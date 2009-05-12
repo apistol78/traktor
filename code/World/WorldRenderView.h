@@ -1,0 +1,202 @@
+#ifndef traktor_world_WorldRenderView_H
+#define traktor_world_WorldRenderView_H
+
+#include <string>
+#include "Core/Heap/Ref.h"
+#include "Core/Object.h"
+#include "Core/Math/Vector2.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Frustum.h"
+#include "Core/Math/Aabb.h"
+#include "Render/Shader.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_WORLD_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+class Texture;
+class Shader;
+class ShaderParameters;
+
+	}
+
+	namespace world
+	{
+
+/*! \brief World render's view.
+ * \ingroup World
+ *
+ * WorldRenderView represent the view of the world from the WorldRenderer's
+ * perspective.
+ */
+class T_DLLCLASS WorldRenderView : public Object
+{
+	T_RTTI_CLASS(WorldRenderView)
+	
+public:
+	enum { MaxLightCount = 2 };
+
+	enum LightType
+	{
+		LtDisabled = 0,
+		LtDirectional = 1,
+		LtPoint = 2
+	};
+
+	struct Light
+	{
+		LightType type;
+		Vector4 position;
+		Vector4 direction;
+		Vector4 sunColor;
+		Vector4 baseColor;
+		Vector4 shadowColor;
+		Scalar range;
+	};
+
+	WorldRenderView();
+
+	void setTechnique(const render::handle_t technique);
+
+	void setViewFrustum(const Frustum& viewFrustum);
+
+	void setCullFrustum(const Frustum& cullFrustum);
+
+	void setProjection(const Matrix44& projection);
+
+	void setView(const Matrix44& view);
+
+	void setViewSize(const Vector2& viewSize);
+
+	void setViewToLightSpace(const Matrix44& viewToLightSpace);
+
+	void setEyePosition(const Vector4& eyePosition);
+
+	void setShadowMap(render::Texture* shadowMap, float shadowMapBias, int shadowMapSlice);
+
+	void setShadowMapDiscRotation(render::Texture* shadowMapDiscRotation);
+
+	void setDepthMap(render::Texture* depthMap);
+
+	void setTime(float time);
+
+	void addLight(const Light& light);
+
+	void resetLights();
+
+	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world) const;
+
+	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setLightShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+
+	void setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	/*! \brief Set shader parameters defined by world renderer.
+	 *
+	 * \param shaderParams Pointer to shader parameter container.
+	 */
+	void setShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	/*! \brief Set shader parameters defined by world renderer.
+	 *
+	 * \param shaderParams Pointer to shader parameter container.
+	 * \param world Entity world transform.
+	 * \param bounds Entity bounds in object space.
+	 */
+	void setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+
+	inline render::handle_t getTechnique() const {
+		return m_technique;
+	}
+
+	inline const Frustum& getViewFrustum() const {
+		return m_viewFrustum;
+	}
+
+	inline const Frustum& getCullFrustum() const {
+		return m_cullFrustum;
+	}
+
+	inline const Matrix44& getProjection() const {
+		return m_projection;
+	}
+
+	inline const Matrix44& getView() const {
+		return m_view;
+	}
+
+	inline const Vector2& getViewSize() const {
+		return m_viewSize;
+	}
+
+	inline const Matrix44& getViewToLightSpace() const {
+		return m_viewToLightSpace;
+	}
+
+	inline const Vector4& getEyePosition() const {
+		return m_eyePosition;
+	}
+
+	inline const Vector4& getLightPosition(int index) const
+	{
+		return m_lights[index].position;
+	}
+
+	inline const Vector4& getLightDirection(int index) const
+	{
+		return m_lights[index].direction;
+	}
+
+	inline render::Texture* getShadowMap() const {
+		return m_shadowMap;
+	}
+
+	inline float getShadowMapBias() const {
+		return m_shadowMapBias;
+	}
+
+	inline render::Texture* getDepthMap() const {
+		return m_depthMap;
+	}
+
+	inline float getTime() const {
+		return m_time;
+	}
+	
+private:
+	render::handle_t m_technique;
+	Frustum m_viewFrustum;
+	Frustum m_cullFrustum;
+	Matrix44 m_projection;
+	Matrix44 m_view;
+	Matrix44 m_viewToLightSpace;
+	Vector2 m_viewSize;
+	Vector4 m_eyePosition;
+	Light m_lights[MaxLightCount];
+	int m_lightCount;
+	Ref< render::Texture > m_shadowMap;
+	Ref< render::Texture > m_shadowMapDiscRotation;
+	float m_shadowMapBias;
+	int m_shadowMapSlice;
+	Ref< render::Texture > m_depthMap;
+	float m_time;
+};
+	
+	}
+}
+
+#endif	// traktor_world_WorldRenderView_H

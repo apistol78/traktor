@@ -1,0 +1,39 @@
+#include "Render/Dx9/HlslVariable.h"
+#include "Core/Misc/StringUtils.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+HlslVariable::HlslVariable()
+:	m_type(HtVoid)
+{
+}
+
+HlslVariable::HlslVariable(const std::wstring& name, HlslType type)
+:	m_name(name)
+,	m_type(type)
+{
+}
+
+std::wstring HlslVariable::cast(HlslType to) const
+{
+	const wchar_t* c[6][6] =
+	{
+		{ 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, L"%", L"%.xx", L"%.xxx", L"%.xxxx" },
+		{ 0, 0, L"%.x", L"%", L"float3(%.xy, 0)", L"float4(%.xy, 0, 0)" },
+		{ 0, 0, L"%.x", L"%.xy", L"%", L"float4(%.xyz, 0)" },
+		{ 0, 0, L"%.x", L"%.xy", L"%.xyz", L"%" }
+	};
+	
+	const wchar_t* f = c[m_type][to];
+	T_ASSERT (f);
+
+	return replaceAll< std::wstring >(f, L"%", m_name);
+}
+
+	}
+}

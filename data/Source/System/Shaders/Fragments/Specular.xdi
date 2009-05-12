@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>71</first>
+				<second>186</second>
+			</position>
+			<name>HalfAngleVector</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>71</first>
+				<second>141</second>
+			</position>
+			<name>Normal</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>253</first>
+				<second>84</second>
+			</position>
+			<name>Exponent</name>
+		</item>
+		<item type="traktor.render.Dot">
+			<comment></comment>
+			<position>
+				<first>280</first>
+				<second>148</second>
+			</position>
+		</item>
+		<item type="traktor.render.Pow">
+			<comment></comment>
+			<position>
+				<first>437</first>
+				<second>105</second>
+			</position>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>618</first>
+				<second>89</second>
+			</position>
+			<name>Output</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Exponent</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

@@ -1,0 +1,58 @@
+#ifndef traktor_ui_custom_MiniButton_H
+#define traktor_ui_custom_MiniButton_H
+
+#include "Ui/Widget.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_CUSTOM_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+		namespace custom
+		{
+
+/*! \brief Mini button control.
+ * \ingroup UIC
+ */
+class T_DLLCLASS MiniButton : public Widget
+{
+	T_RTTI_CLASS(MiniButton)
+	
+public:
+	bool create(Widget* parent, const std::wstring& text);
+
+	bool create(Widget* parent, Bitmap* image);
+
+	virtual Size getPreferedSize() const;
+	
+	void addClickEventHandler(EventHandler* eventHandler);
+
+private:
+	enum State
+	{
+		StReleased,
+		StPushed
+	};
+	
+	State m_state;
+	Ref< Bitmap > m_image;
+	
+	void eventButtonDown(Event* event);
+	
+	void eventButtonUp(Event* event);
+	
+	void eventPaint(Event* event);
+};
+
+		}
+	}
+}
+
+#endif	// traktor_ui_custom_MiniButton_H

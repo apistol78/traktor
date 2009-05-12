@@ -1,0 +1,74 @@
+#ifndef traktor_ui_custom_SequenceGroup_H
+#define traktor_ui_custom_SequenceGroup_H
+
+#include "Core/Heap/Ref.h"
+#include "Ui/Custom/Sequencer/SequenceItem.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_CUSTOM_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class Bitmap;
+
+		namespace custom
+		{
+
+/*! \brief Sequence group.
+ * \ingroup UIC
+ */
+class T_DLLCLASS SequenceGroup : public SequenceItem
+{
+	T_RTTI_CLASS(SequenceGroup)
+
+public:
+	SequenceGroup(const std::wstring& name);
+
+	void expand();
+
+	void collapse();
+
+	bool isExpanded() const;
+
+	bool isCollapsed() const;
+
+	void setVisible(bool visible);
+
+	bool isVisible() const;
+
+	void setRange(int start, int end);
+
+	int getStart() const;
+
+	int getEnd() const;
+
+	virtual void mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset);
+
+	virtual void mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset);
+
+	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset);
+
+private:
+	Ref< Bitmap > m_imageExpand;
+	Ref< Bitmap > m_imageCollapse;
+	Ref< Bitmap > m_imageVisible;
+	Ref< Bitmap > m_imageHidden;
+	bool m_expanded;
+	bool m_visible;
+	int m_start;
+	int m_end;
+};
+
+		}
+	}
+}
+
+#endif	// traktor_ui_custom_SequenceGroup_H

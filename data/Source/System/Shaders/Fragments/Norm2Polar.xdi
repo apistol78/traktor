@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>200</first>
+				<second>110</second>
+			</position>
+			<name>PhiNorm</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>167</first>
+				<second>237</second>
+			</position>
+			<name>ThetaNorm</name>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment></comment>
+			<position>
+				<first>386</first>
+				<second>98</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>PI / 2</comment>
+			<position>
+				<first>385</first>
+				<second>36</second>
+			</position>
+			<value>1.5708</value>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment></comment>
+			<position>
+				<first>385</first>
+				<second>234</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>PI * 2</comment>
+			<position>
+				<first>384</first>
+				<second>188</second>
+			</position>
+			<value>6.28319</value>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>568</first>
+				<second>94</second>
+			</position>
+			<name>Phi</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>565</first>
+				<second>226</second>
+			</position>
+			<name>Theta</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

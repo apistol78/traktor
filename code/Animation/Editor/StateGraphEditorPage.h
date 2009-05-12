@@ -1,0 +1,109 @@
+#ifndef traktor_animation_StateGraphEditorPage_H
+#define traktor_animation_StateGraphEditorPage_H
+
+#include <map>
+#include "Core/Heap/Ref.h"
+#include "Editor/EditorPage.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_ANIMATION_EDITOR_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace editor
+	{
+
+class Editor;
+
+	}
+
+	namespace ui
+	{
+
+class Event;
+class PopupMenu;
+class Point;
+
+		namespace custom
+		{
+
+class ToolBar;
+class GraphControl;
+class Node;
+
+		}
+	}
+
+	namespace animation
+	{
+
+class StateGraph;
+class State;
+class Transition;
+
+class T_DLLEXPORT StateGraphEditorPage : public editor::EditorPage
+{
+	T_RTTI_CLASS(StateGraphEditorPage)
+
+public:
+	StateGraphEditorPage(editor::Editor* editor);
+
+	virtual bool create(ui::Container* parent);
+
+	virtual void destroy();
+
+	virtual void activate();
+
+	virtual void deactivate();
+
+	virtual	bool setDataObject(db::Instance* instance, Object* data);
+
+	virtual Object* getDataObject();
+
+	virtual void propertiesChanged();
+
+	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
+
+	virtual bool handleCommand(const ui::Command& command);
+
+	virtual void handleDatabaseEvent(const Guid& eventId);
+
+private:
+	editor::Editor* m_editor;
+	Ref< StateGraph > m_stateGraph;
+	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::GraphControl > m_editorGraph;
+	Ref< ui::PopupMenu > m_menuPopup;
+
+	void createEditorNodes(const RefArray< State >& states, const RefArray< Transition >& transitions);
+
+	ui::custom::Node* createEditorNode(State* state);
+
+	void createState(const ui::Point& at);
+
+	void updateGraph();
+
+	void eventToolClick(ui::Event* event);
+
+	void eventPropertyChange(ui::Event* event);
+
+	void eventButtonDown(ui::Event* event);
+
+	void eventSelect(ui::Event* event);
+
+	void eventNodeMoved(ui::Event* event);
+
+	void eventEdgeConnect(ui::Event* event);
+
+	void eventEdgeDisconnect(ui::Event* event);
+};
+
+	}
+}
+
+#endif	// traktor_animation_StateGraphEditorPage_H

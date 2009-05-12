@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.VertexOutput" version="1">
+			<comment></comment>
+			<position>
+				<first>414</first>
+				<second>72</second>
+			</position>
+			<technique>Default</technique>
+		</item>
+		<item type="traktor.render.PixelOutput" version="2">
+			<comment></comment>
+			<position>
+				<first>609</first>
+				<second>130</second>
+			</position>
+			<technique>Default</technique>
+			<cullMode>CmNever</cullMode>
+			<blendEnable>true</blendEnable>
+			<blendOperation>BoAdd</blendOperation>
+			<blendSource>BfSourceAlpha</blendSource>
+			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<colorWriteMask>
+				<red>true</red>
+				<green>true</green>
+				<blue>true</blue>
+				<alpha>true</alpha>
+			</colorWriteMask>
+			<depthEnable>false</depthEnable>
+			<depthWriteEnable>false</depthWriteEnable>
+			<depthFunction>CfLessEqual</depthFunction>
+			<alphaTestEnable>false</alphaTestEnable>
+			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestReference>128</alphaTestReference>
+			<wireframe>false</wireframe>
+			<stencilEnable>true</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfEqual</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>2147483648</stencilMask>
+		</item>
+		<item type="traktor.render.External">
+			<comment></comment>
+			<position>
+				<first>194</first>
+				<second>65</second>
+			</position>
+			<fragmentGuid>{46AAC087-9D83-3047-93E2-36B77218D3C7}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+				<item>
+					<name>Color</name>
+				</item>
+			</outputPins>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment></comment>
+			<position>
+				<first>230</first>
+				<second>208</second>
+			</position>
+			<parameterName>CxFormAdd</parameterName>
+			<type>PtVector</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment></comment>
+			<position>
+				<first>230</first>
+				<second>166</second>
+			</position>
+			<parameterName>CxFormMul</parameterName>
+			<type>PtVector</type>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment></comment>
+			<position>
+				<first>411</first>
+				<second>131</second>
+			</position>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Color</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+	</edges>
+</object>

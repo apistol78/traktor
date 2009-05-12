@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<object type="traktor.db.LocalInstanceMeta">
+	<guid>{DD33A3DC-CADD-6640-8424-319A05E3CE09}</guid>
+	<primaryType>traktor.weather.SkyEntityData</primaryType>
+	<blobs/>
+</object>

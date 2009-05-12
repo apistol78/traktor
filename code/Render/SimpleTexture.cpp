@@ -1,0 +1,11 @@
+#include "Render/SimpleTexture.h"
+
+namespace traktor
+{
+	namespace render
+	{
+	
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexture", SimpleTexture, Texture)
+
+	}
+}

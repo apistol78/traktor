@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Sampler">
+			<comment>Diffuse texture</comment>
+			<position>
+				<first>-168</first>
+				<second>93</second>
+			</position>
+			<parameterName>DiffuseTexture</parameterName>
+			<external>{D9663E74-01FF-E04A-9C69-C78C4A5C7A1B}</external>
+			<lookup>LuSimple</lookup>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
+			<magFilter>FtLinear</magFilter>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>-342</first>
+				<second>118</second>
+			</position>
+			<name>TexCoord</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>110</first>
+				<second>165</second>
+			</position>
+			<name>Template_DiffuseColor</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>110</first>
+				<second>208</second>
+			</position>
+			<name>Template_DiffuseTerm</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>Diffuse term</comment>
+			<position>
+				<first>-7</first>
+				<second>230</second>
+			</position>
+			<value>1</value>
+		</item>
+		<item type="traktor.render.Add">
+			<comment></comment>
+			<position>
+				<first>-19</first>
+				<second>135</second>
+			</position>
+		</item>
+		<item type="traktor.render.Color">
+			<comment>Color</comment>
+			<position>
+				<first>-198</first>
+				<second>190</second>
+			</position>
+			<color>255, 255, 255, 255</color>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+	</edges>
+</object>

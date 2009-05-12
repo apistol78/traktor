@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<object type="Solution">
+	<name>HttpGet</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/HttpGet/build/linux</rootPath>
+	<projects>
+		<item type="Project">
+			<name>HttpGet</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/HttpGet/code</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/HttpGet/code</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/HttpGet/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+					<projectName>Traktor.Net</projectName>
+				</item>
+			</dependencies>
+		</item>
+	</projects>
+</object>

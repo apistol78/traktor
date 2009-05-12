@@ -1,0 +1,46 @@
+#include <limits>
+#include "Terrain/EntityRenderer.h"
+#include "Terrain/TerrainEntity.h"
+#include "Terrain/OceanEntity.h"
+#include "Terrain/UndergrowthEntity.h"
+#include "World/WorldContext.h"
+
+namespace traktor
+{
+	namespace terrain
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::EntityRenderer)
+
+const TypeSet EntityRenderer::getEntityTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< TerrainEntity >());
+	typeSet.insert(&type_of< OceanEntity >());
+	typeSet.insert(&type_of< UndergrowthEntity >());
+	return typeSet;
+}
+
+void EntityRenderer::render(
+	world::WorldContext* worldContext,
+	world::WorldRenderView* worldRenderView,
+	world::Entity* entity
+)
+{
+	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
+		terrainEntity->render(worldContext->getRenderContext(), worldRenderView);
+	if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
+		oceanEntity->render(worldContext->getRenderContext(), worldRenderView);
+	if (UndergrowthEntity* undergrowthEntity = dynamic_type_cast< UndergrowthEntity* >(entity))
+		undergrowthEntity->render(worldContext->getRenderContext(), worldRenderView);
+}
+
+void EntityRenderer::flush(
+	world::WorldContext* worldContext,
+	world::WorldRenderView* worldRenderView
+)
+{
+}
+
+	}
+}

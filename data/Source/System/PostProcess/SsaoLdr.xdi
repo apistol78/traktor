@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings">
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>2</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR16F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>3</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR16F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+	</definitions>
+	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>2</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSsao">
+			<shader>{74942CA7-6F3E-814F-A219-57E60FFDC7F3}</shader>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>3</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur">
+			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>2</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>1</source>
+					<index>1</index>
+				</item>
+			</sources>
+			<direction>1, 0, 0, 0</direction>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>2</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur">
+			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>3</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>1</source>
+					<index>1</index>
+				</item>
+			</sources>
+			<direction>0, 1, 0, 0</direction>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>0</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{366B6057-17AB-194C-9630-EDBE4C055C58}</shader>
+			<sources>
+				<item>
+					<param>Frame</param>
+					<source>1</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Occlusion</param>
+					<source>2</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
+</object>

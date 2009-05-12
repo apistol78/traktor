@@ -1,0 +1,45 @@
+#ifndef traktor_ui_MenuBarWin32_H
+#define traktor_ui_MenuBarWin32_H
+
+#define _WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+#include "Core/Heap/Ref.h"
+#include "Ui/Itf/IWidget.h"
+#include "Ui/Itf/IMenuBar.h"
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class EventSubject;
+
+class MenuBarWin32 : public IMenuBar
+{
+public:
+	MenuBarWin32(EventSubject* owner);
+
+	virtual bool create(IForm* form);
+
+	virtual void destroy();
+
+	virtual void add(MenuItem* item);
+
+private:
+	friend class FormWin32;
+
+	EventSubject* m_owner;
+	FormWin32* m_form;
+	HMENU m_hMenu;
+	RefArray< MenuItem > m_menuItems;
+
+	LRESULT eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+
+	LRESULT eventMenuCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
+};
+
+	}
+}
+
+#endif	// traktor_ui_MenuBarWin32_H

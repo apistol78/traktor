@@ -1,0 +1,2498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution">
+	<name>Traktor PS3</name>
+	<rootPath>$(TRAKTOR_HOME)/build/ps3</rootPath>
+	<projects>
+		<item type="Project">
+			<name>Extern.Ode</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/ode-060223</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/ode/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/OPCODE</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/ode/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/OPCODE</item>
+					</includePaths>
+					<definitions/>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/ode/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/OPCODE</item>
+					</includePaths>
+					<definitions>
+						<item>T_ODE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/ode/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/OPCODE</item>
+					</includePaths>
+					<definitions>
+						<item>T_ODE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>ode/src/*.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ode/src/*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ode/src/*.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>OPCODE/*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>OPCODE/*.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>OPCODE/Ice/*.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>OPCODE/Ice/*.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project">
+			<name>Extern.lpng128</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng128</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>T_LPNG128_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>T_LPNG128_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project">
+			<name>Extern.zlib-1.2.2</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>T_ZLIB-1_2_2_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>T_ZLIB-1_2_2_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project">
+			<name>Traktor.Animation</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_ANIMATION_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_ANIMATION_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>PathEntity</name>
+					<items>
+						<item type="File">
+							<fileName>PathEntity/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>RagDoll</name>
+					<items>
+						<item type="File">
+							<fileName>RagDoll/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>IK</name>
+					<items>
+						<item type="File">
+							<fileName>IK/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project type="Project">
+						<name>Traktor.Core</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
+						<configurations>
+							<item type="Configuration">
+								<name>DebugShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_CORE_EXPORT</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_CORE_EXPORT</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.*</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Functor</name>
+								<items>
+									<item type="File">
+										<fileName>Functor/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Heap</name>
+								<items>
+									<item type="File">
+										<fileName>Heap/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Io</name>
+								<items>
+									<item type="Filter">
+										<name>Ps3</name>
+										<items>
+											<item type="File">
+												<fileName>Io/Ps3/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Io/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Library</name>
+								<items>
+									<item type="File">
+										<fileName>Library/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Log</name>
+								<items>
+									<item type="File">
+										<fileName>Log/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Math</name>
+								<items>
+									<item type="Filter">
+										<name>Std</name>
+										<items>
+											<item type="File">
+												<fileName>Math/Std/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Math/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Rtti</name>
+								<items>
+									<item type="File">
+										<fileName>Rtti/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Serialization</name>
+								<items>
+									<item type="File">
+										<fileName>Serialization/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Thread</name>
+								<items>
+									<item type="File">
+										<fileName>Thread/*.*</fileName>
+										<items/>
+									</item>
+									<item type="Filter">
+										<name>Ps3</name>
+										<items>
+											<item type="File">
+												<fileName>Thread/Ps3/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Timer</name>
+								<items>
+									<item type="File">
+										<fileName>Timer/*.*</fileName>
+										<items/>
+									</item>
+									<item type="Filter">
+										<name>Ps3</name>
+										<items>
+											<item type="File">
+												<fileName>Timer/Ps3/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Misc</name>
+								<items>
+									<item type="File">
+										<fileName>Misc/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Debug</name>
+								<items>
+									<item type="Filter">
+										<name>Ansi</name>
+										<items>
+											<item type="File">
+												<fileName>Debug/Ansi/*.*</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="File">
+										<fileName>Debug/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Date</name>
+								<items>
+									<item type="File">
+										<fileName>Date/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Containers</name>
+								<items>
+									<item type="File">
+										<fileName>Containers/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+				<item type="ProjectDependency">
+					<project type="Project">
+						<name>Traktor.Mesh</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
+						<configurations>
+							<item type="Configuration">
+								<name>DebugShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_MESH_EXPORT</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_MESH_EXPORT</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.*</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Indoor</name>
+								<items>
+									<item type="File">
+										<fileName>Indoor/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Skinned</name>
+								<items>
+									<item type="File">
+										<fileName>Skinned/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Static</name>
+								<items>
+									<item type="File">
+										<fileName>Static/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[3]/dependencies/item/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project type="Project">
+									<name>Traktor.Resource</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_RESOURCE_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_RESOURCE_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency">
+								<project type="Project">
+									<name>Traktor.Render</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_RENDER_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_RENDER_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Mesh</name>
+											<items>
+												<item type="File">
+													<fileName>Mesh/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Context</name>
+											<items>
+												<item type="File">
+													<fileName>Context/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>SH</name>
+											<items>
+												<item type="File">
+													<fileName>SH/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency">
+								<project type="Project">
+									<name>Traktor.World</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_WORLD_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_WORLD_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Entity</name>
+											<items>
+												<item type="File">
+													<fileName>Entity/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency">
+											<project type="Project">
+												<name>Traktor.Database</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
+												<configurations>
+													<item type="Configuration">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+													<item type="Filter">
+														<name>Local</name>
+														<items>
+															<item type="File">
+																<fileName>Local/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Compact</name>
+														<items>
+															<item type="File">
+																<fileName>Compact/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency">
+														<project ref="/object/projects/item[3]/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency">
+														<project type="Project">
+															<name>Traktor.Xml</name>
+															<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
+															<configurations>
+																<item type="Configuration">
+																	<name>DebugShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_XML_EXPORT</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_XML_EXPORT</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>DebugStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+															</configurations>
+															<items>
+																<item type="File">
+																	<fileName>*.*</fileName>
+																	<items/>
+																</item>
+															</items>
+															<dependencies>
+																<item type="ProjectDependency">
+																	<project ref="/object/projects/item[3]/dependencies/item/project"/>
+																</item>
+															</dependencies>
+														</project>
+													</item>
+													<item type="ProjectDependency">
+														<project type="Project">
+															<name>Traktor.Zip</name>
+															<sourcePath>$(TRAKTOR_HOME)/code/Zip</sourcePath>
+															<configurations>
+																<item type="Configuration">
+																	<name>DebugShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2\contrib\minizip</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_ZIP_EXPORT</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseShared</name>
+																	<targetFormat>TfSharedLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2\contrib\minizip</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_ZIP_EXPORT</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>DebugStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2\contrib\minizip</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>_DEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/code</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2</item>
+																		<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.2\contrib\minizip</item>
+																	</includePaths>
+																	<definitions>
+																		<item>T_STATIC</item>
+																		<item>NDEBUG</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+															</configurations>
+															<items>
+																<item type="File">
+																	<fileName>*.*</fileName>
+																	<items/>
+																</item>
+																<item type="Filter">
+																	<name>MiniZip</name>
+																	<items>
+																		<item type="File">
+																			<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2/contrib/minizip/*.*</fileName>
+																			<items/>
+																		</item>
+																	</items>
+																</item>
+															</items>
+															<dependencies>
+																<item type="ProjectDependency">
+																	<project ref="/object/projects/item[3]/dependencies/item/project"/>
+																</item>
+																<item type="ProjectDependency">
+																	<project ref="/object/projects/item[2]"/>
+																</item>
+															</dependencies>
+														</project>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+						</dependencies>
+					</project>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item/project"/>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[3]/project"/>
+		<item type="Project">
+			<name>Traktor.Drawing</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item></item>
+					</includePaths>
+					<definitions>
+						<item>T_DRAWING_EXPORT</item>
+						<item>_DEBUG</item>
+						<item>T_INCLUDE_PNG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+					</includePaths>
+					<definitions>
+						<item>T_DRAWING_EXPORT</item>
+						<item>NDEBUG</item>
+						<item>T_INCLUDE_PNG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item></item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>T_INCLUDE_PNG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
+						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.2</item>
+						<item></item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>T_INCLUDE_PNG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[1]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[2]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Graphics</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_GRAPHICS_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_GRAPHICS_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Html</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_HTML_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_HTML_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Input</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Input</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_INPUT_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_INPUT_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Input.Ps3</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Input/Ps3</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_INPUT_PS3_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_INPUT_PS3_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[9]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project"/>
+		<item type="Project">
+			<name>Traktor.Net</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_NET_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_NET_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Ftp</name>
+					<items>
+						<item type="File">
+							<fileName>Ftp/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Http</name>
+					<items>
+						<item type="File">
+							<fileName>Http/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Smtp</name>
+					<items>
+						<item type="File">
+							<fileName>Smtp/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Physics</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Physics.Ode</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Ode</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_ODE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_ODE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-060223/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[13]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+		<item type="Project">
+			<name>Traktor.Render.Ps3</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS3_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_PS3_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item type="Project">
+			<name>Traktor.Scene</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCENE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCENE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Sound</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SOUND_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SOUND_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Spray</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Spray</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SPRAY_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SPRAY_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Modifiers</name>
+					<items>
+						<item type="File">
+							<fileName>Modifiers/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Sources</name>
+					<items>
+						<item type="File">
+							<fileName>Sources/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Terrain</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Terrain</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_TERRAIN_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_TERRAIN_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project">
+			<name>Traktor.Weather</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WEATHER_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WEATHER_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[3]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[3]/project/dependencies/item[2]/project"/>
+	</projects>
+</object>

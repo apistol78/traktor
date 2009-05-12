@@ -1,0 +1,124 @@
+#ifndef traktor_flash_FlashDisplayList_H
+#define traktor_flash_FlashDisplayList_H
+
+#include <map>
+#include "Core/Heap/Ref.h"
+#include "Core/Object.h"
+#include "Flash/SwfTypes.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_FLASH_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace flash
+	{
+
+class ActionContext;
+class FlashMovie;
+class FlashCharacterInstance;
+class FlashFrame;
+
+/*! \brief Movie clip display list.
+ * \ingroup Flash
+ */
+class T_DLLCLASS FlashDisplayList : public Object
+{
+	T_RTTI_CLASS(FlashDisplayList)
+
+public:
+	struct Layer
+	{
+		uint16_t id;
+		Ref< FlashCharacterInstance > instance;
+		int32_t clipDepth;
+
+		Layer()
+		:	id(0)
+		,	clipDepth(0)
+		{
+		}
+	};
+
+	typedef std::map< int32_t, Layer > layer_map_t;
+
+	FlashDisplayList(ActionContext* context);
+
+	/*! \brief Reset display list. */
+	void reset();
+
+	/*! \brief Update display list from frame.
+	 *
+	 * \param ownerInstance Instance which will be parent to other character instances created from this frame.
+	 * \param frame Frame actions.
+	 */
+	void updateFrame(FlashCharacterInstance* ownerInstance, const FlashFrame* frame);
+
+	/*! \brief Show character instance at depth.
+	 *
+	 * \param depth Depth to place character instance.
+	 * \param characterId Identifier of character.
+	 * \param characterInstance Character instance.
+	 */
+	void showObject(int32_t depth, uint16_t characterId, FlashCharacterInstance* characterInstance);
+
+	/*! \brief Remove character instance from display list.
+	 *
+	 * \param characterInstance Character instance.
+	 */
+	void removeObject(FlashCharacterInstance* characterInstance);
+
+	/*! \brief Get depth where character instance is placed.
+	 *
+	 * \param characterInstance Character instance.
+	 * \return Depth of instance.
+	 */
+	int32_t getObjectDepth(const FlashCharacterInstance* characterInstance) const;
+
+	/*! \brief Get next highest depth which is free.
+	 *
+	 * \return Next highest depth.
+	 */
+	int32_t getNextHighestDepth() const;
+
+	/*! \brief Swap character instances at two depths.
+	 *
+	 * \param depth1 First depth.
+	 * \param depth2 Second depth.
+	 */
+	void swap(int32_t depth1, int32_t depth2);
+
+	/*! \brief Get background clear color.
+	 *
+	 * \return Background colors.
+	 */
+	const SwfColor& getBackgroundColor() const;
+
+	/*! \brief Get depth layers.
+	 *
+	 * \return Layers.
+	 */
+	const layer_map_t& getLayers() const;
+
+	/*! \brief Find layer from label.
+	 *
+	 * \param name Name of layer.
+	 * \return Iterator to named layer.
+	 */
+	const layer_map_t::const_iterator findLayer(const std::wstring& name) const;
+
+private:
+	Ref< ActionContext > m_context;
+	SwfColor m_backgroundColor;
+	layer_map_t m_layers;
+};
+
+	}
+}
+
+#endif	// traktor_flash_FlashDisplayList_H

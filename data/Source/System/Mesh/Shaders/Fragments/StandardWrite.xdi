@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.External">
+			<comment></comment>
+			<position>
+				<first>456</first>
+				<second>308</second>
+			</position>
+			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewPosition</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+		</item>
+		<item type="traktor.render.External">
+			<comment></comment>
+			<position>
+				<first>456</first>
+				<second>371</second>
+			</position>
+			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ViewPosition</name>
+				</item>
+			</inputPins>
+			<outputPins/>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>258</first>
+				<second>353</second>
+			</position>
+			<name>ViewPosition</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+	</edges>
+</object>

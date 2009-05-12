@@ -1,0 +1,34 @@
+#ifndef traktor_drone_DroneToolGroup_H
+#define traktor_drone_DroneToolGroup_H
+
+#include "App/DroneTool.h"
+
+namespace traktor
+{
+	namespace drone
+	{
+
+class DroneToolGroup : public DroneTool
+{
+	T_RTTI_CLASS(DroneToolGroup)
+
+public:
+	DroneToolGroup(const std::wstring& title = L"Unnamed");
+
+	const std::wstring& getTitle() const;
+
+	virtual void getMenuItems(RefArray< ui::MenuItem >& outItems);
+
+	virtual bool execute(ui::Widget* parent, ui::MenuItem* menuItem);
+
+	virtual bool serialize(Serializer& s);
+
+private:
+	std::wstring m_title;
+	RefArray< DroneTool > m_tools;
+};
+
+	}
+}
+
+#endif	// traktor_drone_DroneToolGroup_H

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.editor.Assets">
+	<dependencies>
+		<item>{93BB7BDE-FAEA-3341-BDEF-B7DF5582C81A}</item>
+		<item>{9F3FB638-1C8D-EE46-B29A-42DFE6876DDA}</item>
+		<item>{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}</item>
+		<item>{473467B0-835D-EF45-B308-E3C3C5B0F226}</item>
+    <item>{77F684E7-7034-B44E-BEA1-F072C0C9E40C}</item>
+    <item>{E69EEF01-66A9-C04C-9183-9F8B8606DFD4}</item>
+    <item>{88F89A87-8CAB-1E4E-82A8-5B7FEF761534}</item>
+    <item>{A1A4265C-E5DF-A849-97F7-C8C0887EF44F}</item>
+	</dependencies>
+</object>

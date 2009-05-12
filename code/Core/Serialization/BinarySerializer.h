@@ -1,0 +1,95 @@
+#ifndef traktor_BinarySerializer_H
+#define traktor_BinarySerializer_H
+
+#include <map>
+#include "Core/Heap/Ref.h"
+#include "Core/Serialization/Serializer.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class Stream;
+
+/*! \brief Binary serializer.
+ * \ingroup Core
+ */
+class T_DLLCLASS BinarySerializer : public Serializer
+{
+	T_RTTI_CLASS(BinarySerializer)
+
+public:
+	BinarySerializer(Stream* stream);
+	
+	virtual Direction getDirection();
+	
+	virtual bool operator >> (const Member< bool >& m);
+	
+	virtual bool operator >> (const Member< int8_t >& m);
+	
+	virtual bool operator >> (const Member< uint8_t >& m);
+	
+	virtual bool operator >> (const Member< int16_t >& m);
+	
+	virtual bool operator >> (const Member< uint16_t >& m);
+	
+	virtual bool operator >> (const Member< int32_t >& m);
+	
+	virtual bool operator >> (const Member< uint32_t >& m);
+
+	virtual bool operator >> (const Member< int64_t >& m);
+
+	virtual bool operator >> (const Member< uint64_t >& m);
+	
+	virtual bool operator >> (const Member< float >& m);
+	
+	virtual bool operator >> (const Member< double >& m);
+	
+	virtual bool operator >> (const Member< std::string >& m);
+
+	virtual bool operator >> (const Member< std::wstring >& m);
+
+	virtual bool operator >> (const Member< Guid >& m);
+
+	virtual bool operator >> (const Member< Color >& m);
+
+	virtual bool operator >> (const Member< Scalar >& m);
+	
+	virtual bool operator >> (const Member< Vector2 >& m);
+	
+	virtual bool operator >> (const Member< Vector4 >& m);
+	
+	virtual bool operator >> (const Member< Matrix33 >& m);
+	
+	virtual bool operator >> (const Member< Matrix44 >& m);
+
+	virtual bool operator >> (const Member< Quaternion >& m);
+	
+	virtual bool operator >> (const Member< Serializable >& m);
+
+	virtual bool operator >> (const Member< Serializable* >& m);
+
+	virtual bool operator >> (const Member< void* >& m);
+	
+	virtual bool operator >> (const MemberArray& m);
+	
+	virtual bool operator >> (const MemberComplex& m);
+	
+private:
+	Ref< Stream > m_stream;
+	Direction m_direction;
+	std::map< uint64_t, Ref< Serializable > > m_readCache;
+	std::map< Ref< Serializable >, uint64_t > m_writeCache;
+	uint64_t m_nextCacheId;
+};
+	
+}
+
+#endif	// traktor_BinarySerializer_H

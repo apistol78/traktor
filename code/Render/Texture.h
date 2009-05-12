@@ -1,0 +1,45 @@
+#ifndef traktor_render_Texture_H
+#define traktor_render_Texture_H
+
+#include "Core/Object.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+/*! \brief Texture base class.
+ * \ingroup Render
+ */
+class T_DLLCLASS Texture : public Object
+{
+	T_RTTI_CLASS(Texture)
+	
+public:
+	struct Lock
+	{
+		size_t pitch;
+		void* bits;
+	};
+
+	virtual void destroy() = 0;
+
+	virtual int getWidth() const = 0;
+	
+	virtual int getHeight() const = 0;
+	
+	virtual int getDepth() const = 0;
+};
+	
+	}
+}
+
+#endif	// traktor_render_Texture_H

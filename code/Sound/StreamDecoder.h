@@ -1,0 +1,50 @@
+#ifndef traktor_sound_StreamDecoder_H
+#define traktor_sound_StreamDecoder_H
+
+#include "Core/Object.h"
+#include "Sound/Types.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class Stream;
+
+	namespace sound
+	{
+
+/*! \brief Sound stream decoder.
+ * \ingroup Sound
+ *
+ * Stream decoders are called frequently from the mixer thread
+ * when it's time to decode a new sound block from the stream.
+ * Thus it's not required for the decoder itself to keep track
+ * of timing, just return a continuous stream of sound blocks.
+ */
+class T_DLLCLASS StreamDecoder : public Object
+{
+	T_RTTI_CLASS(StreamDecoder)
+
+public:
+	virtual bool create(Stream* stream) = 0;
+
+	virtual void destroy() = 0;
+
+	virtual double getDuration() const = 0;
+
+	virtual bool getBlock(SoundBlock& outBlock) = 0;
+
+	virtual void rewind() = 0;
+};
+
+	}
+}
+
+#endif	// traktor_sound_StreamDecoder_H

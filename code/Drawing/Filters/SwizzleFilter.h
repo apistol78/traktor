@@ -1,0 +1,40 @@
+#ifndef traktor_drawing_SwizzleFilter_H
+#define traktor_drawing_SwizzleFilter_H
+
+#include <string>
+#include "Drawing/ImageFilter.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_DRAWING_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace drawing
+	{
+
+/*! \brief Swizzle color channels.
+ * \ingroup Drawing
+ */
+class T_DLLCLASS SwizzleFilter : public ImageFilter
+{
+	T_RTTI_CLASS(SwizzleFilter)
+
+public:
+	SwizzleFilter(const std::wstring& swizzle);
+
+protected:
+	virtual Image* apply(const Image* image);
+
+private:
+	wchar_t m_swizzle[4];
+};
+	
+	}
+}
+
+#endif	// traktor_drawing_SwizzleFilter_H

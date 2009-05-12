@@ -1,0 +1,62 @@
+#include "Database/Local/LocalInstanceMeta.h"
+#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStl.h"
+
+namespace traktor
+{
+	namespace db
+	{
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.LocalInstanceMeta", LocalInstanceMeta, Serializable)
+
+LocalInstanceMeta::LocalInstanceMeta()
+{
+}
+
+LocalInstanceMeta::LocalInstanceMeta(const Guid& guid, const std::wstring& primaryType)
+:	m_guid(guid)
+,	m_primaryType(primaryType)
+{
+}
+
+void LocalInstanceMeta::setGuid(const Guid& guid)
+{
+	m_guid = guid;
+}
+
+const Guid& LocalInstanceMeta::getGuid() const
+{
+	return m_guid;
+}
+
+void LocalInstanceMeta::setPrimaryType(const std::wstring& primaryType)
+{
+	m_primaryType = primaryType;
+}
+
+const std::wstring& LocalInstanceMeta::getPrimaryType() const
+{
+	return m_primaryType;
+}
+
+void LocalInstanceMeta::addBlob(const std::wstring& blob)
+{
+	m_blobs.push_back(blob);
+}
+
+const std::vector< std::wstring >& LocalInstanceMeta::getBlobs() const
+{
+	return m_blobs;
+}
+
+bool LocalInstanceMeta::serialize(Serializer& s)
+{
+	s >> Member< Guid >(L"guid", m_guid);
+	s >> Member< std::wstring >(L"primaryType", m_primaryType);
+	s >> MemberStlVector< std::wstring >(L"blobs", m_blobs);
+	return true;
+}
+
+	}
+}

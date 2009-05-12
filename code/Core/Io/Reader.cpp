@@ -1,0 +1,161 @@
+#include <vector>
+#include <algorithm>
+#include "Core/Io/Reader.h"
+
+namespace traktor
+{
+	namespace
+	{
+
+#if defined(T_LITTLE_ENDIAN)
+
+template <typename T> T read_primitive(Stream* stream)
+{
+	T tmp;
+	if (stream->read(&tmp, sizeof(T)) == sizeof(T))
+		return tmp;
+	return T(0);
+}
+
+#elif defined(T_BIG_ENDIAN)
+
+template <typename T> T read_primitive(Stream* stream)
+{
+	std::vector< char > tmp; tmp.resize(sizeof(T));
+	if (stream->read(&tmp[0], sizeof(T)) == sizeof(T))
+	{
+		std::reverse(tmp.begin(), tmp.end());
+		return *(T*)&tmp[0];
+	}
+	return T(0);
+}
+
+#endif
+
+	}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Reader", Reader, Object)
+
+Reader::Reader(Stream* stream)
+:	m_stream(stream)
+{
+	T_ASSERT (m_stream);
+	T_ASSERT (m_stream->canRead());
+}
+
+Reader& Reader::operator >> (bool& b)
+{
+	uint8_t tmp = 0;
+	m_stream->read(&tmp, 1);
+	b = tmp ? true : false;
+	return *this;
+}
+
+Reader& Reader::operator >> (int8_t& c)
+{
+	c = read_primitive< int8_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (uint8_t& uc)
+{
+	uc = read_primitive< uint8_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (int16_t& i)
+{
+	i = read_primitive< int16_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (uint16_t& ui)
+{
+	ui = read_primitive< uint16_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (int32_t& i)
+{
+	i = read_primitive< int32_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (uint32_t& ui)
+{
+	ui = read_primitive< uint32_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (int64_t& i)
+{
+	i = read_primitive< int64_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (uint64_t& ui)
+{
+	ui = read_primitive< uint64_t >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (float& f)
+{
+	f = read_primitive< float >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (double& f)
+{
+	f = read_primitive< double >(m_stream);
+	return *this;
+}
+
+Reader& Reader::operator >> (std::wstring& s)
+{
+	s.clear();
+	for (;;)
+	{
+		wchar_t ch;
+		if (read(&ch, 1, sizeof(ch)) != sizeof(ch) || ch == '\0')
+			break;
+		s += ch;
+	}
+	return *this;
+}
+
+int Reader::read(void* block, int nbytes)
+{
+	return m_stream->read(block, nbytes);
+}
+
+int Reader::read(void* block, int count, int size)
+{
+	int result;
+	
+	result = m_stream->read(block, count * size);
+	
+#if defined(T_BIG_ENDIAN)
+
+	if (result > 0)
+	{
+		char* p = static_cast< char* >(block);
+		for (int i = 0; i < result; i += size)
+		{
+			for (int j = 0; j < size >> 1; ++j)
+				std::swap(p[j], p[size - j - 1]);
+			p += size;
+		}
+	}
+
+#endif
+		
+	return result;
+}
+
+int Reader::skip(int nbytes)
+{
+	return m_stream->seek(Stream::SeekCurrent, nbytes);
+}
+
+}
