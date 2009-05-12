@@ -47,6 +47,14 @@ public:
 
 	Object* getResource(const Type& type, const Guid& guid);
 
+	/*! \brief Begin accept requested resources.
+	 *
+	 * Requested resources are put into a list
+	 * of required resources which are loaded
+	 * at endPrepareResources.
+	 */
+	void beginPrepareResources();
+
 	/*! \brief Request resource for later use.
 	 *
 	 * Notify resource manager that a resource might
@@ -63,8 +71,10 @@ public:
 	 * might add requests for other resources this
 	 * method loops until all of the prepare resource
 	 * has been loaded.
+	 *
+	 * \param cancel Cancel preparing resources.
 	 */
-	void prepareResources();
+	void endPrepareResources(bool cancel = false);
 
 protected:
 	virtual void destroy();
@@ -73,6 +83,7 @@ private:
 	RefList< ResourceLoader > m_loaders;
 	Ref< IResourceCache > m_cache;
 	Semaphore m_lock;
+	bool m_acceptResourceRequests;
 	std::list< std::pair< const Type*, Guid > > m_requestedResources;
 
 	ResourceManager();
