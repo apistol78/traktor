@@ -1,0 +1,1845 @@
+#include "Render/Nodes.h"
+#include "Render/TextureResource.h"
+#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/MemberEnum.h"
+#include "Core/Serialization/MemberBitMask.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Math/Format.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Abs", Abs, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Abs_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Abs_o[] = { L"Output", 0 };
+
+Abs::Abs()
+:	ImmutableNode(c_Abs_i, c_Abs_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Add", Add, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Add_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Add_o[] = { L"Output", 0 };
+
+Add::Add()
+:	ImmutableNode(c_Add_i, c_Add_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ArcusCos", ArcusCos, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ArcusCos_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::OutputPinDesc c_ArcusCos_o[] = { L"Output", 0 };
+
+ArcusCos::ArcusCos()
+:	ImmutableNode(c_ArcusCos_i, c_ArcusCos_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ArcusTan", ArcusTan, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { L"Output", 0 };
+
+ArcusTan::ArcusTan()
+:	ImmutableNode(c_ArcusTan_i, c_ArcusTan_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Clamp", Clamp, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Clamp_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Clamp_o[] = { L"Output", 0 };
+
+Clamp::Clamp(float min, float max)
+:	ImmutableNode(c_Clamp_i, c_Clamp_o)
+,	m_min(min)
+,	m_max(max)
+{
+}
+
+void Clamp::setMin(float min)
+{
+	m_min = min;
+}
+
+float Clamp::getMin() const
+{
+	return m_min;
+}
+
+void Clamp::setMax(float max)
+{
+	m_max = max;
+}
+
+float Clamp::getMax() const
+{
+	return m_max;
+}
+
+std::wstring Clamp::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_min << L" - " << m_max;
+	return ss.str();
+}
+
+bool Clamp::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< float >(L"min", m_min);
+	s >> Member< float >(L"max", m_max);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Branch", Branch, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Branch_i[] = { { L"True", false }, { L"False", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Branch_o[] = { L"Output", 0 };
+
+Branch::Branch(const std::wstring& parameterName)
+:	ImmutableNode(c_Branch_i, c_Branch_o)
+,	m_parameterName(parameterName)
+{
+}
+
+void Branch::setParameterName(const std::wstring& parameterName)
+{
+	m_parameterName = parameterName;
+}
+
+const std::wstring& Branch::getParameterName() const
+{
+	return m_parameterName;
+}
+
+std::wstring Branch::getInformation() const
+{
+	return m_parameterName;
+}
+
+bool Branch::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Color", Color, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Color_o[] = { L"Output", 0 };
+
+Color::Color(const traktor::Color& color)
+:	ImmutableNode(0, c_Color_o)
+,	m_color(color)
+{
+}
+
+void Color::setColor(const traktor::Color& color)
+{
+	m_color = color;
+}
+
+const traktor::Color& Color::getColor() const
+{
+	return m_color;
+}
+
+std::wstring Color::getInformation() const
+{
+	StringOutputStream ss;
+	ss << uint32_t(m_color.r) << L", " << uint32_t(m_color.g) << L", " << uint32_t(m_color.b) << L", " << uint32_t(m_color.a);
+	return ss.str();
+}
+
+bool Color::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< traktor::Color >(L"color", m_color);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Conditional", Conditional, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Conditional_o[] = { L"Output", 0 };
+
+Conditional::Conditional()
+:	ImmutableNode(c_Conditional_i, c_Conditional_o)
+,	m_operator(CoLess)
+{
+}
+
+void Conditional::setOperator(Conditional::Operator op)
+{
+	m_operator = op;
+}
+
+Conditional::Operator Conditional::getOperator() const
+{
+	return m_operator;
+}
+
+std::wstring Conditional::getInformation() const
+{
+	const wchar_t* h[] = { L"<", L"<=", L"=", L"<>", L">", L">=" };
+	return h[int(m_operator)];
+}
+
+bool Conditional::serialize(Serializer& s)
+{
+	if (!ImmutableNode::serialize(s))
+		return false;
+
+	const MemberEnum< Operator >::Key kOperator[] =
+	{
+		{ L"CoLess", CoLess },
+		{ L"CoLessEqual", CoLessEqual },
+		{ L"CoEqual", CoEqual },
+		{ L"CoNotEqual", CoNotEqual },
+		{ L"CoGreater", CoGreater },
+		{ L"CoGreaterEqual", CoGreaterEqual }, 
+		{ 0, 0 }
+	};
+
+	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Cos", Cos, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Cos_o[] = { L"Output", 0 };
+
+Cos::Cos()
+:	ImmutableNode(c_Cos_i, c_Cos_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Cross", Cross, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Cross_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Cross_o[] = { L"Output", 0 };
+
+Cross::Cross()
+:	ImmutableNode(c_Cross_i, c_Cross_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Derivative", Derivative, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Derivative_o[] = { L"Output", 0 };
+
+Derivative::Derivative()
+:	ImmutableNode(c_Derivative_i, c_Derivative_o)
+,	m_axis(DaX)
+{
+}
+
+Derivative::Axis Derivative::getAxis() const
+{
+	return m_axis;
+}
+
+std::wstring Derivative::getInformation() const
+{
+	switch (m_axis)
+	{
+	case DaX:
+		return L"f'(x)";
+	case DaY:
+		return L"f'(y)";
+	}
+	return L"";
+}
+
+bool Derivative::serialize(Serializer& s)
+{
+	if (!ImmutableNode::serialize(s))
+		return false;
+
+	const MemberEnum< Axis >::Key kAxis[] =
+	{
+		{ L"DaX", DaX },
+		{ L"DaY", DaY },
+		{ 0, 0 }
+	};
+
+	s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Div", Div, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Div_o[] = { L"Output", 0 };
+
+Div::Div()
+:	ImmutableNode(c_Div_i, c_Div_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Dot", Dot, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Dot_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Dot_o[] = { L"Output", 0 };
+
+Dot::Dot()
+:	ImmutableNode(c_Dot_i, c_Dot_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Exp", Exp, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Exp_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Exp_o[] = { L"Output", 0 };
+
+Exp::Exp()
+:	ImmutableNode(c_Exp_i, c_Exp_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Fraction", Fraction, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Fraction_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Fraction_o[] = { L"Output", 0 };
+
+Fraction::Fraction()
+:	ImmutableNode(c_Fraction_i, c_Fraction_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.FragmentPosition", FragmentPosition, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { L"Output", 0 };
+
+FragmentPosition::FragmentPosition()
+:	ImmutableNode(0, c_FragmentPosition_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.IndexedUniform", IndexedUniform, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, 0 };
+const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { L"Output", 0 };
+
+IndexedUniform::IndexedUniform(const std::wstring& parameterName, ParameterType type, int32_t length)
+:	ImmutableNode(c_IndexedUniform_i, c_IndexedUniform_o)
+,	m_parameterName(parameterName)
+,	m_type(type)
+,	m_length(length)
+{
+}
+
+void IndexedUniform::setParameterName(const std::wstring& parameterName)
+{
+	m_parameterName = parameterName;
+}
+
+const std::wstring& IndexedUniform::getParameterName() const
+{
+	return m_parameterName;
+}
+
+void IndexedUniform::setParameterType(ParameterType type)
+{
+	m_type = type;
+}
+
+ParameterType IndexedUniform::getParameterType() const
+{
+	return m_type;
+}
+
+void IndexedUniform::setLength(int32_t length)
+{
+	m_length = length;
+}
+
+int32_t IndexedUniform::getLength() const
+{
+	return m_length;
+}
+
+std::wstring IndexedUniform::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_parameterName << L"[" << m_length << L"]";
+	return ss.str();
+}
+
+bool IndexedUniform::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	const MemberEnum< ParameterType >::Key kType[] =
+	{
+		{ L"PtScalar", PtScalar },
+		{ L"PtVector", PtVector },
+		{ L"PtMatrix", PtMatrix },
+		{ 0, 0 }
+	};
+
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+	s >> MemberEnum< ParameterType >(L"type", m_type, kType);
+	s >> Member< int32_t >(L"length", m_length);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.InputPort", InputPort, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_InputPort_o[] = { L"Output", 0 };
+
+InputPort::InputPort(const std::wstring& name)
+:	ImmutableNode(0, c_InputPort_o)
+,	m_name(name)
+{
+}
+
+void InputPort::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
+const std::wstring& InputPort::getName() const
+{
+	return m_name;
+}
+
+std::wstring InputPort::getInformation() const
+{
+	return m_name;
+}
+
+bool InputPort::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"name", m_name);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Interpolator", Interpolator, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Interpolator_o[] = { L"Output", 0 };
+
+Interpolator::Interpolator()
+:	ImmutableNode(c_Interpolator_i, c_Interpolator_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Iterate", Iterate, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, 0 };
+const ImmutableNode::OutputPinDesc c_Iterate_o[] = { L"N", L"Output", 0 };
+
+Iterate::Iterate(int32_t from, int32_t to)
+:	ImmutableNode(c_Iterate_i, c_Iterate_o)
+,	m_from(from)
+,	m_to(to)
+{
+}
+
+void Iterate::setFrom(int32_t from)
+{
+	m_from = from;
+}
+
+int32_t Iterate::getFrom() const
+{
+	return m_from;
+}
+
+void Iterate::setTo(int32_t to)
+{
+	m_to = to;
+}
+
+int32_t Iterate::getTo() const
+{
+	return m_to;
+}
+
+std::wstring Iterate::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_from << L" -> " << m_to;
+	return ss.str();
+}
+
+bool Iterate::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< int32_t >(L"from", m_from);
+	s >> Member< int32_t >(L"to", m_to);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Length", Length, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Length_o[] = { L"Output", 0 };
+
+Length::Length()
+:	ImmutableNode(c_Length_i, c_Length_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Lerp", Lerp, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Lerp_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Blend", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Lerp_o[] = { L"Output", 0 };
+
+Lerp::Lerp()
+:	ImmutableNode(c_Lerp_i, c_Lerp_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Log", Log, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Log_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Log_o[] = { L"Output", 0 };
+
+Log::Log(Base base)
+:	ImmutableNode(c_Log_i, c_Log_o)
+,	m_base(base)
+{
+}
+
+Log::Base Log::getBase() const
+{
+	return m_base;
+}
+
+std::wstring Log::getInformation() const
+{
+	switch (m_base)
+	{
+	case LbTwo:
+		return L"2";
+
+	case LbTen:
+		return L"10";
+
+	case LbNatural:
+		return L"e";
+	}
+	return L"";
+}
+
+bool Log::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	const MemberEnum< Base >::Key kBase[] =
+	{
+		{ L"LbTwo", LbTwo },
+		{ L"LbTen", LbTen },
+		{ L"LbNatural", LbNatural },
+		{ 0, 0 }
+	};
+
+	return s >> MemberEnum< Base >(L"base", m_base, kBase);
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Matrix", Matrix, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Matrix_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, 0 };
+const ImmutableNode::OutputPinDesc c_Matrix_o[] = { L"Output", 0 };
+
+Matrix::Matrix()
+:	ImmutableNode(c_Matrix_i, c_Matrix_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Max", Max, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Max_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Max_o[] = { L"Output", 0 };
+
+Max::Max()
+:	ImmutableNode(c_Max_i, c_Max_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Min", Min, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Min_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Min_o[] = { L"Output", 0 };
+
+Min::Min()
+:	ImmutableNode(c_Min_i, c_Min_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MixIn", MixIn, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_MixIn_i[] = { { L"X", true }, { L"Y", true }, { L"Z", true }, { L"W", true }, 0 };
+const ImmutableNode::OutputPinDesc c_MixIn_o[] = { L"Output", 0 };
+
+MixIn::MixIn()
+:	ImmutableNode(c_MixIn_i, c_MixIn_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MixOut", MixOut, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_MixOut_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_MixOut_o[] = { L"X", L"Y", L"Z", L"W", 0 };
+
+MixOut::MixOut()
+:	ImmutableNode(c_MixOut_i, c_MixOut_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Mul", Mul, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Mul_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Mul_o[] = { L"Output", 0 };
+
+Mul::Mul()
+:	ImmutableNode(c_Mul_i, c_Mul_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MulAdd", MulAdd, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_MulAdd_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Input3", false }, 0 };
+const ImmutableNode::OutputPinDesc c_MulAdd_o[] = { L"Output", 0 };
+
+MulAdd::MulAdd()
+:	ImmutableNode(c_MulAdd_i, c_MulAdd_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Neg", Neg, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Neg_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Neg_o[] = { L"Output", 0 };
+
+Neg::Neg()
+:	ImmutableNode(c_Neg_i, c_Neg_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Normalize", Normalize, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Normalize_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Normalize_o[] = { L"Output", 0 };
+
+Normalize::Normalize()
+:	ImmutableNode(c_Normalize_i, c_Normalize_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.OutputPort", OutputPort, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, 0 };
+
+OutputPort::OutputPort(const std::wstring& name)
+:	ImmutableNode(c_OutputPort_i, 0)
+,	m_name(name)
+{
+}
+
+void OutputPort::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
+const std::wstring& OutputPort::getName() const
+{
+	return m_name;
+}
+
+std::wstring OutputPort::getInformation() const
+{
+	return m_name;
+}
+
+bool OutputPort::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"name", m_name);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.PixelOutput", PixelOutput, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, 0 };
+
+PixelOutput::PixelOutput()
+:	ImmutableNode(c_PixelOutput_i, 0)
+,	m_technique(L"Default")
+,	m_cullMode(CmCounterClockWise)
+,	m_blendEnable(false)
+,	m_blendOperation(BoAdd)
+,	m_blendSource(BfOne)
+,	m_blendDestination(BfZero)
+,	m_colorWriteMask(CwRed | CwGreen | CwBlue | CwAlpha)
+,	m_depthEnable(true)
+,	m_depthWriteEnable(true)
+,	m_depthFunction(CfLessEqual)
+,	m_alphaTestEnable(false)
+,	m_alphaTestFunction(CfLess)
+,	m_alphaTestReference(128)
+,	m_wireframe(false)
+,	m_stencilEnable(false)
+,	m_stencilFail(SoKeep)
+,	m_stencilZFail(SoKeep)
+,	m_stencilPass(SoKeep)
+,	m_stencilFunction(CfAlways)
+,	m_stencilReference(0x00000000)
+,	m_stencilMask(0xffffffff)
+{
+}
+
+const std::wstring& PixelOutput::getTechnique() const
+{
+	return m_technique;
+}
+
+void PixelOutput::setCullMode(CullMode cullMode)
+{
+	m_cullMode = cullMode;
+}
+
+PixelOutput::CullMode PixelOutput::getCullMode() const
+{
+	return m_cullMode;
+}
+
+void PixelOutput::setBlendEnable(bool enable)
+{
+	m_blendEnable = enable;
+}
+
+bool PixelOutput::getBlendEnable() const
+{
+	return m_blendEnable;
+}
+
+void PixelOutput::setBlendOperation(BlendOperation blendOperation)
+{
+	m_blendOperation = blendOperation;
+}
+
+PixelOutput::BlendOperation PixelOutput::getBlendOperation() const
+{
+	return m_blendOperation;
+}
+
+void PixelOutput::setBlendSource(BlendFactor source)
+{
+	m_blendSource = source;
+}
+
+PixelOutput::BlendFactor PixelOutput::getBlendSource() const
+{
+	return m_blendSource;
+}
+
+void PixelOutput::setBlendDestination(BlendFactor destination)
+{
+	m_blendDestination = destination;
+}
+
+PixelOutput::BlendFactor PixelOutput::getBlendDestination() const
+{
+	return m_blendDestination;
+}
+
+void PixelOutput::setColorWriteMask(uint32_t writeMask)
+{
+	m_colorWriteMask = writeMask;
+}
+
+uint32_t PixelOutput::getColorWriteMask() const
+{
+	return m_colorWriteMask;
+}
+
+void PixelOutput::setDepthEnable(bool enable)
+{
+	m_depthEnable = enable;
+}
+
+bool PixelOutput::getDepthEnable() const
+{
+	return m_depthEnable;
+}
+
+void PixelOutput::setDepthWriteEnable(bool enable)
+{
+	m_depthWriteEnable = enable;
+}
+
+bool PixelOutput::getDepthWriteEnable() const
+{
+	return m_depthWriteEnable;
+}
+
+void PixelOutput::setDepthFunction(CompareFunction depthFunction)
+{
+	m_depthFunction = depthFunction;
+}
+
+PixelOutput::CompareFunction PixelOutput::getDepthFunction() const
+{
+	return m_depthFunction;
+}
+
+void PixelOutput::setAlphaTestEnable(bool enable)
+{
+	m_alphaTestEnable = enable;
+}
+
+bool PixelOutput::getAlphaTestEnable() const
+{
+	return m_alphaTestEnable;
+}
+
+void PixelOutput::setAlphaTestFunction(CompareFunction alphaFunction)
+{
+	m_alphaTestFunction = alphaFunction;
+}
+
+PixelOutput::CompareFunction PixelOutput::getAlphaTestFunction() const
+{
+	return m_alphaTestFunction;
+}
+
+void PixelOutput::setAlphaTestReference(int alphaRef)
+{
+	m_alphaTestReference = alphaRef;
+}
+
+int32_t PixelOutput::getAlphaTestReference() const
+{
+	return m_alphaTestReference;
+}
+
+void PixelOutput::setWireframe(bool wireframe)
+{
+	m_wireframe = wireframe;
+}
+
+bool PixelOutput::getWireframe() const
+{
+	return m_wireframe;
+}
+
+void PixelOutput::setStencilEnable(bool stencilEnable)
+{
+	m_stencilEnable = stencilEnable;
+}
+
+bool PixelOutput::getStencilEnable() const
+{
+	return m_stencilEnable;
+}
+
+void PixelOutput::setStencilFail(StencilOperation stencilFail)
+{
+	m_stencilFail = stencilFail;
+}
+
+PixelOutput::StencilOperation PixelOutput::getStencilFail() const
+{
+	return m_stencilFail;
+}
+
+void PixelOutput::setStencilZFail(StencilOperation stencilZFail)
+{
+	m_stencilZFail = stencilZFail;
+}
+
+PixelOutput::StencilOperation PixelOutput::getStencilZFail() const
+{
+	return m_stencilZFail;
+}
+
+void PixelOutput::setStencilPass(StencilOperation stencilPass)
+{
+	m_stencilPass = stencilPass;
+}
+
+PixelOutput::StencilOperation PixelOutput::getStencilPass() const
+{
+	return m_stencilPass;
+}
+
+void PixelOutput::setStencilFunction(CompareFunction stencilFunction)
+{
+	m_stencilFunction = stencilFunction;
+}
+
+PixelOutput::CompareFunction PixelOutput::getStencilFunction() const
+{
+	return m_stencilFunction;
+}
+
+void PixelOutput::setStencilReference(uint32_t stencilReference)
+{
+	m_stencilReference = stencilReference;
+}
+
+uint32_t PixelOutput::getStencilReference() const
+{
+	return m_stencilReference;
+}
+
+void PixelOutput::setStencilMask(uint32_t stencilMask)
+{
+	m_stencilMask = stencilMask;
+}
+
+uint32_t PixelOutput::getStencilMask() const
+{
+	return m_stencilMask;
+}
+
+std::wstring PixelOutput::getInformation() const
+{
+	return m_technique;
+}
+
+int PixelOutput::getVersion() const
+{
+	return 2;
+}
+
+bool PixelOutput::serialize(Serializer& s)
+{
+	const MemberEnum< CullMode >::Key kCullMode[] =
+	{
+		{ L"CmNever", CmNever },
+		{ L"CmClockWise", CmClockWise },
+		{ L"CmCounterClockWise", CmCounterClockWise },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< BlendOperation >::Key kBlendOperations[] =
+	{
+		{ L"BoAdd", BoAdd },
+		{ L"BoSubtract", BoSubtract },
+		{ L"BoReverseSubtract", BoReverseSubtract },
+		{ L"BoMin", BoMin },
+		{ L"BoMax", BoMax },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< BlendFactor >::Key kBlendFactors[] =
+	{
+		{ L"BfOne", BfOne },
+		{ L"BfZero", BfZero },
+		{ L"BfSourceColor", BfSourceColor },
+		{ L"BfOneMinusSourceColor", BfOneMinusSourceColor },
+		{ L"BfDestinationColor", BfDestinationColor },
+		{ L"BfOneMinusDestinationColor", BfOneMinusDestinationColor },
+		{ L"BfSourceAlpha", BfSourceAlpha },
+		{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
+		{ L"BfDestinationAlpha", BfDestinationAlpha },
+		{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
+	{
+		{ L"CfAlways", CfAlways },
+		{ L"CfNever", CfNever },
+		{ L"CfLess", CfLess },
+		{ L"CfLessEqual", CfLessEqual },
+		{ L"CfGreater", CfGreater },
+		{ L"CfGreaterEqual", CfGreaterEqual },
+		{ L"CfEqual", CfEqual },
+		{ L"CfNotEqual", CfNotEqual },
+		{ 0, 0 }
+	};
+
+	const MemberBitMask::Bit kColorWriteBits[] =
+	{
+		{ L"red", CwRed },
+		{ L"green", CwGreen },
+		{ L"blue", CwBlue },
+		{ L"alpha", CwAlpha },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< StencilOperation >::Key kStencilOperations[] =
+	{
+		{ L"SoKeep", SoKeep },
+		{ L"SoZero", SoZero },
+		{ L"SoReplace", SoReplace },
+		{ L"SoIncrementSaturate", SoIncrementSaturate },
+		{ L"SoDecrementSaturate", SoDecrementSaturate },
+		{ L"SoInvert", SoInvert },
+		{ L"SoIncrement", SoIncrement },
+		{ L"SoDecrement", SoDecrement },
+		{ 0, 0 }
+	};
+
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"technique", m_technique);
+	s >> MemberEnum< CullMode >(L"cullMode", m_cullMode, kCullMode);
+	s >> Member< bool >(L"blendEnable", m_blendEnable);
+	s >> MemberEnum< BlendOperation >(L"blendOperation", m_blendOperation, kBlendOperations);
+	s >> MemberEnum< BlendFactor >(L"blendSource", m_blendSource, kBlendFactors);
+	s >> MemberEnum< BlendFactor >(L"blendDestination", m_blendDestination, kBlendFactors);
+	s >> MemberBitMask(L"colorWriteMask", m_colorWriteMask, kColorWriteBits);
+	s >> Member< bool >(L"depthEnable", m_depthEnable);
+	s >> Member< bool >(L"depthWriteEnable", m_depthWriteEnable);
+	s >> MemberEnum< CompareFunction >(L"depthFunction", m_depthFunction, kCompareFunctions);
+	s >> Member< bool >(L"alphaTestEnable", m_alphaTestEnable);
+	s >> MemberEnum< CompareFunction >(L"alphaTestFunction", m_alphaTestFunction, kCompareFunctions);
+	s >> Member< int32_t >(L"alphaTestReference", m_alphaTestReference);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"wireframe", m_wireframe);
+	}
+
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< bool >(L"stencilEnable", m_stencilEnable);
+		s >> MemberEnum< StencilOperation >(L"stencilFail", m_stencilFail, kStencilOperations);
+		s >> MemberEnum< StencilOperation >(L"stencilZFail", m_stencilZFail, kStencilOperations);
+		s >> MemberEnum< StencilOperation >(L"stencilPass", m_stencilPass, kStencilOperations);
+		s >> MemberEnum< CompareFunction >(L"stencilFunction", m_stencilFunction, kCompareFunctions);
+		s >> Member< uint32_t >(L"stencilReference", m_stencilReference);
+		s >> Member< uint32_t >(L"stencilMask", m_stencilMask);
+	}
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Platform", Platform, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Platform_i[] = { { L"DX9", true }, { L"DX10", true }, { L"OpenGL", true }, { L"GCM", true }, { L"Other", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Platform_o[] = { L"Output", 0 };
+
+Platform::Platform()
+:	ImmutableNode(c_Platform_i, c_Platform_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Polynomial", Polynomial, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { L"Output", 0 };
+
+Polynomial::Polynomial()
+:	ImmutableNode(c_Polynomial_i, c_Polynomial_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Pow", Pow, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Pow_o[] = { L"Output", 0 };
+
+Pow::Pow()
+:	ImmutableNode(c_Pow_i, c_Pow_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Reflect", Reflect, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Reflect_i[] = { { L"Normal", false }, { L"Direction", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Reflect_o[] = { L"Output", 0 };
+
+Reflect::Reflect()
+:	ImmutableNode(c_Reflect_i, c_Reflect_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sampler", Sampler, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"TexCoord", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
+
+Sampler::Sampler(
+	const std::wstring& parameterName,
+	const Guid& external,
+	Lookup lookup,
+	Filter minFilter,
+	Filter mipFilter,
+	Filter magFilter,
+	Address addressU,
+	Address addressV,
+	Address addressW
+)
+:	ImmutableNode(c_Sampler_i, c_Sampler_o)
+,	m_parameterName(parameterName)
+,	m_external(external)
+,	m_lookup(lookup)
+,	m_minFilter(minFilter)
+,	m_mipFilter(mipFilter)
+,	m_magFilter(magFilter)
+,	m_addressU(addressU)
+,	m_addressV(addressV)
+,	m_addressW(addressW)
+{
+}
+
+void Sampler::setParameterName(const std::wstring& parameterName)
+{
+	m_parameterName = parameterName;
+}
+
+const std::wstring& Sampler::getParameterName() const
+{
+	return m_parameterName;
+}
+
+void Sampler::setExternal(const Guid& external)
+{
+	m_external = external;
+}
+
+const Guid& Sampler::getExternal() const
+{
+	return m_external;
+}
+
+void Sampler::setLookup(Lookup lookup)
+{
+	m_lookup = lookup;
+}
+
+Sampler::Lookup Sampler::getLookup() const
+{
+	return m_lookup;
+}
+
+void Sampler::setMinFilter(Filter minFilter)
+{
+	m_minFilter = minFilter;
+}
+
+Sampler::Filter Sampler::getMinFilter() const
+{
+	return m_minFilter;
+}
+
+void Sampler::setMipFilter(Filter mipFilter)
+{
+	m_mipFilter = mipFilter;
+}
+
+Sampler::Filter Sampler::getMipFilter() const
+{
+	return m_mipFilter;
+}
+
+void Sampler::setMagFilter(Filter magFilter)
+{
+	m_magFilter = magFilter;
+}
+
+Sampler::Filter Sampler::getMagFilter() const
+{
+	return m_magFilter;
+}
+
+void Sampler::setAddressU(Address addressU)
+{
+	m_addressU = addressU;
+}
+
+Sampler::Address Sampler::getAddressU()
+{
+	return m_addressU;
+}
+
+void Sampler::setAddressV(Address addressV)
+{
+	m_addressV = addressV;
+}
+
+Sampler::Address Sampler::getAddressV()
+{
+	return m_addressV;
+}
+
+void Sampler::setAddressW(Address addressW)
+{
+	m_addressW = addressW;
+}
+
+Sampler::Address Sampler::getAddressW()
+{
+	return m_addressW;
+}
+
+std::wstring Sampler::getInformation() const
+{
+	return m_parameterName;
+}
+
+bool Sampler::serialize(Serializer& s)
+{
+	const MemberEnum< Lookup >::Key kLookup[] =
+	{
+		{ L"LuSimple", LuSimple },
+		{ L"LuCube", LuCube },
+		{ L"LuVolume", LuVolume },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< Filter >::Key kFilter[] =
+	{
+		{ L"FtPoint", FtPoint },
+		{ L"FtLinear", FtLinear },
+		{ L"FtAnisotropic", FtAnisotropic },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< Address >::Key kAddress[] =
+	{
+		{ L"AdWrap", AdWrap },
+		{ L"AdMirror", AdMirror },
+		{ L"AdClamp", AdClamp },
+		{ L"AdBorder", AdBorder },
+		{ 0, 0 }
+	};
+
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+	s >> Member< Guid >(L"external", m_external, &type_of< render::TextureResource >());
+	s >> MemberEnum< Lookup >(L"lookup", m_lookup, kLookup);
+	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
+	s >> MemberEnum< Filter >(L"mipFilter", m_mipFilter, kFilter);
+	s >> MemberEnum< Filter >(L"magFilter", m_magFilter, kFilter);
+	s >> MemberEnum< Address >(L"addressU", m_addressU, kAddress);
+	s >> MemberEnum< Address >(L"addressV", m_addressV, kAddress);
+	s >> MemberEnum< Address >(L"addressW", m_addressW, kAddress);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Scalar", Scalar, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Scalar_o[] = { L"Output", 0 };
+
+Scalar::Scalar(float value)
+:	ImmutableNode(0, c_Scalar_o)
+,	m_value(value)
+{
+}
+
+void Scalar::set(float value)
+{
+	m_value = value;
+}
+
+float Scalar::get() const
+{
+	return m_value;
+}
+
+std::wstring Scalar::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_value;
+	return ss.str();
+}
+
+bool Scalar::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< float >(L"value", m_value);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sin", Sin, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sin_o[] = { L"Output", 0 };
+
+Sin::Sin()
+:	ImmutableNode(c_Sin_i, c_Sin_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sqrt", Sqrt, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sqrt_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { L"Output", 0 };
+
+Sqrt::Sqrt()
+:	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sub", Sub, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sub_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sub_o[] = { L"Output", 0 };
+
+Sub::Sub()
+:	ImmutableNode(c_Sub_i, c_Sub_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sum", Sum, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Sum_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Sum_o[] = { L"N", L"Output", 0 };
+
+Sum::Sum(int32_t from, int32_t to)
+:	ImmutableNode(c_Sum_i, c_Sum_o)
+,	m_from(from)
+,	m_to(to)
+{
+}
+
+void Sum::setFrom(int32_t from)
+{
+	m_from = from;
+}
+
+int32_t Sum::getFrom() const
+{
+	return m_from;
+}
+
+void Sum::setTo(int32_t to)
+{
+	m_to = to;
+}
+
+int32_t Sum::getTo() const
+{
+	return m_to;
+}
+
+std::wstring Sum::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_from << L" -> " << m_to;
+	return ss.str();
+}
+
+bool Sum::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< int32_t >(L"from", m_from);
+	s >> Member< int32_t >(L"to", m_to);
+	
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Switch", Switch, Node)
+
+Switch::Switch()
+{
+	m_inputPins.push_back(gc_new< InputPin >(this, L"Select", false));
+	m_inputPins.push_back(gc_new< InputPin >(this, L"Default", false));
+	m_outputPin = gc_new< OutputPin >(this, L"Output");
+}
+
+void Switch::addCase(int32_t value)
+{
+	StringOutputStream ss;
+	ss << L"Case " << value;
+	m_cases.push_back(value);
+	m_inputPins.push_back(gc_new< InputPin >(this, ss.str(), false));
+}
+
+const std::vector< int32_t >& Switch::getCases() const
+{
+	return m_cases;
+}
+
+int Switch::getInputPinCount() const
+{
+	return int(m_inputPins.size());
+}
+
+const InputPin* Switch::getInputPin(int index) const
+{
+	return m_inputPins[index];
+}
+
+int Switch::getOutputPinCount() const
+{
+	return 1;
+}
+
+const OutputPin* Switch::getOutputPin(int index) const
+{
+	return m_outputPin;
+}
+
+bool Switch::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> MemberStlVector< int32_t >(L"cases", m_cases);
+
+	if (s.getDirection() == Serializer::SdRead)
+	{
+		m_inputPins.resize(2 + m_cases.size());
+		for (uint32_t i = 0; i < uint32_t(m_cases.size()); ++i)
+		{
+			StringOutputStream ss;
+			ss << L"Case " << m_cases[i];
+			m_inputPins[2 + i] = gc_new< InputPin >(this, ss.str(), false);
+		}
+	}
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Swizzle", Swizzle, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Swizzle_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Swizzle_o[] = { L"Output", 0 };
+
+Swizzle::Swizzle(const std::wstring& swizzle)
+:	ImmutableNode(c_Swizzle_i, c_Swizzle_o)
+,	m_swizzle(swizzle)
+{
+}
+
+void Swizzle::set(const std::wstring& swizzle)
+{
+	m_swizzle = swizzle;
+}
+
+const std::wstring& Swizzle::get() const
+{
+	return m_swizzle;
+}
+
+std::wstring Swizzle::getInformation() const
+{
+	return m_swizzle;
+}
+
+bool Swizzle::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< std::wstring >(L"swizzle", m_swizzle);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Tan", Tan, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Tan_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Tan_o[] = { L"Output", 0 };
+
+Tan::Tan()
+:	ImmutableNode(c_Tan_i, c_Tan_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Transform", Transform, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Transform_o[] = { L"Output", 0 };
+
+Transform::Transform()
+:	ImmutableNode(c_Transform_i, c_Transform_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Transpose", Transpose, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Transpose_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Transpose_o[] = { L"Output", 0 };
+
+Transpose::Transpose()
+:	ImmutableNode(c_Transpose_i, c_Transpose_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Uniform", Uniform, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };
+
+Uniform::Uniform(const std::wstring& parameterName, ParameterType type)
+:	ImmutableNode(0, c_Uniform_o)
+,	m_parameterName(parameterName)
+,	m_type(type)
+{
+}
+
+void Uniform::setParameterName(const std::wstring& parameterName)
+{
+	m_parameterName = parameterName;
+}
+
+const std::wstring& Uniform::getParameterName() const
+{
+	return m_parameterName;
+}
+
+void Uniform::setParameterType(ParameterType type)
+{
+	m_type = type;
+}
+
+ParameterType Uniform::getParameterType() const
+{
+	return m_type;
+}
+
+std::wstring Uniform::getInformation() const
+{
+	return m_parameterName;
+}
+
+bool Uniform::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	const MemberEnum< ParameterType >::Key kType[] =
+	{
+		{ L"PtScalar", PtScalar },
+		{ L"PtVector", PtVector },
+		{ L"PtMatrix", PtMatrix },
+		{ 0, 0 }
+	};
+
+	s >> Member< std::wstring >(L"parameterName", m_parameterName);
+	s >> MemberEnum< ParameterType >(L"type", m_type, kType);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Vector", Vector, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Vector_o[] = { L"Output", 0 };
+
+Vector::Vector(const Vector4& value)
+:	ImmutableNode(0, c_Vector_o)
+,	m_value(value)
+{
+}
+
+void Vector::set(const Vector4& value)
+{
+	m_value = value;
+}
+
+const Vector4& Vector::get() const
+{
+	return m_value;
+}
+
+std::wstring Vector::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_value;
+	return ss.str();
+}
+
+bool Vector::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< Vector4 >(L"value", m_value);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.VertexInput", VertexInput, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { L"Output", 0 };
+
+VertexInput::VertexInput(const std::wstring& name, DataUsage usage, DataType type, int index)
+:	ImmutableNode(0, c_VertexInput_o)
+,	m_name(name)
+,	m_usage(usage)
+,	m_type(type)
+,	m_index(index)
+{
+}
+
+void VertexInput::setName(const std::wstring& name)
+{
+	m_name = name;
+}
+
+const std::wstring& VertexInput::getName() const
+{
+	return m_name;
+}
+
+void VertexInput::setDataUsage(DataUsage usage)
+{
+	m_usage = usage;
+}
+
+DataUsage VertexInput::getDataUsage() const
+{
+	return m_usage;
+}
+
+void VertexInput::setDataType(DataType type)
+{
+	m_type = type;
+}
+
+DataType VertexInput::getDataType() const
+{
+	return m_type;
+}
+
+void VertexInput::setIndex(int32_t index)
+{
+	m_index = index;
+}
+
+int32_t VertexInput::getIndex() const
+{
+	return m_index;
+}
+
+std::wstring VertexInput::getInformation() const
+{
+	return m_name;
+}
+
+bool VertexInput::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	const MemberEnum< DataUsage >::Key kDataUsage[] =
+	{
+		{ L"DuPosition", DuPosition },
+		{ L"DuNormal", DuNormal },
+		{ L"DuTangent", DuTangent },
+		{ L"DuBinormal", DuBinormal },
+		{ L"DuColor", DuColor },
+		{ L"DuCustom", DuCustom },
+		{ 0, 0 }
+	};
+
+	const MemberEnum< DataType >::Key kDataType[] =
+	{
+		{ L"DtFloat1", DtFloat1 },
+		{ L"DtFloat2", DtFloat2 },
+		{ L"DtFloat3", DtFloat3 },
+		{ L"DtFloat4", DtFloat4 },
+		{ L"DtByte4", DtByte4 },
+		{ L"DtByte4N", DtByte4N },
+		{ L"DtShort2", DtShort2 },
+		{ L"DtShort4", DtShort4 },
+		{ L"DtShort2N", DtShort2N },
+		{ L"DtShort4N", DtShort4N },
+		{ L"DtHalf2", DtHalf2 },
+		{ L"DtHalf4", DtHalf4 },
+		{ 0, 0 }
+	};
+
+	s >> Member< std::wstring >(L"name", m_name);
+	s >> MemberEnum< DataUsage >(L"usage", m_usage, kDataUsage);
+	s >> MemberEnum< DataType >(L"type", m_type, kDataType);
+	s >> Member< int32_t >(L"index", m_index);
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.VertexOutput", VertexOutput, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, 0 };
+
+VertexOutput::VertexOutput()
+:	ImmutableNode(c_VertexOutput_i, 0)
+,	m_technique(L"Default")
+{
+}
+
+void VertexOutput::setTechnique(const std::wstring& technique)
+{
+	m_technique = technique;
+}
+
+const std::wstring& VertexOutput::getTechnique() const
+{
+	return m_technique;
+}
+
+std::wstring VertexOutput::getInformation() const
+{
+	return m_technique;
+}
+
+int VertexOutput::getVersion() const
+{
+	return 1;
+}
+
+bool VertexOutput::serialize(Serializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< std::wstring >(L"technique", m_technique);
+	}
+
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+	}
+}

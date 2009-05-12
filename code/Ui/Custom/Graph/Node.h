@@ -1,0 +1,119 @@
+#ifndef traktor_ui_custom_Node_H
+#define traktor_ui_custom_Node_H
+
+#include <string>
+#include <vector>
+#include <map>
+#include "Core/Heap/Ref.h"
+#include "Core/Object.h"
+#include "Core/Math/Color.h"
+#include "Ui/Associative.h"
+#include "Ui/Rect.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_CUSTOM_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class Bitmap;
+class Canvas;
+class Size;
+
+		namespace custom
+		{
+
+class PaintSettings;
+class NodeShape;
+class Pin;
+
+/*! \brief Graph node.
+ * \ingroup UIC
+ */
+class T_DLLCLASS Node
+:	public Object
+,	public Associative
+{
+	T_RTTI_CLASS(Node)
+
+public:
+	Node(const std::wstring& title, const std::wstring& info, const Point& position, NodeShape* shape);
+
+	void setTitle(const std::wstring& title);
+
+	const std::wstring& getTitle() const;
+
+	void setInfo(const std::wstring& info);
+
+	const std::wstring& getInfo() const;
+
+	void setComment(const std::wstring& comment);
+
+	const std::wstring& getComment() const;
+
+	void setImage(Bitmap* image);
+
+	Bitmap* getImage() const;
+
+	void setColor(const Color& color);
+
+	const Color& getColor() const;
+
+	void setPosition(const Point& position);
+
+	Point getPosition() const;
+
+	void setSelected(bool selected);
+
+	bool isSelected() const;
+
+	void addInputPin(Pin* pin);
+
+	const RefArray< Pin >& getInputPins() const;
+
+	Pin* findInputPin(const std::wstring& name) const;
+
+	void addOutputPin(Pin* pin);
+
+	const RefArray< Pin >& getOutputPins() const;
+
+	Pin* findOutputPin(const std::wstring& name) const;
+
+	bool hit(const Point& p) const;
+
+	Point getPinPosition(const Pin* pin) const;
+
+	Pin* getPinAt(const Point& p) const;
+
+	void paint(PaintSettings* settings, Canvas* canvas, const Size& offset) const;
+
+	Rect calculateRect() const;
+
+private:
+	std::wstring m_title;
+	std::wstring m_info;
+	std::wstring m_comment;
+	Ref< Bitmap > m_image;
+	Color m_color;
+	Point m_position;
+	Size m_size;
+	bool m_selected;
+	RefArray< Pin > m_inputPins;
+	RefArray< Pin > m_outputPins;
+	Ref< NodeShape > m_shape;
+
+	void updateSize();
+};
+
+		}
+	}
+}
+
+#endif	// traktor_ui_custom_Node_H

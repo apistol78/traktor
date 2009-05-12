@@ -1,0 +1,55 @@
+#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/Member.h>
+#include <Core/Serialization/MemberRef.h>
+#include <Ui/MenuItem.h>
+#include "App/DroneToolGroup.h"
+#include "App/Process.h"
+
+namespace traktor
+{
+	namespace drone
+	{
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.drone.DroneToolGroup", DroneToolGroup, DroneTool)
+
+DroneToolGroup::DroneToolGroup(const std::wstring& title)
+:	m_title(title)
+{
+}
+
+const std::wstring& DroneToolGroup::getTitle() const
+{
+	return m_title;
+}
+
+void DroneToolGroup::getMenuItems(RefArray< ui::MenuItem >& outItems)
+{
+	Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(m_title);
+	menuItem->setData(L"TOOL", this);
+
+	for (RefArray< DroneTool >::iterator i = m_tools.begin(); i != m_tools.end(); ++i)
+	{
+		RefArray< ui::MenuItem > menuItems;
+		(*i)->getMenuItems(menuItems);
+
+		for (RefArray< ui::MenuItem >::iterator j = menuItems.begin(); j != menuItems.end(); ++j)
+			menuItem->add(*j);
+	}
+
+	outItems.push_back(menuItem);
+}
+
+bool DroneToolGroup::execute(ui::Widget* parent, ui::MenuItem* menuItem)
+{
+	return false;
+}
+
+bool DroneToolGroup::serialize(Serializer& s)
+{
+	s >> Member< std::wstring >(L"title", m_title);
+	s >> MemberRefArray< DroneTool >(L"tools", m_tools);
+	return true;
+}
+
+	}
+}

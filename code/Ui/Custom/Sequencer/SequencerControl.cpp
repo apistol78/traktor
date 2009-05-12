@@ -1,0 +1,455 @@
+#include <limits>
+#include <sstream>
+#include <stack>
+#include "Ui/Custom/Sequencer/SequencerControl.h"
+#include "Ui/Custom/Sequencer/SequenceItem.h"
+#include "Ui/Custom/Sequencer/SequenceGroup.h"
+#include "Ui/Application.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/MouseEvent.h"
+#include "Ui/Events/PaintEvent.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/FocusEvent.h"
+#include "Core/Log/Log.h"
+
+namespace traktor
+{
+	namespace ui
+	{
+		namespace custom
+		{
+			namespace
+			{
+
+const int c_sequenceHeight = 22;
+const int c_timeScale = 8;
+
+			}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SequencerControl", SequencerControl, Widget)
+
+SequencerControl::SequencerControl()
+:	m_separator(140)
+,	m_length(5000)
+,	m_cursor(0)
+{
+}
+
+bool SequencerControl::create(Widget* parent, int style)
+{
+	if (!Widget::create(parent, style))
+		return false;
+
+	m_scrollBarV = gc_new< ScrollBar >();
+	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
+		return false;
+
+	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &SequencerControl::eventScroll));
+
+	m_scrollBarH = gc_new< ScrollBar >();
+	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
+		return false;
+
+	m_scrollBarH->addScrollEventHandler(createMethodHandler(this, &SequencerControl::eventScroll));
+
+	addSizeEventHandler(createMethodHandler(this, &SequencerControl::eventSize));
+	addButtonDownEventHandler(createMethodHandler(this, &SequencerControl::eventButtonDown));
+	addButtonUpEventHandler(createMethodHandler(this, &SequencerControl::eventButtonUp));
+	addMouseMoveEventHandler(createMethodHandler(this, &SequencerControl::eventMouseMove));
+	addPaintEventHandler(createMethodHandler(this, &SequencerControl::eventPaint));
+
+	return true;
+}
+
+void SequencerControl::setSeparator(int separator)
+{
+	m_separator = separator;
+	updateScrollBars();
+}
+
+int SequencerControl::getSeparator() const
+{
+	return m_separator;
+}
+
+void SequencerControl::setLength(int length)
+{
+	m_length = length;
+	updateScrollBars();
+}
+
+int SequencerControl::getLength() const
+{
+	return m_length;
+}
+
+void SequencerControl::setCursor(int cursor)
+{
+	m_cursor = cursor;
+}
+
+int SequencerControl::getCursor() const
+{
+	return m_cursor;
+}
+
+void SequencerControl::addSequenceItem(SequenceItem* sequenceItem)
+{
+	m_sequenceItems.push_back(sequenceItem);
+	updateScrollBars();
+}
+
+void SequencerControl::removeSequenceItem(SequenceItem* sequenceItem)
+{
+	if (sequenceItem->getParentItem())
+		sequenceItem->getParentItem()->removeChildItem(sequenceItem);
+	else
+		m_sequenceItems.remove(sequenceItem);
+
+	updateScrollBars();
+}
+
+void SequencerControl::removeAllSequenceItems()
+{
+	m_sequenceItems.clear();
+	updateScrollBars();
+}
+
+int SequencerControl::getSequenceItems(RefList< SequenceItem >& sequenceItems, int flags)
+{
+	typedef std::pair< RefList< SequenceItem >::iterator, RefList< SequenceItem >::iterator > range_t;
+
+	std::stack< range_t > stack;
+	stack.push(std::make_pair(m_sequenceItems.begin(), m_sequenceItems.end()));
+
+	while (!stack.empty())
+	{
+		range_t& r = stack.top();
+		if (r.first != r.second)
+		{
+			SequenceItem* item = *r.first++;
+
+			if (flags & GfSelectedOnly)
+			{
+				if (item->isSelected())
+					sequenceItems.push_back(item);
+			}
+			else
+				sequenceItems.push_back(item);
+
+			if (flags & GfDescendants)
+			{
+				if (is_a< SequenceGroup >(item) && (flags & GfExpandedOnly) != 0)
+				{
+					if (static_cast< SequenceGroup* >(item)->isCollapsed())
+						continue;
+				}
+
+				RefList< SequenceItem >& childItems = item->getChildItems();
+				if (!childItems.empty())
+				{
+					stack.push(std::make_pair(
+						childItems.begin(),
+						childItems.end()
+					));
+				}
+			}
+		}
+		else
+			stack.pop();
+	}
+
+	return int(sequenceItems.size());
+}
+
+void SequencerControl::addSelectEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiSelectionChange, eventHandler);
+}
+
+void SequencerControl::addCursorMoveEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiCursorMove, eventHandler);
+}
+
+void SequencerControl::addGroupVisibleEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiGroupVisible, eventHandler);
+}
+
+void SequencerControl::eventSize(Event* e)
+{
+	e->consume();
+
+	Rect rc = getInnerRect();
+
+	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
+	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+
+	m_scrollBarV->setRect(Rect(
+		rc.right - scrollWidth,
+		rc.top,
+		rc.right,
+		rc.bottom - scrollHeight
+	));
+
+	m_scrollBarH->setRect(Rect(
+		rc.left + m_separator,
+		rc.bottom - scrollHeight,
+		rc.right - scrollWidth,
+		rc.bottom
+	));
+
+	updateScrollBars();
+}
+
+void SequencerControl::updateScrollBars()
+{
+	// Get all items, including descendants.
+	RefList< SequenceItem > sequenceItems;
+	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
+
+	Size sequences(
+		m_separator + m_length / c_timeScale,
+		int(sequenceItems.size() * c_sequenceHeight) + 1
+	);
+
+	Rect rc = getInnerRect();
+
+	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
+	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+
+	int overflowV = std::max< int >(0, sequences.cy - rc.getHeight() + scrollHeight);
+	m_scrollBarV->setRange(overflowV);
+	m_scrollBarV->setEnable(overflowV > 0);
+
+	int overflowH = std::max< int >(0, sequences.cx - rc.getWidth() + scrollWidth);
+	m_scrollBarH->setRange(overflowH);
+	m_scrollBarH->setEnable(overflowH > 0);
+}
+
+void SequencerControl::eventButtonDown(Event* e)
+{
+	MouseEvent* m = static_cast< MouseEvent* >(e);
+	if (m->getButton() != MouseEvent::BtLeft)
+		return;
+
+	bool selectionModified = false;
+
+	// Grab focus, need it to be able to get key events.
+	setFocus();
+
+	// Get all items, including descendants.
+	RefList< SequenceItem > sequenceItems;
+	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
+
+	// If not shift is down we de-select all items.
+	if (!(e->getKeyState() & KsShift))
+	{
+		for (RefList< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+			selectionModified |= (*i)->setSelected(false);
+	}
+
+	Point position = m->getPosition();
+	Rect rc = getInnerRect();
+
+	int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
+	if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
+	{
+		RefList< SequenceItem >::iterator i = sequenceItems.begin();
+		std::advance(i, sequenceId);
+
+		// Ensure sequence is selected.
+		selectionModified |= (*i)->setSelected(true);
+
+		// Issue local mouse down event on sequence item.
+		m_mouseTrackItem.rc = Rect(rc.left, 0, rc.right - m_scrollBarV->getPreferedSize().cx, c_sequenceHeight)
+			.offset(0, rc.top - m_scrollBarV->getPosition() + c_sequenceHeight * sequenceId);
+		m_mouseTrackItem.item = *i;
+		m_mouseTrackItem.item->mouseDown(
+			this,
+			Point(
+				m->getPosition().x - m_mouseTrackItem.rc.left,
+				m->getPosition().y - m_mouseTrackItem.rc.top
+			),
+			m_mouseTrackItem.rc,
+			m->getButton(),
+			m_separator,
+			m_scrollBarH->getPosition()
+		);
+	}
+
+	// Issue selection change event.
+	if (selectionModified)
+	{
+		CommandEvent cmdEvent(this, 0);
+		raiseEvent(EiSelectionChange, &cmdEvent);
+	}
+
+	if (position.x >= rc.left + m_separator)
+	{
+		setCapture();
+
+		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * c_timeScale;
+		m_cursor = std::max< int >(m_cursor, 0);
+		m_cursor = std::min< int >(m_cursor, m_length);
+
+		CommandEvent cmdEvent(this, 0, Command(m_cursor));
+		raiseEvent(EiCursorMove, &cmdEvent);
+	}
+
+	update();
+
+	e->consume();
+}
+
+void SequencerControl::eventButtonUp(Event* e)
+{
+	MouseEvent* m = static_cast< MouseEvent* >(e);
+	if (!hasCapture())
+		return;
+
+	// Issue local mouse up event on tracked sequence item.
+	if (m_mouseTrackItem.item)
+	{
+		m_mouseTrackItem.item->mouseUp(
+			this,
+			Point(
+				m->getPosition().x - m_mouseTrackItem.rc.left,
+				m->getPosition().y - m_mouseTrackItem.rc.top
+			),
+			m_mouseTrackItem.rc,
+			m->getButton(),
+			m_separator,
+			m_scrollBarH->getPosition()
+		);
+		m_mouseTrackItem.item = 0;
+	}
+
+	releaseCapture();
+
+	e->consume();
+}
+
+void SequencerControl::eventMouseMove(Event* e)
+{
+	MouseEvent* m = static_cast< MouseEvent* >(e);
+	if (!hasCapture())
+		return;
+
+	// Calculate current cursor display position.
+	int scrollOffsetX = m_scrollBarH->getPosition();
+	int x0 = m_separator + m_cursor / c_timeScale - scrollOffsetX;
+
+	m_cursor = (m->getPosition().x - m_separator + scrollOffsetX) * c_timeScale;
+	m_cursor = std::max< int >(m_cursor, 0);
+	m_cursor = std::min< int >(m_cursor, m_length);
+
+	CommandEvent cmdEvent(this, 0, Command(m_cursor));
+	raiseEvent(EiCursorMove, &cmdEvent);
+
+	// Calculate new cursor display position.
+	int x1 = m_separator + m_cursor / c_timeScale - scrollOffsetX;
+
+	// Redraw sequencer; update cursor range.
+	Rect rc = getInnerRect();
+	rc.left = std::min(x0, x1) - 1;
+	rc.right = std::max(x0, x1) + 1;
+	update(&rc);
+
+	e->consume();
+}
+
+void SequencerControl::eventPaint(Event* e)
+{
+	PaintEvent* p = static_cast< PaintEvent* >(e);
+	Canvas& canvas = p->getCanvas();
+
+	// Get all items, including descendants.
+	RefList< SequenceItem > sequenceItems;
+	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
+
+	// Get component sizes.
+	Rect rc = getInnerRect();
+	int scrollWidth = m_scrollBarV->getPreferedSize().cx;
+	int scrollHeight = m_scrollBarH->getPreferedSize().cy;
+
+	// Get scroll offsets.
+	int scrollOffsetX = m_scrollBarH->getPosition();
+	int scrollOffsetY = m_scrollBarV->getPosition();
+
+	// Clear background.
+	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
+	canvas.setBackground(getSystemColor(ScButtonShadow));
+	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
+
+	// Draw sequences.
+	Rect rcSequence(
+		rc.left,
+		rc.top - scrollOffsetY,
+		rc.right - scrollWidth,
+		rc.top - scrollOffsetY + c_sequenceHeight
+	);
+	for (RefList< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	{
+		canvas.setClipRect(Rect(
+			rc.left,
+			rc.top,
+			rc.right - scrollWidth,
+			rc.bottom - scrollHeight
+		));
+
+		(*i)->paint(this, canvas, rcSequence, m_separator, scrollOffsetX);
+
+		rcSequence = rcSequence.offset(0, c_sequenceHeight);
+	}
+
+	canvas.resetClipRect();
+
+	// Draw cursor.
+	int x = m_separator + m_cursor / c_timeScale - scrollOffsetX;
+	if (x >= m_separator && x < rc.right)
+	{
+		canvas.setForeground(Color(0, 0, 0));
+		canvas.drawLine(x, rc.top, x, rc.bottom);
+	}
+
+	// Draw time information.
+	Rect rcTime(
+		rc.left,
+		rc.bottom - scrollHeight,
+		rc.left + m_separator,
+		rc.bottom
+	);
+
+	canvas.setBackground(Color(255, 255, 255));
+	canvas.fillRect(rcTime);
+
+	std::wstringstream ss;
+	ss << m_cursor << L" ms";
+	Size ext = canvas.getTextExtent(ss.str());
+
+	canvas.setForeground(Color(0, 0, 0));
+	canvas.drawText(
+		Point(
+			rcTime.left + 4,
+			rcTime.top + (rcTime.getHeight() - ext.cy) / 2
+		),
+		ss.str()
+	);
+
+	e->consume();
+}
+
+void SequencerControl::eventScroll(Event* e)
+{
+	update();
+	e->consume();
+}
+
+		}
+	}
+}

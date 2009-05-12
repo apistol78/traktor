@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<object type="traktor.render.TextureAsset">
+  <fileName>$(TRAKTOR_HOME)/data/Assets/System/Weather/Textures/CloudSprites.png</fileName>
+  <generateNormalMap>true</generateNormalMap>
+  <scaleDepth>4.0f</scaleDepth>
+  <generateMips>true</generateMips>
+  <keepZeroAlpha>true</keepZeroAlpha>
+  <isCubeMap>false</isCubeMap>
+  <hasAlpha>true</hasAlpha>
+  <ignoreAlpha>false</ignoreAlpha>
+  <scaleImage>false</scaleImage>
+  <scaleWidth>0</scaleWidth>
+  <scaleHeight>0</scaleHeight>
+  <enableCompression>false</enableCompression>
+  <linearGamma>true</linearGamma>
+</object>

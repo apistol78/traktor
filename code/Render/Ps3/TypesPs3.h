@@ -1,0 +1,63 @@
+#ifndef traktor_render_TypesPs3_H
+#define traktor_render_TypesPs3_H
+
+#include <cell/gcm.h>
+#include "Render/Types.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+struct RenderState
+{
+	uint32_t cullFaceEnable;
+	uint32_t cullFace;
+	uint32_t blendEnable;
+	uint16_t blendEquation;
+	uint16_t blendFuncSrc;
+	uint16_t blendFuncDest;
+	uint32_t depthTestEnable;
+	uint32_t colorMask;
+	uint32_t depthMask;
+	uint32_t depthFunc;
+	uint32_t alphaTestEnable;
+	uint32_t alphaFunc;
+	uint32_t alphaRef;
+
+	RenderState()
+	:	cullFaceEnable(CELL_GCM_TRUE)
+	,	cullFace(CELL_GCM_BACK)
+	,	blendEnable(CELL_GCM_FALSE)
+	,	blendEquation(CELL_GCM_FUNC_ADD)
+	,	blendFuncSrc(CELL_GCM_ONE)
+	,	blendFuncDest(CELL_GCM_ZERO)
+	,	depthTestEnable(CELL_GCM_TRUE)
+	,	colorMask(CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A)
+	,	depthMask(CELL_GCM_TRUE)
+	,	depthFunc(CELL_GCM_LEQUAL)
+	,	alphaTestEnable(CELL_GCM_FALSE)
+	,	alphaFunc(CELL_GCM_ALWAYS)
+	,	alphaRef(0)
+	{
+	}
+};
+
+struct SamplerState
+{
+};
+
+bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& outGcmFormat);
+
+void cellUtilConvertLinearToSwizzle(
+	uint8_t *dst,
+	const uint8_t *src,
+	const uint32_t width,
+	const uint32_t height,
+	const uint32_t depth
+);
+
+	}
+}
+
+#endif	// traktor_render_TypesPs3_H

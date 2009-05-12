@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<object type="traktor.weather.SkyEntityData">
+  <name>Sky</name>
+	<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+</object>

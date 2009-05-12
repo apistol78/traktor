@@ -1,0 +1,50 @@
+#ifndef traktor_render_Processor_H
+#define traktor_render_Processor_H
+
+#include "Core/Heap/Ref.h"
+#include "Core/Object.h"
+#include "Core/Math/Vector4.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_SW_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+class IntrProgram;
+class AbstractSampler;
+
+/*! \brief Shader processor base class.
+ * \ingroup SW
+ */
+class T_DLLCLASS Processor : public Object
+{
+	T_RTTI_CLASS(Processor)
+
+public:
+	typedef void* image_t;
+
+	virtual image_t compile(const IntrProgram& program) const = 0;
+
+	virtual void destroy(image_t image) const = 0;
+
+	virtual void execute(
+		const image_t image,
+		const Vector4* inUniforms,
+		const Vector4* inVaryings,
+		const Ref< AbstractSampler >* inSamplers,
+		Vector4* outVaryings
+	) const = 0;
+};
+
+	}
+}
+
+#endif	// traktor_render_Processor_H

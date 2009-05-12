@@ -1,0 +1,190 @@
+#include "Core/System/Win32/SharedMemoryWin32.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Heap/HeapNew.h"
+
+namespace traktor
+{
+	namespace
+	{
+
+struct Header
+{
+	LONG readerCount;
+	LONG writerCount;
+	LONG dataSize;
+};
+
+class SharedReaderStream : public MemoryStream
+{
+public:
+	SharedReaderStream(Header* header, void* buffer, uint32_t bufferSize)
+	:	MemoryStream(buffer, bufferSize, true, false)
+	,	m_header(header)
+	{
+	}
+
+	virtual ~SharedReaderStream()
+	{
+		close();
+	}
+
+	virtual void close()
+	{
+		if (m_header)
+		{
+			InterlockedDecrement(&m_header->readerCount);
+			MemoryStream::close();
+			m_header = 0;
+		}
+	}
+
+private:
+	Header* m_header;
+};
+
+class SharedWriterStream : public MemoryStream
+{
+public:
+	SharedWriterStream(Header* header, void* buffer, uint32_t bufferSize)
+	:	MemoryStream(buffer, bufferSize, false, true)
+	,	m_header(header)
+	{
+	}
+
+	virtual ~SharedWriterStream()
+	{
+		close();
+	}
+
+	virtual void close()
+	{
+		if (m_header)
+		{
+			m_header->dataSize = tell();
+			T_ASSERT (m_header->writerCount == 1);
+			InterlockedDecrement(&m_header->writerCount);
+			MemoryStream::close();
+			m_header = 0;
+		}
+	}
+
+private:
+	Header* m_header;
+};
+
+	}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryWin32", SharedMemoryWin32, SharedMemory)
+
+SharedMemoryWin32::SharedMemoryWin32()
+:	m_hMap(NULL)
+,	m_ptr(0)
+,	m_size(0)
+{
+}
+
+SharedMemoryWin32::~SharedMemoryWin32()
+{
+	if (m_ptr)
+	{
+		UnmapViewOfFile(m_ptr);
+		m_ptr = 0;
+	}
+	if (m_hMap)
+	{
+		CloseHandle(m_hMap);
+		m_hMap = NULL;
+	}
+}
+
+bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
+{
+	bool initializeMemory = false;
+
+	// Add space for header as well.
+	size += sizeof(Header);
+
+#if !defined(WINCE)
+	m_hMap = OpenFileMapping(FILE_MAP_WRITE | FILE_MAP_READ, FALSE, name.c_str());
+	if (m_hMap == NULL)
+#endif
+	{
+		// No such mapping opened; create new mapping.
+		m_hMap = CreateFileMapping(
+			INVALID_HANDLE_VALUE,
+			NULL,
+			PAGE_READWRITE,
+			0,
+			size,
+			name.c_str()
+		);
+		if (m_hMap == NULL)
+			return false;
+
+		// We've created the mapping; need to initialize header.
+		initializeMemory = true;
+	}
+
+	// Map memory region.
+	m_ptr = MapViewOfFile(m_hMap, FILE_MAP_WRITE | FILE_MAP_READ, 0, 0, size);
+	if (!m_ptr)
+	{
+		CloseHandle(m_hMap); m_hMap = NULL;
+		return false;
+	}
+
+	// Initialize header.
+	if (initializeMemory)
+	{
+		Header* header = static_cast< Header* >(m_ptr);
+		header->readerCount = 0;
+		header->writerCount = 0;
+		header->dataSize = 0;
+	}
+
+	m_size = size;
+	return true;
+}
+
+Stream* SharedMemoryWin32::read(bool exclusive)
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return 0;
+
+	for (;;)
+	{
+		while (InterlockedCompareExchange(&header->writerCount, 0, 0) != 0)
+			Sleep(0);
+
+		InterlockedIncrement(&header->readerCount);
+
+		if (InterlockedCompareExchange(&header->writerCount, 0, 0) == 0)
+			break;
+
+		InterlockedDecrement(&header->readerCount);
+	}
+
+	return gc_new< SharedReaderStream >(header, header + 1, header->dataSize);
+}
+
+Stream* SharedMemoryWin32::write()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return 0;
+
+	// Wait until no writers.
+	while (InterlockedCompareExchange(&header->writerCount, 1, 0) != 0)
+		Sleep(0);
+
+	// Wait until no readers.
+	while (InterlockedCompareExchange(&header->readerCount, 0, 0) != 0)
+		Sleep(0);
+
+	header->dataSize = 0;
+
+	return gc_new< SharedWriterStream >(header, header + 1, m_size);
+}
+
+}

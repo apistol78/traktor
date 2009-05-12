@@ -1,0 +1,58 @@
+#include <sys/time.h>
+#include "Core/Timer/Timer.h"
+
+namespace traktor
+{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
+
+Timer::Timer()
+:	m_paused(true)
+,	m_frequency(0)
+{
+}
+
+void Timer::start()
+{
+	timeval tv;
+	gettimeofday(&tv, 0);
+
+	m_first = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+	m_last = m_first;
+	m_paused = false;
+}
+
+void Timer::pause()
+{
+	m_paused = true;
+}
+
+void Timer::stop()
+{
+	m_paused = true;
+}
+
+double Timer::getElapsedTime() const
+{
+	timeval tv;
+	gettimeofday(&tv, 0);
+
+	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+	
+	return double(curr) / 1e6;
+}
+
+double Timer::getDeltaTime()
+{
+	timeval tv;
+	gettimeofday(&tv, 0);
+
+	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+	
+	double delta = double(curr - m_last) / 1e6;
+	m_last = curr;
+
+	return delta;
+}
+
+}

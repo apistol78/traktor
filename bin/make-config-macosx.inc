@@ -1,0 +1,24 @@
+# Configuration file
+
+CC=gcc
+
+CC_FLAGS_COMMON=-fstrict-aliasing -Wstrict-aliasing=2 -fno-common
+
+CC_FLAGS_DEBUG_SHARED=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE -fPIC
+CC_FLAGS_RELEASE_SHARED=$(CC_FLAGS_COMMON) -O3 -ffast-math -mcpu=970 -mtune=970 -mpowerpc64 -mpowerpc-gpopt -D _UNICODE -D UNICODE -fPIC
+
+CC_FLAGS_DEBUG_STATIC=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
+CC_FLAGS_RELEASE_STATIC=$(CC_FLAGS_COMMON) -O3 -ffast-math -mcpu=970 -mtune=970 -mpowerpc64 -mpowerpc-gpopt -D _UNICODE -D UNICODE
+
+CC_FLAGS_DEBUG_EXECUTABLE=$(CC_FLAGS_COMMON) -g -D _UNICODE -D UNICODE
+CC_FLAGS_RELEASE_EXECUTABLE=$(CC_FLAGS_COMMON) -O3 -ffast-math -mcpu=970 -mtune=970 -mpowerpc64 -mpowerpc-gpopt -D _UNICODE -D UNICODE
+
+AR=libtool
+
+LINK=c++
+LINK_LIBS=
+
+ADDITIONAL_INCLUDE_PATHS=
+ADDITIONAL_LIBRARY_PATHS=
+
+BINARY_TOOL=$(TRAKTOR_HOME)/bin/MacOSX/BinaryInclude

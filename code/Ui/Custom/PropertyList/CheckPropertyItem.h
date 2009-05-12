@@ -1,0 +1,49 @@
+#ifndef traktor_ui_custom_CheckPropertyItem_H
+#define traktor_ui_custom_CheckPropertyItem_H
+
+#include "Core/Heap/Ref.h"
+#include "Ui/Custom/PropertyList/PropertyItem.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_CUSTOM_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+		namespace custom
+		{
+
+/*! \brief Check property item.
+ * \ingroup UIC
+ */
+class T_DLLCLASS CheckPropertyItem : public PropertyItem
+{
+	T_RTTI_CLASS(CheckPropertyItem)
+
+public:
+	CheckPropertyItem(const std::wstring& text, bool checked);
+
+	void setChecked(bool checked);
+	
+	bool isChecked() const;
+
+protected:
+	virtual void mouseButtonDown(MouseEvent* event);
+
+	virtual void paintValue(Canvas& canvas, const Rect& rc);
+
+private:
+	bool m_checked;
+};
+
+		}
+	}
+}
+
+#endif	// traktor_ui_custom_CheckPropertyItem_H

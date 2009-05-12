@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.TextureAsset">
+  <fileName>$(TRAKTOR_HOME)/data/Assets/System/Textures/Noise.png</fileName>
+  <generateNormalMap>false</generateNormalMap>
+  <scaleDepth>0.0f</scaleDepth>
+  <generateMips>true</generateMips>
+  <keepZeroAlpha>true</keepZeroAlpha>
+  <isCubeMap>false</isCubeMap>
+  <hasAlpha>true</hasAlpha>
+  <ignoreAlpha>false</ignoreAlpha>
+  <scaleImage>false</scaleImage>
+  <scaleWidth>0</scaleWidth>
+  <scaleHeight>0</scaleHeight>
+  <enableCompression>true</enableCompression>
+  <linearGamma>true</linearGamma>
+</object>

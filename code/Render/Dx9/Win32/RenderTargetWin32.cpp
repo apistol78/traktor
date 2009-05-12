@@ -1,0 +1,258 @@
+#include "Render/Dx9/Win32/RenderTargetWin32.h"
+#include "Render/Dx9/Win32/ProgramWin32.h"
+#include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/ContextDx9.h"
+#include "Render/Dx9/VertexBufferDx9.h"
+#include "Render/Types.h"
+
+namespace traktor
+{
+	namespace render
+	{
+		namespace
+		{
+
+struct ClearTriangleVertex
+{
+	float pos[3];
+};
+
+const ClearTriangleVertex c_clearTriangles[] =
+{
+	{ -2.0f,  5.0f, 0.0f },
+	{  5.0f, -2.0f, 0.0f },
+	{ -2.0f, -2.0f, 0.0f }
+};
+
+const char c_clearEffect[] =
+{
+	"float4 g_ClearColor;								\r\n"
+
+	"float4 vs_main(float3 pos : POSITION) : POSITION	\r\n"
+	"{													\r\n"
+	"	return float4(pos.x, pos.y, 1.0f, 1.0f);		\r\n"
+	"}													\r\n"
+
+	"float4 ps_main() : COLOR0							\r\n"
+	"{													\r\n"
+	"	return g_ClearColor;							\r\n"
+	"}													\r\n"
+
+	"technique Clear									\r\n"
+	"{													\r\n"
+	"	pass Clear										\r\n"
+	"	{												\r\n"
+	"		ColorWriteEnable = 0x0000000F;				\r\n"
+	"		ZEnable = FALSE;							\r\n"
+	"		ZWriteEnable = FALSE;						\r\n"
+	"		ZFunc = ALWAYS;								\r\n"
+	"		VertexShader = compile vs_2_0 vs_main();	\r\n"
+	"		PixelShader = compile ps_2_0 ps_main();		\r\n"
+	"	}												\r\n"
+	"}													\r\n"
+};
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, Texture)
+
+RenderTargetWin32::RenderTargetWin32(ContextDx9* context)
+:	m_context(context)
+,	m_width(0)
+,	m_height(0)
+{
+}
+
+bool RenderTargetWin32::create(
+	IDirect3DDevice9* d3dDevice,
+	const RenderTargetSetCreateDesc& setDesc,
+	const RenderTargetCreateDesc& targetDesc
+)
+{
+	HRESULT hr;
+
+	if (!setDesc.multiSample)
+	{
+		hr = d3dDevice->CreateTexture(
+			setDesc.width,
+			setDesc.height,
+			1,
+			D3DUSAGE_RENDERTARGET,
+			c_d3dFormat[targetDesc.format],
+			D3DPOOL_DEFAULT,
+			&m_d3dTargetTexture.getAssign(),
+			NULL
+		);
+		if (FAILED(hr))
+			return false;
+
+		hr = m_d3dTargetTexture->GetSurfaceLevel(0, &m_d3dTargetSurface.getAssign());
+		if (FAILED(hr))
+			return false;
+	}
+	else
+	{
+		hr = d3dDevice->CreateRenderTarget(
+			setDesc.width,
+			setDesc.height,
+			c_d3dFormat[targetDesc.format],
+			(D3DMULTISAMPLE_TYPE)setDesc.multiSample,
+			0,
+			FALSE,
+			&m_d3dTargetSurface.getAssign(),
+			NULL
+		);
+		if (FAILED(hr))
+			return false;
+
+		hr = d3dDevice->CreateTexture(
+			setDesc.width,
+			setDesc.height,
+			1,
+			D3DUSAGE_RENDERTARGET,
+			c_d3dFormat[targetDesc.format],
+			D3DPOOL_DEFAULT,
+			&m_d3dTargetTexture.getAssign(),
+			NULL
+		);
+		if (FAILED(hr))
+			return false;
+
+		hr = m_d3dTargetTexture->GetSurfaceLevel(0, &m_d3dResolveTargetSurface.getAssign());
+		if (FAILED(hr))
+			return false;
+	}
+
+	m_width = setDesc.width;
+	m_height = setDesc.height;
+
+	if (targetDesc.format >= TfR16G16B16A16F)
+	{
+		HRESULT hr = D3DXCreateEffect(
+			d3dDevice,
+			c_clearEffect,
+			sizeof(c_clearEffect),
+			NULL,
+			NULL,
+			D3DXSHADER_SKIPVALIDATION,
+			NULL,
+			&m_d3dClearEffect.getAssign(),
+			NULL
+		);
+		if (FAILED(hr))
+			return false;
+
+		m_d3dClearTechnique = m_d3dClearEffect->GetTechniqueByName("Clear");
+	}
+
+	return true;
+}
+
+void RenderTargetWin32::destroy()
+{
+	if (!m_context)
+		return;
+	m_context->releaseComRef(m_d3dClearEffect);
+	m_context->releaseComRef(m_d3dTargetTexture);
+	m_context->releaseComRef(m_d3dTargetSurface);
+	m_context->releaseComRef(m_d3dResolveTargetSurface);
+}
+
+int RenderTargetWin32::getWidth() const
+{
+	return m_width;
+}
+
+int RenderTargetWin32::getHeight() const
+{
+	return m_height;
+}
+
+int RenderTargetWin32::getDepth() const
+{
+	return 1;
+}
+
+IDirect3DBaseTexture9* RenderTargetWin32::getD3DBaseTexture() const
+{
+	return m_d3dTargetTexture;
+}
+
+bool RenderTargetWin32::resolve(IDirect3DDevice9* d3dDevice)
+{
+	if (!m_d3dResolveTargetSurface)
+		return true;
+
+	HRESULT hr = d3dDevice->StretchRect(
+		m_d3dTargetSurface,
+		NULL,
+		m_d3dResolveTargetSurface,
+		NULL,
+		D3DTEXF_NONE
+	);
+
+	return SUCCEEDED(hr);
+}
+
+void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const float color[4], float z, DWORD stencil)
+{
+	if (m_d3dClearEffect)
+	{
+		// Clear stencil and z using ordinary clear call.
+		if (flags & D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL)
+			d3dDevice->Clear(0, NULL, flags, 0, z, stencil);
+
+		if (!(flags & D3DCLEAR_TARGET))
+			return;
+
+		m_d3dClearEffect->SetTechnique(m_d3dClearTechnique);
+
+		UINT passes;
+		HRESULT hr = m_d3dClearEffect->Begin(&passes, 0);
+		if (FAILED(hr))
+			return;
+
+		m_d3dClearEffect->BeginPass(0);
+
+		D3DXHANDLE handle = m_d3dClearEffect->GetParameterByName(NULL, "g_ClearColor");
+		T_ASSERT (handle != 0);
+
+		D3DXVECTOR4 clearColor(
+			color[0],
+			color[1],
+			color[2],
+			color[3]
+		);
+		m_d3dClearEffect->SetVector(handle, &clearColor);
+
+		d3dDevice->SetFVF(D3DFVF_XYZ);
+		hr = d3dDevice->DrawPrimitiveUP(
+			D3DPT_TRIANGLELIST,
+			1,
+			c_clearTriangles,
+			sizeof(ClearTriangleVertex)
+		);
+		T_ASSERT (SUCCEEDED(hr));
+
+		m_d3dClearEffect->EndPass();
+		m_d3dClearEffect->End();
+
+		// Need to force to dirty as various states may have been trashed.
+		ProgramWin32::forceDirty();
+		VertexBufferDx9::forceDirty();
+	}
+	else
+	{
+		// Non-FP targets can be cleared by the normal path.
+		D3DCOLOR clearColor = D3DCOLOR_RGBA(
+			uint8_t(color[0] * 255),
+			uint8_t(color[1] * 255),
+			uint8_t(color[2] * 255),
+			uint8_t(color[3] * 255)
+		);
+		d3dDevice->Clear(0, NULL, flags, clearColor, z, stencil);
+	}
+}
+
+	}
+}

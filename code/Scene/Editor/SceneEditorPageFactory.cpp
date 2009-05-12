@@ -1,0 +1,112 @@
+#include "Scene/Editor/SceneEditorPageFactory.h"
+#include "Scene/Editor/SceneEditorPage.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/SceneAsset.h"
+#include "Editor/Editor.h"
+#include "Editor/Settings.h"
+#include "Physics/PhysicsManager.h"
+#include "World/Entity/EntityData.h"
+#include "Ui/Command.h"
+#include "Core/Log/Log.h"
+
+namespace traktor
+{
+	namespace scene
+	{
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.SceneEditorPageFactory", SceneEditorPageFactory, editor::EditorPageFactory)
+
+const TypeSet SceneEditorPageFactory::getEditableTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< SceneAsset >());
+	typeSet.insert(&type_of< world::EntityData >());
+	return typeSet;
+}
+
+editor::EditorPage* SceneEditorPageFactory::createEditorPage(editor::Editor* editor) const
+{
+	if (!editor->getRenderSystem())
+	{
+		log::error << L"Unable to create scene editor; render system required." << Endl;
+		return 0;
+	}
+
+	// Get physics manager type.
+	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< editor::PropertyString >(L"SceneEditor.PhysicsManager");
+	const Type* physicsManagerType = Type::find(physicsManagerTypeName);
+	if (!physicsManagerType)
+	{
+		log::error << L"Unable to create scene editor; no such physics manager type \"" << physicsManagerTypeName << L"\"." << Endl;
+		return 0;
+	}
+
+	// Create physics manager.
+	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->newInstance());
+	if (!physicsManager->create(1.0f / 60.0f))
+	{
+		log::error << L"Unable to create scene editor; failed to create physics manager." << Endl;
+		return 0;
+	}
+
+	// Configure physics manager.
+	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
+
+	log::debug << L"Using physics manager \"" << physicsManagerTypeName << L"\"; created successfully" << Endl;
+
+	// Create editor context.
+	Ref< SceneEditorContext > context = gc_new< SceneEditorContext >(
+		editor,
+		editor->getOutputDatabase(),
+		editor->getSourceDatabase(),
+		editor->getRenderSystem(),
+		physicsManager
+	);
+
+	// Create profiles.
+	std::vector< const Type* > profileTypes;
+	type_of< SceneEditorProfile >().findAllOf(profileTypes);
+	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	{
+		Ref< SceneEditorProfile > profile = dynamic_type_cast< SceneEditorProfile* >((*i)->newInstance());
+		if (profile)
+			context->addEditorProfile(profile);
+	}
+
+	// Create editor page.
+	return gc_new< SceneEditorPage >(context);
+}
+
+void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+	// Add editor commands.
+	outCommands.push_back(ui::Command(L"Scene.Editor.AddEntity"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.MoveToSelectedEntity"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.MoveSelectedEntityIntoView"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Translate"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Rotate"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Scale"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.TogglePick"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleX"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleY"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleZ"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.EditSpaceWorld"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.EditSpaceObject"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Rewind"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Play"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Stop"));
+
+	// Add profile commands.
+	std::vector< const Type* > profileTypes;
+	type_of< SceneEditorProfile >().findAllOf(profileTypes);
+	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	{
+		Ref< SceneEditorProfile > profile = dynamic_type_cast< SceneEditorProfile* >((*i)->newInstance());
+		if (profile)
+			profile->getCommands(outCommands);
+	}
+}
+
+	}
+}

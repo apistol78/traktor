@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution">
+	<name>Drone Win32</name>
+	<rootPath>$(TRAKTOR_HOME)/tools/Drone/build/win32</rootPath>
+	<projects>
+		<item type="Project">
+			<name>Drone.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/tools/Drone/code/App</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Drone/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DRONE_APP_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>wsock32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Drone/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DRONE_APP_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>wsock32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Drone/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DRONE_APP_EXPORT</item>
+						<item>_DEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>wsock32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/tools/Drone/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DRONE_APP_EXPORT</item>
+						<item>NDEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2007.3.143793-vs2005_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>wsock32.lib</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/traktor.ui.rc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/traktor.ico</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/TraktorTiny.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Core</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Drawing</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Ui</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Ui.Custom</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Ui.Win32</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Xml</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorWin32.xms</solutionFileName>
+					<projectName>Traktor.Net</projectName>
+				</item>
+			</dependencies>
+		</item>
+	</projects>
+</object>

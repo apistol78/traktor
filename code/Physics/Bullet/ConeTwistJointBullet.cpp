@@ -1,0 +1,224 @@
+#include <limits>
+#include "Physics/Bullet/ConeTwistJointBullet.h"
+#include "Physics/Bullet/Conversion.h"
+#include "Physics/ConeTwistJointDesc.h"
+#include "Physics/DynamicBody.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Math/Const.h"
+
+namespace traktor
+{
+	namespace physics
+	{
+		namespace
+		{
+
+const Vector4 c_axis[] =
+{
+	Vector4(1.0f, 0.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+	Vector4(0.0f, 0.0f, 1.0f, 0.0f)
+};
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ConeTwistJointBullet", ConeTwistJointBullet, ConeTwistJoint)
+
+ConeTwistJointBullet::ConeTwistJointBullet(DestroyCallback* callback, JointConstraint* constraint, Body* body1, Body* body2, const ConeTwistJointDesc* desc)
+:	JointBullet< ConeTwistJoint, JointConstraint >(callback, constraint, body1, body2)
+,	m_desc(desc)
+{
+	m_anchor1 = body1->getTransform().inverse() * m_desc->getAnchor();
+	m_anchor2 = body2->getTransform().inverse() * m_desc->getAnchor();
+	m_coneAxis1 = (body1->getTransform().inverse() * m_desc->getConeAxis()).normalized();
+	m_coneAxis2 = (body2->getTransform().inverse() * m_desc->getConeAxis()).normalized();
+	m_twistAxis1 = (body1->getTransform().inverse() * m_desc->getTwistAxis()).normalized();
+	m_twistAxis2 = (body2->getTransform().inverse() * m_desc->getTwistAxis()).normalized();
+
+	m_dynamicBody1 = dynamic_type_cast< DynamicBody* >(body1);
+	m_dynamicBody2 = dynamic_type_cast< DynamicBody* >(body2);
+	T_ASSERT (m_dynamicBody1 || m_dynamicBody2);
+}
+
+void ConeTwistJointBullet::prepare()
+{
+	Matrix44 tf1 = m_body1->getTransform();
+	Matrix44 tf2 = m_body2->getTransform();
+	Matrix44 tfInv1 = tf1.inverseOrtho();
+	Matrix44 tfInv2 = tf2.inverseOrtho();
+
+	Vector4 centerOfMass1 = tf1.translation();
+	Vector4 centerOfMass2 = tf2.translation();
+
+	Vector4 anchor1 = tf1 * m_anchor1;
+	Vector4 anchor2 = tf2 * m_anchor2;
+	Vector4 twistAxis1 = (tf1 * m_twistAxis1).normalized();
+	Vector4 coneAxis1 = (tf1 * m_coneAxis1).normalized();
+	Vector4 twistAxis2 = (tf2 * m_twistAxis2).normalized();
+	Vector4 coneAxis2 = (tf2 * m_coneAxis2).normalized();
+
+	float invMass1 = 0.0f;
+	float invMass2 = 0.0f;
+	Matrix33 inertiaInv1 = Matrix33::zero();
+	Matrix33 inertiaInv2 = Matrix33::zero();
+	Vector4 inertiaInvDiag1 = Vector4::zero();
+	Vector4 inertiaInvDiag2 = Vector4::zero();
+
+	if (m_dynamicBody1)
+	{
+		invMass1 = m_dynamicBody1->getInverseMass();
+		inertiaInv1 = m_dynamicBody1->getInertiaTensorInverseWorld();
+		inertiaInvDiag1 = inertiaInv1.diagonal();
+	}
+	if (m_dynamicBody2)
+	{
+		invMass2 = m_dynamicBody2->getInverseMass();
+		inertiaInv2 = m_dynamicBody2->getInertiaTensorInverseWorld();
+		inertiaInvDiag2 = inertiaInv2.diagonal();
+	}
+
+	// Point constraint.
+	for (int i = 0; i < 3; ++i)
+	{
+		Vector4 relPos1 = anchor1 - centerOfMass1;
+		Vector4 relPos2 = anchor2 - centerOfMass2;
+
+		Vector4 aJ = tfInv1 * cross(relPos1, c_axis[i]);
+		Vector4 bJ = tfInv2 * cross(relPos2, -c_axis[i]);
+		Vector4 MinvJt0 = inertiaInvDiag1 * aJ;
+		Vector4 MinvJt1 = inertiaInvDiag2 * bJ;
+		float diagAB = invMass1 + dot3(MinvJt0, aJ) + invMass2 + dot3(MinvJt1, bJ);
+
+		m_jac[i].diagABInv = 1.0f / diagAB;
+	}
+
+	// Cone constraint.
+	float coneAngleLimit1, coneAngleLimit2;
+	m_desc->getConeAngles(coneAngleLimit1, coneAngleLimit2);
+
+	//float coneGradient = abs(sinf(twistAngle));
+	m_coneAngleLimit = coneAngleLimit1; //coneAngleLimit1 * (1.0f - coneGradient) + coneAngleLimit2 * coneGradient;
+	//T_ASSERT (m_coneAngleLimit >= min(coneAngleLimit1, coneAngleLimit2) - FUZZY_EPSILON);
+	//T_ASSERT (m_coneAngleLimit <= max(coneAngleLimit1, coneAngleLimit2) + FUZZY_EPSILON);
+
+	m_coneImpulseAxis = cross(twistAxis1, twistAxis2);
+	if (m_coneImpulseAxis.length() > FUZZY_EPSILON)
+		m_coneImpulseAxis = m_coneImpulseAxis.normalized();
+	else
+		m_coneImpulseAxis.set(1.0f, 0.0f, 0.0f, 0.0f);
+
+	float angularImpulseDenom1 = dot3(inertiaInv1 * m_coneImpulseAxis, m_coneImpulseAxis);
+	float angularImpulseDenom2 = dot3(inertiaInv2 * m_coneImpulseAxis, m_coneImpulseAxis);
+	m_kCone = 1.0f / (angularImpulseDenom1 + angularImpulseDenom2);
+
+	// Twist constraint.
+	m_twistImpulseAxis = twistAxis2;
+
+	angularImpulseDenom1 = dot3(inertiaInv1 * m_twistImpulseAxis, m_twistImpulseAxis);
+	angularImpulseDenom2 = dot3(inertiaInv2 * m_twistImpulseAxis, m_twistImpulseAxis);
+	m_kTwist = 1.0f / (angularImpulseDenom1 + angularImpulseDenom2);
+}
+
+void ConeTwistJointBullet::update(float deltaTime)
+{
+	const float c_tau = 0.1f;
+	const float c_damping = 1.0f;
+
+	Matrix44 tf1 = m_body1->getTransform();
+	Matrix44 tf2 = m_body2->getTransform();
+
+	Vector4 centerOfMass1 = tf1.translation();
+	Vector4 centerOfMass2 = tf2.translation();
+
+	Vector4 anchor1 = tf1 * m_anchor1;
+	Vector4 anchor2 = tf2 * m_anchor2;
+	Vector4 twistAxis1 = (tf1 * m_twistAxis1).normalized();
+	Vector4 coneAxis1 = (tf1 * m_coneAxis1).normalized();
+	Vector4 twistAxis2 = (tf2 * m_twistAxis2).normalized();
+	Vector4 coneAxis2 = (tf2 * m_coneAxis2).normalized();
+
+	Vector4 velocity1 = Vector4::zero();
+	Vector4 velocity2 = Vector4::zero();
+	Vector4 angularVelocity1 = Vector4::zero();
+	Vector4 angularVelocity2 = Vector4::zero();
+
+	if (m_dynamicBody1)
+	{
+		velocity1 = m_dynamicBody1->getVelocityAt(m_anchor1, true);
+		angularVelocity1 = m_dynamicBody1->getAngularVelocity();
+	}
+	if (m_dynamicBody2)
+	{
+		velocity2 = m_dynamicBody2->getVelocityAt(m_anchor2, true);
+		angularVelocity2 = m_dynamicBody2->getAngularVelocity();
+	}
+
+	Vector4 angularVelocity = angularVelocity2 - angularVelocity1;
+
+	// Solve point constraint.
+	for (int i = 0; i < 3; ++i)
+	{
+		Scalar relativeVelocity = velocity2[i] - velocity1[i];	// Relative velocity on axis.
+		Scalar positionError = anchor2[i] - anchor1[i];			// Positional error on axis.
+
+		Scalar impulse = positionError * Scalar(c_tau / deltaTime) * Scalar(m_jac[i].diagABInv) + Scalar(c_damping) * relativeVelocity * Scalar(m_jac[i].diagABInv);
+		Vector4 impulseVector = c_axis[i] * impulse;
+
+		if (m_dynamicBody1)
+			m_dynamicBody1->addImpulse(anchor1, impulseVector, false);
+		if (m_dynamicBody2)
+			m_dynamicBody2->addImpulse(anchor2, -impulseVector, false);
+	}
+
+	// Solve cone constraint.
+	do
+	{
+		float phi = dot3(twistAxis1, twistAxis2);
+		if (abs(phi) > 1.0f - std::numeric_limits< float >::epsilon())
+			continue;
+
+		float coneAngle = acosf(phi);
+		float coneAngleError = abs(coneAngle) - m_coneAngleLimit / 2.0f;
+		if (coneAngleError <= 0.0f)
+			continue;
+
+		Scalar amplitude = dot3(angularVelocity, m_coneImpulseAxis) * Scalar(c_damping) + Scalar((coneAngleError * c_tau) / deltaTime);
+		Scalar impulse = amplitude * Scalar(m_kCone);
+
+		if (m_dynamicBody1)
+			m_dynamicBody1->addAngularImpulse(m_coneImpulseAxis * impulse, false);
+		if (m_dynamicBody2)
+			m_dynamicBody2->addAngularImpulse(m_coneImpulseAxis * -impulse, false);
+	}
+	while (false);
+
+	// Solve twist constraint.
+	do 
+	{
+		Vector4 coneAxis2in1 = Quaternion(twistAxis2, twistAxis1) * coneAxis2;
+		Vector4 coneAxis1ref = -cross(coneAxis1, twistAxis1).normalized();
+		float a = dot3(coneAxis1, coneAxis2in1);
+		float b = dot3(coneAxis1ref, coneAxis2in1);
+		float twistAngle = atan2f(b, a);
+
+		float twistAngleLimit = m_desc->getTwistAngle();
+		float twistAngleError = abs(twistAngle) - twistAngleLimit / 2.0f;
+		if (twistAngleError <= 0.0f)
+			continue;
+
+		if (twistAngle < 0.0f)
+			twistAngleError = -twistAngleError;
+
+		Scalar amplitude = dot3(angularVelocity, m_twistImpulseAxis) * Scalar(c_damping) + Scalar((twistAngleError * c_tau) / deltaTime);
+		Scalar impulse = amplitude * Scalar(m_kTwist);
+
+		if (m_dynamicBody1)
+			m_dynamicBody1->addAngularImpulse(m_twistImpulseAxis * impulse, false);
+		if (m_dynamicBody2)
+			m_dynamicBody2->addAngularImpulse(m_twistImpulseAxis * -impulse, false);
+	}
+	while(false);
+}
+
+	}
+}

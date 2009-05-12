@@ -1,0 +1,127 @@
+#include "Xml/Document.h"
+#include "Xml/Element.h"
+#include "Xml/Text.h"
+#include "Xml/XmlPullParser.h"
+#include "Core/Heap/HeapNew.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Misc/StringUtils.h"
+
+namespace traktor
+{
+	namespace xml
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Document", Document, Object)
+
+bool Document::loadFromFile(const std::wstring& filename)
+{
+	Ref< Stream > file = FileSystem::getInstance().open(filename, File::FmRead);
+	bool result = false;
+	
+	if (file != 0)
+	{
+		result = loadFromStream(file);
+		file->close();
+	}
+	
+	return result;
+}
+
+bool Document::loadFromStream(Stream* stream)
+{
+	RefList< Element > stack;
+	XmlPullParser xpp(stream);
+
+	for (;;)
+	{
+		XmlPullParser::EventType et = xpp.next();
+		if (et == XmlPullParser::EtEndDocument)
+			break;
+		else if (et == XmlPullParser::EtInvalid)
+			return false;
+
+		const XmlPullParser::Event& e = xpp.getEvent();
+		switch (e.type)
+		{
+		case XmlPullParser::EtStartElement:
+			{
+				Ref< Element > element = gc_new< Element >(e.value);
+				for (XmlPullParser::Attributes::const_iterator i = e.attr.begin(); i != e.attr.end(); ++i)
+					element->setAttribute(i->first, i->second);
+
+				if (!stack.empty())
+					stack.back()->addChild(element);
+				else
+					m_docElement = element;
+
+				stack.push_back(element);
+			}
+			break;
+
+		case XmlPullParser::EtText:
+			{
+				if (!stack.empty())
+					stack.back()->addChild(
+						gc_new< Text >(e.value)
+					);
+			}
+			break;
+
+		case XmlPullParser::EtEndElement:
+			{
+				T_ASSERT (!stack.empty());
+				T_ASSERT (stack.back()->getName() == e.value);
+				stack.pop_back();
+			}
+			break;
+		}
+	}
+
+	return true;
+}
+
+bool Document::loadFromText(const std::wstring& text)
+{
+	return loadFromStream(gc_new< MemoryStream >(
+		(void*)text.c_str(),
+		int(text.length() * sizeof(wchar_t)),
+		true,
+		false
+	));
+}
+
+int Document::get(const std::wstring& path, RefArray< Element >& elements)
+{
+	if (m_docElement)
+	{
+		if (!path.empty() && path[0] == L'/')
+		{
+			size_t p = path.find(L'/', 1);
+			if (path.substr(1, p - 1) == m_docElement->getName())
+				m_docElement->get(path.substr(p + 1), elements);
+		}
+		else
+			m_docElement->get(path, elements);
+	}
+	return int(elements.size());
+}
+
+Element* Document::getSingle(const std::wstring& path)
+{
+	RefArray< Element > elements;
+	return (get(path, elements) > 0) ? elements.front() : 0;
+}
+
+void Document::setDocumentElement(Element* docElement)
+{
+	m_docElement = docElement;
+}
+
+Element* Document::getDocumentElement() const
+{
+	return m_docElement;
+}
+
+	}
+}

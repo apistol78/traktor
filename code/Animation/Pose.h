@@ -1,0 +1,69 @@
+#ifndef traktor_animation_Pose_H
+#define traktor_animation_Pose_H
+
+#include "Core/Serialization/Serializable.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Quaternion.h"
+#include "Animation/BitSet.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_ANIMATION_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace animation
+	{
+
+/*! \brief Skeleton pose.
+ * \ingroup Animation
+ */
+class T_DLLCLASS Pose : public Serializable
+{
+	T_RTTI_CLASS(Pose)
+
+public:
+	void setBoneOffset(uint32_t boneIndex, const Vector4& boneOffset);
+
+	Vector4 getBoneOffset(uint32_t boneIndex) const;
+
+	void setBoneOrientation(uint32_t boneIndex, const Quaternion& boneOrientation);
+
+	Quaternion getBoneOrientation(uint32_t boneIndex) const;
+
+	void getIndexMask(BitSet& outIndices) const;
+
+	virtual bool serialize(Serializer& s);
+
+private:
+	struct Bone
+	{
+		uint32_t index;
+		Vector4 offset;
+		Quaternion orientation;
+
+		Bone(uint32_t index_ = 0)
+		:	index(index_)
+		,	offset(0.0f, 0.0f, 0.0f, 0.0f)
+		,	orientation(Quaternion::identity())
+		{
+		}
+
+		bool serialize(Serializer& s);
+	};
+
+	AlignedVector< Bone > m_bones;
+
+	const Bone* getBone(uint32_t boneIndex) const;
+
+	Bone& getEditBone(uint32_t boneIndex);
+};
+
+	}
+}
+
+#endif	// traktor_animation_Pose_H

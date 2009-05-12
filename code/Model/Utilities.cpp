@@ -1,0 +1,580 @@
+#include <algorithm>
+#include <numeric>
+#include "Model/Utilities.h"
+#include "Model/Model.h"
+#include "Model/ContainerHelpers.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Triangulator.h"
+#include "Core/Math/Plane.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Log/Log.h"
+
+namespace traktor
+{
+	namespace model
+	{
+		namespace
+		{
+
+struct TangentBase
+{
+	Vector4 normal;
+	Vector4 tangent;
+	Vector4 binormal;
+
+	TangentBase()
+	:	normal(0.0f, 0.0f, 0.0f, 0.0f)
+	,	tangent(0.0f, 0.0f, 0.0f, 0.0f)
+	,	binormal(0.0f, 0.0f, 0.0f, 0.0f)
+	{
+	}
+};
+
+		}
+
+Aabb calculateModelBoundingBox(const Model& model)
+{
+	Aabb boundingBox;
+	const AlignedVector< Vector4 >& positions = model.getPositions();
+	for (AlignedVector< Vector4 >::const_iterator i = positions.begin(); i != positions.end(); ++i)
+		boundingBox.contain(*i);
+	return boundingBox;
+}
+
+namespace
+{
+
+	bool findBaseIndex(const Model& mdl, const Polygon& polygon, uint32_t& outBaseIndex)
+	{
+		outBaseIndex = c_InvalidIndex;
+
+		const std::vector< uint32_t >& vertices = polygon.getVertices();
+		for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
+		{
+			const Vertex* v[] =
+			{
+				&mdl.getVertex(vertices[i]),
+				&mdl.getVertex(vertices[(i + 1) % vertices.size()]),
+				&mdl.getVertex(vertices[(i + 2) % vertices.size()])
+			};
+
+			Vector4 p[] =
+			{
+				mdl.getPosition(v[0]->getPosition()),
+				mdl.getPosition(v[1]->getPosition()),
+				mdl.getPosition(v[2]->getPosition())
+			};
+
+			Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
+			if (ep[0].length() > FUZZY_EPSILON && ep[1].length() > FUZZY_EPSILON && cross(ep[0], ep[1]).length() > FUZZY_EPSILON)
+			{
+				outBaseIndex = i;
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+}
+
+void calculateModelTangents(Model& mdl, bool binormals)
+{
+	const std::vector< Polygon >& polygons = mdl.getPolygons();
+	AlignedVector< TangentBase > polygonTangentBases;
+	AlignedVector< TangentBase > vertexTangentBases;
+
+	// Calculate tangent base for each polygon.
+	polygonTangentBases.resize(polygons.size());
+	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	{
+		const Polygon& polygon = polygons[i];
+		uint32_t baseIndex;
+
+		if (!findBaseIndex(mdl, polygon, baseIndex))
+		{
+			log::warning << L"Degenerate polygon (" << i << L") found in model" << Endl;
+			continue;
+		}
+
+		const std::vector< uint32_t >& vertices = polygon.getVertices();
+		T_ASSERT (vertices.size() == 3);
+
+		const Vertex* v[] =
+		{
+			&mdl.getVertex(vertices[baseIndex]),
+			&mdl.getVertex(vertices[(baseIndex + 1) % vertices.size()]),
+			&mdl.getVertex(vertices[(baseIndex + 2) % vertices.size()])
+		};
+
+		Vector4 p[] =
+		{
+			mdl.getPosition(v[0]->getPosition()),
+			mdl.getPosition(v[1]->getPosition()),
+			mdl.getPosition(v[2]->getPosition())
+		};
+
+		Vector4 ep[] = { p[2] - p[0], p[1] - p[0] };
+		T_ASSERT (ep[0].length() > FUZZY_EPSILON);
+		T_ASSERT (ep[1].length() > FUZZY_EPSILON);
+
+		ep[0] = ep[0].normalized();
+		ep[1] = ep[1].normalized();
+
+		TangentBase& tb = polygonTangentBases[i];
+		tb.normal = cross(ep[0], ep[1]);
+		tb.tangent = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), tb.normal);
+		tb.binormal = cross(tb.tangent, tb.normal);
+
+		T_ASSERT (tb.normal.length() > FUZZY_EPSILON);
+		tb.normal = tb.normal.normalized();
+		
+		if (v[0]->getTexCoord() != c_InvalidIndex && v[1]->getTexCoord() != c_InvalidIndex && v[2]->getTexCoord() != c_InvalidIndex)
+		{
+			Vector2 tc[] =
+			{
+				mdl.getTexCoord(v[0]->getTexCoord()),
+				mdl.getTexCoord(v[1]->getTexCoord()),
+				mdl.getTexCoord(v[2]->getTexCoord())
+			};
+
+			Vector2 etc[] = { tc[2] - tc[0], tc[1] - tc[0] };
+
+			float denom = etc[0].x * etc[1].y - etc[1].x * etc[0].y;
+			Scalar r = Scalar(denom != 0.0f ? 1.0f / denom : 0.0f);
+
+			tb.tangent = ((Scalar(etc[0].y) * ep[1] - Scalar(etc[1].y) * ep[0]) * r).xyz0();
+			tb.binormal = ((Scalar(etc[1].x) * ep[0] - Scalar(etc[0].x) * ep[1]) * r).xyz0();
+
+			bool tangentValid = tb.tangent.length() > FUZZY_EPSILON;
+			bool binormalValid = tb.binormal.length() > FUZZY_EPSILON;
+
+			if (tangentValid || binormalValid)
+			{
+				if (!tangentValid)
+					tb.tangent = cross(tb.binormal, tb.normal);
+				if (!binormalValid)
+					tb.binormal = cross(tb.tangent, tb.normal);
+				
+				tb.tangent = tb.tangent.normalized();
+				tb.binormal = tb.binormal.normalized();
+
+				Vector4 normal = cross(tb.tangent, tb.binormal);
+				if (normal.length() >= FUZZY_EPSILON)
+				{
+					if (dot3(normal.normalized(), tb.normal) < 0.0f)
+						tb.tangent = -tb.tangent;
+				}
+				else
+					log::warning << L"Invalid tangent space vectors; colinear vectors (" << i << L")" << Endl;
+			}
+			else
+				log::warning << L"Invalid tangent space vectors; invalid texture coordinates (" << i << L")" << Endl;
+		}
+	}
+
+	// Normalize polygon tangent bases.
+	for (AlignedVector< TangentBase >::iterator i = polygonTangentBases.begin(); i != polygonTangentBases.end(); ++i)
+	{
+		if (i->normal.length() > FUZZY_EPSILON)
+			i->normal = i->normal.normalized();
+		if (i->tangent.length() > FUZZY_EPSILON)
+			i->tangent = i->tangent.normalized();
+		if (i->binormal.length() > FUZZY_EPSILON)
+			i->binormal = i->binormal.normalized();
+	}
+
+	// Build new vertex normals.
+	vertexTangentBases.resize(mdl.getVertexCount());
+	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	{
+		const Polygon& polygon = polygons[i];
+
+		const std::vector< uint32_t >& vertices = polygon.getVertices();
+		for (std::vector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
+		{
+			vertexTangentBases[*j].normal += polygonTangentBases[i].normal;
+			vertexTangentBases[*j].tangent += polygonTangentBases[i].tangent;
+			vertexTangentBases[*j].binormal += polygonTangentBases[i].binormal;
+		}
+	}
+
+	// Normalize vertex tangent bases.
+	for (AlignedVector< TangentBase >::iterator i = vertexTangentBases.begin(); i != vertexTangentBases.end(); ++i)
+	{
+		if (i->normal.length() > FUZZY_EPSILON)
+			i->normal = i->normal.normalized();
+		if (i->tangent.length() > FUZZY_EPSILON)
+			i->tangent = i->tangent.normalized();
+		if (i->binormal.length() > FUZZY_EPSILON)
+			i->binormal = i->binormal.normalized();
+	}
+
+	// Update vertices.
+	mdl.clear(Model::CfNormals);
+	for (uint32_t i = 0; i < mdl.getVertexCount(); ++i)
+	{
+		const TangentBase& tb = vertexTangentBases[i];
+
+		Vertex vertex = mdl.getVertex(i);
+		vertex.setNormal(mdl.addUniqueNormal(tb.normal));
+		vertex.setTangent(mdl.addUniqueNormal(tb.tangent));
+		vertex.setBinormal(mdl.addUniqueNormal(tb.binormal));
+		mdl.setVertex(i, vertex);
+	}
+}
+
+void triangulateModel(Model& model)
+{
+	std::vector< Polygon > triangulatedPolygons;
+
+	const std::vector< Polygon >& polygons = model.getPolygons();
+	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	{
+		const std::vector< uint32_t >& vertices = i->getVertices();
+		if (vertices.size() > 3)
+		{
+			AlignedVector< Vector4 > polygonPoints(vertices.size());
+			for (size_t j = 0; j < vertices.size(); ++j)
+				polygonPoints[j] = model.getPosition(model.getVertex(vertices[j]).getPosition());
+
+			std::vector< Triangulator::Triangle > triangles;
+			Triangulator().freeze(
+				polygonPoints,
+				triangles
+			);
+
+			for (std::vector< Triangulator::Triangle >::iterator j = triangles.begin(); j != triangles.end(); ++j)
+			{
+				Polygon triangulatedPolygon;
+				triangulatedPolygon.setMaterial(i->getMaterial());
+
+				for (int k = 0; k < 3; ++k)
+					triangulatedPolygon.addVertex(vertices[j->indices[k]]);
+
+				triangulatedPolygons.push_back(triangulatedPolygon);
+			}
+		}
+		else if (vertices.size() == 3)
+			triangulatedPolygons.push_back(*i);
+	}
+
+	model.setPolygons(triangulatedPolygons);
+}
+
+namespace
+{
+
+	struct HullFace
+	{
+		uint32_t i[3];
+
+		HullFace()
+		{
+			i[0] = ~0U; i[1] = ~0U; i[2] = ~0U;
+		}
+
+		HullFace(
+			uint32_t i1, uint32_t i2, uint32_t i3
+		)
+		{
+			i[0] = i1; i[1] = i2; i[2] = i3;
+		}
+	};
+
+	struct HullFaceAdjacency
+	{
+		uint32_t n[3];
+
+		HullFaceAdjacency()
+		{
+			n[0] = ~0U; n[1] = ~0U; n[2] = ~0U;
+		}
+
+		HullFaceAdjacency(
+			uint32_t n1, uint32_t n2, uint32_t n3
+		)
+		{
+			n[0] = n1; n[1] = n2; n[2] = n3;
+		}
+	};
+
+	void calculateAdjacency(const std::vector< HullFace >& faces, std::vector< HullFaceAdjacency >& outAdjacency)
+	{
+		for (uint32_t i = 0; i < uint32_t(faces.size()); ++i)
+		{
+			HullFaceAdjacency adj;
+
+			for (uint32_t j = 0; j < 3; ++j)
+			{
+				int a1 = faces[i].i[j];
+				int a2 = faces[i].i[(j + 1) % 3];
+
+				for (uint32_t k = 0; k < uint32_t(faces.size()) && adj.n[j] == ~0U; ++k)
+				{
+					if (i == k)
+						continue;
+
+					for (uint32_t m = 0; m < 3; ++m)
+					{
+						int na1 = faces[k].i[m];
+						int na2 = faces[k].i[(m + 1) % 3];
+
+						if (a1 == na2 && a2 == na1)
+						{
+							adj.n[j] = k;
+							break;
+						}
+					}
+				}
+			}
+
+			if (adj.n[0] != ~0U && adj.n[1] != ~0U && adj.n[2] != ~0U)
+				outAdjacency.push_back(adj);
+			else
+				log::warning << L"Unable to build adjacency of face " << i << Endl;
+		}
+	}
+
+}
+
+void calculateConvexHull(Model& model)
+{
+	AlignedVector< Vector4 > vertices = model.getPositions();
+
+	uint32_t t = ~0U;
+	for (int i = 0; i < 2; ++i)
+	{
+		Plane pl(vertices[0], vertices[1], vertices[2]);
+		for (uint32_t i = 3; i < uint32_t(vertices.size()); ++i)
+		{
+			if (pl.distance(vertices[i]) < -FUZZY_EPSILON)
+			{
+				t = i;
+				break;
+			}
+		}
+		if (t == ~0U)
+			std::swap(vertices[0], vertices[1]);
+		else
+			break;
+	}
+	T_ASSERT (t != ~0U);
+
+	std::vector< HullFace > faces;
+	faces.push_back(HullFace(0, 1, 2));
+	faces.push_back(HullFace(1, 0, t));
+	faces.push_back(HullFace(2, 1, t));
+	faces.push_back(HullFace(0, 2, t));
+
+	std::vector< HullFaceAdjacency > adjacency;
+	calculateAdjacency(faces, adjacency);
+
+	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
+	{
+		std::vector< bool > visible(faces.size());
+		for (uint32_t j = 0; j < uint32_t(faces.size()); ++j)
+		{
+			Plane pl(
+				vertices[faces[j].i[0]],
+				vertices[faces[j].i[1]],
+				vertices[faces[j].i[2]]
+			);
+			visible[j] = bool(pl.distance(vertices[i]) > 0.1f);
+		}
+
+		std::vector< std::pair< uint32_t, uint32_t > > silouette;
+		for (uint32_t j = 0; j < uint32_t(faces.size()); ++j)
+		{
+			for (uint32_t k = 0; k < 3; ++k)
+			{
+				int n = adjacency[j].n[k];
+				if (!visible[j] && visible[n])
+				{
+					silouette.push_back(std::make_pair(
+						faces[j].i[k],
+						faces[j].i[(k + 1) % 3]
+					));
+				}
+			}
+		}
+		if (silouette.empty())
+			continue;
+
+		// Remove visible faces.
+		for (uint32_t j = 0; j < uint32_t(visible.size()); )
+		{
+			if (visible[j])
+			{
+				faces.erase(faces.begin() + j);
+				visible.erase(visible.begin() + j);
+			}
+			else
+				++j;
+		}
+
+		// Add new faces.
+		for (std::vector< std::pair< uint32_t, uint32_t > >::iterator j = silouette.begin(); j != silouette.end(); ++j)
+		{
+			int idx[] = { j->second, j->first, i };
+			faces.push_back(HullFace(idx[0], idx[1], idx[2]));
+		}
+		
+		// Recalculate adjacency.
+		adjacency.resize(0);
+		calculateAdjacency(faces, adjacency);
+	}
+
+	// Clear everything except positions.
+	model.clear(Model::CfMaterials | Model::CfVertices | Model::CfPolygons | Model::CfNormals | Model::CfTexCoords | Model::CfBones);
+
+	for (std::vector< HullFace >::iterator i = faces.begin(); i != faces.end(); ++i)
+	{
+		Vector4 v[] =
+		{
+			vertices[i->i[0]],
+			vertices[i->i[1]],
+			vertices[i->i[2]]
+		};
+
+		Vector4 e[] =
+		{
+			v[1] - v[0],
+			v[2] - v[0]
+		};
+
+		if (cross(e[0], e[1]).length() <= FUZZY_EPSILON)
+			continue;
+
+		Polygon polygon;
+		for (uint32_t j = 0; j < 3; ++j)
+		{
+			Vertex vertex;
+			vertex.setPosition(i->i[j]);
+			polygon.addVertex(model.addVertex(vertex));
+		}
+
+		model.addPolygon(polygon);
+	}
+}
+
+namespace
+{
+
+	struct SortPolygonDistance
+	{
+		bool operator () (const Polygon& a, const Polygon& b) const
+		{
+			const std::vector< uint32_t >& va = a.getVertices();
+			const std::vector< uint32_t >& vb = b.getVertices();
+
+			uint32_t ia = std::accumulate(va.begin(), va.end(), 0);
+			uint32_t ib = std::accumulate(vb.begin(), vb.end(), 0);
+
+			return ia < ib;
+		}
+	};
+
+}
+
+void sortPolygonsCacheCoherent(Model& model)
+{
+	std::vector< Polygon > polygons = model.getPolygons();
+	if (polygons.size() <= 2)
+		return;
+
+	// Sort polygons by "index distance".
+	std::sort(polygons.begin(), polygons.end(), SortPolygonDistance());
+
+	// Replace model's polygons with optimized list.
+	model.setPolygons(polygons);
+}
+
+void cleanDuplicates(Model& model)
+{
+	std::vector< Vertex > vertices = model.getVertices();
+	std::vector< Polygon > polygons = model.getPolygons();
+
+	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end() - 1; )
+	{
+		uint32_t duplicateIndex = c_InvalidIndex;
+		for (std::vector< Vertex >::iterator j = i + 1; j != vertices.end(); ++j)
+		{
+			if (*i == *j)
+			{
+				duplicateIndex = uint32_t(std::distance(vertices.begin(), j));
+				break;
+			}
+		}
+		if (duplicateIndex != c_InvalidIndex)
+		{
+			uint32_t originalIndex = uint32_t(std::distance(vertices.begin(), i));
+
+			for (std::vector< Polygon >::iterator j = polygons.begin(); j != polygons.end(); ++j)
+			{
+				for (uint32_t k = 0; k < j->getVertexCount(); ++k)
+				{
+					if (j->getVertex(k) == originalIndex)
+						j->setVertex(k, duplicateIndex);
+				}
+			}
+
+			i = vertices.erase(i);
+		}
+		else
+			i++;
+	}
+
+	for (std::vector< Polygon >::iterator i = polygons.begin(); i != polygons.end() - 1; )
+	{
+		bool duplicate = false;
+		for (std::vector< Polygon >::iterator j = i + 1; j != polygons.end(); ++j)
+		{
+			if (*i == *j)
+			{
+				duplicate = true;
+				break;
+			}
+		}
+		if (duplicate)
+			i = polygons.erase(i);
+		else
+			i++;
+	}
+
+	model.setVertices(vertices);
+	model.setPolygons(polygons);
+}
+
+void flattenDoubleSided(Model& model)
+{
+	std::vector< Polygon > polygons = model.getPolygons();
+	std::vector< Polygon > flatten;
+
+	for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+	{
+		uint32_t materialId = i->getMaterial();
+		const Material& material = model.getMaterial(materialId);
+		if (!material.isDoubleSided())
+			continue;
+
+		Polygon flat = *i;
+		for (uint32_t j = 0; j < i->getVertexCount(); ++j)
+		{
+			uint32_t vtx = i->getVertex(j);
+			flat.setVertex(i->getVertexCount() - j - 1, vtx);
+		}
+		flatten.push_back(flat);
+	}
+
+	flatten.insert(flatten.end(), polygons.begin(), polygons.end());
+	model.setPolygons(flatten);
+
+	std::vector< Material > materials = model.getMaterials();
+	for (std::vector< Material >::iterator i = materials.begin(); i != materials.end(); ++i)
+		i->setDoubleSided(false);
+	model.setMaterials(materials);
+}
+
+	}
+}

@@ -1,0 +1,44 @@
+#ifndef traktor_animation_PathEntityRenderer_H
+#define traktor_animation_PathEntityRenderer_H
+
+#include "World/Entity/EntityRenderer.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_ANIMATION_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace animation
+	{
+
+/*! \brief Movement path entity renderer.
+ * \ingroup Animation
+ */
+class T_DLLCLASS PathEntityRenderer : public world::EntityRenderer
+{
+	T_RTTI_CLASS(PathEntityRenderer)
+
+public:
+	virtual const TypeSet getEntityTypes() const;
+
+	virtual void render(
+		world::WorldContext* worldContext,
+		world::WorldRenderView* worldRenderView,
+		world::Entity* entity
+	);
+
+	virtual void flush(
+		world::WorldContext* worldContext,
+		world::WorldRenderView* worldRenderView
+	);
+};
+
+	}
+}
+
+#endif	// traktor_animation_PathEntityRenderer_H

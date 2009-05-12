@@ -1,0 +1,74 @@
+#ifndef traktor_render_External_H
+#define traktor_render_External_H
+
+#include <string>
+#include "Render/Node.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Guid.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RENDER_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace render
+	{
+
+class ShaderGraph;
+
+/*! \brief External shader node.
+ * \ingroup Render
+ *
+ * External shader node is a special kind of node
+ * which reference another shader graph, a fragment.
+ * When the shader is created the external fragment is
+ * loaded and merged into the final shader.
+ */
+class T_DLLCLASS External : public Node
+{
+	T_RTTI_CLASS(External)
+
+public:
+	External();
+
+	External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph);
+
+	void setFragmentGuid(const Guid& fragmentGuid);
+
+	const Guid& getFragmentGuid() const;
+
+	virtual std::wstring getInformation() const;
+
+	virtual int getInputPinCount() const;
+
+	virtual const InputPin* getInputPin(int index) const;
+
+	virtual int getOutputPinCount() const;
+
+	virtual const OutputPin* getOutputPin(int index) const;	
+
+	virtual bool serialize(Serializer& s);
+
+	inline void setInputPins(const RefArray< InputPin >& inputPins) { m_inputPins = inputPins; }
+
+	inline RefArray< InputPin >& getInputPins() { return m_inputPins; }
+
+	inline void setOutputPins(const RefArray< OutputPin >& outputPins) { m_outputPins = outputPins; }
+
+	inline RefArray< OutputPin >& getOutputPins() { return m_outputPins; }
+
+private:
+	Guid m_fragmentGuid;
+	RefArray< InputPin > m_inputPins;
+	RefArray< OutputPin > m_outputPins;
+};
+
+	}
+}
+
+#endif	// traktor_render_External_H

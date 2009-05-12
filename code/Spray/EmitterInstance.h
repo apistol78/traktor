@@ -1,0 +1,77 @@
+#ifndef traktor_spray_EmitterInstance_H
+#define traktor_spray_EmitterInstance_H
+
+#include "Core/Heap/Ref.h"
+#include "Core/Object.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Plane.h"
+#include "Core/Math/Aabb.h"
+#include "Core/Thread/JobManager.h"
+#include "Spray/EmitterUpdateContext.h"
+#include "Spray/Point.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPRAY_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+class Job;
+
+	namespace spray
+	{
+
+class Emitter;
+class PointRenderer;
+
+/*! \brief Emitter instance.
+ * \ingroup Spray
+ */
+class T_DLLCLASS EmitterInstance : public Object
+{
+	T_RTTI_CLASS(EmitterInstance)
+
+public:
+	EmitterInstance(Emitter* emitter);
+
+	virtual ~EmitterInstance();
+
+	void update(EmitterUpdateContext& context, const Matrix44& transform, bool emit);
+
+	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
+
+	void synchronize() const;
+
+	inline void setTotalTime(float totalTime) { m_totalTime = totalTime; }
+
+	inline float getTotalTime() const { return m_totalTime; }
+
+	inline void addPoint(const Point& point) { m_points.push_back(point); m_emitted++; }
+
+	inline const PointVector& getPoints() const { return m_points; }
+
+	inline uint32_t getEmitted() const { return m_emitted; }
+
+	inline const Aabb& getBoundingBox() const { return m_boundingBox; }
+
+private:
+	Ref< Emitter > m_emitter;
+	float m_totalTime;
+	PointVector m_points;
+	uint32_t m_emitted;
+	bool m_warm;
+	Aabb m_boundingBox;
+	mutable Job m_jobs[4];
+
+	void updateTask(float deltaTime, const Matrix44& transform, size_t first, size_t last);
+};
+
+	}
+}
+
+#endif	// traktor_spray_EmitterInstance_H

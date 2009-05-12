@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<object type="traktor.db.LocalManifest">
+	<rootGroupPath>$(TRAKTOR_HOME)/data/Target/Xbox360/Output</rootGroupPath>
+	<eventMonitorEnable>true</eventMonitorEnable>
+	<eventFile>$(TRAKTOR_HOME)/data/Target/Xbox360/Temp/Output.xvs</eventFile>
+  <useBinary>false</useBinary>
+</object>

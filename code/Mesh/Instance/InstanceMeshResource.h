@@ -1,0 +1,46 @@
+#ifndef traktor_mesh_InstanceMeshResource_H
+#define traktor_mesh_InstanceMeshResource_H
+
+#include "Mesh/MeshResource.h"
+#include "Core/Guid.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_MESH_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace mesh
+	{
+
+class T_DLLCLASS InstanceMeshResource : public MeshResource
+{
+	T_RTTI_CLASS(InstanceMeshResource)
+
+public:
+	struct Part
+	{
+		std::wstring name;
+		Guid material;
+
+		bool serialize(Serializer& s);
+	};
+
+	void setParts(const std::vector< Part >& parts);
+
+	const std::vector< Part >& getParts() const;
+
+	virtual bool serialize(Serializer& s);
+
+private:
+	std::vector< Part > m_parts;
+};
+
+	}
+}
+
+#endif	// traktor_mesh_InstanceMeshResource_H
