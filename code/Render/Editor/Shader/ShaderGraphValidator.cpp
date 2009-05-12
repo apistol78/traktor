@@ -17,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-void collectActiveNodes(const ShaderGraph* shaderGraph, std::vector< const Node* >& outActiveNodes)
+void collectActiveNodes(const ShaderGraph* shaderGraph, std::set< const Node* >& outActiveNodes)
 {
 	std::stack< const Node* > nodeStack;
 
@@ -33,7 +33,7 @@ void collectActiveNodes(const ShaderGraph* shaderGraph, std::vector< const Node*
 		const Node* node = nodeStack.top();
 		nodeStack.pop();
 
-		outActiveNodes.push_back(node);
+		outActiveNodes.insert(node);
 
 		int inputPinCount = node->getInputPinCount();
 		for (int i = 0; i < inputPinCount; ++i)
@@ -43,7 +43,7 @@ void collectActiveNodes(const ShaderGraph* shaderGraph, std::vector< const Node*
 			if (outputPin)
 			{
 				const Node* sourceNode = outputPin->getNode();
-				if (std::find(outActiveNodes.begin(), outActiveNodes.end(), sourceNode) == outActiveNodes.end())
+				if (outActiveNodes.find(sourceNode) == outActiveNodes.end())
 					nodeStack.push(sourceNode);
 			}
 		}
@@ -79,13 +79,13 @@ private:
 class Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes) = 0;
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes) = 0;
 };
 
 class EdgeNodes : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		const RefArray< Node >& nodes = shaderGraph->getNodes();
 
@@ -103,7 +103,7 @@ public:
 class UniqueTechniques : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		std::map< std::wstring, uint32_t > techniqueCount;
 
@@ -122,9 +122,9 @@ public:
 class NonOptionalInputs : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			int inputPinCount = (*i)->getInputPinCount();
 			for (int j = 0; j < inputPinCount; ++j)
@@ -140,9 +140,9 @@ public:
 class SwizzlePatterns : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			if (is_a< Swizzle >(*i))
 			{
@@ -168,9 +168,9 @@ public:
 class ParameterNames : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			std::wstring parameterName;
 
@@ -194,10 +194,10 @@ public:
 class PortNames : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
 		std::set< std::wstring > usedInputNames, usedOutputNames;
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			std::set< std::wstring >* usedNames;
 			std::wstring portName;
@@ -231,9 +231,9 @@ public:
 class NoPorts : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			if (is_a< InputPort >(*i) || is_a< OutputPort >(*i))
 				outReport.addError(L"Cannot have Input- or OutputPort in non-fragment shader", *i);
@@ -244,9 +244,9 @@ public:
 class NoMetaNodes : public Specification
 {
 public:
-	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::vector< const Node* >& activeNodes)
+	virtual void check(Report& outReport, const ShaderGraph* ShaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		for (std::vector< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
+		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			if (is_a< Branch >(*i))
 				outReport.addError(L"Cannot have Branch node in program shader", *i);
@@ -267,7 +267,7 @@ bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Nod
 {
 	Report report(outErrorNodes);
 
-	std::vector< const Node* > activeNodes;
+	std::set< const Node* > activeNodes;
 	collectActiveNodes(m_shaderGraph, activeNodes);
 
 	EdgeNodes().check(report, m_shaderGraph, activeNodes);
