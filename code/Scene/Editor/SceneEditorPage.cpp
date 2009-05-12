@@ -206,6 +206,9 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 	// Hide edit control as we don't want paint events triggered.
 	m_editControl->setVisible(false);
 
+	// Prepare resource requests.
+	resource::ResourceManager::getInstance().beginPrepareResources();
+
 	if (sceneAsset)
 	{
 		m_context->setSceneAsset(sceneAsset);
@@ -219,6 +222,7 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		if (!entityData)
 		{
 			m_editControl->setVisible(true);
+			resource::ResourceManager::getInstance().endPrepareResources(true);
 			return false;
 		}
 
@@ -254,11 +258,11 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		updateEntityList();
 	}
 
-#if 1
 	// Pre-load all resources; create loader thread.
 	Thread* prepareResourcesThread = ThreadManager::getInstance().create(makeFunctor(
 		&resource::ResourceManager::getInstance(),
-		&resource::ResourceManager::prepareResources
+		&resource::ResourceManager::endPrepareResources,
+		false
 	));
 	T_ASSERT (prepareResourcesThread);
 
@@ -270,10 +274,6 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	// Destroy loader thread.
 	ThreadManager::getInstance().destroy(prepareResourcesThread);
-#else
-	// Load all resources in main thread; OpenGL renderer doesn't support out-of-thread creation.
-	resource::ResourceManager::getInstance().prepareResources();
-#endif
 
 	m_dataObject = checked_type_cast< Serializable* >(data);
 	updatePropertyObject();

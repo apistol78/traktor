@@ -12,7 +12,7 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, Singleton)
-	
+
 ResourceManager& ResourceManager::getInstance()
 {
 	static ResourceManager* s_instance = 0;
@@ -75,24 +75,35 @@ Object* ResourceManager::getResource(const Type& type, const Guid& guid)
 	return resource;
 }
 
-void ResourceManager::requestResource(const Type& type, const Guid& guid)
+void ResourceManager::beginPrepareResources()
 {
-	m_requestedResources.push_back(std::make_pair(&type, guid));
+	m_acceptResourceRequests = true;
 }
 
-void ResourceManager::prepareResources()
+void ResourceManager::requestResource(const Type& type, const Guid& guid)
 {
-	log::debug << L"Resource manager, preparing resources..." << Endl;
+	if (m_acceptResourceRequests)
+		m_requestedResources.push_back(std::make_pair(&type, guid));
+}
 
-	while (!m_requestedResources.empty())
+void ResourceManager::endPrepareResources(bool cancel)
+{
+	T_ASSERT_M (m_acceptResourceRequests, L"endPrepareResources called without beginPrepareResources");
+
+	if (!cancel)
 	{
-		std::pair< const Type*, Guid > requestedResource = m_requestedResources.front();
-		m_requestedResources.pop_front();
+		while (!m_requestedResources.empty())
+		{
+			std::pair< const Type*, Guid > requestedResource = m_requestedResources.front();
+			m_requestedResources.pop_front();
 
-		getResource(*requestedResource.first, requestedResource.second);
+			getResource(*requestedResource.first, requestedResource.second);
+		}
 	}
+	else
+		m_requestedResources.resize(0);
 
-	log::debug << L"Finished preparing resources" << Endl;
+	m_acceptResourceRequests = false;
 }
 
 void ResourceManager::destroy()
@@ -102,6 +113,7 @@ void ResourceManager::destroy()
 
 ResourceManager::ResourceManager()
 :	m_cache(gc_new< ResourceCache >())
+,	m_requestedResources(false)
 {
 }
 
