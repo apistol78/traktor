@@ -47,7 +47,7 @@ bool StaticBodyDesc::serialize(Serializer& s)
 
 	if (s.getVersion() >= 1)
 	{
-		s >> Member< float >(L"friction", m_friction);
+		s >> Member< float >(L"friction", m_friction, 0.0f, 1.0f);
 		if (s.getVersion() >= 2)
 		{
 			s >> Member< bool >(L"kinematic", m_kinematic);

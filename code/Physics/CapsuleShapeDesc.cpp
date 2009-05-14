@@ -40,8 +40,8 @@ bool CapsuleShapeDesc::serialize(Serializer& s)
 	if (!ShapeDesc::serialize(s))
 		return false;
 
-	s >> Member< float >(L"radius", m_radius);
-	s >> Member< float >(L"length", m_length);
+	s >> Member< float >(L"radius", m_radius, 0.0f);
+	s >> Member< float >(L"length", m_length, 0.0f);
 
 	return true;
 }

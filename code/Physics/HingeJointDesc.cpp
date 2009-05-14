@@ -1,6 +1,7 @@
 #include "Physics/HingeJointDesc.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Math/Const.h"
 
 namespace traktor
 {
@@ -53,8 +54,8 @@ bool HingeJointDesc::serialize(Serializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor);
 	s >> Member< Vector4 >(L"axis", m_axis);
-	s >> Member< float >(L"minAngle", m_minAngle);
-	s >> Member< float >(L"maxAngle", m_maxAngle);
+	s >> Member< float >(L"minAngle", m_minAngle, -PI, PI);
+	s >> Member< float >(L"maxAngle", m_maxAngle, -PI, PI);
 	return true;
 }
 

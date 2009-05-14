@@ -89,18 +89,18 @@ bool DynamicBodyDesc::serialize(Serializer& s)
 	if (!BodyDesc::serialize(s))
 		return false;
 
-	s >> Member< float >(L"mass", m_mass);
+	s >> Member< float >(L"mass", m_mass, 0.0f);
 	s >> Member< bool >(L"autoDisable", m_autoDisable);
 	s >> Member< bool >(L"disabled", m_disabled);
 
 	if (s.getVersion() >= 1)
 	{
-		s >> Member< float >(L"linearDamping", m_linearDamping);
-		s >> Member< float >(L"angularDamping", m_angularDamping);
+		s >> Member< float >(L"linearDamping", m_linearDamping, 0.0f, 1.0f);
+		s >> Member< float >(L"angularDamping", m_angularDamping, 0.0f, 1.0f);
 
 		if (s.getVersion() >= 2)
 		{
-			s >> Member< float >(L"friction", m_friction);
+			s >> Member< float >(L"friction", m_friction, 0.0f);
 		}
 	}
 	

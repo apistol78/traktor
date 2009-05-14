@@ -29,14 +29,14 @@ WorldRenderSettings::WorldRenderSettings()
 bool WorldRenderSettings::serialize(Serializer& s)
 {
 	s >> Member< bool >(L"hdr", hdr);
-	s >> Member< float >(L"viewNearZ", viewNearZ);
-	s >> Member< float >(L"viewFarZ", viewFarZ);
+	s >> Member< float >(L"viewNearZ", viewNearZ, 0.0f);
+	s >> Member< float >(L"viewFarZ", viewFarZ, 0.0f);
 	s >> Member< Color >(L"clearColor", clearColor);
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
 	s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices);
-	s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda);
-	s >> Member< float >(L"shadowFarZ", shadowFarZ);
+	s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, 0.0f, 1.0f);
+	s >> Member< float >(L"shadowFarZ", shadowFarZ, 0.0f);
 	s >> Member< int32_t >(L"shadowMapResolution", shadowMapResolution);
 	s >> Member< float >(L"shadowMapBias", shadowMapBias);
 	return true;

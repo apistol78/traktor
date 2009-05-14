@@ -180,8 +180,8 @@ bool InspectReflector::operator >> (const Member< float >& m)
 	addPropertyItem(gc_new< NumericPropertyItem >(
 		stylizeMemberName(m.getName()),
 		m,
-		-std::numeric_limits< float >::max(),
-		 std::numeric_limits< float >::max(),
+		m.getLimitMin(),
+		m.getLimitMax(),
 		true
 	));
 	return true;

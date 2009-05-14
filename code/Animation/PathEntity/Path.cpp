@@ -112,7 +112,7 @@ bool Path::serialize(Serializer& s)
 
 bool Path::Key::serialize(Serializer& s)
 {
-	s >> Member< float >(L"T", T);
+	s >> Member< float >(L"T", T, 0.0f);
 	s >> MemberComposite< Frame >(L"value", value);
 	return true;
 }

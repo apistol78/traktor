@@ -1,6 +1,7 @@
 #include "Animation/Bone.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Math/Const.h"
 
 namespace traktor
 {
@@ -38,7 +39,7 @@ bool Bone::serialize(Serializer& s)
 	if (s.getVersion() >= 1)
 	{
 		s >> Member< bool >(L"enableLimits", m_enableLimits);
-		s >> Member< float >(L"twistLimit", m_twistLimit);
+		s >> Member< float >(L"twistLimit", m_twistLimit, -PI, PI);
 		s >> Member< Vector2 >(L"coneLimit", m_coneLimit);
 	}
 
