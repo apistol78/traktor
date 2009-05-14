@@ -155,7 +155,7 @@ bool RenderViewSw::begin()
 	return true;
 }
 
-bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 

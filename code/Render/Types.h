@@ -156,6 +156,15 @@ struct RenderViewCreateDesc
 	uint32_t multiSample;
 	bool waitVBlank;
 	float mipBias;
+
+	RenderViewCreateDesc()
+	:	depthBits(0)
+	,	stencilBits(0)
+	,	multiSample(0)
+	,	waitVBlank(false)
+	,	mipBias(0.0f)
+	{
+	}
 };
 
 /*! \brief Immutable texture data. */
@@ -164,6 +173,13 @@ struct TextureInitialData
 	const void* data;
 	uint32_t pitch;
 	uint32_t slicePitch;
+
+	TextureInitialData()
+	:	data(0)
+	,	pitch(0)
+	,	slicePitch(0)
+	{
+	}
 };
 
 /*! \brief Descriptor for simple textures. */
@@ -175,6 +191,15 @@ struct SimpleTextureCreateDesc
 	TextureFormat format;
 	bool immutable;
 	TextureInitialData initialData[16];
+
+	SimpleTextureCreateDesc()
+	:	width(0)
+	,	height(0)
+	,	mipCount(0)
+	,	format(TfInvalid)
+	,	immutable(false)
+	{
+	}
 };
 
 /*! \brief Descriptor for cube textures. */
@@ -185,6 +210,14 @@ struct CubeTextureCreateDesc
 	TextureFormat format;
 	bool immutable;
 	TextureInitialData initialData[16 * 6];
+
+	CubeTextureCreateDesc()
+	:	side(0)
+	,	mipCount(0)
+	,	format(TfInvalid)
+	,	immutable(false)
+	{
+	}
 };
 
 /*! \brief Descriptor for volume textures. */
@@ -197,23 +230,47 @@ struct VolumeTextureCreateDesc
 	TextureFormat format;
 	bool immutable;
 	TextureInitialData initialData[16];
+
+	VolumeTextureCreateDesc()
+	:	width(0)
+	,	height(0)
+	,	depth(0)
+	,	mipCount(0)
+	,	format(TfInvalid)
+	,	immutable(false)
+	{
+	}
 };
 
 /*! \brief Descriptor for render target. */
 struct RenderTargetCreateDesc
 {
 	TextureFormat format;	/*< Render target pixel format. */
+
+	RenderTargetCreateDesc()
+	:	format(TfInvalid)
+	{
+	}
 };
 
 /*! \brief Descriptor for render target sets. */
 struct RenderTargetSetCreateDesc
 {
-	int32_t count;						/*< Number of render targets in set; max 4 targets allowed. */
-	int32_t width;						/*< Width of render targets. */
-	int32_t height;						/*< Height of render targets. */
-	int32_t multiSample;				/*< Number of samples; 0 no multisample. */
-	bool depthStencil;					/*< Attach depth/stencil buffer; shared among all targets. */
-	RenderTargetCreateDesc targets[4];	/*< Descriptor for each target. */
+	int32_t count;						/*!< Number of render targets in set; max 4 targets allowed. */
+	int32_t width;						/*!< Width of render targets. */
+	int32_t height;						/*!< Height of render targets. */
+	int32_t multiSample;				/*!< Number of samples; 0 no multisample. */
+	bool depthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
+	RenderTargetCreateDesc targets[4];	/*!< Descriptor for each target. */
+
+	RenderTargetSetCreateDesc()
+	:	count(0)
+	,	width(0)
+	,	height(0)
+	,	multiSample(0)
+	,	depthStencil(false)
+	{
+	}
 };
 
 /*! \brief Draw primitives. */

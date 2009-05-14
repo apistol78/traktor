@@ -205,7 +205,7 @@ bool RenderViewDx10::begin()
 	return true;
 }
 
-bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 

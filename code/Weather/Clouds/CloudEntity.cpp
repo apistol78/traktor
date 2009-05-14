@@ -314,7 +314,7 @@ void CloudEntity::renderCluster(
 	// Render distance from light.
 	//if (dot3(m_lastLightDirection, lightDirection) < 0.999f)
 	{
-		renderView->begin(m_impostorTargetDistance, 0);
+		renderView->begin(m_impostorTargetDistance, 0, false);
 
 		const float clearColor[] = { 0.5f, 0.5f, 0.5f, 0.5f };
 		renderView->clear(render::CfColor | render::CfDepth, clearColor, 1.0f, 0);
@@ -362,7 +362,7 @@ void CloudEntity::renderCluster(
 	// Render particles.
 	//if (dot3((m_lastEyePosition - clusterCenter).normalized(), (eye - clusterCenter).normalized()) < 0.995f)
 	{
-		renderView->begin(m_impostorTargetForward, 0);
+		renderView->begin(m_impostorTargetForward, 0, false);
 
 		const float clearColor[] = { 1.0f, 1.0f, 1.0f, 0.0f };
 		renderView->clear(render::CfColor, clearColor, 1.0f, 0);

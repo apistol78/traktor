@@ -141,7 +141,7 @@ bool RenderViewXbox360::begin()
 	return true;
 }
 
-bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewXbox360::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_ASSERT (m_d3dDevice);
 	

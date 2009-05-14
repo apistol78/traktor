@@ -120,7 +120,7 @@ bool RenderViewOpenGL::begin()
 	return true;
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 

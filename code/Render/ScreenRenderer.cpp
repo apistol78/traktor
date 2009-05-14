@@ -86,7 +86,7 @@ void ScreenRenderer::draw(RenderView* renderView, RenderTargetSet* renderTargetS
 		0.0f
 	));
 
-	renderView->begin(renderTargetSet, renderTarget);
+	renderView->begin(renderTargetSet, renderTarget, false);
 	renderView->setVertexBuffer(m_vertexBuffer);
 	shader->draw(renderView, m_primitives);
 	renderView->end();

@@ -238,7 +238,7 @@ bool RenderViewWin32::begin()
 	return true;
 }
 
-bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
+bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 	T_ASSERT (m_ownerThread == GetCurrentThreadId());
@@ -256,6 +256,9 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rts->getD3DDepthStencilSurface(),
 		rt
 	};
+
+	if (keepDepthStencil)
+		rs.d3dDepthStencilSurface = m_renderStateStack.back().d3dDepthStencilSurface;
 
 	m_renderStateStack.push_back(rs);
 
