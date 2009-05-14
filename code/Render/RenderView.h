@@ -62,9 +62,10 @@ public:
 	 *
 	 * \param renderTargetSet Set of render targets.
 	 * \param renderTarget Index of render target in set.
+	 * \param keepDepthStencil Keep bound depth/stencil surface.
 	 * \return True if successful.
 	 */
-	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget) = 0;
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil) = 0;
 
 	/*! \brief Clear current target.
 	 *

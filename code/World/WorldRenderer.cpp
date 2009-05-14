@@ -212,7 +212,7 @@ bool WorldRenderer::create(
 	desc.width = worldViewPort.width;
 	desc.height = worldViewPort.height;
 	desc.multiSample = multiSample;
-	desc.depthStencil = true;
+	desc.depthStencil = false;
 
 	if (m_settings.hdr)
 		desc.targets[0].format = render::TfR16G16B16A16F;	// HDR color target.
@@ -607,7 +607,7 @@ void WorldRenderer::flush(PostProcess* postProcess, int frame)
 	// Flush Depth context.
 	if (m_settings.depthPassEnabled)
 	{
-		if (!m_renderView->begin(m_renderTargetSet, 1))
+		if (!m_renderView->begin(m_renderTargetSet, 1, true))
 			return;
 
 		const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ};
@@ -629,7 +629,7 @@ void WorldRenderer::flush(PostProcess* postProcess, int frame)
 	// Render to HDR target only if we've a post processing filter.
 	if (postProcess)
 	{
-		if (!m_renderView->begin(m_renderTargetSet, 0))
+		if (!m_renderView->begin(m_renderTargetSet, 0, true))
 			return;
 
 		// Clear color target only; want to reuse depth buffer from Z pass.
@@ -658,7 +658,7 @@ void WorldRenderer::flush(PostProcess* postProcess, int frame)
 #if T_SHARE_SLICE_SHADOWMAP
 		for (int slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 		{
-			if (!m_renderView->begin(m_shadowTargetSet, 0))
+			if (!m_renderView->begin(m_shadowTargetSet, 0, false))
 				continue;
 
 			// Render shadow map.

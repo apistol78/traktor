@@ -71,7 +71,7 @@ int RenderTargetSetWin32::getHeight() const
 
 Texture* RenderTargetSetWin32::getColorTexture(int index) const
 {
-	return index < m_colorTextures.size() ? m_colorTextures[index] : 0;
+	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
 
 HRESULT RenderTargetSetWin32::lostDevice()
