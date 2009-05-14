@@ -24,6 +24,7 @@ bool MeshAsset::serialize(Serializer& s)
 {
 	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
 	{
+		{ L"MtInvalid", MtInvalid },
 		{ L"MtBlend", MtBlend },
 		{ L"MtIndoor", MtIndoor },
 		{ L"MtInstance", MtInstance },
