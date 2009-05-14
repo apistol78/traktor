@@ -112,6 +112,15 @@ T* gc_new(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10
 	return obj;
 }
 
+template < typename T, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7, typename P8, typename P9, typename P10, typename P11 >
+T* gc_new(P1 p1, P2 p2, P3 p3, P4 p4, P5 p5, P6 p6, P7 p7, P8 p8, P9 p9, P10 p10, P11 p11)
+{
+	void* ptr = Heap::getInstance().enterNewObject(sizeof(T), alignOf< T >());
+	T* obj = new(ptr) T (p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11);
+	Heap::getInstance().leaveNewObject(ptr);
+	return obj;
+}
+
 #if defined (_MSC_VER)
 #pragma warning( default : 4244 )
 #endif
