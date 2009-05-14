@@ -26,11 +26,11 @@ double trunc(double value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.NumericPropertyItem", NumericPropertyItem, PropertyItem)
 
-NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double min, double max, bool floatPoint, bool hex)
+NumericPropertyItem::NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint, bool hex)
 :	PropertyItem(text)
 ,	m_value(value)
-,	m_min(min)
-,	m_max(max)
+,	m_limitMin(limitMin)
+,	m_limitMax(limitMax)
 ,	m_floatPoint(floatPoint)
 ,	m_hex(hex)
 ,	m_mouseAdjust(false)
@@ -47,32 +47,32 @@ double NumericPropertyItem::getValue() const
 	return m_floatPoint ? m_value : trunc(m_value);
 }
 
-void NumericPropertyItem::setMin(double min)
+void NumericPropertyItem::setLimitMin(double limitMin)
 {
-	m_min = min;
-	m_value = std::max< double >(m_value, m_min);
+	m_limitMin = limitMin;
+	m_value = std::max< double >(m_value, m_limitMin);
 }
 
-double NumericPropertyItem::getMin() const
+double NumericPropertyItem::getLimitMin() const
 {
-	return m_min;
+	return m_limitMin;
 }
 
-void NumericPropertyItem::setMax(double max)
+void NumericPropertyItem::setLimitMax(double limitMax)
 {
-	m_max = max;
-	m_value = std::min< double >(m_value, m_max);
+	m_limitMax = limitMax;
+	m_value = std::min< double >(m_value, m_limitMax);
 }
 
-double NumericPropertyItem::getMax() const
+double NumericPropertyItem::getLimitMax() const
 {
-	return m_max;
+	return m_limitMax;
 }
 
-void NumericPropertyItem::setRange(double min, double max)
+void NumericPropertyItem::setLimit(double limitMin, double limitMax)
 {
-	setMin(min);
-	setMax(max);
+	setLimitMin(limitMin);
+	setLimitMax(limitMax);
 }
 
 void NumericPropertyItem::createInPlaceControls(Widget* parent, bool visible)
@@ -84,8 +84,8 @@ void NumericPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 		WsNone,
 		m_hex ? 0 : gc_new< NumericEditValidator >(
 			m_floatPoint,
-			m_min,
-			m_max
+			m_limitMin,
+			m_limitMax
 		)
 	);
 	m_editor->setVisible(false);
@@ -141,6 +141,8 @@ void NumericPropertyItem::mouseMove(MouseEvent* event)
 	if (m_mouseAdjust)
 	{
 		m_value += -(event->getPosition().y - m_mouseLastPosition.y) / 20.0f;
+		m_value = std::max(m_value, m_limitMin);
+		m_value = std::min(m_value, m_limitMax);
 		m_mouseLastPosition = event->getPosition();
 		notifyUpdate();
 	}
@@ -163,14 +165,13 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	int x = rc.right - h;
 	int y = rc.top + h;
 
-	canvas.setBackground(Color(80, 80, 80));
-
 	Point up[] =
 	{
 		Point(x, y - b - 1),
 		Point(x + b, y - 1),
 		Point(x - b, y - 1)
 	};
+	canvas.setBackground(value < m_limitMax ? Color(80, 80, 80) : Color(180, 180, 180));
 	canvas.fillPolygon(up, 3);
 
 	Point dw[] =
@@ -179,6 +180,7 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		Point(x - b + 1, y + 1),
 		Point(x + b - 1, y + 1)
 	};
+	canvas.setBackground(value > m_limitMin ? Color(80, 80, 80) : Color(180, 180, 180));
 	canvas.fillPolygon(dw, 3);
 }
 

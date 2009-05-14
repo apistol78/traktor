@@ -61,7 +61,7 @@ bool Transition::serialize(Serializer& s)
 
 	s >> MemberRef< State >(L"from", m_from);
 	s >> MemberRef< State >(L"to", m_to);
-	s >> Member< float >(L"duration", m_duration);
+	s >> Member< float >(L"duration", m_duration, 0.0f);
 	s >> MemberEnum< Moment >(L"moment", m_moment, c_Moment_Keys);
 	s >> Member< std::wstring >(L"condition", m_condition);
 

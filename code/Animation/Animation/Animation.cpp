@@ -133,7 +133,7 @@ bool Animation::serialize(Serializer& s)
 
 bool Animation::KeyPose::serialize(Serializer& s)
 {
-	s >> Member< float >(L"at", at);
+	s >> Member< float >(L"at", at, 0.0f);
 	s >> MemberComposite< Pose >(L"pose", pose);
 	return true;
 }

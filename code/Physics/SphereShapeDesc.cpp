@@ -29,7 +29,7 @@ bool SphereShapeDesc::serialize(Serializer& s)
 	if (!ShapeDesc::serialize(s))
 		return false;
 
-	return s >> Member< float >(L"radius", m_radius);
+	return s >> Member< float >(L"radius", m_radius, 0.0f);
 }
 
 	}

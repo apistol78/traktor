@@ -31,21 +31,21 @@ class T_DLLCLASS NumericPropertyItem : public PropertyItem
 	T_RTTI_CLASS(NumericPropertyItem)
 
 public:
-	NumericPropertyItem(const std::wstring& text, double value, double min, double max, bool floatPoint = true, bool hex = false);
+	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint = true, bool hex = false);
 
 	void setValue(double value);
 
 	double getValue() const;
 
-	void setMin(double min);
+	void setLimitMin(double limitMin);
 
-	double getMin() const;
+	double getLimitMin() const;
 
-	void setMax(double max);
+	void setLimitMax(double limitMax);
 
-	double getMax() const;
+	double getLimitMax() const;
 
-	void setRange(double min, double max);
+	void setLimit(double limitMin, double limitMax);
 
 protected:
 	virtual void createInPlaceControls(Widget* parent, bool visible);
@@ -65,8 +65,8 @@ protected:
 private:
 	Ref< Edit > m_editor;
 	double m_value;
-	double m_min;
-	double m_max;
+	double m_limitMin;
+	double m_limitMax;
 	bool m_floatPoint;
 	bool m_hex;
 	bool m_mouseAdjust;
