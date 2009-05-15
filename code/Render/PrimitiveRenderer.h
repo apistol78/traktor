@@ -211,7 +211,7 @@ public:
 
 private:
 	resource::Proxy< Shader > m_shader;
-	Ref< VertexBuffer > m_vertexBuffers[2];
+	Ref< VertexBuffer > m_vertexBuffers[3];
 	int m_currentBuffer;
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
