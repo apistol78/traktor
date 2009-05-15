@@ -16,7 +16,7 @@ namespace traktor
 		{
 
 const Guid c_guidPrimitiveShader(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}");
-const int c_bufferCount = 64000;
+const int c_bufferCount = 32000;
 
 		}
 
@@ -195,7 +195,7 @@ void PrimitiveRenderer::drawLine(
 	const Color& color
 )
 {
-	if (width <= 1.0f + FUZZY_EPSILON)
+	if (width < 1.5f)
 	{
 		drawLine(start, end, color);
 		return;
