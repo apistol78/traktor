@@ -27,7 +27,7 @@ const TypeSet SceneFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SceneFactory::create(const Type& resourceType, const Guid& guid)
+Object* SceneFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< SceneAsset > asset = m_database->getObjectReadOnly< SceneAsset >(guid);
 	if (!asset)

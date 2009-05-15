@@ -47,8 +47,10 @@ public:
 	 *
 	 * \param resourceType Type of resource.
 	 * \param guid Guid of resource.
+	 * \param outCacheable If resource is cacheable (default set to true).
+	 * \return Resource instance.
 	 */
-	virtual Object* create(const Type& resourceType, const Guid& guid) = 0;
+	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable) = 0;
 };
 	
 	}

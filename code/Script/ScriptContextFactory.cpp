@@ -25,7 +25,7 @@ const TypeSet ScriptContextFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* ScriptContextFactory::create(const Type& resourceType, const Guid& guid)
+Object* ScriptContextFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< Script > s = m_database->getObjectReadOnly< Script >(guid);
 	if (!s)
@@ -46,6 +46,9 @@ Object* ScriptContextFactory::create(const Type& resourceType, const Guid& guid)
 		log::error << L"Unable to create script context; execute script failed" << Endl;
 		return 0;
 	}
+
+	// Don't cache script contexts; each script context have their own local store.
+	outCacheable = false;
 
 	return scriptContext;
 }

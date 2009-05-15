@@ -36,12 +36,25 @@ class T_DLLCLASS ResourceLoader : public Object
 public:
 	void addFactory(ResourceFactory* factory);
 
-	Object* load(const Type& type, const Guid& guid);
+	/*! \brief Load resource through any factory.
+	 *
+	 * \param type Type of resource.
+	 * \param guid Resource's guid.
+	 * \param outCacheable True if created resource is cacheable.
+	 * \return Resource instance.
+	 */
+	Object* load(const Type& type, const Guid& guid, bool& outCacheable);
 
+	/*! \brief Load resource through any factory.
+	 *
+	 * \param guid Resource's guid.
+	 * \param outCacheable True if created resource is cacheable.
+	 * \return Resource instance.
+	 */
 	template < typename T >
-	T* load(const Guid& guid)
+	T* load(const Guid& guid, bool& outCacheable)
 	{
-		return dynamic_type_cast< T* >(load(T::getClassType(), guid));
+		return dynamic_type_cast< T* >(load(T::getClassType(), guid, outCacheable));
 	}
 
 private:

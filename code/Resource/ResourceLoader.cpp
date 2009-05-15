@@ -15,10 +15,11 @@ void ResourceLoader::addFactory(ResourceFactory* factory)
 	m_factories.push_back(factory);
 }
 
-Object* ResourceLoader::load(const Type& type, const Guid& guid)
+Object* ResourceLoader::load(const Type& type, const Guid& guid, bool& outCacheable)
 {
 	Ref< ResourceFactory > factory;
 
+	// Find resource factory which are capable of creating the resource.
 	for (RefArray< ResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 	{
 		TypeSet typeSet = (*i)->getResourceTypes();
@@ -35,7 +36,8 @@ Object* ResourceLoader::load(const Type& type, const Guid& guid)
 		return 0;
 	}
 
-	Ref< Object > resource = factory->create(type, guid);
+	// Create resource through factory.
+	Ref< Object > resource = factory->create(type, guid, outCacheable);
 	if (!resource)
 	{
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << type.getName() << L")" << Endl;
@@ -43,8 +45,12 @@ Object* ResourceLoader::load(const Type& type, const Guid& guid)
 	}
 
 	T_ASSERT_M (is_type_of(type, resource->getType()), L"Incorrect type of created resource");
-	log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(resource) << L") loaded" << Endl;
-		
+
+	if (outCacheable)
+		log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(resource) << L") loaded" << Endl;
+	else
+		log::debug << L"Resource \"" << guid.format() << L"\" (" << type_name(resource) << L") instantiated" << Endl;
+
 	return resource;
 }
 

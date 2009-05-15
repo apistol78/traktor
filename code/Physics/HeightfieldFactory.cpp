@@ -24,7 +24,7 @@ const TypeSet HeightfieldFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* HeightfieldFactory::create(const Type& resourceType, const Guid& guid)
+Object* HeightfieldFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

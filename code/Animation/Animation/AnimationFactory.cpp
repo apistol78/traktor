@@ -27,7 +27,7 @@ const TypeSet AnimationFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* AnimationFactory::create(const Type& resourceType, const Guid& guid)
+Object* AnimationFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly(guid);
 }
