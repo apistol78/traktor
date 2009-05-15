@@ -38,7 +38,7 @@ const TypeSet BlendMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* BlendMeshFactory::create(const Type& resourceType, const Guid& guid)
+Object* BlendMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

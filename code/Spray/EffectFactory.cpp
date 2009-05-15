@@ -21,7 +21,7 @@ const TypeSet EffectFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* EffectFactory::create(const Type& resourceType, const Guid& guid)
+Object* EffectFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly< Effect >(guid);
 }

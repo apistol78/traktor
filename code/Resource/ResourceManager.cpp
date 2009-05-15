@@ -64,12 +64,14 @@ Object* ResourceManager::getResource(const Type& type, const Guid& guid)
 	Ref< Object > resource;
 	if (!m_cache->get(guid, resource))
 	{
+		bool cacheable = true;
 		for (RefList< ResourceLoader >::iterator i = m_loaders.begin(); i != m_loaders.end(); ++i)
 		{
-			if ((resource = (*i)->load(type, guid)) != 0)
+			if ((resource = (*i)->load(type, guid, cacheable)) != 0)
 				break;
 		}
-		m_cache->put(guid, resource);
+		if (cacheable)
+			m_cache->put(guid, resource);
 	}
 
 	return resource;

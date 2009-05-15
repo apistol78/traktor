@@ -21,7 +21,7 @@ const TypeSet RumbleEffectFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* RumbleEffectFactory::create(const Type& resourceType, const Guid& guid)
+Object* RumbleEffectFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly< RumbleEffect >(guid);
 }

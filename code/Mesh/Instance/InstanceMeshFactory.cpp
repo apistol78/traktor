@@ -36,7 +36,7 @@ const TypeSet InstanceMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* InstanceMeshFactory::create(const Type& resourceType, const Guid& guid)
+Object* InstanceMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	// Read single instance mesh.
 	render::SystemMeshFactory systemMeshFactory;

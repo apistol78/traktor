@@ -38,7 +38,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid);
+	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_db;

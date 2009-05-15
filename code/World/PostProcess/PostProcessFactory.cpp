@@ -21,7 +21,7 @@ const TypeSet PostProcessFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* PostProcessFactory::create(const Type& resourceType, const Guid& guid)
+Object* PostProcessFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly< PostProcessSettings >(guid);
 }
