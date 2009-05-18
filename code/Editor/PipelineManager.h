@@ -6,6 +6,7 @@
 #include "Core/Object.h"
 #include "Core/Guid.h"
 #include "Core/Misc/MD5.h"
+#include "Core/Thread/Event.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,6 +19,7 @@
 namespace traktor
 {
 
+class Thread;
 class Serializable;
 
 	namespace db
@@ -130,6 +132,13 @@ private:
 	RefArray< Dependency > m_dependencies;
 	Ref< Dependency > m_currentDependency;
 	std::map< Guid, Ref< Serializable > > m_readCache;
+	Thread* m_buildThreads[4];
+	Semaphore m_buildQueueLock;
+	RefList< Dependency > m_buildQueue;
+	Event m_buildQueueWr;
+	Event m_buildQueueRd;
+	int32_t m_succeeded;
+	int32_t m_failed;
 
 	/*! \brief Find already added dependency.
 	 *
@@ -148,6 +157,9 @@ private:
 	 * \param build If asset needs to be built.
 	 */
 	void addUniqueDependency(const Object* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build);
+
+	/*! \brief Build thread method. */
+	void buildThread();
 };
 
 	}

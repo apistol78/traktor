@@ -8,11 +8,14 @@
 #include "Database/Instance.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Atomic.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
+
+#define USE_BUILD_THREADS	0
 
 namespace traktor
 {
@@ -33,7 +36,10 @@ PipelineManager::PipelineManager(
 ,	m_pipelines(pipelines)
 ,	m_hash(hash)
 ,	m_listener(listener)
+,	m_succeeded(0)
+,	m_failed(0)
 {
+	std::memset(m_buildThreads, 0, sizeof(m_buildThreads));
 }
 
 Pipeline* PipelineManager::findPipeline(const Type& sourceType) const
@@ -199,11 +205,7 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 
 bool PipelineManager::build(bool rebuild)
 {
-	//MD5 lastBuildHash;
-	//uint32_t pipelineVersion;
 	PipelineHash::Hash hash;
-	uint32_t succeeded = 0;
-	uint32_t failed = 0;
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< Dependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
@@ -248,7 +250,24 @@ bool PipelineManager::build(bool rebuild)
 			(*i)->reason |= Pipeline::BrForced;
 	}
 
+#if USE_BUILD_THREADS
+
+	// Create build threads.
+	for (uint32_t i = 0; i < sizeof_array(m_buildThreads); ++i)
+	{
+		m_buildThreads[i] = ThreadManager::getInstance().create(makeFunctor(
+			this,
+			&PipelineManager::buildThread
+		));
+		m_buildThreads[i]->start();
+	}
+
+#endif
+
 	// Build assets which are dirty or have dirty dependency assets.
+	m_succeeded = 0;
+	m_failed = 0;
+
 	for (RefArray< Dependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
 		// Abort if current thread has been stopped; thread are stopped by worker dialog.
@@ -292,6 +311,16 @@ bool PipelineManager::build(bool rebuild)
 					uint32_t(m_dependencies.size())
 				);
 
+#if USE_BUILD_THREADS
+
+			m_buildQueueLock.acquire();
+			m_buildQueue.push_back(*i);
+			m_buildQueueLock.release();
+			m_buildQueueWr.pulse();
+			m_buildQueueRd.wait();
+
+#else
+
 			// Create a clone of the source asset; we need to have a non-const copy to add as database instances.
 			Ref< Serializable > sourceAsset = DeepClone(checked_type_cast< const Serializable* >((*i)->sourceAsset)).create();
 			T_ASSERT (sourceAsset);
@@ -308,18 +337,29 @@ bool PipelineManager::build(bool rebuild)
 			if (result)
 			{
 				m_hash->set((*i)->outputGuid, hash);
-				succeeded++;
+				m_succeeded++;
 			}
 			else
-				failed++;
+				m_failed++;
 
 			log::info << DecreaseIndent;
 			log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+
+#endif
 		}
 	}
 
+#if USE_BUILD_THREADS
+
+	// Destroy builder threads.
+	for (uint32_t i = 0; i < sizeof_array(m_buildThreads); ++i)
+		ThreadManager::getInstance().destroy(m_buildThreads[i]);
+
+#endif
+
+	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << succeeded << L" succeeded, " << failed << L" failed" << Endl;
+		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
@@ -414,6 +454,53 @@ void PipelineManager::addUniqueDependency(const Object* sourceAsset, const std::
 
 	if (result)
 		m_dependencies.push_back(dependency);
+}
+
+void PipelineManager::buildThread()
+{
+#if USE_BUILD_THREADS
+
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped())
+	{
+		if (!m_buildQueueWr.wait(100))
+			continue;
+
+		m_buildQueueLock.acquire();
+
+		T_ASSERT (!m_buildQueue.empty());
+		Ref< Dependency > dependency = m_buildQueue.front();
+		m_buildQueue.pop_front();
+
+		m_buildQueueLock.release();
+		m_buildQueueRd.pulse();
+
+		// Create a clone of the source asset; we need to have a non-const copy to add as database instances.
+		Ref< Serializable > sourceAsset = DeepClone(checked_type_cast< const Serializable* >(dependency->sourceAsset)).create();
+		T_ASSERT (sourceAsset);
+
+		bool result = dependency->pipeline->buildOutput(
+			this,
+			sourceAsset,
+			dependency->buildParams,
+			dependency->outputPath,
+			dependency->outputGuid,
+			dependency->reason
+		);
+
+		if (result)
+		{
+			PipelineHash::Hash hash;
+			hash.checksum = dependency->checksum;
+			hash.pipelineVersion = dependency->pipeline->getVersion();
+			m_hash->set(dependency->outputGuid, hash);
+			Atomic::increment(m_succeeded);
+		}
+		else
+			Atomic::increment(m_failed);
+	}
+
+#endif
 }
 
 bool PipelineManager::Dependency::needBuild()

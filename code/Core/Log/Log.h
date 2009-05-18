@@ -29,20 +29,6 @@ public:
 	virtual void log(const std::wstring& str) = 0;
 };
 
-/*! \brief Multiplex log target.
- * \ingroup Core
- */
-class T_DLLCLASS LogTargetMultiplex : public LogTarget
-{
-public:
-	LogTargetMultiplex(LogTarget* lt1, LogTarget* lt2 = 0, LogTarget* lt3 = 0, LogTarget* lt4 = 0);
-	
-	virtual void log(const std::wstring& str);
-	
-private:
-	std::vector< LogTarget* > m_logTargets;
-};
-
 /*! \brief Console log target.
  * \ingroup Core
  */
