@@ -8,8 +8,6 @@ namespace traktor
 
 #if defined(_WIN32)
 
-std::map< uint32_t, ContextOpenGL* > ContextOpenGL::ms_contextThreads;
-
 ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 :	m_hWnd(hWnd)
 ,	m_hDC(hDC)
@@ -55,16 +53,14 @@ bool ContextOpenGL::enter()
 	if (m_count++ > 0)
 	{
 		T_ASSERT (m_ownerThreadId == threadId);
-		T_ASSERT (ms_contextThreads[threadId] == this);
 		return true;
 	}
 
-	T_ASSERT_M (ms_contextThreads[threadId] == 0, L"Thread already have an active context");
+	T_ASSERT (m_ownerThreadId == 0);
 	if (!wglMakeCurrent(m_hDC, m_hRC))
 		return false;
 
 	m_ownerThreadId = threadId;
-	ms_contextThreads[threadId] = this;
 
 #elif defined(__APPLE__)
 
@@ -111,12 +107,11 @@ void ContextOpenGL::leave()
 #if defined(_WIN32)
 	T_ASSERT (m_count > 0);
 	T_ASSERT (m_ownerThreadId == GetCurrentThreadId());
-	T_ASSERT (ms_contextThreads[m_ownerThreadId] == this);
 
 	if (--m_count == 0)
 	{
 		wglMakeCurrent(m_hDC, NULL);
-		ms_contextThreads[m_ownerThreadId] = 0;
+		m_ownerThreadId = 0;
 	}
 
 #elif defined(__APPLE__)
