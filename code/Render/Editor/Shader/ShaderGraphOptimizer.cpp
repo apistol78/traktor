@@ -234,6 +234,8 @@ ShaderGraph* ShaderGraphOptimizer::insertInterpolators()
 {
 	m_insertedCount = 0;
 
+	updateOrderComplexity();
+
 	RefArray< PixelOutput > pixelOutputNodes;
 	m_shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
@@ -270,7 +272,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
 		T_ASSERT (sourceNode);
 
-		int inputOrder = ShaderGraphOrderEvaluator(m_shaderGraph).evaluate(sourceNode);
+		int inputOrder = m_orderComplexity[sourceNode];
 		if (inputOrder <= ShaderGraphOrderEvaluator::OrLinear)
 		{
 			// We've reached low enough order; insert interpolator if linear and stop.
@@ -313,6 +315,8 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 					edge = gc_new< Edge >(interpolator->getOutputPin(0), inputPin);
 					m_shaderGraph->addEdge(edge);
 
+					// Need to reevaluate complexity.
+					updateOrderComplexity();
 					m_insertedCount++;
 				}
 			}
@@ -322,6 +326,16 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 			// Input still have too high order; need to keep in pixel shader.
 			insertInterpolators(sourceNode);
 		}
+	}
+}
+
+void ShaderGraphOptimizer::updateOrderComplexity()
+{
+	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		int complexity = ShaderGraphOrderEvaluator(m_shaderGraph).evaluate(*i);
+		m_orderComplexity[*i] = complexity;
 	}
 }
 
