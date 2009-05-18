@@ -2,6 +2,7 @@
 #define traktor_render_ShaderGraphOptimizer_H
 
 #include <set>
+#include <map>
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
@@ -60,9 +61,12 @@ public:
 private:
 	Ref< ShaderGraph > m_shaderGraph;
 	std::set< const Node* > m_visited;
+	std::map< const Node*, int > m_orderComplexity;
 	int32_t m_insertedCount;
 
 	void insertInterpolators(Node* node);
+
+	void updateOrderComplexity();
 };
 
 	}
