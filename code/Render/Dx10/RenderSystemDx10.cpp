@@ -161,7 +161,13 @@ RenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderV
 		return 0;
 	}
 
-	return gc_new< RenderViewDx10 >(m_context, m_d3dDevice, d3dSwapChain, scd);
+	return gc_new< RenderViewDx10 >(
+		m_context,
+		m_d3dDevice,
+		d3dSwapChain,
+		cref(scd),
+		desc.waitVBlank
+	);
 }
 
 VertexBuffer* RenderSystemDx10::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
