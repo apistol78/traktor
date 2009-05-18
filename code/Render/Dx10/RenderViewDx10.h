@@ -38,7 +38,8 @@ public:
 		ContextDx10* context,
 		ID3D10Device* d3dDevice,
 		IDXGISwapChain* d3dSwapChain,
-		const DXGI_SWAP_CHAIN_DESC& scd
+		const DXGI_SWAP_CHAIN_DESC& scd,
+		bool waitVBlank
 	);
 
 	virtual ~RenderViewDx10();
@@ -76,6 +77,7 @@ private:
 	ComRef< ID3D10RenderTargetView > m_d3dRenderTargetView;
 	ComRef< ID3D10Texture2D > m_d3dDepthStencil;
 	ComRef< ID3D10DepthStencilView > m_d3dDepthStencilView;
+	bool m_waitVBlank;
 
 	D3D10_VIEWPORT m_d3dViewport;
 

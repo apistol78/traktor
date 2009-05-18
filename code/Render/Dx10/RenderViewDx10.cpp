@@ -31,11 +31,13 @@ RenderViewDx10::RenderViewDx10(
 	ContextDx10* context,
 	ID3D10Device* d3dDevice,
 	IDXGISwapChain* d3dSwapChain,
-	const DXGI_SWAP_CHAIN_DESC& scd
+	const DXGI_SWAP_CHAIN_DESC& scd,
+	bool waitVBlank
 )
 :	m_context(context)
 ,	m_d3dDevice(d3dDevice)
 ,	m_d3dSwapChain(d3dSwapChain)
+,	m_waitVBlank(waitVBlank)
 ,	m_dirty(false)
 ,	m_currentVertexBuffer(0)
 ,	m_currentIndexBuffer(0)
@@ -56,7 +58,7 @@ RenderViewDx10::RenderViewDx10(
 
 	dtd.MipLevels = 1;
 	dtd.ArraySize = 1;
-	dtd.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	dtd.Format = DXGI_FORMAT_D16_UNORM;
 	dtd.Usage = D3D10_USAGE_DEFAULT;
 	dtd.BindFlags = D3D10_BIND_DEPTH_STENCIL;
 	dtd.CPUAccessFlags = 0;
@@ -221,6 +223,9 @@ bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget, b
 		rts->getD3D10DepthTextureView()
 	};
 
+	if (keepDepthStencil)
+		rs.d3dDepthStencilView = m_renderStateStack.back().d3dDepthStencilView;
+
 	m_renderStateStack.push_back(rs);
 
 	m_d3dDevice->OMSetRenderTargets(1, &rs.d3dRenderView, rs.d3dDepthStencilView);
@@ -365,7 +370,7 @@ void RenderViewDx10::end()
 
 void RenderViewDx10::present()
 {
-	m_d3dSwapChain->Present(0, 0);
+	m_d3dSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
 }
 
