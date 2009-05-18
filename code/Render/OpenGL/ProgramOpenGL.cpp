@@ -79,8 +79,6 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 			return false;
 		}
 	}
-	else
-		log::info << L"GLSL vertex shader compiled successfully" << Endl;
 	
 	GLhandleARB fragmentObject = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
@@ -102,8 +100,6 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 			return false;
 		}
 	}
-	else
-		log::info << L"GLSL fragment shader compiled successfully" << Endl;
 
 	m_program = glCreateProgramObjectARB();
 
@@ -123,8 +119,6 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 			return false;
 		}
 	}
-	else
-		log::info << L"GLSL program linked successfully" << Endl;
 
 	GLint uniformCount;
 	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniformCount));
@@ -427,9 +421,9 @@ bool ProgramOpenGL::activate()
 				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 			}
 
-			T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MAG_FILTER, m_renderState.samplerStates[i->unit].magFilter));
-			T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_S, m_renderState.samplerStates[i->unit].wrapS));
-			T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_T, m_renderState.samplerStates[i->unit].wrapT));
+			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MAG_FILTER, m_renderState.samplerStates[i->unit].magFilter));
+			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_S, m_renderState.samplerStates[i->unit].wrapS));
+			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_T, m_renderState.samplerStates[i->unit].wrapT));
 
 			T_OGL_SAFE(glUniform1iARB(i->location, i->unit));
 			T_OGL_SAFE(glUniform4fARB(i->locationOriginScale, st.originScale.x(), st.originScale.y(), st.originScale.z(), st.originScale.w()));

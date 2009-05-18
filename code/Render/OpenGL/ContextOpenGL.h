@@ -88,7 +88,6 @@ private:
 	HGLRC m_hRC;
 	uint32_t m_count;
 	uint32_t m_ownerThreadId;
-	static std::map< uint32_t, ContextOpenGL* > ms_contextThreads;
 #elif defined(__APPLE__)
 	WindowRef m_window;
 	ControlRef m_control;
