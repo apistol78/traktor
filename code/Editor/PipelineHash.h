@@ -6,6 +6,7 @@
 #include "Core/Misc/MD5.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Guid.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,6 +47,7 @@ public:
 
 private:
 	std::map< Guid, Hash > m_hash;
+	mutable Semaphore m_lock;
 };
 
 	}

@@ -6,24 +6,6 @@
 namespace traktor
 {
 
-LogTargetMultiplex::LogTargetMultiplex(LogTarget* lt1, LogTarget* lt2, LogTarget* lt3, LogTarget* lt4)
-{
-	if (lt1)
-		m_logTargets.push_back(lt1);
-	if (lt2)
-		m_logTargets.push_back(lt2);
-	if (lt3)
-		m_logTargets.push_back(lt3);
-	if (lt4)
-		m_logTargets.push_back(lt4);
-}
-
-void LogTargetMultiplex::log(const std::wstring& str)
-{
-	for (std::vector< LogTarget* >::iterator i = m_logTargets.begin(); i != m_logTargets.end(); ++i)
-		(*i)->log(str);
-}
-
 LogTargetConsole::LogTargetConsole(const std::wstring& prefix)
 :	m_prefix(prefix)
 {

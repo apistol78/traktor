@@ -1,4 +1,5 @@
 #include "Editor/PipelineHash.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -12,11 +13,14 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PipelineHash", PipelineHash
 
 void PipelineHash::set(const Guid& guid, const Hash& hash)
 {
+	Acquire< Semaphore > lock(m_lock);
 	m_hash[guid] = hash;
 }
 
 bool PipelineHash::get(const Guid& guid, Hash& outHash) const
 {
+	Acquire< Semaphore > lock(m_lock);
+
 	std::map< Guid, Hash >::const_iterator i = m_hash.find(guid);
 	if (i == m_hash.end())
 		return false;
