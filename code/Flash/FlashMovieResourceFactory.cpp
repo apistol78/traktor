@@ -5,6 +5,7 @@
 #include "Flash/SwfReader.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Core/Io/MemoryStream.h"
 
 namespace traktor
 {
@@ -39,8 +40,25 @@ Object* FlashMovieResourceFactory::create(const Type& resourceType, const Guid& 
 	if (!stream)
 		return 0;
 
-	flash::SwfReader swf(stream);
-	return flash::FlashMovieFactory().createMovie(&swf);
+	uint32_t assetSize = stream->available();
+	std::vector< uint8_t > assetBlob(assetSize);
+
+	uint32_t offset = 0;
+	while (offset < assetSize)
+	{
+		int nread = stream->read(&assetBlob[offset], assetSize - offset);
+		if (nread < 0)
+			return false;
+		offset += nread;
+	}
+
+	stream->close();
+
+	Ref< MemoryStream > memoryStream = gc_new< MemoryStream >(&assetBlob[0], int(assetSize), true, false);
+	Ref< SwfReader > swf = gc_new< SwfReader >(memoryStream);
+
+	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
+	return movie;
 }
 
 	}
