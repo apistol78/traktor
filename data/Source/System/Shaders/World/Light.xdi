@@ -16,16 +16,13 @@
 					<name>SpecularRoughness</name>
 				</item>
 				<item>
-					<name>SurfaceColor</name>
-				</item>
-				<item>
-					<name>DiffuseTerm</name>
-				</item>
-				<item>
 					<name>Position</name>
 				</item>
 				<item>
 					<name>Normal</name>
+				</item>
+				<item>
+					<name>Shadow</name>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -46,16 +43,13 @@
 					<name>Normal</name>
 				</item>
 				<item>
-					<name>DiffuseTerm</name>
-				</item>
-				<item>
-					<name>SurfaceColor</name>
-				</item>
-				<item>
 					<name>SpecularRoughness</name>
 				</item>
 				<item>
 					<name>EyeDirection</name>
+				</item>
+				<item>
+					<name>Shadow</name>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -84,7 +78,7 @@
 			<comment></comment>
 			<position>
 				<first>-409</first>
-				<second>113</second>
+				<second>114</second>
 			</position>
 			<name>Position</name>
 		</item>
@@ -92,7 +86,7 @@
 			<comment></comment>
 			<position>
 				<first>-466</first>
-				<second>163</second>
+				<second>166</second>
 			</position>
 			<name>SpecularRoughness</name>
 		</item>
@@ -100,7 +94,7 @@
 			<comment></comment>
 			<position>
 				<first>-405</first>
-				<second>138</second>
+				<second>140</second>
 			</position>
 			<name>Normal</name>
 		</item>
@@ -111,6 +105,14 @@
 				<second>95</second>
 			</position>
 			<parameterName>LightEnableComplex</parameterName>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>-410</first>
+				<second>192</second>
+			</position>
+			<name>Shadow</name>
 		</item>
 	</nodes>
 	<edges>
@@ -212,6 +214,26 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Shadow</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Shadow</name>
 			</destination>
 		</item>
 	</edges>
