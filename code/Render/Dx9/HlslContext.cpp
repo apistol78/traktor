@@ -37,6 +37,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 		variable = m_currentShader->getVariable(sourcePin);
 	}
 
+	T_ASSERT (!variable || variable->getType() != HtVoid);
 	return variable;
 }
 
