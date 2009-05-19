@@ -127,7 +127,7 @@
 				<first>749</first>
 				<second>462</second>
 			</position>
-			<value>2.5</value>
+			<value>2.3</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment></comment>
@@ -135,7 +135,7 @@
 				<first>748</first>
 				<second>492</second>
 			</position>
-			<value>-2</value>
+			<value>-2.1</value>
 		</item>
 		<item type="traktor.render.Dot">
 			<comment></comment>
