@@ -199,24 +199,28 @@ void ScriptContextLua::pushAny(const Any& any)
 		lua_pushstring(m_luaState, wstombs(any.getString()).c_str());
 	else if (any.isObject())
 	{
-		for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
+		if (any.getObject())
 		{
-			if (&i->scriptClass->getExportType() == &any.getObject()->getType())
+			const Type* objectType = &any.getObject()->getType();
+			for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 			{
-				lua_newtable(m_luaState);
+				if (&i->scriptClass->getExportType() == objectType)
+				{
+					lua_newtable(m_luaState);
 
-				lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
-				lua_setmetatable(m_luaState, -2);
+					lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
+					lua_setmetatable(m_luaState, -2);
 
-				void* data = lua_newuserdata(m_luaState, sizeof(void*));		// +1
-				*(Ref< Object >**)data = new Ref< Object >(any.getObject());
-				lua_newtable(m_luaState);										// +1
-				lua_pushcfunction(m_luaState, gcMethod);						// +1
-				lua_setfield(m_luaState, -2, "__gc");							// -1
-				lua_setmetatable(m_luaState, -2);								// -1
+					void* data = lua_newuserdata(m_luaState, sizeof(void*));		// +1
+					*(Ref< Object >**)data = new Ref< Object >(any.getObject());
+					lua_newtable(m_luaState);										// +1
+					lua_pushcfunction(m_luaState, gcMethod);						// +1
+					lua_setfield(m_luaState, -2, "__gc");							// -1
+					lua_setmetatable(m_luaState, -2);								// -1
 
-				lua_setfield(m_luaState, -2, "__this");							// -1
-				return;
+					lua_setfield(m_luaState, -2, "__this");							// -1
+					return;
+				}
 			}
 		}
 		lua_pushnil(m_luaState);
