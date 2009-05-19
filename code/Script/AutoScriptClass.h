@@ -255,6 +255,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 2 > : p
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 1, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0])
 		);
@@ -281,6 +282,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 2 > : public 
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 1, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0])
 		);
@@ -310,6 +312,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 3 > : p
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 2, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1])
@@ -338,6 +341,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 3 > : public 
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 2, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1])
@@ -369,6 +373,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 4 > : p
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 3, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1]),
@@ -399,6 +404,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 4 > : public 
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 3, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1]),
@@ -432,6 +438,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 5 > : p
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 4, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1]),
@@ -464,6 +471,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 5 > : public 
 
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const
 	{
+		T_ASSERT_M (args.size() >= 4, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1]),
