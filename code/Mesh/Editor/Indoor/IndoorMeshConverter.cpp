@@ -1,7 +1,6 @@
 #include <map>
 #include <limits>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
-#include "Mesh/Editor/Indoor/BspTree.h"
 #include "Mesh/Editor/Indoor/WfObjExporter.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
@@ -16,6 +15,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/BspTree.h"
 #include "Core/Math/Triangulator.h"
 #include "Core/Math/Format.h"
 #include "Core/Log/Log.h"

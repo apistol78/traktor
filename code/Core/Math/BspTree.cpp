@@ -1,10 +1,8 @@
-#include "Mesh/Editor/Indoor/BspTree.h"
+#include "Core/Math/BspTree.h"
 #include "Core/Heap/HeapNew.h"
 
 namespace traktor
 {
-	namespace mesh
-	{
 
 bool BspTree::build(const AlignedVector< Winding >& polygons)
 {
@@ -103,5 +101,4 @@ bool BspTree::inside(const BspNode* node, const Winding& w) const
 	return result;
 }
 
-	}
 }
