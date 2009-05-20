@@ -722,7 +722,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (objectEditor);
 
 		// Create object editor dialog.
-		Ref< ObjectEditorDialog > objectEditorDialog = gc_new< ObjectEditorDialog >(objectEditor);
+		Ref< ObjectEditorDialog > objectEditorDialog = gc_new< ObjectEditorDialog >(m_settings, objectEditor);
 		if (!objectEditorDialog->create(this, instance, object))
 		{
 			log::error << L"Failed to create editor" << Endl;

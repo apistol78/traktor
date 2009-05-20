@@ -313,6 +313,12 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, PropertyValue*
 		m_value.erase(propertyName);
 }
 
+PropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
+{
+	std::map< std::wstring, Ref< PropertyValue > >::iterator it = m_value.find(propertyName);
+	return it != m_value.end() ? it->second.getPtr() : 0;
+}
+
 const PropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
 	std::map< std::wstring, Ref< PropertyValue > >::const_iterator it = m_value.find(propertyName);
@@ -351,7 +357,7 @@ Settings::Settings(PropertyGroup* globalGroup, PropertyGroup* userGroup)
 
 void Settings::setProperty(const std::wstring& propertyName, PropertyValue* value)
 {
-	const PropertyValue* globalValue = m_globalGroup->getProperty(propertyName);
+	Ref< const PropertyValue > globalValue = m_globalGroup->getProperty(propertyName);
 	if (globalValue && DeepHash(globalValue) == DeepHash(value))
 	{
 		// Value identical with global value, erase value from user configuration.
@@ -363,9 +369,17 @@ void Settings::setProperty(const std::wstring& propertyName, PropertyValue* valu
 	m_userGroup->setProperty(propertyName, value);
 }
 
+PropertyValue* Settings::getProperty(const std::wstring& propertyName)
+{
+	Ref< PropertyValue > value = m_userGroup->getProperty(propertyName);
+	if (!value)
+		value = m_globalGroup->getProperty(propertyName);
+	return value;
+}
+
 const PropertyValue* Settings::getProperty(const std::wstring& propertyName) const
 {
-	const PropertyValue* value = m_userGroup->getProperty(propertyName);
+	Ref< const PropertyValue > value = m_userGroup->getProperty(propertyName);
 	if (!value)
 		value = m_globalGroup->getProperty(propertyName);
 	return value;
