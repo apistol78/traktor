@@ -24,18 +24,7 @@ Winding::Winding(const Vector4* points_, size_t npoints)
 Plane Winding::plane() const
 {
 	T_ASSERT (points.size() >= 3);
-	
-	size_t i = 2;
-	for (; i < points.size(); ++i)
-	{
-		Vector4 e1 = (points[1] - points[0]).normalized();
-		Vector4 e2 = (points[i] - points[0]).normalized();
-		if (std::fabs(1.0f - dot3(e1, e2)) > FUZZY_EPSILON)
-			break;
-	}
-	T_ASSERT (i < points.size());
-
-	return Plane(points[0], points[1], points[i]);
+	return Plane(points[0], points[1], points[2]);
 }
 
 void Winding::split(const Plane& plane, Winding& outFront, Winding& outBack) const
