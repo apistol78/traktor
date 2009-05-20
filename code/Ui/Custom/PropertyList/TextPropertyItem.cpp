@@ -3,6 +3,7 @@
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Edit.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseEvent.h"
@@ -135,7 +136,7 @@ void TextPropertyItem::eventEditFocus(Event* event)
 
 void TextPropertyItem::eventClick(Event* event)
 {
-	notifyCommand();
+	notifyCommand(Command(L"Property.Edit"));
 }
 
 		}

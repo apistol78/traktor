@@ -1,6 +1,7 @@
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Core/Io/StringOutputStream.h"
 
@@ -80,7 +81,7 @@ void ObjectPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 void ObjectPropertyItem::eventClick(Event* event)
 {
-	notifyCommand();
+	notifyCommand(Command(L"Property.Edit"));
 }
 
 		}

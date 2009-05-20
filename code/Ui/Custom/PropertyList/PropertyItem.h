@@ -21,6 +21,7 @@ namespace traktor
 
 class Canvas;
 class Rect;
+class Command;
 class MouseEvent;
 
 		namespace custom
@@ -69,7 +70,7 @@ protected:
 
 	void notifyUpdate();
 
-	void notifyCommand();
+	void notifyCommand(const Command& command);
 
 	void notifyChange();
 
