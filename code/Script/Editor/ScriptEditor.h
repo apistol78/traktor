@@ -14,11 +14,23 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class Editor;
+
+	}
+
 	namespace ui
 	{
+
+class Event;
+class ListBox;
+
 		namespace custom
 		{
 
+class Splitter;
 class SyntaxRichEdit;
 
 		}
@@ -34,6 +46,8 @@ class T_DLLCLASS ScriptEditor : public editor::ObjectEditor
 	T_RTTI_CLASS(ScriptEditor)
 
 public:
+	ScriptEditor(editor::Editor* editor);
+
 	virtual bool create(ui::Widget* parent, db::Instance* instance, Object* object);
 
 	virtual void destroy();
@@ -41,8 +55,17 @@ public:
 	virtual void apply();
 
 private:
+	editor::Editor* m_editor;
 	Ref< Script > m_script;
+	Ref< ui::custom::Splitter > m_splitter;
+	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
+
+	void updateDependencyList();
+
+	void eventDependencyToolClick(ui::Event* event);
+
+	void eventDependencyListDoubleClick(ui::Event* event);
 };
 
 	}
