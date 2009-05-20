@@ -731,7 +731,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 
 		objectEditorDialog->show();
-		objectEditorDialog->setForeground();
+		//objectEditorDialog->setForeground();
 	}
 	else
 	{

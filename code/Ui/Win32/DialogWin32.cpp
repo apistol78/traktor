@@ -178,8 +178,8 @@ void DialogWin32::setVisible(bool visible)
 			pntPos.x = 0;
 		if(pntPos.y < 0)
 			pntPos.y = 0;
-		SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE);
-		ShowWindow(m_hWnd, SW_SHOW);
+
+		SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 	else
 		ShowWindow(m_hWnd, SW_HIDE);
