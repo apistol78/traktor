@@ -32,6 +32,8 @@ public:
 
 	void remove(ListViewItem* item);
 
+	void removeAll();
+
 	int count() const;
 
 	ListViewItem* get(int index) const;
