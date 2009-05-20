@@ -57,8 +57,11 @@ private:
 	Guid m_value;
 	const Type* m_filterType;
 	Ref< MiniButton > m_buttonEdit;
+	Ref< MiniButton > m_buttonBrowse;
 
-	void eventClick(Event* event);
+	void eventEditClick(Event* event);
+
+	void eventBrowseClick(Event* event);
 };
 
 		}

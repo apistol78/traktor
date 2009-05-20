@@ -2,6 +2,7 @@
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Core/Io/StringOutputStream.h"
 
@@ -82,13 +83,13 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 void ArrayPropertyItem::eventClick(Event* event)
 {
 	if (m_elementType)
-		notifyCommand();
+		notifyCommand(Command(L"Property.Edit"));
 	else
 	{
 		// Add dummy item to indicate where we want to add new element;
 		// the ApplyReflector will detect this item and insert the new element.
 		addChildItem(gc_new< NullPropertyItem >());
-		notifyCommand();
+		notifyCommand(Command(L"Property.Edit"));
 	}
 }
 

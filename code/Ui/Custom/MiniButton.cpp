@@ -93,28 +93,36 @@ void MiniButton::eventPaint(Event* event)
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(rcInner);
 
-	if (m_state == StReleased)
+	if (isEnable())
 	{
-		canvas.setForeground(Color(140, 140, 140));
-		canvas.drawRect(rcInner);
-		
-		rcInner = rcInner.inflate(-1, -1);
+		if (m_state == StReleased)
+		{
+			canvas.setForeground(Color(140, 140, 140));
+			canvas.drawRect(rcInner);
+			
+			rcInner = rcInner.inflate(-1, -1);
 
-		canvas.setForeground(Color(255, 255, 255));
-		canvas.drawLine(rcInner.left, rcInner.bottom - 2, rcInner.left, rcInner.top);
-		canvas.drawLine(rcInner.left, rcInner.top, rcInner.right - 1, rcInner.top);
+			canvas.setForeground(Color(255, 255, 255));
+			canvas.drawLine(rcInner.left, rcInner.bottom - 2, rcInner.left, rcInner.top);
+			canvas.drawLine(rcInner.left, rcInner.top, rcInner.right - 1, rcInner.top);
+			
+			canvas.setForeground(Color(64, 64, 64));
+			canvas.drawLine(rcInner.left + 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.bottom - 1);
+			canvas.drawLine(rcInner.right - 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.top);
+		}
+		else
+		{
+			canvas.setForeground(getSystemColor(ScButtonShadow));
+			canvas.drawRect(rcInner);
 		
-		canvas.setForeground(Color(64, 64, 64));
-		canvas.drawLine(rcInner.left + 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.bottom - 1);
-		canvas.drawLine(rcInner.right - 1, rcInner.bottom - 1, rcInner.right - 1, rcInner.top);
+			if (m_state == StPushed)
+				rcInner = rcInner.offset(1, 1);
+		}
 	}
 	else
 	{
-		canvas.setForeground(getSystemColor(ScButtonShadow));
+		canvas.setForeground(Color(140, 140, 140));
 		canvas.drawRect(rcInner);
-	
-		if (m_state == StPushed)
-			rcInner = rcInner.offset(1, 1);
 	}
 
 	if (m_image)

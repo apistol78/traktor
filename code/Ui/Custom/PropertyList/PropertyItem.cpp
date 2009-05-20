@@ -117,11 +117,11 @@ void PropertyItem::notifyUpdate()
 		m_propertyList->update();
 }
 
-void PropertyItem::notifyCommand()
+void PropertyItem::notifyCommand(const Command& command)
 {
 	if (m_propertyList)
 	{
-		CommandEvent cmdEvent(m_propertyList, this);
+		CommandEvent cmdEvent(m_propertyList, this, command);
 		m_propertyList->raiseEvent(EiCommand, &cmdEvent);
 	}
 }
