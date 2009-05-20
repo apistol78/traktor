@@ -22,6 +22,11 @@ void ListViewItems::remove(ListViewItem* item)
 	m_items.erase(pos);
 }
 
+void ListViewItems::removeAll()
+{
+	m_items.resize(0);
+}
+
 int ListViewItems::count() const
 {
 	return int(m_items.size());
