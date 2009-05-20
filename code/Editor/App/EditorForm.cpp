@@ -1439,7 +1439,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-		if (!tabPage)
+		if (!tabPage || !tabPage->containFocus())
 			return false;
 
 		Ref< EditorPage > editorPage = tabPage->getData< EditorPage >(L"EDITORPAGE");

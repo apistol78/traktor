@@ -125,6 +125,12 @@ bool Widget::hasFocus() const
 	return m_widget->hasFocus();
 }
 
+bool Widget::containFocus() const
+{
+	T_ASSERT (m_widget);
+	return m_widget->containFocus();
+}
+
 void Widget::setFocus()
 {
 	T_ASSERT (m_widget);

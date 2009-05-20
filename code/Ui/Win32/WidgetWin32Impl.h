@@ -130,6 +130,16 @@ public:
 		return bool(GetFocus() == m_hWnd);
 	}
 
+	virtual bool containFocus() const
+	{
+		for (HWND hWndFocus = GetFocus(); hWndFocus != NULL; hWndFocus = GetParent(hWndFocus))
+		{
+			if (hWndFocus == m_hWnd)
+				return true;
+		}
+		return false;
+	}
+
 	virtual void setFocus()
 	{
 		SetFocus(m_hWnd);

@@ -79,6 +79,8 @@ public:
 
 	virtual bool hasFocus() const;
 
+	virtual bool containFocus() const;
+
 	virtual void setFocus();
 
 	virtual void setRect(const Rect& rect);
