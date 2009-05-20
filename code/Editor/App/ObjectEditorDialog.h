@@ -16,6 +16,7 @@ class Instance;
 	namespace editor
 	{
 
+class Settings;
 class ObjectEditor;
 
 class ObjectEditorDialog : public ui::ConfigDialog
@@ -23,13 +24,14 @@ class ObjectEditorDialog : public ui::ConfigDialog
 	T_RTTI_CLASS(ObjectEditorDialog)
 
 public:
-	ObjectEditorDialog(ObjectEditor* objectEditor);
+	ObjectEditorDialog(Settings* settings, ObjectEditor* objectEditor);
 
 	bool create(ui::Widget* parent, db::Instance* instance, Object* object);
 
 	void destroy();
 
 private:
+	Ref< Settings > m_settings;
 	Ref< ObjectEditor > m_objectEditor;
 	Ref< db::Instance > m_instance;
 

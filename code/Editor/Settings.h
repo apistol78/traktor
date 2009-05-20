@@ -259,6 +259,8 @@ public:
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
 
+	PropertyValue* getProperty(const std::wstring& propertyName);
+
 	const PropertyValue* getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
@@ -330,6 +332,8 @@ public:
 	Settings(PropertyGroup* globalGroup, PropertyGroup* userGroup);
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
+
+	PropertyValue* getProperty(const std::wstring& propertyName);
 
 	const PropertyValue* getProperty(const std::wstring& propertyName) const;
 
