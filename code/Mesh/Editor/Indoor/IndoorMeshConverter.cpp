@@ -352,6 +352,10 @@ void createSectors(
 			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
 				wp.points.push_back(hull.points[k->first]);
 
+			Plane portalPlane;
+			if (!wp.getPlane(portalPlane))
+				continue;
+
 			// Collect points from level which is coplanar with hull portal.
 			AlignedVector< Vector4 > coplanarPoints;
 			for (std::vector< Polygon >::const_iterator k = i->polygons.begin(); k != i->polygons.end(); ++k)
@@ -359,7 +363,7 @@ void createSectors(
 				for (std::vector< size_t >::const_iterator it = k->indices.begin(); it != k->indices.end(); ++it)
 				{
 					const Vector4& p = i->vertices[*it].position;
-					if (abs(wp.plane().distance(p)) > FUZZY_EPSILON)
+					if (abs(portalPlane.distance(p)) > FUZZY_EPSILON)
 						continue;
 
 					coplanarPoints.push_back(p);
@@ -373,8 +377,8 @@ void createSectors(
 
 			const Vector4 up(0.0f, 1.0f, 0.0f, 0.0f);
 
-			Vector4 px =  cross(wp.plane().normal(), up).normalized();
-			Vector4 py = -cross(px, wp.plane().normal()).normalized();
+			Vector4 px =  cross(portalPlane.normal(), up).normalized();
+			Vector4 py = -cross(px, portalPlane.normal()).normalized();
 
 			Vector2 mn(std::numeric_limits< float >::max(), std::numeric_limits< float >::max());
 			Vector2 mx = -mn;
@@ -387,7 +391,7 @@ void createSectors(
 				mx.y = max< float >(mx.y, dot3(*k, py));
 			}
 
-			Vector4 base = (wp.plane().normal() * wp.plane().distance()).xyz1();
+			Vector4 base = (portalPlane.normal() * portalPlane.distance()).xyz1();
 
 			Vector4 r[] =
 			{

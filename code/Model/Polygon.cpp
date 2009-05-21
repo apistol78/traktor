@@ -13,6 +13,25 @@ Polygon::Polygon()
 {
 }
 
+Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3)
+:	m_material(material)
+,	m_vertices(3)
+{
+	m_vertices[0] = vertex1;
+	m_vertices[1] = vertex2;
+	m_vertices[2] = vertex3;
+}
+
+Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3, uint32_t vertex4)
+:	m_material(material)
+,	m_vertices(4)
+{
+	m_vertices[0] = vertex1;
+	m_vertices[1] = vertex2;
+	m_vertices[2] = vertex3;
+	m_vertices[3] = vertex4;
+}
+
 void Polygon::setMaterial(uint32_t material)
 {
 	m_material = material;

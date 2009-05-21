@@ -27,6 +27,10 @@ class T_DLLCLASS Polygon : public Object
 public:
 	Polygon();
 
+	Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3);
+
+	Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3, uint32_t vertex4);
+
 	void setMaterial(uint32_t material);
 
 	uint32_t getMaterial() const;

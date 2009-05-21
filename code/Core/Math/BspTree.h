@@ -46,7 +46,7 @@ private:
 
 	Ref< BspNode > m_root;
 
-	BspNode* recursiveBuild(const AlignedVector< Winding >& polygons);
+	BspNode* recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes);
 
 	bool inside(const BspNode* node, const Vector4& pt) const;
 
@@ -59,7 +59,13 @@ private:
 
 		int cf = w.classify(node->plane);
 		if (cf == Winding::CfCoplanar)
-			cf = dot3(node->plane.normal(), w.plane().normal()) >= 0.0f ? Winding::CfFront : Winding::CfBack;
+		{
+			Plane polygonPlane;
+			if (w.getPlane(polygonPlane))
+				cf = dot3(node->plane.normal(), polygonPlane.normal()) >= 0.0f ? Winding::CfFront : Winding::CfBack;
+			else
+				cf = Winding::CfFront;
+		}
 
 		if (cf == Winding::CfFront)
 		{

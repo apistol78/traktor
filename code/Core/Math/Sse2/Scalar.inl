@@ -133,4 +133,9 @@ T_MATH_INLINE Scalar squareRoot(const Scalar& s)
 	return Scalar(_mm_sqrt_ps(s.m_data));
 }
 
+T_MATH_INLINE Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c)
+{
+	return a * (Scalar(1.0f) - c) + b * c;
+}
+
 }

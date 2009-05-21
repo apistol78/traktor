@@ -1,7 +1,7 @@
 #include "Model/Formats/ModelFormatObj.h"
 #include "Model/Model.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Io/AnsiEncoding.h"
@@ -126,7 +126,8 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 	if (!file)
 		return false;
 
-	FileOutputStream s(file, gc_new< AnsiEncoding >());
+	BufferedStream bs(file, 512 * 1024);
+	FileOutputStream s(&bs, gc_new< AnsiEncoding >());
 
 	s << L"o " << filePath.getFileName() << Endl;
 	s << Endl;

@@ -8,6 +8,8 @@
 
 namespace traktor
 {
+	namespace
+	{
 
 bool compareEqual(const Vector4& a, const Vector4& b)
 {
@@ -28,6 +30,8 @@ bool compareNotEqual(const Vector4& a, const Vector4& b)
 	}
 	return false;
 }
+
+	}
 
 void CaseMath::run()
 {
