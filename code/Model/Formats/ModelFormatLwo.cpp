@@ -8,7 +8,7 @@ extern "C"
 }
 
 #include <limits>
-#include "Model/Import/ImportFormatLwo.h"
+#include "Model/Formats/ModelFormatLwo.h"
 #include "Model/Model.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/TString.h"
@@ -300,23 +300,23 @@ bool createMesh(const lwObject* lwo, Model* outModel)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ImportFormatLwo", ImportFormatLwo, ImportFormat)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ModelFormatLwo", ModelFormatLwo, ModelFormat)
 
-void ImportFormatLwo::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
+void ModelFormatLwo::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
 	outDescription = L"Lightwave Object";
 	outExtensions.push_back(L"lwo");
 	outExtensions.push_back(L"lw");
 }
 
-bool ImportFormatLwo::supportFormat(const Path& filePath) const
+bool ModelFormatLwo::supportFormat(const Path& filePath) const
 {
 	return 
 		compareIgnoreCase(filePath.getExtension(), L"lwo") == 0 ||
 		compareIgnoreCase(filePath.getExtension(), L"lw") == 0;
 }
 
-model::Model* ImportFormatLwo::import(const Path& filePath, uint32_t importFlags) const
+Model* ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
 {
 	std::string fileNameTmp = wstombs(filePath);
 
@@ -344,6 +344,11 @@ model::Model* ImportFormatLwo::import(const Path& filePath, uint32_t importFlags
 	lwFreeObject(lwo);
 
 	return md;
+}
+
+bool ModelFormatLwo::write(const Path& filePath, const Model* model) const
+{
+	return false;
 }
 
 	}

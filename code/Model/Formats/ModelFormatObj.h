@@ -1,7 +1,7 @@
-#ifndef traktor_model_ImportFormatObj_H
-#define traktor_model_ImportFormatObj_H
+#ifndef traktor_model_ModelFormatObj_H
+#define traktor_model_ModelFormatObj_H
 
-#include "Model/Import/ImportFormat.h"
+#include "Model/Formats/ModelFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,19 +19,21 @@ namespace traktor
 /*! \brief Wavefront object model format.
  * \ingroup Model
  */
-class T_DLLCLASS ImportFormatObj : public ImportFormat
+class T_DLLCLASS ModelFormatObj : public ModelFormat
 {
-	T_RTTI_CLASS(ImportFormatObj)
+	T_RTTI_CLASS(ModelFormatObj)
 
 public:
 	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const;
 
 	virtual bool supportFormat(const Path& filePath) const;
 
-	virtual model::Model* import(const Path& filePath, uint32_t importFlags) const;
+	virtual Model* read(const Path& filePath, uint32_t importFlags) const;
+
+	virtual bool write(const Path& filePath, const Model* model) const;
 };
 
 	}
 }
 
-#endif	// traktor_model_ImportFormatObj_H
+#endif	// traktor_model_ModelFormatObj_H

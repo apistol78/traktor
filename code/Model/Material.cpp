@@ -20,6 +20,19 @@ Material::Material()
 {
 }
 
+Material::Material(const std::wstring& name)
+:	m_name(name)
+,	m_diffuseMap(L"")
+,	m_diffuseBlendOperator(BoDecal)
+,	m_specularMap(L"")
+,	m_normalMap(L"")
+,	m_color(255, 255, 255, 255)
+,	m_diffuseTerm(1.0f)
+,	m_specularRoughness(0.0f)
+,	m_doubleSided(false)
+{
+}
+
 void Material::setName(const std::wstring& name)
 {
 	m_name = name;

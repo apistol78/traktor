@@ -12,7 +12,7 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
-#include "Model/Import/ImportFormat.h"
+#include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/ShaderGraph.h"
@@ -97,7 +97,7 @@ bool MeshPipeline::buildDependencies(
 
 	// Import source model.
 	Path fileName = asset->getFileName();
-	params->m_model = model::ImportFormat::importAny(fileName);
+	params->m_model = model::ModelFormat::readAny(fileName);
 	if (!params->m_model)
 	{
 		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName << L")" << Endl;

@@ -38,6 +38,8 @@ public:
 
 	Material();
 
+	Material(const std::wstring& name);
+
 	void setName(const std::wstring& name);
 	
 	const std::wstring& getName() const;

@@ -17,6 +17,15 @@ Vertex::Vertex()
 {
 }
 
+Vertex::Vertex(uint32_t position)
+:	m_position(position)
+,	m_normal(c_InvalidIndex)
+,	m_tangent(c_InvalidIndex)
+,	m_binormal(c_InvalidIndex)
+,	m_texCoord(c_InvalidIndex)
+{
+}
+
 void Vertex::setPosition(uint32_t position)
 {
 	m_position = position;
