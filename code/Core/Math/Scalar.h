@@ -74,6 +74,8 @@ T_MATH_INLINE T_DLLCLASS Scalar abs(const Scalar& s);
 
 T_MATH_INLINE T_DLLCLASS Scalar squareRoot(const Scalar& s);
 
+T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c);
+
 }
 
 #if defined(T_MATH_USE_INLINE)

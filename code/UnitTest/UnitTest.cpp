@@ -7,6 +7,7 @@
 #include "UnitTest/CaseJob.h"
 #include "UnitTest/CaseHeap.h"
 #include "UnitTest/CaseMath.h"
+#include "UnitTest/CaseWinding.h"
 #include "UnitTest/CasePath.h"
 #include "UnitTest/CaseXmlPullParser.h"
 #include "UnitTest/CaseXmlDocument.h"
@@ -40,6 +41,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	log::info << L"Case math" << Endl;
 	traktor::CaseMath().run();
+
+	log::info << L"Case winding" << Endl;
+	traktor::CaseWinding().run();
 
 	log::info << L"Case path" << Endl;
 	traktor::CasePath().run();

@@ -38,7 +38,9 @@ public:
 
 	Winding(const Vector4* points, size_t npoints);
 
-	Plane plane() const;
+	bool angleIndices(uint32_t& outI1, uint32_t& outI2, uint32_t& outI3) const;
+
+	bool getPlane(Plane& outPlane) const;
 
 	void split(const Plane& plane, Winding& outFront, Winding& outBack) const;
 

@@ -1,12 +1,23 @@
 #include "Core/Math/BspTree.h"
+#include "Core/Math/Const.h"
 #include "Core/Heap/HeapNew.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
 
 bool BspTree::build(const AlignedVector< Winding >& polygons)
 {
-	m_root = recursiveBuild(polygons);
+	// Calculate polygon planes.
+	AlignedVector< Plane > planes(polygons.size());
+	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	{
+		if (!polygons[i].getPlane(planes[i]))
+			return false;
+	}
+
+	// Recursively build nodes.
+	m_root = recursiveBuild(polygons, planes);
 	return bool(m_root != 0);
 }
 
@@ -22,42 +33,50 @@ bool BspTree::inside(const Winding& w) const
 	return inside(m_root, w);
 }
 
-BspTree::BspNode* BspTree::recursiveBuild(const AlignedVector< Winding >& polygons)
+BspTree::BspNode* BspTree::recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes)
 {
-	BspNode* node = gc_new< BspNode >();
-	
-	node->plane = polygons[0].plane();
+	Ref< BspNode > node = gc_new< BspNode >();
+	node->plane = planes[0];
 
-	AlignedVector< Winding > front, back;
+	AlignedVector< Winding > frontPolygons, backPolygons;
+	AlignedVector< Plane > frontPlanes, backPlanes;
+
 	for (size_t i = 1; i < polygons.size(); ++i)
 	{
 		int cf = polygons[i].classify(node->plane);
-		if (cf == Winding::CfCoplanar)
-			cf = dot3(node->plane.normal(), polygons[i].plane().normal()) >= 0.0f ? Winding::CfFront : Winding::CfBack;
-
-		if (cf == Winding::CfFront)
-			front.push_back(polygons[i]);
-		else if (cf == Winding::CfBack)
-			back.push_back(polygons[i]);
-		else if (cf == Winding::CfSpan)
+		if (cf == Winding::CfFront || cf == Winding::CfCoplanar)
 		{
+			frontPolygons.push_back(polygons[i]);
+			frontPlanes.push_back(planes[i]);
+		}
+		else if (cf == Winding::CfBack)
+		{
+			backPolygons.push_back(polygons[i]);
+			backPlanes.push_back(planes[i]);
+		}
+		else
+		{
+			T_ASSERT (cf == Winding::CfSpan);
 			Winding f, b;
 			
 			polygons[i].split(node->plane, f, b);
-			T_ASSERT (!f.points.empty());
-			T_ASSERT (!b.points.empty());
+			T_ASSERT (f.points.size() >= 3);
+			T_ASSERT (b.points.size() >= 3);
 
-			if (f.points.size() >= 3)
-				front.push_back(f);
-			if (b.points.size() >= 3)
-				back.push_back(b);
+			frontPolygons.push_back(f);
+			frontPlanes.push_back(planes[i]);
+			backPolygons.push_back(b);
+			backPlanes.push_back(planes[i]);
 		}
 	}
 
-	if (!front.empty())
-		node->front = recursiveBuild(front);
-	if (!back.empty())
-		node->back = recursiveBuild(back);
+	T_ASSERT (frontPolygons.size() == frontPlanes.size());
+	T_ASSERT (backPolygons.size() == backPlanes.size());
+
+	if (!frontPolygons.empty())
+		node->front = recursiveBuild(frontPolygons, frontPlanes);
+	if (!backPolygons.empty())
+		node->back = recursiveBuild(backPolygons, backPlanes);
 
 	return node;
 }
@@ -65,10 +84,18 @@ BspTree::BspNode* BspTree::recursiveBuild(const AlignedVector< Winding >& polygo
 bool BspTree::inside(const BspNode* node, const Vector4& pt) const
 {
 	float d = node->plane.distance(pt);
-	if (d >= 0.0f)
+	if (d > FUZZY_EPSILON)
 		return node->front ? inside(node->front, pt) : true;
-	else
+	else if (d < -FUZZY_EPSILON)
 		return node->back ? inside(node->back, pt) : false;
+	else
+	{
+		if (node->front && inside(node->front, pt))
+				return true;
+		if (node->back && inside(node->back, pt))
+				return true;
+	}
+	return false;
 }
 
 bool BspTree::inside(const BspNode* node, const Winding& w) const
@@ -76,16 +103,13 @@ bool BspTree::inside(const BspNode* node, const Winding& w) const
 	bool result = false;
 
 	int cf = w.classify(node->plane);
-
-	if (cf == Winding::CfCoplanar)
-		cf = dot3(node->plane.normal(), w.plane().normal()) >= 0.0f ? Winding::CfFront : Winding::CfBack;
-
-	if (cf == Winding::CfFront)
+	if (cf == Winding::CfFront || cf == Winding::CfCoplanar)
 		result = node->front ? inside(node->front, w) : true;
 	else if (cf == Winding::CfBack)
 		result = node->back ? inside(node->back, w) : false;
-	else if (cf == Winding::CfSpan)
+	else
 	{
+		T_ASSERT (cf == Winding::CfSpan);
 		Winding f, b;
 
 		w.split(node->plane, f, b);

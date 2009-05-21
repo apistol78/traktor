@@ -135,7 +135,8 @@ void IndoorMesh::findVisibleSectors(
 					view * *j
 				);
 
-			if (clipped.plane().normal().z() >= 0.0f)
+			Plane clippedPlane;
+			if (clipped.getPlane(clippedPlane) && clippedPlane.normal().z() >= 0.0f)
 				std::reverse(clipped.points.begin(), clipped.points.end());
 
 			for (AlignedVector< Plane >::const_iterator j = frustum.begin(); j != frustum.end(); ++j)
