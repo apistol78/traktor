@@ -28,6 +28,8 @@ class T_DLLCLASS Vertex : public Object
 public:
 	Vertex();
 
+	Vertex(uint32_t position);
+
 	void setPosition(uint32_t position);
 
 	uint32_t getPosition() const;

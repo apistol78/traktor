@@ -1,7 +1,7 @@
-#ifndef traktor_model_ImportFormatCollada_H
-#define traktor_model_ImportFormatCollada_H
+#ifndef traktor_model_ModelFormatCollada_H
+#define traktor_model_ModelFormatCollada_H
 
-#include "Model/Import/ImportFormat.h"
+#include "Model/Formats/ModelFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,20 +19,21 @@ namespace traktor
 /*! \brief Collada model format.
  * \ingroup Model
  */
-class T_DLLCLASS ImportFormatCollada : public ImportFormat
+class T_DLLCLASS ModelFormatCollada : public ModelFormat
 {
-	T_RTTI_CLASS(ImportFormatCollada)
+	T_RTTI_CLASS(ModelFormatCollada)
 
 public:
 	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const;
 
 	virtual bool supportFormat(const Path& filePath) const;
 
-	virtual model::Model* import(const Path& filePath, uint32_t importFlags) const;
+	virtual Model* read(const Path& filePath, uint32_t importFlags) const;
 
+	virtual bool write(const Path& filePath, const Model* model) const;
 };
 
 	}
 }
 
-#endif	// traktor_model_ImportFormatCollada_H
+#endif	// traktor_model_ModelFormatCollada_H

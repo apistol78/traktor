@@ -1,6 +1,6 @@
 #include <algorithm>
 #include <limits>
-#include "Model/Import/ImportFormatCollada.h"
+#include "Model/Formats/ModelFormatCollada.h"
 #include "Model/Model.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringUtils.h"
@@ -275,21 +275,21 @@ void createMesh(xml::Element* libraryGeometries, const RefArray< xml::Element >&
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ImportFormatCollada", ImportFormatCollada, ImportFormat)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ModelFormatCollada", ModelFormatCollada, ModelFormat)
 
-void ImportFormatCollada::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
+void ModelFormatCollada::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
 	outDescription = L"Collada Object";
 	outExtensions.push_back(L"dae");
 }
 
-bool ImportFormatCollada::supportFormat(const Path& filePath) const
+bool ModelFormatCollada::supportFormat(const Path& filePath) const
 {
 	return 
 		compareIgnoreCase(filePath.getExtension(), L"dae") == 0;
 }
 
-model::Model* ImportFormatCollada::import(const Path& filePath, uint32_t importFlags) const
+Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
 {
 	xml::Document doc;
 	
@@ -360,6 +360,11 @@ model::Model* ImportFormatCollada::import(const Path& filePath, uint32_t importF
 	}
 
 	return outModel;
+}
+
+bool ModelFormatCollada::write(const Path& filePath, const Model* model) const
+{
+	return false;
 }
 
 	}

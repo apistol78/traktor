@@ -1,7 +1,6 @@
 #include <map>
 #include <limits>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
-#include "Mesh/Editor/Indoor/WfObjExporter.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Model/Model.h"
@@ -506,12 +505,6 @@ void createSectors(
  * CONVERTER
  */
 
-void writeDebug(
-	const std::map< std::wstring, Hull >& hulls,
-   	const AlignedVector< Sector >& sectors,
-	const AlignedVector< Portal >& portals
-);
-
 MeshResource* IndoorMeshConverter::createResource() const
 {
 	return gc_new< IndoorMeshResource >();
@@ -534,14 +527,6 @@ bool IndoorMeshConverter::convert(
 
 	createHulls(model, hulls);
 	createSectors(model, hulls, sectors, portals);
-
-	/*-----------------------------------------------------------------------*/
-	static bool writeDebugEnable = false;
-	if (writeDebugEnable)
-	{
-		log::info << L"Writing debug meshes" << Endl;
-		writeDebug(hulls, sectors, portals);
-	}
 
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Creating indoor mesh" << Endl;
@@ -682,62 +667,6 @@ bool IndoorMeshConverter::convert(
 	log::info << L"Finished" << Endl;
 
 	return true;
-}
-
-void writeDebug(
-	const std::map< std::wstring, Hull >& hulls,
-   	const AlignedVector< Sector >& sectors,
-	const AlignedVector< Portal >& portals
-)
-{
-	WfObjExporter obj;
-
-	for (std::map< std::wstring, Hull >::const_iterator i = hulls.begin(); i != hulls.end(); ++i)
-	{
-		WfObjExporter obj2;
-
-		for (std::vector< Hull::polygon_t >::const_iterator j = i->second.polygons.begin(); j != i->second.polygons.end(); ++j)
-		{
-			Winding w;
-			for (Hull::polygon_t::const_iterator k = j->begin(); k != j->end(); ++k)
-				w.points.push_back(i->second.points[*k]);
-			obj.addPolygon(i->first + L"_hull", w);
-			obj2.addPolygon(i->first + L"_hull", w);
-		}
-		for (std::vector< Hull::portal_t >::const_iterator j = i->second.portals.begin(); j != i->second.portals.end(); ++j)
-		{
-			Winding w;
-			for (Hull::portal_t::const_iterator k = j->begin(); k != j->end(); ++k)
-				w.points.push_back(i->second.points[k->first]);
-			obj.addPolygon(i->first + L"_hull_portal", w);
-			obj2.addPolygon(i->first + L"_hull_portal", w);
-		}
-
-		obj2.write(L"$(TRAKTOR_HOME)/Indoor_" + i->first + L"_hull.obj");
-	}
-
-	for (AlignedVector< Sector >::const_iterator i = sectors.begin(); i != sectors.end(); ++i)
-	{
-		WfObjExporter obj2;
-
-		for (std::vector< Polygon >::const_iterator j = i->polygons.begin(); j != i->polygons.end(); ++j)
-		{
-			Winding w;
-			for (std::vector< size_t >::const_iterator k = j->indices.begin(); k != j->indices.end(); ++k)
-				w.points.push_back(i->vertices[*k].position);
-			obj.addPolygon(i->name + L"_sector", w);
-			obj2.addPolygon(i->name + L"_sector", w);
-		}
-
-		obj2.write(L"$(TRAKTOR_HOME)/Indoor_" + i->name + L"_sector.obj");
-	}
-
-	obj.write(L"$(TRAKTOR_HOME)/Indoor.obj");
-
-	WfObjExporter obj2;
-	for (AlignedVector< Portal >::const_iterator i = portals.begin(); i != portals.end(); ++i)
-		obj2.addPolygon(L"Portal_" + toString(std::distance(portals.begin(), i)), i->winding);
-	obj2.write(L"$(TRAKTOR_HOME)/Indoor_Portals.obj");
 }
 
 	}

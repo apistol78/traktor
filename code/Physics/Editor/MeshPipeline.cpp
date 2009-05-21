@@ -4,7 +4,7 @@
 #include "Physics/Mesh.h"
 #include "Editor/PipelineManager.h"
 #include "Database/Instance.h"
-#include "Model/Import/ImportFormat.h"
+#include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
 #include "Model/Utilities.h"
 #include "Core/Io/Stream.h"
@@ -60,7 +60,7 @@ bool MeshPipeline::buildOutput(
 	Path fileName = meshAsset->getFileName();
 
 	// Import source model.
-	Ref< model::Model > model = model::ImportFormat::importAny(fileName);
+	Ref< model::Model > model = model::ModelFormat::readAny(fileName);
 	if (!model)
 		return false;
 

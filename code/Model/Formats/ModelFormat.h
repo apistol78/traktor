@@ -1,5 +1,5 @@
-#ifndef traktor_model_ImportFormat_H
-#define traktor_model_ImportFormat_H
+#ifndef traktor_model_ModelFormat_H
+#define traktor_model_ModelFormat_H
 
 #include "Core/Object.h"
 #include "Core/Io/Path.h"
@@ -22,12 +22,12 @@ class Model;
 /*! \brief Model importer format.
  * \ingroup Model
  *
- * ImportFormat is used to import geometry and material
+ * ModelFormat is used to import geometry and material
  * information from proprietary 3rd-party formats.
  */
-class T_DLLCLASS ImportFormat : public Object
+class T_DLLCLASS ModelFormat : public Object
 {
-	T_RTTI_CLASS(ImportFormat)
+	T_RTTI_CLASS(ModelFormat)
 
 public:
 	enum ImportFlags
@@ -54,24 +54,40 @@ public:
 	 */
 	virtual bool supportFormat(const Path& filePath) const = 0;
 
-	/*! \brief Import model.
+	/*! \brief Read model.
 	 *
 	 * \param filePath Path to model file.
 	 * \param importFlags Import flags.
-	 * \return Imported model.
+	 * \return Read model.
 	 */
-	virtual model::Model* import(const Path& filePath, uint32_t importFlags = IfAll) const = 0;
+	virtual Model* read(const Path& filePath, uint32_t importFlags = IfAll) const = 0;
 
-	/*! \brief Automatically import model using appropriate format.
+	/*! \brief Write model.
+	 *
+	 * \param filePath Path to new model file.
+	 * \param model Output model.
+	 * \return True if model written successfully.
+	 */
+	virtual bool write(const Path& filePath, const Model* model) const = 0;
+
+	/*! \brief Automatically read model using appropriate format.
 	 *
 	 * \param filePath Path to model file.
 	 * \param importFlags Import flags.
-	 * \return Imported model.
+	 * \return Read model.
 	 */
-	static model::Model* importAny(const Path& filePath, uint32_t importFlags = IfAll);
+	static Model* readAny(const Path& filePath, uint32_t importFlags = IfAll);
+
+	/*! \brief Automatically write model using format based on filename extension.
+	 *
+	 * \param filePath Path to new model file.
+	 * \param model Output model.
+	 * \return True if model written successfully.
+	 */
+	static bool writeAny(const Path& filePath, const Model* model);
 };
 
 	}
 }
 
-#endif	// traktor_model_ImportFormat_H
+#endif	// traktor_model_ModelFormat_H

@@ -6978,10 +6978,10 @@
 								<items/>
 							</item>
 							<item type="Filter">
-								<name>Import</name>
+								<name>Formats</name>
 								<items>
 									<item type="File">
-										<fileName>Import/*.*</fileName>
+										<fileName>Formats/*.*</fileName>
 										<items/>
 									</item>
 								</items>
