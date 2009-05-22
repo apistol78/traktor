@@ -33,6 +33,7 @@ void StaticMesh::render(
 	const world::WorldRenderView* worldRenderView,
 	const Matrix44& worldTransform,
 	float distance,
+	float userParameter,
 	const IMeshParameterCallback* parameterCallback
 )
 {
@@ -54,6 +55,7 @@ void StaticMesh::render(
 		renderBlock->primitives = &parts[i].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->shaderParams);
 		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform, getBoundingBox());

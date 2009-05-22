@@ -34,6 +34,8 @@ public:
 	void addEntity(Entity* entity);
 	
 	void removeEntity(Entity* entity);
+
+	void removeAllEntities();
 	
 	const RefArray< Entity >& getEntities() const;
 	

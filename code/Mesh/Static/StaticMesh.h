@@ -63,6 +63,7 @@ public:
 		const world::WorldRenderView* worldRenderView,
 		const Matrix44& worldTransform,
 		float distance,
+		float userParameter,
 		const IMeshParameterCallback* parameterCallback
 	);
 
