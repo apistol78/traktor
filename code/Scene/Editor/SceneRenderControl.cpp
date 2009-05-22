@@ -10,11 +10,13 @@
 #include "Scene/Editor/SelectEvent.h"
 #include "Render/RenderSystem.h"
 #include "Render/RenderView.h"
+#include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Physics/PhysicsManager.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldRenderSettings.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityUpdate.h"
@@ -185,15 +187,14 @@ void SceneRenderControl::updateWorldRenderer()
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
 
-	m_worldRenderer = gc_new< world::WorldRenderer >();
-
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
 	for (RefArray< SceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
 		RefArray< world::EntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 
 		for (RefArray< world::EntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			m_worldRenderer->addEntityRenderer(*j);
+			worldEntityRenderers->add(*j);
 	}
 
 	world::WorldViewPort worldViewPort;
@@ -202,8 +203,10 @@ void SceneRenderControl::updateWorldRenderer()
 	worldViewPort.aspect = float(sz.cx) / sz.cy;
 	worldViewPort.fov = deg2rad(80.0f);
 
+	m_worldRenderer = gc_new< world::WorldRenderer >();
 	if (m_worldRenderer->create(
 		*m_worldRenderSettings,
+		worldEntityRenderers,
 		m_context->getRenderSystem(),
 		m_renderView,
 		worldViewPort,
@@ -221,19 +224,46 @@ void SceneRenderControl::updateWorldRenderer()
 void SceneRenderControl::updatePostProcess()
 {
 	if (m_postProcess)
+	{
 		m_postProcess->destroy();
+		m_postProcess = 0;
+	}
+
+	if (m_renderTargetSet)
+	{
+		m_renderTargetSet->destroy();
+		m_renderTargetSet = 0;
+	}
 
 	ui::Size sz = getInnerRect().getSize();
 
 	if (m_postProcessSettings && sz.cx > 0 && sz.cy > 0)
 	{
 		m_postProcess = gc_new< world::PostProcess >();
-		if (!m_postProcess->create(
+		if (m_postProcess->create(
 			m_postProcessSettings,
 			m_context->getRenderSystem(),
 			sz.cx,
 			sz.cy
 		))
+		{
+			render::RenderTargetSetCreateDesc desc;
+
+			desc.count = 1;
+			desc.width = sz.cx;
+			desc.height = sz.cy;
+			desc.multiSample = 4;
+			desc.depthStencil = false;
+			desc.targets[0].format = render::TfR8G8B8A8;
+
+			m_renderTargetSet = m_context->getRenderSystem()->createRenderTargetSet(desc);
+			if (!m_renderTargetSet)
+			{
+				m_postProcess->destroy();
+				m_postProcess = 0;
+			}
+		}
+		else
 			m_postProcess = 0;
 	}
 	else
@@ -462,14 +492,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 
 	// Render XZ grid.
 	{
-		Color clearColor = m_worldRenderSettings->clearColor;
-		Color gridColor(
-			255 - clearColor.r,
-			255 - clearColor.g,
-			255 - clearColor.b,
-			64
-		);
-
+		Color gridColor(0, 0, 0, 64);
 		for (int x = -20; x <= 20; ++x)
 		{
 			float fx = float(x);
@@ -546,7 +569,10 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	m_worldRenderView.setView(view);
 
 	if (rootEntityAdapter && rootEntityAdapter->getEntity())
-		m_worldRenderer->render(m_worldRenderView, deltaTime * m_context->getTimeScale(), rootEntityAdapter->getEntity(), 0);
+	{
+		float scaledDeltaTime = deltaTime * m_context->getTimeScale();
+		m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntityAdapter->getEntity(), 0);
+	}
 
 	// Flush rendering queue to GPU.
 	double startRenderTime = m_timer.getElapsedTime();
@@ -558,7 +584,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			makeFunctor(m_renderView.getPtr(), &render::RenderView::end)
 		);
 
-		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		const float clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
 			clearColor,
@@ -566,7 +592,28 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			128
 		);
 
-		m_worldRenderer->flush(m_postProcess, 0);
+		m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
+
+		if (m_postProcess)
+		{
+			m_renderView->begin(m_renderTargetSet, 0, true);
+			m_renderView->clear(render::CfColor, clearColor, 1.0f, 128);
+		}
+
+		m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+		m_worldRenderer->flush(0);
+
+		if (m_postProcess)
+		{
+			m_renderView->end();
+			m_postProcess->render(
+				m_renderView,
+				m_renderTargetSet,
+				Frustum(),
+				Matrix44(),
+				deltaTime
+			);
+		}
 
 		m_primitiveRenderer->flush(m_renderView);
 	}

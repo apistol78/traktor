@@ -1,8 +1,6 @@
 #ifndef traktor_world_WorldRenderer_H
 #define traktor_world_WorldRenderer_H
 
-//#include <map>
-#include <hash_map>
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Const.h"
@@ -35,10 +33,11 @@ class SimpleTexture;
 	namespace world
 	{
 
-class EntityRenderer;
+//class EntityRenderer;
 class Entity;
 class WorldContext;
 class WorldRenderView;
+class WorldEntityRenderers;
 class PostProcess;
 
 struct WorldViewPort
@@ -57,21 +56,10 @@ struct WorldViewPort
 	}
 };
 
-// Don't share shadow map across slices on Xbox360 as we cannot render
-// multiple times to same render target on Xbox360.
-#if !defined(_XBOX)
-#	define T_SHARE_SLICE_SHADOWMAP 1
-#else
-#	define T_SHARE_SLICE_SHADOWMAP 0
-#endif
-
-typedef stdext::hash_map< const Type*, EntityRenderer* > entity_renderer_map_t;
-//typedef std::map< const Type*, EntityRenderer* > entity_renderer_map_t;
-
 /*! \brief Calculate light-view projection used by shadow mapping.
  * \ingroup World
  *
- * We provide a default implementation if noone is given.
+ * We provide a default implementation if none is given.
  * Default implementation tries to maximize view utilization
  * by projecting view frustum.
  */
@@ -99,11 +87,22 @@ public:
 	) const = 0;
 };
 
+/*! \brief World render flags.
+ * \ingroup World
+ */
+enum WorldRenderFlags
+{
+	WrfDepthMap = 1,
+	WrfShadowMap = 2,
+	WrfVisualOpaque = 4,
+	WrfVisualAlphaBlend = 8
+};
+
 /*! \brief World renderer.
  * \ingroup World
  *
  * The world renderer is a high level renderer which renders
- * entities through specialized entity renderers.
+ * entities through specialized entity renderer.
  * In order to maximize throughput the world renderer is designed with
  * threading and multiple cores in mind as the rendering is split
  * into two parts, one culling and collecting part and one actual rendering
@@ -118,6 +117,7 @@ public:
 
 	bool create(
 		const WorldRenderSettings& settings,
+		WorldEntityRenderers* entityRenderers,
 		render::RenderSystem* renderSystem,
 		render::RenderView* renderView,
 		const WorldViewPort& worldViewPort,
@@ -126,34 +126,6 @@ public:
 	);
 
 	void destroy();
-
-	/*! \brief Add entity renderer.
-	 *
-	 * \param entityRenderer Specialized entity renderer.
-	 */
-	void addEntityRenderer(EntityRenderer* entityRenderer);
-
-	/*! \brief Remove entity renderer.
-	 *
-	 * \param entityRenderer Previously added entity renderer.
-	 */
-	void removeEntityRenderer(EntityRenderer* entityRenderer);
-
-	/*! \brief Find entity renderer.
-	 *
-	 * Find entity renderer which supports given
-	 * entity type.
-	 *
-	 * \param entityType Type of entity to render.
-	 * \return Specialized entity renderer, null if noone was found.
-	 */
-	EntityRenderer* findEntityRenderer(const Type* entityType);
-
-	/*! \brief Get array of all entity renderers.
-	 *
-	 * \return Array of entity renderers.
-	 */
-	const RefArray< EntityRenderer >& getEntityRenderers() const;
 
 	/*! \brief Create a world render view.
 	 *
@@ -164,21 +136,27 @@ public:
 	/*! \name Render steps. */
 	//@{
 
-	/*! \brief Render world from world view.
+	/*! \brief Build "render contexts".
 	 *
 	 * \param worldRenderView World render view.
 	 * \param deltaTime Current delta time.
 	 * \param entity Root entity.
 	 * \param frame Multi threaded context frame.
 	 */
-	void render(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+	void build(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+
+	/*! \brief Render "render contexts".
+	 *
+	 * \param flags Combination of world render flags.
+	 * \param frame Multi threaded context frame.
+	 */
+	void render(uint32_t flags, int frame);
 
 	/*! \brief Flush render contexts.
 	 *
-	 * \param postProcess Post process settings; null if no post processing is to be used.
 	 * \param frame Multi threaded context frame.
 	 */
-	void flush(PostProcess* postProcess, int frame);
+	void flush(int frame);
 
 	//@}
 
@@ -207,7 +185,7 @@ public:
 	}
 
 	inline render::RenderTargetSet* getRenderTargetSet() const {
-		return m_renderTargetSet;
+		return m_depthTargetSet;
 	}
 
 private:
@@ -230,16 +208,40 @@ private:
 	Ref< LightViewProjection > m_lightViewProjection;
 	WorldRenderSettings m_settings;
 	Ref< render::RenderView > m_renderView;
-	Ref< render::RenderTargetSet > m_renderTargetSet;
+	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::SimpleTexture > m_shadowDiscRotation[2];
 	WorldViewPort m_worldViewPort;
-	RefArray< EntityRenderer > m_entityRenderers;
-	entity_renderer_map_t m_entityRendererMap;
 	AlignedVector< float > m_splitPositions;
 	AlignedVector< Frame > m_frames;
+	bool m_haveDepth;
+	bool m_haveShadows;
 	float m_time;
 	uint32_t m_count;
+
+	/*! \brief Build render contexts.
+	 *
+	 * \note This method renders world with shadows
+	 *       regardless of what is specified in the settings.
+	 *
+	 * \param worldRenderView World render view.
+	 * \param deltaTime Current delta time.
+	 * \param entity Root entity.
+	 * \param frame Multi threaded context frame.
+	 */
+	void buildShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+
+	/*! \brief Build render contexts.
+	 *
+	 * \note This method renders world without shadows
+	 *       regardless of what is specified in the settings.
+	 *
+	 * \param worldRenderView World render view.
+	 * \param deltaTime Current delta time.
+	 * \param entity Root entity.
+	 * \param frame Multi threaded context frame.
+	 */
+	void buildNoShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
 };
 
 	}

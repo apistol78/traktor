@@ -1,0 +1,58 @@
+#include <algorithm>
+#include "World/WorldEntityRenderers.h"
+#include "World/Entity/EntityRenderer.h"
+
+namespace traktor
+{
+	namespace world
+	{
+		namespace
+		{
+
+/*! \brief Create map between entities and it's associated entity renderer. */
+void updateEntityRendererMap(
+	const RefArray< EntityRenderer >& entityRenderers,
+	WorldEntityRenderers::entity_renderer_map_t& outEntityRendererMap
+)
+{
+	outEntityRendererMap.clear();
+	for (RefArray< EntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
+	{
+		TypeSet entityTypes = (*i)->getEntityTypes();
+		for (TypeSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
+		{
+			std::vector< const Type* > renderableTypes;
+			(*j)->findAllOf(renderableTypes);
+
+			for (std::vector< const Type* >::const_iterator k = renderableTypes.begin(); k != renderableTypes.end(); ++k)
+				outEntityRendererMap[*k] = *i;
+		}
+	}
+}
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityRenderers", WorldEntityRenderers, Object)
+
+void WorldEntityRenderers::add(EntityRenderer* entityRenderer)
+{
+	m_entityRenderers.push_back(entityRenderer);
+	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
+}
+
+void WorldEntityRenderers::remove(EntityRenderer* entityRenderer)
+{
+	RefArray< EntityRenderer >::iterator i = std::find(m_entityRenderers.begin(), m_entityRenderers.end(), entityRenderer);
+	T_ASSERT_M (i != m_entityRenderers.end(), L"No such entity renderer");
+	m_entityRenderers.erase(i);
+	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
+}
+
+EntityRenderer* WorldEntityRenderers::find(const Type& entityType) const
+{
+	entity_renderer_map_t::const_iterator i = m_entityRendererMap.find(&entityType);
+	return i != m_entityRendererMap.end() ? i->second : 0;
+}
+
+	}
+}

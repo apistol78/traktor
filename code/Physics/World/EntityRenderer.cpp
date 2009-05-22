@@ -26,13 +26,13 @@ void EntityRenderer::render(
 {
 	if (RigidEntity* rigidEntity = dynamic_type_cast< RigidEntity* >(entity))
 	{
-		worldContext->render(worldRenderView, rigidEntity->getEntity());
+		worldContext->build(worldRenderView, rigidEntity->getEntity());
 	}
 	else if (ArticulatedEntity* articulatedEntity = dynamic_type_cast< ArticulatedEntity* >(entity))
 	{
 		const RefArray< world::SpatialEntity >& entities = articulatedEntity->getEntities();
 		for (RefArray< world::SpatialEntity >::const_iterator i = entities.begin(); i != entities.end(); ++i)
-			worldContext->render(worldRenderView, *i);
+			worldContext->build(worldRenderView, *i);
 	}
 }
 

@@ -203,7 +203,7 @@
 				<second>365</second>
 			</position>
 			<parameterName>UserParameter</parameterName>
-			<type>PtVector</type>
+			<type>PtScalar</type>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>

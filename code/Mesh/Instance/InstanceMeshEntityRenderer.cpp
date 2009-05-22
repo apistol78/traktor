@@ -26,6 +26,7 @@ void InstanceMeshEntityRenderer::render(
 )
 {
 	InstanceMeshEntity* meshEntity = checked_type_cast< InstanceMeshEntity* >(entity);
+	T_ASSERT_M (!meshEntity->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
 	
 	resource::Proxy< InstanceMesh >& mesh = meshEntity->getMesh();
 	if (!mesh.validate())
@@ -45,7 +46,7 @@ void InstanceMeshEntityRenderer::render(
 	))
 		return;
 
-	m_meshInstances[mesh].push_back(packInstanceMeshData(transform));
+	m_meshInstances[mesh].push_back(packInstanceMeshData(transform, meshEntity->getUserParameter()));
 }
 
 void InstanceMeshEntityRenderer::flush(

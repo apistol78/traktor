@@ -47,12 +47,17 @@ public:
 	
 	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance) = 0;
 
+	inline void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
+
+	inline float getUserParameter() const { return m_userParameter; }
+
 	inline void setParameterCallback(IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
 	inline IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
 	Matrix44 m_transform;
+	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
 };
 

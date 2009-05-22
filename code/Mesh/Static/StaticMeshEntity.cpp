@@ -31,6 +31,7 @@ void StaticMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 		worldRenderView,
 		m_transform,
 		distance,
+		getUserParameter(),
 		getParameterCallback()
 	);
 }

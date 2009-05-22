@@ -30,6 +30,7 @@ class RenderContext;
 class Entity;
 class EntityRenderer;
 class WorldRenderer;
+class WorldEntityRenderers;
 class WorldRenderView;
 
 /*! \brief World render thread context.
@@ -40,18 +41,17 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS(WorldContext)
 
 public:
-	WorldContext(WorldRenderer* worldRenderer, render::RenderView* renderView);
+	WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::RenderView* renderView);
 
-	void render(WorldRenderView* worldRenderView, Entity* entity);
+	void build(WorldRenderView* worldRenderView, Entity* entity);
 
-	void render(uint32_t flags);
-
-	void flush();
+	void flush(WorldRenderView* worldRenderView);
 
 	inline render::RenderContext* getRenderContext() { return m_renderContext; }
 
 private:
 	Ref< WorldRenderer > m_worldRenderer;
+	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::RenderContext > m_renderContext;
 	const Type* m_lastEntityType;
 	Ref< EntityRenderer > m_lastEntityRenderer;

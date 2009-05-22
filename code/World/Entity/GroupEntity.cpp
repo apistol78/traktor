@@ -52,7 +52,13 @@ void GroupEntity::removeEntity(Entity* entity)
 		m_entities.erase(i);
 	}
 }
-	
+
+void GroupEntity::removeAllEntities()
+{
+	T_ASSERT_M (!m_update, L"Cannot remove all entities while in update; not implemented");
+	m_entities.resize(0);
+}
+
 const RefArray< Entity >& GroupEntity::getEntities() const
 {
 	return m_entities;

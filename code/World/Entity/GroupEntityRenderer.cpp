@@ -29,7 +29,7 @@ void GroupEntityRenderer::render(
 	{
 		const RefArray< Entity >& childEntities = groupEntity->getEntities();
 		for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-			worldContext->render(worldRenderView, *i);
+			worldContext->build(worldRenderView, *i);
 	}
 	else if (SpatialGroupEntity* groupEntity = dynamic_type_cast< SpatialGroupEntity* >(entity))
 	{
@@ -46,7 +46,7 @@ void GroupEntityRenderer::render(
 
 		const RefArray< SpatialEntity >& childEntities = groupEntity->getEntities();
 		for (RefArray< SpatialEntity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-			worldContext->render(worldRenderView, *i);
+			worldContext->build(worldRenderView, *i);
 	}
 }
 

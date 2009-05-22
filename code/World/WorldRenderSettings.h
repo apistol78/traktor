@@ -32,10 +32,8 @@ class T_DLLCLASS WorldRenderSettings : public Serializable
 	T_RTTI_CLASS(WorldRenderSettings)
 
 public:
-	bool hdr;
 	float viewNearZ;
 	float viewFarZ;
-	Color clearColor;
 	bool depthPassEnabled;
 	bool shadowsEnabled;
 	int32_t shadowCascadingSlices;

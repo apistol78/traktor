@@ -12,10 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.WorldRenderSettings", WorldRenderSettings, Serializable)
 
 WorldRenderSettings::WorldRenderSettings()
-:	hdr(true)
-,	viewNearZ(1.0f)
+:	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
-,	clearColor(0, 0, 0, 255)
 ,	depthPassEnabled(true)
 ,	shadowsEnabled(false)
 ,	shadowCascadingSlices(4)
@@ -28,10 +26,8 @@ WorldRenderSettings::WorldRenderSettings()
 
 bool WorldRenderSettings::serialize(Serializer& s)
 {
-	s >> Member< bool >(L"hdr", hdr);
 	s >> Member< float >(L"viewNearZ", viewNearZ, 0.0f);
 	s >> Member< float >(L"viewFarZ", viewFarZ, 0.0f);
-	s >> Member< Color >(L"clearColor", clearColor);
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
 	s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices);
