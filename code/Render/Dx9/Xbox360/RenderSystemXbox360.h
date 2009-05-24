@@ -73,7 +73,6 @@ public:
 
 	virtual Program* createProgram(const ProgramResource* programResource);
 
-
 	/*! \name Unmanaged listener. */
 	//@{
 
@@ -83,14 +82,12 @@ public:
 
 	//@}
 
-
 	/*! \name Direct3D interface. */
 	//@{
 
 	IDirect3D9* getD3D() const { return m_d3d; }
 
 	//@}
-
 
 private:
 	Ref< ContextDx9 > m_context;

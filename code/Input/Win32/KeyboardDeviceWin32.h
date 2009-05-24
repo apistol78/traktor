@@ -47,4 +47,4 @@ public:
 	}
 }
 
-#endif	// traktor_input_KeyboardDeviceDi8_H
+#endif	// traktor_input_KeyboardDeviceWin32_H

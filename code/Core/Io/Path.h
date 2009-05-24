@@ -75,7 +75,7 @@ public:
 	 *
 	 * C:/foo/bar.txt => bar
 	 * /foo/bar.txt => bar
- 	 * foo/bar.txt => bar
+	 * foo/bar.txt => bar
 	 *
 	 * \return File name without extension.
 	 */

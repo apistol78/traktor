@@ -53,4 +53,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_VolumeTexture_H
+#endif	// traktor_render_VolumeTextureOpenGL_H

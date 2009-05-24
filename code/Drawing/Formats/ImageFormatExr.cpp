@@ -18,61 +18,61 @@ namespace traktor
 		namespace
 		{
 
-			class IStreamWrapper : public Imf::IStream
-			{
-			public:
-				IStreamWrapper(Stream* stream) :
-					Imf::IStream("n/a"),
-					m_stream(stream)
-				{
-				}
+class IStreamWrapper : public Imf::IStream
+{
+public:
+	IStreamWrapper(Stream* stream) :
+		Imf::IStream("n/a"),
+		m_stream(stream)
+	{
+	}
 
-				virtual bool read(char c[], int n)
-				{
-					return bool(m_stream->read(c, n) == n);
-				}
+	virtual bool read(char c[], int n)
+	{
+		return bool(m_stream->read(c, n) == n);
+	}
 
-				virtual Imf::Int64 tellg()
-				{
-					return Imf::Int64(m_stream->tell());
-				}
+	virtual Imf::Int64 tellg()
+	{
+		return Imf::Int64(m_stream->tell());
+	}
 
-				virtual void seekg(Imf::Int64 pos)
-				{
-					m_stream->seek(Stream::SeekSet, int(pos));
-				}
+	virtual void seekg(Imf::Int64 pos)
+	{
+		m_stream->seek(Stream::SeekSet, int(pos));
+	}
 
-			private:
-				Ref< Stream > m_stream;
-			};
+private:
+	Ref< Stream > m_stream;
+};
 
-			class OStreamWrapper : public Imf::OStream
-			{
-			public:
-				OStreamWrapper(Stream* stream) :
-					Imf::OStream("n/a"),
-					m_stream(stream)
-				{
-				}
+class OStreamWrapper : public Imf::OStream
+{
+public:
+	OStreamWrapper(Stream* stream) :
+		Imf::OStream("n/a"),
+		m_stream(stream)
+	{
+	}
 
-				virtual void write(const char c[], int n)
-				{
-					m_stream->write(c, n);
-				}
+	virtual void write(const char c[], int n)
+	{
+		m_stream->write(c, n);
+	}
 
-				virtual Imf::Int64 tellp()
-				{
-					return Imf::Int64(m_stream->tell());
-				}
+	virtual Imf::Int64 tellp()
+	{
+		return Imf::Int64(m_stream->tell());
+	}
 
-				virtual void seekp(Imf::Int64 pos)
-				{
-					m_stream->seek(Stream::SeekSet, int(pos));
-				}
+	virtual void seekp(Imf::Int64 pos)
+	{
+		m_stream->seek(Stream::SeekSet, int(pos));
+	}
 
-			private:
-				Ref< Stream > m_stream;
-			};
+private:
+	Ref< Stream > m_stream;
+};
 
 		}
 

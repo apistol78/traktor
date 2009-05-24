@@ -72,4 +72,4 @@ struct SoundBlock
 	}
 }
 
-#endif	// traktor_sound_types_H
+#endif	// traktor_sound_Types_H

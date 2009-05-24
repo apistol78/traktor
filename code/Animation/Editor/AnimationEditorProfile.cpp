@@ -17,8 +17,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::SceneEditorProfile)
 
 void AnimationEditorProfile::getCommands(
-	 std::list< ui::Command >& outCommands
- ) const
+	std::list< ui::Command >& outCommands
+) const
 {
 	outCommands.push_back(ui::Command(L"Animation.Editor.StepForward"));
 	outCommands.push_back(ui::Command(L"Animation.Editor.StepBack"));

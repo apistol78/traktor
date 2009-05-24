@@ -123,7 +123,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_infoContainer = gc_new< ui::Container >();
 	m_infoContainer->create(this, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*", 2, 0));
-	   
+
 	m_statusText = gc_new< ui::custom::StatusBar >();
 	m_statusText->create(m_infoContainer, ui::WsDoubleBuffer);
 	m_statusText->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventCameraDoubleClick));

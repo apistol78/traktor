@@ -58,4 +58,4 @@ private:
 	}
 }
 
-#endif	// traktor_input_InputDeviceXi_H
+#endif	// traktor_input_InputDeviceDi8_H

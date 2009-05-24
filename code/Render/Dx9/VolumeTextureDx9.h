@@ -60,4 +60,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_VolumeTexture_H
+#endif	// traktor_render_VolumeTextureDx9_H

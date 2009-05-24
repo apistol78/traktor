@@ -73,7 +73,6 @@ public:
 
 	virtual Program* createProgram(const ProgramResource* programResource);
 
-
 	/*! \name Direct3D interface. */
 	//@{
 
@@ -87,7 +86,6 @@ public:
 
 	//@}
 
-
 	/*! \name Render view management. */
 	//@{
 
@@ -97,7 +95,6 @@ public:
 
 	//@}
 
-
 	/*! \name Unmanaged listener. */
 	//@{
 
@@ -106,7 +103,6 @@ public:
 	virtual void removeUnmanaged(Unmanaged* unmanaged);
 
 	//@}
-
 
 private:
 	Ref< ContextDx9 > m_context;

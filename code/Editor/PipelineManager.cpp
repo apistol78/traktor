@@ -80,15 +80,15 @@ Pipeline* PipelineManager::findPipeline(const Type& sourceType) const
 
 void PipelineManager::addDependency(const Object* sourceAsset)
 {
-    if (!sourceAsset)
+	if (!sourceAsset)
 		return;
-   
+
 	// Don't add dependency if thread is about to be stopped.
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
-    Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
-    if (pipeline)
+	Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
+	if (pipeline)
 	{
 		Ref< const Object > dummyBuildParams;
 		pipeline->buildDependencies(this, sourceAsset, dummyBuildParams);
@@ -127,7 +127,7 @@ void PipelineManager::addDependency(const Object* sourceAsset, const std::wstrin
 
 void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool build)
 {
-    if (!sourceAssetInstance)
+	if (!sourceAssetInstance)
 		return;
 
 	// Don't add dependency if thread is about to be stopped.
@@ -422,8 +422,8 @@ PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) c
 void PipelineManager::addUniqueDependency(const Object* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	// Find appropriate pipeline.
-    Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
-    if (!pipeline)
+	Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
+	if (!pipeline)
 	{
 		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
 		return;

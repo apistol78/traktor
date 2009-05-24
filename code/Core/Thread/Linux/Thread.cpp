@@ -76,7 +76,6 @@ bool Thread::start(Priority priority)
 	return bool(rc == 0);
 }
 
-
 bool Thread::wait(int timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
