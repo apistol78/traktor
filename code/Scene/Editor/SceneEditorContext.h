@@ -102,7 +102,6 @@ public:
 	);
 
 	void addEditorProfile(SceneEditorProfile* editorProfile);
-
 	
 	/*! \name State management. */
 	//@{
@@ -149,7 +148,6 @@ public:
 
 	//@}
 
-
 	/*! \name Entity editors. */
 	//@{
 
@@ -158,7 +156,6 @@ public:
 	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
 
 	//@}
-
 
 	void setSceneAsset(SceneAsset* sceneAsset);
 
@@ -183,7 +180,6 @@ public:
 	EntityAdapter* findEntityFromData(const world::EntityData* entityData, int index) const;
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
-
 
 	/*! \name Accessors. */
 	//@{

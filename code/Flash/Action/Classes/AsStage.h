@@ -39,5 +39,4 @@ private:
 	}
 }
 
-
 #endif	// traktor_flash_AsStage_H

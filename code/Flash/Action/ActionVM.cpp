@@ -23,8 +23,8 @@
 #endif
 
 #if VM_TRACE_ENABLE
-#	define T_WIDEN_x(x) L ## x
-#	define T_WIDEN(x) T_WIDEN_x(x)
+#	define T_WIDEN_X(x) L ## x
+#	define T_WIDEN(x) T_WIDEN_X(x)
 #	define VM_BEGIN(op) \
 	case op : \
 		{ \

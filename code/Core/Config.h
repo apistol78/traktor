@@ -49,9 +49,6 @@
 #	define T_UNALIGNED
 #endif
 
-// Include assert helper.
-#include "Core/Assert.h"
-
 // Detect endian.
 #if defined(__APPLE__)
 
@@ -166,6 +163,9 @@ size_t alignOf()
 #		define T_DEBUG_REFERENCE_ADDRESS		//< Reference instantiation address; must be x86 32bit arch currently.
 #endif
 #endif
+
+// Include assert helper.
+#include "Core/Assert.h"
 
 //@}
 

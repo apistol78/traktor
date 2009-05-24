@@ -65,8 +65,8 @@ PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 
 bool opengl_initialize_extensions()
 {
-	#define T_WIDEN_x(x) L ## x
-	#define T_WIDEN(x) T_WIDEN_x(x)
+	#define T_WIDEN_X(x) L ## x
+	#define T_WIDEN(x) T_WIDEN_X(x)
 
 #if defined(_WIN32)
 	#define RESOLVE(fp) \

@@ -102,4 +102,4 @@ T_MATH_INLINE T_DLLCLASS Vector2 lerp(const Vector2& a, const Vector2& b, float 
 #include "Core/Math/Std/Vector2.inl"
 #endif
 
-#endif	// traktor_Vector4_H
+#endif	// traktor_Vector2_H

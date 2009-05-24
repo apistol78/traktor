@@ -36,4 +36,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_VolumeTexture_H
+#endif	// traktor_render_VolumeTextureDx10_H

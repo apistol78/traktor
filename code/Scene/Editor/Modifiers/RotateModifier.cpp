@@ -79,7 +79,6 @@ void RotateModifier::draw(
 
 	primitiveRenderer->popWorld();
 
-
 	// Pitch
 	primitiveRenderer->pushWorld(mp);
 
@@ -106,7 +105,6 @@ void RotateModifier::draw(
 	);
 
 	primitiveRenderer->popWorld();
-
 
 	// Bank
 	primitiveRenderer->pushWorld(mb);

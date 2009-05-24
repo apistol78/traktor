@@ -281,5 +281,4 @@ private:
 	}
 }
 
-
 #endif	// traktor_flash_AsMovieClip_H

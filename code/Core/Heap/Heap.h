@@ -179,4 +179,4 @@ private:
 
 }
 
-#endif	// traktor_kernel_Heap_H
+#endif	// traktor_Heap_H
