@@ -40,12 +40,9 @@ int StringReader::readLine(std::wstring& out)
 		std::memmove(&m_buffer[0], &m_buffer[result], m_count - result);
 		m_count -= result;
 
-		if (ch == L'\n' || ch == L'\r')
-		{
-			if (!out.empty())
-				break;
-		}
-		else
+		if (ch == L'\n')
+			break;
+		else if (ch != L'\r')
 			out += ch;
 	}
 
