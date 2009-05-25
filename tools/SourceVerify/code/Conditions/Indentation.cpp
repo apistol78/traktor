@@ -42,23 +42,23 @@ void Indentation::check(const Source& source, bool isHeader, OutputStream& repor
 			if (brace < -1 || brace > 1)
 				report << L"Too many braces on line " << lines[i].line << Endl;
 
-			const wchar_t* kw[] =
-			{
-				L"if",
-				L"while",
-				L"for",
-				L"until",
-				L"switch",
-				L"namespace",
-				L"class",
-				L"struct"
-			};
+			//const wchar_t* kw[] =
+			//{
+			//	L"if",
+			//	L"while",
+			//	L"for",
+			//	L"until",
+			//	L"switch",
+			//	L"namespace",
+			//	L"class",
+			//	L"struct"
+			//};
 
-			for (uint32_t j = 0; j < sizeof_array(kw); ++j)
-			{
-				if (line.find(kw[j]) != std::wstring::npos)
-					report << L"Brace(s) on same line as keyword, line " << lines[i].line << Endl;
-			}
+			//for (uint32_t j = 0; j < sizeof_array(kw); ++j)
+			//{
+			//	if (line.find(kw[j]) != std::wstring::npos)
+			//		report << L"Brace(s) on same line as keyword, line " << lines[i].line << Endl;
+			//}
 		}
 	}
 }
