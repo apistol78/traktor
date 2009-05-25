@@ -15,7 +15,11 @@ void IncludeOrder::check(const Source& source, bool isHeader, OutputStream& repo
 	{
 		std::wstring line = trim(lines[i].text);
 		if (line.empty())
+		{
+			ltc = 0;
+			htc = 0;
 			continue;
+		}
 
 		if (line[0] != L'#')
 			continue;
@@ -38,7 +42,5 @@ void IncludeOrder::check(const Source& source, bool isHeader, OutputStream& repo
 		}
 		else if (line[8] == L'\"')
 			++htc;
-		else
-			report << L"Incorrect include statement at " << lines[i].line << Endl;
 	}
 }
