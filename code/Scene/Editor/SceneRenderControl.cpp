@@ -607,10 +607,10 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		{
 			m_renderView->end();
 			m_postProcess->render(
+				m_worldRenderView,
 				m_renderView,
 				m_renderTargetSet,
-				Frustum(),
-				Matrix44(),
+				m_worldRenderer->getDepthTargetSet(),
 				deltaTime
 			);
 		}

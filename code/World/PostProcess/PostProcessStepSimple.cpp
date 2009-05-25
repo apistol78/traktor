@@ -28,10 +28,9 @@ void PostProcessStepSimple::destroy(PostProcess* postProcess)
 
 void PostProcessStepSimple::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {

@@ -27,10 +27,9 @@ void PostProcessStepChain::destroy(PostProcess* postProcess)
 
 void PostProcessStepChain::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {
@@ -38,10 +37,9 @@ void PostProcessStepChain::render(
 	{
 		(*i)->render(
 			postProcess,
+			worldRenderView,
 			renderView,
 			screenRenderer,
-			viewFrustum,
-			projection,
 			deltaTime
 		);
 	}

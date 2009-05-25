@@ -184,8 +184,12 @@ public:
 		return ms_techniqueShadowMapSelfShadow;
 	}
 
-	inline render::RenderTargetSet* getRenderTargetSet() const {
+	inline render::RenderTargetSet* getDepthTargetSet() const {
 		return m_depthTargetSet;
+	}
+
+	inline render::RenderTargetSet* getShadowTargetSet() const {
+		return m_shadowTargetSet;
 	}
 
 private:

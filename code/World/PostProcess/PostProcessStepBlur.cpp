@@ -1,5 +1,6 @@
 #include "World/PostProcess/PostProcessStepBlur.h"
 #include "World/PostProcess/PostProcess.h"
+#include "World/WorldRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
@@ -48,10 +49,9 @@ void PostProcessStepBlur::destroy(PostProcess* postProcess)
 
 void PostProcessStepBlur::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {
@@ -72,6 +72,8 @@ void PostProcessStepBlur::render(
 			));
 		}
 	}
+
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 
 	m_shader->setVectorArrayParameter(L"GaussianOffsetWeights", m_gaussianOffsetWeights, sizeof_array(m_gaussianOffsetWeights));
 	m_shader->setVectorParameter(L"Direction", m_direction);

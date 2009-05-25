@@ -22,10 +22,9 @@ void PostProcessStepRepeat::destroy(PostProcess* postProcess)
 
 void PostProcessStepRepeat::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {
@@ -33,10 +32,9 @@ void PostProcessStepRepeat::render(
 	{
 		m_step->render(
 			postProcess,
+			worldRenderView,
 			renderView,
 			screenRenderer,
-			viewFrustum,
-			projection,
 			deltaTime
 		);
 	}

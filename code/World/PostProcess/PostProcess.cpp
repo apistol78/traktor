@@ -74,18 +74,18 @@ void PostProcess::destroy()
 }
 
 bool PostProcess::render(
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::RenderTargetSet* frameBuffer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
+	render::RenderTargetSet* depthBuffer,
 	float deltaTime
 )
 {
 	if (!m_settings)
 		return false;
 
-	// Bind source framebuffer as target 1 (World render target, read only).
 	m_targets[1] = frameBuffer;
+	m_targets[2] = depthBuffer;
 	m_currentTarget = 0;
 
 	const RefArray< PostProcessStep >& steps = m_settings->getSteps();
@@ -93,10 +93,9 @@ bool PostProcess::render(
 	{
 		(*i)->render(
 			this,
+			worldRenderView,
 			renderView,
 			m_screenRenderer,
-			viewFrustum,
-			projection,
 			deltaTime
 		);
 	}
@@ -107,7 +106,8 @@ bool PostProcess::render(
 
 void PostProcess::setTarget(render::RenderView* renderView, uint32_t id)
 {
-	T_ASSERT_M(id != 1, L"Cannot bind world render target as output");
+	T_ASSERT_M(id != 1, L"Cannot bind source color buffer as output");
+	T_ASSERT_M(id != 2, L"Cannot bind source depth buffer as output");
 
 	if (m_currentTarget)
 		renderView->end();

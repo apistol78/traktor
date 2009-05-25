@@ -190,17 +190,24 @@ bool WorldRenderer::create(
 	m_frames.resize(frameCount);
 
 	// Create "depth map" target.
-	render::RenderTargetSetCreateDesc desc;
-	desc.count = 1;
-	desc.width = worldViewPort.width;
-	desc.height = worldViewPort.height;
-	desc.multiSample = 0;
-	desc.depthStencil = false;
-	desc.targets[0].format = render::TfR16F;
+	if (m_settings.depthPassEnabled)
+	{
+		render::RenderTargetSetCreateDesc desc;
 
-	m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
-	if (!m_depthTargetSet)
-		return false;
+		desc.count = 1;
+		desc.width = worldViewPort.width;
+		desc.height = worldViewPort.height;
+		desc.multiSample = multiSample;
+		desc.depthStencil = false;
+		desc.targets[0].format = render::TfR16F;
+
+		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_depthTargetSet)
+		{
+			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
+			m_settings.depthPassEnabled = false;
+		}
+	}
 
 	// Allocate "shadow map" targets.
 	uint32_t sliceCount = m_settings.shadowCascadingSlices;
