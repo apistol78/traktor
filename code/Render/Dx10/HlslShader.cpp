@@ -214,7 +214,7 @@ std::wstring HlslShader::getGeneratedShader()
 			ss << L"InputData i, ";
 
 		if (m_needVPos)
-			ss << L"float2 vPos : VPOS, ";
+			ss << L"float4 vPos : SV_Position, ";
 		
 		ss << L"out OutputData o)" << Endl;
 
