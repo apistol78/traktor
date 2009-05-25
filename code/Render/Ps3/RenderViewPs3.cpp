@@ -70,7 +70,7 @@ bool RenderViewPs3::create(int resolutionId, int width, int height)
 	}
 
 	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
-    if (ret != CELL_OK)
+	if (ret != CELL_OK)
 	{
 		log::error << L"Create render view failed, unable get video state" << Endl;
 		return 0;

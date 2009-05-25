@@ -27,7 +27,7 @@ void Socket::close()
 	if (m_socket != INVALID_SOCKET)
 	{
 		::send(m_socket, 0, 0, 0);
-		::closesocket(m_socket);
+		CLOSE_SOCKET(m_socket);
 		m_socket = INVALID_SOCKET;
 	}
 }

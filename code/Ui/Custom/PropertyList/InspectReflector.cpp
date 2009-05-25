@@ -193,7 +193,7 @@ bool InspectReflector::operator >> (const Member< double >& m)
 		stylizeMemberName(m.getName()),
 		m,
 		-std::numeric_limits< double >::max(),
-		 std::numeric_limits< double >::max(),
+		std::numeric_limits< double >::max(),
 		true
 	));
 	return true;
@@ -230,7 +230,7 @@ bool InspectReflector::operator >> (const Member< Scalar >& m)
 		stylizeMemberName(m.getName()),
 		float(v),
 		-std::numeric_limits< float >::max(),
-		 std::numeric_limits< float >::max(),
+		std::numeric_limits< float >::max(),
 		true
 	));
 	return true;

@@ -42,7 +42,6 @@ render::Program* createProgram(
 	return program;
 }
 
-
 			}
 
 struct ScreenVertex

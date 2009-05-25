@@ -168,7 +168,7 @@ bool ImageFormatPcx::write(Stream* stream, Image* image)
 	hdr.screenWidth = 0;
 	hdr.screenHeight = 0;
 	hdr.dummy[55] = 0xff;
-		 
+
 	writer << hdr.manufacturer;
 	writer << hdr.version;
 	writer << hdr.encoding;

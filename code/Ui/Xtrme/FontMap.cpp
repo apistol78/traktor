@@ -1,16 +1,16 @@
 #if defined(_WIN32)
-#define T_USE_GDI_FONTS
+#	define T_USE_GDI_FONTS
 #endif
 #if defined(T_USE_GDI_FONTS)
 // Use GDI to render font map.
-#include <windows.h>
-#include <tchar.h>
+#	include <windows.h>
+#	include <tchar.h>
 #else
 // Use FreeType to render font map.
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#	include <ft2build.h>
+#	include FT_FREETYPE_H
+#	include "Core/Io/FileSystem.h"
+#	include "Core/Io/Stream.h"
 #endif
 #include <cmath>
 #include "Ui/Xtrme/FontMap.h"

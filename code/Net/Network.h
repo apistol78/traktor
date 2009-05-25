@@ -24,7 +24,7 @@
 
 #	define SOCKET int
 #	define INVALID_SOCKET -1
-#	define closesocket(s) close(s)
+#	define CLOSE_SOCKET(s) close(s)
 
 #	if !defined(SOMAXCONN)
 #		define SOMAXCONN 4
@@ -40,6 +40,7 @@
 #	endif
 
 typedef int socklen_t;
+#	define CLOSE_SOCKET(s) closesocket(s)
 
 #endif
 

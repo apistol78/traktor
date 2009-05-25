@@ -4,10 +4,13 @@
 extern HINSTANCE g_hInstance;
 
 #if defined(WINCE)
-#define GWLP_USERDATA GWL_USERDATA
-#define GWLP_WNDPROC GWL_WNDPROC
-#define SetWindowLongPtr(a, b, c) SetWindowLong(a, b, c)
-#define GetWindowLongPtr(a, b) GetWindowLong(a, b)
+#	define GWLP_USERDATA GWL_USERDATA
+#	define GWLP_WNDPROC GWL_WNDPROC
+#	define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLong(a, b, c)
+#	define GET_WINDOW_LONG_PTR(a, b) GetWindowLong(a, b)
+#else
+#	define SET_WINDOW_LONG_PTR(a, b, c) SetWindowLongPtr(a, b, c)
+#	define GET_WINDOW_LONG_PTR(a, b) GetWindowLongPtr(a, b)
 #endif
 
 namespace traktor
@@ -25,9 +28,9 @@ Window::Window()
 Window::~Window()
 {
 	if (m_originalWndProc)
-		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
+		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
 
-	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)0);
+	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)0);
 	for (std::map< UINT, IMessageHandler* >::iterator i = m_messageHandlers.begin(); i != m_messageHandlers.end(); ++i)
 		delete i->second;
 
@@ -74,12 +77,12 @@ bool Window::create(
 		return false;
 	}
 
-	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
 	if (subClass)
 	{
-		m_originalWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
-		SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
+		m_originalWndProc = (WNDPROC)GET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC);
+		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 	}
 
 #if !defined(WINCE)
@@ -103,10 +106,10 @@ bool Window::subClass(HWND hWnd)
 	T_ASSERT (!m_hWnd);
 
 	m_hWnd = hWnd;
-	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
+	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)this);
 
-	m_originalWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
-	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
+	m_originalWndProc = (WNDPROC)GET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC);
+	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)wndProcSubClass);
 
 	return true;
 }
@@ -171,7 +174,7 @@ LRESULT Window::invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LP
 {
 	LRESULT result = FALSE;
 
-	Window* window = reinterpret_cast< Window* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, GWLP_USERDATA));
 	if (window)
 	{
 		IMessageHandler* messageHandler = window->m_messageHandlers[message];
@@ -239,7 +242,7 @@ LRESULT CALLBACK Window::wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	// Lookup handler of issued message.
-	Window* window = reinterpret_cast< Window* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, GWLP_USERDATA));
 	if (window)
 	{
 		IMessageHandler* messageHandler = window->m_messageHandlers[message];

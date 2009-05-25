@@ -38,7 +38,6 @@ inline EventHandler* createFunctionHandler(FunctionHandler::F function)
 	return gc_new< FunctionHandler >(function);
 }
 
-
 	}
 }
 

@@ -65,7 +65,6 @@ void sem_thread_3()
 		shared_access();
 }
 
-
 	}
 
 void CaseThread::run()

@@ -170,13 +170,11 @@ void CloudEntity::renderCluster(
 	render::RenderView* renderView = renderContext->getRenderView();
 	T_ASSERT (renderView);
 
-
 	const Vector4& lightDirection = worldRenderView->getLightDirection(0);
 	const Aabb& clusterBoundingBox = cluster.getBoundingBox();
 	const Matrix44& projection = worldRenderView->getProjection();
 	const Matrix44& view = worldRenderView->getView();
 	Matrix44 worldView = m_transform * view;
-
 
 	// Calculate billboard view transform.
 	Vector4 extents[8];
@@ -244,7 +242,6 @@ void CloudEntity::renderCluster(
 		scale((maxX - minX) / 2.0f, (maxY - minY) / 2.0f, 1.0f) *
 		translate((maxX + minX) / 2.0f, (maxY + minY) / 2.0f, maxZ);
 
-
 	//// Render billboard debug outline.
 	//if (primitiveRenderer)
 	//{
@@ -269,7 +266,6 @@ void CloudEntity::renderCluster(
 	//	primitiveRenderer->popView();
 	//}
 
-
 	Matrix44 clusterProjection = perspectiveLh(PI / 2.0f, 1.0f, 1.0f, 1000.0f);
 	Matrix44 clusterView = worldRenderView->getView();
 	Matrix44 clusterWorld = m_transform;
@@ -285,8 +281,6 @@ void CloudEntity::renderCluster(
 		translate(-offsetX, -offsetY, 0.0f) *
 		scale(scaleX, scaleY, 1.0f);
 
-
-
 	const Vector4& clusterExtent = clusterBoundingBox.getExtent();
 	Scalar clusterMaxExtent = clusterExtent[majorAxis3(clusterExtent)];
 
@@ -294,7 +288,6 @@ void CloudEntity::renderCluster(
 	Matrix44 clusterDistanceProjection = orthoLh(clusterMaxExtent * 2.75f, clusterMaxExtent * 2.75f, 0.0f, clusterMaxExtent * 2.0f);
 	Matrix44 clusterDistanceView = lookAt(clusterLightDirection * clusterMaxExtent, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 	Matrix44 clusterDistanceWorld = Matrix44::identity();
-
 
 	// Render particle cloud onto impostor.
 	static Vector4 instanceData1[c_instanceCount], instanceData2[c_instanceCount];
@@ -309,7 +302,6 @@ void CloudEntity::renderCluster(
 	m_particleShader->setVectorParameter(L"BaseLight", m_particleData.getBaseLight());
 	m_particleShader->setVectorParameter(L"ShadowLight", m_particleData.getShadowLight());
 	m_particleShader->setVectorParameter(L"LightCoefficients", m_particleData.getLightCoefficients());
-
 
 	// Render distance from light.
 	//if (dot3(m_lastLightDirection, lightDirection) < 0.999f)
@@ -357,7 +349,6 @@ void CloudEntity::renderCluster(
 		m_lastLightDirection = lightDirection;
 		//m_lastEyePosition.set(0.0f, 0.0f, 0.0f, 0.0f);
 	}
-
 
 	// Render particles.
 	//if (dot3((m_lastEyePosition - clusterCenter).normalized(), (eye - clusterCenter).normalized()) < 0.995f)
@@ -462,7 +453,6 @@ void CloudEntity::renderCluster(
 		renderView->end();
 		//m_lastEyePosition = eye;
 	}
-
 
 	// Render impostor.
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();

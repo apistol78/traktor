@@ -313,7 +313,7 @@ bool ProgramDx10::bind(
 		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
 		{
 			ID3D10ShaderResourceView* res = m_parameterResArray[i->second];
-   			d3dDevice->PSSetShaderResources(i->first, 1, &res);
+			d3dDevice->PSSetShaderResources(i->first, 1, &res);
 		}
 
 		m_parameterResArrayDirty = false;

@@ -39,9 +39,9 @@ void ColorControl::setColor(const Color& color)
 	{
 		for (uint32_t x = 0; x < c_width; ++x)
 		{
-			 Color checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color(180, 180, 180) : Color(80, 80, 80);
-			 Color previewColor = lerp(checkerColor, color, color.a / 255.0f);
-			 m_preview->setPixel(x, y, previewColor);
+			Color checkerColor = (((x >> 2) & 1) ^ ((y >> 2) & 1)) ? Color(180, 180, 180) : Color(80, 80, 80);
+			Color previewColor = lerp(checkerColor, color, color.a / 255.0f);
+			m_preview->setPixel(x, y, previewColor);
 		}
 	}
 	update();

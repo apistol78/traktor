@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <limits>
 #include <cstdio>
 
 extern "C"
@@ -7,7 +8,6 @@ extern "C"
 	#include "lwo2.h"
 }
 
-#include <limits>
 #include "Model/Formats/ModelFormatLwo.h"
 #include "Model/Model.h"
 #include "Core/Io/Path.h"
