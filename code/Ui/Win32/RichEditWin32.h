@@ -3,6 +3,7 @@
 
 #include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IRichEdit.h"
+
 #if !defined(WINCE)
 #	include <richedit.h>
 #endif

@@ -12,6 +12,7 @@
 #	include "Core/Io/FileSystem.h"
 #	include "Core/Io/Stream.h"
 #endif
+
 #include <cmath>
 #include "Ui/Xtrme/FontMap.h"
 #include "Ui/Font.h"
