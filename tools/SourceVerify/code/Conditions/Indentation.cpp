@@ -1,19 +1,22 @@
 #include "Conditions/Indentation.h"
+#include "Source.h"
 
 using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"Indentation", Indentation, Condition)
 
-void Indentation::check(const std::vector< std::wstring >& lines, bool isHeader, OutputStream& report) const
+void Indentation::check(const Source& source, bool isHeader, OutputStream& report) const
 {
+	const std::vector< Source::Line >& lines = source.getUncommentedLines();
+
 	for (uint32_t i = 0; i < uint32_t(lines.size()); ++i)
 	{
-		const std::wstring& line = lines[i];
-		for (uint32_t j = 0; j < uint32_t(line.length() - 1); ++j)
+		const std::wstring& line = lines[i].text;
+		for (uint32_t j = 0; j < uint32_t(line.length()); ++j)
 		{
-			if (line[j] == L' ' && line[j + 1] != '*')
+			if (line[j] == L' ')
 			{
-				report << L"Space used for indentation at " << (i + 1) << Endl;
+				report << L"Space used for indentation at " << lines[i].line << Endl;
 				break;
 			}
 			if (line[j] != L'\t' && line[j] != L' ')
@@ -23,7 +26,7 @@ void Indentation::check(const std::vector< std::wstring >& lines, bool isHeader,
 
 	for (uint32_t i = 0; i < uint32_t(lines.size()); ++i)
 	{
-		const std::wstring& line = lines[i];
+		const std::wstring& line = lines[i].text;
 
 		int32_t brace = 0;
 		for (uint32_t j = 0; j < uint32_t(line.length()); ++j)
@@ -37,7 +40,7 @@ void Indentation::check(const std::vector< std::wstring >& lines, bool isHeader,
 		if (brace != 0)
 		{
 			if (brace < -1 || brace > 1)
-				report << L"Too many braces on line " << (i + 1) << Endl;
+				report << L"Too many braces on line " << lines[i].line << Endl;
 
 			const wchar_t* kw[] =
 			{
@@ -54,7 +57,7 @@ void Indentation::check(const std::vector< std::wstring >& lines, bool isHeader,
 			for (uint32_t j = 0; j < sizeof_array(kw); ++j)
 			{
 				if (line.find(kw[j]) != std::wstring::npos)
-					report << L"Brace(s) on same line as keyword, line " << (i + 1) << Endl;
+					report << L"Brace(s) on same line as keyword, line " << lines[i].line << Endl;
 			}
 		}
 	}
