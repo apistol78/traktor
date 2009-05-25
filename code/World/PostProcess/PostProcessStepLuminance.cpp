@@ -39,10 +39,9 @@ void PostProcessStepLuminance::destroy(PostProcess* postProcess)
 
 void PostProcessStepLuminance::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {

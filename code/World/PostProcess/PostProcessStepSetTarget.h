@@ -38,10 +38,9 @@ public:
 
 	virtual void render(
 		PostProcess* postProcess,
+		const WorldRenderView& worldRenderView,
 		render::RenderView* renderView,
 		render::ScreenRenderer* screenRenderer,
-		const Frustum& viewFrustum,
-		const Matrix44& projection,
 		float deltaTime
 	);
 

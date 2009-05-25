@@ -69,10 +69,9 @@ void PostProcessStepSsao::destroy(PostProcess* postProcess)
 
 void PostProcessStepSsao::render(
 	PostProcess* postProcess,
+	const WorldRenderView& worldRenderView,
 	render::RenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
-	const Frustum& viewFrustum,
-	const Matrix44& projection,
 	float deltaTime
 )
 {
@@ -90,10 +89,13 @@ void PostProcessStepSsao::render(
 		0.0f
 	);
 
+	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
 	Vector4 viewEdgeTopRight = viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
+
+	const Matrix44& projection = worldRenderView.getProjection();
 
 	m_shader->setSamplerTexture(L"Frame", source->getColorTexture(0));
 	m_shader->setSamplerTexture(L"Depth", source->getColorTexture(1));

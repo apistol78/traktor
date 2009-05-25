@@ -2,7 +2,7 @@
 <object type="traktor.world.PostProcessSettings">
 	<definitions>
 		<item type="traktor.world.PostProcessDefineTarget">
-			<id>2</id>
+			<id>3</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
@@ -11,7 +11,7 @@
 			<multiSample>0</multiSample>
 		</item>
 		<item type="traktor.world.PostProcessDefineTarget">
-			<id>3</id>
+			<id>4</id>
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
@@ -22,26 +22,26 @@
 	</definitions>
 	<steps>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>2</target>
+			<target>3</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSsao">
 			<shader>{74942CA7-6F3E-814F-A219-57E60FFDC7F3}</shader>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>3</target>
+			<target>4</target>
 		</item>
 		<item type="traktor.world.PostProcessStepBlur">
 			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>2</source>
+					<source>3</source>
 					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>1</source>
-					<index>1</index>
+					<source>2</source>
+					<index>0</index>
 				</item>
 			</sources>
 			<direction>1, 0, 0, 0</direction>
@@ -54,13 +54,13 @@
 			<sources>
 				<item>
 					<param>Source</param>
-					<source>3</source>
+					<source>4</source>
 					<index>0</index>
 				</item>
 				<item>
 					<param>Depth</param>
-					<source>1</source>
-					<index>1</index>
+					<source>2</source>
+					<index>0</index>
 				</item>
 			</sources>
 			<direction>0, 1, 0, 0</direction>
@@ -78,7 +78,7 @@
 				</item>
 				<item>
 					<param>Occlusion</param>
-					<source>2</source>
+					<source>3</source>
 					<index>0</index>
 				</item>
 			</sources>

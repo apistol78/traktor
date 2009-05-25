@@ -31,13 +31,15 @@ class ScreenRenderer;
 	{
 
 class PostProcessSettings;
+class WorldRenderView;
 
 /*! \brief Frame buffer post processing system.
  * \ingroup World
  *
  * Predefined targets:
  * 0 - Frame buffer, write only.
- * 1 - World render target, read only.
+ * 1 - Source color buffer, read only.
+ * 2 - Source depth buffer, read only.
  */
 class T_DLLCLASS PostProcess : public Object
 {
@@ -49,10 +51,10 @@ public:
 	void destroy();
 
 	bool render(
+		const WorldRenderView& worldRenderView,
 		render::RenderView* renderView,
 		render::RenderTargetSet* frameBuffer,
-		const Frustum& viewFrustum,
-		const Matrix44& projection,
+		render::RenderTargetSet* depthBuffer,
 		float deltaTime
 	);
 
