@@ -1127,17 +1127,9 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << L"0;" << Endl;
 
-	if (cx.inPixel())
-		f << L"[flatten]" << Endl;
-	else
-		f << L"[branch]" << Endl;
-
-	f << L"switch(trunc(" << in->cast(HtFloat) << L"))" << Endl;
-	f << L"{" << Endl;
-
 	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
 	{
-		f << L"case " << caseConditions[i] << L":" << Endl;
+		f << (i == 0 ? L"if (" : L"else if (") << L"int(" << in->cast(HtFloat) << L") == " << caseConditions[i] << L")" << Endl;
 		f << L"{" << Endl;
 		f << IncreaseIndent;
 
@@ -1146,20 +1138,23 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 
 		f << DecreaseIndent;
 		f << L"}" << Endl;
-		f << L"break;" << Endl;
 	}
 
-	f << L"default:" << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
+	if (!caseConditions.empty())
+	{
+		f << L"else" << Endl;
+		f << L"{" << Endl;
+		f << IncreaseIndent;
+	}
 
 	f << caseBranches.back();
 	f << out->getName() << L" = " << caseInputs.back().cast(outputType) << L";" << Endl;
 
-	f << DecreaseIndent;
-	f << L"}" << Endl;
-	f << L"break;" << Endl;
-	f << L"}" << Endl;
+	if (!caseConditions.empty())
+	{
+		f << DecreaseIndent;
+		f << L"}" << Endl;
+	}
 
 	return true;
 }
