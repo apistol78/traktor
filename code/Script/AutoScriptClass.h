@@ -12,12 +12,10 @@ namespace traktor
 //@{
 /* \ingroup Script */
 
-
 struct T_NOVTABLE IInvokable
 {
 	virtual Any invoke(Object* object, const std::vector< Any >& args) const = 0;
 };
-
 
 template <
 	typename ClassType,
@@ -149,7 +147,6 @@ struct MethodSignature< ClassType, ArgumentTypeList, true, 5 >
 	typedef return_t (ClassType::*method_t)(arg1_t, arg2_t, arg3_t, arg4_t) const;
 };
 
-
 template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
 struct CastAny { };
 
@@ -174,7 +171,6 @@ struct CastAny < const wchar_t, true > { static const wchar_t* get(const Any& va
 template < typename Type >
 struct CastAny < Type, true > { static Type get(const Any& value) { return checked_type_cast< Type >(value.getObject()); } };
 
-
 template <
 	typename ClassType,
 	typename ArgumentTypeList,
@@ -185,7 +181,6 @@ template <
 struct Invokable : public IInvokable
 {
 };
-
 
 template <
 	typename ClassType,
@@ -233,7 +228,6 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 1 > : public 
 		return Any();
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -289,7 +283,6 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 2 > : public 
 		return Any();
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -349,7 +342,6 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 3 > : public 
 		return Any();
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -413,7 +405,6 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 4 > : public 
 		return Any();
 	}
 };
-
 
 template <
 	typename ClassType,
@@ -481,7 +472,6 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 5 > : public 
 		return Any();
 	}
 };
-
 
 /*! \brief Automatic generation of script class definition.
  * \ingroup Script

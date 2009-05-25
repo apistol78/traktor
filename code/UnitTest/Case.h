@@ -78,7 +78,6 @@ protected:
 		} \
 	}
 
-
 }
 
 #endif	// traktor_Case_H

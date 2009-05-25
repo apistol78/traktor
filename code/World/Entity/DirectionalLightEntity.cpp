@@ -40,6 +40,5 @@ Aabb DirectionalLightEntity::getBoundingBox() const
 	return Aabb(Vector4(-1.0f, -1.0f, -1.0f, 1.0f), Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 }
 
-
 	}
 }

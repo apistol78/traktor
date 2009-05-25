@@ -454,7 +454,7 @@ RenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rende
 	
 	Ref< ContextOpenGL > context = gc_new< ContextOpenGL >(ownerWindow, (ControlRef)windowHandle, ctx);
 	m_globalContext->share(context);
-	 
+
 	return gc_new< RenderViewOpenGL >(context, m_globalContext);
 
 #else	// LINUX

@@ -136,14 +136,14 @@ void GraphicsSystemGapi::flip(bool waitVBlank)
 				*reinterpret_cast< unsigned short* >(vmp) = 
 					((rgb[0] & 0xf8) << 7) |
 					((rgb[1] & 0xf8) << 2) |
-					 (rgb[2] >> 3);
+					(rgb[2] >> 3);
 			}
 			else if (displayProperties.ffFormat & kfDirect565)
 			{
 				*reinterpret_cast< unsigned short* >(vmp) = 
 					((rgb[0] & 0xf8) << 8) |
 					((rgb[1] & 0xfc) << 3) |
-					 (rgb[2] >> 3);
+					(rgb[2] >> 3);
 			}
 			else if (displayProperties.ffFormat & kfDirect888)
 			{

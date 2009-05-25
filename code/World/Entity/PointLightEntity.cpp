@@ -42,6 +42,5 @@ Aabb PointLightEntity::getBoundingBox() const
 	return Aabb(Vector4(-m_range, -m_range, -m_range, 1.0f), Vector4(m_range, m_range, m_range, 1.0f));
 }
 
-
 	}
 }
