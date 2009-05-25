@@ -17,6 +17,8 @@ namespace traktor
 	namespace sound
 	{
 
+class OggStreamDecoderImpl;
+
 /*! \brief OGG stream decoder.
  * \ingroup Sound
  */
@@ -37,7 +39,7 @@ public:
 
 private:
 	Ref< Stream > m_stream;
-	Ref< class OggStreamDecoderImpl > m_decoderImpl;
+	Ref< OggStreamDecoderImpl > m_decoderImpl;
 };
 
 	}

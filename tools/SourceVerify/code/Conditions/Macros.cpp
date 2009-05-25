@@ -6,7 +6,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"Macros", Macros, Condition)
 
-void Macros::check(const Source& source, bool isHeader, OutputStream& report) const
+void Macros::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	const std::vector< Source::Line >& lines = source.getUncommentedLines();
 	for (uint32_t i = 0; i < uint32_t(lines.size()); ++i)

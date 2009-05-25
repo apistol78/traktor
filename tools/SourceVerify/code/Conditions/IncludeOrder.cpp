@@ -6,7 +6,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"IncludeOrder", IncludeOrder, Condition)
 
-void IncludeOrder::check(const Source& source, bool isHeader, OutputStream& report) const
+void IncludeOrder::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	const std::vector< Source::Line >& lines = source.getOriginalLines();
 	uint32_t ltc = 0, htc = 0;

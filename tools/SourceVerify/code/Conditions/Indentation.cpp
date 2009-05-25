@@ -5,7 +5,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"Indentation", Indentation, Condition)
 
-void Indentation::check(const Source& source, bool isHeader, OutputStream& report) const
+void Indentation::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	const std::vector< Source::Line >& lines = source.getUncommentedLines();
 

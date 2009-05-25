@@ -6,7 +6,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"IncludeGuard", IncludeGuard, Condition)
 
-void IncludeGuard::check(const Source& source, bool isHeader, OutputStream& report) const
+void IncludeGuard::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	if (!isHeader)
 		return;

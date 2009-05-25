@@ -8,7 +8,7 @@ class StatementDisposition : public Condition
 	T_RTTI_CLASS(StatementDisposition)
 
 public:
-	virtual void check(const Source& source, bool isHeader, traktor::OutputStream& report) const;
+	virtual void check(const traktor::Path& fileName, const Source& source, bool isHeader, traktor::OutputStream& report) const;
 };
 
 #endif	// StatementDisposition_H
