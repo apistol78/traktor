@@ -17,6 +17,8 @@ namespace traktor
 	namespace sound
 	{
 
+class FlacStreamDecoderImpl;
+
 /*! \brief FLAC stream decoder.
  * \ingroup Sound
  */
@@ -37,7 +39,7 @@ public:
 
 private:
 	Ref< Stream > m_stream;
-	Ref< class FlacStreamDecoderImpl > m_decoderImpl;
+	Ref< FlacStreamDecoderImpl > m_decoderImpl;
 };
 
 	}

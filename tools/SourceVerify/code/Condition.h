@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <Core/Object.h>
+#include <Core/Io/Path.h>
 #include <Core/Io/OutputStream.h>
 
 class Source;
@@ -13,7 +14,7 @@ class Condition : public traktor::Object
 	T_RTTI_CLASS(Condition)
 
 public:
-	virtual void check(const Source& source, bool isHeader, traktor::OutputStream& report) const = 0;
+	virtual void check(const traktor::Path& fileName, const Source& source, bool isHeader, traktor::OutputStream& report) const = 0;
 };
 
 #endif	// Condition_H

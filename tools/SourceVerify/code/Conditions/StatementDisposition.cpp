@@ -7,7 +7,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"StatementDisposition", StatementDisposition, Condition)
 
-void StatementDisposition::check(const Source& source, bool isHeader, OutputStream& report) const
+void StatementDisposition::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	const std::vector< Source::Line >& lines = source.getUncommentedLines();
 	std::vector< std::wstring > pieces;

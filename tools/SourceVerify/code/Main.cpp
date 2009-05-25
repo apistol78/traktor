@@ -13,6 +13,7 @@
 #include "Conditions/IncludeOrder.h"
 #include "Conditions/Macros.h"
 #include "Conditions/StatementDisposition.h"
+#include "Conditions/ClassName.h"
 
 using namespace traktor;
 
@@ -78,12 +79,13 @@ void verify(ReportLogTarget& report, const Path& pathName)
 			report.setFile(pathName);
 			LogStream reportLog(&report);
 
-			SingleEmptyLine().check(source, isHeader, reportLog);
-			Indentation().check(source, isHeader, reportLog);
-			IncludeGuard().check(source, isHeader, reportLog);
-			IncludeOrder().check(source, isHeader, reportLog);
-			Macros().check(source, isHeader, reportLog);
-			StatementDisposition().check(source, isHeader, reportLog);
+			SingleEmptyLine().check(pathName, source, isHeader, reportLog);
+			Indentation().check(pathName, source, isHeader, reportLog);
+			IncludeGuard().check(pathName, source, isHeader, reportLog);
+			IncludeOrder().check(pathName, source, isHeader, reportLog);
+			Macros().check(pathName, source, isHeader, reportLog);
+			StatementDisposition().check(pathName, source, isHeader, reportLog);
+			ClassName().check(pathName, source, isHeader, reportLog);
 		}
 		else
 			log::error << L"Unable to read file \"" << pathName << L"\"" << Endl;

@@ -11,7 +11,7 @@ namespace traktor
  * \ingroup Core
  */
 template < typename Class >	
-class MemberAggregate: public MemberComplex
+class MemberAggregate : public MemberComplex
 {
 public:
 	typedef Class value_type;

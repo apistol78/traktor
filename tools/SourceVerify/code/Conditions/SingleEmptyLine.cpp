@@ -6,7 +6,7 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"SingleEmptyLine", SingleEmptyLine, Condition)
 
-void SingleEmptyLine::check(const Source& source, bool isHeader, OutputStream& report) const
+void SingleEmptyLine::check(const Path& fileName, const Source& source, bool isHeader, OutputStream& report) const
 {
 	const std::vector< Source::Line >& lines = source.getOriginalLines();
 	bool previousEmpty = bool(trim(lines[0].text).length() == 0);

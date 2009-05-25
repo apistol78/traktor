@@ -8,7 +8,7 @@ class IncludeOrder : public Condition
 	T_RTTI_CLASS(IncludeOrder)
 
 public:
-	virtual void check(const Source& source, bool isHeader, traktor::OutputStream& report) const;
+	virtual void check(const traktor::Path& fileName, const Source& source, bool isHeader, traktor::OutputStream& report) const;
 };
 
 #endif	// IncludeOrder_H
