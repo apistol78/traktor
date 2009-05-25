@@ -1,9 +1,10 @@
 #include <Core/Io/FileSystem.h>
+#include <Core/Io/FileOutputStream.h>
 #include <Core/Io/Stream.h>
-#include <Core/Io/StringReader.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Log/Log.h>
+#include "Source.h"
 
 // Verify conditions
 #include "Conditions/SingleEmptyLine.h"
@@ -11,6 +12,7 @@
 #include "Conditions/IncludeGuard.h"
 #include "Conditions/IncludeOrder.h"
 #include "Conditions/Macros.h"
+#include "Conditions/StatementDisposition.h"
 
 using namespace traktor;
 
@@ -20,8 +22,9 @@ namespace
 class ReportLogTarget : public LogTarget
 {
 public:
-	ReportLogTarget()
+	ReportLogTarget(OutputStream* report)
 	:	m_issues(0)
+	,	m_report(report)
 	{
 	}
 
@@ -29,15 +32,22 @@ public:
 	{
 		log::error << str << Endl;
 		++m_issues;
+
+		if (m_report)
+			*m_report << L"(" << m_issues << L") " << m_fileName << L" : " << str << Endl;
 	}
+
+	void setFile(const Path& fileName) { m_fileName = fileName; }
 
 	uint32_t getIssues() const { return m_issues; }
 
 private:
 	uint32_t m_issues;
+	Path m_fileName;
+	Ref< OutputStream > m_report;
 };
 
-void verify(OutputStream& report, const Path& pathName)
+void verify(ReportLogTarget& report, const Path& pathName)
 {
 	Ref< File > file = FileSystem::getInstance().get(pathName);
 	if (!file)
@@ -58,28 +68,30 @@ void verify(OutputStream& report, const Path& pathName)
 		log::info << pathName.getFileName() << L"..." << Endl;
 		log::info << IncreaseIndent;
 
-		StringReader sr(file, gc_new< Utf8Encoding >());
+		Source source;
+		if (source.create(file))
+		{
+			bool isHeader =
+				bool(compareIgnoreCase(pathName.getExtension(), L"h") == 0) ||
+				bool(compareIgnoreCase(pathName.getExtension(), L"hpp") == 0);
 
-		std::vector< std::wstring > lines;
-		std::wstring line;
+			report.setFile(pathName);
+			LogStream reportLog(&report);
 
-		while (sr.readLine(line) >= 0)
-			lines.push_back(line);
+			SingleEmptyLine().check(source, isHeader, reportLog);
+			Indentation().check(source, isHeader, reportLog);
+			IncludeGuard().check(source, isHeader, reportLog);
+			IncludeOrder().check(source, isHeader, reportLog);
+			Macros().check(source, isHeader, reportLog);
+			StatementDisposition().check(source, isHeader, reportLog);
+		}
+		else
+			log::error << L"Unable to read file \"" << pathName << L"\"" << Endl;
+
+		log::info << DecreaseIndent;
 
 		file->close();
 		file = 0;
-
-		bool isHeader =
-			bool(compareIgnoreCase(pathName.getExtension(), L"h") == 0) ||
-			bool(compareIgnoreCase(pathName.getExtension(), L"hpp") == 0);
-
-		SingleEmptyLine().check(lines, isHeader, report);
-		Indentation().check(lines, isHeader, report);
-		IncludeGuard().check(lines, isHeader, report);
-		IncludeOrder().check(lines, isHeader, report);
-		Macros().check(lines, isHeader, report);
-
-		log::info << DecreaseIndent;
 	}
 	else
 	{
@@ -125,14 +137,25 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.getCount() < 1)
 	{
-		log::info << L"Usage: SourceVerify [path]" << Endl;
+		log::info << L"Usage: SourceVerify [path] (-r=report file)" << Endl;
 		return 0;
 	}
 
-	ReportLogTarget target;
-	LogStream report(&target);
+	Ref< FileOutputStream > fos;
 
+	if (cmdLine.hasOption('r'))
+	{
+		std::wstring logFile = cmdLine.getOption('r').getString();
+		Ref< Stream > file = FileSystem::getInstance().open(logFile, File::FmWrite);
+		if (file)
+			fos = gc_new< FileOutputStream >(file, gc_new< Utf8Encoding >());
+	}
+
+	ReportLogTarget report(fos);
 	verify(report, cmdLine.getString(0));
 
-	log::info << target.getIssues() << L" issue(s) found" << Endl;
+	log::info << report.getIssues() << L" issue(s) found" << Endl;
+
+	if (fos)
+		fos->close();
 }

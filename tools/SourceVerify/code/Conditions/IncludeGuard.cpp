@@ -1,14 +1,17 @@
 #include <Core/Misc/StringUtils.h>
 #include "Conditions/IncludeGuard.h"
+#include "Source.h"
 
 using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"IncludeGuard", IncludeGuard, Condition)
 
-void IncludeGuard::check(const std::vector< std::wstring >& lines, bool isHeader, OutputStream& report) const
+void IncludeGuard::check(const Source& source, bool isHeader, OutputStream& report) const
 {
 	if (!isHeader)
 		return;
+
+	const std::vector< Source::Line >& lines = source.getOriginalLines();
 
 	if (lines.size() < 3)
 	{
@@ -18,22 +21,22 @@ void IncludeGuard::check(const std::vector< std::wstring >& lines, bool isHeader
 
 	std::wstring lockDefine = L"(Unknown)";
 
-	if (startsWith(lines[0], L"#ifndef "))
-		lockDefine = lines[0].substr(8);
+	if (startsWith(lines[0].text, L"#ifndef "))
+		lockDefine = lines[0].text.substr(8);
 	else
 		report << L"First line doesn't start with \"#ifndef ...\"" << Endl;
 
-	if (startsWith(lines[1], L"#define "))
+	if (startsWith(lines[1].text, L"#define "))
 	{
-		if (lines[1].substr(8) != lockDefine)
+		if (lines[1].text.substr(8) != lockDefine)
 			report << L"Second line include guard symbol mismatch, should be \"" << lockDefine << L"\"" << Endl;
 	}
 	else
 		report << L"Second line doesn't start with \"#define ...\"" << Endl;
 
-	if (startsWith(lines.back(), L"#endif\t// "))
+	if (startsWith(lines.back().text, L"#endif\t// "))
 	{
-		if (lines.back().substr(10) != lockDefine)
+		if (lines.back().text.substr(10) != lockDefine)
 			report << L"Last line include guard symbol mismatch, should be \"#endif<tab>// " << lockDefine << L"\"" << Endl;
 	}
 	else
