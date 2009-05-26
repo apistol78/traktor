@@ -34,6 +34,8 @@ public:
 
 	void setLanguage(SyntaxLanguage* language);
 
+	void setErrorHighlight(int line);
+
 private:
 	Ref< SyntaxLanguage > m_language;
 	int m_attributeDefault;
@@ -41,6 +43,7 @@ private:
 	int m_attributeNumber;
 	int m_attributeComment;
 	int m_attributeKeyword;
+	int m_attributeError;
 
 	void updateLanguage(int fromLine, int toLine);
 

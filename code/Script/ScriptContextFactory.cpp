@@ -41,7 +41,7 @@ Object* ScriptContextFactory::create(const Type& resourceType, const Guid& guid,
 		return 0;
 	}
 
-	if (!scriptContext->executeScript(s->getText()))
+	if (!scriptContext->executeScript(s->getText(), false, 0))
 	{
 		log::error << L"Unable to create script context; execute script failed" << Endl;
 		return 0;

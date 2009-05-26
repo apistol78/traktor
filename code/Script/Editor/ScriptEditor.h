@@ -3,6 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Editor/ObjectEditor.h"
+#include "Script/ScriptContext.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,6 +33,7 @@ class ListBox;
 
 class Splitter;
 class SyntaxRichEdit;
+class StatusBar;
 
 		}
 	}
@@ -40,8 +42,12 @@ class SyntaxRichEdit;
 	{
 
 class Script;
+class ScriptManager;
+class ScriptContext;
 
-class T_DLLCLASS ScriptEditor : public editor::ObjectEditor
+class T_DLLCLASS ScriptEditor
+:	public editor::ObjectEditor
+,	public script::IErrorCallback
 {
 	T_RTTI_CLASS(ScriptEditor)
 
@@ -57,15 +63,27 @@ public:
 private:
 	editor::Editor* m_editor;
 	Ref< Script > m_script;
+	Ref< ScriptManager > m_scriptManager;
+	Ref< ScriptContext > m_scriptContext;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
+	Ref< ui::custom::StatusBar > m_compileStatus;
+	int32_t m_compileCountDown;
+
+	virtual void syntaxError(uint32_t line, const std::wstring& message);
+
+	virtual void otherError(const std::wstring& message);
 
 	void updateDependencyList();
 
 	void eventDependencyToolClick(ui::Event* event);
 
 	void eventDependencyListDoubleClick(ui::Event* event);
+
+	void eventScriptChange(ui::Event* event);
+
+	void eventTimer(ui::Event* event);
 };
 
 	}

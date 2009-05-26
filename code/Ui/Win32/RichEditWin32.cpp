@@ -154,7 +154,8 @@ int RichEditWin32::getLineOffset(int line) const
 
 int RichEditWin32::getLineLength(int line) const
 {
-	return int(m_hWnd.sendMessage(EM_LINELENGTH, (WPARAM)line, 0));
+	int characterIndex = getLineOffset(line);
+	return int(m_hWnd.sendMessage(EM_LINELENGTH, (WPARAM)characterIndex, 0));
 }
 
 std::wstring RichEditWin32::getLine(int line) const
