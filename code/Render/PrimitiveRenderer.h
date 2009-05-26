@@ -201,7 +201,9 @@ public:
 		const Color& colorHint
 	);
 
-	void flush(RenderView* renderView);
+	bool begin(RenderView* renderView);
+
+	void end(RenderView* renderView);
 
 	inline const Matrix44& getProjection() const { return m_projection.back(); }
 

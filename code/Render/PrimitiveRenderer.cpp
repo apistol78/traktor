@@ -90,10 +90,7 @@ bool PrimitiveRenderer::create(
 	}
 
 	m_vertexStart =
-	m_vertex = static_cast< Vertex* >(m_vertexBuffers[m_currentBuffer]->lock());
-	if (!m_vertex)
-		return false;
-
+	m_vertex = 0;
 	m_shader = shader;
 
 	m_projection.push_back(Matrix44::identity());
@@ -687,41 +684,14 @@ void PrimitiveRenderer::drawCone(
 	}
 }
 
-void PrimitiveRenderer::flush(RenderView* renderView)
+bool PrimitiveRenderer::begin(RenderView* renderView)
 {
-	if (m_vertex)
-	{
-		m_vertexBuffers[m_currentBuffer]->unlock();
-
-		if (m_shader.validate())
-		{
-			renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
-
-			for (std::vector< Primitives >::iterator i = m_primitives.begin(); i != m_primitives.end(); ++i)
-			{
-				if (i->type == PtTriangles)
-					m_shader->setTechnique(L"Solid");
-				else
-					m_shader->setTechnique(L"Wire");
-
-				m_shader->draw(renderView, *i);
-			}
-		}
-
-		m_currentBuffer = (m_currentBuffer + 1) % sizeof_array(m_vertexBuffers);
-	}
+	T_ASSERT (!m_vertex);
 
 	m_vertexStart =
 	m_vertex = static_cast< Vertex* >(m_vertexBuffers[m_currentBuffer]->lock());
-
-	m_primitives.resize(0);
-
-	while (!m_projection.empty())
-		m_projection.pop_back();
-	while (!m_view.empty())
-		m_view.pop_back();
-	while (!m_world.empty())
-		m_world.pop_back();
+	if (!m_vertex)
+		return false;
 
 	m_projection.push_back(Matrix44::identity());
 	m_view.push_back(Matrix44::identity());
@@ -731,6 +701,42 @@ void PrimitiveRenderer::flush(RenderView* renderView)
 
 	m_viewWidth = float(renderView->getViewport().width);
 	m_viewHeight = float(renderView->getViewport().height);
+
+	return true;
+}
+
+void PrimitiveRenderer::end(RenderView* renderView)
+{
+	T_ASSERT (m_vertex);
+
+	m_vertexBuffers[m_currentBuffer]->unlock();
+	if (m_shader.validate())
+	{
+		renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
+
+		for (std::vector< Primitives >::iterator i = m_primitives.begin(); i != m_primitives.end(); ++i)
+		{
+			if (i->type == PtTriangles)
+				m_shader->setTechnique(L"Solid");
+			else
+				m_shader->setTechnique(L"Wire");
+
+			m_shader->draw(renderView, *i);
+		}
+	}
+
+	m_currentBuffer = (m_currentBuffer + 1) % sizeof_array(m_vertexBuffers);
+
+	m_vertexStart =
+	m_vertex = 0;
+	m_primitives.resize(0);
+
+	while (!m_projection.empty())
+		m_projection.pop_back();
+	while (!m_view.empty())
+		m_view.pop_back();
+	while (!m_world.empty())
+		m_world.pop_back();
 }
 
 void PrimitiveRenderer::updateTransforms()

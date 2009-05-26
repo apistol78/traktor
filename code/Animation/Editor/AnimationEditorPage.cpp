@@ -913,73 +913,76 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 	data->picker->setViewTransform(view);
 
 	// Begin rendering primitives.
-	m_primitiveRenderer->pushProjection(projection);
-	m_primitiveRenderer->pushView(view);
-
-	for (int x = -10; x <= 10; ++x)
+	if (m_primitiveRenderer->begin(data->renderView))
 	{
-		m_primitiveRenderer->drawLine(
-			Vector4(float(x), 0.0f, -10.0f, 1.0f),
-			Vector4(float(x), 0.0f, 10.0f, 1.0f),
-			Color(100, 100, 100)
-		);
-		m_primitiveRenderer->drawLine(
-			Vector4(-10.0f, 0.0f, float(x), 1.0f),
-			Vector4(10.0f, 0.0f, float(x), 1.0f),
-			Color(100, 100, 100)
-		);
-	}
+		m_primitiveRenderer->pushProjection(projection);
+		m_primitiveRenderer->pushView(view);
 
-	if (m_skeleton)
-	{
-		float time = float(m_sequencer->getCursor() / 1000.0f);
-
-		// Render ghost trail.
-		if (m_showGhostTrail)
+		for (int x = -10; x <= 10; ++x)
 		{
-			for (int i = 0; i < 10; ++i)
-			{
-				float ghostTime = time - (i + 1) * 0.1f;
-				if (ghostTime < 0.0f)
-					break;
+			m_primitiveRenderer->drawLine(
+				Vector4(float(x), 0.0f, -10.0f, 1.0f),
+				Vector4(float(x), 0.0f, 10.0f, 1.0f),
+				Color(100, 100, 100)
+			);
+			m_primitiveRenderer->drawLine(
+				Vector4(-10.0f, 0.0f, float(x), 1.0f),
+				Vector4(10.0f, 0.0f, float(x), 1.0f),
+				Color(100, 100, 100)
+			);
+		}
 
-				uint8_t alpha = 100 - i * 100 / 10;
-				drawSkeleton(ghostTime, Color(0, 0, 0, alpha), Color(0, 0, 0, alpha), false);
+		if (m_skeleton)
+		{
+			float time = float(m_sequencer->getCursor() / 1000.0f);
+
+			// Render ghost trail.
+			if (m_showGhostTrail)
+			{
+				for (int i = 0; i < 10; ++i)
+				{
+					float ghostTime = time - (i + 1) * 0.1f;
+					if (ghostTime < 0.0f)
+						break;
+
+					uint8_t alpha = 100 - i * 100 / 10;
+					drawSkeleton(ghostTime, Color(0, 0, 0, alpha), Color(0, 0, 0, alpha), false);
+				}
+			}
+
+			// Render current skeleton.
+			drawSkeleton(time, Color(255, 255, 0, 180), Color(255, 200, 255, 180), true);
+
+			// Update picker volumes.
+			Pose pose;
+			m_animation->getPose(time, pose);
+
+			AlignedVector< Matrix44 > boneTransforms;
+			calculatePoseTransforms(
+				m_skeleton,
+				&pose,
+				boneTransforms
+			);
+
+			data->picker->removeAllVolumes();
+			for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+			{
+				const Bone* bone = m_skeleton->getBone(i);
+
+				Vector4 center(0.0f, 0.0f, bone->getLength() / 2.0f, 1.0f);
+				Vector4 extent(bone->getRadius(), bone->getRadius(), bone->getLength() / 2.0f, 0.0f);
+
+				Aabb boneVolume(
+					center - extent,
+					center + extent
+				);
+
+				data->picker->addVolume(boneTransforms[i], boneVolume, i);
 			}
 		}
 
-		// Render current skeleton.
-		drawSkeleton(time, Color(255, 255, 0, 180), Color(255, 200, 255, 180), true);
-
-		// Update picker volumes.
-		Pose pose;
-		m_animation->getPose(time, pose);
-
-		AlignedVector< Matrix44 > boneTransforms;
-		calculatePoseTransforms(
-			m_skeleton,
-			&pose,
-			boneTransforms
-		);
-
-		data->picker->removeAllVolumes();
-		for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
-		{
-			const Bone* bone = m_skeleton->getBone(i);
-
-			Vector4 center(0.0f, 0.0f, bone->getLength() / 2.0f, 1.0f);
-			Vector4 extent(bone->getRadius(), bone->getRadius(), bone->getLength() / 2.0f, 0.0f);
-
-			Aabb boneVolume(
-				center - extent,
-				center + extent
-			);
-
-			data->picker->addVolume(boneTransforms[i], boneVolume, i);
-		}
+		m_primitiveRenderer->end(data->renderView);
 	}
-
-	m_primitiveRenderer->flush(data->renderView);
 
 	data->renderView->end();
 	data->renderView->present();

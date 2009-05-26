@@ -486,6 +486,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	Matrix44 view = camera->getCurrentView();
 
 	// Render world.
+	m_primitiveRenderer->begin(m_renderView);
 	m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
 	m_primitiveRenderer->pushProjection(m_worldRenderView.getProjection());
 	m_primitiveRenderer->pushView(view);
@@ -615,7 +616,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			);
 		}
 
-		m_primitiveRenderer->flush(m_renderView);
+		m_primitiveRenderer->end(m_renderView);
 	}
 
 	double stopTime = m_timer.getElapsedTime();
