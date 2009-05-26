@@ -297,44 +297,47 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		viewInverse.translation()
 	);
 
-	m_primitiveRenderer->pushProjection(projectionTransform);
-	m_primitiveRenderer->pushView(viewTransform);
-
-	for (int x = -10; x <= 10; ++x)
+	if (m_primitiveRenderer->begin(m_renderView))
 	{
-		m_primitiveRenderer->drawLine(
-			Vector4(float(x), 0.0f, -10.0f, 1.0f),
-			Vector4(float(x), 0.0f, 10.0f, 1.0f),
-			Color(90, 90, 90)
-		);
-		m_primitiveRenderer->drawLine(
-			Vector4(-10.0f, 0.0f, float(x), 1.0f),
-			Vector4(10.0f, 0.0f, float(x), 1.0f),
-			Color(90, 90, 90)
-		);
-	}
+		m_primitiveRenderer->pushProjection(projectionTransform);
+		m_primitiveRenderer->pushView(viewTransform);
 
-	// Draw emitter sources.
-	if (m_effect && m_guideVisible)
-	{
-		const RefArray< EffectLayer >& layers = m_effect->getLayers();
-		for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		for (int x = -10; x <= 10; ++x)
 		{
-			Ref< Emitter > emitter = (*i)->getEmitter();
-			if (!emitter)
-				continue;
-
-			Ref< Source > source = emitter->getSource();
-			if (!source)
-				continue;
-
-			std::map< const Type*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&source->getType());
-			if (j != m_sourceRenderers.end())
-				j->second->render(m_primitiveRenderer, source);
+			m_primitiveRenderer->drawLine(
+				Vector4(float(x), 0.0f, -10.0f, 1.0f),
+				Vector4(float(x), 0.0f, 10.0f, 1.0f),
+				Color(90, 90, 90)
+			);
+			m_primitiveRenderer->drawLine(
+				Vector4(-10.0f, 0.0f, float(x), 1.0f),
+				Vector4(10.0f, 0.0f, float(x), 1.0f),
+				Color(90, 90, 90)
+			);
 		}
-	}
 
-	m_primitiveRenderer->flush(m_renderView);
+		// Draw emitter sources.
+		if (m_effect && m_guideVisible)
+		{
+			const RefArray< EffectLayer >& layers = m_effect->getLayers();
+			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+			{
+				Ref< Emitter > emitter = (*i)->getEmitter();
+				if (!emitter)
+					continue;
+
+				Ref< Source > source = emitter->getSource();
+				if (!source)
+					continue;
+
+				std::map< const Type*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&source->getType());
+				if (j != m_sourceRenderers.end())
+					j->second->render(m_primitiveRenderer, source);
+			}
+		}
+
+		m_primitiveRenderer->end(m_renderView);
+	}
 
 	if (m_effectInstance)
 	{

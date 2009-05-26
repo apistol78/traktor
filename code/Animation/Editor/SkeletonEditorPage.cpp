@@ -426,92 +426,95 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 		2000.0f
 	);
 
-	m_primitiveRenderer->pushProjection(projectionTransform);
-	m_primitiveRenderer->pushView(viewTransform);
-
-	for (int x = -10; x <= 10; ++x)
+	if (m_primitiveRenderer->begin(m_renderView))
 	{
-		m_primitiveRenderer->drawLine(
-			Vector4(float(x), 0.0f, -10.0f, 1.0f),
-			Vector4(float(x), 0.0f, 10.0f, 1.0f),
-			Color(100, 100, 100)
-		);
-		m_primitiveRenderer->drawLine(
-			Vector4(-10.0f, 0.0f, float(x), 1.0f),
-			Vector4(10.0f, 0.0f, float(x), 1.0f),
-			Color(100, 100, 100)
-		);
-	}
+		m_primitiveRenderer->pushProjection(projectionTransform);
+		m_primitiveRenderer->pushView(viewTransform);
 
-	AlignedVector< Matrix44 > boneTransforms;
-	calculateBoneTransforms(
-		m_skeleton,
-		boneTransforms
-	);
-
-	for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
-	{
-		const Bone* bone = m_skeleton->getBone(i);
-
-		Vector4 start = boneTransforms[i].translation();
-		Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
-
-		Color color = (m_selectedBone == i) ? Color(255, 128, 255, 128) : Color(255, 255, 0, 128);
-
-		Vector4 d = boneTransforms[i].axisZ();
-		Vector4 a = boneTransforms[i].axisX();
-		Vector4 b = boneTransforms[i].axisY();
-
-		Scalar radius = bone->getRadius();
-		d *= radius;
-		a *= radius;
-		b *= radius;
-
-		m_primitiveRenderer->drawLine(start, start + d + a + b, color);
-		m_primitiveRenderer->drawLine(start, start + d - a + b, color);
-		m_primitiveRenderer->drawLine(start, start + d + a - b, color);
-		m_primitiveRenderer->drawLine(start, start + d - a - b, color);
-
-		m_primitiveRenderer->drawLine(start + d + a + b, end, color);
-		m_primitiveRenderer->drawLine(start + d - a + b, end, color);
-		m_primitiveRenderer->drawLine(start + d + a - b, end, color);
-		m_primitiveRenderer->drawLine(start + d - a - b, end, color);
-
-		m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-		m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-		m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-		m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
-
-		m_primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 128));
-		m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 128));
-		m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 128));
-
-		if (bone->getEnableLimits())
+		for (int x = -10; x <= 10; ++x)
 		{
-			m_primitiveRenderer->drawCone(
-				boneTransforms[i],
-				bone->getConeLimit().x,
-				bone->getConeLimit().y,
-				radius,
-				Color(255, 255, 255, 64),
-				Color(0, 0, 0, 32)
+			m_primitiveRenderer->drawLine(
+				Vector4(float(x), 0.0f, -10.0f, 1.0f),
+				Vector4(float(x), 0.0f, 10.0f, 1.0f),
+				Color(100, 100, 100)
 			);
-
-			m_primitiveRenderer->drawProtractor(
-				start,
-				boneTransforms[i].axisX(),
-				boneTransforms[i].axisY(),
-				-bone->getTwistLimit(),
-				bone->getTwistLimit(),
-				deg2rad(8.0f),
-				radius,
-				Color(255, 255, 255, 64),
-				Color(0, 0, 0, 32)
+			m_primitiveRenderer->drawLine(
+				Vector4(-10.0f, 0.0f, float(x), 1.0f),
+				Vector4(10.0f, 0.0f, float(x), 1.0f),
+				Color(100, 100, 100)
 			);
 		}
-	}
 
-	m_primitiveRenderer->flush(m_renderView);
+		AlignedVector< Matrix44 > boneTransforms;
+		calculateBoneTransforms(
+			m_skeleton,
+			boneTransforms
+		);
+
+		for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+		{
+			const Bone* bone = m_skeleton->getBone(i);
+
+			Vector4 start = boneTransforms[i].translation();
+			Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+
+			Color color = (m_selectedBone == i) ? Color(255, 128, 255, 128) : Color(255, 255, 0, 128);
+
+			Vector4 d = boneTransforms[i].axisZ();
+			Vector4 a = boneTransforms[i].axisX();
+			Vector4 b = boneTransforms[i].axisY();
+
+			Scalar radius = bone->getRadius();
+			d *= radius;
+			a *= radius;
+			b *= radius;
+
+			m_primitiveRenderer->drawLine(start, start + d + a + b, color);
+			m_primitiveRenderer->drawLine(start, start + d - a + b, color);
+			m_primitiveRenderer->drawLine(start, start + d + a - b, color);
+			m_primitiveRenderer->drawLine(start, start + d - a - b, color);
+
+			m_primitiveRenderer->drawLine(start + d + a + b, end, color);
+			m_primitiveRenderer->drawLine(start + d - a + b, end, color);
+			m_primitiveRenderer->drawLine(start + d + a - b, end, color);
+			m_primitiveRenderer->drawLine(start + d - a - b, end, color);
+
+			m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
+			m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
+			m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
+			m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+
+			m_primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 128));
+			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 128));
+			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 128));
+
+			if (bone->getEnableLimits())
+			{
+				m_primitiveRenderer->drawCone(
+					boneTransforms[i],
+					bone->getConeLimit().x,
+					bone->getConeLimit().y,
+					radius,
+					Color(255, 255, 255, 64),
+					Color(0, 0, 0, 32)
+				);
+
+				m_primitiveRenderer->drawProtractor(
+					start,
+					boneTransforms[i].axisX(),
+					boneTransforms[i].axisY(),
+					-bone->getTwistLimit(),
+					bone->getTwistLimit(),
+					deg2rad(8.0f),
+					radius,
+					Color(255, 255, 255, 64),
+					Color(0, 0, 0, 32)
+				);
+			}
+		}
+
+		m_primitiveRenderer->end(m_renderView);
+	}
 
 	m_renderView->end();
 	m_renderView->present();
