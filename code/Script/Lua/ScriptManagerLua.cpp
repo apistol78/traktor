@@ -1,5 +1,6 @@
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptContextLua.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Heap/HeapNew.h"
 
 namespace traktor
@@ -7,7 +8,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, ScriptManager)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, ScriptManager)
 
 void ScriptManagerLua::registerClass(ScriptClass* scriptClass)
 {

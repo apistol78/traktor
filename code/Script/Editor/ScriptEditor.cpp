@@ -1,6 +1,8 @@
 #include "Script/Editor/ScriptEditor.h"
 #include "Script/Script.h"
+#include "Script/ScriptManager.h"
 #include "Editor/Editor.h"
+#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -16,8 +18,11 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
+#include "Ui/Custom/StatusBar/StatusBar.h"
 #include "I18N/Text.h"
 #include "Core/Heap/HeapNew.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
@@ -31,6 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditor", ScriptEditor, editor::Obj
 
 ScriptEditor::ScriptEditor(editor::Editor* editor)
 :	m_editor(editor)
+,	m_compileCountDown(0)
 {
 }
 
@@ -66,16 +72,54 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, Object* ob
 
 	m_dependencyList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyListDoubleClick));
 
-	m_edit = gc_new< ui::custom::SyntaxRichEdit >();
-	if (!m_edit->create(m_splitter, m_script->getText()))
+	Ref< ui::Container > containerEdit = gc_new< ui::Container >();
+	if (!containerEdit->create(m_splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%,*", 0, 0)))
 		return false;
 
-	m_edit->setFont(ui::Font(
-		L"Courier New",
-		16
-	));
+	m_edit = gc_new< ui::custom::SyntaxRichEdit >();
+	if (!m_edit->create(containerEdit, m_script->getText()))
+		return false;
 
-	m_edit->setLanguage(gc_new< ui::custom::SyntaxLanguageLua >());
+	m_edit->setFont(ui::Font(L"Courier New", 16));
+	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
+
+	m_compileStatus = gc_new< ui::custom::StatusBar >();
+	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
+		return false;
+
+	// Create language specific implementations.
+	{
+		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.SyntaxLanguageType");
+		const Type* syntaxLanguageType = Type::find(syntaxLanguageTypeName);
+		if (syntaxLanguageType)
+		{
+			Ref< ui::custom::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::custom::SyntaxLanguage* >(syntaxLanguageType->newInstance());
+			T_ASSERT (syntaxLanguage);
+			m_edit->setLanguage(syntaxLanguage);
+		}
+
+		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.ScriptManagerType");
+		const Type* scriptManagerType = Type::find(scriptManagerTypeName);
+		if (scriptManagerType)
+		{
+			m_scriptManager = dynamic_type_cast< ScriptManager* >(scriptManagerType->newInstance());
+			T_ASSERT (m_scriptManager);
+
+			m_scriptContext = m_scriptManager->createContext();
+			if (!m_scriptContext)
+			{
+				log::warning << L"Failed to create script context; interactive syntax check disabled" << Endl;
+				m_scriptManager = 0;
+			}
+		}
+	}
+
+	// Setup compile timer.
+	if (m_scriptManager)
+	{
+		parent->addTimerEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventTimer));
+		parent->startTimer(100);
+	}
 
 	updateDependencyList();
 	return true;
@@ -89,6 +133,22 @@ void ScriptEditor::destroy()
 void ScriptEditor::apply()
 {
 	m_script->setText(m_edit->getText());
+}
+
+void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)
+{
+	StringOutputStream ss;
+	ss << L"Syntax error (" << line << L") : " << message;
+	m_compileStatus->setText(ss.str());
+	if (line > 0)
+		m_edit->setErrorHighlight(line - 1);
+}
+
+void ScriptEditor::otherError(const std::wstring& message)
+{
+	StringOutputStream ss;
+	ss << L"Error : " << message;
+	m_compileStatus->setText(ss.str());
 }
 
 void ScriptEditor::updateDependencyList()
@@ -141,6 +201,28 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
 		if (scriptInstance)
 			m_editor->openEditor(scriptInstance);
+	}
+}
+
+void ScriptEditor::eventScriptChange(ui::Event* event)
+{
+	m_compileCountDown = 10;
+	m_compileStatus->setText(L"");
+}
+
+void ScriptEditor::eventTimer(ui::Event* event)
+{
+	T_ASSERT (m_scriptManager);
+
+	if (--m_compileCountDown == 0 && m_scriptContext)
+	{
+		// Take snapshot of script and try to compile it.
+		std::wstring script = m_edit->getText();
+		if (m_scriptContext->executeScript(script, true, this))
+		{
+			m_compileStatus->setText(L"");
+			m_edit->setErrorHighlight(-1);
+		}
 	}
 }
 

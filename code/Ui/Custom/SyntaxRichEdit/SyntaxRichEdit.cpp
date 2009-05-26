@@ -19,6 +19,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 ,	m_attributeNumber(0)
 ,	m_attributeComment(0)
 ,	m_attributeKeyword(0)
+,	m_attributeError(0)
 {
 }
 
@@ -32,6 +33,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	m_attributeNumber = addAttribute(Color(0, 0, 120), Color(255, 255, 255), false, false, false);		// Number
 	m_attributeComment = addAttribute(Color(40, 120, 40), Color(255, 255, 255), false, true, false);	// Comment
 	m_attributeKeyword = addAttribute(Color(0, 0, 255), Color(255, 255, 255), false, false, false);		// Keyword
+	m_attributeError = addAttribute(Color(255, 255, 255), Color(255, 0, 0), false, false, false);		// Error
 
 	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
 	return true;
@@ -41,6 +43,17 @@ void SyntaxRichEdit::setLanguage(SyntaxLanguage* language)
 {
 	m_language = language;
 	updateLanguage(0, getLineCount() - 1);
+}
+
+void SyntaxRichEdit::setErrorHighlight(int line)
+{
+	updateLanguage(0, getLineCount() - 1);
+	if (line >= 0)
+	{
+		int offset = getLineOffset(line);
+		int length = getLineLength(line);
+		setAttribute(offset, length, m_attributeError);
+	}
 }
 
 void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)

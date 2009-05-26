@@ -1,4 +1,5 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
+#include "Core/Serialization/Serializable.h"
 
 namespace traktor
 {
@@ -7,7 +8,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", SyntaxLanguageLua, SyntaxLanguage)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", SyntaxLanguageLua, SyntaxLanguage)
 
 void SyntaxLanguageLua::begin()
 {

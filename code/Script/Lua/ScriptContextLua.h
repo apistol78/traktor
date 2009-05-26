@@ -36,7 +36,7 @@ public:
 
 	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue);
 
-	virtual bool executeScript(const std::wstring& script);
+	virtual bool executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback);
 
 	virtual bool haveFunction(const std::wstring& functionName) const;
 

@@ -2,6 +2,8 @@
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/ScriptClass.h"
 #include "Core/Misc/TString.h"
+#include "Core/Misc/SplitString.h"
+#include "Core/Misc/StringUtils.h"
 #include "Core/Log/Log.h"
 
 extern "C"
@@ -76,24 +78,42 @@ void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& glob
 	lua_setglobal(m_luaState, wstombs(globalName).c_str());
 }
 
-bool ScriptContextLua::executeScript(const std::wstring& script)
+bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	int32_t result = luaL_loadstring(m_luaState, wstombs(script).c_str());
 	if (result == LUA_ERRSYNTAX)
 	{
-		log::error << L"LUA syntax error; " << mbstows(lua_tostring(m_luaState, -1)) << Endl;
+		if (errorCallback)
+		{
+			std::wstring message = mbstows(lua_tostring(m_luaState, -1));
+			std::vector< std::wstring > parts;
+			Split< std::wstring >::any(message, L":", parts);
+			T_ASSERT (parts.size() == 3);
+			errorCallback->syntaxError(parseString< int32_t >(parts[1]), parts[2]);
+		}
+		else
+			log::error << L"LUA syntax error; " << mbstows(lua_tostring(m_luaState, -1)) << Endl;
+
 		lua_pop(m_luaState, 1);
 		return false;
 	}
 	else if (result == LUA_ERRMEM)
 	{
-		log::debug << L"Out of memory in LUA runtime; " << mbstows(lua_tostring(m_luaState, -1)) << Endl;
+		if (errorCallback)
+			errorCallback->otherError(L"Out of memory in LUA runtime; " + mbstows(lua_tostring(m_luaState, -1)));
+		else
+			log::debug << L"Out of memory in LUA runtime; " << mbstows(lua_tostring(m_luaState, -1)) << Endl;
+		lua_pop(m_luaState, 1);
 		return false;
 	}
 
-	lua_pcall(m_luaState, 0, LUA_MULTRET, 0);
+	if (!compileOnly)
+		lua_pcall(m_luaState, 0, LUA_MULTRET, 0);
+	else
+		lua_pop(m_luaState, 1);
+
 	return true;
 }
 
