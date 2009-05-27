@@ -11,6 +11,7 @@
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Edge.h"
 #include "Editor/Editor.h"
 #include "Editor/Settings.h"
@@ -790,7 +791,7 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 			// Remove pins.
 			while (!externalInputPins.empty())
 			{
-				Ref< Edge > edge = m_shaderGraph->findEdge(externalInputPins.back());
+				Ref< Edge > edge = ShaderGraphAdjacency(m_shaderGraph).findEdge(externalInputPins.back());
 				if (edge)
 					m_shaderGraph->removeEdge(edge);
 
@@ -803,7 +804,7 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 			while (!externalOutputPins.empty())
 			{
 				RefArray< Edge > edges;
-				m_shaderGraph->findEdges(externalOutputPins.back(), edges);
+				ShaderGraphAdjacency(m_shaderGraph).findEdges(externalOutputPins.back(), edges);
 				for (RefArray< Edge >::iterator j = edges.begin(); j != edges.end(); ++j)
 					m_shaderGraph->removeEdge(*j);
 
@@ -933,7 +934,7 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::Event* event)
 	T_ASSERT (shaderDestinationPin);
 
 	// Replace existing edge.
-	Ref< Edge > shaderEdge = m_shaderGraph->findEdge(shaderDestinationPin);
+	Ref< Edge > shaderEdge = ShaderGraphAdjacency(m_shaderGraph).findEdge(shaderDestinationPin);
 	if (shaderEdge)
 	{
 		m_shaderGraph->removeEdge(shaderEdge);

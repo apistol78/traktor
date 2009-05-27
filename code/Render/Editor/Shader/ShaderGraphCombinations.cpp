@@ -2,6 +2,7 @@
 #include <stack>
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
 #include "Core/Serialization/DeepClone.h"
@@ -15,6 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCom
 
 ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
+,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
 {
 	RefArray< Branch > branchNodes;
 	m_shaderGraph->findNodesOf< Branch >(branchNodes);
@@ -88,11 +90,11 @@ ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 			Ref< const OutputPin > outputPin = node->findOutputPin(L"Output");
 			T_ASSERT (outputPin);
 
-			Ref< const OutputPin > sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+			Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 			T_ASSERT (sourceOutputPin);
 
 			RefArray< const InputPin > destinationInputPins;
-			m_shaderGraph->findDestinationPins(outputPin, destinationInputPins);
+			m_shaderGraphAdj->findDestinationPins(outputPin, destinationInputPins);
 			T_ASSERT (!destinationInputPins.empty());
 
 			for (RefArray< const InputPin >::iterator i = destinationInputPins.begin(); i != destinationInputPins.end(); ++i)
@@ -111,7 +113,7 @@ ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 				Ref< const InputPin > inputPin = node->getInputPin(i);
 				T_ASSERT (inputPin);
 
-				Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
+				Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 				if (edge)
 				{
 					T_ASSERT (edge->getDestination() == inputPin);

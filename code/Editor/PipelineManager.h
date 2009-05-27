@@ -97,7 +97,7 @@ public:
 
 	virtual db::Database* getOutputDatabase() const;
 
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, Object* object);
+	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, const Object* object);
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 

@@ -1,5 +1,6 @@
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 
 namespace traktor
@@ -9,8 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOrderEvaluator", ShaderGraphOrderEvaluator, Object)
 
-ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph)
+ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph, const ShaderGraphAdjacency* shaderGraphAdj)
 :	m_shaderGraph(shaderGraph)
+,	m_shaderGraphAdj(shaderGraphAdj)
 {
 }
 
@@ -19,7 +21,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& in
 	Ref< const InputPin > inputPin = node->findInputPin(inputPinName);
 	T_ASSERT (inputPin);
 
-	Ref< const OutputPin > sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+	Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourceOutputPin)
 		return OrConstant;
 

@@ -1,6 +1,7 @@
 #include <stack>
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
 #include "Core/Serialization/DeepClone.h"
@@ -14,6 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechn
 
 ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
+,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
 {
 }
 
@@ -75,7 +77,7 @@ ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 			Ref< const InputPin > inputPin = node->getInputPin(i);
 			T_ASSERT (inputPin);
 
-			Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
+			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 			if (edge)
 			{
 				shaderGraph->addEdge(edge);

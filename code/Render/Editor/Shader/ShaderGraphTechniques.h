@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class ShaderGraph;
+class ShaderGraphAdjacency;
 class Node;
 
 /*! \brief Shader graph technique generator. */
@@ -35,6 +36,7 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
+	Ref< ShaderGraphAdjacency > m_shaderGraphAdj;
 };
 
 	}

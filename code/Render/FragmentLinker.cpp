@@ -4,6 +4,7 @@
 #include <algorithm>
 #include "Render/FragmentLinker.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/Nodes.h"
 #include "Render/External.h"
@@ -130,7 +131,7 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
 				OutputPort* fragmentPort = dynamic_type_cast< OutputPort* >(*j);
 				if (fragmentPort && fragmentPort->getName() == sourcePin->getName())
 				{
-					sourcePin = fragmentGraph->findSourcePin(fragmentPort->findInputPin(L"Input"));
+					sourcePin = ShaderGraphAdjacency(fragmentGraph).findSourcePin(fragmentPort->findInputPin(L"Input"));
 					T_ASSERT (sourcePin);
 					break;
 				}
@@ -150,7 +151,7 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
 				InputPort* fragmentPort = dynamic_type_cast< InputPort* >(*j);
 				if (fragmentPort && fragmentPort->getName() == destinationPin->getName())
 				{
-					fragmentGraph->findDestinationPins(fragmentPort->findOutputPin(L"Output"), destinationPins);
+					ShaderGraphAdjacency(fragmentGraph).findDestinationPins(fragmentPort->findOutputPin(L"Output"), destinationPins);
 					break;
 				}
 			}
@@ -224,6 +225,9 @@ ShaderGraph* FragmentLinker::merge(const ShaderGraph* shaderGraphLeft, const Sha
 			resolvedEdges.push_back(*i);
 	}
 
+	ShaderGraphAdjacency shaderGraphLeftAdj(shaderGraphLeft);
+	ShaderGraphAdjacency shaderGraphRightAdj(shaderGraphRight);
+
 	for (RefArray< Node >::const_iterator i = nodesRight.begin(); i != nodesRight.end(); ++i)
 	{
 		InputPort* inputPort = dynamic_type_cast< InputPort* >(*i);
@@ -231,13 +235,13 @@ ShaderGraph* FragmentLinker::merge(const ShaderGraph* shaderGraphLeft, const Sha
 			continue;
 
 		RefArray< const InputPin > destinationPins;
-		if (!shaderGraphRight->findDestinationPins(inputPort->getOutputPin(0), destinationPins))
+		if (!shaderGraphRightAdj.findDestinationPins(inputPort->getOutputPin(0), destinationPins))
 			continue;
 
 		std::set< OutputPort* >::iterator j = std::find_if(outputPorts.begin(), outputPorts.end(), OutputPortPredicate(inputPort->getName()));
 		if (j != outputPorts.end())
 		{
-			Ref< const OutputPin > sourcePin = shaderGraphLeft->findSourcePin((*j)->getInputPin(0));
+			Ref< const OutputPin > sourcePin = shaderGraphLeftAdj.findSourcePin((*j)->getInputPin(0));
 
 			bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), sourcePin->getNode()) != resolvedNodes.end();
 			if (!foundSource)

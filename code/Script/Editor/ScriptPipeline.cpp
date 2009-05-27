@@ -71,14 +71,14 @@ bool ScriptPipeline::buildDependencies(
 
 bool ScriptPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	Object* sourceAsset,
+	const Object* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	uint32_t reason
 ) const
 {
-	Ref< Script > sourceScript = checked_type_cast< Script* >(sourceAsset);
+	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
 
 	// Resolve script; ie. concate all dependent scripts.
 	Ref< Script > outputScript = resolveScript(pipelineManager, sourceScript);

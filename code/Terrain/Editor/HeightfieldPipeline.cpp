@@ -91,7 +91,7 @@ bool HeightfieldPipeline::buildDependencies(
 
 bool HeightfieldPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	Object* sourceAsset,
+	const Object* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
