@@ -27,7 +27,7 @@ namespace traktor
 		namespace
 		{
 
-class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
+class FragmentReaderAdapter : public FragmentLinker::FragmentReader
 {
 public:
 	FragmentReaderAdapter(editor::PipelineManager* pipelineManager)
@@ -35,9 +35,9 @@ public:
 	{
 	}
 
-	virtual const render::ShaderGraph* read(const Guid& fragmentGuid)
+	virtual const ShaderGraph* read(const Guid& fragmentGuid)
 	{
-		return m_pipelineManager->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+		return m_pipelineManager->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 	}
 
 private:
@@ -167,7 +167,7 @@ bool ShaderPipeline::buildDependencies(
 
 bool ShaderPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	Object* sourceAsset,
+	const Object* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -195,12 +195,14 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
+#if defined(_DEBUG)
 	// Ensure shader graph is valid as a shader.
 	if (!ShaderGraphValidator(shaderGraph).validate(ShaderGraphValidator::SgtShader))
 	{
 		log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
 		return false;
 	}
+#endif
 
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph);
@@ -283,7 +285,7 @@ bool ShaderPipeline::buildOutput(
 				return false;
 			}
 #endif
-			// Insert interpolator nodes at optimal locations.
+			// Insert interpolation nodes at optimal locations.
 			shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
 			if (!shaderGraphCombination)
 			{
@@ -307,12 +309,14 @@ bool ShaderPipeline::buildOutput(
 					log::warning << L"Unable to create debug file" << Endl;
 			}
 
+#if defined(_DEBUG)
 			// Ensure shader graph is valid as a program.
 			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
 			{
 				log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
 				return false;
 			}
+#endif
 
 			if (m_renderSystem)
 			{
@@ -323,10 +327,10 @@ bool ShaderPipeline::buildOutput(
 					return false;
 				}
 
-				RefArray< render::Sampler > samplerNodes;
-				shaderGraphCombination->findNodesOf< render::Sampler >(samplerNodes);
+				RefArray< Sampler > samplerNodes;
+				shaderGraphCombination->findNodesOf< Sampler >(samplerNodes);
 
-				for (RefArray< render::Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+				for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
 				{
 					const Guid& textureGuid = (*i)->getExternal();
 					if (!textureGuid.isNull() && textureGuid.isValid())

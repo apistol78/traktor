@@ -3,6 +3,7 @@
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
 #include "Core/Serialization/DeepClone.h"
@@ -41,6 +42,8 @@ ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 {
 	m_shaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
 	T_ASSERT (m_shaderGraph);
+
+	m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 }
 
 ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
@@ -71,7 +74,7 @@ ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
 		for (int i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
+			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 			if (edge)
 			{
 				Ref< const OutputPin > outputPin = edge->getSource();
@@ -132,14 +135,17 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 
 			// Identical nodes found; rewire edges.
 			RefArray< Edge > edges;
-			m_shaderGraph->findEdges(nodes[j]->getOutputPin(0), edges);
-			for (RefArray< Edge >::iterator k = edges.begin(); k != edges.end(); ++k)
+			if (m_shaderGraphAdj->findEdges(nodes[j]->getOutputPin(0), edges) > 0)
 			{
-				m_shaderGraph->removeEdge(*k);
-				m_shaderGraph->addEdge(gc_new< Edge >(
-					nodes[i]->getOutputPin(0),
-					(*k)->getDestination()
-				));
+				for (RefArray< Edge >::iterator k = edges.begin(); k != edges.end(); ++k)
+				{
+					m_shaderGraph->removeEdge(*k);
+					m_shaderGraph->addEdge(gc_new< Edge >(
+						nodes[i]->getOutputPin(0),
+						(*k)->getDestination()
+					));
+				}
+				m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 			}
 
 			// Remove redundant node.
@@ -177,8 +183,8 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 				bool wiredIdentical = true;
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					Ref< const OutputPin > sourcePin1 = m_shaderGraph->findSourcePin(nodes[i]->getInputPin(k));
-					Ref< const OutputPin > sourcePin2 = m_shaderGraph->findSourcePin(nodes[j]->getInputPin(k));
+					Ref< const OutputPin > sourcePin1 = m_shaderGraphAdj->findSourcePin(nodes[i]->getInputPin(k));
+					Ref< const OutputPin > sourcePin2 = m_shaderGraphAdj->findSourcePin(nodes[j]->getInputPin(k));
 					if (sourcePin1 != sourcePin2)
 					{
 						wiredIdentical = false;
@@ -195,7 +201,7 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 				for (int k = 0; k < outputPinCount; ++k)
 				{
 					RefArray< Edge > edges;
-					m_shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
+					m_shaderGraphAdj->findEdges(nodes[j]->getOutputPin(k), edges);
 					for (RefArray< Edge >::iterator m = edges.begin(); m != edges.end(); ++m)
 					{
 						m_shaderGraph->removeEdge(*m);
@@ -209,10 +215,14 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 				// Remove input edges.
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					Ref< Edge > edge = m_shaderGraph->findEdge(nodes[j]->getInputPin(k));
+					Ref< Edge > edge = m_shaderGraphAdj->findEdge(nodes[j]->getInputPin(k));
 					if (edge)
 						m_shaderGraph->removeEdge(edge);
 				}
+
+				// Update adjacency.
+				if (outputPinCount > 0 || inputPinCount > 0)
+					m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 
 				// Remove node; should be completely disconnected now.
 				m_shaderGraph->removeNode(nodes[j]);
@@ -233,7 +243,6 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 ShaderGraph* ShaderGraphOptimizer::insertInterpolators()
 {
 	m_insertedCount = 0;
-
 	updateOrderComplexity();
 
 	RefArray< PixelOutput > pixelOutputNodes;
@@ -265,7 +274,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 		Ref< const InputPin > inputPin = node->getInputPin(i);
 		T_ASSERT (inputPin);
 
-		Ref< const OutputPin > sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+		Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 		if (!sourceOutputPin)
 			continue;
 
@@ -279,7 +288,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 			if (inputOrder == ShaderGraphOrderEvaluator::OrLinear)
 			{
 				// Remove edge; replace with interpolator.
-				Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
+				Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 				T_ASSERT (edge);
 
 				m_shaderGraph->removeEdge(edge);
@@ -287,7 +296,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 
 				// If this output pin already connected to an interpolator node then we reuse it.
 				RefArray< Edge > outputEdges;
-				m_shaderGraph->findEdges(sourceOutputPin, outputEdges);
+				m_shaderGraphAdj->findEdges(sourceOutputPin, outputEdges);
 				for (RefArray< Edge >::iterator i = outputEdges.begin(); i != outputEdges.end(); ++i)
 				{
 					Ref< Node > targetNode = (*i)->getDestination()->getNode();
@@ -315,10 +324,11 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 					edge = gc_new< Edge >(interpolator->getOutputPin(0), inputPin);
 					m_shaderGraph->addEdge(edge);
 
-					// Need to reevaluate complexity.
-					updateOrderComplexity();
 					m_insertedCount++;
 				}
+
+				m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
+				updateOrderComplexity();
 			}
 		}
 		else
@@ -334,7 +344,7 @@ void ShaderGraphOptimizer::updateOrderComplexity()
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		int complexity = ShaderGraphOrderEvaluator(m_shaderGraph).evaluate(*i);
+		int complexity = ShaderGraphOrderEvaluator(m_shaderGraph, m_shaderGraphAdj).evaluate(*i);
 		m_orderComplexity[*i] = complexity;
 	}
 }

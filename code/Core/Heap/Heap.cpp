@@ -69,8 +69,8 @@ struct ObjectInfo
 #	define HEAP_LOCK
 #endif
 
-const int32_t c_objectsThreshold = 200;				//!< Number of objects allocated before issuing GC.
-const int32_t c_refsRemovedThreshold = 10000;		//!< Number of references removed before issuing GC.
+const int32_t c_objectsThreshold = 1000;			//!< Number of objects allocated before issuing GC.
+const int32_t c_refsRemovedThreshold = 30000;		//!< Number of references removed before issuing GC.
 const int32_t c_promoteNonVisitedThreshold = 100;	//!< Milliseconds until objects get promoted from non-visited into collectable.
 const int32_t c_maxDestructQueueSize = 64;			//!< Maximum number of destruction queues; collector will force a block if this is exceeded.
 

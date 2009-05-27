@@ -72,17 +72,17 @@ Object* ShaderFactory::create(const Type& resourceType, const Guid& guid, bool& 
 			if (!j->program)
 				continue;
 
-			Ref< render::ProgramResource > programResource;
-			if (render::ShaderGraph* programShaderGraph = dynamic_type_cast< render::ShaderGraph* >(j->program))
+			Ref< ProgramResource > programResource;
+			if (ShaderGraph* programShaderGraph = dynamic_type_cast< ShaderGraph* >(j->program))
 			{
 				programResource = m_renderSystem->compileProgram(programShaderGraph, 4, false);
 				if (!programResource)
 					return 0;
 
-				RefArray< render::Sampler > samplerNodes;
-				programShaderGraph->findNodesOf< render::Sampler >(samplerNodes);
+				RefArray< Sampler > samplerNodes;
+				programShaderGraph->findNodesOf< Sampler >(samplerNodes);
 
-				for (RefArray< render::Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+				for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
 				{
 					const Guid& textureGuid = (*i)->getExternal();
 					if (!textureGuid.isNull() && textureGuid.isValid())
@@ -95,7 +95,7 @@ Object* ShaderFactory::create(const Type& resourceType, const Guid& guid, bool& 
 				}
 			}
 			else
-				programResource = checked_type_cast< render::ProgramResource* >(j->program);
+				programResource = checked_type_cast< ProgramResource* >(j->program);
 
 			Shader::Combination combination;
 			combination.parameterValue = j->parameterValue;
@@ -104,7 +104,7 @@ Object* ShaderFactory::create(const Type& resourceType, const Guid& guid, bool& 
 				return 0;
 
 			TextureReaderAdapter textureReader;
-			if (!render::TextureLinker(textureReader).link(programResource, combination.program))
+			if (!TextureLinker(textureReader).link(programResource, combination.program))
 				return 0;
 
 			technique.combinations.push_back(combination);

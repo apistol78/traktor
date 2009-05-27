@@ -66,36 +66,6 @@ public:
 	/*! \brief Remove all edges from graph. */
 	void removeAllEdges();
 
-	/*! \brief Find edge connected to input pin.
-	 *
-	 * \param inputPin Input pin.
-	 * \return Connected edge.
-	 */
-	Edge* findEdge(const InputPin* inputPin) const;
-
-	/*! \brief Find edges connected from output pin.
-	 *
-	 * \param outputPin Output pin.
-	 * \param outEdges Connected edges.
-	 * \return Number of connected edges.
-	 */
-	size_t findEdges(const OutputPin* outputPin, RefArray< Edge >& outEdges) const;
-
-	/*! \brief Find output pin connected to input pin.
-	 *
-	 * \param inputPin Input pin.
-	 * \return Connected output pin.
-	 */
-	const OutputPin* findSourcePin(const InputPin* inputPin) const;
-
-	/*! \brief Find all input pins which are connected to output pin.
-	 *
-	 * \param outputPin Output pin.
-	 * \param outDestinations Connected input pins.
-	 * \return Number of connected input pins.
-	 */
-	size_t findDestinationPins(const OutputPin* outputPin, RefArray< const InputPin >& outDestinations) const;
-	
 	/*! \brief Get all nodes of a specific type.
 	 *
 	 * \param nodeType Type of node to find.
@@ -115,11 +85,15 @@ public:
 	{
 		RefArray< Node > untypedNodes;
 		findNodesOf(type_of< NodeType >(), untypedNodes);
-		for (RefArray< Node >::const_iterator i = untypedNodes.begin(); i != untypedNodes.end(); ++i)
-			outNodes.push_back(checked_type_cast< NodeType* >(*i));
+		
+		outNodes.resize(untypedNodes.size());
+		for (size_t i = 0; i < untypedNodes.size(); ++i)
+			outNodes[i] = checked_type_cast< NodeType* >(untypedNodes[i]);
+
 		return outNodes.size();
 	}
 
+	/*! \brief Serialize graph. */
 	virtual bool serialize(Serializer& s);
 
 	/*! \brief Get all nodes.

@@ -11,7 +11,6 @@
 #include "Core/Thread/Atomic.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
 
@@ -321,13 +320,9 @@ bool PipelineManager::build(bool rebuild)
 
 #else
 
-			// Create a clone of the source asset; we need to have a non-const copy to add as database instances.
-			Ref< Serializable > sourceAsset = DeepClone(checked_type_cast< const Serializable* >((*i)->sourceAsset)).create();
-			T_ASSERT (sourceAsset);
-
 			bool result = (*i)->pipeline->buildOutput(
 				this,
-				sourceAsset,
+				(*i)->sourceAsset,
 				(*i)->buildParams,
 				(*i)->outputPath,
 				(*i)->outputGuid,
@@ -377,7 +372,7 @@ db::Database* PipelineManager::getOutputDatabase() const
 	return m_outputDatabase;
 }
 
-db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, Object* object)
+db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, const Object* object)
 {
 	if (!is_a< Serializable >(object))
 	{
@@ -387,7 +382,7 @@ db::Instance* PipelineManager::createOutputInstance(const std::wstring& instance
 
 	return m_outputDatabase->createInstance(
 		instancePath,
-		static_cast< Serializable* >(object),
+		static_cast< Serializable* >(const_cast< Object* >(object)),
 		db::CifReplaceExisting,
 		&instanceGuid
 	);
@@ -475,13 +470,9 @@ void PipelineManager::buildThread()
 		m_buildQueueLock.release();
 		m_buildQueueRd.pulse();
 
-		// Create a clone of the source asset; we need to have a non-const copy to add as database instances.
-		Ref< Serializable > sourceAsset = DeepClone(checked_type_cast< const Serializable* >(dependency->sourceAsset)).create();
-		T_ASSERT (sourceAsset);
-
 		bool result = dependency->pipeline->buildOutput(
 			this,
-			sourceAsset,
+			dependency->sourceAsset,
 			dependency->buildParams,
 			dependency->outputPath,
 			dependency->outputGuid,

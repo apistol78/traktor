@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class ShaderGraph;
+class ShaderGraphAdjacency;
 class Node;
 
 /*! \brief Shader graph optimizer.
@@ -60,6 +61,7 @@ public:
 
 private:
 	Ref< ShaderGraph > m_shaderGraph;
+	Ref< ShaderGraphAdjacency > m_shaderGraphAdj;
 	std::set< const Node* > m_visited;
 	std::map< const Node*, int > m_orderComplexity;
 	int32_t m_insertedCount;

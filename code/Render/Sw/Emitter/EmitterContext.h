@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class ShaderGraph;
+class ShaderGraphAdjacency;
 class Node;
 class InputPin;
 class OutputPin;
@@ -134,6 +135,7 @@ private:
 
 	Emitter m_emitter;
 	Ref< const ShaderGraph > m_shaderGraph;
+	Ref< ShaderGraphAdjacency > m_shaderGraphAdj;
 	Parameters& m_parameters;
 	State m_states[2];
 	State* m_currentState;
