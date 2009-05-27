@@ -12,20 +12,30 @@
 #include "Render/Dx10/Hlsl.h"
 #include "Render/Dx10/HlslProgram.h"
 #include "Render/Dx10/TypesDx10.h"
+#include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
-#include "Core/Misc/ComRef.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const TCHAR* c_className = _T("TraktorRenderSystem");
+
+		}
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, RenderSystem)
 
 bool RenderSystemDx10::create()
 {
+	ComRef< IDXGIDevice > dxgiDevice;
+	ComRef< IDXGIAdapter > dxgiAdapter;
+	ComRef< IDXGIOutput > dxgiOutput;
 	HRESULT hr;
+
 	hr = D3D10CreateDevice(
 		NULL,
 		D3D10_DRIVER_TYPE_HARDWARE,
@@ -48,31 +58,107 @@ bool RenderSystemDx10::create()
 	if (FAILED(hr))
 		return false;
 
-	m_context = gc_new< ContextDx10 >();
+	hr = m_d3dDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice.getAssign());
+	if (FAILED(hr))
+		return 0;
 
+	hr = dxgiDevice->GetAdapter(&dxgiAdapter.getAssign());
+	if (FAILED(hr))
+		return 0;
+
+	hr = dxgiAdapter->EnumOutputs(0, &dxgiOutput.getAssign());
+	if (FAILED(hr))
+		return 0;
+
+	UINT count = 0;
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		0
+	);
+	if (FAILED(hr))
+		return 0;
+
+	m_dxgiDisplayModes = new DXGI_MODE_DESC [count]; 
+	hr = dxgiOutput->GetDisplayModeList(
+		DXGI_FORMAT_R8G8B8A8_UNORM,
+		0,
+		&count,
+		m_dxgiDisplayModes.ptr()
+	);
+	if (FAILED(hr))
+		return 0;
+
+	for (UINT j = 0; j < count; ++j)
+	{
+		m_displayModes.push_back(gc_new< DisplayMode >(
+			j,
+			m_dxgiDisplayModes[j].Width,
+			m_dxgiDisplayModes[j].Height,
+			32
+		));
+	}
+
+	WNDCLASS wc;
+	std::memset(&wc, 0, sizeof(wc));
+	wc.style = CS_HREDRAW | CS_VREDRAW;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = sizeof(this);
+	wc.lpfnWndProc = (WNDPROC)wndProc;
+	wc.hInstance = static_cast<HINSTANCE>(GetModuleHandle(0));
+	wc.hIcon = NULL;
+	wc.hCursor = static_cast<HCURSOR>(LoadCursor(NULL, IDC_ARROW));
+	wc.lpszClassName = c_className;
+	RegisterClass(&wc);
+
+	m_hWnd = CreateWindow(
+		c_className,
+		_T("Traktor 2.0 DirectX 10.0 Renderer"),
+		WS_POPUPWINDOW,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+		NULL,
+		static_cast< HMODULE >(GetModuleHandle(NULL)),
+		this
+	);
+	if (!m_hWnd)
+		return false;
+
+	m_context = gc_new< ContextDx10 >();
 	return true;
 }
 
 void RenderSystemDx10::destroy()
 {
-	m_dxgiFactory.release();
-	m_d3dDevice.release();
-
 	if (m_context)
 	{
 		m_context->deleteResources();
 		m_context = 0;
 	}
+
+	if (m_hWnd)
+	{
+		DestroyWindow(m_hWnd);
+		m_hWnd = NULL;
+	}
+
+	m_dxgiFactory.release();
+	m_d3dDevice.release();
 }
 
 int RenderSystemDx10::getDisplayModeCount() const
 {
-	return 0;
+	return int(m_displayModes.size());
 }
 
 DisplayMode* RenderSystemDx10::getDisplayMode(int index)
 {
-	return 0;
+	T_ASSERT (index >= 0 && index < int(m_displayModes.size()));
+	return m_displayModes[index];
 }
 
 DisplayMode* RenderSystemDx10::getCurrentDisplayMode()
@@ -82,12 +168,96 @@ DisplayMode* RenderSystemDx10::getCurrentDisplayMode()
 
 bool RenderSystemDx10::handleMessages()
 {
-	return false;
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return going;
 }
 
 RenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
-	return 0;
+	ComRef< IDXGISwapChain > d3dSwapChain;
+	DXGI_SWAP_CHAIN_DESC scd;
+	DXGI_MODE_DESC* dmd;
+	HRESULT hr;
+
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_SHOWWINDOW);
+	ShowWindow(m_hWnd, SW_MAXIMIZE);
+	UpdateWindow(m_hWnd);
+
+	dmd = &m_dxgiDisplayModes[displayMode->getIndex()];
+	T_ASSERT (dmd);
+
+	std::memset(&scd, 0, sizeof(scd));
+	scd.SampleDesc.Count = 1;
+	scd.SampleDesc.Quality = 0;
+	scd.BufferCount = 1;
+	std::memcpy(&scd.BufferDesc, dmd, sizeof(DXGI_MODE_DESC));
+	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	scd.OutputWindow = m_hWnd;
+	scd.Windowed = FALSE;
+	
+	if (desc.multiSample > 0)
+	{
+		scd.SampleDesc.Count = 0;
+		for (uint32_t i = 1; i <= D3D10_MAX_MULTISAMPLE_SAMPLE_COUNT; ++i)
+		{
+			UINT msQuality1 = 0;
+			UINT msQuality2 = 0;
+
+			hr = m_d3dDevice->CheckMultisampleQualityLevels(
+				scd.BufferDesc.Format,
+				i,
+				&msQuality1
+			);
+
+			if (SUCCEEDED(hr) && msQuality1 > 0)
+			{
+				hr = m_d3dDevice->CheckMultisampleQualityLevels(
+					DXGI_FORMAT_D16_UNORM,
+					i,
+					&msQuality2
+				);
+
+				if (SUCCEEDED(hr) && msQuality2 > 0)
+				{
+					scd.SampleDesc.Count = i;
+					scd.SampleDesc.Quality = min(msQuality1 - 1, msQuality2 - 1);
+				}
+			}
+		}
+		if (!scd.SampleDesc.Count)
+			return 0;
+	}
+
+	hr = m_dxgiFactory->CreateSwapChain(
+		m_d3dDevice,
+		&scd,
+		&d3dSwapChain.getAssign()
+	);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
+		return 0;
+	}
+
+	return gc_new< RenderViewDx10 >(
+		m_context,
+		m_d3dDevice,
+		d3dSwapChain,
+		cref(scd),
+		desc.waitVBlank
+	);
 }
 
 RenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
@@ -157,7 +327,7 @@ RenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderV
 	);
 	if (FAILED(hr))
 	{
-		log::error << L"CreateSwapChain failed" << Endl;
+		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
 		return 0;
 	}
 
@@ -282,6 +452,47 @@ Program* RenderSystemDx10::createProgram(const ProgramResource* programResource)
 		return 0;
 
 	return program;
+}
+
+LRESULT RenderSystemDx10::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	RenderSystemDx10* renderSystem = reinterpret_cast< RenderSystemDx10* >(GetWindowLongPtr(hWnd, 0));
+	LPCREATESTRUCT createStruct;
+	LRESULT result = TRUE;
+
+	switch (uMsg)
+	{
+	case WM_CREATE:
+		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
+		renderSystem = reinterpret_cast< RenderSystemDx10* >(createStruct->lpCreateParams);
+		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
+		break;
+
+	case WM_KEYDOWN:
+		if (wParam != VK_ESCAPE)
+			break;
+
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		break;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+
+	case WM_ERASEBKGND:
+		break;
+
+	case WM_SETCURSOR:
+		SetCursor(NULL);
+		break;
+
+	default:
+		result = DefWindowProc(hWnd, uMsg, wParam, lParam);
+		break;
+	}
+
+	return result;
 }
 
 	}

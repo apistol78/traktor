@@ -4,6 +4,7 @@
 #include "Render/Dx10/Platform.h"
 #include "Render/RenderSystem.h"
 #include "Core/Misc/ComRef.h"
+#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,6 +67,11 @@ private:
 	Ref< ContextDx10 > m_context;
 	ComRef< ID3D10Device > m_d3dDevice;
 	ComRef< IDXGIFactory > m_dxgiFactory;
+	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
+	RefArray< DisplayMode > m_displayModes;
+	HWND m_hWnd;
+
+	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}

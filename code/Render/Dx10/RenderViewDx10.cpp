@@ -90,7 +90,12 @@ RenderViewDx10::~RenderViewDx10()
 void RenderViewDx10::close()
 {
 	m_d3dRenderTargetView.release();
-	m_d3dSwapChain.release();
+
+	if (m_d3dSwapChain)
+	{
+		m_d3dSwapChain->SetFullscreenState(FALSE, NULL);
+		m_d3dSwapChain.release();
+	}
 }
 
 void RenderViewDx10::resize(int32_t width, int32_t height)
