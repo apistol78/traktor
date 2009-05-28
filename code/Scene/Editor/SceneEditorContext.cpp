@@ -273,9 +273,7 @@ void SceneEditorContext::buildEntities()
 
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
 {
-	T_ASSERT (entityAdapter);
-
-	if (entityAdapter->m_selected != select)
+	if (entityAdapter && entityAdapter->m_selected != select)
 	{
 		entityAdapter->m_selected = select;
 		if (entityAdapter->m_entityEditor)
@@ -290,6 +288,11 @@ void SceneEditorContext::selectAllEntities(bool select)
 
 	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 		selectEntity(*i, select);
+}
+
+void SceneEditorContext::selectNotify()
+{
+	raiseEvent(ui::EiSelectionChange, 0);
 }
 
 uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
@@ -389,6 +392,11 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 void SceneEditorContext::addChangeEventHandler(ui::EventHandler* eventHandler)
 {
 	addEventHandler(ui::EiContentChange, eventHandler);
+}
+
+void SceneEditorContext::addSelectEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(ui::EiSelectionChange, eventHandler);
 }
 
 	}
