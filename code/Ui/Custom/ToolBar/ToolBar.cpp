@@ -61,17 +61,15 @@ void ToolBar::destroy()
 
 uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
 {
-	uint32_t width = 0, height = 0;
+	T_ASSERT (image);
+	T_ASSERT (imageCount > 0);
 
-	if (!image)
-		return 0;
-	
 	if (m_image)
 	{
 		Ref< Bitmap > source = image;
 
-		width = m_image->getSize().cx + source->getSize().cx;
-		height = std::max(m_image->getSize().cy, source->getSize().cy);
+		uint32_t width = m_image->getSize().cx + source->getSize().cx;
+		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = gc_new< ui::Bitmap >(width, height);
 		newImage->copyImage(m_image->getImage());

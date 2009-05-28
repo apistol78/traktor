@@ -52,6 +52,7 @@
 
 // Resources
 #include "Resources/EntityEdit.h"
+#include "Resources/EntityTypes.h"
 
 namespace traktor
 {
@@ -116,6 +117,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_entityGrid = gc_new< ui::custom::GridView >();
 	m_entityGrid->create(m_entityPanel, ui::custom::GridView::WsDrag | ui::WsDoubleBuffer);
+	m_entityGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
 	m_entityGrid->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 300));
 	m_entityGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridSelect));
 	m_entityGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridButtonDown));
@@ -568,16 +570,25 @@ ui::custom::GridRow* SceneEditorPage::updateEntityListRow(EntityAdapter* entityA
 {
 	Ref< ui::custom::GridRow > row = gc_new< ui::custom::GridRow >(0);
 	row->setData(L"ENTITY", entityAdapter);
-
-	row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName()));
 	row->setState(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0);
 
 	// All external entities is highlighted as they shouldn't be edited.
 	if (entityAdapter->isChildOfExternal())
+	{
+		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 0));
 		row->setFont(m_entityGridFontItalic);
+	}
 	else if (entityAdapter->isExternal())
+	{
+		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 1));
 		row->setFont(m_entityGridFontBold);
+	}
+	else if (entityAdapter->isGroup())
+		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 2, 3));
+	else
+		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 0));
 
+	// Recursively add children.
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{

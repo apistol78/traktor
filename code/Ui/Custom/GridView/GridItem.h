@@ -29,14 +29,30 @@ class T_DLLCLASS GridItem
 	T_RTTI_CLASS(GridItem)
 
 public:
+	GridItem();
+
 	GridItem(const std::wstring& text);
+
+	GridItem(const std::wstring& text, int32_t image);
+
+	GridItem(const std::wstring& text, int32_t image, int32_t expandedImage);
 
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const { return m_text; }
 
+	void setImage(int32_t image);
+
+	int32_t getImage() const { return m_image; }
+
+	void setExpandedImage(int expandedImage);
+
+	int32_t getExpandedImage() const { return m_expandedImage; }
+
 private:
 	std::wstring m_text;
+	int32_t m_image;
+	int32_t m_expandedImage;
 };
 
 		}

@@ -5158,6 +5158,10 @@
 										<fileName>../../../res/toolbar/Playback.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/editor/EntityTypes.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 						</items>
