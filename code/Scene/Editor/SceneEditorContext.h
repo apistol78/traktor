@@ -174,6 +174,8 @@ public:
 
 	void selectAllEntities(bool select = true);
 
+	void selectNotify();
+
 	/*! \brief Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
@@ -208,6 +210,8 @@ public:
 	//@{
 
 	void addChangeEventHandler(ui::EventHandler* eventHandler);
+
+	void addSelectEventHandler(ui::EventHandler* eventHandler);
 
 	//@}
 

@@ -103,7 +103,9 @@ private:
 
 	void updateScene(bool updateModified);
 
-	ui::custom::GridRow* updateEntityListRow(EntityAdapter* entityAdapter);
+	ui::custom::GridRow* createEntityListRow(EntityAdapter* entityAdapter);
+
+	void createEntityList();
 
 	void updateEntityList();
 
@@ -126,6 +128,8 @@ private:
 	void eventEntityGridDragValid(ui::Event* event);
 
 	void eventContextChange(ui::Event* event);
+
+	void eventContextSelect(ui::Event* event);
 };
 
 	}

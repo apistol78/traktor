@@ -302,8 +302,8 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 		Ref< EntityAdapter > entityAdapter = m_context->queryRay(worldRayOrigin, worldRayDirection);
 
 		m_context->selectAllEntities(false);
-		if (entityAdapter)
-			m_context->selectEntity(entityAdapter);
+		m_context->selectEntity(entityAdapter);
+		m_context->selectNotify();
 	}
 
 	// Get selected entities which will be modified.
