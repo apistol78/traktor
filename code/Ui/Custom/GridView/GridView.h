@@ -54,7 +54,11 @@ public:
 		EiDragValid = EiUser + 2
 	};
 
+	GridView();
+
 	bool create(Widget* parent, uint32_t style);
+
+	uint32_t addImage(Bitmap* image, uint32_t imageCount);
 
 	void addColumn(GridColumn* column);
 
@@ -77,6 +81,10 @@ public:
 	virtual void update(const Rect* rc = 0, bool immediate = false);
 
 private:
+	Ref< Bitmap > m_image;
+	uint32_t m_imageWidth;
+	uint32_t m_imageHeight;
+	uint32_t m_imageCount;
 	RefArray< GridColumn > m_columns;
 	RefArray< GridRow > m_rows;
 	Ref< Bitmap > m_expand[2];
