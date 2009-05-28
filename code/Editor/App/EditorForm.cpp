@@ -888,11 +888,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	pipelines.resize(0);
 
 	savePipelineHash(pipelineHash);
-
-	// Not entirely safe but lets hope for now system handle
-	// this call even if it's from another thread.
-	m_buildProgress->setVisible(false);
-	m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
 }
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
@@ -903,11 +898,17 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	// Stop current build.
 	if (m_threadBuild)
 	{
-		while (!m_threadBuild->stop());
+		if (!m_threadBuild->finished())
+		{
+			if (!m_threadBuild->stop())
+				log::error << L"Unable to stop previous build thread" << Endl;
+		}
+
 		ThreadManager::getInstance().destroy(m_threadBuild);
 		m_threadBuild = 0;
 	}
 
+	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
 		makeFunctor< 
 			EditorForm,
@@ -1689,6 +1690,13 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 	// Update modified flags.
 	checkModified();
+
+	// Hide build progress if build thread has finished.
+	if (!m_threadBuild || m_threadBuild->finished())
+	{
+		m_buildProgress->setVisible(false);
+		m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
+	}
 }
 
 	}
