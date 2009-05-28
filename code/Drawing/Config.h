@@ -21,6 +21,10 @@
 //#	define DRAWING_INCLUDE_EXR
 #endif
 
+#if defined(_DEBUG)
+#	define DRAWING_CHECK_DATA
+#endif
+
 //@}
 
 #endif	// traktor_drawing_Config_H

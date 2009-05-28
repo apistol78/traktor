@@ -341,12 +341,10 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 
 void ShaderGraphOptimizer::updateOrderComplexity()
 {
+	ShaderGraphOrderEvaluator evaluator(m_shaderGraph, m_shaderGraphAdj);
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-	{
-		int complexity = ShaderGraphOrderEvaluator(m_shaderGraph, m_shaderGraphAdj).evaluate(*i);
-		m_orderComplexity[*i] = complexity;
-	}
+		m_orderComplexity[*i] = evaluator.evaluate(*i);
 }
 
 	}

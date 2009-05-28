@@ -108,40 +108,113 @@ public:
 	const int getAlphaShift() const {
 		return m_alphaShift;
 	}
-	
-	static const PixelFormat* getP4();
-	
-	static const PixelFormat* getP8();
-	
-	static const PixelFormat* getA8();
-	
-	static const PixelFormat* getR5G5B5();
 
-	static const PixelFormat* getR5G6B5();
+	/*! \group Common pixel formats. */
+	//@{
 
-	static const PixelFormat* getR8G8B8();
+	static const PixelFormat* getP4()
+	{
+		static const PixelFormat pfP4(4, 0, 0, 0, 0, true, false);
+		return &pfP4;
+	}
 
-	static const PixelFormat* getB8G8R8();
-	
-	static const PixelFormat* getA1R5G5B5();
+	static const PixelFormat* getP8()
+	{
+		static const PixelFormat pfP8(8, 0, 0, 0, 0, true, false);
+		return &pfP8;
+	}
 
-	static const PixelFormat* getX8R8G8B8();
+	static const PixelFormat* getA8()
+	{
+		static const PixelFormat pfA8(8, 0, 0, 0, 0xff, false, false);
+		return &pfA8;
+	}
 
-	static const PixelFormat* getX8B8G8R8();
+	static const PixelFormat* getR5G5B5()
+	{
+		static const PixelFormat pfR5G5B5(15, 0x7c00, 0x03e0, 0x001f, 0, false, false);
+		return &pfR5G5B5;
+	}
 
-	static const PixelFormat* getR8G8B8X8();
+	static const PixelFormat* getR5G6B5()
+	{
+		static const PixelFormat pfR5G6B5(16, 0xf800, 0x07e0, 0x001f, 0, false, false);
+		return &pfR5G6B5;
+	}
 
-	static const PixelFormat* getB8G8R8X8();
+	static const PixelFormat* getR8G8B8()
+	{
+		static const PixelFormat pfR8G8B8(24, 0xff0000, 0x00ff00, 0x0000ff, 0, false, false);
+		return &pfR8G8B8;
+	}
 
-	static const PixelFormat* getA8R8G8B8();
+	static const PixelFormat* getB8G8R8()
+	{
+		static const PixelFormat pfB8G8R8(24, 0x0000ff, 0x00ff00, 0xff0000, 0, false, false);
+		return &pfB8G8R8;
+	}
 
-	static const PixelFormat* getA8B8G8R8();
+	static const PixelFormat* getA1R5G5B5()
+	{
+		static const PixelFormat pfA1R5G5B5(16, 0x7c00, 0x03e0, 0x001f, 0x8000, false, false);
+		return &pfA1R5G5B5;
+	}
 
-	static const PixelFormat* getR8G8B8A8();
+	static const PixelFormat* getX8R8G8B8()
+	{
+		static const PixelFormat pfX8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0, false, false);
+		return &pfX8R8G8B8;
+	}
 
-	static const PixelFormat* getB8G8R8A8();
+	static const PixelFormat* getX8B8G8R8()
+	{
+		static const PixelFormat pfX8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0, false, false);
+		return &pfX8B8G8R8;
+	}
 
-	static const PixelFormat* getRGBAF32();
+	static const PixelFormat* getR8G8B8X8()
+	{
+		static const PixelFormat pfR8G8B8X8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0, false, false);
+		return &pfR8G8B8X8;
+	}
+
+	static const PixelFormat* getB8G8R8X8()
+	{
+		static const PixelFormat pfB8G8R8X8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0, false, false);
+		return &pfB8G8R8X8;
+	}
+
+	static const PixelFormat* getA8R8G8B8()
+	{
+		static const PixelFormat pfA8R8G8B8(32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000, false, false);
+		return &pfA8R8G8B8;
+	}
+
+	static const PixelFormat* getA8B8G8R8()
+	{
+		static const PixelFormat pfA8B8G8R8(32, 0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000, false, false);
+		return &pfA8B8G8R8;
+	}
+
+	static const PixelFormat* getR8G8B8A8()
+	{
+		static const PixelFormat pfR8G8B8A8(32, 0xff000000, 0x00ff0000, 0x0000ff00, 0x000000ff, false, false);
+		return &pfR8G8B8A8;
+	}
+
+	static const PixelFormat* getB8G8R8A8()
+	{
+		static const PixelFormat pfB8G8R8A8(32, 0x0000ff00, 0x00ff0000, 0xff000000, 0x000000ff, false, false);
+		return &pfB8G8R8A8;
+	}
+
+	static const PixelFormat* getRGBAF32()
+	{
+		static const PixelFormat pfRGBAF32(128, 32, 0, 32, 32, 32, 64, 32, 96, false, true);
+		return &pfRGBAF32;
+	}
+
+	//@}
 
 private:
 	bool m_palettized;	/**< If pixel format is describing palettized pixels. */

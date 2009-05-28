@@ -612,15 +612,12 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 				i->m_visited = 0;
 				visitRefs(i->m_crefs, visitor);
 
+				// If keep flag has been set then there is a circular reference chain.
 				if (i->m_keep)
 				{
-					// Circular reference; need to invalidate all references to this object prior
-					// to collection.
-					for (IntrusiveList< ObjectInfo >::iterator j = collectables.begin(); j != collectables.end(); ++j)
-					{
-						for (IntrusiveList< RefBase >::iterator k = j->m_crefs.begin(); k != j->m_crefs.end(); ++k)
-							k->invalidate(getObject(*i));
-					}
+					// Invalidate all object's child references to break circular chain.
+					for (IntrusiveList< RefBase >::iterator j = i->m_crefs.begin(); j != i->m_crefs.end(); ++j)
+						j->invalidate();
 				}
 			}
 

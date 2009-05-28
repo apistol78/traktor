@@ -14,10 +14,15 @@ namespace traktor
 		namespace
 		{
 
+#if defined(DRAWING_CHECK_DATA)
 const uint32_t c_wallSize = 64;
+#else
+const uint32_t c_wallSize = 0;
+#endif
 
 void checkData(uint8_t* ptr, size_t size)
 {
+#if defined(DRAWING_CHECK_DATA)
 	if (!ptr || !size)
 		return;
 
@@ -29,6 +34,7 @@ void checkData(uint8_t* ptr, size_t size)
 		if (wp[c_wallSize + size + i] != 0x55)
 			T_FATAL_ERROR;
 	}
+#endif
 }
 
 uint8_t* allocData(size_t size)
