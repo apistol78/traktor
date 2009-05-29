@@ -27,9 +27,13 @@ class T_DLLCLASS GroupEntity : public Entity
 public:
 	GroupEntity();
 
+	GroupEntity(const std::wstring& name);
+
 	virtual ~GroupEntity();
 
 	virtual void destroy();
+
+	const std::wstring& getName() const;
 
 	void addEntity(Entity* entity);
 	
