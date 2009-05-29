@@ -97,21 +97,25 @@ namespace
 
 	inline uint32_t cellUtilRoundDownToPowOf2(uint32_t x)
 	{
-		if(cellUtilIsPowerOfTwo(x))
+		if (cellUtilIsPowerOfTwo(x))
 			return x;
 		
 		int i = 0;
-		while( (x >> i) != 0 ) i++;
+		while ((x >> i) != 0)
+			i++;
+
 		return (1 << (i-1));
 	}
 
 	inline uint32_t cellUtilRoundUpToPowOf2(uint32_t x)
 	{
-		if(cellUtilIsPowerOfTwo(x))
+		if (cellUtilIsPowerOfTwo(x))
 			return x;
 		
 		int i = 0;
-		while( (x >> i) != 0 ) i++;
+		while ((x >> i) != 0)
+			i++;
+
 		return (1 << (i));
 	}
 

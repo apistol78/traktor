@@ -64,9 +64,9 @@ void ToolFormWin32::center()
 		rcParent.left + (rcParent.right - rcParent.left - rcTool.right + rcTool.left) / 2,
 		rcParent.top + (rcParent.bottom - rcParent.top - rcTool.bottom + rcTool.top) / 2
 	};
-	if(pntPos.x < 0)
+	if (pntPos.x < 0)
 		pntPos.x = 0;
-	if(pntPos.y < 0)
+	if (pntPos.y < 0)
 		pntPos.y = 0;
 
 	SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE);

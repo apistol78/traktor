@@ -84,7 +84,7 @@ void InterpreterFixed::execute(
 	for (std::vector< Instruction >::const_iterator i = instructions.begin(); i != instructions.end(); ++i)
 	{
 		Fix4& dest = R[i->dest];
-		switch(i->op)
+		switch (i->op)
 		{
 		case OpNop:
 			break;

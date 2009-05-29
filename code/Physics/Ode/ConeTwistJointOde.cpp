@@ -210,7 +210,7 @@ void ConeTwistJointOde::update(float deltaTime)
 		if (is_a< DynamicBody >(m_body2))
 			static_cast< DynamicBody* >(m_body2.getPtr())->addAngularImpulse(impulseAxis * Scalar(-impulse), false);
 	}
-	while(false);
+	while (false);
 #endif
 }
 

@@ -575,7 +575,7 @@ private:
 		dBodyID b2 = dGeomGetBody(o2);
 
 		// Bodies connected through a joint should not generate collisions.
-		if(b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
+		if (b1 && b2 && dAreConnectedExcluding(b1, b2, dJointTypeContact))
 			return;
 
 		// Bodies connected through a joint should not generate collisions,
@@ -603,7 +603,7 @@ private:
 		}
 
 		int ncontacts = dCollide(o1, o2, m_settings.maxContacts, &contact[0].geom, sizeof(dContact));
-		if(ncontacts > 0)
+		if (ncontacts > 0)
 		{
 			// Issue collision listeners.
 			CollisionInfo collisionInfo;

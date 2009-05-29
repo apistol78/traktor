@@ -86,7 +86,7 @@ int DialogWin32::showModal()
 	HWND hParentWnd = GetParent(m_hWnd);
 	if (hParentWnd)
 	{
-		while(GetParent(hParentWnd))
+		while (GetParent(hParentWnd))
 			hParentWnd = GetParent(hParentWnd);
 		EnableWindow(hParentWnd, FALSE);
 	}
@@ -103,9 +103,9 @@ int DialogWin32::showModal()
 		rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
 		rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
 	};
-	if(pntPos.x < 0)
+	if (pntPos.x < 0)
 		pntPos.x = 0;
-	if(pntPos.y < 0)
+	if (pntPos.y < 0)
 		pntPos.y = 0;
 	SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE);
 
@@ -115,14 +115,14 @@ int DialogWin32::showModal()
 	
 	// Handle events from the dialog.
 	m_modal = true;
-	while(GetMessage(&msg, NULL, 0, 0))
+	while (GetMessage(&msg, NULL, 0, 0))
 	{
-		if(msg.message == WM_ENDMODAL)
+		if (msg.message == WM_ENDMODAL)
 		{
 			result = int(msg.wParam);
 			break;
 		}
-		else if(!IsDialogMessage(m_hWnd, &msg))
+		else if (!IsDialogMessage(m_hWnd, &msg))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
@@ -174,9 +174,9 @@ void DialogWin32::setVisible(bool visible)
 			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
 			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
 		};
-		if(pntPos.x < 0)
+		if (pntPos.x < 0)
 			pntPos.x = 0;
-		if(pntPos.y < 0)
+		if (pntPos.y < 0)
 			pntPos.y = 0;
 
 		SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
