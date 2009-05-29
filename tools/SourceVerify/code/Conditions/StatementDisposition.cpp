@@ -1,5 +1,6 @@
 #include <Core/Misc/WildCompare.h>
 #include <Core/Misc/StringUtils.h>
+#include <Core/Misc/SplitString.h>
 #include "Conditions/StatementDisposition.h"
 #include "Source.h"
 
@@ -23,55 +24,68 @@ void StatementDisposition::check(const Path& fileName, const Source& source, boo
 		if (text.empty() || text[0] == L'#')
 			continue;
 
-		pieces.resize(0);
-		if (wcif.match(i->text, WildCompare::CmCaseSensitive, &pieces))
+		std::vector< std::wstring > statements;
+		Split< std::wstring >::any(text, L";", statements);
+
+		for (std::vector< std::wstring >::const_iterator j = statements.begin(); j != statements.end(); ++j)
 		{
-			bool correct = true;
+			std::wstring statement = trim(*j);
+			if (statement.empty())
+			{
+				report << L"Empty statement at " << i->line << Endl;
+				continue;
+			}
 
-			correct &= bool(pieces[0] == L" ");
-			//correct &= bool(trim(pieces[2]).length() == 0);
+			pieces.resize(0);
+			if (wcif.match(statement, WildCompare::CmCaseSensitive, &pieces))
+			{
+				bool correct = true;
 
-			if (!correct)
-				report << L"Statement \"if\" not correctly formated at line " << i->line << Endl;
-		}
+				correct &= bool(pieces[0] == L" ");
+				//correct &= bool(trim(pieces[2]).length() == 0);
 
-		pieces.resize(0);
-		if (wcfor.match(i->text, WildCompare::CmCaseSensitive, &pieces))
-		{
-			bool correct = true;
+				if (!correct)
+					report << L"Statement \"if\" not correctly formated at line " << i->line << Endl;
+			}
 
-			correct &= bool(pieces[0] == L" ");
-			correct &= bool(pieces[1].length() == 0 || pieces[1][0] != L' ');
-			correct &= bool(pieces[2].length() == 0 || pieces[2][0] == L' ');
-			correct &= bool(pieces[3].length() == 0 || pieces[3][0] == L' ');
-			//correct &= bool(trim(pieces[4]).length() == 0);
+			pieces.resize(0);
+			if (wcfor.match(statement, WildCompare::CmCaseSensitive, &pieces))
+			{
+				bool correct = true;
 
-			if (!correct)
-				report << L"Statement \"for\" not correctly formated at line " << i->line << Endl;
-		}
+				correct &= bool(pieces[0] == L" ");
+				correct &= bool(pieces[1].length() == 0 || pieces[1][0] != L' ');
+				correct &= bool(pieces[2].length() == 0 || pieces[2][0] == L' ');
+				correct &= bool(pieces[3].length() == 0 || pieces[3][0] == L' ');
+				//correct &= bool(trim(pieces[4]).length() == 0);
 
-		pieces.resize(0);
-		if (wcwhile.match(i->text, WildCompare::CmCaseSensitive, &pieces))
-		{
-			bool correct = true;
+				if (!correct)
+					report << L"Statement \"for\" not correctly formated at line " << i->line << Endl;
+			}
 
-			correct &= bool(pieces[0] == L" ");
-			//correct &= bool(trim(pieces[2]).length() == 0);
+			pieces.resize(0);
+			if (wcwhile.match(statement, WildCompare::CmCaseSensitive, &pieces))
+			{
+				bool correct = true;
 
-			if (!correct)
-				report << L"Statement \"while\" not correctly formated at line " << i->line << Endl;
-		}
+				correct &= bool(pieces[0] == L" ");
+				//correct &= bool(trim(pieces[2]).length() == 0);
 
-		pieces.resize(0);
-		if (wcswitch.match(i->text, WildCompare::CmCaseSensitive, &pieces))
-		{
-			bool correct = true;
+				if (!correct)
+					report << L"Statement \"while\" not correctly formated at line " << i->line << Endl;
+			}
 
-			correct &= bool(pieces[0] == L" ");
-			//correct &= bool(trim(pieces[2]).length() == 0);
+			pieces.resize(0);
+			if (wcswitch.match(statement, WildCompare::CmCaseSensitive, &pieces))
+			{
+				bool correct = true;
 
-			if (!correct)
-				report << L"Statement \"switch\" not correctly formated at line " << i->line << Endl;
+				correct &= bool(pieces[0] == L" ");
+				//correct &= bool(trim(pieces[2]).length() == 0);
+
+				if (!correct)
+					report << L"Statement \"switch\" not correctly formated at line " << i->line << Endl;
+			}
 		}
 	}
 }
