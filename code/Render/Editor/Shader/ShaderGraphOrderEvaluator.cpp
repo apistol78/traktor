@@ -66,7 +66,6 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node)
 		is_a< Derivative >(node) ||
 		is_a< Exp >(node) ||
 		is_a< Fraction >(node) ||
-		is_a< FragmentPosition >(node) ||
 		is_a< Log >(node) ||
 		is_a< Max >(node) ||
 		is_a< Min >(node) ||
@@ -74,10 +73,14 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node)
 		is_a< Polynomial >(node) ||
 		is_a< Pow >(node) ||
 		is_a< Reflect >(node) ||
-		is_a< Sampler >(node) ||
 		is_a< Sqrt >(node)
 	)
-		order = nodeDefault(node, OrNonLinear);
+		order = nodeConstantOrNonLinear(node);
+	else if(
+		is_a< FragmentPosition >(node) ||
+		is_a< Sampler >(node)
+	)
+		order = OrNonLinear;
 	else if (is_a< Div >(node))
 		order = nodeMulOrDiv(node);
 	else if (is_a< Mul >(node))
@@ -107,6 +110,18 @@ int ShaderGraphOrderEvaluator::nodeDefault(const Node* node, int initialOrder)
 		order = std::max(order, pinOrder);
 	}
 	return order;
+}
+
+int ShaderGraphOrderEvaluator::nodeConstantOrNonLinear(const Node* node)
+{
+	for (int i = 0; i < node->getInputPinCount(); ++i)
+	{
+		Ref< const InputPin > inputPin = node->getInputPin(i);
+		int pinOrder = evaluate(node, inputPin->getName());
+		if (pinOrder != OrConstant)
+			return OrNonLinear;
+	}
+	return OrConstant;
 }
 
 int ShaderGraphOrderEvaluator::nodeMulOrDiv(const Node* node)

@@ -48,6 +48,8 @@ private:
 
 	int nodeDefault(const Node* node, int initialOrder);
 
+	int nodeConstantOrNonLinear(const Node* node);
+
 	int nodeMulOrDiv(const Node* node);
 
 	int nodeMulAdd(const Node* node);

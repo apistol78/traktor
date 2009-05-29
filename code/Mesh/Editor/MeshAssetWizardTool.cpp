@@ -1,6 +1,5 @@
 #include "Mesh/Editor/MeshAssetWizardTool.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Mesh/Editor/ShaderBuilder.h"
 #include "Editor/Editor.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
