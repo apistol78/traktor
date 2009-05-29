@@ -217,7 +217,7 @@ void ConeTwistJointBullet::update(float deltaTime)
 		if (m_dynamicBody2)
 			m_dynamicBody2->addAngularImpulse(m_twistImpulseAxis * -impulse, false);
 	}
-	while(false);
+	while (false);
 }
 
 	}

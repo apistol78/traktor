@@ -111,12 +111,12 @@ LRESULT ScrollBarWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPAR
 {
 	SCROLLINFO si;
 
-	memset(&si, 0, sizeof(si));
+	std::memset(&si, 0, sizeof(si));
 	si.cbSize = sizeof(si);
 	si.fMask = SIF_RANGE | SIF_POS | SIF_PAGE;
 	GetScrollInfo(m_hWnd, SB_CTL, &si);
 	
-	switch(LOWORD(wParam))
+	switch (LOWORD(wParam))
 	{
 	case SB_TOP:
 		si.nPos = si.nMin;
@@ -128,20 +128,20 @@ LRESULT ScrollBarWin32::eventScroll(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 	case SB_LINEDOWN:
 	case SB_PAGEDOWN:		
-		if(si.nPos < si.nMax)
+		if (si.nPos < si.nMax)
 		{
 			si.nPos += (LOWORD(wParam) == SB_LINEDOWN) ? 1 : si.nPage;
-			if(si.nPos > si.nMax)
+			if (si.nPos > si.nMax)
 				si.nPos = si.nMax;
 		}
 		break;
 
 	case SB_LINEUP:
 	case SB_PAGEUP:
-		if(si.nPos > si.nMin)
+		if (si.nPos > si.nMin)
 		{
 			si.nPos -= (LOWORD(wParam) == SB_LINEUP) ? 1 : si.nPage;
-			if(si.nPos < si.nMin)
+			if (si.nPos < si.nMin)
 				si.nPos = si.nMin;
 		}
 		break;

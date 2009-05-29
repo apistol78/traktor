@@ -70,15 +70,18 @@ void triangle(
 	int C3 = DY31 * X3 - DX31 * Y3;
 
 	// Correct for fill convention
-	if(DY12 < 0 || (DY12 == 0 && DX12 > 0)) C1++;
-	if(DY23 < 0 || (DY23 == 0 && DX23 > 0)) C2++;
-	if(DY31 < 0 || (DY31 == 0 && DX31 > 0)) C3++;
+	if (DY12 < 0 || (DY12 == 0 && DX12 > 0))
+		C1++;
+	if (DY23 < 0 || (DY23 == 0 && DX23 > 0))
+		C2++;
+	if (DY31 < 0 || (DY31 == 0 && DX31 > 0))
+		C3++;
 
 	int CY1 = C1 + DX12 * (miny << 4) - DY12 * (minx << 4);
 	int CY2 = C2 + DX23 * (miny << 4) - DY23 * (minx << 4);
 	int CY3 = C3 + DX31 * (miny << 4) - DY31 * (minx << 4);
 
-	for(int y = miny; y < maxy; y++)
+	for (int y = miny; y < maxy; y++)
 	{
 		int CX1 = CY1;
 		int CX2 = CY2;
@@ -87,7 +90,7 @@ void triangle(
 		int x1 = minx;
 		while (x1 < maxx)
 		{
-			if(CX1 > 0 && CX2 > 0 && CX3 > 0)
+			if (CX1 > 0 && CX2 > 0 && CX3 > 0)
 				break;
 			CX1 -= FDY12;
 			CX2 -= FDY23;
@@ -99,7 +102,7 @@ void triangle(
 			int x2 = x1 + 1;
 			while (x2 < maxx)
 			{
-				if(!(CX1 > 0 && CX2 > 0 && CX3 > 0))
+				if (!(CX1 > 0 && CX2 > 0 && CX3 > 0))
 					break;
 				CX1 -= FDY12;
 				CX2 -= FDY23;

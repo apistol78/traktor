@@ -115,7 +115,7 @@ int ListViewWin32::addColumn(const std::wstring& columnHeader, int width)
 	tstring tmp = wstots(columnHeader);
 	LVCOLUMN lvc;
 
-	memset(&lvc, 0, sizeof(lvc));
+	std::memset(&lvc, 0, sizeof(lvc));
 	lvc.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.iSubItem = m_columnCount;
 	lvc.pszText = const_cast< LPTSTR >(tmp.c_str());
@@ -131,7 +131,7 @@ void ListViewWin32::setColumnHeader(int columnIndex, const std::wstring& columnH
 	tstring tmp = wstots(columnHeader);
 	LVCOLUMN lvc;
 
-	memset(&lvc, 0, sizeof(lvc));
+	std::memset(&lvc, 0, sizeof(lvc));
 	lvc.mask = LVCF_FMT | LVCF_TEXT | LVCF_SUBITEM;
 	lvc.iSubItem = columnIndex;
 	lvc.pszText = const_cast< LPTSTR >(tmp.c_str());
@@ -147,7 +147,7 @@ std::wstring ListViewWin32::getColumnHeader(int columnIndex) const
 	lvc.mask = LVCF_TEXT;
 	lvc.pszText = tmp;
 	lvc.cchTextMax = sizeof(tmp) / sizeof(TCHAR);
-	if(ListView_GetColumn(m_hWnd, columnIndex, &lvc) == FALSE)
+	if (ListView_GetColumn(m_hWnd, columnIndex, &lvc) == FALSE)
 		return L"";
 
 	return tstows(tmp);

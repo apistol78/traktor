@@ -66,11 +66,11 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	HRESULT hr;
 
 	hr = m_directInput->CreateDevice(deviceInstance->guidInstance, &device.getAssign(), NULL);
-	if(FAILED(hr)) 
+	if (FAILED(hr)) 
 		return false;
 
 	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-	if(FAILED(hr)) 
+	if (FAILED(hr)) 
 		return false;
 
 	m_devices.push_back(gc_new< input::InputDeviceDi8 >(device.get()));

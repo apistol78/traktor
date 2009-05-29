@@ -69,7 +69,7 @@ public:
 		// set up the Vorbis decoder
 
 		// The next two packets in order are the comment and codebook headers.
-		// They're likely large and may span multiple pages.  Thus we reead
+		// They're likely large and may span multiple pages.  Thus we read
 		// and submit data until we get our two packets, watching that no
 		// pages are missing.  If a page is missing, error out; losing a
 		// header page is the only place where missing data is fatal.
@@ -80,11 +80,11 @@ public:
 			while (i<2)
 			{
 				int result = ogg_sync_pageout(&m_oy, &m_og);
-				if(result == 0)
+				if (result == 0)
 					break; // Need more data
 				// Don't complain about missing or corrupt data yet.  We'll
 				// catch it at the packet output phase.
-				if(result == 1)
+				if (result == 1)
 				{
 					ogg_stream_pagein(&m_os, &m_og); // we can ignore any errors here as they'll also become apparent at packet-out.
 					while (i < 2)
