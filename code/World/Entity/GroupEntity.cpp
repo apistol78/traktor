@@ -14,6 +14,12 @@ GroupEntity::GroupEntity()
 {
 }
 
+GroupEntity::GroupEntity(const std::wstring& name)
+:	m_name(name)
+,	m_update(false)
+{
+}
+
 GroupEntity::~GroupEntity()
 {
 	destroy();
@@ -28,6 +34,11 @@ void GroupEntity::destroy()
 			(*i)->destroy();
 	}
 	m_entities.resize(0);
+}
+
+const std::wstring& GroupEntity::getName() const
+{
+	return m_name;
 }
 
 void GroupEntity::addEntity(Entity* entity)
