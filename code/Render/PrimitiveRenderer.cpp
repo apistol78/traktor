@@ -18,6 +18,9 @@ namespace traktor
 const Guid c_guidPrimitiveShader(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}");
 const int c_bufferCount = 32000;
 
+static render::handle_t s_handleSolid = 0;
+static render::handle_t s_handleWire = 0;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PrimitiveRenderer", PrimitiveRenderer, Object)
@@ -30,11 +33,7 @@ struct Vertex
 	
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color& rgb_)
 	{
-		pos[0] = pos_.x();
-		pos[1] = pos_.y();
-		pos[2] = pos_.z();
-		pos[3] = pos_.w();
-		
+		pos_.store(pos);
 		rgb = rgb_;
 
 #if defined(T_BIG_ENDIAN)
@@ -52,6 +51,8 @@ PrimitiveRenderer::PrimitiveRenderer()
 ,	m_viewWidth(1000.0f)
 ,	m_viewHeight(1000.0f)
 {
+	s_handleSolid = render::getParameterHandle(L"Solid");
+	s_handleWire = render::getParameterHandle(L"Wire");
 }
 
 bool PrimitiveRenderer::create(RenderSystem* renderSystem)
@@ -192,7 +193,7 @@ void PrimitiveRenderer::drawLine(
 	const Color& color
 )
 {
-	if (width < 1.5f)
+	if (width < 2.0f - FUZZY_EPSILON)
 	{
 		drawLine(start, end, color);
 		return;
@@ -206,8 +207,8 @@ void PrimitiveRenderer::drawLine(
 
 	Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
 
-	bool i1 = vp.distance(vs1) > Scalar(0.0f);
-	bool i2 = vp.distance(vs2) > Scalar(0.0f);
+	bool i1 = bool(vp.distance(vs1) >= 0.0f);
+	bool i2 = bool(vp.distance(vs2) >= 0.0f);
 	if (!i1 && !i2)
 		return;
 
@@ -216,37 +217,43 @@ void PrimitiveRenderer::drawLine(
 		Vector4 vsc;
 		Scalar k;
 
-		vp.segmentIntersection(vs1, vs2, k, &vsc);
-		if (!i1)
-			vs1 = vsc;
-		else
-			vs2 = vsc;
+		if (vp.segmentIntersection(vs1, vs2, k, &vsc))
+		{
+			if (!i1)
+				vs1 = vsc;
+			else
+				vs2 = vsc;
+		}
 	}
 
 	Vector4 cs1 = m_projection.back() * vs1;
 	Vector4 cs2 = m_projection.back() * vs2;
 
-	float sx1 = cs1.x() / cs1.w();
-	float sy1 = cs1.y() / cs1.w();
+	Scalar cw1 = cs1.w(), cw2 = cs2.w();
+	if (cw1 <= Scalar(FUZZY_EPSILON) || cw2 <= Scalar(FUZZY_EPSILON))
+		return;
 
-	float sx2 = cs2.x() / cs2.w();
-	float sy2 = cs2.y() / cs2.w();
+	Scalar sx1 = cs1.x() / cw1;
+	Scalar sy1 = cs1.y() / cw1;
 
-	float dy =   sx2 - sx1;
-	float dx = -(sy2 - sy1);
+	Scalar sx2 = cs2.x() / cw2;
+	Scalar sy2 = cs2.y() / cw2;
 
-	float dln = sqrtf(dx * dx + dy * dy);
+	Scalar dy =   sx2 - sx1;
+	Scalar dx = -(sy2 - sy1);
+
+	Scalar dln = Scalar(sqrtf(dx * dx + dy * dy));
 	if (dln <= FUZZY_EPSILON)
 		return;
 
-	dx = (dx * width) / (dln * m_viewWidth);
-	dy = (dy * width) / (dln * m_viewHeight);
+	dx = (dx * Scalar(width)) / (dln * Scalar(m_viewWidth));
+	dy = (dy * Scalar(width)) / (dln * Scalar(m_viewHeight));
 
-	float dx1 = dx * cs1.w();
-	float dy1 = dy * cs1.w();
+	Scalar dx1 = dx * cs1.w();
+	Scalar dy1 = dy * cs1.w();
 
-	float dx2 = dx * cs2.w();
-	float dy2 = dy * cs2.w();
+	Scalar dx2 = dx * cs2.w();
+	Scalar dy2 = dy * cs2.w();
 
 	if (m_primitives.empty() || m_primitives.back().type != PtTriangles)
 	{
@@ -716,11 +723,7 @@ void PrimitiveRenderer::end(RenderView* renderView)
 
 		for (std::vector< Primitives >::iterator i = m_primitives.begin(); i != m_primitives.end(); ++i)
 		{
-			if (i->type == PtTriangles)
-				m_shader->setTechnique(L"Solid");
-			else
-				m_shader->setTechnique(L"Wire");
-
+			m_shader->setTechnique((i->type == PtTriangles) ? s_handleSolid : s_handleWire);
 			m_shader->draw(renderView, *i);
 		}
 	}

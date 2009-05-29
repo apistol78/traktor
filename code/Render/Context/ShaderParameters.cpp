@@ -82,7 +82,8 @@ void ShaderParameters::endParameters(RenderContext* context)
 {
 	T_ASSERT (m_parameterFirst);
 	uint32_t parametersSize = uint32_t(m_parameterLast - m_parameterFirst);
-	context->alloc(parametersSize);
+	if (!context->alloc(parametersSize))
+		T_FATAL_ERROR;
 }
 
 void ShaderParameters::setBooleanParameter(handle_t handle, bool param)
