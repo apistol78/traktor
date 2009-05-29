@@ -70,9 +70,12 @@ RenderContext::~RenderContext()
 
 void* RenderContext::alloc(int blockSize)
 {
-	T_ASSERT (m_heapPtr + blockSize < m_heapEnd);
+	if (m_heapPtr + blockSize >= m_heapEnd)
+		return 0;
+
 	void* ptr = m_heapPtr;
 	m_heapPtr += blockSize;
+
 	return ptr;
 }
 

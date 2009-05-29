@@ -483,108 +483,9 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		rootEntityAdapter->getEntity()->update(&entityUpdate);
 	}
 
-	Matrix44 view = camera->getCurrentView();
-
 	// Render world.
-	m_primitiveRenderer->begin(m_renderView);
-	m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
-	m_primitiveRenderer->pushProjection(m_worldRenderView.getProjection());
-	m_primitiveRenderer->pushView(view);
-
-	// Render XZ grid.
-	{
-		Color gridColor(0, 0, 0, 64);
-		for (int x = -20; x <= 20; ++x)
-		{
-			float fx = float(x);
-			m_primitiveRenderer->drawLine(
-				Vector4(fx, 0.0f, -20.0f, 1.0f),
-				Vector4(fx, 0.0f, 20.0f, 1.0f),
-				(x == 0) ? 2.0f : 1.0f,
-				gridColor
-			);
-			m_primitiveRenderer->drawLine(
-				Vector4(-20.0f, 0.0f, fx, 1.0f),
-				Vector4(20.0f, 0.0f, fx, 1.0f),
-				(x == 0) ? 2.0f : 1.0f,
-				gridColor
-			);
-		}
-	}
-
-	// Draw selection marker(s).
-	Ref< Modifier > modifier = m_context->getModifier();
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	{
-		// Draw modifier, as modifiers are only applicable to spatial entities we must first check if it's a spatial entity.
-		if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
-		{
-			bool modifierActive = (event->getKeyState() & ui::KsControl) == 0 && hasCapture();
-			modifier->draw(
-				m_context,
-				(*i)->getTransform(),
-				m_primitiveRenderer,
-				modifierActive,
-				m_mouseButton
-			);
-		}
-
-		// Draw entity guides.
-		m_context->drawGuide(m_primitiveRenderer, *i);
-	}
-
-	// Render global coordinate frame.
-	{
-		const float c_guideLength = 0.2f;
-
-		m_primitiveRenderer->pushView(Matrix44(
-			view.axisX(),
-			view.axisY(),
-			view.axisZ(),
-			Vector4(-1.25f, -1.5f, 2.0f, 1.0f)
-		));
-
-		m_primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(c_guideLength, 0.0f, 0.0f, 1.0f),
-			4.0f,
-			Color(255, 0, 0)
-		);
-		m_primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(0.0f, c_guideLength, 0.0f, 1.0f),
-			4.0f,
-			Color(0, 255, 0)
-		);
-		m_primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(0.0f, 0.0f, c_guideLength, 1.0f),
-			4.0f,
-			Color(0, 0, 255)
-		);
-
-		m_primitiveRenderer->popView();
-	}
-
-	// Render entities.
-	m_worldRenderView.setView(view);
-
-	if (rootEntityAdapter && rootEntityAdapter->getEntity())
-	{
-		float scaledDeltaTime = deltaTime * m_context->getTimeScale();
-		m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntityAdapter->getEntity(), 0);
-	}
-
-	// Flush rendering queue to GPU.
-	double startRenderTime = m_timer.getElapsedTime();
-
 	if (m_renderView->begin())
 	{
-		EnterLeave leaveRenderScope(
-			0,
-			makeFunctor(m_renderView.getPtr(), &render::RenderView::end)
-		);
-
 		const float clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
@@ -592,6 +493,70 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			1.0f,
 			128
 		);
+
+		Matrix44 view = camera->getCurrentView();
+
+		m_primitiveRenderer->begin(m_renderView);
+		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
+		m_primitiveRenderer->pushProjection(m_worldRenderView.getProjection());
+		m_primitiveRenderer->pushView(view);
+
+		// Render XZ grid.
+		const Color gridColor(0, 0, 0, 64);
+
+		Vector4 viewPosition = view.inverseOrtho().translation();
+		float vx = floorf(viewPosition.x());
+		float vz = floorf(viewPosition.z());
+
+		for (int x = -20; x <= 20; ++x)
+		{
+			float fx = float(x);
+			m_primitiveRenderer->drawLine(
+				Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
+				Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
+				(abs(fx + vx) <= FUZZY_EPSILON) ? 2.0f : 0.0f,
+				gridColor
+			);
+			m_primitiveRenderer->drawLine(
+				Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
+				Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
+				(abs(fx + vz) <= FUZZY_EPSILON) ? 2.0f : 0.0f,
+				gridColor
+			);
+		}
+
+		// Draw selection marker(s).
+		Ref< Modifier > modifier = m_context->getModifier();
+		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+		{
+			// Draw modifier, as modifiers are only applicable to spatial entities we must first check if it's a spatial entity.
+			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
+			{
+				bool modifierActive = (event->getKeyState() & ui::KsControl) == 0 && hasCapture();
+				modifier->draw(
+					m_context,
+					(*i)->getTransform(),
+					m_primitiveRenderer,
+					modifierActive,
+					m_mouseButton
+				);
+			}
+
+			// Draw entity guides.
+			m_context->drawGuide(m_primitiveRenderer, *i);
+		}
+
+		// Render entities.
+		m_worldRenderView.setView(view);
+
+		if (rootEntityAdapter && rootEntityAdapter->getEntity())
+		{
+			float scaledDeltaTime = deltaTime * m_context->getTimeScale();
+			m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntityAdapter->getEntity(), 0);
+		}
+
+		// Flush rendering queue to GPU.
+		double startRenderTime = m_timer.getElapsedTime();
 
 		m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
 
@@ -617,17 +582,18 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		}
 
 		m_primitiveRenderer->end(m_renderView);
-	}
 
-	double stopTime = m_timer.getElapsedTime();
+		m_renderView->end();
+		m_renderView->present();
 
-	m_renderView->present();
+		double stopTime = m_timer.getElapsedTime();
 
-	// Notify frame handlers about frame time.
-	if ((int32_t(stopTime * 100.0) & 15) == 0)
-	{
-		FrameEvent eventFrame(this, stopTime - startTime, stopTime - startRenderTime);
-		raiseEvent(EiFrame, &eventFrame);
+		// Notify frame handlers about frame time.
+		if ((int32_t(stopTime * 100.0) & 15) == 0)
+		{
+			FrameEvent eventFrame(this, stopTime - startTime, stopTime - startRenderTime);
+			raiseEvent(EiFrame, &eventFrame);
+		}
 	}
 
 	event->consume();
