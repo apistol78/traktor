@@ -21,19 +21,26 @@ namespace traktor
 #pragma pack(1)
 struct InstanceMeshData
 {
-	Quaternion rotation;
-	float translation[4];
+	float rotation[4];
+	float translation[3];
+	float parameter;
 };
 #pragma pack()
 
 inline InstanceMeshData packInstanceMeshData(const Matrix44& transform, float userParameter)
 {
+	Quaternion rotation = Quaternion(transform).normalized();
 	InstanceMeshData imd;
-	imd.rotation = Quaternion(transform).normalized();
+
+	imd.rotation[0] = rotation.x;
+	imd.rotation[1] = rotation.y;
+	imd.rotation[2] = rotation.z;
+	imd.rotation[3] = rotation.w;
 	imd.translation[0] = transform.translation().x();
 	imd.translation[1] = transform.translation().y();
 	imd.translation[2] = transform.translation().z();
-	imd.translation[3] = userParameter;
+	imd.parameter = userParameter;
+
 	return imd;
 }
 

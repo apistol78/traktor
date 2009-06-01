@@ -5,6 +5,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "World/Entity/EntityRenderer.h"
+#include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
 
 // import/export mechanism.
@@ -19,8 +20,6 @@ namespace traktor
 {
 	namespace mesh
 	{
-
-class InstanceMesh;
 
 class T_DLLCLASS InstanceMeshEntityRenderer : public world::EntityRenderer
 {
@@ -41,7 +40,7 @@ public:
 	);
 
 private:
-	std::map< InstanceMesh*, AlignedVector< InstanceMeshData > > m_meshInstances;
+	std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > > m_meshInstances;
 };
 
 	}
