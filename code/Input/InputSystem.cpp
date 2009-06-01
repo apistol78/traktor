@@ -60,11 +60,11 @@ int InputSystem::getDeviceCount(InputCategory category) const
 	return deviceCount;
 }
 
-InputDevice* InputSystem::getDevice(InputCategory category, int index)
+InputDevice* InputSystem::getDevice(InputCategory category, int index, bool connected)
 {
 	for (RefArray< InputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 	{
-		if ((*i)->getCategory() == category)
+		if ((*i)->getCategory() == category && (!connected || (*i)->isConnected()))
 		{
 			if (index-- <= 0)
 				return *i;

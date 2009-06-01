@@ -8,6 +8,7 @@ namespace traktor
 
 enum InputDefaultControlType
 {
+	DtInvalid,
 	DtUp,
 	DtDown,
 	DtLeft,

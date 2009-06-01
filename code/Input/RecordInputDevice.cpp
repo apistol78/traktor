@@ -25,6 +25,11 @@ InputCategory RecordInputDevice::getCategory() const
 	return m_inputDevice->getCategory();
 }
 
+bool RecordInputDevice::isConnected() const
+{
+	return true;
+}
+
 int RecordInputDevice::getControlCount()
 {
 	return m_inputDevice->getControlCount();

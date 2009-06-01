@@ -23,7 +23,8 @@ InputDeviceXi::InputDeviceXi(DWORD controller)
 :	m_controller(controller)
 ,	m_connected(false)
 {
-	memset(&m_state, 0, sizeof(m_state));
+	std::memset(&m_state, 0, sizeof(m_state));
+	readState();
 }
 
 std::wstring InputDeviceXi::getName() const
@@ -34,6 +35,11 @@ std::wstring InputDeviceXi::getName() const
 InputCategory InputDeviceXi::getCategory() const
 {
 	return CtJoystick;
+}
+
+bool InputDeviceXi::isConnected() const
+{
+	return m_connected;
 }
 
 int InputDeviceXi::getControlCount()
