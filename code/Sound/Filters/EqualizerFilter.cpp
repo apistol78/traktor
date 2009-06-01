@@ -18,7 +18,7 @@ EqualizerFilter::EqualizerFilter(float gain)
 
 void EqualizerFilter::apply(SoundBlock& outBlock)
 {
-	for (uint32_t i = 0; i < outBlock.channels; ++i)
+	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
 		float* samples = outBlock.samples[i];
 		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)

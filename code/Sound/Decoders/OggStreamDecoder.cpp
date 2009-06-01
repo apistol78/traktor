@@ -214,7 +214,7 @@ public:
 		// Prepare output sound block.
 		for (int i = 0; i < m_vi.channels; ++i)
 			outSoundBlock.samples[i] = m_decoded[i];
-		outSoundBlock.channels = m_vi.channels;
+		outSoundBlock.maxChannel = m_vi.channels;
 		outSoundBlock.sampleRate = m_vi.rate;
 		outSoundBlock.samplesCount = decodedCount;
 

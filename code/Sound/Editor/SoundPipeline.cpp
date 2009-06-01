@@ -187,7 +187,7 @@ bool SoundPipeline::buildOutput(
 
 		while (decoder->getBlock(soundBlock))
 		{
-			for (uint32_t i = 0; i < soundBlock.channels; ++i)
+			for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
 			{
 				for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
 					samples[i].push_back(quantify(soundBlock.samples[i][j]));
@@ -195,7 +195,7 @@ bool SoundPipeline::buildOutput(
 
 			sampleRate = soundBlock.sampleRate;
 			samplesCount += soundBlock.samplesCount;
-			channelsCount = soundBlock.channels;
+			channelsCount = soundBlock.maxChannel;
 		}
 
 		// Write asset.

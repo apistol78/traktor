@@ -214,7 +214,7 @@ void FFTFilter::apply(SoundBlock& outBlock)
 	const int n2 = (N * 2) / 4;
 	const int n3 = (N * 3) / 4;
 
-	for (uint32_t i = 0; i < outBlock.channels; ++i)
+	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
 		float* history = m_history[i];
 		float* samples = outBlock.samples[i];

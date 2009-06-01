@@ -64,7 +64,7 @@ struct SoundBlock
 	float* samples[SbcMaxChannelCount];	//< Point to samples, one per channel.
 	uint32_t samplesCount;				//< Number of samples.
 	uint32_t sampleRate;				//< Samples per second.
-	uint32_t channels;					//< Number of channels.
+	uint32_t maxChannel;				//< Last channel used, everyone above is considered mute.
 };
 
 //@}

@@ -64,7 +64,7 @@ public:
 	 * \param repeat Repeat sound.
 	 * \return Sound channel.
 	 */
-	SoundChannel* playSound(uint32_t channelId, Sound* sound, uint32_t repeat = 1);
+	SoundChannel* play(uint32_t channelId, Sound* sound, uint32_t repeat = 1);
 
 	/*! \brief Play sound on first non-playing virtual channel.
 	 *
@@ -73,13 +73,16 @@ public:
 	 * \param repeat Repeat sound.
 	 * \return Sound channel if sound was successfully attached to one.
 	 */
-	SoundChannel* playSound(Sound* sound, bool wait, uint32_t repeat = 1);
+	SoundChannel* play(Sound* sound, bool wait, uint32_t repeat = 1);
 
 	/*! \brief Stop virtual channel from playing.
 	 *
 	 * \param channelId Virtual channel identifier.
 	 */
-	void stopSound(uint32_t channelId);
+	void stop(uint32_t channelId);
+
+	/*! \brief Stop playing all virtual channels. */
+	void stopAll();
 
 	/*! \brief Get current mixer time. */
 	double getTime() const;

@@ -22,10 +22,10 @@ void NormalizationFilter::apply(SoundBlock& outBlock)
 	float energy = 0.0f;
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			energy += std::abs(outBlock.samples[j][i]);
 	}
-	energy /= outBlock.samplesCount * outBlock.channels;
+	energy /= outBlock.samplesCount * outBlock.maxChannel;
 
 	if (energy >= m_energyThreshold)
 	{
@@ -36,7 +36,7 @@ void NormalizationFilter::apply(SoundBlock& outBlock)
 		float middleGain = m_targetEnergy / energy;
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
-			for (uint32_t j = 0; j < outBlock.channels; ++j)
+			for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 				outBlock.samples[j][i] *= m_currentGain;
 			m_currentGain = middleGain * attackRate + m_currentGain * (1.0f - attackRate);
 		}
@@ -46,7 +46,7 @@ void NormalizationFilter::apply(SoundBlock& outBlock)
 		// Energy below threshold, keep current gain.
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
-			for (uint32_t j = 0; j < outBlock.channels; ++j)
+			for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 				outBlock.samples[j][i] *= m_currentGain;
 		}
 	}

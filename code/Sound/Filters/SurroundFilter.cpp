@@ -43,13 +43,13 @@ void SurroundFilter::apply(SoundBlock& outBlock)
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
 		float sample = 0.0f;
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			sample += outBlock.samples[j][i];
 		for (uint32_t j = 0; j < sizeof_array(c_listenerCones); ++j)
 			m_buffer[c_listenerCones[j].channel][i] = sample;
 		m_buffer[SbcLfe][i] = 0.0f;
 	}
-	outBlock.channels = SbcMaxChannelCount;
+	outBlock.maxChannel = SbcMaxChannelCount;
 	for (uint32_t j = 0; j < SbcMaxChannelCount; ++j)
 		outBlock.samples[j] = m_buffer[j];
 

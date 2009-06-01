@@ -109,7 +109,7 @@ public:
 
 			T_ASSERT (outSoundBlock.sampleRate == 0 || outSoundBlock.sampleRate == m_mad_synth.pcm.samplerate);
 			outSoundBlock.sampleRate = m_mad_synth.pcm.samplerate;
-			outSoundBlock.channels = m_mad_synth.pcm.channels;
+			outSoundBlock.maxChannel = m_mad_synth.pcm.channels;
 
 			const mad_fixed_t* left = m_mad_synth.pcm.samples[0];
 			const mad_fixed_t* right = m_mad_synth.pcm.samples[1];
