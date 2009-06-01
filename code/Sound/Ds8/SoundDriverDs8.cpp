@@ -183,7 +183,7 @@ void SoundDriverDs8::submit(const SoundBlock& soundBlock)
 	HRESULT hr;
 
 	T_ASSERT (m_frameSamples == soundBlock.samplesCount);
-	T_ASSERT (m_wfx.nChannels == soundBlock.channels);
+	T_ASSERT (m_wfx.nChannels == soundBlock.maxChannel);
 
 	uint32_t sampleSize = m_wfx.wBitsPerSample >> 3;
 	uint32_t blockSize = soundBlock.samplesCount * m_wfx.nChannels * sampleSize;

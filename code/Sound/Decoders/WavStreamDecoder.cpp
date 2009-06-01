@@ -82,7 +82,7 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 	outSoundBlock.samples[SbcLeft] = m_samplesBuffer;
 	outSoundBlock.samplesCount = readSamples;
 	outSoundBlock.sampleRate = m_format.sampleRate;
-	outSoundBlock.channels = m_format.channels;
+	outSoundBlock.maxChannel = m_format.channels;
 
 	return true;
 }

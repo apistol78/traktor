@@ -17,7 +17,7 @@ void DitherFilter::apply(SoundBlock& outBlock)
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
 		float r = float((m_random.nextDouble() * 2.0 - 1.0) * m_ditherAmplitude);
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			outBlock.samples[j][i] += r;
 	}
 }

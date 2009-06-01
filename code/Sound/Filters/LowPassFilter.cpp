@@ -19,7 +19,7 @@ void LowPassFilter::apply(SoundBlock& outBlock)
 	float alpha = dt / (dt + 1.0f / m_cutOff);
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
 			outBlock.samples[j][i] = outBlock.samples[j][i] * alpha + m_history[j] * (1.0f - alpha);
 			m_history[j] = outBlock.samples[j][i];

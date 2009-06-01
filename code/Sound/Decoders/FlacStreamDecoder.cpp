@@ -92,7 +92,7 @@ public:
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
 		outSoundBlock.samplesCount = std::min(m_decodedCount, outSoundBlock.samplesCount);
 		outSoundBlock.sampleRate = FLAC__stream_decoder_get_sample_rate(m_decoder);
-		outSoundBlock.channels = FLAC__stream_decoder_get_channels(m_decoder);
+		outSoundBlock.maxChannel = FLAC__stream_decoder_get_channels(m_decoder);
 
 		m_keepOffset = outSoundBlock.samplesCount;
 		return true;

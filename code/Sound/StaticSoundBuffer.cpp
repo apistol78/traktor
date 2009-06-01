@@ -70,7 +70,7 @@ bool StaticSoundBuffer::getBlock(double time, SoundBlock& outBlock)
 
 	outBlock.samplesCount = samplesCount;
 	outBlock.sampleRate = m_sampleRate;
-	outBlock.channels = m_channelsCount;
+	outBlock.maxChannel = m_channelsCount;
 
 	return true;
 }

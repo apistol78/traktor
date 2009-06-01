@@ -70,7 +70,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	if (!m_sound)
 		return false;
 
-	SoundBuffer* soundBuffer = m_sound->getSoundBuffer();
+	Ref< SoundBuffer > soundBuffer = m_sound->getSoundBuffer();
 	if (!soundBuffer)
 		return false;
 
@@ -101,7 +101,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	}
 
 	// We might get a null block; does not indicate end of stream.
-	if (!soundBlock.samplesCount || !soundBlock.sampleRate || !soundBlock.channels)
+	if (!soundBlock.samplesCount || !soundBlock.sampleRate || !soundBlock.maxChannel)
 		return false;
 
 	// Apply filter on sound block.
@@ -110,27 +110,38 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 
 	// Normalize sound block to hardware sample rate.
 	for (uint32_t k = 0; k < SbcMaxChannelCount; ++k)
-		outBlock.samples[k] = m_outputSamples[k];
+	{
+		if (soundBlock.samples[k])
+			outBlock.samples[k] = m_outputSamples[k];
+		else
+			outBlock.samples[k] = 0;
+	}
 	outBlock.samplesCount = (soundBlock.samplesCount * m_hwSampleRate) / soundBlock.sampleRate;
 	outBlock.samplesCount = std::min(outBlock.samplesCount, m_hwFrameSamples);
 	outBlock.sampleRate = m_hwSampleRate;
-	outBlock.channels = soundBlock.channels;
+	outBlock.maxChannel = soundBlock.maxChannel;
 
 	if (soundBlock.sampleRate != m_hwSampleRate)
 	{
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
 			uint32_t j = (i * soundBlock.sampleRate) / m_hwSampleRate;
-			for (uint32_t k = 0; k < outBlock.channels; ++k)
-				outBlock.samples[k][i] = soundBlock.samples[k][j] * m_volume;
+			for (uint32_t k = 0; k < outBlock.maxChannel; ++k)
+			{
+				if (outBlock.samples[k])
+					outBlock.samples[k][i] = soundBlock.samples[k][j] * m_volume;
+			}
 		}
 	}
 	else
 	{
-		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 		{
-			for (uint32_t j = 0; j < outBlock.channels; ++j)
-				outBlock.samples[j][i] = soundBlock.samples[j][i] * m_volume;
+			if (outBlock.samples[i])
+			{
+				for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+					outBlock.samples[i][j] = soundBlock.samples[i][j] * m_volume;
+			}
 		}
 	}
 

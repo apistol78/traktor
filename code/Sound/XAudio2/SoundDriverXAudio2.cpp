@@ -189,13 +189,13 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	switch (m_wfx.wBitsPerSample)
 	{
 	case 8:
-		for (uint32_t i = 0; i < soundBlock.channels; ++i)
-			writeSamples< uint8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.channels);
+		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
+			writeSamples< uint8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
 		break;
 
 	case 16:
-		for (uint32_t i = 0; i < soundBlock.channels; ++i)
-			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.channels);
+		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
+			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, soundBlock.maxChannel);
 		break;
 	}
 

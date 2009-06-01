@@ -22,7 +22,7 @@ void RingModulationFilter::apply(SoundBlock& outBlock)
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
 		float ringAmplitude = sinf(m_ringFrequency * m_time * 2.0f * PI);
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			outBlock.samples[j][i] *= ringAmplitude;
 		m_time += sampleDeltaTime;
 	}

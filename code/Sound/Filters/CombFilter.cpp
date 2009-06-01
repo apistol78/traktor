@@ -28,7 +28,7 @@ void CombFilter::apply(SoundBlock& outBlock)
 {
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
-		for (uint32_t j = 0; j < outBlock.channels; ++j)
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
 			m_last[j] = m_history[j][m_index[j]] * (1.0f - m_damp) + m_last[j] * m_damp;
 			m_history[j][m_index[j]] = outBlock.samples[j][i] + m_last[j] * m_feedback;

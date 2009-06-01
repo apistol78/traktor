@@ -135,7 +135,7 @@ SoundChannel* SoundSystem::getChannel(uint32_t channelId)
 	return m_channels[channelId];
 }
 
-SoundChannel* SoundSystem::playSound(uint32_t channelId, Sound* sound, uint32_t repeat)
+SoundChannel* SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repeat)
 {
 	T_ASSERT (channelId < m_channels.size());
 	Acquire< Semaphore > lock(m_channelAttachLock);
@@ -143,7 +143,7 @@ SoundChannel* SoundSystem::playSound(uint32_t channelId, Sound* sound, uint32_t 
 	return m_channels[channelId];
 }
 
-SoundChannel* SoundSystem::playSound(Sound* sound, bool wait, uint32_t repeat)
+SoundChannel* SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 {
 	for (;;)
 	{
@@ -169,11 +169,18 @@ SoundChannel* SoundSystem::playSound(Sound* sound, bool wait, uint32_t repeat)
 	return 0;
 }
 
-void SoundSystem::stopSound(uint32_t channelId)
+void SoundSystem::stop(uint32_t channelId)
 {
 	T_ASSERT (channelId < m_channels.size());
 	Acquire< Semaphore > lock(m_channelAttachLock);
 	m_channels[channelId]->stop();
+}
+
+void SoundSystem::stopAll()
+{
+	Acquire< Semaphore > lock(m_channelAttachLock);
+	for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+		(*i)->stop();
 }
 
 double SoundSystem::getTime() const
@@ -219,19 +226,20 @@ void SoundSystem::threadMixer()
 			frameBlock.samples[i] = samples + m_desc.driverDesc.frameSamples * i;
 		frameBlock.samplesCount = m_desc.driverDesc.frameSamples;
 		frameBlock.sampleRate = m_desc.driverDesc.sampleRate;
-		frameBlock.channels = m_desc.driverDesc.hwChannels;
+		frameBlock.maxChannel = m_desc.driverDesc.hwChannels;
 
 		// Read blocks from channels.
 		uint32_t channelsCount = uint32_t(m_channels.size());
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
 			requestBlock.samplesCount = m_desc.driverDesc.frameSamples;
+			requestBlock.maxChannel = 0;
 
 			// Temporarily lock channels as we don't want user to attach new sounds just yet.
 			m_channelAttachLock.acquire();
 			bool got = m_channels[i]->getBlock(m_time, requestBlock);
 			m_channelAttachLock.release();
-			if (!got)
+			if (!got || !requestBlock.maxChannel)
 				continue;
 
 			T_ASSERT (requestBlock.sampleRate == m_desc.driverDesc.sampleRate);
@@ -240,7 +248,7 @@ void SoundSystem::threadMixer()
 			// Final combine channels into hardware channels using "combine matrix".
 			for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 			{
-				for (uint32_t k = 0; k < SbcMaxChannelCount; ++k)
+				for (uint32_t k = 0; k < requestBlock.maxChannel; ++k)
 				{
 					float strength = m_desc.cm[j][k];
 					if (requestBlock.samples[k] && abs(strength) >= FUZZY_EPSILON)
