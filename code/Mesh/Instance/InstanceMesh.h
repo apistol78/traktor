@@ -58,11 +58,13 @@ public:
 		resource::Proxy< render::Shader > material;
 	};
 
+	typedef std::pair< InstanceMeshData, float > instance_distance_t;
+
 	InstanceMesh();
 
 	const Aabb& getBoundingBox() const;
 	
-	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, const AlignedVector< InstanceMeshData >& instanceWorld);
+	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, AlignedVector< instance_distance_t >& instanceWorld);
 
 	inline const Ref< render::Mesh >& getRenderMesh() const { return m_mesh; }
 

@@ -46,7 +46,10 @@ void InstanceMeshEntityRenderer::render(
 	))
 		return;
 
-	m_meshInstances[mesh].push_back(packInstanceMeshData(transform, meshEntity->getUserParameter()));
+	m_meshInstances[mesh].push_back(std::make_pair(
+		packInstanceMeshData(transform, meshEntity->getUserParameter()),
+		distance
+	));
 }
 
 void InstanceMeshEntityRenderer::flush(
@@ -54,7 +57,7 @@ void InstanceMeshEntityRenderer::flush(
 	world::WorldRenderView* worldRenderView
 )
 {
-	for (std::map< InstanceMesh*, AlignedVector< InstanceMeshData > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
+	for (std::map< InstanceMesh*, AlignedVector< InstanceMesh::instance_distance_t > >::iterator i = m_meshInstances.begin(); i != m_meshInstances.end(); ++i)
 	{
 		if (i->second.empty())
 			continue;
