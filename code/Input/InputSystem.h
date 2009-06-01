@@ -40,7 +40,7 @@ public:
 
 	int getDeviceCount(InputCategory category) const;
 
-	InputDevice* getDevice(InputCategory category, int index);
+	InputDevice* getDevice(InputCategory category, int index, bool connected);
 
 	bool update(float deltaTime);
 

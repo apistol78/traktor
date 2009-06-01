@@ -81,6 +81,11 @@ InputCategory InputDeviceDi8::getCategory() const
 	}
 }
 
+bool InputDeviceDi8::isConnected() const
+{
+	return true;
+}
+
 int InputDeviceDi8::getControlCount()
 {
 	switch (getCategory())

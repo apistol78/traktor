@@ -26,6 +26,11 @@ InputCategory ReplayInputDevice::getCategory() const
 	return m_inputDevice->getCategory();
 }
 
+bool ReplayInputDevice::isConnected() const
+{
+	return true;
+}
+
 int ReplayInputDevice::getControlCount()
 {
 	return m_inputDevice->getControlCount();

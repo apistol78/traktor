@@ -18,6 +18,11 @@ InputCategory KeyboardDeviceWin32::getCategory() const
 	return CtKeyboard;
 }
 
+bool KeyboardDeviceWin32::isConnected() const
+{
+	return true;
+}
+
 int KeyboardDeviceWin32::getControlCount()
 {
 	return 256;

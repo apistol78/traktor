@@ -30,6 +30,8 @@ public:
 
 	virtual InputCategory getCategory() const;
 
+	virtual bool isConnected() const;
+
 	virtual int getControlCount();
 
 	virtual std::wstring getControlName(int control);
