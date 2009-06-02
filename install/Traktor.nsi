@@ -22,7 +22,7 @@ SetCompressor lzma
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
-!insertmacro MUI_PAGE_LICENSE "C:\Private\traktor\main\doc\misc\Licence.txt"
+!insertmacro MUI_PAGE_LICENSE "C:\Private\dre\traktor\doc\misc\Licence.txt"
 ; Directory page
 !insertmacro MUI_PAGE_DIRECTORY
 ; Instfiles page
@@ -53,46 +53,46 @@ Section "Traktor" SEC01
   SetOutPath "$INSTDIR\msvcrt"
   SetOverwrite try
 
-  File "C:\Private\traktor\main\msvcrt\vc2008\*.*"
+  File "C:\Private\dre\traktor\msvcrt\vc2008\*.*"
 
   SetOutPath "$INSTDIR\build\win32\ReleaseShared"
   SetOverwrite try
   
-  File "C:\Private\traktor\main\build\win32\ReleaseShared\*.dll"
-  File "C:\Private\traktor\main\build\win32\ReleaseShared\*.exe"
+  File "C:\Private\dre\traktor\build\win32\ReleaseShared\*.dll"
+  File "C:\Private\dre\traktor\build\win32\ReleaseShared\*.exe"
 
   SetOutPath "$INSTDIR\bin"
   SetOverwrite try
   
-  File "C:\Private\traktor\main\bin\*.exe"
+  File "C:\Private\dre\traktor\bin\*.exe"
 
   SetOutPath "$INSTDIR\res"
   SetOverwrite try
 
-  File "C:\Private\traktor\main\res\*.xml"
+  File "C:\Private\dre\traktor\res\*.xml"
   
   SetOutPath "$INSTDIR"
   SetOverwrite try
 
-  File "C:\Private\traktor\main\Traktor.Editor.config"
-  File "C:\Private\traktor\main\Drone.App.config"
-  File "C:\Private\traktor\main\config.bat"
-  File "C:\Private\traktor\main\run-editor-win32.bat"
+  File "C:\Private\dre\traktor\Traktor.Editor.config"
+  File "C:\Private\dre\traktor\Drone.App.config"
+  File "C:\Private\dre\traktor\config.bat"
+  File "C:\Private\dre\traktor\run-editor-win32.bat"
   
   SetOutPath "$INSTDIR\data"
   SetOverwrite try
   
-  File "C:\Private\traktor\main\data\*.manifest"
+  File "C:\Private\dre\traktor\data\*.manifest"
   
   SetOutPath "$INSTDIR\data\Assets"
   SetOverwrite try
   
-  File /nonfatal /r "C:\Private\traktor\main\data\Assets\*.*"
+  File /nonfatal /r "C:\Private\dre\traktor\data\Assets\*.*"
 
   SetOutPath "$INSTDIR\data\Source"
   SetOverwrite try
 
-  File /nonfatal /r "C:\Private\traktor\main\data\Source\*.*"
+  File /nonfatal /r "C:\Private\dre\traktor\data\Source\*.*"
   
   SetOutPath "$INSTDIR"
   
