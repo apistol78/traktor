@@ -130,7 +130,8 @@ void ObjectEditorDialog::eventClick(ui::Event* event)
 		break;
 
 	case ui::DrOk:
-		apply(false);
+		if (apply(false))
+			destroy();
 		break;
 
 	case ui::DrCancel:
