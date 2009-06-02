@@ -82,7 +82,7 @@ Section "Traktor" SEC01
   SetOutPath "$INSTDIR\data"
   SetOverwrite try
   
-  File "C:\Private\dre\traktor\data\*.manifest"
+  File "C:\Private\dre\traktor\data\target\win32\*.manifest"
   
   SetOutPath "$INSTDIR\data\Assets"
   SetOverwrite try
