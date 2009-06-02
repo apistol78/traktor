@@ -1031,6 +1031,19 @@ void EditorForm::saveCurrentDocument()
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
+	// First iterate all object editor dialogs to see if focus is in any of those,
+	// if so then we simulate an "Apply" in active one.
+	for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
+	{
+		Ref< ObjectEditorDialog > objectEditorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
+		if (objectEditorDialog && objectEditorDialog->containFocus())
+		{
+			objectEditorDialog->apply(true);
+			return;
+		}
+	}
+
+	// Get active editor page and commit it's primary instance.
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
 	if (tabPage)
 	{
