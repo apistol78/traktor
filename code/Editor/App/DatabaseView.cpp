@@ -5,6 +5,9 @@
 #include "Editor/WizardTool.h"
 #include "Editor/Settings.h"
 #include "Editor/Asset.h"
+#include "Editor/PipelineManager.h"
+#include "Editor/PipelineHash.h"
+#include "Editor/Pipeline.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
@@ -49,9 +52,9 @@ class DefaultFilter : public DatabaseView::Filter
 	T_RTTI_CLASS(DefaultFilter)
 
 public:
-	virtual bool acceptInstance(const Type& primaryType) const
+	virtual bool acceptInstance(const db::Instance* instance) const
 	{
-		return is_type_of< Serializable >(primaryType);
+		return is_type_of< Serializable >(*instance->getPrimaryType());
 	}
 
 	virtual bool acceptEmptyGroups() const
@@ -64,7 +67,7 @@ T_IMPLEMENT_RTTI_CLASS(L"DefaultFilter", DefaultFilter, DatabaseView::Filter)
 
 class TypeSetFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS(DefaultFilter)
+	T_RTTI_CLASS(TypeSetFilter)
 
 public:
 	TypeSetFilter(const TypeSet& typeSet)
@@ -72,9 +75,9 @@ public:
 	{
 	}
 
-	virtual bool acceptInstance(const Type& primaryType) const
+	virtual bool acceptInstance(const db::Instance* instance) const
 	{
-		return m_typeSet.find(&primaryType) != m_typeSet.end();
+		return m_typeSet.find(instance->getPrimaryType()) != m_typeSet.end();
 	}
 
 	virtual bool acceptEmptyGroups() const
@@ -87,6 +90,32 @@ private:
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"TypeSetFilter", TypeSetFilter, DatabaseView::Filter)
+
+class GuidSetFilter : public DatabaseView::Filter
+{
+	T_RTTI_CLASS(DefaultFilter)
+
+public:
+	GuidSetFilter(const std::set< Guid >& guidSet)
+	:	m_guidSet(guidSet)
+	{
+	}
+
+	virtual bool acceptInstance(const db::Instance* instance) const
+	{
+		return m_guidSet.find(instance->getGuid()) != m_guidSet.end();
+	}
+
+	virtual bool acceptEmptyGroups() const
+	{
+		return false;
+	}
+
+private:
+	mutable std::set< Guid > m_guidSet;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
 
 		}
 
@@ -164,7 +193,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
 	m_menuInstance->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Filter"), i18n::Text(L"DATABASE_FILTER_ON_THIS_TYPE")));
+	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
+	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstance->add(gc_new< ui::MenuItem >(L"-"));
 	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
@@ -179,7 +209,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Filter"), i18n::Text(L"DATABASE_FILTER_ON_THIS_TYPE")));
+	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
+	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(L"-"));
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
@@ -242,7 +273,7 @@ ui::TreeViewItem* DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeVi
 		if (!primaryType)
 			continue;
 
-		if (!m_filter->acceptInstance(*primaryType))
+		if (!m_filter->acceptInstance(instanceIter))
 			continue;
 
 		int iconIndex = 2;
@@ -274,6 +305,57 @@ ui::TreeViewItem* DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeVi
 	}
 
 	return groupItem;
+}
+
+void DatabaseView::filterType(db::Instance* instance)
+{
+	TypeSet typeSet;
+	typeSet.insert(instance->getPrimaryType());
+	m_filter = gc_new< TypeSetFilter >(cref(typeSet));
+	m_toolFilter->setToggled(true);
+	updateView();
+}
+
+void DatabaseView::filterDependencies(db::Instance* instance)
+{
+	RefArray< Pipeline > pipelines;
+
+	std::vector< const Type* > pipelineTypes;
+	type_of< Pipeline >().findAllOf(pipelineTypes);
+
+	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	{
+		Ref< Pipeline > pipeline = dynamic_type_cast< Pipeline* >((*i)->newInstance());
+		if (pipeline)
+		{
+			if (!pipeline->create(m_editor->getSettings()))
+			{
+				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
+				continue;
+			}
+			pipelines.push_back(pipeline);
+		}
+	}
+
+	Ref< PipelineHash > pipelineHash = gc_new< PipelineHash >();
+	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
+		m_editor->getSourceDatabase(),
+		m_editor->getOutputDatabase(),
+		pipelines,
+		pipelineHash
+	);
+
+	pipelineManager->addDependency(instance, false);
+
+	std::set< Guid > guidSet;
+
+	const RefArray< PipelineManager::Dependency >& dependencies = pipelineManager->getDependencies();
+	for (RefArray< PipelineManager::Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		guidSet.insert((*i)->outputGuid);
+
+	m_filter = gc_new< GuidSetFilter >(cref(guidSet));
+	m_toolFilter->setToggled(true);
+	updateView();
 }
 
 void DatabaseView::eventToolSelectionClicked(ui::Event* event)
@@ -399,13 +481,13 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 			
 			treeDomain->update();
 		}
-		else if (selected->getCommand() == L"Editor.Database.Filter")	// Filter on selected instance's type.
+		else if (selected->getCommand() == L"Editor.Database.FilterInstanceType")	// Filter on type.
 		{
-			TypeSet typeSet;
-			typeSet.insert(instance->getPrimaryType());
-			m_filter = gc_new< TypeSetFilter >(cref(typeSet));
-			m_toolFilter->setToggled(true);
-			updateView();
+			filterType(instance);
+		}
+		else if (selected->getCommand() == L"Editor.Database.FilterInstanceDepends")	// Filter on dependencies
+		{
+			filterDependencies(instance);
 		}
 		else if (selected->getCommand() == L"Editor.Database.Build")	// Build asset
 		{

@@ -404,6 +404,11 @@ const Serializable* PipelineManager::getObjectReadOnly(const Guid& instanceGuid)
 	return object;
 }
 
+const RefArray< PipelineManager::Dependency >& PipelineManager::getDependencies() const
+{
+	return m_dependencies;
+}
+
 PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) const
 {
 	for (RefArray< Dependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)

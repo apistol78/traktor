@@ -158,8 +158,12 @@
       <second>Filter</second>
     </item>
     <item>
-      <first>DATABASE_FILTER_ON_THIS_TYPE</first>
-      <second>Filter this instance's type</second>
+      <first>DATABASE_FILTER_DEPENDENCIES</first>
+      <second>Filter instance's dependencies</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_TYPE</first>
+      <second>Filter instance's type</second>
     </item>
 		<item>
 			<first>DATABASE_IMPORT</first>

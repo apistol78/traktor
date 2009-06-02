@@ -59,6 +59,22 @@ public:
 		) const = 0;
 	};
 
+	struct Dependency : public Object
+	{
+		std::wstring name;
+		Ref< Pipeline > pipeline;
+		Ref< const Object > sourceAsset;
+		std::wstring outputPath;
+		Guid outputGuid;
+		Ref< const Object > buildParams;
+		RefArray< Dependency > dependencies;
+		MD5 checksum;
+		bool build;
+		uint32_t reason;
+
+		bool needBuild();
+	};
+
 	PipelineManager(
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
@@ -101,6 +117,8 @@ public:
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 
+	virtual const RefArray< Dependency >& getDependencies() const;
+
 	template < typename T >
 	const T* getObjectReadOnly(const Guid& guid)
 	{
@@ -108,22 +126,6 @@ public:
 	}
 
 private:
-	struct Dependency : public Object
-	{
-		std::wstring name;
-		Ref< Pipeline > pipeline;
-		Ref< const Object > sourceAsset;
-		std::wstring outputPath;
-		Guid outputGuid;
-		Ref< const Object > buildParams;
-		RefArray< Dependency > dependencies;
-		MD5 checksum;
-		bool build;
-		uint32_t reason;
-
-		bool needBuild();
-	};
-
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< PipelineHash > m_hash;
