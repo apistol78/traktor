@@ -162,8 +162,12 @@
       <second>Filter</second>
     </item>
     <item>
-      <first>DATABASE_FILTER_ON_THIS_TYPE</first>
-      <second>Filtrera på denna instansens typ</second>
+      <first>DATABASE_FILTER_DEPENDENCIES</first>
+      <second>Filtrera instansens beroenden</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_TYPE</first>
+      <second>Filtrera instansens typ</second>
     </item>
     <item>
 			<first>DATABASE_IMPORT</first>

@@ -27,6 +27,7 @@ class ToolBarButton;
 
 class Database;
 class Group;
+class Instance;
 
 	}
 
@@ -46,7 +47,7 @@ public:
 		T_RTTI_CLASS(Filter)
 
 	public:
-		virtual bool acceptInstance(const Type& primaryType) const = 0;
+		virtual bool acceptInstance(const db::Instance* instance) const = 0;
 
 		virtual bool acceptEmptyGroups() const = 0;
 	};
@@ -74,6 +75,10 @@ private:
 	RefArray< WizardTool > m_wizardTools;
 
 	ui::TreeViewItem* buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
+
+	void filterType(db::Instance* instance);
+
+	void filterDependencies(db::Instance* instance);
 
 	void eventToolSelectionClicked(ui::Event* event);
 
