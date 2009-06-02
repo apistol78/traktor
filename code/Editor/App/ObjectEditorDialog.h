@@ -30,6 +30,10 @@ public:
 
 	void destroy();
 
+	bool apply(bool keep);
+
+	void cancel();
+
 private:
 	Ref< Settings > m_settings;
 	Ref< ObjectEditor > m_objectEditor;

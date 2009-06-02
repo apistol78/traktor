@@ -98,28 +98,43 @@ void ObjectEditorDialog::destroy()
 	ui::ConfigDialog::destroy();
 }
 
+bool ObjectEditorDialog::apply(bool keep)
+{
+	m_objectEditor->apply();
+	if (m_instance->commit(keep ? db::CfKeepCheckedOut : db::CfDefault))
+		return true;
+	else
+	{
+		ui::MessageBox::show(this, i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_MESSAGE"), i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION"), ui::MbIconError | ui::MbOk);
+		return false;
+	}
+}
+
+void ObjectEditorDialog::cancel()
+{
+	if (m_instance)
+	{
+		m_instance->revert();
+		m_instance = 0;
+	}
+	destroy();
+}
+
 void ObjectEditorDialog::eventClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
 	switch (command.getId())
 	{
 	case ui::DrApply:
-		m_objectEditor->apply();
-		if (!m_instance->commit(db::CfKeepCheckedOut))
-			ui::MessageBox::show(this, i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_MESSAGE"), i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION"), ui::MbIconError | ui::MbOk);
+		apply(true);
 		break;
 
 	case ui::DrOk:
-		m_objectEditor->apply();
-		if (m_instance->commit())
-			destroy();
-		else
-			ui::MessageBox::show(this, i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_MESSAGE"), i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION"), ui::MbIconError | ui::MbOk);
+		apply(false);
 		break;
 
 	case ui::DrCancel:
-		m_instance->revert();
-		destroy();
+		cancel();
 		break;
 	}
 }
