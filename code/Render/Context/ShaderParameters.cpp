@@ -32,6 +32,16 @@ inline void write(uint8_t*& writePtr, const Type* valueArray, int length)
 	}
 }
 
+template < >
+inline void write(uint8_t*& writePtr, const Vector4* valueArray, int length)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		valueArray[i].store(reinterpret_cast< float* >(writePtr));
+		writePtr += sizeof(Vector4);
+	}
+}
+
 template < typename Type >
 inline const Type& read(uint8_t*& readPtr)
 {
