@@ -1,3 +1,4 @@
+#include <limits>
 #include <algorithm>
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityManager.h"
@@ -39,18 +40,33 @@ Entity* EntityBuilder::build(const EntityData* entityData)
 	if (!entityData)
 		return 0;
 
-	Ref< Entity > entity;
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< EntityFactory > entityFactory;
 
-	for (RefArray< EntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && !entity; ++i)
+	for (RefArray< EntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 	{
 		const TypeSet& typeSet = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && !entity; ++j)
+		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
-			if (is_type_of(*(*j), entityData->getType()))
-				entity = (*i)->createEntity(this, *entityData);
+			if (is_type_of(**j, entityData->getType()))
+			{
+				uint32_t classDifference = type_difference(**j, entityData->getType());
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					entityFactory = *i;
+				}
+			}
 		}
 	}
 
+	if (!entityFactory)
+	{
+		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 	if (entity)
 	{
 		if (m_entityManager)

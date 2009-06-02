@@ -128,7 +128,33 @@ inline bool is_type_of(const Type& base, const Type& type)
 template < typename T >
 inline bool is_type_of(const Type& type)
 {
-	return is_type_of(T::getClassType(), type);
+	return is_type_of(type_of< T >(), type);
+}
+
+/*! \brief Return type difference. */
+inline uint32_t type_difference(const Type& base, const Type& type)
+{
+	uint32_t difference = 0;
+
+	// Traverse up in inheritance chain from until we reach base type.
+	for (const Type* i = &type; i; i = i->getSuper(), ++difference)
+	{
+		if (i == &base)
+			return difference;
+	}
+
+	// Unable to reach base type; add inheritance depth of base type.
+	for (const Type* i = &base; i; i = i->getSuper())
+		++difference;
+
+	return difference;
+}
+
+/*! \brief Return type difference. */
+template < typename T >
+inline uint32_t type_difference(const Type& type)
+{
+	return type_difference(type_of< T >(), type);
 }
 
 //@}
