@@ -918,6 +918,22 @@
       <second>Unnamed</second>
     </item>
     <item>
+      <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
+      <second>Add dependency</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
+      <second>Remove dependency</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
+      <second>Move dependency up</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN</first>
+      <second>Move dependency down</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_OPEN_REFEREE</first>
       <second>Open referee</second>
     </item>
@@ -1280,6 +1296,26 @@
     <item>
       <first>TEXT_EDIT</first>
       <second>Edit</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import texture batch...</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_ADD</first>
+      <second>Add textures...</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_REMOVE</first>
+      <second>Remove textures</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_DIALOG_TITLE</first>
+      <second>Import texture batch</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_FILE_TITLE</first>
+      <second>Add textures</second>
     </item>
     <item>
       <first>TEXTURE_EDITOR_COLOR</first>

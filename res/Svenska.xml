@@ -941,7 +941,23 @@
 			<first>SCENE_EDITOR_UNNAMED_ENTITY</first>
 			<second>Namnlös</second>
 		</item>
-		<item>
+    <item>
+      <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
+      <second>Lägg till beroende</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
+      <second>Ta bort beroende</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_UP</first>
+      <second>Flytta upp</second>
+    </item>
+    <item>
+      <first>SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN</first>
+      <second>Flytta ned</second>
+    </item>
+    <item>
 			<first>SHADERGRAPH_ALGEBRA</first>
 			<second>Algebra</second>
 		</item>
@@ -1333,7 +1349,27 @@
       <first>TEXT_EDIT</first>
       <second>Redigera</second>
     </item>
-		<item>
+    <item>
+      <first>TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Importera flera texturer...</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_ADD</first>
+      <second>Lägg till texturer...</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_REMOVE</first>
+      <second>Ta bort texturer</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_DIALOG_TITLE</first>
+      <second>Importera flera texturer</second>
+    </item>
+    <item>
+      <first>TEXTURE_BATCH_FILE_TITLE</first>
+      <second>Lägg till texturer</second>
+    </item>
+    <item>
 			<first>TITLE_DATABASE</first>
 			<second>Databas</second>
 		</item>
