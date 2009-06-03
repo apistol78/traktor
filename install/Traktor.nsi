@@ -79,10 +79,10 @@ Section "Traktor" SEC01
   File "C:\Private\dre\traktor\config.bat"
   File "C:\Private\dre\traktor\run-editor-win32.bat"
   
-  SetOutPath "$INSTDIR\data"
+  SetOutPath "$INSTDIR\data\Target"
   SetOverwrite try
   
-  File "C:\Private\dre\traktor\data\target\win32\*.manifest"
+  File /nonfatal /r "C:\Private\dre\traktor\data\Target\*.manifest"
   
   SetOutPath "$INSTDIR\data\Assets"
   SetOverwrite try
