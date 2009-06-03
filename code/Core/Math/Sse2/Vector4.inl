@@ -107,6 +107,7 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 
 T_MATH_INLINE void Vector4::store(float* out) const
 {
+	T_ASSERT (out);
 	_mm_storeu_ps(out, m_data);
 }
 

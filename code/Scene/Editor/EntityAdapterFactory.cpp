@@ -1,3 +1,4 @@
+#include <limits>
 #include "Scene/Editor/EntityAdapterFactory.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -113,16 +114,30 @@ world::Entity* EntityAdapterFactory::createEntity(world::EntityBuilder* builder,
 
 world::Entity* EntityAdapterFactory::createRealEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const
 {
-	for (RefArray< world::EntityFactory >::const_iterator i = m_entityFactories.begin(); i != m_entityFactories.end(); ++i)
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< EntityFactory > entityFactory;
+
+	for (RefArray< EntityFactory >::const_iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 	{
-		TypeSet typeSet = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		const TypeSet& typeSet = (*i)->getEntityTypes();
+		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
 			if (is_type_of(**j, entityData.getType()))
-				return (*i)->createEntity(builder, entityData);
+			{
+				uint32_t classDifference = type_difference(**j, entityData.getType());
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					entityFactory = *i;
+				}
+			}
 		}
 	}
-	return 0;
+
+	if (!entityFactory)
+		return 0;
+
+	return entityFactory->createEntity(builder, entityData);
 }
 
 	}
