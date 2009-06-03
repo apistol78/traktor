@@ -106,13 +106,17 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenu->add(gc_new< ui::MenuItem >(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
 	m_entityMenu->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
+	m_toolLookAtEntity = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"), ui::Command(L"Scene.Editor.LookAtEntity"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
+
 	m_entityToolBar = gc_new< ui::custom::ToolBar >();
 	m_entityToolBar->create(m_entityPanel);
-	m_entityToolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 3);
+	m_entityToolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 4);
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), ui::Command(L"Editor.Delete"), 2));
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), ui::Command(L"Scene.Editor.MoveToSelectedEntity"), 0));
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW"), ui::Command(L"Scene.Editor.MoveSelectedEntityIntoView"), 1));
+	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
+	m_entityToolBar->addItem(m_toolLookAtEntity);
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
 	m_entityGrid = gc_new< ui::custom::GridView >();
@@ -494,6 +498,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = moveToSelectedEntity();
 	else if (command == L"Scene.Editor.MoveSelectedEntityIntoView")
 		result = moveSelectedEntityIntoView();
+	else if (command == L"Scene.Editor.LookAtEntity")
+		result = updateCameraLook();
 	else
 	{
 		// Propagate command to editor control.
@@ -741,6 +747,12 @@ bool SceneEditorPage::moveToSelectedEntity()
 		// Move camera to new target location.
 		Ref< Camera > camera = m_context->getCamera();
 		camera->setTargetView(targetTransform);
+
+		// Ensure look-at tool isn't toggled as camera is
+		// automatically reset to free mode when directly
+		// modifying target view.
+		m_toolLookAtEntity->setToggled(false);
+		m_entityToolBar->update();
 	}
 	
 	return true;
@@ -774,6 +786,27 @@ bool SceneEditorPage::moveSelectedEntityIntoView()
 	return true;
 }
 
+bool SceneEditorPage::updateCameraLook()
+{
+	if (m_toolLookAtEntity->isToggled())
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1 || !selectedEntities[0]->isSpatial())
+		{
+			m_toolLookAtEntity->setToggled(false);
+			m_entityToolBar->update();
+			return false;
+		}
+
+		m_context->getCamera()->enterLookAt(selectedEntities[0]->getTransform().translation());
+	}
+	else
+	{
+		m_context->getCamera()->enterFreeLook();
+	}
+	return true;
+}
+
 void SceneEditorPage::eventEntityToolClick(ui::Event* event)
 {
 	ui::CommandEvent* commandEvent = checked_type_cast< ui::CommandEvent* >(event);
@@ -782,7 +815,7 @@ void SceneEditorPage::eventEntityToolClick(ui::Event* event)
 
 void SceneEditorPage::eventEntityGridSelect(ui::Event* event)
 {
-	// Deselect all entities.
+	// De-select all entities.
 	m_context->selectAllEntities(false);
 
 	// Select only entities which is selected in the grid.
