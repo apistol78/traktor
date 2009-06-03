@@ -27,6 +27,7 @@ class Font;
 		{
 
 class ToolBar;
+class ToolBarButton;
 class GridView;
 class GridRow;
 
@@ -90,6 +91,7 @@ private:
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::Container > m_entityPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
+	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::custom::GridView > m_entityGrid;
 	Ref< ui::Font > m_entityGridFontItalic;
@@ -116,6 +118,8 @@ private:
 	bool moveToSelectedEntity();
 
 	bool moveSelectedEntityIntoView();
+
+	bool updateCameraLook();
 
 	void eventEntityToolClick(ui::Event* event);
 

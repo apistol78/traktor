@@ -854,6 +854,10 @@
 			<second>Total tid {0} ms, FPS {1}</second>
 		</item>
     <item>
+      <first>SCENE_EDITOR_LOOK_AT_ENTITY</first>
+      <second>Titta på entitet</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_LOADING_TITLE</first>
       <second>Laddar</second>
     </item>

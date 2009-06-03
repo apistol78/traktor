@@ -25,6 +25,10 @@ class T_DLLCLASS Camera : public Object
 public:
 	Camera(const Matrix44& transform);
 
+	void enterFreeLook();
+
+	void enterLookAt(const Vector4& lookAtPosition);
+
 	void place(const Matrix44& transform);
 
 	void move(const Vector4& direction);
@@ -58,6 +62,12 @@ public:
 	inline const Quaternion& getTargetOrientation() const { return m_target.orientation; }
 
 private:
+	enum LookMode
+	{
+		LmFree,
+		LmLookAt
+	};
+
 	struct Frame
 	{
 		Vector4 position;
@@ -66,6 +76,10 @@ private:
 
 	Frame m_current;
 	Frame m_target;
+
+	LookMode m_lookMode;
+	Vector4 m_lookAtPosition;
+	Scalar m_lookAtDistance;
 };
 
 	}
