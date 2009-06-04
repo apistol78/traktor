@@ -3,12 +3,12 @@
 #include "Net/Http/HttpChunkStream.h"
 #include "Net/SocketAddressIPv6.h"
 #include "Net/SocketStream.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

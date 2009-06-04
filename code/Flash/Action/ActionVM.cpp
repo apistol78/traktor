@@ -11,7 +11,7 @@
 #include "Flash/Action/Classes/AsMovieClip.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Log/Log.h"

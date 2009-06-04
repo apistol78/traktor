@@ -1,5 +1,5 @@
-#ifndef traktor_stringutils_H
-#define traktor_stringutils_H
+#ifndef traktor_String_H
+#define traktor_String_H
 
 #include <cctype>
 #include <string>
@@ -8,7 +8,7 @@
 #include <limits>
 
 #if defined(max)
-#undef max
+#	undef max
 #endif
 
 namespace traktor
@@ -192,4 +192,4 @@ inline ValueType parseString(const std::wstring& text)
 
 }
 
-#endif	// traktor_stringutils_H
+#endif	// traktor_String_H

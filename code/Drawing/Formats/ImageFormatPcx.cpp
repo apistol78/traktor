@@ -3,7 +3,7 @@
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"

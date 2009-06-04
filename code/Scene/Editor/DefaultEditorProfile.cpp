@@ -2,7 +2,7 @@
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Core/Serialization/Serializable.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Ui/Command.h"
 
 // Resource factories

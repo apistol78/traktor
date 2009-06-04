@@ -1,4 +1,49 @@
-BODY,H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
+body
+{
+	background-image: url("images/background4.png");
+	background-repeat: repeat;
+	font-family: "Bitstream Vera Sans", Lucida, Verdana, sans-serif;
+	margin: 0px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+#frame
+{
+	margin-left: auto;
+	margin-right: auto;
+	overflow: hidden;
+	padding: 20px 80px 20px 80px;
+	width: 750px;
+}
+
+#page
+{
+	background-color: #ffffff;
+	padding: 0px;
+	overflow: hidden;
+	width: 100%;
+	border: 2px;
+	border-style: solid;
+	border-color: #000000;
+}
+
+#header
+{
+	background-image: url("images/header.png");
+	background-repeat: repeat;
+	text-align: center;
+	padding: 0px;
+	overflow: hidden;
+	margin: 0px 0px 16px 0px;
+}
+
+#copyright
+{
+	text-align: center;
+}
+
+H1,H2,H3,H4,H5,H6,P,CENTER,TD,TH,UL,DL,DIV {
 	font-family: Tahoma, Geneva, Arial, Helvetica, sans-serif;
 }
 BODY,TD {
@@ -105,7 +150,6 @@ DIV.groupHeader {
 }
 DIV.groupText { margin-left: 16px; font-style: italic; font-size: 90% }
 BODY {
-	background: white;
 	color: black;
 	margin-right: 20px;
 	margin-left: 20px;

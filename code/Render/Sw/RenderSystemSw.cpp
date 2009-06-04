@@ -12,7 +12,7 @@
 #include "Render/ShaderGraph.h"
 #include "Render/VertexElement.h"
 #include "Graphics/GraphicsSystem.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 #if defined(_WIN32)

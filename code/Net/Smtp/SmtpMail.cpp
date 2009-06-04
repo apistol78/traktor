@@ -1,8 +1,8 @@
 #include "Net/Smtp/SmtpMail.h"
 #include "Net/SocketAddressIPv6.h"
 #include "Net/TcpSocket.h"
-#include "Core/Misc/SplitString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

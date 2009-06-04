@@ -34,20 +34,57 @@ public:
 		bool serialize(Serializer& s);
 	};
 
+	/*! \brief Add key pose to animation.
+	 *
+	 * \param pose Key pose.
+	 * \return Index of added key pose.
+	 */
 	uint32_t addKeyPose(const KeyPose& pose);
 
+	/*! \brief Remove key pose from animation.
+	 *
+	 * \param poseIndex Index of key pose.
+	 */
 	void removeKeyPose(uint32_t poseIndex);
 
+	/*! \brief Return true if animation doesn't contain any poses.
+	 *
+	 * \return True if animation is empty.
+	 */
 	bool empty() const;
 
+	/*! \brief Get number of key poses in animation.
+	 *
+	 * \return Number of key poses.
+	 */
 	uint32_t getKeyPoseCount() const;
 
+	/*! \brief Get reference to key pose.
+	 *
+	 * \param poseIndex Index of key pose.
+	 * \return Key pose.
+	 */
 	KeyPose& getKeyPose(uint32_t poseIndex);
 
+	/*! \brief Get reference to key pose.
+	 *
+	 * \param poseIndex Index of key pose.
+	 * \return Key pose.
+	 */
 	const KeyPose& getKeyPose(uint32_t poseIndex) const;
 
+	/*! \brief Get last key pose.
+	 *
+	 * \return Last key pose.
+	 */
 	const KeyPose& getLastKeyPose() const;
 
+	/*! \brief Get key pose from time.
+	 *
+	 * \param at Time
+	 * \param outPose Output key pose.
+	 * \return True if found key pose.
+	 */
 	bool getPose(float at, Pose& outPose) const;
 
 	virtual bool serialize(Serializer& s);

@@ -16,7 +16,7 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #include <ctime>
 #include "Core/Date/DateTime.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 

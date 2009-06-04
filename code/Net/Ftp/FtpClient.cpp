@@ -1,7 +1,7 @@
 #include "Net/Ftp/FtpClient.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketStream.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

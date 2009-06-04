@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "Ui/TreeViewItem.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 namespace traktor
 {

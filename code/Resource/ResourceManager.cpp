@@ -2,7 +2,7 @@
 #include "Resource/ResourceLoader.h"
 #include "Resource/ResourceCache.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 

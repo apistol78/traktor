@@ -3,7 +3,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

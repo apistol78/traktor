@@ -1,6 +1,6 @@
 #include "Net/Url.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

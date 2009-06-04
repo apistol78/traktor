@@ -1,6 +1,6 @@
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

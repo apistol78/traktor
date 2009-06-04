@@ -7,7 +7,7 @@
 #include "Core/Io/Win32/NativeVolume.h"
 #include "Core/Io/Win32/NativeStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 

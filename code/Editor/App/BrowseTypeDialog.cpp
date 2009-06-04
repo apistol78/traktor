@@ -12,7 +12,7 @@
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
 #include "I18N/Text.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 // Resources
 #include "Resources/Files.h"

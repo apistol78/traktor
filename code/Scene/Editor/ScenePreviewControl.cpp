@@ -34,7 +34,7 @@
 #include "I18N/Format.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 // Resources

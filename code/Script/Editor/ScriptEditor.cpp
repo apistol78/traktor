@@ -20,7 +20,7 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "I18N/Text.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 

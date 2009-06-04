@@ -1,7 +1,7 @@
 #include "Input/Win32/InputDriverWin32.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 #include "Input/Win32/MouseDeviceWin32.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

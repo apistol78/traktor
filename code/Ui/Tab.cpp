@@ -10,7 +10,7 @@
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/CloseEvent.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

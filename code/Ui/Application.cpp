@@ -1,7 +1,7 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
-#include "Core/Heap/HeapNew.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Heap/New.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

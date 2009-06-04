@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
 

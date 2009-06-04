@@ -1,5 +1,5 @@
 #include "Core/Misc/WildCompare.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 namespace traktor
 {

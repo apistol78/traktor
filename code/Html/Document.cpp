@@ -7,8 +7,8 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
-#include "Core/Misc/StringUtils.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

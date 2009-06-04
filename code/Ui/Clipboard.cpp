@@ -1,5 +1,5 @@
 #include "Ui/Clipboard.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Serialization/DeepClone.h"
 
 namespace traktor

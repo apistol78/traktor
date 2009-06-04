@@ -1,6 +1,6 @@
 #include "Input/Xi/InputDriverXi.h"
 #include "Input/Xi/InputDeviceXi.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

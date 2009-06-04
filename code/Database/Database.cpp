@@ -3,9 +3,9 @@
 #include "Database/Instance.h"
 #include "Database/Provider.h"
 #include "Database/Traverse.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

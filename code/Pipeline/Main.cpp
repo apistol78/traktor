@@ -12,7 +12,7 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/System/OS.h"
 #include "Core/Misc/CommandLine.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 using namespace traktor;

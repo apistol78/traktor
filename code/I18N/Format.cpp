@@ -1,6 +1,6 @@
 #include "I18N/Format.h"
 #include "I18N/I18N.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

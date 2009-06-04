@@ -8,7 +8,7 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Drawing/Image.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 // Resources
 #include "Resources/Log.h"

@@ -3,7 +3,7 @@
 #include "Net/Http/HttpConnection.h"
 #include "Net/Ftp/FtpConnection.h"
 #include "Net/File/FileConnection.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

@@ -6,7 +6,7 @@
 #include "Database/Instance.h"
 #include "Ui/FileDialog.h"
 #include "I18N/Text.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

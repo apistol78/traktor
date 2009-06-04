@@ -7,7 +7,7 @@
 #include "Render/OpenGL/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/RenderTargetOpenGL.h"
 #include "Render/OpenGL/GlslProgram.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 

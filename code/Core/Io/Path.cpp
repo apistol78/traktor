@@ -2,9 +2,9 @@
 #include <numeric>
 #include "Core/Io/Path.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

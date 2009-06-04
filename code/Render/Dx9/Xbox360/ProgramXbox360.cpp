@@ -10,7 +10,7 @@
 #include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/HlslProgram.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

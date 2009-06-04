@@ -2,7 +2,7 @@
 #include "Net/Ftp/FtpClient.h"
 #include "Net/Url.h"
 #include "Net/SocketAddressIPv6.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/Stream.h"
 
 namespace traktor

@@ -1,5 +1,5 @@
-#ifndef traktor_HeapNew_H
-#define traktor_HeapNew_H
+#ifndef traktor_New_H
+#define traktor_New_H
 
 #include "Core/Heap/Heap.h"
 
@@ -151,4 +151,4 @@ template < typename T > ReferenceWrapper< T const > cref(T const& t)
 
 }
 
-#endif	// traktor_HeapNew_H
+#endif	// traktor_New_H

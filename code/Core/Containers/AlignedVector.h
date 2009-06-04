@@ -9,6 +9,7 @@ namespace traktor
 {
 
 /*! \brief Construct/destruct items policy.
+ * \ingroup Core
  *
  * Default policy when constructing or destroying
  * items in the AlignedVector container.
@@ -237,21 +238,38 @@ public:
 		clear();
 	}
 
+	/*! \brief Get number of elements in vector.
+	 *
+	 * \return Number of elements.
+	 */
 	size_t size() const
 	{
 		return m_size;
 	}
 
+	/*! \brief Get number of elements allocated by vector.
+	 *
+	 * \return Number of allocated elements.
+	 */
 	size_t capacity() const
 	{
 		return m_capacity;
 	}
 
+	/*! \brief Check if vector is empty.
+	 *
+	 * \return True if vector empty.
+	 */
 	bool empty() const
 	{
 		return m_size == 0;
 	}
 
+	/*! \brief Clear vector.
+	 *
+	 * Clear frees all memory allocated
+	 * by the vector.
+	 */
 	void clear()
 	{
 		for (size_t i = 0; i < m_size; ++i)
@@ -264,11 +282,26 @@ public:
 		m_capacity = 0;
 	}
 
+	/*! \brief Resize vector.
+	 *
+	 * Allocates more elements if required.
+	 * If vector shrink then no reallocation is performed.
+	 *
+	 * \param size New size of vector.
+	 */
 	void resize(size_t size)
 	{
 		resize(size, ItemType());
 	}
 
+	/*! \brief Resize vector, pad with given value.
+	 *
+	 * Allocates more elements if required.
+	 * If vector shrink then no reallocation is performed.
+	 *
+	 * \param size New size of vector.
+	 * \param pad Pad value.
+	 */
 	void resize(size_t size, const ItemType& pad)
 	{
 		if (size > m_size)
@@ -291,6 +324,10 @@ public:
 		m_size = size;
 	}
 
+	/*! \brief Ensure vector capacity.
+	 *
+	 * \param capacity Vector capacity.
+	 */
 	void reserve(size_t capacity)
 	{
 		if (capacity > m_capacity)
@@ -312,12 +349,17 @@ public:
 		}
 	}
 
+	/*! \brief Push value onto vector.
+	 *
+	 * \param item Item value.
+	 */
 	void push_back(const ItemType& item)
 	{
 		grow(1);
 		Constructor::construct(m_data[m_size - 1], item);
 	}
 
+	/*! \brief Pop value from vector. */
 	void pop_back()
 	{
 		T_ASSERT (m_size > 0);
@@ -325,50 +367,87 @@ public:
 		shrink(1);
 	}
 
+	/*! \brief Return reference to value first in vector.
+	 *
+	 * \return Value reference.
+	 */
 	ItemType& front()
 	{
 		T_ASSERT (m_size > 0);
 		return *m_data;
 	}
 
+	/*! \brief Return reference to value first in vector.
+	 *
+	 * \return Value reference.
+	 */
 	const ItemType& front() const
 	{
 		T_ASSERT (m_size > 0);
 		return *m_data;
 	}
 
+	/*! \brief Return reference to value last in vector.
+	 *
+	 * \return Value reference.
+	 */
 	ItemType& back()
 	{
 		T_ASSERT (m_size > 0);
 		return m_data[m_size - 1];
 	}
 
+	/*! \brief Return reference to value last in vector.
+	 *
+	 * \return Value reference.
+	 */
 	const ItemType& back() const
 	{
 		T_ASSERT (m_size > 0);
 		return m_data[m_size - 1];
 	}
 
+	/*! \brief Return iterator at first element.
+	 *
+	 * \return Iterator.
+	 */
 	iterator begin()
 	{
 		return iterator(m_data);
 	}
 
+	/*! \brief Return iterator one step beyond last element.
+	 *
+	 * \return Iterator.
+	 */
 	iterator end()
 	{
 		return iterator(&m_data[m_size]);
 	}
 
+	/*! \brief Return constant iterator at first element.
+	 *
+	 * \return Iterator.
+	 */
 	const_iterator begin() const
 	{
 		return const_iterator(m_data);
 	}
 
+	/*! \brief Return constant iterator one step beyond last element.
+	 *
+	 * \return Iterator.
+	 */
 	const_iterator end() const
 	{
 		return const_iterator(&m_data[m_size]);
 	}
 
+	/*! \brief Erase element.
+	 *
+	 * \param where Iterator at element.
+	 * \return New iterator at next element.
+	 */
 	iterator erase(const iterator& where)
 	{
 		size_t offset = size_t(where.m_ptr - m_data);
@@ -382,6 +461,12 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
+	/*! \brief Insert element into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param item Item value.
+	 * \return Iterator at new element.
+	 */
 	iterator insert(const iterator& where, const ItemType& item)
 	{
 		size_t size = m_size;
@@ -403,6 +488,13 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
+	/*! \brief Insert elements into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param from Iterator at first insert element.
+	 * \param to Iterator at last insert element.
+	 * \return Iterator at new element.
+	 */
 	iterator insert(const iterator& where, const const_iterator& from, const const_iterator& to)
 	{
 		size_t size = m_size;
