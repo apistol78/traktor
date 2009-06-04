@@ -32,6 +32,12 @@ class Group;
 
 class Editor;
 
+/*! \brief Wizard tool base class.
+ * \ingroup Editor
+ *
+ * Wizards are launched by context menu
+ * from database view.
+ */
 class T_DLLCLASS WizardTool : public Object
 {
 	T_RTTI_CLASS(WizardTool)

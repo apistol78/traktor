@@ -21,6 +21,13 @@ namespace traktor
 	namespace editor
 	{
 
+/*! \brief Pipeline hash.
+ * \ingroup Editor
+ *
+ * The pipeline hash keeps records of builds
+ * used by the pipeline to check if an asset
+ * needs to be rebuilt.
+ */
 class T_DLLCLASS PipelineHash : public Serializable
 {
 	T_RTTI_CLASS(PipelineHash)

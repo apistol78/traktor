@@ -20,6 +20,9 @@ namespace traktor
 class Editor;
 class ObjectEditor;
 
+/*! \brief Interface used by Editor to create object editors.
+ * \ingroup Editor
+ */
 class T_DLLCLASS ObjectEditorFactory : public Object
 {
 	T_RTTI_CLASS(ObjectEditorFactory)

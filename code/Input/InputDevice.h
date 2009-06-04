@@ -18,6 +18,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief Input device base.
+ * \ingroup Input
+ */
 class T_DLLCLASS InputDevice : public Object
 {
 	T_RTTI_CLASS(InputDevice)

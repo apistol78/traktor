@@ -24,6 +24,9 @@ class Encoding;
 
 class Element;
 
+/*! \brief HTML DOM Document.
+ * \ingroup HTML
+ */
 class T_DLLCLASS Document : public Object
 {
 	T_RTTI_CLASS(Document)

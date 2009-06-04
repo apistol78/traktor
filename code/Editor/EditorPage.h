@@ -35,6 +35,7 @@ class Command;
 	{
 
 /*! \brief Editor page base.
+ * \ingroup Editor
  *
  * The editor use editor pages as the base for all supported editors.
  * EditorPage objects are created through specialized EditorPageFactory classes.

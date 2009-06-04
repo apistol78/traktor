@@ -21,6 +21,7 @@ class Serializable;
 	{
 
 /*! \brief Undo/redo stack.
+ * \ingroup Editor
  *
  * Editor helper class to simplify handling
  * of undo/redo mechanism.

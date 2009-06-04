@@ -29,7 +29,9 @@ class Instance;
 class Settings;
 class PipelineManager;
 
-/*! \brief Source asset pipeline. */
+/*! \brief Source asset pipeline.
+ * \ingroup Editor
+ */
 class T_DLLCLASS Pipeline : public Object
 {
 	T_RTTI_CLASS(Pipeline)

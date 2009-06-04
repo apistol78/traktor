@@ -24,6 +24,9 @@ class Database;
 	namespace input
 	{
 
+/*! \brief Rumble effect resource factory.
+ * \ingroup Input
+ */
 class T_DLLCLASS RumbleEffectFactory : public resource::ResourceFactory
 {
 	T_RTTI_CLASS(RumbleEffectFactory)

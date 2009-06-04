@@ -21,6 +21,9 @@ class Stream;
 	namespace html
 	{
 
+/*! \brief HTML DOM Node.
+ * \ingroup HTML
+ */
 class T_DLLCLASS Node : public Object
 {
 	T_RTTI_CLASS(Node)

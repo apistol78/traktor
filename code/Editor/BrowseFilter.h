@@ -23,7 +23,9 @@ class Instance;
 	namespace editor
 	{
 
-/*! \brief Browse instance filter. */
+/*! \brief Browse instance filter.
+ * \ingroup Editor
+ */
 class T_DLLCLASS BrowseFilter
 {
 public:

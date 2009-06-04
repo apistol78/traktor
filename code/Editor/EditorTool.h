@@ -26,6 +26,9 @@ class Widget;
 
 class Editor;
 
+/*! \brief Editor tool base class.
+ * \ingroup Editor
+ */
 class T_DLLCLASS EditorTool : public Object
 {
 	T_RTTI_CLASS(EditorTool)
