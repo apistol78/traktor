@@ -4,7 +4,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Container.h"
 #include "Ui/Rect.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 
 namespace traktor
 {

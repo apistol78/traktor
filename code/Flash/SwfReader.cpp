@@ -2,7 +2,7 @@
 #include "Flash/SwfReader.h"
 #include "Core/Io/Stream.h"
 #include "Zip/InflateStream.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

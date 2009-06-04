@@ -2,7 +2,7 @@
 #define traktor_flash_ActionFunctionNative_H
 
 #include "Flash/Action/ActionFunction.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

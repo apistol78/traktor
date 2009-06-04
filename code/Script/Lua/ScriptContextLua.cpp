@@ -2,8 +2,8 @@
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/ScriptClass.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/SplitString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 extern "C"

@@ -1,7 +1,7 @@
 #include <sstream>
 #include "Flash/FlashText.h"
 #include "Flash/FlashTextInstance.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

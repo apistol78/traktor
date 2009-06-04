@@ -2,7 +2,7 @@
 #include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

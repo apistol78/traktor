@@ -5,8 +5,8 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberType.h"
 #include "Core/Serialization/DeepHash.h"
-#include "Core/Misc/StringUtils.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/Split.h"
 
 namespace traktor
 {

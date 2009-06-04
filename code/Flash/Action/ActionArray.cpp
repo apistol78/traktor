@@ -1,8 +1,8 @@
 #include "Flash/Action/ActionArray.h"
 #include "Flash/Action/Classes/AsArray.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/StringUtils.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Misc/String.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

@@ -5,7 +5,7 @@
 #include <sstream>
 #include "Xml/XmlPullParser.h"
 #include "Core/Io/Stream.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 

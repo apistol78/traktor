@@ -17,7 +17,7 @@
 #include "Xml/XmlSerializer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

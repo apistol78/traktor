@@ -1,6 +1,6 @@
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

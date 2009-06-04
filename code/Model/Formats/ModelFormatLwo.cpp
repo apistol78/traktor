@@ -12,7 +12,7 @@ extern "C"
 #include "Model/Model.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

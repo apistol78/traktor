@@ -40,7 +40,7 @@
 #include "I18N/Text.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 // Resources

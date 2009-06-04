@@ -5,7 +5,7 @@
 #include "Editor/App/Splash.h"
 #include "Editor/App/EditorForm.h"
 #include "Core/Misc/CommandLine.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/Split.h"
 #include "Core/Heap/Heap.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"

@@ -3,8 +3,8 @@
 #include "Xml/Element.h"
 #include "Xml/Attribute.h"
 #include "Xml/Text.h"
-#include "Core/Heap/HeapNew.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Heap/New.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

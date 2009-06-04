@@ -1,6 +1,6 @@
 #include "Input/Di8/InputDriverDi8.h"
 #include "Input/Di8/InputDeviceDi8.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

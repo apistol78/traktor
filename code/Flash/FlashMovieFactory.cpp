@@ -4,7 +4,7 @@
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/SwfReader.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/Stream.h"
 #include "Core/Log/Log.h"
 

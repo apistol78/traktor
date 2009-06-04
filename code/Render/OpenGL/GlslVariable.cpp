@@ -1,5 +1,5 @@
 #include "Render/OpenGL/GlslVariable.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

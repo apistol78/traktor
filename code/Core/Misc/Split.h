@@ -1,5 +1,5 @@
-#ifndef traktor_split_H
-#define traktor_split_H
+#ifndef traktor_Split_H
+#define traktor_Split_H
 
 #include <vector>
 #include "Core/Misc/TString.h"
@@ -80,8 +80,9 @@ struct ConvertPolicy< std::wstring, float >
 	}
 };
 
-/*!
+/*! \brief String splitter.
  * \ingroup Core
+ *
  * Split< std::wstring >::any(L"A,B,C", ",", out);
  * Split< std::wstring >::word(L"A,B,C", ",", out);
  */
@@ -149,4 +150,4 @@ struct Split
 
 }
 
-#endif	// traktor_split_H
+#endif	// traktor_Split_H

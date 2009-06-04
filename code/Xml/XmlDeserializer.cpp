@@ -4,8 +4,8 @@
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Serializable.h"
-#include "Core/Misc/SplitString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Log/Log.h"
 

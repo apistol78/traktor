@@ -1,8 +1,8 @@
 #include "Ui/Win32/FileDialogWin32.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Enums.h"
-#include "Core/Misc/SplitString.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 
 extern HINSTANCE g_hInstance;
 

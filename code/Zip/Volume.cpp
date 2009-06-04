@@ -6,8 +6,8 @@
 #include "Zip/StreamZip.h"
 #include "Zip/StreamUnzip.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/StringUtils.h"
-#include "Core/Misc/SplitString.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Log/Log.h"
 

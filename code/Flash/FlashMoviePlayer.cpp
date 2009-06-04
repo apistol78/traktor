@@ -9,7 +9,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/AsKey.h"
 #include "Flash/Action/Classes/AsMouse.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

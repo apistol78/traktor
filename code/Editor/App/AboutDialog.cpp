@@ -3,7 +3,7 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Image.h"
 #include "I18N/Text.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 
 // Resources
 #include "Resources/About.h"

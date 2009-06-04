@@ -7,7 +7,7 @@
 #include "Terrain/EntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/New.h"
 #include "Core/Serialization/Serializable.h"
 
 namespace traktor
