@@ -3,6 +3,7 @@
 #include "Render/Dx10/RenderTargetDx10.h"
 #include "Render/Dx10/ContextDx10.h"
 #include "Render/Dx10/TypesDx10.h"
+#include "Render/Dx10/Utilities.h"
 #include "Render/Types.h"
 #include "Core/Log/Log.h"
 
@@ -53,10 +54,16 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 		dtd.CPUAccessFlags = 0;
 		dtd.MiscFlags = 0;
 
+		if (!setupSampleDesc(d3dDevice, desc.multiSample, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+		{
+			log::error << L"Unable to create render target; unsupported MSAA" << Endl;
+			return false;
+		}
+
 		hr = d3dDevice->CreateTexture2D(&dtd, NULL, &m_d3dDepthTexture.getAssign());
 		if (FAILED(hr))
 		{
-			log::error << L"Unable to create render target, failed to create depth texture" << Endl;
+			log::error << L"Unable to create render target; failed to create depth texture" << Endl;
 			return false;
 		}
 		
@@ -67,7 +74,7 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 		hr = d3dDevice->CreateDepthStencilView(m_d3dDepthTexture, &ddsvd, &m_d3dDepthTextureView.getAssign());
 		if (FAILED(hr))
 		{
-			log::error << L"Unable to create render target, failed to create depth stencil view" << Endl;
+			log::error << L"Unable to create render target; failed to create depth stencil view" << Endl;
 			return false;
 		}
 	}

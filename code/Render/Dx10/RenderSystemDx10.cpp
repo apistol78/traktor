@@ -12,6 +12,7 @@
 #include "Render/Dx10/Hlsl.h"
 #include "Render/Dx10/HlslProgram.h"
 #include "Render/Dx10/TypesDx10.h"
+#include "Render/Dx10/Utilities.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
@@ -287,37 +288,10 @@ RenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderV
 	scd.OutputWindow = (HWND)windowHandle;
 	scd.Windowed = TRUE;
 
-	if (desc.multiSample > 0)
+	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
 	{
-		scd.SampleDesc.Count = 0;
-		for (uint32_t i = 1; i <= D3D10_MAX_MULTISAMPLE_SAMPLE_COUNT; ++i)
-		{
-			UINT msQuality1 = 0;
-			UINT msQuality2 = 0;
-
-			hr = m_d3dDevice->CheckMultisampleQualityLevels(
-				scd.BufferDesc.Format,
-				i,
-				&msQuality1
-			);
-
-			if (SUCCEEDED(hr) && msQuality1 > 0)
-			{
-				hr = m_d3dDevice->CheckMultisampleQualityLevels(
-					DXGI_FORMAT_D16_UNORM,
-					i,
-					&msQuality2
-				);
-
-				if (SUCCEEDED(hr) && msQuality2 > 0)
-				{
-					scd.SampleDesc.Count = i;
-					scd.SampleDesc.Quality = min(msQuality1 - 1, msQuality2 - 1);
-				}
-			}
-		}
-		if (!scd.SampleDesc.Count)
-			return 0;
+		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
+		return 0;
 	}
 
 	hr = m_dxgiFactory->CreateSwapChain(

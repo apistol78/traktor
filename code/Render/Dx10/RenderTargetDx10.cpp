@@ -2,6 +2,7 @@
 #include "Render/Dx10/RenderTargetDx10.h"
 #include "Render/Dx10/ContextDx10.h"
 #include "Render/Dx10/TypesDx10.h"
+#include "Render/Dx10/Utilities.h"
 #include "Render/Types.h"
 #include "Core/Log/Log.h"
 
@@ -41,36 +42,14 @@ bool RenderTargetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetCrea
 	dtd.CPUAccessFlags = 0;
 	dtd.MiscFlags = 0;
 
-	if (setDesc.multiSample > 0)
+	if (setDesc.depthStencil)
 	{
-		dtd.SampleDesc.Count = 0;
-		for (uint32_t i = 1; i <= D3D10_MAX_MULTISAMPLE_SAMPLE_COUNT; ++i)
-		{
-			UINT msQuality1 = 0;
-			UINT msQuality2 = 0;
-
-			hr = d3dDevice->CheckMultisampleQualityLevels(
-				dtd.Format,
-				i,
-				&msQuality1
-			);
-
-			if (SUCCEEDED(hr) && msQuality1 > 0)
-			{
-				hr = d3dDevice->CheckMultisampleQualityLevels(
-					DXGI_FORMAT_D16_UNORM,
-					i,
-					&msQuality2
-				);
-
-				if (SUCCEEDED(hr) && msQuality2 > 0)
-				{
-					dtd.SampleDesc.Count = i;
-					dtd.SampleDesc.Quality = min(msQuality1 - 1, msQuality2 - 1);
-				}
-			}
-		}
-		if (!dtd.SampleDesc.Count)
+		if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+			return false;
+	}
+	else
+	{
+		if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], dtd.SampleDesc))
 			return false;
 	}
 
