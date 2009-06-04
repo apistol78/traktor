@@ -9,6 +9,8 @@
 /*! \defgroup UI User interface */
 /*! \defgroup UIC User interface - Custom widgets */
 
+/*! \defgroup Editor Editor */
+
 /*! \defgroup Render Render */
 /*! \defgroup DX9 Render - DirectX 9 */
 /*! \defgroup DX10 Render - DirectX 10 */
@@ -35,8 +37,11 @@
 
 /*! \defgroup World World manager */
 
+/*! \defgroup Input Input system */
+
 /*! \defgroup Spray Spray particle system */
 
 /*! \defgroup Flash SWF player */
 
+/*! \defgroup HTML HTML Parser */
 /*! \defgroup XML XML Parser */

@@ -27,6 +27,9 @@ class Command;
 class Editor;
 class EditorPage;
 
+/*! \brief Interface for creating editor pages.
+ * \ingroup Editor
+ */
 class T_DLLCLASS EditorPageFactory : public Object
 {
 	T_RTTI_CLASS(EditorPageFactory)

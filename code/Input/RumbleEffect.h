@@ -18,6 +18,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief Rumble effect.
+ * \ingroup Input
+ */
 class T_DLLCLASS RumbleEffect : public Serializable
 {
 	T_RTTI_CLASS(RumbleEffect)

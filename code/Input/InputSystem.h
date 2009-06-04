@@ -21,6 +21,9 @@ namespace traktor
 class InputDriver;
 class InputDevice;
 
+/*! \brief Input system.
+ * \ingroup Input
+ */
 class T_DLLCLASS InputSystem : public Object
 {
 	T_RTTI_CLASS(InputSystem)

@@ -36,7 +36,9 @@ class Instance;
 class PipelineHash;
 class Pipeline;
 
-/*! \brief Pipeline manager. */
+/*! \brief Pipeline manager.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PipelineManager : public Object
 {
 	T_RTTI_CLASS(PipelineManager)

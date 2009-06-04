@@ -6,6 +6,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief Input control type.
+ * \ingroup Input
+ */
 enum InputDefaultControlType
 {
 	DtInvalid,
@@ -33,6 +36,9 @@ enum InputDefaultControlType
 	DtAxisY
 };
 
+/*! \brief Input device category.
+ * \ingroup Input
+ */
 enum InputCategory
 {
 	CtKeyboard,
@@ -42,6 +48,9 @@ enum InputCategory
 	CtUnknown
 };
 
+/*! \brief Input rumble specification.
+ * \ingroup Input
+ */
 struct InputRumble
 {
 	float lowFrequencyRumble;

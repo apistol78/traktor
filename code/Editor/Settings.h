@@ -23,13 +23,17 @@ namespace traktor
 	namespace editor
 	{
 
-/*! \brief Property value base. */
+/*! \brief Property value base.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyValue : public Serializable
 {
 	T_RTTI_CLASS(PropertyValue)
 };
 
-/*! \brief Boolean property value. */
+/*! \brief Boolean property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyBoolean : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyBoolean)
@@ -47,7 +51,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Integer property value. */
+/*! \brief Integer property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyInteger : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyInteger)
@@ -65,7 +71,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Single precision float property value. */
+/*! \brief Single precision float property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyFloat : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyFloat)
@@ -83,7 +91,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief String property value. */
+/*! \brief String property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyString : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyBoolean)
@@ -101,7 +111,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief String array property value. */
+/*! \brief String array property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyStringArray : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyStringArray)
@@ -119,7 +131,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Guid property value. */
+/*! \brief Guid property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyGuid : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyGuid)
@@ -137,7 +151,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Guid array property value. */
+/*! \brief Guid array property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyGuidArray : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyGuidArray)
@@ -155,7 +171,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Type property value. */
+/*! \brief Type property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyType : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyType)
@@ -173,7 +191,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Type set property value. */
+/*! \brief Type set property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyTypeSet : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyTypeSet)
@@ -191,7 +211,9 @@ private:
 	std::vector< std::wstring > m_value;
 };
 
-/*! \brief Vector4 property value. */
+/*! \brief Vector4 property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyVector4 : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyVector4)
@@ -209,7 +231,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Quaternion property value. */
+/*! \brief Quaternion property value.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyQuaternion : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyQuaternion)
@@ -227,7 +251,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Key property. */
+/*! \brief Key property.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyKey : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyKey)
@@ -245,7 +271,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Property value map. */
+/*! \brief Property value map.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertyGroup : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyGroup)
@@ -297,7 +325,9 @@ private:
 	value_type_t m_value;
 };
 
-/*! \brief Serializable property. */
+/*! \brief Serializable property.
+ * \ingroup Editor
+ */
 class T_DLLCLASS PropertySerializable : public PropertyValue
 {
 	T_RTTI_CLASS(PropertyQuaternion)
@@ -315,6 +345,9 @@ private:
 	Ref< Serializable > m_value;
 };
 
+/*! \brief Settings.
+ * \ingroup Editor
+ */
 class T_DLLCLASS Settings : public Object
 {
 	T_RTTI_CLASS(Settings)

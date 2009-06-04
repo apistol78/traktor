@@ -16,6 +16,9 @@ namespace traktor
 	namespace editor
 	{
 
+/*! \brief Assets pipeline.
+ * \ingroup Editor
+ */
 class T_DLLCLASS AssetsPipeline : public Pipeline
 {
 	T_RTTI_CLASS(AssetsPipeline)

@@ -31,6 +31,7 @@ class Instance;
 	{
 
 /*! \brief Object editor base.
+ * \ingroup Editor
  *
  * Object editors are created as modal-less dialogs.
  */

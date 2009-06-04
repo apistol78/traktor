@@ -16,6 +16,9 @@ namespace traktor
 	namespace html
 	{
 
+/*! \brief HTML DOM Comment.
+ * \ingroup HTML
+ */
 class T_DLLCLASS Comment : public Node
 {
 	T_RTTI_CLASS(Comment)

@@ -19,6 +19,9 @@ namespace traktor
 
 class RecordInputScript;
 
+/*! \brief Recording input device.
+ * \ingroup Input
+ */
 class T_DLLCLASS RecordInputDevice : public InputDevice
 {
 	T_RTTI_CLASS(RecordInputDevice)

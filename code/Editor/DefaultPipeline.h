@@ -17,11 +17,12 @@ namespace traktor
 	{
 
 /*! \brief Default pipeline.
+ * \ingroup Editor
  *
- * This pipeline is issued for every source instance
+ * This pipeline is used for every source instance
  * which hasn't a dedicated pipeline.
  *
- * It copies the source instance into the
+ * It copies the source instance to the
  * output database without any modification.
  */
 class T_DLLCLASS DefaultPipeline : public Pipeline

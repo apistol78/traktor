@@ -32,6 +32,7 @@ class EditorPage;
 class BrowseFilter;
 
 /*! \brief Editor base interface.
+ * \ingroup Editor
  *
  * This is the interface by which other modules
  * communicate with the Editor application.
