@@ -65,8 +65,12 @@ struct ObjectInfo
 
 #if defined(T_HEAP_THREAD_SAFE)
 #	define HEAP_LOCK Acquire< Semaphore > __prvlock__(m_lock);
+#	define HEAP_LOCK_ACQUIRE m_lock.acquire();
+#	define HEAP_LOCK_RELEASE m_lock.release();
 #else
 #	define HEAP_LOCK
+#	define HEAP_LOCK_ACQUIRE
+#	define HEAP_LOCK_RELEASE
 #endif
 
 const int32_t c_objectsThreshold = 1000;			//!< Number of objects allocated before issuing GC.
@@ -601,7 +605,7 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 	while (!collectables.empty())
 	{
 		{
-			HEAP_LOCK
+			HEAP_LOCK_ACQUIRE
 
 			// Keep objects which are members to objects being collected.
 			for (IntrusiveList< ObjectInfo >::iterator i = collectables.begin(); i != collectables.end(); ++i)
@@ -612,12 +616,26 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 				i->m_visited = 0;
 				visitRefs(i->m_crefs, visitor);
 
-				// If keep flag has been set then there is a circular reference chain.
 				if (i->m_keep)
 				{
-					// Invalidate all object's child references to break circular chain.
-					for (IntrusiveList< RefBase >::iterator j = i->m_crefs.begin(); j != i->m_crefs.end(); ++j)
-						j->invalidate();
+					// Ensure flags on living objects are reset before releasing lock.
+					for (IntrusiveList< ObjectInfo >::iterator j = m_objects.begin(); j != m_objects.end(); ++j)
+					{
+						j->m_visited = 0;
+						j->m_keep = 0;
+					}
+
+					HEAP_LOCK_RELEASE
+
+					// Circular reference; need to invalidate all references to this object.
+					// We do this without lock in order to reduce stalls from other threads making allocations.
+					for (IntrusiveList< ObjectInfo >::iterator j = collectables.begin(); j != collectables.end(); ++j)
+					{
+						for (IntrusiveList< RefBase >::iterator k = j->m_crefs.begin(); k != j->m_crefs.end(); ++k)
+							k->invalidate(getObject(*i));
+					}
+
+					HEAP_LOCK_ACQUIRE
 				}
 			}
 
@@ -627,6 +645,8 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 				i->m_visited = 0;
 				i->m_keep = 0;
 			}
+
+			HEAP_LOCK_RELEASE
 		}
 
 		// Collect objects which are still marked for collection.
