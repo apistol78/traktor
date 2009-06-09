@@ -225,6 +225,11 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
 	f << hlsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
+	if (node->getBranch() == Conditional::BrStatic)
+		f << L"[flatten]" << Endl;
+	else if (node->getBranch() == Conditional::BrDynamic)
+		f << L"[branch]" << Endl;
+
 	// Create condition statement.
 	switch (node->getOperator())
 	{
@@ -1216,9 +1221,11 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << L"0;" << Endl;
 
-#if defined(_XBOX)
-	f << L"[branch]" << Endl;
-#endif
+	if (node->getBranch() == Switch::BrStatic)
+		f << L"[flatten]" << Endl;
+	else if (node->getBranch() == Switch::BrDynamic)
+		f << L"[branch]" << Endl;
+
 	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
 	{
 		f << (i == 0 ? L"if (" : L"else if (") << L"int(" << in->cast(HtFloat) << L") == " << caseConditions[i] << L")" << Endl;

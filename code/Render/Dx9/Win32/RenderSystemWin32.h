@@ -24,6 +24,7 @@ namespace traktor
 
 class RenderViewWin32;
 class ContextDx9;
+class ShaderCache;
 class ParameterCache;
 class VertexDeclCache;
 
@@ -109,6 +110,7 @@ private:
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
+	Ref< ShaderCache > m_shaderCache;
 	ParameterCache* m_parameterCache;
 	VertexDeclCache* m_vertexDeclCache;
 	RefList< RenderViewWin32 > m_renderViews;

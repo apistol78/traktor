@@ -198,8 +198,19 @@ const ImmutableNode::OutputPinDesc c_Conditional_o[] = { L"Output", 0 };
 
 Conditional::Conditional()
 :	ImmutableNode(c_Conditional_i, c_Conditional_o)
+,	m_branch(BrAuto)
 ,	m_operator(CoLess)
 {
+}
+
+void Conditional::setBranch(Branch branch)
+{
+	m_branch = branch;
+}
+
+Conditional::Branch Conditional::getBranch() const
+{
+	return m_branch;
 }
 
 void Conditional::setOperator(Conditional::Operator op)
@@ -218,10 +229,23 @@ std::wstring Conditional::getInformation() const
 	return h[int(m_operator)];
 }
 
+int Conditional::getVersion() const
+{
+	return 1;
+}
+
 bool Conditional::serialize(Serializer& s)
 {
 	if (!ImmutableNode::serialize(s))
 		return false;
+
+	const MemberEnum< Branch >::Key kBranch[] =
+	{
+		{ L"BrAuto", BrAuto },
+		{ L"BrStatic", BrStatic },
+		{ L"BrDynamic", BrDynamic },
+		{ 0, 0 }
+	};
 
 	const MemberEnum< Operator >::Key kOperator[] =
 	{
@@ -233,6 +257,9 @@ bool Conditional::serialize(Serializer& s)
 		{ L"CoGreaterEqual", CoGreaterEqual }, 
 		{ 0, 0 }
 	};
+
+	if (s.getVersion() >= 1)
+		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
 
@@ -1463,10 +1490,21 @@ bool Sum::serialize(Serializer& s)
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Switch", Switch, Node)
 
 Switch::Switch()
+:	m_branch(BrAuto)
 {
 	m_inputPins.push_back(gc_new< InputPin >(this, L"Select", false));
 	m_inputPins.push_back(gc_new< InputPin >(this, L"Default", false));
 	m_outputPin = gc_new< OutputPin >(this, L"Output");
+}
+
+void Switch::setBranch(Branch branch)
+{
+	m_branch = branch;
+}
+
+Switch::Branch Switch::getBranch() const
+{
+	return m_branch;
 }
 
 void Switch::addCase(int32_t value)
@@ -1502,10 +1540,26 @@ const OutputPin* Switch::getOutputPin(int index) const
 	return m_outputPin;
 }
 
+int Switch::getVersion() const
+{
+	return 1;
+}
+
 bool Switch::serialize(Serializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
+
+	const MemberEnum< Branch >::Key kBranch[] =
+	{
+		{ L"BrAuto", BrAuto },
+		{ L"BrStatic", BrStatic },
+		{ L"BrDynamic", BrDynamic },
+		{ 0, 0 }
+	};
+
+	if (s.getVersion() >= 1)
+		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberStlVector< int32_t >(L"cases", m_cases);
 

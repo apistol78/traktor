@@ -17,6 +17,10 @@ public:
 
 	virtual ~ParameterCache();
 
+	void setVertexShader(IDirect3DVertexShader9* d3dVertexShader);
+
+	void setPixelShader(IDirect3DPixelShader9* d3dPixelShader);
+
 	void setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
 
 	void setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
@@ -45,6 +49,8 @@ private:
 	};
 
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
+	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
+	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
 	float m_vertexConstantsShadow[VertexConstantCount * 4];
 	float m_pixelConstantsShadow[PixelConstantCount * 4];
 	ComRef< IDirect3DBaseTexture9 > m_vertexTextureShadow[VertexTextureCount];

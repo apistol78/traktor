@@ -3,6 +3,7 @@
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
 #include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/ShaderCache.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Render/Dx9/SimpleTextureDx9.h"
@@ -11,6 +12,7 @@
 #include "Render/Dx9/HlslProgram.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -25,7 +27,8 @@ bool compileShader(
 	const std::string& entry,
 	const std::string& profile,
 	DWORD flags,
-	ComRef< ID3DXBuffer >& outProgramResource
+	ComRef< ID3DXBuffer >& outProgramResource,
+	uint32_t& outProgramHash
 )
 {
 	ComRef< ID3DXBuffer > d3dErrorMsgs;
@@ -50,6 +53,13 @@ bool compileShader(
 		log::error << hlslShader << Endl;
 		return false;
 	}
+
+	Adler32 hash;
+	hash.begin();
+	hash.feed(outProgramResource->GetBufferPointer(), outProgramResource->GetBufferSize());
+	hash.end();
+
+	outProgramHash = hash.get();
 
 	return true;
 }
@@ -122,9 +132,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramWin32", ProgramWin32, Shader)
 
 ProgramWin32* ProgramWin32::ms_activeProgram = 0;
 
-ProgramWin32::ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ParameterCache* parameterCache)
+ProgramWin32::ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache)
 :	Unmanaged(unmanagedListener)
 ,	m_context(context)
+,	m_shaderCache(shaderCache)
 ,	m_parameterCache(parameterCache)
 ,	m_dirty(true)
 {
@@ -158,7 +169,8 @@ ProgramResourceDx9* ProgramWin32::compile(const HlslProgram& hlslProgram, int op
 		"main",
 		"vs_3_0",
 		flags,
-		resource->m_vertexShader
+		resource->m_vertexShader,
+		resource->m_vertexShaderHash
 	))
 		return 0;
 
@@ -167,7 +179,8 @@ ProgramResourceDx9* ProgramWin32::compile(const HlslProgram& hlslProgram, int op
 		"main",
 		"ps_3_0",
 		flags,
-		resource->m_pixelShader
+		resource->m_pixelShader,
+		resource->m_pixelShaderHash
 	))
 		return 0;
 
@@ -186,24 +199,34 @@ bool ProgramWin32::create(
 
 	T_ASSERT (d3dDevice);
 
-	hr = d3dDevice->CreateVertexShader(
-		(const DWORD *)resource->m_vertexShader->GetBufferPointer(),
-		&m_d3dVertexShader.getAssign()
-	);
-	if (FAILED(hr))
+	m_d3dVertexShader = m_shaderCache->getVertexShader(resource->m_vertexShaderHash);
+	if (!m_d3dVertexShader)
 	{
-		log::error << L"Unable to create program; CreateVertexShader failed " << int32_t(hr) << Endl;
-		return false;
+		hr = d3dDevice->CreateVertexShader(
+			(const DWORD *)resource->m_vertexShader->GetBufferPointer(),
+			&m_d3dVertexShader.getAssign()
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create program; CreateVertexShader failed " << int32_t(hr) << Endl;
+			return false;
+		}
+		m_shaderCache->putVertexShader(resource->m_vertexShaderHash, m_d3dVertexShader);
 	}
-	
-	hr = d3dDevice->CreatePixelShader(
-		(const DWORD *)resource->m_pixelShader->GetBufferPointer(),
-		&m_d3dPixelShader.getAssign()
-	);
-	if (FAILED(hr))
+
+	m_d3dPixelShader = m_shaderCache->getPixelShader(resource->m_pixelShaderHash);
+	if (!m_d3dPixelShader)
 	{
-		log::error << L"Unable to create program; CreatePixelShader failed " << int32_t(hr) << Endl;
-		return false;
+		hr = d3dDevice->CreatePixelShader(
+			(const DWORD *)resource->m_pixelShader->GetBufferPointer(),
+			&m_d3dPixelShader.getAssign()
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create program; CreatePixelShader failed " << int32_t(hr) << Endl;
+			return false;
+		}
+		m_shaderCache->putPixelShader(resource->m_pixelShaderHash, m_d3dPixelShader);
 	}
 
 	D3DXGetShaderConstantTable((const DWORD *)resource->m_vertexShader->GetBufferPointer(), &d3dVertexConstantTable.getAssign());
@@ -292,8 +315,8 @@ bool ProgramWin32::activate()
 
 	if (ms_activeProgram != this)
 	{
-		m_d3dDevice->SetVertexShader(m_d3dVertexShader);
-		m_d3dDevice->SetPixelShader(m_d3dPixelShader);
+		m_parameterCache->setVertexShader(m_d3dVertexShader);
+		m_parameterCache->setPixelShader(m_d3dPixelShader);
 		m_state.apply(m_parameterCache);
 	}
 
@@ -322,6 +345,8 @@ void ProgramWin32::destroy()
 		m_d3dDevice->SetPixelShader(0);
 		ms_activeProgram = 0;
 	}
+
+	m_shaderCache = 0;
 
 	m_context->releaseComRef(m_d3dDevice);
 	m_context->releaseComRef(m_d3dVertexShader);

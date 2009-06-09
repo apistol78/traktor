@@ -21,6 +21,8 @@ class ProgramResourceDx9 : public ProgramResource
 	T_RTTI_CLASS(ProgramResourceDx9)
 
 public:
+	ProgramResourceDx9();
+
 	virtual bool serialize(Serializer& s);
 
 private:
@@ -29,6 +31,8 @@ private:
 
 	ComRef< ID3DXBuffer > m_vertexShader;
 	ComRef< ID3DXBuffer > m_pixelShader;
+	uint32_t m_vertexShaderHash;
+	uint32_t m_pixelShaderHash;
 	StateBlockDx9 m_state;
 };
 

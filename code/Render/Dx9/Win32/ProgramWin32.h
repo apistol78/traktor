@@ -29,6 +29,7 @@ class ContextDx9;
 class HlslProgram;
 class TextureBaseDx9;
 class ProgramResourceDx9;
+class ShaderCache;
 class ParameterCache;
 
 /*!
@@ -56,7 +57,7 @@ public:
 		uint16_t texture;
 	};
 
-	ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ParameterCache* parameterCache);
+	ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache);
 
 	virtual ~ProgramWin32();
 
@@ -108,6 +109,7 @@ private:
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
 	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
+	Ref< ShaderCache > m_shaderCache;
 	ParameterCache* m_parameterCache;
 	std::vector< Uniform > m_vertexUniforms;
 	std::vector< Uniform > m_pixelUniforms;

@@ -18,6 +18,24 @@ ParameterCache::~ParameterCache()
 	Unmanaged::removeFromListener();
 }
 
+void ParameterCache::setVertexShader(IDirect3DVertexShader9* d3dVertexShader)
+{
+	if (m_d3dVertexShader != d3dVertexShader)
+	{
+		m_d3dDevice->SetVertexShader(d3dVertexShader);
+		m_d3dVertexShader = d3dVertexShader;
+	}
+}
+
+void ParameterCache::setPixelShader(IDirect3DPixelShader9* d3dPixelShader)
+{
+	if (m_d3dPixelShader != d3dPixelShader)
+	{
+		m_d3dDevice->SetPixelShader(d3dPixelShader);
+		m_d3dPixelShader = d3dPixelShader;
+	}
+}
+
 void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
 	float* shadow = &m_vertexConstantsShadow[registerOffset];
@@ -93,6 +111,8 @@ void ParameterCache::setSamplerState(uint32_t sampler, uint32_t state, uint32_t 
 HRESULT ParameterCache::lostDevice()
 {
 	m_d3dDevice = 0;
+	m_d3dVertexShader = 0;
+	m_d3dPixelShader = 0;
 
 	std::memset(m_vertexConstantsShadow, 0, sizeof(m_vertexConstantsShadow));
 	std::memset(m_pixelConstantsShadow, 0, sizeof(m_pixelConstantsShadow));

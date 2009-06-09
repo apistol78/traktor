@@ -138,6 +138,13 @@ class T_DLLCLASS Conditional : public ImmutableNode
 	T_RTTI_CLASS(Conditional)
 
 public:
+	enum Branch
+	{
+		BrAuto,
+		BrStatic,
+		BrDynamic
+	};
+
 	enum Operator
 	{
 		CoLess,
@@ -150,15 +157,22 @@ public:
 
 	Conditional();
 
+	void setBranch(Branch branch);
+
+	Branch getBranch() const;
+
 	void setOperator(Operator op);
 
 	Operator getOperator() const;
 
 	virtual std::wstring getInformation() const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 private:
+	Branch m_branch;
 	Operator m_operator;
 };
 
@@ -867,7 +881,18 @@ class T_DLLCLASS Switch : public Node
 	T_RTTI_CLASS(Switch)
 
 public:
+	enum Branch
+	{
+		BrAuto,
+		BrStatic,
+		BrDynamic
+	};
+
 	Switch();
+
+	void setBranch(Branch branch);
+
+	Branch getBranch() const;
 
 	void addCase(int32_t value);
 
@@ -881,9 +906,12 @@ public:
 
 	virtual const OutputPin* getOutputPin(int index) const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 private:
+	Branch m_branch;
 	std::vector< int32_t > m_cases;
 	RefArray< InputPin > m_inputPins;
 	Ref< OutputPin > m_outputPin;

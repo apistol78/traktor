@@ -53,6 +53,12 @@ private:
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceDx9", ProgramResourceDx9, ProgramResource)
 
+ProgramResourceDx9::ProgramResourceDx9()
+:	m_vertexShaderHash(0)
+,	m_pixelShaderHash(0)
+{
+}
+
 bool ProgramResourceDx9::serialize(Serializer& s)
 {
 	if (!ProgramResource::serialize(s))
@@ -60,7 +66,10 @@ bool ProgramResourceDx9::serialize(Serializer& s)
 
 	s >> MemberID3DXBuffer(L"vertexShader", m_vertexShader);
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
+	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
+	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
 	s >> MemberAggregate< StateBlockDx9 >(L"state", m_state);
+
 	return true;
 }
 

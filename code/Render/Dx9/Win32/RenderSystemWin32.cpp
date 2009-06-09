@@ -3,6 +3,7 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/ContextDx9.h"
+#include "Render/Dx9/ShaderCache.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexDeclCache.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
@@ -80,7 +81,6 @@ bool RenderSystemWin32::create()
 		return false;
 
 	m_context = gc_new< ContextDx9 >();
-
 	return true;
 }
 
@@ -93,6 +93,12 @@ void RenderSystemWin32::destroy()
 	{
 		m_context->deleteResources();
 		m_context = 0;
+	}
+
+	if (m_shaderCache)
+	{
+		m_shaderCache->releaseAll();
+		m_shaderCache = 0;
 	}
 
 	if (m_parameterCache)
@@ -179,7 +185,7 @@ RenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode, 
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 	UpdateWindow(m_hWnd);
 
-	memset(&d3dPresent, 0, sizeof(d3dPresent));
+	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
 	d3dPresent.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dPresent.BackBufferCount = 1;
 	d3dPresent.BackBufferWidth = displayMode->getWidth();
@@ -222,7 +228,7 @@ RenderView* RenderSystemWin32::createRenderView(void* windowHandle, const Render
 	if (rcWindow.top >= rcWindow.bottom)
 		rcWindow.bottom = rcWindow.top + 10;
 
-	memset(&d3dPresent, 0, sizeof(d3dPresent));
+	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
 	d3dPresent.BackBufferFormat = D3DFMT_A8R8G8B8;
 	d3dPresent.BackBufferCount = 1;
 	d3dPresent.BackBufferWidth = rcWindow.right - rcWindow.left;
@@ -314,13 +320,14 @@ ProgramResource* RenderSystemWin32::compileProgram(const ShaderGraph* shaderGrap
 
 Program* RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
+	T_ASSERT (m_shaderCache);
 	T_ASSERT (m_parameterCache);
 
 	Ref< const ProgramResourceDx9 > resource = dynamic_type_cast< const ProgramResourceDx9* >(programResource);
 	if (!resource)
 		return 0;
 
-	Ref< ProgramWin32 > program = gc_new< ProgramWin32 >(this, m_context, m_parameterCache);
+	Ref< ProgramWin32 > program = gc_new< ProgramWin32 >(this, m_context, m_shaderCache, m_parameterCache);
 	if (!program->create(m_d3dDevice, resource))
 		return 0;
 
@@ -375,6 +382,12 @@ HRESULT RenderSystemWin32::resetDevice()
 
 		m_d3dDevice.release();
 
+		if (m_shaderCache)
+		{
+			m_shaderCache->releaseAll();
+			m_shaderCache = 0;
+		}
+
 		if (m_parameterCache)
 		{
 			delete m_parameterCache;
@@ -409,7 +422,7 @@ HRESULT RenderSystemWin32::resetDevice()
 			
 			D3DPRESENT_PARAMETERS d3dPresentNull;
 
-			memset(&d3dPresentNull, 0, sizeof(d3dPresentNull));
+			std::memset(&d3dPresentNull, 0, sizeof(d3dPresentNull));
 			d3dPresentNull.BackBufferFormat = D3DFMT_A8R8G8B8;
 			d3dPresentNull.BackBufferCount = 1;
 			d3dPresentNull.BackBufferWidth = 1;
@@ -437,7 +450,7 @@ HRESULT RenderSystemWin32::resetDevice()
 			}
 
 			D3DCAPS9 d3dDeviceCaps;
-			memset(&d3dDeviceCaps, 0, sizeof(d3dDeviceCaps));
+			std::memset(&d3dDeviceCaps, 0, sizeof(d3dDeviceCaps));
 			hr = m_d3dDevice->GetDeviceCaps(&d3dDeviceCaps);
 			if (SUCCEEDED(hr))
 			{
@@ -457,6 +470,9 @@ HRESULT RenderSystemWin32::resetDevice()
 			}
 			else
 				log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
+
+			T_ASSERT (!m_shaderCache);
+			m_shaderCache= gc_new< ShaderCache >();
 
 			T_ASSERT (!m_parameterCache);
 			m_parameterCache = new ParameterCache(this, m_d3dDevice);
@@ -540,6 +556,9 @@ HRESULT RenderSystemWin32::resetDevice()
 				log::error << L"Reset device failed, unable to create device" << Endl;
 				return hr;
 			}
+
+			T_ASSERT (!m_shaderCache);
+			m_shaderCache = gc_new< ShaderCache >();
 
 			T_ASSERT (!m_parameterCache);
 			m_parameterCache = new ParameterCache(this, m_d3dDevice);

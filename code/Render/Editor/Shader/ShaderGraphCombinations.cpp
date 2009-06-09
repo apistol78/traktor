@@ -1,5 +1,5 @@
+#include <algorithm>
 #include <set>
-#include <stack>
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/ShaderGraph.h"
 #include "Render/ShaderGraphAdjacency.h"
@@ -16,7 +16,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCom
 
 ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
 {
 	RefArray< Branch > branchNodes;
 	m_shaderGraph->findNodesOf< Branch >(branchNodes);
@@ -25,11 +24,11 @@ ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
 	for (RefArray< Branch >::iterator i = branchNodes.begin(); i != branchNodes.end(); ++i)
 	{
 		std::wstring name = (*i)->getParameterName();
-		if (parameterNames.find(name) == parameterNames.end())
-		{
-			m_parameterNames.push_back(name);
-			parameterNames.insert(name);
-		}
+		if (parameterNames.find(name) != parameterNames.end())
+			continue;
+
+		m_parameterNames.push_back(name);
+		parameterNames.insert(name);
 	}
 }
 
@@ -56,90 +55,44 @@ std::vector< std::wstring > ShaderGraphCombinations::getParameterCombination(uin
 
 ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 {
-	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >();
-	std::stack< Node* > nodeStack;
-	std::set< Node* > nodeVisited;
-	RefArray< Edge > edges;
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	Ref< ShaderGraphAdjacency > shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
 
-	// Get initial nodes.
-	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	RefArray< Branch > branches;
+	shaderGraph->findNodesOf< Branch >(branches);
+
+	for (RefArray< Branch >::const_iterator i = branches.begin(); i != branches.end(); ++i)
 	{
-		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i) || is_a< OutputPort >(*i))
-			nodeStack.push(*i);
-	}
+		std::vector< std::wstring >::const_iterator parameterIter = std::find(m_parameterNames.begin(), m_parameterNames.end(), (*i)->getParameterName());
+		uint32_t combinationMask = 1 << uint32_t(std::distance(m_parameterNames.begin(), parameterIter));
 
-	// Traverse graph, select combination branchs.
-	while (!nodeStack.empty())
-	{
-		Ref< Node > node = nodeStack.top();
-		nodeStack.pop();
+		Ref< const InputPin > inputPin = (*i)->getInputPin((combination & combinationMask) == combinationMask ? /* True */ 0 : /* False */ 1);
+		T_ASSERT (inputPin);
 
-		// Already visited this node?
-		if (nodeVisited.find(node) != nodeVisited.end())
-			continue;
+		Ref< const OutputPin > outputPin = (*i)->getOutputPin(/* Output */ 0);
+		T_ASSERT (outputPin);
 
-		nodeVisited.insert(node);
+		Ref< Edge > inputEdge = shaderGraphAdj->findEdge(inputPin);
+		T_ASSERT (inputEdge);
 
-		// Create combination of branch nodes.
-		if (is_a< Branch >(node))
+		shaderGraph->removeEdge(inputEdge);
+
+		RefArray< Edge > outputEdges;
+		shaderGraphAdj->findEdges(outputPin, outputEdges);
+
+		for (RefArray< Edge >::iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
 		{
-			Ref< const InputPin > inputPin = node->findInputPin((combination & 1) ? L"True" : L"False");
-			T_ASSERT (inputPin);
-
-			Ref< const OutputPin > outputPin = node->findOutputPin(L"Output");
-			T_ASSERT (outputPin);
-
-			Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
-			T_ASSERT (sourceOutputPin);
-
-			RefArray< const InputPin > destinationInputPins;
-			m_shaderGraphAdj->findDestinationPins(outputPin, destinationInputPins);
-			T_ASSERT (!destinationInputPins.empty());
-
-			for (RefArray< const InputPin >::iterator i = destinationInputPins.begin(); i != destinationInputPins.end(); ++i)
-				edges.push_back(gc_new< Edge >(sourceOutputPin, *i));
-
-			nodeStack.push(sourceOutputPin->getNode());
-			combination >>= 1;
+			shaderGraph->addEdge(gc_new< Edge >(
+				inputEdge->getSource(),
+				(*j)->getDestination()
+			));
+			shaderGraph->removeEdge(*j);
 		}
-		else
-		{
-			shaderGraph->addNode(node);
 
-			int inputPinCount = node->getInputPinCount();
-			for (int i = 0; i < inputPinCount; ++i)
-			{
-				Ref< const InputPin > inputPin = node->getInputPin(i);
-				T_ASSERT (inputPin);
-
-				Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
-				if (edge)
-				{
-					T_ASSERT (edge->getDestination() == inputPin);
-
-					Ref< Node > sourceNode = edge->getSource()->getNode();
-					if (!is_a< Branch >(sourceNode))
-						edges.push_back(edge);
-
-					nodeStack.push(sourceNode);
-				}
-			}
-		}
+		shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
 	}
 
-	// Add edges; add only edges which connect visited nodes.
-	for (RefArray< Edge >::iterator i = edges.begin(); i != edges.end(); ++i)
-	{
-		bool haveSource = nodeVisited.find((*i)->getSource()->getNode()) != nodeVisited.end();
-		bool haveDestination = nodeVisited.find((*i)->getDestination()->getNode()) != nodeVisited.end();
-		if (haveSource && haveDestination)
-			shaderGraph->addEdge(*i);
-	}
-
-	// Return a clone of combination graph as we don't want references between
-	// graph instances.
-	return DeepClone(shaderGraph).create< ShaderGraph >();
+	return shaderGraph;
 }
 
 	}

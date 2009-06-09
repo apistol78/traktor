@@ -1,83 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.Scalar">
-			<comment></comment>
-			<position>
-				<first>1527</first>
-				<second>950</second>
-			</position>
-			<value>1</value>
-		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>1976</first>
-				<second>998</second>
+				<first>1820</first>
+				<second>974</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.InputPort">
 			<comment></comment>
 			<position>
-				<first>1055</first>
-				<second>953</second>
+				<first>1233</first>
+				<second>943</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
-		<item type="traktor.render.Switch">
-			<comment></comment>
-			<position>
-				<first>1663</first>
-				<second>942</second>
-			</position>
-			<cases>
-				<item>1</item>
-				<item>2</item>
-			</cases>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment>Shadow mode</comment>
-			<position>
-				<first>1547</first>
-				<second>866</second>
-			</position>
-			<swizzle>z</swizzle>
-		</item>
-		<item type="traktor.render.Uniform">
-			<comment></comment>
-			<position>
-				<first>1297</first>
-				<second>844</second>
-			</position>
-			<parameterName>ShadowMapSizeAndBias</parameterName>
-			<type>PtVector</type>
-		</item>
 		<item type="traktor.render.External">
 			<comment></comment>
 			<position>
-				<first>1266</first>
-				<second>907</second>
+				<first>1480</first>
+				<second>943</second>
 			</position>
 			<fragmentGuid>{6526BF34-650D-9A4B-ADA1-842467115774}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>ViewPosition</name>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
-			<position>
-				<first>1266</first>
-				<second>977</second>
-			</position>
-			<fragmentGuid>{D5C42971-B6AB-D74B-9E4D-04FEF63FBDDE}</fragmentGuid>
 			<inputPins>
 				<item>
 					<name>ViewPosition</name>
@@ -92,16 +38,16 @@
 		<item type="traktor.render.Branch">
 			<comment></comment>
 			<position>
-				<first>1838</first>
-				<second>971</second>
+				<first>1682</first>
+				<second>947</second>
 			</position>
 			<parameterName>ShadowEnable</parameterName>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment></comment>
 			<position>
-				<first>1695</first>
-				<second>1053</second>
+				<first>1539</first>
+				<second>1029</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -109,102 +55,42 @@
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Default</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Select</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Case 1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Case 2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>True</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>False</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>True</name>
 			</destination>
 		</item>
 	</edges>
