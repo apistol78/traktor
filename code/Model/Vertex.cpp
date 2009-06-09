@@ -10,6 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Vertex", Vertex, Object)
 
 Vertex::Vertex()
 :	m_position(c_InvalidIndex)
+,	m_color(c_InvalidIndex)
 ,	m_normal(c_InvalidIndex)
 ,	m_tangent(c_InvalidIndex)
 ,	m_binormal(c_InvalidIndex)
@@ -19,6 +20,7 @@ Vertex::Vertex()
 
 Vertex::Vertex(uint32_t position)
 :	m_position(position)
+,	m_color(c_InvalidIndex)
 ,	m_normal(c_InvalidIndex)
 ,	m_tangent(c_InvalidIndex)
 ,	m_binormal(c_InvalidIndex)
@@ -34,6 +36,16 @@ void Vertex::setPosition(uint32_t position)
 uint32_t Vertex::getPosition() const
 {
 	return m_position;
+}
+
+void Vertex::setColor(uint32_t color)
+{
+	m_color = color;
+}
+
+uint32_t Vertex::getColor() const
+{
+	return m_color;
 }
 
 void Vertex::setNormal(uint32_t normal)
@@ -99,6 +111,8 @@ float Vertex::getBoneInfluence(uint32_t boneIndex) const
 bool Vertex::operator == (const Vertex& r) const
 {
 	if (m_position != r.m_position)
+		return false;
+	if (m_color != r.m_color)
 		return false;
 	if (m_normal != r.m_normal)
 		return false;

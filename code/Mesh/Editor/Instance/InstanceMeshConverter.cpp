@@ -80,6 +80,8 @@ bool InstanceMeshConverter::convert(
 			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(i->getTangent()));
 		if (i->getBinormal() != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
+		if (i->getColor() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
 		if (i->getTexCoord() != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord()));
 

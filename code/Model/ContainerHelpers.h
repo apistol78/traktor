@@ -47,6 +47,14 @@ struct PositionPredicate
 	}
 };
 
+struct ColorPredicate
+{
+	inline bool operator () (const Vector4& a, const Vector4& b) const
+	{
+		return (b - a).length() <= 1.0f / (4.0f * 256.0f);
+	}
+};
+
 struct NormalPredicate
 {
 	inline bool operator () (const Vector4& a, const Vector4& b) const
