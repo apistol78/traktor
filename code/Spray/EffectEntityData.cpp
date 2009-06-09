@@ -13,7 +13,10 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectEntityData", EffectEnt
 
 EffectEntity* EffectEntityData::createEntity() const
 {
-	return gc_new< EffectEntity >(getTransform(), m_effect);
+	return gc_new< EffectEntity >(
+		cref(getTransform()),
+		m_effect
+	);
 }
 
 bool EffectEntityData::serialize(Serializer& s)

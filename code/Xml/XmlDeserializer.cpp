@@ -275,14 +275,7 @@ bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 	if (Split< std::wstring, float >::any(value, L",", v) != 4 * 4)
 		return false;
 
-	for (int r = 0; r < 4; ++r)
-	{
-		for (int c = 0; c < 4; ++c)
-		{
-			m->e[r][c] = v[r * 4 + c];
-		}
-	}
-
+	m = Matrix44(&v[0]);
 	return true;
 }
 

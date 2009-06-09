@@ -16,6 +16,9 @@
 #		endif
 #	else	// !_DEBUG
 #		define T_MATH_INLINE
+#		if !defined(WINCE)
+#			define T_MATH_USE_SSE2
+#		endif
 #	endif
 
 #	if defined(T_MATH_USE_SSE2)

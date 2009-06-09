@@ -32,26 +32,23 @@ namespace traktor
 T_MATH_ALIGN16 class T_DLLCLASS Matrix44
 {
 public:
-	union
-	{
-		union { float m[16]; };			// m[row * 4 + column]
-		union { float e[4][4]; };		// e[row][colum]
-		struct
-		{
-			float e11, e12, e13, e14;	// named as e[row][column]
-			float e21, e22, e23, e24;
-			float e31, e32, e33, e34;
-			float e41, e42, e43, e44;
-		};
-	};
-
 	T_MATH_INLINE Matrix44();
 
 	T_MATH_INLINE Matrix44(const Matrix44& m);
 
-	explicit T_MATH_INLINE Matrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation);
+	explicit T_MATH_INLINE Matrix44(
+		const Vector4& axisX,
+		const Vector4& axisY,
+		const Vector4& axisZ,
+		const Vector4& translation
+	);
 
-	explicit T_MATH_INLINE Matrix44(float e11, float e12, float e13, float e14, float e21, float e22, float e23, float e24, float e31, float e32, float e33, float e34, float e41, float e42, float e43, float e44);
+	explicit T_MATH_INLINE Matrix44(
+		float e11, float e12, float e13, float e14,
+		float e21, float e22, float e23, float e24,
+		float e31, float e32, float e33, float e34,
+		float e41, float e42, float e43, float e44
+	);
 
 	explicit T_MATH_INLINE Matrix44(const float* p);
 
@@ -71,13 +68,21 @@ public:
 
 	T_MATH_INLINE bool isOrtho() const;
 
-	T_MATH_INLINE float determinant() const;
+	T_MATH_INLINE Scalar determinant() const;
 
 	T_MATH_INLINE Matrix44 transpose() const;
 
 	T_MATH_INLINE Matrix44 inverse() const;
 
 	T_MATH_INLINE Matrix44 inverseOrtho() const;
+
+	T_MATH_INLINE void store(float* out) const;
+
+	T_MATH_INLINE Vector4& operator () (int r);
+
+	T_MATH_INLINE const Vector4& operator () (int r) const;
+
+	T_MATH_INLINE Scalar operator () (int r, int c) const;
 
 	T_MATH_INLINE Matrix44& operator = (const Matrix44& m);
 
@@ -98,6 +103,9 @@ public:
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Matrix44& m, const Vector4& v);
 
 	/*extern*/ friend T_MATH_INLINE T_DLLCLASS Matrix44 operator * (const Matrix44& lh, const Matrix44& rh);
+
+private:
+	Vector4 m_r[4];
 };
 
 T_MATH_INLINE T_DLLCLASS Matrix44 orthoLh(float width, float height, float zn, float zf);

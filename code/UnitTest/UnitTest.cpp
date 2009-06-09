@@ -7,6 +7,7 @@
 #include "UnitTest/CaseJob.h"
 #include "UnitTest/CaseHeap.h"
 #include "UnitTest/CaseMath.h"
+#include "UnitTest/CaseMatrix44.h"
 #include "UnitTest/CaseWinding.h"
 #include "UnitTest/CasePath.h"
 #include "UnitTest/CaseXmlPullParser.h"
@@ -24,44 +25,47 @@ int main(int /*argc*/, const char** /*argv*/)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif
 {
-	log::info << L"Case meta" << Endl;
-	traktor::CaseMeta().run();
+	//log::info << L"Case meta" << Endl;
+	//traktor::CaseMeta().run();
 
-	log::info << L"Case process" << Endl;
-	traktor::CaseProcess().run();
+	//log::info << L"Case process" << Endl;
+	//traktor::CaseProcess().run();
 
-	log::info << L"Case thread" << Endl;
-	traktor::CaseThread().run();
+	//log::info << L"Case thread" << Endl;
+	//traktor::CaseThread().run();
 
-	log::info << L"Case job" << Endl;
-	traktor::CaseJob().run();
+	//log::info << L"Case job" << Endl;
+	//traktor::CaseJob().run();
 
-	log::info << L"Case heap" << Endl;
-	traktor::CaseHeap().run();
+	//log::info << L"Case heap" << Endl;
+	//traktor::CaseHeap().run();
 
-	log::info << L"Case math" << Endl;
-	traktor::CaseMath().run();
+	//log::info << L"Case math" << Endl;
+	//traktor::CaseMath().run();
 
-	log::info << L"Case winding" << Endl;
-	traktor::CaseWinding().run();
+	log::info << L"Case matrix 4x4" << Endl;
+	traktor::CaseMatrix44().run();
 
-	log::info << L"Case path" << Endl;
-	traktor::CasePath().run();
+	//log::info << L"Case winding" << Endl;
+	//traktor::CaseWinding().run();
 
-	log::info << L"Case xml pull parser" << Endl;
-	traktor::CaseXmlPullParser().run();
+	//log::info << L"Case path" << Endl;
+	//traktor::CasePath().run();
 
-	log::info << L"Case xml document" << Endl;
-	traktor::CaseXmlDocument().run();
+	//log::info << L"Case xml pull parser" << Endl;
+	//traktor::CaseXmlPullParser().run();
 
-	log::info << L"Case zip" << Endl;
-	traktor::CaseZip().run();
+	//log::info << L"Case xml document" << Endl;
+	//traktor::CaseXmlDocument().run();
 
-	log::info << L"Case spatial hash array" << Endl;
-	traktor::CaseSpatialHashArray().run();
+	//log::info << L"Case zip" << Endl;
+	//traktor::CaseZip().run();
 
-	//log::info << L"Case software renderer" << Endl;
-	//traktor::CaseRenderSw().run();
+	//log::info << L"Case spatial hash array" << Endl;
+	//traktor::CaseSpatialHashArray().run();
+
+	////log::info << L"Case software renderer" << Endl;
+	////traktor::CaseRenderSw().run();
 
 	log::info << L"Finished" << Endl;
 }

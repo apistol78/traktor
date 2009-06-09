@@ -74,40 +74,40 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& axisAngle)
 
 T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 {
-	float trace = 1.0f + m.e11 + m.e22 + m.e33;
+	float trace = 1.0f + m(0, 0) + m(1, 1) + m(2, 2);
 	if (trace > FUZZY_EPSILON)
 	{
 		float S = sqrtf(trace) * 2;
-		x = (m.e32 - m.e23) / S;
-		y = (m.e13 - m.e31) / S;
-		z = (m.e21 - m.e12) / S;
+		x = (m(2, 1) - m(1, 2)) / S;
+		y = (m(0, 2) - m(2, 0)) / S;
+		z = (m(1, 0) - m(0, 1)) / S;
 		w = 0.25f * S;
 	}
 	else
 	{
-		if (m.e11 > m.e22 && m.e11 > m.e33)
+		if (m(0, 0) > m(1, 1) && m(0, 0) > m(2, 2))
 		{
-			float S = sqrtf(1.0f + m.e11 - m.e22 - m.e33) * 2;
+			float S = sqrtf(1.0f + m(0, 0) - m(1, 1) - m(2, 2)) * 2;
 			x = 0.25f * S;
-			y = (m.e21 + m.e12) / S;
-			z = (m.e13 + m.e31) / S;
-			w = (m.e32 - m.e23) / S;
+			y = (m(1, 0) + m(0, 1)) / S;
+			z = (m(0, 2) + m(2, 0)) / S;
+			w = (m(2, 1) - m(1, 2)) / S;
 		}
-		else if (m.e22 > m.e33)
+		else if (m(1, 1) > m(2, 2))
 		{
-			float S = sqrtf(1.0f + m.e22 - m.e11 - m.e33) * 2;
-			x = (m.e21 + m.e12) / S;
+			float S = sqrtf(1.0f + m(1, 1) - m(0, 0) - m(2, 2)) * 2;
+			x = (m(1, 0) + m(0, 1)) / S;
 			y = 0.25f * S;
-			z = (m.e32 + m.e23) / S;
-			w = (m.e13 - m.e31) / S;
+			z = (m(2, 1) + m(1, 2)) / S;
+			w = (m(0, 2) - m(2, 0)) / S;
 		}
 		else
 		{
-			float S = sqrtf(1.0f + m.e33 - m.e11 - m.e22) * 2;
-			x = (m.e13 + m.e31) / S;
-			y = (m.e32 + m.e23) / S;
+			float S = sqrtf(1.0f + m(2, 2) - m(0, 0) - m(1, 1)) * 2;
+			x = (m(0, 2) + m(2, 0)) / S;
+			y = (m(2, 1) + m(1, 2)) / S;
 			z = 0.25f * S;
-			w = (m.e21 - m.e12) / S;
+			w = (m(1, 0) - m(0, 1)) / S;
 		}
 	}
 	VALIDATE(*this);

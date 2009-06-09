@@ -147,7 +147,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	Vector4 cameraPosition = settings->getProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
 	Quaternion cameraOrientation = settings->getProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", Quaternion::identity());
 
-	Ref< Camera > camera = gc_new< Camera >(Matrix44::identity());
+	Ref< Camera > camera = gc_new< Camera >(cref(Matrix44::identity()));
 	camera->setCurrentPosition(cameraPosition);
 	camera->setTargetPosition(cameraPosition);
 	camera->setCurrentOrientation(cameraOrientation);
@@ -253,11 +253,11 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		Aabb boundingBox = entityAdapter->getBoundingBox();
 		float distance = !boundingBox.empty() ? boundingBox.getExtent().z() + 4.0f : 4.0f;
 		
-		m_context->setCamera(gc_new< Camera >(translate(
+		m_context->setCamera(gc_new< Camera >(cref(translate(
 			0.0f,
 			0.0f,
 			-distance
-		)));
+		))));
 
 		m_context->selectEntity(entityAdapter);
 
@@ -778,9 +778,7 @@ bool SceneEditorPage::moveSelectedEntityIntoView()
 	Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -distance)).inverse().translation();
 
 	Matrix44 entityTransform = selectedEntities[0]->getTransform();
-	entityTransform.e[3][0] = position.x();
-	entityTransform.e[3][1] = position.y();
-	entityTransform.e[3][2] = position.z();
+	entityTransform(3) = position.xyz1();
 
 	selectedEntities[0]->setTransform(entityTransform);
 	return true;

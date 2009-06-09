@@ -19,9 +19,9 @@ void getEulerAngles(
 	float& outBank
 )
 {
-	outHead = std::atan2(m.e[0][2], m.e[2][2]);
-	outPitch = -std::asin(-m.e[1][2]);
-	outBank = -std::atan2(m.e[1][0], m.e[1][1]);
+	outHead = std::atan2(m(0, 2), m(2, 2));
+	outPitch = -std::asin(-m(1, 2));
+	outBank = -std::atan2(m(1, 0), m(1, 1));
 }
 		
 		}

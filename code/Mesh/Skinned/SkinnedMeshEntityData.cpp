@@ -14,7 +14,10 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.SkinnedMeshEntityData", Skinn
 
 MeshEntity* SkinnedMeshEntityData::createEntity(world::EntityBuilder* builder) const
 {
-	return gc_new< SkinnedMeshEntity >(getTransform(), m_mesh);
+	return gc_new< SkinnedMeshEntity >(
+		cref(getTransform()),
+		m_mesh
+	);
 }
 
 bool SkinnedMeshEntityData::serialize(Serializer& s)

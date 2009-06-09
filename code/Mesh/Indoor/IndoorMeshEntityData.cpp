@@ -14,7 +14,10 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.IndoorMeshEntityData", Indoor
 
 MeshEntity* IndoorMeshEntityData::createEntity(world::EntityBuilder* builder) const
 {
-	return gc_new< IndoorMeshEntity >(getTransform(), m_mesh);
+	return gc_new< IndoorMeshEntity >(
+		cref(getTransform()),
+		m_mesh
+	);
 }
 
 bool IndoorMeshEntityData::serialize(Serializer& s)

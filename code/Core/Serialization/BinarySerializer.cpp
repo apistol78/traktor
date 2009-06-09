@@ -432,13 +432,18 @@ bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	bool result = true;
 	if (m_direction == SdRead)
 	{
-		for (int i = 0; i < 4 * 4; ++i)
-			result &= read_primitive< float >(m_stream, m->m[i]);
+		float e[4][4];
+		for (int r = 0; r < 4; ++r)
+			for (int c = 0; c < 4; ++c)
+				result &= read_primitive< float >(m_stream, e[r][c]);
+		if (result)
+			m = Matrix44(reinterpret_cast< const float* >(e));
 	}
 	else
 	{
-		for (int i = 0; i < 4 * 4; ++i)
-			result &= write_primitive< float >(m_stream, m->m[i]);
+		for (int r = 0; r < 4; ++r)
+			for (int c = 0; c < 4; ++c)
+				result &= write_primitive< float >(m_stream, (*m)(r, c));
 	}
 	return result;
 }

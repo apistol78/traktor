@@ -195,7 +195,7 @@ bool XmlSerializer::operator >> (const Member< Matrix44 >& m)
 		m_xml << m_indent << L"\t";
 		for (int c = 0; c < 4; ++c)
 		{
-			m_xml << m->e[r][c];
+			m_xml << (*m)(r, c);
 			if (r < 3 || c < 3)
 				m_xml << L", ";
 		}

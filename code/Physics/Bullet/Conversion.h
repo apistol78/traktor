@@ -61,11 +61,11 @@ inline Matrix44 fromBtTransform(const btTransform& transform)
 inline btTransform toBtTransform(const Matrix44& transform)
 {
 	btMatrix3x3 basis(
-		transform.e11, transform.e21, transform.e31,
-		transform.e12, transform.e22, transform.e32,
-		transform.e13, transform.e23, transform.e33
+		transform.axisX().x(), transform.axisY().x(), transform.axisZ().x(),
+		transform.axisX().y(), transform.axisY().y(), transform.axisZ().y(),
+		transform.axisX().z(), transform.axisY().z(), transform.axisZ().z()
 	);
-	btVector3 origin(transform.e41, transform.e42, transform.e43);
+	btVector3 origin = toBtVector3(transform.translation());
 	return btTransform(basis, origin);
 }
 

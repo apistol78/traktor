@@ -22,6 +22,20 @@ inline void write(uint8_t*& writePtr, const Type& value)
 	writePtr += sizeof(Type);
 }
 
+template < >
+inline void write< Vector4 >(uint8_t*& writePtr, const Vector4& value)
+{
+	value.store(reinterpret_cast< float* >(writePtr));
+	writePtr += sizeof(Vector4);
+}
+
+template < >
+inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44& value)
+{
+	value.store(reinterpret_cast< float* >(writePtr));
+	writePtr += sizeof(Matrix44);
+}
+
 template < typename Type >
 inline void write(uint8_t*& writePtr, const Type* valueArray, int length)
 {
@@ -33,12 +47,22 @@ inline void write(uint8_t*& writePtr, const Type* valueArray, int length)
 }
 
 template < >
-inline void write(uint8_t*& writePtr, const Vector4* valueArray, int length)
+inline void write< Vector4 >(uint8_t*& writePtr, const Vector4* valueArray, int length)
 {
 	for (int i = 0; i < length; ++i)
 	{
 		valueArray[i].store(reinterpret_cast< float* >(writePtr));
 		writePtr += sizeof(Vector4);
+	}
+}
+
+template < >
+inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44* valueArray, int length)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		valueArray[i].store(reinterpret_cast< float* >(writePtr));
+		writePtr += sizeof(Matrix44);
 	}
 }
 
@@ -145,6 +169,7 @@ void ShaderParameters::setMatrixParameter(handle_t handle, const Matrix44& param
 	T_ASSERT (m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrix);
+	align< Matrix44 >(m_parameterLast);
 	write< Matrix44 >(m_parameterLast, param);
 }
 
@@ -154,6 +179,7 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrixArray);
 	write< int >(m_parameterLast, length);
+	align< Matrix44 >(m_parameterLast);
 	write< Matrix44 >(m_parameterLast, param, length);
 }
 
@@ -206,12 +232,14 @@ void ShaderParameters::fixup(Shader* shader) const
 			break;
 
 		case PmtMatrix:
+			align< Matrix44 >(parameter);
 			shader->setMatrixParameter(handle, read< Matrix44 >(parameter));
 			break;
 
 		case PmtMatrixArray:
 			{
 				int length = read< int >(parameter);
+				align< Matrix44 >(parameter);
 				shader->setMatrixArrayParameter(handle, read< Matrix44 >(parameter, length), length);
 			}
 			break;
