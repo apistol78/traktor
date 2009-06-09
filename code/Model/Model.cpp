@@ -23,6 +23,8 @@ void Model::clear(uint32_t clearFlags)
 		m_polygons.resize(0);
 	if (clearFlags & CfPositions)
 		m_positions.clear();
+	if (clearFlags & CfColors)
+		m_colors.clear();
 	if (clearFlags & CfNormals)
 		m_normals.clear();
 	if (clearFlags & CfTexCoords)
@@ -33,15 +35,17 @@ void Model::clear(uint32_t clearFlags)
 	for (std::vector< Vertex >::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
 	{
 		if (clearFlags & CfPositions)
-			i->setPosition(-1);
+			i->setPosition(c_InvalidIndex);
+		if (clearFlags & CfColors)
+			i->setColor(c_InvalidIndex);
 		if (clearFlags & CfNormals)
 		{
-			i->setNormal(-1);
-			i->setTangent(-1);
-			i->setBinormal(-1);
+			i->setNormal(c_InvalidIndex);
+			i->setTangent(c_InvalidIndex);
+			i->setBinormal(c_InvalidIndex);
 		}
 		if (clearFlags & CfTexCoords)
-			i->setTexCoord(-1);
+			i->setTexCoord(c_InvalidIndex);
 		if (clearFlags & CfBones)
 			i->clearBoneInfluences();
 	}
@@ -49,7 +53,7 @@ void Model::clear(uint32_t clearFlags)
 	for (std::vector< Polygon >::iterator i = m_polygons.begin(); i != m_polygons.end(); ++i)
 	{
 		if (clearFlags & CfMaterials)
-			i->setMaterial(-1);
+			i->setMaterial(c_InvalidIndex);
 		if (clearFlags & CfVertices)
 			i->clearVertices();
 	}
@@ -171,6 +175,32 @@ void Model::setPositions(const AlignedVector< Vector4 >& positions)
 const AlignedVector< Vector4 >& Model::getPositions() const
 {
 	return m_positions.items();
+}
+
+uint32_t Model::addColor(const Vector4& color)
+{
+	return m_colors.add(color);
+}
+
+uint32_t Model::addUniqueColor(const Vector4& color)
+{
+	uint32_t id = m_colors.get< ColorPredicate >(color);
+	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
+}
+
+const Vector4& Model::getColor(uint32_t index) const
+{
+	return m_colors.get(index);
+}
+
+void Model::setColors(const AlignedVector< Vector4 >& colors)
+{
+	m_colors.replace(colors);
+}
+
+const AlignedVector< Vector4 >& Model::getColors() const
+{
+	return m_colors.items();
 }
 
 uint32_t Model::addNormal(const Vector4& normal)

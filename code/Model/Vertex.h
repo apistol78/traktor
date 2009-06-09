@@ -34,6 +34,10 @@ public:
 
 	uint32_t getPosition() const;
 
+	void setColor(uint32_t color);
+
+	uint32_t getColor() const;
+
 	void setNormal(uint32_t normal);
 
 	uint32_t getNormal() const;
@@ -59,7 +63,8 @@ public:
 	bool operator == (const Vertex& r) const;
 
 private:
-	int m_position;
+	uint32_t m_position;
+	uint32_t m_color;
 	uint32_t m_normal;
 	uint32_t m_tangent;
 	uint32_t m_binormal;

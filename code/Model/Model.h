@@ -40,9 +40,10 @@ public:
 		CfVertices = (1 << 1),
 		CfPolygons = (1 << 2),
 		CfPositions = (1 << 3),
-		CfNormals = (1 << 4),
-		CfTexCoords = (1 << 5),
-		CfBones = (1 << 6),
+		CfColors = (1 << 4),
+		CfNormals = (1 << 5),
+		CfTexCoords = (1 << 6),
+		CfBones = (1 << 7),
 		CfAll = (CfMaterials | CfVertices | CfPolygons | CfPositions | CfNormals | CfTexCoords | CfBones)
 	};
 
@@ -96,6 +97,16 @@ public:
 
 	const AlignedVector< Vector4 >& getPositions() const;
 
+	uint32_t addColor(const Vector4& color);
+
+	uint32_t addUniqueColor(const Vector4& color);
+
+	const Vector4& getColor(uint32_t index) const;
+
+	void setColors(const AlignedVector< Vector4 >& colors);
+
+	const AlignedVector< Vector4 >& getColors() const;
+
 	uint32_t addNormal(const Vector4& normal);
 
 	uint32_t addUniqueNormal(const Vector4& normal);
@@ -139,6 +150,7 @@ private:
 	std::vector< Vertex > m_vertices;
 	std::vector< Polygon > m_polygons;
 	SpatialHashArray< Vector4 > m_positions;
+	SpatialHashArray< Vector4 > m_colors; 
 	SpatialHashArray< Vector4 > m_normals;
 	SpatialHashArray< Vector2 > m_texCoords;
 	std::vector< std::wstring > m_bones;

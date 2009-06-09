@@ -479,6 +479,25 @@
 				<second>615</second>
 			</position>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>1936</first>
+				<second>367</second>
+			</position>
+			<name>Color</name>
+		</item>
+		<item type="traktor.render.VertexInput">
+			<comment></comment>
+			<position>
+				<first>1703</first>
+				<second>384</second>
+			</position>
+			<name>Color</name>
+			<usage>DuColor</usage>
+			<type>DtByte4N</type>
+			<index>0</index>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1028,6 +1047,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[25]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Input</name>
 			</destination>
 		</item>

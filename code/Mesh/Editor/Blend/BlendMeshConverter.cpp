@@ -76,19 +76,21 @@ bool BlendMeshConverter::convert(
 	// Create vertex buffer.
 	uint8_t* vertex = static_cast< uint8_t* >(baseMesh->getVertexBuffer()->lock());
 
-	for (std::vector< model::Vertex >::const_iterator j = model.getVertices().begin(); j != model.getVertices().end(); ++j)
+	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
 		std::memset(vertex, 0, vertexSize);
 
-		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model.getPosition(j->getPosition()));
-		if (j->getNormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model.getNormal(j->getNormal()));
-		if (j->getTangent() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(j->getTangent()));
-		if (j->getBinormal() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(j->getBinormal()));
-		if (j->getTexCoord() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(j->getTexCoord()));
+		writeVertexData(vertexElements, vertex, render::DuPosition, 0, model.getPosition(i->getPosition()));
+		if (i->getNormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuNormal, 0, model.getNormal(i->getNormal()));
+		if (i->getTangent() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuTangent, 0, model.getNormal(i->getTangent()));
+		if (i->getBinormal() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
+		if (i->getColor() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
+		if (i->getTexCoord() != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord()));
 
 		vertex += vertexSize;
 	}
