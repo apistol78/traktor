@@ -57,16 +57,20 @@ T_FORCE_INLINE hkMatrix3 toHkMatrix3(const Matrix33& m)
 /*! \brief Convert from Havok transform. */
 T_FORCE_INLINE Matrix44 fromHkTransform(const hkTransform& t)
 {
-	Matrix44 m;
-	t.get4x4ColumnMajor(m.m);
-	return m;
+	float T_ALIGN16 e[4 * 4];
+	t.get4x4ColumnMajor(e);
+	return Matrix44(e);
 }
 
 /*! \brief Convert to Havok transform. */
 T_FORCE_INLINE hkTransform toHkTransform(const Matrix44& m)
 {
+	float T_ALIGN16 e[4 * 4];
+	m.store(e);
+
 	hkTransform t;
-	t.set4x4ColumnMajor(m.m);
+	t.set4x4ColumnMajor(e);
+
 	return t;
 }
 

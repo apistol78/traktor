@@ -11,30 +11,37 @@ T_MATH_INLINE Matrix44::Matrix44()
 
 T_MATH_INLINE Matrix44::Matrix44(const Matrix44& m)
 {
-	for (int i = 0; i < 16; ++i)
-		this->m[i] = m.m[i];
+	for (int i = 0; i < sizeof_array(m_r); ++i)
+		this->m_r[i] = m.m_r[i];
 }
 
 T_MATH_INLINE Matrix44::Matrix44(const Vector4& axisX, const Vector4& axisY, const Vector4& axisZ, const Vector4& translation)
-:	e11(axisX.x()), e12(axisX.y()), e13(axisX.z()), e14(axisX.w())
-,	e21(axisY.x()), e22(axisY.y()), e23(axisY.z()), e24(axisY.w())
-,	e31(axisZ.x()), e32(axisZ.y()), e33(axisZ.z()), e34(axisZ.w())
-,	e41(translation.x()), e42(translation.y()), e43(translation.z()), e44(translation.w())	
 {
+	m_r[0] = axisX;
+	m_r[1] = axisY;
+	m_r[2] = axisZ;
+	m_r[3] = translation;
 }
 
-T_MATH_INLINE Matrix44::Matrix44(float e11_, float e12_, float e13_, float e14_, float e21_, float e22_, float e23_, float e24_, float e31_, float e32_, float e33_, float e34_, float e41_, float e42_, float e43_, float e44_)
-:	e11(e11_), e12(e12_), e13(e13_), e14(e14_)
-,	e21(e21_), e22(e22_), e23(e23_), e24(e24_)
-,	e31(e31_), e32(e32_), e33(e33_), e34(e34_)
-,	e41(e41_), e42(e42_), e43(e43_), e44(e44_)
+T_MATH_INLINE Matrix44::Matrix44(
+	float e11, float e12, float e13, float e14,
+	float e21, float e22, float e23, float e24,
+	float e31, float e32, float e33, float e34,
+	float e41, float e42, float e43, float e44
+)
 {
+	m_r[0] = Vector4(e11, e12, e13, e14);
+	m_r[1] = Vector4(e21, e22, e23, e24);
+	m_r[2] = Vector4(e31, e32, e33, e34);
+	m_r[3] = Vector4(e41, e42, e43, e44);
 }
 
 T_MATH_INLINE Matrix44::Matrix44(const float* p)
 {
-	for (int i = 0; i < 16; ++i)
-		m[i] = p[i];
+	m_r[0] = Vector4(&p[0]);
+	m_r[1] = Vector4(&p[4]);
+	m_r[2] = Vector4(&p[8]);
+	m_r[3] = Vector4(&p[12]);
 }
 
 T_MATH_INLINE const Matrix44& Matrix44::zero()
@@ -61,52 +68,65 @@ T_MATH_INLINE const Matrix44& Matrix44::identity()
 
 T_MATH_INLINE Vector4 Matrix44::axisX() const
 {
-	return Vector4(e11, e12, e13, e14);
+	return m_r[0];
 }
 
 T_MATH_INLINE Vector4 Matrix44::axisY() const
 {
-	return Vector4(e21, e22, e23, e24);
+	return m_r[1];
 }
 
 T_MATH_INLINE Vector4 Matrix44::axisZ() const
 {
-	return Vector4(e31, e32, e33, e34);
+	return m_r[2];
 }
 
 T_MATH_INLINE Vector4 Matrix44::translation() const
 {
-	return Vector4(e41, e42, e43, e44);
+	return m_r[3];
 }
 
 T_MATH_INLINE Vector4 Matrix44::diagonal() const
 {
-	return Vector4(e11, e22, e33, e44);
+	return Vector4(m_r[0].x(), m_r[1].y(), m_r[2].z(), m_r[3].w());
 }
 
 T_MATH_INLINE bool Matrix44::isOrtho() const
 {
-	return std::fabs(determinant()) == 1.0f;
+	return abs(determinant()) == 1.0f;
 }
 
-T_MATH_INLINE float Matrix44::determinant() const
+T_MATH_INLINE Scalar Matrix44::determinant() const
 {
-	return
-		  (e11 * e22 - e12 * e21) * (e33 * e44 - e34 * e43)
-		- (e11 * e23 - e13 * e21) * (e32 * e44 - e34 * e42)
-		+ (e11 * e24 - e14 * e21) * (e32 * e43 - e33 * e42)
-		+ (e12 * e23 - e13 * e22) * (e31 * e44 - e34 * e41)
-		- (e12 * e24 - e14 * e22) * (e31 * e43 - e33 * e41)
-		+ (e13 * e24 - e14 * e23) * (e31 * e42 - e32 * e41);
+	Vector4 r0_xxyz = m_r[0].shuffle< 0, 0, 1, 2 >();
+	Vector4 r0_ywzw = m_r[0].shuffle< 1, 3, 2, 3 >();
+	Vector4 r1_xxyz = m_r[1].shuffle< 0, 0, 1, 2 >();
+	Vector4 r1_ywzw = m_r[1].shuffle< 1, 3, 2, 3 >();
+	Vector4 r2_zyxx = m_r[2].shuffle< 2, 1, 0, 0 >();
+	Vector4 r2_wzwy = m_r[2].shuffle< 3, 2, 3, 1 >();
+	Vector4 r3_zyxx = m_r[3].shuffle< 2, 1, 0, 0 >();
+	Vector4 r3_wzwy = m_r[3].shuffle< 3, 2, 3, 1 >();
+
+	Vector4 r0_xy = m_r[0].shuffle< 0, 1, 0, 0 >();
+	Vector4 r0_zw = m_r[0].shuffle< 2, 3, 0, 0 >();
+	Vector4 r1_xy = m_r[1].shuffle< 0, 1, 0, 0 >();
+	Vector4 r1_zw = m_r[1].shuffle< 2, 3, 0, 0 >();
+	Vector4 r2_yx = m_r[2].shuffle< 1, 0, 0, 0 >();
+	Vector4 r3_yx = m_r[3].shuffle< 1, 0, 0, 0 >();
+
+	Vector4 pos = (r0_xxyz * r1_ywzw - r0_ywzw * r1_xxyz) * (r2_zyxx * r3_wzwy - r2_wzwy * r3_zyxx);
+	Vector4 neg = (r0_xy * r1_zw - r0_zw * r1_xy) * (r2_yx * r3_wzwy - r2_wzwy * r3_yx);
+
+	return pos.x() + pos.y() + pos.z() + pos.w() - neg.x() - neg.y();
 }
 
 T_MATH_INLINE Matrix44 Matrix44::transpose() const
 {
 	return Matrix44(
-		e11, e21, e31, e41,
-		e12, e22, e32, e42,
-		e13, e23, e33, e43,
-		e14, e24, e34, e44
+		m_r[0].x(), m_r[1].x(), m_r[2].x(), m_r[3].x(),
+		m_r[0].y(), m_r[1].y(), m_r[2].y(), m_r[3].y(),
+		m_r[0].z(), m_r[1].z(), m_r[2].z(), m_r[3].z(),
+		m_r[0].w(), m_r[1].w(), m_r[2].w(), m_r[3].w()
 	);
 }
 
@@ -114,61 +134,124 @@ T_MATH_INLINE Matrix44 Matrix44::inverse() const
 {
 	Matrix44 r;
 
-	float s = determinant();
-	if (s == 0.0f) return identity();
+	Scalar s = determinant();
+	if (s == 0.0f)
+		return identity();
 
-	s = 1 / s;
-	r.e11 = s * (e22 * (e33 * e44 - e34 * e43) + e23 * (e34 * e42 - e32 * e44) + e24 * (e32 * e43 - e33 * e42));
-	r.e12 = s * (e32 * (e13 * e44 - e14 * e43) + e33 * (e14 * e42 - e12 * e44) + e34 * (e12 * e43 - e13 * e42));
-	r.e13 = s * (e42 * (e13 * e24 - e14 * e23) + e43 * (e14 * e22 - e12 * e24) + e44 * (e12 * e23 - e13 * e22));
-	r.e14 = s * (e12 * (e24 * e33 - e23 * e34) + e13 * (e22 * e34 - e24 * e32) + e14 * (e23 * e32 - e22 * e33));
-	r.e21 = s * (e23 * (e31 * e44 - e34 * e41) + e24 * (e33 * e41 - e31 * e43) + e21 * (e34 * e43 - e33 * e44));
-	r.e22 = s * (e33 * (e11 * e44 - e14 * e41) + e34 * (e13 * e41 - e11 * e43) + e31 * (e14 * e43 - e13 * e44));
-	r.e23 = s * (e43 * (e11 * e24 - e14 * e21) + e44 * (e13 * e21 - e11 * e23) + e41 * (e14 * e23 - e13 * e24));
-	r.e24 = s * (e13 * (e24 * e31 - e21 * e34) + e14 * (e21 * e33 - e23 * e31) + e11 * (e23 * e34 - e24 * e33));
-	r.e31 = s * (e24 * (e31 * e42 - e32 * e41) + e21 * (e32 * e44 - e34 * e42) + e22 * (e34 * e41 - e31 * e44));
-	r.e32 = s * (e34 * (e11 * e42 - e12 * e41) + e31 * (e12 * e44 - e14 * e42) + e32 * (e14 * e41 - e11 * e44));
-	r.e33 = s * (e44 * (e11 * e22 - e12 * e21) + e41 * (e12 * e24 - e14 * e22) + e42 * (e14 * e21 - e11 * e24));
-	r.e34 = s * (e14 * (e22 * e31 - e21 * e32) + e11 * (e24 * e32 - e22 * e34) + e12 * (e21 * e34 - e24 * e31));
-	r.e41 = s * (e21 * (e33 * e42 - e32 * e43) + e22 * (e31 * e43 - e33 * e41) + e23 * (e32 * e41 - e31 * e42));
-	r.e42 = s * (e31 * (e13 * e42 - e12 * e43) + e32 * (e11 * e43 - e13 * e41) + e33 * (e12 * e41 - e11 * e42));
-	r.e43 = s * (e41 * (e13 * e22 - e12 * e23) + e42 * (e11 * e23 - e13 * e21) + e43 * (e12 * e21 - e11 * e22));
-	r.e44 = s * (e11 * (e22 * e33 - e23 * e32) + e12 * (e23 * e31 - e21 * e33) + e13 * (e21 * e32 - e22 * e31));
+	s = Scalar(1.0f) / s;
 
-	return r;
+	Vector4 r0_zxxz = m_r[0].shuffle< 2, 0, 0, 2 >();
+	Vector4 r0_wwyy = m_r[0].shuffle< 3, 3, 1, 1 >();
+	Vector4 r0_yxwz = m_r[0].shuffle< 1, 0, 3, 2 >();
+	Vector4 r0_wzyx = m_r[0].shuffle< 3, 2, 1, 0 >();
+	Vector4 r0_zzxx = m_r[0].shuffle< 2, 2, 0, 0 >();
+	Vector4 r0_ywwy = m_r[0].shuffle< 1, 3, 3, 1 >();
+	Vector4 r0_yzwx = m_r[0].shuffle< 1, 2, 3, 0 >();
+	Vector4 r0_zwxy = m_r[0].shuffle< 2, 3, 0, 1 >();
+	Vector4 r0_wxyz = m_r[0].shuffle< 3, 0, 1, 2 >();
+
+	Vector4 r1_zxxz = m_r[1].shuffle< 2, 0, 0, 2 >();
+	Vector4 r1_wwyy = m_r[1].shuffle< 3, 3, 1, 1 >();
+	Vector4 r1_yxwz = m_r[1].shuffle< 1, 0, 3, 2 >();
+	Vector4 r1_wzyx = m_r[1].shuffle< 3, 2, 1, 0 >();
+	Vector4 r1_zzxx = m_r[1].shuffle< 2, 2, 0, 0 >();
+	Vector4 r1_ywwy = m_r[1].shuffle< 1, 3, 3, 1 >();
+	Vector4 r1_yzwx = m_r[1].shuffle< 1, 2, 3, 0 >();
+	Vector4 r1_zwxy = m_r[1].shuffle< 2, 3, 0, 1 >();
+	Vector4 r1_wxyz = m_r[1].shuffle< 3, 0, 1, 2 >();
+
+	Vector4 r2_zxxz = m_r[2].shuffle< 2, 0, 0, 2 >();
+	Vector4 r2_wwyy = m_r[2].shuffle< 3, 3, 1, 1 >();
+	Vector4 r2_yxwz = m_r[2].shuffle< 1, 0, 3, 2 >();
+	Vector4 r2_wzyx = m_r[2].shuffle< 3, 2, 1, 0 >();
+	Vector4 r2_zzxx = m_r[2].shuffle< 2, 2, 0, 0 >();
+	Vector4 r2_ywwy = m_r[2].shuffle< 1, 3, 3, 1 >();
+	Vector4 r2_yzwx = m_r[2].shuffle< 1, 2, 3, 0 >();
+	Vector4 r2_zwxy = m_r[2].shuffle< 2, 3, 0, 1 >();
+	Vector4 r2_wxyz = m_r[2].shuffle< 3, 0, 1, 2 >();
+
+	Vector4 r3_zxxz = m_r[3].shuffle< 2, 0, 0, 2 >();
+	Vector4 r3_wwyy = m_r[3].shuffle< 3, 3, 1, 1 >();
+	Vector4 r3_yxwz = m_r[3].shuffle< 1, 0, 3, 2 >();
+	Vector4 r3_wzyx = m_r[3].shuffle< 3, 2, 1, 0 >();
+	Vector4 r3_zzxx = m_r[3].shuffle< 2, 2, 0, 0 >();
+	Vector4 r3_ywwy = m_r[3].shuffle< 1, 3, 3, 1 >();
+	Vector4 r3_yzwx = m_r[3].shuffle< 1, 2, 3, 0 >();
+	Vector4 r3_zwxy = m_r[3].shuffle< 2, 3, 0, 1 >();
+	Vector4 r3_wxyz = m_r[3].shuffle< 3, 0, 1, 2 >();
+
+	Vector4 r_xxxx = r1_yzwx * (r2_zxxz * r3_wwyy - r2_wwyy * r3_zxxz) + r1_zwxy * (r2_wzyx * r3_yxwz - r2_yxwz * r3_wzyx) + r1_wxyz * (r2_ywwy * r3_zzxx - r2_zzxx * r3_ywwy);
+	Vector4 r_yyyy = r2_yzwx * (r0_zxxz * r3_wwyy - r0_wwyy * r3_zxxz) + r2_zwxy * (r0_wzyx * r3_yxwz - r0_yxwz * r3_wzyx) + r2_wxyz * (r0_ywwy * r3_zzxx - r0_zzxx * r3_ywwy);
+	Vector4 r_zzzz = r3_yzwx * (r0_zxxz * r1_wwyy - r0_wwyy * r1_zxxz) + r3_zwxy * (r0_wzyx * r1_yxwz - r0_yxwz * r1_wzyx) + r3_wxyz * (r0_ywwy * r1_zzxx - r0_zzxx * r1_ywwy);
+	Vector4 r_wwww = r0_yzwx * (r2_zxxz * r1_wwyy - r2_wwyy * r1_zxxz) + r0_zwxy * (r2_wxyz * r1_yxwz - r2_yxwz * r1_wzyx) + r0_wxyz * (r2_ywwy * r1_zzxx - r2_zzxx * r1_ywwy);
+
+	r_xxxx *= s;
+	r_yyyy *= s;
+	r_zzzz *= s;
+	r_wwww *= s;
+
+	return Matrix44(
+		Vector4(r_xxxx.x(), r_yyyy.x(), r_zzzz.x(), r_wwww.x()),
+		Vector4(r_xxxx.y(), r_yyyy.y(), r_zzzz.y(), r_wwww.y()),
+		Vector4(r_xxxx.z(), r_yyyy.z(), r_zzzz.z(), r_wwww.z()),
+		Vector4(r_xxxx.w(), r_yyyy.w(), r_zzzz.w(), r_wwww.w())
+	);
 }
 
 T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
 {
-	float s = determinant();
+	Scalar s = determinant();
 	T_ASSERT (abs(s) > FUZZY_EPSILON);
 	
-	s = 1.0f / s;
-	
+	s = Scalar(1.0f) / s;
+
 	return Matrix44(
-		s * ((e22 * e33) - (e23 * e32)),
-		s * ((e32 * e13) - (e33 * e12)),
-		s * ((e12 * e23) - (e13 * e22)),
+		s * (m_r[1].y() * m_r[2].z() - m_r[1].z() * m_r[2].y()),
+		s * (m_r[2].y() * m_r[0].z() - m_r[2].z() * m_r[0].y()),
+		s * (m_r[0].y() * m_r[1].z() - m_r[0].z() * m_r[1].y()),
 		0.0f,
-		s * ((e23 * e31) - (e21 * e33)),
-		s * ((e33 * e11) - (e31 * e13)),
-		s * ((e13 * e21) - (e11 * e23)),
+		s * (m_r[1].z() * m_r[2].x() - m_r[1].x() * m_r[2].z()),
+		s * (m_r[2].z() * m_r[0].x() - m_r[2].x() * m_r[0].z()),
+		s * (m_r[0].z() * m_r[1].x() - m_r[0].x() * m_r[1].z()),
 		0.0f,
-		s * ((e21 * e32) - (e22 * e31)),
-		s * ((e31 * e12) - (e32 * e11)),
-		s * ((e11 * e22) - (e12 * e21)),
+		s * (m_r[1].x() * m_r[2].y() - m_r[1].y() * m_r[2].x()),
+		s * (m_r[2].x() * m_r[0].y() - m_r[2].y() * m_r[0].x()),
+		s * (m_r[0].x() * m_r[1].y() - m_r[0].y() * m_r[1].x()),
 		0.0f,
-		s * (e21 * (e33 * e42 - e32 * e43) + e22 * (e31 * e43 - e33 * e41) + e23 * (e32 * e41 - e31 * e42)),
-		s * (e31 * (e13 * e42 - e12 * e43) + e32 * (e11 * e43 - e13 * e41) + e33 * (e12 * e41 - e11 * e42)),
-		s * (e41 * (e13 * e22 - e12 * e23) + e42 * (e11 * e23 - e13 * e21) + e43 * (e12 * e21 - e11 * e22)),
+		s * (m_r[1].x() * (m_r[2].z() * m_r[3].y() - m_r[2].y() * m_r[3].z()) + m_r[1].y() * (m_r[2].x() * m_r[3].z() - m_r[2].z() * m_r[3].x()) + m_r[1].z() * (m_r[2].y() * m_r[3].x() - m_r[2].x() * m_r[3].y())),
+		s * (m_r[2].x() * (m_r[0].z() * m_r[3].y() - m_r[0].y() * m_r[3].z()) + m_r[2].y() * (m_r[0].x() * m_r[3].z() - m_r[0].z() * m_r[3].x()) + m_r[2].z() * (m_r[0].y() * m_r[3].x() - m_r[0].x() * m_r[3].y())),
+		s * (m_r[3].x() * (m_r[0].z() * m_r[1].y() - m_r[0].y() * m_r[1].z()) + m_r[3].y() * (m_r[0].x() * m_r[1].z() - m_r[0].z() * m_r[1].x()) + m_r[3].z() * (m_r[0].y() * m_r[1].x() - m_r[0].x() * m_r[1].y())),
 		1.0f
 	);
 }
 
+T_MATH_INLINE void Matrix44::store(float* out) const
+{
+	m_r[0].store(&out[0]);
+	m_r[1].store(&out[4]);
+	m_r[2].store(&out[8]);
+	m_r[3].store(&out[12]);
+}
+
+T_MATH_INLINE Vector4& Matrix44::operator () (int r)
+{
+	return m_r[r];
+}
+
+T_MATH_INLINE const Vector4& Matrix44::operator () (int r) const
+{
+	return m_r[r];
+}
+
+T_MATH_INLINE Scalar Matrix44::operator () (int r, int c) const
+{
+	return m_r[r][c];
+}
+
 T_MATH_INLINE Matrix44& Matrix44::operator = (const Matrix44& m)
 {
-	for (int i = 0; i < 16; ++i)
-		this->m[i] = m.m[i];
+	for (int i = 0; i < sizeof_array(m_r); ++i)
+		this->m_r[i] = m.m_r[i];
 	return *this;
 }
 
@@ -194,11 +277,8 @@ T_MATH_INLINE bool Matrix44::operator == (const Matrix44& m) const
 {
 	for (int r = 0; r < 4; ++r)
 	{
-		for (int c = 0; c < 4; ++c)
-		{
-			if (abs(e[r][c] - m.e[r][c]) > FUZZY_EPSILON)
-				return false;
-		}
+		if (m_r[r] != m.m_r[r])
+			return false;
 	}
 	return true;
 }
@@ -207,11 +287,8 @@ T_MATH_INLINE bool Matrix44::operator != (const Matrix44& m) const
 {
 	for (int r = 0; r < 4; ++r)
 	{
-		for (int c = 0; c < 4; ++c)
-		{
-			if (abs(e[r][c] - m.e[r][c]) > FUZZY_EPSILON)
-				return true;
-		}
+		if (m_r[r] != m.m_r[r])
+			return true;
 	}
 	return false;
 }
@@ -220,8 +297,7 @@ T_MATH_INLINE Matrix44 operator + (const Matrix44& lh, const Matrix44& rh)
 {
 	Matrix44 m;
 	for (int r = 0; r < 4; ++r)
-		for (int c = 0; c < 4; ++c)
-			m.e[r][c] = lh.e[r][c] + rh.e[r][c];
+		m.m_r[r] = lh.m_r[r] + rh.m_r[r];
 	return m;
 }
 
@@ -229,35 +305,42 @@ T_MATH_INLINE Matrix44 operator - (const Matrix44& lh, const Matrix44& rh)
 {
 	Matrix44 m;
 	for (int r = 0; r < 4; ++r)
-		for (int c = 0; c < 4; ++c)
-			m.e[r][c] = lh.e[r][c] - rh.e[r][c];
+		m.m_r[r] = lh.m_r[r] - rh.m_r[r];
 	return m;
 }
 
 T_MATH_INLINE Vector4 operator * (const Matrix44& m, const Vector4& v)
 {
-	return v.x() * m.axisX() + v.y() * m.axisY() + v.z() * m.axisZ() + v.w() * m.translation();
+	return v.x() * m.m_r[0] + v.y() * m.m_r[1] + v.z() * m.m_r[2] + v.w() * m.m_r[3];
 }
 
 T_MATH_INLINE Matrix44 operator * (const Matrix44& lh, const Matrix44& rh)
 {
+	Vector4 lr0_xxxx = lh.m_r[0].shuffle< 0, 0, 0, 0 >();
+	Vector4 lr0_yyyy = lh.m_r[0].shuffle< 1, 1, 1, 1 >();
+	Vector4 lr0_zzzz = lh.m_r[0].shuffle< 2, 2, 2, 2 >();
+	Vector4 lr0_wwww = lh.m_r[0].shuffle< 3, 3, 3, 3 >();
+
+	Vector4 lr1_xxxx = lh.m_r[1].shuffle< 0, 0, 0, 0 >();
+	Vector4 lr1_yyyy = lh.m_r[1].shuffle< 1, 1, 1, 1 >();
+	Vector4 lr1_zzzz = lh.m_r[1].shuffle< 2, 2, 2, 2 >();
+	Vector4 lr1_wwww = lh.m_r[1].shuffle< 3, 3, 3, 3 >();
+
+	Vector4 lr2_xxxx = lh.m_r[2].shuffle< 0, 0, 0, 0 >();
+	Vector4 lr2_yyyy = lh.m_r[2].shuffle< 1, 1, 1, 1 >();
+	Vector4 lr2_zzzz = lh.m_r[2].shuffle< 2, 2, 2, 2 >();
+	Vector4 lr2_wwww = lh.m_r[2].shuffle< 3, 3, 3, 3 >();
+
+	Vector4 lr3_xxxx = lh.m_r[3].shuffle< 0, 0, 0, 0 >();
+	Vector4 lr3_yyyy = lh.m_r[3].shuffle< 1, 1, 1, 1 >();
+	Vector4 lr3_zzzz = lh.m_r[3].shuffle< 2, 2, 2, 2 >();
+	Vector4 lr3_wwww = lh.m_r[3].shuffle< 3, 3, 3, 3 >();
+
 	return Matrix44(
-		lh.e11 * rh.e11 + lh.e12 * rh.e21 + lh.e13 * rh.e31 + lh.e14 * rh.e41,
-		lh.e11 * rh.e12 + lh.e12 * rh.e22 + lh.e13 * rh.e32 + lh.e14 * rh.e42,
-		lh.e11 * rh.e13 + lh.e12 * rh.e23 + lh.e13 * rh.e33 + lh.e14 * rh.e43,
-		lh.e11 * rh.e14 + lh.e12 * rh.e24 + lh.e13 * rh.e34 + lh.e14 * rh.e44,
-		lh.e21 * rh.e11 + lh.e22 * rh.e21 + lh.e23 * rh.e31 + lh.e24 * rh.e41,
-		lh.e21 * rh.e12 + lh.e22 * rh.e22 + lh.e23 * rh.e32 + lh.e24 * rh.e42,
-		lh.e21 * rh.e13 + lh.e22 * rh.e23 + lh.e23 * rh.e33 + lh.e24 * rh.e43,
-		lh.e21 * rh.e14 + lh.e22 * rh.e24 + lh.e23 * rh.e34 + lh.e24 * rh.e44,
-		lh.e31 * rh.e11 + lh.e32 * rh.e21 + lh.e33 * rh.e31 + lh.e34 * rh.e41,
-		lh.e31 * rh.e12 + lh.e32 * rh.e22 + lh.e33 * rh.e32 + lh.e34 * rh.e42,
-		lh.e31 * rh.e13 + lh.e32 * rh.e23 + lh.e33 * rh.e33 + lh.e34 * rh.e43,
-		lh.e31 * rh.e14 + lh.e32 * rh.e24 + lh.e33 * rh.e34 + lh.e34 * rh.e44,
-		lh.e41 * rh.e11 + lh.e42 * rh.e21 + lh.e43 * rh.e31 + lh.e44 * rh.e41,
-		lh.e41 * rh.e12 + lh.e42 * rh.e22 + lh.e43 * rh.e32 + lh.e44 * rh.e42,
-		lh.e41 * rh.e13 + lh.e42 * rh.e23 + lh.e43 * rh.e33 + lh.e44 * rh.e43,
-		lh.e41 * rh.e14 + lh.e42 * rh.e24 + lh.e43 * rh.e34 + lh.e44 * rh.e44
+		lr0_xxxx * rh.m_r[0] + lr0_yyyy * rh.m_r[1] + lr0_zzzz * rh.m_r[2] + lr0_wwww * rh.m_r[3],
+		lr1_xxxx * rh.m_r[0] + lr1_yyyy * rh.m_r[1] + lr1_zzzz * rh.m_r[2] + lr1_wwww * rh.m_r[3],
+		lr2_xxxx * rh.m_r[0] + lr2_yyyy * rh.m_r[1] + lr2_zzzz * rh.m_r[2] + lr2_wwww * rh.m_r[3],
+		lr3_xxxx * rh.m_r[0] + lr3_yyyy * rh.m_r[1] + lr3_zzzz * rh.m_r[2] + lr3_wwww * rh.m_r[3]
 	);
 }
 

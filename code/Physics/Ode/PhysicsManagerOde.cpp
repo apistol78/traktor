@@ -255,12 +255,11 @@ public:
 			const Vector4& p = localTransform.translation();
 			dGeomSetPosition(geomId, p.x(), p.y(), p.z());
 
-			const float* e = localTransform.m;
 			dMatrix3 rotation =
 			{
-				e[0], e[4], e[8], 0.0f,
-				e[1], e[5], e[9], 0.0f,
-				e[2], e[6], e[10], 0.0f
+				localTransform(0, 0), localTransform(1, 0), localTransform(2, 0), 0.0f,
+				localTransform(0, 1), localTransform(1, 1), localTransform(2, 1), 0.0f,
+				localTransform(0, 2), localTransform(1, 2), localTransform(2, 2), 0.0f
 			};
 			dGeomSetRotation(geomId, rotation);
 

@@ -308,7 +308,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 
 void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	setFloatArrayParameter(handle, param.m, 16);
+	setFloatArrayParameter(handle, reinterpret_cast< const float* >(&param), 16);
 }
 
 void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)

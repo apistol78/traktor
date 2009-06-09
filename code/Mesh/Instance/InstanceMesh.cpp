@@ -38,7 +38,7 @@ const Aabb& InstanceMesh::getBoundingBox() const
 
 void InstanceMesh::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, AlignedVector< instance_distance_t >& instanceWorld)
 {
-	InstanceMeshData instanceBatch[MaxInstanceCount];
+	InstanceMeshData T_ALIGN16 instanceBatch[MaxInstanceCount];
 	bool haveAlphaBlend = false;
 
 	if (instanceWorld.empty())

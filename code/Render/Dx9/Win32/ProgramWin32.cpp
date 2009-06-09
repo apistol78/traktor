@@ -377,22 +377,46 @@ void ProgramWin32::setFloatArrayParameter(handle_t handle, const float* param, i
 
 void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(&param), 4);
+	uint32_t index = m_parameterMap.get(handle);
+	if (index == ~0U)
+		return;
+
+	param.store(&m_uniformFloatData[index]);
+	m_dirty = true;
 }
 
 void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 4);
+	uint32_t index = m_parameterMap.get(handle);
+	if (index == ~0U)
+		return;
+
+	for (int i = 0; i < length; ++i)
+		param[i].store(&m_uniformFloatData[index + i * 4]);
+
+	m_dirty = true;
 }
 
 void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(&param), 16);
+	uint32_t index = m_parameterMap.get(handle);
+	if (index == ~0U)
+		return;
+
+	param.store(&m_uniformFloatData[index]);
+	m_dirty = true;
 }
 
 void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
+	uint32_t index = m_parameterMap.get(handle);
+	if (index == ~0U)
+		return;
+
+	for (int i = 0; i < length; ++i)
+		param[i].store(&m_uniformFloatData[index + i * 16]);
+
+	m_dirty = true;
 }
 
 void ProgramWin32::setSamplerTexture(handle_t handle, Texture* texture)

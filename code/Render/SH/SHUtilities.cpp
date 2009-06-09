@@ -105,9 +105,9 @@ SHMatrix generateRotationSHMatrix(const Matrix44& matrix, int order)
 	if (order <= 1)
 		return M;
 
-	M.w(1, -1, -1) =  matrix.e[2][2]; M.w(1, -1, 0) = -matrix.e[1][2]; M.w(1, -1, 1) =  matrix.e[0][2];
-	M.w(1,  0, -1) = -matrix.e[2][1]; M.w(1,  0, 0) =  matrix.e[1][1]; M.w(1,  0, 1) = -matrix.e[0][1];
-	M.w(1,  1, -1) =  matrix.e[2][0]; M.w(1,  1, 0) = -matrix.e[1][0]; M.w(1,  1, 1) =  matrix.e[0][0];
+	M.w(1, -1, -1) =  matrix(2, 2); M.w(1, -1, 0) = -matrix(1, 2); M.w(1, -1, 1) =  matrix(0, 2);
+	M.w(1,  0, -1) = -matrix(2, 1); M.w(1,  0, 0) =  matrix(1, 1); M.w(1,  0, 1) = -matrix(0, 1);
+	M.w(1,  1, -1) =  matrix(2, 0); M.w(1,  1, 0) = -matrix(1, 0); M.w(1,  1, 1) =  matrix(0, 0);
 	if (order <= 2)
 		return M;
 

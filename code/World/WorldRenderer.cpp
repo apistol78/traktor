@@ -582,8 +582,10 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 
 		// Modify perspective transform so near and far clip planes are accurate.
 		Matrix44 sliceProjection = projection;
-		sliceProjection.e33 = zf / (zf - zn);
-		sliceProjection.e43 = -zn * zf / (zf - zn);
+		Vector4& r3 = sliceProjection(2);
+		r3 = r3 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, zf / (zf - zn), 0.0f);
+		Vector4& r4 = sliceProjection(3);
+		r4 = r4 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, -zn * zf / (zf - zn), 0.0f);
 
 		// Render visuals.
 		worldRenderView.resetLights();
@@ -618,8 +620,10 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 
 		// Modify perspective transform so near and far clip planes are accurate.
 		Matrix44 sliceProjection = projection;
-		sliceProjection.e33 = zf / (zf - zn);
-		sliceProjection.e43 = -zn * zf / (zf - zn);
+		Vector4& r3 = sliceProjection(2);
+		r3 = r3 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, zf / (zf - zn), 0.0f);
+		Vector4& r4 = sliceProjection(3);
+		r4 = r4 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, -zn * zf / (zf - zn), 0.0f);
 
 		worldRenderView.resetLights();
 		worldRenderView.setProjection(sliceProjection);

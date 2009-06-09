@@ -71,12 +71,11 @@ void DynamicBodyOde::setTransform(const Matrix44& transform)
 	const Vector4& p = transform.translation();
 	dBodySetPosition(m_bodyId, p.x(), p.y(), p.z());
 
-	const float* e = transform.m;
 	dMatrix3 rotation =
 	{
-		e[0], e[4], e[8], 0.0f,
-		e[1], e[5], e[9], 0.0f,
-		e[2], e[6], e[10], 0.0f
+		transform(0, 0), transform(1, 0), transform(2, 0), 0.0f,
+		transform(0, 1), transform(1, 1), transform(2, 1), 0.0f,
+		transform(0, 2), transform(1, 2), transform(2, 2), 0.0f
 	};
 	dBodySetRotation(m_bodyId, rotation);
 }

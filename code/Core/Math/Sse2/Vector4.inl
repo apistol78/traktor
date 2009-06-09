@@ -26,7 +26,7 @@ T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
 T_MATH_INLINE Vector4::Vector4(const float* p)
 {
 	T_ASSERT (p);
-	m_data = _mm_load_ps(p);
+	m_data = _mm_loadu_ps(p);
 }
 
 T_MATH_INLINE const Vector4& Vector4::zero()

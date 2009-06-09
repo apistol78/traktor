@@ -40,10 +40,10 @@ T_FORCE_INLINE Matrix44 fromNxMat34(const NxMat34& m)
 T_FORCE_INLINE NxMat34 toNxMat34(const Matrix44& m)
 {
 	NxMat34 r;
-	r.M(0, 0) = m.m[ 0]; r.M(1, 0) = m.m[ 1]; r.M(2, 0) = m.m[ 2];
-	r.M(0, 1) = m.m[ 4]; r.M(1, 1) = m.m[ 5]; r.M(2, 1) = m.m[ 6];
-	r.M(0, 2) = m.m[ 8]; r.M(1, 2) = m.m[ 9]; r.M(2, 2) = m.m[10];
-	r.t[0] = m.m[12]; r.t[1] = m.m[13], r.t[2] = m.m[14];
+	r.M(0, 0) = m(0, 0); r.M(1, 0) = m(0, 1); r.M(2, 0) = m(0, 2);
+	r.M(0, 1) = m(1, 0); r.M(1, 1) = m(1, 1); r.M(2, 1) = m(1, 2);
+	r.M(0, 2) = m(2, 0); r.M(1, 2) = m(2, 1); r.M(2, 2) = m(2, 2);
+	r.t[0] = m(3, 0); r.t[1] = m(3, 1); r.t[2] = m(3, 2);
 	return r;
 }
 
