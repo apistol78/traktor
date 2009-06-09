@@ -56,9 +56,9 @@ private:
 	Ref< Stream > m_stream;
 	uint32_t m_internalBufferSize;
 	uint8_t* m_readBuf;
-	int m_readBufCnt[2];
+	int32_t m_readBufCnt[2];
 	uint8_t* m_writeBuf;
-	int m_writeBufCnt;
+	int32_t m_writeBufCnt;
 };
 
 }

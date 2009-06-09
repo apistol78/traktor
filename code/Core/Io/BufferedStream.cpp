@@ -31,8 +31,12 @@ BufferedStream::~BufferedStream()
 
 void BufferedStream::close()
 {
-	flush();
-	m_stream->close();
+	if (m_stream)
+	{
+		flush();
+		m_stream->close();
+		m_stream = 0;
+	}
 }
 
 bool BufferedStream::canRead() const
@@ -52,57 +56,71 @@ bool BufferedStream::canSeek() const
 
 int BufferedStream::tell() const
 {
+	if (m_stream->canRead())
+		return m_stream->tell() + m_readBufCnt[0];
+	if (m_stream->canWrite())
+		return m_stream->tell() + m_writeBufCnt;
 	return m_stream->tell();
 }
 
 int BufferedStream::available() const
 {
-	return m_stream->available() + (m_readBufCnt[1] - m_readBufCnt[0]);
+	if (m_stream->canRead())
+		return m_stream->available() + (m_readBufCnt[1] - m_readBufCnt[0]);
+	else
+		return m_stream->available();
 }
 
 int BufferedStream::seek(SeekOriginType origin, int offset)
 {
 	if (m_stream->canRead())
 	{
+		int32_t readBufAvail = m_readBufCnt[1] - m_readBufCnt[0];
 		switch (origin)
 		{
+		case SeekSet:
+			offset -= tell();
+			// Fall through
+
 		case SeekCurrent:
 			{
-				// Is new offset within buffered bytes then just decrease buffer.
-				int readBufAvail = m_readBufCnt[1] - m_readBufCnt[0];
-				if (offset > 0 && offset < readBufAvail)
+				if (offset > 0)
 				{
-					m_readBufCnt[0] += offset;
-					return offset;
+					if (offset < readBufAvail)
+					{
+						m_readBufCnt[0] += offset;
+						return offset;
+					}
+					else
+					{
+						m_readBufCnt[0] =
+						m_readBufCnt[1] = 0;
+						return m_stream->seek(SeekCurrent, offset - readBufAvail);
+					}
 				}
+				else if (offset < 0)
+				{
+					int32_t position = tell() + offset;
+					m_readBufCnt[0] =
+					m_readBufCnt[1] = 0;
+					return m_stream->seek(SeekSet, position);
+				}
+				else
+					return 0;
 			}
 			break;
 
 		case SeekEnd:
-			break;
-
-		case SeekSet:
-			{
-				// Is new offset within buffered bytes then just decrease buffer.
-				int currentPosition = m_stream->tell();
-				int distance = offset - currentPosition;
-				int readBufAvail = m_readBufCnt[1] - m_readBufCnt[0];
-				if (distance > 0 && distance < readBufAvail)
-				{
-					m_readBufCnt[0] += distance;
-					return offset;
-				}
-			}
-			break;
+			m_readBufCnt[0] =
+			m_readBufCnt[1] = 0;
+			return m_stream->seek(SeekEnd, offset);
 		}
 
-		m_readBufCnt[0] =
-		m_readBufCnt[1] = 0;
+		return -1;
 	}
-	if (m_stream->canWrite())
-	{
+	else if (m_stream->canWrite())
 		flush();
-	}
+
 	return m_stream->seek(origin, offset);
 }
 
@@ -199,6 +217,7 @@ int BufferedStream::write(const void* block, int nbytes)
 
 void BufferedStream::flush()
 {
+	T_ASSERT (m_stream);
 	if (m_writeBufCnt > 0)
 	{
 		m_stream->write(m_writeBuf, m_writeBufCnt);
