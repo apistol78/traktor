@@ -10,7 +10,7 @@
 #include <Ui/Wx/WidgetFactoryWx.h>
 #endif
 #include <Core/Misc/CommandLine.h>
-#include <Core/Misc/SplitString.h>
+#include <Core/Misc/Split.h>
 #include "DroneForm.h"
 
 using namespace traktor;

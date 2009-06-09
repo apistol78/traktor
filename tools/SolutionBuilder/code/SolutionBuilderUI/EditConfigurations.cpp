@@ -1,6 +1,6 @@
 #include <Core/Config.h>
-#include <Core/Misc/SplitString.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/Split.h>
+#include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include "EditConfigurations.h"
 #include "ConfigurationsDialog.h"

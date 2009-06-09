@@ -9,7 +9,7 @@
 #include <Core/Serialization/MemberStaticArray.h>
 #include <Core/Serialization/MemberComposite.h>
 #include <Core/Misc/MD5.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionBuilderLIB/Msvc2005/SolutionBuilderMsvc2005.h"

@@ -1,6 +1,6 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/Stream.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionLoader.h"
 #include "Solution.h"

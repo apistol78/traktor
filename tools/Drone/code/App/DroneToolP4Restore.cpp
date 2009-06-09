@@ -4,7 +4,7 @@
 #include <Core/Io/Stream.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Serialization/MemberAggregate.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>

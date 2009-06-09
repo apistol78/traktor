@@ -2,7 +2,7 @@
 #include <Core/Serialization/Serializer.h>
 #include <Core/Serialization/MemberAggregate.h>
 #include <Core/Serialization/MemberStl.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include "SolutionBuilderUI/MRU.h"
 
 using namespace traktor;

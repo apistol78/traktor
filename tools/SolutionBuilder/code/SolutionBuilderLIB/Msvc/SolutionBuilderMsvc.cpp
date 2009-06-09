@@ -7,7 +7,7 @@
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlDeserializer.h>

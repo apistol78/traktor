@@ -4,11 +4,11 @@
 #include <Ui/FloodLayout.h>
 #include <Ui/FileDialog.h>
 #include <Ui/MethodHandler.h>
-#include <Ui/MouseEvent.h>
-#include <Ui/CommandEvent.h>
-#include <Ui/CloseEvent.h>
 #include <Ui/Bitmap.h>
 #include <Ui/Custom/Splitter.h>
+#include <Ui/Events/MouseEvent.h>
+#include <Ui/Events/CommandEvent.h>
+#include <Ui/Events/CloseEvent.h>
 #include <Drawing/Formats/ImageFormatBmp.h>
 #include <Xml/XmlSerializer.h>
 #include <Xml/XmlDeserializer.h>

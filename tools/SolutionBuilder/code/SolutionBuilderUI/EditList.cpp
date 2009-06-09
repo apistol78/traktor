@@ -1,14 +1,14 @@
 #include <Ui/MethodHandler.h>
-#include <Ui/MouseEvent.h>
-#include <Ui/FocusEvent.h>
-#include <Ui/EditEvent.h>
+#include <Ui/Events/MouseEvent.h>
+#include <Ui/Events/FocusEvent.h>
+#include <Ui/Events/EditEvent.h>
 #include <Core/Log/Log.h>
 #include "EditList.h"
 using namespace traktor;
 
-// It seems creating inplace edit control crashes in wxGTK.
+// It seems creating in-place edit control crashes in wxGTK.
 #if !defined(_WIN32)
-#define T_NO_INPLACE_EDIT
+#	define T_NO_INPLACE_EDIT
 #endif
 
 bool EditList::create(ui::Widget* parent)
