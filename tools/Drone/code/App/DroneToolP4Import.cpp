@@ -6,7 +6,7 @@
 #include <Core/System/OS.h>
 #include <Core/System/Process.h>
 #include <Core/Serialization/MemberAggregate.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Misc/TString.h>
 #include <Core/Log/Log.h>
 #include <Xml/XmlSerializer.h>

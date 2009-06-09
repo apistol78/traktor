@@ -5,7 +5,7 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/BufferedStream.h>
 #include <Core/Thread/ThreadManager.h>
-#include <Core/Misc/SplitString.h>
+#include <Core/Misc/Split.h>
 #include <Net/Network.h>
 #include <Net/UrlConnection.h>
 #include <Xml/XmlDeserializer.h>

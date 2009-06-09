@@ -1,4 +1,4 @@
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include "Conditions/IncludeOrder.h"
 #include "Source.h"
 

@@ -1,7 +1,7 @@
 #include <sstream>
 #include <Core/Config.h>
-#include <Core/Misc/SplitString.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/Split.h>
+#include <Core/Misc/String.h>
 #include "AddMultipleConfigurations.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"

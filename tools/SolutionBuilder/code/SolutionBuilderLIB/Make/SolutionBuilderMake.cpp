@@ -7,7 +7,7 @@
 #include <Core/Io/AnsiEncoding.h>
 #include <Core/Io/StringReader.h>
 #include <Core/Serialization/BinarySerializer.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"

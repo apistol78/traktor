@@ -3,7 +3,7 @@
 #include <Ui/Custom/GridView/GridColumn.h>
 #include <Ui/Custom/GridView/GridRow.h>
 #include <Ui/Custom/GridView/GridItem.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include "App/PerforceChangeListDialog.h"
 #include "App/PerforceChangeList.h"
 #include "App/PerforceChangeListFile.h"

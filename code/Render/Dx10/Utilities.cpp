@@ -41,7 +41,6 @@ bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
 	return true;
 }
 
-
 bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT colorFormat, DXGI_FORMAT depthFormat, DXGI_SAMPLE_DESC& outSampleDesc)
 {
 	HRESULT hr;

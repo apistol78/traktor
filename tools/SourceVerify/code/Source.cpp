@@ -1,7 +1,7 @@
-#include <Core/Heap/HeapNew.h>
+#include <Core/Heap/New.h>
 #include <Core/Io/StringReader.h>
 #include <Core/Io/Utf8Encoding.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include "Source.h"
 
 using namespace traktor;

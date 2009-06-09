@@ -5,8 +5,8 @@
 #include <Xml/Attribute.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/File.h>
-#include <Core/Misc/SplitString.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/Split.h>
+#include <Core/Misc/String.h>
 #include "ImportMsvcProject.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"

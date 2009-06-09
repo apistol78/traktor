@@ -1,8 +1,8 @@
 #include <Ui/TableLayout.h>
 #include <Ui/Static.h>
 #include <Ui/MethodHandler.h>
-#include <Ui/CommandEvent.h>
-#include <Ui/EditEvent.h>
+#include <Ui/Events/CommandEvent.h>
+#include <Ui/Events/EditEvent.h>
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Configuration.h"
 #include "ConfigurationPropertyPage.h"

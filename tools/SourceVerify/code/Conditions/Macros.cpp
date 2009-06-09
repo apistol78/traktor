@@ -1,4 +1,4 @@
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include "Conditions/Macros.h"
 #include "Source.h"
 

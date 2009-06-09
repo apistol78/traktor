@@ -6,7 +6,7 @@
 #include <Ui/MessageBox.h>
 #include <Ui/Custom/InputDialog.h>
 #include <Ui/MethodHandler.h>
-#include <Ui/FocusEvent.h>
+#include <Ui/Events/FocusEvent.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"

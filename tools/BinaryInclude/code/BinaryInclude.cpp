@@ -3,7 +3,7 @@
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Misc/CommandLine.h>
-#include <Core/Misc/StringUtils.h>
+#include <Core/Misc/String.h>
 #include <Core/Log/Log.h>
 
 using namespace traktor;

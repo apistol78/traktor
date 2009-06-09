@@ -1,7 +1,7 @@
 #include <Ui/TableLayout.h>
 #include <Ui/MethodHandler.h>
-#include <Ui/FocusEvent.h>
 #include <Ui/Static.h>
+#include <Ui/Events/FocusEvent.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionPropertyPage.h"
 using namespace traktor;

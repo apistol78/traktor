@@ -6,7 +6,7 @@
 #include <Ui/PopupMenu.h>
 #include <Ui/MenuItem.h>
 #include <Ui/MessageBox.h>
-#include <Ui/MouseEvent.h>
+#include <Ui/Events/MouseEvent.h>
 #include <Xml/XmlDeserializer.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/Stream.h>
