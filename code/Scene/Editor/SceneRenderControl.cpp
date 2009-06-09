@@ -514,13 +514,13 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 				Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-				(abs(fx + vx) <= FUZZY_EPSILON) ? 2.0f : 0.0f,
+				0.0f,
 				gridColor
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
 				Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-				(abs(fx + vz) <= FUZZY_EPSILON) ? 2.0f : 0.0f,
+				0.0f,
 				gridColor
 			);
 		}

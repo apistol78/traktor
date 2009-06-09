@@ -25,6 +25,7 @@ render::handle_t s_handleLightSunColor;
 render::handle_t s_handleLightBaseColor;
 render::handle_t s_handleLightShadowColor;
 render::handle_t s_handleShadowEnable;
+render::handle_t s_handleShadowHighQuality;
 render::handle_t s_handleShadowMap;
 render::handle_t s_handleShadowMapDiscRotation;
 render::handle_t s_handleShadowMapSizeAndBias;
@@ -85,6 +86,7 @@ WorldRenderView::WorldRenderView()
 		s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
 		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
 		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
+		s_handleShadowHighQuality = render::getParameterHandle(L"ShadowHighQuality");
 		s_handleShadowMap = render::getParameterHandle(L"ShadowMap");
 		s_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
 		s_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
@@ -329,6 +331,7 @@ void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* sha
 		Vector4 shadowMapSizeAndBias(float(1.0f / m_shadowMap->getWidth()), m_shadowMapBias, shadowMode, float(m_shadowMapSlice));
 
 		shaderParams->setBooleanParameter(s_handleShadowEnable, true);
+		shaderParams->setBooleanParameter(s_handleShadowHighQuality, m_shadowMapSlice <= 0);
 		shaderParams->setSamplerTexture(s_handleShadowMap, m_shadowMap);
 		shaderParams->setSamplerTexture(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation);
 		shaderParams->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);

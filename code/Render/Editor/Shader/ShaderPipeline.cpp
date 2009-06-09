@@ -141,7 +141,7 @@ void ShaderPipeline::destroy()
 
 uint32_t ShaderPipeline::getVersion() const
 {
-	return 3;
+	return 4;
 }
 
 TypeSet ShaderPipeline::getAssetTypes() const
