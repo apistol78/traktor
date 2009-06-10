@@ -6,7 +6,9 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashSprite.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Application.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Events/IdleEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/MouseEvent.h"
@@ -38,6 +40,12 @@ const int c_updateInterval = 30;
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.FlashPreviewControl", FlashPreviewControl, ui::Widget)
+
+FlashPreviewControl::FlashPreviewControl()
+:	m_frameLength(0.0f)
+,	m_playing(false)
+{
+}
 
 bool FlashPreviewControl::create(ui::Widget* parent, int style, render::RenderSystem* renderSystem)
 {
@@ -80,18 +88,28 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, render::RenderSy
 
 	addSizeEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventSize));
 	addPaintEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventPaint));
-	addTimerEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventTimer));
 	addKeyDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyDown));
 	addKeyUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyUp));
 	addButtonDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonUp));
 	addMouseMoveEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventMouseMove));
 
+	// Register our event handler in case of message idle.
+	m_idleHandler = ui::createMethodHandler(this, &FlashPreviewControl::eventIdle);
+	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
+
+	m_timer.start();
 	return true;
 }
 
 void FlashPreviewControl::destroy()
 {
+	if (m_idleHandler)
+	{
+		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
+		m_idleHandler = 0;
+	}
+
 #if T_USE_ACCELERATED_RENDERER
 	if (m_displayRenderer)
 	{
@@ -126,8 +144,6 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 	m_moviePlayer->create(movie);
 
 	m_playing = true;
-
-	startTimer(1000 / movie->getMovieClip()->getFrameRate());
 }
 
 void FlashPreviewControl::rewind()
@@ -240,23 +256,36 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 	event->consume();
 }
 
-void FlashPreviewControl::eventTimer(ui::Event* event)
+void FlashPreviewControl::eventIdle(ui::Event* event)
 {
 	if (!m_moviePlayer)
 		return;
 
-	if (m_playing && m_movie)
+	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
+	if (isVisible(true))
 	{
-		// Update movie logic.
-		m_moviePlayer->executeFrame();
+		float deltaTime = float(m_timer.getDeltaTime());
 
-		// Read FS commands issued from this frame.
-		std::wstring command, args;
-		while (m_moviePlayer->getFsCommand(command, args))
-			log::info << L"FSCommand \"" << command << L"\" \"" << args << L"\"" << Endl;
+		m_frameLength -= deltaTime;
+		if (m_frameLength <= 0.0f)
+		{
+			if (m_playing)
+			{
+				// Update movie logic.
+				m_moviePlayer->executeFrame();
+
+				// Read FS commands issued from this frame.
+				std::wstring command, args;
+				while (m_moviePlayer->getFsCommand(command, args))
+					log::info << L"FSCommand \"" << command << L"\" \"" << args << L"\"" << Endl;
+			}
+
+			m_frameLength = 1.0f / m_movie->getMovieClip()->getFrameRate();
+			update();
+		}
+
+		idleEvent->requestMore();
 	}
-
-	update();
 }
 
 void FlashPreviewControl::eventKeyDown(ui::Event* event)
