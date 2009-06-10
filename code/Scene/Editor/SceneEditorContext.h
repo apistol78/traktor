@@ -174,8 +174,6 @@ public:
 
 	void selectAllEntities(bool select = true);
 
-	void selectNotify();
-
 	/*! \brief Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
@@ -209,7 +207,32 @@ public:
 	/*! \name Events. */
 	//@{
 
-	void addChangeEventHandler(ui::EventHandler* eventHandler);
+	enum Events
+	{
+		EiPreModify = ui::EiUser + 1,
+		EiPostModify = ui::EiUser + 2,
+		EiPostFrame = ui::EiUser + 3,
+		EiPostBuild = ui::EiUser + 4,
+		EiSelect = ui::EiUser + 5
+	};
+
+	void raisePreModify();
+
+	void raisePostModify();
+
+	void raisePostFrame(ui::Event* event);
+
+	void raisePostBuild();
+
+	void raiseSelect();
+
+	void addPreModifyEventHandler(ui::EventHandler* eventHandler);
+
+	void addPostModifyEventHandler(ui::EventHandler* eventHandler);
+
+	void addPostFrameEventHandler(ui::EventHandler* eventHandler);
+
+	void addPostBuildEventHandler(ui::EventHandler* eventHandler);
 
 	void addSelectEventHandler(ui::EventHandler* eventHandler);
 

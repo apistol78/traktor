@@ -58,6 +58,12 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::EditorPage)
 
@@ -137,8 +143,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->getEditor()->createAdditionalPanel(m_entityPanel, 250, false);
 
 	// Context event handlers.
-	m_context->addChangeEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextChange));
+	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostBuild));
 	m_context->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextSelect));
+	m_context->addPreModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPreModify));
 
 	// Restore camera from settings.
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
@@ -234,8 +241,6 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		}
 
 		// Read white-room scene asset from system domain.
-		const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
-
 		sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
 		T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
 
@@ -387,9 +392,22 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		m_dataObject = m_undoStack->undo(m_dataObject);
 
-		Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject);
-		if (sceneAsset)
+		if (Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject))
+		{
 			m_context->setSceneAsset(sceneAsset);
+		}
+		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
+		{
+			// Read white-room scene asset from system domain.
+			Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
+			T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
+
+			// Add our entity to white-room scene.
+			Ref< world::GroupEntityData > sceneRootGroup = checked_type_cast< world::GroupEntityData* >(sceneAsset->getEntityData());
+			sceneRootGroup->addEntityData(entityData);
+
+			m_context->setSceneAsset(sceneAsset);
+		}
 
 		updateScene(true);
 		createEntityList();
@@ -402,9 +420,22 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		m_dataObject = m_undoStack->redo(m_dataObject);
 
-		Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject);
-		if (sceneAsset)
+		if (Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(m_dataObject))
+		{
 			m_context->setSceneAsset(sceneAsset);
+		}
+		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
+		{
+			// Read white-room scene asset from system domain.
+			Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
+			T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
+
+			// Add our entity to white-room scene.
+			Ref< world::GroupEntityData > sceneRootGroup = checked_type_cast< world::GroupEntityData* >(sceneAsset->getEntityData());
+			sceneRootGroup->addEntityData(entityData);
+
+			m_context->setSceneAsset(sceneAsset);
+		}
 
 		updateScene(true);
 		createEntityList();
@@ -866,7 +897,7 @@ void SceneEditorPage::eventEntityGridDragValid(ui::Event* event)
 	dragEvent->consume();
 }
 
-void SceneEditorPage::eventContextChange(ui::Event* event)
+void SceneEditorPage::eventContextPostBuild(ui::Event* event)
 {
 	createEntityList();
 }
@@ -874,6 +905,11 @@ void SceneEditorPage::eventContextChange(ui::Event* event)
 void SceneEditorPage::eventContextSelect(ui::Event* event)
 {
 	updateEntityList();
+}
+
+void SceneEditorPage::eventContextPreModify(ui::Event* event)
+{
+	m_undoStack->push(m_dataObject);
 }
 
 	}

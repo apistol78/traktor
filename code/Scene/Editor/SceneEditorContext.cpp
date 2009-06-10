@@ -268,7 +268,7 @@ void SceneEditorContext::buildEntities()
 	// Force a collect in order to as quickly as possible remove old, unused, entities.
 	Heap::getInstance().collect(true);
 
-	raiseEvent(ui::EiContentChange, 0);
+	raisePostBuild();
 }
 
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
@@ -288,11 +288,6 @@ void SceneEditorContext::selectAllEntities(bool select)
 
 	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 		selectEntity(*i, select);
-}
-
-void SceneEditorContext::selectNotify()
-{
-	raiseEvent(ui::EiSelectionChange, 0);
 }
 
 uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags) const
@@ -389,14 +384,54 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	return minEntityAdapter;
 }
 
-void SceneEditorContext::addChangeEventHandler(ui::EventHandler* eventHandler)
+void SceneEditorContext::raisePreModify()
 {
-	addEventHandler(ui::EiContentChange, eventHandler);
+	raiseEvent(EiPreModify, 0);
+}
+
+void SceneEditorContext::raisePostModify()
+{
+	raiseEvent(EiPostModify, 0);
+}
+
+void SceneEditorContext::raisePostFrame(ui::Event* event)
+{
+	raiseEvent(EiPostFrame, event);
+}
+
+void SceneEditorContext::raisePostBuild()
+{
+	raiseEvent(EiPostBuild, 0);
+}
+
+void SceneEditorContext::raiseSelect()
+{
+	raiseEvent(EiSelect, 0);
+}
+
+void SceneEditorContext::addPreModifyEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiPreModify, eventHandler);
+}
+
+void SceneEditorContext::addPostModifyEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiPostModify, eventHandler);
+}
+
+void SceneEditorContext::addPostFrameEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiPostFrame, eventHandler);
+}
+
+void SceneEditorContext::addPostBuildEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiPostBuild, eventHandler);
 }
 
 void SceneEditorContext::addSelectEventHandler(ui::EventHandler* eventHandler)
 {
-	addEventHandler(ui::EiSelectionChange, eventHandler);
+	addEventHandler(EiSelect, eventHandler);
 }
 
 	}

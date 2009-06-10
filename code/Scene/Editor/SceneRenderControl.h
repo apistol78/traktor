@@ -58,12 +58,6 @@ class T_DLLCLASS SceneRenderControl : public ui::Widget
 	T_RTTI_CLASS(SceneRenderControl)
 
 public:
-	enum Events
-	{
-		EiModified = ui::EiUser + 1,
-		EiFrame = ui::EiUser + 2
-	};
-
 	SceneRenderControl();
 
 	bool create(ui::Widget* parent, SceneEditorContext* context);
@@ -75,10 +69,6 @@ public:
 	void setPostProcessSettings(world::PostProcessSettings* postProcessSettings);
 
 	bool handleCommand(const ui::Command& command);
-
-	void addModifiedEventHandler(ui::EventHandler* eventHandler);
-
-	void addFrameEventHandler(ui::EventHandler* eventHandler);
 
 private:
 	Ref< SceneEditorContext > m_context;
