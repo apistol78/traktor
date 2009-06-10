@@ -29,14 +29,14 @@ uint32_t writeVertexData(const std::vector< render::VertexElement >& vertexEleme
 
 		case render::DtByte4:
 		case render::DtByte4N:
-			*vertex++ = uint8_t(*data++);
+			*vertex++ = uint8_t(255.0f * *data++);
 			break;
 
 		case render::DtShort2:
 		case render::DtShort4:
 		case render::DtShort2N:
 		case render::DtShort4N:
-			*reinterpret_cast< uint16_t* >(vertex) = uint16_t(*data++);
+			*reinterpret_cast< uint16_t* >(vertex) = uint16_t(65535.0f * *data++);
 			vertex += sizeof(uint16_t);
 			break;
 
