@@ -4,6 +4,7 @@
 #define T_USE_ACCELERATED_RENDERER	1
 
 #include "Ui/Widget.h"
+#include "Core/Timer/Timer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,6 +48,8 @@ class T_DLLCLASS FlashPreviewControl : public ui::Widget
 	T_RTTI_CLASS(FlashPreviewControl)
 
 public:
+	FlashPreviewControl();
+
 	bool create(ui::Widget* parent, int style, render::RenderSystem* renderSystem);
 
 	void destroy();
@@ -72,9 +75,11 @@ private:
 	Ref< graphics::GraphicsSystem > m_graphicsSystem;
 	Ref< SwDisplayRenderer > m_displayRenderer;
 #endif
-
+	Ref< ui::EventHandler > m_idleHandler;
 	Ref< FlashMoviePlayer > m_moviePlayer;
 	Ref< FlashMovie > m_movie;
+	Timer m_timer;
+	float m_frameLength;
 	bool m_playing;
 
 	ui::Point getTwips(const ui::Point& pt) const;
@@ -83,7 +88,7 @@ private:
 
 	void eventPaint(ui::Event* event);
 
-	void eventTimer(ui::Event* event);
+	void eventIdle(ui::Event* event);
 
 	void eventKeyDown(ui::Event* event);
 

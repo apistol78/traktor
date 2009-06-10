@@ -26,16 +26,9 @@ class T_DLLCLASS AspectLayout : public Layout
 	T_RTTI_CLASS(AspectLayout)
 
 public:
-	AspectLayout(float ratio = 4.0f / 3.0f);
-
-	void setRatio(float ratio);
-
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
 
 	virtual void update(Widget* widget);
-
-private:
-	float m_ratio;
 };
 
 		}

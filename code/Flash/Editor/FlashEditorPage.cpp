@@ -11,8 +11,10 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/CenterLayout.h"
+#include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Database/Instance.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
@@ -23,6 +25,7 @@
 
 // Resources
 #include "Resources/Playback.h"
+#include "Resources/Aspect.h"
 
 namespace traktor
 {
@@ -57,10 +60,14 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay = gc_new< ui::custom::ToolBar >();
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
+	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
 	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
 	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
 	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
 	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
+	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarSeparator >());
+	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Layout Center", ui::Command(L"Flash.Editor.LayoutCenter"), 6));
+	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Layout Aspect", ui::Command(L"Flash.Editor.LayoutAspect"), 7));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
 	m_previewContainer = gc_new< ui::Container >();
@@ -151,6 +158,16 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->stop();
 	else if (command == L"Flash.Editor.Forward")
 		m_previewControl->forward();
+	else if (command == L"Flash.Editor.LayoutCenter")
+	{
+		m_previewContainer->setLayout(gc_new< ui::custom::CenterLayout >());
+		m_previewContainer->update();
+	}
+	else if (command == L"Flash.Editor.LayoutAspect")
+	{
+		m_previewContainer->setLayout(gc_new< ui::custom::AspectLayout >());
+		m_previewContainer->update();
+	}
 	else
 		result = false;
 

@@ -6122,6 +6122,10 @@
 							<fileName>../../../res/toolbar/Playback.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Aspect.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>

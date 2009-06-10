@@ -28,6 +28,8 @@ void FlashEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Flash.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Flash.Editor.Stop"));
 	outCommands.push_back(ui::Command(L"Flash.Editor.Forward"));
+	outCommands.push_back(ui::Command(L"Flash.Editor.LayoutCenter"));
+	outCommands.push_back(ui::Command(L"Flash.Editor.LayoutAspect"));
 }
 
 	}
