@@ -60,13 +60,18 @@ void AccDisplayRenderer::destroy()
 {
 	m_renderSystem = 0;
 	m_renderView = 0;
+	
 	if (m_textureCache)
 	{
 		m_textureCache->destroy();
 		m_textureCache = 0;
 	}
+
 	for (std::map< uint32_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
-		i->second.shape->destroy();
+	{
+		if (i->second.shape)
+			i->second.shape->destroy();
+	}
 	m_shapeCache.clear();
 }
 
