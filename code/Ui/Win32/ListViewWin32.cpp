@@ -22,9 +22,15 @@ bool ListViewWin32::create(IWidget* parent, int style)
 	getNativeStyles(style, nativeStyle, nativeStyleEx);
 
 	if (style & ListView::WsList)
+	{
 		nativeStyle |= LVS_LIST;
+		nativeStyleEx |= LVS_EX_FULLROWSELECT;
+	}
 	else if (style & ListView::WsReport)
+	{
 		nativeStyle |= LVS_REPORT;
+		nativeStyleEx |= LVS_EX_FULLROWSELECT;
+	}
 	else if (style & ListView::WsIconNormal)
 		nativeStyle |= LVS_ICON | LVS_AUTOARRANGE;
 	else if (style & ListView::WsIconSmall)
@@ -38,7 +44,7 @@ bool ListViewWin32::create(IWidget* parent, int style)
 		WC_LISTVIEW,
 		_T(""),
 		WS_VISIBLE | WS_CHILD | WS_TABSTOP | LVS_SHOWSELALWAYS | nativeStyle,
-		LVS_EX_FULLROWSELECT | nativeStyleEx,
+		nativeStyleEx,
 		0,
 		0,
 		0,

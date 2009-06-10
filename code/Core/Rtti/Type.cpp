@@ -33,7 +33,7 @@ void __registerType(const Type* type)
 
 		std::wstring ttypeName(ttype->getName());
 		int res = ttypeName.compare(typeName);
-		if (res < 0)
+		if (res > 0)
 			break;
 
 		index++;
@@ -115,9 +115,9 @@ const Type* Type::find(const std::wstring& name)
 		int res = std::wstring(s_typeRegistry[index]->getName()).compare(name);
 		if (res == 0)
 			return s_typeRegistry[index];
-		else if (res < 0)
-			last = index;
 		else if (res > 0)
+			last = index;
+		else if (res < 0)
 			first = index + 1;
 	}
 
