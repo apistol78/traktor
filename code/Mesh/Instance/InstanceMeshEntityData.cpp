@@ -10,7 +10,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.InstanceMeshEntityData", InstanceMeshEntityData, MeshEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.InstanceMeshEntityData", InstanceMeshEntityData, MeshEntityData)
 
 MeshEntity* InstanceMeshEntityData::createEntity(world::EntityBuilder* builder) const
 {

@@ -51,17 +51,20 @@ public:
 };
 
 /*! \brief Generic object factory. */
-template < typename ClassType >
+template < typename ClassType, bool Editable >
 struct DefaultFactory : public ObjectFactory
 {
-	virtual Object* newInstance() const
-	{
+	virtual bool isEditable() const {
+		return Editable;
+	}
+
+	virtual Object* newInstance() const {
 		return gc_new< ClassType >();
 	}
 };
 
 #define T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(CLASSID, CLASS, SUPER) \
-	const traktor::Type CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(CLASS), new traktor::DefaultFactory< CLASS >); \
+	const traktor::Type CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(CLASS), new traktor::DefaultFactory< CLASS, false >); \
 	\
 	const traktor::Type& CLASS::getClassType() { \
 		return m__type__; \
@@ -71,7 +74,27 @@ struct DefaultFactory : public ObjectFactory
 	}
 
 #define T_IMPLEMENT_RTTI_SERIALIZABLE_COMPOSITE_CLASS(CLASSID, OUTER, CLASS, SUPER) \
-	const traktor::Type OUTER::CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(OUTER::CLASS), new traktor::DefaultFactory< OUTER::CLASS >); \
+	const traktor::Type OUTER::CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(OUTER::CLASS), new traktor::DefaultFactory< OUTER::CLASS, false >); \
+	\
+	const traktor::Type& OUTER::CLASS::getClassType() { \
+		return m__type__; \
+	} \
+	const traktor::Type& OUTER::CLASS::getType() const { \
+		return m__type__; \
+	}
+
+#define T_IMPLEMENT_RTTI_EDITABLE_CLASS(CLASSID, CLASS, SUPER) \
+	const traktor::Type CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(CLASS), new traktor::DefaultFactory< CLASS, true >); \
+	\
+	const traktor::Type& CLASS::getClassType() { \
+		return m__type__; \
+	} \
+	const traktor::Type& CLASS::getType() const { \
+		return m__type__; \
+	}
+
+#define T_IMPLEMENT_RTTI_EDITABLE_COMPOSITE_CLASS(CLASSID, OUTER, CLASS, SUPER) \
+	const traktor::Type OUTER::CLASS::m__type__(&traktor::type_of< SUPER >(), CLASSID, sizeof(OUTER::CLASS), new traktor::DefaultFactory< OUTER::CLASS, true >); \
 	\
 	const traktor::Type& OUTER::CLASS::getClassType() { \
 		return m__type__; \

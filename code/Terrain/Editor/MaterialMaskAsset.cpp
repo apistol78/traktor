@@ -6,7 +6,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.MaterialMaskAsset", MaterialMaskAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.MaterialMaskAsset", MaterialMaskAsset, editor::Asset)
 
 const Type* MaterialMaskAsset::getOutputType() const
 {

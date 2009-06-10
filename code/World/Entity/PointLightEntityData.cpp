@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PointLightEntityData", PointLightEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.PointLightEntityData", PointLightEntityData, SpatialEntityData)
 
 PointLightEntityData::PointLightEntityData()
 :	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)

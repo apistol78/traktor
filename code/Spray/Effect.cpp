@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.Effect", Effect, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.spray.Effect", Effect, Serializable)
 
 Effect::Effect()
 :	m_duration(0.0f)

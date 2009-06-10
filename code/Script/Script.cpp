@@ -21,7 +21,7 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.Script", Script, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.script.Script", Script, Serializable)
 
 Script::Script()
 {

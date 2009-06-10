@@ -12,7 +12,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.weather.CloudEntityData", CloudEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.CloudEntityData", CloudEntityData, world::SpatialEntityData)
 
 CloudEntityData::CloudEntityData()
 :	m_impostorTargetResolution(256)

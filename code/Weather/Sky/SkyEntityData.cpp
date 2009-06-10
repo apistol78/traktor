@@ -27,7 +27,7 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.weather.SkyEntityData", SkyEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.SkyEntityData", SkyEntityData, world::EntityData)
 
 SkyEntityData::SkyEntityData()
 {

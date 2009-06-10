@@ -17,7 +17,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
 
 UndergrowthEntity* UndergrowthEntityData::createEntity(render::RenderSystem* renderSystem) const
 {

@@ -33,7 +33,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, u
 bool NewInstanceDialog::create(ui::Widget* parent)
 {
 	std::vector< const Type* > types;
-	Serializable::getClassType().findAllOf(types);
+	type_of< Serializable >().findAllOf(types);
 	if (types.empty())
 		return false;
 
@@ -97,6 +97,10 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	for (std::vector< const Type* >::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const Type* type = *i;
+		T_ASSERT (type);
+
+		if (!type->isEditable())
+			continue;
 
 		std::vector< std::wstring > parts;
 		if (!Split< std::wstring >::any(type->getName(), L".", parts))

@@ -13,7 +13,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
 
 RigidEntity* RigidEntityData::createEntity(
 	world::EntityBuilder* builder,

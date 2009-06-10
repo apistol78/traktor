@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.SpatialEntityData", SpatialEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.SpatialEntityData", SpatialEntityData, EntityData)
 
 SpatialEntityData::SpatialEntityData()
 :	m_transform(Matrix44::identity())

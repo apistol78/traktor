@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessSettings", PostProcessSettings, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.PostProcessSettings", PostProcessSettings, Serializable)
 
 const RefArray< PostProcessDefine >& PostProcessSettings::getDefinitions() const
 {
