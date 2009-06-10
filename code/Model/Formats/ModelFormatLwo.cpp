@@ -137,8 +137,8 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		));
 
 		material.setDiffuseTerm(surface->diffuse.val);
-//		material.setSpecularTerm(surface->specularity.val);
-		material.setSpecularRoughness(surface->glossiness.val);
+		material.setSpecularTerm(surface->specularity.val);
+		material.setSpecularTerm(surface->glossiness.val);
 
 		if ((surface->sideflags & 3) == 3)
 			material.setDoubleSided(true);
