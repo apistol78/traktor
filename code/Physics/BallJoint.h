@@ -25,6 +25,8 @@ class T_DLLCLASS BallJoint : public Joint
 	T_RTTI_CLASS(BallJoint)
 
 public:
+	virtual void setAnchor(const Vector4& anchor) = 0;
+
 	virtual Vector4 getAnchor() const = 0;
 };
 

@@ -28,6 +28,8 @@ class T_DLLCLASS BallJointHavok : public JointHavok< BallJoint >
 public:
 	BallJointHavok(DestroyCallbackHavok* callback, const HvkRef< hkpConstraintInstance >& constraint, Body* body1, Body* body2);
 
+	virtual void setAnchor(const Vector4& anchor);
+
 	virtual Vector4 getAnchor() const;
 };
 

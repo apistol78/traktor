@@ -12,6 +12,11 @@ BallJointOde::BallJointOde(DestroyCallback* callback, dJointID jointId, Body* bo
 {
 }
 
+void BallJointOde::setAnchor(const Vector4& anchor)
+{
+	dJointSetBallAnchor(m_jointId, anchor.x(), anchor.y(), anchor.z());
+}
+
 Vector4 BallJointOde::getAnchor() const
 {
 	dVector3 anchor;
