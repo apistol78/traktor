@@ -12,6 +12,10 @@ BallJointHavok::BallJointHavok(DestroyCallbackHavok* callback, const HvkRef< hkp
 {
 }
 
+void BallJointHavok::setAnchor(const Vector4& anchor)
+{
+}
+
 Vector4 BallJointHavok::getAnchor() const
 {
 	return Vector4(0.0f, 0.0f, 0.0f, 1.0f);

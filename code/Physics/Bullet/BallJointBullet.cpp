@@ -1,4 +1,5 @@
 #include "Physics/Bullet/BallJointBullet.h"
+#include "Physics/Bullet/Conversion.h"
 
 namespace traktor
 {
@@ -12,9 +13,20 @@ BallJointBullet::BallJointBullet(DestroyCallback* callback, btPoint2PointConstra
 {
 }
 
+void BallJointBullet::setAnchor(const Vector4& anchor)
+{
+	btVector3 pivotInWorld = toBtVector3(anchor);
+	btVector3 pivotInA = m_constraint->getRigidBodyA().getWorldTransform().inverse() * pivotInWorld;
+	m_constraint->setPivotA(pivotInA);
+	btVector3 pivotInB = m_constraint->getRigidBodyB().getWorldTransform().inverse() * pivotInWorld;
+	m_constraint->setPivotB(pivotInA);
+}
+
 Vector4 BallJointBullet::getAnchor() const
 {
-	return Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+	const btVector3& pivotInA = m_constraint->getPivotInA();
+	btVector3 pivotInWorld = m_constraint->getRigidBodyA().getWorldTransform() * pivotInA;
+	return fromBtVector3(pivotInWorld, 1.0f);
 }
 
 	}

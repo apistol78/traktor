@@ -28,6 +28,8 @@ class T_DLLCLASS BallJointOde : public JointOde< BallJoint >
 public:
 	BallJointOde(DestroyCallback* callback, dJointID jointId, Body* body1, Body* body2);
 
+	virtual void setAnchor(const Vector4& anchor);
+
 	virtual Vector4 getAnchor() const;
 };
 
