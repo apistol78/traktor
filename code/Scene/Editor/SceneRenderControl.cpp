@@ -162,16 +162,6 @@ bool SceneRenderControl::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void SceneRenderControl::addModifiedEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiModified, eventHandler);
-}
-
-void SceneRenderControl::addFrameEventHandler(ui::EventHandler* eventHandler)
-{
-	addEventHandler(EiFrame, eventHandler);
-}
-
 void SceneRenderControl::updateWorldRenderer()
 {
 	if (!m_worldRenderSettings)
@@ -303,16 +293,23 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 
 		m_context->selectAllEntities(false);
 		m_context->selectEntity(entityAdapter);
-		m_context->selectNotify();
+		m_context->raiseSelect();
 	}
 
 	// Get selected entities which will be modified.
 	if (!m_modifyCamera)
 	{
+		// Ensure physics simulation is disabled.
+		m_context->setPhysicsEnable(false);
+
+		// Get selected entities.
 		m_context->getEntities(
 			m_modifyEntities,
 			SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
 		);
+
+		// Issue begin modification event.
+		m_context->raisePreModify();
 	}
 
 	setCapture();
@@ -321,6 +318,10 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 
 void SceneRenderControl::eventButtonUp(ui::Event* event)
 {
+	// Issue finished modification event.
+	if (!m_modifyCamera)
+		m_context->raisePostModify();
+
 	m_modifyEntities.resize(0);
 	m_modifyCamera = false;
 	m_modifyAlternative = false;
@@ -347,9 +348,6 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 
 	if (!m_modifyCamera)
 	{
-		// Ensure physics simulation is disabled.
-		m_context->setPhysicsEnable(false);
-
 		// Apply modifier on selected entities.
 		Ref< Modifier > modifier = m_context->getModifier();
 		T_ASSERT (modifier);
@@ -388,7 +386,6 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 	m_mouseButton = mouseButton;
 
 	update();
-	raiseEvent(EiModified, 0);
 }
 
 void SceneRenderControl::eventMouseWheel(ui::Event* event)
@@ -414,8 +411,6 @@ void SceneRenderControl::eventMouseWheel(ui::Event* event)
 
 	deltaScale = std::max(deltaScale, c_deltaAdjustSmall);
 	m_context->setDeltaScale(deltaScale);
-
-	raiseEvent(EiModified, 0);
 }
 
 void SceneRenderControl::eventSize(ui::Event* event)
@@ -592,7 +587,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		if ((int32_t(stopTime * 100.0) & 15) == 0)
 		{
 			FrameEvent eventFrame(this, stopTime - startTime, stopTime - startRenderTime);
-			raiseEvent(EiFrame, &eventFrame);
+			m_context->raisePostFrame(&eventFrame);
 		}
 	}
 

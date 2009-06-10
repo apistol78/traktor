@@ -91,9 +91,9 @@ private:
 
 	void eventTimeScaleChanged(ui::Event* event);
 
-	void eventRenderModified(ui::Event* event);
+	void eventContextPostBuild(ui::Event* event);
 
-	void eventRenderFrame(ui::Event* event);
+	void eventContextPostFrame(ui::Event* event);
 
 	void eventCameraDoubleClick(ui::Event* event);
 };

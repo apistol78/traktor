@@ -118,8 +118,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_sceneRenderControl = gc_new< SceneRenderControl >();
 	if (!m_sceneRenderControl->create(this, context))
 		return false;
-	m_sceneRenderControl->addModifiedEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventRenderModified));
-	m_sceneRenderControl->addFrameEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventRenderFrame));
 
 	m_infoContainer = gc_new< ui::Container >();
 	m_infoContainer->create(this, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*", 2, 0));
@@ -134,6 +132,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
+	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventContextPostBuild));
+	m_context->addPostFrameEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventContextPostFrame));
 
 	updateEditState();
 	updateInformation();
@@ -302,15 +302,15 @@ void ScenePreviewControl::eventTimeScaleChanged(ui::Event* event)
 	m_context->setTimeScale(timeScale);
 }
 
-void ScenePreviewControl::eventRenderModified(ui::Event* event)
+void ScenePreviewControl::eventContextPostBuild(ui::Event* event)
 {
 	updateInformation();
 }
 
-void ScenePreviewControl::eventRenderFrame(ui::Event* event)
+void ScenePreviewControl::eventContextPostFrame(ui::Event* event)
 {
-	m_frameTime = checked_type_cast< FrameEvent* >(event)->getFrameTime();
-	m_renderTime = checked_type_cast< FrameEvent* >(event)->getRenderTime();
+	m_frameTime = checked_type_cast< const FrameEvent* >(event)->getFrameTime();
+	m_renderTime = checked_type_cast< const FrameEvent* >(event)->getRenderTime();
 	updateInformation();
 }
 

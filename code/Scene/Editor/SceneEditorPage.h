@@ -131,9 +131,11 @@ private:
 
 	void eventEntityGridDragValid(ui::Event* event);
 
-	void eventContextChange(ui::Event* event);
+	void eventContextPostBuild(ui::Event* event);
 
 	void eventContextSelect(ui::Event* event);
+
+	void eventContextPreModify(ui::Event* event);
 };
 
 	}
