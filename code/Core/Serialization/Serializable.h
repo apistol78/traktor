@@ -42,9 +42,15 @@ public:
 	 */
 	virtual int getVersion() const;
 
+	/*! \brief Serialize object.
+	 *
+	 * \param s Serializer interface.
+	 * \return True if serialization successful.
+	 */
 	virtual bool serialize(Serializer& s) = 0;
 };
 
+/*! \brief Generic object factory. */
 template < typename ClassType >
 struct DefaultFactory : public ObjectFactory
 {
