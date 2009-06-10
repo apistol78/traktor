@@ -11,7 +11,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.PathEntityData", PathEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.PathEntityData", PathEntityData, world::SpatialEntityData)
 
 PathEntityData::PathEntityData()
 :	m_timeMode(PathEntity::TmManual)

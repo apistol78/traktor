@@ -9,7 +9,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.SceneAsset", SceneAsset, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.scene.SceneAsset", SceneAsset, Serializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(gc_new< world::WorldRenderSettings >())

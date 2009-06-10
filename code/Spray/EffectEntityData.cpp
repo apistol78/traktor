@@ -9,7 +9,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectEntityData", EffectEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.spray.EffectEntityData", EffectEntityData, world::SpatialEntityData)
 
 EffectEntity* EffectEntityData::createEntity() const
 {

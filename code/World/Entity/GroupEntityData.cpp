@@ -8,7 +8,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.GroupEntityData", GroupEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.GroupEntityData", GroupEntityData, EntityData)
 
 void GroupEntityData::addEntityData(EntityData* entityData)
 {

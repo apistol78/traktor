@@ -98,6 +98,11 @@ bool Type::isInstantiable() const
 	return m_factory != 0;
 }
 
+bool Type::isEditable() const
+{
+	return m_factory && m_factory->isEditable();
+}
+
 Object* Type::newInstance() const
 {
 	return m_factory ? m_factory->newInstance() : 0;

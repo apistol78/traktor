@@ -12,7 +12,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderGraph", ShaderGraph, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.render.ShaderGraph", ShaderGraph, Serializable)
 
 ShaderGraph::ShaderGraph()
 {

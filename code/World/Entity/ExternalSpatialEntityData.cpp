@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.ExternalSpatialEntityData", ExternalSpatialEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.ExternalSpatialEntityData", ExternalSpatialEntityData, SpatialEntityData)
 
 ExternalSpatialEntityData::ExternalSpatialEntityData()
 {

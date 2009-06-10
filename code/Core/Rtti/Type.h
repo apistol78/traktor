@@ -64,6 +64,8 @@ class Object;
 
 struct T_DLLCLASS ObjectFactory
 {
+	virtual bool isEditable() const = 0;
+
 	virtual Object* newInstance() const = 0;
 };
 
@@ -86,6 +88,9 @@ public:
 
 	/*! \brief Instantiable type. */
 	bool isInstantiable() const;
+
+	/*! \brief Editable type. */
+	bool isEditable() const;
 
 	/*! \brief Create new instance of type. */
 	Object* newInstance() const;

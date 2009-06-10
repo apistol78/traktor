@@ -9,7 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.Skeleton", Skeleton, Serializable)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.Skeleton", Skeleton, Serializable)
 
 uint32_t Skeleton::addBone(Bone* bone)
 {

@@ -14,7 +14,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.ArticulatedEntityData", ArticulatedEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.ArticulatedEntityData", ArticulatedEntityData, world::SpatialEntityData)
 
 ArticulatedEntity* ArticulatedEntityData::createEntity(
 	world::EntityBuilder* builder,

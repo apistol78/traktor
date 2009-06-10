@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.DirectionalLightEntityData", DirectionalLightEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.DirectionalLightEntityData", DirectionalLightEntityData, SpatialEntityData)
 
 DirectionalLightEntityData::DirectionalLightEntityData()
 :	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
