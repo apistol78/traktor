@@ -66,9 +66,9 @@ public:
 
 	float getDiffuseTerm() const;
 
-	void setSpecularRoughness(float specularRoughness);
+	void setSpecularTerm(float specularTerm);
 
-	float getSpecularRoughness() const;
+	float getSpecularTerm() const;
 
 	void setDoubleSided(bool doubleSided);
 
@@ -82,7 +82,7 @@ private:
 	std::wstring m_normalMap;
 	Color m_color;
 	float m_diffuseTerm;
-	float m_specularRoughness;
+	float m_specularTerm;
 	bool m_doubleSided;
 };
 

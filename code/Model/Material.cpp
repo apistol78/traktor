@@ -15,7 +15,7 @@ Material::Material()
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
-,	m_specularRoughness(0.0f)
+,	m_specularTerm(1.0f)
 ,	m_doubleSided(false)
 {
 }
@@ -28,7 +28,7 @@ Material::Material(const std::wstring& name)
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
-,	m_specularRoughness(0.0f)
+,	m_specularTerm(1.0f)
 ,	m_doubleSided(false)
 {
 }
@@ -99,14 +99,14 @@ float Material::getDiffuseTerm() const
 	return m_diffuseTerm;
 }
 
-void Material::setSpecularRoughness(float specularRoughness)
+void Material::setSpecularTerm(float specularTerm)
 {
-	m_specularRoughness = specularRoughness;
+	m_specularTerm = specularTerm;
 }
 
-float Material::getSpecularRoughness() const
+float Material::getSpecularTerm() const
 {
-	return m_specularRoughness;
+	return m_specularTerm;
 }
 
 void Material::setDoubleSided(bool doubleSided)
