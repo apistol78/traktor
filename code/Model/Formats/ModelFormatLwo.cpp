@@ -25,6 +25,7 @@ namespace traktor
 #define ID_WGHT	LWID_('W','G','H','T')
 #define ID_SPOT	LWID_('S','P','O','T')	// Absolute
 #define ID_MORF	LWID_('M','O','R','F')	// Relative
+#define ID_RGBA LWID_('R','G','B','A')	// Vertex color map.
 
 const lwClip* findLwClip(const lwObject* lwo, int clipIndex)
 {
@@ -247,6 +248,24 @@ bool createMesh(const lwObject* lwo, Model* outModel)
 					pol->v[j].norm[2]
 				)));
 
+				// Vertex colors.
+				for (int32_t k = 0; k < pnt->nvmaps; ++k)
+				{
+					const lwVMapPt* vc = &pnt->vm[k];
+					if (vc->vmap->type == ID_RGBA)
+					{
+						const float* color = vc->vmap->val[vc->index];
+						vertex.setColor(outModel->addUniqueColor(Vector4(
+							color[0],
+							color[1],
+							color[2],
+							color[3]
+						)));
+						break;
+					}
+				}
+
+				// UV maps.
 				if (tex)
 				{
 					const lwVMapPt* vpt = findLwVMapPt(pol->v[j].vm, pol->v[j].nvmaps, tex->param.imap.vmap_name);
