@@ -109,13 +109,6 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 		m_filter->apply(soundBlock);
 
 	// Normalize sound block to hardware sample rate.
-	for (uint32_t k = 0; k < SbcMaxChannelCount; ++k)
-	{
-		if (soundBlock.samples[k])
-			outBlock.samples[k] = m_outputSamples[k];
-		else
-			outBlock.samples[k] = 0;
-	}
 	outBlock.samplesCount = (soundBlock.samplesCount * m_hwSampleRate) / soundBlock.sampleRate;
 	outBlock.samplesCount = std::min(outBlock.samplesCount, m_hwFrameSamples);
 	outBlock.sampleRate = m_hwSampleRate;
@@ -123,6 +116,9 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 
 	if (soundBlock.sampleRate != m_hwSampleRate)
 	{
+		for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+			outBlock.samples[i] = soundBlock.samples[i] ? m_outputSamples[i] : 0;
+
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
 			uint32_t j = (i * soundBlock.sampleRate) / m_hwSampleRate;
@@ -135,12 +131,23 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	}
 	else
 	{
-		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
+		if (abs(m_volume - 1.0f) < FUZZY_EPSILON)
 		{
-			if (outBlock.samples[i])
+			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+				outBlock.samples[i] = soundBlock.samples[i];
+		}
+		else
+		{
+			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
+				outBlock.samples[i] = soundBlock.samples[i] ? m_outputSamples[i] : 0;
+
+			for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 			{
-				for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-					outBlock.samples[i][j] = soundBlock.samples[i][j] * m_volume;
+				if (outBlock.samples[i])
+				{
+					for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+						outBlock.samples[i][j] = soundBlock.samples[i][j] * m_volume;
+				}
 			}
 		}
 	}
