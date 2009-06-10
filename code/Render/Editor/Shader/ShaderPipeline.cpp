@@ -183,7 +183,7 @@ bool ShaderPipeline::buildOutput(
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph);
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; Unable to link shader fragments" << Endl;
+		log::error << L"ShaderPipeline failed; unable to link shader fragments" << Endl;
 		return false;
 	}
 
@@ -191,7 +191,7 @@ bool ShaderPipeline::buildOutput(
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 	if (!shaderGraph)
 	{
-		log::error << L"ShaderPipeline failed; Unable to remove unused branches" << Endl;
+		log::error << L"ShaderPipeline failed; unable to remove unused branches" << Endl;
 		return false;
 	}
 
@@ -199,7 +199,7 @@ bool ShaderPipeline::buildOutput(
 	// Ensure shader graph is valid as a shader.
 	if (!ShaderGraphValidator(shaderGraph).validate(ShaderGraphValidator::SgtShader))
 	{
-		log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
+		log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
 		return false;
 	}
 #endif
@@ -210,7 +210,7 @@ bool ShaderPipeline::buildOutput(
 
 	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
 	{
-		log::info << L"Building shader technique \"" << *i << L"\".." << Endl;
+		log::info << L"Building shader technique \"" << *i << L"\"..." << Endl;
 		log::info << IncreaseIndent;
 
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
@@ -220,7 +220,7 @@ bool ShaderPipeline::buildOutput(
 		// Ensure shader graph is valid as a program.
 		if (!ShaderGraphValidator(shaderGraphTechnique).validate(ShaderGraphValidator::SgtShader))
 		{
-			log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
+			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
 			return false;
 		}
 #endif
@@ -246,7 +246,7 @@ bool ShaderPipeline::buildOutput(
 		// Optimize and compile all combination programs.
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
-			log::info << L"Building combination \"" << (combination + 1) << L"\".." << Endl;
+			log::info << L"Building combination " << (combination + 1) << L"/" << combinationCount << L"..." << Endl;
 			log::info << IncreaseIndent;
 
 			ShaderResource::Combination shaderResourceCombination;
@@ -265,15 +265,16 @@ bool ShaderPipeline::buildOutput(
 			// Ensure shader graph is valid as a program.
 			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
 			{
-				log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
+				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
 				return false;
 			}
 #endif
 			// Merge identical branches.
+			log::info << L"Merging identical branches..." << Endl;
 			shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).mergeBranches();
 			if (!shaderGraphCombination)
 			{
-				log::error << L"ShaderPipeline failed; Unable to merge branches" << Endl;
+				log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
 				return false;
 			}
 
@@ -281,15 +282,16 @@ bool ShaderPipeline::buildOutput(
 			// Ensure shader graph is valid as a program.
 			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
 			{
-				log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
+				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
 				return false;
 			}
 #endif
 			// Insert interpolation nodes at optimal locations.
+			log::info << L"Inserting interpolators..." << Endl;
 			shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
 			if (!shaderGraphCombination)
 			{
-				log::error << L"ShaderPipeline failed; Unable to optimize shader graph" << Endl;
+				log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
 				return false;
 			}
 
@@ -313,17 +315,18 @@ bool ShaderPipeline::buildOutput(
 			// Ensure shader graph is valid as a program.
 			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
 			{
-				log::error << L"ShaderPipeline failed; Not a valid shader graph" << Endl;
+				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
 				return false;
 			}
 #endif
 
 			if (m_renderSystem)
 			{
+				log::info << L"Compiling program..." << Endl;
 				Ref< ProgramResource > programResource = m_renderSystem->compileProgram(shaderGraphCombination, m_optimize, m_validate);
 				if (!programResource)
 				{
-					log::error << L"ShaderPipeline failed; Unable to compile shader" << Endl;
+					log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
 					return false;
 				}
 
@@ -363,13 +366,13 @@ bool ShaderPipeline::buildOutput(
 	);
 	if (!outputInstance)
 	{
-		log::error << L"ShaderPipeline failed; Unable to create output instance" << Endl;
+		log::error << L"ShaderPipeline failed; unable to create output instance" << Endl;
 		return false;
 	}
 
 	if (!outputInstance->commit())
 	{
-		log::error << L"ShaderPipeline failed; Unable to commit output instance" << Endl;
+		log::error << L"ShaderPipeline failed; unable to commit output instance" << Endl;
 		outputInstance->revert();
 		return false;
 	}
