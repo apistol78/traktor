@@ -48,7 +48,10 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 void RenderTargetSetOpenGL::destroy()
 {
 	for (RefArray< RenderTargetOpenGL >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
-		(*i)->destroy();
+	{
+		if (*i)
+			(*i)->destroy();
+	}
 	m_colorTextures.resize(0);
 }
 

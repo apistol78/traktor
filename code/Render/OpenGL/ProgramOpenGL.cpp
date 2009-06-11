@@ -277,8 +277,12 @@ void ProgramOpenGL::destroy()
 		m_dirty = true;
 	}
 
-	m_context->deleteResource(new DeleteObjectCallback(m_program));
-	m_program = 0;
+	if (m_program)
+	{
+		if (m_context)
+			m_context->deleteResource(new DeleteObjectCallback(m_program));
+		m_program = 0;
+	}
 }
 
 void ProgramOpenGL::setFloatParameter(handle_t handle, float param)
@@ -292,7 +296,7 @@ void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, 
 	if (i == m_parameterMap.end())
 		return;
 
-	memcpy(&m_uniformData[i->second], param, length * sizeof(float));
+	std::memcpy(&m_uniformData[i->second], param, length * sizeof(float));
 	m_dirty = true;
 }
 

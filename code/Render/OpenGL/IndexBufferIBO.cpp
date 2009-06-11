@@ -49,7 +49,8 @@ void IndexBufferIBO::destroy()
 	T_ASSERT_M (!m_locked, L"Index buffer locked");
 	if (m_name)
 	{
-		m_context->deleteResource(new DeleteBufferCallback(m_name));
+		if (m_context)
+			m_context->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }
@@ -58,10 +59,9 @@ void* IndexBufferIBO::lock()
 {
 	T_ASSERT_M (!m_locked, L"Index buffer already locked");
 	
-	if (!m_context->enter())
-		return 0;
-
+	T_CONTEXT_SCOPE(m_context);
 	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
+
 	void* ptr = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
 	if (ptr)
 		m_locked = true;
@@ -73,11 +73,11 @@ void IndexBufferIBO::unlock()
 {
 	T_ASSERT_M (m_locked, L"Index buffer not locked");
 
+	T_CONTEXT_SCOPE(m_context);
 	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
 	T_OGL_SAFE(glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB));
 
 	m_locked = false;
-	m_context->leave();
 }
 
 void IndexBufferIBO::bind()

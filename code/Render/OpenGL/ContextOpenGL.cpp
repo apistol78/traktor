@@ -5,6 +5,14 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+typedef RefArray< ContextOpenGL > context_stack_t;
+
+		}
+
+ThreadLocal ContextOpenGL::ms_contextStack;
 
 #if defined(_WIN32)
 
@@ -12,8 +20,6 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 :	m_hWnd(hWnd)
 ,	m_hDC(hDC)
 ,	m_hRC(hRC)
-,	m_count(0)
-,	m_ownerThreadId(0)
 
 #elif defined(__APPLE__)
 
@@ -48,19 +54,17 @@ bool ContextOpenGL::enter()
 {
 #if defined(_WIN32)
 
-	uint32_t threadId = GetCurrentThreadId();
-
-	if (m_count++ > 0)
-	{
-		T_ASSERT (m_ownerThreadId == threadId);
-		return true;
-	}
-
-	T_ASSERT (m_ownerThreadId == 0);
 	if (!wglMakeCurrent(m_hDC, m_hRC))
 		return false;
 
-	m_ownerThreadId = threadId;
+	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
+	if (!stack)
+	{
+		stack = new context_stack_t();
+		ms_contextStack.set(stack);
+	}
+
+	stack->push_back(this);
 
 #elif defined(__APPLE__)
 
@@ -105,14 +109,23 @@ bool ContextOpenGL::enter()
 void ContextOpenGL::leave()
 {
 #if defined(_WIN32)
-	T_ASSERT (m_count > 0);
-	T_ASSERT (m_ownerThreadId == GetCurrentThreadId());
+	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 
-	if (--m_count == 0)
+	T_ASSERT (stack);
+	T_ASSERT (!stack->empty());
+	T_ASSERT (stack->back() == this);
+
+	stack->pop_back();
+
+	if (!stack->empty())
 	{
-		wglMakeCurrent(m_hDC, NULL);
-		m_ownerThreadId = 0;
+		wglMakeCurrent(
+			stack->back()->m_hDC,
+			stack->back()->m_hRC
+		);
 	}
+	else
+		wglMakeCurrent(m_hDC, NULL);
 
 #elif defined(__APPLE__)
 #else	// LINUX
