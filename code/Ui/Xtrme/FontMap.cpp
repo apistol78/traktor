@@ -69,9 +69,9 @@ void FontMap::create(render::RenderSystem* renderSystem, const Font& font)
 	T_ASSERT_M (hbm, L"Unable to create DIB section");
 	T_ASSERT_M (bits, L"No bits returned from CreateDIBSection");
 
-	memset(bits, 0xff, dim * dim * 4);
+	std::memset(bits, 0xff, dim * dim * 4);
 
-	memset(&lf, 0, sizeof(lf));
+	std::memset(&lf, 0, sizeof(lf));
 	lf.lfHeight = -pixelSize;
 	lf.lfWidth = 0;
 	lf.lfEscapement = 0;

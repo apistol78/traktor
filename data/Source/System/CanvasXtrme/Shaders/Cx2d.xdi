@@ -39,8 +39,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>-49</first>
-				<second>250</second>
+				<first>-76</first>
+				<second>374</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -54,7 +54,7 @@
 				<second>251</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="1">
+		<item type="traktor.render.PixelOutput" version="2">
 			<comment></comment>
 			<position>
 				<first>478</first>
@@ -79,12 +79,19 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>101</first>
-				<second>259</second>
+				<first>108</first>
+				<second>318</second>
 			</position>
 			<swizzle>zyxw</swizzle>
 		</item>
