@@ -173,12 +173,14 @@ void RenderTargetOpenGL::destroy()
 {
 	if (m_colorTexture)
 	{
-		m_context->deleteResource(new DeleteTextureCallback(m_colorTexture));
+		if (m_context)
+			m_context->deleteResource(new DeleteTextureCallback(m_colorTexture));
 		m_colorTexture = 0;
 	}
 	if (m_frameBufferObject)
 	{
-		m_context->deleteResource(new DeleteFramebufferCallback(m_frameBufferObject));
+		if (m_context)
+			m_context->deleteResource(new DeleteFramebufferCallback(m_frameBufferObject));
 		m_frameBufferObject = 0;
 	}
 }

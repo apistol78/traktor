@@ -148,7 +148,8 @@ void VertexBufferVBO::destroy()
 	T_ASSERT_M (!m_locked, L"Vertex buffer locked");
 	if (m_name)
 	{
-		m_context->deleteResource(new DeleteBufferCallback(m_name));
+		if (m_context)
+			m_context->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }

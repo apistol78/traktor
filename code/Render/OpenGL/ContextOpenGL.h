@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
+#include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
 
 namespace traktor
@@ -86,8 +87,6 @@ private:
 	HWND m_hWnd;
 	HDC m_hDC;
 	HGLRC m_hRC;
-	uint32_t m_count;
-	uint32_t m_ownerThreadId;
 #elif defined(__APPLE__)
 	WindowRef m_window;
 	ControlRef m_control;
@@ -98,6 +97,7 @@ private:
 	GLXContext m_context;
 #endif
 
+	static ThreadLocal ms_contextStack;
 	std::vector< DeleteCallback* > m_deleteResources;
 };
 

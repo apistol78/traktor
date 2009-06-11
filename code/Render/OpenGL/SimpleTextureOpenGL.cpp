@@ -165,6 +165,7 @@ bool SimpleTextureOpenGL::lock(int level, Lock& lock)
 
 void SimpleTextureOpenGL::unlock(int level)
 {
+	T_CONTEXT_SCOPE(m_context)
 	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 	T_OGL_SAFE(glTexImage2D(
