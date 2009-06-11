@@ -650,26 +650,41 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 
 	// Find factory supporting instance type.
-	const EditorPageFactory* editorPageFactory = 0;
-	const ObjectEditorFactory* objectEditorFactory = 0;
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< const EditorPageFactory > editorPageFactory;
+	Ref< const ObjectEditorFactory > objectEditorFactory;
 
-	for (RefArray< EditorPageFactory >::iterator i = m_editorPageFactories.begin(); !editorPageFactory && i != m_editorPageFactories.end(); ++i)
+	for (RefArray< EditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); !editorPageFactory && j != typeSet.end(); ++j)
+		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
 		{
-			if (is_type_of(*(*j), object->getType()))
-				editorPageFactory = *i;
+			if (is_type_of(**j, object->getType()))
+			{
+				uint32_t classDifference = type_difference(**j, object->getType());
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					editorPageFactory = *i;
+				}
+			}
 		}
 	}
 
-	for (RefArray< ObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); !objectEditorFactory && i != m_objectEditorFactories.end(); ++i)
+	for (RefArray< ObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); !objectEditorFactory && j != typeSet.end(); ++j)
+		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
 		{
-			if (is_type_of(*(*j), object->getType()))
-				objectEditorFactory = *i;
+			if (is_type_of(**j, object->getType()))
+			{
+				uint32_t classDifference = type_difference(**j, object->getType());
+				if (classDifference < minClassDifference)
+				{
+					minClassDifference = classDifference;
+					objectEditorFactory = *i;
+				}
+			}
 		}
 	}
 
