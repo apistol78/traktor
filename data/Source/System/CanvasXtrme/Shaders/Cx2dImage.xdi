@@ -39,8 +39,8 @@
 		<item type="traktor.render.Sampler">
 			<comment></comment>
 			<position>
-				<first>432</first>
-				<second>259</second>
+				<first>361</first>
+				<second>250</second>
 			</position>
 			<parameterName>Texture</parameterName>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
@@ -70,11 +70,11 @@
 			<type>DtFloat2</type>
 			<index>0</index>
 		</item>
-		<item type="traktor.render.PixelOutput" version="1">
+		<item type="traktor.render.PixelOutput" version="2">
 			<comment></comment>
 			<position>
-				<first>1035</first>
-				<second>320</second>
+				<first>724</first>
+				<second>324</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
@@ -95,12 +95,19 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>376</first>
-				<second>459</second>
+				<first>65</first>
+				<second>463</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -110,15 +117,15 @@
 		<item type="traktor.render.Interpolator">
 			<comment></comment>
 			<position>
-				<first>818</first>
-				<second>350</second>
+				<first>487</first>
+				<second>353</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment></comment>
 			<position>
-				<first>890</first>
-				<second>277</second>
+				<first>579</first>
+				<second>281</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
@@ -162,32 +169,17 @@
 		<item type="traktor.render.Platform">
 			<comment></comment>
 			<position>
-				<first>637</first>
-				<second>349</second>
+				<first>326</first>
+				<second>353</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>539</first>
-				<second>404</second>
+				<first>228</first>
+				<second>408</second>
 			</position>
 			<swizzle>zyxw</swizzle>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment></comment>
-			<position>
-				<first>617</first>
-				<second>231</second>
-			</position>
-			<swizzle>zyxw</swizzle>
-		</item>
-		<item type="traktor.render.Platform">
-			<comment></comment>
-			<position>
-				<first>715</first>
-				<second>176</second>
-			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -353,52 +345,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[16]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<name>DX10</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

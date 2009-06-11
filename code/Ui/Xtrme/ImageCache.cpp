@@ -60,7 +60,7 @@ render::Texture* ImageCache::getTexture(IBitmap* bitmap)
 	}
 
 	Ref< drawing::Image > image = bitmap->getImage();
-	image->convert(drawing::PixelFormat::getA8R8G8B8());
+	image->convert(drawing::PixelFormat::getA8B8G8R8());
 
 	uint32_t width = image->getWidth();
 	uint32_t height = image->getHeight();
