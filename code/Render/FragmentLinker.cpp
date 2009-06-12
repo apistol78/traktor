@@ -119,7 +119,7 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
 	{
 		Edge* edge = *i;
 
-		Ref< const OutputPin > sourcePin = edge->getSource();
+		const OutputPin* sourcePin = edge->getSource();
 		if (is_a< External >(sourcePin->getNode()))
 		{
 			Ref< const ShaderGraph > fragmentGraph = fragmentGraphs[sourcePin->getNode()];
@@ -138,8 +138,8 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
 			}
 		}
 
-		RefArray< const InputPin > destinationPins;
-		Ref< const InputPin > destinationPin = edge->getDestination();
+		std::vector< const InputPin* > destinationPins;
+		const InputPin* destinationPin = edge->getDestination();
 		if (is_a< External >(destinationPin->getNode()))
 		{
 			Ref< const ShaderGraph > fragmentGraph = fragmentGraphs[destinationPin->getNode()];
@@ -159,7 +159,7 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
 		else
 			destinationPins.push_back(destinationPin);
 
-		for (RefArray< const InputPin >::iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
+		for (std::vector< const InputPin* >::iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
 		{
 			T_ASSERT (!is_a< External >(sourcePin->getNode()));
 			T_ASSERT (!is_a< External >((*j)->getNode()));
@@ -234,20 +234,20 @@ ShaderGraph* FragmentLinker::merge(const ShaderGraph* shaderGraphLeft, const Sha
 		if (!inputPort)
 			continue;
 
-		RefArray< const InputPin > destinationPins;
+		std::vector< const InputPin* > destinationPins;
 		if (!shaderGraphRightAdj.findDestinationPins(inputPort->getOutputPin(0), destinationPins))
 			continue;
 
 		std::set< OutputPort* >::iterator j = std::find_if(outputPorts.begin(), outputPorts.end(), OutputPortPredicate(inputPort->getName()));
 		if (j != outputPorts.end())
 		{
-			Ref< const OutputPin > sourcePin = shaderGraphLeftAdj.findSourcePin((*j)->getInputPin(0));
+			const OutputPin* sourcePin = shaderGraphLeftAdj.findSourcePin((*j)->getInputPin(0));
 
 			bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), sourcePin->getNode()) != resolvedNodes.end();
 			if (!foundSource)
 				resolvedNodes.push_back(sourcePin->getNode());
 
-			for (RefArray< const InputPin >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
+			for (std::vector< const InputPin* >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
 			{
 				bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(),(*k)->getNode()) != resolvedNodes.end();
 				if (!foundDestination)
@@ -262,7 +262,7 @@ ShaderGraph* FragmentLinker::merge(const ShaderGraph* shaderGraphLeft, const Sha
 			if (!foundSource)
 				resolvedNodes.push_back(inputPort);
 
-			for (RefArray< const InputPin >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
+			for (std::vector< const InputPin* >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
 			{
 				bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(),(*k)->getNode()) != resolvedNodes.end();
 				if (!foundDestination)

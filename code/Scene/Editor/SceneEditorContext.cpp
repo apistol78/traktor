@@ -266,7 +266,7 @@ void SceneEditorContext::buildEntities()
 		m_rootEntityAdapter = 0;
 
 	// Force a collect in order to as quickly as possible remove old, unused, entities.
-	Heap::getInstance().collect(true);
+	Heap::getInstance().collect();
 
 	raisePostBuild();
 }

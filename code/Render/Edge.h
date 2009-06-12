@@ -37,8 +37,8 @@ public:
 	bool serialize(Serializer& s);
 
 private:
-	Ref< const OutputPin > m_source;
-	Ref< const InputPin > m_destination;
+	const OutputPin* m_source;
+	const InputPin* m_destination;
 };
 
 	}

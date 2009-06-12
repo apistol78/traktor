@@ -705,7 +705,7 @@ void emitSwitch(EmitterContext& cx, Switch* node)
 		Instruction is1(OpJumpIfZero, N->reg, 0, 0, 0, 0);
 		uint32_t addressJump = cx.emitInstruction(is1);
 
-		Ref< const InputPin > caseInputPin = node->getInputPin(i + 2);
+		const InputPin* caseInputPin = node->getInputPin(i + 2);
 		T_ASSERT (caseInputPin);
 
 		Variable* in = cx.emitInput(caseInputPin);

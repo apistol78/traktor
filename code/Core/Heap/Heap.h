@@ -6,7 +6,7 @@
 #include "Core/Containers/IntrusiveList.h"
 #include "Core/Singleton/Singleton.h"
 #include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Event.h"
+#include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
 
 // import/export mechanism.
@@ -54,6 +54,12 @@ class T_DLLCLASS Heap : public Singleton
 	T_RTTI_CLASS(Heap)
 
 public:
+	typedef Semaphore lock_primitive_t;
+
+	/*! \brief Get Heap singleton instance.
+	 *
+	 * \return Reference to single Heap instance.
+	 */
 	static Heap& getInstance();
 
 	/*! \brief Enter construction of new object.
@@ -96,11 +102,8 @@ public:
 	 */
 	void invalidateAllRefs();
 
-	/*! \brief Collect unused memory.
-	 *
-	 * \param wait Wait until collection is completed until return.
-	 */
-	void collect(bool wait = false);
+	/*! \brief Collect unused memory. */
+	void collect();
 
 	/*! \brief Collect all memory.
 	 *
@@ -140,6 +143,12 @@ public:
 	 */
 	uint32_t getReferenceCount(const Object* obj);
 
+	/*! \brief Get number of pending destruction tasks.
+	 *
+	 * \return Number of destruction tasks.
+	 */
+	uint32_t getDestructionTaskCount() const;
+
 	/*! \brief Dump information about allocated objects.
 	 *
 	 * \param os Target output stream.
@@ -152,14 +161,15 @@ protected:
 	virtual void destroy();
 
 private:
-	mutable Semaphore m_lock;
+	mutable lock_primitive_t m_heapLock;
+	mutable lock_primitive_t m_destructQueueLock;
+
 	Allocator* m_allocator;
 	ThreadLocal* m_creatingObjectStack;
 	std::vector< IntrusiveList< ObjectInfo >* > m_creatingObjectStacks;
 	IntrusiveList< ObjectInfo > m_objects;
 	IntrusiveList< RefBase > m_rootRefs;
-	Semaphore m_destructQueueLock;
-	Event m_destructQueueEvent;
+	Signal m_destructQueueSignal;
 	std::list< Functor* > m_destructQueue;
 	Thread* m_destructThread;
 	int32_t m_objectsSinceGC;

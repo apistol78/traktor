@@ -37,7 +37,7 @@ public:
 	bool getOptional() const;
 
 private:
-	Ref< Node > m_node;
+	Node* m_node;
 	std::wstring m_name;
 	bool m_optional;
 };

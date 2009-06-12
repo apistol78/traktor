@@ -18,10 +18,10 @@ ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGr
 
 int ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName)
 {
-	Ref< const InputPin > inputPin = node->findInputPin(inputPinName);
+	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT (inputPin);
 
-	Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourceOutputPin)
 		return OrConstant;
 
@@ -105,7 +105,7 @@ int ShaderGraphOrderEvaluator::nodeDefault(const Node* node, int initialOrder)
 	int order = initialOrder;
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
-		Ref< const InputPin > inputPin = node->getInputPin(i);
+		const InputPin* inputPin = node->getInputPin(i);
 		int pinOrder = evaluate(node, inputPin->getName());
 		order = std::max(order, pinOrder);
 	}
@@ -116,7 +116,7 @@ int ShaderGraphOrderEvaluator::nodeConstantOrNonLinear(const Node* node)
 {
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
-		Ref< const InputPin > inputPin = node->getInputPin(i);
+		const InputPin* inputPin = node->getInputPin(i);
 		int pinOrder = evaluate(node, inputPin->getName());
 		if (pinOrder != OrConstant)
 			return OrNonLinear;

@@ -46,7 +46,7 @@ const OutputPin* ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) c
 	return edge ? edge->getSource() : 0;
 }
 
-size_t ShaderGraphAdjacency::findDestinationPins(const OutputPin* outputPin, RefArray< const InputPin >& outDestinations) const
+size_t ShaderGraphAdjacency::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const
 {
 	RefArray< Edge > edges;
 	findEdges(outputPin, edges);

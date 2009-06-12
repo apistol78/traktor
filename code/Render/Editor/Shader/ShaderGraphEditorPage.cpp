@@ -578,14 +578,14 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 	{
 		Edge* shaderEdge = *i;
 
-		Ref< const OutputPin > shaderSourcePin = shaderEdge->getSource();
+		const OutputPin* shaderSourcePin = shaderEdge->getSource();
 		if (!shaderSourcePin)
 		{
 			log::warning << L"Invalid shader edge, no source pin" << Endl;
 			continue;
 		}
 
-		Ref< const InputPin > shaderDestinationPin = shaderEdge->getDestination();
+		const InputPin* shaderDestinationPin = shaderEdge->getDestination();
 		if (!shaderDestinationPin)
 		{
 			log::warning << L"Invalid shader edge, no destination pin" << Endl;
@@ -643,7 +643,7 @@ ui::custom::Node* ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
-		Ref< const InputPin > inputPin = shaderNode->getInputPin(j);
+		const InputPin* inputPin = shaderNode->getInputPin(j);
 		editorNode->addInputPin(gc_new< ui::custom::Pin >(
 			editorNode,
 			inputPin->getName(),
@@ -654,7 +654,7 @@ ui::custom::Node* ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
 	{
-		Ref< const OutputPin > outputPin = shaderNode->getOutputPin(j);
+		const OutputPin* outputPin = shaderNode->getOutputPin(j);
 		editorNode->addOutputPin(gc_new< ui::custom::Pin >(
 			editorNode,
 			outputPin->getName(),
@@ -927,10 +927,10 @@ void ShaderGraphEditorPage::eventEdgeConnect(ui::Event* event)
 	Ref< Node > shaderDestinationNode = editorDestinationPin->getNode()->getData< Node >(L"SHADERNODE");
 	T_ASSERT (shaderDestinationNode);
 
-	Ref< const OutputPin > shaderSourcePin = shaderSourceNode->findOutputPin(editorSourcePin->getName());
+	const OutputPin* shaderSourcePin = shaderSourceNode->findOutputPin(editorSourcePin->getName());
 	T_ASSERT (shaderSourcePin);
 
-	Ref< const InputPin > shaderDestinationPin = shaderDestinationNode->findInputPin(editorDestinationPin->getName());
+	const InputPin* shaderDestinationPin = shaderDestinationNode->findInputPin(editorDestinationPin->getName());
 	T_ASSERT (shaderDestinationPin);
 
 	// Replace existing edge.

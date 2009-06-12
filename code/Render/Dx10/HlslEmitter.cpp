@@ -1088,7 +1088,7 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 		cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		Ref< const InputPin > caseInput = node->getInputPin(i + 2);
+		const InputPin* caseInput = node->getInputPin(i + 2);
 		T_ASSERT (caseInput);
 
 		HlslVariable* caseInputVariable = cx.emitInput(caseInput);
@@ -1109,7 +1109,7 @@ bool emitSwitch(HlslContext& cx, Switch* node)
 		cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		Ref< const InputPin > caseInput = node->getInputPin(1);
+		const InputPin* caseInput = node->getInputPin(1);
 		T_ASSERT (caseInput);
 
 		HlslVariable* caseInputVariable = cx.emitInput(caseInput);

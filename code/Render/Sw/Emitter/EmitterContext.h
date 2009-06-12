@@ -139,7 +139,7 @@ private:
 	Parameters& m_parameters;
 	State m_states[2];
 	State* m_currentState;
-	std::map< Ref< const OutputPin >, TransientInput > m_inputs;
+	std::map< const OutputPin*, TransientInput > m_inputs;
 	uint32_t m_interpolatorCount;
 	uint32_t m_samplerCount;
 	RenderStateDesc m_renderState;
