@@ -133,7 +133,8 @@ void SimpleTextureOpenGL::destroy()
 {
 	if (m_textureName)
 	{
-		m_context->deleteResource(new DeleteTextureCallback(m_textureName));
+		if (m_context)
+			m_context->deleteResource(new DeleteTextureCallback(m_textureName));
 		m_textureName = 0;
 	}
 }

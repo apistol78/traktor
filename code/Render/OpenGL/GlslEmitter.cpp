@@ -711,11 +711,11 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"textureCube(" << node->getParameterName() << L", " << samplerTexCoord << L");" << Endl;
+			assign(f, out) << L"textureCube(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"texture3D(" << node->getParameterName() << L", " << samplerTexCoord << L");" << Endl;
+			assign(f, out) << L"texture3D(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
 			break;
 		}
 	}
@@ -728,11 +728,11 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"textureCubeLod(" << node->getParameterName() << L", " << samplerTexCoord << L", 0.0);" << Endl;
+			assign(f, out) << L"textureCubeLod(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"texture3DLod(" << node->getParameterName() << L", " << samplerTexCoord << L", 0.0);" << Endl;
+			assign(f, out) << L"texture3DLod(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
 			break;
 		}
 	}
@@ -743,7 +743,20 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		int sampler = int(samplers.size());
 
 		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform sampler2D " << node->getParameterName() << L";" << Endl;
+		switch (node->getLookup())
+		{
+		case Sampler::LuSimple:
+			fu << L"uniform sampler2D " << node->getParameterName() << L";" << Endl;
+			break;
+
+		case Sampler::LuCube:
+			fu << L"uniform samplerCube " << node->getParameterName() << L";" << Endl;
+			break;
+
+		case Sampler::LuVolume:
+			fu << L"uniform sampler3D " << node->getParameterName() << L";" << Endl;
+			break;
+		}
 		fu << L"uniform vec4 " << originScale << L";" << Endl;
 
 		RenderState& rs = cx.getRenderState();

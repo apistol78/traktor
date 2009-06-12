@@ -20,13 +20,8 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 	case TfR8G8B8A8:
 		outPixelSize = 4;
 		outComponents = GL_RGBA8;
-#if defined(T_BIG_ENDIAN)
-		outFormat = GL_BGRA;
-		outType = GL_UNSIGNED_INT_8_8_8_8;
-#else	// T_LITTLE_ENDIAN
-		outFormat = GL_BGRA;
+		outFormat = GL_RGBA;
 		outType = GL_UNSIGNED_INT_8_8_8_8_REV;
-#endif
 		break;
 
 	//case TfR16G16B16A16F:
