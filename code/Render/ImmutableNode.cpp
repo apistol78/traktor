@@ -11,12 +11,12 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 {
 	while (inputPins && inputPins->name)
 	{
-		m_inputPins.push_back(gc_new< InputPin >(this, inputPins->name, inputPins->optional));
+		m_inputPins.push_back(InputPin(this, inputPins->name, inputPins->optional));
 		++inputPins;
 	}
 	while (outputPins && outputPins->name)
 	{
-		m_outputPins.push_back(gc_new< OutputPin >(this, outputPins->name));
+		m_outputPins.push_back(OutputPin(this, outputPins->name));
 		++outputPins;
 	}
 }
@@ -29,7 +29,7 @@ int ImmutableNode::getInputPinCount() const
 const InputPin* ImmutableNode::getInputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
-	return m_inputPins[index];
+	return &m_inputPins[index];
 }
 
 int ImmutableNode::getOutputPinCount() const
@@ -40,7 +40,7 @@ int ImmutableNode::getOutputPinCount() const
 const OutputPin* ImmutableNode::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
-	return m_outputPins[index];
+	return &m_outputPins[index];
 }
 
 	}

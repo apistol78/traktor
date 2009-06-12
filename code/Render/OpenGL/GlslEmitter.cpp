@@ -924,7 +924,7 @@ void emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		Ref< const InputPin > caseInput = node->getInputPin(i + 2);
+		const InputPin* caseInput = node->getInputPin(i + 2);
 		T_ASSERT (caseInput);
 
 		GlslVariable* caseInputVariable = cx.emitInput(caseInput);
@@ -945,7 +945,7 @@ void emitSwitch(GlslContext& cx, Switch* node)
 		cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 		cx.getShader().pushScope();
 
-		Ref< const InputPin > caseInput = node->getInputPin(1);
+		const InputPin* caseInput = node->getInputPin(1);
 		T_ASSERT (caseInput);
 
 		GlslVariable* caseInputVariable = cx.emitInput(caseInput);

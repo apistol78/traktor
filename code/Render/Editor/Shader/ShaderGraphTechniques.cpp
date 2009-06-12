@@ -74,7 +74,7 @@ ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 		int inputPinCount = node->getInputPinCount();
 		for (int i = 0; i < inputPinCount; ++i)
 		{
-			Ref< const InputPin > inputPin = node->getInputPin(i);
+			const InputPin* inputPin = node->getInputPin(i);
 			T_ASSERT (inputPin);
 
 			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);

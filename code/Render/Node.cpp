@@ -46,7 +46,7 @@ const InputPin* Node::findInputPin(const std::wstring& name) const
 	int count = getInputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
-		Ref< const InputPin > inputPin = getInputPin(i);
+		const InputPin* inputPin = getInputPin(i);
 		T_ASSERT (inputPin);
 
 		if (inputPin->getName() == name)
@@ -60,7 +60,7 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 	int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
-		Ref< const OutputPin > outputPin = getOutputPin(i);
+		const OutputPin* outputPin = getOutputPin(i);
 		T_ASSERT (outputPin);
 
 		if (outputPin->getName() == name)

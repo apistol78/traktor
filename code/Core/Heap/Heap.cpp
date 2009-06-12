@@ -64,9 +64,9 @@ struct ObjectInfo
 	{
 
 #if defined(T_HEAP_THREAD_SAFE)
-#	define HEAP_LOCK Acquire< Semaphore > __prvlock__(m_lock);
-#	define HEAP_LOCK_ACQUIRE m_lock.acquire();
-#	define HEAP_LOCK_RELEASE m_lock.release();
+#	define HEAP_LOCK Acquire< Heap::lock_primitive_t > __prvlock__(m_heapLock);
+#	define HEAP_LOCK_ACQUIRE m_heapLock.acquire();
+#	define HEAP_LOCK_RELEASE m_heapLock.release();
 #else
 #	define HEAP_LOCK
 #	define HEAP_LOCK_ACQUIRE
@@ -76,7 +76,6 @@ struct ObjectInfo
 const int32_t c_objectsThreshold = 1000;			//!< Number of objects allocated before issuing GC.
 const int32_t c_refsRemovedThreshold = 30000;		//!< Number of references removed before issuing GC.
 const int32_t c_promoteNonVisitedThreshold = 100;	//!< Milliseconds until objects get promoted from non-visited into collectable.
-const int32_t c_maxDestructQueueSize = 64;			//!< Maximum number of destruction queues; collector will force a block if this is exceeded.
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)
 {
@@ -393,7 +392,7 @@ void Heap::invalidateAllRefs()
 	}
 }
 
-void Heap::collect(bool wait)
+void Heap::collect()
 {
 	IntrusiveList< ObjectInfo > collectables;
 	MarkVisitor visitor;
@@ -446,24 +445,16 @@ void Heap::collect(bool wait)
 	// Destroy collectables.
 	{
 #if defined(T_HEAP_CONCURRENT_COLLECT)
-		bool enqueued = false;
-		if (!wait)
+		m_destructQueueLock.acquire();
 		{
-			m_destructQueueLock.acquire();
-			if (m_destructQueue.size() < c_maxDestructQueueSize)
+			Functor* task = makeFunctor(this, &Heap::destruct, collectables);
+			if (task)
 			{
-				Functor* task = makeFunctor(this, &Heap::destruct, collectables);
-				if (task)
-				{
-					m_destructQueue.push_back(task);
-					m_destructQueueEvent.pulse();
-					enqueued = true;
-				}
+				m_destructQueue.push_back(task);
+				m_destructQueueSignal.set();
 			}
-			m_destructQueueLock.release();
 		}
-		if (!enqueued)
-			destruct(collectables);
+		m_destructQueueLock.release();
 #else
 		destruct(collectables);
 #endif
@@ -554,6 +545,12 @@ uint32_t Heap::getReferenceCount(const Object* obj)
 	return visitor.m_count;
 }
 
+uint32_t Heap::getDestructionTaskCount() const
+{
+	Acquire< lock_primitive_t > lock(m_destructQueueLock);
+	return uint32_t(m_destructQueue.size());
+}
+
 void Heap::dump(OutputStream& os) const
 {
 	HEAP_LOCK
@@ -589,7 +586,7 @@ void Heap::create()
 	m_destructThread = ThreadManager::getInstance().create(makeFunctor(this, &Heap::destructThread), L"Heap destruct thread");
 	T_ASSERT (m_destructThread);
 
-	m_destructThread->start();
+	m_destructThread->start(Thread::Above);
 #endif
 }
 
@@ -674,23 +671,33 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 void Heap::destructThread()
 {
 	T_ASSERT (m_destructThread);
+	Functor* task;
+
 	while (!m_destructThread->stopped())
 	{
-		if (!m_destructQueueEvent.wait(100))
-			continue;
-
 		m_destructQueueLock.acquire();
-		T_ASSERT (!m_destructQueue.empty());
-		Functor* task = m_destructQueue.front();
-		m_destructQueue.pop_front();
-		T_ASSERT (task);
+
+		if (!m_destructQueue.empty())
+		{
+			task = m_destructQueue.front();
+			m_destructQueue.pop_front();
+			T_ASSERT (task);
+		}
+		else
+			task = 0;
+
 		m_destructQueueLock.release();
 
-		(*task)();
-
-		m_destructQueueLock.acquire();
-		delete task;
-		m_destructQueueLock.release();
+		if (task)
+		{
+			(*task)();
+			delete task;
+		}
+		else
+		{
+			m_destructQueueSignal.reset();
+			m_destructQueueSignal.wait(100);
+		}
 	}
 }
 

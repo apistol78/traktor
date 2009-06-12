@@ -62,7 +62,7 @@ public:
 	 * \param outDestinations Connected input pins.
 	 * \return Number of connected input pins.
 	 */
-	size_t findDestinationPins(const OutputPin* outputPin, RefArray< const InputPin >& outDestinations) const;
+	size_t findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const;
 	
 private:
 	Ref< const ShaderGraph > m_shaderGraph;

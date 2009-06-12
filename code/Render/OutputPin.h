@@ -37,7 +37,7 @@ public:
 	const std::wstring& getName() const;
 
 private:
-	Ref< Node > m_node;
+	Node* m_node;
 	std::wstring m_name;
 };
 

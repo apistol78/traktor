@@ -28,7 +28,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 
 HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 {
-	Ref< const OutputPin > sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
@@ -45,7 +45,7 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 
 HlslVariable* HlslContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
-	Ref< const InputPin > inputPin = node->findInputPin(inputPinName);
+	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT (inputPin);
 
 	return emitInput(inputPin);
@@ -53,7 +53,7 @@ HlslVariable* HlslContext::emitInput(Node* node, const std::wstring& inputPinNam
 
 HlslVariable* HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, HlslType type)
 {
-	Ref< const OutputPin > outputPin = node->findOutputPin(outputPinName);
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT (outputPin);
 
 	HlslVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);

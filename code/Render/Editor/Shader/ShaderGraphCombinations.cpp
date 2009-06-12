@@ -66,10 +66,10 @@ ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 		std::vector< std::wstring >::const_iterator parameterIter = std::find(m_parameterNames.begin(), m_parameterNames.end(), (*i)->getParameterName());
 		uint32_t combinationMask = 1 << uint32_t(std::distance(m_parameterNames.begin(), parameterIter));
 
-		Ref< const InputPin > inputPin = (*i)->getInputPin((combination & combinationMask) == combinationMask ? /* True */ 0 : /* False */ 1);
+		const InputPin* inputPin = (*i)->getInputPin((combination & combinationMask) == combinationMask ? /* True */ 0 : /* False */ 1);
 		T_ASSERT (inputPin);
 
-		Ref< const OutputPin > outputPin = (*i)->getOutputPin(/* Output */ 0);
+		const OutputPin* outputPin = (*i)->getOutputPin(/* Output */ 0);
 		T_ASSERT (outputPin);
 
 		Ref< Edge > inputEdge = shaderGraphAdj->findEdge(inputPin);

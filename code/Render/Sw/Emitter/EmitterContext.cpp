@@ -51,7 +51,7 @@ void EmitterContext::emit(Node* node)
 	m_emitter.emit(*this, node);
 
 	// Clean all used inputs.
-	for (std::map< Ref< const OutputPin >, TransientInput >::iterator i = m_inputs.begin(); i != m_inputs.end(); )
+	for (std::map< const OutputPin*, TransientInput >::iterator i = m_inputs.begin(); i != m_inputs.end(); )
 	{
 		if (!i->second.count)
 		{
@@ -65,12 +65,12 @@ void EmitterContext::emit(Node* node)
 
 Variable* EmitterContext::emitInput(const InputPin* inputPin)
 {
-	Ref< const OutputPin > sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
 	// Emit source pin if not visited already.
-	std::map< Ref< const OutputPin >, TransientInput >::iterator i = m_inputs.find(sourcePin);
+	std::map< const OutputPin*, TransientInput >::iterator i = m_inputs.find(sourcePin);
 	if (i == m_inputs.end())
 	{
 		m_emitter.emit(*this, sourcePin->getNode());
@@ -89,7 +89,7 @@ Variable* EmitterContext::emitInput(const InputPin* inputPin)
 
 Variable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName)
 {
-	Ref< const InputPin > inputPin = node->findInputPin(inputPinName);
+	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT_M (inputPin, L"Unable to find input pin");
 
 	return emitInput(inputPin);
@@ -97,10 +97,10 @@ Variable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName
 
 Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, VariableType type)
 {
-	Ref< const OutputPin > outputPin = node->findOutputPin(outputPinName);
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT_M (outputPin, L"Unable to find output pin");
 
-	RefArray< const InputPin > destinationPins;
+	std::vector< const InputPin* > destinationPins;
 	m_shaderGraphAdj->findDestinationPins(outputPin, destinationPins);
 	if (destinationPins.empty())
 		return 0;
@@ -118,10 +118,10 @@ Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinNa
 
 bool EmitterContext::evaluateConstant(Node* node, const std::wstring& inputPinName, float& outValue)
 {
-	Ref< const InputPin > inputPin = node->findInputPin(inputPinName);
+	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT_M (inputPin, L"Unable to find input pin");
 
-	Ref< const OutputPin > sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourcePin)
 		return false;
 

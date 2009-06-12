@@ -45,11 +45,13 @@ private:
 		double at;
 		uint32_t objectCount;
 		uint32_t referenceCount;
+		uint32_t destructionCount;
 	};
 
 	Ref< Timer > m_timer;
 	std::list< Sample > m_samples;
-	uint32_t m_peek;
+	uint32_t m_peekObjectReference;
+	uint32_t m_peekTasks;
 
 	void eventPaint(Event* event);
 
