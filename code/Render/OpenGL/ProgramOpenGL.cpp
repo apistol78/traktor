@@ -191,7 +191,9 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 
 				uint32_t offset = uint32_t(m_uniformData.size());
 				m_parameterMap[handle] = offset;
-				m_uniformData.resize(offset + allocSize);
+
+				m_uniformData.resize(offset + allocSize, 0.0f);
+				m_uniformDataDirty.resize(offset + allocSize, false);
 			}
 
 			m_uniforms.push_back(Uniform());
@@ -297,6 +299,8 @@ void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, 
 		return;
 
 	std::memcpy(&m_uniformData[i->second], param, length * sizeof(float));
+
+	m_uniformDataDirty[i->second] = true;
 	m_dirty = true;
 }
 
@@ -376,30 +380,66 @@ bool ProgramOpenGL::activate()
 	if (ms_activeProgram == this && !m_dirty)
 		return true;
 
-	T_OGL_SAFE(glCallList(m_state));
-
-	T_ASSERT (m_program);
-	T_OGL_SAFE(glUseProgramObjectARB(m_program));
-
-	for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+	if (ms_activeProgram != this)
 	{
-		const float* uniformData = &m_uniformData[i->offset];
-		switch (i->type)
+		T_OGL_SAFE(glCallList(m_state));
+
+		T_ASSERT (m_program);
+		T_OGL_SAFE(glUseProgramObjectARB(m_program));
+
+		for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 		{
-		case GL_FLOAT:
-			T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
-			break;
+			const float* uniformData = &m_uniformData[i->offset];
 
-		case GL_FLOAT_VEC4_ARB:
-			T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
-			break;
+			switch (i->type)
+			{
+			case GL_FLOAT:
+				T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
+				break;
 
-		case GL_FLOAT_MAT4_ARB:
-			T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_TRUE, uniformData));
-			break;
-			
-		default:
-			T_ASSERT (0);
+			case GL_FLOAT_VEC4_ARB:
+				T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
+				break;
+
+			case GL_FLOAT_MAT4_ARB:
+				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_TRUE, uniformData));
+				break;
+
+			default:
+				T_ASSERT (0);
+			}
+
+			m_uniformDataDirty[i->offset] = false;
+		}
+	}
+	else
+	{
+		for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
+		{
+			if (m_uniformDataDirty[i->offset])
+			{
+				const float* uniformData = &m_uniformData[i->offset];
+
+				switch (i->type)
+				{
+				case GL_FLOAT:
+					T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
+					break;
+
+				case GL_FLOAT_VEC4_ARB:
+					T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
+					break;
+
+				case GL_FLOAT_MAT4_ARB:
+					T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_TRUE, uniformData));
+					break;
+					
+				default:
+					T_ASSERT (0);
+				}
+
+				m_uniformDataDirty[i->offset] = false;
+			}
 		}
 	}
 

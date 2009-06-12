@@ -96,6 +96,7 @@ private:
 	GLuint m_state;
 	std::map< handle_t, uint32_t > m_parameterMap;
 	AlignedVector< float > m_uniformData;
+	std::vector< bool > m_uniformDataDirty;
 	AlignedVector< SamplerTexture > m_samplerTextures;
 
 	static ProgramOpenGL* ms_activeProgram;
