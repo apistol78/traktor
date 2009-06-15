@@ -2,7 +2,7 @@
 #define traktor_Library_H
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -19,8 +19,10 @@ namespace traktor
 /*! \brief System dynamic library.
  * \ingroup Core
  */
-class T_DLLCLASS Library
+class T_DLLCLASS Library : public Object
 {
+	T_RTTI_CLASS(Library)
+
 public:
 	virtual ~Library();
 	
