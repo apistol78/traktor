@@ -5,6 +5,8 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
+
 Library::~Library()
 {
 }
@@ -16,8 +18,18 @@ bool Library::open(const Path& libraryName)
 #else
 	const wchar_t suffix[] = L"_d.dll";
 #endif
-	tstring path = wstots(libraryName.getPathName() + suffix);
+
+	tstring path;
+
+	path = wstots(libraryName.getPathName() + suffix);
 	m_handle = (void*)LoadLibrary(path.c_str());
+
+	if (!m_handle)
+	{
+		path = wstots(libraryName.getPathName());
+		m_handle = (void*)LoadLibrary(path.c_str());
+	}
+	
 	return bool(m_handle != NULL);
 }
 
