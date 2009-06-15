@@ -129,12 +129,15 @@ const Type* Type::find(const std::wstring& name)
 	return 0;
 }
 
-void Type::findAllOf(std::vector< const Type* >& outTypes) const
+void Type::findAllOf(std::vector< const Type* >& outTypes, bool inclusive) const
 {
 	for (size_t i = 0; i < s_typeCount; ++i)
 	{
 		if (is_type_of(*this, *s_typeRegistry[i]))
-			outTypes.push_back(s_typeRegistry[i]);
+		{
+			if (inclusive || s_typeRegistry[i] != this)
+				outTypes.push_back(s_typeRegistry[i]);
+		}
 	}
 }
 
