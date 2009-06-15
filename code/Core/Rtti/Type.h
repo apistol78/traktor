@@ -77,29 +77,54 @@ public:
 
 	virtual ~Type();
 
-	/*! \brief Return super type. */
+	/*! \brief Return super type.
+	 *
+	 * \return Super type.
+	 */
 	const Type* getSuper() const;
 
-	/*! \brief Name of type. */
+	/*! \brief Name of type.
+	 *
+	 * \return Type name.
+	 */
 	const wchar_t* getName() const;
 
-	/*! \brief Size of type in bytes. */
+	/*! \brief Size of type in bytes.
+	 *
+	 * \return Type size in bytes.
+	 */
 	size_t getSize() const;
 
-	/*! \brief Instantiable type. */
+	/*! \brief Instantiable type.
+	 *
+	 * \return True if type is instantiable.
+	 */
 	bool isInstantiable() const;
 
-	/*! \brief Editable type. */
+	/*! \brief Editable type.
+	 *
+	 * \return True if type is editable.
+	 */
 	bool isEditable() const;
 
-	/*! \brief Create new instance of type. */
+	/*! \brief Create new instance of type.
+	 *
+	 * \return New instance.
+	 */
 	Object* newInstance() const;
 
-	/*! \brief Find type from string representation. */
+	/*! \brief Find type from string representation.
+	 *
+	 * \return Type pointer, null if type not found.
+	 */
 	static const Type* find(const std::wstring& name);
 
-	/*! \brief Find all types derived from this type. */
-	void findAllOf(std::vector< const Type* >& outTypes) const;
+	/*! \brief Find all types derived from this type.
+	 *
+	 * \param outTypes Found types.
+	 * \param inclusive If this type should be included in result.
+	 */
+	void findAllOf(std::vector< const Type* >& outTypes, bool inclusive = true) const;
 
 private:
 	const Type* m_super;
