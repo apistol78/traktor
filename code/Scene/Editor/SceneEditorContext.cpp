@@ -1,3 +1,4 @@
+#include <limits>
 #include <stack>
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorProfile.h"
