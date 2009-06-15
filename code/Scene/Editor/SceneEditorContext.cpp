@@ -23,20 +23,26 @@ namespace traktor
 // Find best matching entity editor.
 EntityEditor* findEntityEditor(const RefArray< EntityEditor >& entityEditors, const Type& entityType)
 {
-	Ref< EntityEditor > entityEditor = 0;
+	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
+	Ref< EntityEditor > entityEditor;
+	
 	for (RefArray< EntityEditor >::const_iterator i = entityEditors.begin(); i != entityEditors.end(); ++i)
 	{
 		TypeSet entityTypes = (*i)->getEntityTypes();
 		for (TypeSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
 		{
-			if (is_type_of(*(*j), entityType))
+			if (is_type_of(**j, entityType))
 			{
-				entityEditor = *i;
-				if (*j == &entityType)
-					break;
+				uint32_t classDifference = type_difference(**j, entityType);
+				if (classDifference < minClassDifference)
+				{
+					entityEditor = *i;
+					minClassDifference = classDifference;
+				}
 			}
 		}
 	}
+
 	return entityEditor;
 }
 
