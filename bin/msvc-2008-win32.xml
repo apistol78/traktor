@@ -105,7 +105,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -180,7 +185,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -266,7 +276,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -376,7 +391,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -505,7 +525,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -611,7 +636,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -736,7 +766,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
@@ -842,7 +877,12 @@
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCResourceCompilerTool</toolName>
-              <staticOptions/>
+              <staticOptions>
+                <item>
+                  <first>AdditionalIncludeDirectories</first>
+                  <second>$(IntDir)</second>
+                </item>
+              </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPreLinkEventTool</toolName>
