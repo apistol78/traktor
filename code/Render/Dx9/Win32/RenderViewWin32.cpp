@@ -81,8 +81,6 @@ void RenderViewWin32::close()
 {
 	T_ASSERT (m_renderStateStack.empty());
 
-	Unmanaged::removeFromListener();
-
 	if (!m_d3dDevice)
 		return;
 
@@ -96,6 +94,8 @@ void RenderViewWin32::close()
 	m_d3dDevice = 0;
 	m_renderSystem = 0;
 	m_context = 0;
+
+	Unmanaged::removeFromListener();
 }
 
 void RenderViewWin32::resize(int32_t width, int32_t height)
