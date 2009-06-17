@@ -26,11 +26,29 @@ class T_DLLCLASS Library : public Object
 public:
 	virtual ~Library();
 	
+	/*! \brief Open library.
+	 *
+	 * \param libraryName Name of library.
+	 * \return True if library opened successfully.
+	 */
 	bool open(const Path& libraryName);
 	
+	/*! \brief Close library. */
 	void close();
 	
+	/*! \brief Find exported symbol from library.
+	 *
+	 * \param symbol Name of exported symbol.
+	 * \return Pointer to symbol.
+	 */
 	void* find(const std::wstring& symbol);
+
+	/*! \brief Add additional search path for libraries.
+	 *
+	 * \param searchPath New search path.
+	 * \return True if search path added successfully.
+	 */
+	static bool addSearchPath(const std::wstring& searchPath);
 
 private:
 	void* m_handle;
