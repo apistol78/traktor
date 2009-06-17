@@ -1,6 +1,7 @@
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <lmcons.h>
+#include <shlobj.h>
 #include <tchar.h>
 #include "Core/System/OS.h"
 #include "Core/System/Win32/ProcessWin32.h"
@@ -9,6 +10,7 @@
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/TString.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -55,6 +57,42 @@ std::wstring OS::getCurrentUser() const
 #else
 	return L"Unavailable";
 #endif
+}
+
+std::wstring OS::getUserHomePath() const
+{
+	TCHAR szPath[MAX_PATH];
+	HRESULT hr;
+
+	hr = SHGetFolderPath(
+		NULL,
+		CSIDL_PERSONAL,
+		NULL,
+		SHGFP_TYPE_CURRENT,
+		szPath
+	);
+	if (FAILED(hr))
+		return L"";
+
+	return replaceAll(tstows(szPath), L'\\', L'/');
+}
+
+std::wstring OS::getUserApplicationDataPath() const
+{
+	TCHAR szPath[MAX_PATH];
+	HRESULT hr;
+
+	hr = SHGetFolderPath(
+		NULL,
+		CSIDL_LOCAL_APPDATA,
+		NULL,
+		SHGFP_TYPE_CURRENT,
+		szPath
+	);
+	if (FAILED(hr))
+		return L"";
+
+	return replaceAll(tstows(szPath), L'\\', L'/');
 }
 
 bool OS::editFile(const Path& file) const

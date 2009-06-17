@@ -40,6 +40,18 @@ public:
 	 */
 	std::wstring getCurrentUser() const;
 
+	/*! \brief Get path to user home.
+	 *
+	 * \return User home path.
+	 */
+	std::wstring getUserHomePath() const;
+
+	/*! \brief Get path to user application data.
+	 *
+	 * \return User application data path.
+	 */
+	std::wstring getUserApplicationDataPath() const;
+
 	/*! \brief Launch associate editor of given file.
 	 *
 	 * \return True if associate editor opened successfully.
