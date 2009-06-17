@@ -1,6 +1,7 @@
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
 #include "Core/Misc/TString.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -45,6 +46,12 @@ void* Library::find(const std::wstring& symbol)
 #else
 	return (void*)GetProcAddress((HMODULE)m_handle, symbol.c_str());
 #endif
+}
+
+bool Library::addSearchPath(const std::wstring& searchPath)
+{
+	tstring path = wstots(replaceAll(searchPath, L'/', L'\\'));
+	return SetDllDirectory(path.c_str()) != 0;
 }
 
 }
