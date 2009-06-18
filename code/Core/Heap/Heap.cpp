@@ -180,7 +180,7 @@ Heap::~Heap()
 #if defined(T_HEAP_CONCURRENT_COLLECT)
 	if (m_destructThread)
 	{
-		m_destructThread->stop();
+		m_destructThread->stop(1000);
 		ThreadManager::getInstance().destroy(m_destructThread);
 		m_destructThread = 0;
 	}
@@ -675,7 +675,8 @@ void Heap::destructThread()
 
 	while (!m_destructThread->stopped())
 	{
-		m_destructQueueLock.acquire();
+		if (!m_destructQueueLock.acquire(100))
+			continue;
 
 		if (!m_destructQueue.empty())
 		{

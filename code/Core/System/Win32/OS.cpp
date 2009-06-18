@@ -15,6 +15,17 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+typedef HRESULT STDAPICALLTYPE IEISPROTECTEDMODEPROCESSPROC (BOOL* pbResult);
+typedef HRESULT STDAPICALLTYPE IEGETWRITEABLEFOLDERPATHPROC (REFGUID clsidFolderID, LPWSTR *lppwstrPath);
+
+HINSTANCE s_hIeFrameLib = 0;
+IEISPROTECTEDMODEPROCESSPROC* s_IEIsProtectedModeProcess = 0;
+IEGETWRITEABLEFOLDERPATHPROC* s_IEGetWriteableFolderPath = 0;
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Singleton)
 
@@ -93,6 +104,54 @@ std::wstring OS::getUserApplicationDataPath() const
 		return L"";
 
 	return replaceAll(tstows(szPath), L'\\', L'/');
+}
+
+std::wstring OS::getWritableFolderPath() const
+{
+	if (s_IEIsProtectedModeProcess && s_IEGetWriteableFolderPath)
+	{
+		HRESULT hr;
+		BOOL pm;
+
+		log::debug << L"1" << Endl;
+
+		hr = (*s_IEIsProtectedModeProcess)(&pm);
+		if (FAILED(hr))
+			return L"";
+
+		log::debug << L"2" << Endl;
+
+		if (pm)
+		{
+			LPWSTR pwstrPath = 0;
+
+			log::debug << L"3" << Endl;
+
+			hr = (*s_IEGetWriteableFolderPath)(
+				FOLDERID_LocalAppDataLow,
+				&pwstrPath
+			);
+			if (FAILED(hr))
+				return L"";
+
+			log::debug << L"4" << Endl;
+
+			std::wstring path = pwstrPath;
+
+			log::debug << path << Endl;
+
+			path = replaceAll(path, L'\\', L'/');
+
+			log::debug << path << Endl;
+
+			CoTaskMemFree(pwstrPath);
+
+			log::debug << L"5" << Endl;
+			return path;
+		}
+	}
+
+	return getUserApplicationDataPath();
 }
 
 bool OS::editFile(const Path& file) const
@@ -183,10 +242,23 @@ SharedMemory* OS::createSharedMemory(const std::wstring& name, uint32_t size) co
 OS::OS()
 {
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+	// Load IEFrame library; only available on Vista.
+	s_hIeFrameLib = LoadLibrary(L"ieframe.dll");
+	if (s_hIeFrameLib)
+	{
+		s_IEIsProtectedModeProcess = (IEISPROTECTEDMODEPROCESSPROC*)GetProcAddress(s_hIeFrameLib, "IEIsProtectedModeProcess");
+		T_ASSERT (s_IEIsProtectedModeProcess);
+		s_IEGetWriteableFolderPath = (IEGETWRITEABLEFOLDERPATHPROC*)GetProcAddress(s_hIeFrameLib, "IEGetWriteableFolderPath");
+		T_ASSERT (s_IEGetWriteableFolderPath);
+	}
 }
 
 OS::~OS()
 {
+	if (s_hIeFrameLib)
+		FreeLibrary(s_hIeFrameLib);
+
 	CoUninitialize();
 }
 

@@ -84,6 +84,8 @@ public:
 
 	static void registerDefaultClass();
 
+	static void unregisterDefaultClass();
+
 private:
 	HWND m_hWnd;
 	HFONT m_hFont;

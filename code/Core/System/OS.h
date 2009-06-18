@@ -52,6 +52,12 @@ public:
 	 */
 	std::wstring getUserApplicationDataPath() const;
 
+	/*! \brief Get path to writable folder.
+	 *
+	 * \return Writable folder.
+	 */
+	std::wstring getWritableFolderPath() const;
+
 	/*! \brief Launch associate editor of given file.
 	 *
 	 * \return True if associate editor opened successfully.

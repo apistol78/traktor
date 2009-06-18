@@ -150,7 +150,7 @@ void Window::registerDefaultClass()
 {
 	WNDCLASS wc;
 
-	memset(&wc, 0, sizeof(wc));
+	std::memset(&wc, 0, sizeof(wc));
 	wc.style         = CS_DBLCLKS;
 	wc.lpfnWndProc   = wndProc;
 	wc.cbClsExtra    = 0;
@@ -168,6 +168,11 @@ void Window::registerDefaultClass()
 
 	if (!RegisterClass(&wc))
 		log::error << L"Unable to register class \"TraktorWin32Class\"" << Endl;
+}
+
+void Window::unregisterDefaultClass()
+{
+	UnregisterClass(_T("TraktorWin32Class"), g_hInstance);
 }
 
 LRESULT Window::invokeMessageHandlers(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)
