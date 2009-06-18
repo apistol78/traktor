@@ -41,6 +41,8 @@ EventLoopWin32::EventLoopWin32()
 
 EventLoopWin32::~EventLoopWin32()
 {
+	Window::unregisterDefaultClass();
+
 #if defined(T_USE_GDI_PLUS)
 	CanvasGdiPlusWin32::shutdown();
 #endif
