@@ -1,9 +1,8 @@
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Local/LocalManifest.h"
-#include "Database/Local/LocalContext.h"
+#include "Database/Local/Context.h"
 #include "Database/Local/LocalBus.h"
 #include "Database/Local/LocalGroup.h"
-#include "Database/Local/DataAccess.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
@@ -51,7 +50,7 @@ bool LocalDatabase::create(const Path& manifestPath)
 		return false;
 	}
 
-	m_context = gc_new< LocalContext >(manifest->getUseBinary());
+	m_context = gc_new< Context >(manifest->getUseBinary());
 
 	if (manifest->getEventMonitorEnable())
 		m_bus = gc_new< LocalBus >(manifest->getEventFile());
@@ -80,7 +79,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 		return false;
 	}
 
-	m_context = gc_new< LocalContext >(manifest->getUseBinary());
+	m_context = gc_new< Context >(manifest->getUseBinary());
 
 	if (manifest->getEventMonitorEnable())
 	{

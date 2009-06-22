@@ -34,7 +34,7 @@ TypeSet PhysicsPipeline::getAssetTypes() const
 
 bool PhysicsPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -50,7 +50,7 @@ bool PhysicsPipeline::buildDependencies(
 
 bool PhysicsPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

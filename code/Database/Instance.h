@@ -43,7 +43,7 @@ class T_DLLCLASS Instance : public Object
 public:
 	Instance(IProviderBus* providerBus);
 
-	bool internalCreate(IProviderInstance* providerInstance, Group* parent, Serializable* exclusiveObject);
+	bool internalCreate(IProviderInstance* providerInstance, Group* parent);
 
 	void internalDestroy();
 
@@ -57,21 +57,19 @@ public:
 
 	virtual const Type* getPrimaryType() const;
 
-	virtual bool lock();
-
-	virtual bool unlock();
-
-	virtual bool rename(const std::wstring& name);
-
-	virtual bool remove();
-
-	virtual Serializable* checkout(uint32_t flags = CfExclusive);
-
-	virtual bool replace(Serializable* object);
+	virtual bool checkout();
 
 	virtual bool commit(uint32_t flags = CfDefault);
 
 	virtual bool revert();
+
+	virtual bool setName(const std::wstring& name);
+
+	virtual bool remove();
+
+	virtual Serializable* getObject();
+
+	virtual bool setObject(const Serializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
@@ -82,31 +80,18 @@ public:
 	virtual Group* getParent();
 
 	template < typename T >
-	T* checkout(uint32_t flags = CfExclusive)
+	T* getObject()
 	{
-		Ref< Serializable > object = checkout(flags);
-		if (!object)
-			return 0;
-
-		if (!is_a< T >(object))
-		{
-			if (flags & CfExclusive)
-				revert();
-			return 0;
-		}
-
-		return reinterpret_cast< T* >(object.getPtr());
+		return dynamic_type_cast< T* >(getObject());
 	}
 
 private:
 	Ref< IProviderBus > m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
 	Ref< Group > m_parent;
-	std::wstring m_name;
-	Guid m_guid;
-	std::wstring m_primaryTypeName;
-	Ref< Serializable > m_exclusiveObject;
 	Mutex m_lock;
+	bool m_renamed;
+	bool m_removed;
 };
 
 	}

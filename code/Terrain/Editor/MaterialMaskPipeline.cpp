@@ -39,7 +39,7 @@ TypeSet MaterialMaskPipeline::getAssetTypes() const
 
 bool MaterialMaskPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -48,7 +48,7 @@ bool MaterialMaskPipeline::buildDependencies(
 
 bool MaterialMaskPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -81,14 +81,15 @@ bool MaterialMaskPipeline::buildOutput(
 	// Create instance's name.
 	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		resource
+		outputGuid
 	);
 	if (!instance)
 	{
 		log::error << L"Failed to build mask, unable to create instance" << Endl;
 		return false;
 	}
+
+	instance->setObject(resource);
 
 	Ref< Stream > stream = instance->writeData(L"Data");
 	if (!stream)

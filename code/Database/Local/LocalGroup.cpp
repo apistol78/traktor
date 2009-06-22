@@ -1,7 +1,10 @@
 #include "Database/Local/LocalGroup.h"
 #include "Database/Local/LocalInstance.h"
-#include "Database/Local/LocalContext.h"
-#include "Database/Local/DataAccess.h"
+#include "Database/Local/LocalFileLink.h"
+#include "Database/Local/Context.h"
+#include "Database/Local/PhysicalAccess.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -10,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalGroup", LocalGroup, IProviderGroup)
 
-LocalGroup::LocalGroup(LocalContext* context, const Path& groupPath)
+LocalGroup::LocalGroup(Context* context, const Path& groupPath)
 :	m_context(context)
 ,	m_groupPath(groupPath)
 {
@@ -23,7 +26,7 @@ std::wstring LocalGroup::getName() const
 
 bool LocalGroup::rename(const std::wstring& name)
 {
-	if (!m_context->getDataAccess()->renameGroup(m_groupPath, name))
+	if (!FileSystem::getInstance().renameDirectory(m_groupPath, name))
 		return false;
 
 	m_groupPath = m_groupPath.getPathOnly() + L"/" + name;
@@ -32,17 +35,20 @@ bool LocalGroup::rename(const std::wstring& name)
 
 bool LocalGroup::remove()
 {
-	return m_context->getDataAccess()->removeGroup(m_groupPath);
+	return FileSystem::getInstance().removeDirectory(m_groupPath);
 }
 
 IProviderGroup* LocalGroup::createGroup(const std::wstring& groupName)
 {
-	if (!m_context->getDataAccess()->createGroup(m_groupPath, groupName))
-		return 0;
+	Path newGroupPath = std::wstring(m_groupPath) + L"/" + groupName;
 
-	Path groupPath = std::wstring(m_groupPath) + L"/" + groupName;
+	if (FileSystem::getInstance().exist(newGroupPath))
+		return false;
 
-	return gc_new< LocalGroup >(m_context, groupPath);
+	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
+		return false;
+
+	return gc_new< LocalGroup >(m_context, newGroupPath);
 }
 
 IProviderInstance* LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
@@ -60,12 +66,32 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 {
 	T_ASSERT (outChildGroups.empty());
 
-	std::vector< Path > groupPaths;
-	if (!m_context->getDataAccess()->enumerateGroups(m_groupPath, groupPaths))
+	RefArray< File > groupFiles;
+	if (!FileSystem::getInstance().find(std::wstring(m_groupPath) + L"/*.*", groupFiles))
 		return false;
 
-	for (std::vector< Path >::iterator i = groupPaths.begin(); i != groupPaths.end(); ++i)
-		outChildGroups.push_back(gc_new< LocalGroup >(m_context, *i));
+	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
+	{
+		const Path& path = (*i)->getPath();
+		if ((*i)->isDirectory() && path.getFileName() != L"." && path.getFileName() != L"..")
+		{
+			outChildGroups.push_back(gc_new< LocalGroup >(
+				m_context,
+				cref(path)
+			));
+		}
+		else if (!(*i)->isDirectory() && compareIgnoreCase(path.getExtension(), L"xgl") == 0)
+		{
+			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
+			if (link)
+			{
+				outChildGroups.push_back(gc_new< LocalGroup >(
+					m_context,
+					cref(Path(link->getPath()))
+				));
+			}
+		}
+	}
 
 	return true;
 }
@@ -74,15 +100,29 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 {
 	T_ASSERT (outChildInstances.empty());
 
-	std::vector< Path > instancePaths;
-	if (!m_context->getDataAccess()->enumerateInstances(m_groupPath, instancePaths))
+	RefArray< File > groupFiles;
+	if (!FileSystem::getInstance().find(std::wstring(m_groupPath) + L"/*.*", groupFiles))
 		return false;
 
-	for (std::vector< Path >::iterator i = instancePaths.begin(); i != instancePaths.end(); ++i)
+	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
 	{
-		Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
-		if (instance->internalCreateExisting(i->getPathNameNoExtension()))
-			outChildInstances.push_back(instance);
+		const Path& path = (*i)->getPath();
+		if (compareIgnoreCase(path.getExtension(), L"xdm") == 0)
+		{
+			Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
+			if (instance->internalCreate(path.getPathNameNoExtension()))
+				outChildInstances.push_back(instance);
+		}
+		else if (compareIgnoreCase(path.getExtension(), L"xil") == 0)
+		{
+			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
+			if (link)
+			{
+				Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
+				if (instance->internalCreate(Path(link->getPath()).getPathNameNoExtension()))
+					outChildInstances.push_back(instance);
+			}
+		}
 	}
 
 	return true;

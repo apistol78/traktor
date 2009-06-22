@@ -37,7 +37,7 @@ Object* SoundFactory::create(const Type& resourceType, const Guid& guid, bool& o
 	if (!instance)
 		return 0;
 
-	Ref< SoundResource > resource = instance->checkout< SoundResource >(db::CfReadOnly);
+	Ref< SoundResource > resource = instance->getObject< SoundResource >();
 	if (!resource)
 		return 0;
 

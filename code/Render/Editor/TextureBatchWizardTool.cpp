@@ -34,12 +34,12 @@ bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::Editor* editor, 
 		for (RefArray< TextureAsset >::iterator i = textureAssets.begin(); i != textureAssets.end(); ++i)
 		{
 			std::wstring instanceName = Path((*i)->getFileName()).getFileName();
-			Ref< db::Instance > textureAssetInstance = group->createInstance(
-				instanceName,
-				*i
-			);
+			Ref< db::Instance > textureAssetInstance = group->createInstance(instanceName);
 			if (textureAssetInstance)
+			{
+				textureAssetInstance->setObject(*i);
 				textureAssetInstance->commit();
+			}
 			else
 				log::error << L"Unable to create instance \"" << instanceName << L"\"; asset not imported" << Endl;
 		}

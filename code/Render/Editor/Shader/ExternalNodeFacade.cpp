@@ -32,7 +32,7 @@ Node* ExternalNodeFacade::createShaderNode(
 	if (!fragmentInstance)
 		return 0;
 
-	Ref< ShaderGraph > fragmentGraph = fragmentInstance->checkout< ShaderGraph >(db::CfReadOnly);
+	Ref< ShaderGraph > fragmentGraph = fragmentInstance->getObject< ShaderGraph >();
 	if (!fragmentGraph)
 		return 0;
 

@@ -31,13 +31,13 @@ public:
 
 	virtual bool buildDependencies(
 		editor::PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		editor::PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

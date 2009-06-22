@@ -51,7 +51,7 @@ Object* TextureFactory::create(const Type& resourceType, const Guid& guid, bool&
 	if (!instance)
 		return 0;
 
-	Ref< TextureResource > resource = instance->checkout< TextureResource >(db::CfReadOnly);
+	Ref< TextureResource > resource = instance->getObject< TextureResource >();
 	if (!resource)
 		return 0;
 

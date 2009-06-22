@@ -17,8 +17,9 @@ namespace traktor
 	namespace db
 	{
 
-class LocalContext;
+class Context;
 class LocalGroup;
+class Transaction;
 
 /*! \brief Local instance.
  * \ingroup Database
@@ -28,29 +29,31 @@ class T_DLLCLASS LocalInstance : public IProviderInstance
 	T_RTTI_CLASS(LocalInstance)
 
 public:
-	LocalInstance(LocalContext* context);
+	LocalInstance(Context* context);
 
-	bool internalCreateExisting(const Path& instancePath);
+	bool internalCreate(const Path& instancePath);
 
 	bool internalCreateNew(const Path& instancePath, const Guid& instanceGuid);
 
+	virtual std::wstring getPrimaryTypeName() const;
+
+	virtual bool beginTransaction();
+
+	virtual bool endTransaction(bool commit);
+
 	virtual std::wstring getName() const;
+
+	virtual bool setName(const std::wstring& name);
 
 	virtual Guid getGuid() const;
 
-	virtual std::wstring getPrimaryTypeName() const;
-
-	virtual bool rename(const std::wstring& name);
+	virtual bool setGuid(const Guid& guid);
 
 	virtual bool remove();
 
-	virtual bool lock();
+	virtual Serializable* getObject();
 
-	virtual bool unlock();
-
-	virtual Serializable* readObject();
-
-	virtual bool writeObject(Serializable* object);
+	virtual bool setObject(const Serializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 
@@ -59,9 +62,10 @@ public:
 	virtual Stream* writeData(const std::wstring& dataName);
 
 private:
-	Ref< LocalContext > m_context;
+	Ref< Context > m_context;
 	Path m_instancePath;
-	bool m_locked;
+	Ref< Transaction > m_transaction;
+	std::wstring m_transactionName;
 };
 
 	}

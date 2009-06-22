@@ -30,7 +30,7 @@ Object* HeightfieldFactory::create(const Type& resourceType, const Guid& guid, b
 	if (!instance)
 		return 0;
 
-	Ref< HeightfieldResource > resource = instance->checkout< HeightfieldResource >(db::CfReadOnly);
+	Ref< HeightfieldResource > resource = instance->getObject< HeightfieldResource >();
 	if (!resource)
 		return 0;
 

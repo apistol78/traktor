@@ -30,7 +30,7 @@ Object* MeshFactory::create(const Type& resourceType, const Guid& guid, bool& ou
 	if (!instance)
 		return 0;
 
-	Ref< MeshResource > resource = instance->checkout< MeshResource >(db::CfReadOnly);
+	Ref< MeshResource > resource = instance->getObject< MeshResource >();
 	if (!resource)
 		return 0;
 

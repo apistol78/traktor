@@ -22,7 +22,7 @@ ObjectEditorDialog::ObjectEditorDialog(Settings* settings, ObjectEditor* objectE
 {
 }
 
-bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, Object* object)
+bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
 {
 	int32_t width = 500, height = 400;
 
@@ -55,6 +55,7 @@ bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, Obje
 	addCloseEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventClose));
 
 	m_instance = instance;
+	m_object = object;
 
 	if (!m_objectEditor->create(this, instance, object))
 		return false;
@@ -101,6 +102,9 @@ void ObjectEditorDialog::destroy()
 bool ObjectEditorDialog::apply(bool keep)
 {
 	m_objectEditor->apply();
+	
+	m_instance->setObject(m_object);
+
 	if (m_instance->commit(keep ? db::CfKeepCheckedOut : db::CfDefault))
 		return true;
 	else

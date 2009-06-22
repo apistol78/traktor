@@ -40,7 +40,7 @@ ScriptEditor::ScriptEditor(editor::Editor* editor)
 {
 }
 
-bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, Object* object)
+bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
 {
 	m_script = dynamic_type_cast< Script* >(object);
 	if (!m_script)

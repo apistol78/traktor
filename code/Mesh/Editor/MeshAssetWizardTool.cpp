@@ -44,11 +44,12 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::Editor* editor, db:
 	// Create asset instance.
 	Ref< db::Instance > assetInstance = group->createInstance(
 		fileName.getFileNameNoExtension(),
-		asset,
 		db::CifReplaceExisting | db::CifKeepExistingGuid
 	);
 	if (!assetInstance)
 		return false;
+
+	assetInstance->setObject(asset);
 
 	if (!assetInstance->commit())
 		return false;

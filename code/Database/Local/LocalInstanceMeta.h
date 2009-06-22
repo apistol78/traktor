@@ -40,6 +40,10 @@ public:
 
 	void addBlob(const std::wstring& blob);
 
+	void removeBlob(const std::wstring& blob);
+
+	bool haveBlob(const std::wstring& blob) const;
+
 	const std::vector< std::wstring >& getBlobs() const;
 
 	virtual bool serialize(Serializer& s);

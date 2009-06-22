@@ -41,7 +41,7 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
 	{
 		Ref< Instance > childInstance = gc_new< Instance >(m_providerBus);
-		if (!childInstance->internalCreate(*i, this, 0))
+		if (!childInstance->internalCreate(*i, this))
 			return false;
 
 		m_childInstances.push_back(childInstance);
@@ -164,7 +164,7 @@ Instance* Group::getInstance(const std::wstring& instanceName)
 	return findChildInstance(this, FindInstanceByName(instanceName));
 }
 
-Instance* Group::createInstance(const std::wstring& instanceName, Serializable* object, uint32_t flags, const Guid* guid)
+Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT (m_providerGroup);
 
@@ -180,10 +180,13 @@ Instance* Group::createInstance(const std::wstring& instanceName, Serializable* 
 			if (flags & CifKeepExistingGuid)
 				instanceGuid = existingInstance->getGuid();
 
-			if (!existingInstance->lock())
+			if (!existingInstance->checkout())
 				return 0;
 
 			if (!existingInstance->remove())
+				return 0;
+
+			if (!existingInstance->commit())
 				return 0;
 		}
 	}
@@ -193,15 +196,12 @@ Instance* Group::createInstance(const std::wstring& instanceName, Serializable* 
 	if (!providerInstance)
 		return 0;
 
-	// Lock new provider instance.
-	if (!providerInstance->lock())
-		return 0;
-
 	// Create instance object.
 	Ref< Instance > instance = gc_new< Instance >(m_providerBus);
-	if (!instance->internalCreate(providerInstance, this, object))
+	if (!instance->internalCreate(providerInstance, this))
 		return 0;
 
+	// @fixme We should add instance when it's finally committed.
 	m_childInstances.push_back(instance);
 	return instance;
 }

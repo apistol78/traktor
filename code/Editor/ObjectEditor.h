@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace ui
 	{
 
@@ -40,7 +43,7 @@ class T_DLLCLASS ObjectEditor : public Object
 	T_RTTI_CLASS(ObjectEditor)
 
 public:
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Object* object) = 0;
+	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object) = 0;
 
 	virtual void destroy() = 0;
 

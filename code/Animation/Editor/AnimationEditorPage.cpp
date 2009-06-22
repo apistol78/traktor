@@ -324,7 +324,7 @@ void AnimationEditorPage::propertiesChanged()
 
 bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	Ref< Skeleton > skeleton = instance->checkout< Skeleton >(db::CfReadOnly);
+	Ref< Skeleton > skeleton = instance->getObject< Skeleton >();
 	if (!skeleton)
 		return false;
 
@@ -421,7 +421,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 		Ref< db::Instance > skeletonInstance = m_editor->browseInstance(&filter);
 		if (skeletonInstance)
 		{
-			Ref< Skeleton > skeleton = skeletonInstance->checkout< Skeleton >(db::CfReadOnly);
+			Ref< Skeleton > skeleton = skeletonInstance->getObject< Skeleton >();
 			if (skeleton)
 				setSkeleton(skeleton);
 		}

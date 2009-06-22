@@ -21,7 +21,7 @@ class DefaultObjectEditor
 public:
 	DefaultObjectEditor(Editor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Object* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
 	virtual void destroy();
 

@@ -40,7 +40,7 @@ Object* IndoorMeshFactory::create(const Type& resourceType, const Guid& guid, bo
 		return 0;
 	}
 
-	Ref< IndoorMeshResource > resource = instance->checkout< IndoorMeshResource >(db::CfReadOnly);
+	Ref< IndoorMeshResource > resource = instance->getObject< IndoorMeshResource >();
 	if (!resource)
 	{
 		log::error << L"Indoor mesh factory failed; unable to checkout resource" << Endl;

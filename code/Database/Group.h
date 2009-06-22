@@ -17,7 +17,6 @@ namespace traktor
 {
 
 class Guid;
-class Serializable;
 
 	namespace db
 	{
@@ -58,7 +57,7 @@ public:
 
 	virtual Instance* getInstance(const std::wstring& instanceName);
 
-	virtual Instance* createInstance(const std::wstring& instanceName, Serializable* object, uint32_t flags = CifDefault, const Guid* guid = 0);
+	virtual Instance* createInstance(const std::wstring& instanceName, uint32_t flags = CifDefault, const Guid* guid = 0);
 
 	virtual Group* getParent();
 

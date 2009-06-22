@@ -35,7 +35,7 @@ TypeSet EffectPipeline::getAssetTypes() const
 
 bool EffectPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -54,7 +54,7 @@ bool EffectPipeline::buildDependencies(
 
 bool EffectPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -63,11 +63,12 @@ bool EffectPipeline::buildOutput(
 {
 	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		sourceAsset
+		outputGuid
 	);
 	if (!instance)
 		return false;
+
+	instance->setObject(sourceAsset);
 
 	return instance->commit();
 }

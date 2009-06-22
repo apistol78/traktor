@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
@@ -43,6 +44,17 @@ const std::wstring& LocalInstanceMeta::getPrimaryType() const
 void LocalInstanceMeta::addBlob(const std::wstring& blob)
 {
 	m_blobs.push_back(blob);
+}
+
+void LocalInstanceMeta::removeBlob(const std::wstring& blob)
+{
+	std::vector< std::wstring >::iterator i = std::find(m_blobs.begin(), m_blobs.end(), blob);
+	m_blobs.erase(i);
+}
+
+bool LocalInstanceMeta::haveBlob(const std::wstring& blob) const
+{
+	return std::find(m_blobs.begin(), m_blobs.end(), blob) != m_blobs.end();
 }
 
 const std::vector< std::wstring >& LocalInstanceMeta::getBlobs() const

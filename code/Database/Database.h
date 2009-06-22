@@ -54,7 +54,7 @@ public:
 
 	virtual Instance* getInstance(const std::wstring& instancePath);
 
-	virtual Instance* createInstance(const std::wstring& instancePath, Serializable* object, uint32_t flags = CifDefault, const Guid* guid = 0);
+	virtual Instance* createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = 0);
 
 	virtual Serializable* getObjectReadOnly(const Guid& guid);
 

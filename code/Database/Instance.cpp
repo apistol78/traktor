@@ -14,19 +14,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
 Instance::Instance(IProviderBus* providerBus)
 :	m_providerBus(providerBus)
+,	m_renamed(false)
+,	m_removed(false)
 {
 }
 
-bool Instance::internalCreate(IProviderInstance* providerInstance, Group* parent, Serializable* exclusiveObject)
+bool Instance::internalCreate(IProviderInstance* providerInstance, Group* parent)
 {
 	m_providerInstance = providerInstance;
 	m_parent = parent;
-	
-	m_name = m_providerInstance->getName();
-	m_guid = m_providerInstance->getGuid();
-	m_primaryTypeName = m_providerInstance->getPrimaryTypeName();
-	m_exclusiveObject = exclusiveObject;
-
 	return true;
 }
 
@@ -35,124 +31,51 @@ void Instance::internalDestroy()
 	m_providerBus = 0;
 	m_providerInstance = 0;
 	m_parent = 0;
-	m_name = L"";
-	m_guid = Guid();
-	m_primaryTypeName = L"";
-	m_exclusiveObject = 0;
-
 	Heap::getInstance().invalidateRefs(this);
 }
 
 std::wstring Instance::getName() const
 {
 	T_ASSERT (m_providerInstance);
-	return m_name;
+	return m_providerInstance->getName();
 }
 
 std::wstring Instance::getPath() const
 {
 	T_ASSERT (m_providerInstance);
-	return m_parent->getPath() + L"/" + m_name;
+	return m_parent->getPath() + L"/" + m_providerInstance->getName();
 }
 
 Guid Instance::getGuid() const
 {
 	T_ASSERT (m_providerInstance);
-	return m_guid;
+	return m_providerInstance->getGuid();
 }
 
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ASSERT (m_providerInstance);
-	return m_primaryTypeName;
+	return m_providerInstance->getPrimaryTypeName();
 }
 
 const Type* Instance::getPrimaryType() const
 {
 	T_ASSERT (m_providerInstance);
-	return Type::find(m_primaryTypeName);
+	return Type::find(getPrimaryTypeName());
 }
 
-bool Instance::lock()
-{
-	T_ASSERT (m_providerInstance);
-	return m_providerInstance->lock();
-}
-
-bool Instance::unlock()
-{
-	T_ASSERT (m_providerInstance);
-	return m_providerInstance->unlock();
-}
-
-bool Instance::rename(const std::wstring& name)
-{
-	T_ASSERT (m_providerInstance);
-	
-	if (!m_providerInstance->rename(name))
-		return false;
-
-	if (m_providerBus)
-		m_providerBus->putEvent(PeRenamed, getGuid());
-
-	m_name = name;
-	return true;
-}
-
-bool Instance::remove()
-{
-	T_ASSERT (m_providerInstance);
-
-	if (!m_providerInstance->remove())
-		return false;
-
-	m_parent->removeChildInstance(this);
-
-	if (m_providerBus)
-		m_providerBus->putEvent(PeRemoved, getGuid());
-
-	internalDestroy();
-	return true;
-}
-
-Serializable* Instance::checkout(uint32_t flags)
+bool Instance::checkout()
 {
 	T_ASSERT (m_providerInstance);
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (flags & CfExclusive)
-	{
-		if (m_exclusiveObject)
-			return 0;
-		if (!m_providerInstance->lock())
-			return 0;
-	}
-
-	Ref< Serializable > resultObject = m_providerInstance->readObject();
-	if (!resultObject)
-	{
-		if (flags & CfExclusive)
-			m_providerInstance->unlock();
-		return 0;
-	}
-
-	if (flags & CfExclusive)
-		m_exclusiveObject = resultObject;
-
-	return resultObject;
-}
-
-bool Instance::replace(Serializable* object)
-{
-	T_ASSERT (m_providerInstance);
-
-	Acquire< Mutex > __lock__(m_lock);
-
-	if (!m_exclusiveObject)
+	if (!m_providerInstance->beginTransaction())
 		return false;
 
-	m_exclusiveObject = object;
+	m_renamed = false;
+	m_removed = false;
+
 	return true;
 }
 
@@ -162,23 +85,29 @@ bool Instance::commit(uint32_t flags)
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (!m_exclusiveObject)
+	if (!m_providerInstance->endTransaction(true))
 		return false;
-
-	bool result = m_providerInstance->writeObject(m_exclusiveObject);
-	if (!result)
-		return false;
-
-	if (!(flags & CfKeepCheckedOut))
-	{
-		m_exclusiveObject = 0;
-		m_providerInstance->unlock();
-	}
-
-	m_primaryTypeName = m_providerInstance->getPrimaryTypeName();
 
 	if (m_providerBus)
-		m_providerBus->putEvent(PeCommited, getGuid());
+	{
+		Guid guid = getGuid();
+		m_providerBus->putEvent(PeCommited, guid);
+		if (m_removed)
+			m_providerBus->putEvent(PeRemoved, guid);
+		if (m_renamed)
+			m_providerBus->putEvent(PeRenamed, guid);
+	}
+
+	if (m_removed)
+	{
+		m_parent->removeChildInstance(this);
+		internalDestroy();
+	}
+	else if (flags & CfKeepCheckedOut)
+	{
+		if (!m_providerInstance->beginTransaction())
+			return false;
+	}
 
 	return true;
 }
@@ -189,16 +118,51 @@ bool Instance::revert()
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (!m_exclusiveObject)
+	if (!m_providerInstance->endTransaction(false))
 		return false;
-
-	m_exclusiveObject = 0;
-	m_providerInstance->unlock();
 
 	if (m_providerBus)
 		m_providerBus->putEvent(PeReverted, getGuid());
 
 	return true;
+}
+
+bool Instance::setName(const std::wstring& name)
+{
+	T_ASSERT (m_providerInstance);
+
+	if (!m_providerInstance->setName(name))
+		return false;
+
+	m_renamed = true;
+	return true;
+}
+
+bool Instance::remove()
+{
+	T_ASSERT (m_providerInstance);
+
+	if (!m_providerInstance->remove())
+		return false;
+
+	m_removed = true;
+	return true;
+}
+
+Serializable* Instance::getObject()
+{
+	T_ASSERT (m_providerInstance);
+
+	Acquire< Mutex > __lock__(m_lock);
+	return m_providerInstance->getObject();
+}
+
+bool Instance::setObject(const Serializable* object)
+{
+	T_ASSERT (m_providerInstance);
+
+	Acquire< Mutex > __lock__(m_lock);
+	return m_providerInstance->setObject(object);
 }
 
 uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const

@@ -94,23 +94,25 @@ class T_DLLCLASS IProviderInstance : public Object
 	T_RTTI_CLASS(IProviderInstance)
 
 public:
+	virtual std::wstring getPrimaryTypeName() const = 0;
+
+	virtual bool beginTransaction() = 0;
+
+	virtual bool endTransaction(bool commit) = 0;
+
 	virtual std::wstring getName() const = 0;
+
+	virtual bool setName(const std::wstring& name) = 0;
 
 	virtual Guid getGuid() const = 0;
 
-	virtual std::wstring getPrimaryTypeName() const = 0;
-
-	virtual bool rename(const std::wstring& name) = 0;
+	virtual bool setGuid(const Guid& guid) = 0;
 
 	virtual bool remove() = 0;
 
-	virtual bool lock() = 0;
+	virtual Serializable* getObject() = 0;
 
-	virtual bool unlock() = 0;
-
-	virtual Serializable* readObject() = 0;
-
-	virtual bool writeObject(Serializable* object) = 0;
+	virtual bool setObject(const Serializable* object) = 0;
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
 

@@ -42,7 +42,7 @@ Object* StaticMeshFactory::create(const Type& resourceType, const Guid& guid, bo
 		return 0;
 	}
 
-	Ref< StaticMeshResource > resource = instance->checkout< StaticMeshResource >(db::CfReadOnly);
+	Ref< StaticMeshResource > resource = instance->getObject< StaticMeshResource >();
 	if (!resource)
 	{
 		log::error << L"Static mesh factory failed; unable to checkout resource" << Endl;
