@@ -20,7 +20,7 @@ class Path;
 	namespace db
 	{
 
-class LocalContext;
+class Context;
 class LocalBus;
 class LocalGroup;
 
@@ -43,7 +43,7 @@ public:
 	virtual IProviderGroup* getRootGroup();
 
 private:
-	Ref< LocalContext > m_context;
+	Ref< Context > m_context;
 	Ref< LocalBus > m_bus;
 	Ref< LocalGroup > m_rootGroup;
 };

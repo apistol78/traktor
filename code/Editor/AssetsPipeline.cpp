@@ -32,7 +32,7 @@ TypeSet AssetsPipeline::getAssetTypes() const
 
 bool AssetsPipeline::buildDependencies(
 	PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -44,7 +44,7 @@ bool AssetsPipeline::buildDependencies(
 
 bool AssetsPipeline::buildOutput(
 	PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

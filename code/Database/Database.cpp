@@ -150,7 +150,7 @@ Instance* Database::getInstance(const std::wstring& instancePath)
 	return group->getInstance(instanceName);
 }
 
-Instance* Database::createInstance(const std::wstring& instancePath, Serializable* object, uint32_t flags, const Guid* guid)
+Instance* Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -178,7 +178,7 @@ Instance* Database::createInstance(const std::wstring& instancePath, Serializabl
 	if (instanceName.empty() || !group)
 		return 0;
 
-	return group->createInstance(instanceName, object, flags, guid);
+	return group->createInstance(instanceName, flags, guid);
 }
 
 Serializable* Database::getObjectReadOnly(const Guid& guid)
@@ -187,7 +187,7 @@ Serializable* Database::getObjectReadOnly(const Guid& guid)
 	Acquire< Semaphore > scopeLock(m_lock);
 
 	Ref< Instance > instance = getInstance(guid);
-	return instance ? instance->checkout(CfReadOnly) : 0;
+	return instance ? instance->getObject() : 0;
 }
 
 bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote)

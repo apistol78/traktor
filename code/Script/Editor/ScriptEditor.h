@@ -54,7 +54,7 @@ class T_DLLCLASS ScriptEditor
 public:
 	ScriptEditor(editor::Editor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Object* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
 	virtual void destroy();
 

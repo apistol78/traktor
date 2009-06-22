@@ -47,7 +47,7 @@ Object* BlendMeshFactory::create(const Type& resourceType, const Guid& guid, boo
 		return 0;
 	}
 
-	Ref< BlendMeshResource > resource = instance->checkout< BlendMeshResource >(db::CfReadOnly);
+	Ref< BlendMeshResource > resource = instance->getObject< BlendMeshResource >();
 	if (!resource)
 	{
 		log::error << L"Blend mesh factory failed; unable to checkout resource" << Endl;

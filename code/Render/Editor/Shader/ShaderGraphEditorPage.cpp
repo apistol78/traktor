@@ -63,7 +63,7 @@ public:
 
 	virtual bool acceptable(db::Instance* instance) const
 	{
-		Ref< ShaderGraph > shaderGraph = instance->checkout< ShaderGraph >(db::CfReadOnly);
+		Ref< ShaderGraph > shaderGraph = instance->getObject< ShaderGraph >();
 		if (!shaderGraph)
 			return false;
 
@@ -288,7 +288,7 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 	// Create an external node in case of ShaderGraph.
 	else if (is_type_of< ShaderGraph >(*primaryType))
 	{
-		Ref< ShaderGraph > fragmentGraph = instance->checkout< ShaderGraph >(db::CfReadOnly);
+		Ref< ShaderGraph > fragmentGraph = instance->getObject< ShaderGraph >();
 		T_ASSERT (fragmentGraph);
 
 		Ref< External > shaderNode = gc_new< External >(

@@ -23,23 +23,25 @@ public:
 
 	bool internalCreate(CompactInstanceEntry* instanceEntry);
 
+	virtual std::wstring getPrimaryTypeName() const;
+
+	virtual bool beginTransaction();
+
+	virtual bool endTransaction(bool commit);
+
 	virtual std::wstring getName() const;
+
+	virtual bool setName(const std::wstring& name);
 
 	virtual Guid getGuid() const;
 
-	virtual std::wstring getPrimaryTypeName() const;
-
-	virtual bool rename(const std::wstring& name);
+	virtual bool setGuid(const Guid& guid);
 
 	virtual bool remove();
 
-	virtual bool lock();
+	virtual Serializable* getObject();
 
-	virtual bool unlock();
-
-	virtual Serializable* readObject();
-
-	virtual bool writeObject(Serializable* object);
+	virtual bool setObject(const Serializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 

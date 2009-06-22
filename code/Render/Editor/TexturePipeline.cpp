@@ -175,7 +175,7 @@ TypeSet TexturePipeline::getAssetTypes() const
 
 bool TexturePipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -184,7 +184,7 @@ bool TexturePipeline::buildDependencies(
 
 bool TexturePipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -328,14 +328,15 @@ bool TexturePipeline::buildOutput(
 	Ref< TextureResource > outputResource = gc_new< TextureResource >();
 	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		outputResource
+		outputGuid
 	);
 	if (!outputInstance)
 	{
 		log::error << L"Unable to create output instance" << Endl;
 		return false;
 	}
+
+	outputInstance->setObject(outputResource);
 
 	Ref< Stream > stream = outputInstance->writeData(L"Data");
 	if (!stream)

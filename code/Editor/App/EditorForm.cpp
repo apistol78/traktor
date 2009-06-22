@@ -642,10 +642,17 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 
 	// Checkout instance for exclusive editing.
-	Ref< Object > object = instance->checkout(db::CfExclusive);
-	if (!object)
+	if (!instance->checkout())
 	{
 		log::error << L"Unable to checkout instance \"" << instance->getName() << L"\"" << Endl;
+		return false;
+	}
+
+	Ref< Serializable > object = instance->getObject();
+	if (!object)
+	{
+		log::error << L"Unable to get object \"" << instance->getName() << L"\"" << Endl;
+		instance->revert();
 		return false;
 	}
 
@@ -1073,7 +1080,7 @@ void EditorForm::saveCurrentDocument()
 		Ref< Serializable > object = checked_type_cast< Serializable* >(editorPage->getDataObject());
 		T_ASSERT (object);
 
-		if (instance->replace(object))
+		if (instance->setObject(object))
 		{
 			if (instance->commit(db::CfKeepCheckedOut))
 			{
@@ -1125,7 +1132,7 @@ void EditorForm::saveAllDocuments()
 		Ref< Serializable > object = checked_type_cast< Serializable* >(editorPage->getDataObject());
 		T_ASSERT (object);
 
-		if (instance->replace(object))
+		if (instance->setObject(object))
 		{
 			if (instance->commit(db::CfKeepCheckedOut))
 			{

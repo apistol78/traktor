@@ -56,7 +56,7 @@ TypeSet ScriptPipeline::getAssetTypes() const
 
 bool ScriptPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -71,7 +71,7 @@ bool ScriptPipeline::buildDependencies(
 
 bool ScriptPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

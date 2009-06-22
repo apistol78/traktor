@@ -48,7 +48,7 @@ Object* InstanceMeshFactory::create(const Type& resourceType, const Guid& guid, 
 		return 0;
 	}
 
-	Ref< InstanceMeshResource > meshResource = instance->checkout< InstanceMeshResource >(db::CfReadOnly);
+	Ref< InstanceMeshResource > meshResource = instance->getObject< InstanceMeshResource >();
 	if (!meshResource)
 	{
 		log::error << L"Instance mesh factory failed; unable to checkout resource" << Endl;

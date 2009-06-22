@@ -77,7 +77,7 @@ Pipeline* PipelineManager::findPipeline(const Type& sourceType) const
 	return pipeline;
 }
 
-void PipelineManager::addDependency(const Object* sourceAsset)
+void PipelineManager::addDependency(const Serializable* sourceAsset)
 {
 	if (!sourceAsset)
 		return;
@@ -97,7 +97,7 @@ void PipelineManager::addDependency(const Object* sourceAsset)
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineManager::addDependency(const Object* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineManager::addDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	if (!sourceAsset)
 		return;
@@ -143,7 +143,7 @@ void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool buil
 	}
 
 	// Checkout source asset instance.
-	Ref< Object > sourceAsset = sourceAssetInstance->checkout(db::CfReadOnly);
+	Ref< Serializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
@@ -186,7 +186,7 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 	}
 
 	// Checkout source asset instance.
-	Ref< Object > sourceAsset = sourceAssetInstance->checkout(db::CfReadOnly);
+	Ref< Serializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
@@ -372,17 +372,10 @@ db::Database* PipelineManager::getOutputDatabase() const
 	return m_outputDatabase;
 }
 
-db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, const Object* object)
+db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
-	if (!is_a< Serializable >(object))
-	{
-		log::error << L"Unable to create output instance; object not serializable" << Endl;
-		return 0;
-	}
-
 	return m_outputDatabase->createInstance(
 		instancePath,
-		static_cast< Serializable* >(const_cast< Object* >(object)),
 		db::CifReplaceExisting,
 		&instanceGuid
 	);
@@ -419,7 +412,7 @@ PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) c
 	return 0;
 }
 
-void PipelineManager::addUniqueDependency(const Object* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineManager::addUniqueDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	// Find appropriate pipeline.
 	Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());

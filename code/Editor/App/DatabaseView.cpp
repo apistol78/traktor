@@ -424,13 +424,13 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 
 		if (selected->getCommand() == L"Editor.Database.Edit")	// Edit
 		{
-			Ref< Asset > editAsset = instance->checkout< Asset >(db::CfReadOnly);
+			Ref< Asset > editAsset = instance->getObject< Asset >();
 			if (editAsset)
 				OS::getInstance().editFile(editAsset->getFileName());
 		}
 		else if (selected->getCommand() == L"Editor.Database.Explore")	// Explore
 		{
-			Ref< Asset > exploreAsset = instance->checkout< Asset >(db::CfReadOnly);
+			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
 				OS::getInstance().exploreFile(exploreAsset->getFileName());
 		}
@@ -443,10 +443,13 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 			if (ui::MessageBox::show(this, i18n::Text(L"DATABASE_DELETE_ARE_YOU_SURE"), i18n::Text(L"DATABASE_DELETE_INSTANCE"), ui::MbYesNo | ui::MbIconQuestion) != 1)
 				return;
 
-			if (!instance->lock())
+			if (!instance->checkout())
 				return;
 
 			if (!instance->remove())
+				return;
+
+			if (!instance->commit())
 				return;
 
 			treeDomain->removeItem(treeItem);
@@ -454,7 +457,7 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 		}
 		else if (selected->getCommand() == L"Editor.Database.Clone")	// Clone
 		{
-			Ref< Serializable > object = instance->checkout< Serializable >(db::CfReadOnly);
+			Ref< Serializable > object = instance->getObject< Serializable >();
 			if (!object)
 			{
 				log::error << L"Unable to checkout instance" << Endl;
@@ -468,10 +471,18 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 				return;
 			}
 
-			Ref< db::Instance > instanceClone = group->createInstance(instance->getName() + L" (clone)", object);
-			if (!instanceClone || !instanceClone->commit())
+			Ref< db::Instance > instanceClone = group->createInstance(instance->getName() + L" (clone)");
+			if (!instanceClone)
 			{
 				log::error << L"Unable to create clone instance" << Endl;
+				return;
+			}
+
+			instanceClone->setObject(object);
+
+			if (!instanceClone->commit())
+			{
+				log::error << L"Unable to commit clone instance" << Endl;
 				return;
 			}
 
@@ -525,17 +536,21 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 				Ref< Serializable > data = dynamic_type_cast< Serializable* >(type->newInstance());
 				T_ASSERT (data);
 
-				Ref< db::Instance > instance = group->createInstance(instanceName, data);
-				if (instance && instance->commit())
+				Ref< db::Instance > instance = group->createInstance(instanceName);
+				if (instance)
 				{
-					const PropertyGroup* iconGroup = checked_type_cast< const PropertyGroup* >(m_editor->getSettings()->getProperty(L"Editor.Icons"));
-					int iconIndex = iconGroup->getProperty< PropertyInteger >(typeName, 2);
+					instance->setObject(data);
+					if (instance->commit())
+					{
+						const PropertyGroup* iconGroup = checked_type_cast< const PropertyGroup* >(m_editor->getSettings()->getProperty(L"Editor.Icons"));
+						int iconIndex = iconGroup->getProperty< PropertyInteger >(typeName, 2);
 
-					Ref< ui::TreeViewItem > instanceItem = treeDomain->createItem(treeItem, instanceName, iconIndex);
-					instanceItem->setData(L"GROUP", group);
-					instanceItem->setData(L"INSTANCE", instance);
-					
-					treeDomain->update();
+						Ref< ui::TreeViewItem > instanceItem = treeDomain->createItem(treeItem, instanceName, iconIndex);
+						instanceItem->setData(L"GROUP", group);
+						instanceItem->setData(L"INSTANCE", instance);
+						
+						treeDomain->update();
+					}
 				}
 			}
 
@@ -598,10 +613,10 @@ void DatabaseView::eventInstanceRenamed(ui::Event* event)
 
 	if (instance && group)
 	{
-		if (instance->lock())
+		if (instance->checkout())
 		{
-			result = instance->rename(treeItem->getText());
-			instance->unlock();
+			result = instance->setName(treeItem->getText());
+			result &= instance->commit();
 		}
 	}
 	else if (group)

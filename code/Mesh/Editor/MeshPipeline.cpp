@@ -85,7 +85,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 
 bool MeshPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -154,7 +154,7 @@ bool MeshPipeline::buildDependencies(
 		pipelineManager->addDependency(materialShaderInstance->getGuid(), false);
 
 		// Generate combined shader; @fixme the combined graph is possibly created multiple times.
-		Ref< const render::ShaderGraph > materialShaderGraph = materialShaderInstance->checkout< render::ShaderGraph >(db::CfReadOnly);
+		Ref< const render::ShaderGraph > materialShaderGraph = materialShaderInstance->getObject< render::ShaderGraph >();
 		if (!materialShaderGraph)
 			continue;
 
@@ -193,7 +193,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -296,14 +296,15 @@ bool MeshPipeline::buildOutput(
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		resource
+		outputGuid
 	);
 	if (!outputInstance)
 	{
 		log::error << L"Mesh pipeline failed; unable to create output instance" << Endl;
 		return false;
 	}
+
+	outputInstance->setObject(resource);
 
 	// Open asset data stream.
 	Ref< Stream > stream = outputInstance->writeData(L"Data");

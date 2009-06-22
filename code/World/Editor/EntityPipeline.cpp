@@ -36,7 +36,7 @@ TypeSet EntityPipeline::getAssetTypes() const
 
 bool EntityPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -65,7 +65,7 @@ bool EntityPipeline::buildDependencies(
 
 bool EntityPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -75,9 +75,11 @@ bool EntityPipeline::buildOutput(
 	if ((reason & (BrSourceModified | BrForced)) == 0)
 		return true;
 
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid, sourceAsset);
+	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 		return false;
+
+	outputInstance->setObject(sourceAsset);
 
 	if (!outputInstance->commit())
 		return false;

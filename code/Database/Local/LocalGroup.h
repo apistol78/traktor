@@ -17,7 +17,7 @@ namespace traktor
 	namespace db
 	{
 
-class LocalContext;
+class Context;
 
 /*! \brief Local group.
  * \ingroup Database
@@ -27,7 +27,7 @@ class T_DLLCLASS LocalGroup : public IProviderGroup
 	T_RTTI_CLASS(LocalGroup)
 
 public:
-	LocalGroup(LocalContext* contex, const Path& groupPath);
+	LocalGroup(Context* contex, const Path& groupPath);
 
 	virtual std::wstring getName() const;
 
@@ -44,7 +44,7 @@ public:
 	virtual bool getChildInstances(RefArray< IProviderInstance >& outChildInstances);
 
 private:
-	Ref< LocalContext > m_context;
+	Ref< Context > m_context;
 	Path m_groupPath;
 };
 

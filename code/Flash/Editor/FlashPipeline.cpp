@@ -37,7 +37,7 @@ TypeSet FlashPipeline::getAssetTypes() const
 
 bool FlashPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -53,7 +53,7 @@ bool FlashPipeline::buildDependencies(
 
 bool FlashPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -71,14 +71,15 @@ bool FlashPipeline::buildOutput(
 
 	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		gc_new< flash::FlashMovieResource >()
+		outputGuid
 	);
 	if (!instance)
 	{
 		log::error << L"Failed to build flash resource, unable to create instance" << Endl;
 		return false;
 	}
+
+	instance->setObject(gc_new< flash::FlashMovieResource >());
 
 	Ref< Stream > stream = instance->writeData(L"Data");
 	if (!stream)

@@ -39,7 +39,7 @@ Object* SkinnedMeshFactory::create(const Type& resourceType, const Guid& guid, b
 		return 0;
 	}
 
-	Ref< SkinnedMeshResource > resource = instance->checkout< SkinnedMeshResource >(db::CfReadOnly);
+	Ref< SkinnedMeshResource > resource = instance->getObject< SkinnedMeshResource >();
 	if (!resource)
 	{
 		log::error << L"Skinned mesh factory failed; unable to checkout resource" << Endl;

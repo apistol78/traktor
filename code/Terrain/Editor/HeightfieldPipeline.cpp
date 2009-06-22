@@ -82,7 +82,7 @@ TypeSet HeightfieldPipeline::getAssetTypes() const
 
 bool HeightfieldPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -91,7 +91,7 @@ bool HeightfieldPipeline::buildDependencies(
 
 bool HeightfieldPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -143,14 +143,15 @@ bool HeightfieldPipeline::buildOutput(
 	// Create instance's name.
 	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		resource
+		outputGuid
 	);
 	if (!instance)
 	{
 		log::error << L"Failed to build heightfield, unable to create instance" << Endl;
 		return false;
 	}
+
+	instance->setObject(resource);
 
 	Ref< Stream > stream = instance->writeData(L"Data");
 	if (!stream)

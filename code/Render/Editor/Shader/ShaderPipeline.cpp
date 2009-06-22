@@ -153,7 +153,7 @@ TypeSet ShaderPipeline::getAssetTypes() const
 
 bool ShaderPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -167,7 +167,7 @@ bool ShaderPipeline::buildDependencies(
 
 bool ShaderPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -361,14 +361,15 @@ bool ShaderPipeline::buildOutput(
 	// Create output instance.
 	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		shaderResource
+		outputGuid
 	);
 	if (!outputInstance)
 	{
 		log::error << L"ShaderPipeline failed; unable to create output instance" << Endl;
 		return false;
 	}
+
+	outputInstance->setObject(shaderResource);
 
 	if (!outputInstance->commit())
 	{

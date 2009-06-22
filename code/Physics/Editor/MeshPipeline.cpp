@@ -40,7 +40,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 
 bool MeshPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -49,7 +49,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -106,11 +106,12 @@ bool MeshPipeline::buildOutput(
 
 	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 		outputPath,
-		outputGuid,
-		gc_new< MeshResource >()
+		outputGuid		
 	);
 	if (!instance)
 		return false;
+
+	instance->setObject(gc_new< MeshResource >());
 
 	Ref< Stream > stream = instance->writeData(L"Data");
 	mesh.write(stream);

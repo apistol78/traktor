@@ -16,12 +16,6 @@ enum CreateInstanceFlags
 	CifKeepExistingGuid = 2	//< Keep existing instance's guid.	
 };
 
-enum CheckoutInstanceFlags
-{
-	CfReadOnly = 0,
-	CfExclusive = 1
-};
-
 enum CommitInstanceFlags
 {
 	CfDefault = 0,

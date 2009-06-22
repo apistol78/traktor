@@ -15,6 +15,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace db
 	{
 
@@ -70,7 +73,7 @@ public:
 	 */
 	virtual bool buildDependencies(
 		PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const = 0;
 
@@ -86,7 +89,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

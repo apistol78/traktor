@@ -57,7 +57,7 @@ TypeSet SoundPipeline::getAssetTypes() const
 
 bool SoundPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -66,7 +66,7 @@ bool SoundPipeline::buildDependencies(
 
 bool SoundPipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -104,14 +104,15 @@ bool SoundPipeline::buildOutput(
 
 		Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 			outputPath,
-			outputGuid,
-			resource
+			outputGuid
 		);
 		if (!instance)
 		{
 			log::error << L"Failed to build sound asset, unable to create instance" << Endl;
 			return false;
 		}
+
+		instance->setObject(resource);
 
 		Ref< Stream > stream = instance->writeData(L"Data");
 		if (!stream)
@@ -151,14 +152,15 @@ bool SoundPipeline::buildOutput(
 
 		Ref< db::Instance > instance = pipelineManager->createOutputInstance(
 			outputPath,
-			outputGuid,
-			resource
+			outputGuid
 		);
 		if (!instance)
 		{
 			log::error << L"Failed to build sound asset, unable to create instance" << Endl;
 			return false;
 		}
+
+		instance->setObject(resource);
 
 		Ref< Stream > stream = instance->writeData(L"Data");
 		if (!stream)

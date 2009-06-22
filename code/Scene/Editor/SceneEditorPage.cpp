@@ -371,7 +371,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 	}
 	else if (is_type_of< world::PostProcessSettings >(*primaryType))
 	{
-		Ref< world::PostProcessSettings > postProcessSettings = instance->checkout< world::PostProcessSettings >(db::CfReadOnly);
+		Ref< world::PostProcessSettings > postProcessSettings = instance->getObject< world::PostProcessSettings >();
 		if (postProcessSettings)
 			m_editControl->getRenderControl()->setPostProcessSettings(postProcessSettings);
 	}

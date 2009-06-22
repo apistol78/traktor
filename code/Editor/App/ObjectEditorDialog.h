@@ -6,6 +6,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace db
 	{
 
@@ -26,7 +29,7 @@ class ObjectEditorDialog : public ui::ConfigDialog
 public:
 	ObjectEditorDialog(Settings* settings, ObjectEditor* objectEditor);
 
-	bool create(ui::Widget* parent, db::Instance* instance, Object* object);
+	bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
 	void destroy();
 
@@ -38,6 +41,7 @@ private:
 	Ref< Settings > m_settings;
 	Ref< ObjectEditor > m_objectEditor;
 	Ref< db::Instance > m_instance;
+	Ref< Serializable > m_object;
 
 	void eventClick(ui::Event* event);
 

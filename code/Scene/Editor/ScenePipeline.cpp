@@ -35,7 +35,7 @@ TypeSet ScenePipeline::getAssetTypes() const
 
 bool ScenePipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -46,19 +46,21 @@ bool ScenePipeline::buildDependencies(
 
 bool ScenePipeline::buildOutput(
 	editor::PipelineManager* pipelineManager,
-	const Object* sourceAsset,
+	const Serializable* sourceAsset,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	uint32_t reason
 ) const
 {
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid, sourceAsset);
+	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"Unable to create output instance" << Endl;
 		return false;
 	}
+
+	outputInstance->setObject(sourceAsset);
 
 	if (!outputInstance->commit())
 	{

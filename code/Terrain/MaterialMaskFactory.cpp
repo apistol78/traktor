@@ -31,7 +31,7 @@ Object* MaterialMaskFactory::create(const Type& resourceType, const Guid& guid, 
 	if (!instance)
 		return 0;
 
-	Ref< MaterialMaskResource > resource = instance->checkout< MaterialMaskResource >(db::CfReadOnly);
+	Ref< MaterialMaskResource > resource = instance->getObject< MaterialMaskResource >();
 	if (!resource)
 		return 0;
 

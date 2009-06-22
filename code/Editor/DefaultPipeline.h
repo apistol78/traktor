@@ -40,13 +40,13 @@ public:
 
 	virtual bool buildDependencies(
 		PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		PipelineManager* pipelineManager,
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

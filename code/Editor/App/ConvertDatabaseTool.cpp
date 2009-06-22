@@ -27,20 +27,22 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 		log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
 		status.notify(0, sourceInstance->getName());
 
-		Ref< Serializable > sourceObject = sourceInstance->checkout(db::CfReadOnly);
+		Ref< Serializable > sourceObject = sourceInstance->getObject();
 		if (!sourceObject)
 		{
-			log::error << L"Failed, unable to checkout source instance" << Endl;
+			log::error << L"Failed, unable to get source object" << Endl;
 			continue;
 		}
 
 		Guid sourceGuid = sourceInstance->getGuid();
-		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), sourceObject, db::CifReplaceExisting, &sourceGuid);
+		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
 		if (!targetInstance)
 		{
 			log::error << L"Failed, unable to create target instance" << Endl;
 			continue;
 		}
+
+		targetInstance->setObject(sourceObject);
 
 		std::vector< std::wstring > dataNames;
 		sourceInstance->getDataNames(dataNames);

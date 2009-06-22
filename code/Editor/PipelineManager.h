@@ -65,7 +65,7 @@ public:
 	{
 		std::wstring name;
 		Ref< Pipeline > pipeline;
-		Ref< const Object > sourceAsset;
+		Ref< const Serializable > sourceAsset;
 		std::wstring outputPath;
 		Guid outputGuid;
 		Ref< const Object > buildParams;
@@ -88,11 +88,11 @@ public:
 	virtual Pipeline* findPipeline(const Type& sourceType) const;
 
 	virtual void addDependency(
-		const Object* sourceAsset
+		const Serializable* sourceAsset
 	);
 
 	virtual void addDependency(
-		const Object* sourceAsset,
+		const Serializable* sourceAsset,
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
@@ -115,7 +115,7 @@ public:
 
 	virtual db::Database* getOutputDatabase() const;
 
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid, const Object* object);
+	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 
@@ -160,7 +160,7 @@ private:
 	 * \param outputGuid Guid of output instance.
 	 * \param build If asset needs to be built.
 	 */
-	void addUniqueDependency(const Object* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build);
+	void addUniqueDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build);
 
 	/*! \brief Build thread method. */
 	void buildThread();

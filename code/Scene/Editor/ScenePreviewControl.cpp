@@ -201,7 +201,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		Ref< db::Instance > postProcessInstance = m_context->getEditor()->browseInstance(&filter);
 		if (postProcessInstance)
 		{
-			Ref< world::PostProcessSettings > postProcessSettings = postProcessInstance->checkout< world::PostProcessSettings >(db::CfReadOnly);
+			Ref< world::PostProcessSettings > postProcessSettings = postProcessInstance->getObject< world::PostProcessSettings >();
 			if (postProcessSettings)
 				m_sceneRenderControl->setPostProcessSettings(postProcessSettings);
 		}

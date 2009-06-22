@@ -23,10 +23,35 @@ bool CompactInstance::internalCreate(CompactInstanceEntry* instanceEntry)
 	return true;
 }
 
+std::wstring CompactInstance::getPrimaryTypeName() const
+{
+	T_ASSERT (m_instanceEntry);
+	return m_instanceEntry->getPrimaryTypeName();
+}
+
+bool CompactInstance::beginTransaction()
+{
+	T_ASSERT (m_instanceEntry);
+	return true;
+}
+
+bool CompactInstance::endTransaction(bool commit)
+{
+	T_ASSERT (m_instanceEntry);
+	return true;
+}
+
 std::wstring CompactInstance::getName() const
 {
 	T_ASSERT (m_instanceEntry);
 	return m_instanceEntry->getName();
+}
+
+bool CompactInstance::setName(const std::wstring& name)
+{
+	T_ASSERT (m_instanceEntry);
+	m_instanceEntry->setName(name);
+	return true;
 }
 
 Guid CompactInstance::getGuid() const
@@ -35,16 +60,10 @@ Guid CompactInstance::getGuid() const
 	return m_instanceEntry->getGuid();
 }
 
-std::wstring CompactInstance::getPrimaryTypeName() const
+bool CompactInstance::setGuid(const Guid& guid)
 {
 	T_ASSERT (m_instanceEntry);
-	return m_instanceEntry->getPrimaryTypeName();
-}
-
-bool CompactInstance::rename(const std::wstring& name)
-{
-	T_ASSERT (m_instanceEntry);
-	m_instanceEntry->setName(name);
+	m_instanceEntry->setGuid(guid);
 	return true;
 }
 
@@ -78,19 +97,7 @@ bool CompactInstance::remove()
 	return true;
 }
 
-bool CompactInstance::lock()
-{
-	T_ASSERT (m_instanceEntry);
-	return true;
-}
-
-bool CompactInstance::unlock()
-{
-	T_ASSERT (m_instanceEntry);
-	return true;
-}
-
-Serializable* CompactInstance::readObject()
+Serializable* CompactInstance::getObject()
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -111,7 +118,7 @@ Serializable* CompactInstance::readObject()
 	return object;
 }
 
-bool CompactInstance::writeObject(Serializable* object)
+bool CompactInstance::setObject(const Serializable* object)
 {
 	T_ASSERT (m_instanceEntry);
 

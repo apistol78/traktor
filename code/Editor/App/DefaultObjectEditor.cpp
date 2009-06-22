@@ -25,7 +25,7 @@ DefaultObjectEditor::DefaultObjectEditor(Editor* editor)
 {
 }
 
-bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, Object* object)
+bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
 {
 	m_propertyList = gc_new< ui::custom::AutoPropertyList >();
 	m_propertyList->create(parent, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
@@ -33,7 +33,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, Obj
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
-	m_propertyList->bind(checked_type_cast< Serializable* >(object));
+	m_propertyList->bind(object);
 
 	return true;
 }

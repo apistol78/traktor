@@ -32,7 +32,7 @@ Object* FlashMovieResourceFactory::create(const Type& resourceType, const Guid& 
 	if (!instance)
 		return 0;
 
-	Ref< FlashMovieResource > resource = instance->checkout< FlashMovieResource >(db::CfReadOnly);
+	Ref< FlashMovieResource > resource = instance->getObject< FlashMovieResource >();
 	if (!resource)
 		return 0;
 
