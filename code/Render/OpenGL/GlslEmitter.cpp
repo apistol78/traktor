@@ -20,7 +20,24 @@ std::wstring formatFloat(float v)
 
 	std::wstring s = ss.str();
 	return s;
-}		
+}
+
+std::wstring expandScalar(float v, GlslType type)
+{
+	std::wstring vs = formatFloat(v);
+	switch (type)
+	{
+	case GtFloat2:
+		return L"vec2(" + vs + L", " + vs + L")";
+
+	case GtFloat3:
+		return L"vec3(" + vs + L", " + vs + L", " + vs + L")";
+	
+	case GtFloat4:
+		return L"vec4(" + vs + L", " + vs + L", " + vs + L", " + vs + L")";
+	}
+	return vs;
+}
 
 StringOutputStream& assign(StringOutputStream& f, GlslVariable* out)
 {
@@ -250,7 +267,7 @@ void emitFragmentPosition(GlslContext& cx, FragmentPosition* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
-	assign(f, out) << L"gl_FragCoord;" << Endl;
+	assign(f, out) << L"gl_FragCoord.xy;" << Endl;
 }
 
 void emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
@@ -348,7 +365,7 @@ void emitIterate(GlslContext& cx, Iterate* node)
 	if (initial)
 		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
 	else
-		assign(f, out) << L"0;" << Endl;
+		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
@@ -852,7 +869,7 @@ void emitSum(GlslContext& cx, Sum* node)
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
-	assign(f, out) << L"0;" << Endl;
+	assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
 	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
@@ -973,7 +990,7 @@ void emitSwitch(GlslContext& cx, Switch* node)
 	}
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", outputType);
-	assign(f, out) << L"0;" << Endl;
+	assign(f, out) << expandScalar(0.0f, outputType) << L";" << Endl;
 
 	const std::vector< int32_t >& cases = node->getCases();
 
