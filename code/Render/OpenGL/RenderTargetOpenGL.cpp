@@ -104,17 +104,37 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 #if !defined(__APPLE__)
 	case TfR16F:
-		internalFormat = GL_FLOAT_R16_NV;
-		format = GL_RED;
-		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
+		if (/* have GL_NV_float_buffer */ 0)
+		{
+			internalFormat = GL_FLOAT_R16_NV;
+			format = GL_RED;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
+		}
+		else if (/* have GL_ATI_texture_float */ 1)
+		{
+			internalFormat = GL_LUMINANCE_FLOAT16_ATI;
+			format = GL_RED;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
 		break;
 
 	case TfR32F:
-		internalFormat = GL_FLOAT_R32_NV;
-		format = GL_RED;
-		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
+		if (/* have GL_NV_float_buffer */ 0)
+		{
+			internalFormat = GL_FLOAT_R32_NV;
+			format = GL_RED;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_RECTANGLE_NV;
+		}
+		else if (/* have GL_ATI_texture_float */ 1)
+		{
+			internalFormat = GL_LUMINANCE_FLOAT32_ATI;
+			format = GL_RED;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
 		break;
 #else
 	case TfR16F:
