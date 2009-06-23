@@ -83,6 +83,7 @@ private:
 
 	void findDefinitions(
 		GeneratorContext& context,
+		Solution* solution,
 		Project* project,
 		const traktor::RefList< ProjectItem >& items
 	) const;
