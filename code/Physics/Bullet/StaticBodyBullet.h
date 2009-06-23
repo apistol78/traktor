@@ -29,15 +29,22 @@ class T_DLLCLASS StaticBodyBullet : public BodyBullet< StaticBody >
 	T_RTTI_CLASS(StaticBodyBullet)
 
 public:
-	StaticBodyBullet(DestroyCallback* callback, btRigidBody* body, btCollisionShape* shape);
+	StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape);
 
 	virtual void setTransform(const Matrix44& transform);
 
 	virtual Matrix44 getTransform() const;
 
+	virtual void setActive(bool active);
+
+	virtual bool isActive() const;
+
 	virtual void setEnable(bool enable);
 
-	virtual bool getEnable() const;
+	virtual bool isEnable() const;
+
+private:
+	bool m_enable;
 };
 
 	}

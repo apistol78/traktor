@@ -29,7 +29,7 @@ class T_DLLCLASS DynamicBodyBullet : public BodyBullet< DynamicBody >
 	T_RTTI_CLASS(DynamicBodyBullet)
 
 public:
-	DynamicBodyBullet(DestroyCallback* callback, btRigidBody* body, btCollisionShape* shape);
+	DynamicBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape);
 
 	virtual void setTransform(const Matrix44& transform);
 
@@ -67,9 +67,16 @@ public:
 
 	virtual DynamicBodyState getState() const;
 
+	virtual void setActive(bool active);
+
+	virtual bool isActive() const;
+
 	virtual void setEnable(bool enable);
 
-	virtual bool getEnable() const;
+	virtual bool isEnable() const;
+
+private:
+	bool m_enable;
 };
 
 	}

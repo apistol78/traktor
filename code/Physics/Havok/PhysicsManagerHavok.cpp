@@ -750,7 +750,7 @@ void PhysicsManagerHavok::getBodyCount(uint32_t& outCount, uint32_t& outActiveCo
 	outActiveCount = 0;
 	for (RefArray< DynamicBodyHavok >::const_iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
 	{
-		if ((*i)->getEnable())
+		if ((*i)->isActive())
 			++outActiveCount;
 	}
 }

@@ -11,8 +11,9 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.DynamicBodyDesc", DynamicB
 
 DynamicBodyDesc::DynamicBodyDesc()
 :	m_mass(1.0f)
-,	m_autoDisable(false)
-,	m_disabled(false)
+,	m_autoDeactivate(true)
+,	m_initiallyActive(true)
+,	m_initiallyEnabled(true)
 ,	m_linearDamping(0.0f)
 ,	m_angularDamping(0.0f)
 ,	m_friction(0.75f)
@@ -29,24 +30,34 @@ float DynamicBodyDesc::getMass() const
 	return m_mass;
 }
 
-void DynamicBodyDesc::setAutoDisable(bool autoDisable)
+void DynamicBodyDesc::setAutoDeactivate(bool autoDeactivate)
 {
-	m_autoDisable = autoDisable;
+	m_autoDeactivate = autoDeactivate;
 }
 
-bool DynamicBodyDesc::getAutoDisable() const
+bool DynamicBodyDesc::getAutoDeactivate() const
 {
-	return m_autoDisable;
+	return m_autoDeactivate;
 }
 
-void DynamicBodyDesc::setDisabled(bool disabled)
+void DynamicBodyDesc::setInitiallyActive(bool initiallyActive)
 {
-	m_disabled = disabled;
+	m_initiallyActive = initiallyActive;
 }
 
-bool DynamicBodyDesc::getDisabled() const
+bool DynamicBodyDesc::getInitiallyActive() const
 {
-	return m_disabled;
+	return m_initiallyActive;
+}
+
+void DynamicBodyDesc::setInitiallyEnabled(bool initiallyEnabled)
+{
+	m_initiallyEnabled = initiallyEnabled;
+}
+
+bool DynamicBodyDesc::getInitiallyEnabled() const
+{
+	return m_initiallyEnabled;
 }
 
 void DynamicBodyDesc::setLinearDamping(float linearDamping)
@@ -81,7 +92,7 @@ float DynamicBodyDesc::getFriction() const
 
 int DynamicBodyDesc::getVersion() const
 {
-	return 2;
+	return 3;
 }
 
 bool DynamicBodyDesc::serialize(Serializer& s)
@@ -90,8 +101,20 @@ bool DynamicBodyDesc::serialize(Serializer& s)
 		return false;
 
 	s >> Member< float >(L"mass", m_mass, 0.0f);
-	s >> Member< bool >(L"autoDisable", m_autoDisable);
-	s >> Member< bool >(L"disabled", m_disabled);
+
+	if (s.getVersion() >= 3)
+	{
+		s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
+		s >> Member< bool >(L"initiallyActive", m_initiallyActive);
+		s >> Member< bool >(L"initiallyEnabled", m_initiallyEnabled);
+	}
+	else
+	{
+		m_initiallyActive = !m_initiallyActive;
+		s >> Member< bool >(L"autoDisable", m_autoDeactivate);
+		s >> Member< bool >(L"disabled", m_initiallyActive);
+		m_initiallyActive = !m_initiallyActive;
+	}
 
 	if (s.getVersion() >= 1)
 	{

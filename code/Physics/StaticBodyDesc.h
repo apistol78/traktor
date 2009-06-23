@@ -26,6 +26,10 @@ class T_DLLCLASS StaticBodyDesc : public BodyDesc
 public:
 	StaticBodyDesc();
 
+	void setInitiallyEnabled(bool initiallyEnabled);
+
+	bool getInitiallyEnabled() const;
+
 	void setFriction(float friction);
 
 	float getFriction() const;
@@ -39,6 +43,7 @@ public:
 	virtual bool serialize(Serializer& s);
 
 private:
+	bool m_initiallyEnabled;
 	float m_friction;
 	bool m_kinematic;
 };

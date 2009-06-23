@@ -139,17 +139,26 @@ DynamicBodyState DynamicBodyPhysX::getState() const
 	return state;
 }
 
-void DynamicBodyPhysX::setEnable(bool enable)
+void DynamicBodyPhysX::setActive(bool active)
 {
-	if (!enable)
+	if (!active)
 		m_actor->putToSleep();
 	else
 		m_actor->wakeUp();
 }
 
-bool DynamicBodyPhysX::getEnable() const
+bool DynamicBodyPhysX::isActive() const
 {
 	return !m_actor->isSleeping();
+}
+
+void DynamicBodyPhysX::setEnable(bool enable)
+{
+}
+
+bool DynamicBodyPhysX::isEnable() const
+{
+	return true;
 }
 
 	}

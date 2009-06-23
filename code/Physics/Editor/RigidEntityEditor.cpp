@@ -71,7 +71,7 @@ void RigidEntityEditor::applyModifier(
 	// Ensure body is enabled as it might have gone to sleep.
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
 	if (rigidEntity->getBody())
-		rigidEntity->getBody()->setEnable(true);
+		rigidEntity->getBody()->setActive(true);
 }
 
 bool RigidEntityEditor::handleCommand(

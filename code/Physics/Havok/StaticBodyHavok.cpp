@@ -24,17 +24,26 @@ Matrix44 StaticBodyHavok::getTransform() const
 	return fromHkTransform(m_rigidBody->getTransform());
 }
 
-void StaticBodyHavok::setEnable(bool enable)
+void StaticBodyHavok::setActive(bool active)
 {
-	if (enable)
+	if (active)
 		m_rigidBody->activate();
 	else
 		m_rigidBody->deactivate();
 }
 
-bool StaticBodyHavok::getEnable() const
+bool StaticBodyHavok::isActive() const
 {
 	return m_rigidBody->isActive();
+}
+
+void StaticBodyHavok::setEnable(bool enable)
+{
+}
+
+bool StaticBodyHavok::isEnable() const
+{
+	return true;
 }
 
 	}

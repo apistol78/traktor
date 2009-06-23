@@ -261,20 +261,29 @@ DynamicBodyState DynamicBodyOde::getState() const
 	return state;
 }
 
-void DynamicBodyOde::setEnable(bool enable)
+void DynamicBodyOde::setActive(bool active)
 {
 	T_ASSERT (m_bodyId != 0);
 
-	if (enable)
+	if (active)
 		dBodyEnable(m_bodyId);
 	else
 		dBodyDisable(m_bodyId);
 }
 
-bool DynamicBodyOde::getEnable() const
+bool DynamicBodyOde::isActive() const
 {
 	T_ASSERT (m_bodyId != 0);
 	return bool(dBodyIsEnabled(m_bodyId) != 0);
+}
+
+void DynamicBodyOde::setEnable(bool enable)
+{
+}
+
+bool DynamicBodyOde::isEnable() const
+{
+	return true;
 }
 
 const dGeomID DynamicBodyOde::getGeomId() const
