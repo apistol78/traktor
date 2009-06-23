@@ -36,6 +36,12 @@ void ResourceManager::removeLoader(ResourceLoader* loader)
 	m_loaders.remove(loader);
 }
 
+void ResourceManager::removeAllLoaders()
+{
+	Acquire< Semaphore > scope(m_lock);
+	m_loaders.clear();
+}
+
 void ResourceManager::setCache(IResourceCache* cache)
 {
 	Acquire< Semaphore > scope(m_lock);
