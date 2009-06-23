@@ -34,7 +34,7 @@ bool Library::open(const Path& libraryName)
 	return bool(m_handle != NULL);
 }
 
-bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths)
+bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
 	TCHAR currentPath[32767];
 
@@ -50,6 +50,9 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 		for (++i; i != searchPaths.end(); ++i)
 			newPathStream << L";" << i->getPathName();
 	}
+
+	if (includeDefaultPaths)
+		newPathStream << L";" << currentPath;
 
 	std::wstring newPath = newPathStream.str();
 

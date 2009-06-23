@@ -36,15 +36,16 @@ public:
 	/*! \brief Open library.
 	 *
 	 * This method take user defined search paths
-	 * which is used recursivly, ie. dependent
+	 * which is used recursively, i.e. dependent
 	 * libraries are also searched through the same
 	 * paths.
 	 *
 	 * \param libraryName Name of library.
 	 * \param searchPaths Custom search paths.
+	 * \param includeDefaultPaths Include default search paths.
 	 * \return True if library opened successfully.
 	 */
-	bool open(const Path& libraryName, const std::vector< Path >& searchPaths);
+	bool open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths);
 
 	/*! \brief Close library. */
 	void close();
