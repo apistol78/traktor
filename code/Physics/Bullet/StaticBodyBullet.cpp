@@ -9,8 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.StaticBodyBullet", StaticBodyBullet, StaticBody)
 
-StaticBodyBullet::StaticBodyBullet(DestroyCallback* callback, btRigidBody* body, btCollisionShape* shape)
-:	BodyBullet< StaticBody >(callback, body, shape)
+StaticBodyBullet::StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape)
+:	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape)
+,	m_enable(false)
 {
 }
 
@@ -32,16 +33,41 @@ Matrix44 StaticBodyBullet::getTransform() const
 	return fromBtTransform(m_body->getWorldTransform());
 }
 
-void StaticBodyBullet::setEnable(bool enable)
+void StaticBodyBullet::setActive(bool active)
 {
 	if (!m_body->isKinematicObject())
-		m_body->setActivationState(enable ? ACTIVE_TAG : ISLAND_SLEEPING);
+		m_body->setActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
 }
 
-bool StaticBodyBullet::getEnable() const
+bool StaticBodyBullet::isActive() const
 {
 	return m_body->isActive();
 }
+
+void StaticBodyBullet::setEnable(bool enable)
+{
+	if (enable == m_enable)
+		return;
+
+	if (enable)
+	{
+		//m_dynamicsWorld->addCollisionObject(m_body);
+		m_dynamicsWorld->addRigidBody(m_body);
+	}
+	else
+	{
+		//m_dynamicsWorld->removeCollisionObject(m_body);
+		m_dynamicsWorld->removeRigidBody(m_body);
+	}
+
+	m_enable = enable;
+}
+
+bool StaticBodyBullet::isEnable() const
+{
+	return m_enable;
+}
+
 
 	}
 }

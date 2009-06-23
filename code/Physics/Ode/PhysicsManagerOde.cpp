@@ -343,7 +343,7 @@ public:
 
 			dBodySetMass(bodyId, &mass);
 
-			if (dynamicDesc->getAutoDisable())
+			if (dynamicDesc->getAutoDeactivate())
 				dBodySetAutoDisableFlag(bodyId, true);
 
 			Ref< DynamicBodyOde > dynamicBody = gc_new< DynamicBodyOde >(

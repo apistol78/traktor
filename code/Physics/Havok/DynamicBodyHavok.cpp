@@ -161,17 +161,26 @@ DynamicBodyState DynamicBodyHavok::getState() const
 	return state;
 }
 
-void DynamicBodyHavok::setEnable(bool enable)
+void DynamicBodyHavok::setActive(bool active)
 {
-	if (enable)
+	if (active)
 		m_rigidBody->activate();
 	else
 		m_rigidBody->deactivate();
 }
 
-bool DynamicBodyHavok::getEnable() const
+bool DynamicBodyHavok::isActive() const
 {
 	return m_rigidBody->isActive();
+}
+
+void DynamicBodyHavok::setEnable(bool enable)
+{
+}
+
+bool DynamicBodyHavok::isEnable() const
+{
+	return true;
 }
 
 	}

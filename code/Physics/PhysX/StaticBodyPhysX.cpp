@@ -24,11 +24,20 @@ Matrix44 StaticBodyPhysX::getTransform() const
 	return fromNxMat34(m_actor->getGlobalPose());
 }
 
+void StaticBodyPhysX::setActive(bool active)
+{
+}
+
+bool StaticBodyPhysX::isActive() const
+{
+	return true;
+}
+
 void StaticBodyPhysX::setEnable(bool enable)
 {
 }
 
-bool StaticBodyPhysX::getEnable() const
+bool StaticBodyPhysX::isEnable() const
 {
 	return true;
 }

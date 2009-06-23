@@ -291,15 +291,16 @@ Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
 			rigidBody->setActivationState(DISABLE_DEACTIVATION);
 		}
 
-		// Add body to world.
-		m_dynamicsWorld->addRigidBody(rigidBody);
-
 		// Create our wrapper.
-		Ref< StaticBodyBullet > staticBody = gc_new< StaticBodyBullet >(this, rigidBody, shape);
+		Ref< StaticBodyBullet > staticBody = gc_new< StaticBodyBullet >(this, m_dynamicsWorld, rigidBody, shape);
 		m_staticBodies.push_back(staticBody);
 
 		rigidBody->setUserPointer(staticBody);
 		body = staticBody;
+
+		// Add body to world if initially enabled.
+		if (staticDesc->getInitiallyEnabled())
+			staticBody->setEnable(true);
 	}
 	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
@@ -316,28 +317,29 @@ Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		info.m_friction = dynamicDesc->getFriction();
 		btRigidBody* rigidBody = new btRigidBody(info);
 
-		if (dynamicDesc->getDisabled())
+		if (!dynamicDesc->getInitiallyActive())
 		{
-			T_ASSERT_M (dynamicDesc->getAutoDisable(), L"If body is initially disabled then auto disable must be set as well");
+			T_ASSERT_M (dynamicDesc->getAutoDeactivate(), L"If body is initially disabled then auto deactivate must be set as well");
 			rigidBody->forceActivationState(ISLAND_SLEEPING);
 		}
 		else
 		{
-			if (!dynamicDesc->getAutoDisable())
+			if (!dynamicDesc->getAutoDeactivate())
 				rigidBody->forceActivationState(DISABLE_DEACTIVATION);
 			else
 				rigidBody->forceActivationState(ACTIVE_TAG);
 		}
 
-		// Add body to world.
-		m_dynamicsWorld->addRigidBody(rigidBody);
-
 		// Create our wrapper.
-		Ref< DynamicBodyBullet > dynamicBody = gc_new< DynamicBodyBullet >(this, rigidBody, shape);
+		Ref< DynamicBodyBullet > dynamicBody = gc_new< DynamicBodyBullet >(this, m_dynamicsWorld, rigidBody, shape);
 		m_dynamicBodies.push_back(dynamicBody);
 
 		rigidBody->setUserPointer(dynamicBody);
 		body = dynamicBody;
+
+		// Add body to world if initially enabled.
+		if (dynamicDesc->getInitiallyEnabled())
+			dynamicBody->setEnable(true);
 	}
 	else
 	{
@@ -649,7 +651,7 @@ void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCol
 {
 	Acquire< CriticalSection > __lock__(m_lock);
 
-	m_dynamicsWorld->removeCollisionObject(rigidBody);
+	//m_dynamicsWorld->removeCollisionObject(rigidBody);
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
 	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))

@@ -30,13 +30,17 @@ public:
 
 	float getMass() const;
 
-	void setAutoDisable(bool autoDisable);
+	void setAutoDeactivate(bool autoDeactivate);
 
-	bool getAutoDisable() const;
+	bool getAutoDeactivate() const;
 
-	void setDisabled(bool disabled);
+	void setInitiallyActive(bool initiallyActive);
 
-	bool getDisabled() const;
+	bool getInitiallyActive() const;
+
+	void setInitiallyEnabled(bool initiallyEnabled);
+
+	bool getInitiallyEnabled() const;
 
 	void setLinearDamping(float linearDamping);
 
@@ -56,8 +60,9 @@ public:
 
 private:
 	float m_mass;
-	bool m_autoDisable;
-	bool m_disabled;
+	bool m_autoDeactivate;
+	bool m_initiallyActive;
+	bool m_initiallyEnabled;
 	float m_linearDamping;
 	float m_angularDamping;
 	float m_friction;

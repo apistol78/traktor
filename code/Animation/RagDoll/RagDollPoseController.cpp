@@ -61,8 +61,8 @@ bool RagDollPoseController::create(
 		physics::DynamicBodyDesc bodyDesc;
 		bodyDesc.setShape(&shapeDesc);
 		bodyDesc.setMass(0.1f);
-		bodyDesc.setAutoDisable(true);
-		bodyDesc.setDisabled(initiallyDisabled);
+		bodyDesc.setAutoDeactivate(true);
+		bodyDesc.setInitiallyActive(!initiallyDisabled);
 		bodyDesc.setLinearDamping(0.3f);
 		bodyDesc.setAngularDamping(0.3f);
 

@@ -60,11 +60,20 @@ Matrix44 StaticBodyOde::getTransform() const
 	);
 }
 
+void StaticBodyOde::setActive(bool active)
+{
+}
+
+bool StaticBodyOde::isActive() const
+{
+	return true;
+}
+
 void StaticBodyOde::setEnable(bool enable)
 {
 }
 
-bool StaticBodyOde::getEnable() const
+bool StaticBodyOde::isEnable() const
 {
 	return true;
 }

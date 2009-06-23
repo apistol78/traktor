@@ -31,9 +31,13 @@ public:
 
 	virtual Matrix44 getTransform() const;
 
+	virtual void setActive(bool active);
+
+	virtual bool isActive() const;
+
 	virtual void setEnable(bool enable);
 
-	virtual bool getEnable() const;
+	virtual bool isEnable() const;
 };
 
 	}
