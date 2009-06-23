@@ -1,5 +1,6 @@
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
 
@@ -19,7 +20,6 @@ bool Library::open(const Path& libraryName)
 #else
 	const wchar_t suffix[] = L"_d.dll";
 #endif
-
 	tstring path;
 
 	path = wstots(libraryName.getPathName() + suffix);
@@ -34,6 +34,35 @@ bool Library::open(const Path& libraryName)
 	return bool(m_handle != NULL);
 }
 
+bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths)
+{
+	TCHAR currentPath[32767];
+
+	if (!GetEnvironmentVariable(_T("PATH"), currentPath, sizeof_array(currentPath)))
+		return false;
+
+	StringOutputStream newPathStream;
+
+	std::vector< Path >::const_iterator i = searchPaths.begin();
+	if (i != searchPaths.end())
+	{
+		newPathStream << i->getPathName();
+		for (++i; i != searchPaths.end(); ++i)
+			newPathStream << L";" << i->getPathName();
+	}
+
+	std::wstring newPath = newPathStream.str();
+
+	if (!SetEnvironmentVariable(_T("PATH"), newPath.c_str()))
+		return false;
+
+	bool result = open(libraryName);
+
+	SetEnvironmentVariable(_T("PATH"), currentPath);
+
+	return result;
+}
+
 void Library::close()
 {
 	FreeLibrary((HMODULE)m_handle);
@@ -46,12 +75,6 @@ void* Library::find(const std::wstring& symbol)
 #else
 	return (void*)GetProcAddress((HMODULE)m_handle, symbol.c_str());
 #endif
-}
-
-bool Library::addSearchPath(const std::wstring& searchPath)
-{
-	tstring path = wstots(replaceAll(searchPath, L'/', L'\\'));
-	return SetDllDirectory(path.c_str()) != 0;
 }
 
 }
