@@ -33,6 +33,19 @@ public:
 	 */
 	bool open(const Path& libraryName);
 	
+	/*! \brief Open library.
+	 *
+	 * This method take user defined search paths
+	 * which is used recursivly, ie. dependent
+	 * libraries are also searched through the same
+	 * paths.
+	 *
+	 * \param libraryName Name of library.
+	 * \param searchPaths Custom search paths.
+	 * \return True if library opened successfully.
+	 */
+	bool open(const Path& libraryName, const std::vector< Path >& searchPaths);
+
 	/*! \brief Close library. */
 	void close();
 	
@@ -42,13 +55,6 @@ public:
 	 * \return Pointer to symbol.
 	 */
 	void* find(const std::wstring& symbol);
-
-	/*! \brief Add additional search path for libraries.
-	 *
-	 * \param searchPath New search path.
-	 * \return True if search path added successfully.
-	 */
-	static bool addSearchPath(const std::wstring& searchPath);
 
 private:
 	void* m_handle;
