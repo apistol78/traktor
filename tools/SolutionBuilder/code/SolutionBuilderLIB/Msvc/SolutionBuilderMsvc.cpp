@@ -235,7 +235,7 @@ SolutionBuilderMsvcLinkerTool::SolutionBuilderMsvcLinkerTool()
 bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, traktor::OutputStream& os) const
 {
 	context.set(L"MODULE_DEFINITION_FILE", L"");
-	findDefinitions(context, project, project->getItems());
+	findDefinitions(context, solution, project, project->getItems());
 
 	os << L"<Tool" << Endl;
 	os << IncreaseIndent;
@@ -331,8 +331,10 @@ bool SolutionBuilderMsvcLinkerTool::serialize(traktor::Serializer& s)
 	return true;
 }
 
-void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, Project* project, const RefList< ProjectItem >& items) const
+void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, Solution* solution, Project* project, const RefList< ProjectItem >& items) const
 {
+	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
+
 	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (const ::File* file = dynamic_type_cast< const ::File* >(*i))
@@ -341,11 +343,19 @@ void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, P
 			file->getSystemFiles(project->getSourcePath(), systemFiles);
 			for (std::set< Path >::iterator j = systemFiles.begin(); j != systemFiles.end(); ++j)
 			{
-				if (compareIgnoreCase(Path(j->getFileName()).getExtension(), L"def") == 0)
-					context.set(L"MODULE_DEFINITION_FILE", j->getFileName());
+				if (compareIgnoreCase(j->getExtension(), L"def") == 0)
+				{
+					Path relativePath;
+					FileSystem::getInstance().getRelativePath(
+						*j,
+						rootPath,
+						relativePath
+					);
+					context.set(L"MODULE_DEFINITION_FILE", relativePath);
+				}
 			}
 		}
-		findDefinitions(context, project, (*i)->getItems());
+		findDefinitions(context, solution, project, (*i)->getItems());
 	}
 }
 
