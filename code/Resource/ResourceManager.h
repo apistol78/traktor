@@ -38,6 +38,8 @@ public:
 	void addLoader(ResourceLoader* loader);
 
 	void removeLoader(ResourceLoader* loader);
+
+	void removeAllLoaders();
 	
 	void setCache(IResourceCache* cache);
 
