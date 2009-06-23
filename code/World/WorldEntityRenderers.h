@@ -36,7 +36,7 @@ public:
 
 	EntityRenderer* find(const Type& entityType) const;
 
-	const RefArray< EntityRenderer >& get() { return m_entityRenderers; }
+	const RefArray< EntityRenderer >& get() const { return m_entityRenderers; }
 
 private:
 	RefArray< EntityRenderer > m_entityRenderers;

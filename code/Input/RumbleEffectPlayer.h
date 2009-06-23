@@ -31,13 +31,13 @@ class T_DLLCLASS RumbleEffectPlayer : public Object
 public:
 	RumbleEffectPlayer();
 
-	void play(RumbleEffect* effect, InputDevice* targetDevice);
+	virtual void play(RumbleEffect* effect, InputDevice* targetDevice);
 
-	void stop(RumbleEffect* effect, InputDevice* targetDevice);
+	virtual void stop(RumbleEffect* effect, InputDevice* targetDevice);
 
-	void stopAll();
+	virtual void stopAll();
 
-	void update(float deltaTime);
+	virtual void update(float deltaTime);
 
 private:
 	struct PlayingEffect
