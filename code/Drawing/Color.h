@@ -58,6 +58,8 @@ public:
 
 	Color operator - (const Color& r) const;
 
+	Color operator * (const Color& r) const;
+
 	Color operator * (float r) const;
 
 	Color operator / (float r) const;

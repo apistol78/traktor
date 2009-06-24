@@ -10,7 +10,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 class PropertiesView
 :	public ui::Container
@@ -19,7 +19,7 @@ class PropertiesView
 	T_RTTI_CLASS(PropertiesView)
 
 public:
-	PropertiesView(Editor* editor);
+	PropertiesView(IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -32,7 +32,7 @@ public:
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
 private:
-	Editor* m_editor;
+	IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
 	Ref< Object > m_propertyObject;
 

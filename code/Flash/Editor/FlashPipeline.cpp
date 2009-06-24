@@ -12,7 +12,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::Settings* settings)
 {

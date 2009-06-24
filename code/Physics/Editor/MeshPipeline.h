@@ -1,7 +1,7 @@
 #ifndef traktor_physics_MeshPipeline_H
 #define traktor_physics_MeshPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-class T_DLLCLASS MeshPipeline : public editor::Pipeline
+class T_DLLCLASS MeshPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(MeshPipeline)
 

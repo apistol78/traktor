@@ -2,7 +2,8 @@
 #include "Spray/Editor/EffectPreviewControl.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -35,9 +36,9 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::IEditorPage)
 
-EffectEditorPage::EffectEditorPage(editor::Editor* editor)
+EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_velocityVisible(false)
 ,	m_guideVisible(true)
@@ -51,13 +52,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceCache = gc_new< resource::ResourceCache >();
 	m_resourceLoader = gc_new< resource::ResourceLoader >();
 
-	Ref< db::Database > db = m_editor->getOutputDatabase();
+	Ref< editor::IProject > project = m_editor->getProject();
+	Ref< db::Database > database = project->getOutputDatabase();
 
 	m_resourceLoader->addFactory(
-		gc_new< render::TextureFactory >(db, renderSystem)
+		gc_new< render::TextureFactory >(database, renderSystem)
 	);
 	m_resourceLoader->addFactory(
-		gc_new< render::ShaderFactory >(db, renderSystem)
+		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 
 	activate();

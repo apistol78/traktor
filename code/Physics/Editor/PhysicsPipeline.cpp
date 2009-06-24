@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::IPipeline)
 
 bool PhysicsPipeline::create(const editor::Settings* settings)
 {

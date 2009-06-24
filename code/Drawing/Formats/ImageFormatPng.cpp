@@ -160,7 +160,7 @@ bool ImageFormatPng::write(Stream* stream, Image* image)
 
 	const char* data = (const char *)clone->getData();
 	void** rows = (void **)png_malloc(png_ptr, sizeof(void*) * clone->getHeight());
-	for (uint32_t i = 0; i < image->getHeight(); ++i)
+	for (int32_t i = 0; i < image->getHeight(); ++i)
 	{
 		int rowsize = clone->getPixelFormat()->getByteSize() * clone->getWidth();
 		rows[i] = png_malloc(png_ptr, rowsize);
@@ -182,7 +182,7 @@ bool ImageFormatPng::write(Stream* stream, Image* image)
 		NULL
 	);
 
-	for (uint32_t i = 0; i < clone->getHeight(); ++i)
+	for (int32_t i = 0; i < clone->getHeight(); ++i)
 		png_free(png_ptr, rows[i]);
 	png_free(png_ptr, rows);
 

@@ -1,7 +1,7 @@
 #ifndef traktor_world_EntityPipeline_H
 #define traktor_world_EntityPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace world
 	{
 
-class T_DLLCLASS EntityPipeline : public editor::Pipeline
+class T_DLLCLASS EntityPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(EntityPipeline)
 

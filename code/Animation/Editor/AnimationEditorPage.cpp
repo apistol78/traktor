@@ -7,7 +7,8 @@
 #include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
 #include "Database/Instance.h"
@@ -138,9 +139,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PoseIdData", PoseIdData, Object)
 
 const int c_animationLength = 10000;
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEditorPage", AnimationEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEditorPage", AnimationEditorPage, editor::IEditorPage)
 
-AnimationEditorPage::AnimationEditorPage(editor::Editor* editor)
+AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_selectedBone(0)
 ,	m_showGhostTrail(false)
@@ -249,16 +250,17 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_resourceCache = gc_new< resource::ResourceCache >();
 	m_resourceLoader = gc_new< resource::ResourceLoader >();
 
-	Ref< db::Database > db = m_editor->getOutputDatabase();
+	Ref< editor::IProject > project = m_editor->getProject();
+	Ref< db::Database > database = project->getOutputDatabase();
 
 	m_resourceLoader->addFactory(
-		gc_new< render::TextureFactory >(db, renderSystem)
+		gc_new< render::TextureFactory >(database, renderSystem)
 	);
 	m_resourceLoader->addFactory(
-		gc_new< render::ShaderFactory >(db, renderSystem)
+		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 	m_resourceLoader->addFactory(
-		gc_new< AnimationFactory >(db)
+		gc_new< AnimationFactory >(database)
 	);
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();

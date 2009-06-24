@@ -12,7 +12,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityEditor.h"
 #include "Physics/PhysicsManager.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Instance.h"

@@ -1,7 +1,7 @@
 #ifndef traktor_render_TexturePipeline_H
 #define traktor_render_TexturePipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS TexturePipeline : public editor::Pipeline
+class T_DLLCLASS TexturePipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(TexturePipeline)
 

@@ -23,14 +23,14 @@ DefaultNodeFacade::DefaultNodeFacade(ui::custom::GraphControl* graphControl)
 
 Node* DefaultNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	return checked_type_cast< Node* >(nodeType->newInstance());
 }
 
 ui::custom::Node* DefaultNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -67,7 +67,7 @@ ui::custom::Node* DefaultNodeFacade::createEditorNode(
 }
 
 void DefaultNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )

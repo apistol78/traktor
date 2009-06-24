@@ -18,7 +18,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -94,7 +94,7 @@ public:
 	};
 
 	SceneEditorContext(
-		editor::Editor* editor,
+		editor::IEditor* editor,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
 		render::RenderSystem* renderSystem,
@@ -184,7 +184,7 @@ public:
 	/*! \name Accessors. */
 	//@{
 
-	editor::Editor* getEditor() { return m_editor; }
+	editor::IEditor* getEditor() { return m_editor; }
 
 	db::Database* getResourceDatabase() { return m_resourceDb; }
 
@@ -239,7 +239,7 @@ public:
 	//@}
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
 	Ref< render::RenderSystem > m_renderSystem;

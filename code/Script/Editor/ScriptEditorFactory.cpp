@@ -7,7 +7,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptEditorFactory", ScriptEditorFactory, editor::ObjectEditorFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptEditorFactory", ScriptEditorFactory, editor::IObjectEditorFactory)
 
 const TypeSet ScriptEditorFactory::getEditableTypes() const
 {
@@ -16,7 +16,7 @@ const TypeSet ScriptEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::ObjectEditor* ScriptEditorFactory::createObjectEditor(editor::Editor* editor) const
+editor::IObjectEditor* ScriptEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return gc_new< ScriptEditor >(editor);
 }

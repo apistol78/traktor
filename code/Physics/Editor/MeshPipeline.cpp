@@ -15,7 +15,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::Settings* settings)
 {

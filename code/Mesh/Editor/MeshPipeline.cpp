@@ -57,7 +57,7 @@ Guid combineGuids(const Guid& g1, const Guid& g2)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::Settings* settings)
 {

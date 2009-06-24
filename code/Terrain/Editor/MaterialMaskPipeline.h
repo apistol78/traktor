@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_MaterialMaskPipeline_H
 #define traktor_terrain_MaterialMaskPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS MaterialMaskPipeline : public editor::Pipeline
+class T_DLLCLASS MaterialMaskPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(MaterialMaskPipeline)
 

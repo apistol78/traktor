@@ -20,14 +20,14 @@ class Instance;
 	{
 
 class Settings;
-class ObjectEditor;
+class IObjectEditor;
 
 class ObjectEditorDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS(ObjectEditorDialog)
 
 public:
-	ObjectEditorDialog(Settings* settings, ObjectEditor* objectEditor);
+	ObjectEditorDialog(Settings* settings, IObjectEditor* objectEditor);
 
 	bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
@@ -39,7 +39,7 @@ public:
 
 private:
 	Ref< Settings > m_settings;
-	Ref< ObjectEditor > m_objectEditor;
+	Ref< IObjectEditor > m_objectEditor;
 	Ref< db::Instance > m_instance;
 	Ref< Serializable > m_object;
 

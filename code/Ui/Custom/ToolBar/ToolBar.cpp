@@ -8,6 +8,9 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Drawing/Filters/GrayscaleFilter.h"
+#include "Drawing/Filters/BrightnessContrastFilter.h"
+#include "Drawing/Image.h"
 
 namespace traktor
 {
@@ -64,27 +67,40 @@ uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
 	T_ASSERT (image);
 	T_ASSERT (imageCount > 0);
 
-	if (m_image)
+	if (m_imageEnabled)
 	{
 		Ref< Bitmap > source = image;
 
-		uint32_t width = m_image->getSize().cx + source->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
+		uint32_t width = m_imageEnabled->getSize().cx + source->getSize().cx;
+		uint32_t height = std::max(m_imageEnabled->getSize().cy, source->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = gc_new< ui::Bitmap >(width, height);
-		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
-		m_image = newImage;
+		newImage->copyImage(m_imageEnabled->getImage());
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_imageEnabled->getSize().cx, 0));
+		m_imageEnabled = newImage;
 	}
 	else
 	{
-		m_image = image;
-		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize().cx / imageCount);
-		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
+		m_imageEnabled = image;
+		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_imageEnabled->getSize().cx / imageCount);
+		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_imageEnabled->getSize().cy);
 	}
 
 	uint32_t imageBase = m_imageCount;
 	m_imageCount += imageCount;
+
+	// Create disabled image
+	{
+		Ref< drawing::Image > image = m_imageEnabled->getImage();
+
+		drawing::GrayscaleFilter grayscaleFilter;
+		image = image->applyFilter(&grayscaleFilter);
+
+		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.4f, 0.6f);
+		image = image->applyFilter(&brigtnessContrastFilter);
+
+		m_imageDisabled = gc_new< ui::Bitmap >(image);
+	}
 
 	return imageBase;
 }
@@ -235,7 +251,14 @@ void ToolBar::eventPaint(Event* event)
 		int offset = (rc.getHeight() - c_marginHeight * 2 - size.cy) / 2;
 		Point at(x, y + offset);
 
-		(*i)->paint(this, canvas, at, m_image, m_imageWidth, m_imageHeight);
+		(*i)->paint(
+			this,
+			canvas,
+			at,
+			isEnable() ? m_imageEnabled : m_imageDisabled,
+			m_imageWidth,
+			m_imageHeight
+		);
 
 		x += size.cx + c_itemPad;
 	}

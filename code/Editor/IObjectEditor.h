@@ -1,5 +1,5 @@
-#ifndef traktor_editor_ObjectEditor_H
-#define traktor_editor_ObjectEditor_H
+#ifndef traktor_editor_IObjectEditor_H
+#define traktor_editor_IObjectEditor_H
 
 #include "Core/Object.h"
 
@@ -38,9 +38,9 @@ class Instance;
  *
  * Object editors are created as modal-less dialogs.
  */
-class T_DLLCLASS ObjectEditor : public Object
+class T_DLLCLASS IObjectEditor : public Object
 {
-	T_RTTI_CLASS(ObjectEditor)
+	T_RTTI_CLASS(IObjectEditor)
 
 public:
 	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object) = 0;
@@ -53,4 +53,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_ObjectEditor_H
+#endif	// traktor_editor_IObjectEditor_H

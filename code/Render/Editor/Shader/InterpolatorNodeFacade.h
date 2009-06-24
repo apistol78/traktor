@@ -28,17 +28,17 @@ public:
 
 	virtual Node* createShaderNode(
 		const Type* nodeType,
-		editor::Editor* editor
+		editor::IEditor* editor
 	);
 
 	virtual ui::custom::Node* createEditorNode(
-		editor::Editor* editor,
+		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode
 	);
 
 	virtual void editShaderNode(
-		editor::Editor* editor,
+		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode
 	);

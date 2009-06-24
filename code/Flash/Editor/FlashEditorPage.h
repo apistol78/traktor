@@ -2,7 +2,7 @@
 #define traktor_flash_FlashEditorPage_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -49,12 +49,12 @@ class ResourceLoader;
 class FlashPreviewControl;
 class FlashMovie;
 
-class T_DLLCLASS FlashEditorPage : public editor::EditorPage
+class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(FlashEditorPage)
 
 public:
-	FlashEditorPage(editor::Editor* editor);
+	FlashEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -77,7 +77,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewContainer;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;

@@ -64,7 +64,7 @@ void recursiveAttachEditors(EntityAdapter* entityAdapter, const RefArray< Entity
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
 
 SceneEditorContext::SceneEditorContext(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
 	render::RenderSystem* renderSystem,

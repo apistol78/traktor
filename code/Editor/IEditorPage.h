@@ -1,5 +1,5 @@
-#ifndef traktor_editor_EditorPage_H
-#define traktor_editor_EditorPage_H
+#ifndef traktor_editor_IEditorPage_H
+#define traktor_editor_IEditorPage_H
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
@@ -40,9 +40,9 @@ class Command;
  * The editor use editor pages as the base for all supported editors.
  * EditorPage objects are created through specialized EditorPageFactory classes.
  */
-class T_DLLCLASS EditorPage : public Object
+class T_DLLCLASS IEditorPage : public Object
 {
-	T_RTTI_CLASS(EditorPage)
+	T_RTTI_CLASS(IEditorPage)
 
 public:
 	virtual bool create(ui::Container* parent) = 0;
@@ -69,4 +69,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_EditorPage_H
+#endif	// traktor_editor_IEditorPage_H

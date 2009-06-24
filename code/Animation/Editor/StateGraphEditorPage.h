@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -46,12 +46,12 @@ class StateGraph;
 class State;
 class Transition;
 
-class T_DLLEXPORT StateGraphEditorPage : public editor::EditorPage
+class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(StateGraphEditorPage)
 
 public:
-	StateGraphEditorPage(editor::Editor* editor);
+	StateGraphEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -74,7 +74,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< StateGraph > m_stateGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;

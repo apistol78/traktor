@@ -1,7 +1,8 @@
 #include "Render/Editor/Shader/SamplerNodeFacade.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Render/Nodes.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -27,14 +28,14 @@ SamplerNodeFacade::SamplerNodeFacade(ui::custom::GraphControl* graphControl)
 
 Node* SamplerNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	return gc_new< Sampler >();
 }
 
 ui::custom::Node* SamplerNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -56,7 +57,8 @@ ui::custom::Node* SamplerNodeFacade::createEditorNode(
 	Guid textureGuid = sampler->getExternal();
 	if (!textureGuid.isNull())
 	{
-		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
+		Ref< editor::IProject > project = editor->getProject();
+		Ref< TextureAsset > textureAsset = project->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
 		{
 			Ref< drawing::Image > textureImage = drawing::Image::load(textureAsset->getFileName());
@@ -73,9 +75,9 @@ ui::custom::Node* SamplerNodeFacade::createEditorNode(
 				// Create alpha preview.
 				if (textureImage->getPixelFormat()->getAlphaBits() > 0 && textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false)
 				{
-					for (uint32_t y = 0; y < textureImage->getHeight(); ++y)
+					for (int32_t y = 0; y < textureImage->getHeight(); ++y)
 					{
-						for (uint32_t x = 0; x < textureImage->getWidth(); ++x)
+						for (int32_t x = 0; x < textureImage->getWidth(); ++x)
 						{
 							drawing::Color alpha =
 								((x >> 2) & 1) ^ ((y >> 2) & 1) ?
@@ -96,9 +98,9 @@ ui::custom::Node* SamplerNodeFacade::createEditorNode(
 				{
 					textureImage->convert(drawing::PixelFormat::getR8G8B8A8());
 
-					for (uint32_t y = 0; y < textureImage->getHeight(); ++y)
+					for (int32_t y = 0; y < textureImage->getHeight(); ++y)
 					{
-						for (uint32_t x = 0; x < textureImage->getWidth(); ++x)
+						for (int32_t x = 0; x < textureImage->getWidth(); ++x)
 						{
 							drawing::Color pixel;
 							textureImage->getPixel(x, y, pixel);
@@ -120,7 +122,7 @@ ui::custom::Node* SamplerNodeFacade::createEditorNode(
 }
 
 void SamplerNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )

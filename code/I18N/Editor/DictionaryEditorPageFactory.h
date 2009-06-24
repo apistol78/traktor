@@ -1,7 +1,7 @@
 #ifndef traktor_i18n_DictionaryEditorPageFactory_H
 #define traktor_i18n_DictionaryEditorPageFactory_H
 
-#include "Editor/EditorPageFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace i18n
 	{
 
-class T_DLLCLASS DictionaryEditorPageFactory : public editor::EditorPageFactory
+class T_DLLCLASS DictionaryEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS(DictionaryEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::EditorPage* createEditorPage(editor::Editor* editor) const;
+	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

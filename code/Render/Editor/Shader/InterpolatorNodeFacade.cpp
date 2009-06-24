@@ -17,14 +17,14 @@ InterpolatorNodeFacade::InterpolatorNodeFacade()
 
 Node* InterpolatorNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	return checked_type_cast< Node* >(nodeType->newInstance());
 }
 
 ui::custom::Node* InterpolatorNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -41,7 +41,7 @@ ui::custom::Node* InterpolatorNodeFacade::createEditorNode(
 }
 
 void InterpolatorNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )

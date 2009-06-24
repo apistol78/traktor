@@ -1,5 +1,5 @@
-#ifndef traktor_editor_ObjectEditorFactory_H
-#define traktor_editor_ObjectEditorFactory_H
+#ifndef traktor_editor_IObjectEditorFactory_H
+#define traktor_editor_IObjectEditorFactory_H
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
@@ -17,23 +17,23 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
-class ObjectEditor;
+class IEditor;
+class IObjectEditor;
 
 /*! \brief Interface used by Editor to create object editors.
  * \ingroup Editor
  */
-class T_DLLCLASS ObjectEditorFactory : public Object
+class T_DLLCLASS IObjectEditorFactory : public Object
 {
-	T_RTTI_CLASS(ObjectEditorFactory)
+	T_RTTI_CLASS(IObjectEditorFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const = 0;
 
-	virtual ObjectEditor* createObjectEditor(Editor* editor) const = 0;
+	virtual IObjectEditor* createObjectEditor(IEditor* editor) const = 0;
 };
 
 	}
 }
 
-#endif	// traktor_editor_ObjectEditorFactory_H
+#endif	// traktor_editor_IObjectEditorFactory_H

@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectEditorPageFactory_H
 #define traktor_spray_EffectEditorPageFactory_H
 
-#include "Editor/EditorPageFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace spray
 	{
 
-class T_DLLCLASS EffectEditorPageFactory : public editor::EditorPageFactory
+class T_DLLCLASS EffectEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS(EffectEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::EditorPage* createEditorPage(editor::Editor* editor) const;
+	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

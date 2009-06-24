@@ -3,7 +3,7 @@
 #include "Animation/Animation/State.h"
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/Animation.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Database/Instance.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -31,9 +31,9 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StateGraphEditorPage", StateGraphEditorPage, editor::IEditorPage)
 
-StateGraphEditorPage::StateGraphEditorPage(editor::Editor* editor)
+StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }

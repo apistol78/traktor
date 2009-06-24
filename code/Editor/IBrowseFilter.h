@@ -1,5 +1,5 @@
-#ifndef traktor_editor_BrowseFilter_H
-#define traktor_editor_BrowseFilter_H
+#ifndef traktor_editor_IBrowseFilter_H
+#define traktor_editor_IBrowseFilter_H
 
 #include "Core/Config.h"
 
@@ -23,10 +23,10 @@ class Instance;
 	namespace editor
 	{
 
-/*! \brief Browse instance filter.
+/*! \brief Browse instance filter interface.
  * \ingroup Editor
  */
-class T_DLLCLASS BrowseFilter
+class T_DLLCLASS IBrowseFilter
 {
 public:
 	virtual bool acceptable(db::Instance* instance) const = 0;
@@ -35,4 +35,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_BrowseFilter_H
+#endif	// traktor_editor_IBrowseFilter_H

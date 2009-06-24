@@ -1,5 +1,5 @@
-#ifndef traktor_editor_Pipeline_H
-#define traktor_editor_Pipeline_H
+#ifndef traktor_editor_IPipeline_H
+#define traktor_editor_IPipeline_H
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
@@ -35,9 +35,9 @@ class PipelineManager;
 /*! \brief Source asset pipeline.
  * \ingroup Editor
  */
-class T_DLLCLASS Pipeline : public Object
+class T_DLLCLASS IPipeline : public Object
 {
-	T_RTTI_CLASS(Pipeline)
+	T_RTTI_CLASS(IPipeline)
 
 public:
 	enum BuildReason
@@ -100,4 +100,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_Pipeline_H
+#endif	// traktor_editor_IPipeline_H

@@ -3,7 +3,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorProfile.h"
 #include "Scene/SceneAsset.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Physics/PhysicsManager.h"
 #include "World/Entity/EntityData.h"
@@ -15,7 +16,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.SceneEditorPageFactory", SceneEditorPageFactory, editor::EditorPageFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.SceneEditorPageFactory", SceneEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeSet SceneEditorPageFactory::getEditableTypes() const
 {
@@ -25,8 +26,11 @@ const TypeSet SceneEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::EditorPage* SceneEditorPageFactory::createEditorPage(editor::Editor* editor) const
+editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
+	Ref< editor::IProject > project = editor->getProject();
+	T_ASSERT (project);
+
 	if (!editor->getRenderSystem())
 	{
 		log::error << L"Unable to create scene editor; render system required." << Endl;
@@ -58,8 +62,8 @@ editor::EditorPage* SceneEditorPageFactory::createEditorPage(editor::Editor* edi
 	// Create editor context.
 	Ref< SceneEditorContext > context = gc_new< SceneEditorContext >(
 		editor,
-		editor->getOutputDatabase(),
-		editor->getSourceDatabase(),
+		project->getOutputDatabase(),
+		project->getSourceDatabase(),
 		editor->getRenderSystem(),
 		physicsManager
 	);

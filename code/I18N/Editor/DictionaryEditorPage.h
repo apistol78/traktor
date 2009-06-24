@@ -2,7 +2,7 @@
 #define traktor_i18n_DictionaryEditorPage_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -39,12 +39,12 @@ class GridView;
 
 class Dictionary;
 
-class T_DLLCLASS DictionaryEditorPage : public editor::EditorPage
+class T_DLLCLASS DictionaryEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(DictionaryEditorPage)
 
 public:
-	DictionaryEditorPage(editor::Editor* editor);
+	DictionaryEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -67,7 +67,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< ui::custom::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
 

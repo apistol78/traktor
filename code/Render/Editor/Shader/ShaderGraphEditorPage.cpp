@@ -13,10 +13,11 @@
 #include "Render/ShaderGraph.h"
 #include "Render/ShaderGraphAdjacency.h"
 #include "Render/Edge.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/Settings.h"
-#include "Editor/BrowseFilter.h"
 #include "Editor/UndoStack.h"
+#include "Editor/IBrowseFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -53,7 +54,7 @@ namespace traktor
 		namespace
 		{
 
-class RefereeFilter : public editor::BrowseFilter
+class RefereeFilter : public editor::IBrowseFilter
 {
 public:
 	RefereeFilter(const Guid& fragmentGuid)
@@ -86,9 +87,9 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphEditorPage", ShaderGraphEditorPage, editor::IEditorPage)
 
-ShaderGraphEditorPage::ShaderGraphEditorPage(editor::Editor* editor)
+ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_lastValidationResult(true)
 {
@@ -244,7 +245,8 @@ void ShaderGraphEditorPage::propertiesChanged()
 		
 		if (is_a< External >(shaderNode))
 		{
-			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
+			Ref< editor::IProject > project = m_editor->getProject();
+			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
 			editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
 			editorNode->setInfo(L"");
 		}
@@ -728,7 +730,8 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 
 	for (RefArray< External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
 	{
-		Ref< ShaderGraph > fragmentGraph = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >((*i)->getFragmentGuid());
+		Ref< editor::IProject > project = m_editor->getProject();
+		Ref< ShaderGraph > fragmentGraph = project->getSourceDatabase()->getObjectReadOnly< ShaderGraph >((*i)->getFragmentGuid());
 		if (!fragmentGraph)
 		{
 			ui::MessageBox::show(i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE"), i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION"), ui::MbIconError | ui::MbOk);

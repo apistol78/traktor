@@ -4,7 +4,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Guid.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Ui/Form.h"
 #include "Ui/Command.h"
 
@@ -51,11 +51,12 @@ class PropertiesView;
 class HeapView;
 class LogView;
 class Settings;
-class EditorPageFactory;
-class EditorPage;
-class ObjectEditorFactory;
-class ObjectEditor;
-class EditorTool;
+class Project;
+class IEditorPageFactory;
+class IEditorPage;
+class IObjectEditorFactory;
+class IObjectEditor;
+class IEditorTool;
 class PipelineHash;
 
 /*! \brief Main editor form.
@@ -65,7 +66,7 @@ class PipelineHash;
  */
 class EditorForm
 :	public ui::Form
-,	public Editor
+,	public IEditor
 {
 	T_RTTI_CLASS(EditorForm)
 
@@ -74,14 +75,12 @@ public:
 
 	void destroy();
 
-	/*! \name Editor implementation */
+	/*! \name IEditor implementation */
 	//@{
 
 	virtual Settings* getSettings();
 
-	virtual db::Database* getSourceDatabase();
-
-	virtual db::Database* getOutputDatabase();
+	virtual IProject* getProject();
 
 	virtual render::RenderSystem* getRenderSystem();
 
@@ -99,15 +98,15 @@ public:
 
 	virtual const Type* browseType(const Type* base);
 
-	virtual db::Instance* browseInstance(const BrowseFilter* filter);
+	virtual db::Instance* browseInstance(const IBrowseFilter* filter);
 
 	virtual bool isEditable(const Type& type) const;
 
 	virtual bool openEditor(db::Instance* instance);
 
-	virtual EditorPage* getActiveEditorPage();
+	virtual IEditorPage* getActiveEditorPage();
 
-	virtual void setActiveEditorPage(EditorPage* editorPage);
+	virtual void setActiveEditorPage(IEditorPage* editorPage);
 
 	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild);
 
@@ -118,9 +117,9 @@ public:
 	//@}
 
 private:
-	RefArray< EditorPageFactory > m_editorPageFactories;
-	RefArray< ObjectEditorFactory > m_objectEditorFactories;
-	RefArray< EditorTool > m_editorTools;
+	RefArray< IEditorPageFactory > m_editorPageFactories;
+	RefArray< IObjectEditorFactory > m_objectEditorFactories;
+	RefArray< IEditorTool > m_editorTools;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;
 	Ref< ui::Dock > m_dock;
@@ -139,13 +138,10 @@ private:
 	Ref< PropertiesView > m_propertiesView;
 	Ref< HeapView > m_heapView;
 	Ref< LogView > m_logView;
-	Ref< db::Database > m_sourceDatabase;
-	Ref< db::Database > m_outputDatabase;
-	std::wstring m_sourceDatabasePath;
-	std::wstring m_outputDatabasePath;
 	Ref< render::RenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
-	Ref< EditorPage > m_activeEditorPage;
+	Ref< Project > m_project;
+	Ref< IEditorPage > m_activeEditorPage;
 	Thread* m_threadBuild;
 
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
@@ -154,7 +150,13 @@ private:
 
 	void updateOtherPanels();
 
-	void openDatabases();
+	void newProject();
+
+	void openProject();
+
+	bool closeProject();
+
+	void updateProjectViews();
 
 	void saveCurrentDocument();
 
@@ -181,6 +183,10 @@ private:
 	void savePipelineHash(PipelineHash* pipelineHash);
 
 	void checkModified();
+
+	bool currentModified();
+
+	bool anyModified();
 
 	bool handleCommand(const ui::Command& command);
 

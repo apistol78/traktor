@@ -1,5 +1,6 @@
 #include "Editor/App/DefaultObjectEditor.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/Asset.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Ui/MethodHandler.h"
@@ -18,9 +19,9 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultObjectEditor", DefaultObjectEditor, ObjectEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DefaultObjectEditor", DefaultObjectEditor, IObjectEditor)
 
-DefaultObjectEditor::DefaultObjectEditor(Editor* editor)
+DefaultObjectEditor::DefaultObjectEditor(IEditor* editor)
 :	m_editor(editor)
 {
 }
@@ -50,7 +51,10 @@ void DefaultObjectEditor::apply()
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
-	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
+	Ref< editor::IProject > project = m_editor->getProject();
+	T_ASSERT (project);
+
+	Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(guid);
 	if (!instance)
 		return false;
 

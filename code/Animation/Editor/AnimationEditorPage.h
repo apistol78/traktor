@@ -4,7 +4,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Math/Color.h"
 #include "Core/Math/Vector4.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
 
 // import/export mechanism.
@@ -20,7 +20,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 class UndoStack;
 
 	}
@@ -72,12 +72,12 @@ class Animation;
 class Skeleton;
 class Pose;
 
-class T_DLLCLASS AnimationEditorPage : public editor::EditorPage
+class T_DLLCLASS AnimationEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(AnimationEditorPage)
 
 public:
-	AnimationEditorPage(editor::Editor* editor);
+	AnimationEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -100,7 +100,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];

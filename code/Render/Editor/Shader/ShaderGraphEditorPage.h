@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 class UndoStack;
 
 	}
@@ -48,12 +48,12 @@ class Node;
 class NodeFacade;
 class Edge;
 
-class T_DLLEXPORT ShaderGraphEditorPage : public editor::EditorPage
+class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(ShaderGraphEditorPage)
 
 public:
-	ShaderGraphEditorPage(editor::Editor* editor);
+	ShaderGraphEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -76,7 +76,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< editor::UndoStack > m_undoStack;
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;

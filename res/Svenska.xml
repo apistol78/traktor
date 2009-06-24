@@ -242,6 +242,10 @@
 			<second>Om</second>
 		</item>
     <item>
+      <first>EDITOR_OPEN_PROJECT</first>
+      <second>Öppna projekt</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_ADD_DEPENDENT_TITLE</first>
       <second>Lägg till modul</second>
     </item>
@@ -260,10 +264,6 @@
     <item>
       <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
       <second>Bygg tillgångar innan redigering</second>
-    </item>
-    <item>
-      <first>EDITOR_SETTINGS_BUILD_AT_STARTUP</first>
-      <second>Bygg tillgångar när applikationen startas</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_BUILD_WHEN_MODIFIED</first>
@@ -605,10 +605,22 @@
 			<first>MENU_FILE</first>
 			<second>Fil</second>
 		</item>
+    <item>
+      <first>MENU_FILE_CLOSE_PROJECT</first>
+      <second>Stäng projekt</second>
+    </item>
 		<item>
 			<first>MENU_FILE_EXIT</first>
 			<second>Avsluta</second>
 		</item>
+    <item>
+      <first>MENU_FILE_NEW_PROJECT</first>
+      <second>Nytt projekt...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_PROJECT</first>
+      <second>Öppna projekt...</second>
+    </item>
 		<item>
 			<first>MENU_FILE_SAVE</first>
 			<second>Spara...</second>

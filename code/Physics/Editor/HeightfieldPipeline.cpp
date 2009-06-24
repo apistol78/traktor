@@ -57,7 +57,7 @@ drawing::Image* readRawTerrain(const Path& fileName)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.HeightfieldPipeline", HeightfieldPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::Settings* settings)
 {
@@ -156,9 +156,9 @@ bool HeightfieldPipeline::buildOutput(
 
 	// Convert image pixels into heights.
 	Writer writer(stream);
-	for (uint32_t y = 0; y < image->getWidth(); ++y)
+	for (int32_t y = 0; y < image->getWidth(); ++y)
 	{
-		for (uint32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			drawing::Color imagePixel;
 			image->getPixel(x, y, imagePixel);

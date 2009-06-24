@@ -57,7 +57,7 @@ drawing::Image* readRawTerrain(const Path& fileName)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.HeightfieldPipeline", HeightfieldPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::Settings* settings)
 {

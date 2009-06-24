@@ -7,7 +7,7 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", DictionaryEditorPageFactory, editor::EditorPageFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", DictionaryEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeSet DictionaryEditorPageFactory::getEditableTypes() const
 {
@@ -16,7 +16,7 @@ const TypeSet DictionaryEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::EditorPage* DictionaryEditorPageFactory::createEditorPage(editor::Editor* editor) const
+editor::IEditorPage* DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< DictionaryEditorPage >(editor);
 }

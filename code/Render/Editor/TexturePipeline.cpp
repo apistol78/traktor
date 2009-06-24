@@ -40,9 +40,9 @@ bool isLog2(int v)
 bool isBinaryAlpha(const drawing::Image* image)
 {
 	std::set< uint8_t > alphas;
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		for (uint32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			drawing::Color color;
 			image->getPixel(x, y, color);
@@ -144,7 +144,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TexturePipeline", TexturePipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TexturePipeline", TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)

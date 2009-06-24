@@ -79,14 +79,14 @@ Image* ImageFormatPcx::read(Stream* stream)
 
 	uint8_t T_UNALIGNED *bits = static_cast< uint8_t* >(image->getData());
 
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		uint8_t T_UNALIGNED *scan = &bits[y * image->getWidth()];
 
 		int count = 0;
 		uint8_t value = 0;
 
-		int x = image->getWidth();
+		int32_t x = image->getWidth();
 		while (x > 0)
 		{
 			uint8_t c;
@@ -189,11 +189,11 @@ bool ImageFormatPcx::write(Stream* stream, Image* image)
 
 	const uint8_t* bits = static_cast< const uint8_t* >(image->getData());
 
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		const uint8_t* scan = &bits[y * image->getWidth()];
 
-		uint32_t x = 0;
+		int32_t x = 0;
 		while (x < image->getWidth())
 		{
 			uint8_t value = *scan++;

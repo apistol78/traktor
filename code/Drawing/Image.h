@@ -66,10 +66,10 @@ public:
 	void clear(const Color& color);
 
 	/*! \brief Get single pixel. */
-	bool getPixel(uint32_t x, uint32_t y, Color& color) const;
+	bool getPixel(int32_t x, int32_t y, Color& color) const;
 
 	/*! \brief Set single pixel. */
-	bool setPixel(uint32_t x, uint32_t y, const Color& color);
+	bool setPixel(int32_t x, int32_t y, const Color& color);
 	
 	/*! \brief Apply filter on entire image. */
 	Image* applyFilter(ImageFilter* imageFilter) const;
@@ -90,10 +90,10 @@ public:
 	const PixelFormat* getPixelFormat() const;
 	
 	/*! \brief Get width of image. */
-	const uint32_t getWidth() const;
+	const int32_t getWidth() const;
 
 	/*! \brief Get height of image. */
-	const uint32_t getHeight() const;
+	const int32_t getHeight() const;
 
 	/*! \brief Get image palette. */
 	Palette* getPalette() const;
@@ -118,8 +118,8 @@ public:
 	
 private:
 	Ref< const PixelFormat > m_pixelFormat;
-	uint32_t m_width;
-	uint32_t m_height;
+	int32_t m_width;
+	int32_t m_height;
 	Ref< Palette > m_palette;
 	size_t m_size;
 	uint8_t* m_data;

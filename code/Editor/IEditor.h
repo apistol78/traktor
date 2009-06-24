@@ -1,5 +1,5 @@
-#ifndef traktor_editor_Editor_H
-#define traktor_editor_Editor_H
+#ifndef traktor_editor_IEditor_H
+#define traktor_editor_IEditor_H
 
 #include "Core/Config.h"
 #include "Ui/Dock.h"
@@ -28,8 +28,9 @@ class RenderSystem;
 	{
 
 class Settings;
-class EditorPage;
-class BrowseFilter;
+class IProject;
+class IEditorPage;
+class IBrowseFilter;
 
 /*! \brief Editor base interface.
  * \ingroup Editor
@@ -37,17 +38,14 @@ class BrowseFilter;
  * This is the interface by which other modules
  * communicate with the Editor application.
  */
-class T_NOVTABLE Editor
+class T_NOVTABLE IEditor
 {
 public:
 	/*! \brief Get editor settings. */
 	virtual Settings* getSettings() = 0;
 
-	/*! \brief Get source asset database. */
-	virtual db::Database* getSourceDatabase() = 0;
-
-	/*! \brief Get output database. */
-	virtual db::Database* getOutputDatabase() = 0;
+	/*! \brief Get project. */
+	virtual IProject* getProject() = 0;
 
 	/*! \brief Get editor render system. */
 	virtual render::RenderSystem* getRenderSystem() = 0;
@@ -74,7 +72,7 @@ public:
 	virtual const Type* browseType(const Type* base = 0) = 0;
 
 	/*! \brief Browse database instance. */
-	virtual db::Instance* browseInstance(const BrowseFilter* filter = 0) = 0;
+	virtual db::Instance* browseInstance(const IBrowseFilter* filter = 0) = 0;
 
 	/*! \brief Check if type is editable. */
 	virtual bool isEditable(const Type& type) const = 0;
@@ -83,10 +81,10 @@ public:
 	virtual bool openEditor(db::Instance* instance) = 0;
 
 	/*! \brief Get active editor. */
-	virtual EditorPage* getActiveEditorPage() = 0;
+	virtual IEditorPage* getActiveEditorPage() = 0;
 
 	/*! \brief Set active editor. */
-	virtual void setActiveEditorPage(EditorPage* editorPage) = 0;
+	virtual void setActiveEditorPage(IEditorPage* editorPage) = 0;
 
 	/*! \brief Build assets. */
 	virtual void buildAssets(const std::vector< Guid >& assetGuids, bool rebuild) = 0;
@@ -101,4 +99,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_Editor_H
+#endif	// traktor_editor_IEditor_H

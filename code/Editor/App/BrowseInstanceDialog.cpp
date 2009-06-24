@@ -1,6 +1,6 @@
 #include "Editor/App/BrowseInstanceDialog.h"
-#include "Editor/Editor.h"
-#include "Editor/BrowseFilter.h"
+#include "Editor/IEditor.h"
+#include "Editor/IBrowseFilter.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FloodLayout.h"
@@ -27,7 +27,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
-bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, const BrowseFilter* filter)
+bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter)
 {
 	if (!ui::ConfigDialog::create(
 		parent,
@@ -69,7 +69,7 @@ db::Instance* BrowseInstanceDialog::getInstance()
 namespace
 {
 
-	bool recursiveIncludeGroup(db::Group* group, const BrowseFilter* filter)
+	bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 	{
 		// Does this group contain a valid instance?
 		for (Ref< db::Instance > instanceIter = group->getFirstChildInstance(); instanceIter; instanceIter = group->getNextChildInstance(instanceIter))
@@ -91,7 +91,7 @@ namespace
 
 }
 
-void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const BrowseFilter* filter)
+void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
 {
 	if (filter && !recursiveIncludeGroup(group, filter))
 		return;

@@ -2,7 +2,7 @@
 #define traktor_editor_DefaultObjectEditor_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/ObjectEditor.h"
+#include "Editor/IObjectEditor.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 namespace traktor
@@ -10,16 +10,16 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 class DefaultObjectEditor
-:	public ObjectEditor
+:	public IObjectEditor
 ,	public ui::custom::PropertyList::IPropertyGuidResolver
 {
-	T_RTTI_CLASS(ObjectEditor)
+	T_RTTI_CLASS(IObjectEditor)
 
 public:
-	DefaultObjectEditor(Editor* editor);
+	DefaultObjectEditor(IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
@@ -28,7 +28,7 @@ public:
 	virtual void apply();
 
 private:
-	Editor* m_editor;
+	IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;

@@ -2,7 +2,7 @@
 #define traktor_animation_SkeletonEditorPage_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
 
 // import/export mechanism.
@@ -18,7 +18,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 class UndoStack;
 
 	}
@@ -69,12 +69,12 @@ class PrimitiveRenderer;
 
 class Skeleton;
 
-class T_DLLCLASS SkeletonEditorPage : public editor::EditorPage
+class T_DLLCLASS SkeletonEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(SkeletonEditorPage)
 
 public:
-	SkeletonEditorPage(editor::Editor* editor);
+	SkeletonEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -97,7 +97,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::PopupMenu > m_boneMenu;

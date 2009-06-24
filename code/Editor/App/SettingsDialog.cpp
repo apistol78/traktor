@@ -91,10 +91,6 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 	m_editDictionary = gc_new< ui::Edit >();
 	m_editDictionary->create(container, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
 
-	m_checkBuildAtStartup = gc_new< ui::CheckBox >();
-	m_checkBuildAtStartup->create(pageGeneral, i18n::Text(L"EDITOR_SETTINGS_BUILD_AT_STARTUP"));
-	m_checkBuildAtStartup->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildAtStartup"));
-
 	m_checkBuildWhenModified = gc_new< ui::CheckBox >();
 	m_checkBuildWhenModified->create(pageGeneral, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_MODIFIED"));
 	m_checkBuildWhenModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenModified"));
@@ -191,7 +187,6 @@ void SettingsDialog::eventDialogClick(ui::Event* event)
 		m_settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
 
 		// Update build.
-		m_settings->setProperty< PropertyBoolean >(L"Editor.BuildAtStartup", m_checkBuildAtStartup->isChecked());
 		m_settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenModified", m_checkBuildWhenModified->isChecked());
 
 		// Update modules.

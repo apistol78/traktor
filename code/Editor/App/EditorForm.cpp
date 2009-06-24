@@ -9,15 +9,16 @@
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/AboutDialog.h"
+#include "Editor/App/Project.h"
 #include "Editor/Settings.h"
-#include "Editor/EditorPageFactory.h"
-#include "Editor/EditorPage.h"
-#include "Editor/ObjectEditorFactory.h"
-#include "Editor/ObjectEditor.h"
-#include "Editor/EditorTool.h"
+#include "Editor/IEditorPageFactory.h"
+#include "Editor/IEditorPage.h"
+#include "Editor/IObjectEditorFactory.h"
+#include "Editor/IObjectEditor.h"
+#include "Editor/IEditorTool.h"
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 #include "Editor/Assets.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -78,7 +79,7 @@
 #include "Resources/Types.h"
 
 #if defined(MessageBox)
-#undef MessageBox
+#	undef MessageBox
 #endif
 
 namespace traktor
@@ -109,6 +110,30 @@ bool findShortcutCommandMapping(const Settings* settings, const std::wstring& co
 
 	return true;
 }
+
+const uint32_t c_offsetFindingPipelines = 10;
+const uint32_t c_offsetCollectingDependencies = 20;
+const uint32_t c_offsetBuildingAsset = 30;
+const uint32_t c_offsetFinished = 100;
+
+struct StatusListener : public PipelineManager::Listener
+{
+	Ref< ui::custom::ProgressBar > m_buildProgress;
+
+	StatusListener(ui::custom::ProgressBar* buildProgress)
+	:	m_buildProgress(buildProgress)
+	{
+	}
+
+	virtual void begunBuildingAsset(
+		const std::wstring& assetName,
+		uint32_t index,
+		uint32_t count
+	) const
+	{
+		m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
+	}
+};
 
 		}
 
@@ -143,6 +168,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
 	Ref< ui::MenuItem > menuFile = gc_new< ui::MenuItem >(i18n::Text(L"MENU_FILE"));
+	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.NewProject"), i18n::Text(L"MENU_FILE_NEW_PROJECT")));
+	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.OpenProject"), i18n::Text(L"MENU_FILE_OPEN_PROJECT")));
+	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseProject"), i18n::Text(L"MENU_FILE_CLOSE_PROJECT")));
+	menuFile->add(gc_new< ui::MenuItem >(L"-"));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(gc_new< ui::MenuItem >(L"-"));
@@ -202,17 +231,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 	}
 #endif
-
-	// Load additional modules from command line.
-	if (cmdLine.hasOption('m'))
-	{
-		std::wstring module = cmdLine.getOption('m').getString();
-		log::info << L"Loading command line module \"" << module << L"\"..." << Endl;
-		if (Library().open(module))
-			log::info << L"Module \"" << module << L"\" loaded successfully" << Endl;
-		else
-			log::error << L"Unable to load module \"" << module << L"\"" << Endl;
-	}
 
 	m_dock = gc_new< ui::Dock >();
 	m_dock->create(this);
@@ -277,7 +295,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuTab->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
 	m_menuTab->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
 
-	// Create statusbar.
+	// Create status bar.
 	m_statusBar = gc_new< ui::custom::StatusBar >();
 	m_statusBar->create(this);
 	m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
@@ -288,12 +306,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create editor page factories.
 	std::vector< const Type* > editorPageFactoryTypes;
-	type_of< EditorPageFactory >().findAllOf(editorPageFactoryTypes);
+	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes);
 	if (!editorPageFactoryTypes.empty())
 	{
 		for (std::vector< const Type* >::iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
 		{
-			Ref< EditorPageFactory > editorPageFactory = dynamic_type_cast< EditorPageFactory* >((*i)->newInstance());
+			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >((*i)->newInstance());
 			if (editorPageFactory)
 				m_editorPageFactories.push_back(editorPageFactory);
 		}
@@ -301,12 +319,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create object editor factories.
 	std::vector< const Type* > objectEditorFactoryTypes;
-	type_of< ObjectEditorFactory >().findAllOf(objectEditorFactoryTypes);
+	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes);
 	if (!objectEditorFactoryTypes.empty())
 	{
 		for (std::vector< const Type* >::iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
 		{
-			Ref< ObjectEditorFactory > objectEditorFactory = dynamic_type_cast< ObjectEditorFactory* >((*i)->newInstance());
+			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >((*i)->newInstance());
 			if (objectEditorFactory)
 				m_objectEditorFactories.push_back(objectEditorFactory);
 		}
@@ -316,13 +334,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuTools = gc_new< ui::MenuItem >(i18n::Text(L"MENU_TOOLS"));
 
 	std::vector< const Type* > toolTypes;
-	type_of< EditorTool >().findAllOf(toolTypes);
+	type_of< IEditorTool >().findAllOf(toolTypes);
 	if (!toolTypes.empty())
 	{
 		int toolId = 0;
 		for (std::vector< const Type* >::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
-			Ref< EditorTool > tool = dynamic_type_cast< EditorTool* >((*i)->newInstance());
+			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->newInstance());
 			if (!tool)
 				continue;
 
@@ -342,6 +360,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->add(menuHelp);
 
 	// Collect all shortcut commands from all editors.
+	m_shortcutCommands.push_back(ui::Command(L"Editor.NewProject"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.OpenProject"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseProject"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Save"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.SaveAll"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseEditor"));
@@ -359,7 +380,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 
-	for (RefArray< EditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
+	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
 		std::list< ui::Command > editorShortcutCommands;
 		(*i)->getCommands(editorShortcutCommands);
@@ -410,16 +431,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (m_settings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
 		maximize();
 
+	// Ensure views are in correct state.
+	updateProjectViews();
+
 	// Show form.
 	update();
 	show();
-
-	// Open both databases.
-	openDatabases();
-
-	// Initially build assets to ensure it's up to date.
-	if (m_settings->getProperty< PropertyBoolean >(L"Editor.BuildAtStartup", true))
-		buildAssets(false);
 
 	// Start modified and database poll timer.
 	startTimer(1000);
@@ -438,17 +455,8 @@ void EditorForm::destroy()
 		m_threadBuild = 0;
 	}
 
-	// Close databases.
-	if (m_sourceDatabase)
-	{
-		m_sourceDatabase->close();
-		m_sourceDatabase = 0;
-	}
-	if (m_outputDatabase)
-	{
-		m_outputDatabase->close();
-		m_outputDatabase = 0;
-	}
+	// Close opened project.
+	closeProject();
 
 	// Destroy shortcut table.
 	m_shortcutTable->destroy();
@@ -475,14 +483,9 @@ Settings* EditorForm::getSettings()
 	return m_settings;
 }
 
-db::Database* EditorForm::getSourceDatabase()
+IProject* EditorForm::getProject()
 {
-	return m_sourceDatabase;
-}
-
-db::Database* EditorForm::getOutputDatabase()
-{
-	return m_outputDatabase;
+	return m_project;
 }
 
 render::RenderSystem* EditorForm::getRenderSystem()
@@ -571,30 +574,37 @@ const Type* EditorForm::browseType(const Type* base)
 	const Type* type = 0;
 
 	BrowseTypeDialog dlgBrowse;
-	dlgBrowse.create(this, base);
-	if (dlgBrowse.showModal() == ui::DrOk)
-		type = dlgBrowse.getSelectedType();
-	dlgBrowse.destroy();
+	if (dlgBrowse.create(this, base))
+	{
+		if (dlgBrowse.showModal() == ui::DrOk)
+			type = dlgBrowse.getSelectedType();
+		dlgBrowse.destroy();
+	}
 
 	return type;
 }
 
-db::Instance* EditorForm::browseInstance(const BrowseFilter* filter)
+db::Instance* EditorForm::browseInstance(const IBrowseFilter* filter)
 {
 	Ref< db::Instance > instance;
 
-	BrowseInstanceDialog dlgBrowse;
-	dlgBrowse.create(this, m_sourceDatabase, filter);
-	if (dlgBrowse.showModal() == ui::DrOk)
-		instance = dlgBrowse.getInstance();
-	dlgBrowse.destroy();
+	if (m_project)
+	{
+		BrowseInstanceDialog dlgBrowse;
+		if (dlgBrowse.create(this, m_project->getSourceDatabase(), filter))
+		{
+			if (dlgBrowse.showModal() == ui::DrOk)
+				instance = dlgBrowse.getInstance();
+			dlgBrowse.destroy();
+		}
+	}
 
 	return instance;
 }
 
 bool EditorForm::isEditable(const Type& type) const
 {
-	for (RefArray< EditorPageFactory >::const_iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
+	for (RefArray< IEditorPageFactory >::const_iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
@@ -604,7 +614,7 @@ bool EditorForm::isEditable(const Type& type) const
 		}
 	}
 
-	for (RefArray< ObjectEditorFactory >::const_iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
+	for (RefArray< IObjectEditorFactory >::const_iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
@@ -632,7 +642,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
 		if (dynamic_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE")) == instance)
 		{
-			Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+			Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 
 			setActiveEditorPage(editorPage);
 			m_tab->setActivePage(tabPage);
@@ -658,10 +668,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 	// Find factory supporting instance type.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< const EditorPageFactory > editorPageFactory;
-	Ref< const ObjectEditorFactory > objectEditorFactory;
+	Ref< const IEditorPageFactory > editorPageFactory;
+	Ref< const IObjectEditorFactory > objectEditorFactory;
 
-	for (RefArray< EditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
+	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
@@ -678,7 +688,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 	}
 
-	for (RefArray< ObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
+	for (RefArray< IObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
 	{
 		const TypeSet typeSet = (*i)->getEditableTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
@@ -698,7 +708,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 	// Create new editor page.
 	if (editorPageFactory)
 	{
-		Ref< EditorPage > editorPage = editorPageFactory->createEditorPage(this);
+		Ref< IEditorPage > editorPage = editorPageFactory->createEditorPage(this);
 		T_ASSERT (editorPage);
 
 		// Find icon index.
@@ -740,7 +750,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 	else if (objectEditorFactory)
 	{
-		Ref< ObjectEditor > objectEditor = objectEditorFactory->createObjectEditor(this);
+		Ref< IObjectEditor > objectEditor = objectEditorFactory->createObjectEditor(this);
 		T_ASSERT (objectEditor);
 
 		// Create object editor dialog.
@@ -764,12 +774,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 	return true;
 }
 
-EditorPage* EditorForm::getActiveEditorPage()
+IEditorPage* EditorForm::getActiveEditorPage()
 {
 	return m_activeEditorPage;
 }
 
-void EditorForm::setActiveEditorPage(EditorPage* editorPage)
+void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 {
 	if (editorPage == m_activeEditorPage)
 		return;
@@ -784,7 +794,7 @@ void EditorForm::setActiveEditorPage(EditorPage* editorPage)
 		for (int i = 0; i < pageCount; ++i)
 		{
 			Ref< ui::TabPage > page = m_tab->getPage(i);
-			if (page->getData< EditorPage >(L"EDITORPAGE") == m_activeEditorPage)
+			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 			{
 				// Save property object; attach to tab page.
 				Ref< Object > properties = getPropertyObject();
@@ -801,7 +811,7 @@ void EditorForm::setActiveEditorPage(EditorPage* editorPage)
 		for (int i = 0; i < pageCount; ++i)
 		{
 			Ref< ui::TabPage > page = m_tab->getPage(i);
-			if (page->getData< EditorPage >(L"EDITORPAGE") == m_activeEditorPage)
+			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 			{
 				// Set tab page as active.
 				m_tab->setActivePage(page);
@@ -818,35 +828,6 @@ void EditorForm::setActiveEditorPage(EditorPage* editorPage)
 	}
 }
 
-namespace
-{
-
-	const uint32_t c_offsetFindingPipelines = 10;
-	const uint32_t c_offsetCollectingDependencies = 20;
-	const uint32_t c_offsetBuildingAsset = 30;
-	const uint32_t c_offsetFinished = 100;
-
-	struct StatusListener : public PipelineManager::Listener
-	{
-		Ref< ui::custom::ProgressBar > m_buildProgress;
-
-		StatusListener(ui::custom::ProgressBar* buildProgress)
-		:	m_buildProgress(buildProgress)
-		{
-		}
-
-		virtual void begunBuildingAsset(
-			const std::wstring& assetName,
-			uint32_t index,
-			uint32_t count
-		) const
-		{
-			m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
-		}
-	};
-
-}
-
 void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 {
 	Ref< PipelineHash > pipelineHash = loadPipelineHash();
@@ -855,14 +836,14 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
-	RefArray< Pipeline > pipelines;
+	RefArray< IPipeline > pipelines;
 
 	std::vector< const Type* > pipelineTypes;
-	type_of< Pipeline >().findAllOf(pipelineTypes);
+	type_of< IPipeline >().findAllOf(pipelineTypes);
 
 	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
-		Ref< Pipeline > pipeline = dynamic_type_cast< Pipeline* >((*i)->newInstance());
+		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
 		if (pipeline)
 		{
 			if (!pipeline->create(m_settings))
@@ -876,8 +857,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	StatusListener listener(m_buildProgress);
 	PipelineManager pipelineManager(
-		m_sourceDatabase,
-		m_outputDatabase,
+		m_project->getSourceDatabase(),
+		m_project->getOutputDatabase(),
 		pipelines,
 		pipelineHash,
 		&listener
@@ -904,7 +885,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	log::info << DecreaseIndent;
 	log::info << L"Finished" << Endl;
 
-	for (RefArray< Pipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
+	for (RefArray< IPipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
 		(*i)->destroy();
 
 	pipelines.resize(0);
@@ -914,7 +895,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
 {
-	if (!m_sourceDatabase || !m_outputDatabase)
+	if (!m_project)
 		return;
 
 	// Stop current build.
@@ -960,7 +941,7 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 
 void EditorForm::buildAssets(bool rebuild)
 {
-	if (!m_sourceDatabase || !m_outputDatabase)
+	if (!m_project)
 		return;
 
 	EnterLeave cursor(
@@ -973,7 +954,7 @@ void EditorForm::buildAssets(bool rebuild)
 
 	RefArray< db::Instance > assetsInstances;
 	db::recursiveFindChildInstances(
-		m_sourceDatabase->getRootGroup(),
+		m_project->getSourceDatabase()->getRootGroup(),
 		db::FindInstanceByType(type_of< Assets >()),
 		assetsInstances
 	);
@@ -997,9 +978,6 @@ void EditorForm::updateTitle()
 	else
 		ss << c_title;
 
-	if (m_sourceDatabase)
-		ss << L" - " << m_sourceDatabasePath;
-
 	setText(ss.str());
 }
 
@@ -1016,34 +994,91 @@ void EditorForm::updateOtherPanels()
 	}
 }
 
-void EditorForm::openDatabases()
+void EditorForm::newProject()
 {
-	EnterLeave cursor(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
-	);
-
-	std::wstring sourceManifest = m_settings->getProperty< PropertyString >(L"Editor.SourceManifest");
-	std::wstring outputManifest = m_settings->getProperty< PropertyString >(L"Editor.OutputManifest");
-
-	Ref< db::LocalDatabase > localSource = gc_new< db::LocalDatabase >();
-	if (!localSource->open(sourceManifest))
+	if (!closeProject())
 		return;
 
-	Ref< db::LocalDatabase > localOutput = gc_new< db::LocalDatabase >();
-	if (!localOutput->open(outputManifest))
+	// @fixme
+
+	updateProjectViews();
+}
+
+void EditorForm::openProject()
+{
+	if (!closeProject())
 		return;
 
-	m_sourceDatabase = gc_new< db::Database >();
-	if (!m_sourceDatabase->create(localSource))
-		m_sourceDatabase = 0;
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, i18n::Text(L"EDITOR_OPEN_PROJECT"), L"Projects;*.project;All files;*.*"))
+		return;
 
-	m_outputDatabase = gc_new< db::Database >();
-	if (!m_outputDatabase->create(localOutput))
-		m_outputDatabase = 0;
+	Path projectPath;
+	if (fileDialog.showModal(projectPath) != ui::DrOk)
+	{
+		fileDialog.destroy();
+		return;
+	}
+	fileDialog.destroy();
 
-	m_dataBaseView->setDatabase(m_sourceDatabase);
-	m_menuTools->setEnable(bool(m_sourceDatabase != 0));
+	{
+		EnterLeave cursor(
+			makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
+			makeFunctor(this, &EditorForm::resetCursor)
+		);
+
+		m_project = gc_new< Project >();
+		if (!m_project->open(projectPath))
+			m_project = 0;
+
+		updateProjectViews();
+	}
+}
+
+bool EditorForm::closeProject()
+{
+	if (anyModified())
+	{
+		int result = ui::MessageBox::show(
+			this,
+			i18n::Text(L"QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
+			i18n::Text(L"QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
+			ui::MbIconExclamation | ui::MbYesNo
+		);
+		if (result == ui::DrNo)
+			return false;
+	}
+
+	closeAllEditors();
+
+	if (m_project)
+	{
+		m_project->close();
+		m_project = 0;
+	}
+
+	updateProjectViews();
+	return true;
+}
+
+void EditorForm::updateProjectViews()
+{
+	if (m_project)
+	{
+		m_dataBaseView->setDatabase(m_project->getSourceDatabase());
+		m_dataBaseView->setEnable(true);
+		m_toolBar->setEnable(true);
+		m_menuTools->setEnable(true);
+	}
+	else
+	{
+		m_dataBaseView->setDatabase(0);
+		m_dataBaseView->setEnable(false);
+		m_toolBar->setEnable(false);
+		m_menuTools->setEnable(false);
+	}
+	m_dataBaseView->update();
+	m_toolBar->update();
 }
 
 void EditorForm::saveCurrentDocument()
@@ -1069,7 +1104,7 @@ void EditorForm::saveCurrentDocument()
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
 	if (tabPage)
 	{
-		Ref< EditorPage > editorPage = tabPage->getData< EditorPage >(L"EDITORPAGE");
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
 
 		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
@@ -1121,7 +1156,7 @@ void EditorForm::saveAllDocuments()
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
 		T_ASSERT (tabPage);
 
-		Ref< EditorPage > editorPage = tabPage->getData< EditorPage >(L"EDITORPAGE");
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		T_ASSERT (editorPage);
 
 		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
@@ -1181,7 +1216,7 @@ void EditorForm::closeCurrentEditor()
 	m_tab->update();
 
 	tabPage = m_tab->getActivePage();
-	m_activeEditorPage = tabPage ? tabPage->getData< EditorPage >(L"EDITORPAGE") : 0;
+	m_activeEditorPage = tabPage ? tabPage->getData< IEditorPage >(L"EDITORPAGE") : 0;
 }
 
 void EditorForm::closeAllEditors()
@@ -1198,7 +1233,7 @@ void EditorForm::closeAllEditors()
 
 		m_tab->removePage(tabPage);
 
-		Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 		T_ASSERT (editorPage);
 
 		editorPage->deactivate();
@@ -1230,7 +1265,7 @@ void EditorForm::closeAllOtherEditors()
 		T_ASSERT (tabPage);
 		m_tab->removePage(tabPage);
 
-		Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 		T_ASSERT (editorPage);
 
 		editorPage->destroy();
@@ -1249,7 +1284,7 @@ void EditorForm::activatePreviousEditor()
 	Ref< ui::TabPage > previousTabPage = m_tab->cycleActivePage(false);
 	if (previousTabPage)
 	{
-		Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(previousTabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(previousTabPage->getData(L"EDITORPAGE"));
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -1259,7 +1294,7 @@ void EditorForm::activateNextEditor()
 	Ref< ui::TabPage > nextTabPage = m_tab->cycleActivePage(true);
 	if (nextTabPage)
 	{
-		Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(nextTabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(nextTabPage->getData(L"EDITORPAGE"));
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -1330,9 +1365,11 @@ void EditorForm::loadDictionary()
 
 PipelineHash* EditorForm::loadPipelineHash()
 {
+	T_ASSERT (m_project);
+
 	Ref< PipelineHash > pipelineHash;
 
-	std::wstring pipelineHashFile = m_settings->getProperty< PropertyString >(L"Pipeline.Hash");
+	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
 	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
 	if (file)
 	{
@@ -1347,7 +1384,9 @@ PipelineHash* EditorForm::loadPipelineHash()
 
 void EditorForm::savePipelineHash(PipelineHash* pipelineHash)
 {
-	std::wstring pipelineHashFile = m_settings->getProperty< PropertyString >(L"Pipeline.Hash");
+	T_ASSERT (m_project);
+
+	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
 	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
 	if (file)
 	{
@@ -1366,7 +1405,7 @@ void EditorForm::checkModified()
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
 		T_ASSERT (tabPage);
 
-		Ref< EditorPage > editorPage = tabPage->getData< EditorPage >(L"EDITORPAGE");
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (!editorPage)
 			continue;
 
@@ -1402,11 +1441,47 @@ void EditorForm::checkModified()
 		m_tab->update();
 }
 
+bool EditorForm::currentModified()
+{
+	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
+	if (!tabPage)
+		return false;
+
+	checkModified();
+
+	std::wstring tabName = tabPage->getText();
+	return tabName[tabName.length() - 1] == L'*';
+}
+
+bool EditorForm::anyModified()
+{
+	checkModified();
+
+	bool unsavedInstances = false;
+	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	{
+		std::wstring tabName = m_tab->getPage(i)->getText();
+		if (tabName[tabName.length() - 1] == L'*')
+		{
+			unsavedInstances = true;
+			break;
+		}
+	}
+
+	return unsavedInstances;
+}
+
 bool EditorForm::handleCommand(const ui::Command& command)
 {
 	bool result = true;
 
-	if (command == L"Editor.Save")
+	if (command == L"Editor.NewProject")
+		newProject();
+	else if (command == L"Editor.OpenProject")
+		openProject();
+	else if (command == L"Editor.CloseProject")
+		closeProject();
+	else if (command == L"Editor.Save")
 		saveCurrentDocument();
 	else if (command == L"Editor.SaveAll")
 		saveAllDocuments();
@@ -1465,7 +1540,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		ui::Application::getInstance().exit(0);
 	else if ((command.getFlags() & ui::Command::CfId) == ui::Command::CfId)
 	{
-		Ref< EditorTool > tool = m_editorTools[command.getId()];
+		Ref< IEditorTool > tool = m_editorTools[command.getId()];
 		T_ASSERT (tool);
 
 		if (tool->launch(this, this))
@@ -1479,7 +1554,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		if (!tabPage || !tabPage->containFocus())
 			return false;
 
-		Ref< EditorPage > editorPage = tabPage->getData< EditorPage >(L"EDITORPAGE");
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 		if (!editorPage)
 			return false;
 
@@ -1528,7 +1603,7 @@ void EditorForm::eventTabSelChange(ui::Event* event)
 {
 	Ref< ui::CommandEvent > commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(commandEvent->getItem());
-	Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+	Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 	setActiveEditorPage(editorPage);
 }
 
@@ -1537,11 +1612,8 @@ void EditorForm::eventTabClose(ui::Event* event)
 	Ref< ui::CloseEvent > closeEvent = checked_type_cast< ui::CloseEvent* >(event);
 	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(closeEvent->getItem());
 
-	checkModified();
-
 	// Ask user when trying to close an editor which contains unsaved data.
-	std::wstring tabName = tabPage->getText();
-	if (tabName[tabName.length() - 1] == L'*')
+	if (currentModified())
 	{
 		int result = ui::MessageBox::show(
 			this,
@@ -1559,7 +1631,7 @@ void EditorForm::eventTabClose(ui::Event* event)
 
 	m_tab->removePage(tabPage);
 
-	Ref< EditorPage > editor = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+	Ref< IEditorPage > editor = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 	T_ASSERT (editor);
 	T_ASSERT (m_activeEditorPage == editor);
 
@@ -1585,7 +1657,7 @@ void EditorForm::eventTabClose(ui::Event* event)
 	tabPage = m_tab->getActivePage();
 	if (tabPage)
 	{
-		Ref< EditorPage > editor = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editor = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 		setActiveEditorPage(editor);
 	}
 
@@ -1596,20 +1668,7 @@ void EditorForm::eventClose(ui::Event* event)
 {
 	ui::CloseEvent* closeEvent = checked_type_cast< ui::CloseEvent* >(event);
 
-	checkModified();
-
-	bool unsavedInstances = false;
-	for (int i = 0; i < m_tab->getPageCount(); ++i)
-	{
-		std::wstring tabName = m_tab->getPage(i)->getText();
-		if (tabName[tabName.length() - 1] == L'*')
-		{
-			unsavedInstances = true;
-			break;
-		}
-	}
-
-	if (unsavedInstances)
+	if (anyModified())
 	{
 		int result = ui::MessageBox::show(
 			this,
@@ -1630,7 +1689,7 @@ void EditorForm::eventClose(ui::Event* event)
 		Ref< ui::TabPage > tabPage = m_tab->getPage(0);
 		m_tab->removePage(tabPage);
 
-		Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
+		Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
 		editorPage->deactivate();
 		editorPage->destroy();
 
@@ -1667,56 +1726,58 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 	updateView = false;
 
-	if (m_sourceDatabase)
-	{
-		// Check if there is any commited instances into
-		// source database.
-		bool commited = false;
-		while (m_sourceDatabase->getEvent(event, eventId, remote))
-		{
-			if (remote == false && event == db::PeCommited)
-				commited = true;
+	if (!m_project)
+		return;
 
-			if (remote)
-				updateView = true;
-		}
-		if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenModified", true))
-			buildAssets(false);
+	Ref< db::Database > sourceDatabase = m_project->getSourceDatabase();
+	T_ASSERT (sourceDatabase);
+
+	Ref< db::Database > outputDatabase = m_project->getOutputDatabase();
+	T_ASSERT (outputDatabase);
+
+	// Check if there is any commited instances into
+	// source database.
+	bool commited = false;
+	while (sourceDatabase->getEvent(event, eventId, remote))
+	{
+		if (remote == false && event == db::PeCommited)
+			commited = true;
+
+		if (remote)
+			updateView = true;
+	}
+	if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenModified", true))
+		buildAssets(false);
+
+	std::vector< Guid > eventIds;
+	while (outputDatabase->getEvent(event, eventId, remote))
+	{
+		if (event != db::PeCommited)
+			continue;
+
+		log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << eventId.format() << L" detected; propagate to editor pages..." << Endl;
+
+		eventIds.push_back(eventId);
+
+		if (remote)
+			updateView = true;
 	}
 
-	if (m_outputDatabase)
+	if (!eventIds.empty())
 	{
-		std::vector< Guid > eventIds;
-
-		while (m_outputDatabase->getEvent(event, eventId, remote))
+		// Propagate database event to editor pages in order for them to flush resources.
+		for (int i = 0; i < m_tab->getPageCount(); ++i)
 		{
-			if (event != db::PeCommited)
-				continue;
-
-			log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << eventId.format() << L" detected; propagate to editor pages..." << Endl;
-
-			eventIds.push_back(eventId);
-
-			if (remote)
-				updateView = true;
-		}
-
-		if (!eventIds.empty())
-		{
-			// Propagate database event to editor pages in order for them to flush resources.
-			for (int i = 0; i < m_tab->getPageCount(); ++i)
+			Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+			Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+			if (editorPage)
 			{
-				Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-				Ref< EditorPage > editorPage = checked_type_cast< EditorPage* >(tabPage->getData(L"EDITORPAGE"));
-				if (editorPage)
-				{
-					for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
-						editorPage->handleDatabaseEvent(*j);
-				}
+				for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
+					editorPage->handleDatabaseEvent(*j);
 			}
-
-			log::debug << L"Database change(s) notified" << Endl;
 		}
+
+		log::debug << L"Database change(s) notified" << Endl;
 	}
 
 	// We need to update database view as another process has modified database.

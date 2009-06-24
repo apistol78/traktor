@@ -8,7 +8,7 @@
 #include "Scene/Editor/SelectEvent.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/SceneAsset.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
@@ -65,7 +65,7 @@ const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
 
 SceneEditorPage::SceneEditorPage(SceneEditorContext* context)
 :	m_context(context)

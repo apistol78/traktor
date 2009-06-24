@@ -72,16 +72,16 @@ PerlinNoiseFilter::PerlinNoiseFilter(int octaves, float persistence, float magni
 Image* PerlinNoiseFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		float fy = float(y) / image->getHeight();
 
-		for (uint32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			float fx = float(x) / image->getWidth();
 
 			float perlin = 0.0f;
-			for (int i = 0; i < m_octaves; ++i)
+			for (int32_t i = 0; i < m_octaves; ++i)
 			{
 				float frequency = std::pow(2.0f, i);
 				float amplitude = std::pow(m_persistence, i);

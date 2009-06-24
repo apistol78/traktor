@@ -19,9 +19,9 @@ Image* NormalMapFilter::apply(const Image* image)
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in[3];
 
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		for (uint32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixel(x, y, in[0]);
 			image->getPixel(x + 1, y, in[1]);

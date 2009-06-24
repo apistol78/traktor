@@ -2,7 +2,7 @@
 #define traktor_script_ScriptEditor_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/ObjectEditor.h"
+#include "Editor/IObjectEditor.h"
 #include "Script/ScriptContext.h"
 
 // import/export mechanism.
@@ -18,7 +18,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -46,13 +46,13 @@ class ScriptManager;
 class ScriptContext;
 
 class T_DLLCLASS ScriptEditor
-:	public editor::ObjectEditor
+:	public editor::IObjectEditor
 ,	public script::IErrorCallback
 {
 	T_RTTI_CLASS(ScriptEditor)
 
 public:
-	ScriptEditor(editor::Editor* editor);
+	ScriptEditor(editor::IEditor* editor);
 
 	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
 
@@ -61,7 +61,7 @@ public:
 	virtual void apply();
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< Script > m_script;
 	Ref< ScriptManager > m_scriptManager;
 	Ref< ScriptContext > m_scriptContext;

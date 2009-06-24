@@ -1,7 +1,7 @@
 #ifndef traktor_editor_AssetsPipeline_H
 #define traktor_editor_AssetsPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Assets pipeline.
  * \ingroup Editor
  */
-class T_DLLCLASS AssetsPipeline : public Pipeline
+class T_DLLCLASS AssetsPipeline : public IPipeline
 {
 	T_RTTI_CLASS(AssetsPipeline)
 

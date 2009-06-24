@@ -1,7 +1,7 @@
 #include "Render/Editor/TextureBatchWizardTool.h"
 #include "Render/Editor/TextureBatchDialog.h"
 #include "Render/Editor/TextureAsset.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -14,14 +14,14 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TextureBatchWizardTool", TextureBatchWizardTool, editor::WizardTool)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TextureBatchWizardTool", TextureBatchWizardTool, editor::IWizardTool)
 
 std::wstring TextureBatchWizardTool::getDescription() const
 {
 	return i18n::Text(L"TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
-bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::Editor* editor, db::Group* group)
+bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
 {
 	TextureBatchDialog textureDialog;
 

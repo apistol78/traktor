@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/MD5.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -57,7 +57,7 @@ class SceneEditorContext;
 class EntityAdapter;
 class SceneAsset;
 
-class T_DLLCLASS SceneEditorPage : public editor::EditorPage
+class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(SceneEditorPage)
 

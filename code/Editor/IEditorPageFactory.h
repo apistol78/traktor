@@ -1,5 +1,5 @@
-#ifndef traktor_editor_EditorPageFactory_H
-#define traktor_editor_EditorPageFactory_H
+#ifndef traktor_editor_IEditorPageFactory_H
+#define traktor_editor_IEditorPageFactory_H
 
 #include <list>
 #include "Core/Object.h"
@@ -24,20 +24,20 @@ class Command;
 	namespace editor
 	{
 
-class Editor;
-class EditorPage;
+class IEditor;
+class IEditorPage;
 
 /*! \brief Interface for creating editor pages.
  * \ingroup Editor
  */
-class T_DLLCLASS EditorPageFactory : public Object
+class T_DLLCLASS IEditorPageFactory : public Object
 {
-	T_RTTI_CLASS(EditorPageFactory)
+	T_RTTI_CLASS(IEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const = 0;
 
-	virtual EditorPage* createEditorPage(Editor* editor) const = 0;
+	virtual IEditorPage* createEditorPage(IEditor* editor) const = 0;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
 };
@@ -45,4 +45,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_EditorPageFactory_H
+#endif	// traktor_editor_IEditorPageFactory_H
