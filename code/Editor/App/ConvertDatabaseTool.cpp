@@ -50,7 +50,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 
 		for (std::vector< std::wstring >::iterator i = dataNames.begin(); i != dataNames.end(); ++i)
 		{
-			log::info << L"Copying data \"" << *i << L"\"..." << Endl;
+			log::info << L"\t\"" << *i << L"\"..." << Endl;
 
 			Ref< Stream > sourceStream = sourceInstance->readData(*i);
 			if (!sourceStream)
@@ -66,7 +66,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 				continue;
 			}
 
-			uint8_t block[1024]; int blockSize;
+			uint8_t block[4096]; int blockSize;
 			while ((blockSize = sourceStream->read(block, sizeof(block))) > 0)
 				targetStream->write(block, blockSize);
 
@@ -79,8 +79,6 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 			log::error << L"Failed, unable to commit target instance" << Endl;
 			continue;
 		}
-
-		log::info << L"Succeeded" << Endl;
 	}
 
 	for (Ref< db::Group > sourceChildGroup = sourceGroup->getFirstChildGroup(); sourceChildGroup; sourceChildGroup = sourceGroup->getNextChildGroup(sourceChildGroup))
@@ -98,8 +96,6 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 				continue;
 			}
 		}
-
-		log::info << L"Succeeded" << Endl;
 
 		recursiveConvertInstances(targetChildGroup, sourceChildGroup, status);
 	}
