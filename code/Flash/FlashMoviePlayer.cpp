@@ -9,6 +9,8 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/AsKey.h"
 #include "Flash/Action/Classes/AsMouse.h"
+#include "Core/Timer/Timer.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
@@ -24,6 +26,7 @@ FlashMoviePlayer::FlashMoviePlayer(DisplayRenderer* displayRenderer)
 ,	m_movieRenderer(gc_new< FlashMovieRenderer >(displayRenderer))
 ,	m_actionVM(gc_new< ActionVM >())
 ,	m_intervalNextId(1)
+,	m_untilNextFrame(0.0f)
 {
 }
 
@@ -189,6 +192,24 @@ void FlashMoviePlayer::executeFrame()
 	m_movieInstance->eventFrame(m_actionVM);
 
 	m_movieInstance->postDispatchEvents(m_actionVM);
+}
+
+bool FlashMoviePlayer::progressFrame(float deltaTime)
+{
+	m_untilNextFrame -= deltaTime;
+	if (m_untilNextFrame <= FUZZY_EPSILON)
+	{
+		Timer timer;
+		timer.start();
+		
+		executeFrame();
+
+		m_untilNextFrame = 1.0f / m_movie->getMovieClip()->getFrameRate();
+		m_untilNextFrame -= float(timer.getElapsedTime());
+		return true;
+	}
+	else
+		return false;
 }
 
 void FlashMoviePlayer::postKeyDown(int keyCode)

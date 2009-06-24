@@ -93,6 +93,13 @@ public:
 	/*! \brief Execute events in current frame. */
 	void executeFrame();
 
+	/*! \brief Progress until next frame.
+	 *
+	 * \param deltaTime Time in seconds to progress movie.
+	 * \return True if new frame.
+	 */
+	bool progressFrame(float deltaTime);
+
 	/*! \brief Post key down event.
 	 *
 	 * \param keyCode Key code.
@@ -176,12 +183,11 @@ private:
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
 	mutable Semaphore m_renderLock;
-
 	std::list< Event > m_events;
 	std::list< std::pair< std::wstring, std::wstring > > m_fsCommands;
-
 	std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
+	float m_untilNextFrame;
 
 	void Global_getUrl(CallArgs& ca);
 
