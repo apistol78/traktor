@@ -4,7 +4,8 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/SwfReader.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Ui/Container.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
@@ -32,9 +33,9 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditorPage", FlashEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashEditorPage", FlashEditorPage, editor::IEditorPage)
 
-FlashEditorPage::FlashEditorPage(editor::Editor* editor)
+FlashEditorPage::FlashEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }
@@ -42,13 +43,14 @@ FlashEditorPage::FlashEditorPage(editor::Editor* editor)
 bool FlashEditorPage::create(ui::Container* parent)
 {
 	Ref< render::RenderSystem > renderSystem = m_editor->getRenderSystem();
-	Ref< db::Database > db = m_editor->getOutputDatabase();
+	Ref< editor::IProject > project = m_editor->getProject();
+	Ref< db::Database > database = project->getOutputDatabase();
 
 	m_resourceCache = gc_new< resource::ResourceCache >();
 	m_resourceLoader = gc_new< resource::ResourceLoader >();
 
 	m_resourceLoader->addFactory(
-		gc_new< render::ShaderFactory >(db, renderSystem)
+		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 
 	resource::ResourceManager::getInstance().setCache(m_resourceCache);

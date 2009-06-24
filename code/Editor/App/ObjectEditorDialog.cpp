@@ -1,6 +1,6 @@
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/Settings.h"
-#include "Editor/ObjectEditor.h"
+#include "Editor/IObjectEditor.h"
 #include "Ui/MessageBox.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog, ui::ConfigDialog)
 
-ObjectEditorDialog::ObjectEditorDialog(Settings* settings, ObjectEditor* objectEditor)
+ObjectEditorDialog::ObjectEditorDialog(Settings* settings, IObjectEditor* objectEditor)
 :	m_settings(settings)
 ,	m_objectEditor(objectEditor)
 {

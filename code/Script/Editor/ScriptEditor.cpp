@@ -1,7 +1,8 @@
 #include "Script/Editor/ScriptEditor.h"
 #include "Script/Script.h"
 #include "Script/ScriptManager.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
@@ -32,9 +33,9 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditor", ScriptEditor, editor::ObjectEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptEditor", ScriptEditor, editor::IObjectEditor)
 
-ScriptEditor::ScriptEditor(editor::Editor* editor)
+ScriptEditor::ScriptEditor(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_compileCountDown(0)
 {
@@ -153,11 +154,15 @@ void ScriptEditor::otherError(const std::wstring& message)
 
 void ScriptEditor::updateDependencyList()
 {
+	Ref< editor::IProject > project = m_editor->getProject();
+	T_ASSERT (project);
+
 	m_dependencyList->removeAll();
+
 	const std::vector< Guid >& dependencies = m_script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(*i);
+		Ref< db::Instance > scriptInstance = project->getSourceDatabase()->getInstance(*i);
 		if (scriptInstance)
 			m_dependencyList->add(scriptInstance->getName());
 		else
@@ -197,8 +202,11 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 	int selectedIndex = m_dependencyList->getSelected();
 	if (selectedIndex >= 0)
 	{
+		Ref< editor::IProject > project = m_editor->getProject();
+		T_ASSERT (project);
+
 		const std::vector< Guid >& dependencies = m_script->getDependencies();
-		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
+		Ref< db::Instance > scriptInstance = project->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
 		if (scriptInstance)
 			m_editor->openEditor(scriptInstance);
 	}

@@ -1,7 +1,7 @@
 #ifndef traktor_render_ShaderGraphEditorPageFactory_H
 #define traktor_render_ShaderGraphEditorPageFactory_H
 
-#include "Editor/EditorPageFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS ShaderGraphEditorPageFactory : public editor::EditorPageFactory
+class T_DLLCLASS ShaderGraphEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS(ShaderGraphEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::EditorPage* createEditorPage(editor::Editor* editor) const;
+	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

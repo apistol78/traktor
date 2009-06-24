@@ -2,7 +2,7 @@
 #include <algorithm>
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 #include "Editor/Asset.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -26,7 +26,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineManager", PipelineManager, Objec
 PipelineManager::PipelineManager(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
-	const RefArray< Pipeline >& pipelines,
+	const RefArray< IPipeline >& pipelines,
 	PipelineHash* hash,
 	Listener* listener
 )
@@ -41,12 +41,12 @@ PipelineManager::PipelineManager(
 	std::memset(m_buildThreads, 0, sizeof(m_buildThreads));
 }
 
-Pipeline* PipelineManager::findPipeline(const Type& sourceType) const
+IPipeline* PipelineManager::findPipeline(const Type& sourceType) const
 {
 	uint32_t best = std::numeric_limits< uint32_t >::max();
-	Pipeline* pipeline = 0;
+	IPipeline* pipeline = 0;
 
-	for (RefArray< Pipeline >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+	for (RefArray< IPipeline >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
 	{
 		TypeSet typeSet = (*i)->getAssetTypes();
 		for (TypeSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
@@ -86,7 +86,7 @@ void PipelineManager::addDependency(const Serializable* sourceAsset)
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
-	Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
+	Ref< IPipeline > pipeline = findPipeline(sourceAsset->getType());
 	if (pipeline)
 	{
 		Ref< const Object > dummyBuildParams;
@@ -217,17 +217,17 @@ bool PipelineManager::build(bool rebuild)
 			if (!m_hash->get((*i)->outputGuid, hash))
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
-				(*i)->reason |= Pipeline::BrSourceModified;
+				(*i)->reason |= IPipeline::BrSourceModified;
 			}
 			else if (hash.checksum != (*i)->checksum)
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
-				(*i)->reason |= Pipeline::BrSourceModified;
+				(*i)->reason |= IPipeline::BrSourceModified;
 			}
 			else if (hash.pipelineVersion != (*i)->pipeline->getVersion())
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
-				(*i)->reason |= Pipeline::BrSourceModified;
+				(*i)->reason |= IPipeline::BrSourceModified;
 			}
 			else
 			{
@@ -240,13 +240,13 @@ bool PipelineManager::build(bool rebuild)
 					{
 						// Time stamps doesn't match; assume it has been modified.
 						log::info << L"Asset \"" << (*i)->name << L"\" modified; data has been modified" << Endl;
-						(*i)->reason |= Pipeline::BrSourceModified;
+						(*i)->reason |= IPipeline::BrSourceModified;
 					}
 				}
 			}
 		}
 		else
-			(*i)->reason |= Pipeline::BrForced;
+			(*i)->reason |= IPipeline::BrForced;
 	}
 
 #if USE_BUILD_THREADS
@@ -415,7 +415,7 @@ PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) c
 void PipelineManager::addUniqueDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	// Find appropriate pipeline.
-	Ref< Pipeline > pipeline = findPipeline(sourceAsset->getType());
+	Ref< IPipeline > pipeline = findPipeline(sourceAsset->getType());
 	if (!pipeline)
 	{
 		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
@@ -430,7 +430,7 @@ void PipelineManager::addUniqueDependency(const Serializable* sourceAsset, const
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;
 	dependency->build = build;
-	dependency->reason = Pipeline::BrNone;
+	dependency->reason = IPipeline::BrNone;
 
 	if (m_currentDependency)
 		m_currentDependency->dependencies.push_back(dependency);
@@ -494,14 +494,14 @@ void PipelineManager::buildThread()
 
 bool PipelineManager::Dependency::needBuild()
 {
-	if (reason != Pipeline::BrNone)
+	if (reason != IPipeline::BrNone)
 		return true;
 
 	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if ((*i)->needBuild())
 		{
-			reason |= Pipeline::BrDependencyModified;
+			reason |= IPipeline::BrDependencyModified;
 			return true;
 		}
 	}

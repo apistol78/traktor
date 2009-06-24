@@ -55,7 +55,8 @@ public:
 private:
 	Ref< ToolTip > m_toolTip;
 	int m_style;
-	Ref< Bitmap > m_image;
+	Ref< Bitmap > m_imageEnabled;
+	Ref< Bitmap > m_imageDisabled;
 	uint32_t m_imageWidth;
 	uint32_t m_imageHeight;
 	uint32_t m_imageCount;

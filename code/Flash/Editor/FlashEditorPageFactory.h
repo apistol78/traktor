@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashEditorPageFactory_H
 #define traktor_flash_FlashEditorPageFactory_H
 
-#include "Editor/EditorPageFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace flash
 	{
 
-class T_DLLCLASS FlashEditorPageFactory : public editor::EditorPageFactory
+class T_DLLCLASS FlashEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS(FlashEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::EditorPage* createEditorPage(editor::Editor* editor) const;
+	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

@@ -33,7 +33,6 @@ public:
 private:
 	Ref< Settings > m_settings;
 	Ref< ui::DropDown > m_dropRenderSystem;
-	Ref< ui::CheckBox > m_checkBuildAtStartup;
 	Ref< ui::CheckBox > m_checkBuildWhenModified;
 	Ref< ui::Edit > m_editDictionary;
 	Ref< ui::ListBox > m_listModules;

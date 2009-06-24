@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectEditorPageFactory", EffectEditorPageFactory, editor::EditorPageFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectEditorPageFactory", EffectEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeSet EffectEditorPageFactory::getEditableTypes() const
 {
@@ -17,7 +17,7 @@ const TypeSet EffectEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::EditorPage* EffectEditorPageFactory::createEditorPage(editor::Editor* editor) const
+editor::IEditorPage* EffectEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< EffectEditorPage >(editor);
 }

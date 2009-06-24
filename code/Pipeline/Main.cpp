@@ -1,6 +1,6 @@
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 #include "Editor/Settings.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Compact/CompactDatabase.h"
@@ -183,14 +183,14 @@ int main(int argc, const char** argv)
 	if (!pipelineHash)
 		pipelineHash = gc_new< editor::PipelineHash >();
 
-	RefArray< editor::Pipeline > pipelines;
+	RefArray< editor::IPipeline > pipelines;
 
 	std::vector< const Type* > pipelineTypes;
-	type_of< editor::Pipeline >().findAllOf(pipelineTypes);
+	type_of< editor::IPipeline >().findAllOf(pipelineTypes);
 
 	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
-		Ref< editor::Pipeline > pipeline = dynamic_type_cast< editor::Pipeline* >((*i)->newInstance());
+		Ref< editor::IPipeline > pipeline = dynamic_type_cast< editor::IPipeline* >((*i)->newInstance());
 		if (!pipeline)
 			continue;
 
@@ -235,7 +235,7 @@ int main(int argc, const char** argv)
 	outputDatabase->close();
 	sourceDatabase->close();
 
-	for (RefArray< editor::Pipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
+	for (RefArray< editor::IPipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
 		(*i)->destroy();
 
 	return 0;

@@ -6,7 +6,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.DefaultObjectEditorFactory", DefaultObjectEditorFactory, ObjectEditorFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.DefaultObjectEditorFactory", DefaultObjectEditorFactory, IObjectEditorFactory)
 
 const TypeSet DefaultObjectEditorFactory::getEditableTypes() const
 {
@@ -15,7 +15,7 @@ const TypeSet DefaultObjectEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-ObjectEditor* DefaultObjectEditorFactory::createObjectEditor(Editor* editor) const
+IObjectEditor* DefaultObjectEditorFactory::createObjectEditor(IEditor* editor) const
 {
 	return gc_new< DefaultObjectEditor >(editor);
 }

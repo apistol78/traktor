@@ -1,7 +1,8 @@
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/TextEditorDialog.h"
-#include "Editor/Editor.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorPage.h"
+#include "Editor/IProject.h"
 #include "Editor/Asset.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Ui/FloodLayout.h"
@@ -24,7 +25,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertiesView", PropertiesView, ui::Container)
 
-PropertiesView::PropertiesView(Editor* editor)
+PropertiesView::PropertiesView(IEditor* editor)
 :	m_editor(editor)
 {
 }
@@ -65,7 +66,10 @@ Object* PropertiesView::getPropertyObject()
 
 bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
-	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
+	Ref< editor::IProject > project = m_editor->getProject();
+	T_ASSERT (project);
+
+	Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(guid);
 	if (!instance)
 		return false;
 
@@ -125,7 +129,10 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 			if (instanceGuid.isNull() || !instanceGuid.isValid())
 				return;
 
-			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(instanceGuid);
+			Ref< IProject > project = m_editor->getProject();
+			T_ASSERT (project);
+
+			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(instanceGuid);
 			if (!instance)
 				return;
 

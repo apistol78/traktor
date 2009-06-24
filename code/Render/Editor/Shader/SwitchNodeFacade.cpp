@@ -20,14 +20,14 @@ SwitchNodeFacade::SwitchNodeFacade(ui::custom::GraphControl* graphControl)
 
 Node* SwitchNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	return gc_new< Switch >();
 }
 
 ui::custom::Node* SwitchNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -44,7 +44,7 @@ ui::custom::Node* SwitchNodeFacade::createEditorNode(
 }
 
 void SwitchNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )

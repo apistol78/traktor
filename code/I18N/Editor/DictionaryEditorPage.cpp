@@ -14,9 +14,9 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::IEditorPage)
 
-DictionaryEditorPage::DictionaryEditorPage(editor::Editor* editor)
+DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }

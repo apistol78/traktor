@@ -118,6 +118,16 @@ Color Color::operator - (const Color& r) const
 	);
 }
 
+Color Color::operator * (const Color& r) const
+{
+	return Color(
+		m_red * r.m_red,
+		m_green * r.m_green,
+		m_blue * r.m_blue,
+		m_alpha * r.m_alpha
+	);
+}
+
 Color Color::operator * (float r) const
 {
 	return Color(

@@ -10,7 +10,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.ScenePipeline", ScenePipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.ScenePipeline", ScenePipeline, editor::IPipeline)
 
 bool ScenePipeline::create(const editor::Settings* settings)
 {

@@ -234,6 +234,10 @@
       <second>About</second>
     </item>
     <item>
+      <first>EDITOR_OPEN_PROJECT</first>
+      <second>Open project</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_ADD_MODULE</first>
       <second>Add module...</second>
     </item>
@@ -254,10 +258,6 @@
       <second>Build asset before editing</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_BUILD_AT_STARTUP</first>
-      <second>Build all assets at startup</second>
-    </item>
-    <item>
       <first>EDITOR_SETTINGS_BUILD_WHEN_MODIFIED</first>
       <second>Build asset when modified</second>
     </item>
@@ -268,6 +268,10 @@
     <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Shortcut</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED</first>
+      <second>(Not assigned)</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
@@ -581,11 +585,23 @@
 			<first>MENU_FILE</first>
 			<second>File</second>
 		</item>
-		<item>
+    <item>
+      <first>MENU_FILE_CLOSE_PROJECT</first>
+      <second>Close project</second>
+    </item>
+    <item>
 			<first>MENU_FILE_EXIT</first>
 			<second>Exit</second>
 		</item>
-		<item>
+    <item>
+      <first>MENU_FILE_NEW_PROJECT</first>
+      <second>New project...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_PROJECT</first>
+      <second>Open project...</second>
+    </item>
+    <item>
 			<first>MENU_FILE_SAVE</first>
 			<second>Save...</second>
 		</item>

@@ -1,7 +1,7 @@
 #ifndef traktor_editor_DefaultPipeline_H
 #define traktor_editor_DefaultPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ namespace traktor
  * It copies the source instance to the
  * output database without any modification.
  */
-class T_DLLCLASS DefaultPipeline : public Pipeline
+class T_DLLCLASS DefaultPipeline : public IPipeline
 {
 	T_RTTI_CLASS(DefaultPipeline)
 

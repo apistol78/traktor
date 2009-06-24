@@ -2,7 +2,7 @@
 #define traktor_spray_EffectEditorPage_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/EditorPage.h"
+#include "Editor/IEditorPage.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -50,12 +50,12 @@ class ResourceLoader;
 class Effect;
 class EffectPreviewControl;
 
-class T_DLLCLASS EffectEditorPage : public editor::EditorPage
+class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 {
 	T_RTTI_CLASS(EffectEditorPage)
 
 public:
-	EffectEditorPage(editor::Editor* editor);
+	EffectEditorPage(editor::IEditor* editor);
 
 	virtual bool create(ui::Container* parent);
 
@@ -78,7 +78,7 @@ public:
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
 private:
-	editor::Editor* m_editor;
+	editor::IEditor* m_editor;
 	Ref< Effect > m_effect;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;

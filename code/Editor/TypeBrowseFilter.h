@@ -2,7 +2,7 @@
 #define traktor_editor_TypeBrowseFilter_H
 
 #include "Core/Rtti/Type.h"
-#include "Editor/BrowseFilter.h"
+#include "Editor/IBrowseFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Filter instances by type.
  * \ingroup Editor
  */
-class T_DLLCLASS TypeBrowseFilter : public BrowseFilter
+class T_DLLCLASS TypeBrowseFilter : public IBrowseFilter
 {
 public:
 	TypeBrowseFilter(const Type& type);

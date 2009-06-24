@@ -34,7 +34,7 @@ class Instance;
 	{
 
 class PipelineHash;
-class Pipeline;
+class IPipeline;
 
 /*! \brief Pipeline manager.
  * \ingroup Editor
@@ -64,7 +64,7 @@ public:
 	struct Dependency : public Object
 	{
 		std::wstring name;
-		Ref< Pipeline > pipeline;
+		Ref< IPipeline > pipeline;
 		Ref< const Serializable > sourceAsset;
 		std::wstring outputPath;
 		Guid outputGuid;
@@ -80,12 +80,12 @@ public:
 	PipelineManager(
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
-		const RefArray< Pipeline >& pipelines,
+		const RefArray< IPipeline >& pipelines,
 		PipelineHash* hash,
 		Listener* listener = 0
 	);
 
-	virtual Pipeline* findPipeline(const Type& sourceType) const;
+	virtual IPipeline* findPipeline(const Type& sourceType) const;
 
 	virtual void addDependency(
 		const Serializable* sourceAsset
@@ -132,7 +132,7 @@ private:
 	Ref< db::Database > m_outputDatabase;
 	Ref< PipelineHash > m_hash;
 	Listener* m_listener;
-	RefArray< Pipeline > m_pipelines;
+	RefArray< IPipeline > m_pipelines;
 	RefArray< Dependency > m_dependencies;
 	Ref< Dependency > m_currentDependency;
 	std::map< Guid, Ref< Serializable > > m_readCache;

@@ -26,14 +26,14 @@ class Instance;
 	namespace editor
 	{
 
-class BrowseFilter;
+class IBrowseFilter;
 
 class BrowseInstanceDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS(BrowseInstanceDialog)
 
 public:
-	bool create(ui::Widget* parent, db::Database* database, const BrowseFilter* filter);
+	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
 	db::Instance* getInstance();
 
@@ -42,7 +42,7 @@ private:
 	Ref< ui::ListView > m_listInstances;
 	Ref< db::Instance > m_instance;
 
-	void buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const BrowseFilter* filter);
+	void buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
 
 	void eventTreeItemSelected(ui::Event* event);
 

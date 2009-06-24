@@ -1,5 +1,6 @@
 #include "Editor/App/ConvertDatabaseTool.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -106,16 +107,17 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.ConvertDatabaseTool", ConvertDatabaseTool, EditorTool)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.ConvertDatabaseTool", ConvertDatabaseTool, IEditorTool)
 
 std::wstring ConvertDatabaseTool::getDescription() const
 {
 	return i18n::Text(L"CONVERT_DATABASE_DESCRIPTION");
 }
 
-bool ConvertDatabaseTool::launch(ui::Widget* parent, Editor* editor)
+bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 {
-	Ref< db::Database > sourceDb = editor->getOutputDatabase();
+	Ref< editor::IProject > project = editor->getProject();
+	Ref< db::Database > sourceDb = project->getOutputDatabase();
 	if (!sourceDb)
 		return false;
 

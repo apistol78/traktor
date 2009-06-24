@@ -1,7 +1,7 @@
 #ifndef traktor_animation_AnimationEditorPageFactory_H
 #define traktor_animation_AnimationEditorPageFactory_H
 
-#include "Editor/EditorPageFactory.h"
+#include "Editor/IEditorPageFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace animation
 	{
 
-class T_DLLCLASS AnimationEditorPageFactory : public editor::EditorPageFactory
+class T_DLLCLASS AnimationEditorPageFactory : public editor::IEditorPageFactory
 {
 	T_RTTI_CLASS(AnimationEditorPageFactory)
 
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::EditorPage* createEditorPage(editor::Editor* editor) const;
+	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

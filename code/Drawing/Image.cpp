@@ -198,9 +198,9 @@ void Image::clear(const Color& color)
 	checkData(m_data, m_size);
 }
 
-bool Image::getPixel(uint32_t x, uint32_t y, Color& color) const
+bool Image::getPixel(int32_t x, int32_t y, Color& color) const
 {
-	if (x >= m_width || y >= m_height)
+	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
 		return false;
 
 	float tmp[] =
@@ -224,9 +224,9 @@ bool Image::getPixel(uint32_t x, uint32_t y, Color& color) const
 	return true;
 }
 
-bool Image::setPixel(uint32_t x, uint32_t y, const Color& color)
+bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 {
-	if (x >= m_width || y >= m_height)
+	if (x < 0  || x >= m_width || y < 0 || y >= m_height)
 		return false;
 
 	float tmp[] =
@@ -344,12 +344,12 @@ const PixelFormat* Image::getPixelFormat() const
 	return m_pixelFormat;
 }
 
-const uint32_t Image::getWidth() const
+const int32_t Image::getWidth() const
 {
 	return m_width;
 }
 
-const uint32_t Image::getHeight() const
+const int32_t Image::getHeight() const
 {
 	return m_height;
 }

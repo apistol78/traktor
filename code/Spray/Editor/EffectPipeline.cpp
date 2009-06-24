@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::IPipeline)
 
 bool EffectPipeline::create(const editor::Settings* settings)
 {

@@ -85,7 +85,7 @@ void traverseDependencies(editor::PipelineManager* pipelineManager, const Shader
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderPipeline", ShaderPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderPipeline", ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)

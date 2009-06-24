@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.editor.PropertyGroup">
+  <value>
+    <item>
+      <first>Project.SourceManifest</first>
+      <second type="traktor.editor.PropertyString">
+        <value>$(TRAKTOR_HOME)/data/Source.manifest</value>
+      </second>
+    </item>
+    <item>
+      <first>Project.OutputManifest</first>
+      <second type="traktor.editor.PropertyString">
+        <value>$(TRAKTOR_HOME)/data/Target/Win32/Output.manifest</value>
+      </second>
+    </item>
+    <item>
+      <first>Project.PipelineHash</first>
+      <second type="traktor.editor.PropertyString">
+        <value>$(TRAKTOR_HOME)/data/Target/Win32/Temp/Pipeline.hash</value>
+      </second>
+    </item>
+  </value>
+</object>

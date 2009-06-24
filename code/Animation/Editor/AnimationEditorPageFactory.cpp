@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorPageFactory", AnimationEditorPageFactory, editor::EditorPageFactory)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorPageFactory", AnimationEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeSet AnimationEditorPageFactory::getEditableTypes() const
 {
@@ -17,7 +17,7 @@ const TypeSet AnimationEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::EditorPage* AnimationEditorPageFactory::createEditorPage(editor::Editor* editor) const
+editor::IEditorPage* AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< AnimationEditorPage >(editor);
 }

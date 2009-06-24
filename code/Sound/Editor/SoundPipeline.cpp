@@ -32,7 +32,7 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::IPipeline)
 
 bool SoundPipeline::create(const editor::Settings* settings)
 {

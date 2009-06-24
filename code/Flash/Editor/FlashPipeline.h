@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashPipeline_H
 #define traktor_flash_FlashPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace flash
 	{
 
-class T_DLLCLASS FlashPipeline : public editor::Pipeline
+class T_DLLCLASS FlashPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(FlashPipeline)
 

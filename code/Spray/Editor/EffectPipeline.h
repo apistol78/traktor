@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectPipeline_H
 #define traktor_spray_EffectPipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace spray
 	{
 
-class T_DLLCLASS EffectPipeline : public editor::Pipeline
+class T_DLLCLASS EffectPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(EffectPipeline)
 

@@ -1,5 +1,5 @@
-#ifndef traktor_editor_EditorTool_H
-#define traktor_editor_EditorTool_H
+#ifndef traktor_editor_IEditorTool_H
+#define traktor_editor_IEditorTool_H
 
 #include <string>
 #include "Core/Object.h"
@@ -24,22 +24,22 @@ class Widget;
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 /*! \brief Editor tool base class.
  * \ingroup Editor
  */
-class T_DLLCLASS EditorTool : public Object
+class T_DLLCLASS IEditorTool : public Object
 {
-	T_RTTI_CLASS(EditorTool)
+	T_RTTI_CLASS(IEditorTool)
 
 public:
 	virtual std::wstring getDescription() const = 0;
 
-	virtual bool launch(ui::Widget* parent, Editor* editor) = 0;
+	virtual bool launch(ui::Widget* parent, IEditor* editor) = 0;
 };
 
 	}
 }
 
-#endif	// traktor_editor_EditorTool_H
+#endif	// traktor_editor_IEditorTool_H

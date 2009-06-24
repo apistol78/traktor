@@ -37,9 +37,9 @@ Image* GammaFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;
-	for (uint32_t y = 0; y < image->getHeight(); ++y)
+	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
-		for (uint32_t x = 0; x < image->getWidth(); ++x)
+		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixel(x, y, in);
 			Color out(

@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_MeshAssetWizardTool_H
 #define traktor_mesh_MeshAssetWizardTool_H
 
-#include "Editor/WizardTool.h"
+#include "Editor/IWizardTool.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +16,14 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS MeshAssetWizardTool : public editor::WizardTool
+class T_DLLCLASS MeshAssetWizardTool : public editor::IWizardTool
 {
 	T_RTTI_CLASS(MeshAssetWizardTool)
 
 public:
 	virtual std::wstring getDescription() const;
 
-	virtual bool launch(ui::Widget* parent, editor::Editor* editor, db::Group* group);
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group);
 };
 
 	}

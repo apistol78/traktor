@@ -34,8 +34,8 @@ class Instance;
 	namespace editor
 	{
 
-class Editor;
-class WizardTool;
+class IEditor;
+class IWizardTool;
 
 class DatabaseView : public ui::Container
 {
@@ -52,7 +52,7 @@ public:
 		virtual bool acceptEmptyGroups() const = 0;
 	};
 
-	DatabaseView(Editor* editor);
+	DatabaseView(IEditor* editor);
 
 	bool create(ui::Widget* parent);
 
@@ -62,8 +62,10 @@ public:
 
 	void updateView();
 
+	virtual void setEnable(bool enable);
+
 private:
-	Editor* m_editor;
+	IEditor* m_editor;
 	Ref< ui::custom::ToolBar > m_toolSelection;
 	Ref< ui::custom::ToolBarButton > m_toolFilter;
 	Ref< ui::TreeView > m_treeDatabase;
@@ -72,7 +74,7 @@ private:
 	Ref< ui::PopupMenu > m_menuInstanceAsset;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
-	RefArray< WizardTool > m_wizardTools;
+	RefArray< IWizardTool > m_wizardTools;
 
 	ui::TreeViewItem* buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 

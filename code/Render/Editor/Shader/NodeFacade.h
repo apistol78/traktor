@@ -8,7 +8,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 	}
 
@@ -35,17 +35,17 @@ class NodeFacade : public Object
 public:
 	virtual Node* createShaderNode(
 		const Type* nodeType,
-		editor::Editor* editor
+		editor::IEditor* editor
 	) = 0;
 
 	virtual ui::custom::Node* createEditorNode(
-		editor::Editor* editor,
+		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode
 	) = 0;
 
 	virtual void editShaderNode(
-		editor::Editor* editor,
+		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode
 	) = 0;

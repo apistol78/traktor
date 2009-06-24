@@ -42,8 +42,8 @@ public:
 	};
 
 	ScaleFilter(
-		uint32_t width,
-		uint32_t height,
+		int32_t width,
+		int32_t height,
 		MinifyType minify,
 		MagnifyType magnify,
 		bool keepZeroAlpha = false
@@ -53,8 +53,8 @@ protected:
 	virtual Image* apply(const Image* image);
 
 private:
-	uint32_t m_width;
-	uint32_t m_height;
+	int32_t m_width;
+	int32_t m_height;
 	MinifyType m_minify;
 	MagnifyType m_magnify;
 	bool m_keepZeroAlpha;

@@ -1,7 +1,7 @@
 #ifndef traktor_scene_ScenePipeline_H
 #define traktor_scene_ScenePipeline_H
 
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace scene
 	{
 
-class T_DLLCLASS ScenePipeline : public editor::Pipeline
+class T_DLLCLASS ScenePipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(ScenePipeline)
 

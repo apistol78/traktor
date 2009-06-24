@@ -1,7 +1,8 @@
 #include "Render/Editor/Shader/ExternalNodeFacade.h"
 #include "Render/External.h"
 #include "Render/ShaderGraph.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -24,7 +25,7 @@ ExternalNodeFacade::ExternalNodeFacade(ui::custom::GraphControl* graphControl)
 
 Node* ExternalNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	editor::TypeBrowseFilter filter(type_of< ShaderGraph >());
@@ -43,7 +44,7 @@ Node* ExternalNodeFacade::createShaderNode(
 }
 
 ui::custom::Node* ExternalNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -52,7 +53,8 @@ ui::custom::Node* ExternalNodeFacade::createEditorNode(
 
 	Guid fragmentGuid = checked_type_cast< External* >(shaderNode)->getFragmentGuid();
 
-	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(fragmentGuid);
+	Ref< editor::IProject > project = editor->getProject();
+	Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(fragmentGuid);
 	if (instance)
 		title = instance->getName();
 	else
@@ -74,12 +76,15 @@ ui::custom::Node* ExternalNodeFacade::createEditorNode(
 }
 
 void ExternalNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
 {
-	Ref< db::Instance > instance = editor->getSourceDatabase()->getInstance(
+	Ref< editor::IProject > project = editor->getProject();
+	T_ASSERT (project);
+
+	Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(
 		checked_type_cast< External* >(shaderNode)->getFragmentGuid()
 	);
 	if (instance)

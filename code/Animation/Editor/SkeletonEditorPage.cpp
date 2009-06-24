@@ -3,7 +3,8 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
+#include "Editor/IProject.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
 #include "Resource/ResourceLoader.h"
@@ -52,9 +53,9 @@ int findIndexOfBone(const Skeleton* skeleton, const Bone* bone)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonEditorPage", SkeletonEditorPage, editor::EditorPage)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonEditorPage", SkeletonEditorPage, editor::IEditorPage)
 
-SkeletonEditorPage::SkeletonEditorPage(editor::Editor* editor)
+SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_selectedBone(-1)
 ,	m_cameraHead(0.0f)
@@ -111,13 +112,14 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_resourceCache = gc_new< resource::ResourceCache >();
 	m_resourceLoader = gc_new< resource::ResourceLoader >();
 
-	Ref< db::Database > db = m_editor->getOutputDatabase();
+	Ref< editor::IProject > project = m_editor->getProject();
+	Ref< db::Database > database = project->getOutputDatabase();
 
 	m_resourceLoader->addFactory(
-		gc_new< render::TextureFactory >(db, renderSystem)
+		gc_new< render::TextureFactory >(database, renderSystem)
 	);
 	m_resourceLoader->addFactory(
-		gc_new< render::ShaderFactory >(db, renderSystem)
+		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();

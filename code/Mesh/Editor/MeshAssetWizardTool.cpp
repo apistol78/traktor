@@ -1,6 +1,6 @@
 #include "Mesh/Editor/MeshAssetWizardTool.h"
 #include "Mesh/Editor/MeshAsset.h"
-#include "Editor/Editor.h"
+#include "Editor/IEditor.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -14,14 +14,14 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshAssetWizardTool", MeshAssetWizardTool, editor::WizardTool)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshAssetWizardTool", MeshAssetWizardTool, editor::IWizardTool)
 
 std::wstring MeshAssetWizardTool::getDescription() const
 {
 	return i18n::Text(L"MESHASSET_WIZARDTOOL_DESCRIPTION");
 }
 
-bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::Editor* editor, db::Group* group)
+bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
 {
 	// Select source model.
 	ui::FileDialog fileDialog;

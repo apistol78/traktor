@@ -14,7 +14,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::Pipeline)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::IPipeline)
 
 bool PostProcessPipeline::create(const editor::Settings* settings)
 {

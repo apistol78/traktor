@@ -17,14 +17,14 @@ SwizzleNodeFacade::SwizzleNodeFacade(ui::custom::GraphControl* graphControl)
 
 Node* SwizzleNodeFacade::createShaderNode(
 	const Type* nodeType,
-	editor::Editor* editor
+	editor::IEditor* editor
 )
 {
 	return checked_type_cast< Node* >(nodeType->newInstance());
 }
 
 ui::custom::Node* SwizzleNodeFacade::createEditorNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
@@ -45,7 +45,7 @@ ui::custom::Node* SwizzleNodeFacade::createEditorNode(
 }
 
 void SwizzleNodeFacade::editShaderNode(
-	editor::Editor* editor,
+	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )

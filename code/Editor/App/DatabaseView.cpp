@@ -1,13 +1,14 @@
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/NewInstanceDialog.h"
-#include "Editor/Editor.h"
-#include "Editor/EditorPage.h"
-#include "Editor/WizardTool.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorPage.h"
+#include "Editor/IProject.h"
+#include "Editor/IWizardTool.h"
 #include "Editor/Settings.h"
 #include "Editor/Asset.h"
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
@@ -119,7 +120,7 @@ T_IMPLEMENT_RTTI_CLASS(L"GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
 
 		}
 
-DatabaseView::DatabaseView(Editor* editor)
+DatabaseView::DatabaseView(IEditor* editor)
 :	m_editor(editor)
 ,	m_filter(gc_new< DefaultFilter >())
 {
@@ -163,7 +164,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuGroup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	
 	std::vector< const Type* > wizardToolTypes;
-	type_of< WizardTool >().findAllOf(wizardToolTypes);
+	type_of< IWizardTool >().findAllOf(wizardToolTypes);
 
 	if (!wizardToolTypes.empty())
 	{
@@ -172,7 +173,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		int wizardId = 0;
 		for (std::vector< const Type* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
 		{
-			Ref< WizardTool > wizard = dynamic_type_cast< WizardTool* >((*i)->newInstance());
+			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->newInstance());
 			if (!wizard)
 				continue;
 
@@ -257,6 +258,13 @@ void DatabaseView::updateView()
 	m_treeDatabase->update();
 }
 
+void DatabaseView::setEnable(bool enable)
+{
+	m_toolSelection->setEnable(enable);
+	m_treeDatabase->setEnable(enable);
+	ui::Container::setEnable(enable);
+}
+
 ui::TreeViewItem* DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
@@ -318,14 +326,14 @@ void DatabaseView::filterType(db::Instance* instance)
 
 void DatabaseView::filterDependencies(db::Instance* instance)
 {
-	RefArray< Pipeline > pipelines;
+	RefArray< IPipeline > pipelines;
 
 	std::vector< const Type* > pipelineTypes;
-	type_of< Pipeline >().findAllOf(pipelineTypes);
+	type_of< IPipeline >().findAllOf(pipelineTypes);
 
 	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
-		Ref< Pipeline > pipeline = dynamic_type_cast< Pipeline* >((*i)->newInstance());
+		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
 		if (pipeline)
 		{
 			if (!pipeline->create(m_editor->getSettings()))
@@ -337,10 +345,13 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 		}
 	}
 
+	Ref< editor::IProject > project = m_editor->getProject();
+	T_ASSERT (project);
+
 	Ref< PipelineHash > pipelineHash = gc_new< PipelineHash >();
 	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
-		m_editor->getSourceDatabase(),
-		m_editor->getOutputDatabase(),
+		project->getSourceDatabase(),
+		project->getOutputDatabase(),
 		pipelines,
 		pipelineHash
 	);
@@ -588,7 +599,7 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 		}
 		else if (command == L"Editor.Database.Wizard")
 		{
-			Ref< WizardTool > wizard = m_wizardTools[command.getId()];
+			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
 
 			if (wizard->launch(this, m_editor, group))
 				updateView();
@@ -644,7 +655,7 @@ void DatabaseView::eventInstanceDrag(ui::Event* event)
 		Ref< db::Instance > instance = dragItem->getData< db::Instance >(L"INSTANCE");
 		T_ASSERT (instance);
 
-		Ref< EditorPage > editorPage = m_editor->getActiveEditorPage();
+		Ref< IEditorPage > editorPage = m_editor->getActiveEditorPage();
 		if (editorPage)
 			editorPage->dropInstance(instance, dragEvent->getPosition());
 	}

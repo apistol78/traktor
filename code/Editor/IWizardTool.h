@@ -1,5 +1,5 @@
-#ifndef traktor_editor_WizardTool_H
-#define traktor_editor_WizardTool_H
+#ifndef traktor_editor_IWizardTool_H
+#define traktor_editor_IWizardTool_H
 
 #include "Core/Object.h"
 
@@ -30,7 +30,7 @@ class Group;
 	namespace editor
 	{
 
-class Editor;
+class IEditor;
 
 /*! \brief Wizard tool base class.
  * \ingroup Editor
@@ -38,17 +38,17 @@ class Editor;
  * Wizards are launched by context menu
  * from database view.
  */
-class T_DLLCLASS WizardTool : public Object
+class T_DLLCLASS IWizardTool : public Object
 {
-	T_RTTI_CLASS(WizardTool)
+	T_RTTI_CLASS(IWizardTool)
 
 public:
 	virtual std::wstring getDescription() const = 0;
 
-	virtual bool launch(ui::Widget* parent, Editor* editor, db::Group* group) = 0;
+	virtual bool launch(ui::Widget* parent, IEditor* editor, db::Group* group) = 0;
 };
 
 	}
 }
 
-#endif	// traktor_editor_WizardTool_H
+#endif	// traktor_editor_IWizardTool_H

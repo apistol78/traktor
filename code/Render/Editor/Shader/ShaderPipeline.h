@@ -2,7 +2,7 @@
 #define traktor_render_ShaderPipeline_H
 
 #include "Core/Heap/Ref.h"
-#include "Editor/Pipeline.h"
+#include "Editor/IPipeline.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 
 class RenderSystem;
 
-class T_DLLCLASS ShaderPipeline : public editor::Pipeline
+class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 {
 	T_RTTI_CLASS(ShaderPipeline)
 
