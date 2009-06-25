@@ -1,16 +1,9 @@
 #ifndef traktor_db_LocalInstance_H
 #define traktor_db_LocalInstance_H
 
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderInstance.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
@@ -24,7 +17,7 @@ class Transaction;
 /*! \brief Local instance.
  * \ingroup Database
  */
-class T_DLLCLASS LocalInstance : public IProviderInstance
+class LocalInstance : public IProviderInstance
 {
 	T_RTTI_CLASS(LocalInstance)
 

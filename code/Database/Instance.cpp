@@ -1,6 +1,7 @@
 #include "Database/Instance.h"
 #include "Database/Group.h"
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderInstance.h"
+#include "Database/Provider/IProviderBus.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Io/Stream.h"
 #include "Core/Thread/Acquire.h"

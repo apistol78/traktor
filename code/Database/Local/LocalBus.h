@@ -2,9 +2,10 @@
 #define traktor_db_LocalBus_H
 
 #include <list>
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderBus.h"
 #include "Core/Guid.h"
 #include "Core/Thread/Mutex.h"
+#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
@@ -45,7 +46,6 @@ private:
 
 	Guid m_localGuid;
 	Mutex m_globalLock;
-	//std::wstring m_eventFile;
 	Ref< SharedMemory > m_shm;
 	std::list< Event > m_pendingEvents;
 };
