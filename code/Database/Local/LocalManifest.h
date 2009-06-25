@@ -4,14 +4,6 @@
 #include <string>
 #include "Core/Serialization/Serializable.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace db
@@ -20,7 +12,7 @@ namespace traktor
 /*! \brief Local database manifest.
  * \ingroup Database
  */
-class T_DLLCLASS LocalManifest : public Serializable
+class LocalManifest : public Serializable
 {
 	T_RTTI_CLASS(LocalManifest)
 

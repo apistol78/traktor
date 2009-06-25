@@ -1,16 +1,8 @@
 #ifndef traktor_db_LocalGroup_H
 #define traktor_db_LocalGroup_H
 
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
@@ -22,7 +14,7 @@ class Context;
 /*! \brief Local group.
  * \ingroup Database
  */
-class T_DLLCLASS LocalGroup : public IProviderGroup
+class LocalGroup : public IProviderGroup
 {
 	T_RTTI_CLASS(LocalGroup)
 

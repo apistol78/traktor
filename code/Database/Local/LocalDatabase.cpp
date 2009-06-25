@@ -18,9 +18,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalDatabase", LocalDatabase, IProviderData
 
 bool LocalDatabase::create(const Path& manifestPath)
 {
-	std::wstring rootGroupPath = manifestPath.getPathOnly() + L"/Db";
+	std::wstring rootGroupPath = manifestPath.getFileNameNoExtension();
 
-	if (!FileSystem::getInstance().makeDirectory(rootGroupPath))
+	if (!FileSystem::getInstance().makeAllDirectories(rootGroupPath))
 	{
 		log::error << L"Unable to create physical group at \"" << rootGroupPath << L"\"" << Endl;
 		return false;

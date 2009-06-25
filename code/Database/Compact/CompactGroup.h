@@ -1,7 +1,7 @@
 #ifndef traktor_db_CompactGroup_H
 #define traktor_db_CompactGroup_H
 
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
 
 namespace traktor

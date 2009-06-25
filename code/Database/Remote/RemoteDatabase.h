@@ -2,12 +2,11 @@
 #define traktor_db_CompactDatabase_H
 
 #include "Database/Provider/IProviderDatabase.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Misc/MD5.h"
+#include "Net/Url.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_DATABASE_COMPACT_EXPORT)
+#if defined(T_DATABASE_REMOTE_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT
@@ -15,38 +14,24 @@
 
 namespace traktor
 {
-
-class Path;
-
 	namespace db
 	{
 
-class CompactContext;
-class CompactGroup;
-
-/*! \brief Compact database provider
+/*! \brief Remote database provider
  * \ingroup Database
  */
-class T_DLLCLASS CompactDatabase : public IProviderDatabase
+class T_DLLCLASS RemoteDatabase : public IProviderDatabase
 {
 	T_RTTI_CLASS(CompactDatabase)
 
 public:
-	bool create(const Path& filePath);
-
-	bool open(const Path& filePath, bool readOnly = false);
+	bool open(const net::Url& url);
 
 	virtual void close();
 
 	virtual IProviderBus* getBus();
 
 	virtual IProviderGroup* getRootGroup();
-
-private:
-	Ref< CompactContext > m_context;
-	Ref< CompactGroup > m_rootGroup;
-	bool m_readOnly;
-	MD5 m_registryHash;
 };
 
 	}

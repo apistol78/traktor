@@ -2,11 +2,11 @@
 #define traktor_db_LocalDatabase_H
 
 #include "Core/Heap/Ref.h"
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderDatabase.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_DATABASE_EXPORT)
+#if defined(T_DATABASE_LOCAL_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT

@@ -2,7 +2,8 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderGroup.h"
+#include "Database/Provider/IProviderBus.h"
 #include "Core/Heap/New.h"
 
 namespace traktor

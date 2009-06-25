@@ -1,7 +1,8 @@
 #ifndef traktor_db_CompactInstance_H
 #define traktor_db_CompactInstance_H
 
-#include "Database/Provider.h"
+#include "Database/Provider/IProviderInstance.h"
+#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
