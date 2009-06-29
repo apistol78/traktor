@@ -38,8 +38,7 @@ class ToolBar;
 	namespace resource
 	{
 
-class ResourceCache;
-class ResourceLoader;
+class IResourceManager;
 
 	}
 
@@ -81,8 +80,7 @@ private:
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::Container > m_previewContainer;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
-	Ref< resource::ResourceCache > m_resourceCache;
-	Ref< resource::ResourceLoader > m_resourceLoader;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
 
 	void eventToolClick(ui::Event* event);

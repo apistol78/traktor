@@ -6,6 +6,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
 #include "Editor/Settings.h"
+#include "Resource/ResourceManager.h"
 #include "Physics/PhysicsManager.h"
 #include "World/Entity/EntityData.h"
 #include "Ui/Command.h"
@@ -37,6 +38,9 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		return 0;
 	}
 
+	// Create resource manager.
+	Ref< resource::IResourceManager > resourceManager = gc_new< resource::ResourceManager >();
+
 	// Get physics manager type.
 	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< editor::PropertyString >(L"SceneEditor.PhysicsManager");
 	const Type* physicsManagerType = Type::find(physicsManagerTypeName);
@@ -64,18 +68,31 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		editor,
 		project->getOutputDatabase(),
 		project->getSourceDatabase(),
+		resourceManager,
 		editor->getRenderSystem(),
 		physicsManager
 	);
 
-	// Create profiles.
+	// Create profiles, resource factories and entity editors.
 	std::vector< const Type* > profileTypes;
 	type_of< SceneEditorProfile >().findAllOf(profileTypes);
 	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
 		Ref< SceneEditorProfile > profile = dynamic_type_cast< SceneEditorProfile* >((*i)->newInstance());
-		if (profile)
-			context->addEditorProfile(profile);
+		if (!profile)
+			continue;
+
+		RefArray< resource::IResourceFactory > resourceFactories;
+		profile->createResourceFactories(context, resourceFactories);
+		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
+			resourceManager->addFactory(*j);
+
+		RefArray< EntityEditor > profileEntityEditors;
+		profile->createEntityEditors(context, profileEntityEditors);
+		for (RefArray< EntityEditor >::iterator j = profileEntityEditors.begin(); j != profileEntityEditors.end(); ++j)
+			context->addEntityEditor(*j);
+
+		context->addEditorProfile(profile);
 	}
 
 	// Create editor page.

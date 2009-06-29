@@ -2,6 +2,7 @@
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
 #include "Core/Serialization/Serializer.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -11,11 +12,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.spray.EffectEntityData", EffectEntityData, world::SpatialEntityData)
 
-EffectEntity* EffectEntityData::createEntity() const
+EffectEntity* EffectEntityData::createEntity(resource::IResourceManager* resourceManager) const
 {
+	if (!resourceManager->bind(m_effect))
+		return 0;
+
 	return gc_new< EffectEntity >(
+		resourceManager,
 		cref(getTransform()),
-		m_effect
+		cref(m_effect)
 	);
 }
 

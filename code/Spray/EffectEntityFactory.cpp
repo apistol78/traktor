@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::EntityFactory)
 
+EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager)
+:	m_resourceManager(resourceManager)
+{
+}
+
 const TypeSet EffectEntityFactory::getEntityTypes() const
 {
 	TypeSet typeSet;
@@ -18,7 +23,7 @@ const TypeSet EffectEntityFactory::getEntityTypes() const
 
 world::Entity* EffectEntityFactory::createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity();
+	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager);
 }
 
 	}

@@ -78,7 +78,10 @@ bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 		return false;
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
-	if (!m_primitiveRenderer->create(m_context->getRenderSystem()))
+	if (!m_primitiveRenderer->create(
+		m_context->getResourceManager(),
+		m_context->getRenderSystem()
+	))
 		return false;
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventButtonDown));
@@ -232,6 +235,7 @@ void SceneRenderControl::updatePostProcess()
 		m_postProcess = gc_new< world::PostProcess >();
 		if (m_postProcess->create(
 			m_postProcessSettings,
+			m_context->getResourceManager(),
 			m_context->getRenderSystem(),
 			sz.cx,
 			sz.cy

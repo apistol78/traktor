@@ -23,7 +23,7 @@ class T_DLLCLASS SprayEditorProfile : public scene::SceneEditorProfile
 public:
 	virtual void createResourceFactories(
 		scene::SceneEditorContext* context,
-		RefArray< resource::ResourceFactory >& outResourceFactories
+		RefArray< resource::IResourceFactory >& outResourceFactories
 	) const;
 
 	virtual void createEntityFactories(

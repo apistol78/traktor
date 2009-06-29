@@ -22,6 +22,13 @@ class WorldRenderView;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -59,7 +66,7 @@ public:
 
 	TerrainEntity();
 
-	bool create(render::RenderSystem* renderSystem, const TerrainEntityData& data);
+	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const TerrainEntityData& data);
 
 	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView);
 

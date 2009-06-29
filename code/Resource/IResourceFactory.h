@@ -1,5 +1,5 @@
-#ifndef traktor_resource_ResourceFactory_H
-#define traktor_resource_ResourceFactory_H
+#ifndef traktor_resource_IResourceFactory_H
+#define traktor_resource_IResourceFactory_H
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
@@ -16,8 +16,11 @@ namespace traktor
 {
 	namespace resource
 	{
-	
-/*! \brief Resource factory base.
+
+class IResourceManager;
+
+/*! \brief Resource factory interface.
+ * \ingroup Resource
  *
  * A resource factory is responsible of creating resources from
  * a given guid.
@@ -26,9 +29,9 @@ namespace traktor
  * as the resource manager needs to know which resources to flush
  * in case of a resource has been modified.
  */
-class T_DLLCLASS ResourceFactory : public Object
+class T_DLLCLASS IResourceFactory : public Object
 {
-	T_RTTI_CLASS(ResourceFactory)
+	T_RTTI_CLASS(IResourceFactory)
 	
 public:
 	/*! \brief Get resource types.
@@ -45,15 +48,16 @@ public:
 	 * other guid;s if other resources were loaded as
 	 * as a result of creating this resource.
 	 *
+	 * \param resourceManager Resource manager.
 	 * \param resourceType Type of resource.
 	 * \param guid Guid of resource.
 	 * \param outCacheable If resource is cacheable (default set to true).
 	 * \return Resource instance.
 	 */
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable) = 0;
+	virtual Object* create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable) = 0;
 };
 	
 	}
 }
 
-#endif	// traktor_resource_ResourceFactory_H
+#endif	// traktor_resource_IResourceFactory_H

@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -34,14 +41,14 @@ class T_DLLCLASS SkyEntityData : public world::EntityData
 public:
 	SkyEntityData();
 
-	SkyEntity* createEntity(render::RenderSystem* renderSystem) const;
+	SkyEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< render::Shader > m_shader;
 };
 
 	}

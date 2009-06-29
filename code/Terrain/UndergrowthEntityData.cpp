@@ -19,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
 
-UndergrowthEntity* UndergrowthEntityData::createEntity(render::RenderSystem* renderSystem) const
+UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const
 {
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(UndergrowthEntity::Vertex, position)));
@@ -76,6 +76,7 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(render::RenderSystem* ren
 	);
 
 	return gc_new< UndergrowthEntity >(
+		resourceManager,
 		m_heightfield,
 		m_materialMask,
 		m_settings,

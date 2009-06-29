@@ -2,7 +2,7 @@
 #define traktor_animation_AnimationFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "Resource/ResourceFactory.h"
+#include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ class Database;
 /*! \brief Key framed animation factory.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimationFactory : public resource::ResourceFactory
+class T_DLLCLASS AnimationFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(AnimationFactory)
 
@@ -36,7 +36,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_db;

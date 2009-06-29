@@ -2,6 +2,7 @@
 #include "Mesh/Indoor/IndoorMeshFactory.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Mesh/Indoor/IndoorMesh.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/Mesh.h"
@@ -16,7 +17,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshFactory", IndoorMeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshFactory", IndoorMeshFactory, resource::IResourceFactory)
 
 IndoorMeshFactory::IndoorMeshFactory(db::Database* database, render::RenderSystem* renderSystem)
 :	m_database(database)
@@ -31,7 +32,7 @@ const TypeSet IndoorMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* IndoorMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* IndoorMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -81,6 +82,9 @@ Object* IndoorMeshFactory::create(const Type& resourceType, const Guid& guid, bo
 		{
 			indoorMesh->m_sectors[i].parts[j].material = sectorParts[j].material;
 			indoorMesh->m_sectors[i].parts[j].meshPart = sectorParts[j].meshPart;
+
+			if (!resourceManager->bind(indoorMesh->m_sectors[i].parts[j].material))
+				return 0;
 		}
 	}
 

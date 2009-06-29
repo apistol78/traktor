@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -29,13 +36,14 @@ class T_DLLCLASS EntityFactory : public world::EntityFactory
 	T_RTTI_CLASS(EntityFactory)
 
 public:
-	EntityFactory(render::RenderSystem* renderSystem);
+	EntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
 
 	virtual const TypeSet getEntityTypes() const;
 
 	virtual world::Entity* createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const;
 
 private:
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::RenderSystem > m_renderSystem;
 };
 

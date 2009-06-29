@@ -28,7 +28,7 @@ void TerrainEditorProfile::getCommands(
 
 void TerrainEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(gc_new< HeightfieldFactory >(context->getResourceDatabase(), context->getRenderSystem()));
@@ -40,7 +40,10 @@ void TerrainEditorProfile::createEntityFactories(
 	RefArray< world::EntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< EntityFactory >(context->getRenderSystem()));
+	outEntityFactories.push_back(gc_new< EntityFactory >(
+		context->getResourceManager(),
+		context->getRenderSystem()
+	));
 }
 
 void TerrainEditorProfile::createEntityRenderers(

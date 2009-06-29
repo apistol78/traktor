@@ -7,6 +7,7 @@
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -16,8 +17,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
 
-bool PostProcessStepSimple::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepSimple::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
+	if (!resourceManager->bind(m_shader))
+		return false;
+
 	m_time = 0.0f;
 	return true;
 }

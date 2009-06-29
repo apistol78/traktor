@@ -11,7 +11,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialMaskFactory", MaterialMaskFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialMaskFactory", MaterialMaskFactory, resource::IResourceFactory)
 
 MaterialMaskFactory::MaterialMaskFactory(db::Database* db)
 :	m_db(db)
@@ -25,7 +25,7 @@ const TypeSet MaterialMaskFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* MaterialMaskFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

@@ -1,174 +1,146 @@
-#include "Resource/ResourceManager.h"
-#include "Resource/ResourceCache.h"
+#include "Resource/IResourceHandle.h"
 
 namespace traktor
 {
 	namespace resource
 	{
 
-template < typename T >
-Proxy< T >::Proxy()
-:	Ref< T >()
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy()
+:	Ref< ResourceType >()
 {
 }
 
-template < typename T >
-Proxy< T >::Proxy(T* resource)
-:	Ref< T >(resource)
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy(ResourceType* resource)
+:	Ref< ResourceType >(resource)
 {
 }
 
-template < typename T >
-Proxy< T >::Proxy(const Ref< T >& resource)
-:	Ref< T >(resource)
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy(const Ref< ResourceType >& resource)
+:	Ref< ResourceType >(resource)
 {
 }
 
-template < typename T >
-Proxy< T >::Proxy(T* resource, const Guid& guid)
-:	Ref< T >(resource)
-,	m_guid(guid)
-{
-	ResourceManager::getInstance().setResource(T::getClassType(), guid, resource);
-}
-
-template < typename T >
-Proxy< T >::Proxy(const Ref< T >& resource, const Guid& guid)
-:	Ref< T >(resource)
-,	m_guid(guid)
-{
-	ResourceManager::getInstance().setResource(T::getClassType(), guid, resource);
-}
-
-template < typename T >
-Proxy< T >::Proxy(const Proxy< T >& resource)
-:	Ref< T >(resource)
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy(const Proxy< ResourceType >& resource)
+:	Ref< ResourceType >(resource)
+,	m_handle(resource.m_handle)
 ,	m_guid(resource.m_guid)
 {
 }
 
-template < typename T >
-Proxy< T >::Proxy(const Guid& guid)
-:	Ref< T >()
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy(const Guid& guid)
+:	Ref< ResourceType >()
 ,	m_guid(guid)
 {
-	ResourceManager::getInstance().requestResource(T::getClassType(), guid);
 }
 
-template < typename T >
-const Guid& Proxy< T >::getGuid() const
+template < typename ResourceType >
+Proxy< ResourceType >::Proxy(IResourceHandle* handle)
+:	Ref< ResourceType >()
+,	m_handle(handle)
+{
+	validate();
+}
+
+template < typename ResourceType >
+const Guid& Proxy< ResourceType >::getGuid() const
 {
 	return m_guid;
 }
 
-template < typename T >
-bool Proxy< T >::valid() const
+template < typename ResourceType >
+void Proxy< ResourceType >::replace(IResourceHandle* handle)
 {
-	return bool(Ref< T >::getPtr() != 0);
+	m_handle = handle;
+	validate();
 }
 
-template < typename T >
-bool Proxy< T >::validate()
+template < typename ResourceType >
+bool Proxy< ResourceType >::valid() const
 {
-	if (valid())
-		return true;
-
-	Ref< T > tmp = checked_type_cast< T* >(ResourceManager::getInstance().getResource(T::getClassType(), m_guid));
-	if (!tmp)
-		return false;
-
-	setPtr(tmp);
-	return true;
+	return bool(Ref< ResourceType >::getPtr() != 0);
 }
 
-template < typename T >
-void Proxy< T >::flush()
+template < typename ResourceType >
+bool Proxy< ResourceType >::validate()
 {
-	if (Ref< T >::getPtr())
-	{
-		Ref< IResourceCache > cache = ResourceManager::getInstance().getCache();
-		if (cache)
-		{
-			cache->flush(m_guid);
-			T_ASSERT (Ref< T >::getPtr() == 0);
-		}
-	}
+	T_ASSERT_M (m_handle, L"Trying to validate unbound proxy");
+	Ref< ResourceType >::setPtr(m_handle->get());
+	return valid();
 }
 
-template < typename T >
-inline Proxy< T >::operator T* ()
+template < typename ResourceType >
+inline Proxy< ResourceType >::operator ResourceType* ()
 {
-	if (!validate())
+	return Ref< ResourceType >::getPtr();
+}
+
+template < typename ResourceType >
+inline ResourceType& Proxy< ResourceType >::operator * ()
+{
+	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
+	if (!valid())
 		T_FATAL_ERROR;
-	return Ref< T >::getPtr();
+	return *Ref< ResourceType >::getPtr();
 }
 
-template < typename T >
-inline T& Proxy< T >::operator * ()
+template < typename ResourceType >
+inline ResourceType* Proxy< ResourceType >::operator -> ()
 {
-	if (!validate())
+	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
+	if (!valid())
 		T_FATAL_ERROR;
-	return *Ref< T >::getPtr();
+	return Ref< ResourceType >::getPtr();
 }
 
-template < typename T >
-inline T* Proxy< T >::operator -> ()
+template < typename ResourceType >
+inline const ResourceType* Proxy< ResourceType >::operator -> () const
 {
-	if (!validate())
+	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
+	if (!valid())
 		T_FATAL_ERROR;
-	return Ref< T >::getPtr();
+	return Ref< ResourceType >::getPtr();
 }
 
-template < typename T >
-inline const T* Proxy< T >::operator -> () const
-{
-	return Ref< T >::getPtr();
-}
-
-template < typename T >
-inline Proxy< T >& Proxy< T >::operator = (const Guid& guid)
+template < typename ResourceType >
+inline Proxy< ResourceType >& Proxy< ResourceType >::operator = (const Guid& guid)
 {
 	if (guid != m_guid)
 	{
+		m_handle = 0;
 		m_guid = guid;
-		Ref< T >::setPtr(0);
-		ResourceManager::getInstance().requestResource(T::getClassType(), guid);
+		Ref< ResourceType >::setPtr(0);
 	}
 	return *this;
 }
 
-template < typename T >
-inline bool Proxy< T >::operator == (const T* resource)
+template < typename ResourceType >
+inline bool Proxy< ResourceType >::operator == (const ResourceType* resource)
 {
-	if (!validate())
-		T_FATAL_ERROR;
-	return bool(Ref< T >::getPtr() == resource);
+	return bool(Ref< ResourceType >::getPtr() == resource);
 }
 
-template < typename T >
-inline bool Proxy< T >::operator != (const T* resource)
+template < typename ResourceType >
+inline bool Proxy< ResourceType >::operator != (const ResourceType* resource)
 {
-	if (!validate())
-		T_FATAL_ERROR;
-	return bool(Ref< T >::getPtr() != resource);
+	return bool(Ref< ResourceType >::getPtr() != resource);
 }
 
-template < typename T >
-inline bool Proxy< T >::operator == (const Ref< T >& ref)
+template < typename ResourceType >
+inline bool Proxy< ResourceType >::operator == (const Ref< ResourceType >& ref)
 {
-	if (!validate())
-		T_FATAL_ERROR;
-	return bool(Ref< T >::getPtr() == ref.getPtr());
+	return bool(Ref< ResourceType >::getPtr() == ref.getPtr());
 }
 
-template < typename T >
-inline bool Proxy< T >::operator != (const Ref< T >& ref)
+template < typename ResourceType >
+inline bool Proxy< ResourceType >::operator != (const Ref< ResourceType >& ref)
 {
-	if (!validate())
-		T_FATAL_ERROR;
-	return bool(Ref< T >::getPtr() != ref.getPtr());
+	return bool(Ref< ResourceType >::getPtr() != ref.getPtr());
 }
 
 	}
 }
-

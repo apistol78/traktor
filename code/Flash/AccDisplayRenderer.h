@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -45,6 +52,7 @@ public:
 	virtual ~AccDisplayRenderer();
 
 	bool create(
+		resource::IResourceManager* resourceManager,
 		render::RenderSystem* renderSystem,
 		render::RenderView* renderView,
 		bool clearBackground
@@ -73,6 +81,7 @@ private:
 		Ref< AccShape > shape;
 	};
 
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::RenderSystem > m_renderSystem;
 	Ref< render::RenderView > m_renderView;
 	Ref< AccTextureCache > m_textureCache;

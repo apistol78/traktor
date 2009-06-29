@@ -2,6 +2,7 @@
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/Heightfield.h"
 #include "World/WorldRenderView.h"
+#include "Resource/IResourceManager.h"
 #include "Render/RenderSystem.h"
 #include "Render/RenderView.h"
 #include "Render/VertexElement.h"
@@ -23,7 +24,7 @@ OceanEntity::OceanEntity()
 {
 }
 
-bool OceanEntity::create(render::RenderSystem* renderSystem, const OceanEntityData& data)
+bool OceanEntity::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const OceanEntityData& data)
 {
 	const uint32_t gridSize = 100;
 	const uint32_t vertexCount = gridSize * gridSize;
@@ -100,6 +101,11 @@ bool OceanEntity::create(render::RenderSystem* renderSystem, const OceanEntityDa
 	m_heightfield = data.m_heightfield;
 	m_shader = data.m_shader;
 	m_altitude = data.m_altitude;
+
+	if (!resourceManager->bind(m_heightfield))
+		return false;
+	if (!resourceManager->bind(m_shader))
+		return false;
 
 	T_ASSERT (MaxWaves <= OceanEntityData::MaxWaves);
 	for (int i = 0; i < MaxWaves; ++i)

@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 #if T_USE_ACCELERATED_RENDERER
 	namespace render
 	{
@@ -50,7 +57,7 @@ class T_DLLCLASS FlashPreviewControl : public ui::Widget
 public:
 	FlashPreviewControl();
 
-	bool create(ui::Widget* parent, int style, render::RenderSystem* renderSystem);
+	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
 
 	void destroy();
 

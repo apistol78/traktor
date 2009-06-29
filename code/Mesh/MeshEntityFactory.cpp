@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityFactory", MeshEntityFactory, world::EntityFactory)
 
+MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager)
+:	m_resourceManager(resourceManager)
+{
+}
+
 const TypeSet MeshEntityFactory::getEntityTypes() const
 {
 	TypeSet typeSet;
@@ -18,7 +23,7 @@ const TypeSet MeshEntityFactory::getEntityTypes() const
 
 world::Entity* MeshEntityFactory::createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const MeshEntityData* >(&entityData)->createEntity(builder);
+	return checked_type_cast< const MeshEntityData* >(&entityData)->createEntity(m_resourceManager, builder);
 }
 
 	}

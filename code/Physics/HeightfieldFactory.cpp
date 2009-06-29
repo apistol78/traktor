@@ -10,7 +10,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.HeightfieldFactory", HeightfieldFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
 
 HeightfieldFactory::HeightfieldFactory(db::Database* db)
 :	m_db(db)
@@ -24,7 +24,7 @@ const TypeSet HeightfieldFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* HeightfieldFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* HeightfieldFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

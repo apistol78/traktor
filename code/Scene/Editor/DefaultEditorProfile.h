@@ -16,7 +16,7 @@ class DefaultEditorProfile : public SceneEditorProfile
 public:
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
-		RefArray< resource::ResourceFactory >& outResourceFactories
+		RefArray< resource::IResourceFactory >& outResourceFactories
 	) const;
 
 	virtual void createEntityFactories(

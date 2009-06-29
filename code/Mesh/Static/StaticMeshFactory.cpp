@@ -1,6 +1,7 @@
 #include "Mesh/Static/StaticMeshFactory.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Mesh/Static/StaticMesh.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/Mesh.h"
@@ -15,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshFactory", StaticMeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshFactory", StaticMeshFactory, resource::IResourceFactory)
 
 StaticMeshFactory::StaticMeshFactory(db::Database* database, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_database(database)
@@ -33,7 +34,7 @@ const TypeSet StaticMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* StaticMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* StaticMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -73,7 +74,11 @@ Object* StaticMeshFactory::create(const Type& resourceType, const Guid& guid, bo
 	staticMesh->m_parts.resize(parts.size());
 
 	for (size_t i = 0; i < parts.size(); ++i)
+	{
 		staticMesh->m_parts[i].material = parts[i].material;
+		if (!resourceManager->bind(staticMesh->m_parts[i].material))
+			return 0;
+	}
 
 	return staticMesh;
 }

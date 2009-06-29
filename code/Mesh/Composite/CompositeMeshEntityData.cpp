@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.CompositeMeshEntityData", CompositeMeshEntityData, MeshEntityData)
 
-MeshEntity* CompositeMeshEntityData::createEntity(world::EntityBuilder* builder) const
+MeshEntity* CompositeMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const
 {
 	Ref< CompositeMeshEntity > compositeMeshEntity = gc_new< CompositeMeshEntity >(cref(getTransform()));
 	for (RefArray< MeshEntityData >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)

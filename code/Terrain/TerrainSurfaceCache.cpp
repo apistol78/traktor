@@ -1,6 +1,7 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "Terrain/TerrainSurface.h"
 #include "World/WorldRenderView.h"
+#include "Resource/IResourceManager.h"
 #include "Render/RenderSystem.h"
 #include "Render/RenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -67,10 +68,10 @@ TerrainSurfaceCache::~TerrainSurfaceCache()
 	destroy();
 }
 
-bool TerrainSurfaceCache::create(render::RenderSystem* renderSystem)
+bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
-	if (!(m_renderSystem = renderSystem))
-		return false;
+	m_resourceManager = resourceManager;
+	m_renderSystem = renderSystem;
 
 	m_screenRenderer = gc_new< render::ScreenRenderer >();
 	if (!m_screenRenderer->create(renderSystem))
@@ -180,6 +181,10 @@ void TerrainSurfaceCache::get(
 		}
 	}
 
+	resource::Proxy< render::Shader >& shader = surface->getLayers().front();
+	if (!m_resourceManager->bind(shader))
+		return;
+
 	// Create render block.
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >();
 
@@ -188,7 +193,7 @@ void TerrainSurfaceCache::get(
 
 	renderBlock->type = render::RbtOpaque;
 	renderBlock->distance = 0.0f;
-	renderBlock->shader = surface->getLayers().front();
+	renderBlock->shader = shader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
 
 	renderBlock->shaderParams->beginParameters(renderContext);

@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -28,14 +35,14 @@ class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(EffectEntityData)
 
 public:
-	EffectEntity* createEntity() const;
+	EffectEntity* createEntity(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 
 private:
-	resource::Proxy< Effect > m_effect;
+	mutable resource::Proxy< Effect > m_effect;
 };
 
 	}

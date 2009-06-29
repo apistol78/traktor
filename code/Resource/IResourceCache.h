@@ -18,7 +18,10 @@ namespace traktor
 	namespace resource
 	{
 
+class IResourceHandle;
+
 /*! \brief Resource cache interface.
+ * \ingroup Resource
  *
  * A resource cache is a container object which is used by the ResourceManager
  * to store loaded resources.
@@ -28,9 +31,9 @@ class T_DLLCLASS IResourceCache : public Object
 	T_RTTI_CLASS(IResourceCache)
 
 public:
-	virtual void put(const Guid& guid, Object* resource) = 0;
+	virtual void put(const Guid& guid, IResourceHandle* handle) = 0;
 
-	virtual bool get(const Guid& guid, Ref< Object >& outResource) const = 0;
+	virtual IResourceHandle* get(const Guid& guid) = 0;
 
 	virtual void flush(const Guid& guid) = 0;
 

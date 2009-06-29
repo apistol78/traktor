@@ -2,7 +2,7 @@
 #define traktor_render_TextureFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "Resource/ResourceFactory.h"
+#include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class RenderSystem;
 /*! \brief Texture resource factory.
  * \ingroup Render
  */
-class T_DLLCLASS TextureFactory : public resource::ResourceFactory
+class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(TextureFactory)
 
@@ -38,7 +38,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_db;

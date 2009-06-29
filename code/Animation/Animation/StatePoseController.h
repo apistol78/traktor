@@ -1,6 +1,7 @@
 #ifndef traktor_animation_StatePoseController_H
 #define traktor_animation_StatePoseController_H
 
+#include <map>
 #include "Resource/Proxy.h"
 #include "Animation/PoseController.h"
 #include "Animation/Animation/StateContext.h"

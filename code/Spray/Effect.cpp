@@ -19,12 +19,12 @@ Effect::Effect()
 {
 }
 
-EffectInstance* Effect::createInstance() const
+EffectInstance* Effect::createInstance(resource::IResourceManager* resourceManager) const
 {
 	Ref< EffectInstance > effectInstance = gc_new< EffectInstance >(this);
 	for (RefArray< EffectLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
-		Ref< EffectLayerInstance > layerInstance = (*i)->createInstance();
+		Ref< EffectLayerInstance > layerInstance = (*i)->createInstance(resourceManager);
 		if (layerInstance)
 			effectInstance->m_layerInstances.push_back(layerInstance);
 	}

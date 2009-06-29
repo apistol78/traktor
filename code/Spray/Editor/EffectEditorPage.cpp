@@ -22,8 +22,7 @@
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/ResourceCache.h"
-#include "Resource/ResourceLoader.h"
+#include "Resource/IResourceCache.h"
 #include "Core/Io/StringOutputStream.h"
 
 // Resources
@@ -49,16 +48,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 {
 	Ref< render::RenderSystem > renderSystem = m_editor->getRenderSystem();
 
-	m_resourceCache = gc_new< resource::ResourceCache >();
-	m_resourceLoader = gc_new< resource::ResourceLoader >();
-
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceLoader->addFactory(
+	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager->addFactory(
 		gc_new< render::TextureFactory >(database, renderSystem)
 	);
-	m_resourceLoader->addFactory(
+	m_resourceManager->addFactory(
 		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 
@@ -93,7 +90,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	splitter->create(container, false, -150, false);
 
 	m_previewControl = gc_new< EffectPreviewControl >();
-	m_previewControl->create(splitter, ui::WsClientBorder, renderSystem);
+	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem);
 	m_previewControl->showGuide(m_guideVisible);
 
 	m_sequencer = gc_new< ui::custom::SequencerControl >();
@@ -113,19 +110,14 @@ void EffectEditorPage::destroy()
 	settings->setProperty< editor::PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 
 	m_previewControl->destroy();
-	m_resourceCache->flush();
 }
 
 void EffectEditorPage::activate()
 {
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
 }
 
 void EffectEditorPage::deactivate()
 {
-	resource::ResourceManager::getInstance().removeLoader(m_resourceLoader);
-	resource::ResourceManager::getInstance().setCache(0);
 }
 
 bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
@@ -200,8 +192,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 
 void EffectEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceCache)
-		m_resourceCache->flush(eventId);
+	if (m_resourceManager)
+		m_resourceManager->getCache()->flush(eventId);
 }
 
 void EffectEditorPage::updateSequencer()

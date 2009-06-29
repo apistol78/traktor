@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -34,7 +41,7 @@ class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 	T_RTTI_CLASS(UndergrowthEntityData)
 
 public:
-	UndergrowthEntity* createEntity(render::RenderSystem* renderSystem) const;
+	UndergrowthEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

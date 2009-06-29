@@ -1,6 +1,7 @@
 #include "Mesh/Blend/BlendMeshFactory.h"
 #include "Mesh/Blend/BlendMeshResource.h"
 #include "Mesh/Blend/BlendMesh.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
@@ -20,7 +21,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshFactory", BlendMeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshFactory", BlendMeshFactory, resource::IResourceFactory)
 
 BlendMeshFactory::BlendMeshFactory(db::Database* db, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_db(db)
@@ -38,7 +39,7 @@ const TypeSet BlendMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* BlendMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* BlendMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -103,7 +104,11 @@ Object* BlendMeshFactory::create(const Type& resourceType, const Guid& guid, boo
 	blendMesh->m_parts.resize(parts.size());
 
 	for (size_t i = 0; i < parts.size(); ++i)
+	{
 		blendMesh->m_parts[i].material = parts[i].material;
+		if (!resourceManager->bind(blendMesh->m_parts[i].material))
+			return 0;
+	}
 
 	blendMesh->m_targetMap = resource->getBlendTargetMap();
 

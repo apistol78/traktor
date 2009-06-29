@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundFactory", SoundFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundFactory", SoundFactory, resource::IResourceFactory)
 
 SoundFactory::SoundFactory(db::Database* db, SoundSystem* soundSystem)
 :	m_db(db)
@@ -31,7 +31,7 @@ const TypeSet SoundFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SoundFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

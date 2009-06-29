@@ -9,11 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepChain", PostProcessStepChain, PostProcessStep)
 
-bool PostProcessStepChain::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepChain::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
 	for (RefArray< PostProcessStep >::iterator i = m_steps.begin(); i != m_steps.end(); ++i)
 	{
-		if (!(*i)->create(postProcess, renderSystem))
+		if (!(*i)->create(postProcess, resourceManager, renderSystem))
 			return false;
 	}
 	return true;

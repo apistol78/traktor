@@ -20,9 +20,8 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
-#include "Resource/ResourceManager.h"
-#include "Resource/ResourceCache.h"
-#include "Resource/ResourceLoader.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/IResourceCache.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
@@ -48,6 +47,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Core/Log/Log.h"
 
 // Resources
@@ -74,27 +74,6 @@ SceneEditorPage::SceneEditorPage(SceneEditorContext* context)
 
 bool SceneEditorPage::create(ui::Container* parent)
 {
-	// Create entity editor.
-	if (!createEntityEditors())
-		return false;
-
-	// Create resource loaders.
-	m_resourceCache = gc_new< resource::ResourceCache >();
-	m_resourceLoader = gc_new< resource::ResourceLoader >();
-
-	for (RefArray< SceneEditorProfile >::iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-	{
-		RefArray< resource::ResourceFactory > resourceFactories;
-		(*i)->createResourceFactories(m_context, resourceFactories);
-
-		for (RefArray< resource::ResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
-			m_resourceLoader->addFactory(*j);
-	}
-
-	// Set resource cache and loaders as the preview control needs to load shaders for the primitive renderer.
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
-
 	// Create editor panel.
 	m_editPanel = gc_new< ui::Container >();
 	m_editPanel->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%", 0, 0));
@@ -187,9 +166,6 @@ void SceneEditorPage::destroy()
 	m_entityPanel->destroy();
 	m_editPanel->destroy();
 
-	// Flush our resource cache.
-	m_resourceCache->flush();
-
 	// Destroy physics manager.
 	if (m_context->getPhysicsManager())
 		m_context->getPhysicsManager()->destroy();
@@ -197,9 +173,6 @@ void SceneEditorPage::destroy()
 
 void SceneEditorPage::activate()
 {
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
-
 	m_editControl->setVisible(true);
 	m_context->getEditor()->showAdditionalPanel(m_entityPanel);
 }
@@ -208,20 +181,20 @@ void SceneEditorPage::deactivate()
 {
 	m_context->getEditor()->hideAdditionalPanel(m_entityPanel);
 	m_editControl->setVisible(false);
-
-	resource::ResourceManager::getInstance().removeLoader(m_resourceLoader);
-	resource::ResourceManager::getInstance().setCache(0);
 }
 
 bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
 	Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(data);
 
-	// Hide edit control as we don't want paint events triggered.
-	m_editControl->setVisible(false);
+	// Hide edit control as long as we're preparing scene.
+	EnterLeave scopeVisible(
+		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, false),
+		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, true)
+	);
 
-	// Prepare resource requests.
-	resource::ResourceManager::getInstance().beginPrepareResources();
+	//// Prepare resource requests.
+	//resource::ResourceManager::getInstance().beginPrepareResources();
 
 	if (sceneAsset)
 	{
@@ -235,8 +208,7 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(data);
 		if (!entityData)
 		{
-			m_editControl->setVisible(true);
-			resource::ResourceManager::getInstance().endPrepareResources(true);
+			//resource::ResourceManager::getInstance().endPrepareResources(true);
 			return false;
 		}
 
@@ -270,28 +242,25 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		createEntityList();
 	}
 
-	// Pre-load all resources; create loader thread.
-	Thread* prepareResourcesThread = ThreadManager::getInstance().create(makeFunctor(
-		&resource::ResourceManager::getInstance(),
-		&resource::ResourceManager::endPrepareResources,
-		false
-	));
-	T_ASSERT (prepareResourcesThread);
+	//// Pre-load all resources; create loader thread.
+	//Thread* prepareResourcesThread = ThreadManager::getInstance().create(makeFunctor(
+	//	&resource::ResourceManager::getInstance(),
+	//	&resource::ResourceManager::endPrepareResources,
+	//	false
+	//));
+	//T_ASSERT (prepareResourcesThread);
 
-	// Create loading dialog.
-	ui::custom::BackgroundWorkerDialog loadingDialog;
-	loadingDialog.create(m_editPanel, i18n::Text(L"SCENE_EDITOR_LOADING_TITLE"), i18n::Text(L"SCENE_EDITOR_LOADING"));
-	loadingDialog.execute(prepareResourcesThread, 0);
-	loadingDialog.destroy();
+	//// Create loading dialog.
+	//ui::custom::BackgroundWorkerDialog loadingDialog;
+	//loadingDialog.create(m_editPanel, i18n::Text(L"SCENE_EDITOR_LOADING_TITLE"), i18n::Text(L"SCENE_EDITOR_LOADING"));
+	//loadingDialog.execute(prepareResourcesThread, 0);
+	//loadingDialog.destroy();
 
-	// Destroy loader thread.
-	ThreadManager::getInstance().destroy(prepareResourcesThread);
+	//// Destroy loader thread.
+	//ThreadManager::getInstance().destroy(prepareResourcesThread);
 
 	m_dataObject = checked_type_cast< Serializable* >(data);
 	updatePropertyObject();
-
-	// Show preview control.
-	m_editControl->setVisible(true);
 
 	return true;
 }
@@ -542,8 +511,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceCache)
-		m_resourceCache->flush(eventId);
+	if (m_context)
+		m_context->getResourceManager()->getCache()->flush(eventId);
 
 	// Check all external entities; might be such an entity which has been modified.
 	bool anyExternalDirty = false;
@@ -570,19 +539,6 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 	}
 	else
 		updateScene(true);
-}
-
-bool SceneEditorPage::createEntityEditors()
-{
-	RefArray< EntityEditor > entityEditors;
-	for (RefArray< SceneEditorProfile >::iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-	{
-		RefArray< EntityEditor > profileEntityEditors;
-		(*i)->createEntityEditors(m_context, profileEntityEditors);
-		entityEditors.insert(entityEditors.end(), profileEntityEditors.begin(), profileEntityEditors.end());
-	}
-	m_context->setEntityEditors(entityEditors);
-	return true;
 }
 
 void SceneEditorPage::updateScene(bool updateModified)

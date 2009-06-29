@@ -15,6 +15,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity/SpatialEntity.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Resource/IResourceManager.h"
 #include "Ui/Command.h"
 #include "Core/Math/Const.h"
 
@@ -167,7 +168,7 @@ void RigidEntityEditor::drawGuide(
 				else if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 				{
 					resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
-					if (mesh.validate())
+					if (context->getResourceManager()->bind(mesh))
 					{
 						const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 						const std::vector< Mesh::Triangle >& triangles = 
@@ -207,7 +208,7 @@ void RigidEntityEditor::drawGuide(
 				else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 				{
 					resource::Proxy< Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
-					if (heightfield.validate())
+					if (context->getResourceManager()->bind(heightfield))
 					{
 						const Vector4& extent = heightfield->getWorldExtent();
 						Aabb boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));

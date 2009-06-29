@@ -24,14 +24,14 @@ class T_DLLCLASS SkinnedMeshEntityData : public MeshEntityData
 	T_RTTI_CLASS(SkinnedMeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(world::EntityBuilder* builder) const;
+	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< SkinnedMesh >& getMesh() const { return m_mesh; }
 
 private:
-	resource::Proxy< SkinnedMesh > m_mesh;
+	mutable resource::Proxy< SkinnedMesh > m_mesh;
 };
 
 	}

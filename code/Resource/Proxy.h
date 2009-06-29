@@ -9,60 +9,63 @@ namespace traktor
 	namespace resource
 	{
 
+class IResourceHandle;
+
 /*! \brief Resource proxy.
+ * \ingroup Resource
  *
  * A resource proxy is a reference wrapper with the
  * added functionality to resolve the object when
  * the reference is being dereferenced.
  */
-template < typename T >
-class Proxy : public Ref< T >
+template < typename ResourceType >
+class Proxy : public Ref< ResourceType >
 {
 public:
-	Proxy< T >();
+	Proxy< ResourceType >();
 
-	Proxy< T >(T* resource);
+	Proxy< ResourceType >(ResourceType* resource);
 
-	Proxy< T >(const Ref< T >& resource);
+	Proxy< ResourceType >(const Ref< ResourceType >& resource);
 
-	Proxy< T >(T* resource, const Guid& guid);
+	Proxy< ResourceType >(const Proxy< ResourceType >& resource);
 
-	Proxy< T >(const Ref< T >& resource, const Guid& guid);
+	Proxy< ResourceType >(const Guid& guid);
 
-	Proxy< T >(const Proxy< T >& resource);
-
-	Proxy< T >(const Guid& guid);
+	Proxy< ResourceType >(IResourceHandle* handle);
 	
+	/*! \brief Get resource's guid. */
 	const Guid& getGuid() const;
-	
+
+	/*! \brief Replace resource handle. */
+	void replace(IResourceHandle* handle);
+
 	/*! \brief Check if proxy contains a valid pointer. */
 	bool valid() const;
 
-	/*! \brief Validate resource container by loading resource. */
+	/*! \brief Validate proxy; update resource if it's been replaced in manager. */
 	bool validate();
 
-	/*! \brief Flush resource container. */
-	void flush();
-
-	inline operator T* ();
+	inline operator ResourceType* ();
 	
-	inline T& operator * ();
+	inline ResourceType& operator * ();
 
-	inline T* operator -> ();
+	inline ResourceType* operator -> ();
 
-	inline const T* operator -> () const;
+	inline const ResourceType* operator -> () const;
 
-	inline Proxy< T >& operator = (const Guid& guid);
+	inline Proxy< ResourceType >& operator = (const Guid& guid);
 
-	inline bool operator == (const T* resource);
+	inline bool operator == (const ResourceType* resource);
 
-	inline bool operator != (const T* resource);
+	inline bool operator != (const ResourceType* resource);
 
-	inline bool operator == (const Ref< T >& ref);
+	inline bool operator == (const Ref< ResourceType >& ref);
 
-	inline bool operator != (const Ref< T >& ref);
+	inline bool operator != (const Ref< ResourceType >& ref);
 
 private:
+	Ref< IResourceHandle > m_handle;
 	Guid m_guid;
 };
 

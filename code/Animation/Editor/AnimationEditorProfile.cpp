@@ -29,7 +29,7 @@ void AnimationEditorProfile::getCommands(
 
 void AnimationEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(gc_new< AnimationFactory >(context->getResourceDatabase()));

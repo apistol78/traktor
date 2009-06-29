@@ -26,7 +26,7 @@ void PhysicsEditorProfile::getCommands(
 
 void PhysicsEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(gc_new< MeshFactory >(context->getResourceDatabase()));

@@ -25,6 +25,13 @@ class PopupMenu;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -51,7 +58,7 @@ class T_DLLCLASS EffectPreviewControl : public ui::Widget
 public:
 	EffectPreviewControl();
 
-	bool create(ui::Widget* parent, int style, render::RenderSystem* renderSystem);
+	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
 
 	void destroy();
 
@@ -72,6 +79,7 @@ public:
 private:
 	Ref< ui::PopupMenu > m_menuOptions;
 	Ref< ui::EventHandler > m_idleHandler;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::RenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;

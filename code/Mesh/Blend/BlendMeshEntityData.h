@@ -24,14 +24,14 @@ class T_DLLCLASS BlendMeshEntityData : public MeshEntityData
 	T_RTTI_CLASS(BlendMeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(world::EntityBuilder* builder) const;
+	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< BlendMesh >& getMesh() const { return m_mesh; }
 
 private:
-	resource::Proxy< BlendMesh > m_mesh;
+	mutable resource::Proxy< BlendMesh > m_mesh;
 };
 
 	}

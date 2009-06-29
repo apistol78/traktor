@@ -39,7 +39,7 @@ class PrimitiveRenderer;
 	namespace resource
 	{
 
-class ResourceFactory;
+class IResourceFactory;
 
 	}
 
@@ -80,7 +80,7 @@ public:
 
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
-		RefArray< resource::ResourceFactory >& outResourceFactories
+		RefArray< resource::IResourceFactory >& outResourceFactories
 	) const;
 
 	virtual void createEntityFactories(

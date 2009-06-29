@@ -1,6 +1,7 @@
 #include "Mesh/Instance/InstanceMeshFactory.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
 #include "Mesh/Instance/InstanceMesh.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
@@ -18,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshFactory", InstanceMeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshFactory", InstanceMeshFactory, resource::IResourceFactory)
 
 InstanceMeshFactory::InstanceMeshFactory(db::Database* database, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_database(database)
@@ -36,7 +37,7 @@ const TypeSet InstanceMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* InstanceMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* InstanceMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	// Read single instance mesh.
 	render::SystemMeshFactory systemMeshFactory;
@@ -167,7 +168,11 @@ Object* InstanceMeshFactory::create(const Type& resourceType, const Guid& guid, 
 	instanceMesh->m_parts.resize(parts.size());
 
 	for (size_t i = 0; i < parts.size(); ++i)
+	{
 		instanceMesh->m_parts[i].material = parts[i].material;
+		if (!resourceManager->bind(instanceMesh->m_parts[i].material))
+			return 0;
+	}
 
 	return instanceMesh;
 }

@@ -1,5 +1,6 @@
 #include "Weather/Clouds/CloudEntityData.h"
 #include "Weather/Clouds/CloudEntity.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
 #include "Core/Serialization/Serializer.h"
@@ -20,14 +21,20 @@ CloudEntityData::CloudEntityData()
 {
 }
 
-CloudEntity* CloudEntityData::createEntity(render::RenderSystem* renderSystem) const
+CloudEntity* CloudEntityData::createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const
 {
+	if (!resourceManager->bind(m_particleShader))
+		return 0;
+	if (!resourceManager->bind(m_impostorShader))
+		return 0;
+
 	Ref< CloudEntity > cloudEntity = gc_new< CloudEntity >();
 	if (cloudEntity->create(renderSystem, m_particleShader, m_impostorShader, m_impostorTargetResolution, m_distanceTargetResolution, m_particleData))
 	{
 		cloudEntity->setTransform(getTransform());
 		return cloudEntity;
 	}
+
 	return 0;
 }
 

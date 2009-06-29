@@ -9,6 +9,7 @@
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -18,10 +19,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepBlur", PostProcessStepBlur, PostProcessStep)
 
-bool PostProcessStepBlur::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepBlur::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
-	float totalWeight = 0.0f;
+	if (!resourceManager->bind(m_shader))
+		return false;
 
+	float totalWeight = 0.0f;
 	for (int i = 0; i < sizeof_array(m_gaussianOffsetWeights); ++i)
 	{
 		float weight = std::sin(i * PI / 14.0f);

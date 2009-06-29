@@ -53,8 +53,7 @@ class SequencerControl;
 	namespace resource
 	{
 
-class ResourceCache;
-class ResourceLoader;
+class ResourceManager;
 
 	}
 
@@ -109,8 +108,7 @@ private:
 	Ref< ui::custom::SequencerControl > m_sequencer;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< resource::ResourceCache > m_resourceCache;
-	Ref< resource::ResourceLoader > m_resourceLoader;
+	Ref< resource::ResourceManager > m_resourceManager;
 	Ref< editor::UndoStack > m_undoStack;
 	ui::Point m_lastMousePosition;
 	int m_selectedBone;

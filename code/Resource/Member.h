@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 /*! \brief Resource proxy serialization member.
+ * \ingroup Resource
  *
  * A resource proxy is serialized using it's
  * associated guid.

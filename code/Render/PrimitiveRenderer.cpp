@@ -4,6 +4,7 @@
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Plane.h"
 #include "Core/Misc/Endian.h"
@@ -55,16 +56,25 @@ PrimitiveRenderer::PrimitiveRenderer()
 	s_handleWire = render::getParameterHandle(L"Wire");
 }
 
-bool PrimitiveRenderer::create(RenderSystem* renderSystem)
+bool PrimitiveRenderer::create(
+	resource::IResourceManager* resourceManager,
+	RenderSystem* renderSystem
+)
 {
-	return create(renderSystem, c_guidPrimitiveShader);
+	resource::Proxy< Shader > shader(c_guidPrimitiveShader);
+	return create(resourceManager, renderSystem, shader);
 }
 
 bool PrimitiveRenderer::create(
+   resource::IResourceManager* resourceManager,
 	RenderSystem* renderSystem,
 	const resource::Proxy< Shader >& shader
 )
 {
+	m_shader = shader;
+	if (!resourceManager->bind(m_shader))
+		return 0;
+
 	std::vector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(
 		DuPosition,
@@ -92,7 +102,6 @@ bool PrimitiveRenderer::create(
 
 	m_vertexStart =
 	m_vertex = 0;
-	m_shader = shader;
 
 	m_projection.push_back(Matrix44::identity());
 	m_view.push_back(Matrix44::identity());

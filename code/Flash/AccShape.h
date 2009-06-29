@@ -11,6 +11,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -37,6 +44,7 @@ class AccShape : public Object
 {
 public:
 	bool create(
+		resource::IResourceManager* resourceManager,
 		render::RenderSystem* renderSystem,
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,

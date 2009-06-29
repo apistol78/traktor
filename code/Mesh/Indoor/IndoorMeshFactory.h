@@ -2,7 +2,7 @@
 #define traktor_mesh_IndoorMeshFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "Resource/ResourceFactory.h"
+#include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +31,7 @@ class RenderSystem;
 	namespace mesh
 	{
 
-class T_DLLCLASS IndoorMeshFactory : public resource::ResourceFactory
+class T_DLLCLASS IndoorMeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(IndoorMeshFactory)
 
@@ -40,7 +40,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_database;

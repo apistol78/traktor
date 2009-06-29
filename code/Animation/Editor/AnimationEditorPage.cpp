@@ -13,8 +13,7 @@
 #include "Editor/UndoStack.h"
 #include "Database/Instance.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/ResourceCache.h"
-#include "Resource/ResourceLoader.h"
+#include "Resource/IResourceCache.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
@@ -247,24 +246,22 @@ bool AnimationEditorPage::create(ui::Container* parent)
 		data->picker = gc_new< VolumePicker >();
 	}
 
-	m_resourceCache = gc_new< resource::ResourceCache >();
-	m_resourceLoader = gc_new< resource::ResourceLoader >();
-
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceLoader->addFactory(
+	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager->addFactory(
 		gc_new< render::TextureFactory >(database, renderSystem)
 	);
-	m_resourceLoader->addFactory(
+	m_resourceManager->addFactory(
 		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
-	m_resourceLoader->addFactory(
+	m_resourceManager->addFactory(
 		gc_new< AnimationFactory >(database)
 	);
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
-	if (!m_primitiveRenderer->create(renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
 	m_undoStack = gc_new< editor::UndoStack >();
@@ -287,25 +284,16 @@ void AnimationEditorPage::destroy()
 	// Destroy widgets.
 	m_menuPopup->destroy();
 	m_sequencerPanel->destroy();
-
-	// Flush our resource cache.
-	m_resourceCache->flush();
 }
 
 void AnimationEditorPage::activate()
 {
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
-
 	m_editor->showAdditionalPanel(m_sequencerPanel);
 }
 
 void AnimationEditorPage::deactivate()
 {
 	m_editor->hideAdditionalPanel(m_sequencerPanel);
-
-	resource::ResourceManager::getInstance().removeLoader(m_resourceLoader);
-	resource::ResourceManager::getInstance().setCache(0);
 }
 
 bool AnimationEditorPage::setDataObject(db::Instance* instance, Object* data)
@@ -501,8 +489,8 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 
 void AnimationEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceCache)
-		m_resourceCache->flush(eventId);
+	if (m_resourceManager)
+		m_resourceManager->getCache()->flush(eventId);
 }
 
 void AnimationEditorPage::setSkeleton(Skeleton* skeleton)

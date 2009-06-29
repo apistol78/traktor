@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityFactory", WeatherEntityFactory, world::EntityFactory)
 
-WeatherEntityFactory::WeatherEntityFactory(render::RenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 {
 }
 
@@ -27,9 +28,9 @@ const TypeSet WeatherEntityFactory::getEntityTypes() const
 world::Entity* WeatherEntityFactory::createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
-		return skyEntityData->createEntity(m_renderSystem);
+		return skyEntityData->createEntity(m_resourceManager, m_renderSystem);
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(&entityData))
-		return cloudEntityData->createEntity(m_renderSystem);
+		return cloudEntityData->createEntity(m_resourceManager, m_renderSystem);
 	return 0;
 }
 
