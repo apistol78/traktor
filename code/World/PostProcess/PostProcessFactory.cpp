@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessFactory", PostProcessFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessFactory", PostProcessFactory, resource::IResourceFactory)
 
 PostProcessFactory::PostProcessFactory(db::Database* db)
 :	m_db(db)
@@ -21,7 +21,7 @@ const TypeSet PostProcessFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* PostProcessFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* PostProcessFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly< PostProcessSettings >(guid);
 }

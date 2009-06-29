@@ -28,6 +28,13 @@ class WorldRenderView;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -77,6 +84,7 @@ public:
 #pragma pack()
 
 	UndergrowthEntity(
+		resource::IResourceManager* resourceManager,
 		const resource::Proxy< Heightfield >& heightfield,
 		const resource::Proxy< MaterialMask >& materialMask,
 		const Settings& settings,

@@ -23,6 +23,13 @@ class WorldRenderView;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -50,7 +57,7 @@ public:
 
 	virtual ~TerrainSurfaceCache();
 
-	bool create(render::RenderSystem* renderSystem);
+	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
 
 	void destroy();
 
@@ -81,6 +88,7 @@ private:
 		Ref< render::RenderTargetSet > renderTargetSet;
 	};
 
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::RenderSystem > m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	RefArray< render::RenderTargetSet > m_cache[4];

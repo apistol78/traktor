@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -31,7 +38,7 @@ class T_DLLCLASS EffectEntity : public world::SpatialEntity
 	T_RTTI_CLASS(EffectEntity)
 
 public:
-	EffectEntity(const Matrix44& transform, const resource::Proxy< Effect >& effect);
+	EffectEntity(resource::IResourceManager* resourceManager, const Matrix44& transform, const resource::Proxy< Effect >& effect);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 
@@ -52,6 +59,7 @@ public:
 	inline bool isEnable() const { return m_enable; }
 
 private:
+	Ref< resource::IResourceManager > m_resourceManager;
 	Matrix44 m_transform;
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;

@@ -44,11 +44,13 @@ AccDisplayRenderer::~AccDisplayRenderer()
 }
 
 bool AccDisplayRenderer::create(
+	resource::IResourceManager* resourceManager,
 	render::RenderSystem* renderSystem,
 	render::RenderView* renderView,
 	bool clearBackground
 )
 {
+	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
 	m_textureCache = gc_new< AccTextureCache >(m_renderSystem);
@@ -150,6 +152,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	{
 		accShape = gc_new< AccShape >();
 		accShape->create(
+			m_resourceManager,
 			m_renderSystem,
 			*m_textureCache,
 			movie,
@@ -191,6 +194,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	{
 		accShape = gc_new< AccShape >();
 		accShape->create(
+			m_resourceManager,
 			m_renderSystem,
 			*m_textureCache,
 			movie,

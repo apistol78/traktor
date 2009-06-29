@@ -2,7 +2,7 @@
 #define traktor_input_RumbleEffectFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "Resource/ResourceFactory.h"
+#include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ class Database;
 /*! \brief Rumble effect resource factory.
  * \ingroup Input
  */
-class T_DLLCLASS RumbleEffectFactory : public resource::ResourceFactory
+class T_DLLCLASS RumbleEffectFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(RumbleEffectFactory)
 
@@ -36,7 +36,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_db;

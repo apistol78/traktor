@@ -10,7 +10,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextFactory", ScriptContextFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextFactory", ScriptContextFactory, resource::IResourceFactory)
 
 ScriptContextFactory::ScriptContextFactory(db::Database* database, ScriptManager* scriptManager)
 :	m_database(database)
@@ -25,7 +25,7 @@ const TypeSet ScriptContextFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* ScriptContextFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* ScriptContextFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< Script > s = m_database->getObjectReadOnly< Script >(guid);
 	if (!s)

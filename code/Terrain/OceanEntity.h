@@ -23,6 +23,13 @@ class WorldRenderView;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -50,7 +57,7 @@ public:
 
 	OceanEntity();
 
-	bool create(render::RenderSystem* renderSystem, const OceanEntityData& data);
+	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const OceanEntityData& data);
 
 	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView);
 

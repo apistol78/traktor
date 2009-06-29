@@ -12,7 +12,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
 SceneFactory::SceneFactory(db::Database* database, world::EntityBuilder* entityBuilder)
 :	m_database(database)
@@ -27,7 +27,7 @@ const TypeSet SceneFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SceneFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* SceneFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< SceneAsset > asset = m_database->getObjectReadOnly< SceneAsset >(guid);
 	if (!asset)

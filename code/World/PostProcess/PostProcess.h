@@ -17,6 +17,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -46,7 +53,13 @@ class T_DLLCLASS PostProcess : public Object
 	T_RTTI_CLASS(PostProcess)
 
 public:
-	bool create(PostProcessSettings* settings, render::RenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight);
+	bool create(
+		PostProcessSettings* settings,
+		resource::IResourceManager* resourceManager,
+		render::RenderSystem* renderSystem,
+		uint32_t screenWidth,
+		uint32_t screenHeight
+	);
 
 	void destroy();
 

@@ -6,6 +6,7 @@
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
+#include "Resource/IResourceManager.h"
 #include "Render/RenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
@@ -73,10 +74,14 @@ TerrainEntity::TerrainEntity()
 {
 }
 
-bool TerrainEntity::create(render::RenderSystem* renderSystem, const TerrainEntityData& data)
+bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const TerrainEntityData& data)
 {
 	m_heightfield = data.m_heightfield;
-	if (!m_heightfield.validate())
+	if (!resourceManager->bind(m_heightfield))
+		return 0;
+
+	m_shader = data.m_shader;
+	if (!resourceManager->bind(m_shader))
 		return 0;
 
 	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
@@ -321,10 +326,9 @@ bool TerrainEntity::create(render::RenderSystem* renderSystem, const TerrainEnti
 	m_indexBuffer->unlock();
 
 	m_surfaceCache = gc_new< TerrainSurfaceCache >();
-	if (!m_surfaceCache->create(renderSystem))
+	if (!m_surfaceCache->create(resourceManager, renderSystem))
 		return false;
 
-	m_shader = data.m_shader;
 	m_surface = data.m_surface;
 	m_patchCount = patchCount;
 	m_patchLodDistance = data.m_patchLodDistance;

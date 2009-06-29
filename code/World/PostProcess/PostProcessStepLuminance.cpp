@@ -5,6 +5,7 @@
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
 #include "Core/Serialization/Serializer.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -14,8 +15,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
 
-bool PostProcessStepLuminance::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepLuminance::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
+	if (!resourceManager->bind(m_shader))
+		return false;
+
 	int index = 0;
 	for (int y = 0; y < 4; ++y)
 	{
@@ -30,6 +34,7 @@ bool PostProcessStepLuminance::create(PostProcess* postProcess, render::RenderSy
 			index++;
 		}
 	}
+
 	return true;
 }
 

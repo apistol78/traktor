@@ -12,7 +12,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieResourceFactory", FlashMovieResourceFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieResourceFactory", FlashMovieResourceFactory, resource::IResourceFactory)
 
 FlashMovieResourceFactory::FlashMovieResourceFactory(db::Database* db)
 :	m_db(db)
@@ -26,7 +26,7 @@ const TypeSet FlashMovieResourceFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* FlashMovieResourceFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* FlashMovieResourceFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

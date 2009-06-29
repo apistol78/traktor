@@ -1,7 +1,6 @@
 #include "World/PostProcess/PostProcessStepSetTarget.h"
 #include "World/PostProcess/PostProcess.h"
 #include "Core/Serialization/Serializer.h"
-#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -10,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSetTarget", PostProcessStepSetTarget, PostProcessStep)
 
-bool PostProcessStepSetTarget::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepSetTarget::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
 	return true;
 }

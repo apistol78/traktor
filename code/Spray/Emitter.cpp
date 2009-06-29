@@ -4,6 +4,7 @@
 #include "Spray/Modifier.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
+#include "Resource/IResourceManager.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/Member.h"
@@ -21,8 +22,11 @@ Emitter::Emitter()
 {
 }
 
-EmitterInstance* Emitter::createInstance()
+EmitterInstance* Emitter::createInstance(resource::IResourceManager* resourceManager)
 {
+	if (!resourceManager->bind(m_shader))
+		return 0;
+
 	return gc_new< EmitterInstance >(this);
 }
 

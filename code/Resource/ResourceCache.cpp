@@ -1,6 +1,6 @@
-#include <algorithm>
 #include "Resource/ResourceCache.h"
-#include "Core/Log/Log.h"
+#include "Resource/ResourceHandle.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {
@@ -9,46 +9,35 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceCache", ResourceCache, IResourceCache)
 
-void ResourceCache::put(const Guid& guid, Object* resource)
+void ResourceCache::put(const Guid& guid, IResourceHandle* handle)
 {
-	m_cache[guid] = resource;
+	m_cache[guid] = handle;
 }
 
-bool ResourceCache::get(const Guid& guid, Ref< Object >& outResource) const
+IResourceHandle* ResourceCache::get(const Guid& guid)
 {
-	std::map< Guid, Ref< Object > >::const_iterator i = m_cache.find(guid);
-	if (i == m_cache.end())
-		return false;
-
-	outResource = i->second;
-	return true;
+	return m_cache[guid];
 }
 
 void ResourceCache::flush(const Guid& guid)
 {
-	for (std::map< Guid, Ref< Object > >::iterator i = m_cache.begin(); i != m_cache.end(); )
+	std::map< Guid, Ref< IResourceHandle > >::iterator i = m_cache.find(guid);
+	if (i != m_cache.end())
 	{
-		if (i->first == guid)
-		{
-			Heap::getInstance().invalidateRefs(i->second);
-			T_ASSERT (!i->second);
-
-			m_cache.erase(i++);
-		}
-		else
-			++i;
+		Ref< IResourceHandle > handle = i->second;
+		if (handle)
+			handle->flush();
 	}
 }
 
 void ResourceCache::flush()
 {
-	for (std::map< Guid, Ref< Object > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	for (std::map< Guid, Ref< IResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 	{
-		if (i->second)
-			Heap::getInstance().invalidateRefs(i->second);
-		T_ASSERT (!i->second);
+		Ref< IResourceHandle > handle = i->second;
+		if (handle)
+			handle->flush();
 	}
-	m_cache.clear();
 }
 
 	}

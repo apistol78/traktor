@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSwapTargets", PostProcessStepSwapTargets, PostProcessStep)
 
-bool PostProcessStepSwapTargets::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepSwapTargets::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
 	return true;
 }

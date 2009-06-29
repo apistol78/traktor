@@ -20,6 +20,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -45,9 +52,13 @@ class T_DLLCLASS PrimitiveRenderer : public Object
 public:
 	PrimitiveRenderer();
 
-	bool create(RenderSystem* renderSystem);
+	bool create(
+		resource::IResourceManager* resourceManager,
+		RenderSystem* renderSystem
+	);
 
 	bool create(
+		resource::IResourceManager* resourceManager,
 		RenderSystem* renderSystem,
 		const resource::Proxy< Shader >& shader
 	);

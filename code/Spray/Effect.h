@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -30,7 +37,7 @@ class T_DLLCLASS Effect : public Serializable
 public:
 	Effect();
 
-	EffectInstance* createInstance() const;
+	EffectInstance* createInstance(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(Serializer& s);
 

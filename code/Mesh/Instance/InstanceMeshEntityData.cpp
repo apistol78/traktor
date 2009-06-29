@@ -2,6 +2,7 @@
 #include "Mesh/Instance/InstanceMeshEntity.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
+#include "Resource/IResourceManager.h"
 #include "Core/Serialization/Serializer.h"
 #include "Resource/Member.h"
 
@@ -12,8 +13,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.InstanceMeshEntityData", InstanceMeshEntityData, MeshEntityData)
 
-MeshEntity* InstanceMeshEntityData::createEntity(world::EntityBuilder* builder) const
+MeshEntity* InstanceMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const
 {
+	if (!resourceManager->bind(m_mesh))
+		return 0;
+
 	return gc_new< InstanceMeshEntity >(
 		cref(getTransform()),
 		m_mesh

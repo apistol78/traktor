@@ -14,7 +14,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcess", PostProcess, Object)
 
-bool PostProcess::create(PostProcessSettings* settings, render::RenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
+bool PostProcess::create(
+	PostProcessSettings* settings,
+	resource::IResourceManager* resourceManager,
+	render::RenderSystem* renderSystem,
+	uint32_t screenWidth,
+	uint32_t screenHeight
+)
 {
 	m_settings = settings;
 	
@@ -35,7 +41,7 @@ bool PostProcess::create(PostProcessSettings* settings, render::RenderSystem* re
 	const RefArray< PostProcessStep >& steps = m_settings->getSteps();
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
 	{
-		if (!(*i)->create(this, renderSystem))
+		if (!(*i)->create(this, resourceManager, renderSystem))
 		{
 			log::error << L"Unable to create post processing step " << uint32_t(std::distance(steps.begin(), i)) << Endl;
 			return false;

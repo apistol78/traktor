@@ -38,7 +38,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.DefaultEditorProfile", Defau
 
 void DefaultEditorProfile::createResourceFactories(
 	SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(gc_new< render::TextureFactory >(context->getResourceDatabase(), context->getRenderSystem()));
@@ -59,8 +59,8 @@ void DefaultEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(gc_new< world::LightEntityFactory >());
 	outEntityFactories.push_back(gc_new< world::ExternalEntityFactory >(context->getSourceDatabase()));
 	outEntityFactories.push_back(gc_new< world::GroupEntityFactory >());
-	outEntityFactories.push_back(gc_new< weather::WeatherEntityFactory >(context->getRenderSystem()));
-	outEntityFactories.push_back(gc_new< mesh::MeshEntityFactory >());
+	outEntityFactories.push_back(gc_new< weather::WeatherEntityFactory >(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(gc_new< mesh::MeshEntityFactory >(context->getResourceManager()));
 }
 
 void DefaultEditorProfile::createEntityRenderers(

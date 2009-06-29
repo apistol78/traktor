@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -41,7 +48,7 @@ class T_DLLCLASS Emitter : public Serializable
 public:
 	Emitter();
 
-	EmitterInstance* createInstance();
+	EmitterInstance* createInstance(resource::IResourceManager* resourceManager);
 
 	inline Source* getSource() { return m_source; }
 

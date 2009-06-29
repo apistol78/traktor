@@ -1,7 +1,8 @@
+#include <algorithm>
 #include "Resource/ResourceManager.h"
-#include "Resource/ResourceLoader.h"
 #include "Resource/ResourceCache.h"
-#include "Core/Singleton/SingletonManager.h"
+#include "Resource/ResourceHandle.h"
+#include "Resource/IResourceFactory.h"
 #include "Core/Heap/New.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
@@ -11,35 +12,26 @@ namespace traktor
 	namespace resource
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, Singleton)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
-ResourceManager& ResourceManager::getInstance()
+ResourceManager::ResourceManager()
+:	m_cache(gc_new< ResourceCache >())
 {
-	static ResourceManager* s_instance = 0;
-	if (!s_instance)
-	{
-		s_instance = new ResourceManager();
-		SingletonManager::getInstance().addBefore(s_instance, &Heap::getInstance());
-	}
-	return *s_instance;
 }
 
-void ResourceManager::addLoader(ResourceLoader* loader)
+void ResourceManager::addFactory(IResourceFactory* factory)
 {
-	Acquire< Semaphore > scope(m_lock);
-	m_loaders.push_back(loader);
+	m_factories.push_back(factory);
 }
 
-void ResourceManager::removeLoader(ResourceLoader* loader)
+void ResourceManager::removeFactory(IResourceFactory* factory)
 {
-	Acquire< Semaphore > scope(m_lock);
-	m_loaders.remove(loader);
+	m_factories.remove(factory);
 }
 
-void ResourceManager::removeAllLoaders()
+void ResourceManager::removeAllFactories()
 {
-	Acquire< Semaphore > scope(m_lock);
-	m_loaders.clear();
+	m_factories.clear();
 }
 
 void ResourceManager::setCache(IResourceCache* cache)
@@ -53,76 +45,58 @@ IResourceCache* ResourceManager::getCache() const
 	return m_cache;
 }
 
-void ResourceManager::setResource(const Type& type, const Guid& guid, Object* resource)
-{
-	Acquire< Semaphore > scope(m_lock);
-	m_cache->put(guid, resource);
-}
-
-Object* ResourceManager::getResource(const Type& type, const Guid& guid)
+IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
 {
 	Acquire< Semaphore > scope(m_lock);
 
-	// If no cache is available we cannot load it.
 	if (!m_cache)
 		return 0;
 
-	Ref< Object > resource;
-	if (!m_cache->get(guid, resource))
+	Ref< IResourceHandle > handle = m_cache->get(guid);
+
+	if (!handle || !handle->get())
 	{
+		Ref< IResourceFactory > factory;
 		bool cacheable = true;
-		for (RefList< ResourceLoader >::iterator i = m_loaders.begin(); i != m_loaders.end(); ++i)
+
+		if (!handle)
+			handle = gc_new< ResourceHandle >();
+
+		for (RefList< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 		{
-			if ((resource = (*i)->load(type, guid, cacheable)) != 0)
+			TypeSet typeSet = (*i)->getResourceTypes();
+			if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
+			{
+				factory = *i;
 				break;
+			}
 		}
-		if (cacheable)
-			m_cache->put(guid, resource);
-	}
 
-	return resource;
-}
-
-void ResourceManager::beginPrepareResources()
-{
-	m_acceptResourceRequests = true;
-}
-
-void ResourceManager::requestResource(const Type& type, const Guid& guid)
-{
-	if (m_acceptResourceRequests)
-		m_requestedResources.push_back(std::make_pair(&type, guid));
-}
-
-void ResourceManager::endPrepareResources(bool cancel)
-{
-	T_ASSERT_M (m_acceptResourceRequests, L"endPrepareResources called without beginPrepareResources");
-
-	if (!cancel)
-	{
-		while (!m_requestedResources.empty())
+		if (factory)
 		{
-			std::pair< const Type*, Guid > requestedResource = m_requestedResources.front();
-			m_requestedResources.pop_front();
+			Ref< Object > object = factory->create(this, type, guid, cacheable);
+			if (object)
+			{
+				T_ASSERT_M (is_type_of(type, object->getType()), L"Incorrect type of created resource");
 
-			getResource(*requestedResource.first, requestedResource.second);
+				handle->replace(object);
+
+				if (cacheable)
+				{
+					log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") loaded" << Endl;
+					m_cache->put(guid, handle);
+				}
+				else
+					log::debug << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") instantiated" << Endl;
+			}
+			else
+				log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << type.getName() << L")" << Endl;
 		}
+		else
+			log::error << L"Unable to find resource factory for type \"" << type.getName() << L"\"" << Endl;
 	}
-	else
-		m_requestedResources.resize(0);
 
-	m_acceptResourceRequests = false;
-}
-
-void ResourceManager::destroy()
-{
-	delete this;
-}
-
-ResourceManager::ResourceManager()
-:	m_cache(gc_new< ResourceCache >())
-,	m_requestedResources(false)
-{
+	return handle;
 }
 
 	}

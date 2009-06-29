@@ -2,7 +2,7 @@
 #define traktor_mesh_BlendMeshFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "Resource/ResourceFactory.h"
+#include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +32,7 @@ class MeshFactory;
 	namespace mesh
 	{
 
-class T_DLLCLASS BlendMeshFactory : public resource::ResourceFactory
+class T_DLLCLASS BlendMeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(BlendMeshFactory)
 
@@ -41,7 +41,7 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
 
 private:
 	Ref< db::Database > m_db;

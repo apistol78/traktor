@@ -2,6 +2,7 @@
 #include "Terrain/UndergrowthEntity.h"
 #include "Terrain/Heightfield.h"
 #include "Terrain/MaterialMask.h"
+#include "Resource/IResourceManager.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
@@ -28,6 +29,7 @@ void UndergrowthEntity::Vertex::set(const Vector4& position_, const Vector4& nor
 }
 
 UndergrowthEntity::UndergrowthEntity(
+	resource::IResourceManager* resourceManager,
 	const resource::Proxy< Heightfield >& heightfield,
 	const resource::Proxy< MaterialMask >& materialMask,
 	const Settings& settings,
@@ -46,6 +48,9 @@ UndergrowthEntity::UndergrowthEntity(
 ,	m_lastView(Matrix44::identity())
 ,	m_sync(false)
 {
+	resourceManager->bind(m_heightfield);
+	resourceManager->bind(m_materialMask);
+
 	m_lastFrustum.buildPerspective(0.0f, 1.0f, 0.0f, 0.0f);
 
 	int offset = 0;

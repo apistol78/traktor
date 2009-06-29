@@ -19,8 +19,7 @@
 #include "Database/Instance.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/ResourceCache.h"
-#include "Resource/ResourceLoader.h"
+#include "Resource/IResourceCache.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 
@@ -46,15 +45,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceCache = gc_new< resource::ResourceCache >();
-	m_resourceLoader = gc_new< resource::ResourceLoader >();
-
-	m_resourceLoader->addFactory(
+	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager->addFactory(
 		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
-
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
 
 	Ref< ui::Container > container = gc_new< ui::Container >();
 	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
@@ -76,7 +70,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_previewContainer->create(container, ui::WsNone, gc_new< ui::custom::CenterLayout >());
 
 	m_previewControl = gc_new< FlashPreviewControl >();
-	m_previewControl->create(m_previewContainer, ui::WsNone, renderSystem);
+	m_previewControl->create(m_previewContainer, ui::WsNone, m_resourceManager, renderSystem);
 
 	return true;
 }
@@ -84,19 +78,14 @@ bool FlashEditorPage::create(ui::Container* parent)
 void FlashEditorPage::destroy()
 {
 	m_previewControl->destroy();
-	m_resourceCache->flush();
 }
 
 void FlashEditorPage::activate()
 {
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
 }
 
 void FlashEditorPage::deactivate()
 {
-	resource::ResourceManager::getInstance().removeLoader(m_resourceLoader);
-	resource::ResourceManager::getInstance().setCache(0);
 }
 
 bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
@@ -178,8 +167,8 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 
 void FlashEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceCache)
-		m_resourceCache->flush(eventId);
+	if (m_resourceManager)
+		m_resourceManager->getCache()->flush(eventId);
 }
 
 void FlashEditorPage::eventToolClick(ui::Event* event)

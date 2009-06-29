@@ -7,7 +7,8 @@
 #include "Editor/IProject.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
-#include "Resource/ResourceLoader.h"
+#include "Resource/ResourceManager.h"
+#include "Resource/IResourceCache.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
@@ -109,21 +110,19 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	if (!m_renderView)
 		return false;
 
-	m_resourceCache = gc_new< resource::ResourceCache >();
-	m_resourceLoader = gc_new< resource::ResourceLoader >();
-
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceLoader->addFactory(
+	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager->addFactory(
 		gc_new< render::TextureFactory >(database, renderSystem)
 	);
-	m_resourceLoader->addFactory(
+	m_resourceManager->addFactory(
 		gc_new< render::ShaderFactory >(database, renderSystem)
 	);
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
-	if (!m_primitiveRenderer->create(renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
 	m_renderWidget->startTimer(30);
@@ -142,25 +141,16 @@ void SkeletonEditorPage::destroy()
 	m_boneMenu->destroy();
 	m_skeletonPanel->destroy();
 	m_renderWidget->destroy();
-
-	// Flush our resource cache.
-	m_resourceCache->flush();
 }
 
 void SkeletonEditorPage::activate()
 {
-	resource::ResourceManager::getInstance().setCache(m_resourceCache);
-	resource::ResourceManager::getInstance().addLoader(m_resourceLoader);
-
 	m_editor->showAdditionalPanel(m_skeletonPanel);
 }
 
 void SkeletonEditorPage::deactivate()
 {
 	m_editor->hideAdditionalPanel(m_skeletonPanel);
-
-	resource::ResourceManager::getInstance().removeLoader(m_resourceLoader);
-	resource::ResourceManager::getInstance().setCache(0);
 }
 
 bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
@@ -281,8 +271,8 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceCache)
-		m_resourceCache->flush(eventId);
+	if (m_resourceManager)
+		m_resourceManager->getCache()->flush(eventId);
 }
 
 void SkeletonEditorPage::createSkeletonTreeNodes()

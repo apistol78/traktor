@@ -2,6 +2,7 @@
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectInstance.h"
+#include "Resource/IResourceManager.h"
 #include "World/Entity/EntityUpdate.h"
 
 namespace traktor
@@ -17,8 +18,9 @@ const float c_maxDeltaTime = 1.0f / 30.0f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::SpatialEntity)
 
-EffectEntity::EffectEntity(const Matrix44& transform, const resource::Proxy< Effect >& effect)
-:	m_transform(transform)
+EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Matrix44& transform, const resource::Proxy< Effect >& effect)
+:	m_resourceManager(resourceManager)
+,	m_transform(transform)
 ,	m_effect(effect)
 #if !defined(WINCE)
 ,	m_context(float(clock()))
@@ -65,10 +67,13 @@ void EffectEntity::update(const world::EntityUpdate* update)
 {
 	if (!m_effect.valid() || !m_effectInstance)
 	{
+		if (!m_resourceManager->bind(m_effect))
+			return;
+
 		if (!m_effect.validate())
 			return;
 
-		m_effectInstance = m_effect->createInstance();
+		m_effectInstance = m_effect->createInstance(m_resourceManager);
 	}
 
 	m_context.deltaTime = update->getDeltaTime();

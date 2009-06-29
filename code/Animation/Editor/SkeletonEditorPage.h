@@ -51,8 +51,7 @@ class ToolBar;
 	namespace resource
 	{
 
-class ResourceCache;
-class ResourceLoader;
+class IResourceManager;
 
 	}
 
@@ -105,8 +104,7 @@ private:
 	Ref< ui::TreeView > m_treeSkeleton;
 	Ref< render::RenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< resource::ResourceCache > m_resourceCache;
-	Ref< resource::ResourceLoader > m_resourceLoader;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< editor::UndoStack > m_undoStack;
 	ui::Point m_lastMousePosition;
 	int m_selectedBone;

@@ -47,7 +47,7 @@ FlashPreviewControl::FlashPreviewControl()
 {
 }
 
-bool FlashPreviewControl::create(ui::Widget* parent, int style, render::RenderSystem* renderSystem)
+bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
 	if (!Widget::create(parent, style))
 		return false;
@@ -66,7 +66,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, render::RenderSy
 		return false;
 
 	m_displayRenderer = gc_new< AccDisplayRenderer >();
-	m_displayRenderer->create(renderSystem, m_renderView, true);
+	m_displayRenderer->create(resourceManager, renderSystem, m_renderView, true);
 #else
 	graphics::CreateDesc desc;
 

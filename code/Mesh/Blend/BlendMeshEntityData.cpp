@@ -2,6 +2,7 @@
 #include "Mesh/Blend/BlendMeshEntity.h"
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/Blend/BlendMeshResource.h"
+#include "Resource/IResourceManager.h"
 #include "Core/Serialization/Serializer.h"
 #include "Resource/Member.h"
 
@@ -12,8 +13,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.BlendMeshEntityData", BlendMeshEntityData, MeshEntityData)
 
-MeshEntity* BlendMeshEntityData::createEntity(world::EntityBuilder* builder) const
+MeshEntity* BlendMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const
 {
+	if (!resourceManager->bind(m_mesh))
+		return 0;
+
 	return gc_new< BlendMeshEntity >(
 		cref(getTransform()),
 		m_mesh

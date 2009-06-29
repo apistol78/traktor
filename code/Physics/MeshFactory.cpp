@@ -10,7 +10,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshFactory", MeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.MeshFactory", MeshFactory, resource::IResourceFactory)
 
 MeshFactory::MeshFactory(db::Database* db)
 :	m_db(db)
@@ -24,7 +24,7 @@ const TypeSet MeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* MeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* MeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

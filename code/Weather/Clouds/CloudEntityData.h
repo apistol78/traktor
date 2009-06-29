@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -35,13 +42,13 @@ class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
 public:
 	CloudEntityData();
 
-	CloudEntity* createEntity(render::RenderSystem* renderSystem) const;
+	CloudEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
-	resource::Proxy< render::Shader > m_particleShader;
-	resource::Proxy< render::Shader > m_impostorShader;
+	mutable resource::Proxy< render::Shader > m_particleShader;
+	mutable resource::Proxy< render::Shader > m_impostorShader;
 	uint32_t m_impostorTargetResolution;
 	uint32_t m_distanceTargetResolution;
 	CloudParticleData m_particleData;

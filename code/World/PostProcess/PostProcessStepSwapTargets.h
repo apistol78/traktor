@@ -24,7 +24,7 @@ class T_DLLCLASS PostProcessStepSwapTargets : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSwapTargets)
 
 public:
-	virtual bool create(PostProcess* postProcess, render::RenderSystem* renderSystem);
+	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
 
 	virtual void destroy(PostProcess* postProcess);
 

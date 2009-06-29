@@ -28,7 +28,7 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
 
 TextureFactory::TextureFactory(db::Database* db, RenderSystem* renderSystem)
 :	m_db(db)
@@ -43,7 +43,7 @@ const TypeSet TextureFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* TextureFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< Texture > texture;
 

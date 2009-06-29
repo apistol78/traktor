@@ -39,8 +39,7 @@ class SequencerControl;
 	namespace resource
 	{
 
-class ResourceCache;
-class ResourceLoader;
+class IResourceManager;
 
 	}
 
@@ -84,8 +83,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< EffectPreviewControl > m_previewControl;
 	Ref< ui::custom::SequencerControl > m_sequencer;
-	Ref< resource::ResourceCache > m_resourceCache;
-	Ref< resource::ResourceLoader > m_resourceLoader;
+	Ref< resource::IResourceManager > m_resourceManager;
 	bool m_velocityVisible;
 	bool m_guideVisible;
 

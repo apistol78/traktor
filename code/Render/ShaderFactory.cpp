@@ -7,7 +7,7 @@
 #include "Render/ProgramResource.h"
 #include "Render/Program.h"
 #include "Render/TextureLinker.h"
-#include "Resource/Proxy.h"
+#include "Resource/IResourceManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 
@@ -21,21 +21,30 @@ namespace traktor
 class TextureReaderAdapter : public TextureLinker::TextureReader
 {
 public:
+	TextureReaderAdapter(resource::IResourceManager* resourceManager)
+	:	m_resourceManager(resourceManager)
+	{
+	}
+
 	virtual Texture* read(const Guid& textureGuid)
 	{
-		return resource::Proxy< Texture >(textureGuid);
+		Ref< resource::IResourceHandle > handle = m_resourceManager->bind< Texture >(textureGuid);
+		return handle ? dynamic_type_cast< Texture* >(handle->get()) : 0;
 	}
+
+private:
+	Ref< resource::IResourceManager > m_resourceManager;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource::IResourceFactory)
 
 ShaderFactory::ShaderFactory(
-	db::Database* db,
+	db::Database* database,
 	RenderSystem* renderSystem
 )
-:	m_db(db)
+:	m_database(database)
 ,	m_renderSystem(renderSystem)
 {
 }
@@ -47,9 +56,9 @@ const TypeSet ShaderFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* ShaderFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
-	Ref< ShaderResource > shaderResource = m_db->getObjectReadOnly< ShaderResource >(guid);
+	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
 	if (!shaderResource)
 		return 0;
 
@@ -103,7 +112,7 @@ Object* ShaderFactory::create(const Type& resourceType, const Guid& guid, bool& 
 			if (!combination.program)
 				return 0;
 
-			TextureReaderAdapter textureReader;
+			TextureReaderAdapter textureReader(resourceManager);
 			if (!TextureLinker(textureReader).link(programResource, combination.program))
 				return 0;
 

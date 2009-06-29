@@ -29,6 +29,13 @@ class Database;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -97,6 +104,7 @@ public:
 		editor::IEditor* editor,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
+		resource::IResourceManager* resourceManager,
 		render::RenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager
 	);
@@ -151,7 +159,7 @@ public:
 	/*! \name Entity editors. */
 	//@{
 
-	void setEntityEditors(const RefArray< EntityEditor >& entityEditors);
+	void addEntityEditor(EntityEditor* entityEditor);
 
 	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
 
@@ -189,6 +197,8 @@ public:
 	db::Database* getResourceDatabase() { return m_resourceDb; }
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
+
+	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
 
 	render::RenderSystem* getRenderSystem() { return m_renderSystem; }
 
@@ -242,6 +252,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::RenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< SceneEditorProfile > m_editorProfiles;

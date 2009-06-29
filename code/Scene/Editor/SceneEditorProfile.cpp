@@ -21,7 +21,7 @@ void SceneEditorProfile::createToolBarItems(
 
 void SceneEditorProfile::createResourceFactories(
 	SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 }

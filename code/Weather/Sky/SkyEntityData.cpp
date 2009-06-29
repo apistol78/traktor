@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Weather/Sky/SkyEntityData.h"
 #include "Weather/Sky/SkyEntity.h"
+#include "Resource/IResourceManager.h"
 #include "Render/RenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
@@ -33,8 +34,11 @@ SkyEntityData::SkyEntityData()
 {
 }
 
-SkyEntity* SkyEntityData::createEntity(render::RenderSystem* renderSystem) const
+SkyEntity* SkyEntityData::createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const
 {
+	if (!resourceManager->bind(m_shader))
+		return 0;
+
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, 0));
 

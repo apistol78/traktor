@@ -170,7 +170,7 @@ render::Texture* createNormalTexture(render::RenderSystem* renderSystem, const H
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.HeightfieldFactory", HeightfieldFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
 
 HeightfieldFactory::HeightfieldFactory(db::Database* database, render::RenderSystem* renderSystem)
 :	m_database(database)
@@ -185,7 +185,7 @@ const TypeSet HeightfieldFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* HeightfieldFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* HeightfieldFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

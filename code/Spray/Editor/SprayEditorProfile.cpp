@@ -16,7 +16,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SprayEditorProfile", SprayEd
 
 void SprayEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::ResourceFactory >& outResourceFactories
+	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(gc_new< spray::EffectFactory >(context->getResourceDatabase()));
@@ -27,7 +27,7 @@ void SprayEditorProfile::createEntityFactories(
 	RefArray< world::EntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< spray::EffectEntityFactory >());
+	outEntityFactories.push_back(gc_new< spray::EffectEntityFactory >(context->getResourceManager()));
 }
 
 void SprayEditorProfile::createEntityRenderers(

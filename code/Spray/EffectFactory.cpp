@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
 
 EffectFactory::EffectFactory(db::Database* db)
 :	m_db(db)
@@ -21,7 +21,7 @@ const TypeSet EffectFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* EffectFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* EffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly< Effect >(guid);
 }

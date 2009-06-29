@@ -70,10 +70,12 @@ EffectPreviewControl::EffectPreviewControl()
 	m_sourceRenderers[&type_of< SplineSource >()] = gc_new< SplineSourceRenderer >();
 }
 
-bool EffectPreviewControl::create(ui::Widget* parent, int style, render::RenderSystem* renderSystem)
+bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
 	if (!Widget::create(parent, style))
 		return false;
+
+	m_resourceManager = resourceManager;
 
 	render::RenderViewCreateDesc desc;
 	desc.depthBits = 16;
@@ -87,7 +89,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, render::RenderS
 		return false;
 
 	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
-	if (!m_primitiveRenderer->create(renderSystem))
+	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
 	m_renderContext = gc_new< render::RenderContext >(m_renderView);
@@ -144,7 +146,7 @@ void EffectPreviewControl::destroy()
 void EffectPreviewControl::setEffect(Effect* effect)
 {
 	m_effect = effect;
-	m_effectInstance = m_effect->createInstance();
+	m_effectInstance = m_effect->createInstance(m_resourceManager);
 }
 
 void EffectPreviewControl::setTimeScale(float timeScale)
@@ -181,7 +183,7 @@ void EffectPreviewControl::syncEffect()
 	float currentTime = m_effectInstance->getTime();
 
 	// Re-create instance.
-	m_effectInstance = m_effect->createInstance();
+	m_effectInstance = m_effect->createInstance(m_resourceManager);
 
 	// Run emitter until total time is reached.
 	const float c_deltaTime = 1.0f / 30.0f;

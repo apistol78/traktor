@@ -1,11 +1,9 @@
 #ifndef traktor_resource_ResourceManager_H
 #define traktor_resource_ResourceManager_H
 
-#include <list>
 #include "Core/Heap/Ref.h"
-#include "Core/Singleton/Singleton.h"
-#include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
+#include "Resource/IResourceManager.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,76 +17,33 @@ namespace traktor
 {
 	namespace resource
 	{
-	
-class ResourceLoader;
-class IResourceCache;
 
-/*! \brief Resource manager singleton.
- *
- * The resource manager is the hub in the resource system
- * which each proxy uses to validate themselves.
+/*! \brief Resource manager.
+ * \ingroup Resource
  */
-class T_DLLCLASS ResourceManager : public Singleton
+class T_DLLCLASS ResourceManager : public IResourceManager
 {
 	T_RTTI_CLASS(ResourceManager)
 
 public:
-	static ResourceManager& getInstance();
+	ResourceManager();
+
+	virtual void addFactory(IResourceFactory* factory);
+
+	virtual void removeFactory(IResourceFactory* factory);
+
+	virtual void removeAllFactories();
 	
-	void addLoader(ResourceLoader* loader);
+	virtual void setCache(IResourceCache* cache);
 
-	void removeLoader(ResourceLoader* loader);
+	virtual IResourceCache* getCache() const;
 
-	void removeAllLoaders();
-	
-	void setCache(IResourceCache* cache);
-
-	IResourceCache* getCache() const;
-
-	void setResource(const Type& type, const Guid& guid, Object* resource);
-
-	Object* getResource(const Type& type, const Guid& guid);
-
-	/*! \brief Begin accept requested resources.
-	 *
-	 * Requested resources are put into a list
-	 * of required resources which are loaded
-	 * at endPrepareResources.
-	 */
-	void beginPrepareResources();
-
-	/*! \brief Request resource for later use.
-	 *
-	 * Notify resource manager that a resource might
-	 * need to be available in the near future.
-	 *
-	 * \param type Type of resource.
-	 * \param guid Resource guid.
-	 */
-	void requestResource(const Type& type, const Guid& guid);
-
-	/*! \brief Load all requested resources.
-	 *
-	 * Load all requested resource; as new resources
-	 * might add requests for other resources this
-	 * method loops until all of the prepare resource
-	 * has been loaded.
-	 *
-	 * \param cancel Cancel preparing resources.
-	 */
-	void endPrepareResources(bool cancel = false);
-
-protected:
-	virtual void destroy();
+	virtual IResourceHandle* bind(const Type& type, const Guid& guid);
 
 private:
-	RefList< ResourceLoader > m_loaders;
+	RefList< IResourceFactory > m_factories;
 	Ref< IResourceCache > m_cache;
 	Semaphore m_lock;
-	bool m_acceptResourceRequests;
-	std::list< std::pair< const Type*, Guid > > m_requestedResources;
-
-	ResourceManager();
 };
 	
 	}

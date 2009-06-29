@@ -11,7 +11,6 @@
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
-#include "Resource/ResourceManager.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -67,15 +66,16 @@ SceneEditorContext::SceneEditorContext(
 	editor::IEditor* editor,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
+	resource::IResourceManager* resourceManager,
 	render::RenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager
 )
 :	m_editor(editor)
 ,	m_resourceDb(resourceDb)
 ,	m_sourceDb(sourceDb)
+,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
-,	m_camera(gc_new< Camera >(Matrix44::identity()))
 ,	m_pickEnable(true)
 ,	m_axisEnable(AeXYZ)
 ,	m_editSpace(EsWorld)
@@ -85,6 +85,8 @@ SceneEditorContext::SceneEditorContext(
 ,	m_physicsEnable(false)
 ,	m_timeScale(1.0f)
 {
+	const Matrix44 identity = Matrix44::identity();
+	m_camera = gc_new< Camera >(cref(identity));
 }
 
 void SceneEditorContext::addEditorProfile(SceneEditorProfile* editorProfile)
@@ -192,9 +194,9 @@ float SceneEditorContext::getTimeScale() const
 	return m_timeScale;
 }
 
-void SceneEditorContext::setEntityEditors(const RefArray< EntityEditor >& entityEditors)
+void SceneEditorContext::addEntityEditor(EntityEditor* entityEditor)
 {
-	m_entityEditors = entityEditors;
+	m_entityEditors.push_back(entityEditor);
 }
 
 void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)

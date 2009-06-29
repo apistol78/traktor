@@ -10,6 +10,7 @@
 #include "Core/Serialization/Serializer.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -19,8 +20,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSsao", PostProcessStepSsao, PostProcessStep)
 
-bool PostProcessStepSsao::create(PostProcess* postProcess, render::RenderSystem* renderSystem)
+bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 {
+	if (!resourceManager->bind(m_shader))
+		return false;
+
 	RandomGeometry random;
 	for (int i = 0; i < sizeof_array(m_offsets); ++i)
 	{

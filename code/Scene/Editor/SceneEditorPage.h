@@ -34,14 +34,6 @@ class GridRow;
 		}
 	}
 
-	namespace resource
-	{
-
-class ResourceCache;
-class ResourceLoader;
-
-	}
-
 	namespace editor
 	{
 
@@ -96,12 +88,8 @@ private:
 	Ref< ui::custom::GridView > m_entityGrid;
 	Ref< ui::Font > m_entityGridFontItalic;
 	Ref< ui::Font > m_entityGridFontBold;
-	Ref< resource::ResourceCache > m_resourceCache;
-	Ref< resource::ResourceLoader > m_resourceLoader;
 	Ref< editor::UndoStack > m_undoStack;
 	MD5 m_currentSettingsMD5;
-	
-	bool createEntityEditors();
 
 	void updateScene(bool updateModified);
 

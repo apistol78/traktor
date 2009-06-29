@@ -4,6 +4,7 @@
 #include "Flash/FlashShape.h"
 #include "Flash/PathTesselator.h"
 #include "Flash/Triangulator.h"
+#include "Resource/IResourceManager.h"
 #include "Render/RenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
@@ -48,6 +49,7 @@ render::handle_t s_handleTextureMatrix;
 		}
 
 bool AccShape::create(
+	resource::IResourceManager* resourceManager,
 	render::RenderSystem* renderSystem,
 	AccTextureCache& textureCache,
 	const FlashMovie& movie,
@@ -66,27 +68,27 @@ bool AccShape::create(
 	}
 
 	m_shaderSolid = c_guidShaderSolid;
-	if (!m_shaderSolid.validate())
+	if (!resourceManager->bind(m_shaderSolid))
 		return false;
 
 	m_shaderTextured = c_guidShaderTextured;
-	if (!m_shaderTextured.validate())
+	if (!resourceManager->bind(m_shaderTextured))
 		return false;
 
 	m_shaderSolidMask = c_guidShaderSolidMask;
-	if (!m_shaderSolidMask.validate())
+	if (!resourceManager->bind(m_shaderSolidMask))
 		return false;
 
 	m_shaderTexturedMask = c_guidShaderTexturedMask;
-	if (!m_shaderTexturedMask.validate())
+	if (!resourceManager->bind(m_shaderTexturedMask))
 		return false;
 
 	m_shaderIncrementMask = c_guidShaderIncrementMask;
-	if (!m_shaderIncrementMask.validate())
+	if (!resourceManager->bind(m_shaderIncrementMask))
 		return false;
 
 	m_shaderDecrementMask = c_guidShaderDecrementMask;
-	if (!m_shaderDecrementMask.validate())
+	if (!resourceManager->bind(m_shaderDecrementMask))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;

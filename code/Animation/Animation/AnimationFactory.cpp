@@ -10,7 +10,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFactory", AnimationFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFactory", AnimationFactory, resource::IResourceFactory)
 
 AnimationFactory::AnimationFactory(db::Database* db)
 :	m_db(db)
@@ -27,7 +27,7 @@ const TypeSet AnimationFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* AnimationFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* AnimationFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	return m_db->getObjectReadOnly(guid);
 }

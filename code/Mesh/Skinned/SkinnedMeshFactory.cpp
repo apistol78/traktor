@@ -1,6 +1,7 @@
 #include "Mesh/Skinned/SkinnedMeshFactory.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Resource/IResourceManager.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/Mesh.h"
@@ -15,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshFactory", SkinnedMeshFactory, resource::ResourceFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshFactory", SkinnedMeshFactory, resource::IResourceFactory)
 
 SkinnedMeshFactory::SkinnedMeshFactory(db::Database* database, render::RenderSystem* renderSystem)
 :	m_database(database)
@@ -30,7 +31,7 @@ const TypeSet SkinnedMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SkinnedMeshFactory::create(const Type& resourceType, const Guid& guid, bool& outCacheable)
+Object* SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -71,7 +72,11 @@ Object* SkinnedMeshFactory::create(const Type& resourceType, const Guid& guid, b
 	skinnedMesh->m_parts.resize(parts.size());
 
 	for (size_t i = 0; i < parts.size(); ++i)
+	{
 		skinnedMesh->m_parts[i].material = parts[i].material;
+		if (!resourceManager->bind(skinnedMesh->m_parts[i].material))
+			return 0;
+	}
 
 	skinnedMesh->m_boneMap = resource->getBoneMap();
 

@@ -13,8 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityFactory", EntityFactory, world::EntityFactory)
 
-EntityFactory::EntityFactory(render::RenderSystem* renderSystem)
-:	m_renderSystem(renderSystem)
+EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+:	m_resourceManager(resourceManager)
+,	m_renderSystem(renderSystem)
 {
 }
 
@@ -34,17 +35,17 @@ world::Entity* EntityFactory::createEntity(world::EntityBuilder* builder, const 
 	if (is_a< TerrainEntityData >(&entityData))
 	{
 		Ref< TerrainEntity > terrainEntity = gc_new< TerrainEntity >();
-		if (terrainEntity->create(m_renderSystem, static_cast< const TerrainEntityData& >(entityData)))
+		if (terrainEntity->create(m_resourceManager, m_renderSystem, static_cast< const TerrainEntityData& >(entityData)))
 			return terrainEntity;
 	}
 	else if (is_a< OceanEntityData >(&entityData))
 	{
 		Ref< OceanEntity > oceanEntity = gc_new< OceanEntity >();
-		if (oceanEntity->create(m_renderSystem, static_cast< const OceanEntityData& >(entityData)))
+		if (oceanEntity->create(m_resourceManager, m_renderSystem, static_cast< const OceanEntityData& >(entityData)))
 			return oceanEntity;
 	}
 	else if (is_a< UndergrowthEntityData >(&entityData))
-		entity = static_cast< const UndergrowthEntityData* >(&entityData)->createEntity(m_renderSystem);
+		entity = static_cast< const UndergrowthEntityData* >(&entityData)->createEntity(m_resourceManager, m_renderSystem);
 
 	return entity;
 }

@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -38,7 +45,7 @@ class T_DLLCLASS PostProcessStep : public Serializable
 	T_RTTI_CLASS(PostProcessStep)
 
 public:
-	virtual bool create(PostProcess* postProcess, render::RenderSystem* renderSystem) = 0;
+	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) = 0;
 
 	virtual void destroy(PostProcess* postProcess) = 0;
 
