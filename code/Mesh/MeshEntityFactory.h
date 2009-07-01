@@ -2,7 +2,7 @@
 #define traktor_mesh_MeshEntityFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityFactory.h"
+#include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +24,7 @@ class IResourceManager;
 	namespace mesh
 	{
 
-class T_DLLCLASS MeshEntityFactory : public world::EntityFactory
+class T_DLLCLASS MeshEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS(MeshEntityFactory)
 
@@ -33,7 +33,7 @@ public:
 
 	virtual const TypeSet getEntityTypes() const;
 
-	virtual world::Entity* createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const;
+	virtual world::Entity* createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData) const;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

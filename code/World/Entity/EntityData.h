@@ -1,7 +1,6 @@
 #ifndef traktor_world_EntityData_H
 #define traktor_world_EntityData_H
 
-#include <string>
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -28,16 +27,6 @@ namespace traktor
 class T_DLLCLASS EntityData : public Serializable
 {
 	T_RTTI_CLASS(EntityData)
-
-public:
-	void setName(const std::wstring& name);
-
-	const std::wstring& getName() const;
-
-	virtual bool serialize(Serializer& s);
-
-private:
-	std::wstring m_name;
 };
 
 	}

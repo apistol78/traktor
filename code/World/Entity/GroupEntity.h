@@ -27,13 +27,9 @@ class T_DLLCLASS GroupEntity : public Entity
 public:
 	GroupEntity();
 
-	GroupEntity(const std::wstring& name);
-
 	virtual ~GroupEntity();
 
 	virtual void destroy();
-
-	const std::wstring& getName() const;
 
 	void addEntity(Entity* entity);
 	
@@ -51,26 +47,6 @@ public:
 	
 	Entity* getFirstEntityOfRecursive(const Type& entityType) const;
 
-	/*! \brief Find named child group.
-	 *
-	 * Iterate through it's children to find a named
-	 * child group.
-	 * Do NOT use this frequently as it relies on rtti
-	 * types to investigate children entities and thus
-	 * are really slow.
-	 */
-	GroupEntity* findChildGroup(const std::wstring& name) const;
-
-	/*! \brief Find named child group recursively.
-	 *
-	 * Iterate through it's children to find a named
-	 * child group.
-	 * Do NOT use this frequently as it relies on rtti
-	 * types to investigate children entities and thus
-	 * are really slow.
-	 */
-	GroupEntity* findChildGroupRecursive(const std::wstring& name) const;
-	
 	virtual void update(const EntityUpdate* update);	
 
 	/*! \name Template helpers. */
@@ -105,7 +81,6 @@ public:
 private:
 	friend class GroupEntityFactory;
 
-	std::wstring m_name;
 	RefArray< Entity > m_entities;
 	bool m_update;
 	RefArray< Entity > m_remove;

@@ -2,7 +2,7 @@
 #define traktor_animation_AnimatedMeshEntityFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityFactory.h"
+#include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ class PhysicsManager;
 /*! \brief Animated mesh entity factory.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshEntityFactory : public world::EntityFactory
+class T_DLLCLASS AnimatedMeshEntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS(AnimatedMeshEntityFactory)
 
@@ -36,7 +36,7 @@ public:
 
 	virtual const TypeSet getEntityTypes() const;
 
-	virtual world::Entity* createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const;
+	virtual world::Entity* createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData) const;
 
 private:
 	Ref< physics::PhysicsManager > m_physicsManager;

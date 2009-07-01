@@ -1,5 +1,5 @@
-#ifndef traktor_world_EntityRenderer_H
-#define traktor_world_EntityRenderer_H
+#ifndef traktor_world_IEntityRenderer_H
+#define traktor_world_IEntityRenderer_H
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
@@ -29,9 +29,9 @@ class WorldRenderView;
  * The entity renderer is responsible of
  * producing render commands from entity instances.
  */
-class T_DLLCLASS EntityRenderer : public Object
+class T_DLLCLASS IEntityRenderer : public Object
 {
-	T_RTTI_CLASS(EntityRenderer)
+	T_RTTI_CLASS(IEntityRenderer)
 
 public:
 	virtual const TypeSet getEntityTypes() const = 0;
@@ -59,4 +59,4 @@ public:
 	}
 }
 
-#endif	// traktor_world_EntityRenderer_H
+#endif	// traktor_world_IEntityRenderer_H

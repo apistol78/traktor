@@ -28,7 +28,7 @@ void SceneEditorProfile::createResourceFactories(
 
 void SceneEditorProfile::createEntityFactories(
 	SceneEditorContext* context,
-	RefArray< world::EntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 }
@@ -37,7 +37,7 @@ void SceneEditorProfile::createEntityRenderers(
 	SceneEditorContext* context,
 	render::RenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
-	RefArray< world::EntityRenderer >& outEntityRenderers
+	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 }

@@ -16,7 +16,8 @@ namespace traktor
 	namespace world
 	{
 
-class EntityBuilder;
+class IEntityBuilder;
+class EntityInstance;
 
 	}
 
@@ -47,7 +48,7 @@ public:
 	};
 
 	ArticulatedEntity* createEntity(
-		world::EntityBuilder* builder,
+		world::IEntityBuilder* builder,
 		PhysicsManager* physicsManager
 	) const;
 
@@ -55,12 +56,12 @@ public:
 	
 	virtual bool serialize(Serializer& s);
 
-	const RefArray< RigidEntityData >& getEntities() const { return m_entities; }
+	const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
 
 	const std::vector< Constraint >& getConstraints() const { return m_constraints; }
 
 private:
-	RefArray< RigidEntityData > m_entities;
+	RefArray< world::EntityInstance > m_instances;
 	std::vector< Constraint > m_constraints;
 };
 

@@ -2,7 +2,7 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldContext.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 #include "World/Entity/Entity.h"
 #include "World/PostProcess/PostProcess.h"
 #include "Render/RenderSystem.h"

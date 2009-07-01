@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class EntityManager;
+class IEntityManager;
 class Entity;
 class WorldRenderSettings;
 
@@ -32,19 +32,19 @@ class T_DLLCLASS Scene : public Object
 
 public:
 	Scene(
-		world::EntityManager* entityManager,
+		world::IEntityManager* entityManager,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings
 	);
 
-	world::EntityManager* getEntityManager() const;
+	world::IEntityManager* getEntityManager() const;
 
 	world::Entity* getRootEntity() const;
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
 private:
-	Ref< world::EntityManager > m_entityManager;
+	Ref< world::IEntityManager > m_entityManager;
 	Ref< world::Entity > m_rootEntity;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 };

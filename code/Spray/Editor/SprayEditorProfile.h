@@ -28,14 +28,14 @@ public:
 
 	virtual void createEntityFactories(
 		scene::SceneEditorContext* context,
-		RefArray< world::EntityFactory >& outEntityFactories
+		RefArray< world::IEntityFactory >& outEntityFactories
 	) const;
 
 	virtual void createEntityRenderers(
 		scene::SceneEditorContext* context,
 		render::RenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
-		RefArray< world::EntityRenderer >& outEntityRenderers
+		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;
 };
 

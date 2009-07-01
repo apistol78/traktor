@@ -1,5 +1,5 @@
 #include "Scene/Editor/EntityClipboardData.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -10,19 +10,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.EntityClipboardData", EntityClipboardData, Serializable)
 
-void EntityClipboardData::addEntityData(world::EntityData* entityData)
+void EntityClipboardData::addInstance(world::EntityInstance* instance)
 {
-	m_entityData.push_back(entityData);
+	m_instances.push_back(instance);
 }
 
-const RefArray< world::EntityData >& EntityClipboardData::getEntityData() const
+const RefArray< world::EntityInstance >& EntityClipboardData::getInstances() const
 {
-	return m_entityData;
+	return m_instances;
 }
 
 bool EntityClipboardData::serialize(Serializer& s)
 {
-	return s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
+	return s >> MemberRefArray< world::EntityInstance >(L"instances", m_instances);
 }
 
 	}

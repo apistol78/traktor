@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntityRenderer_H
 #define traktor_world_GroupEntityRenderer_H
 
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Group entity renderer.
  * \ingroup World
  */
-class T_DLLCLASS GroupEntityRenderer : public EntityRenderer
+class T_DLLCLASS GroupEntityRenderer : public IEntityRenderer
 {
 	T_RTTI_CLASS(GroupEntityRenderer)
 

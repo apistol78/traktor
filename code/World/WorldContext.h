@@ -28,7 +28,7 @@ class RenderContext;
 	{
 
 class Entity;
-class EntityRenderer;
+class IEntityRenderer;
 class WorldRenderer;
 class WorldEntityRenderers;
 class WorldRenderView;
@@ -54,7 +54,7 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::RenderContext > m_renderContext;
 	const Type* m_lastEntityType;
-	Ref< EntityRenderer > m_lastEntityRenderer;
+	Ref< IEntityRenderer > m_lastEntityRenderer;
 };
 
 	}

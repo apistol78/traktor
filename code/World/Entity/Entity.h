@@ -52,6 +52,26 @@ public:
 	 * \param update Update message.
 	 */
 	virtual void update(const EntityUpdate* update) = 0;
+
+	/*! \brief Add entity reference.
+	 *
+	 * \note This method doesn't do anything,
+	 * if you want to keep references then you
+	 * have to overload this method.
+	 *
+	 * \param reference Entity reference.
+	 */
+	virtual void addReference(Entity* reference);
+
+	/*! \brief Add entity referee.
+	 *
+	 * \note This method doesn't do anything,
+	 * if you want to keep references then you
+	 * have to overload this method.
+	 *
+	 * \param reference Entity reference.
+	 */
+	virtual void addReferee(Entity* referee);
 };
 
 	}

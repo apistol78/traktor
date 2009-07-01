@@ -30,9 +30,6 @@ const Guid& ExternalEntityData::getGuid() const
 
 bool ExternalEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	return s >> Member< Guid >(L"guid", m_guid, &type_of< EntityData >());
 }
 

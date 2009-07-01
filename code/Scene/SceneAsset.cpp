@@ -1,6 +1,6 @@
 #include "Scene/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -26,20 +26,20 @@ world::WorldRenderSettings* SceneAsset::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneAsset::setEntityData(world::EntityData* entityData)
+void SceneAsset::setInstance(world::EntityInstance* instance)
 {
-	m_entityData = entityData;
+	m_instance = instance;
 }
 
-world::EntityData* SceneAsset::getEntityData() const
+world::EntityInstance* SceneAsset::getInstance() const
 {
-	return m_entityData;
+	return m_instance;
 }
 
 bool SceneAsset::serialize(Serializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
+	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
 	return true;
 }
 

@@ -11,21 +11,27 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>1</shadowMapBias>
 	</worldRenderSettings>
-	<entityData type="traktor.world.GroupEntityData">
-		<name>Root</name>
-		<entityData>
-			<item type="traktor.world.DirectionalLightEntityData">
-				<name>Light</name>
-				<transform>
-					0.812132, 0, -0.583474, 0, 
-					-0.406596, 0.717214, -0.565936, 0, 
-					0.418476, 0.696853, 0.582472, 0, 
-					0, 7.8, 0, 1
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
-			</item>
-		</entityData>
-	</entityData>
+  <instance type="traktor.world.EntityInstance">
+    <name>Root</name>
+    <entityData type="traktor.world.GroupEntityData">
+      <instances>
+        <item type="traktor.world.EntityInstance">
+          <name>Light</name>
+          <entityData type="traktor.world.DirectionalLightEntityData">
+            <transform>
+              0.812132, 0, -0.583474, 0,
+              -0.406596, 0.717214, -0.565936, 0,
+              0.418476, 0.696853, 0.582472, 0,
+              0, 7.8, 0, 1
+            </transform>
+            <sunColor>1, 1, 1, 0</sunColor>
+            <baseColor>0.5, 0.5, 0.5, 0</baseColor>
+            <shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
+          </entityData>
+          <references/>
+        </item>
+      </instances>
+    </entityData>
+    <references/>
+  </instance>
 </object>

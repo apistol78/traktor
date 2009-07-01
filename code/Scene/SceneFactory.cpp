@@ -1,7 +1,7 @@
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneAsset.h"
 #include "Scene/Scene.h"
-#include "World/Entity/EntityBuilder.h"
+#include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
@@ -14,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(db::Database* database, world::EntityBuilder* entityBuilder)
+SceneFactory::SceneFactory(db::Database* database, world::IEntityBuilder* entityBuilder)
 :	m_database(database)
 ,	m_entityBuilder(entityBuilder)
 {
@@ -33,13 +33,15 @@ Object* SceneFactory::create(resource::IResourceManager* resourceManager, const 
 	if (!asset)
 		return 0;
 
-	Ref< world::EntityManager > entityManager = gc_new< world::EntityManager >();
+	Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
 
-	m_entityBuilder->setEntityManager(entityManager);
+	m_entityBuilder->begin(entityManager);
 
-	Ref< world::Entity > rootEntity = m_entityBuilder->build(asset->getEntityData());
+	Ref< world::Entity > rootEntity = m_entityBuilder->build(
+		asset->getInstance()
+	);
 	
-	m_entityBuilder->setEntityManager(0);
+	m_entityBuilder->end();
 
 	if (!rootEntity)
 		return 0;

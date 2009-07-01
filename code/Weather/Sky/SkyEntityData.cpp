@@ -131,9 +131,6 @@ SkyEntity* SkyEntityData::createEntity(resource::IResourceManager* resourceManag
 
 bool SkyEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }
 

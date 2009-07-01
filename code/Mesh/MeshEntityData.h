@@ -24,7 +24,7 @@ class IResourceManager;
 	namespace world
 	{
 
-class EntityBuilder;
+class IEntityBuilder;
 
 	}
 
@@ -38,7 +38,7 @@ class T_DLLCLASS MeshEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(MeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const = 0;
+	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const = 0;
 };
 
 	}

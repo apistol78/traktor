@@ -51,7 +51,7 @@ void ArticulatedEntityEditor::drawGuide(
 ) const
 {
 	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getEntityData());
-	const RefArray< RigidEntityData >& entities = articulatedEntityData->getEntities();
+	const RefArray< world::EntityInstance >& instances = articulatedEntityData->getInstances();
 	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 
 	Matrix44 transform = articulatedEntityData->getTransform();
@@ -64,13 +64,13 @@ void ArticulatedEntityEditor::drawGuide(
 		if (constraint.entityIndex1 < 0)
 			continue;
 
-		Ref< RigidEntityData > entityData1 = entities[constraint.entityIndex1];
-		Ref< RigidEntityData > entityData2 = constraint.entityIndex2 >= 0 ? entities[constraint.entityIndex2] : 0;
+		Ref< world::EntityInstance > instance1 = instances[constraint.entityIndex1];
+		Ref< world::EntityInstance > instance2 = constraint.entityIndex2 >= 0 ? instances[constraint.entityIndex2] : 0;
 
-		Ref< scene::EntityAdapter > entity1 = context->findEntityFromData(entityData1, 0);
-		Ref< scene::EntityAdapter > entity2 = entityData2 ? context->findEntityFromData(entityData2, 0) : 0;
+		Ref< scene::EntityAdapter > entity1 = context->findAdapterFromInstance(instance1);
+		Ref< scene::EntityAdapter > entity2 = instance2 ? context->findAdapterFromInstance(instance2) : 0;
 
-		Matrix44 body1OriginalTransformInv = entityData1->getTransform().inverseOrtho();
+		Matrix44 body1OriginalTransformInv = entity1->getTransform().inverseOrtho();
 		Matrix44 body1Transform = entity1->getTransform();
 		Matrix44 jointTransform = transform * body1OriginalTransformInv * body1Transform;
 		Vector4 body1Center = body1Transform.translation();
@@ -268,9 +268,9 @@ void ArticulatedEntityEditor::drawGuide(
 		}
 	}
 
-	for (RefArray< RigidEntityData >::const_iterator i = entities.begin(); i != entities.end(); ++i)
+	for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 	{
-		Ref< scene::EntityAdapter > entityAdapter = context->findEntityFromData(*i, 0);
+		Ref< scene::EntityAdapter > entityAdapter = context->findAdapterFromInstance(*i);
 		if (entityAdapter)
 			context->drawGuide(primitiveRenderer, entityAdapter);
 	}

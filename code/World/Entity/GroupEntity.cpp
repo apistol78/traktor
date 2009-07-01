@@ -14,12 +14,6 @@ GroupEntity::GroupEntity()
 {
 }
 
-GroupEntity::GroupEntity(const std::wstring& name)
-:	m_name(name)
-,	m_update(false)
-{
-}
-
 GroupEntity::~GroupEntity()
 {
 	destroy();
@@ -27,6 +21,7 @@ GroupEntity::~GroupEntity()
 
 void GroupEntity::destroy()
 {
+	T_ASSERT_M (!m_update, L"Cannot destroy group while in update");
 	T_ASSERT (m_remove.empty());
 	for (RefArray< Entity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
@@ -34,11 +29,6 @@ void GroupEntity::destroy()
 			(*i)->destroy();
 	}
 	m_entities.resize(0);
-}
-
-const std::wstring& GroupEntity::getName() const
-{
-	return m_name;
 }
 
 void GroupEntity::addEntity(Entity* entity)
@@ -126,38 +116,6 @@ Entity* GroupEntity::getFirstEntityOfRecursive(const Type& entityType) const
 		}
 	}
 	return entity;
-}
-
-GroupEntity* GroupEntity::findChildGroup(const std::wstring& name) const
-{
-	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
-	{
-		GroupEntity* childGroup = dynamic_type_cast< GroupEntity* >(*i);
-		if (!childGroup)
-			continue;
-
-		if (childGroup->m_name == name)
-			return childGroup;
-	}
-	return 0;
-}
-
-GroupEntity* GroupEntity::findChildGroupRecursive(const std::wstring& name) const
-{
-	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
-	{
-		GroupEntity* childGroup = dynamic_type_cast< GroupEntity* >(*i);
-		if (!childGroup)
-			continue;
-
-		if (childGroup->m_name == name)
-			return childGroup;
-
-		childGroup = childGroup->findChildGroupRecursive(name);
-		if (childGroup)
-			return childGroup;
-	}
-	return 0;
 }
 
 void GroupEntity::update(const EntityUpdate* update)

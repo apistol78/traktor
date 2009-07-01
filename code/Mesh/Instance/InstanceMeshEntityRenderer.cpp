@@ -10,7 +10,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshEntityRenderer", InstanceMeshEntityRenderer, world::EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshEntityRenderer", InstanceMeshEntityRenderer, world::IEntityRenderer)
 
 const TypeSet InstanceMeshEntityRenderer::getEntityTypes() const
 {

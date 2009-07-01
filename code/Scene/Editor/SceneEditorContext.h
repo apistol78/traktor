@@ -54,8 +54,9 @@ class PhysicsManager;
 	namespace world
 	{
 
-class Entity;
+class EntityInstance;
 class EntityData;
+class Entity;
 
 	}
 
@@ -174,8 +175,6 @@ public:
 	 */
 	void resetEntities();
 
-	void updateModified();
-
 	void buildEntities();
 
 	void selectEntity(EntityAdapter* entityAdapter, bool select = true);
@@ -185,7 +184,7 @@ public:
 	/*! \brief Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
-	EntityAdapter* findEntityFromData(const world::EntityData* entityData, int index) const;
+	EntityAdapter* findAdapterFromInstance(const world::EntityInstance* instance) const;
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
 

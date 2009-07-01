@@ -34,14 +34,10 @@ const OceanEntityData::Wave& OceanEntityData::getWave(int index) const
 
 bool OceanEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> Member< float >(L"altitude", m_altitude);
 	s >> MemberStaticArray< Wave, MaxWaves, MemberComposite< Wave > >(L"waves", m_waves);
-
 	return true;
 }
 

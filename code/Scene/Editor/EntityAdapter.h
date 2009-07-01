@@ -21,6 +21,7 @@ namespace traktor
 	namespace world
 	{
 
+class EntityInstance;
 class EntityData;
 class Entity;
 
@@ -33,7 +34,7 @@ class EntityEditor;
 
 /*! \brief Entity adapter class.
  *
- * Map between Entity and EntityData instances.
+ * Map between EntityInstance and Entity.
  * Also keep parent-child relationship of entities.
  */
 class T_DLLCLASS EntityAdapter : public Object
@@ -41,10 +42,12 @@ class T_DLLCLASS EntityAdapter : public Object
 	T_RTTI_CLASS(EntityAdapter)
 
 public:
-	EntityAdapter(world::EntityData* entityData);
+	EntityAdapter(world::EntityInstance* instance);
 
 	/*! \name Accessors */
 	//@{
+
+	world::EntityInstance* getInstance() const;
 
 	world::EntityData* getEntityData() const;
 
@@ -92,8 +95,6 @@ public:
 
 	bool isGroup() const;
 
-	void setParent(EntityAdapter* parent);
-
 	EntityAdapter* getParent() const;
 
 	EntityAdapter* getParentGroup();
@@ -104,13 +105,9 @@ public:
 
 	void removeChild(EntityAdapter* child, bool modifyEntityData);
 
-	void removeFromParent();
-
-	void removeAllChildren();
-
-	void setChildren(const RefArray< EntityAdapter >& children);
-
 	const RefArray< EntityAdapter >& getChildren() const;
+
+	void unlink();
 
 	//@}
 
@@ -128,13 +125,9 @@ public:
 
 	bool isSelected() const;
 
-	void updateModified();
+	void setHash(const MD5& hash);
 
-	void forceModified();
-
-	void resetModified();
-
-	bool isModified() const;
+	const MD5& getHash() const;
 
 	//@}
 
@@ -169,14 +162,13 @@ public:
 private:
 	friend class SceneEditorContext;
 
-	Ref< world::EntityData > m_entityData;
-	MD5 m_entityDataHash;
+	Ref< world::EntityInstance > m_instance;
+	MD5 m_hash;
 	Ref< world::Entity > m_entity;
 	Ref< EntityAdapter > m_parent;
 	RefArray< EntityAdapter > m_children;
 	Ref< EntityEditor > m_entityEditor;
 	bool m_selected;
-	bool m_modified;
 	Ref< Object > m_userObject;
 };
 

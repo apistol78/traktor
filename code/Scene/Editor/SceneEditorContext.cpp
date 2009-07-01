@@ -5,10 +5,9 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/Modifier.h"
 #include "Scene/Editor/EntityEditor.h"
-#include "Scene/Editor/EntityAdapterFactory.h"
+#include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/SceneAsset.h"
-#include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
 #include "Core/Log/Log.h"
@@ -213,58 +212,46 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 
 void SceneEditorContext::resetEntities()
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
+	//RefArray< EntityAdapter > entityAdapters;
+	//getEntities(entityAdapters);
 
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	{
-		if ((*i)->isSpatial())
-			(*i)->forceModified();
-	}
+	//for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	//{
+	//	if ((*i)->isSpatial())
+	//		(*i)->forceModified();
+	//}
 
-	buildEntities();
-}
+	//buildEntities();
 
-void SceneEditorContext::updateModified()
-{
-	// Update modified flags; we don't want to frequently check this as it's pretty expensive
-	// so each adapter has a flag indicating modified state of itself.
-	// This flag is automatically reset when entity has been rebuilt.
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-		(*i)->updateModified();
+	T_BREAKPOINT;
 }
 
 void SceneEditorContext::buildEntities()
 {
 	if (m_sceneAsset)
 	{
-		// Create entity adapter factory, tunnel all entity factories through our adapter factory.
-		Ref< EntityAdapterFactory > entityAdapterFactory = gc_new< EntityAdapterFactory >(this);
+		Ref< EntityAdapterBuilder > entityBuilder = gc_new< EntityAdapterBuilder >(this);
+
 		for (RefArray< SceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
 		{
-			RefArray< world::EntityFactory > entityFactories;
+			RefArray< world::IEntityFactory > entityFactories;
 			(*i)->createEntityFactories(this, entityFactories);
 
-			for (RefArray< world::EntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
-				entityAdapterFactory->addFactory(*j);
+			for (RefArray< world::IEntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
+				entityBuilder->addFactory(*j);
 		}
 
 		// (Re-)build entities.
 		{
-			entityAdapterFactory->beginBuild();
+			entityBuilder->begin(0);
+			entityBuilder->build(m_sceneAsset->getInstance());
+			entityBuilder->end();
 
-			// As some entities might cache the entity builder we remove out adapter
-			// factory as soon as the entities has been built; so if any entity
-			// creates another entity later it will fail gracefully.
-			Ref< world::EntityBuilder > entityBuilder = gc_new< world::EntityBuilder >();
-			entityBuilder->addFactory(entityAdapterFactory);
-			entityBuilder->build(m_sceneAsset->getEntityData());
-			entityBuilder->removeFactory(entityAdapterFactory);
+			// Save new root entity adapter.
+			m_rootEntityAdapter = entityBuilder->getRootAdapter();
 
-			m_rootEntityAdapter = entityAdapterFactory->endBuild();
+			// Ensure no references exist to our entity builder; not allowed to cache it.
+			Heap::getInstance().invalidateRefs(entityBuilder);
 		}
 
 		// Attach entity editors.
@@ -343,14 +330,14 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	return uint32_t(outEntityAdapters.size());
 }
 
-EntityAdapter* SceneEditorContext::findEntityFromData(const world::EntityData* entityData, int index) const
+EntityAdapter* SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
 {
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		if ((*i)->getEntityData() == entityData && index-- <= 0)
+		if ((*i)->getInstance() == instance)
 			return *i;
 	}
 

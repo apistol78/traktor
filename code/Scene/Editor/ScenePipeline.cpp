@@ -1,6 +1,6 @@
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/SceneAsset.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity/EntityInstance.h"
 #include "Editor/PipelineManager.h"
 #include "Database/Instance.h"
 #include "Core/Log/Log.h"
@@ -40,7 +40,7 @@ bool ScenePipeline::buildDependencies(
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineManager->addDependency(sceneAsset->getEntityData());
+	pipelineManager->addDependency(sceneAsset->getInstance());
 	return true;
 }
 

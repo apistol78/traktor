@@ -11,7 +11,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::IEntityRenderer)
 
 EffectEntityRenderer::EffectEntityRenderer(render::RenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
 :	m_pointRenderer(gc_new< PointRenderer >(renderSystem, cullNearDistance, fadeNearRange))

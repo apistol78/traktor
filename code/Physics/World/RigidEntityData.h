@@ -16,7 +16,8 @@ namespace traktor
 	namespace world
 	{
 
-class EntityBuilder;
+class IEntityBuilder;
+class EntityInstance;
 
 	}
 
@@ -36,21 +37,19 @@ class T_DLLCLASS RigidEntityData : public world::SpatialEntityData
 
 public:
 	RigidEntity* createEntity(
-		world::EntityBuilder* builder,
+		world::IEntityBuilder* builder,
 		PhysicsManager* physicsManager
 	) const;
-	
-	virtual void setTransform(const Matrix44& transform);
 
 	virtual bool serialize(Serializer& s);
 
 	inline const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
 
-	inline const world::SpatialEntityData* getEntityData() const { return m_entityData; }
+	inline const world::EntityInstance* getInstance() const { return m_instance; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;
-	Ref< world::SpatialEntityData > m_entityData;
+	Ref< world::EntityInstance > m_instance;
 };
 
 	}

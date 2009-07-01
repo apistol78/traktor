@@ -17,5 +17,15 @@ void Entity::destroy()
 	// Nothing to destroy.
 }
 
+void Entity::addReference(Entity* reference)
+{
+	// Do nothing.
+}
+
+void Entity::addReferee(Entity* referee)
+{
+	// Do nothing.
+}
+
 	}
 }

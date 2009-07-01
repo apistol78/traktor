@@ -37,7 +37,7 @@ void AnimationEditorProfile::createResourceFactories(
 
 void AnimationEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::EntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(gc_new< AnimatedMeshEntityFactory >(context->getPhysicsManager()));
@@ -48,7 +48,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::RenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
-	RefArray< world::EntityRenderer >& outEntityRenderers
+	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 	outEntityRenderers.push_back(gc_new< PathEntityRenderer >());

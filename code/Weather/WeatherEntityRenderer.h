@@ -2,7 +2,7 @@
 #define traktor_weather_WeatherEntityRenderer_H
 
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +24,7 @@ class PrimitiveRenderer;
 	namespace weather
 	{
 
-class T_DLLCLASS WeatherEntityRenderer : public world::EntityRenderer
+class T_DLLCLASS WeatherEntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(WeatherEntityRenderer)
 

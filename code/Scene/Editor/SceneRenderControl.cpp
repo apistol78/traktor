@@ -183,10 +183,10 @@ void SceneRenderControl::updateWorldRenderer()
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
 	for (RefArray< SceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
-		RefArray< world::EntityRenderer > entityRenderers;
+		RefArray< world::IEntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 
-		for (RefArray< world::EntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 			worldEntityRenderers->add(*j);
 	}
 

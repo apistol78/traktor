@@ -53,7 +53,7 @@ void DefaultEditorProfile::createResourceFactories(
 
 void DefaultEditorProfile::createEntityFactories(
 	SceneEditorContext* context,
-	RefArray< world::EntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(gc_new< world::LightEntityFactory >());
@@ -67,7 +67,7 @@ void DefaultEditorProfile::createEntityRenderers(
 	SceneEditorContext* context,
 	render::RenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
-	RefArray< world::EntityRenderer >& outEntityRenderers
+	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 	outEntityRenderers.push_back(gc_new< world::LightEntityRenderer >());

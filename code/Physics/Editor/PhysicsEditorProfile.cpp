@@ -35,7 +35,7 @@ void PhysicsEditorProfile::createResourceFactories(
 
 void PhysicsEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::EntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(gc_new< EntityFactory >(context->getPhysicsManager()));
@@ -45,7 +45,7 @@ void PhysicsEditorProfile::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::RenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
-	RefArray< world::EntityRenderer >& outEntityRenderers
+	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 	outEntityRenderers.push_back(gc_new< EntityRenderer >());

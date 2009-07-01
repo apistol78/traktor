@@ -6,7 +6,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRenderer, world::EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRenderer, world::IEntityRenderer)
 
 const TypeSet PathEntityRenderer::getEntityTypes() const
 {

@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class EntityInstance;
+
+	}
+
 	namespace mesh
 	{
 
@@ -22,14 +29,14 @@ class T_DLLCLASS CompositeMeshEntityData : public MeshEntityData
 	T_RTTI_CLASS(CompositeMeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const;
+	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 
-	inline const RefArray< MeshEntityData >& getMeshEntities() const { return m_meshEntities; }
+	inline const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
 
 private:
-	RefArray< MeshEntityData > m_meshEntities;
+	RefArray< world::EntityInstance > m_instances;
 };
 
 	}

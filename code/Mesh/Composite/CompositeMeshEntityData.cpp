@@ -1,6 +1,7 @@
 #include "Mesh/Composite/CompositeMeshEntityData.h"
 #include "Mesh/Composite/CompositeMeshEntity.h"
-#include "World/Entity/EntityBuilder.h"
+#include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -11,10 +12,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.CompositeMeshEntityData", CompositeMeshEntityData, MeshEntityData)
 
-MeshEntity* CompositeMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const
+MeshEntity* CompositeMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
 	Ref< CompositeMeshEntity > compositeMeshEntity = gc_new< CompositeMeshEntity >(cref(getTransform()));
-	for (RefArray< MeshEntityData >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
+	for (RefArray< world::EntityInstance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
 		Ref< MeshEntity > meshEntity = dynamic_type_cast< MeshEntity* >(builder->build(*i));
 		if (meshEntity)
@@ -27,7 +28,7 @@ bool CompositeMeshEntityData::serialize(Serializer& s)
 {
 	if (!MeshEntityData::serialize(s))
 		return false;
-	return s >> MemberRefArray< MeshEntityData >(L"meshEntities", m_meshEntities);
+	return s >> MemberRefArray< world::EntityInstance >(L"instances", m_instances);
 }
 
 	}
