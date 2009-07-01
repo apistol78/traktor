@@ -24,7 +24,7 @@ class T_DLLCLASS InstanceMeshEntityData : public MeshEntityData
 	T_RTTI_CLASS(InstanceMeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::EntityBuilder* builder) const;
+	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 

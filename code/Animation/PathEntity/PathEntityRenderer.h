@@ -1,7 +1,7 @@
 #ifndef traktor_animation_PathEntityRenderer_H
 #define traktor_animation_PathEntityRenderer_H
 
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Movement path entity renderer.
  * \ingroup Animation
  */
-class T_DLLCLASS PathEntityRenderer : public world::EntityRenderer
+class T_DLLCLASS PathEntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(PathEntityRenderer)
 

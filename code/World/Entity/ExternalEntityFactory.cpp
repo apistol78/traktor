@@ -1,7 +1,7 @@
 #include "World/Entity/ExternalEntityFactory.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
-#include "World/Entity/EntityBuilder.h"
+#include "World/Entity/IEntityBuilder.h"
 #include "Database/Database.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ExternalEntityFactory", ExternalEntityFactory, EntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.ExternalEntityFactory", ExternalEntityFactory, IEntityFactory)
 
 ExternalEntityFactory::ExternalEntityFactory(db::Database* database)
 :	m_database(database)
@@ -24,7 +24,7 @@ const TypeSet ExternalEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* ExternalEntityFactory::createEntity(EntityBuilder* builder, const EntityData& entityData) const
+Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const
 {
 	Ref< EntityData > realEntityData;
 
@@ -45,7 +45,7 @@ Entity* ExternalEntityFactory::createEntity(EntityBuilder* builder, const Entity
 	if (!realEntityData)
 		return 0;
 
-	return builder->build(realEntityData);
+	return builder->create(name, realEntityData);
 }
 
 	}

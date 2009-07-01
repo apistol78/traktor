@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, IEntityRenderer)
 
 const TypeSet LightEntityRenderer::getEntityTypes() const
 {

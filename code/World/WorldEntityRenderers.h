@@ -18,7 +18,7 @@ namespace traktor
 	namespace world
 	{
 
-class EntityRenderer;
+class IEntityRenderer;
 
 /*! \brief World entity renderers.
  * \ingroup World
@@ -28,18 +28,18 @@ class T_DLLCLASS WorldEntityRenderers : public Object
 	T_RTTI_CLASS(WorldEntityRenderers)
 
 public:
-	typedef std::map< const Type*, EntityRenderer* > entity_renderer_map_t;
+	typedef std::map< const Type*, IEntityRenderer* > entity_renderer_map_t;
 
-	void add(EntityRenderer* entityRenderer);
+	void add(IEntityRenderer* entityRenderer);
 
-	void remove(EntityRenderer* entityRenderer);
+	void remove(IEntityRenderer* entityRenderer);
 
-	EntityRenderer* find(const Type& entityType) const;
+	IEntityRenderer* find(const Type& entityType) const;
 
-	const RefArray< EntityRenderer >& get() const { return m_entityRenderers; }
+	const RefArray< IEntityRenderer >& get() const { return m_entityRenderers; }
 
 private:
-	RefArray< EntityRenderer > m_entityRenderers;
+	RefArray< IEntityRenderer > m_entityRenderers;
 	entity_renderer_map_t m_entityRendererMap;
 };
 

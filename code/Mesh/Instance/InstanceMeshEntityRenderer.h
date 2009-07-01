@@ -4,7 +4,7 @@
 #include <map>
 #include "Core/Heap/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
 
@@ -21,7 +21,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS InstanceMeshEntityRenderer : public world::EntityRenderer
+class T_DLLCLASS InstanceMeshEntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(InstanceMeshEntityRenderer)
 

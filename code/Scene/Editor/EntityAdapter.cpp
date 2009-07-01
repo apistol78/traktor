@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityEditor.h"
+#include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/SpatialEntityData.h"
@@ -8,8 +9,6 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/SpatialGroupEntityData.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Core/Math/Const.h"
 
 namespace traktor
@@ -19,17 +18,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
-EntityAdapter::EntityAdapter(world::EntityData* entityData)
-:	m_entityData(entityData)
-,	m_entityDataHash(DeepHash(entityData).getMD5())
+EntityAdapter::EntityAdapter(world::EntityInstance* instance)
+:	m_instance(instance)
 ,	m_selected(false)
-,	m_modified(false)
 {
+}
+
+world::EntityInstance* EntityAdapter::getInstance() const
+{
+	return m_instance;
 }
 
 world::EntityData* EntityAdapter::getEntityData() const
 {
-	return m_entityData;
+	T_ASSERT (m_instance);
+	return m_instance->getEntityData();
 }
 
 void EntityAdapter::setEntity(world::Entity* entity)
@@ -44,22 +47,22 @@ world::Entity* EntityAdapter::getEntity() const
 
 std::wstring EntityAdapter::getName() const
 {
-	return m_entityData->getName();
+	return m_instance->getName();
 }
 
 std::wstring EntityAdapter::getTypeName() const
 {
-	return type_name(m_entityData);
+	return type_name(getEntityData());
 }
 
 bool EntityAdapter::isSpatial() const
 {
-	return is_a< world::SpatialEntityData >(m_entityData);
+	return is_a< world::SpatialEntityData >(getEntityData());
 }
 
 void EntityAdapter::setTransform(const Matrix44& transform)
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
 		spatialEntityData->setTransform(transform);
 	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
 		spatialEntity->setTransform(transform);
@@ -74,7 +77,7 @@ Matrix44 EntityAdapter::getTransform() const
 			return transform;
 	}
 
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
 		return spatialEntityData->getTransform();
 
 	return Matrix44::identity();
@@ -91,7 +94,7 @@ bool EntityAdapter::isExternal() const
 {
 	for (const EntityAdapter* entityAdapter = this; entityAdapter; entityAdapter = entityAdapter->m_parent)
 	{
-		if (is_a< world::ExternalEntityData >(entityAdapter->m_entityData) || is_a< world::ExternalSpatialEntityData >(entityAdapter->m_entityData))
+		if (is_a< world::ExternalEntityData >(entityAdapter->getEntityData()) || is_a< world::ExternalSpatialEntityData >(entityAdapter->getEntityData()))
 			return true;
 	}
 	return false;
@@ -107,12 +110,12 @@ bool EntityAdapter::isChildOfExternal() const
 
 bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 {
-	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(m_entityData))
+	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(getEntityData()))
 	{
 		outGuid = externalEntityData->getGuid();
 		return true;
 	}
-	if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(m_entityData))
+	if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(getEntityData()))
 	{
 		outGuid = externalSpatialEntityData->getGuid();
 		return true;
@@ -122,12 +125,7 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 
 bool EntityAdapter::isGroup() const
 {
-	return is_a< world::GroupEntityData >(m_entityData) || is_a< world::SpatialGroupEntityData >(m_entityData);
-}
-
-void EntityAdapter::setParent(EntityAdapter* parent)
-{
-	m_parent = parent;
+	return is_a< world::GroupEntityData >(getEntityData());
 }
 
 EntityAdapter* EntityAdapter::getParent() const
@@ -163,15 +161,8 @@ bool EntityAdapter::addChild(EntityAdapter* child, bool modifyEntityData)
 
 	if (modifyEntityData)
 	{
-		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(m_entityData))
-			groupEntityData->addEntityData(child->m_entityData);
-		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(m_entityData))
-		{
-			if (world::SpatialEntityData* childEntityData = dynamic_type_cast< world::SpatialEntityData* >(child->m_entityData))
-				spatialGroupEntityData->addEntityData(childEntityData);
-			else
-				return false;
-		}
+		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
+			groupEntityData->addInstance(child->getInstance());
 		else
 			return false;
 	}
@@ -189,47 +180,29 @@ void EntityAdapter::removeChild(EntityAdapter* child, bool modifyEntityData)
 
 	if (modifyEntityData)
 	{
-		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(m_entityData))
-			groupEntityData->removeEntityData(child->m_entityData);
-		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(m_entityData))
-			spatialGroupEntityData->removeEntityData(checked_type_cast< world::SpatialEntityData* >(child->m_entityData));
+		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
+			groupEntityData->removeInstance(child->getInstance());
 	}
 
 	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
 	T_ASSERT (i != m_children.end());
-
 	m_children.erase(i);
-}
 
-void EntityAdapter::removeFromParent()
-{
-	T_ASSERT (m_parent);
-
-	m_parent->removeChild(this, false);
-	m_parent = 0;
-}
-
-void EntityAdapter::removeAllChildren()
-{
-	// Recursively remove all children to ensure all links are broken.
-	for (RefArray< EntityAdapter >::iterator i = m_children.begin(); i != m_children.end(); ++i)
-	{
-		(*i)->setParent(0);
-		(*i)->removeAllChildren();
-	}
-	m_children.resize(0);
-}
-
-void EntityAdapter::setChildren(const RefArray< EntityAdapter >& children)
-{
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-		(*i)->m_parent = this;
-	m_children = children;
+	child->m_parent = 0;
 }
 
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
 {
 	return m_children;
+}
+
+void EntityAdapter::unlink()
+{
+	if (m_parent)
+	{
+		m_parent->removeChild(this, false);
+		m_parent = 0;
+	}
 }
 
 void EntityAdapter::setEntityEditor(EntityEditor* entityEditor)
@@ -247,33 +220,14 @@ bool EntityAdapter::isSelected() const
 	return m_selected;
 }
 
-void EntityAdapter::updateModified()
+void EntityAdapter::setHash(const MD5& hash)
 {
-	m_modified |= bool(DeepHash(m_entityData).getMD5() != m_entityDataHash);
+	m_hash = hash;
 }
 
-void EntityAdapter::forceModified()
+const MD5& EntityAdapter::getHash() const
 {
-	m_modified = true;
-}
-
-void EntityAdapter::resetModified()
-{
-	m_modified = false;
-}
-
-bool EntityAdapter::isModified() const
-{
-	if (m_modified)
-		return true;
-
-	for (RefArray< EntityAdapter >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
-	{
-		if ((*i)->isModified())
-			return true;
-	}
-
-	return false;
+	return m_hash;
 }
 
 void EntityAdapter::setUserObject(Object* userObject)

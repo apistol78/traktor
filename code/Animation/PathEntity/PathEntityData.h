@@ -18,7 +18,8 @@ namespace traktor
 	namespace world
 	{
 
-class EntityBuilder;
+class IEntityBuilder;
+class EntityInstance;
 
 	}
 
@@ -35,7 +36,7 @@ class T_DLLCLASS PathEntityData : public world::SpatialEntityData
 public:
 	PathEntityData();
 
-	PathEntity* createEntity(world::EntityBuilder* builder) const;
+	PathEntity* createEntity(world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 
@@ -45,12 +46,12 @@ public:
 
 	const PathEntity::TimeMode getTimeMode() const { return m_timeMode; }
 
-	const Ref< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
+	const Ref< world::EntityInstance >& getInstance() const { return m_instance; }
 
 private:
 	Path m_path;
 	PathEntity::TimeMode m_timeMode;
-	Ref< world::SpatialEntityData > m_entityData;
+	Ref< world::EntityInstance > m_instance;
 };
 
 	}

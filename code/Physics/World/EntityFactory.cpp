@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::EntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::IEntityFactory)
 
 EntityFactory::EntityFactory(physics::PhysicsManager* physicsManager)
 :	m_physicsManager(physicsManager)
@@ -25,7 +25,8 @@ const TypeSet EntityFactory::getEntityTypes() const
 }
 
 world::Entity* EntityFactory::createEntity(
-	world::EntityBuilder* builder,
+	world::IEntityBuilder* builder,
+	const std::wstring& name,
 	const world::EntityData& entityData
 ) const
 {

@@ -231,9 +231,9 @@ void RigidEntityEditor::drawGuide(
 	}
 
 	// Draw default guides of contained entity.
-	if (const world::SpatialEntityData* entityData = rigidEntityData->getEntityData())
+	if (const world::EntityInstance* instance = rigidEntityData->getInstance())
 	{
-		Ref< scene::EntityAdapter > entityAdapter = context->findEntityFromData(entityData, 0);
+		Ref< scene::EntityAdapter > entityAdapter = context->findAdapterFromInstance(instance);
 		if (entityAdapter)
 			context->drawGuide(primitiveRenderer, entityAdapter);
 	}

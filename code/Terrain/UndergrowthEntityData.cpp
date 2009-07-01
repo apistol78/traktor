@@ -89,9 +89,6 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 
 bool UndergrowthEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< MaterialMask, MaterialMaskResource >(L"materialMask", m_materialMask);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
@@ -99,7 +96,6 @@ bool UndergrowthEntityData::serialize(Serializer& s)
 	s >> Member< float >(L"spreadDistance", m_settings.spreadDistance);
 	s >> Member< float >(L"cellRadius", m_settings.cellRadius);
 	s >> Member< float >(L"plantScale", m_settings.plantScale);
-
 	return true;
 }
 

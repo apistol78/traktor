@@ -17,6 +17,8 @@ namespace traktor
 	namespace world
 	{
 
+class EntityInstance;
+
 /*! \brief Group entity data.
  * \ingroup World
  */
@@ -25,18 +27,20 @@ class T_DLLCLASS GroupEntityData : public EntityData
 	T_RTTI_CLASS(GroupEntityData)
 
 public:
-	void addEntityData(EntityData* entityData);
+	void addInstance(EntityInstance* instance);
 
-	void removeEntityData(EntityData* entityData);
+	void removeInstance(EntityInstance* instance);
 
-	RefArray< EntityData >& getEntityData();
+	void removeAllInstances();
 
-	const RefArray< EntityData >& getEntityData() const;
+	RefArray< EntityInstance >& getInstances();
+
+	const RefArray< EntityInstance >& getInstances() const;
 	
 	virtual bool serialize(Serializer& s);
 	
 private:
-	RefArray< EntityData > m_entityData;
+	RefArray< EntityInstance > m_instances;
 };
 	
 	}

@@ -41,6 +41,13 @@ class UndoStack;
 
 	}
 
+	namespace world
+	{
+
+class EntityData;
+
+	}
+
 	namespace scene
 	{
 
@@ -85,19 +92,19 @@ private:
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
-	Ref< ui::custom::GridView > m_entityGrid;
-	Ref< ui::Font > m_entityGridFontItalic;
-	Ref< ui::Font > m_entityGridFontBold;
+	Ref< ui::custom::GridView > m_instanceGrid;
+	Ref< ui::Font > m_instanceGridFontItalic;
+	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< editor::UndoStack > m_undoStack;
 	MD5 m_currentSettingsMD5;
 
-	void updateScene(bool updateModified);
+	SceneAsset* createWhiteRoomSceneAsset(world::EntityData* entityData);
+
+	void updateScene();
 
 	ui::custom::GridRow* createEntityListRow(EntityAdapter* entityAdapter);
 
-	void createEntityList();
-
-	void updateEntityList();
+	void updateInstanceGrid();
 
 	void updatePropertyObject();
 
@@ -111,13 +118,11 @@ private:
 
 	void eventEntityToolClick(ui::Event* event);
 
-	void eventEntityGridSelect(ui::Event* event);
+	void eventInstanceSelect(ui::Event* event);
 
-	void eventEntityGridButtonDown(ui::Event* event);
+	void eventInstanceButtonDown(ui::Event* event);
 
-	void eventEntityGridDoubleClick(ui::Event* event);
-
-	void eventEntityGridDragValid(ui::Event* event);
+	void eventInstanceDoubleClick(ui::Event* event);
 
 	void eventContextPostBuild(ui::Event* event);
 

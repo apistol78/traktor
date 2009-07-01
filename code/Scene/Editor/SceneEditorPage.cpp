@@ -14,6 +14,7 @@
 #include "Database/Database.h"
 #include "Physics/PhysicsManager.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Entity/EntityInstance.h"
 #include "World/Entity/SpatialEntity.h"
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -41,6 +42,7 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridDragEvent.h"
 #include "Ui/Custom/BackgroundWorkerDialog.h"
+#include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
 #include "Database/Instance.h"
 #include "Core/Thread/ThreadManager.h"
@@ -104,20 +106,19 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(m_toolLookAtEntity);
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
-	m_entityGrid = gc_new< ui::custom::GridView >();
-	m_entityGrid->create(m_entityPanel, ui::custom::GridView::WsDrag | ui::WsDoubleBuffer);
-	m_entityGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_entityGrid->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 300));
-	m_entityGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridSelect));
-	m_entityGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridButtonDown));
-	m_entityGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridDoubleClick));
-	m_entityGrid->addDragValidEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityGridDragValid));
+	m_instanceGrid = gc_new< ui::custom::GridView >();
+	m_instanceGrid->create(m_entityPanel, ui::custom::GridView::WsDrag | ui::WsDoubleBuffer);
+	m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
+	m_instanceGrid->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 300));
+	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
+	m_instanceGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceButtonDown));
+	m_instanceGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceDoubleClick));
 
-	m_entityGridFontItalic = gc_new< ui::Font >(cref(m_entityGrid->getFont()));
-	m_entityGridFontItalic->setItalic(true);
+	m_instanceGridFontItalic = gc_new< ui::Font >(cref(m_instanceGrid->getFont()));
+	m_instanceGridFontItalic->setItalic(true);
 
-	m_entityGridFontBold = gc_new< ui::Font >(cref(m_entityGrid->getFont()));
-	m_entityGridFontBold->setBold(true);
+	m_instanceGridFontBold = gc_new< ui::Font >(cref(m_instanceGrid->getFont()));
+	m_instanceGridFontBold->setBold(true);
 
 	m_context->getEditor()->createAdditionalPanel(m_entityPanel, 250, false);
 
@@ -185,79 +186,40 @@ void SceneEditorPage::deactivate()
 
 bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
-	Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(data);
-
-	// Hide edit control as long as we're preparing scene.
 	EnterLeave scopeVisible(
 		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, false),
 		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, true)
 	);
 
-	//// Prepare resource requests.
-	//resource::ResourceManager::getInstance().beginPrepareResources();
-
+	Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(data);
 	if (sceneAsset)
 	{
 		m_context->setSceneAsset(sceneAsset);
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 	}
 	else
 	{
 		Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(data);
 		if (!entityData)
-		{
-			//resource::ResourceManager::getInstance().endPrepareResources(true);
 			return false;
-		}
 
-		// Read white-room scene asset from system domain.
-		sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
-		T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
-
-		// Add our entity to white-room scene.
-		Ref< world::GroupEntityData > sceneRootGroup = checked_type_cast< world::GroupEntityData* >(sceneAsset->getEntityData());
-		sceneRootGroup->addEntityData(entityData);
+		sceneAsset = createWhiteRoomSceneAsset(entityData);
+		if (!sceneAsset)
+			return false;
 
 		m_context->setSceneAsset(sceneAsset);
-		updateScene(true);
+		updateScene();
 
-		// Put camera so entity is initially visible.
-		Ref< EntityAdapter > entityAdapter = m_context->findEntityFromData(entityData, 0);
-		T_ASSERT (entityAdapter);
-
-		Aabb boundingBox = entityAdapter->getBoundingBox();
-		float distance = !boundingBox.empty() ? boundingBox.getExtent().z() + 4.0f : 4.0f;
-		
 		m_context->setCamera(gc_new< Camera >(cref(translate(
 			0.0f,
 			0.0f,
-			-distance
+			-4.0f
 		))));
 
-		m_context->selectEntity(entityAdapter);
-
-		// Rebuild entity list.
-		createEntityList();
+		updateInstanceGrid();
 	}
-
-	//// Pre-load all resources; create loader thread.
-	//Thread* prepareResourcesThread = ThreadManager::getInstance().create(makeFunctor(
-	//	&resource::ResourceManager::getInstance(),
-	//	&resource::ResourceManager::endPrepareResources,
-	//	false
-	//));
-	//T_ASSERT (prepareResourcesThread);
-
-	//// Create loading dialog.
-	//ui::custom::BackgroundWorkerDialog loadingDialog;
-	//loadingDialog.create(m_editPanel, i18n::Text(L"SCENE_EDITOR_LOADING_TITLE"), i18n::Text(L"SCENE_EDITOR_LOADING"));
-	//loadingDialog.execute(prepareResourcesThread, 0);
-	//loadingDialog.destroy();
-
-	//// Destroy loader thread.
-	//ThreadManager::getInstance().destroy(prepareResourcesThread);
 
 	m_dataObject = checked_type_cast< Serializable* >(data);
 	updatePropertyObject();
@@ -272,8 +234,8 @@ Object* SceneEditorPage::getDataObject()
 
 void SceneEditorPage::propertiesChanged()
 {
-	updateScene(true);
-	createEntityList();
+	updateScene();
+	updateInstanceGrid();
 }
 
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -287,7 +249,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Get selected items, must be a single item.
 		RefArray< ui::custom::GridRow > selectedRows;
-		if (m_entityGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly) == 1)
+		if (m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly) == 1)
 		{
 			Ref< EntityAdapter > selectedEntity = selectedRows[0]->getData< EntityAdapter >(L"ENTITY");
 			T_ASSERT (selectedEntity);
@@ -296,7 +258,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 			if (!parentGroupAdapter)
 					return false;
 		}
-		else if (m_context->getSceneAsset()->getEntityData())
+		else if (m_context->getSceneAsset()->getInstance())
 		{
 			parentGroupAdapter = m_context->getRootEntityAdapter();
 			if (!parentGroupAdapter)
@@ -322,20 +284,19 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		else
 			entityData = gc_new< world::ExternalEntityData >(cref(instance->getGuid()));
 
-		entityData->setName(instance->getName());
-
 		m_undoStack->push(m_dataObject);
 
-		// Create adapter and update scene.
-		Ref< EntityAdapter > entityAdapter = gc_new< EntityAdapter >(entityData);
+		// Create instance and adapter.
+		Ref< world::EntityInstance > entityInstance = gc_new< world::EntityInstance >(cref(instance->getName()), entityData);
+		Ref< EntityAdapter > entityAdapter = gc_new< EntityAdapter >(entityInstance);
 
 		if (parentGroupAdapter)
 			parentGroupAdapter->addChild(entityAdapter, true);
 		else
-			m_context->getSceneAsset()->setEntityData(entityData);
+			m_context->getSceneAsset()->setInstance(entityInstance);
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (is_type_of< world::PostProcessSettings >(*primaryType))
@@ -367,19 +328,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		}
 		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
 		{
-			// Read white-room scene asset from system domain.
-			Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
-			T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
-
-			// Add our entity to white-room scene.
-			Ref< world::GroupEntityData > sceneRootGroup = checked_type_cast< world::GroupEntityData* >(sceneAsset->getEntityData());
-			sceneRootGroup->addEntityData(entityData);
-
-			m_context->setSceneAsset(sceneAsset);
+			Ref< SceneAsset > sceneAsset = createWhiteRoomSceneAsset(entityData);
+			if (sceneAsset)
+				m_context->setSceneAsset(sceneAsset);
+			else
+				log::warning << L"Unable to undo scene" << Endl;
 		}
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (command == L"Editor.Redo")
@@ -395,19 +352,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		}
 		else if (Ref< world::EntityData > entityData = dynamic_type_cast< world::EntityData* >(m_dataObject))
 		{
-			// Read white-room scene asset from system domain.
-			Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
-			T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
-
-			// Add our entity to white-room scene.
-			Ref< world::GroupEntityData > sceneRootGroup = checked_type_cast< world::GroupEntityData* >(sceneAsset->getEntityData());
-			sceneRootGroup->addEntityData(entityData);
-
-			m_context->setSceneAsset(sceneAsset);
+			Ref< SceneAsset > sceneAsset = createWhiteRoomSceneAsset(entityData);
+			if (sceneAsset)
+				m_context->setSceneAsset(sceneAsset);
+			else
+				log::warning << L"Unable to redo scene" << Endl;
 		}
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
@@ -422,7 +375,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		Ref< EntityClipboardData > entityClipboardData = gc_new< EntityClipboardData >();
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
-			entityClipboardData->addEntityData((*i)->getEntityData());
+			entityClipboardData->addInstance((*i)->getInstance());
 			if (command == L"Editor.Cut")
 			{
 				Ref< EntityAdapter > parentGroupAdapter = (*i)->getParentContainerGroup();
@@ -435,8 +388,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		if (command == L"Editor.Cut")
 		{
-			updateScene(true);
-			createEntityList();
+			updateScene();
+			updateInstanceGrid();
 		}
 	}
 	else if (command == L"Editor.Paste")
@@ -458,13 +411,16 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		m_undoStack->push(m_dataObject);
 
-		// Create new adapters for each entity found in clipboard.
-		const RefArray< world::EntityData >& entityData = entityClipboardData->getEntityData();
-		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
-			parentEntity->addChild(gc_new< EntityAdapter >(*i), true);
+		// Create new instances and adapters for each entity found in clipboard.
+		const RefArray< world::EntityInstance >& instances = entityClipboardData->getInstances();
+		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		{
+			Ref< EntityAdapter > adapter = gc_new< EntityAdapter >(*i);
+			parentEntity->addChild(adapter, true);
+		}
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 	}
 	else if (command == L"Editor.Delete")
 	{
@@ -481,15 +437,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				parentGroupAdapter->removeChild((*i), true);
 		}
 
-		updateScene(true);
-		createEntityList();
+		updateScene();
+		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (command == L"Editor.SelectAll")
 	{
 		m_context->selectAllEntities();
 
-		createEntityList();
+		updateInstanceGrid();
 		updatePropertyObject();
 	}
 	else if (command == L"Scene.Editor.AddEntity")
@@ -513,39 +469,27 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_context)
 		m_context->getResourceManager()->getCache()->flush(eventId);
-
-	// Check all external entities; might be such an entity which has been modified.
-	bool anyExternalDirty = false;
-	if (m_context)
-	{
-		RefArray< EntityAdapter > entityAdapters;
-		m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
-
-		for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-		{
-			Guid externalGuid;
-			if ((*i)->getExternalGuid(externalGuid) && externalGuid == eventId)
-			{
-				(*i)->forceModified();
-				anyExternalDirty = true;
-			}
-		}
-	}
-
-	if (anyExternalDirty)
-	{
-		updateScene(false);
-		createEntityList();
-	}
-	else
-		updateScene(true);
 }
 
-void SceneEditorPage::updateScene(bool updateModified)
+SceneAsset* SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
 {
-	if (updateModified)
-		m_context->updateModified();
+	// Create temporary instance from entity data.
+	Ref< world::EntityInstance > instance = gc_new< world::EntityInstance >(L"Entity", entityData);
 
+	// Read white-room scene asset from system database.
+	Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
+	T_ASSERT_M (sceneAsset, L"Unable to open white-room scene");
+
+	// Add our entity to white-room scene.
+	Ref< world::EntityInstance > rootInstance = sceneAsset->getInstance();
+	Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData* >(rootInstance->getEntityData());
+	rootGroup->addInstance(instance);
+
+	return sceneAsset;
+}
+
+void SceneEditorPage::updateScene()
+{
 	m_context->buildEntities();
 
 	Ref< world::WorldRenderSettings > newSettings = m_context->getSceneAsset()->getWorldRenderSettings();
@@ -570,12 +514,12 @@ ui::custom::GridRow* SceneEditorPage::createEntityListRow(EntityAdapter* entityA
 	if (entityAdapter->isChildOfExternal())
 	{
 		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 0));
-		row->setFont(m_entityGridFontItalic);
+		row->setFont(m_instanceGridFontItalic);
 	}
 	else if (entityAdapter->isExternal())
 	{
 		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 1));
-		row->setFont(m_entityGridFontBold);
+		row->setFont(m_instanceGridFontBold);
 	}
 	else if (entityAdapter->isGroup())
 		row->addItem(gc_new< ui::custom::GridItem >(entityAdapter->getName(), 2, 3));
@@ -594,9 +538,9 @@ ui::custom::GridRow* SceneEditorPage::createEntityListRow(EntityAdapter* entityA
 	return row;
 }
 
-void SceneEditorPage::createEntityList()
+void SceneEditorPage::updateInstanceGrid()
 {
-	m_entityGrid->removeAllRows();
+	m_instanceGrid->removeAllRows();
 
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters);
@@ -611,42 +555,11 @@ void SceneEditorPage::createEntityList()
 		if (entityRow)
 		{
 			entityRow->setState(entityRow->getState() | ui::custom::GridRow::RsExpanded);
-			m_entityGrid->addRow(entityRow);
+			m_instanceGrid->addRow(entityRow);
 		}
 	}
 
-	m_entityGrid->update();
-}
-
-void SceneEditorPage::updateEntityList()
-{
-	RefArray< ui::custom::GridRow > rows;
-	m_entityGrid->getRows(rows, ui::custom::GridView::GfDescendants);
-
-	for (RefArray< ui::custom::GridRow >::iterator i = rows.begin(); i != rows.end(); ++i)
-	{
-		Ref< EntityAdapter > entityAdapter = (*i)->getData< EntityAdapter >(L"ENTITY");
-		T_ASSERT (entityAdapter);
-
-		uint32_t state = (*i)->getState();
-
-		if (entityAdapter->isSelected())
-		{
-			// Expand all parents to ensure new selection is made visible.
-			if ((state & ui::custom::GridRow::RsSelected) == 0)
-			{
-				state |= ui::custom::GridRow::RsSelected;
-				for (Ref< ui::custom::GridRow > parent = (*i)->getParent(); parent; parent = parent->getParent())
-					parent->setState(parent->getState() | ui::custom::GridRow::RsExpanded);
-			}
-		}
-		else
-			state &= ~ui::custom::GridRow::RsSelected;
-
-		(*i)->setState(state);
-	}
-
-	m_entityGrid->update();
+	m_instanceGrid->update();
 }
 
 void SceneEditorPage::updatePropertyObject()
@@ -682,7 +595,7 @@ bool SceneEditorPage::addEntity()
 		if (!parentGroupAdapter)
 				return false;
 	}
-	else if (m_context->getSceneAsset()->getEntityData())
+	else if (m_context->getSceneAsset()->getInstance())
 	{
 		parentGroupAdapter = m_context->getRootEntityAdapter();
 		if (!parentGroupAdapter)
@@ -697,19 +610,22 @@ bool SceneEditorPage::addEntity()
 	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(entityType->newInstance());
 	T_ASSERT (entityData);
 
-	entityData->setName(i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY"));
-
 	m_undoStack->push(m_dataObject);
 
-	Ref< EntityAdapter > entityAdapter = gc_new< EntityAdapter >(entityData);
+	// Create instance and adapter.
+	Ref< world::EntityInstance > instance = gc_new< world::EntityInstance >(
+		i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY"),
+		entityData
+	);
+	Ref< EntityAdapter > entityAdapter = gc_new< EntityAdapter >(instance);
 
 	if (parentGroupAdapter)
 		parentGroupAdapter->addChild(entityAdapter, true);
 	else
-		m_context->getSceneAsset()->setEntityData(entityData);
+		m_context->getSceneAsset()->setInstance(instance);
 
-	updateScene(true);
-	createEntityList();
+	updateScene();
+	updateInstanceGrid();
 	updatePropertyObject();
 	return true;
 }
@@ -798,14 +714,14 @@ void SceneEditorPage::eventEntityToolClick(ui::Event* event)
 	handleCommand(commandEvent->getCommand());
 }
 
-void SceneEditorPage::eventEntityGridSelect(ui::Event* event)
+void SceneEditorPage::eventInstanceSelect(ui::Event* event)
 {
 	// De-select all entities.
 	m_context->selectAllEntities(false);
 
 	// Select only entities which is selected in the grid.
 	RefArray< ui::custom::GridRow > selectedRows;
-	m_entityGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly);
+	m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly);
 
 	for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
 	{
@@ -818,12 +734,12 @@ void SceneEditorPage::eventEntityGridSelect(ui::Event* event)
 	updatePropertyObject();
 }
 
-void SceneEditorPage::eventEntityGridButtonDown(ui::Event* event)
+void SceneEditorPage::eventInstanceButtonDown(ui::Event* event)
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_entityMenu->show(m_entityGrid, mouseEvent->getPosition());
+		Ref< ui::MenuItem > selectedItem = m_entityMenu->show(m_instanceGrid, mouseEvent->getPosition());
 		if (selectedItem)
 		{
 			if (handleCommand(selectedItem->getCommand()))
@@ -832,35 +748,38 @@ void SceneEditorPage::eventEntityGridButtonDown(ui::Event* event)
 	}
 }
 
-void SceneEditorPage::eventEntityGridDoubleClick(ui::Event* event)
+void SceneEditorPage::eventInstanceDoubleClick(ui::Event* event)
 {
-	ui::Command command(L"Scene.Editor.MoveToSelectedEntity");
-	handleCommand(command);
-}
+	RefArray< ui::custom::GridRow > selectedRows;
+	if (m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly) != 1)
+		return;
 
-void SceneEditorPage::eventEntityGridDragValid(ui::Event* event)
-{
-	Ref< ui::custom::GridDragEvent > dragEvent = checked_type_cast< ui::custom::GridDragEvent* >(event);
-	Ref< ui::custom::GridRow > row = checked_type_cast< ui::custom::GridRow* >(dragEvent->getItem());
+	Ref< world::EntityInstance > instance = selectedRows[0]->getData< EntityAdapter >(L"ENTITY")->getInstance();
 
-	Ref< EntityAdapter > entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
-	T_ASSERT (entityAdapter);
+	ui::custom::InputDialog::Field fields[] =
+	{
+		{ i18n::Text(L"SCENE_EDITOR_NAME"), instance->getName(), 0 }
+	};
 
-	// Cannot drag root entities.
-	if (!entityAdapter->getParent())
-		dragEvent->cancel();
+	ui::custom::InputDialog inputDialog;
+	if (!inputDialog.create(m_instanceGrid, i18n::Text(L"SCENE_EDITOR_ENTER_NAME"), i18n::Text(L"SCENE_EDITOR_ENTER_NAME"), fields, sizeof_array(fields)))
+		return;
 
-	dragEvent->consume();
+	if (inputDialog.showModal() == ui::DrOk)
+		instance->setName(fields[0].value);
+
+	inputDialog.destroy();
+	event->consume();
 }
 
 void SceneEditorPage::eventContextPostBuild(ui::Event* event)
 {
-	createEntityList();
+	updateInstanceGrid();
 }
 
 void SceneEditorPage::eventContextSelect(ui::Event* event)
 {
-	updateEntityList();
+	updateInstanceGrid();
 }
 
 void SceneEditorPage::eventContextPreModify(ui::Event* event)

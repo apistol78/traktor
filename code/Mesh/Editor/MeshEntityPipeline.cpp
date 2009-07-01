@@ -5,6 +5,7 @@
 #include "Mesh/Instance/InstanceMeshEntityData.h"
 #include "Mesh/Skinned/SkinnedMeshEntityData.h"
 #include "Mesh/Static/StaticMeshEntityData.h"
+#include "World/Entity/EntityInstance.h"
 #include "Editor/PipelineManager.h"
 
 namespace traktor
@@ -36,8 +37,8 @@ bool MeshEntityPipeline::buildDependencies(
 		pipelineManager->addDependency(blendMeshEntityData->getMesh().getGuid());
 	if (const CompositeMeshEntityData* compositeMeshEntityData = dynamic_type_cast< const CompositeMeshEntityData* >(sourceAsset))
 	{
-		const RefArray< MeshEntityData >& meshEntities = compositeMeshEntityData->getMeshEntities();
-		for (RefArray< MeshEntityData >::const_iterator i = meshEntities.begin(); i != meshEntities.end(); ++i)
+		const RefArray< world::EntityInstance >& instances = compositeMeshEntityData->getInstances();
+		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 			pipelineManager->addDependency(*i);
 	}
 	if (const IndoorMeshEntityData* indoorMeshEntityData = dynamic_type_cast< const IndoorMeshEntityData* >(sourceAsset))

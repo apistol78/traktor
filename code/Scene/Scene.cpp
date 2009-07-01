@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 
 Scene::Scene(
-	world::EntityManager* entityManager,
+	world::IEntityManager* entityManager,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings
 )
@@ -20,7 +20,7 @@ Scene::Scene(
 {
 }
 
-world::EntityManager* Scene::getEntityManager() const
+world::IEntityManager* Scene::getEntityManager() const
 {
 	return m_entityManager;
 }

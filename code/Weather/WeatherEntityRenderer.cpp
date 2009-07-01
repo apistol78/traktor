@@ -9,7 +9,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityRenderer", WeatherEntityRenderer, world::EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityRenderer", WeatherEntityRenderer, world::IEntityRenderer)
 
 WeatherEntityRenderer::WeatherEntityRenderer(render::PrimitiveRenderer* primitiveRenderer)
 :	m_primitiveRenderer(primitiveRenderer)

@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntityFactory_H
 #define traktor_world_GroupEntityFactory_H
 
-#include "World/Entity/EntityFactory.h"
+#include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,14 +19,14 @@ namespace traktor
 /* \brief Group entity factory.
  * \ingroup World
  */
-class T_DLLCLASS GroupEntityFactory : public EntityFactory
+class T_DLLCLASS GroupEntityFactory : public IEntityFactory
 {
 	T_RTTI_CLASS(GroupEntityFactory)
 	
 public:
 	virtual const TypeSet getEntityTypes() const;
 
-	virtual Entity* createEntity(EntityBuilder* builder, const EntityData& entityData) const;
+	virtual Entity* createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const;
 };
 	
 	}

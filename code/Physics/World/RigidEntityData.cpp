@@ -4,7 +4,8 @@
 #include "Physics/BodyDesc.h"
 #include "Physics/Body.h"
 #include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/EntityBuilder.h"
+#include "World/Entity/EntityInstance.h"
+#include "World/Entity/IEntityBuilder.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -16,11 +17,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
 
 RigidEntity* RigidEntityData::createEntity(
-	world::EntityBuilder* builder,
+	world::IEntityBuilder* builder,
 	PhysicsManager* physicsManager
 ) const
 {
-	if (!m_bodyDesc && !m_entityData)
+	if (!m_bodyDesc && !m_instance)
 		return 0;
 
 	Ref< Body > body = physicsManager->createBody(m_bodyDesc);
@@ -30,11 +31,9 @@ RigidEntity* RigidEntityData::createEntity(
 	body->setTransform(getTransform());
 
 	Ref< world::SpatialEntity > entity;
-	if (m_entityData)
+	if (m_instance)
 	{
-		m_entityData->setTransform(getTransform());
-
-		entity = checked_type_cast< world::SpatialEntity* >(builder->build(m_entityData));
+		entity = checked_type_cast< world::SpatialEntity* >(builder->build(m_instance));
 		if (!entity)
 			return 0;
 
@@ -47,21 +46,13 @@ RigidEntity* RigidEntityData::createEntity(
 	);
 }
 
-void RigidEntityData::setTransform(const Matrix44& transform)
-{
-	if (m_entityData)
-		m_entityData->setTransform(transform);
-
-	world::SpatialEntityData::setTransform(transform);
-}
-
 bool RigidEntityData::serialize(Serializer& s)
 {
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
 
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
-	s >> MemberRef< world::SpatialEntityData >(L"entityData", m_entityData);
+	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
 
 	return true;
 }

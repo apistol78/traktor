@@ -26,9 +26,6 @@ const Matrix44& SpatialEntityData::getTransform() const
 
 bool SpatialEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	return s >> Member< Matrix44 >(L"transform", m_transform);
 }
 

@@ -1,7 +1,7 @@
 #ifndef traktor_world_LightEntityRenderer_H
 #define traktor_world_LightEntityRenderer_H
 
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Light entity renderer.
  * \ingroup World
  */
-class T_DLLCLASS LightEntityRenderer : public EntityRenderer
+class T_DLLCLASS LightEntityRenderer : public IEntityRenderer
 {
 	T_RTTI_CLASS(LightEntityRenderer)
 

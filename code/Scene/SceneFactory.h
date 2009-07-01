@@ -24,7 +24,7 @@ class Database;
 	namespace world
 	{
 
-class EntityBuilder;
+class IEntityBuilder;
 
 	}
 
@@ -36,7 +36,7 @@ class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 	T_RTTI_CLASS(SceneFactory)
 
 public:
-	SceneFactory(db::Database* database, world::EntityBuilder* entityBuilder);
+	SceneFactory(db::Database* database, world::IEntityBuilder* entityBuilder);
 
 	virtual const TypeSet getResourceTypes() const;
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
-	Ref< world::EntityBuilder > m_entityBuilder;
+	Ref< world::IEntityBuilder > m_entityBuilder;
 };
 
 	}

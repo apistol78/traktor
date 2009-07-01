@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityManager", EntityManager, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityManager", EntityManager, IEntityManager)
 
 void EntityManager::addEntity(Entity* entity)
 {
@@ -109,6 +109,11 @@ Entity* EntityManager::getEntity(const Type& entityType, uint32_t index) const
 		return 0;
 
 	return m_entities[i->second.start + index];
+}
+
+const RefArray< Entity >& EntityManager::getEntities() const
+{
+	return m_entities;
 }
 
 	}

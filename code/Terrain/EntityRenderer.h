@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_EntityRenderer_H
 #define traktor_terrain_EntityRenderer_H
 
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS EntityRenderer : public world::EntityRenderer
+class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(EntityRenderer)
 

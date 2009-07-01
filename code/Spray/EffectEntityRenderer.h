@@ -2,7 +2,7 @@
 #define traktor_spray_EffectEntityRenderer_H
 
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -31,7 +31,7 @@ class EffectEntity;
 /*! \brief Effect entity renderer.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectEntityRenderer : public world::EntityRenderer
+class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(EffectEntityRenderer)
 

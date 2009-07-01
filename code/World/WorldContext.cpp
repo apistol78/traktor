@@ -2,7 +2,7 @@
 #include "World/WorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/Entity.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 #include "Render/Context/RenderContext.h"
 
 namespace traktor
@@ -31,7 +31,7 @@ void WorldContext::build(WorldRenderView* worldRenderView, Entity* entity)
 	if (!entity)
 		return;
 
-	EntityRenderer* entityRenderer = 0;
+	IEntityRenderer* entityRenderer = 0;
 
 	const Type& entityType = entity->getType();
 	if (m_lastEntityType == &entityType)
@@ -55,8 +55,8 @@ void WorldContext::build(WorldRenderView* worldRenderView, Entity* entity)
 void WorldContext::flush(WorldRenderView* worldRenderView)
 {
 	T_ASSERT (m_entityRenderers);
-	const RefArray< EntityRenderer >& entityRenderers = m_entityRenderers->get();
-	for (RefArray< EntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
+	const RefArray< IEntityRenderer >& entityRenderers = m_entityRenderers->get();
+	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
 		(*i)->flush(this, worldRenderView);
 }
 

@@ -1,7 +1,7 @@
 #ifndef traktor_physics_EntityRenderer_H
 #define traktor_physics_EntityRenderer_H
 
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -18,7 +18,7 @@ namespace traktor
 /*! \brief Physics entity renderer.
  * \ingroup Physics
  */
-class T_DLLCLASS EntityRenderer : public world::EntityRenderer
+class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(EntityRenderer)
 

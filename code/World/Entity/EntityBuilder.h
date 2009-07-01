@@ -1,8 +1,9 @@
 #ifndef traktor_world_EntitySetBuilder_H
 #define traktor_world_EntitySetBuilder_H
 
+#include <map>
 #include "Core/Heap/Ref.h"
-#include "Core/Object.h"
+#include "World/Entity/IEntityBuilder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,37 +18,30 @@ namespace traktor
 	namespace world
 	{
 
-class EntityManager;
-class EntityFactory;
-class EntityData;
-class Entity;
-
 /*! \brief Entity builder.
  * \ingroup World
- *
- * Entity factory registration class; used
- * to select EntityFactory based on the type
- * of entity data given in order to build
- * a runtime entity.
  */
-class T_DLLCLASS EntityBuilder : public Object
+class T_DLLCLASS EntityBuilder : public IEntityBuilder
 {
 	T_RTTI_CLASS(EntityBuilder)
 
 public:
-	void addFactory(EntityFactory* entityFactory);
+	virtual void addFactory(IEntityFactory* entityFactory);
 
-	void removeFactory(EntityFactory* entityFactory);
+	virtual void removeFactory(IEntityFactory* entityFactory);
 
-	void setEntityManager(EntityManager* entityManager);
+	virtual void begin(IEntityManager* entityManager);
 
-	EntityManager* getEntityManager() const;
+	virtual Entity* create(const std::wstring& name, const EntityData* entityData);
 
-	Entity* build(const EntityData* entityData);
+	virtual Entity* build(const EntityInstance* instance);
+
+	virtual void end();
 
 private:
-	Ref< EntityManager > m_entityManager;
-	RefArray< EntityFactory > m_entityFactories;
+	Ref< IEntityManager > m_entityManager;
+	RefArray< IEntityFactory > m_entityFactories;
+	std::map< const EntityInstance*, Ref< Entity > > m_instances;
 };
 
 	}

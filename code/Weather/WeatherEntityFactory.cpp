@@ -9,7 +9,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityFactory", WeatherEntityFactory, world::EntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityFactory", WeatherEntityFactory, world::IEntityFactory)
 
 WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
@@ -25,7 +25,7 @@ const TypeSet WeatherEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-world::Entity* WeatherEntityFactory::createEntity(world::EntityBuilder* builder, const world::EntityData& entityData) const
+world::Entity* WeatherEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
 		return skyEntityData->createEntity(m_resourceManager, m_renderSystem);

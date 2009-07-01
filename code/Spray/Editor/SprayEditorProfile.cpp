@@ -24,7 +24,7 @@ void SprayEditorProfile::createResourceFactories(
 
 void SprayEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::EntityFactory >& outEntityFactories
+	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(gc_new< spray::EffectEntityFactory >(context->getResourceManager()));
@@ -34,7 +34,7 @@ void SprayEditorProfile::createEntityRenderers(
 	scene::SceneEditorContext* context,
 	render::RenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
-	RefArray< world::EntityRenderer >& outEntityRenderers
+	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
 	outEntityRenderers.push_back(gc_new< spray::EffectEntityRenderer >(context->getRenderSystem(), 1.0f, 1.0f));

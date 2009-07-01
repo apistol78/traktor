@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityRenderer", EntityRenderer, world::EntityRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
 const TypeSet EntityRenderer::getEntityTypes() const
 {
@@ -30,8 +30,8 @@ void EntityRenderer::render(
 	}
 	else if (ArticulatedEntity* articulatedEntity = dynamic_type_cast< ArticulatedEntity* >(entity))
 	{
-		const RefArray< world::SpatialEntity >& entities = articulatedEntity->getEntities();
-		for (RefArray< world::SpatialEntity >::const_iterator i = entities.begin(); i != entities.end(); ++i)
+		const RefArray< RigidEntity >& entities = articulatedEntity->getEntities();
+		for (RefArray< RigidEntity >::const_iterator i = entities.begin(); i != entities.end(); ++i)
 			worldContext->build(worldRenderView, *i);
 	}
 }

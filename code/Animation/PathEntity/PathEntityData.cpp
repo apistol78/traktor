@@ -1,6 +1,7 @@
 #include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/Path.h"
-#include "World/Entity/EntityBuilder.h"
+#include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
@@ -18,9 +19,9 @@ PathEntityData::PathEntityData()
 {
 }
 
-PathEntity* PathEntityData::createEntity(world::EntityBuilder* builder) const
+PathEntity* PathEntityData::createEntity(world::IEntityBuilder* builder) const
 {
-	Ref< world::SpatialEntity > entity = dynamic_type_cast< world::SpatialEntity* >(builder->build(m_entityData));
+	Ref< world::SpatialEntity > entity = dynamic_type_cast< world::SpatialEntity* >(builder->build(m_instance));
 	return gc_new< PathEntity >(
 		cref(getTransform()),
 		cref(m_path),
@@ -45,7 +46,7 @@ bool PathEntityData::serialize(Serializer& s)
 
 	s >> MemberComposite< Path >(L"path", m_path);
 	s >> MemberEnum< PathEntity::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
-	s >> MemberRef< world::SpatialEntityData >(L"entityData", m_entityData);
+	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
 
 	return true;
 }

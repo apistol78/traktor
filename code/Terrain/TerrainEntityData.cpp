@@ -23,15 +23,11 @@ TerrainEntityData::TerrainEntityData()
 
 bool TerrainEntityData::serialize(Serializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberRef< TerrainSurface >(L"surface", m_surface);
 	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
 	s >> Member< float >(L"surfaceLodDistance", m_surfaceLodDistance);
-
 	return true;
 }
 

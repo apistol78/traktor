@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityFactory", LightEntityFactory, EntityFactory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityFactory", LightEntityFactory, IEntityFactory)
 
 const TypeSet LightEntityFactory::getEntityTypes() const
 {
@@ -19,7 +19,7 @@ const TypeSet LightEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* LightEntityFactory::createEntity(EntityBuilder* builder, const EntityData& entityData) const
+Entity* LightEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const
 {
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{

@@ -2,7 +2,7 @@
 #define traktor_physics_EntityFactory_H
 
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityFactory.h"
+#include "World/Entity/IEntityFactory.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -21,7 +21,7 @@ class PhysicsManager;
 /*! \brief Physics entity factory.
  * \ingroup Physics
  */
-class T_DLLCLASS EntityFactory : public world::EntityFactory
+class T_DLLCLASS EntityFactory : public world::IEntityFactory
 {
 	T_RTTI_CLASS(EntityFactory)
 
@@ -31,7 +31,8 @@ public:
 	virtual const TypeSet getEntityTypes() const;
 
 	virtual world::Entity* createEntity(
-		world::EntityBuilder* builder,
+		world::IEntityBuilder* builder,
+		const std::wstring& name,
 		const world::EntityData& entityData
 	) const;
 

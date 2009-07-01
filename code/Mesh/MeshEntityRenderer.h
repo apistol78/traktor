@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
-#include "World/Entity/EntityRenderer.h"
+#include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 
 class MeshEntity;
 
-class T_DLLCLASS MeshEntityRenderer : public world::EntityRenderer
+class T_DLLCLASS MeshEntityRenderer : public world::IEntityRenderer
 {
 	T_RTTI_CLASS(MeshEntityRenderer)
 

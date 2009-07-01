@@ -18,7 +18,7 @@ namespace traktor
 	{
 
 class WorldRenderSettings;
-class EntityData;
+class EntityInstance;
 
 	}
 
@@ -36,15 +36,15 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	void setEntityData(world::EntityData* entityData);
+	void setInstance(world::EntityInstance* instance);
 
-	world::EntityData* getEntityData() const;
+	world::EntityInstance* getInstance() const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	Ref< world::EntityData > m_entityData;
+	Ref< world::EntityInstance > m_instance;
 };
 
 	}
