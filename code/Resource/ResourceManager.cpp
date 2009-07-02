@@ -10,10 +10,25 @@ namespace traktor
 {
 	namespace resource
 	{
+		namespace
+		{
+
+class NullResourceHandle : public IResourceHandle
+{
+public:
+	virtual void replace(Object* object) { T_BREAKPOINT; }
+
+	virtual Object* get() { return 0; }
+
+	virtual void flush() {}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
 ResourceManager::ResourceManager()
+:	m_nullHandle(gc_new< NullResourceHandle >())
 {
 }
 
@@ -37,9 +52,12 @@ IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
 	Acquire< Semaphore > scope(m_lock);
 	Ref< ResourceHandle > handle;
 
+	if (guid.isNull() || !guid.isValid())
+		return m_nullHandle;
+
 	Ref< IResourceFactory > factory = findFactory(type);
 	if (!factory)
-		return 0;
+		return m_nullHandle;
 
 	bool cacheable = factory->isCacheable();
 

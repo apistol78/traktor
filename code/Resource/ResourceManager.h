@@ -19,6 +19,7 @@ namespace traktor
 	namespace resource
 	{
 
+class IResourceHandle;
 class ResourceHandle;
 
 /*! \brief Resource manager.
@@ -47,6 +48,7 @@ public:
 
 private:
 	RefList< IResourceFactory > m_factories;
+	Ref< IResourceHandle > m_nullHandle;
 	std::map< Guid, Ref< ResourceHandle > > m_cache;
 	Semaphore m_lock;
 
