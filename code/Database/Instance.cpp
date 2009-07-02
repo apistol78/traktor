@@ -92,6 +92,12 @@ bool Instance::commit(uint32_t flags)
 	if (!m_providerInstance->commitTransaction())
 		return false;
 
+	if ((flags & CfKeepCheckedOut) == 0)
+	{
+		if (!m_providerInstance->closeTransaction())
+			return false;
+	}
+
 	if (m_providerBus)
 	{
 		Guid guid = getGuid();
@@ -104,14 +110,9 @@ bool Instance::commit(uint32_t flags)
 
 	if (m_removed)
 	{
-		m_parent->removeChildInstance(this);
+		if (m_parent)
+			m_parent->removeChildInstance(this);
 		internalDestroy();
-	}
-
-	if ((flags & CfKeepCheckedOut) == 0)
-	{
-		if (!m_providerInstance->closeTransaction())
-			return false;
 	}
 
 	return true;
