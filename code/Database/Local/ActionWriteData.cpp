@@ -55,6 +55,9 @@ bool ActionWriteData::execute(Context* context)
 	if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
 		return false;
 
+	writeStream->close();
+	writeStream = 0;
+
 	// New blob; add to meta data.
 	if (!m_existingBlob)
 	{
