@@ -13,7 +13,6 @@
 #include "Editor/UndoStack.h"
 #include "Database/Instance.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/IResourceCache.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Container.h"
@@ -490,7 +489,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 void AnimationEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->getCache()->flush(eventId);
+		m_resourceManager->update(eventId, true);
 }
 
 void AnimationEditorPage::setSkeleton(Skeleton* skeleton)

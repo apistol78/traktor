@@ -32,7 +32,12 @@ const TypeSet IndoorMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* IndoorMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool IndoorMeshFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* IndoorMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

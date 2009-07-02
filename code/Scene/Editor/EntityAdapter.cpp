@@ -123,6 +123,13 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 	return false;
 }
 
+void EntityAdapter::addReference(EntityAdapter* reference)
+{
+	T_ASSERT (m_instance);
+	T_ASSERT (reference->m_instance);
+	m_instance->addReference(reference->m_instance);
+}
+
 bool EntityAdapter::isGroup() const
 {
 	return is_a< world::GroupEntityData >(getEntityData());

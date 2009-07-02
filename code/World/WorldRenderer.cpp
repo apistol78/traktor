@@ -161,8 +161,6 @@ render::handle_t WorldRenderer::ms_techniqueShadowMapSelfShadow = 0;
 
 WorldRenderer::WorldRenderer()
 :	m_lightViewProjection(gc_new< DefaultLightViewProjection >())
-,	m_haveDepth(false)
-,	m_haveShadows(false)
 ,	m_time(0.0f)
 ,	m_count(0)
 {
@@ -356,18 +354,16 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, float deltaTime, Ent
 
 	if (m_settings.depthPassEnabled)
 	{
-		Frame& f = m_frames[frame];
-
 		WorldRenderView depthRenderView = worldRenderView;
 		depthRenderView.setTechnique(ms_techniqueDepth);
 
 		f.depth->build(&depthRenderView, entity);
 		f.depth->flush(&depthRenderView);
 
-		m_haveDepth = true;
+		f.haveDepth = true;
 	}
 	else
-		m_haveDepth = false;
+		f.haveDepth = false;
 
 	if (m_settings.shadowsEnabled)
 		buildShadows(worldRenderView, deltaTime, entity, frame);
@@ -386,7 +382,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 {
 	Frame& f = m_frames[frame];
 
-	if ((flags & WrfDepthMap) != 0 && m_haveDepth)
+	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
 		if (!m_renderView->begin(m_depthTargetSet, 0, true))
 			return;
@@ -397,7 +393,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		m_renderView->end();
 	}
 
-	if ((flags & WrfShadowMap) != 0 && m_haveShadows)
+	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 	{
 		float sliceDenom = float(m_settings.shadowCascadingSlices);
 		if (m_settings.shadowFarZ < m_settings.viewFarZ)
@@ -416,7 +412,10 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		}
 	}
 
-	if (m_haveShadows)
+	if (!(flags & (WrfVisualOpaque | WrfVisualAlphaBlend)))
+		return;
+
+	if (f.haveShadows)
 	{
 		render::Viewport viewport = m_renderView->getViewport();
 		render::Viewport sliceViewport = viewport;
@@ -480,10 +479,10 @@ void WorldRenderer::flush(int frame)
 {
 	Frame& f = m_frames[frame];
 
-	if (m_haveDepth)
+	if (f.haveDepth)
 		f.depth->getRenderContext()->flush();
 
-	if (m_haveShadows)
+	if (f.haveShadows)
 	{
 		for (int slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 		{
@@ -599,7 +598,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 			slice
 		);
 		worldRenderView.setShadowMapDiscRotation(m_shadowDiscRotation[m_count & 1]);
-		if (m_haveDepth)
+		if (f.haveDepth)
 			worldRenderView.setDepthMap(m_depthTargetSet->getColorTexture(0));
 		else
 			worldRenderView.setDepthMap(0);
@@ -631,7 +630,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 		worldRenderView.setEyePosition(eyePosition);
 		worldRenderView.setViewToLightSpace(Matrix44::identity());
 		worldRenderView.setShadowMap(0, 0.0f, 0);
-		if (m_haveDepth)
+		if (f.haveDepth)
 			worldRenderView.setDepthMap(m_depthTargetSet->getColorTexture(0));
 		else
 			worldRenderView.setDepthMap(0);
@@ -645,7 +644,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	worldRenderView.setCullFrustum(cullFrustum);
 	worldRenderView.setViewFrustum(viewFrustum);
 
-	m_haveShadows = true;
+	f.haveShadows = true;
 }
 
 void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)
@@ -659,7 +658,7 @@ void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, float delta
 	worldRenderView.setEyePosition(eyePosition);
 	worldRenderView.setViewToLightSpace(Matrix44::identity());
 	worldRenderView.setShadowMap(0, 0.0f, 0);
-	if (m_haveDepth)
+	if (f.haveDepth)
 		worldRenderView.setDepthMap(m_depthTargetSet->getColorTexture(0));
 	else
 		worldRenderView.setDepthMap(0);
@@ -667,7 +666,7 @@ void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, float delta
 	f.visual[0]->build(&worldRenderView, entity);
 	f.visual[0]->flush(&worldRenderView);
 
-	m_haveShadows = false;
+	f.haveShadows = false;
 }
 
 	}

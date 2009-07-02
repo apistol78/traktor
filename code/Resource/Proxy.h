@@ -43,7 +43,7 @@ public:
 	/*! \brief Check if proxy contains a valid pointer. */
 	bool valid() const;
 
-	/*! \brief Validate proxy; update resource if it's been replaced in manager. */
+	/*! \brief Validate proxy; update resource if it's been replaced in handle. */
 	bool validate();
 
 	inline operator ResourceType* ();

@@ -43,7 +43,12 @@ const TypeSet TextureFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool TextureFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< Texture > texture;
 

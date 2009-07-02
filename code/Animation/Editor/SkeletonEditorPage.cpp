@@ -8,7 +8,6 @@
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/IResourceCache.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/TableLayout.h"
@@ -272,7 +271,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->getCache()->flush(eventId);
+		m_resourceManager->update(eventId, true);
 }
 
 void SkeletonEditorPage::createSkeletonTreeNodes()

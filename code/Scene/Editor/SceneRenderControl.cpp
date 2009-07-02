@@ -264,47 +264,68 @@ void SceneRenderControl::updatePostProcess()
 		m_postProcess = 0;
 }
 
+EntityAdapter* SceneRenderControl::pickEntity(const ui::Point& position) const
+{
+	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
+	ui::Rect innerRect = getInnerRect();
+
+	Scalar fx(float(position.x) / innerRect.getWidth());
+	Scalar fy(float(position.y) / innerRect.getHeight());
+
+	// Interpolate frustum edges to find view pick-ray.
+	const Vector4& viewEdgeTopLeft = viewFrustum.corners[4];
+	const Vector4& viewEdgeTopRight = viewFrustum.corners[5];
+	const Vector4& viewEdgeBottomLeft = viewFrustum.corners[7];
+	const Vector4& viewEdgeBottomRight = viewFrustum.corners[6];
+
+	Vector4 viewEdgeTop = lerp(viewEdgeTopLeft, viewEdgeTopRight, fx);
+	Vector4 viewEdgeBottom = lerp(viewEdgeBottomLeft, viewEdgeBottomRight, fx);
+	Vector4 viewRayDirection = lerp(viewEdgeTop, viewEdgeBottom, fy).normalized().xyz0();
+
+	// Transform ray into world space.
+	Matrix44 viewInv = m_worldRenderView.getView().inverseOrtho();
+	Vector4 worldRayOrigin = viewInv.translation().xyz1();
+	Vector4 worldRayDirection = viewInv * viewRayDirection;
+
+	return m_context->queryRay(worldRayOrigin, worldRayDirection);
+}
+
 void SceneRenderControl::eventButtonDown(ui::Event* event)
 {
-	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
-	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
-	// Handle entity picking if enabled; do not pick if user holds a modifier key.
-	if (m_context->getPickEnable() && event->getKeyState() == 0)
+	if (!m_context->inReferenceMode())
 	{
-		Frustum viewFrustum = m_worldRenderView.getViewFrustum();
+		m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
+		m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 
-		Scalar fx(float(m_mousePosition.x) / getInnerRect().getWidth());
-		Scalar fy(float(m_mousePosition.y) / getInnerRect().getHeight());
+		// Handle entity picking if enabled.
+		if (!m_modifyCamera && m_context->getPickEnable())
+		{
+			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
+			m_context->selectAllEntities(false);
+			m_context->selectEntity(entityAdapter);
+			m_context->raiseSelect();
+		}
 
-		// Interpolate frustum edges to find view pick-ray.
-		const Vector4& viewEdgeTopLeft = viewFrustum.corners[4];
-		const Vector4& viewEdgeTopRight = viewFrustum.corners[5];
-		const Vector4& viewEdgeBottomLeft = viewFrustum.corners[7];
-		const Vector4& viewEdgeBottomRight = viewFrustum.corners[6];
+		if (!m_modifyCamera)
+		{
+			// Ensure physics simulation is disabled.
+			m_context->setPhysicsEnable(false);
 
-		Vector4 viewEdgeTop = lerp(viewEdgeTopLeft, viewEdgeTopRight, fx);
-		Vector4 viewEdgeBottom = lerp(viewEdgeBottomLeft, viewEdgeBottomRight, fx);
-		Vector4 viewRayDirection = lerp(viewEdgeTop, viewEdgeBottom, fy).normalized().xyz0();
+			// Get selected entities.
+			m_context->getEntities(
+				m_modifyEntities,
+				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+			);
 
-		// Transform ray into world space.
-		Matrix44 viewInv = m_worldRenderView.getView().inverseOrtho();
-		Vector4 worldRayOrigin = viewInv.translation().xyz1();
-		Vector4 worldRayDirection = viewInv * viewRayDirection;
-
-		Ref< EntityAdapter > entityAdapter = m_context->queryRay(worldRayOrigin, worldRayDirection);
-
-		m_context->selectAllEntities(false);
-		m_context->selectEntity(entityAdapter);
-		m_context->raiseSelect();
+			// Issue begin modification event.
+			m_context->raisePreModify();
+		}
 	}
-
-	// Get selected entities which will be modified.
-	if (!m_modifyCamera)
+	else
 	{
-		// Ensure physics simulation is disabled.
-		m_context->setPhysicsEnable(false);
+		Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
 
 		// Get selected entities.
 		m_context->getEntities(
@@ -312,8 +333,9 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 			SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
 		);
 
-		// Issue begin modification event.
-		m_context->raisePreModify();
+		// Add reference to all entities.
+		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			(*i)->addReference(entityAdapter);
 	}
 
 	setCapture();

@@ -22,7 +22,6 @@
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/IResourceCache.h"
 #include "Core/Io/StringOutputStream.h"
 
 // Resources
@@ -193,7 +192,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 void EffectEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->getCache()->flush(eventId);
+		m_resourceManager->update(eventId, true);
 }
 
 void EffectEditorPage::updateSequencer()

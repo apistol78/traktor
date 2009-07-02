@@ -19,7 +19,6 @@
 #include "Database/Instance.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/IResourceCache.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 
@@ -168,7 +167,7 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 void FlashEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->getCache()->flush(eventId);
+		m_resourceManager->update(eventId, true);
 }
 
 void FlashEditorPage::eventToolClick(ui::Event* event)

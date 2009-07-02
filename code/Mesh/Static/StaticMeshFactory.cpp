@@ -34,7 +34,12 @@ const TypeSet StaticMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* StaticMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool StaticMeshFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* StaticMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

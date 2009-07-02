@@ -22,7 +22,6 @@
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "Resource/IResourceManager.h"
-#include "Resource/IResourceCache.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
@@ -468,7 +467,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_context)
-		m_context->getResourceManager()->getCache()->flush(eventId);
+		m_context->getResourceManager()->update(eventId, true);
 }
 
 SceneAsset* SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)

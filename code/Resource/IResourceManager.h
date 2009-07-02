@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class IResourceFactory;
-class IResourceCache;
 class IResourceHandle;
 
 /*! \brief Resource manager interface.
@@ -30,17 +29,44 @@ class T_DLLCLASS IResourceManager : public Object
 	T_RTTI_CLASS(IResourceManager)
 
 public:
+	/*! \brief Add resource factory to manager.
+	 *
+	 * \param factory Resource factory.
+	 */
 	virtual void addFactory(IResourceFactory* factory) = 0;
 
+	/*! \brief Remove resource factory from manager.
+	 *
+	 * \param factory Resource factory.
+	 */
 	virtual void removeFactory(IResourceFactory* factory) = 0;
 
+	/*! \brief Remove all resource factories. */
 	virtual void removeAllFactories() = 0;
 
-	virtual void setCache(IResourceCache* cache) = 0;
-
-	virtual IResourceCache* getCache() const = 0;
-
+	/*! \brief Bind handle to resource identifier.
+	 *
+	 * \param type Type of resource.
+	 * \param guid Resource identifier.
+	 * \return Resource handle.
+	 */
 	virtual IResourceHandle* bind(const Type& type, const Guid& guid) = 0;
+
+	/*! \brief Update all handles.
+	 *
+	 * \param guid Resource identifier.
+	 * \param force Force update; recreate resource even if resource is cached.
+	 */
+	virtual void update(const Guid& guid, bool force) = 0;
+
+	/*! \brief Flush resource from cache.
+	 *
+	 * \param guid Resource identifier.
+	 */
+	virtual void flush(const Guid& guid) = 0;
+
+	/*! \brief Flush all resources. */
+	virtual void flush() = 0;
 
 	template < typename ResourceType >
 	IResourceHandle* bind(const Guid& guid)
