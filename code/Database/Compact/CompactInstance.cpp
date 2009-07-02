@@ -29,13 +29,19 @@ std::wstring CompactInstance::getPrimaryTypeName() const
 	return m_instanceEntry->getPrimaryTypeName();
 }
 
-bool CompactInstance::beginTransaction()
+bool CompactInstance::openTransaction()
 {
 	T_ASSERT (m_instanceEntry);
 	return true;
 }
 
-bool CompactInstance::endTransaction(bool commit)
+bool CompactInstance::commitTransaction()
+{
+	T_ASSERT (m_instanceEntry);
+	return true;
+}
+
+bool CompactInstance::closeTransaction()
 {
 	T_ASSERT (m_instanceEntry);
 	return true;

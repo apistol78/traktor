@@ -30,9 +30,11 @@ public:
 
 	virtual std::wstring getPrimaryTypeName() const;
 
-	virtual bool beginTransaction();
+	virtual bool openTransaction();
 
-	virtual bool endTransaction(bool commit);
+	virtual bool commitTransaction();
+
+	virtual bool closeTransaction();
 
 	virtual std::wstring getName() const;
 

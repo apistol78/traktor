@@ -71,7 +71,7 @@ bool Instance::checkout()
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (!m_providerInstance->beginTransaction())
+	if (!m_providerInstance->openTransaction())
 		return false;
 
 	m_renamed = false;
@@ -86,7 +86,10 @@ bool Instance::commit(uint32_t flags)
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (!m_providerInstance->endTransaction(true))
+	if ((flags & CfKeepCheckedOut) != 0 && m_removed)
+		return false;
+
+	if (!m_providerInstance->commitTransaction())
 		return false;
 
 	if (m_providerBus)
@@ -104,9 +107,10 @@ bool Instance::commit(uint32_t flags)
 		m_parent->removeChildInstance(this);
 		internalDestroy();
 	}
-	else if (flags & CfKeepCheckedOut)
+
+	if ((flags & CfKeepCheckedOut) == 0)
 	{
-		if (!m_providerInstance->beginTransaction())
+		if (!m_providerInstance->closeTransaction())
 			return false;
 	}
 
@@ -119,7 +123,7 @@ bool Instance::revert()
 
 	Acquire< Mutex > __lock__(m_lock);
 
-	if (!m_providerInstance->endTransaction(false))
+	if (!m_providerInstance->closeTransaction())
 		return false;
 
 	if (m_providerBus)
