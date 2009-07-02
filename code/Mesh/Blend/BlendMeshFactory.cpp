@@ -39,7 +39,12 @@ const TypeSet BlendMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* BlendMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool BlendMeshFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* BlendMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

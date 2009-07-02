@@ -41,6 +41,15 @@ public:
 	 */
 	virtual const TypeSet getResourceTypes() const = 0;
 
+	/*! \brief Check if resource is cacheable.
+	 *
+	 * A non cacheable resource are recreated for each
+	 * proxy trying to validate the resource.
+	 *
+	 * \return True if resource is cacheable.
+	 */
+	virtual bool isCacheable() const = 0;
+
 	/*! \brief Create resource from guid.
 	 *
 	 * Create a specified resource from a guid.
@@ -54,7 +63,7 @@ public:
 	 * \param outCacheable If resource is cacheable (default set to true).
 	 * \return Resource instance.
 	 */
-	virtual Object* create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable) = 0;
+	virtual Object* create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid) = 0;
 };
 	
 	}

@@ -83,6 +83,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_deltaScale(0.05f)
 ,	m_physicsEnable(false)
 ,	m_timeScale(1.0f)
+,	m_referenceMode(false)
 {
 	const Matrix44 identity = Matrix44::identity();
 	m_camera = gc_new< Camera >(cref(identity));
@@ -191,6 +192,16 @@ void SceneEditorContext::setTimeScale(float timeScale)
 float SceneEditorContext::getTimeScale() const
 {
 	return m_timeScale;
+}
+
+void SceneEditorContext::setReferenceMode(bool referenceMode)
+{
+	m_referenceMode = referenceMode;
+}
+
+bool SceneEditorContext::inReferenceMode() const
+{
+	return m_referenceMode;
 }
 
 void SceneEditorContext::addEntityEditor(EntityEditor* entityEditor)

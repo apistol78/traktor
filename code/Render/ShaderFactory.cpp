@@ -56,7 +56,12 @@ const TypeSet ShaderFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool ShaderFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
 	if (!shaderResource)

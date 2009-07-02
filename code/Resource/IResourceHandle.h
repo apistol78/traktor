@@ -24,10 +24,19 @@ class T_DLLCLASS IResourceHandle : public Object
 	T_RTTI_CLASS(IResourceHandle)
 
 public:
+	/*! \brief Replace resource object.
+	 *
+	 * \param object New resource object.
+	 */
 	virtual void replace(Object* object) = 0;
 
+	/*! \brief Get resource object.
+	 *
+	 * \return Resource object.
+	 */
 	virtual Object* get() = 0;
 
+	/*! \brief Flush resource object. */
 	virtual void flush() = 0;
 };
 

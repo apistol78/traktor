@@ -202,6 +202,8 @@ private:
 		Frustum viewFrustum;
 		Matrix44 projection;
 		float deltaTime;
+		bool haveDepth;
+		bool haveShadows;
 	};
 
 	static render::handle_t ms_techniqueDefault;
@@ -218,8 +220,6 @@ private:
 	WorldViewPort m_worldViewPort;
 	AlignedVector< float > m_splitPositions;
 	AlignedVector< Frame > m_frames;
-	bool m_haveDepth;
-	bool m_haveShadows;
 	float m_time;
 	uint32_t m_count;
 

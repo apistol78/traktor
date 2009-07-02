@@ -96,6 +96,8 @@ private:
 
 	void updatePostProcess();
 
+	EntityAdapter* pickEntity(const ui::Point& position) const;
+
 	void eventButtonDown(ui::Event* event);
 
 	void eventButtonUp(ui::Event* event);

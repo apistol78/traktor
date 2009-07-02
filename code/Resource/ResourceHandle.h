@@ -17,13 +17,18 @@ class ResourceHandle : public IResourceHandle
 	T_RTTI_CLASS(ResourceHandle)
 
 public:
+	ResourceHandle(const Type& type);
+
 	virtual void replace(Object* object);
 
 	virtual Object* get();
 
 	virtual void flush();
 
+	const Type& getResourceType() const;
+
 private:
+	const Type& m_resourceType;
 	Ref< Object > m_object;
 };
 

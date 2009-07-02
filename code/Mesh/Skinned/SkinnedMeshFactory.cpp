@@ -31,7 +31,12 @@ const TypeSet SkinnedMeshFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool SkinnedMeshFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

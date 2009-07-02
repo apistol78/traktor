@@ -25,7 +25,12 @@ const TypeSet MaterialMaskFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool MaterialMaskFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

@@ -90,6 +90,13 @@ public:
 
 	//@}
 
+	/*! \name References. */
+	//@{
+
+	void addReference(EntityAdapter* reference);
+
+	//@}
+
 	/*! \name Relationship. */
 	//@{
 

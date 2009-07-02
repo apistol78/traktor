@@ -1,6 +1,7 @@
 #ifndef traktor_resource_ResourceManager_H
 #define traktor_resource_ResourceManager_H
 
+#include <map>
 #include "Core/Heap/Ref.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
@@ -18,6 +19,8 @@ namespace traktor
 	namespace resource
 	{
 
+class ResourceHandle;
+
 /*! \brief Resource manager.
  * \ingroup Resource
  */
@@ -34,16 +37,22 @@ public:
 
 	virtual void removeAllFactories();
 	
-	virtual void setCache(IResourceCache* cache);
-
-	virtual IResourceCache* getCache() const;
-
 	virtual IResourceHandle* bind(const Type& type, const Guid& guid);
+
+	virtual void update(const Guid& guid, bool force);
+
+	virtual void flush(const Guid& guid);
+
+	virtual void flush();
 
 private:
 	RefList< IResourceFactory > m_factories;
-	Ref< IResourceCache > m_cache;
+	std::map< Guid, Ref< ResourceHandle > > m_cache;
 	Semaphore m_lock;
+
+	IResourceFactory* findFactory(const Type& type);
+
+	void load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle);
 };
 	
 	}

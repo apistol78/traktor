@@ -33,7 +33,9 @@ public:
 
 	virtual const TypeSet getResourceTypes() const;
 
-	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable);
+	virtual bool isCacheable() const;
+
+	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_db;

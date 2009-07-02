@@ -155,6 +155,10 @@ public:
 
 	float getTimeScale() const;
 
+	void setReferenceMode(bool referenceMode);
+
+	bool inReferenceMode() const;
+
 	//@}
 
 	/*! \name Entity editors. */
@@ -265,6 +269,7 @@ private:
 	float m_deltaScale;
 	bool m_physicsEnable;
 	float m_timeScale;
+	bool m_referenceMode;
 	RefArray< EntityEditor > m_entityEditors;
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< EntityAdapter > m_rootEntityAdapter;

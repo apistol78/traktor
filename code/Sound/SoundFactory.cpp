@@ -31,7 +31,12 @@ const TypeSet SoundFactory::getResourceTypes() const
 	return typeSet;
 }
 
-Object* SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid, bool& outCacheable)
+bool SoundFactory::isCacheable() const
+{
+	return true;
+}
+
+Object* SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
