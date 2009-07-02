@@ -42,7 +42,9 @@ bool ActionWriteObject::execute(Context* context)
 	if (!writePhysicalObject(instanceObjectPath, m_object, context->preferBinary()))
 		return false;
 
-	if (FileSystem::getInstance().exist(instanceMetaPath))
+	// Write meta data if primary type has changed.
+	std::wstring primaryTypeName = type_name(m_object);
+	if (instanceMeta->getPrimaryType() != primaryTypeName)
 	{
 		m_oldMetaRenamed = FileSystem::getInstance().move(
 			std::wstring(instanceMetaPath) + L"~",
@@ -51,12 +53,12 @@ bool ActionWriteObject::execute(Context* context)
 		);
 		if (!m_oldMetaRenamed)
 			return false;
+
+		instanceMeta->setPrimaryType(type_name(m_object));
+
+		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+			return false;
 	}
-
-	instanceMeta->setPrimaryType(type_name(m_object));
-
-	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
-		return false;
 
 	return true;
 }

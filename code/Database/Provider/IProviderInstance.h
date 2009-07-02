@@ -31,9 +31,11 @@ class T_DLLCLASS IProviderInstance : public Object
 public:
 	virtual std::wstring getPrimaryTypeName() const = 0;
 
-	virtual bool beginTransaction() = 0;
+	virtual bool openTransaction() = 0;
 
-	virtual bool endTransaction(bool commit) = 0;
+	virtual bool commitTransaction() = 0;
+
+	virtual bool closeTransaction() = 0;
 
 	virtual std::wstring getName() const = 0;
 

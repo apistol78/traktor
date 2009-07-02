@@ -34,7 +34,7 @@ bool LocalInstance::internalCreateNew(const Path& instancePath, const Guid& inst
 	if (!internalCreate(instancePath))
 		return false;
 
-	if (!beginTransaction())
+	if (!openTransaction())
 		return false;
 
 	m_transaction->add(gc_new< ActionSetGuid >(
@@ -53,7 +53,7 @@ std::wstring LocalInstance::getPrimaryTypeName() const
 	return instanceMeta ? instanceMeta->getPrimaryType() : L"";
 }
 
-bool LocalInstance::beginTransaction()
+bool LocalInstance::openTransaction()
 {
 	if (m_transaction)
 		return false;
@@ -64,22 +64,23 @@ bool LocalInstance::beginTransaction()
 	return true;
 }
 
-bool LocalInstance::endTransaction(bool commit)
+bool LocalInstance::commitTransaction()
 {
-	bool result = true;
-
 	if (!m_transaction)
 		return false;
+	if (!m_transaction->commit(m_context))
+		return false;
+	if (!m_transactionName.empty())
+		m_instancePath = m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
+	return true;
+}
 
-	if (commit)
-	{
-		result = m_transaction->commit(m_context);
-		if (result && !m_transactionName.empty())
-			m_instancePath = m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
-	}
-
+bool LocalInstance::closeTransaction()
+{
+	if (!m_transaction)
+		return false;
 	m_transaction = 0;
-	return result;
+	return true;
 }
 
 std::wstring LocalInstance::getName() const
