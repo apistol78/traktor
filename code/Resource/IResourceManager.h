@@ -78,8 +78,8 @@ public:
 	bool bind(Proxy< ResourceType >& proxy)
 	{
 		Ref< IResourceHandle > handle = bind< ResourceType >(proxy.getGuid());
-		T_ASSERT (handle);
-
+		if (!handle)
+			return false;
 		proxy.replace(handle);
 		return true;
 	}
