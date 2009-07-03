@@ -130,6 +130,7 @@ void TranslateModifier::draw(
 
 	Scalar cameraDistance = world.translation().length();
 	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
+	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
 
 	int mouseX, mouseY, mouseZ;
 	float scaleX, scaleY, scaleZ;
@@ -155,18 +156,41 @@ void TranslateModifier::draw(
 			3.0f,
 			Color(255, 0, 0, (axisEnable & SceneEditorContext::AeX) ? 255 : 64)
 		);
+		if (axisEnable & SceneEditorContext::AeX)
+			primitiveRenderer->drawArrowHead(
+				axisX * guideLength,
+				axisX * (guideLength + arrowLength),
+				0.5f,
+				Color(255, 0, 0, 255)
+			);
+
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 			axisY * guideLength,
 			3.0f,
 			Color(0, 255, 0, (axisEnable & SceneEditorContext::AeY) ? 255 : 64)
 		);
+		if (axisEnable & SceneEditorContext::AeY)
+			primitiveRenderer->drawArrowHead(
+				axisY * guideLength,
+				axisY * (guideLength + arrowLength),
+				0.5f,
+				Color(0, 255, 0, 255)
+			);
+
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 			axisZ * guideLength,
 			3.0f,
 			Color(0, 0, 255, (axisEnable & SceneEditorContext::AeZ) ? 255 : 64)
 		);
+		if (axisEnable & SceneEditorContext::AeZ)
+			primitiveRenderer->drawArrowHead(
+				axisZ * guideLength,
+				axisZ * (guideLength + arrowLength),
+				0.5f,
+				Color(0, 0, 255, 255)
+			);
 	}
 	else
 	{
@@ -176,6 +200,14 @@ void TranslateModifier::draw(
 			3.0f,
 			Color(255, 0, 0, (axisEnable & SceneEditorContext::AeX) ? 255 : 64)
 		);
+		if (axisEnable & SceneEditorContext::AeX)
+			primitiveRenderer->drawArrowHead(
+				axisX * guideLength,
+				axisX * (guideLength + arrowLength),
+				0.5f,
+				Color(255, 0, 0, 255)
+			);
+
 		if (button == 0)
 		{
 			primitiveRenderer->drawLine(
@@ -184,6 +216,13 @@ void TranslateModifier::draw(
 				3.0f,
 				Color(0, 255, 0, (axisEnable & SceneEditorContext::AeY) ? 255 : 64)
 			);
+			if (axisEnable & SceneEditorContext::AeY)
+				primitiveRenderer->drawArrowHead(
+					axisY * guideLength,
+					axisY * (guideLength + arrowLength),
+					0.5f,
+					Color(0, 255, 0, 255)
+				);
 		}
 		else
 		{
@@ -193,6 +232,13 @@ void TranslateModifier::draw(
 				3.0f,
 				Color(0, 0, 255, (axisEnable & SceneEditorContext::AeZ) ? 255 : 64)
 			);
+			if (axisEnable & SceneEditorContext::AeZ)
+				primitiveRenderer->drawArrowHead(
+					axisZ * guideLength,
+					axisZ * (guideLength + arrowLength),
+					0.5f,
+					Color(0, 0, 255, 255)
+				);
 		}
 	}
 
