@@ -211,10 +211,10 @@ void PrimitiveRenderer::drawLine(
 	if (int(m_vertex - m_vertexStart + 6) >= c_bufferCount)
 		return;
 
-	Vector4 vs1 = m_worldView * Vector4(start.x(), start.y(), start.z(), 1.0f);
-	Vector4 vs2 = m_worldView * Vector4(  end.x(),   end.y(),   end.z(), 1.0f);
+	Vector4 vs1 = m_worldView * start.xyz1();
+	Vector4 vs2 = m_worldView * end.xyz1();
 
-	Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
+	const Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
 
 	bool i1 = bool(vp.distance(vs1) >= 0.0f);
 	bool i2 = bool(vp.distance(vs2) >= 0.0f);
@@ -292,6 +292,87 @@ void PrimitiveRenderer::drawLine(
 	m_vertex++;
 
 	m_primitives.back().count += 2;
+}
+
+void PrimitiveRenderer::drawArrowHead(
+	const Vector4& start,
+	const Vector4& end,
+	float sharpness,
+	const Color& color
+)
+{
+	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
+		return;
+
+	Vector4 vs1 = m_worldView * start.xyz1();
+	Vector4 vs2 = m_worldView * end.xyz1();
+
+	const Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
+
+	bool i1 = bool(vp.distance(vs1) >= 0.0f);
+	bool i2 = bool(vp.distance(vs2) >= 0.0f);
+	if (!i1 && !i2)
+		return;
+
+	if (i1 != i2)
+	{
+		Vector4 vsc;
+		Scalar k;
+
+		if (vp.segmentIntersection(vs1, vs2, k, &vsc))
+		{
+			if (!i1)
+				vs1 = vsc;
+			else
+				vs2 = vsc;
+		}
+	}
+
+	Vector4 cs1 = m_projection.back() * vs1;
+	Vector4 cs2 = m_projection.back() * vs2;
+
+	Scalar cw1 = cs1.w(), cw2 = cs2.w();
+	if (cw1 <= Scalar(FUZZY_EPSILON) || cw2 <= Scalar(FUZZY_EPSILON))
+		return;
+
+	Scalar sx1 = cs1.x() / cw1;
+	Scalar sy1 = cs1.y() / cw1;
+
+	Scalar sx2 = cs2.x() / cw2;
+	Scalar sy2 = cs2.y() / cw2;
+
+	Scalar dy =   sx2 - sx1;
+	Scalar dx = -(sy2 - sy1);
+
+	Scalar dln = Scalar(sqrtf(dx * dx + dy * dy));
+	if (dln <= FUZZY_EPSILON)
+		return;
+
+	dx *= Scalar(1.0f - sharpness); //(dx * dln * Scalar(1.0f - sharpness) * Scalar(m_viewWidth)) / (dln * Scalar(m_viewWidth));
+	dy *= Scalar(1.0f - sharpness); //(dy * dln * Scalar(1.0f - sharpness) * Scalar(m_viewHeight)) / (dln * Scalar(m_viewHeight));
+
+	Scalar csdx = dx * cs1.w();
+	Scalar csdy = dy * cs1.w();
+
+	if (m_primitives.empty() || m_primitives.back().type != PtTriangles)
+	{
+		m_primitives.push_back(Primitives(
+			PtTriangles,
+			int(m_vertex - m_vertexStart),
+			0
+		));
+	}
+
+	m_vertex->set(Vector4(cs1.x() - csdx, cs1.y() - csdy, cs1.z(), cs1.w()), color);
+	m_vertex++;
+
+	m_vertex->set(Vector4(cs1.x() + csdx, cs1.y() + csdy, cs1.z(), cs1.w()), color);
+	m_vertex++;
+
+	m_vertex->set(Vector4(cs2.x(), cs2.y(), cs2.z(), cs2.w()), color);
+	m_vertex++;
+
+	m_primitives.back().count++;
 }
 
 void PrimitiveRenderer::drawWireAabb(

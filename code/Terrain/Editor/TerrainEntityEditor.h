@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_TerrainEntityEditor_H
 #define traktor_terrain_TerrainEntityEditor_H
 
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,12 +16,16 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS TerrainEntityEditor : public scene::EntityEditor
+class T_DLLCLASS TerrainEntityEditor : public scene::IEntityEditor
 {
 	T_RTTI_CLASS(TerrainEntityEditor)
 
 public:
 	virtual TypeSet getEntityTypes() const;
+
+	virtual bool isPickable(
+		scene::EntityAdapter* entityAdapter
+	) const;
 
 	virtual void entitySelected(
 		scene::SceneEditorContext* context,

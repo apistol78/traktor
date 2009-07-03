@@ -810,6 +810,10 @@
 			<second>Lägg till...</second>
 		</item>
     <item>
+      <first>SCENE_EDITOR_ADD_REFERENCE</first>
+      <second>Referenser</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
       <second>Välj efter-effekt...</second>
     </item>

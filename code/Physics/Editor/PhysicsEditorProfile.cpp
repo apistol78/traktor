@@ -53,7 +53,7 @@ void PhysicsEditorProfile::createEntityRenderers(
 
 void PhysicsEditorProfile::createEntityEditors(
 	scene::SceneEditorContext* context,
-	RefArray< scene::EntityEditor >& outEntityEditors
+	RefArray< scene::IEntityEditor >& outEntityEditors
 ) const
 {
 	outEntityEditors.push_back(gc_new< RigidEntityEditor >());

@@ -72,6 +72,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
+	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	Ref< ui::Slider > m_sliderTimeScale;
 	Ref< SceneRenderControl > m_sceneRenderControl;
 	Ref< ui::Container > m_infoContainer;

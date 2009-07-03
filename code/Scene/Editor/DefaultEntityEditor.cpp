@@ -12,13 +12,21 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, EntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
 TypeSet DefaultEntityEditor::getEntityTypes() const
 {
 	TypeSet typeSet;
 	typeSet.insert(&type_of< world::SpatialEntityData >());
 	return typeSet;
+}
+
+bool DefaultEntityEditor::isPickable(
+	EntityAdapter* entityAdapter
+) const
+{
+	T_ASSERT (entityAdapter->isSpatial());
+	return true;
 }
 
 void DefaultEntityEditor::entitySelected(

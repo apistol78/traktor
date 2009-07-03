@@ -66,7 +66,7 @@ class Entity;
 class SceneEditorProfile;
 class Camera;
 class Modifier;
-class EntityEditor;
+class IEntityEditor;
 class EntityAdapter;
 class SceneAsset;
 
@@ -155,16 +155,16 @@ public:
 
 	float getTimeScale() const;
 
-	void setReferenceMode(bool referenceMode);
+	void setAddReferenceMode(bool referenceMode);
 
-	bool inReferenceMode() const;
+	bool inAddReferenceMode() const;
 
 	//@}
 
 	/*! \name Entity editors. */
 	//@{
 
-	void addEntityEditor(EntityEditor* entityEditor);
+	void addEntityEditor(IEntityEditor* entityEditor);
 
 	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
 
@@ -209,7 +209,7 @@ public:
 
 	RefArray< SceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
-	RefArray< EntityEditor >& getEntityEditors() { return m_entityEditors; }
+	RefArray< IEntityEditor >& getEntityEditors() { return m_entityEditors; }
 
 	Ref< SceneAsset >& getSceneAsset() { return m_sceneAsset; }
 
@@ -270,7 +270,7 @@ private:
 	bool m_physicsEnable;
 	float m_timeScale;
 	bool m_referenceMode;
-	RefArray< EntityEditor > m_entityEditors;
+	RefArray< IEntityEditor > m_entityEditors;
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< EntityAdapter > m_rootEntityAdapter;
 };

@@ -11,42 +11,10 @@
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
 
-#if defined(_DEBUG)
-#	include "World/Entity/GroupEntity.h"
-#	include "World/Entity/GroupEntityData.h"
-#endif
-
 namespace traktor
 {
 	namespace scene
 	{
-#if defined(_DEBUG)
-		namespace
-		{
-
-void validateAdapter(EntityAdapter* adapter)
-{
-	T_ASSERT (adapter);
-	T_ASSERT (adapter->getInstance());
-
-	const RefArray< EntityAdapter >& adapterChildren = adapter->getChildren();
-
-	Ref< world::GroupEntity > groupEntity = dynamic_type_cast< world::GroupEntity* >(adapter->getEntity());
-	if (groupEntity)
-	{
-		const RefArray< world::Entity >& groupChildEntities = groupEntity->getEntities();
-		T_ASSERT (groupChildEntities.size() == adapterChildren.size());
-
-		for (size_t i = 0; i < adapterChildren.size(); ++i)
-			T_ASSERT (adapterChildren[i]->getEntity() == groupChildEntities[i]);
-	}
-
-	for (RefArray< EntityAdapter >::const_iterator i = adapterChildren.begin(); i != adapterChildren.end(); ++i)
-		validateAdapter(*i);
-}
-
-		}
-#endif
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
@@ -174,13 +142,7 @@ world::Entity* EntityAdapterBuilder::build(const world::EntityInstance* instance
 void EntityAdapterBuilder::end()
 {
 	T_ASSERT (m_currentAdapter == 0);
-
 	m_instances.clear();
-
-#if defined(_DEBUG)
-	if (m_rootAdapter)
-		validateAdapter(m_rootAdapter);
-#endif
 }
 
 EntityAdapter* EntityAdapterBuilder::getRootAdapter() const

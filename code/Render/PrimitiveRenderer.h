@@ -92,6 +92,13 @@ public:
 		const Color& color
 	);
 
+	void drawArrowHead(
+		const Vector4& start,
+		const Vector4& end,
+		float sharpness,
+		const Color& color
+	);
+
 	void drawWireAabb(
 		const Vector4& center,
 		const Vector4& extent,

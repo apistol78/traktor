@@ -12,13 +12,20 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::EntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::IEntityEditor)
 
 TypeSet OceanEntityEditor::getEntityTypes() const
 {
 	TypeSet typeSet;
 	typeSet.insert(&type_of< OceanEntityData >());
 	return typeSet;
+}
+
+bool OceanEntityEditor::isPickable(
+	scene::EntityAdapter* entityAdapter
+) const
+{
+	return false;
 }
 
 void OceanEntityEditor::entitySelected(

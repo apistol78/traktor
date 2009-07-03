@@ -87,9 +87,9 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
 			resourceManager->addFactory(*j);
 
-		RefArray< EntityEditor > profileEntityEditors;
+		RefArray< IEntityEditor > profileEntityEditors;
 		profile->createEntityEditors(context, profileEntityEditors);
-		for (RefArray< EntityEditor >::iterator j = profileEntityEditors.begin(); j != profileEntityEditors.end(); ++j)
+		for (RefArray< IEntityEditor >::iterator j = profileEntityEditors.begin(); j != profileEntityEditors.end(); ++j)
 			context->addEntityEditor(*j);
 
 		context->addEditorProfile(profile);
@@ -114,6 +114,9 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleZ"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.EditSpaceWorld"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.EditSpaceObject"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleGuide"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleSnap"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleAddReference"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Rewind"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Stop"));

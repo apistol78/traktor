@@ -24,6 +24,10 @@ class EntityData;
  *
  * This class is used by serialization to
  * resolve inter-entity dependencies.
+ *
+ * The entity product of this instance will
+ * have references to those entities produced
+ * by the instance references.
  */
 class T_DLLCLASS EntityInstance : public Serializable
 {
@@ -34,14 +38,49 @@ public:
 
 	EntityInstance(const std::wstring& name, EntityData* entityData);
 
+	/*! \brief Set name of instance.
+	 *
+	 * \param name New instance name.
+	 */
 	virtual void setName(const std::wstring& name);
 
+	/*! \brief Get name of instance.
+	 *
+	 * \return Instance name.
+	 */
 	virtual const std::wstring& getName() const;
 
+	/*! \brief Set instance entity data.
+	 *
+	 * \param entityData New instance entity data.
+	 */
+	virtual void setEntityData(EntityData* entityData);
+
+	/*! \brief Get instance entity data.
+	 *
+	 * \return Instance entity data.
+	 */
 	virtual EntityData* getEntityData() const;
 
+	/*! \brief Add instance reference.
+	 *
+	 * \param reference Reference to add.
+	 */
 	virtual void addReference(EntityInstance* reference);
 
+	/*! \brief Remove instance reference.
+	 *
+	 * \param reference Reference to remove.
+	 */
+	virtual void removeReference(EntityInstance* reference);
+
+	/*! \brief Remove all instance references. */
+	virtual void removeAllReferences();
+
+	/*! \brief Get all instance references.
+	 *
+	 * \return Array of instance's references.
+	 */
 	virtual const RefArray< EntityInstance >& getReferences() const;
 
 	virtual bool serialize(Serializer& s);

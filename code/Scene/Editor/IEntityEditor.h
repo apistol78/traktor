@@ -1,5 +1,5 @@
-#ifndef traktor_scene_EntityEditor_H
-#define traktor_scene_EntityEditor_H
+#ifndef traktor_scene_IEntityEditor_H
+#define traktor_scene_IEntityEditor_H
 
 #include "Core/Object.h"
 #include "Core/Math/Vector2.h"
@@ -41,9 +41,9 @@ class Modifier;
  * The scene editor uses specializations of this
  * class to apply changes to selected entities.
  */
-class T_DLLCLASS EntityEditor : public Object
+class T_DLLCLASS IEntityEditor : public Object
 {
-	T_RTTI_CLASS(EntityEditor)
+	T_RTTI_CLASS(IEntityEditor)
 
 public:
 	/*! \brief Get set of supported entities.
@@ -51,6 +51,18 @@ public:
 	 * \return Set of supported entity types.
 	 */
 	virtual TypeSet getEntityTypes() const = 0;
+
+	/*! \brief Is entity pick-able?
+	 *
+	 * Return true if entity can be selected
+	 * through the 3D preview.
+	 *
+	 * \param entityAdapter Entity adapter.
+	 * \return True if pick-able.
+	 */
+	virtual bool isPickable(
+		EntityAdapter* entityAdapter
+	) const = 0;
 
 	/*! \brief Entity selected.
 	 *
@@ -127,4 +139,4 @@ public:
 	}
 }
 
-#endif	// traktor_scene_EntityEditor_H
+#endif	// traktor_scene_IEntityEditor_H

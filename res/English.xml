@@ -786,6 +786,10 @@
       <second>Add entity...</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_ADD_REFERENCE</first>
+      <second>References</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_BROWSE_POSTPROCESS</first>
       <second>Browse postprocessing filter...</second>
     </item>

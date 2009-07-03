@@ -10,7 +10,7 @@
 #include "Scene/Editor/Modifiers/ScaleModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 #include "Physics/PhysicsManager.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
@@ -65,6 +65,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleZ = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleGuide = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Scene.Editor.ToggleGuide"), 5, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleAddReference = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TOGGLE_ADD_REFERENCE"), ui::Command(L"Scene.Editor.ToggleAddReference"), 12, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< editor::Settings > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
@@ -78,7 +79,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolBarActions = gc_new< ui::custom::ToolBar >();
 	m_toolBarActions->create(this, ui::WsBorder);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 12);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 13);
 	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
@@ -95,13 +96,14 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(m_toolToggleGuide);
 	m_toolBarActions->addItem(m_toolToggleSnap);
+	m_toolBarActions->addItem(m_toolToggleAddReference);
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_BROWSE_POSTPROCESS"), ui::Command(L"Scene.Editor.BrowsePostProcess"), 6));
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 12));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_PLAY"), ui::Command(L"Scene.Editor.Play"), 13));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_STOP"), ui::Command(L"Scene.Editor.Stop"), 14));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 13));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_PLAY"), ui::Command(L"Scene.Editor.Play"), 14));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_STOP"), ui::Command(L"Scene.Editor.Stop"), 15));
 
 	m_sliderTimeScale = gc_new< ui::Slider >();
 	m_sliderTimeScale->create(m_toolBarActions);
@@ -195,6 +197,8 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		updateEditState();
 	else if (command == L"Scene.Editor.ToggleSnap")
 		updateEditState();
+	else if (command == L"Scene.Editor.ToggleAddReference")
+		updateEditState();
 	else if (command == L"Scene.Editor.BrowsePostProcess")
 	{
 		editor::TypeBrowseFilter filter(type_of< world::PostProcessSettings >());
@@ -247,6 +251,7 @@ void ScenePreviewControl::updateEditState()
 	// Guides enabled.
 	m_context->setGuideEnable(m_toolToggleGuide->isToggled());
 	m_context->setSnapEnable(m_toolToggleSnap->isToggled());
+	m_context->setAddReferenceMode(m_toolToggleAddReference->isToggled());
 }
 
 void ScenePreviewControl::updateInformation()

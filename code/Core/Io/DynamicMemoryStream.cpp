@@ -58,11 +58,14 @@ int DynamicMemoryStream::read(void* block, int nbytes)
 	if (nbytes <= 0)
 		return 0;
 
-	int read = std::min< int >(nbytes, available());
-	std::memcpy(block, &(*m_bufferIter), read);
-	m_bufferIter += read;
+	int nread = std::min< int >(nbytes, available());
+	if (nread > 0)
+	{
+		std::memcpy(block, &(*m_bufferIter), nread);
+		m_bufferIter += nread;
+	}
 
-	return read;
+	return nread;
 }
 
 int DynamicMemoryStream::write(const void* block, int nbytes)

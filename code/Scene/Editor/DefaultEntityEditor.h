@@ -1,7 +1,7 @@
 #ifndef traktor_scene_DefaultEntityEditor_H
 #define traktor_scene_DefaultEntityEditor_H
 
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,12 +16,16 @@ namespace traktor
 	namespace scene
 	{
 
-class T_DLLCLASS DefaultEntityEditor : public EntityEditor
+class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 {
 	T_RTTI_CLASS(DefaultEntityEditor)
 
 public:
 	virtual TypeSet getEntityTypes() const;
+
+	virtual bool isPickable(
+		EntityAdapter* entityAdapter
+	) const;
 
 	virtual void entitySelected(
 		SceneEditorContext* context,
