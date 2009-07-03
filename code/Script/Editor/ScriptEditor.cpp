@@ -1,6 +1,6 @@
 #include "Script/Editor/ScriptEditor.h"
+#include "Script/IScriptManager.h"
 #include "Script/Script.h"
-#include "Script/ScriptManager.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
 #include "Editor/Settings.h"
@@ -103,7 +103,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, Serializab
 		const Type* scriptManagerType = Type::find(scriptManagerTypeName);
 		if (scriptManagerType)
 		{
-			m_scriptManager = dynamic_type_cast< ScriptManager* >(scriptManagerType->newInstance());
+			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->newInstance());
 			T_ASSERT (m_scriptManager);
 
 			m_scriptContext = m_scriptManager->createContext();

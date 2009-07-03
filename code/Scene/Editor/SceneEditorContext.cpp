@@ -48,9 +48,12 @@ IEntityEditor* findEntityEditor(const RefArray< IEntityEditor >& entityEditors, 
 // Attach entity editor in each adapter.
 void recursiveAttachEditors(EntityAdapter* entityAdapter, const RefArray< IEntityEditor >& entityEditors)
 {
-	Ref< IEntityEditor > entityEditor = findEntityEditor(entityEditors, entityAdapter->getEntityData()->getType());
-	if (entityEditor)
-		entityAdapter->setEntityEditor(entityEditor);
+	if (entityAdapter->getEntityData())
+	{
+		Ref< IEntityEditor > entityEditor = findEntityEditor(entityEditors, entityAdapter->getEntityData()->getType());
+		if (entityEditor)
+			entityAdapter->setEntityEditor(entityEditor);
+	}
 
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)

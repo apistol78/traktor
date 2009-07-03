@@ -765,7 +765,13 @@ void SceneEditorPage::eventInstanceDoubleClick(ui::Event* event)
 		return;
 
 	if (inputDialog.showModal() == ui::DrOk)
+	{
 		instance->setName(fields[0].value);
+
+		// Directly update item in instance grid.
+		selectedRows[0]->getItems().at(0)->setText(fields[0].value);
+		m_instanceGrid->update();
+	}
 
 	inputDialog.destroy();
 	event->consume();

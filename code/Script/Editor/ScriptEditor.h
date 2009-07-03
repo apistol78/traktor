@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Editor/IObjectEditor.h"
-#include "Script/ScriptContext.h"
+#include "Script/IScriptContext.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,8 +42,8 @@ class StatusBar;
 	{
 
 class Script;
-class ScriptManager;
-class ScriptContext;
+class IScriptManager;
+class IScriptContext;
 
 class T_DLLCLASS ScriptEditor
 :	public editor::IObjectEditor
@@ -63,8 +63,8 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< Script > m_script;
-	Ref< ScriptManager > m_scriptManager;
-	Ref< ScriptContext > m_scriptContext;
+	Ref< IScriptManager > m_scriptManager;
+	Ref< IScriptContext > m_scriptContext;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;

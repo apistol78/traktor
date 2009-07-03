@@ -1,7 +1,7 @@
 #ifndef traktor_script_AutoScriptClass_H
 #define traktor_script_AutoScriptClass_H
 
-#include "Script/ScriptClass.h"
+#include "Script/IScriptClass.h"
 #include "Core/Meta/TypeList.h"
 
 namespace traktor
@@ -483,9 +483,11 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 5 > : public 
  * time.
  */
 template < typename ClassType >
-class AutoScriptClass : public ScriptClass
+class AutoScriptClass : public IScriptClass
 {
 public:
+	typedef Any (ClassType::*unknown_method_t)(const std::wstring& methodName, const std::vector< Any >& args);
+
 	AutoScriptClass()
 	{
 	}
@@ -512,6 +514,11 @@ public:
 		m_methods.push_back(info);
 	}
 
+	void setUnknownMethod(unknown_method_t unknown)
+	{
+		m_unknown = unknown;
+	}
+
 	virtual const Type& getExportType() const
 	{
 		return type_of< ClassType >();
@@ -532,6 +539,14 @@ public:
 		return m_methods[methodId].mptr->invoke(object, args);
 	}
 
+	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, const std::vector< Any >& args) const
+	{
+		if (m_unknown)
+			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, args);
+		else
+			return Any();
+	}
+
 private:
 	struct MethodInfo
 	{
@@ -540,6 +555,7 @@ private:
 	};
 
 	std::vector< MethodInfo > m_methods;
+	unknown_method_t m_unknown;
 };
 
 //@}

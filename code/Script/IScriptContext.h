@@ -1,5 +1,5 @@
-#ifndef traktor_script_ScriptContext_H
-#define traktor_script_ScriptContext_H
+#ifndef traktor_script_IScriptContext_H
+#define traktor_script_IScriptContext_H
 
 #include <vector>
 #include "Core/Object.h"
@@ -38,7 +38,7 @@ public:
  * intended to be small environments which can
  * be embedded into entities etc.
  */
-class T_DLLCLASS ScriptContext : public Object
+class T_DLLCLASS IScriptContext : public Object
 {
 	T_RTTI_CLASS(ScriptContext)
 
@@ -59,7 +59,7 @@ public:
 	 */
 	virtual bool executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback) = 0;
 
-	/*! \brief Return true if context contains function.
+	/*! \brief Return true if context contains function (or method).
 	 *
 	 * \param functionName Name of function of interest.
 	 * \return True if function exists.
@@ -73,9 +73,18 @@ public:
 	 * \return Return value from function.
 	 */
 	virtual Any executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments) = 0;
+
+	/*! \brief Execute method.
+	*
+	* \param self This object.
+	* \param methodName Name of method to execute.
+	* \param arguments Call arguments.
+	* \return Return value from function.
+	*/
+	virtual Any executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments) = 0;
 };
 
 	}
 }
 
-#endif	// traktor_script_ScriptContext_H
+#endif	// traktor_script_IScriptContext_H

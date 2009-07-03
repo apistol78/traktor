@@ -1,6 +1,6 @@
 #include "Script/ScriptContextFactory.h"
-#include "Script/ScriptManager.h"
-#include "Script/ScriptContext.h"
+#include "Script/IScriptManager.h"
+#include "Script/IScriptContext.h"
 #include "Script/Script.h"
 #include "Database/Database.h"
 #include "Core/Log/Log.h"
@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextFactory", ScriptContextFactory, resource::IResourceFactory)
 
-ScriptContextFactory::ScriptContextFactory(db::Database* database, ScriptManager* scriptManager)
+ScriptContextFactory::ScriptContextFactory(db::Database* database, IScriptManager* scriptManager)
 :	m_database(database)
 ,	m_scriptManager(scriptManager)
 {
@@ -21,7 +21,7 @@ ScriptContextFactory::ScriptContextFactory(db::Database* database, ScriptManager
 const TypeSet ScriptContextFactory::getResourceTypes() const
 {
 	TypeSet typeSet;
-	typeSet.insert(&type_of< ScriptContext >());
+	typeSet.insert(&type_of< IScriptContext >());
 	return typeSet;
 }
 
@@ -39,7 +39,7 @@ Object* ScriptContextFactory::create(resource::IResourceManager* resourceManager
 		return 0;
 	}
 
-	Ref< ScriptContext > scriptContext = m_scriptManager->createContext();
+	Ref< IScriptContext > scriptContext = m_scriptManager->createContext();
 	if (!scriptContext)
 	{
 		log::error << L"Unable to create script context; create context failed" << Endl;
