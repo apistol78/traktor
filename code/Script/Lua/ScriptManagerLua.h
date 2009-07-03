@@ -2,7 +2,7 @@
 #define traktor_script_ScriptManagerLua_H
 
 #include "Core/Heap/Ref.h"
-#include "Script/ScriptManager.h"
+#include "Script/IScriptManager.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,17 +20,17 @@ namespace traktor
 /*! \brief LUA script manager.
  * \ingroup LUA Script
  */
-class T_DLLCLASS ScriptManagerLua : public ScriptManager
+class T_DLLCLASS ScriptManagerLua : public IScriptManager
 {
 	T_RTTI_CLASS(ScriptManagerLua)
 
 public:
-	virtual void registerClass(ScriptClass* scriptClass);
+	virtual void registerClass(IScriptClass* scriptClass);
 
-	virtual ScriptContext* createContext();
+	virtual IScriptContext* createContext();
 
 private:
-	RefArray< ScriptClass > m_registeredClasses;
+	RefArray< IScriptClass > m_registeredClasses;
 };
 
 	}

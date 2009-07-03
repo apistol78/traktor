@@ -24,14 +24,17 @@ class Database;
 	namespace script
 	{
 
-class ScriptManager;
+class IScriptManager;
 
+/*! \brief Script context factory.
+ * \ingroup Script
+ */
 class T_DLLCLASS ScriptContextFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS(ScriptContextFactory)
 
 public:
-	ScriptContextFactory(db::Database* database, ScriptManager* scriptManager);
+	ScriptContextFactory(db::Database* database, IScriptManager* scriptManager);
 
 	virtual const TypeSet getResourceTypes() const;
 
@@ -41,7 +44,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
-	Ref< ScriptManager > m_scriptManager;
+	Ref< IScriptManager > m_scriptManager;
 };
 
 	}

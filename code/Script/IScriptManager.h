@@ -1,5 +1,5 @@
-#ifndef traktor_script_ScriptManager_H
-#define traktor_script_ScriptManager_H
+#ifndef traktor_script_IScriptManager_H
+#define traktor_script_IScriptManager_H
 
 #include "Core/Object.h"
 
@@ -16,8 +16,8 @@ namespace traktor
 	namespace script
 	{
 
-class ScriptClass;
-class ScriptContext;
+class IScriptClass;
+class IScriptContext;
 
 /*! \brief Script manager.
  * \ingroup Script
@@ -29,19 +29,19 @@ class ScriptContext;
  * Each context should have at least the classes
  * registered up until the time of creation accessible.
  */
-class T_DLLCLASS ScriptManager : public Object
+class T_DLLCLASS IScriptManager : public Object
 {
-	T_RTTI_CLASS(ScriptManager)
+	T_RTTI_CLASS(IScriptManager)
 
 public:
 	/*! \brief Register script class. */
-	virtual void registerClass(ScriptClass* scriptClass) = 0;
+	virtual void registerClass(IScriptClass* scriptClass) = 0;
 
 	/*! \brief Create script context. */
-	virtual ScriptContext* createContext() = 0;
+	virtual IScriptContext* createContext() = 0;
 };
 
 	}
 }
 
-#endif	// traktor_script_ScriptManager_H
+#endif	// traktor_script_IScriptManager_H

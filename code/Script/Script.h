@@ -17,6 +17,9 @@ namespace traktor
 	namespace script
 	{
 
+/*! \brief Persistent script.
+ * \ingroup Script
+ */
 class T_DLLCLASS Script : public Serializable
 {
 	T_RTTI_CLASS(Script)

@@ -8,14 +8,14 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, ScriptManager)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, IScriptManager)
 
-void ScriptManagerLua::registerClass(ScriptClass* scriptClass)
+void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 {
 	m_registeredClasses.push_back(scriptClass);
 }
 
-ScriptContext* ScriptManagerLua::createContext()
+IScriptContext* ScriptManagerLua::createContext()
 {
 	return gc_new< ScriptContextLua >(cref(m_registeredClasses));
 }

@@ -1,6 +1,6 @@
 #include <csetjmp>
 #include "Script/Lua/ScriptContextLua.h"
-#include "Script/ScriptClass.h"
+#include "Script/IScriptClass.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -49,9 +49,9 @@ jmp_buf s_jb;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, ScriptContext)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, IScriptContext)
 
-ScriptContextLua::ScriptContextLua(const RefArray< ScriptClass >& registeredClasses)
+ScriptContextLua::ScriptContextLua(const RefArray< IScriptClass >& registeredClasses)
 {
 	m_luaState = lua_open();
 
@@ -62,7 +62,7 @@ ScriptContextLua::ScriptContextLua(const RefArray< ScriptClass >& registeredClas
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
 
-	for (RefArray< ScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
+	for (RefArray< IScriptClass >::const_iterator i = registeredClasses.begin(); i != registeredClasses.end(); ++i)
 		registerClass(*i);
 }
 
@@ -157,7 +157,31 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, const st
 	return returnValue;
 }
 
-void ScriptContextLua::registerClass(ScriptClass* scriptClass)
+Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments)
+{
+	CHECK_LUA_STACK(m_luaState, 0);
+
+	Any returnValue;
+
+	if (setjmp(s_jb) == 0)
+	{
+		lua_getglobal(m_luaState, wstombs(methodName).c_str());
+		if (!lua_isnil(m_luaState, -1))
+		{
+			pushAny(Any(self));
+			for (std::vector< Any >::const_iterator i = arguments.begin(); i != arguments.end(); ++i)
+				pushAny(*i);
+			lua_call(m_luaState, int32_t(arguments.size() + 1), 1);
+			returnValue = toAny(-1);
+		}
+		lua_pop(m_luaState, 1);
+		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+	}
+
+	return returnValue;
+}
+
+void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
@@ -180,26 +204,38 @@ void ScriptContextLua::registerClass(ScriptClass* scriptClass)
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
 		std::wstring methodName = scriptClass->getMethodName(i);
-		lua_pushstring(m_luaState, wstombs(methodName).c_str());
 		lua_pushinteger(m_luaState, i);
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
 		lua_pushcclosure(m_luaState, callMethod, 3);
-		lua_settable(m_luaState, -3);
+		lua_setfield(m_luaState, -2, wstombs(methodName).c_str());
 	}
 
 	const Type* superType = scriptClass->getExportType().getSuper();
-	if (superType)
+	T_ASSERT (superType);
+
+	bool exportedAsRoot = true;
+	for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 	{
-		for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
+		if (superType == &i->scriptClass->getExportType())
 		{
-			if (superType == &i->scriptClass->getExportType())
-			{
-				lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
-				lua_setmetatable(m_luaState, -2);
-				break;
-			}
+			lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
+			lua_setmetatable(m_luaState, -2);
+			exportedAsRoot = false;
+			break;
 		}
+	}
+
+	if (exportedAsRoot)
+	{
+		lua_newtable(m_luaState);
+		
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushcclosure(m_luaState, getUnknownMethod, 2);
+		lua_setfield(m_luaState, -2, "__index");
+
+		lua_setmetatable(m_luaState, -2);
 	}
 
 	lua_pop(m_luaState, 1);
@@ -271,7 +307,30 @@ Any ScriptContextLua::toAny(int32_t index)
 	return Any();
 }
 
-int32_t ScriptContextLua::callMethod(lua_State* luaState)
+int ScriptContextLua::getUnknownMethod(lua_State* luaState)
+{
+	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (context);
+
+	if (!lua_istable(luaState, 1))
+		return 0;
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	if (!scriptClass)
+		return 0;
+
+	const char* methodName = lua_tostring(luaState, 2);
+	T_ASSERT (methodName);
+
+	lua_pushstring(luaState, methodName);
+	lua_pushlightuserdata(luaState, (void*)context);
+	lua_pushlightuserdata(luaState, (void*)scriptClass);
+	lua_pushcclosure(luaState, callUnknownMethod, 3);
+
+	return 1;
+}
+
+int ScriptContextLua::callMethod(lua_State* luaState)
 {
 	CHECK_LUA_STACK(luaState, 1);
 
@@ -282,7 +341,7 @@ int32_t ScriptContextLua::callMethod(lua_State* luaState)
 		return 0;
 
 	// Get script class from function.
-	const ScriptClass* scriptClass = reinterpret_cast< ScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
 	if (!scriptClass)
 		return 0;
 
@@ -308,6 +367,45 @@ int32_t ScriptContextLua::callMethod(lua_State* luaState)
 
 	// Invoke native method.
 	Any returnValue = scriptClass->invoke(object, methodId, args);
+	context->pushAny(returnValue);
+
+	return 1;
+}
+
+int ScriptContextLua::callUnknownMethod(lua_State* luaState)
+{
+	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (context);
+
+	if (!lua_istable(luaState, 1))
+		return 0;
+
+	const char* methodName = lua_tostring(luaState, lua_upvalueindex(1));
+	T_ASSERT (methodName);
+	
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	if (!scriptClass)
+		return 0;
+
+	// Get object pointer.
+	lua_getfield(luaState, 1, "__this");
+	void* objectRefData = lua_touserdata(luaState, -1);
+	lua_pop(luaState, 1);
+	if (!objectRefData)
+		return 0;
+
+	Ref< Object > object = *(*(Ref< Object >**)(objectRefData));
+	if (!object)
+		return 0;
+
+	// Convert arguments.
+	int32_t argsCount = lua_gettop(luaState) - 1;
+	std::vector< Any > args(argsCount);
+	for (int32_t i = 0; i < argsCount; ++i)
+		args[i] = context->toAny(2 + i);
+
+	// Invoke native method.
+	Any returnValue = scriptClass->invokeUnknown(object, mbstows(methodName), args);
 	context->pushAny(returnValue);
 
 	return 1;

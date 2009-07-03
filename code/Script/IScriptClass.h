@@ -1,5 +1,5 @@
-#ifndef traktor_script_ScriptClass_H
-#define traktor_script_ScriptClass_H
+#ifndef traktor_script_IScriptClass_H
+#define traktor_script_IScriptClass_H
 
 #include "Script/Any.h"
 
@@ -20,12 +20,12 @@ namespace traktor
  * \ingroup Script
  *
  * This class is used to describe native
- * classes which are intended to be useable
+ * classes which are intended to be used
  * from scripts.
  */
-class T_DLLCLASS ScriptClass : public Object
+class T_DLLCLASS IScriptClass : public Object
 {
-	T_RTTI_CLASS(ScriptClass)
+	T_RTTI_CLASS(IScriptClass)
 
 public:
 	/*! \brief Get exported native type. */
@@ -39,9 +39,12 @@ public:
 
 	/*! \brief Invoke exported method. */
 	virtual Any invoke(Object* object, uint32_t methodId, const std::vector< Any >& args) const = 0;
+
+	/*! \brief Invoke unknown method. */
+	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, const std::vector< Any >& args) const = 0;
 };
 
 	}
 }
 
-#endif	// traktor_script_ScriptClass_H
+#endif	// traktor_script_IScriptClass_H
