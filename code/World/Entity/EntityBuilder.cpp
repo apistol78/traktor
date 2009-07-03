@@ -100,8 +100,8 @@ Entity* EntityBuilder::build(const EntityInstance* instance)
 		Ref< Entity > reference = build(*i);
 		if (reference)
 		{
-			entity->addReference(reference);
-			reference->addReferee(entity);
+			entity->addReference((*i)->getName(), reference);
+			reference->addReferee(instance->getName(), entity);
 		}
 		else
 			log::warning << L"Unable to get reference instance" << Endl;

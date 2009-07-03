@@ -59,9 +59,10 @@ public:
 	 * if you want to keep references then you
 	 * have to overload this method.
 	 *
+	 * \param name Name of reference.
 	 * \param reference Entity reference.
 	 */
-	virtual void addReference(Entity* reference);
+	virtual void addReference(const std::wstring& name, Entity* reference);
 
 	/*! \brief Add entity referee.
 	 *
@@ -69,9 +70,10 @@ public:
 	 * if you want to keep references then you
 	 * have to overload this method.
 	 *
-	 * \param reference Entity reference.
+	 * \param name Name of referee.
+	 * \param reference Entity referee.
 	 */
-	virtual void addReferee(Entity* referee);
+	virtual void addReferee(const std::wstring& name, Entity* referee);
 };
 
 	}

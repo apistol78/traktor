@@ -17,12 +17,12 @@ void Entity::destroy()
 	// Nothing to destroy.
 }
 
-void Entity::addReference(Entity* reference)
+void Entity::addReference(const std::wstring& name, Entity* reference)
 {
 	// Do nothing.
 }
 
-void Entity::addReferee(Entity* referee)
+void Entity::addReferee(const std::wstring& name, Entity* referee)
 {
 	// Do nothing.
 }
