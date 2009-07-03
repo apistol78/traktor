@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
 #include "Core/Serialization/Serializer.h"
@@ -30,6 +31,11 @@ const std::wstring& EntityInstance::getName() const
 	return m_name;
 }
 
+void EntityInstance::setEntityData(EntityData* entityData)
+{
+	m_entityData = entityData;
+}
+
 EntityData* EntityInstance::getEntityData() const
 {
 	return m_entityData;
@@ -38,6 +44,18 @@ EntityData* EntityInstance::getEntityData() const
 void EntityInstance::addReference(EntityInstance* reference)
 {
 	m_references.push_back(reference);
+}
+
+void EntityInstance::removeReference(EntityInstance* reference)
+{
+	RefArray< EntityInstance >::iterator i = std::find(m_references.begin(), m_references.end(), reference);
+	if (i != m_references.end())
+		m_references.erase(i);
+}
+
+void EntityInstance::removeAllReferences()
+{
+	m_references.resize(0);
 }
 
 const RefArray< EntityInstance >& EntityInstance::getReferences() const

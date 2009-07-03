@@ -23,13 +23,20 @@ struct TerrainData : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntityEditor", TerrainEntityEditor, scene::EntityEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntityEditor", TerrainEntityEditor, scene::IEntityEditor)
 
 TypeSet TerrainEntityEditor::getEntityTypes() const
 {
 	TypeSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	return typeSet;
+}
+
+bool TerrainEntityEditor::isPickable(
+	scene::EntityAdapter* entityAdapter
+) const
+{
+	return false;
 }
 
 void TerrainEntityEditor::entitySelected(

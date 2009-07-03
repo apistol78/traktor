@@ -44,7 +44,7 @@ void SceneEditorProfile::createEntityRenderers(
 
 void SceneEditorProfile::createEntityEditors(
 	SceneEditorContext* context,
-	RefArray< EntityEditor >& outEntityEditors
+	RefArray< IEntityEditor >& outEntityEditors
 ) const
 {
 }

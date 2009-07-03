@@ -2,7 +2,7 @@
 #include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorProfile.h"
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/Modifier.h"
@@ -18,6 +18,7 @@
 #include "World/WorldRenderSettings.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/PostProcess/PostProcess.h"
+#include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityUpdate.h"
 #include "Ui/Application.h"
@@ -152,7 +153,7 @@ bool SceneRenderControl::handleCommand(const ui::Command& command)
 
 	for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 	{
-		Ref< EntityEditor > entityEditor = (*i)->getEntityEditor();
+		Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 		if (entityEditor)
 		{
 			// Propagate command to entity editor.
@@ -293,12 +294,11 @@ EntityAdapter* SceneRenderControl::pickEntity(const ui::Point& position) const
 void SceneRenderControl::eventButtonDown(ui::Event* event)
 {
 	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
+	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
+	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 
-	if (!m_context->inReferenceMode())
+	if (m_modifyCamera || !m_context->inAddReferenceMode())
 	{
-		m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
-		m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
-
 		// Handle entity picking if enabled.
 		if (!m_modifyCamera && m_context->getPickEnable())
 		{
@@ -322,23 +322,43 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 			// Issue begin modification event.
 			m_context->raisePreModify();
 		}
+
+		setCapture();
 	}
 	else
 	{
 		Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
+		if (entityAdapter)
+		{
+			// Get selected entities.
+			m_context->getEntities(
+				m_modifyEntities,
+				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+			);
 
-		// Get selected entities.
-		m_context->getEntities(
-			m_modifyEntities,
-			SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-		);
+			if (!m_modifyEntities.empty())
+			{
+				// Issue begin modification event.
+				m_context->raisePreModify();
 
-		// Add reference to all entities.
-		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			(*i)->addReference(entityAdapter);
+				// Add reference to all selected entities.
+				bool referenceAdded = false;
+				for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+				{
+					if ((*i) != entityAdapter)
+						referenceAdded |= (*i)->addReference(entityAdapter);
+				}
+
+				// Need to build entities so references in them will get updated.
+				if (referenceAdded)
+					m_context->buildEntities();
+
+				// Issue post modification event.
+				m_context->raisePostModify();
+			}
+		}
 	}
 
-	setCapture();
 	setFocus();
 }
 
@@ -380,7 +400,7 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 
 		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 		{
-			Ref< EntityEditor > entityEditor = (*i)->getEntityEditor();
+			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 			if (entityEditor)
 				entityEditor->applyModifier(
 					m_context,
@@ -531,17 +551,18 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 
 		for (int x = -20; x <= 20; ++x)
 		{
+			float width = (x == 0) ? 2.0f : 0.0f;
 			float fx = float(x);
 			m_primitiveRenderer->drawLine(
 				Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 				Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-				0.0f,
+				width,
 				gridColor
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
 				Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-				0.0f,
+				width,
 				gridColor
 			);
 		}
@@ -550,7 +571,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		Ref< Modifier > modifier = m_context->getModifier();
 		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 		{
-			// Draw modifier, as modifiers are only applicable to spatial entities we must first check if it's a spatial entity.
+			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.
 			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
 			{
 				bool modifierActive = (event->getKeyState() & ui::KsControl) == 0 && hasCapture();
@@ -561,6 +582,28 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 					modifierActive,
 					m_mouseButton
 				);
+
+				// Draw reference arrows.
+				const RefArray< world::EntityInstance >& references = (*i)->getInstance()->getReferences();
+				for (RefArray< world::EntityInstance >::const_iterator j = references.begin(); j != references.end(); ++j)
+				{
+					Ref< EntityAdapter > referencedAdapter = m_context->findAdapterFromInstance(*j);
+					if (referencedAdapter)
+					{
+						Vector4 sourcePosition = (*i)->getTransform().translation();
+						Vector4 targetPosition = referencedAdapter->getTransform().translation();
+
+						Vector4 center = (sourcePosition + targetPosition) / Scalar(2.0f);
+						Vector4 offset = (targetPosition - sourcePosition) / Scalar(20.0f);
+
+						Scalar length = offset.length();
+						if (length > 0.1f)
+							offset *= Scalar(0.1f) / length;
+
+						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, Color(255, 200, 0, 255));
+						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, Color(255, 200, 0, 255));
+					}
+				}
 			}
 
 			// Draw entity guides.

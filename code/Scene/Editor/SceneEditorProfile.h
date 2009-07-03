@@ -56,7 +56,7 @@ class IEntityRenderer;
 	{
 
 class SceneEditorContext;
-class EntityEditor;
+class IEntityEditor;
 
 /*! \brief Scene editor profile.
  * \ingroup Scene
@@ -97,7 +97,7 @@ public:
 
 	virtual void createEntityEditors(
 		SceneEditorContext* context,
-		RefArray< EntityEditor >& outEntityEditors
+		RefArray< IEntityEditor >& outEntityEditors
 	) const;
 
 	virtual void setupWorldRenderer(

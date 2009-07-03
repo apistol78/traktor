@@ -4,7 +4,7 @@
 #include "Scene/Editor/SceneEditorProfile.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/Modifier.h"
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/SceneAsset.h"
@@ -20,12 +20,12 @@ namespace traktor
 		{
 
 // Find best matching entity editor.
-EntityEditor* findEntityEditor(const RefArray< EntityEditor >& entityEditors, const Type& entityType)
+IEntityEditor* findEntityEditor(const RefArray< IEntityEditor >& entityEditors, const Type& entityType)
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< EntityEditor > entityEditor;
+	Ref< IEntityEditor > entityEditor;
 	
-	for (RefArray< EntityEditor >::const_iterator i = entityEditors.begin(); i != entityEditors.end(); ++i)
+	for (RefArray< IEntityEditor >::const_iterator i = entityEditors.begin(); i != entityEditors.end(); ++i)
 	{
 		TypeSet entityTypes = (*i)->getEntityTypes();
 		for (TypeSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
@@ -46,9 +46,9 @@ EntityEditor* findEntityEditor(const RefArray< EntityEditor >& entityEditors, co
 }
 
 // Attach entity editor in each adapter.
-void recursiveAttachEditors(EntityAdapter* entityAdapter, const RefArray< EntityEditor >& entityEditors)
+void recursiveAttachEditors(EntityAdapter* entityAdapter, const RefArray< IEntityEditor >& entityEditors)
 {
-	Ref< EntityEditor > entityEditor = findEntityEditor(entityEditors, entityAdapter->getEntityData()->getType());
+	Ref< IEntityEditor > entityEditor = findEntityEditor(entityEditors, entityAdapter->getEntityData()->getType());
 	if (entityEditor)
 		entityAdapter->setEntityEditor(entityEditor);
 
@@ -194,24 +194,24 @@ float SceneEditorContext::getTimeScale() const
 	return m_timeScale;
 }
 
-void SceneEditorContext::setReferenceMode(bool referenceMode)
+void SceneEditorContext::setAddReferenceMode(bool referenceMode)
 {
 	m_referenceMode = referenceMode;
 }
 
-bool SceneEditorContext::inReferenceMode() const
+bool SceneEditorContext::inAddReferenceMode() const
 {
 	return m_referenceMode;
 }
 
-void SceneEditorContext::addEntityEditor(EntityEditor* entityEditor)
+void SceneEditorContext::addEntityEditor(IEntityEditor* entityEditor)
 {
 	m_entityEditors.push_back(entityEditor);
 }
 
 void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)
 {
-	Ref< EntityEditor > entityEditor = entityAdapter->getEntityEditor();
+	Ref< IEntityEditor > entityEditor = entityAdapter->getEntityEditor();
 	if (entityEditor)
 		entityEditor->drawGuide(this, primitiveRenderer, entityAdapter);
 }
@@ -366,6 +366,9 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
 		if (!(*i)->isSpatial())
+			continue;
+
+		if (!(*i)->getEntityEditor()->isPickable(*i))
 			continue;
 
 		// Transform ray into object space.

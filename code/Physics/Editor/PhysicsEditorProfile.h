@@ -44,7 +44,7 @@ public:
 
 	virtual void createEntityEditors(
 		scene::SceneEditorContext* context,
-		RefArray< scene::EntityEditor >& outEntityEditors
+		RefArray< scene::IEntityEditor >& outEntityEditors
 	) const;
 };
 

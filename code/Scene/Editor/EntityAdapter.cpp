@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityEditor.h"
+#include "Scene/Editor/IEntityEditor.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
@@ -123,11 +123,25 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 	return false;
 }
 
-void EntityAdapter::addReference(EntityAdapter* reference)
+bool EntityAdapter::addReference(EntityAdapter* reference)
 {
 	T_ASSERT (m_instance);
 	T_ASSERT (reference->m_instance);
+
+	const RefArray< world::EntityInstance >& references = m_instance->getReferences();
+	if (std::find(references.begin(), references.end(), reference->m_instance) != references.end())
+		return false;
+
 	m_instance->addReference(reference->m_instance);
+	return true;
+}
+
+void EntityAdapter::removeReference(EntityAdapter* reference)
+{
+	T_ASSERT (m_instance);
+	T_ASSERT (reference->m_instance);
+
+	m_instance->removeReference(reference->m_instance);
 }
 
 bool EntityAdapter::isGroup() const
@@ -212,12 +226,12 @@ void EntityAdapter::unlink()
 	}
 }
 
-void EntityAdapter::setEntityEditor(EntityEditor* entityEditor)
+void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)
 {
 	m_entityEditor = entityEditor;
 }
 
-EntityEditor* EntityAdapter::getEntityEditor() const
+IEntityEditor* EntityAdapter::getEntityEditor() const
 {
 	return m_entityEditor;
 }

@@ -30,7 +30,7 @@ class Entity;
 	namespace scene
 	{
 
-class EntityEditor;
+class IEntityEditor;
 
 /*! \brief Entity adapter class.
  *
@@ -93,7 +93,9 @@ public:
 	/*! \name References. */
 	//@{
 
-	void addReference(EntityAdapter* reference);
+	bool addReference(EntityAdapter* reference);
+
+	void removeReference(EntityAdapter* reference);
 
 	//@}
 
@@ -121,9 +123,9 @@ public:
 	/*! \name Entity editor. */
 	//@{
 
-	void setEntityEditor(EntityEditor* entityEditor);
+	void setEntityEditor(IEntityEditor* entityEditor);
 
-	EntityEditor* getEntityEditor() const;
+	IEntityEditor* getEntityEditor() const;
 
 	//@}
 
@@ -174,7 +176,7 @@ private:
 	Ref< world::Entity > m_entity;
 	Ref< EntityAdapter > m_parent;
 	RefArray< EntityAdapter > m_children;
-	Ref< EntityEditor > m_entityEditor;
+	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;
 	Ref< Object > m_userObject;
 };

@@ -79,7 +79,7 @@ void DefaultEditorProfile::createEntityRenderers(
 
 void DefaultEditorProfile::createEntityEditors(
 	SceneEditorContext* context,
-	RefArray< EntityEditor >& outEntityEditors
+	RefArray< IEntityEditor >& outEntityEditors
 ) const
 {
 	outEntityEditors.push_back(gc_new< DefaultEntityEditor >());
