@@ -20,6 +20,7 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "Ui/Custom/ShortcutEdit.h"
 #include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
 #include "Render/RenderSystem.h"
@@ -99,10 +100,15 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 	Ref< ui::Container > containerShortcuts = gc_new< ui::Container >();
 	containerShortcuts->create(pageShortcuts, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%,*", 0, 4));
 
-	Ref< ui::custom::GridView > gridShortcuts = gc_new< ui::custom::GridView >();
-	gridShortcuts->create(containerShortcuts, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
-	gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
-	gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
+	m_gridShortcuts = gc_new< ui::custom::GridView >();
+	m_gridShortcuts->create(containerShortcuts, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
+	m_gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
+	m_gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
+	m_gridShortcuts->addSelectEventHandler(ui::createMethodHandler(this, &SettingsDialog::eventShortcutSelect));
+
+	m_editShortcut = gc_new< ui::custom::ShortcutEdit >();
+	m_editShortcut->create(containerShortcuts, 0, 0, ui::WsClientBorder);
+	m_editShortcut->addChangeEventHandler(ui::createMethodHandler(this, &SettingsDialog::eventShortcutModified));
 
 	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
@@ -141,7 +147,7 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 				));
 			}
 
-			gridShortcuts->addRow(row);
+			m_gridShortcuts->addRow(row);
 		}
 	}
 
@@ -195,6 +201,28 @@ void SettingsDialog::eventDialogClick(ui::Event* event)
 			modules.push_back(m_listModules->getItem(i));
 		m_settings->setProperty< PropertyStringArray >(L"Editor.Modules", modules);
 	}
+}
+
+void SettingsDialog::eventShortcutSelect(ui::Event* event)
+{
+	RefArray< ui::custom::GridRow > selectedRows;
+	m_gridShortcuts->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+
+	if (selectedRows.size() == 1)
+	{
+		// @fixme
+		m_editShortcut->setEnable(true);
+	}
+	else
+	{
+		m_editShortcut->set(0, 0);
+		m_editShortcut->setEnable(false);
+	}
+}
+
+void SettingsDialog::eventShortcutModified(ui::Event* event)
+{
+	// @fixme
 }
 
 void SettingsDialog::eventButtonAddModuleClick(ui::Event* event)
