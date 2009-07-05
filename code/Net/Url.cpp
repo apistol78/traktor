@@ -1,5 +1,6 @@
 #include "Net/Url.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/Path.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -9,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Url", Url, Object)
 
-Url::Url() :
-	m_valid(false)
+Url::Url()
+:	m_valid(false)
 {
 }
 		
@@ -94,6 +95,7 @@ bool Url::set(const std::wstring& spec)
 	{
 		// Non-generic form; save as path.
 		m_path = specific;
+		m_file = Path(m_path).getFileName();
 	}
 
 	m_valid = true;

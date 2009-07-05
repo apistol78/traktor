@@ -9,14 +9,14 @@ namespace traktor
 /*! \brief Composite member.
  * \ingroup Core
  */
-template < typename Class >	
+template < typename Class, bool Compound = true >	
 class MemberComposite : public MemberComplex
 {
 public:
 	typedef Class value_type;
 	
 	MemberComposite(const std::wstring& name, value_type& ref)
-	:	MemberComplex(name, true)
+	:	MemberComplex(name, Compound)
 	,	m_ref(ref)
 	{
 	}

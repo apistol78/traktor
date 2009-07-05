@@ -113,20 +113,13 @@ std::wstring OS::getWritableFolderPath() const
 		HRESULT hr;
 		BOOL pm;
 
-		log::debug << L"1" << Endl;
-
 		hr = (*s_IEIsProtectedModeProcess)(&pm);
 		if (FAILED(hr))
-			return L"";
-
-		log::debug << L"2" << Endl;
+			pm = FALSE;
 
 		if (pm)
 		{
 			LPWSTR pwstrPath = 0;
-
-			log::debug << L"3" << Endl;
-
 			hr = (*s_IEGetWriteableFolderPath)(
 				FOLDERID_LocalAppDataLow,
 				&pwstrPath
@@ -134,19 +127,10 @@ std::wstring OS::getWritableFolderPath() const
 			if (FAILED(hr))
 				return L"";
 
-			log::debug << L"4" << Endl;
-
 			std::wstring path = pwstrPath;
-
-			log::debug << path << Endl;
-
 			path = replaceAll(path, L'\\', L'/');
 
-			log::debug << path << Endl;
-
 			CoTaskMemFree(pwstrPath);
-
-			log::debug << L"5" << Endl;
 			return path;
 		}
 	}

@@ -126,6 +126,16 @@ uint32_t rotate(uint32_t x, int32_t n)
 	return (x << n) | (x >> (32 - n));
 }
 
+uint8_t fromHex(wchar_t hc)
+{
+	if (hc >= L'0' && hc <= L'9')
+		return hc - L'0';
+	hc = tolower(hc);
+	if (hc >= L'a' && hc <= L'f')
+		return (hc - L'a') + 10;
+	return 0;
+}
+
 void FF(
 	uint32_t& a,
 	uint32_t b,
@@ -206,6 +216,25 @@ MD5::MD5()
 	begin();
 }
 
+bool MD5::create(const std::wstring& md5)
+{
+	if (md5.length() != 32)
+		return false;
+
+	const int MD5_SIZE = 16;
+	uint8_t md5b[MD5_SIZE];
+
+	for (int i = 0; i < MD5_SIZE; ++i)
+	{
+		wchar_t hn = md5[i * 2];
+		wchar_t ln = md5[i * 2 + 1];
+		md5b[i] = (fromHex(hn) << 4) | fromHex(ln);
+	}
+
+	byteToDword(m_md5, md5b, MD5_SIZE);
+	return true;
+}
+
 void MD5::begin()
 {
 	std::memset(m_buffer, 0, sizeof(m_buffer));
@@ -277,7 +306,21 @@ std::wstring MD5::format() const
 
 bool MD5::serialize(Serializer& s)
 {
-	return s >> MemberStaticArray< uint32_t, 4 >(L"md5", m_md5);
+	if (s.getDirection() == Serializer::SdRead)
+	{
+		std::wstring md5;
+		if (!(s >> Member< std::wstring >(L"md5", md5)))
+			return false;
+		if (!create(md5))
+			return false;
+	}
+	else	// SdWrite
+	{
+		std::wstring md5 = format();
+		if (!(s >> Member< std::wstring >(L"md5", md5)))
+			return false;
+	}
+	return true;
 }
 
 bool MD5::operator == (const MD5& md5) const

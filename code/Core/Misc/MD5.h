@@ -25,14 +25,30 @@ class T_DLLCLASS MD5 : public Serializable
 public:
 	MD5();
 
+	/*! \brief Create object from MD5 checksum string.
+	 *
+	 * \param md5 32 character hex encoded MD5.
+	 * \return True if created successfully.
+	 */
+	bool create(const std::wstring& md5);
+
+	/*! \brief Begin feeding data for MD5 checksum calculation. */
 	void begin();
 
+	/*! \brief Feed data to MD5 checksum calculation.
+	 *
+	 * \param buffer Pointer to data.
+	 * \param bufferSize Amount of data in bytes.
+	 */
 	void feed(const void* buffer, uint32_t bufferSize);
 
+	/*! \brief End feeding data for MD5 checksum calculation. */
 	void end();
 
+	/*! \brief Get pointer to MD5 checksum. */
 	const uint32_t* get() const;
 
+	/*! \brief Format MD5 checksum as string. */
 	std::wstring format() const;
 
 	bool operator == (const MD5& md5) const;
