@@ -3,7 +3,7 @@
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -19,7 +19,7 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InputDeviceDi8 : public InputDevice
+class T_DLLCLASS InputDeviceDi8 : public IInputDevice
 {
 	T_RTTI_CLASS(InputDeviceDi8)
 

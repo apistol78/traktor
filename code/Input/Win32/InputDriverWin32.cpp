@@ -8,7 +8,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverWin32", InputDriverWin32, InputDriver)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverWin32", InputDriverWin32, IInputDriver)
 
 InputDriverWin32::InputDriverWin32()
 :	m_keyboardDevice(gc_new< KeyboardDeviceWin32 >())
@@ -21,7 +21,7 @@ int InputDriverWin32::getDeviceCount()
 	return 2;
 }
 
-InputDevice* InputDriverWin32::getDevice(int index)
+IInputDevice* InputDriverWin32::getDevice(int index)
 {
 	if (index == 0)
 		return m_keyboardDevice;

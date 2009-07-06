@@ -1,7 +1,7 @@
 #ifndef traktor_input_KeyboardDeviceWin32_H
 #define traktor_input_KeyboardDeviceWin32_H
 
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS KeyboardDeviceWin32 : public InputDevice
+class T_DLLCLASS KeyboardDeviceWin32 : public IInputDevice
 {
 	T_RTTI_CLASS(KeyboardDeviceWin32)
 

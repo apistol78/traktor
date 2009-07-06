@@ -2,7 +2,7 @@
 #define traktor_input_InputDriverWin32_H
 
 #include "Core/Heap/Ref.h"
-#include "Input/InputDriver.h"
+#include "Input/IInputDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 class KeyboardDeviceWin32;
 class MouseDeviceWin32;
 
-class T_DLLCLASS InputDriverWin32 : public InputDriver
+class T_DLLCLASS InputDriverWin32 : public IInputDriver
 {
 	T_RTTI_CLASS(InputDriverWin32)
 
@@ -29,7 +29,7 @@ public:
 
 	virtual int getDeviceCount();
 
-	virtual InputDevice* getDevice(int index);
+	virtual IInputDevice* getDevice(int index);
 
 private:
 	Ref< KeyboardDeviceWin32 > m_keyboardDevice;

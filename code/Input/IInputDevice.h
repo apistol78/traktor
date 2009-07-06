@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputDevice_H
-#define traktor_input_InputDevice_H
+#ifndef traktor_input_IInputDevice_H
+#define traktor_input_IInputDevice_H
 
 #include <string>
 #include "Core/Object.h"
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Input device base.
  * \ingroup Input
  */
-class T_DLLCLASS InputDevice : public Object
+class T_DLLCLASS IInputDevice : public Object
 {
-	T_RTTI_CLASS(InputDevice)
+	T_RTTI_CLASS(IInputDevice)
 
 public:
 	virtual std::wstring getName() const = 0;
@@ -54,4 +54,4 @@ public:
 	}
 }
 
-#endif	// traktor_input_InputDevice_H
+#endif	// traktor_input_IInputDevice_H

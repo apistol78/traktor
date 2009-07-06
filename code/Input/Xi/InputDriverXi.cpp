@@ -7,7 +7,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverXi", InputDriverXi, InputDriver)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverXi", InputDriverXi, IInputDriver)
 
 InputDriverXi::InputDriverXi(DWORD deviceCount)
 {
@@ -20,7 +20,7 @@ int InputDriverXi::getDeviceCount()
 	return int(m_devices.size());
 }
 
-InputDevice* InputDriverXi::getDevice(int index)
+IInputDevice* InputDriverXi::getDevice(int index)
 {
 	return m_devices[index];
 }

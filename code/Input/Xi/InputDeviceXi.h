@@ -7,7 +7,7 @@
 #include <windows.h>
 #include <xinput.h>
 #endif
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InputDeviceXi : public InputDevice
+class T_DLLCLASS InputDeviceXi : public IInputDevice
 {
 	T_RTTI_CLASS(InputDeviceXi)
 

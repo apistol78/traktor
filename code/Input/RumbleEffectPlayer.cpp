@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Input/RumbleEffectPlayer.h"
 #include "Input/RumbleEffect.h"
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 namespace traktor
 {
@@ -15,13 +15,13 @@ RumbleEffectPlayer::RumbleEffectPlayer()
 {
 }
 
-void RumbleEffectPlayer::play(RumbleEffect* effect, InputDevice* targetDevice)
+void RumbleEffectPlayer::play(RumbleEffect* effect, IInputDevice* targetDevice)
 {
 	T_ASSERT (targetDevice->supportRumble());
 	m_playingEffects.push_back(PlayingEffect(effect, targetDevice, m_totalTime));
 }
 
-void RumbleEffectPlayer::stop(RumbleEffect* effect, InputDevice* targetDevice)
+void RumbleEffectPlayer::stop(RumbleEffect* effect, IInputDevice* targetDevice)
 {
 	std::list< PlayingEffect >::iterator i = std::find(m_playingEffects.begin(), m_playingEffects.end(), PlayingEffect(effect, targetDevice, 0.0f));
 	if (i != m_playingEffects.end())
@@ -58,7 +58,7 @@ void RumbleEffectPlayer::update(float deltaTime)
 	m_totalTime += deltaTime;
 }
 
-RumbleEffectPlayer::PlayingEffect::PlayingEffect(RumbleEffect* effect_, InputDevice* targetDevice_, float attachedTime_)
+RumbleEffectPlayer::PlayingEffect::PlayingEffect(RumbleEffect* effect_, IInputDevice* targetDevice_, float attachedTime_)
 :	effect(effect_)
 ,	targetDevice(targetDevice_)
 ,	attachedTime(attachedTime_)
