@@ -2,7 +2,7 @@
 #define traktor_input_RecordInputDevice_H
 
 #include "Core/Heap/Ref.h"
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,12 +22,12 @@ class RecordInputScript;
 /*! \brief Recording input device.
  * \ingroup Input
  */
-class T_DLLCLASS RecordInputDevice : public InputDevice
+class T_DLLCLASS RecordInputDevice : public IInputDevice
 {
 	T_RTTI_CLASS(RecordInputDevice)
 
 public:
-	RecordInputDevice(InputDevice* inputDevice, RecordInputScript* inputScript);
+	RecordInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript);
 
 	virtual std::wstring getName() const;
 
@@ -54,7 +54,7 @@ public:
 	virtual void setRumble(const InputRumble& rumble);
 
 private:
-	Ref< InputDevice > m_inputDevice;
+	Ref< IInputDevice > m_inputDevice;
 	Ref< RecordInputScript > m_inputScript;
 	uint32_t m_frame;
 };

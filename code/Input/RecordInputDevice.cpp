@@ -6,9 +6,9 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RecordInputDevice", RecordInputDevice, InputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.RecordInputDevice", RecordInputDevice, IInputDevice)
 
-RecordInputDevice::RecordInputDevice(InputDevice* inputDevice, RecordInputScript* inputScript)
+RecordInputDevice::RecordInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript)
 :	m_inputDevice(inputDevice)
 ,	m_inputScript(inputScript)
 ,	m_frame(0)

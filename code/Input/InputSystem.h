@@ -18,8 +18,8 @@ namespace traktor
 	namespace input
 	{
 
-class InputDriver;
-class InputDevice;
+class IInputDriver;
+class IInputDevice;
 
 /*! \brief Input system.
  * \ingroup Input
@@ -29,27 +29,27 @@ class T_DLLCLASS InputSystem : public Object
 	T_RTTI_CLASS(InputSystem)
 
 public:
-	void addDriver(InputDriver* inputDriver);
+	void addDriver(IInputDriver* inputDriver);
 
-	void removeDriver(InputDriver* inputDriver);
+	void removeDriver(IInputDriver* inputDriver);
 
-	void addDevice(InputDevice* inputDevice);
+	void addDevice(IInputDevice* inputDevice);
 
-	void removeDevice(InputDevice* inputDevice);
+	void removeDevice(IInputDevice* inputDevice);
 
 	int getDeviceCount() const;
 
-	InputDevice* getDevice(int index);
+	IInputDevice* getDevice(int index);
 
 	int getDeviceCount(InputCategory category) const;
 
-	InputDevice* getDevice(InputCategory category, int index, bool connected);
+	IInputDevice* getDevice(InputCategory category, int index, bool connected);
 
 	bool update(float deltaTime);
 
 private:
-	RefArray< InputDriver > m_drivers;
-	RefArray< InputDevice > m_devices;
+	RefArray< IInputDriver > m_drivers;
+	RefArray< IInputDevice > m_devices;
 
 	void updateDevices();
 };

@@ -2,7 +2,7 @@
 #define traktor_input_ReplayInputDevice_H
 
 #include "Core/Heap/Ref.h"
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,12 +22,12 @@ class RecordInputScript;
 /*! \brief Replay input device.
  * \ingroup Input
  */
-class T_DLLCLASS ReplayInputDevice : public InputDevice
+class T_DLLCLASS ReplayInputDevice : public IInputDevice
 {
 	T_RTTI_CLASS(ReplayInputDevice)
 
 public:
-	ReplayInputDevice(InputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
+	ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);
 
 	virtual std::wstring getName() const;
 
@@ -54,7 +54,7 @@ public:
 	virtual void setRumble(const InputRumble& rumble);
 
 private:
-	Ref< InputDevice > m_inputDevice;
+	Ref< IInputDevice > m_inputDevice;
 	Ref< RecordInputScript > m_inputScript;
 	bool m_loop;
 	uint32_t m_frame;

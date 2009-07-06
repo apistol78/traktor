@@ -1,5 +1,5 @@
-#ifndef traktor_input_InputDriver_H
-#define traktor_input_InputDriver_H
+#ifndef traktor_input_IInputDriver_H
+#define traktor_input_IInputDriver_H
 
 #include "Core/Object.h"
 
@@ -16,22 +16,22 @@ namespace traktor
 	namespace input
 	{
 
-class InputDevice;
+class IInputDevice;
 
 /*! \brief Input driver base.
  * \ingroup Input
  */
-class T_DLLCLASS InputDriver : public Object
+class T_DLLCLASS IInputDriver : public Object
 {
-	T_RTTI_CLASS(InputDriver)
+	T_RTTI_CLASS(IInputDriver)
 
 public:
 	virtual int getDeviceCount() = 0;
 
-	virtual InputDevice* getDevice(int index) = 0;
+	virtual IInputDevice* getDevice(int index) = 0;
 };
 
 	}
 }
 
-#endif	// traktor_input_InputDriver_H
+#endif	// traktor_input_IInputDriver_H

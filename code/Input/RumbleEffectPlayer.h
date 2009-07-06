@@ -19,7 +19,7 @@ namespace traktor
 	{
 
 class RumbleEffect;
-class InputDevice;
+class IInputDevice;
 
 /*! \brief Rumble effect player.
  * \ingroup Input
@@ -31,9 +31,9 @@ class T_DLLCLASS RumbleEffectPlayer : public Object
 public:
 	RumbleEffectPlayer();
 
-	virtual void play(RumbleEffect* effect, InputDevice* targetDevice);
+	virtual void play(RumbleEffect* effect, IInputDevice* targetDevice);
 
-	virtual void stop(RumbleEffect* effect, InputDevice* targetDevice);
+	virtual void stop(RumbleEffect* effect, IInputDevice* targetDevice);
 
 	virtual void stopAll();
 
@@ -43,10 +43,10 @@ private:
 	struct PlayingEffect
 	{
 		Ref< RumbleEffect > effect;
-		Ref< InputDevice > targetDevice;
+		Ref< IInputDevice > targetDevice;
 		float attachedTime;
 
-		PlayingEffect(RumbleEffect* effect_, InputDevice* targetDevice_, float attachedTime_);
+		PlayingEffect(RumbleEffect* effect_, IInputDevice* targetDevice_, float attachedTime_);
 
 		bool operator == (const PlayingEffect& other) const;
 	};

@@ -8,7 +8,7 @@
 #include <xinput.h>
 #endif
 #include "Core/Heap/Ref.h"
-#include "Input/InputDriver.h"
+#include "Input/IInputDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +25,7 @@ namespace traktor
 
 class InputDeviceXi;
 
-class T_DLLCLASS InputDriverXi : public InputDriver
+class T_DLLCLASS InputDriverXi : public IInputDriver
 {
 	T_RTTI_CLASS(InputDriverXi)
 
@@ -34,7 +34,7 @@ public:
 
 	virtual int getDeviceCount();
 
-	virtual InputDevice* getDevice(int index);
+	virtual IInputDevice* getDevice(int index);
 
 private:
 	RefArray< InputDeviceXi > m_devices;

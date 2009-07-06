@@ -18,7 +18,7 @@ float adjustDeadZone(float value)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceDi8", InputDeviceDi8, InputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceDi8", InputDeviceDi8, IInputDevice)
 
 InputDeviceDi8::InputDeviceDi8(IDirectInputDevice8* device)
 :	m_device(device)
