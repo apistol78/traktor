@@ -34,6 +34,7 @@ TypeSet PhysicsPipeline::getAssetTypes() const
 
 bool PhysicsPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

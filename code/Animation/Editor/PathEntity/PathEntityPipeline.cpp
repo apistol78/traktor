@@ -19,6 +19,7 @@ TypeSet PathEntityPipeline::getAssetTypes() const
 
 bool PathEntityPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
@@ -26,7 +27,7 @@ bool PathEntityPipeline::buildDependencies(
 	if (const PathEntityData* pathEntityData = dynamic_type_cast< const PathEntityData* >(sourceAsset))
 		pipelineManager->addDependency(pathEntityData->getInstance());
 
-	return world::EntityPipeline::buildDependencies(pipelineManager, sourceAsset, outBuildParams);
+	return world::EntityPipeline::buildDependencies(pipelineManager, sourceInstance, sourceAsset, outBuildParams);
 }
 
 	}

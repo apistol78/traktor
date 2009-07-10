@@ -35,6 +35,7 @@ TypeSet ScenePipeline::getAssetTypes() const
 
 bool ScenePipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

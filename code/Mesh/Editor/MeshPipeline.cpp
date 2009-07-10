@@ -85,6 +85,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 
 bool MeshPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
@@ -133,9 +134,18 @@ bool MeshPipeline::buildDependencies(
 	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
 		const std::wstring& name = i->getName();
-		std::wstring path = m_materialSourcePath + L"/" + name;
 
-		Ref< db::Instance > materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(path);
+		// Find material shader; first try in same group as the source instance.
+		Ref< db::Instance > materialShaderInstance;
+		materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(
+			sourceInstance->getParent()->getPath() + L"/" + name
+		);
+		if (!materialShaderInstance)
+		{
+			materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(
+				m_materialSourcePath + L"/" + name
+			);
+		}
 		if (!materialShaderInstance)
 		{
 			log::warning << L"No material shader \"" << name << L"\" found; using default material" << Endl;

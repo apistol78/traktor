@@ -19,6 +19,7 @@ TypeSet AnimatedMeshEntityPipeline::getAssetTypes() const
 
 bool AnimatedMeshEntityPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

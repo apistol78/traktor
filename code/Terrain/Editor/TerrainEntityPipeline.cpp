@@ -23,6 +23,7 @@ TypeSet TerrainEntityPipeline::getAssetTypes() const
 
 bool TerrainEntityPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

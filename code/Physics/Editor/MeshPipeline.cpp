@@ -40,6 +40,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 
 bool MeshPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

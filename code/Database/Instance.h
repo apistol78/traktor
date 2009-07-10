@@ -77,7 +77,7 @@ public:
 
 	virtual Stream* writeData(const std::wstring& dataName);
 
-	virtual Group* getParent();
+	virtual Group* getParent() const;
 
 	template < typename T >
 	T* getObject()

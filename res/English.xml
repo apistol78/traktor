@@ -652,7 +652,15 @@
     <item>
       <first>MESHASSET_WIZARDTOOL_FILE_TITLE</first>
       <second>Select source model</second>
-    </item>    
+    </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS</first>
+      <second>Create default materials?</second>
+    </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS_TITLE</first>
+      <second>Create materials?</second>
+    </item>
 		<item>
 			<first>NEW_BATCH_DESCRIPTION</first>
 			<second>New import batch...</second>

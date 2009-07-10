@@ -56,6 +56,7 @@ TypeSet ScriptPipeline::getAssetTypes() const
 
 bool ScriptPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

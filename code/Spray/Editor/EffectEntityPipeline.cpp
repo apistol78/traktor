@@ -18,6 +18,7 @@ TypeSet EffectEntityPipeline::getAssetTypes() const
 
 bool EffectEntityPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
@@ -25,7 +26,7 @@ bool EffectEntityPipeline::buildDependencies(
 	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
 	pipelineManager->addDependency(effectEntityData->getEffect().getGuid());
 
-	return world::EntityPipeline::buildDependencies(pipelineManager, sourceAsset, outBuildParams);
+	return world::EntityPipeline::buildDependencies(pipelineManager, sourceInstance, sourceAsset, outBuildParams);
 }
 
 	}

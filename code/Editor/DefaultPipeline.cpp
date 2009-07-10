@@ -34,6 +34,7 @@ TypeSet DefaultPipeline::getAssetTypes() const
 
 bool DefaultPipeline::buildDependencies(
 	PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

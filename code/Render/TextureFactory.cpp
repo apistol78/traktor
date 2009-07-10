@@ -6,6 +6,7 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Zip/InflateStream.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 
@@ -97,14 +98,14 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 		desc.immutable = true;
 
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
-		std::vector< uint8_t > buffer(textureDataSize);
+		AutoArrayPtr< uint8_t > buffer = new uint8_t [textureDataSize];
 
 		uint32_t blockSize = getTextureBlockSize(desc.format);
 		uint32_t blockDenom = getTextureBlockDenom(desc.format);
 
 		Reader readerData(isCompressed ? gc_new< zip::InflateStream >(stream) : stream);
 
-		uint8_t* data = &buffer[0];
+		uint8_t* data = buffer.ptr();
 		for (int i = 0; i < mipCount; ++i)
 		{
 			int mipWidth = imageWidth >> i;
@@ -121,7 +122,7 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 			T_ASSERT (nread == blockCount * blockSize);
 
 			data += blockCount * blockSize;
-			T_ASSERT (size_t(data - &buffer[0]) <= textureDataSize);
+			T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
 		}
 
 		texture = m_renderSystem->createSimpleTexture(desc);
@@ -145,15 +146,15 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.side, desc.side, desc.mipCount);
 
-		std::vector< uint8_t > buffer[6];
+		AutoArrayPtr< uint8_t > buffer[6];
 
 		Reader readerData(isCompressed ? gc_new< zip::InflateStream >(stream) : stream);
 		
 		for (int side = 0; side < 6; ++side)
 		{
-			buffer[side].resize(textureDataSize);
+			buffer[side] = new uint8_t [textureDataSize];
 
-			uint8_t* data = &buffer[side][0];
+			uint8_t* data = buffer[side].ptr();
 			for (int i = 0; i < mipCount; ++i)
 			{
 				int mipSide = imageWidth >> i;
