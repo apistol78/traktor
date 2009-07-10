@@ -673,6 +673,14 @@
       <first>MESHASSET_WIZARDTOOL_FILE_TITLE</first>
       <second>Välj källmodell</second>
     </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS</first>
+      <second>Skapa standard material?</second>
+    </item>
+    <item>
+      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS_TITLE</first>
+      <second>Skapa material?</second>
+    </item>
 		<item>
 			<first>NEW_BATCH_DESCRIPTION</first>
 			<second>Skapa nytt import skript...</second>

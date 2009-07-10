@@ -90,7 +90,7 @@ void PipelineManager::addDependency(const Serializable* sourceAsset)
 	if (pipeline)
 	{
 		Ref< const Object > dummyBuildParams;
-		pipeline->buildDependencies(this, sourceAsset, dummyBuildParams);
+		pipeline->buildDependencies(this, 0, sourceAsset, dummyBuildParams);
 		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
 	}
 	else
@@ -116,6 +116,7 @@ void PipelineManager::addDependency(const Serializable* sourceAsset, const std::
 	}
 
 	addUniqueDependency(
+		0,
 		sourceAsset,
 		name,
 		outputPath,
@@ -151,6 +152,7 @@ void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool buil
 	}
 
 	addUniqueDependency(
+		sourceAssetInstance,
 		sourceAsset,
 		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
@@ -194,6 +196,7 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 	}
 
 	addUniqueDependency(
+		sourceAssetInstance,
 		sourceAsset,
 		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
@@ -412,7 +415,14 @@ PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) c
 	return 0;
 }
 
-void PipelineManager::addUniqueDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineManager::addUniqueDependency(
+	const db::Instance* sourceInstance,
+	const Serializable* sourceAsset,
+	const std::wstring& name,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
+	bool build
+)
 {
 	// Find appropriate pipeline.
 	Ref< IPipeline > pipeline = findPipeline(sourceAsset->getType());
@@ -440,6 +450,7 @@ void PipelineManager::addUniqueDependency(const Serializable* sourceAsset, const
 		Save< Ref< Dependency > > save(m_currentDependency, dependency);
 		result = pipeline->buildDependencies(
 			this,
+			sourceInstance,
 			sourceAsset,
 			dependency->buildParams
 		);

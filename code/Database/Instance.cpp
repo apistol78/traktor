@@ -189,7 +189,7 @@ Stream* Instance::writeData(const std::wstring& dataName)
 	return m_providerInstance->writeData(dataName);
 }
 
-Group* Instance::getParent()
+Group* Instance::getParent() const
 {
 	return m_parent;
 }

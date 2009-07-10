@@ -35,6 +35,7 @@ TypeSet EffectPipeline::getAssetTypes() const
 
 bool EffectPipeline::buildDependencies(
 	editor::PipelineManager* pipelineManager,
+	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const

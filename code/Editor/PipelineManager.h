@@ -154,13 +154,21 @@ private:
 	/*! \brief Add dependency.
 	 * Add dependency without checking if it's already added.
 	 *
+	 * \param sourceInstance Source asset datbase instance; null if not originate from database.
 	 * \param sourceAsset Pointer to source asset object.
 	 * \param name Name of source asset.
 	 * \param outputPath Output path of target instance.
 	 * \param outputGuid Guid of output instance.
 	 * \param build If asset needs to be built.
 	 */
-	void addUniqueDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build);
+	void addUniqueDependency(
+		const db::Instance* sourceInstance,
+		const Serializable* sourceAsset,
+		const std::wstring& name,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
+		bool build
+	);
 
 	/*! \brief Build thread method. */
 	void buildThread();

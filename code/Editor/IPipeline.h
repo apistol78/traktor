@@ -21,7 +21,6 @@ class Serializable;
 	namespace db
 	{
 
-class Database;
 class Instance;
 
 	}
@@ -67,12 +66,14 @@ public:
 	/*! \brief Build dependencies from source asset.
 	 *
 	 * \param pipelineManager Pipeline manager requesting dependencies.
+	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
 	 * \param outBuildParams User defined parameter object; passed into buildOutput(...).
 	 * \param True if successful.
 	 */
 	virtual bool buildDependencies(
 		PipelineManager* pipelineManager,
+		const db::Instance* sourceInstance,
 		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const = 0;
