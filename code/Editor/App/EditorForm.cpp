@@ -990,9 +990,15 @@ void EditorForm::updateTitle()
 
 	std::wstring targetTitle = m_settings->getProperty< PropertyString >(L"Editor.TargetTitle");
 	if (!targetTitle.empty())
-		ss << targetTitle << L" - " << c_title;
-	else
-		ss << c_title;
+		ss << targetTitle << L" - ";
+
+	if (m_project)
+	{
+		std::wstring projectName = m_projectPath.getFileNameNoExtension();
+		ss << projectName << L" - ";
+	}
+
+	ss << c_title;
 
 	setText(ss.str());
 }
@@ -1038,9 +1044,6 @@ void EditorForm::newProject()
 
 void EditorForm::openProject()
 {
-	if (!closeProject())
-		return;
-
 	ui::FileDialog fileDialog;
 	if (!fileDialog.create(this, i18n::Text(L"EDITOR_OPEN_PROJECT"), L"Projects;*.project;All files;*.*"))
 		return;
@@ -1053,18 +1056,27 @@ void EditorForm::openProject()
 	}
 	fileDialog.destroy();
 
+	if (m_project != 0 && m_projectPath == projectPath)
+		return;
+
 	{
 		EnterLeave cursor(
 			makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 			makeFunctor(this, &EditorForm::resetCursor)
 		);
 
-		m_project = gc_new< Project >();
-		if (m_project->open(projectPath))
-			m_mru->usedFile(projectPath);
-		else
-			m_project = 0;
+		Ref< Project > project = gc_new< Project >();
+		if (project->open(projectPath))
+		{
+			if (!closeProject())
+				return;
 
+			m_projectPath = projectPath;
+			m_project = project;
+			m_mru->usedFile(projectPath);
+		}
+
+		updateTitle();
 		updateProjectViews();
 		updateMRU();
 	}
@@ -1601,23 +1613,26 @@ bool EditorForm::handleCommand(const ui::Command& command)
 
 bool EditorForm::handleMRU(const ui::Command& command, const Path& path)
 {
-	if (!closeProject())
-		return false;
+	EnterLeave cursor(
+		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
+		makeFunctor(this, &EditorForm::resetCursor)
+	);
 
+	Ref< Project > project = gc_new< Project >();
+	if (project->open(path))
 	{
-		EnterLeave cursor(
-			makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-			makeFunctor(this, &EditorForm::resetCursor)
-		);
+		if (!closeProject())
+			return false;
 
-		m_project = gc_new< Project >();
-		if (m_project->open(path))
-			m_mru->usedFile(path);
-		else
-			m_project = 0;
-
-		updateProjectViews();
+		m_projectPath = path;
+		m_project = project;
+		m_mru->usedFile(path);
 	}
+	else
+		m_project = 0;
+
+	updateTitle();
+	updateProjectViews();
 
 	return true;
 }
