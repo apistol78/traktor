@@ -167,6 +167,13 @@ public:
 	 */
 	Path operator + (const Path& rh) const;
 
+	/*! \brief Compare equal operator.
+	 *
+	 * \param rh Compare to path.
+	 * \return True if paths is equal; depending on platform case sensitive.
+	 */
+	bool operator == (const Path& rh) const;
+
 	/*! \brief Compare less-than operator.
 	 *
 	 * Implemented to be able to have

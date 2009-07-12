@@ -201,6 +201,17 @@ Path Path::operator + (const Path& rh) const
 	return Path(getPathName() + L"/" + rh.getPathName());
 }
 
+bool Path::operator == (const Path& rh) const
+{
+	std::wstring pl = getPathName();
+	std::wstring pr = rh.getPathName();
+#if defined(_WIN32)
+	return compareIgnoreCase(pl, pr) == 0;
+#else
+	return pl.compare(pr) == 0;
+#endif
+}
+
 bool Path::operator < (const Path& rh) const
 {
 	return bool(getPathName() < rh.getPathName());

@@ -142,6 +142,7 @@ private:
 	Ref< LogView > m_logView;
 	Ref< render::RenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
+	Path m_projectPath;
 	Ref< Project > m_project;
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< MRU > m_mru;
