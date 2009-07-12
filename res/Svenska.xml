@@ -621,7 +621,11 @@
       <first>MENU_FILE_OPEN_PROJECT</first>
       <second>Öppna projekt...</second>
     </item>
-		<item>
+    <item>
+      <first>MENU_FILE_OPEN_RECENT</first>
+      <second>Öppna tidigare projekt...</second>
+    </item>
+    <item>
 			<first>MENU_FILE_SAVE</first>
 			<second>Spara...</second>
 		</item>

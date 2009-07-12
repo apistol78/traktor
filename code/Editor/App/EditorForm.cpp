@@ -10,6 +10,7 @@
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/AboutDialog.h"
 #include "Editor/App/Project.h"
+#include "Editor/App/MRU.h"
 #include "Editor/Settings.h"
 #include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPage.h"
@@ -67,6 +68,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Library/Library.h"
 #include "Core/Timer/Timer.h"
 #include "Core/System/OS.h"
@@ -167,10 +169,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
+	m_menuItemMRU = gc_new< ui::MenuItem >(i18n::Text(L"MENU_FILE_OPEN_RECENT"));
+
 	Ref< ui::MenuItem > menuFile = gc_new< ui::MenuItem >(i18n::Text(L"MENU_FILE"));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.NewProject"), i18n::Text(L"MENU_FILE_NEW_PROJECT")));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.OpenProject"), i18n::Text(L"MENU_FILE_OPEN_PROJECT")));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseProject"), i18n::Text(L"MENU_FILE_CLOSE_PROJECT")));
+	menuFile->add(m_menuItemMRU);
 	menuFile->add(gc_new< ui::MenuItem >(L"-"));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
@@ -402,6 +407,16 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		m_shortcutTable->addCommand(keyState, keyCode, *i);
 	}
 
+	// Load MRU registry.
+	Ref< Stream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", File::FmRead);
+	if (file)
+	{
+		m_mru = xml::XmlDeserializer(file).readObject< MRU >();
+		file->close();
+	}
+	if (!m_mru)
+		m_mru = gc_new< MRU >();
+
 	// Create render system.
 	const Type* renderSystemType = Type::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
 	if (renderSystemType)
@@ -433,6 +448,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Ensure views are in correct state.
 	updateProjectViews();
+	updateMRU();
 
 	// Show form.
 	update();
@@ -981,6 +997,22 @@ void EditorForm::updateTitle()
 	setText(ss.str());
 }
 
+void EditorForm::updateMRU()
+{
+	m_menuItemMRU->removeAll();
+
+	std::vector< Path > usedFiles;
+	if (!m_mru->getUsedFiles(usedFiles))
+		return;
+
+	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
+	{
+		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Editor.MRU"), std::wstring(*i));
+		menuItem->setData(L"PATH", DeepClone(&(*i)).create());
+		m_menuItemMRU->add(menuItem);
+	}
+}
+
 void EditorForm::updateOtherPanels()
 {
 	m_menuItemOtherPanels->removeAll();
@@ -1028,10 +1060,13 @@ void EditorForm::openProject()
 		);
 
 		m_project = gc_new< Project >();
-		if (!m_project->open(projectPath))
+		if (m_project->open(projectPath))
+			m_mru->usedFile(projectPath);
+		else
 			m_project = 0;
 
 		updateProjectViews();
+		updateMRU();
 	}
 }
 
@@ -1564,6 +1599,29 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	return result;
 }
 
+bool EditorForm::handleMRU(const ui::Command& command, const Path& path)
+{
+	if (!closeProject())
+		return false;
+
+	{
+		EnterLeave cursor(
+			makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
+			makeFunctor(this, &EditorForm::resetCursor)
+		);
+
+		m_project = gc_new< Project >();
+		if (m_project->open(path))
+			m_mru->usedFile(path);
+		else
+			m_project = 0;
+
+		updateProjectViews();
+	}
+
+	return true;
+}
+
 void EditorForm::eventShortcut(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
@@ -1574,7 +1632,15 @@ void EditorForm::eventShortcut(ui::Event* event)
 void EditorForm::eventMenuClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< const ui::MenuItem* >(event->getItem())->getCommand();
-	if (handleCommand(command))
+	if (command == L"Editor.MRU")
+	{
+		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
+		T_ASSERT (path);
+
+		if (handleMRU(command, *path))
+			event->consume();
+	}
+	else if (handleCommand(command))
 		event->consume();
 }
 
@@ -1713,6 +1779,14 @@ void EditorForm::eventClose(ui::Event* event)
 
 	// Save settings and pipeline hash.
 	saveSettings(L"Traktor.Editor");
+
+	// Save MRU.
+	Ref< Stream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", traktor::File::FmWrite);
+	if (file)
+	{
+		xml::XmlSerializer(file).writeObject(m_mru);
+		file->close();
+	}
 
 	ui::Application::getInstance().exit(0);
 }
