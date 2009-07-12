@@ -58,6 +58,7 @@ class IObjectEditorFactory;
 class IObjectEditor;
 class IEditorTool;
 class PipelineHash;
+class MRU;
 
 /*! \brief Main editor form.
  *
@@ -127,6 +128,7 @@ private:
 	Ref< ui::DockPane > m_paneAdditionalSouth;
 	RefArray< ui::Widget > m_otherPanels;
 	Ref< ui::MenuBar > m_menuBar;
+	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::StatusBar > m_statusBar;
@@ -142,11 +144,14 @@ private:
 	Ref< Settings > m_settings;
 	Ref< Project > m_project;
 	Ref< IEditorPage > m_activeEditorPage;
+	Ref< MRU > m_mru;
 	Thread* m_threadBuild;
 
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
 
 	void updateTitle();
+
+	void updateMRU();
 
 	void updateOtherPanels();
 
@@ -189,6 +194,8 @@ private:
 	bool anyModified();
 
 	bool handleCommand(const ui::Command& command);
+
+	bool handleMRU(const ui::Command& command, const Path& path);
 
 	/*! \name Event handlers. */
 	//@{

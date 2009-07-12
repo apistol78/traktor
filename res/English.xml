@@ -602,6 +602,10 @@
       <second>Open project...</second>
     </item>
     <item>
+      <first>MENU_FILE_OPEN_RECENT</first>
+      <second>Open recent project...</second>
+    </item>    
+    <item>
 			<first>MENU_FILE_SAVE</first>
 			<second>Save...</second>
 		</item>
