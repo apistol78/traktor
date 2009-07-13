@@ -1,13 +1,13 @@
 #include "Ui/Wx/ToolFormWx.h"
-#include "Ui/CloseEvent.h"
+#include "Ui/Events/CloseEvent.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-ToolFormWx::ToolFormWx(EventSubject* owner) :
-	WidgetWxImpl< IToolForm, wxMiniFrame >(owner)
+ToolFormWx::ToolFormWx(EventSubject* owner)
+:	WidgetWxImpl< IToolForm, wxMiniFrame >(owner)
 {
 }
 

@@ -1,9 +1,7 @@
 #include <wx/wx.h>
 #include "Ui/Wx/FormWx.h"
 #include "Ui/Wx/MenuBarWx.h"
-#include "Ui/Wx/ToolBarWx.h"
-#include "Ui/Wx/StatusBarWx.h"
-#include "Ui/CloseEvent.h"
+#include "Ui/Events/CloseEvent.h"
 
 namespace traktor
 {
