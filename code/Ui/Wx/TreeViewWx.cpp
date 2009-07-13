@@ -22,7 +22,7 @@ TreeViewWx::TreeViewWx(EventSubject* owner)
 bool TreeViewWx::create(IWidget* parent, int style)
 {
 	long wxStyle = wxTR_HAS_BUTTONS | wxTR_LINES_AT_ROOT;
-	if (!(style & WsBorder))
+	if (!(style & (WsClientBorder | WsBorder)))
 		wxStyle |= wxNO_BORDER;
 	if (style & WsClientBorder)
 		wxStyle |= wxSUNKEN_BORDER;

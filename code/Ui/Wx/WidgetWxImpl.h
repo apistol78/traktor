@@ -1,18 +1,14 @@
 #ifndef traktor_ui_WidgetWxImpl_H
 #define traktor_ui_WidgetWxImpl_H
 
-#if !defined(_CRT_SECURE_NO_DEPRECATE)
-#define _CRT_SECURE_NO_DEPRECATE 1
-#endif
-
 #include <string>
 #include <map>
 #include <wx/wx.h>
 #include <wx/event.h>
 #if defined(__WXGTK__)
-#include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include <wx/gtk/win_gtk.h>
+#	include <gtk/gtk.h>
+#	include <gdk/gdkx.h>
+#	include <wx/gtk/win_gtk.h>
 #endif
 #include "Ui/Widget.h"
 #include "Ui/Canvas.h"
@@ -35,9 +31,7 @@ namespace traktor
 	namespace ui
 	{
 
-/**
- * Common implementation of WxWindow widgets.
- */
+/* \brief Common implementation of WxWindow widgets. */
 template < typename ControlType, typename WxWindowType >
 class WidgetWxImpl : public ControlType
 {
@@ -181,7 +175,11 @@ public:
 
 	virtual bool containFocus() const
 	{
-		// @fixme
+		for (wxWindow* window = m_window; window; window = window->GetParent())
+		{
+			if (wxWindow::FindFocus() == window)
+				return true;
+		}
 		return false;
 	}
 
@@ -229,7 +227,7 @@ public:
 
 	virtual void setRect(const Rect& rect)
 	{
-		m_window->SetSize(rect.left, rect.top, rect.getWidth(), rect.getHeight());
+		m_window->SetSize(rect.left, rect.top, rect.getWidth() + 1, rect.getHeight() + 1);
 	}
 
 	virtual Rect getRect() const
@@ -246,7 +244,7 @@ public:
 
 	virtual Rect getNormalRect() const
 	{
-#if defined(_WIN32) && !defined(WINCE)
+#if defined(_WIN32)
 		WINDOWPLACEMENT wp;
 		memset(&wp, 0, sizeof(wp));
 		wp.length = sizeof(wp);
@@ -295,6 +293,48 @@ public:
 
 	virtual void setCursor(Cursor cursor)
 	{
+		switch (cursor)
+		{
+		case CrNone:
+			m_window->SetCursor(wxNullCursor);
+			break;
+		case CrArrow:
+			m_window->SetCursor(wxCURSOR_ARROW);
+			break;
+		case CrArrowRight:
+			m_window->SetCursor(wxCURSOR_RIGHT_ARROW);
+			break;
+		case CrArrowWait:
+			m_window->SetCursor(wxCURSOR_ARROWWAIT);
+			break;
+		case CrCross:
+			m_window->SetCursor(wxCURSOR_CROSS);
+			break;
+		case CrHand:
+			m_window->SetCursor(wxCURSOR_HAND);
+			break;
+		case CrIBeam:
+			m_window->SetCursor(wxCURSOR_IBEAM);
+			break;
+		case CrSizeNESW:
+			m_window->SetCursor(wxCURSOR_SIZENESW);
+			break;
+		case CrSizeNS:
+			m_window->SetCursor(wxCURSOR_SIZENS);
+			break;
+		case CrSizeNWSE:
+			m_window->SetCursor(wxCURSOR_SIZENWSE);
+			break;
+		case CrSizeWE:
+			m_window->SetCursor(wxCURSOR_SIZEWE);
+			break;
+		case CrSizing:
+			m_window->SetCursor(wxCURSOR_SIZING);
+			break;
+		case CrWait:
+			m_window->SetCursor(wxCURSOR_WAIT);
+			break;
+		}
 	}
 
 	virtual Point getMousePosition(bool relative) const
@@ -320,7 +360,13 @@ public:
 
 	virtual bool hitTest(const Point& pt) const
 	{
-		return false;
+		Point cpt = screenToClient(pt);
+		if (cpt.x < 0 || cpt.y < 0)
+			return false;
+		wxSize sz = m_window->GetSize();
+		if (cpt.x > sz.GetWidth() || cpt.y > sz.GetHeight())
+			return false;
+		return true;
 	}
 
 	virtual void setChildRects(const std::vector< IWidgetRect >& childRects)

@@ -5,8 +5,8 @@ namespace traktor
 	namespace ui
 	{
 
-StaticWx::StaticWx(EventSubject* owner) :
-	WidgetWxImpl< IStatic, wxStaticText >(owner)
+StaticWx::StaticWx(EventSubject* owner)
+:	WidgetWxImpl< IStatic, wxStaticText >(owner)
 {
 }
 

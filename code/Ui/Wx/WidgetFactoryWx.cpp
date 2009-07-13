@@ -17,6 +17,7 @@
 #include "Ui/Wx/RadioButtonWx.h"
 #include "Ui/Wx/RichEditWx.h"
 #include "Ui/Wx/ScrollBarWx.h"
+#include "Ui/Wx/SliderWx.h"
 #include "Ui/Wx/StaticWx.h"
 #include "Ui/Wx/ToolFormWx.h"
 #include "Ui/Wx/TreeViewWx.h"
@@ -125,7 +126,7 @@ IScrollBar* WidgetFactoryWx::createScrollBar(EventSubject* owner)
 
 ISlider* WidgetFactoryWx::createSlider(EventSubject* owner)
 {
-	return 0;
+	return new SliderWx(owner);
 }
 
 IStatic* WidgetFactoryWx::createStatic(EventSubject* owner)
