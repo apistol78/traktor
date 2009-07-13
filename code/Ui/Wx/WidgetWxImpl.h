@@ -15,15 +15,15 @@
 #include <wx/gtk/win_gtk.h>
 #endif
 #include "Ui/Widget.h"
-#include "Ui/ShowEvent.h"
-#include "Ui/KeyEvent.h"
-#include "Ui/MoveEvent.h"
-#include "Ui/SizeEvent.h"
-#include "Ui/MouseEvent.h"
-#include "Ui/FocusEvent.h"
-#include "Ui/CommandEvent.h"
-#include "Ui/PaintEvent.h"
 #include "Ui/Canvas.h"
+#include "Ui/Events/ShowEvent.h"
+#include "Ui/Events/KeyEvent.h"
+#include "Ui/Events/MoveEvent.h"
+#include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/MouseEvent.h"
+#include "Ui/Events/FocusEvent.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/PaintEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Wx/EvtHandler.h"
 #include "Ui/Wx/CanvasWx.h"
@@ -177,6 +177,12 @@ public:
 	virtual bool hasFocus() const
 	{
 		return bool(wxWindow::FindFocus() == m_window);
+	}
+
+	virtual bool containFocus() const
+	{
+		// @fixme
+		return false;
 	}
 
 	virtual void setFocus()

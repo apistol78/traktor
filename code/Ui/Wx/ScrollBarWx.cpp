@@ -1,14 +1,14 @@
 #include "Ui/Wx/ScrollBarWx.h"
 #include "Ui/ScrollBar.h"
-#include "Ui/ScrollEvent.h"
+#include "Ui/Events/ScrollEvent.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
-ScrollBarWx::ScrollBarWx(EventSubject* owner) :
-	WidgetWxImpl< IScrollBar, wxScrollBar >(owner)
+ScrollBarWx::ScrollBarWx(EventSubject* owner)
+:	WidgetWxImpl< IScrollBar, wxScrollBar >(owner)
 {
 }
 

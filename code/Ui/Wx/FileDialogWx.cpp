@@ -1,7 +1,7 @@
 #include <wx/wx.h>
 #include "Ui/Wx/FileDialogWx.h"
 #include "Ui/Itf/IWidget.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor

@@ -2,6 +2,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Math/Color.h"
 
 namespace traktor
 {
@@ -73,6 +74,17 @@ drawing::Image* BitmapWx::getImage() const
 Size BitmapWx::getSize() const
 {
 	return Size(m_image->GetWidth(), m_image->GetHeight());
+}
+
+void BitmapWx::setPixel(uint32_t x, uint32_t y, const Color& color)
+{
+	// @fixme
+}
+
+Color BitmapWx::getPixel(uint32_t x, uint32_t y) const
+{
+	// @fixme
+	return Color(0, 0, 0);
 }
 
 	}

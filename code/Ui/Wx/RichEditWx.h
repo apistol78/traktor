@@ -14,7 +14,7 @@ class RichEditWx : public WidgetWxImpl< IRichEdit, wxTextCtrl >
 public:
 	RichEditWx(EventSubject* owner);
 
-	virtual bool create(IWidget* parent, int style);
+	virtual bool create(IWidget* parent, const std::wstring& text, int style);
 
 	virtual int addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline);
 

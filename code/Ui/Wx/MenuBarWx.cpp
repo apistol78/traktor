@@ -4,7 +4,7 @@
 #include "Ui/Itf/IForm.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Widget.h"
-#include "Ui/CommandEvent.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor

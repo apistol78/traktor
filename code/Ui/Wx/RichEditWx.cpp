@@ -5,12 +5,12 @@ namespace traktor
 	namespace ui
 	{
 
-RichEditWx::RichEditWx(EventSubject* owner) :
-	WidgetWxImpl< IRichEdit, wxTextCtrl >(owner)
+RichEditWx::RichEditWx(EventSubject* owner)
+:	WidgetWxImpl< IRichEdit, wxTextCtrl >(owner)
 {
 }
 
-bool RichEditWx::create(IWidget* parent, int style)
+bool RichEditWx::create(IWidget* parent, const std::wstring& text, int style)
 {
 	int wxStyle = wxTE_RICH2;
 	if (style & WsClientBorder)

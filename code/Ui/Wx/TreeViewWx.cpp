@@ -5,8 +5,8 @@
 #include "Ui/Wx/TreeItemData.h"
 #include "Ui/Wx/BitmapWx.h"
 #include "Ui/TreeView.h"
-#include "Ui/TreeViewDragEvent.h"
-#include "Core/Heap/HeapNew.h"
+#include "Ui/Events/TreeViewDragEvent.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

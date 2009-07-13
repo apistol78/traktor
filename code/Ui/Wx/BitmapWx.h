@@ -24,6 +24,10 @@ public:
 
 	virtual Size getSize() const;
 
+	virtual void setPixel(uint32_t x, uint32_t y, const Color& color);
+
+	virtual Color getPixel(uint32_t x, uint32_t y) const;
+
 	inline wxImage* getWxImage() { return m_image; }
 
 private:
