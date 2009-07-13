@@ -78,13 +78,16 @@ Size BitmapWx::getSize() const
 
 void BitmapWx::setPixel(uint32_t x, uint32_t y, const Color& color)
 {
-	// @fixme
+	m_image->SetRGB(int(x), int(y), color.r, color.g, color.b);
 }
 
 Color BitmapWx::getPixel(uint32_t x, uint32_t y) const
 {
-	// @fixme
-	return Color(0, 0, 0);
+	return Color(
+		m_image->GetRed(int(x), int(y)),
+		m_image->GetGreen(int(x), int(y)),
+		m_image->GetBlue(int(x), int(y))
+	);
 }
 
 	}
