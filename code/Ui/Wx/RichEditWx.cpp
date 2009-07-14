@@ -30,6 +30,7 @@ bool RichEditWx::create(IWidget* parent, const std::wstring& text, int style)
 	))
 	{
 		m_window->Destroy();
+		m_window = 0;
 		return false;
 	}
 	
@@ -41,27 +42,18 @@ bool RichEditWx::create(IWidget* parent, const std::wstring& text, int style)
 
 int RichEditWx::addAttribute(const Color& textColor, const Color& backColor, bool bold, bool italic, bool underline)
 {
-	//Font font = getFont();
-	//
-	//font.setBold(bold);
-	//font.setItalic(italic);
-	//font.setUnderline(underline);
-	//
-	//wxTextAttr attr(
-	//	wxColour(
-	//		unsigned char(textColor->getRed() * 255.0f),
-	//		unsigned char(textColor->getGreen() * 255.0f),
-	//		unsigned char(textColor->getBlue() * 255.0f)
-	//	),
-	//	wxColour(
-	//		unsigned char(backColor->getRed() * 255.0f),
-	//		unsigned char(backColor->getGreen() * 255.0f),
-	//		unsigned char(backColor->getBlue() * 255.0f)
-	//	),
-	//	font.getWxFont()
-	//);
-	//
-	//m_attributes.push_back(attr);
+	wxFont font = m_window->GetFont();
+	font.SetWeight(bold ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
+	font.SetStyle(italic ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+	font.SetUnderlined(underline);
+
+	wxTextAttr attr(
+		wxColour(textColor.r, textColor.g, textColor.b),
+		wxColour(backColor.r, backColor.g, backColor.b),
+		font
+	);
+	
+	m_attributes.push_back(attr);
 	
 	return int(m_attributes.size() - 1);
 }

@@ -33,7 +33,12 @@ void PopupMenuWx::add(MenuItem* item)
 	if (item->count() > 0)
 		wx = m_menu.Append(id, wstots(item->getText()).c_str(), buildSubMenu(item));
 	else
-		wx = m_menu.Append(id, wstots(item->getText()).c_str());
+	{
+		if (item->getText() == L"-")
+			wx = m_menu.AppendSeparator();
+		else
+			wx = m_menu.Append(id, wstots(item->getText()).c_str());
+	}
 
 	wx->Enable(item->isEnable());
 }
@@ -54,15 +59,22 @@ wxMenu* PopupMenuWx::buildSubMenu(MenuItem* parentItem)
 	for (int i = 0; i < parentItem->count(); ++i)
 	{
 		Ref< MenuItem > item = parentItem->get(i);
-
-		int id = int(m_flatten.size() + 1000);
-		m_flatten.push_back(item);
-
 		wxMenuItem* wx;
-		if (item->count() > 0)
-			wx = menu->Append(id, wstots(item->getText()).c_str(), buildSubMenu(item));
+
+		if (item->getText() == L"-")
+		{
+			wx = menu->AppendSeparator();
+		}
 		else
-			wx = menu->Append(id, wstots(item->getText()).c_str());
+		{
+			int32_t id = int32_t(m_flatten.size() + 1000);
+			m_flatten.push_back(item);
+
+			if (item->count() > 0)
+				wx = menu->Append(id, wstots(item->getText()).c_str(), buildSubMenu(item));
+			else
+				wx = menu->Append(id, wstots(item->getText()).c_str());
+		}
 
 		wx->Enable(item->isEnable());
 	}

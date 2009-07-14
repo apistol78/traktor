@@ -53,20 +53,55 @@ void BitmapWx::copySubImage(drawing::Image* image, const Rect& srcRect, const Po
 
 drawing::Image* BitmapWx::getImage() const
 {
-	Ref< drawing::Image > image = gc_new< drawing::Image >(
-		drawing::PixelFormat::getB8G8R8(),
-		m_image->GetWidth(),
-		m_image->GetHeight()
-	);
+	const uint8_t* srcC = reinterpret_cast< const uint8_t* >(m_image->GetData());
+	const uint8_t* srcA = reinterpret_cast< const uint8_t* >(m_image->GetAlpha());
 
-	const uint8_t* src = reinterpret_cast< const uint8_t* >(m_image->GetData());
-	uint8_t* dst = reinterpret_cast< uint8_t* >(image->getData());
+	if (!srcC)
+		return 0;
 
-	memcpy(
-		dst,
-		src,
-		m_image->GetWidth() * m_image->GetHeight() * 3
-	);
+	Ref< drawing::Image > image;
+
+	if (!srcA)
+	{
+		 image = gc_new< drawing::Image >(
+			drawing::PixelFormat::getB8G8R8(),
+			m_image->GetWidth(),
+			m_image->GetHeight()
+		);
+
+		uint8_t* dst = reinterpret_cast< uint8_t* >(image->getData());
+
+		std::memcpy(
+			dst,
+			srcC,
+			m_image->GetWidth() * m_image->GetHeight() * 3
+		);
+	}
+	else
+	{
+		 image = gc_new< drawing::Image >(
+			drawing::PixelFormat::getR8G8B8A8(),
+			m_image->GetWidth(),
+			m_image->GetHeight()
+		);
+
+		uint32_t* dst = reinterpret_cast< uint32_t* >(image->getData());
+
+		for (int32_t y = 0; y < image->getHeight(); ++y)
+		{
+			for (int32_t x = 0; x < image->getWidth(); ++x)
+			{
+				int32_t offset = x + y * image->getWidth();
+
+				uint32_t r = srcC[offset * 3 + 0];
+				uint32_t g = srcC[offset * 3 + 1];
+				uint32_t b = srcC[offset * 3 + 2];
+				uint32_t a = srcA[offset];
+
+				dst[offset] = (r << 24) | (g << 16) | (b << 8) | a;
+			}
+		}
+	}
 
 	return image;
 }
