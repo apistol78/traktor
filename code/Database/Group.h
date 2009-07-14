@@ -55,7 +55,7 @@ public:
 
 	virtual Group* createGroup(const std::wstring& groupName);
 
-	virtual Instance* getInstance(const std::wstring& instanceName);
+	virtual Instance* getInstance(const std::wstring& instanceName, const Type* primaryType = 0);
 
 	virtual Instance* createInstance(const std::wstring& instanceName, uint32_t flags = CifDefault, const Guid* guid = 0);
 

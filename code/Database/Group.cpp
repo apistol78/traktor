@@ -159,10 +159,18 @@ Group* Group::createGroup(const std::wstring& groupName)
 	return group;
 }
 
-Instance* Group::getInstance(const std::wstring& instanceName)
+Instance* Group::getInstance(const std::wstring& instanceName, const Type* primaryType)
 {
 	T_ASSERT (m_providerGroup);
-	return findChildInstance(this, FindInstanceByName(instanceName));
+	if (!primaryType)
+		return findChildInstance(this, FindInstanceByName(instanceName));
+	else
+	{
+		Ref< Instance > instance = findChildInstance(this, FindInstanceByName(instanceName));
+		if (!instance || !is_type_of(*primaryType, *instance->getPrimaryType()))
+			return 0;
+		return instance;
+	}
 }
 
 Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)

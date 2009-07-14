@@ -130,7 +130,7 @@ Instance* Database::getInstance(const Guid& instanceGuid)
 	return i->second;
 }
 
-Instance* Database::getInstance(const std::wstring& instancePath)
+Instance* Database::getInstance(const std::wstring& instancePath, const Type* primaryType)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -148,7 +148,7 @@ Instance* Database::getInstance(const std::wstring& instancePath)
 	if (!group)
 		return 0;
 
-	return group->getInstance(instanceName);
+	return group->getInstance(instanceName, primaryType);
 }
 
 Instance* Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
