@@ -50,11 +50,12 @@ bool ScrollBarWx::create(IWidget* parent, int style)
 void ScrollBarWx::setRange(int range)
 {
 	int thumbSize = std::max(range / 10, 30);
+	int pageSize = thumbSize;
 	m_window->SetScrollbar(
 		m_window->GetThumbPosition(),
 		thumbSize,
-		range + thumbSize,
-		thumbSize
+		range,
+		pageSize
 	);
 }
 
@@ -65,11 +66,12 @@ int ScrollBarWx::getRange() const
 
 void ScrollBarWx::setPage(int page)
 {
+	m_window->SetThumbPosition(page * m_window->GetPageSize());
 }
 
 int ScrollBarWx::getPage() const
 {
-	return 0;
+	return m_window->GetThumbPosition() / m_window->GetPageSize();
 }
 
 void ScrollBarWx::setPosition(int position)
