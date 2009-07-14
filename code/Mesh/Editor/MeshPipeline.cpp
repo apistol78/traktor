@@ -138,12 +138,14 @@ bool MeshPipeline::buildDependencies(
 		// Find material shader; first try in same group as the source instance.
 		Ref< db::Instance > materialShaderInstance;
 		materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(
-			sourceInstance->getParent()->getPath() + L"/" + name
+			sourceInstance->getParent()->getPath() + L"/" + name,
+			&type_of< render::ShaderGraph >()
 		);
 		if (!materialShaderInstance)
 		{
 			materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(
-				m_materialSourcePath + L"/" + name
+				m_materialSourcePath + L"/" + name,
+				&type_of< render::ShaderGraph >()
 			);
 		}
 		if (!materialShaderInstance)
