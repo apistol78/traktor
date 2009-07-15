@@ -1,4 +1,3 @@
-#include <sstream>
 #include <limits>
 #include "Ui/Custom/PropertyList/VectorPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
@@ -7,6 +6,7 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseEvent.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -88,19 +88,12 @@ void VectorPropertyItem::mouseButtonDown(MouseEvent* event)
 	for (int i = 0; i < m_dimension; ++i)
 	{
 		Rect rcSub = m_editors[i]->getRect();
-
 		if (rcSub.inside(event->getPosition()))
 		{
-			std::wstringstream ss;
-			
-			ss.precision(2);
-			ss << m_value[i];
-
-			m_editors[i]->setText(ss.str());
+			m_editors[i]->setText(toString(m_value[i]));
 			m_editors[i]->setVisible(true);
 			m_editors[i]->setFocus();
 			m_editors[i]->selectAll();
-
 			break;
 		}
 	}
@@ -117,12 +110,12 @@ void VectorPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 			rc.bottom
 		);
 
-		std::wstringstream ss;
-		
-		ss.precision(2);
-		ss << m_value[i];
-	
-		canvas.drawText(rcSub.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
+		canvas.drawText(
+			rcSub.inflate(-2, -2),
+			toString(m_value[i]),
+			AnLeft,
+			AnCenter
+		);
 	}
 }
 
@@ -135,13 +128,10 @@ void VectorPropertyItem::eventEditFocus(Event* event)
 		{
 			if (m_editors[i]->isVisible(false))
 			{
-				std::wstringstream ss(m_editors[i]->getText());
-				ss >> m_value[i];
-
+				m_value[i] = parseString< float >(m_editors[i]->getText());
 				m_editors[i]->setVisible(false);
 			}
 		}
-
 		notifyChange();
 	}
 }
