@@ -1,5 +1,5 @@
 #if defined(_WIN32)
-#include <windows.h>
+#	include <windows.h>
 #endif
 #include "Ui/Application.h"
 #include "Editor/App/Splash.h"
@@ -13,29 +13,29 @@
 
 #include "Core/Timer/Profiler.h"
 #if defined(T_PROFILER_ENABLE)
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
-#include "Core/Io/FileOutputStream.h"
-#include "Core/Io/Utf8Encoding.h"
+#	include "Core/Io/FileSystem.h"
+#	include "Core/Io/Stream.h"
+#	include "Core/Io/FileOutputStream.h"
+#	include "Core/Io/Utf8Encoding.h"
 #endif
 
 #define T_UI_IMPL_WX	1
 #define T_UI_IMPL_WIN32	2
 
 #if !defined(T_UI_IMPL)
-#if defined(_WIN32)
-#define T_UI_IMPL T_UI_IMPL_WIN32
-#else
-#define T_UI_IMPL T_UI_IMPL_WX
-#endif
+#	if defined(_WIN32)
+#		define T_UI_IMPL T_UI_IMPL_WIN32
+#	else
+#		define T_UI_IMPL T_UI_IMPL_WX
+#	endif
 #endif
 
 #if T_UI_IMPL == T_UI_IMPL_WX
-#include "Ui/Wx/EventLoopWx.h"
-#include "Ui/Wx/WidgetFactoryWx.h"
+#	include "Ui/Wx/EventLoopWx.h"
+#	include "Ui/Wx/WidgetFactoryWx.h"
 #elif T_UI_IMPL == T_UI_IMPL_WIN32
-#include "Ui/Win32/EventLoopWin32.h"
-#include "Ui/Win32/WidgetFactoryWin32.h"
+#	include "Ui/Win32/EventLoopWin32.h"
+#	include "Ui/Win32/WidgetFactoryWin32.h"
 #endif
 
 using namespace traktor;
