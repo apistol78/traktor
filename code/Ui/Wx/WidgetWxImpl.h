@@ -30,6 +30,20 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
+
+wxRect toWxRect(const Rect rc)
+{
+	return wxRect(rc.left, rc.top, rc.getWidth(), rc.getHeight());
+}
+
+Rect fromWxRect(const wxRect& rc)
+{
+	return Rect(rc.GetLeft(), rc.GetTop(), rc.GetRight() + 1, rc.GetBottom() + 1);
+}
+
+		}
 
 /* \brief Common implementation of WxWindow widgets. */
 template < typename ControlType, typename WxWindowType >
@@ -227,19 +241,19 @@ public:
 
 	virtual void setRect(const Rect& rect)
 	{
-		m_window->SetSize(rect.left, rect.top, rect.getWidth() + 1, rect.getHeight() + 1);
+		m_window->SetSize(toWxRect(rect));
 	}
 
 	virtual Rect getRect() const
 	{
 		wxRect rect = m_window->GetRect();
-		return Rect(rect.GetLeft(), rect.GetTop(), rect.GetRight(), rect.GetBottom());
+		return fromWxRect(rect);
 	}
 
 	virtual Rect getInnerRect() const
 	{
 		wxRect rect = m_window->GetClientRect();
-		return Rect(0, 0, rect.GetWidth(), rect.GetHeight());
+		return fromWxRect(rect);
 	}
 
 	virtual Rect getNormalRect() const
@@ -254,7 +268,7 @@ public:
 #else
 		// wxWidgets doesn't expose this functionality, thus we fake it.
 		wxRect rect = m_window->GetRect();
-		return Rect(rect.GetLeft(), rect.GetTop(), rect.GetRight(), rect.GetBottom());
+		return fromWxRect(rect);
 #endif
 	}
 
@@ -375,12 +389,8 @@ public:
 		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
 		{
 			wxWindow* widget = static_cast< wxWindow* >(i->widget->getInternalHandle());
-			widget->SetSize(
-				i->rect.left,
-				i->rect.top,
-				i->rect.getWidth(),
-				i->rect.getHeight()
-			);
+			wxRect rect = toWxRect(i->rect);
+			widget->SetSize(rect);
 		}
 		m_window->Thaw();
 	}
@@ -388,13 +398,13 @@ public:
 	virtual Size getMinimumSize() const
 	{
 		wxSize s = m_window->GetMinSize();
-		return Size(s.x, s.y);
+		return Size(s.x + 1, s.y + 1);
 	}
 
 	virtual Size getPreferedSize() const
 	{
 		wxSize s = m_window->GetBestSize();
-		return Size(s.x, s.y);
+		return Size(s.x + 1, s.y + 1);
 	}
 
 	virtual Size getMaximumSize() const
@@ -408,7 +418,7 @@ public:
 			m_window->Refresh(false);
 		else
 		{
-			wxRect refreshRc(rc->left, rc->top, rc->getWidth(), rc->getHeight());
+			wxRect refreshRc = toWxRect(*rc);
 			m_window->Refresh(false, &refreshRc);
 		}
 		if (immediate)
