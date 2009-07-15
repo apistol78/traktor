@@ -2,6 +2,7 @@
 #include "Ui/Wx/FormWx.h"
 #include "Ui/Wx/MenuBarWx.h"
 #include "Ui/Events/CloseEvent.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -111,6 +112,21 @@ Rect FormWx::getInnerRect() const
 	}
 #endif
 	return inner;
+}
+
+void FormWx::setOutline(const Point* p, int np)
+{
+	if (p && np > 0)
+	{
+		AutoArrayPtr< wxPoint > points = new wxPoint [np];
+		for (int i = 0; i < np; ++i)
+			points[i] = wxPoint(p[i].x, p[i].y);
+
+		wxRegion region(size_t(np), points.ptr());
+		m_window->SetShape(region);
+	}
+	else
+		m_window->SetShape(wxRegion());
 }
 
 void FormWx::update(const Rect* rc, bool immediate)

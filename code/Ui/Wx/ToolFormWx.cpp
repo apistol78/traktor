@@ -1,5 +1,6 @@
 #include "Ui/Wx/ToolFormWx.h"
 #include "Ui/Events/CloseEvent.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -61,6 +62,21 @@ bool ToolFormWx::create(IWidget* parent, const std::wstring& text, int width, in
 void ToolFormWx::center()
 {
 	m_window->CentreOnScreen();
+}
+
+void ToolFormWx::setOutline(const Point* p, int np)
+{
+	if (p && np > 0)
+	{
+		AutoArrayPtr< wxPoint > points = new wxPoint [np];
+		for (int i = 0; i < np; ++i)
+			points[i] = wxPoint(p[i].x, p[i].y);
+
+		wxRegion region(size_t(np), points.ptr());
+		m_window->SetShape(region);
+	}
+	else
+		m_window->SetShape(wxRegion());
 }
 
 void ToolFormWx::onClose(wxCloseEvent& event)
