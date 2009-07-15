@@ -30,6 +30,8 @@ public:
 
 	virtual Rect getInnerRect() const;
 
+	virtual void setOutline(const Point* p, int np);
+
 	virtual void update(const Rect* rc, bool immediate);
 
 private:

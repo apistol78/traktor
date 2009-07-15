@@ -20,6 +20,8 @@ public:
 
 	virtual void center();
 
+	virtual void setOutline(const Point* p, int np);
+
 private:
 	void onClose(wxCloseEvent& event);
 };

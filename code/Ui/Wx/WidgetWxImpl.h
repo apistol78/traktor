@@ -237,6 +237,8 @@ public:
 
 	virtual void setOutline(const Point* p, int np)
 	{
+		// Do nothing; implemented in widgets which supports
+		// clipping outline.
 	}
 
 	virtual void setRect(const Rect& rect)
