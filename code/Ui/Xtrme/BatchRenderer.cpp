@@ -93,7 +93,7 @@ void BatchRenderer::batch(ProgramId programId, render::Texture* texture, render:
 	}
 
 	std::vector< render::Primitives >& primitives = m_batches.back().primitives;
-	if (primitives.empty() || primitives.back().type != primitiveType)
+	if (primitives.empty() || primitives.back().type != primitiveType || primitiveType == render::PtTriangleStrip)
 	{
 		primitives.push_back(render::Primitives(
 			primitiveType,
