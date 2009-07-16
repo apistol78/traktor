@@ -17,7 +17,7 @@ namespace traktor
 		namespace
 		{
 
-MD5 calculateNodeHash(Node* node)
+uint32_t calculateNodeHash(Node* node)
 {
 	std::pair< int, int > position = node->getPosition();
 	std::wstring comment = node->getComment();
@@ -25,7 +25,7 @@ MD5 calculateNodeHash(Node* node)
 	node->setPosition(std::make_pair(0, 0));
 	node->setComment(L"");
 
-	MD5 hash = DeepHash(node).getMD5();
+	uint32_t hash = DeepHash(node).get();
 
 	node->setPosition(position);
 	node->setComment(comment);
@@ -109,7 +109,7 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 		return m_shaderGraph;
 
 	// Calculate node hashes.
-	std::map< const Node*, MD5 > hash;
+	std::map< const Node*, uint32_t > hash;
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		hash[*i] = calculateNodeHash(*i);
 

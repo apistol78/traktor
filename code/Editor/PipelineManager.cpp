@@ -212,7 +212,7 @@ bool PipelineManager::build(bool rebuild)
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< Dependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
-		(*i)->checksum = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).getMD5();
+		(*i)->checksum = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
 
 		// Have source asset been modified?
 		if (!rebuild)
