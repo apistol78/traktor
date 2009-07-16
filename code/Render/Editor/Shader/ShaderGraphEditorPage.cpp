@@ -2,6 +2,7 @@
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/NodeFacade.h"
 #include "Render/Editor/Shader/DefaultNodeFacade.h"
+#include "Render/Editor/Shader/ColorNodeFacade.h"
 #include "Render/Editor/Shader/InterpolatorNodeFacade.h"
 #include "Render/Editor/Shader/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/SwizzleNodeFacade.h"
@@ -167,6 +168,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	for (std::vector< const Type* >::const_iterator i = nodeTypes.begin(); i != nodeTypes.end(); ++i)
 		m_nodeFacades[*i] = gc_new< DefaultNodeFacade >(m_editorGraph);
 
+	m_nodeFacades[&type_of< Color >()] = gc_new< ColorNodeFacade >(m_editorGraph);
 	m_nodeFacades[&type_of< Interpolator >()] = gc_new< InterpolatorNodeFacade >();
 	m_nodeFacades[&type_of< Switch >()] = gc_new< SwitchNodeFacade >(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = gc_new< SwizzleNodeFacade >(m_editorGraph);
@@ -232,36 +234,7 @@ void ShaderGraphEditorPage::propertiesChanged()
 	// Save undo state.
 	m_undoStack->push(m_shaderGraph);
 
-	// Refresh editor nodes.
-	RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
-	{
-		ui::custom::Node* editorNode = *i;
-
-		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
-		editorNode->setComment(
-			shaderNode->getComment()
-		);
-		
-		if (is_a< External >(shaderNode))
-		{
-			Ref< editor::IProject > project = m_editor->getProject();
-			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
-			editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
-			editorNode->setInfo(L"");
-		}
-		else
-			editorNode->setInfo(
-				shaderNode->getInformation()
-			);
-
-		const std::pair< int, int >& position = shaderNode->getPosition();
-		editorNode->setPosition(ui::Point(
-			position.first,
-			position.second
-		));
-	}
-
+	refreshGraph();
 	updateGraph();
 }
 
@@ -689,6 +662,39 @@ void ShaderGraphEditorPage::createNode(const Type* nodeType, const ui::Point& at
 	updateGraph();
 }
 
+void ShaderGraphEditorPage::refreshGraph()
+{
+	// Refresh editor nodes.
+	RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
+	for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+	{
+		ui::custom::Node* editorNode = *i;
+
+		Node* shaderNode = editorNode->getData< Node >(L"SHADERNODE");
+		editorNode->setComment(
+			shaderNode->getComment()
+		);
+		
+		if (is_a< External >(shaderNode))
+		{
+			Ref< editor::IProject > project = m_editor->getProject();
+			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
+			editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
+			editorNode->setInfo(L"");
+		}
+		else
+			editorNode->setInfo(
+				shaderNode->getInformation()
+			);
+
+		const std::pair< int, int >& position = shaderNode->getPosition();
+		editorNode->setPosition(ui::Point(
+			position.first,
+			position.second
+		));
+	}
+}
+
 void ShaderGraphEditorPage::updateGraph()
 {
 	// Validate shader graph.
@@ -913,6 +919,9 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::Event* event)
 
 	// Update properties.
 	m_editor->setPropertyObject(shaderNode);
+
+	// Refresh graph; information might have changed.
+	refreshGraph();
 }
 
 void ShaderGraphEditorPage::eventEdgeConnect(ui::Event* event)
