@@ -195,24 +195,20 @@ void CanvasXtrme::drawSpline(const Point* pnts, int npnts)
 
 void CanvasXtrme::fillRect(const Rect& rc)
 {
-	m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangles);
+	m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangleStrip);
 	m_batchRenderer.add(rc.left, rc.top, m_backGround);
 	m_batchRenderer.add(rc.right, rc.top, m_backGround);
 	m_batchRenderer.add(rc.left, rc.bottom, m_backGround);
-	m_batchRenderer.add(rc.right, rc.top, m_backGround);
 	m_batchRenderer.add(rc.right, rc.bottom, m_backGround);
-	m_batchRenderer.add(rc.left, rc.bottom, m_backGround);
 }
 
 void CanvasXtrme::fillGradientRect(const Rect& rc, bool vertical)
 {
-	m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangles);
+	m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangleStrip);
 	m_batchRenderer.add(rc.left, rc.top, m_foreGround);
 	m_batchRenderer.add(rc.right, rc.top, m_foreGround);
 	m_batchRenderer.add(rc.left, rc.bottom, m_backGround);
-	m_batchRenderer.add(rc.right, rc.top, m_foreGround);
 	m_batchRenderer.add(rc.right, rc.bottom, m_backGround);
-	m_batchRenderer.add(rc.left, rc.bottom, m_backGround);
 }
 
 void CanvasXtrme::drawRect(const Rect& rc)
@@ -266,13 +262,11 @@ void CanvasXtrme::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	float u2 = u1 + float(srcSize.cx) / size.cx;
 	float v2 = v1 + float(srcSize.cy) / size.cy;
 
-	m_batchRenderer.batch(BatchRenderer::PiImage, texture, render::PtTriangles);
+	m_batchRenderer.batch(BatchRenderer::PiImage, texture, render::PtTriangleStrip);
 	m_batchRenderer.add(dstAt.x, dstAt.y, u1, v1, m_backGround);
 	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y, u2, v1, m_backGround);
 	m_batchRenderer.add(dstAt.x, dstAt.y + dstSize.cy, u1, v2, m_backGround);
-	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y, u2, v1, m_backGround);
 	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y + dstSize.cy, u2, v2, m_backGround);
-	m_batchRenderer.add(dstAt.x, dstAt.y + dstSize.cy, u1, v2, m_backGround);
 }
 
 void CanvasXtrme::drawText(const Point& at, const std::wstring& text)
@@ -388,13 +382,11 @@ void CanvasXtrme::drawSubLine(int x1, int y1, int x2, int y2)
 		float fx2 = x2 + dx;
 		float fy2 = y2 + dy;
 
-		m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangles);
+		m_batchRenderer.batch(BatchRenderer::PiDefault, 0, render::PtTriangleStrip);
 		m_batchRenderer.add(int(fx1 - px), int(fy1 - py), m_foreGround);
 		m_batchRenderer.add(int(fx1 + px), int(fy1 + py), m_foreGround);
 		m_batchRenderer.add(int(fx2 - px), int(fy2 - py), m_foreGround);
-		m_batchRenderer.add(int(fx1 + px), int(fy1 + py), m_foreGround);
 		m_batchRenderer.add(int(fx2 + px), int(fy2 + py), m_foreGround);
-		m_batchRenderer.add(int(fx2 - px), int(fy2 - py), m_foreGround);
 	}
 }
 
