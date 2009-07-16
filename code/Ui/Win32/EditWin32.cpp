@@ -4,9 +4,15 @@ namespace traktor
 {
 	namespace ui
 	{
+		namespace
+		{
 
-EditWin32::EditWin32(EventSubject* owner) :
-	WidgetWin32Impl< IEdit >(owner)
+const int32_t c_heightMargin = 11;
+
+		}
+
+EditWin32::EditWin32(EventSubject* owner)
+:	WidgetWin32Impl< IEdit >(owner)
 {
 }
 
@@ -53,7 +59,9 @@ void EditWin32::selectAll()
 
 Size EditWin32::getPreferedSize() const
 {
-	return Size(128, 18);
+	Font currentFont = getFont();
+	int32_t currentFontHeight = abs(currentFont.getSize() * 72) / 96;
+	return Size(128, currentFontHeight + c_heightMargin);
 }
 
 	}
