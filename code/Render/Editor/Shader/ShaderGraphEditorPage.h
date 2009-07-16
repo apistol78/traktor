@@ -92,6 +92,8 @@ private:
 
 	void createNode(const Type* nodeType, const ui::Point& at);
 
+	void refreshGraph();
+
 	void updateGraph();
 
 	void checkUpdatedFragments();
