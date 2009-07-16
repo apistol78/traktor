@@ -31,7 +31,7 @@ bool CompactDatabase::create(const Path& filePath)
 	registry->setRootGroup(rootGroupEntry);
 
 	m_readOnly = false;
-	m_registryHash = DeepHash(registry).getMD5();
+	m_registryHash = DeepHash(registry).get();
 
 	m_context = gc_new< CompactContext >(blockFile, registry);
 
@@ -66,7 +66,7 @@ bool CompactDatabase::open(const Path& filePath, bool readOnly)
 	}
 
 	m_readOnly = readOnly;
-	m_registryHash = DeepHash(registry).getMD5();
+	m_registryHash = DeepHash(registry).get();
 
 	m_context = gc_new< CompactContext >(blockFile, registry);
 

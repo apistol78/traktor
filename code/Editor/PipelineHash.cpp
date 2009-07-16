@@ -31,12 +31,12 @@ bool PipelineHash::get(const Guid& guid, Hash& outHash) const
 
 int PipelineHash::getVersion() const
 {
-	return 1;
+	return 2;
 }
 
 bool PipelineHash::serialize(Serializer& s)
 {
-	if (s.getVersion() >= 1)
+	if (s.getVersion() >= 2)
 		return s >> MemberStlMap< Guid, Hash, MemberStlPair< Guid, Hash, Member< Guid >, MemberComposite< Hash > > >(L"hash", m_hash);
 	else
 		return true;
@@ -49,7 +49,7 @@ PipelineHash::Hash::Hash()
 
 bool PipelineHash::Hash::serialize(Serializer& s)
 {
-	s >> MemberComposite< MD5 >(L"checksum", checksum);
+	s >> Member< uint32_t >(L"checksum", checksum);
 	s >> MemberComposite< DateTime >(L"assetTimestamp", assetTimestamp);
 	s >> Member< uint32_t >(L"pipelineVersion", pipelineVersion);
 	return true;

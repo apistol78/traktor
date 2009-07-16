@@ -3,7 +3,6 @@
 
 #include "Database/Provider/IProviderDatabase.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Misc/MD5.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,7 +45,7 @@ private:
 	Ref< CompactContext > m_context;
 	Ref< CompactGroup > m_rootGroup;
 	bool m_readOnly;
-	MD5 m_registryHash;
+	uint32_t m_registryHash;
 };
 
 	}

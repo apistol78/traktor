@@ -5,7 +5,6 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Misc/MD5.h"
 #include "Core/Thread/Event.h"
 
 // import/export mechanism.
@@ -70,7 +69,7 @@ public:
 		Guid outputGuid;
 		Ref< const Object > buildParams;
 		RefArray< Dependency > dependencies;
-		MD5 checksum;
+		uint32_t checksum;
 		bool build;
 		uint32_t reason;
 

@@ -15,8 +15,8 @@ bool UndoStack::push(Serializable* current)
 
 	if (!m_stack.empty())
 	{
-		MD5 hash1 = DeepHash(current).getMD5();
-		MD5 hash2 = DeepHash(m_stack.back()).getMD5();
+		uint32_t hash1 = DeepHash(current).get();
+		uint32_t hash2 = DeepHash(m_stack.back()).get();
 		if (hash1 == hash2)
 			return true;
 	}

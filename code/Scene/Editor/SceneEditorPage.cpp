@@ -495,10 +495,10 @@ void SceneEditorPage::updateScene()
 	if (newSettings)
 	{
 		DeepHash hash(newSettings);
-		if (hash != m_currentSettingsMD5)
+		if (hash != m_currentSettingsHash)
 		{
 			m_editControl->setWorldRenderSettings(newSettings);
-			m_currentSettingsMD5 = hash.getMD5();
+			m_currentSettingsHash = hash.get();
 		}
 	}
 }

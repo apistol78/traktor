@@ -1,6 +1,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Misc/Adler32.h"
 
 namespace traktor
 {
@@ -15,57 +16,60 @@ DeepHash::DeepHash(const Serializable* object)
 	DynamicMemoryStream stream(copy, false, true);
 	BinarySerializer(&stream).writeObject(object);
 
-	// Calculate MD5 checksum of binary object.
-	m_md5.begin();
-	m_md5.feed(&copy[0], uint32_t(copy.size()));
-	m_md5.end();
+	// Calculate checksum of binary object.
+	Adler32 cs;
+	cs.begin();
+	cs.feed(&copy[0], uint32_t(copy.size()));
+	cs.end();
+
+	m_hash = cs.get();
 }
 
-const MD5& DeepHash::getMD5() const
+uint32_t DeepHash::get() const
 {
-	return m_md5;
+	return m_hash;
 }
 
 bool DeepHash::operator == (const DeepHash& hash) const
 {
-	return m_md5 == hash.m_md5;
+	return m_hash == hash.m_hash;
 }
 
 bool DeepHash::operator != (const DeepHash& hash) const
 {
-	return m_md5 != hash.m_md5;
+	return m_hash != hash.m_hash;
 }
 
 bool DeepHash::operator == (const DeepHash* hash) const
 {
-	return m_md5 == hash->m_md5;
+	return m_hash == hash->m_hash;
 }
 
 bool DeepHash::operator != (const DeepHash* hash) const
 {
-	return m_md5 != hash->m_md5;
+	return m_hash != hash->m_hash;
 }
 
 bool DeepHash::operator == (const Serializable* object) const
 {
 	DeepHash hash(object);
-	return m_md5 == hash.m_md5;
+	return m_hash == hash.m_hash;
 }
 
 bool DeepHash::operator != (const Serializable* object) const
 {
 	DeepHash hash(object);
-	return m_md5 != hash.m_md5;
+	return m_hash != hash.m_hash;
 }
 
-bool DeepHash::operator == (const MD5& md5) const
+bool DeepHash::operator == (uint32_t hash) const
 {
-	return m_md5 == md5;
+	return m_hash == hash;
 }
 
-bool DeepHash::operator != (const MD5& md5) const
+bool DeepHash::operator != (uint32_t hash) const
 {
-	return m_md5 != md5;
+	return m_hash != hash;
 }
 
 }

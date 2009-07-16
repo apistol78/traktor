@@ -2,7 +2,6 @@
 #define traktor_scene_SceneEditorPage_H
 
 #include "Core/Heap/Ref.h"
-#include "Core/Misc/MD5.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -15,6 +14,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace ui
 	{
 
@@ -96,7 +98,7 @@ private:
 	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< editor::UndoStack > m_undoStack;
-	MD5 m_currentSettingsMD5;
+	uint32_t m_currentSettingsHash;
 
 	SceneAsset* createWhiteRoomSceneAsset(world::EntityData* entityData);
 

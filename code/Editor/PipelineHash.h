@@ -3,7 +3,6 @@
 
 #include <map>
 #include "Core/Serialization/Serializable.h"
-#include "Core/Misc/MD5.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
@@ -35,7 +34,7 @@ class T_DLLCLASS PipelineHash : public Serializable
 public:
 	struct Hash
 	{
-		MD5 checksum;
+		uint32_t checksum;
 		DateTime assetTimestamp;
 		uint32_t pipelineVersion;
 
