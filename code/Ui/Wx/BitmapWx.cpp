@@ -63,7 +63,7 @@ drawing::Image* BitmapWx::getImage() const
 
 	if (!srcA)
 	{
-		 image = gc_new< drawing::Image >(
+		image = gc_new< drawing::Image >(
 			drawing::PixelFormat::getB8G8R8(),
 			m_image->GetWidth(),
 			m_image->GetHeight()
@@ -79,7 +79,7 @@ drawing::Image* BitmapWx::getImage() const
 	}
 	else
 	{
-		 image = gc_new< drawing::Image >(
+		image = gc_new< drawing::Image >(
 			drawing::PixelFormat::getR8G8B8A8(),
 			m_image->GetWidth(),
 			m_image->GetHeight()

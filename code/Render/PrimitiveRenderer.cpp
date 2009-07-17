@@ -66,7 +66,7 @@ bool PrimitiveRenderer::create(
 }
 
 bool PrimitiveRenderer::create(
-   resource::IResourceManager* resourceManager,
+	resource::IResourceManager* resourceManager,
 	RenderSystem* renderSystem,
 	const resource::Proxy< Shader >& shader
 )

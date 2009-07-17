@@ -68,6 +68,5 @@ bool StaticBodyBullet::isEnable() const
 	return m_enable;
 }
 
-
 	}
 }
