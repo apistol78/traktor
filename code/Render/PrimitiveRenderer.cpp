@@ -348,8 +348,8 @@ void PrimitiveRenderer::drawArrowHead(
 	if (dln <= FUZZY_EPSILON)
 		return;
 
-	dx *= Scalar(1.0f - sharpness); //(dx * dln * Scalar(1.0f - sharpness) * Scalar(m_viewWidth)) / (dln * Scalar(m_viewWidth));
-	dy *= Scalar(1.0f - sharpness); //(dy * dln * Scalar(1.0f - sharpness) * Scalar(m_viewHeight)) / (dln * Scalar(m_viewHeight));
+	dx *= Scalar(1.0f - sharpness);
+	dy *= Scalar(1.0f - sharpness);
 
 	Scalar csdx = dx * cs1.w();
 	Scalar csdy = dy * cs1.w();

@@ -81,6 +81,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	if (style & WsAlpha)
 	{
 		m_alphaGradient = gc_new< AlphaGradient >();
+		m_alphaGradient->color = initialColor;
 
 		m_sliderAlphaControl = gc_new< ColorSliderControl >();
 		m_sliderAlphaControl->create(this, WsClientBorder, m_alphaGradient);
@@ -124,6 +125,8 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	m_colorControl = gc_new< ColorControl >();
 	m_colorControl->create(container, WsClientBorder);
 	m_colorControl->setColor(initialColor);
+
+	m_color = initialColor;
 
 	fit();
 	return true;
@@ -191,7 +194,12 @@ void ColorDialog::eventSliderColorSelect(Event* event)
 	m_gradientControl->update();
 
 	// Cycle color through gradient control as gradient colors are primary HSL colors.
-	m_color = m_gradientControl->getColor();
+	color = m_gradientControl->getColor();
+
+	// Just copy rgb as gradient control will reset alpha.
+	m_color.r = color.r;
+	m_color.g = color.g;
+	m_color.b = color.b;
 
 	m_editColor[0]->setText(toString(m_color.r));
 	m_editColor[1]->setText(toString(m_color.g));
