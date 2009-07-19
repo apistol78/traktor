@@ -27,6 +27,8 @@ class T_DLLCLASS ScriptManagerLua : public IScriptManager
 public:
 	virtual void registerClass(IScriptClass* scriptClass);
 
+	virtual IScriptClass* findScriptClass(const Type& type) const;
+
 	virtual IScriptContext* createContext();
 
 private:
