@@ -68,7 +68,7 @@ private:
 #endif
 
 	FunctorHeap()
-	:	m_block(allocAlign(MaxFunctorCount * MaxFunctorSize, 16))
+	:	m_block(Alloc::acquireAlign(MaxFunctorCount * MaxFunctorSize, 16))
 	,	m_blockAllocator(m_block, MaxFunctorCount, MaxFunctorSize)
 #if defined(_DEBUG)
 	,	m_count(0)
@@ -79,7 +79,7 @@ private:
 	virtual ~FunctorHeap()
 	{
 		T_ASSERT_M (m_count == 0, L"There are still functors allocated, memory leak?");
-		freeAlign(m_block);
+		Alloc::freeAlign(m_block);
 	}
 };
 

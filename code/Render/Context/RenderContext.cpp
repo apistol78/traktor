@@ -58,14 +58,14 @@ RenderContext::RenderContext(RenderView* renderView, uint32_t heapSize)
 ,	m_heapEnd(0)
 ,	m_heapPtr(0)
 {
-	m_heap = static_cast< uint8_t* >(allocAlign(heapSize, 16));
+	m_heap = static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16));
 	m_heapEnd = m_heap + heapSize;
 	m_heapPtr = m_heap;
 }
 
 RenderContext::~RenderContext()
 {
-	freeAlign(m_heap);
+	Alloc::freeAlign(m_heap);
 }
 
 void* RenderContext::alloc(int blockSize)

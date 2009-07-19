@@ -14,18 +14,20 @@
 namespace traktor
 {
 
-/*! \ingroup Core */
-//@{
+/*! \brief System memory allocators.
+ * \ingroup Core
+ */
+class T_DLLCLASS Alloc
+{
+public:
+	static void* acquire(size_t size);
 
-T_DLLCLASS void* alloc(size_t size);
+	static void free(void* ptr);
 
-T_DLLCLASS void free(void* ptr);
+	static void* acquireAlign(size_t size, size_t align);
 
-T_DLLCLASS void* allocAlign(size_t size, size_t align);
-
-T_DLLCLASS void freeAlign(void* ptr);
-
-//!\}
+	static void freeAlign(void* ptr);
+};
 
 }
 

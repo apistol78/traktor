@@ -23,13 +23,13 @@ SoundChannel::SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples)
 {
 	memset(m_outputSamples, 0, sizeof(m_outputSamples));
 	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
-		m_outputSamples[i] = static_cast< float* >(allocAlign(hwFrameSamples * sizeof(float), 16));
+		m_outputSamples[i] = static_cast< float* >(Alloc::acquireAlign(hwFrameSamples * sizeof(float), 16));
 }
 
 SoundChannel::~SoundChannel()
 {
 	for (uint32_t i = 0; i < sizeof_array(m_outputSamples); ++i)
-		freeAlign(m_outputSamples[i]);
+		Alloc::freeAlign(m_outputSamples[i]);
 }
 
 void SoundChannel::setVolume(float volume)

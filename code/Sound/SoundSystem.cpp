@@ -48,7 +48,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	// Allocate samples.
 	for (uint32_t i = 0; i < c_allocateBlocks; ++i)
 	{
-		float* block = static_cast< float* >(allocAlign(
+		float* block = static_cast< float* >(Alloc::acquireAlign(
 			m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels * sizeof(float),
 			16
 		));
@@ -113,13 +113,13 @@ void SoundSystem::destroy()
 
 	while (!m_submitQueue.empty())
 	{
-		freeAlign(m_submitQueue.back().samples[0]);
+		Alloc::freeAlign(m_submitQueue.back().samples[0]);
 		m_submitQueue.pop_back();
 	}
 
 	while (!m_samplesBlocks.empty())
 	{
-		freeAlign(m_samplesBlocks.back());
+		Alloc::freeAlign(m_samplesBlocks.back());
 		m_samplesBlocks.pop_back();
 	}
 }

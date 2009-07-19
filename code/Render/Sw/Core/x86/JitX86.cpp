@@ -860,7 +860,7 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 	a.ret();
 	a.fixup();
 
-	InternalImage* image = (InternalImage*)allocAlign(sizeof(InternalImage), 16);
+	InternalImage* image = (InternalImage*)Alloc::acquireAlign(sizeof(InternalImage), 16);
 	image->native = VirtualAlloc(NULL, a.get().size(), MEM_COMMIT, PAGE_EXECUTE_READWRITE);
 
 	memset(image->constants, 0, 256 * 4 * sizeof(float));
@@ -877,7 +877,7 @@ void JitX86::destroy(image_t image) const
 {
 	InternalImage* i = reinterpret_cast< InternalImage* >(image);
 	VirtualFree(i->native, 0, MEM_RELEASE);
-	freeAlign(i);
+	Alloc::freeAlign(i);
 }
 
 void JitX86::execute(

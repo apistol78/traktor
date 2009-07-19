@@ -27,7 +27,7 @@ ProgramSw::ProgramSw(
 ,	m_renderState(renderState)
 ,	m_interpolatorCount(interpolatorCount)
 {
-	m_parameters = (Vector4*)(allocAlign(256 * sizeof(Vector4), 16));
+	m_parameters = (Vector4*)(Alloc::acquireAlign(256 * sizeof(Vector4), 16));
 	for (int i = 0; i < 256; ++i)
 		m_parameters[i].set(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -40,7 +40,7 @@ void ProgramSw::destroy()
 	for (int i = 0; i < 8; ++i)
 		m_samplers[i] = 0;
 	
-	freeAlign(m_parameters);
+	Alloc::freeAlign(m_parameters);
 	m_parameters = 0;
 }
 
