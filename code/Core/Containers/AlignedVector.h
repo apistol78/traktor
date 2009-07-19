@@ -275,7 +275,7 @@ public:
 		for (size_t i = 0; i < m_size; ++i)
 			Constructor::destroy(m_data[i]);
 
-		freeAlign(m_data);
+		Alloc::freeAlign(m_data);
 
 		m_data = 0;
 		m_size = 0;
@@ -332,7 +332,7 @@ public:
 	{
 		if (capacity > m_capacity)
 		{
-			ItemType* data = reinterpret_cast< ItemType* >(allocAlign(capacity * sizeof(ItemType), Alignment));
+			ItemType* data = reinterpret_cast< ItemType* >(Alloc::acquireAlign(capacity * sizeof(ItemType), Alignment));
 
 			if (m_data)
 			{
@@ -341,7 +341,7 @@ public:
 					Constructor::construct(data[i], m_data[i]);
 					Constructor::destroy(m_data[i]);
 				}
-				freeAlign(m_data);
+				Alloc::freeAlign(m_data);
 			}
 
 			m_data = data;
