@@ -20,10 +20,10 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderContext;
 class Mesh;
-class Texture;
+class ITexture;
 
 	}
 
@@ -83,7 +83,7 @@ private:
 		resource::Proxy< render::Shader > material;
 	};
 
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	RefArray< render::Mesh > m_meshes;
 	std::vector< const uint8_t* > m_vertices;
 	std::vector< Part > m_parts;

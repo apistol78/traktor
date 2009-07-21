@@ -1,7 +1,7 @@
 #include <limits>
 #include <algorithm>
 #include "Spray/PointRenderer.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
@@ -52,7 +52,7 @@ struct Vertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 
-PointRenderer::PointRenderer(render::RenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
+PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
 :	m_cullNearDistance(cullNearDistance)
 ,	m_fadeNearRange(fadeNearRange)
 ,	m_currentBuffer(0)

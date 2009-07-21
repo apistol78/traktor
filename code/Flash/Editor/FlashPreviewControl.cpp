@@ -13,8 +13,8 @@
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #if T_USE_ACCELERATED_RENDERER
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/RenderTargetSet.h"
@@ -47,7 +47,7 @@ FlashPreviewControl::FlashPreviewControl()
 {
 }
 
-bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	if (!Widget::create(parent, style))
 		return false;

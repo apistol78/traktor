@@ -33,7 +33,7 @@ public:
 
 	virtual void createEntityRenderers(
 		scene::SceneEditorContext* context,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;

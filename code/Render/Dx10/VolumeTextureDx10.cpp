@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx10", VolumeTextureDx10, VolumeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx10", VolumeTextureDx10, IVolumeTexture)
 
 void VolumeTextureDx10::destroy()
 {

@@ -30,8 +30,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class Shader;
 class VertexBuffer;
 
@@ -54,12 +54,12 @@ public:
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		RenderSystem* renderSystem
+		IRenderSystem* renderSystem
 	);
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		RenderSystem* renderSystem,
+		IRenderSystem* renderSystem,
 		const resource::Proxy< Shader >& shader
 	);
 
@@ -219,9 +219,9 @@ public:
 		const Color& colorHint
 	);
 
-	bool begin(RenderView* renderView);
+	bool begin(IRenderView* renderView);
 
-	void end(RenderView* renderView);
+	void end(IRenderView* renderView);
 
 	inline const Matrix44& getProjection() const { return m_projection.back(); }
 

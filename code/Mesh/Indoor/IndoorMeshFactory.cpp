@@ -6,7 +6,7 @@
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Core/Io/Stream.h"
@@ -19,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshFactory", IndoorMeshFactory, resource::IResourceFactory)
 
-IndoorMeshFactory::IndoorMeshFactory(db::Database* database, render::RenderSystem* renderSystem)
+IndoorMeshFactory::IndoorMeshFactory(db::Database* database, render::IRenderSystem* renderSystem)
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 {

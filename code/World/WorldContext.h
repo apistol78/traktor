@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 class RenderContext;
 
 	}
@@ -41,7 +41,7 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS(WorldContext)
 
 public:
-	WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::RenderView* renderView);
+	WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::IRenderView* renderView);
 
 	void build(WorldRenderView* worldRenderView, Entity* entity);
 

@@ -4,7 +4,7 @@
 #include <stack>
 #include "Core/Heap/Ref.h"
 #include "Render/Dx10/Platform.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -29,7 +29,7 @@ class RenderTargetSetDx10;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS RenderViewDx10 : public RenderView
+class T_DLLCLASS RenderViewDx10 : public IRenderView
 {
 	T_RTTI_CLASS(RenderViewDx10)
 
@@ -62,7 +62,7 @@ public:
 	
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setProgram(Program* program);
+	virtual void setProgram(IProgram* program);
 	
 	virtual void draw(const Primitives& primitives);
 

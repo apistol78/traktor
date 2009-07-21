@@ -1,8 +1,8 @@
 #include "Render/TextureFactory.h"
 #include "Render/TextureResource.h"
-#include "Render/RenderSystem.h"
-#include "Render/SimpleTexture.h"
-#include "Render/CubeTexture.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
+#include "Render/ICubeTexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Zip/InflateStream.h"
@@ -31,7 +31,7 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
 
-TextureFactory::TextureFactory(db::Database* db, RenderSystem* renderSystem)
+TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem)
 :	m_db(db)
 ,	m_renderSystem(renderSystem)
 {
@@ -40,7 +40,7 @@ TextureFactory::TextureFactory(db::Database* db, RenderSystem* renderSystem)
 const TypeSet TextureFactory::getResourceTypes() const
 {
 	TypeSet typeSet;
-	typeSet.insert(&type_of< Texture >());
+	typeSet.insert(&type_of< ITexture >());
 	return typeSet;
 }
 
@@ -51,7 +51,7 @@ bool TextureFactory::isCacheable() const
 
 Object* TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
-	Ref< Texture > texture;
+	Ref< ITexture > texture;
 
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

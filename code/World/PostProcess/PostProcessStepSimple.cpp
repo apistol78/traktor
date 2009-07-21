@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
 
-bool PostProcessStepSimple::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool PostProcessStepSimple::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
@@ -33,7 +33,7 @@ void PostProcessStepSimple::destroy(PostProcess* postProcess)
 void PostProcessStepSimple::render(
 	PostProcess* postProcess,
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
 	float deltaTime
 )

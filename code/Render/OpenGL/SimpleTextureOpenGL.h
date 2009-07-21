@@ -1,7 +1,7 @@
 #ifndef traktor_render_SimpleTextureOpenGL_H
 #define traktor_render_SimpleTextureOpenGL_H
 
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
@@ -24,9 +24,9 @@ class ContextOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS SimpleTextureOpenGL : public SimpleTexture
+class T_DLLCLASS SimpleTextureOpenGL : public ISimpleTexture
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS(ISimpleTexture)
 
 public:
 	SimpleTextureOpenGL(ContextOpenGL* context);

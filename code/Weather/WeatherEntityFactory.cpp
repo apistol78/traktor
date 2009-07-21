@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.WeatherEntityFactory", WeatherEntityFactory, world::IEntityFactory)
 
-WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 {

@@ -3,8 +3,8 @@
 #include "Terrain/Heightfield.h"
 #include "World/WorldRenderView.h"
 #include "Resource/IResourceManager.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
@@ -24,7 +24,7 @@ OceanEntity::OceanEntity()
 {
 }
 
-bool OceanEntity::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const OceanEntityData& data)
+bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data)
 {
 	const uint32_t gridSize = 100;
 	const uint32_t vertexCount = gridSize * gridSize;

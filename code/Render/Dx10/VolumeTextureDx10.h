@@ -1,7 +1,7 @@
 #ifndef traktor_render_VolumeTextureDx10_H
 #define traktor_render_VolumeTextureDx10_H
 
-#include "Render/VolumeTexture.h"
+#include "Render/IVolumeTexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS VolumeTextureDx10 : public VolumeTexture
+class T_DLLCLASS VolumeTextureDx10 : public IVolumeTexture
 {
 	T_RTTI_CLASS(VolumeTextureDx10)
 	

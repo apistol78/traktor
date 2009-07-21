@@ -24,7 +24,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 	}
 
@@ -36,7 +36,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS(EntityFactory)
 
 public:
-	EntityFactory(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeSet getEntityTypes() const;
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 	}

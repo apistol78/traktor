@@ -1,6 +1,6 @@
 #include "Render/Shader.h"
-#include "Render/Program.h"
-#include "Render/RenderView.h"
+#include "Render/IProgram.h"
+#include "Render/IRenderView.h"
 
 namespace traktor
 {
@@ -117,7 +117,7 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 		i->program->setMatrixArrayParameter(handle, param, length);
 }
 
-void Shader::setSamplerTexture(handle_t handle, Texture* texture)
+void Shader::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	if (!m_currentTechnique)
 		return;
@@ -135,7 +135,7 @@ void Shader::setStencilReference(uint32_t stencilReference)
 		i->program->setStencilReference(stencilReference);
 }
 
-void Shader::draw(RenderView* renderView, const Primitives& primitives)
+void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 {
 	if (!m_currentProgram)
 		return;

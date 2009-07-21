@@ -1,7 +1,7 @@
 #ifndef traktor_render_SimpleTextureSw_H
 #define traktor_render_SimpleTextureSw_H
 
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -20,9 +20,9 @@ namespace traktor
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS SimpleTextureSw : public SimpleTexture
+class T_DLLCLASS SimpleTextureSw : public ISimpleTexture
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS(ISimpleTexture)
 
 public:
 	SimpleTextureSw();

@@ -32,11 +32,11 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderContext;
 class VertexBuffer;
 class IndexBuffer;
-class Texture;
+class ITexture;
 
 	}
 
@@ -66,7 +66,7 @@ public:
 
 	TerrainEntity();
 
-	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const TerrainEntityData& data);
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const TerrainEntityData& data);
 
 	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView);
 

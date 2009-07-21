@@ -14,7 +14,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDx10", ProgramDx10, Program)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDx10", ProgramDx10, IProgram)
 
 ProgramDx10* ProgramDx10::ms_activeProgram = 0;
 
@@ -227,7 +227,7 @@ void ProgramDx10::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
 }
 
-void ProgramDx10::setSamplerTexture(handle_t handle, Texture* texture)
+void ProgramDx10::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())

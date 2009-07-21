@@ -183,12 +183,12 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	write< Matrix44 >(m_parameterLast, param, length);
 }
 
-void ShaderParameters::setSamplerTexture(handle_t handle, Texture* texture)
+void ShaderParameters::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	T_ASSERT (m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtTexture);
-	write< Texture* >(m_parameterLast, texture);
+	write< ITexture* >(m_parameterLast, texture);
 }
 
 void ShaderParameters::fixup(Shader* shader) const
@@ -245,7 +245,7 @@ void ShaderParameters::fixup(Shader* shader) const
 			break;
 
 		case PmtTexture:
-			shader->setSamplerTexture(handle, read< Texture* >(parameter));
+			shader->setSamplerTexture(handle, read< ITexture* >(parameter));
 			break;
 		}
 	}

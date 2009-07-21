@@ -4,7 +4,7 @@
 #include <map>
 #include "Core/Heap/Ref.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class GlslProgram;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS ProgramOpenGL : public Program
+class T_DLLCLASS ProgramOpenGL : public IProgram
 {
 	T_RTTI_CLASS(ProgramOpenGL)
 
@@ -51,7 +51,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, Texture* texture);
+	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 

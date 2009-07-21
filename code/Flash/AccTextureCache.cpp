@@ -1,7 +1,7 @@
 #include "Flash/AccTextureCache.h"
 #include "Flash/FlashFillStyle.h"
 #include "Flash/FlashBitmap.h"
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 
 namespace traktor
 {
@@ -46,7 +46,7 @@ SwfColor interpolateGradient(const AlignedVector< FlashFillStyle::ColorRecord >&
 
 		}
 
-AccTextureCache::AccTextureCache(render::RenderSystem* renderSystem)
+AccTextureCache::AccTextureCache(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
 }
@@ -68,7 +68,7 @@ void AccTextureCache::destroy()
 
 void AccTextureCache::clear()
 {
-	for (std::map< uint32_t, Ref< render::Texture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	for (std::map< uint32_t, Ref< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 	{
 		if (i->second)
 			i->second->destroy();
@@ -76,12 +76,12 @@ void AccTextureCache::clear()
 	m_cache.clear();
 }
 
-render::Texture* AccTextureCache::getGradientTexture(const FlashFillStyle& style)
+render::ITexture* AccTextureCache::getGradientTexture(const FlashFillStyle& style)
 {
-	Ref< render::SimpleTexture > texture;
+	Ref< render::ISimpleTexture > texture;
 
 	uint32_t hash = reinterpret_cast< uint32_t >(&style);
-	std::map< uint32_t, Ref< render::Texture > >::iterator it = m_cache.find(hash);
+	std::map< uint32_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
@@ -154,10 +154,10 @@ render::Texture* AccTextureCache::getGradientTexture(const FlashFillStyle& style
 	return texture;
 }
 
-render::Texture* AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
+render::ITexture* AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint32_t hash = reinterpret_cast< uint32_t >(&bitmap);
-	std::map< uint32_t, Ref< render::Texture > >::iterator it = m_cache.find(hash);
+	std::map< uint32_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
@@ -171,7 +171,7 @@ render::Texture* AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 	desc.initialData[0].data = bitmap.getBits();
 	desc.initialData[0].pitch = bitmap.getWidth() * 4;
 
-	Ref< render::SimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
 	T_ASSERT (texture);
 
 	m_cache[hash] = texture;

@@ -25,7 +25,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class Shader;
 
 	}
@@ -42,7 +42,7 @@ class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
 public:
 	CloudEntityData();
 
-	CloudEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
+	CloudEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

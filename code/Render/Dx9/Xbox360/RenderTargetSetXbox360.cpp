@@ -22,7 +22,7 @@ int RenderTargetSetXbox360::getHeight() const
 	return 0;
 }
 
-Texture* RenderTargetSetXbox360::getColorTexture(int index) const
+ITexture* RenderTargetSetXbox360::getColorTexture(int index) const
 {
 	return 0;
 }

@@ -68,7 +68,7 @@ inline int clip(
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewSw", RenderViewSw, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewSw", RenderViewSw, IRenderView)
 
 RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSystem* graphicsSystem, Processor* processor)
 :	m_renderSystem(renderSystem)
@@ -209,7 +209,7 @@ void RenderViewSw::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_currentIndexBuffer = checked_type_cast< IndexBufferSw* >(indexBuffer);
 }
 
-void RenderViewSw::setProgram(Program* program)
+void RenderViewSw::setProgram(IProgram* program)
 {
 	m_currentProgram = checked_type_cast< ProgramSw * >(program);
 }

@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::IEntityRenderer)
 
-EffectEntityRenderer::EffectEntityRenderer(render::RenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
+EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
 :	m_pointRenderer(gc_new< PointRenderer >(renderSystem, cullNearDistance, fadeNearRange))
 ,	m_defaltTechnique(render::getParameterHandle(L"Default"))
 {

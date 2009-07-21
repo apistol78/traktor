@@ -8,7 +8,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Core/Io/Stream.h"
@@ -21,7 +21,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMeshFactory", InstanceMeshFactory, resource::IResourceFactory)
 
-InstanceMeshFactory::InstanceMeshFactory(db::Database* database, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory)
+InstanceMeshFactory::InstanceMeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 ,	m_meshFactory(meshFactory)

@@ -1,8 +1,8 @@
 #include <algorithm>
 #include "Weather/Clouds/CloudEntity.h"
 #include "World/WorldRenderView.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/VertexElement.h"
@@ -57,7 +57,7 @@ CloudEntity::CloudEntity()
 }
 
 bool CloudEntity::create(
-	render::RenderSystem* renderSystem,
+	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& particleShader,
 	const resource::Proxy< render::Shader >& impostorShader,
 	uint32_t impostorTargetResolution,
@@ -167,7 +167,7 @@ void CloudEntity::renderCluster(
 	const CloudParticleCluster& cluster
 )
 {
-	render::RenderView* renderView = renderContext->getRenderView();
+	render::IRenderView* renderView = renderContext->getRenderView();
 	T_ASSERT (renderView);
 
 	const Vector4& lightDirection = worldRenderView->getLightDirection(0);

@@ -32,14 +32,14 @@ class T_DLLCLASS PostProcessStepSetTarget : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSetTarget)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual void destroy(PostProcess* postProcess);
 
 	virtual void render(
 		PostProcess* postProcess,
 		const WorldRenderView& worldRenderView,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::ScreenRenderer* screenRenderer,
 		float deltaTime
 	);

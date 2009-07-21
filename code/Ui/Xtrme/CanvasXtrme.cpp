@@ -2,8 +2,8 @@
 #include "Ui/Xtrme/CanvasXtrme.h"
 #include "Ui/Xtrme/FontMap.h"
 #include "Ui/Itf/IBitmap.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Hermite.h"
@@ -22,7 +22,7 @@ const int c_circleResolution = 16;
 
 			}
 
-CanvasXtrme::CanvasXtrme(render::RenderSystem* renderSystem, render::RenderView* renderView, const Font& font)
+CanvasXtrme::CanvasXtrme(render::IRenderSystem* renderSystem, render::IRenderView* renderView, const Font& font)
 :	m_batchRenderer(renderSystem, renderView, 65536)
 ,	m_imageCache(renderSystem)
 ,	m_renderSystem(renderSystem)
@@ -252,7 +252,7 @@ void CanvasXtrme::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 
 void CanvasXtrme::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
 {
-	Ref< render::Texture > texture = m_imageCache.getTexture(bitmap);
+	Ref< render::ITexture > texture = m_imageCache.getTexture(bitmap);
 	T_ASSERT (texture);
 	
 	Size size = bitmap->getSize();

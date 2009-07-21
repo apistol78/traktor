@@ -1,12 +1,12 @@
 #include "World/PostProcess/PostProcessStepSsao.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/WorldRenderView.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
@@ -20,7 +20,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSsao", PostProcessStepSsao, PostProcessStep)
 
-bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
@@ -74,7 +74,7 @@ void PostProcessStepSsao::destroy(PostProcess* postProcess)
 void PostProcessStepSsao::render(
 	PostProcess* postProcess,
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
 	float deltaTime
 )

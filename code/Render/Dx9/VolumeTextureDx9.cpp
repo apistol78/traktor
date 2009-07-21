@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx9", VolumeTextureDx9, VolumeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx9", VolumeTextureDx9, IVolumeTexture)
 
 VolumeTextureDx9::VolumeTextureDx9(ContextDx9* context)
 :	m_context(context)

@@ -69,7 +69,7 @@ int RenderTargetSetWin32::getHeight() const
 	return m_desc.height;
 }
 
-Texture* RenderTargetSetWin32::getColorTexture(int index) const
+ITexture* RenderTargetSetWin32::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }

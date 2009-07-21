@@ -57,7 +57,7 @@
 #include "Database/Traverse.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Zip/Volume.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
@@ -421,7 +421,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	const Type* renderSystemType = Type::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
 	if (renderSystemType)
 	{
-		m_renderSystem = dynamic_type_cast< render::RenderSystem* >(renderSystemType->newInstance());
+		m_renderSystem = dynamic_type_cast< render::IRenderSystem* >(renderSystemType->newInstance());
 		T_ASSERT (m_renderSystem);
 
 		if (!m_renderSystem->create())
@@ -504,7 +504,7 @@ IProject* EditorForm::getProject()
 	return m_project;
 }
 
-render::RenderSystem* EditorForm::getRenderSystem()
+render::IRenderSystem* EditorForm::getRenderSystem()
 {
 	return m_renderSystem;
 }

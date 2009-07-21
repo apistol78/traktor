@@ -24,7 +24,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class Shader;
 
 	}
@@ -41,7 +41,7 @@ class T_DLLCLASS SkyEntityData : public world::EntityData
 public:
 	SkyEntityData();
 
-	SkyEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
+	SkyEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

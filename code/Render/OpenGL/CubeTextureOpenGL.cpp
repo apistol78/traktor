@@ -50,7 +50,7 @@ struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, CubeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, ICubeTexture)
 
 CubeTextureOpenGL::CubeTextureOpenGL(ContextOpenGL* context)
 :	m_context(context)

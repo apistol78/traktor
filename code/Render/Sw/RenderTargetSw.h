@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetSw_H
 
 #include <vector>
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS RenderTargetSw : public Texture
+class T_DLLCLASS RenderTargetSw : public ITexture
 {
 	T_RTTI_CLASS(RenderTargetSw)
 

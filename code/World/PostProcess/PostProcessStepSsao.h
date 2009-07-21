@@ -19,7 +19,7 @@ namespace traktor
 	{
 
 class Shader;
-class SimpleTexture;
+class ISimpleTexture;
 
 	}
 
@@ -34,14 +34,14 @@ class T_DLLCLASS PostProcessStepSsao : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSsao)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual void destroy(PostProcess* postProcess);
 
 	virtual void render(
 		PostProcess* postProcess,
 		const WorldRenderView& worldRenderView,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::ScreenRenderer* screenRenderer,
 		float deltaTime
 	);
@@ -53,7 +53,7 @@ public:
 private:
 	resource::Proxy< render::Shader > m_shader;
 	Vector4 m_offsets[32];
-	Ref< render::SimpleTexture > m_randomNormals;
+	Ref< render::ISimpleTexture > m_randomNormals;
 };
 
 	}

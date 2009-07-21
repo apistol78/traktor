@@ -22,7 +22,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 
 /*! \brief Deferred render context.
  * \ingroup Render
@@ -41,7 +41,7 @@ public:
 		RfAlphaBlend = 2
 	};
 
-	RenderContext(RenderView* renderView, uint32_t heapSize = 4 * 1024 * 1024);
+	RenderContext(IRenderView* renderView, uint32_t heapSize = 4 * 1024 * 1024);
 
 	virtual ~RenderContext();
 
@@ -70,12 +70,12 @@ public:
 	/*! \brief Flush blocks. */
 	void flush();
 
-	inline RenderView* getRenderView() const { return m_renderView; }
+	inline IRenderView* getRenderView() const { return m_renderView; }
 
 	inline uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - &m_heap[0]); }
 
 private:
-	Ref< RenderView > m_renderView;
+	Ref< IRenderView > m_renderView;
 	uint8_t* m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;

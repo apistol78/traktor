@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class Texture;
+class ITexture;
 	
 /*! \brief Render target set.
  * \ingroup Render
@@ -42,7 +42,7 @@ public:
 	virtual int getHeight() const = 0;
 
 	/*! \brief Get color target texture. */
-	virtual Texture* getColorTexture(int index) const = 0;
+	virtual ITexture* getColorTexture(int index) const = 0;
 
 	/*! \brief Set content valid flag. */
 	inline void setContentValid(bool contentValid) { m_contentValid = contentValid; }

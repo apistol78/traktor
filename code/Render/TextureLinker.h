@@ -18,8 +18,8 @@ namespace traktor
 	{
 
 class ProgramResource;
-class Program;
-class Texture;
+class IProgram;
+class ITexture;
 
 /*! \brief Bind textures to shaders.
  * \ingroup Render
@@ -31,12 +31,12 @@ class T_DLLCLASS TextureLinker : public Object
 public:
 	struct TextureReader
 	{
-		virtual Texture* read(const Guid& textureGuid) = 0;
+		virtual ITexture* read(const Guid& textureGuid) = 0;
 	};
 
 	TextureLinker(TextureReader& textureReader);
 
-	bool link(const ProgramResource* programResource, Program* program);
+	bool link(const ProgramResource* programResource, IProgram* program);
 
 private:
 	TextureReader& m_textureReader;

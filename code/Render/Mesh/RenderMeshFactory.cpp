@@ -1,6 +1,6 @@
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderMeshFactory", RenderMeshFactory, MeshFactory)
 
-RenderMeshFactory::RenderMeshFactory(RenderSystem* renderSystem)
+RenderMeshFactory::RenderMeshFactory(IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
 }

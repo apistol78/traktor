@@ -31,7 +31,7 @@ class ToolBar;
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 class PrimitiveRenderer;
 
 	}
@@ -90,7 +90,7 @@ public:
 
 	virtual void createEntityRenderers(
 		SceneEditorContext* context,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;

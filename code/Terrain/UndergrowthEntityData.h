@@ -25,7 +25,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class Shader;
 
 	}
@@ -41,7 +41,7 @@ class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 	T_RTTI_CLASS(UndergrowthEntityData)
 
 public:
-	UndergrowthEntity* createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const;
+	UndergrowthEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

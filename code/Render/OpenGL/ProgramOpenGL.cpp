@@ -36,7 +36,7 @@ struct DeleteObjectCallback : public ContextOpenGL::DeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, Program)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
@@ -324,7 +324,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
 }
 
-void ProgramOpenGL::setSamplerTexture(handle_t handle, Texture* texture)
+void ProgramOpenGL::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())

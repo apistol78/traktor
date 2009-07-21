@@ -27,8 +27,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class RenderTargetSet;
 class ScreenRenderer;
 
@@ -56,7 +56,7 @@ public:
 	bool create(
 		PostProcessSettings* settings,
 		resource::IResourceManager* resourceManager,
-		render::RenderSystem* renderSystem,
+		render::IRenderSystem* renderSystem,
 		uint32_t screenWidth,
 		uint32_t screenHeight
 	);
@@ -65,13 +65,13 @@ public:
 
 	bool render(
 		const WorldRenderView& worldRenderView,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::RenderTargetSet* frameBuffer,
 		render::RenderTargetSet* depthBuffer,
 		float deltaTime
 	);
 
-	void setTarget(render::RenderView* renderView, uint32_t id);
+	void setTarget(render::IRenderView* renderView, uint32_t id);
 
 	Ref< render::RenderTargetSet >& getTargetRef(uint32_t id);
 

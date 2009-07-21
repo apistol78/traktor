@@ -10,7 +10,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramSw", ProgramSw, Program)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramSw", ProgramSw, IProgram)
 
 ProgramSw::ProgramSw(
 	const std::map< handle_t, int >& parameterMap,
@@ -115,7 +115,7 @@ void ProgramSw::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 	}
 }
 
-void ProgramSw::setSamplerTexture(handle_t handle, Texture* texture)
+void ProgramSw::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, int >::const_iterator i = m_samplerMap.find(handle);
 	if (i != m_samplerMap.end())

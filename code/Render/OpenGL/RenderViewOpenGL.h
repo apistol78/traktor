@@ -3,7 +3,7 @@
 
 #include <stack>
 #include "Core/Heap/Ref.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/ContextOpenGL.h"
 
@@ -29,7 +29,7 @@ class RenderTargetOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderViewOpenGL : public RenderView
+class T_DLLCLASS RenderViewOpenGL : public IRenderView
 {
 	T_RTTI_CLASS(RenderViewOpenGL)
 
@@ -71,7 +71,7 @@ public:
 
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setProgram(Program* program);
+	virtual void setProgram(IProgram* program);
 
 	virtual void draw(const Primitives& primitives);
 

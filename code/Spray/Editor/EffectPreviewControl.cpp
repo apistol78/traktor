@@ -27,8 +27,8 @@
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "I18N/Text.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
 #include "World/WorldRenderView.h"
@@ -70,7 +70,7 @@ EffectPreviewControl::EffectPreviewControl()
 	m_sourceRenderers[&type_of< SplineSource >()] = gc_new< SplineSourceRenderer >();
 }
 
-bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	if (!Widget::create(parent, style))
 		return false;

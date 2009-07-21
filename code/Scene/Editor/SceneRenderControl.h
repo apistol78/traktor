@@ -28,7 +28,7 @@ class Command;
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 class RenderTargetSet;
 class PrimitiveRenderer;
 
@@ -72,7 +72,7 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTargetSet;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

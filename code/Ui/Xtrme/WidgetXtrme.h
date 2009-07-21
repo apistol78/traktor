@@ -16,8 +16,8 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 
 	}
 
@@ -44,11 +44,11 @@ public:
 
 	void addPaintXtrmeEventHandler(EventHandler* eventHandler);
 
-	static void setRenderSystem(render::RenderSystem* renderSystem);
+	static void setRenderSystem(render::IRenderSystem* renderSystem);
 
 private:
-	static Ref< render::RenderSystem > ms_renderSystem;
-	Ref< render::RenderView > m_renderView;
+	static Ref< render::IRenderSystem > ms_renderSystem;
+	Ref< render::IRenderView > m_renderView;
 	CanvasXtrme* m_canvasImpl;
 
 	void eventSize(Event* event);

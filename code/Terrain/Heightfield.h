@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class Texture;
+class ITexture;
 
 	}
 
@@ -41,21 +41,21 @@ public:
 
 	const height_t* getHeights() const;
 
-	void setHeightTexture(render::Texture* heightTexture);
+	void setHeightTexture(render::ITexture* heightTexture);
 
-	void setNormalTexture(render::Texture* normalTexture);
+	void setNormalTexture(render::ITexture* normalTexture);
 
-	render::Texture* getHeightTexture() const;
+	render::ITexture* getHeightTexture() const;
 
-	render::Texture* getNormalTexture() const;
+	render::ITexture* getNormalTexture() const;
 
 	inline const HeightfieldResource& getResource() const { return m_resource; }
 
 private:
 	HeightfieldResource m_resource;
 	height_t* m_heights;
-	Ref< render::Texture > m_heightTexture;
-	Ref< render::Texture > m_normalTexture;
+	Ref< render::ITexture > m_heightTexture;
+	Ref< render::ITexture > m_normalTexture;
 };
 
 	}

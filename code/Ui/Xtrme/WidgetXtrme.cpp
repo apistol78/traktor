@@ -4,8 +4,8 @@
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Itf/IWidget.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 
 namespace traktor
 {
@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.xtrme.WidgetXtrme", WidgetXtrme, Widget)
 
-Ref< render::RenderSystem > WidgetXtrme::ms_renderSystem;
+Ref< render::IRenderSystem > WidgetXtrme::ms_renderSystem;
 
 bool WidgetXtrme::create(Widget* parent, int style)
 {
@@ -68,7 +68,7 @@ void WidgetXtrme::addPaintXtrmeEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiPaintXtrme, eventHandler);
 }
 
-void WidgetXtrme::setRenderSystem(render::RenderSystem* renderSystem)
+void WidgetXtrme::setRenderSystem(render::IRenderSystem* renderSystem)
 {
 	ms_renderSystem = renderSystem;
 }

@@ -18,8 +18,8 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class RenderTargetSet;
 class VertexBuffer;
 
@@ -37,13 +37,13 @@ class T_DLLCLASS ScreenRenderer : public Object
 public:
 	ScreenRenderer();
 
-	bool create(RenderSystem* renderSystem);
+	bool create(IRenderSystem* renderSystem);
 
 	void destroy();
 
-	void draw(RenderView* renderView, Shader* shader);
+	void draw(IRenderView* renderView, Shader* shader);
 
-	void draw(RenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader);
+	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader);
 
 private:
 	Ref< render::VertexBuffer > m_vertexBuffer;

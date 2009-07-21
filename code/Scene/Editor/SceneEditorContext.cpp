@@ -69,7 +69,7 @@ SceneEditorContext::SceneEditorContext(
 	db::Database* resourceDb,
 	db::Database* sourceDb,
 	resource::IResourceManager* resourceManager,
-	render::RenderSystem* renderSystem,
+	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager
 )
 :	m_editor(editor)

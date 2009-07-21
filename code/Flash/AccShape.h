@@ -21,10 +21,10 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class Shader;
-class Texture;
+class ITexture;
 class VertexBuffer;
 
 	}
@@ -45,7 +45,7 @@ class AccShape : public Object
 public:
 	bool create(
 		resource::IResourceManager* resourceManager,
-		render::RenderSystem* renderSystem,
+		render::IRenderSystem* renderSystem,
 		AccTextureCache& textureCache,
 		const FlashMovie& movie,
 		const FlashShape& shape
@@ -54,7 +54,7 @@ public:
 	void destroy();
 
 	void render(
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		const FlashShape& shape,
 		const Vector4& frameSize,
 		const Matrix33& transform,
@@ -67,7 +67,7 @@ public:
 private:
 	struct Batch
 	{
-		render::Texture* texture;
+		render::ITexture* texture;
 		Matrix33 textureMatrix;
 		render::Primitives primitives;
 	};

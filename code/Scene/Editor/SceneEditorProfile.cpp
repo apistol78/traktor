@@ -35,7 +35,7 @@ void SceneEditorProfile::createEntityFactories(
 
 void SceneEditorProfile::createEntityRenderers(
 	SceneEditorContext* context,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const

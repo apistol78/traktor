@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class Shader;
 
 	}

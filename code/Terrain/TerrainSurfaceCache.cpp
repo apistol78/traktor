@@ -2,8 +2,8 @@
 #include "Terrain/TerrainSurface.h"
 #include "World/WorldRenderView.h"
 #include "Resource/IResourceManager.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
@@ -33,7 +33,7 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	{
 	}
 
-	virtual void render(render::RenderView* renderView) const
+	virtual void render(render::IRenderView* renderView) const
 	{
 		if (shaderParams)
 			shaderParams->fixup(shader);
@@ -68,7 +68,7 @@ TerrainSurfaceCache::~TerrainSurfaceCache()
 	destroy();
 }
 
-bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
@@ -129,7 +129,7 @@ void TerrainSurfaceCache::get(
 	const world::WorldRenderView* worldRenderView,
 	render::RenderContext* renderContext,
 	TerrainSurface* surface,
-	render::Texture* heightfieldTexture,
+	render::ITexture* heightfieldTexture,
 	const Vector4& worldOrigin,
 	const Vector4& worldExtent,
 	const Vector4& patchOrigin,
@@ -138,7 +138,7 @@ void TerrainSurfaceCache::get(
 	uint32_t patchId,
 	// Out
 	render::RenderBlock*& outRenderBlock,
-	Ref< render::Texture >& outTexture
+	Ref< render::ITexture >& outTexture
 )
 {
 	// If the cache is already valid we just reuse it.

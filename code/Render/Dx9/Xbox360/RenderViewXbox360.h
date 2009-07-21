@@ -5,7 +5,7 @@
 #include <stack>
 #include "Core/Heap/Ref.h"
 #include "Render/Dx9/Platform.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -31,7 +31,7 @@ class IndexBufferDx9;
 /*!
  * \ingroup Xbox360
  */
-class T_DLLCLASS RenderViewXbox360 : public RenderView
+class T_DLLCLASS RenderViewXbox360 : public IRenderView
 {
 	T_RTTI_CLASS(RenderViewXbox360)
 
@@ -66,7 +66,7 @@ public:
 	
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setProgram(Program* progrma);
+	virtual void setProgram(IProgram* progrma);
 	
 	virtual void draw(const Primitives& primitives);
 

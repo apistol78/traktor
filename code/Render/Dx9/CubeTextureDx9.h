@@ -1,7 +1,7 @@
 #ifndef traktor_render_CubeTextureDx9_H
 #define traktor_render_CubeTextureDx9_H
 
-#include "Render/CubeTexture.h"
+#include "Render/ICubeTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
@@ -26,7 +26,7 @@ struct CubeTextureCreateDesc;
  * \ingroup DX9 Xbox360
  */
 class T_DLLCLASS CubeTextureDx9
-:	public CubeTexture
+:	public ICubeTexture
 ,	public TextureBaseDx9
 {
 	T_RTTI_CLASS(CubeTextureDx9)

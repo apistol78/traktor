@@ -3,15 +3,15 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-class RenderSystem;
-class Texture;
+class IRenderSystem;
+class ITexture;
 
 	}
 
@@ -27,7 +27,7 @@ class FlashBitmap;
 class AccTextureCache : public Object
 {
 public:
-	AccTextureCache(render::RenderSystem* renderSystem);
+	AccTextureCache(render::IRenderSystem* renderSystem);
 
 	virtual ~AccTextureCache();
 
@@ -35,13 +35,13 @@ public:
 
 	void clear();
 
-	render::Texture* getGradientTexture(const FlashFillStyle& style);
+	render::ITexture* getGradientTexture(const FlashFillStyle& style);
 
-	render::Texture* getBitmapTexture(const FlashBitmap& bitmap);
+	render::ITexture* getBitmapTexture(const FlashBitmap& bitmap);
 
 private:
-	Ref< render::RenderSystem > m_renderSystem;
-	std::map< uint32_t, Ref< render::Texture > > m_cache;
+	Ref< render::IRenderSystem > m_renderSystem;
+	std::map< uint32_t, Ref< render::ITexture > > m_cache;
 };
 
 	}

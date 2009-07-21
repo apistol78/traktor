@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemXbox360", RenderSystemXbox360, RenderSystem)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemXbox360", RenderSystemXbox360, IRenderSystem)
 
 RenderSystemXbox360::RenderSystemXbox360()
 :	m_parameterCache(0)
@@ -95,7 +95,7 @@ bool RenderSystemXbox360::handleMessages()
 	return true;
 }
 
-RenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -155,7 +155,7 @@ RenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMode
 	return m_renderView;
 }
 
-RenderView* RenderSystemXbox360::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemXbox360::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	return 0;
 }
@@ -176,7 +176,7 @@ IndexBuffer* RenderSystemXbox360::createIndexBuffer(IndexType indexType, uint32_
 	return indexBuffer;
 }
 
-SimpleTexture* RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+ISimpleTexture* RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx9 > texture = gc_new< SimpleTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -184,7 +184,7 @@ SimpleTexture* RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreat
 	return texture;
 }
 
-CubeTexture* RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc& desc)
+ICubeTexture* RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx9 > texture = gc_new< CubeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -192,7 +192,7 @@ CubeTexture* RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc&
 	return texture;
 }
 
-VolumeTexture* RenderSystemXbox360::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+IVolumeTexture* RenderSystemXbox360::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	Ref< VolumeTextureDx9 > texture = gc_new< VolumeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -218,7 +218,7 @@ ProgramResource* RenderSystemXbox360::compileProgram(const ShaderGraph* shaderGr
 	return programResource;
 }
 
-Program* RenderSystemXbox360::createProgram(const ProgramResource* programResource)
+IProgram* RenderSystemXbox360::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_parameterCache);
 

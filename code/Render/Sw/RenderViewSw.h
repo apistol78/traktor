@@ -2,7 +2,7 @@
 #define traktor_render_RenderViewSw_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Render/Sw/VaryingUtils.h"
 #include "Graphics/Surface.h"
 #include "Core/Math/Vector2.h"
@@ -38,7 +38,7 @@ class Processor;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS RenderViewSw : public RenderView
+class T_DLLCLASS RenderViewSw : public IRenderView
 {
 	T_RTTI_CLASS(RenderViewSw)
 
@@ -65,7 +65,7 @@ public:
 
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setProgram(Program* program);
+	virtual void setProgram(IProgram* program);
 
 	virtual void draw(const Primitives& primitives);
 

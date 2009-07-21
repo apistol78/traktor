@@ -44,7 +44,7 @@ struct DeleteFramebufferCallback : public ContextOpenGL::DeleteCallback
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, Texture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ITexture)
 
 RenderTargetOpenGL::RenderTargetOpenGL(ContextOpenGL* context)
 :	m_context(context)

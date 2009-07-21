@@ -23,8 +23,8 @@
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "I18N/Text.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "Render/PrimitiveRenderer.h"
@@ -69,7 +69,7 @@ SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
 
 bool SkeletonEditorPage::create(ui::Container* parent)
 {
-	Ref< render::RenderSystem > renderSystem = m_editor->getRenderSystem();
+	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	m_renderWidget = gc_new< ui::Widget >();
 	m_renderWidget->create(parent, ui::WsNone);

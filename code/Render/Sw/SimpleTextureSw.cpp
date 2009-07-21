@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureSw", SimpleTextureSw, SimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureSw", SimpleTextureSw, ISimpleTexture)
 
 SimpleTextureSw::SimpleTextureSw()
 :	m_width(0)

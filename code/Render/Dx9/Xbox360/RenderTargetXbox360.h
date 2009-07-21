@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetXbox360_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Render/Dx9/Xbox360/RenderTargetPool.h"
 #include "Core/Misc/ComRef.h"
@@ -26,7 +26,7 @@ class RenderSystemXbox360;
  * \ingroup Xbox360
  */
 class T_DLLCLASS RenderTargetXbox360
-:	public Texture
+:	public ITexture
 ,	public TextureBaseDx9
 {
 	T_RTTI_CLASS(RenderTargetXbox360)

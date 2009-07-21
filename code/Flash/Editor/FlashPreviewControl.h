@@ -27,8 +27,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class Shader;
 class RenderTargetSet;
 
@@ -57,7 +57,7 @@ class T_DLLCLASS FlashPreviewControl : public ui::Widget
 public:
 	FlashPreviewControl();
 
-	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	void destroy();
 
@@ -75,8 +75,8 @@ public:
 
 private:
 #if T_USE_ACCELERATED_RENDERER
-	Ref< render::RenderSystem > m_renderSystem;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::IRenderView > m_renderView;
 	Ref< AccDisplayRenderer > m_displayRenderer;
 #else
 	Ref< graphics::GraphicsSystem > m_graphicsSystem;

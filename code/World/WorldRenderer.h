@@ -23,10 +23,10 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class RenderTargetSet;
-class SimpleTexture;
+class ISimpleTexture;
 
 	}
 
@@ -118,8 +118,8 @@ public:
 	bool create(
 		const WorldRenderSettings& settings,
 		WorldEntityRenderers* entityRenderers,
-		render::RenderSystem* renderSystem,
-		render::RenderView* renderView,
+		render::IRenderSystem* renderSystem,
+		render::IRenderView* renderView,
 		const WorldViewPort& worldViewPort,
 		int multiSample,
 		int frameCount
@@ -213,10 +213,10 @@ private:
 
 	Ref< LightViewProjection > m_lightViewProjection;
 	WorldRenderSettings m_settings;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
-	Ref< render::SimpleTexture > m_shadowDiscRotation[2];
+	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
 	WorldViewPort m_worldViewPort;
 	AlignedVector< float > m_splitPositions;
 	AlignedVector< Frame > m_frames;

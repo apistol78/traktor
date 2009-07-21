@@ -58,7 +58,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 class PrimitiveRenderer;
 
 	}
@@ -102,7 +102,7 @@ private:
 	Ref< ui::PopupMenu > m_boneMenu;
 	Ref< ui::Container > m_skeletonPanel;
 	Ref< ui::TreeView > m_treeSkeleton;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< editor::UndoStack > m_undoStack;

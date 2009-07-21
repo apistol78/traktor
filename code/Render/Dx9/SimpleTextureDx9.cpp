@@ -23,7 +23,7 @@ bool isLog2(uint32_t x)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx9", SimpleTextureDx9, SimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx9", SimpleTextureDx9, ISimpleTexture)
 
 SimpleTextureDx9::SimpleTextureDx9(ContextDx9* context)
 :	m_context(context)

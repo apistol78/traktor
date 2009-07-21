@@ -52,7 +52,7 @@ T_FORCE_INLINE void insert(std::vector< RenderBlock* >& queue, RenderBlock* rend
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
-RenderContext::RenderContext(RenderView* renderView, uint32_t heapSize)
+RenderContext::RenderContext(IRenderView* renderView, uint32_t heapSize)
 :	m_renderView(renderView)
 ,	m_heap(0)
 ,	m_heapEnd(0)

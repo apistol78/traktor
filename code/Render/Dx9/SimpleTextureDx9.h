@@ -1,7 +1,7 @@
 #ifndef traktor_render_SimpleTextureDx9_H
 #define traktor_render_SimpleTextureDx9_H
 
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
@@ -26,10 +26,10 @@ struct SimpleTextureCreateDesc;
  * \ingroup DX9 Xbox360
  */
 class T_DLLCLASS SimpleTextureDx9
-:	public SimpleTexture
+:	public ISimpleTexture
 ,	public TextureBaseDx9
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS(ISimpleTexture)
 
 public:
 	SimpleTextureDx9(ContextDx9* context);

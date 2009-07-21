@@ -7,8 +7,8 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashShape.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -45,8 +45,8 @@ AccDisplayRenderer::~AccDisplayRenderer()
 
 bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
-	render::RenderSystem* renderSystem,
-	render::RenderView* renderView,
+	render::IRenderSystem* renderSystem,
+	render::IRenderView* renderView,
 	bool clearBackground
 )
 {

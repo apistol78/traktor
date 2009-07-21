@@ -37,7 +37,7 @@ const D3DPRIMITIVETYPE c_d3dPrimitiveType[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewXbox360", RenderViewXbox360, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewXbox360", RenderViewXbox360, IRenderView)
 
 RenderViewXbox360::RenderViewXbox360(
 	const RenderViewCreateDesc& createDesc,
@@ -174,7 +174,7 @@ void RenderViewXbox360::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_currentIndexBuffer = static_cast< IndexBufferDx9* >(indexBuffer);
 }
 
-void RenderViewXbox360::setProgram(Program* program)
+void RenderViewXbox360::setProgram(IProgram* program)
 {
 	T_ASSERT (is_a< ProgramXbox360 >(program));
 	m_currentProgram = static_cast< ProgramXbox360* >(program);

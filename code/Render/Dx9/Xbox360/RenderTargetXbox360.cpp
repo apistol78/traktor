@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetXbox360", RenderTargetXbox360, Texture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetXbox360", RenderTargetXbox360, ITexture)
 
 RenderTargetXbox360::RenderTargetXbox360(RenderSystemXbox360* renderSystem)
 :	m_width(0)

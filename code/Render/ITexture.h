@@ -1,5 +1,5 @@
-#ifndef traktor_render_Texture_H
-#define traktor_render_Texture_H
+#ifndef traktor_render_ITexture_H
+#define traktor_render_ITexture_H
 
 #include "Core/Object.h"
 
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Texture base class.
  * \ingroup Render
  */
-class T_DLLCLASS Texture : public Object
+class T_DLLCLASS ITexture : public Object
 {
-	T_RTTI_CLASS(Texture)
+	T_RTTI_CLASS(ITexture)
 	
 public:
 	struct Lock
@@ -42,4 +42,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_Texture_H
+#endif	// traktor_render_ITexture_H

@@ -13,7 +13,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRenderView)
 
 #if defined(_WIN32)
 
@@ -186,7 +186,7 @@ void RenderViewOpenGL::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_currentDirty = true;
 }
 
-void RenderViewOpenGL::setProgram(Program* program)
+void RenderViewOpenGL::setProgram(IProgram* program)
 {
 	m_currentProgram = checked_type_cast< ProgramOpenGL * >(program);
 	m_currentDirty = true;

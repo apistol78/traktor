@@ -39,7 +39,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual Texture* getColorTexture(int index) const;
+	virtual ITexture* getColorTexture(int index) const;
 
 	float* getDepthSurface();
 

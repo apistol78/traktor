@@ -10,7 +10,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureDx10", CubeTextureDx10, CubeTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureDx10", CubeTextureDx10, ICubeTexture)
 
 CubeTextureDx10::CubeTextureDx10(ContextDx10* context)
 :	m_context(context)

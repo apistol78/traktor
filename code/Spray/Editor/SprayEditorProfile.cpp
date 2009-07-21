@@ -32,7 +32,7 @@ void SprayEditorProfile::createEntityFactories(
 
 void SprayEditorProfile::createEntityRenderers(
 	scene::SceneEditorContext* context,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::PrimitiveRenderer* primitiveRenderer,
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const

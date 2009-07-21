@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemOpenGL", RenderSystemOpenGL, RenderSystem)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemOpenGL", RenderSystemOpenGL, IRenderSystem)
 
 RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(_WIN32)
@@ -284,7 +284,7 @@ bool RenderSystemOpenGL::handleMessages()
 #endif
 }
 
-RenderView* RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -365,7 +365,7 @@ RenderView* RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode,
 #endif
 }
 
-RenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -521,7 +521,7 @@ IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t
 		return gc_new< IndexBufferIAR >(m_globalContext, indexType, bufferSize);
 }
 
-SimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+ISimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -532,7 +532,7 @@ SimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreate
 	return texture;
 }
 
-CubeTexture* RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
+ICubeTexture* RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -543,7 +543,7 @@ CubeTexture* RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& 
 	return texture;
 }
 
-VolumeTexture* RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+IVolumeTexture* RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -571,7 +571,7 @@ ProgramResource* RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGra
 	return gc_new< ProgramResourceOpenGL >(shaderGraph);
 }
 
-Program* RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
+IProgram* RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceOpenGL > resource = dynamic_type_cast< const ProgramResourceOpenGL* >(programResource);
 	if (!resource)

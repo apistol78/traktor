@@ -1,7 +1,7 @@
 #ifndef traktor_render_VolumeTextureDx9_H
 #define traktor_render_VolumeTextureDx9_H
 
-#include "Render/VolumeTexture.h"
+#include "Render/IVolumeTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
@@ -26,7 +26,7 @@ struct VolumeTextureCreateDesc;
  * \ingroup DX9 Xbox360
  */
 class T_DLLCLASS VolumeTextureDx9
-:	public VolumeTexture
+:	public IVolumeTexture
 ,	public TextureBaseDx9
 {
 	T_RTTI_CLASS(VolumeTextureDx9)

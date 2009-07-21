@@ -3,7 +3,7 @@
 #include "Terrain/HeightfieldResource.h"
 #include "Terrain/MaterialMask.h"
 #include "Terrain/MaterialMaskResource.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
@@ -19,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
 
-UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const
+UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(UndergrowthEntity::Vertex, position)));

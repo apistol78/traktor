@@ -33,7 +33,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderContext;
 class VertexBuffer;
 class IndexBuffer;
@@ -57,7 +57,7 @@ public:
 
 	OceanEntity();
 
-	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const OceanEntityData& data);
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data);
 
 	void render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView);
 

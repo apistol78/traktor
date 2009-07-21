@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetDx10_H
 #define traktor_render_RenderTargetDx10_H
 
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
@@ -25,7 +25,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS RenderTargetDx10 : public Texture
+class T_DLLCLASS RenderTargetDx10 : public ITexture
 {
 	T_RTTI_CLASS(RenderTargetDx10)
 

@@ -1,6 +1,6 @@
 #include <limits>
 #include <cmath>
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/DisplayMode.h"
 
 namespace traktor
@@ -8,9 +8,9 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderSystem", RenderSystem, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IRenderSystem", IRenderSystem, Object)
 
-DisplayMode* RenderSystem::findDisplayMode(const DisplayMode* criteria)
+DisplayMode* IRenderSystem::findDisplayMode(const DisplayMode* criteria)
 {
 	int bestMatch = std::numeric_limits< int >::max();
 	Ref< DisplayMode > best;

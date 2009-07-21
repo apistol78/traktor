@@ -23,7 +23,7 @@
 #include "Ui/Custom/ShortcutEdit.h"
 #include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 
 namespace traktor
 {
@@ -72,7 +72,7 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 	std::wstring renderSystemType = settings->getProperty< PropertyString >(L"Editor.RenderSystem");
 
 	std::vector< const Type* > renderSystemTypes;
-	type_of< render::RenderSystem >().findAllOf(renderSystemTypes);
+	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes);
 
 	for (std::vector< const Type* >::const_iterator i = renderSystemTypes.begin(); i != renderSystemTypes.end(); ++i)
 	{
