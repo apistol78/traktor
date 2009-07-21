@@ -65,7 +65,7 @@ class Entity;
 
 class SceneEditorProfile;
 class Camera;
-class Modifier;
+class IModifier;
 class IEntityEditor;
 class EntityAdapter;
 class SceneAsset;
@@ -119,9 +119,9 @@ public:
 
 	Camera* getCamera() const;
 
-	void setModifier(Modifier* modifier);
+	void setModifier(IModifier* modifier);
 
-	Modifier* getModifier() const;
+	IModifier* getModifier() const;
 
 	void setPickEnable(bool pickEnable);
 
@@ -260,7 +260,7 @@ private:
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< SceneEditorProfile > m_editorProfiles;
 	Ref< Camera > m_camera;
-	Ref< Modifier > m_modifier;
+	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;
 	EditSpace m_editSpace;

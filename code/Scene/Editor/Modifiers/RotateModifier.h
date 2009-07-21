@@ -1,7 +1,7 @@
 #ifndef traktor_scene_RotateModifier_H
 #define traktor_scene_RotateModifier_H
 
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 	{
 
 /*! \brief Rotation modifier. */
-class RotateModifier : public Modifier
+class RotateModifier : public IModifier
 {
 	T_RTTI_CLASS(RotateModifier)
 

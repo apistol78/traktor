@@ -103,7 +103,7 @@ void getMouseDeltaAxises(
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScaleModifier", ScaleModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScaleModifier", ScaleModifier, IModifier)
 
 void ScaleModifier::draw(
 	SceneEditorContext* context,

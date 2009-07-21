@@ -1,7 +1,7 @@
 #ifndef traktor_scene_ScaleModifier_H
 #define traktor_scene_ScaleModifier_H
 
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 	{
 
 /*! \brief Scale modifier. */
-class ScaleModifier : public Modifier
+class ScaleModifier : public IModifier
 {
 	T_RTTI_CLASS(ScaleModifier)
 

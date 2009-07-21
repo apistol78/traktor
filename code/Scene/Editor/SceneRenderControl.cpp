@@ -5,7 +5,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/SelectEvent.h"
 #include "Render/RenderSystem.h"
@@ -395,7 +395,7 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 	if (!m_modifyCamera)
 	{
 		// Apply modifier on selected entities.
-		Ref< Modifier > modifier = m_context->getModifier();
+		Ref< IModifier > modifier = m_context->getModifier();
 		T_ASSERT (modifier);
 
 		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
@@ -568,7 +568,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		}
 
 		// Draw selection marker(s).
-		Ref< Modifier > modifier = m_context->getModifier();
+		Ref< IModifier > modifier = m_context->getModifier();
 		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 		{
 			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.

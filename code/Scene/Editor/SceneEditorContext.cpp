@@ -3,7 +3,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorProfile.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -107,12 +107,12 @@ Camera* SceneEditorContext::getCamera() const
 	return m_camera;
 }
 
-void SceneEditorContext::setModifier(Modifier* modifier)
+void SceneEditorContext::setModifier(IModifier* modifier)
 {
 	m_modifier = modifier;
 }
 
-Modifier* SceneEditorContext::getModifier() const
+IModifier* SceneEditorContext::getModifier() const
 {
 	return m_modifier;
 }

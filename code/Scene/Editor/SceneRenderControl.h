@@ -50,7 +50,7 @@ class Entity;
 
 class SceneEditorContext;
 class Camera;
-class Modifier;
+class IModifier;
 class EntityAdapter;
 
 class T_DLLCLASS SceneRenderControl : public ui::Widget

@@ -34,7 +34,7 @@ class PrimitiveRenderer;
 
 class SceneEditorContext;
 class EntityAdapter;
-class Modifier;
+class IModifier;
 
 /*! \brief Abstract entity editor class.
  *
