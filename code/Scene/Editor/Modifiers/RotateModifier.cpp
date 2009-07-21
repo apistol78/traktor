@@ -26,7 +26,7 @@ void getEulerAngles(
 		
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RotateModifier", RotateModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RotateModifier", RotateModifier, IModifier)
 
 void RotateModifier::draw(
 	SceneEditorContext* context,

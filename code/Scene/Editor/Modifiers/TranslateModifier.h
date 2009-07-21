@@ -1,7 +1,7 @@
 #ifndef traktor_scene_TranslateModifier_H
 #define traktor_scene_TranslateModifier_H
 
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 	{
 
 /*! \brief Translation modifier. */
-class TranslateModifier : public Modifier
+class TranslateModifier : public IModifier
 {
 	T_RTTI_CLASS(TranslateModifier)
 

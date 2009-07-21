@@ -43,7 +43,7 @@ class WorldRenderSettings;
 class SceneEditorContext;
 class SceneRenderControl;
 class Camera;
-class Modifier;
+class IModifier;
 
 class T_DLLCLASS ScenePreviewControl : public ui::Container
 {
@@ -77,9 +77,9 @@ private:
 	Ref< SceneRenderControl > m_sceneRenderControl;
 	Ref< ui::Container > m_infoContainer;
 	Ref< ui::custom::StatusBar > m_statusText;
-	Ref< Modifier > m_modifierTranslate;
-	Ref< Modifier > m_modifierRotate;
-	Ref< Modifier > m_modifierScale;
+	Ref< IModifier > m_modifierTranslate;
+	Ref< IModifier > m_modifierRotate;
+	Ref< IModifier > m_modifierScale;
 	double m_frameTime;
 	double m_renderTime;
 	Ref< SceneEditorContext > m_context;

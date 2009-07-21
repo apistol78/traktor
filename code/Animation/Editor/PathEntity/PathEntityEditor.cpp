@@ -4,7 +4,7 @@
 #include "Animation/PathEntity/Path.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 #include "World/Entity/SpatialEntity.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Ui/Command.h"
@@ -76,7 +76,7 @@ void PathEntityEditor::applyModifier(
 	Ref< PathUserData > data = entityAdapter->getUserObject< PathUserData >();
 	T_ASSERT (data);
 
-	Ref< scene::Modifier > modifier = context->getModifier();
+	Ref< scene::IModifier > modifier = context->getModifier();
 	if (modifier)
 	{
 		Path& path = entityData->getPath();

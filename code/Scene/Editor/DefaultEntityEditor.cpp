@@ -1,7 +1,7 @@
 #include <limits>
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/Modifier.h"
+#include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/DirectionalLightEntity.h"
@@ -48,7 +48,7 @@ void DefaultEntityEditor::applyModifier(
 {
 	T_ASSERT (entityAdapter->isSpatial());
 
-	Ref< Modifier > modifier = context->getModifier();
+	Ref< IModifier > modifier = context->getModifier();
 	if (!modifier)
 		return;
 

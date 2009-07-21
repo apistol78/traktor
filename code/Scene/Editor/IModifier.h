@@ -1,5 +1,5 @@
-#ifndef traktor_scene_Modifier_H
-#define traktor_scene_Modifier_H
+#ifndef traktor_scene_IModifier_H
+#define traktor_scene_IModifier_H
 
 #include "Core/Object.h"
 #include "Core/Math/Vector2.h"
@@ -21,9 +21,9 @@ class PrimitiveRenderer;
 class SceneEditorContext;
 
 /*! \brief Selection modifier abstraction. */
-class Modifier : public Object
+class IModifier : public Object
 {
-	T_RTTI_CLASS(Modifier)
+	T_RTTI_CLASS(IModifier)
 
 public:
 	virtual void draw(
@@ -46,4 +46,4 @@ public:
 	}
 }
 
-#endif	// traktor_scene_Modifier_H
+#endif	// traktor_scene_IModifier_H
