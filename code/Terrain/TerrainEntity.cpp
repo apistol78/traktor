@@ -7,7 +7,7 @@
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "Resource/IResourceManager.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
@@ -48,7 +48,7 @@ struct TerrainRenderBlock : public render::SimpleRenderBlock
 	{
 	}
 
-	virtual void render(render::RenderView* renderView) const
+	virtual void render(render::IRenderView* renderView) const
 	{
 		if (nested)
 			nested->render(renderView);
@@ -74,15 +74,18 @@ TerrainEntity::TerrainEntity()
 {
 }
 
-bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem, const TerrainEntityData& data)
+bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const TerrainEntityData& data)
 {
 	m_heightfield = data.m_heightfield;
 	if (!resourceManager->bind(m_heightfield))
-		return 0;
+		return false;
+
+	if (!m_heightfield.validate())
+		return false;
 
 	m_shader = data.m_shader;
 	if (!resourceManager->bind(m_shader))
-		return 0;
+		return false;
 
 	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
 	T_ASSERT (heightfieldSize > 0);
@@ -339,7 +342,7 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::
 
 void TerrainEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView)
 {
-	Ref< render::Texture > surface;
+	Ref< render::ITexture > surface;
 
 	if (!m_heightfield.validate() || !m_shader.validate() || !m_surface)
 		return;

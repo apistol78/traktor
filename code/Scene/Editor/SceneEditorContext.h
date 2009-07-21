@@ -39,7 +39,7 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class PrimitiveRenderer;
 
 	}
@@ -106,7 +106,7 @@ public:
 		db::Database* resourceDb,
 		db::Database* sourceDb,
 		resource::IResourceManager* resourceManager,
-		render::RenderSystem* renderSystem,
+		render::IRenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager
 	);
 
@@ -203,7 +203,7 @@ public:
 
 	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
 
-	render::RenderSystem* getRenderSystem() { return m_renderSystem; }
+	render::IRenderSystem* getRenderSystem() { return m_renderSystem; }
 
 	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
 
@@ -256,7 +256,7 @@ private:
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< SceneEditorProfile > m_editorProfiles;
 	Ref< Camera > m_camera;

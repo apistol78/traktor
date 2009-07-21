@@ -1,7 +1,7 @@
-#ifndef traktor_render_CubeTexture_H
-#define traktor_render_CubeTexture_H
+#ifndef traktor_render_ICubeTexture_H
+#define traktor_render_ICubeTexture_H
 
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Cube texture.
  * \ingroup Render
  */
-class T_DLLCLASS CubeTexture : public Texture
+class T_DLLCLASS ICubeTexture : public ITexture
 {
-	T_RTTI_CLASS(CubeTexture)
+	T_RTTI_CLASS(ICubeTexture)
 	
 public:
 	enum Side
@@ -42,4 +42,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_CubeTexture_H
+#endif	// traktor_render_ICubeTexture_H

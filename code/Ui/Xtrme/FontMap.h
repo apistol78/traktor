@@ -11,8 +11,8 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class Texture;
+class IRenderSystem;
+class ITexture;
 
 	}
 
@@ -35,7 +35,7 @@ public:
 		float uv[4];
 	};
 
-	void create(render::RenderSystem* renderSystem, const Font& font);
+	void create(render::IRenderSystem* renderSystem, const Font& font);
 
 	int getKerning(uint16_t charLeft, uint16_t charRight) const;
 
@@ -46,13 +46,13 @@ public:
 		return m_glyphs[ch & 255];
 	}
 
-	inline render::Texture* getTexture() const
+	inline render::ITexture* getTexture() const
 	{
 		return m_texture;
 	}
 
 private:
-	Ref< render::Texture > m_texture;
+	Ref< render::ITexture > m_texture;
 	Glyph m_glyphs[256];
 	std::map< uint32_t, int > m_kerningPairs;
 };

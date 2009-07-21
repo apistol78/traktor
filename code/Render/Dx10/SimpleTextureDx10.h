@@ -1,7 +1,7 @@
 #ifndef traktor_render_SimpleTextureDx10_H
 #define traktor_render_SimpleTextureDx10_H
 
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
@@ -24,9 +24,9 @@ struct SimpleTextureCreateDesc;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS SimpleTextureDx10 : public SimpleTexture
+class T_DLLCLASS SimpleTextureDx10 : public ISimpleTexture
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS(ISimpleTexture)
 
 public:
 	SimpleTextureDx10(ContextDx10* context);

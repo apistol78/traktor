@@ -1,5 +1,5 @@
-#ifndef traktor_render_RenderView_H
-#define traktor_render_RenderView_H
+#ifndef traktor_render_IRenderView_H
+#define traktor_render_IRenderView_H
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
@@ -18,22 +18,22 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class VertexBuffer;
 class IndexBuffer;
-class Texture;
-class SimpleTexture;
-class CubeTexture;
-class VolumeTexture;
+class ITexture;
+class ISimpleTexture;
+class ICubeTexture;
+class IVolumeTexture;
 class RenderTargetSet;
-class Program;
+class IProgram;
 
 /*! \brief Render view.
  * \ingroup Render
  */
-class T_DLLCLASS RenderView : public Object
+class T_DLLCLASS IRenderView : public Object
 {
-	T_RTTI_CLASS(RenderView)
+	T_RTTI_CLASS(IRenderView)
 
 public:
 	/*! \name View management. */
@@ -92,7 +92,7 @@ public:
 	 *
 	 * \param program Program to set as active.
 	 */
-	virtual void setProgram(Program* program) = 0;
+	virtual void setProgram(IProgram* program) = 0;
 
 	/*! \brief Draw primitives.
 	 *
@@ -110,4 +110,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_RenderView_H
+#endif	// traktor_render_IRenderView_H

@@ -25,8 +25,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class ScreenRenderer;
 
 	}
@@ -45,14 +45,14 @@ class T_DLLCLASS PostProcessStep : public Serializable
 	T_RTTI_CLASS(PostProcessStep)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) = 0;
+	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) = 0;
 
 	virtual void destroy(PostProcess* postProcess) = 0;
 
 	virtual void render(
 		PostProcess* postProcess,
 		const WorldRenderView& worldRenderView,
-		render::RenderView* renderView,
+		render::IRenderView* renderView,
 		render::ScreenRenderer* screenRenderer,
 		float deltaTime
 	) = 0;

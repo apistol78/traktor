@@ -24,7 +24,7 @@ class Database;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 /*! \brief Texture resource factory.
  * \ingroup Render
@@ -34,7 +34,7 @@ class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 	T_RTTI_CLASS(TextureFactory)
 
 public:
-	TextureFactory(db::Database* db, RenderSystem* renderSystem);
+	TextureFactory(db::Database* db, IRenderSystem* renderSystem);
 
 	virtual const TypeSet getResourceTypes() const;
 
@@ -44,7 +44,7 @@ public:
 
 private:
 	Ref< db::Database > m_db;
-	Ref< RenderSystem > m_renderSystem;
+	Ref< IRenderSystem > m_renderSystem;
 };
 
 	}

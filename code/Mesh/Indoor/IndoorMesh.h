@@ -24,7 +24,7 @@ namespace traktor
 
 class RenderContext;
 class Mesh;
-class Texture;
+class ITexture;
 
 	}
 

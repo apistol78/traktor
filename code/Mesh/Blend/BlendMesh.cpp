@@ -1,6 +1,6 @@
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/IMeshParameterCallback.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"

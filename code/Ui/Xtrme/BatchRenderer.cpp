@@ -1,8 +1,8 @@
 #include "Ui/Xtrme/BatchRenderer.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/ShaderGraph.h"
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Xml/XmlDeserializer.h"
@@ -22,8 +22,8 @@ namespace traktor
 			namespace
 			{
 
-render::Program* createProgram(
-	render::RenderSystem* renderSystem,
+render::IProgram* createProgram(
+	render::IRenderSystem* renderSystem,
 	const uint8_t resource[],
 	const int resourceSize
 )
@@ -36,7 +36,7 @@ render::Program* createProgram(
 	Ref< render::ProgramResource > programResource = renderSystem->compileProgram(shaderGraph, 4, true);
 	T_ASSERT_M (programResource, L"Unable to compile shader");
 
-	Ref< render::Program > program = renderSystem->createProgram(programResource);
+	Ref< render::IProgram > program = renderSystem->createProgram(programResource);
 	T_ASSERT_M (program, L"Unable to create program");
 
 	return program;
@@ -53,7 +53,7 @@ struct ScreenVertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.xtrme.BatchRenderer", BatchRenderer, Object)
 
-BatchRenderer::BatchRenderer(render::RenderSystem* renderSystem, render::RenderView* renderView, uint32_t bufferCount)
+BatchRenderer::BatchRenderer(render::IRenderSystem* renderSystem, render::IRenderView* renderView, uint32_t bufferCount)
 :	m_renderSystem(renderSystem)
 ,	m_renderView(renderView)
 ,	m_vertexStart(0)
@@ -78,7 +78,7 @@ BatchRenderer::~BatchRenderer()
 	m_vertexBuffer = 0;
 }
 
-void BatchRenderer::batch(ProgramId programId, render::Texture* texture, render::PrimitiveType primitiveType)
+void BatchRenderer::batch(ProgramId programId, render::ITexture* texture, render::PrimitiveType primitiveType)
 {
 	if (m_batches.empty())
 		m_batches.push_back(Batch());

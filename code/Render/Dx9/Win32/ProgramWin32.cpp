@@ -109,7 +109,7 @@ size_t collectParameters(
 	return offset;
 }
 
-IDirect3DBaseTexture9* getD3DTexture(Texture* texture)
+IDirect3DBaseTexture9* getD3DTexture(ITexture* texture)
 {
 	if (!texture)
 		return 0;
@@ -419,7 +419,7 @@ void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* para
 	m_dirty = true;
 }
 
-void ProgramWin32::setSamplerTexture(handle_t handle, Texture* texture)
+void ProgramWin32::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	uint32_t index = m_parameterMap.get(handle);
 	if (index == ~0U || m_samplerTextures[index] == texture)

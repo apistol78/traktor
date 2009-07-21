@@ -42,7 +42,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual Texture* getColorTexture(int index) const;
+	virtual ITexture* getColorTexture(int index) const;
 
 	inline ID3D10DepthStencilView* getD3D10DepthTextureView() const {
 		return m_d3dDepthTextureView;

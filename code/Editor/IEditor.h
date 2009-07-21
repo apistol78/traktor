@@ -20,7 +20,7 @@ class Instance;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 	}
 
@@ -48,7 +48,7 @@ public:
 	virtual IProject* getProject() = 0;
 
 	/*! \brief Get editor render system. */
-	virtual render::RenderSystem* getRenderSystem() = 0;
+	virtual render::IRenderSystem* getRenderSystem() = 0;
 
 	/*! \brief Attach object to property list. */
 	virtual void setPropertyObject(Object* properties) = 0;

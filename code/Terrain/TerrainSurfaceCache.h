@@ -33,10 +33,10 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderTargetSet;
 class ScreenRenderer;
-class Texture;
+class ITexture;
 class RenderContext;
 class RenderBlock;
 
@@ -57,7 +57,7 @@ public:
 
 	virtual ~TerrainSurfaceCache();
 
-	bool create(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	bool create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	void destroy();
 
@@ -69,7 +69,7 @@ public:
 		const world::WorldRenderView* worldRenderView,
 		render::RenderContext* renderContext,
 		TerrainSurface* surface,
-		render::Texture* heightfieldTexture,
+		render::ITexture* heightfieldTexture,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent,
 		const Vector4& patchOrigin,
@@ -78,7 +78,7 @@ public:
 		uint32_t patchId,
 		// Out
 		render::RenderBlock*& outRenderBlock,
-		Ref< render::Texture >& outTexture
+		Ref< render::ITexture >& outTexture
 	);
 
 private:
@@ -89,7 +89,7 @@ private:
 	};
 
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	RefArray< render::RenderTargetSet > m_cache[4];
 	std::vector< Entry > m_entries;

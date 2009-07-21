@@ -35,7 +35,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, RenderSystem)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, IRenderSystem)
 
 RenderSystemWin32::RenderSystemWin32()
 :	m_parameterCache(0)
@@ -171,7 +171,7 @@ bool RenderSystemWin32::handleMessages()
 	return going;
 }
 
-RenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -214,7 +214,7 @@ RenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode, 
 	);
 }
 
-RenderView* RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -273,7 +273,7 @@ IndexBuffer* RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t 
 	return indexBuffer;
 }
 
-SimpleTexture* RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+ISimpleTexture* RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx9 > texture = gc_new< SimpleTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -281,7 +281,7 @@ SimpleTexture* RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateD
 	return texture;
 }
 
-CubeTexture* RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
+ICubeTexture* RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx9 > texture = gc_new< CubeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -289,7 +289,7 @@ CubeTexture* RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& d
 	return texture;
 }
 
-VolumeTexture* RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+IVolumeTexture* RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	Ref< VolumeTextureDx9 > texture = gc_new< VolumeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -318,7 +318,7 @@ ProgramResource* RenderSystemWin32::compileProgram(const ShaderGraph* shaderGrap
 	return programResource;
 }
 
-Program* RenderSystemWin32::createProgram(const ProgramResource* programResource)
+IProgram* RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_shaderCache);
 	T_ASSERT (m_parameterCache);

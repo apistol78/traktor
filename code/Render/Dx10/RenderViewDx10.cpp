@@ -25,7 +25,7 @@ const D3D10_PRIMITIVE_TOPOLOGY c_d3dTopology[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDx10", RenderViewDx10, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDx10", RenderViewDx10, IRenderView)
 
 RenderViewDx10::RenderViewDx10(
 	ContextDx10* context,
@@ -270,7 +270,7 @@ void RenderViewDx10::setIndexBuffer(IndexBuffer* indexBuffer)
 	}
 }
 
-void RenderViewDx10::setProgram(Program* program)
+void RenderViewDx10::setProgram(IProgram* program)
 {
 	if (m_currentProgram != program)
 	{

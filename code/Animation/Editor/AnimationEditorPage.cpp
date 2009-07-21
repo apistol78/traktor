@@ -34,8 +34,8 @@
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "Ui/Itf/IWidget.h"
 #include "I18N/Text.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "Render/PrimitiveRenderer.h"
@@ -77,7 +77,7 @@ public:
 	{
 	}
 
-	Ref< render::RenderView > renderView;
+	Ref< render::IRenderView > renderView;
 	bool orthogonal;
 	float size;
 	float cameraAngleX;
@@ -156,7 +156,7 @@ AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
 
 bool AnimationEditorPage::create(ui::Container* parent)
 {
-	Ref< render::RenderSystem > renderSystem = m_editor->getRenderSystem();
+	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	Ref< ui::custom::QuadSplitter > splitter = gc_new< ui::custom::QuadSplitter >();
 	splitter->create(parent, ui::Point(50, 50), true);

@@ -54,7 +54,7 @@ const char c_clearEffect[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, Texture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, ITexture)
 
 RenderTargetWin32::RenderTargetWin32(ContextDx9* context)
 :	m_context(context)

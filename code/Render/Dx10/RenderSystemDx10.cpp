@@ -28,7 +28,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, RenderSystem)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, IRenderSystem)
 
 bool RenderSystemDx10::create()
 {
@@ -185,7 +185,7 @@ bool RenderSystemDx10::handleMessages()
 	return going;
 }
 
-RenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	DXGI_SWAP_CHAIN_DESC scd;
@@ -261,7 +261,7 @@ RenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, c
 	);
 }
 
-RenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	HRESULT hr;
@@ -373,7 +373,7 @@ IndexBuffer* RenderSystemDx10::createIndexBuffer(IndexType indexType, uint32_t b
 	return gc_new< IndexBufferDx10 >(m_context, indexType, bufferSize, d3dBuffer);
 }
 
-SimpleTexture* RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+ISimpleTexture* RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx10 > texture = gc_new< SimpleTextureDx10 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -381,7 +381,7 @@ SimpleTexture* RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDe
 	return texture;
 }
 
-CubeTexture* RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& desc)
+ICubeTexture* RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx10 > texture = gc_new< CubeTextureDx10 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -389,7 +389,7 @@ CubeTexture* RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& de
 	return texture;
 }
 
-VolumeTexture* RenderSystemDx10::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+IVolumeTexture* RenderSystemDx10::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return gc_new< VolumeTextureDx10 >();
 }
@@ -415,7 +415,7 @@ ProgramResource* RenderSystemDx10::compileProgram(const ShaderGraph* shaderGraph
 	return programResource;
 }
 
-Program* RenderSystemDx10::createProgram(const ProgramResource* programResource)
+IProgram* RenderSystemDx10::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceDx10 > resource = dynamic_type_cast< const ProgramResourceDx10* >(programResource);
 	if (!resource)

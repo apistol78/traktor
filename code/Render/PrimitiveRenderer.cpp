@@ -1,6 +1,6 @@
 #include "Render/PrimitiveRenderer.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Shader.h"
@@ -58,7 +58,7 @@ PrimitiveRenderer::PrimitiveRenderer()
 
 bool PrimitiveRenderer::create(
 	resource::IResourceManager* resourceManager,
-	RenderSystem* renderSystem
+	IRenderSystem* renderSystem
 )
 {
 	resource::Proxy< Shader > shader(c_guidPrimitiveShader);
@@ -67,7 +67,7 @@ bool PrimitiveRenderer::create(
 
 bool PrimitiveRenderer::create(
 	resource::IResourceManager* resourceManager,
-	RenderSystem* renderSystem,
+	IRenderSystem* renderSystem,
 	const resource::Proxy< Shader >& shader
 )
 {
@@ -781,7 +781,7 @@ void PrimitiveRenderer::drawCone(
 	}
 }
 
-bool PrimitiveRenderer::begin(RenderView* renderView)
+bool PrimitiveRenderer::begin(IRenderView* renderView)
 {
 	T_ASSERT (!m_vertex);
 
@@ -802,7 +802,7 @@ bool PrimitiveRenderer::begin(RenderView* renderView)
 	return true;
 }
 
-void PrimitiveRenderer::end(RenderView* renderView)
+void PrimitiveRenderer::end(IRenderView* renderView)
 {
 	T_ASSERT (m_vertex);
 

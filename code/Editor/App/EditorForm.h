@@ -83,7 +83,7 @@ public:
 
 	virtual IProject* getProject();
 
-	virtual render::RenderSystem* getRenderSystem();
+	virtual render::IRenderSystem* getRenderSystem();
 
 	virtual void setPropertyObject(Object* properties);
 
@@ -140,7 +140,7 @@ private:
 	Ref< PropertiesView > m_propertiesView;
 	Ref< HeapView > m_heapView;
 	Ref< LogView > m_logView;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
 	Path m_projectPath;
 	Ref< Project > m_project;

@@ -2,7 +2,7 @@
 #define traktor_render_ProgramDx10_H
 
 #include <map>
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/Types.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
@@ -27,7 +27,7 @@ class HlslProgram;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS ProgramDx10 : public Program
+class T_DLLCLASS ProgramDx10 : public IProgram
 {
 	T_RTTI_CLASS(ProgramDx10)
 
@@ -54,7 +54,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, Texture* texture);
+	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 

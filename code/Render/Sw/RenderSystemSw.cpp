@@ -45,7 +45,7 @@ const TCHAR* c_windowClassName = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemSw", RenderSystemSw, RenderSystem)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemSw", RenderSystemSw, IRenderSystem)
 
 RenderSystemSw::RenderSystemSw()
 #if defined(_WIN32)
@@ -140,7 +140,7 @@ bool RenderSystemSw::handleMessages()
 #endif
 }
 
-RenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	graphics::CreateDesc graphicsDesc;
 
@@ -181,7 +181,7 @@ RenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, con
 	return gc_new< RenderViewSw >(this, m_graphicsSystem, m_processor);
 }
 
-RenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
@@ -209,7 +209,7 @@ IndexBuffer* RenderSystemSw::createIndexBuffer(IndexType indexType, uint32_t buf
 	return gc_new< IndexBufferSw >(indexType, bufferSize);
 }
 
-SimpleTexture* RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+ISimpleTexture* RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureSw > texture = gc_new< SimpleTextureSw >();
 	if (!texture->create(desc))
@@ -217,12 +217,12 @@ SimpleTexture* RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc
 	return texture;
 }
 
-CubeTexture* RenderSystemSw::createCubeTexture(const CubeTextureCreateDesc& desc)
+ICubeTexture* RenderSystemSw::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-VolumeTexture* RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+IVolumeTexture* RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return 0;
 }
@@ -241,7 +241,7 @@ ProgramResource* RenderSystemSw::compileProgram(const ShaderGraph* shaderGraph, 
 	return gc_new< ProgramResourceSw >(shaderGraph);
 }
 
-Program* RenderSystemSw::createProgram(const ProgramResource* programResource)
+IProgram* RenderSystemSw::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceSw > resource = dynamic_type_cast< const ProgramResourceSw* >(programResource);
 	if (!resource)

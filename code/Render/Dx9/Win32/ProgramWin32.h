@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include "Core/Heap/Ref.h"
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/Types.h"
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/Dx9/StateBlockDx9.h"
@@ -36,7 +36,7 @@ class ParameterCache;
  * \ingroup DX9
  */
 class T_DLLCLASS ProgramWin32
-:	public Program
+:	public IProgram
 ,	public Unmanaged
 {
 	T_RTTI_CLASS(ProgramWin32)
@@ -84,7 +84,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, Texture* texture);
+	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -118,7 +118,7 @@ private:
 	StateBlockDx9 m_state;
 	ParameterMap m_parameterMap;
 	std::vector< float > m_uniformFloatData;
-	RefArray< Texture > m_samplerTextures;
+	RefArray< ITexture > m_samplerTextures;
 	bool m_dirty;
 };
 

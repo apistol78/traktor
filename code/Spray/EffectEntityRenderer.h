@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 	}
 
@@ -36,7 +36,7 @@ class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS(EffectEntityRenderer)
 
 public:
-	EffectEntityRenderer(render::RenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
+	EffectEntityRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
 
 	virtual const TypeSet getEntityTypes() const;
 

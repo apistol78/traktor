@@ -1,7 +1,7 @@
 #ifndef traktor_render_CubeTextureDx10_H
 #define traktor_render_CubeTextureDx10_H
 
-#include "Render/CubeTexture.h"
+#include "Render/ICubeTexture.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
@@ -24,7 +24,7 @@ struct CubeTextureCreateDesc;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS CubeTextureDx10 : public CubeTexture
+class T_DLLCLASS CubeTextureDx10 : public ICubeTexture
 {
 	T_RTTI_CLASS(CubeTextureDx10)
 

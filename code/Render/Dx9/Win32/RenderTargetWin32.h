@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetWin32_H
 #define traktor_render_RenderTargetWin32_H
 
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TextureBaseDx9.h"
 #include "Core/Heap/Ref.h"
@@ -25,7 +25,7 @@ struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
 class T_DLLCLASS RenderTargetWin32
-:	public Texture
+:	public ITexture
 ,	public TextureBaseDx9
 {
 	T_RTTI_CLASS(RenderTargetWin32)

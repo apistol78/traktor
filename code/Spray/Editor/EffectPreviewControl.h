@@ -35,8 +35,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 class RenderContext;
 class PrimitiveRenderer;
 
@@ -58,7 +58,7 @@ class T_DLLCLASS EffectPreviewControl : public ui::Widget
 public:
 	EffectPreviewControl();
 
-	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem);
+	bool create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	void destroy();
 
@@ -80,7 +80,7 @@ private:
 	Ref< ui::PopupMenu > m_menuOptions;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< PointRenderer > m_pointRenderer;

@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepRepeat", PostProcessStepRepeat, PostProcessStep)
 
-bool PostProcessStepRepeat::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool PostProcessStepRepeat::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	return m_step->create(postProcess, resourceManager, renderSystem);
 }
@@ -23,7 +23,7 @@ void PostProcessStepRepeat::destroy(PostProcess* postProcess)
 void PostProcessStepRepeat::render(
 	PostProcess* postProcess,
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
 	float deltaTime
 )

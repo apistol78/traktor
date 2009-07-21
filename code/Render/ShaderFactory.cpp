@@ -3,9 +3,9 @@
 #include "Render/ShaderGraph.h"
 #include "Render/Shader.h"
 #include "Render/Nodes.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/ProgramResource.h"
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/TextureLinker.h"
 #include "Resource/IResourceManager.h"
 #include "Database/Database.h"
@@ -26,10 +26,10 @@ public:
 	{
 	}
 
-	virtual Texture* read(const Guid& textureGuid)
+	virtual ITexture* read(const Guid& textureGuid)
 	{
-		Ref< resource::IResourceHandle > handle = m_resourceManager->bind< Texture >(textureGuid);
-		return handle ? dynamic_type_cast< Texture* >(handle->get()) : 0;
+		Ref< resource::IResourceHandle > handle = m_resourceManager->bind< ITexture >(textureGuid);
+		return handle ? dynamic_type_cast< ITexture* >(handle->get()) : 0;
 	}
 
 private:
@@ -42,7 +42,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderFactory", ShaderFactory, resource:
 
 ShaderFactory::ShaderFactory(
 	db::Database* database,
-	RenderSystem* renderSystem
+	IRenderSystem* renderSystem
 )
 :	m_database(database)
 ,	m_renderSystem(renderSystem)

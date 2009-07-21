@@ -23,7 +23,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderContext;
 class VertexBuffer;
 class IndexBuffer;
@@ -50,7 +50,7 @@ class T_DLLCLASS PointRenderer : public Object
 	T_RTTI_CLASS(PointRenderer)
 
 public:
-	PointRenderer(render::RenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
+	PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
 
 	void render(
 		render::Shader* shader,

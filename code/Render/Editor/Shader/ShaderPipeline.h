@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 {
@@ -51,7 +51,7 @@ public:
 	) const;
 
 private:
-	Ref< RenderSystem > m_renderSystem;
+	Ref< IRenderSystem > m_renderSystem;
 	int32_t m_optimize;
 	bool m_validate;
 	bool m_debugCompleteGraphs;

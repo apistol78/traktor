@@ -1,6 +1,6 @@
 #include "Render/ScreenRenderer.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
@@ -27,7 +27,7 @@ ScreenRenderer::ScreenRenderer()
 {
 }
 
-bool ScreenRenderer::create(RenderSystem* renderSystem)
+bool ScreenRenderer::create(IRenderSystem* renderSystem)
 {
 	std::vector< VertexElement > vertexElements;
 	vertexElements.push_back(VertexElement(DuPosition, DtFloat2, offsetof(ScreenVertex, pos)));
@@ -63,7 +63,7 @@ void ScreenRenderer::destroy()
 	}
 }
 
-void ScreenRenderer::draw(RenderView* renderView, Shader* shader)
+void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
 	Viewport viewport = renderView->getViewport();
 	shader->setVectorParameter(m_handleTargetSize, Vector4(
@@ -77,7 +77,7 @@ void ScreenRenderer::draw(RenderView* renderView, Shader* shader)
 	shader->draw(renderView, m_primitives);
 }
 
-void ScreenRenderer::draw(RenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
+void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
 	shader->setVectorParameter(m_handleTargetSize, Vector4(
 		float(renderTargetSet->getWidth()),

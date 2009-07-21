@@ -24,7 +24,7 @@ class Database;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 /*! \brief Shader resource factory.
  * \ingroup Render
@@ -36,7 +36,7 @@ class T_DLLCLASS ShaderFactory : public resource::IResourceFactory
 public:
 	ShaderFactory(
 		db::Database* database,
-		RenderSystem* renderSystem
+		IRenderSystem* renderSystem
 	);
 
 	virtual const TypeSet getResourceTypes() const;
@@ -47,7 +47,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
-	Ref< RenderSystem > m_renderSystem;
+	Ref< IRenderSystem > m_renderSystem;
 };
 
 	}

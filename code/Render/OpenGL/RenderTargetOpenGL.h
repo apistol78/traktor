@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetOpenGL_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Render/Types.h"
 #include "Core/Math/Vector4.h"
 
@@ -24,7 +24,7 @@ class ContextOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderTargetOpenGL : public Texture
+class T_DLLCLASS RenderTargetOpenGL : public ITexture
 {
 	T_RTTI_CLASS(RenderTargetOpenGL)
 

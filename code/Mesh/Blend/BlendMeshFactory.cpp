@@ -6,10 +6,10 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/Mesh.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Core/Io/Stream.h"
@@ -23,7 +23,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshFactory", BlendMeshFactory, resource::IResourceFactory)
 
-BlendMeshFactory::BlendMeshFactory(db::Database* db, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory)
+BlendMeshFactory::BlendMeshFactory(db::Database* db, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory)
 :	m_db(db)
 ,	m_renderSystem(renderSystem)
 ,	m_meshFactory(meshFactory)

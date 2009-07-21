@@ -23,7 +23,7 @@ namespace traktor
 	namespace render
 	{
 
-class Texture;
+class ITexture;
 class Shader;
 class ShaderParameters;
 
@@ -81,11 +81,11 @@ public:
 
 	void setEyePosition(const Vector4& eyePosition);
 
-	void setShadowMap(render::Texture* shadowMap, float shadowMapBias, int shadowMapSlice);
+	void setShadowMap(render::ITexture* shadowMap, float shadowMapBias, int shadowMapSlice);
 
-	void setShadowMapDiscRotation(render::Texture* shadowMapDiscRotation);
+	void setShadowMapDiscRotation(render::ITexture* shadowMapDiscRotation);
 
-	void setDepthMap(render::Texture* depthMap);
+	void setDepthMap(render::ITexture* depthMap);
 
 	void setTime(float time);
 
@@ -161,7 +161,7 @@ public:
 		return m_lights[index].direction;
 	}
 
-	inline render::Texture* getShadowMap() const {
+	inline render::ITexture* getShadowMap() const {
 		return m_shadowMap;
 	}
 
@@ -169,7 +169,7 @@ public:
 		return m_shadowMapBias;
 	}
 
-	inline render::Texture* getDepthMap() const {
+	inline render::ITexture* getDepthMap() const {
 		return m_depthMap;
 	}
 
@@ -188,11 +188,11 @@ private:
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
-	Ref< render::Texture > m_shadowMap;
-	Ref< render::Texture > m_shadowMapDiscRotation;
+	Ref< render::ITexture > m_shadowMap;
+	Ref< render::ITexture > m_shadowMapDiscRotation;
 	float m_shadowMapBias;
 	int m_shadowMapSlice;
-	Ref< render::Texture > m_depthMap;
+	Ref< render::ITexture > m_depthMap;
 	float m_time;
 };
 	

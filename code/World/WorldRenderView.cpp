@@ -1,5 +1,5 @@
 #include "World/WorldRenderView.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Render/Context/ShaderParameters.h"
 
 namespace traktor
@@ -137,19 +137,19 @@ void WorldRenderView::setEyePosition(const Vector4& eyePosition)
 	m_eyePosition = eyePosition;
 }
 
-void WorldRenderView::setShadowMap(render::Texture* shadowMap, float shadowMapBias, int shadowMapSlice)
+void WorldRenderView::setShadowMap(render::ITexture* shadowMap, float shadowMapBias, int shadowMapSlice)
 {
 	m_shadowMap = shadowMap;
 	m_shadowMapBias = shadowMapBias / 1000.0f;
 	m_shadowMapSlice = shadowMapSlice;
 }
 
-void WorldRenderView::setShadowMapDiscRotation(render::Texture* shadowMapDiscRotation)
+void WorldRenderView::setShadowMapDiscRotation(render::ITexture* shadowMapDiscRotation)
 {
 	m_shadowMapDiscRotation = shadowMapDiscRotation;
 }
 
-void WorldRenderView::setDepthMap(render::Texture* depthMap)
+void WorldRenderView::setDepthMap(render::ITexture* depthMap)
 {
 	m_depthMap = depthMap;
 }

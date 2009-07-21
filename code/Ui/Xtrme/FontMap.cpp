@@ -16,8 +16,8 @@
 #include <cmath>
 #include "Ui/Xtrme/FontMap.h"
 #include "Ui/Font.h"
-#include "Render/RenderSystem.h"
-#include "Render/SimpleTexture.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
@@ -41,7 +41,7 @@ inline int nearestPowerOf2(int value)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.xtrme.FontMap", FontMap, Object)
 
-void FontMap::create(render::RenderSystem* renderSystem, const Font& font)
+void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 {
 #if defined(T_USE_GDI_FONTS)
 
@@ -148,10 +148,10 @@ void FontMap::create(render::RenderSystem* renderSystem, const Font& font)
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = false;
 
-	Ref< render::SimpleTexture > texture = renderSystem->createSimpleTexture(desc);
+	Ref< render::ISimpleTexture > texture = renderSystem->createSimpleTexture(desc);
 	T_ASSERT_M (texture, L"Unable to create font texture");
 
-	render::Texture::Lock lock;
+	render::ITexture::Lock lock;
 	texture->lock(0, lock);
 
 	uint8_t* dp = reinterpret_cast< uint8_t* >(lock.bits);
@@ -220,10 +220,10 @@ void FontMap::create(render::RenderSystem* renderSystem, const Font& font)
 	desc.format = render::TfA8R8G8B8;
 	desc.immutable = false;
 
-	Ref< render::SimpleTexture > texture = renderSystem->createSimpleTexture(desc);
+	Ref< render::ISimpleTexture > texture = renderSystem->createSimpleTexture(desc);
 	T_ASSERT_M (texture, L"Unable to create font texture");
 
-	render::Texture::Lock lock;
+	render::ITexture::Lock lock;
 	texture->lock(0, lock);
 
 	uint8_t* dp = reinterpret_cast< uint8_t* >(lock.bits);

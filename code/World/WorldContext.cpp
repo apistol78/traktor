@@ -18,7 +18,7 @@ const uint32_t c_contextMemory = 6 * 1024 * 1024;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
-WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::RenderView* renderView)
+WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::IRenderView* renderView)
 :	m_worldRenderer(worldRenderer)
 ,	m_entityRenderers(entityRenderers)
 ,	m_renderContext(gc_new< render::RenderContext >(renderView, c_contextMemory))

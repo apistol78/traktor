@@ -5,7 +5,7 @@
 #include "Flash/PathTesselator.h"
 #include "Flash/Triangulator.h"
 #include "Resource/IResourceManager.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
@@ -50,7 +50,7 @@ render::handle_t s_handleTextureMatrix;
 
 bool AccShape::create(
 	resource::IResourceManager* resourceManager,
-	render::RenderSystem* renderSystem,
+	render::IRenderSystem* renderSystem,
 	AccTextureCache& textureCache,
 	const FlashMovie& movie,
 	const FlashShape& shape
@@ -142,7 +142,7 @@ bool AccShape::create(
 		for (AlignedVector< Triangle >::iterator j = i->triangles.begin(); j != i->triangles.end(); ++j)
 		{
 			Color color(255, 255, 255, 255);
-			render::Texture* texture = 0;
+			render::ITexture* texture = 0;
 			Matrix33 textureMatrix;
 
 			if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
@@ -278,7 +278,7 @@ void AccShape::destroy()
 }
 
 void AccShape::render(
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	const FlashShape& shape,
 	const Vector4& frameSize,
 	const Matrix33& transform,

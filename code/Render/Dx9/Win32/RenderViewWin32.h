@@ -6,7 +6,7 @@
 #include "Core/Heap/Ref.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/Unmanaged.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -34,7 +34,7 @@ class IndexBufferDx9;
  * \ingroup DX9
  */
 class T_DLLCLASS RenderViewWin32
-:	public RenderView
+:	public IRenderView
 ,	public Unmanaged
 {
 	T_RTTI_CLASS(RenderViewWin32)
@@ -68,7 +68,7 @@ public:
 	
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setProgram(Program* program);
+	virtual void setProgram(IProgram* program);
 	
 	virtual void draw(const Primitives& primitives);
 

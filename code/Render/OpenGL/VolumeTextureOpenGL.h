@@ -2,7 +2,7 @@
 #define traktor_render_VolumeTextureOpenGL_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/VolumeTexture.h"
+#include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -23,7 +23,7 @@ class ContextOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS VolumeTextureOpenGL : public VolumeTexture
+class T_DLLCLASS VolumeTextureOpenGL : public IVolumeTexture
 {
 	T_RTTI_CLASS(VolumeTextureOpenGL)
 	

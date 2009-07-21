@@ -38,7 +38,7 @@ const D3DPRIMITIVETYPE c_d3dPrimitiveType[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRenderView)
 
 RenderViewWin32::RenderViewWin32(
 	ContextDx9* context,
@@ -314,7 +314,7 @@ void RenderViewWin32::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_currentIndexBuffer = static_cast< IndexBufferDx9* >(indexBuffer);
 }
 
-void RenderViewWin32::setProgram(Program* program)
+void RenderViewWin32::setProgram(IProgram* program)
 {
 	T_ASSERT (is_a< ProgramWin32 >(program));
 	T_ASSERT (m_ownerThread == GetCurrentThreadId());

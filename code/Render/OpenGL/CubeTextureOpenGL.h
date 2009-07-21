@@ -2,7 +2,7 @@
 #define traktor_render_CubeTextureOpenGL_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/CubeTexture.h"
+#include "Render/ICubeTexture.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -23,7 +23,7 @@ class ContextOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS CubeTextureOpenGL : public CubeTexture
+class T_DLLCLASS CubeTextureOpenGL : public ICubeTexture
 {
 	T_RTTI_CLASS(CubeTextureOpenGL)
 

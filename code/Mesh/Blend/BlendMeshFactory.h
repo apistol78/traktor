@@ -24,7 +24,7 @@ class Database;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class MeshFactory;
 
 	}
@@ -37,7 +37,7 @@ class T_DLLCLASS BlendMeshFactory : public resource::IResourceFactory
 	T_RTTI_CLASS(BlendMeshFactory)
 
 public:
-	BlendMeshFactory(db::Database* db, render::RenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
+	BlendMeshFactory(db::Database* db, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
 
 	virtual const TypeSet getResourceTypes() const;
 
@@ -47,7 +47,7 @@ public:
 
 private:
 	Ref< db::Database > m_db;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::MeshFactory > m_meshFactory;
 };
 

@@ -10,8 +10,8 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class Texture;
+class IRenderSystem;
+class ITexture;
 
 	}
 
@@ -28,11 +28,11 @@ class ImageCache : public Object
 	T_RTTI_CLASS(ImageCache)
 
 public:
-	ImageCache(render::RenderSystem* renderSystem);
+	ImageCache(render::IRenderSystem* renderSystem);
 
 	virtual ~ImageCache();
 	
-	render::Texture* getTexture(IBitmap* bitmap);
+	render::ITexture* getTexture(IBitmap* bitmap);
 
 	void flush();
 	
@@ -40,10 +40,10 @@ private:
 	struct CachedTexture
 	{
 		uint32_t touched;
-		Ref< render::Texture > texture;
+		Ref< render::ITexture > texture;
 	};
 
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 	std::map< IBitmap*, CachedTexture > m_cache;
 };
 

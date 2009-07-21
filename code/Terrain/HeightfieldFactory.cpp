@@ -4,8 +4,8 @@
 #include "Terrain/Heightfield.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Render/RenderSystem.h"
-#include "Render/SimpleTexture.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Core/Io/Stream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Math/MathUtils.h"
@@ -62,7 +62,7 @@ void createHeightTextureJob(
 	}
 }
 
-render::Texture* createHeightTexture(render::RenderSystem* renderSystem, const Heightfield* heightfield)
+render::ITexture* createHeightTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
 {
 	uint32_t size = heightfield->getResource().getSize();
 	T_ASSERT (size > 0);
@@ -134,7 +134,7 @@ void createNormalTextureJob(
 	}
 }
 
-render::Texture* createNormalTexture(render::RenderSystem* renderSystem, const Heightfield* heightfield)
+render::ITexture* createNormalTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
 {
 	uint32_t size = heightfield->getResource().getSize();
 	T_ASSERT (size > 0);
@@ -172,7 +172,7 @@ render::Texture* createNormalTexture(render::RenderSystem* renderSystem, const H
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.HeightfieldFactory", HeightfieldFactory, resource::IResourceFactory)
 
-HeightfieldFactory::HeightfieldFactory(db::Database* database, render::RenderSystem* renderSystem)
+HeightfieldFactory::HeightfieldFactory(db::Database* database, render::IRenderSystem* renderSystem)
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 {

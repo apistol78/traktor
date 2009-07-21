@@ -25,8 +25,8 @@ class IResourceManager;
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 
 	}
 
@@ -53,8 +53,8 @@ public:
 
 	bool create(
 		resource::IResourceManager* resourceManager,
-		render::RenderSystem* renderSystem,
-		render::RenderView* renderView,
+		render::IRenderSystem* renderSystem,
+		render::IRenderView* renderView,
 		bool clearBackground
 	);
 
@@ -82,8 +82,8 @@ private:
 	};
 
 	Ref< resource::IResourceManager > m_resourceManager;
-	Ref< render::RenderSystem > m_renderSystem;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::IRenderView > m_renderView;
 	Ref< AccTextureCache > m_textureCache;
 	std::map< uint32_t, CacheEntry > m_shapeCache;
 	Vector4 m_frameSize;

@@ -21,7 +21,7 @@ CloudEntityData::CloudEntityData()
 {
 }
 
-CloudEntity* CloudEntityData::createEntity(resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem) const
+CloudEntity* CloudEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_particleShader))
 		return 0;

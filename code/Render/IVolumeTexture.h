@@ -1,7 +1,7 @@
-#ifndef traktor_render_VolumeTexture_H
-#define traktor_render_VolumeTexture_H
+#ifndef traktor_render_IVolumeTexture_H
+#define traktor_render_IVolumeTexture_H
 
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief Volume texture.
  * \ingroup Render
  */
-class T_DLLCLASS VolumeTexture : public Texture
+class T_DLLCLASS IVolumeTexture : public ITexture
 {
-	T_RTTI_CLASS(VolumeTexture)
+	T_RTTI_CLASS(IVolumeTexture)
 };
 	
 	}
 }
 
-#endif	// traktor_render_VolumeTexture_H
+#endif	// traktor_render_IVolumeTexture_H

@@ -3,7 +3,7 @@
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/ShaderGraph.h"
 #include "Render/ShaderResource.h"
 #include "Render/Nodes.h"
@@ -107,7 +107,7 @@ bool ShaderPipeline::create(const editor::Settings* settings)
 			return false;
 		}
 
-		m_renderSystem = checked_type_cast< RenderSystem* >(renderSystemType->newInstance());
+		m_renderSystem = checked_type_cast< IRenderSystem* >(renderSystemType->newInstance());
 		if (!m_renderSystem)
 		{
 			log::error << L"Shader pipeline; unable to instanciate render system" << Endl;

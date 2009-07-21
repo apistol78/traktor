@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSetTarget", PostProcessStepSetTarget, PostProcessStep)
 
-bool PostProcessStepSetTarget::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool PostProcessStepSetTarget::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	return true;
 }
@@ -21,7 +21,7 @@ void PostProcessStepSetTarget::destroy(PostProcess* postProcess)
 void PostProcessStepSetTarget::render(
 	PostProcess* postProcess,
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
 	float deltaTime
 )

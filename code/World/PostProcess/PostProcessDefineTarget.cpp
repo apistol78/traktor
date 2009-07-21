@@ -1,6 +1,6 @@
 #include "World/PostProcess/PostProcessDefineTarget.h"
 #include "World/PostProcess/PostProcess.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessDefineTarget", PostProcessDefineTarget, PostProcessDefine)
 
-bool PostProcessDefineTarget::define(PostProcess* postProcess, render::RenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
+bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
 {
 	render::RenderTargetSetCreateDesc desc;
 

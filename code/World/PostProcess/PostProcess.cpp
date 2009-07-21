@@ -2,8 +2,8 @@
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessStep.h"
+#include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
-#include "Render/RenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Core/Log/Log.h"
 
@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcess", PostProcess, Object)
 bool PostProcess::create(
 	PostProcessSettings* settings,
 	resource::IResourceManager* resourceManager,
-	render::RenderSystem* renderSystem,
+	render::IRenderSystem* renderSystem,
 	uint32_t screenWidth,
 	uint32_t screenHeight
 )
@@ -81,7 +81,7 @@ void PostProcess::destroy()
 
 bool PostProcess::render(
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::RenderTargetSet* frameBuffer,
 	render::RenderTargetSet* depthBuffer,
 	float deltaTime
@@ -110,7 +110,7 @@ bool PostProcess::render(
 	return true;
 }
 
-void PostProcess::setTarget(render::RenderView* renderView, uint32_t id)
+void PostProcess::setTarget(render::IRenderView* renderView, uint32_t id)
 {
 	T_ASSERT_M(id != 1, L"Cannot bind source color buffer as output");
 	T_ASSERT_M(id != 2, L"Cannot bind source depth buffer as output");

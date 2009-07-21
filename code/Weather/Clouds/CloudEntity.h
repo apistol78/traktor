@@ -20,7 +20,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 class RenderContext;
 class PrimitiveRenderer;
 class RenderTargetSet;
@@ -47,7 +47,7 @@ public:
 	CloudEntity();
 
 	bool create(
-		render::RenderSystem* renderSystem,
+		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& particleShader,
 		const resource::Proxy< render::Shader >& impostorShader,
 		uint32_t impostorTargetResolution,

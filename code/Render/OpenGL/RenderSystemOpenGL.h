@@ -2,7 +2,7 @@
 #define traktor_render_RenderSystemOpenGL_H
 
 #include "Core/Heap/Ref.h"
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/ContextOpenGL.h"
 
@@ -24,7 +24,7 @@ namespace traktor
  *
  * OpenGL render system implementation.
  */
-class T_DLLCLASS RenderSystemOpenGL : public RenderSystem
+class T_DLLCLASS RenderSystemOpenGL : public IRenderSystem
 {
 	T_RTTI_CLASS(RenderSystemOpenGL)
 
@@ -43,25 +43,25 @@ public:
 
 	virtual bool handleMessages();
 
-	virtual RenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
+	virtual IRenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
 
-	virtual RenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
+	virtual IRenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
 
 	virtual VertexBuffer* createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
 	virtual IndexBuffer* createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic);
 
-	virtual SimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc);
+	virtual ISimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc);
 
-	virtual CubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc);
+	virtual ICubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc);
 
-	virtual VolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc);
+	virtual IVolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc);
 
 	virtual RenderTargetSet* createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
 	virtual ProgramResource* compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
 
-	virtual Program* createProgram(const ProgramResource* programResource);
+	virtual IProgram* createProgram(const ProgramResource* programResource);
 
 private:
 	friend class RenderViewOpenGL;

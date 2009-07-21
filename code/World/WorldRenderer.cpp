@@ -5,10 +5,10 @@
 #include "World/Entity/IEntityRenderer.h"
 #include "World/Entity/Entity.h"
 #include "World/PostProcess/PostProcess.h"
-#include "Render/RenderSystem.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Core/Math/Random.h"
 #include "Core/Log/Log.h"
@@ -118,7 +118,7 @@ public:
  * This texture is used to rotate the Poisson distribution
  * disc for each fragment in shadow mapping.
  */
-render::SimpleTexture* createRandomRotationTexture(render::RenderSystem* renderSystem)
+render::ISimpleTexture* createRandomRotationTexture(render::IRenderSystem* renderSystem)
 {
 	static Random random;
 
@@ -173,8 +173,8 @@ WorldRenderer::WorldRenderer()
 bool WorldRenderer::create(
 	const WorldRenderSettings& settings,
 	WorldEntityRenderers* entityRenderers,
-	render::RenderSystem* renderSystem,
-	render::RenderView* renderView,
+	render::IRenderSystem* renderSystem,
+	render::IRenderView* renderView,
 	const WorldViewPort& worldViewPort,
 	int multiSample,
 	int frameCount

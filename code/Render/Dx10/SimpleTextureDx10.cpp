@@ -10,7 +10,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx10", SimpleTextureDx10, SimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx10", SimpleTextureDx10, ISimpleTexture)
 
 SimpleTextureDx10::SimpleTextureDx10(ContextDx10* context)
 :	m_context(context)

@@ -24,7 +24,7 @@ class Database;
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 	}
 
@@ -36,7 +36,7 @@ class T_DLLCLASS SkinnedMeshFactory : public resource::IResourceFactory
 	T_RTTI_CLASS(SkinnedMeshFactory)
 
 public:
-	SkinnedMeshFactory(db::Database* database, render::RenderSystem* renderSystem);
+	SkinnedMeshFactory(db::Database* database, render::IRenderSystem* renderSystem);
 
 	virtual const TypeSet getResourceTypes() const;
 
@@ -46,7 +46,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
-	Ref< render::RenderSystem > m_renderSystem;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 	}

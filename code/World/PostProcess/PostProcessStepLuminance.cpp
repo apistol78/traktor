@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
 
-bool PostProcessStepLuminance::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::RenderSystem* renderSystem)
+bool PostProcessStepLuminance::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
@@ -45,7 +45,7 @@ void PostProcessStepLuminance::destroy(PostProcess* postProcess)
 void PostProcessStepLuminance::render(
 	PostProcess* postProcess,
 	const WorldRenderView& worldRenderView,
-	render::RenderView* renderView,
+	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
 	float deltaTime
 )

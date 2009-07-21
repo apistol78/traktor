@@ -1,5 +1,5 @@
-#ifndef traktor_render_Program_H
-#define traktor_render_Program_H
+#ifndef traktor_render_IProgram_H
+#define traktor_render_IProgram_H
 
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
@@ -19,14 +19,14 @@ namespace traktor
 	namespace render
 	{
 
-class Texture;
+class ITexture;
 
 /*! \brief Program
  * \ingroup Render
  */
-class T_DLLCLASS Program : public Object
+class T_DLLCLASS IProgram : public Object
 {
-	T_RTTI_CLASS(Program);
+	T_RTTI_CLASS(IProgram);
 
 public:
 	virtual void destroy() = 0;
@@ -43,7 +43,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length) = 0;
 
-	virtual void setSamplerTexture(handle_t handle, Texture* texture) = 0;
+	virtual void setSamplerTexture(handle_t handle, ITexture* texture) = 0;
 
 	virtual void setStencilReference(uint32_t stencilReference) = 0;
 
@@ -68,7 +68,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setSamplerTexture(const std::wstring& name, Texture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
+	inline void setSamplerTexture(const std::wstring& name, ITexture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
 
 	//@}
 };
@@ -76,4 +76,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_Program_H
+#endif	// traktor_render_IProgram_H

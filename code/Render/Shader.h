@@ -21,9 +21,9 @@ namespace traktor
 	namespace render
 	{
 
-class Texture;
-class Program;
-class RenderView;
+class ITexture;
+class IProgram;
+class IRenderView;
 
 /*! \brief Shader
  * \ingroup Render
@@ -61,7 +61,7 @@ public:
 
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	void setSamplerTexture(handle_t handle, Texture* texture);
+	void setSamplerTexture(handle_t handle, ITexture* texture);
 
 	void setStencilReference(uint32_t stencilReference);
 
@@ -70,7 +70,7 @@ public:
 	 * \param renderView Render primitives view.
 	 * \param primitives Primitives.
 	 */
-	void draw(RenderView* renderView, const Primitives& primitives);
+	void draw(IRenderView* renderView, const Primitives& primitives);
 
 	/*! \name Set parameter by name.
 	 *
@@ -97,7 +97,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setSamplerTexture(const std::wstring& name, Texture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
+	inline void setSamplerTexture(const std::wstring& name, ITexture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
 
 	//@}
 
@@ -118,7 +118,7 @@ private:
 	struct Combination
 	{
 		uint32_t parameterValue;
-		Ref< Program > program;
+		Ref< IProgram > program;
 	};
 
 	struct Technique
@@ -131,7 +131,7 @@ private:
 	std::map< handle_t, uint32_t > m_parameterBits;
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
-	Program* m_currentProgram;
+	IProgram* m_currentProgram;
 
 	void updateCurrentProgram();
 };

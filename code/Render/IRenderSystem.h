@@ -1,10 +1,10 @@
-#ifndef traktor_render_RenderSystem_H
-#define traktor_render_RenderSystem_H
+#ifndef traktor_render_IRenderSystem_H
+#define traktor_render_IRenderSystem_H
 
 #include <vector>
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -21,17 +21,17 @@ namespace traktor
 	{
 
 class DisplayMode;
-class RenderView;
+class IRenderView;
 class VertexElement;
 class VertexBuffer;
 class IndexBuffer;
-class SimpleTexture;
-class CubeTexture;
-class VolumeTexture;
+class ISimpleTexture;
+class ICubeTexture;
+class IVolumeTexture;
 class RenderTargetSet;
 class ShaderGraph;
 class ProgramResource;
-class Program;
+class IProgram;
 
 /*! \brief Render system interface.
  * \ingroup Render
@@ -39,9 +39,9 @@ class Program;
  * The render system class is an abstraction of
  * the underlying system used.
  */
-class T_DLLCLASS RenderSystem : public Object
+class T_DLLCLASS IRenderSystem : public Object
 {
-	T_RTTI_CLASS(RenderSystem)
+	T_RTTI_CLASS(IRenderSystem)
 
 public:
 	/*! \name Render system creation. */
@@ -107,10 +107,10 @@ public:
 	//@{
 	
 	/*! \brief Create full screen render view. */
-	virtual RenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc) = 0;
+	virtual IRenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc) = 0;
 
 	/*! \brief Create windowed render view. */
-	virtual RenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc) = 0;
+	virtual IRenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc) = 0;
 	
 	//@}
 
@@ -134,13 +134,13 @@ public:
 	virtual IndexBuffer* createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! \brief Create simple, 2d, texture. */
-	virtual SimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;
+	virtual ISimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;
 
 	/*! \brief Create cube texture. */
-	virtual CubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
+	virtual ICubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
 	
 	/*! \brief Create volume texture. */
-	virtual VolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
+	virtual IVolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
 
 	/*! \brief Create render target set. */
 	virtual RenderTargetSet* createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
@@ -159,7 +159,7 @@ public:
 	 * \param shaderResource Compiled shader resource.
 	 * \return Shader suitable for rendering with this render system.
 	 */
-	virtual Program* createProgram(const ProgramResource* programResource) = 0;
+	virtual IProgram* createProgram(const ProgramResource* programResource) = 0;
 
 	//@}
 };
@@ -167,4 +167,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_RenderSystem_H
+#endif	// traktor_render_IRenderSystem_H

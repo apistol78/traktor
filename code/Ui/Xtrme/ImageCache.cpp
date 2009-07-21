@@ -1,7 +1,7 @@
 #include "Ui/Xtrme/ImageCache.h"
 #include "Ui/Itf/IBitmap.h"
-#include "Render/RenderSystem.h"
-#include "Render/SimpleTexture.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
@@ -36,7 +36,7 @@ bool isLog2(uint32_t v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.xtrme.ImageCache", ImageCache, Object)
 
-ImageCache::ImageCache(render::RenderSystem* renderSystem)
+ImageCache::ImageCache(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
 {
 }
@@ -50,7 +50,7 @@ ImageCache::~ImageCache()
 	}
 }
 
-render::Texture* ImageCache::getTexture(IBitmap* bitmap)
+render::ITexture* ImageCache::getTexture(IBitmap* bitmap)
 {
 	std::map< IBitmap*, CachedTexture >::iterator i = m_cache.find(bitmap);
 	if (i != m_cache.end())
@@ -93,7 +93,7 @@ render::Texture* ImageCache::getTexture(IBitmap* bitmap)
 	desc.initialData[0].data = image->getData();
 	desc.initialData[0].pitch = image->getWidth() * 4;
 
-	Ref< render::SimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
 	T_ASSERT_M (texture, L"Unable to create texture");
 
 	m_cache[bitmap].touched = 0;

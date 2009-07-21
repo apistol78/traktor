@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 /*! \brief Render mesh factory.
  * \ingroup Render
@@ -27,7 +27,7 @@ class T_DLLCLASS RenderMeshFactory : public MeshFactory
 	T_RTTI_CLASS(RenderMeshFactory)
 
 public:
-	RenderMeshFactory(RenderSystem* renderSystem);
+	RenderMeshFactory(IRenderSystem* renderSystem);
 
 	virtual Mesh* createMesh(
 		const std::vector< VertexElement >& vertexElements,
@@ -37,7 +37,7 @@ public:
 	);
 
 private:
-	Ref< RenderSystem > m_renderSystem;
+	Ref< IRenderSystem > m_renderSystem;
 };
 
 	}

@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
-#include "Render/Program.h"
+#include "Render/IProgram.h"
 #include "Render/Sw/Core/Types.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Core/Processor.h"
@@ -27,7 +27,7 @@ class AbstractSampler;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS ProgramSw : public Program
+class T_DLLCLASS ProgramSw : public IProgram
 {
 	T_RTTI_CLASS(ProgramSw)
 
@@ -55,7 +55,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, Texture* texture);
+	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 

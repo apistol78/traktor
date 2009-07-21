@@ -45,7 +45,7 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
 
 bool EffectEditorPage::create(ui::Container* parent)
 {
-	Ref< render::RenderSystem > renderSystem = m_editor->getRenderSystem();
+	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();

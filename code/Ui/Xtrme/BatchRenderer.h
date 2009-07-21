@@ -11,11 +11,11 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
-class Program;
+class IRenderSystem;
+class IRenderView;
+class IProgram;
 class VertexBuffer;
-class Texture;
+class ITexture;
 
 	}
 
@@ -38,11 +38,11 @@ public:
 		PiFont		= 2
 	};
 
-	BatchRenderer(render::RenderSystem* renderSystem, render::RenderView* renderView, uint32_t bufferCount);
+	BatchRenderer(render::IRenderSystem* renderSystem, render::IRenderView* renderView, uint32_t bufferCount);
 
 	virtual ~BatchRenderer();
 
-	void batch(ProgramId programId, render::Texture* texture, render::PrimitiveType primitiveType);
+	void batch(ProgramId programId, render::ITexture* texture, render::PrimitiveType primitiveType);
 
 	void add(int x, int y, uint32_t color);
 
@@ -55,14 +55,14 @@ public:
 private:
 	struct Batch
 	{
-		Ref< render::Program > program;
-		Ref< render::Texture > texture;
+		Ref< render::IProgram > program;
+		Ref< render::ITexture > texture;
 		std::vector< render::Primitives > primitives;
 	};
 
-	Ref< render::RenderSystem > m_renderSystem;
-	Ref< render::RenderView > m_renderView;
-	Ref< render::Program > m_programs[3];
+	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::IRenderView > m_renderView;
+	Ref< render::IProgram > m_programs[3];
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	ScreenVertex* m_vertexStart;
 	ScreenVertex* m_vertex;

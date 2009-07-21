@@ -17,7 +17,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderView;
+class IRenderView;
 class Shader;
 class ShaderParameters;
 class IndexBuffer;
@@ -51,7 +51,7 @@ public:
 	{
 	}
 
-	virtual void render(RenderView* renderView) const = 0;
+	virtual void render(IRenderView* renderView) const = 0;
 };
 
 #pragma warning( push )
@@ -74,7 +74,7 @@ public:
 	{
 	}
 
-	virtual void render(RenderView* renderView) const;
+	virtual void render(IRenderView* renderView) const;
 };
 
 /*! \brief Indexed primitives render block.
@@ -102,7 +102,7 @@ public:
 	{
 	}
 
-	virtual void render(RenderView* renderView) const;
+	virtual void render(IRenderView* renderView) const;
 };
 
 #pragma warning( pop )

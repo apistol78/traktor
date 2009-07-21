@@ -11,7 +11,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx10", RenderTargetDx10, Texture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetDx10", RenderTargetDx10, ITexture)
 
 RenderTargetDx10::RenderTargetDx10(ContextDx10* context)
 :	m_context(context)

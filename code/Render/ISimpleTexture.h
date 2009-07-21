@@ -1,7 +1,7 @@
-#ifndef traktor_render_SimpleTexture_H
-#define traktor_render_SimpleTexture_H
+#ifndef traktor_render_ISimpleTexture_H
+#define traktor_render_ISimpleTexture_H
 
-#include "Render/Texture.h"
+#include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Simple 2d texture.
  * \ingroup Render
  */
-class T_DLLCLASS SimpleTexture : public Texture
+class T_DLLCLASS ISimpleTexture : public ITexture
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS(ISimpleTexture)
 	
 public:
 	virtual bool lock(int level, Lock& lock) = 0;
@@ -32,4 +32,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_SimpleTexture_H
+#endif	// traktor_render_ISimpleTexture_H

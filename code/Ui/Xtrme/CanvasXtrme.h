@@ -12,8 +12,8 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
-class RenderView;
+class IRenderSystem;
+class IRenderView;
 
 	}
 
@@ -27,7 +27,7 @@ class FontMap;
 class CanvasXtrme : public ICanvas
 {
 public:
-	CanvasXtrme(render::RenderSystem* renderSystem, render::RenderView* renderView, const Font& font);
+	CanvasXtrme(render::IRenderSystem* renderSystem, render::IRenderView* renderView, const Font& font);
 
 	virtual void setForeground(const Color& foreground);
 
@@ -84,8 +84,8 @@ public:
 	void end(const Size& size);
 
 private:
-	Ref< render::RenderSystem > m_renderSystem;
-	Ref< render::RenderView > m_renderView;
+	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::IRenderView > m_renderView;
 	BatchRenderer m_batchRenderer;
 	ImageCache m_imageCache;
 	std::map< Font, Ref< FontMap > > m_fontMaps;

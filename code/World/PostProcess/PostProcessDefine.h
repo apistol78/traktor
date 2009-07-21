@@ -16,7 +16,7 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystem;
+class IRenderSystem;
 
 	}
 
@@ -33,7 +33,7 @@ class T_DLLCLASS PostProcessDefine : public Serializable
 	T_RTTI_CLASS(PostProcessDefine)
 
 public:
-	virtual bool define(PostProcess* postProcess, render::RenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight) = 0;
+	virtual bool define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight) = 0;
 };
 
 	}
