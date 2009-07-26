@@ -2,7 +2,7 @@
 <object type="SolutionBuilderMsvcSettings">
   <slnVersion>10.00</slnVersion>
   <vsVersion>2008</vsVersion>
-  <project type="SolutionBuilderMsvcProject" version="1">
+  <project type="SolutionBuilderMsvcVCProj">
     <staticOptions>
       <item>
         <first>ProjectType</first>
@@ -40,7 +40,7 @@
         <staticOptions>
           <item>
             <first>Name</first>
-            <second>%(CONFIGURATION_NAME)|%(PLATFORM)</second>
+            <second>%(CONFIGURATION_NAME)|%(PROJECT_PLATFORM)</second>
           </item>
           <item>
             <first>ConfigurationType</first>
@@ -209,7 +209,7 @@
         <staticOptions>
           <item>
             <first>Name</first>
-            <second>%(CONFIGURATION_NAME)|%(PLATFORM)</second>
+            <second>%(CONFIGURATION_NAME)|%(PROJECT_PLATFORM)</second>
           </item>
           <item>
             <first>ConfigurationType</first>
@@ -436,7 +436,7 @@
         <staticOptions>
           <item>
             <first>Name</first>
-            <second>%(CONFIGURATION_NAME)|%(PLATFORM)</second>
+            <second>%(CONFIGURATION_NAME)|%(PROJECT_PLATFORM)</second>
           </item>
           <item>
             <first>ConfigurationType</first>
@@ -663,7 +663,7 @@
         <staticOptions>
           <item>
             <first>Name</first>
-            <second>%(CONFIGURATION_NAME)|%(PLATFORM)</second>
+            <second>%(CONFIGURATION_NAME)|%(PROJECT_PLATFORM)</second>
           </item>
           <item>
             <first>ConfigurationType</first>

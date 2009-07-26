@@ -39,7 +39,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.99.7"
+#define TITLE L"SolutionBuilder v1.99.8"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -258,7 +258,7 @@ void SolutionForm::updateMRU()
 
 bool SolutionForm::isModified() const
 {
-	return m_solution && DeepHash(m_solution).getMD5() != m_solutionHash;
+	return m_solution && DeepHash(m_solution).get() != m_solutionHash;
 }
 
 ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentItem, Project* project)
@@ -339,7 +339,7 @@ bool SolutionForm::loadSolution(const traktor::Path& fileName)
 
 	updateSolutionTree();
 
-	m_solutionHash = DeepHash(m_solution).getMD5();
+	m_solutionHash = DeepHash(m_solution).get();
 	m_solutionFileName = fileName;
 
 	m_mru->usedFile(fileName);
@@ -359,7 +359,7 @@ void SolutionForm::commandNew()
 	m_solution = gc_new< Solution >();
 	m_solution->setName(L"Unnamed");
 	
-	m_solutionHash = DeepHash(m_solution).getMD5();
+	m_solutionHash = DeepHash(m_solution).get();
 	m_solutionFileName = L"";
 
 	updateSolutionTree();
@@ -417,7 +417,7 @@ void SolutionForm::commandSave(bool saveAs)
 
 	if (result)
 	{
-		m_solutionHash = DeepHash(m_solution).getMD5();
+		m_solutionHash = DeepHash(m_solution).get();
 		m_solutionFileName = filePath;
 
 		m_mru->usedFile(filePath);
@@ -503,7 +503,7 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 
 			updateSolutionTree();
 
-			m_solutionHash = DeepHash(m_solution).getMD5();
+			m_solutionHash = DeepHash(m_solution).get();
 			m_solutionFileName = *path;
 
 			m_mru->usedFile(*path);

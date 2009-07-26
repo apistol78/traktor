@@ -3844,7 +3844,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.wxWidgets-2.8.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src</sourcePath>
 			<configurations>
@@ -12605,7 +12605,7 @@
 		<item ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 		<item ref="/object/projects/item[25]/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Ui.Wx</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
 			<configurations>
