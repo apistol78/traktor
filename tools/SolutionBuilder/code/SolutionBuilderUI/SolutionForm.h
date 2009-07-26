@@ -8,7 +8,6 @@
 #include <Ui/TreeView.h>
 #include <Ui/TreeViewItem.h>
 #include <Ui/PopupMenu.h>
-#include <Core/Misc/MD5.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Io/Path.h>
 
@@ -48,7 +47,7 @@ private:
 	traktor::Ref< ConfigurationPropertyPage > m_pageConfiguration;
 	traktor::Ref< Solution > m_solution;
 	std::wstring m_solutionFileName;
-	traktor::MD5 m_solutionHash;
+	uint32_t m_solutionHash;
 	traktor::Ref< MRU > m_mru;
 
 	void updateTitle();
