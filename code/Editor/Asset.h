@@ -2,6 +2,7 @@
 #define traktor_editor_Asset_H
 
 #include "Core/Serialization/Serializable.h"
+#include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,18 +28,20 @@ class T_DLLCLASS Asset : public Serializable
 	T_RTTI_CLASS(Asset)
 
 public:
-	Asset(const std::wstring& fileName = L"");
+	Asset();
 
-	void setFileName(const std::wstring& fileName);
+	Asset(const Path& fileName);
 
-	const std::wstring& getFileName() const;
+	void setFileName(const Path& fileName);
+
+	const Path& getFileName() const;
 
 	virtual bool serialize(Serializer& s);
 
 	virtual const Type* getOutputType() const = 0;
 
 private:
-	std::wstring m_fileName;
+	Path m_fileName;
 };
 
 	}

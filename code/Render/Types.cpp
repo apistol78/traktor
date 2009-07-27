@@ -1,6 +1,7 @@
 #include <map>
 #include "Render/Types.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Singleton/Singleton.h"
 
 namespace traktor
 {

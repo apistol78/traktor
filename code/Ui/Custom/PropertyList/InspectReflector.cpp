@@ -10,6 +10,7 @@
 #include "Ui/Custom/PropertyList/CheckPropertyItem.h"
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Core/Serialization/MemberArray.h"
@@ -214,6 +215,12 @@ bool InspectReflector::operator >> (const Member< std::wstring >& m)
 bool InspectReflector::operator >> (const Member< Guid >& m)
 {
 	addPropertyItem(gc_new< BrowsePropertyItem >(stylizeMemberName(m.getName()), m.getType(), m));
+	return true;
+}
+
+bool InspectReflector::operator >> (const Member< Path >& m)
+{
+	addPropertyItem(gc_new< FilePropertyItem >(stylizeMemberName(m.getName()), *m));
 	return true;
 }
 

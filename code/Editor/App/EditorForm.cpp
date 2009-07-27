@@ -1014,7 +1014,7 @@ void EditorForm::updateMRU()
 	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
 	{
 		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Editor.MRU"), std::wstring(*i));
-		menuItem->setData(L"PATH", DeepClone(&(*i)).create());
+		menuItem->setData(L"PATH", gc_new< Path >(cref(*i)));
 		m_menuItemMRU->add(menuItem);
 	}
 }

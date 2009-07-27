@@ -242,6 +242,10 @@
 			<second>Om</second>
 		</item>
     <item>
+      <first>EDITOR_BROWSE_FILE</first>
+      <second>Välj fil</second>
+    </item>
+    <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Öppna projekt</second>
     </item>

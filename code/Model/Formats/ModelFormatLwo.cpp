@@ -10,6 +10,7 @@ extern "C"
 
 #include "Model/Formats/ModelFormatLwo.h"
 #include "Model/Model.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"

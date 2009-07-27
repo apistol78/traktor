@@ -3,6 +3,7 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
 #include "Render/Dx9/ContextDx9.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

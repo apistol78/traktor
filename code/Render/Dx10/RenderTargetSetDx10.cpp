@@ -5,6 +5,7 @@
 #include "Render/Dx10/TypesDx10.h"
 #include "Render/Dx10/Utilities.h"
 #include "Render/Types.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

@@ -58,6 +58,8 @@ public:
 
 	virtual bool operator >> (const Member< Guid >& m);
 
+	virtual bool operator >> (const Member< Path >& m);
+
 	virtual bool operator >> (const Member< Color >& m);
 
 	virtual bool operator >> (const Member< Scalar >& m);

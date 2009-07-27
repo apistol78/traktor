@@ -1,7 +1,6 @@
 #include <cstdlib>
 #include <numeric>
 #include "Core/Io/Path.h"
-#include "Core/Serialization/Serializer.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Split.h"
@@ -10,7 +9,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.Path", Path, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Path", Path, Object)
 
 Path::Path()
 :	m_relative(false)
@@ -18,8 +17,7 @@ Path::Path()
 }
 
 Path::Path(const Path& path)
-:	Serializable()
-,	m_volume(path.m_volume)
+:	m_volume(path.m_volume)
 ,	m_relative(path.m_relative)
 ,	m_path(path.m_path)
 ,	m_file(path.m_file)
@@ -215,16 +213,6 @@ bool Path::operator == (const Path& rh) const
 bool Path::operator < (const Path& rh) const
 {
 	return bool(getPathName() < rh.getPathName());
-}
-
-bool Path::serialize(Serializer& s)
-{
-	s >> Member< std::wstring >(L"volume", m_volume);
-	s >> Member< bool >(L"relative", m_relative);
-	s >> Member< std::wstring >(L"path", m_path);
-	s >> Member< std::wstring >(L"file", m_file);
-	s >> Member< std::wstring >(L"ext", m_ext);
-	return true;
 }
 
 void Path::resolve(const std::wstring& path)

@@ -234,6 +234,10 @@
       <second>About</second>
     </item>
     <item>
+      <first>EDITOR_BROWSE_FILE</first>
+      <second>Choose file</second>
+    </item>
+    <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Open project</second>
     </item>

@@ -144,6 +144,12 @@ bool XmlSerializer::operator >> (const Member< Guid >& m)
 	return true;
 }
 
+bool XmlSerializer::operator >> (const Member< Path >& m)
+{
+	m_xml << m_indent << L"<" << m.getName() << L">" << m->getPathName() << L"</" << m.getName() << L">" << Endl;
+	return true;
+}
+
 bool XmlSerializer::operator >> (const Member< Color >& m)
 {
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m->r) << L", " << int32_t(m->g) << L", " << int32_t(m->b) << L", " << int32_t(m->a) << L"</" << m.getName() << L">" << Endl;

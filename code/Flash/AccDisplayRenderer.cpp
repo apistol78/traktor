@@ -9,6 +9,7 @@
 #include "Flash/FlashShape.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

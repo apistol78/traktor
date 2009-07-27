@@ -3,8 +3,10 @@
 #include "Editor/IProject.h"
 #include "Editor/Asset.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "Ui/FileDialog.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Event.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
@@ -64,6 +66,23 @@ bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& re
 
 void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 {
+	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
+	if (fileItem)
+	{
+		ui::FileDialog fileDialog;
+		if (!fileDialog.create(m_propertyList, i18n::Text(L"EDITOR_BROWSE_FILE"), L"All files (*.*);*.*"))
+			return;
+
+		Path path = fileItem->getPath();
+		if (fileDialog.showModal(path) == ui::DrOk)
+		{
+			fileItem->setPath(path);
+			m_propertyList->apply();
+		}
+
+		fileDialog.destroy();
+	}
+
 	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
 	if (browseItem)
 	{

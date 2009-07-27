@@ -16,6 +16,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Formats/ImageFormatJpeg.h"
+#include "Core/Heap/New.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
