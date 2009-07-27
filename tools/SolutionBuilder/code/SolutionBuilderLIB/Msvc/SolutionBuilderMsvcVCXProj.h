@@ -6,6 +6,7 @@
 class Configuration;
 class ProjectItem;
 class SolutionBuilderMsvcVCXDefinition;
+class SolutionBuilderMsvcVCXBuildTool;
 
 /*! \brief Visual Studio solution project settings. */
 class SolutionBuilderMsvcVCXProj : public SolutionBuilderMsvcProject
@@ -37,6 +38,7 @@ private:
 	std::wstring m_keyword;
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
+	traktor::RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;
 
 	bool collectFiles(
 		Project* project,
