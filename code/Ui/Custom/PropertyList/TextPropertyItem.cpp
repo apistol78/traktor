@@ -6,7 +6,6 @@
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
-#include "Ui/Events/MouseEvent.h"
 
 // Resources
 #include "Resources/SmallPen.h"
