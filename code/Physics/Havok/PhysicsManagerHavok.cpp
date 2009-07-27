@@ -516,7 +516,7 @@ Joint* PhysicsManagerHavok::createJoint(const JointDesc* desc, const Matrix44& t
 		}
 
 		constraint = new hkpConstraintInstance(b1, b2, ballConstraintData);
-		joint = gc_new< BallJointHavok >(this, constraint, body1, body2);
+		joint = gc_new< BallJointHavok >(this, cref(constraint), body1, body2);
 	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
@@ -558,7 +558,7 @@ Joint* PhysicsManagerHavok::createJoint(const JointDesc* desc, const Matrix44& t
 		}
 
 		constraint = new hkpConstraintInstance(b1, b2, hingeConstraintData);
-		joint = gc_new< HingeJointHavok >(this, constraint, body1, body2);
+		joint = gc_new< HingeJointHavok >(this, cref(constraint), body1, body2);
 	}
 
 	if (!joint)
