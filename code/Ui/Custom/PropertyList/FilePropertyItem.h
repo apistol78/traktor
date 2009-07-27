@@ -17,6 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
+class Edit;
 class Event;
 
 		namespace custom
@@ -47,11 +48,16 @@ protected:
 
 	virtual void showInPlaceControls(bool show);
 
+	virtual void mouseButtonDown(MouseEvent* event);
+
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
 private:
+	Ref< Edit > m_editor;
 	Ref< MiniButton > m_buttonEdit;
 	Path m_path;
+
+	void eventEditFocus(Event* event);
 
 	void eventClick(Event* event);
 };
