@@ -27,7 +27,7 @@ namespace
 	};
 
 	const int c_columnsHeight = 25;
-	const int c_propertyItemHeight = 18;
+	const int c_propertyItemHeight = 20;
 
 }
 

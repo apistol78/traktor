@@ -8,6 +8,7 @@
 #include "Ui/Custom/PropertyList/CheckPropertyItem.h"
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
@@ -132,6 +133,13 @@ bool ApplyReflector::operator >> (const Member< Guid >& m)
 {
 	BrowsePropertyItem* propertyItem = checked_type_cast< BrowsePropertyItem* >(*m_propertyItemIterator++);
 	m = propertyItem->getValue();
+	return true;
+}
+
+bool ApplyReflector::operator >> (const Member< Path >& m)
+{
+	FilePropertyItem* propertyItem = checked_type_cast< FilePropertyItem* >(*m_propertyItemIterator++);
+	m = propertyItem->getPath();
 	return true;
 }
 

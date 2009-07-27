@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace db
 	{
 

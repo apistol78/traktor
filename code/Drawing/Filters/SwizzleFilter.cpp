@@ -1,6 +1,7 @@
 #include <cctype>
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Image.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

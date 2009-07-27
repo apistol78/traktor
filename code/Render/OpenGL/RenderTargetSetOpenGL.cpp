@@ -1,6 +1,7 @@
 #include "Render/OpenGL/Extensions.h"
 #include "Render/OpenGL/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/RenderTargetOpenGL.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

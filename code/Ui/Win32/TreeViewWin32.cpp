@@ -3,6 +3,7 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/TreeView.h"
 #include "Ui/Events/TreeViewDragEvent.h"
+#include "Core/Heap/New.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

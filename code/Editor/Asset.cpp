@@ -9,24 +9,28 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, Serializable)
 
-Asset::Asset(const std::wstring& fileName)
+Asset::Asset()
+{
+}
+
+Asset::Asset(const Path& fileName)
 :	m_fileName(fileName)
 {
 }
 
-void Asset::setFileName(const std::wstring& fileName)
+void Asset::setFileName(const Path& fileName)
 {
 	m_fileName = fileName;
 }
 
-const std::wstring& Asset::getFileName() const
+const Path& Asset::getFileName() const
 {
 	return m_fileName;
 }
 
 bool Asset::serialize(Serializer& s)
 {
-	return s >> Member< std::wstring >(L"fileName", m_fileName);
+	return s >> Member< Path >(L"fileName", m_fileName);
 }
 
 	}

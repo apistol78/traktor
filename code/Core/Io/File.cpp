@@ -98,7 +98,7 @@ const DateTime& File::getLastWriteTime() const
 
 bool File::serialize(Serializer& s)
 {
-	s >> MemberComposite< Path >(L"path", m_path);
+	s >> Member< Path >(L"path", m_path);
 	s >> Member< uint64_t >(L"size", m_size);
 	s >> Member< uint32_t >(L"flags", m_flags);
 	s >> MemberComposite< DateTime >(L"creationTime", m_creationTime);

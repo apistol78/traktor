@@ -2,9 +2,10 @@
 #include <limits>
 #include "Model/Formats/ModelFormatCollada.h"
 #include "Model/Model.h"
-#include "Core/Log/Log.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
+#include "Core/Log/Log.h"
 #include "Xml/Document.h"
 #include "Xml/Element.h"
 #include "Xml/Attribute.h"

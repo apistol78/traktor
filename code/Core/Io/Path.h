@@ -2,7 +2,7 @@
 #define traktor_Path_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,9 +18,9 @@ namespace traktor
 /*! \brief File path.
  * \ingroup Core
  */
-class T_DLLCLASS Path : public Serializable
+class T_DLLCLASS Path : public Object
 {
-	T_RTTI_CLASS(Serializable)
+	T_RTTI_CLASS(Path)
 
 public:
 	Path();
@@ -183,8 +183,6 @@ public:
 	 * \return True if path is lexically less than given path.
 	 */
 	bool operator < (const Path& rh) const;
-
-	virtual bool serialize(Serializer& s);
 
 private:
 	std::wstring m_volume;

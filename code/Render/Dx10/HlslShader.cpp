@@ -1,6 +1,7 @@
 #include <cassert>
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/HlslShader.h"
+#include "Core/Heap/New.h"
 
 namespace traktor
 {

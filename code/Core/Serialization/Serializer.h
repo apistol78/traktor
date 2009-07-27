@@ -5,6 +5,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Io/Path.h"
 #include "Core/Math/Color.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
@@ -92,6 +93,8 @@ public:
 	virtual bool operator >> (const Member< std::wstring >& m) = 0;
 
 	virtual bool operator >> (const Member< Guid >& m) = 0;
+
+	virtual bool operator >> (const Member< Path >& m) = 0;
 
 	virtual bool operator >> (const Member< Color >& m) = 0;
 

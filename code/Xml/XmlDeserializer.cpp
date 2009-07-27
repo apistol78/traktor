@@ -186,6 +186,18 @@ bool XmlDeserializer::operator >> (const Member< Guid >& m)
 	return true;
 }
 
+bool XmlDeserializer::operator >> (const Member< Path >& m)
+{
+	std::wstring value;
+	if (!nextElementValue(m.getName(), value))
+		return false;
+
+	Path& path = m;
+	path = Path(value);
+
+	return true;
+}
+
 bool XmlDeserializer::operator >> (const Member< Color >& m)
 {
 	std::wstring value;

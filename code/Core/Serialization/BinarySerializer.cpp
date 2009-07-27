@@ -334,6 +334,24 @@ bool BinarySerializer::operator >> (const Member< Guid >& m)
 	return true;
 }
 
+bool BinarySerializer::operator >> (const Member< Path >& m)
+{
+	if (m_direction == SdRead)
+	{
+		std::wstring path;
+		if (!read_string< std::wstring >(m_stream, path))
+			return false;
+		*m = path;
+	}
+	else
+	{
+		std::wstring path = *m;
+		if (!write_string(m_stream, path))
+			return false;
+	}
+	return true;
+}
+
 bool BinarySerializer::operator >> (const Member< Color >& m)
 {
 	bool result = true;

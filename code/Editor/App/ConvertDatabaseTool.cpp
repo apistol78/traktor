@@ -11,6 +11,7 @@
 #include "Ui/Custom/BackgroundWorkerStatus.h"
 #include "I18N/Text.h"
 #include "Core/Io/Stream.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Log/Log.h"
 
