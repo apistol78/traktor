@@ -16,11 +16,14 @@
 
 // Forced references
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCProj.h"
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcCompilerTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcGenericTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcLibrarianTool.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcLinkerTool.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXCustomBuildTool.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 
 using namespace traktor;
 
@@ -68,11 +71,14 @@ bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 bool SolutionBuilderMsvc::generate(Solution* solution)
 {
 	T_FORCE_LINK_REF(SolutionBuilderMsvcVCProj)
-	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcCompilerTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcGenericTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcLibrarianTool)
 	T_FORCE_LINK_REF(SolutionBuilderMsvcLinkerTool)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXProj)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXBuildTool)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXCustomBuildTool)
+	T_FORCE_LINK_REF(SolutionBuilderMsvcVCXDefinition)
 
 	std::wstring solutionFileName = solution->getRootPath() + L"/" + solution->getName() + L".sln";
 

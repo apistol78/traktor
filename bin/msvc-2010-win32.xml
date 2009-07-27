@@ -713,5 +713,53 @@
         </item>
       </item>
     </buildDefinitionsRelease>
+    <buildTools>
+      <item type="SolutionBuilderMsvcVCXCustomBuildTool">
+        <name>CustomBuild</name>
+        <fileType>png</fileType>
+        <command>$(TRAKTOR_HOME)/bin/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+        <message>Building embedded resource file %(FileName).h</message>
+        <outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+      </item>
+      <item type="SolutionBuilderMsvcVCXCustomBuildTool">
+        <name>CustomBuild</name>
+        <fileType>xdi</fileType>
+        <command>$(TRAKTOR_HOME)/bin/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</command>
+        <message>Building embedded resource file %(FileName).h</message>
+        <outputs>.\\Resources\\%(FileName).h;%(Outputs)</outputs>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ClInclude</name>
+        <fileType>h</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ClInclude</name>
+        <fileType>hpp</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ClCompile</name>
+        <fileType>cpp</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ClCompile</name>
+        <fileType>cc</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ClCompile</name>
+        <fileType>c</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>ResourceCompile</name>
+        <fileType>rc</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>None</name>
+        <fileType>inl</fileType>
+      </item>
+      <item type="SolutionBuilderMsvcVCXBuildTool">
+        <name>Midl</name>
+        <fileType>idl</fileType>
+      </item>
+    </buildTools>
   </project>
 </object>

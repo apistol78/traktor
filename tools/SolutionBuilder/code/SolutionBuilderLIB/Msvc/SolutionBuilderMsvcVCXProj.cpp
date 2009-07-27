@@ -11,6 +11,7 @@
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXProj.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXBuildTool.h"
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -236,64 +237,21 @@ bool SolutionBuilderMsvcVCXProj::generate(
 			return false;
 	}
 
-	// Create custom build item group(s).
-	for (std::vector< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
-	{
-		if (
-			compareIgnoreCase(i->getExtension(), L"png") == 0 ||
-			compareIgnoreCase(i->getExtension(), L"xdi") == 0
-		)
-		{
-			os << L"<ItemGroup>" << Endl;
-			os << IncreaseIndent;
-			os << L"<CustomBuild Include=\"" << systemPath(*i) << L"\">" << Endl;
-			os << IncreaseIndent;
-
-			for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
-			{
-				Configuration* configuration = *i;
-				std::wstring name = configuration->getName();
-
-				os << L"<Command Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">$(TRAKTOR_HOME)/bin/BinaryInclude %(FullPath) .\\Resources\\%(FileName).h c_Resource%(FileName)</Command>" << Endl;
-				os << L"<Message Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">Building embedded resource file %(FileName).h</Message>" << Endl;
-				os << L"<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">.\\Resources\\%(FileName).h;%(Outputs)</Outputs>" << Endl;
-			}
-
-			os << DecreaseIndent;
-			os << L"</CustomBuild>" << Endl;
-			os << DecreaseIndent;
-			os << L"</ItemGroup>" << Endl;
-		}
-	}
-
 	// Create item groups.
-	const wchar_t* itemGroups[7][2] =
-	{
-		{ L"ClInclude", L"hpp" },
-		{ L"ClInclude", L"h" },
-		{ L"ClCompile", L"cpp" },
-		{ L"ClCompile", L"cc" },
-		{ L"ClCompile", L"c" },
-		{ L"ResourceCompile", L"rc" },
-		{ L"None", L"inl" }
-	};
-	for (int i = 0; i < sizeof_array(itemGroups); ++i)
+	for (RefArray< SolutionBuilderMsvcVCXBuildTool >::const_iterator i = m_buildTools.begin(); i != m_buildTools.end(); ++i)
 	{
 		os << L"<ItemGroup>" << Endl;
 		os << IncreaseIndent;
 
 		for (std::vector< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
 		{
-			if (compareIgnoreCase(j->getExtension(), itemGroups[i][1]) == 0)
-			{
-				Path itemPath;
-				FileSystem::getInstance().getRelativePath(
-					FileSystem::getInstance().getAbsolutePath(*j),
-					FileSystem::getInstance().getAbsolutePath(projectPath),
-					itemPath
-				);
-				os << L"<" << itemGroups[i][0] << L" Include=\"" << systemPath(itemPath.getPathName()) << L"\" />" << Endl;
-			}
+			Path itemPath;
+			FileSystem::getInstance().getRelativePath(
+				FileSystem::getInstance().getAbsolutePath(*j),
+				FileSystem::getInstance().getAbsolutePath(projectPath),
+				itemPath
+			);
+			(*i)->generate(context, solution, project, itemPath, os);
 		}
 
 		os << DecreaseIndent;
@@ -302,6 +260,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 	os << L"<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.targets\" />" << Endl;
 
+	// Dependencies.
 	os << L"<ItemGroup>" << Endl;
 	os << IncreaseIndent;
 
@@ -380,6 +339,7 @@ bool SolutionBuilderMsvcVCXProj::serialize(traktor::Serializer& s)
 			sizeof_array(m_buildDefinitionsRelease),
 			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
 		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
+	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
 	return true;
 }
 
