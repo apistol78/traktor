@@ -17,7 +17,8 @@ Path::Path()
 }
 
 Path::Path(const Path& path)
-:	m_volume(path.m_volume)
+:	m_original(path.m_original)
+,	m_volume(path.m_volume)
 ,	m_relative(path.m_relative)
 ,	m_path(path.m_path)
 ,	m_file(path.m_file)
@@ -26,13 +27,20 @@ Path::Path(const Path& path)
 }
 
 Path::Path(const std::wstring& path)
+:	m_original(path)
 {
-	resolve(path);
+	resolve();
 }
 
 Path::Path(const wchar_t* path)
+:	m_original(path)
 {
-	resolve(std::wstring(path));
+	resolve();
+}
+
+std::wstring Path::getOriginal() const
+{
+	return m_original;
 }
 
 bool Path::hasVolume() const
@@ -174,23 +182,6 @@ Path Path::normalized() const
 	return Path(out);
 }
 
-const wchar_t* Path::c_str() const
-{
-	static wchar_t tmp[256];
-	std::wstring pathName = getPathName();
-#if defined(_MSC_VER) && !defined(WINCE)
-	wcsncpy_s(tmp, pathName.c_str(), sizeof(tmp));
-#else
-	wcsncpy(tmp, pathName.c_str(), sizeof(tmp));
-#endif
-	return tmp;
-}
-
-Path::operator std::wstring () const
-{
-	return getPathName();
-}
-
 Path Path::operator + (const Path& rh) const
 {
 	if (!rh.isRelative())
@@ -215,9 +206,9 @@ bool Path::operator < (const Path& rh) const
 	return bool(getPathName() < rh.getPathName());
 }
 
-void Path::resolve(const std::wstring& path)
+void Path::resolve()
 {
-	std::wstring tmp = replaceAll(path, L'\\', L'/');
+	std::wstring tmp = replaceAll(m_original, L'\\', L'/');
 
 #if !defined(_XBOX) && !defined(WINCE) && !defined(_PS3)
 	for (;;)

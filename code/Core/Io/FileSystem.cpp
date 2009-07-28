@@ -154,7 +154,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	Ref< Stream > src = open(source, File::FmRead);
 	if (!src)
 	{
-		log::error << L"Unable to open file \"" << std::wstring(source) << L"\" for reading" << Endl;
+		log::error << L"Unable to open file \"" << source.getPathName() << L"\" for reading" << Endl;
 		return 0;
 	}
 
@@ -162,7 +162,7 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	Ref< Stream > dst = open(destination, File::FmWrite);
 	if (!dst)
 	{
-		log::error << L"Unable to open file \"" << std::wstring(destination) << L"\" for writing" << Endl;
+		log::error << L"Unable to open file \"" << destination.getPathName() << L"\" for writing" << Endl;
 		return 0;
 	}
 
@@ -264,8 +264,8 @@ bool FileSystem::getRelativePath(const Path& absolutePath, const Path& relativeT
 
 	std::vector< std::wstring > absoluteParts, relativeParts;
 
-	Split< std::wstring >::any(absolutePath, L"/", absoluteParts);
-	Split< std::wstring >::any(relativeToPath, L"/", relativeParts);
+	Split< std::wstring >::any(absolutePath.getPathName(), L"/", absoluteParts);
+	Split< std::wstring >::any(relativeToPath.getPathName(), L"/", relativeParts);
 
 	std::vector< std::wstring >::iterator i1 = absoluteParts.begin();
 	std::vector< std::wstring >::iterator i2 = relativeParts.begin();

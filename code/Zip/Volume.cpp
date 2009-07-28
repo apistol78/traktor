@@ -111,7 +111,7 @@ Volume::~Volume()
 
 std::wstring Volume::getDescription() const
 {
-	return L"Zip archive (" + std::wstring(m_archive) + L")";
+	return L"Zip archive (" + m_archive.getPathName() + L")";
 }
 
 File* Volume::get(const Path& path)
@@ -251,7 +251,7 @@ Stream* Volume::open(const Path& filename, File::Mode mode)
 		memset(&zfi, 0, sizeof(zfi));
 #endif
 
-		if (zipOpenNewFileInZip(m_zipFile, wstombs(filename).c_str(), &zfi, 0, 0, 0, 0, 0, Z_DEFLATED, Z_DEFAULT_COMPRESSION) != ZIP_OK)
+		if (zipOpenNewFileInZip(m_zipFile, wstombs(filename.getPathName()).c_str(), &zfi, 0, 0, 0, 0, 0, Z_DEFLATED, Z_DEFAULT_COMPRESSION) != ZIP_OK)
 			return 0;
 	
 		stream = gc_new< StreamZip >(m_zipFile);
@@ -322,10 +322,10 @@ bool Volume::readArchive()
 
 	if (m_unzFile == 0)
 	{
-		m_unzFile = unzOpen2(wstombs(m_archive).c_str(), m_zlibFF);
+		m_unzFile = unzOpen2(wstombs(m_archive.getPathName()).c_str(), m_zlibFF);
 		if (m_unzFile == 0)
 		{
-			log::error << L"Unable to open archive \"" << m_archive << L"\"" << Endl;
+			log::error << L"Unable to open archive \"" << m_archive.getPathName() << L"\"" << Endl;
 			return false;
 		}
 	}
@@ -346,10 +346,10 @@ bool Volume::writeArchive()
 		std::stringstream comment;
 		comment << "Traktor Framework, Copyright 2005-2008 (C) Anders Pistol";
 		
-		m_zipFile = zipOpen2(wstombs(m_archive).c_str(), 0, (zipcharpc*)comment.str().c_str(), m_zlibFF);
+		m_zipFile = zipOpen2(wstombs(m_archive.getPathName()).c_str(), 0, (zipcharpc*)comment.str().c_str(), m_zlibFF);
 		if (m_zipFile == 0)
 		{
-			log::error << L"Unable to open archive \"" << m_archive << L"\"" << Endl;
+			log::error << L"Unable to open archive \"" << m_archive.getPathName() << L"\"" << Endl;
 			return false;
 		}
 	}

@@ -31,6 +31,12 @@ public:
 
 	Path(const wchar_t* path);
 
+	/*! \brief Get original, unresolved, path.
+	 *
+	 * \return Original path.
+	 */
+	std::wstring getOriginal() const;
+
 	/*! \brief Return true if path include volume.
 	 *
 	 * C:/foo/bar.txt => true
@@ -149,18 +155,6 @@ public:
 	 */
 	Path normalized() const;
 
-	/*! \brief String representation of path.
-	 *
-	 * \return Constant string.
-	 */
-	const wchar_t* c_str() const;
-
-	/*! \brief String representation of path.
-	 *
-	 * \return String object.
-	 */
-	operator std::wstring () const;
-
 	/*! \brief Concate two paths.
 	 *
 	 * \return Concated path.
@@ -185,6 +179,7 @@ public:
 	bool operator < (const Path& rh) const;
 
 private:
+	std::wstring m_original;
 	std::wstring m_volume;
 	bool m_relative;
 	std::wstring m_path;
@@ -194,9 +189,8 @@ private:
 	/*! \brief Resolve path.
 	 *
 	 * Resolve environment variables in path.
-	 * \param path System path including environment variables.
 	 */
-	void resolve(const std::wstring& path);
+	void resolve();
 };
 	
 }

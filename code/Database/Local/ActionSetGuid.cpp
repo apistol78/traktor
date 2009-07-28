@@ -32,7 +32,7 @@ bool ActionSetGuid::execute(Context* context)
 			return false;
 
 		m_renamedMeta = FileSystem::getInstance().move(
-			std::wstring(instanceMetaPath) + L"~",
+			instanceMetaPath.getPathName() + L"~",
 			instanceMetaPath,
 			true
 		);
@@ -57,7 +57,7 @@ bool ActionSetGuid::undo(Context* context)
 	{
 		if (!FileSystem::getInstance().move(
 			instanceMetaPath,
-			std::wstring(instanceMetaPath) + L"~",
+			instanceMetaPath.getPathName() + L"~",
 			true
 		))
 			return false;
@@ -79,7 +79,7 @@ void ActionSetGuid::clean(Context* context)
 	{
 		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 		FileSystem::getInstance().remove(
-			std::wstring(instanceMetaPath) + L"~"
+			instanceMetaPath.getPathName() + L"~"
 		);
 	}
 }

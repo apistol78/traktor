@@ -84,7 +84,7 @@ void FilePropertyItem::showInPlaceControls(bool show)
 
 void FilePropertyItem::mouseButtonDown(MouseEvent* event)
 {
-	m_editor->setText(m_path);
+	m_editor->setText(m_path.getOriginal());
 	m_editor->setVisible(true);
 	m_editor->setFocus();
 	m_editor->selectAll();
@@ -92,7 +92,7 @@ void FilePropertyItem::mouseButtonDown(MouseEvent* event)
 
 void FilePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	canvas.drawText(rc.inflate(-2, -2), m_path, AnLeft, AnCenter);
+	canvas.drawText(rc.inflate(-2, -2), m_path.getOriginal(), AnLeft, AnCenter);
 }
 
 void FilePropertyItem::eventEditFocus(Event* event)

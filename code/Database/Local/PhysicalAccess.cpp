@@ -12,17 +12,17 @@ namespace traktor
 
 Path getInstanceObjectPath(const Path& instancePath)
 {
-	return std::wstring(instancePath) + L".xdi";
+	return instancePath.getPathName() + L".xdi";
 }
 
 Path getInstanceMetaPath(const Path& instancePath)
 {
-	return std::wstring(instancePath) + L".xdm";
+	return instancePath.getPathName() + L".xdm";
 }
 
 Path getInstanceDataPath(const Path& instancePath, const std::wstring& dataName)
 {
-	return std::wstring(instancePath) + L"_" + dataName + L".xdd";
+	return instancePath.getPathName() + L"_" + dataName + L".xdd";
 }
 
 Ref< Serializable > readPhysicalObject(const Path& objectPath)

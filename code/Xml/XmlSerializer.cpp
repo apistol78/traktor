@@ -146,7 +146,7 @@ bool XmlSerializer::operator >> (const Member< Guid >& m)
 
 bool XmlSerializer::operator >> (const Member< Path >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << m->getPathName() << L"</" << m.getName() << L">" << Endl;
+	m_xml << m_indent << L"<" << m.getName() << L">" << m->getOriginal() << L"</" << m.getName() << L">" << Endl;
 	return true;
 }
 

@@ -341,11 +341,11 @@ bool BinarySerializer::operator >> (const Member< Path >& m)
 		std::wstring path;
 		if (!read_string< std::wstring >(m_stream, path))
 			return false;
-		*m = path;
+		*m = Path(path);
 	}
 	else
 	{
-		std::wstring path = *m;
+		std::wstring path = m->getPathName();
 		if (!write_string(m_stream, path))
 			return false;
 	}

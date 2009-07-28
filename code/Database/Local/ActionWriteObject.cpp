@@ -27,7 +27,7 @@ bool ActionWriteObject::execute(Context* context)
 	if (FileSystem::getInstance().exist(instanceObjectPath))
 	{
 		m_oldObjectRenamed = FileSystem::getInstance().move(
-			std::wstring(instanceObjectPath) + L"~",
+			instanceObjectPath.getPathName() + L"~",
 			instanceObjectPath,
 			true
 		);
@@ -47,7 +47,7 @@ bool ActionWriteObject::execute(Context* context)
 	if (instanceMeta->getPrimaryType() != primaryTypeName)
 	{
 		m_oldMetaRenamed = FileSystem::getInstance().move(
-			std::wstring(instanceMetaPath) + L"~",
+			instanceMetaPath.getPathName() + L"~",
 			instanceMetaPath,
 			true
 		);
@@ -70,7 +70,7 @@ bool ActionWriteObject::undo(Context* context)
 		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 		if (!FileSystem::getInstance().move(
 			instanceObjectPath,
-			std::wstring(instanceObjectPath) + L"~",
+			instanceObjectPath.getPathName() + L"~",
 			true
 		))
 			return false;
@@ -82,7 +82,7 @@ bool ActionWriteObject::undo(Context* context)
 		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 		if (!FileSystem::getInstance().move(
 			instanceMetaPath,
-			std::wstring(instanceMetaPath) + L"~",
+			instanceMetaPath.getPathName() + L"~",
 			true
 		))
 			return false;
@@ -98,12 +98,12 @@ void ActionWriteObject::clean(Context* context)
 	if (m_oldObjectRenamed)
 	{
 		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-		FileSystem::getInstance().remove(std::wstring(instanceObjectPath) + L"~");
+		FileSystem::getInstance().remove(instanceObjectPath.getPathName() + L"~");
 	}
 	if (m_oldMetaRenamed)
 	{
 		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-		FileSystem::getInstance().remove(std::wstring(instanceMetaPath) + L"~");
+		FileSystem::getInstance().remove(instanceMetaPath.getPathName() + L"~");
 	}
 }
 
