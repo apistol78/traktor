@@ -199,7 +199,7 @@ bool TexturePipeline::buildOutput(
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
 	if (!image)
 	{
-		log::error << L"Unable to read source texture image \"" << fileName << L"\"" << Endl;
+		log::error << L"Unable to read source texture image \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
 

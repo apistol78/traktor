@@ -101,7 +101,7 @@ bool MeshPipeline::buildDependencies(
 	params->m_model = model::ModelFormat::readAny(fileName);
 	if (!params->m_model)
 	{
-		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName << L")" << Endl;
+		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
 		return false;
 	}
 

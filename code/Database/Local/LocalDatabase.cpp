@@ -36,7 +36,7 @@ bool LocalDatabase::create(const Path& manifestPath)
 	Ref< Stream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmWrite);
 	if (!manifestFile)
 	{
-		log::error << L"Unable to create manifest \"" << manifestPath << L"\"" << Endl;
+		log::error << L"Unable to create manifest \"" << manifestPath.getPathName() << L"\"" << Endl;
 		return false;
 	}
 
@@ -46,7 +46,7 @@ bool LocalDatabase::create(const Path& manifestPath)
 
 	if (!result)
 	{
-		log::error << L"Unable to write manifest \"" << manifestPath << L"\"" << Endl;
+		log::error << L"Unable to write manifest \"" << manifestPath.getPathName() << L"\"" << Endl;
 		return false;
 	}
 
@@ -65,7 +65,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 	Ref< Stream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmRead);
 	if (!manifestFile)
 	{
-		log::error << L"Unable to open manifest \"" << manifestPath << L"\", file missing?" << Endl;
+		log::error << L"Unable to open manifest \"" << manifestPath.getPathName() << L"\", file missing?" << Endl;
 		return false;
 	}
 
@@ -75,7 +75,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 
 	if (!manifest)
 	{
-		log::error << L"Unable to read manifest \"" << manifestPath << L"\", possibly corrupted" << Endl;
+		log::error << L"Unable to read manifest \"" << manifestPath.getPathName() << L"\", possibly corrupted" << Endl;
 		return false;
 	}
 
@@ -89,7 +89,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 			log::error << L"Unable to ensure event file directory exist" << Endl;
 			return false;
 		}
-		m_bus = gc_new< LocalBus >(eventFile);
+		m_bus = gc_new< LocalBus >(eventFile.getPathName());
 	}
 
 	if (!FileSystem::getInstance().makeAllDirectories(manifest->getRootGroupPath()))

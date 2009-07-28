@@ -145,7 +145,7 @@ bool OS::editFile(const Path& file) const
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("edit"),
-		wstots(absoluteFile).c_str(),
+		wstots(absoluteFile.getPathName()).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
@@ -163,7 +163,7 @@ bool OS::exploreFile(const Path& file) const
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("explore"),
-		wstots(absoluteFile).c_str(),
+		wstots(absoluteFile.getPathName()).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
@@ -185,9 +185,9 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 
 	TCHAR app[MAX_PATH], cmd[32768], cwd[MAX_PATH];
 #if !defined(WINCE)
-	_tcscpy_s(app, wstots(file).c_str());
+	_tcscpy_s(app, wstots(file.getPathName()).c_str());
 	_tcscpy_s(cmd, wstots(commandLine).c_str());
-	_tcscpy_s(cwd, wstots(workingDirectory).c_str());
+	_tcscpy_s(cwd, wstots(workingDirectory.getPathName()).c_str());
 #else
 	_tcscpy_s(app, sizeof_array(app), wstots(file).c_str());
 	_tcscpy_s(cmd, sizeof_array(cmd), wstots(commandLine).c_str());

@@ -52,7 +52,7 @@ std::wstring fixTextureFileName(const Path& texturePath, const std::wstring& fil
 	if (pos != std::wstring::npos)
 		return fileName.substr(0, pos + 1) + L'/' + fileName.substr(pos + 1);
 	else
-		return texturePath + fileName;
+		return texturePath.getPathName() + fileName;
 }
 
 const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::string& vmapName)
@@ -338,12 +338,12 @@ bool ModelFormatLwo::supportFormat(const Path& filePath) const
 
 Model* ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
 {
-	std::string fileNameTmp = wstombs(filePath);
+	std::string fileNameTmp = wstombs(filePath.getPathName());
 
 	lwObject* lwo = lwGetObject(const_cast< char* >(fileNameTmp.c_str()), 0, 0);
 	if (!lwo)
 	{
-		log::error << L"Unable to open Lightwave object \"" << filePath << L"\"" << Endl;
+		log::error << L"Unable to open Lightwave object \"" << filePath.getPathName() << L"\"" << Endl;
 		return 0;
 	}
 

@@ -30,30 +30,30 @@ bool ActionRemove::execute(Context* context)
 	{
 		Path instanceDataPath = getInstanceDataPath(m_instancePath, *i);
 		if (FileSystem::getInstance().move(
-			std::wstring(instanceDataPath) + L"~",
+			instanceDataPath.getPathName() + L"~",
 			instanceDataPath,
 			true
 		))
-			m_renamedFiles.push_back(instanceDataPath);
+			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
 			return false;
 	}
 
 	if (FileSystem::getInstance().move(
-		std::wstring(instanceObjectPath) + L"~",
+		instanceObjectPath.getPathName() + L"~",
 		instanceObjectPath,
 		true
 	))
-		m_renamedFiles.push_back(instanceObjectPath);
+		m_renamedFiles.push_back(instanceObjectPath.getPathName());
 	else
 		return false;
 
 	if (FileSystem::getInstance().move(
-		std::wstring(instanceMetaPath) + L"~",
+		instanceMetaPath.getPathName() + L"~",
 		instanceMetaPath,
 		true
 	))
-		m_renamedFiles.push_back(instanceMetaPath);
+		m_renamedFiles.push_back(instanceMetaPath.getPathName());
 	else
 		return false;
 

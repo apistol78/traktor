@@ -40,7 +40,7 @@ bool LocalGroup::remove()
 
 IProviderGroup* LocalGroup::createGroup(const std::wstring& groupName)
 {
-	Path newGroupPath = std::wstring(m_groupPath) + L"/" + groupName;
+	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
 	if (FileSystem::getInstance().exist(newGroupPath))
 		return false;
@@ -53,7 +53,7 @@ IProviderGroup* LocalGroup::createGroup(const std::wstring& groupName)
 
 IProviderInstance* LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
-	Path instancePath = std::wstring(m_groupPath) + L"/" + instanceName;
+	Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
 
 	Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
 	if (!instance->internalCreateNew(instancePath, instanceGuid))
@@ -67,7 +67,7 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 	T_ASSERT (outChildGroups.empty());
 
 	RefArray< File > groupFiles;
-	if (!FileSystem::getInstance().find(std::wstring(m_groupPath) + L"/*.*", groupFiles))
+	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
 		return false;
 
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)
@@ -101,7 +101,7 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 	T_ASSERT (outChildInstances.empty());
 
 	RefArray< File > groupFiles;
-	if (!FileSystem::getInstance().find(std::wstring(m_groupPath) + L"/*.*", groupFiles))
+	if (!FileSystem::getInstance().find(m_groupPath.getPathName() + L"/*.*", groupFiles))
 		return false;
 
 	for (RefArray< File >::iterator i = groupFiles.begin(); i != groupFiles.end(); ++i)

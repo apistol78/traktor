@@ -39,7 +39,7 @@ bool ActionWriteData::execute(Context* context)
 	if (m_existingBlob)
 	{
 		if (!FileSystem::getInstance().move(
-			std::wstring(instanceDataPath) + L"~",
+			instanceDataPath.getPathName() + L"~",
 			instanceDataPath,
 			true
 		))
@@ -77,7 +77,7 @@ bool ActionWriteData::undo(Context* context)
 		Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 		return FileSystem::getInstance().move(
 			instanceDataPath,
-			std::wstring(instanceDataPath) + L"~",
+			instanceDataPath.getPathName() + L"~",
 			true
 		);
 
@@ -101,7 +101,7 @@ void ActionWriteData::clean(Context* context)
 	if (m_existingBlob)
 	{
 		Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
-		FileSystem::getInstance().remove(std::wstring(instanceDataPath) + L"~");
+		FileSystem::getInstance().remove(instanceDataPath.getPathName() + L"~");
 	}
 }
 
