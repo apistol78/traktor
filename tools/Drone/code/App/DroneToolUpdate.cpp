@@ -118,7 +118,7 @@ void DroneToolUpdate::updateThread(ui::Widget* parent, UpdateBundle* bundle, ui:
 		Path destinationPath(i->path);
 		if (destinationPath.isRelative())
 		{
-			destinationPath = m_rootPath + L"/" + std::wstring(destinationPath);
+			destinationPath = m_rootPath + L"/" + destinationPath.getPathName();
 			if (destinationPath.isRelative())
 			{
 				destinationPath = FileSystem::getInstance().getAbsolutePath(destinationPath);

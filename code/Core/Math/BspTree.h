@@ -23,12 +23,30 @@ namespace traktor
 class T_DLLCLASS BspTree
 {
 public:
+	/*! \brief Build BSP from a set of polygons.
+	 *
+	 * \param polygons Polygon set.
+	 * \return True if built successfully.
+	 */
 	bool build(const AlignedVector< Winding >& polygons);
 
+	/*! \brief Check if point is inside "solid" space.
+	 *
+	 * \return True if point inside "solid" space.
+	 */
 	bool inside(const Vector4& pt) const;
 
+	/*! \brief Check if all points of a winding is inside "solid" space.
+	 *
+	 * \return True if all points inside "solid" space.
+	 */
 	bool inside(const Winding& w) const;
 
+	/*! \brief Clip polygon to BSP.
+	 *
+	 * \param polygon Polygon
+	 * \param outClipped Clipped polygons.
+	 */
 	template < typename PolygonType >
 	void clip(const PolygonType& polygon, AlignedVector< PolygonType >& outClipped) const
 	{

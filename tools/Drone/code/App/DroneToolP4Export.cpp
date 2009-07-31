@@ -67,7 +67,7 @@ bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 			break;
 		}
 
-		std::wstring descriptionFilePath = std::wstring(exportPath) + L"/ChangeList.xml";
+		std::wstring descriptionFilePath = exportPath.getPathName() + L"/ChangeList.xml";
 		Ref< Stream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmWrite);
 		if (!descriptionFile)
 		{
@@ -93,7 +93,7 @@ bool DroneToolP4Export::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 				continue;
 
 			std::wstring exportFile = replaceAll((*j)->getDepotPath(), '/', '_');
-			std::wstring exportFilePath = std::wstring(exportPath) + L"/" + exportFile;
+			std::wstring exportFilePath = exportPath.getPathName() + L"/" + exportFile;
 
 			exportResult = FileSystem::getInstance().copy(
 				exportFilePath,

@@ -52,7 +52,7 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 		if (!(*i)->isDirectory())
 			continue;
 
-		std::wstring descriptionFilePath = std::wstring((*i)->getPath()) + L"/ChangeList.xml";
+		std::wstring descriptionFilePath = (*i)->getPath().getPathName() + L"/ChangeList.xml";
 		Ref< Stream > descriptionFile = FileSystem::getInstance().open(descriptionFilePath, File::FmRead);
 		if (!descriptionFile)
 			continue;
@@ -152,9 +152,9 @@ bool DroneToolP4Import::execute(ui::Widget* parent, ui::MenuItem* menuItem)
 					}
 
 					StringOutputStream ss;
-					ss << Path(localFile) << L" ";	// Base
-					ss << Path(importFile) << L" ";	// Left
-					ss << Path(localFile) << L" ";	// Right
+					ss << Path(localFile).getPathName() << L" ";	// Base
+					ss << Path(importFile).getPathName() << L" ";	// Left
+					ss << Path(localFile).getPathName() << L" ";	// Right
 					ss << mbstows(mergeFile);		// Merge
 
 					Ref< Process > process = OS::getInstance().execute(m_mergeExecutable, ss.str(), L"");

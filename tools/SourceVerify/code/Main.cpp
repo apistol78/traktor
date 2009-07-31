@@ -35,7 +35,7 @@ public:
 		++m_issues;
 
 		if (m_report)
-			*m_report << L"(" << m_issues << L") " << m_fileName << L" : " << str << Endl;
+			*m_report << L"(" << m_issues << L") " << m_fileName.getPathName() << L" : " << str << Endl;
 	}
 
 	void setFile(const Path& fileName) { m_fileName = fileName; }
@@ -53,7 +53,7 @@ void verify(ReportLogTarget& report, const Path& pathName)
 	Ref< File > file = FileSystem::getInstance().get(pathName);
 	if (!file)
 	{
-		log::error << L"Unable to open \"" << pathName << L"\"; no such file or directory" << Endl;
+		log::error << L"Unable to open \"" << pathName.getPathName() << L"\"; no such file or directory" << Endl;
 		return;
 	}
 
@@ -62,7 +62,7 @@ void verify(ReportLogTarget& report, const Path& pathName)
 		Ref< Stream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 		if (!file)
 		{
-			log::error << L"Unable to open file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to open file \"" << pathName.getPathName() << L"\"" << Endl;
 			return;
 		}
 
@@ -88,7 +88,7 @@ void verify(ReportLogTarget& report, const Path& pathName)
 			ClassName().check(pathName, source, isHeader, reportLog);
 		}
 		else
-			log::error << L"Unable to read file \"" << pathName << L"\"" << Endl;
+			log::error << L"Unable to read file \"" << pathName.getPathName() << L"\"" << Endl;
 
 		log::info << DecreaseIndent;
 
