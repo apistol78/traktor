@@ -32,13 +32,13 @@ bool Process::create(
 	si.cb = sizeof(si);
 
 	StringOutputStream commandLine;
-	commandLine << command << L" " << commandArguments;
+	commandLine << command.getPathName() << L" " << commandArguments;
 
 	TCHAR szCommand[1024];
 	_tcscpy_s(szCommand, wstots(commandLine.str()).c_str());
 
 	TCHAR szWorkingDirectory[MAX_PATH];
-	_tcscpy_s(szWorkingDirectory, wstots(workingDirectory).c_str());
+	_tcscpy_s(szWorkingDirectory, wstots(workingDirectory.getPathName()).c_str());
 
 	BOOL result = CreateProcess(
 		NULL,
@@ -69,7 +69,7 @@ bool Process::create(
 	si.cb = sizeof(si);
 
 	StringOutputStream commandLine;
-	commandLine << command << L" " << commandArguments;
+	commandLine << command.getPathName() << L" " << commandArguments;
 
 	TCHAR szCommand[1024];
 	_tcscpy_s(szCommand, wstots(commandLine.str()).c_str());

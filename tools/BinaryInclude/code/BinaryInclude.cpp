@@ -25,7 +25,7 @@ int main(int argc, const char** argv)
 	Ref< Stream > input = FileSystem::getInstance().open(inputFile, File::FmRead);
 	if (!input)
 	{
-		log::error << L"Generation failed, unable to open file \"" << inputFile << L"\"" << Endl;
+		log::error << L"Generation failed, unable to open file \"" << inputFile.getPathName() << L"\"" << Endl;
 		return 1;
 	}
 
@@ -34,7 +34,7 @@ int main(int argc, const char** argv)
 	Ref< Stream > output = FileSystem::getInstance().open(outputFile, File::FmWrite);
 	if (!output)
 	{
-		log::error << L"Generation failed, unable to create file \"" << outputFile << L"\"" << Endl;
+		log::error << L"Generation failed, unable to create file \"" << outputFile.getPathName() << L"\"" << Endl;
 		return 1;
 	}
 

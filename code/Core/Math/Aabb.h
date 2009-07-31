@@ -32,12 +32,33 @@ public:
 	
 	explicit Aabb(const Vector4& mn_, const Vector4& mx_);
 
+	/*! \brief Get bounding box corners.
+	 *
+	 * \param extents Output array of corner points.
+	 */
 	void getExtents(Vector4 extents[8]) const;
 
+	/*! \brief Return true if point is inside bounding box.
+	 *
+	 * \param pt Point
+	 * \return True if inside.
+	 */
 	bool inside(const Vector4& pt) const;
 
+	/*! \brief Line segment intersection query.
+	 *
+	 * \param p1 Start point.
+	 * \param p2 End point.
+	 * \param outDistance Distance from start point to intersection.
+	 * \return True if intersection found.
+	 */
 	bool intersect(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const;
 
+	/*! \brief Transform bounding box.
+	 *
+	 * \param m Transformation matrix.
+	 * \return Transformed bounding box.
+	 */
 	Aabb transform(const Matrix44& m) const;
 
 	/*! \brief Return 6 faces, 4 indices each (24 integers total). */
