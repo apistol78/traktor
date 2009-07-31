@@ -50,6 +50,13 @@ public:
 	 */
 	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue) = 0;
 
+	/*! \brief Get global variable value.
+	 *
+	 * \param globalName Name of global variable.
+	 * \return Global value; void if not found.
+	 */
+	virtual Any getGlobal(const std::wstring& globalName) = 0;
+
 	/*! \brief Execute script.
 	 *
 	 * \param script Script.
