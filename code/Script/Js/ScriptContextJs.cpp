@@ -115,6 +115,15 @@ void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globa
 	);
 }
 
+Any ScriptContextJs::getGlobal(const std::wstring& globalName)
+{
+	v8::Context::Scope contextScope(m_context);
+	v8::HandleScope handleScope;
+
+	v8::Local< v8::Value > value = m_context->Global()->Get(createString(globalName));
+	return fromValue(value);
+}
+
 bool ScriptContextJs::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
 {
 	v8::Context::Scope contextScope(m_context);

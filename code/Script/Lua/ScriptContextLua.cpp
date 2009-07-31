@@ -78,6 +78,13 @@ void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& glob
 	lua_setglobal(m_luaState, wstombs(globalName).c_str());
 }
 
+Any ScriptContextLua::getGlobal(const std::wstring& globalName)
+{
+	CHECK_LUA_STACK(m_luaState, 0);
+	lua_getglobal(m_luaState, wstombs(globalName).c_str());
+	return toAny(-1);
+}
+
 bool ScriptContextLua::executeScript(const std::wstring& script, bool compileOnly, IErrorCallback* errorCallback)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
