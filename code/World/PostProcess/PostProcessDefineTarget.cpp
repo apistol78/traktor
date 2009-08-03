@@ -13,6 +13,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessDefineTarget", PostProcessDefineTarget, PostProcessDefine)
 
+PostProcessDefineTarget::PostProcessDefineTarget()
+:	m_id(0)
+,	m_width(0)
+,	m_height(0)
+,	m_screenDenom(0)
+,	m_format(render::TfInvalid)
+,	m_depthStencil(false)
+,	m_multiSample(0)
+{
+}
+
 bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight)
 {
 	render::RenderTargetSetCreateDesc desc;
