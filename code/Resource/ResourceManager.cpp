@@ -133,6 +133,7 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 	{
 		T_ASSERT_M (is_type_of(resourceType, object->getType()), L"Incorrect type of created resource");
 		handle->replace(object);
+		log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
 	}
 	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
