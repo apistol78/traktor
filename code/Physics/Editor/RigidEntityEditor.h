@@ -21,13 +21,13 @@ class T_DLLCLASS RigidEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS(RigidEntityEditor)
 
 public:
-	virtual TypeSet getEntityTypes() const;
+	RigidEntityEditor();
 
 	virtual void entitySelected(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
 		bool selected
-	) const;
+	);
 
 	virtual void applyModifier(
 		scene::SceneEditorContext* context,
@@ -35,19 +35,22 @@ public:
 		const Matrix44& viewTransform,
 		const Vector2& mouseDelta,
 		int mouseButton
-	) const;
+	);
 
 	virtual bool handleCommand(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
 		const ui::Command& command
-	) const;
+	);
 
 	virtual void drawGuide(
 		scene::SceneEditorContext* context,
 		render::PrimitiveRenderer* primitiveRenderer,
 		scene::EntityAdapter* entityAdapter
 	) const;
+
+private:
+	bool m_showHull;
 };
 
 	}

@@ -20,18 +20,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntityEditor", ArticulatedEntityEditor, scene::DefaultEntityEditor)
 
-TypeSet ArticulatedEntityEditor::getEntityTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< ArticulatedEntityData >());
-	return typeSet;
-}
-
 void ArticulatedEntityEditor::entitySelected(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	bool selected
-) const
+)
 {
 }
 
@@ -39,7 +32,7 @@ bool ArticulatedEntityEditor::handleCommand(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const ui::Command& command
-) const
+)
 {
 	return false;
 }

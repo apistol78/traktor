@@ -1,5 +1,5 @@
-#ifndef traktor_scene_SceneEditorProfile_H
-#define traktor_scene_SceneEditorProfile_H
+#ifndef traktor_scene_ISceneEditorProfile_H
+#define traktor_scene_ISceneEditorProfile_H
 
 #include <string>
 #include "Core/Heap/Ref.h"
@@ -65,48 +65,80 @@ class IEntityEditor;
  * scene editor and are used to create necessary
  * factories.
  */
-class T_DLLCLASS SceneEditorProfile : public Object
+class T_DLLCLASS ISceneEditorProfile : public Object
 {
-	T_RTTI_CLASS(SceneEditorProfile)
+	T_RTTI_CLASS(ISceneEditorProfile)
 
 public:
+	/*! \brief Get supported set of entities.
+	 *
+	 * \return Type set of EntityData types.
+	 */
+	virtual TypeSet getEntityDataTypes() const = 0;
+
+	/*! \brief Get UI commands.
+	 *
+	 * \param outCommands Output list of commands.
+	 */
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
-	) const;
+	) const = 0;
 
+	/*! \brief Create custom toolbar items.
+	 *
+	 * \param toolBar ToolBar widget.
+	 */
 	virtual void createToolBarItems(
 		ui::custom::ToolBar* toolBar
-	) const;
+	) const = 0;
 
+	/*! \brief Create resource factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outResourceFactories Output array of resource factories.
+	 */
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
 		RefArray< resource::IResourceFactory >& outResourceFactories
-	) const;
+	) const = 0;
 
+	/*! \brief Create entity factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outEntityFactories Output array of entity factories.
+	 */
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
 		RefArray< world::IEntityFactory >& outEntityFactories
-	) const;
+	) const = 0;
 
+	/*! \brief Create entity renderers.
+	 *
+	 * \param context Scene editor context.
+	 * \param renderView Scene editor render view.
+	 * \param primitiveRenderer Primitive renderer.
+	 * \param outEntityRenderers Output array of entity renderers.
+	 */
 	virtual void createEntityRenderers(
 		SceneEditorContext* context,
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
-	) const;
+	) const = 0;
 
-	virtual void createEntityEditors(
+	/*! \brief Create entity editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param entityDataType Type of entity data.
+	 * \return Entity editor instance.
+	 */
+	virtual IEntityEditor* createEntityEditor(
 		SceneEditorContext* context,
-		RefArray< IEntityEditor >& outEntityEditors
-	) const;
-
-	virtual void setupWorldRenderer(
-		SceneEditorContext* context,
-		world::WorldRenderer* worldRenderer
-	) const;
+		const Type& entityDataType
+	) const = 0;
 };
 
 	}
 }
 
-#endif	// traktor_scene_SceneEditorProfile_H
+#endif	// traktor_scene_ISceneEditorProfile_H

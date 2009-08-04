@@ -1,6 +1,8 @@
 #include "Physics/Editor/PhysicsEditorProfile.h"
 #include "Physics/Editor/RigidEntityEditor.h"
 #include "Physics/Editor/ArticulatedEntityEditor.h"
+#include "Physics/World/RigidEntityData.h"
+#include "Physics/World/ArticulatedEntityData.h"
 #include "Physics/World/EntityFactory.h"
 #include "Physics/World/EntityRenderer.h"
 #include "Physics/MeshFactory.h"
@@ -15,13 +17,27 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsEditorProfile", PhysicsEditorProfile, scene::SceneEditorProfile)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsEditorProfile", PhysicsEditorProfile, scene::ISceneEditorProfile)
+
+TypeSet PhysicsEditorProfile::getEntityDataTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< RigidEntityData >());
+	typeSet.insert(&type_of< ArticulatedEntityData >());
+	return typeSet;
+}
 
 void PhysicsEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
 	outCommands.push_back(ui::Command(L"Physics.ToggleMeshTriangles"));
+}
+
+void PhysicsEditorProfile::createToolBarItems(
+	ui::custom::ToolBar* toolBar
+) const
+{
 }
 
 void PhysicsEditorProfile::createResourceFactories(
@@ -51,13 +67,16 @@ void PhysicsEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< EntityRenderer >());
 }
 
-void PhysicsEditorProfile::createEntityEditors(
+scene::IEntityEditor* PhysicsEditorProfile::createEntityEditor(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditor >& outEntityEditors
+	const Type& entityDataType
 ) const
 {
-	outEntityEditors.push_back(gc_new< RigidEntityEditor >());
-	outEntityEditors.push_back(gc_new< ArticulatedEntityEditor >());
+	if (is_type_of< RigidEntityData >(entityDataType))
+		return gc_new< RigidEntityEditor >();
+	if (is_type_of< ArticulatedEntityEditor >(entityDataType))
+		return gc_new< ArticulatedEntityEditor >();
+	return 0;
 }
 
 	}

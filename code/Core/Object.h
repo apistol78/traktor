@@ -129,6 +129,16 @@ inline T checked_type_cast(const Object* o)
 	return static_cast< T >(o);
 }
 
+/*! \brief Get type of object.
+*
+* \param object Object to get type of.
+*/
+inline const Type& type_of(const Object* object)
+{
+	T_ASSERT (object);
+	return object->getType();
+}
+
 /*! \brief Return RTTI type name.
  *
  * \param o Object.

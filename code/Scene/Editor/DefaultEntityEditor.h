@@ -21,7 +21,7 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 	T_RTTI_CLASS(DefaultEntityEditor)
 
 public:
-	virtual TypeSet getEntityTypes() const;
+	DefaultEntityEditor();
 
 	virtual bool isPickable(
 		EntityAdapter* entityAdapter
@@ -31,7 +31,12 @@ public:
 		SceneEditorContext* context,
 		EntityAdapter* entityAdapter,
 		bool selected
-	) const;
+	);
+
+	virtual void beginModifier(
+		SceneEditorContext* context,
+		EntityAdapter* entityAdapter
+	);
 
 	virtual void applyModifier(
 		SceneEditorContext* context,
@@ -39,13 +44,18 @@ public:
 		const Matrix44& viewTransform,
 		const Vector2& mouseDelta,
 		int mouseButton
-	) const;
+	);
+
+	virtual void endModifier(
+		SceneEditorContext* context,
+		EntityAdapter* entityAdapter
+	);
 
 	virtual bool handleCommand(
 		SceneEditorContext* context,
 		EntityAdapter* entityAdapter,
 		const ui::Command& command
-	) const;
+	);
 
 	virtual void drawGuide(
 		SceneEditorContext* context,
@@ -58,6 +68,9 @@ public:
 		EntityAdapter* entityAdapter,
 		std::wstring& outStatusText
 	) const;
+
+private:
+	bool m_inModify;
 };
 
 	}

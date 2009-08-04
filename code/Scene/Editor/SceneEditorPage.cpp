@@ -2,7 +2,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneRenderControl.h"
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SelectEvent.h"

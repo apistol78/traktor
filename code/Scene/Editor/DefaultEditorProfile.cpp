@@ -1,6 +1,7 @@
 #include "Scene/Editor/DefaultEditorProfile.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "World/Entity/SpatialEntityData.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Heap/New.h"
 #include "Ui/Command.h"
@@ -34,7 +35,26 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.DefaultEditorProfile", DefaultEditorProfile, SceneEditorProfile)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.DefaultEditorProfile", DefaultEditorProfile, ISceneEditorProfile)
+
+TypeSet DefaultEditorProfile::getEntityDataTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< world::SpatialEntityData >());
+	return typeSet;
+}
+
+void DefaultEditorProfile::getCommands(
+	std::list< ui::Command >& outCommands
+) const
+{
+}
+
+void DefaultEditorProfile::createToolBarItems(
+	ui::custom::ToolBar* toolBar
+) const
+{
+}
 
 void DefaultEditorProfile::createResourceFactories(
 	SceneEditorContext* context,
@@ -77,12 +97,13 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< mesh::InstanceMeshEntityRenderer >());
 }
 
-void DefaultEditorProfile::createEntityEditors(
+IEntityEditor* DefaultEditorProfile::createEntityEditor(
 	SceneEditorContext* context,
-	RefArray< IEntityEditor >& outEntityEditors
+	const Type& entityDataType
 ) const
 {
-	outEntityEditors.push_back(gc_new< DefaultEntityEditor >());
+	T_ASSERT (is_type_of< world::SpatialEntityData >(entityDataType));
+	return gc_new< DefaultEntityEditor >();
 }
 
 	}

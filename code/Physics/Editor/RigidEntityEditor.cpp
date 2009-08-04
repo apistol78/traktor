@@ -23,39 +23,22 @@ namespace traktor
 {
 	namespace physics
 	{
-		namespace
-		{
-
-struct RigidData : public Object
-{
-	bool showHull;
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntityEditor", RigidEntityEditor, scene::DefaultEntityEditor)
 
-TypeSet RigidEntityEditor::getEntityTypes() const
+RigidEntityEditor::RigidEntityEditor()
+:	m_showHull(false)
 {
-	TypeSet typeSet;
-	typeSet.insert(&type_of< RigidEntityData >());
-	return typeSet;
 }
 
 void RigidEntityEditor::entitySelected(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	bool selected
-) const
+)
 {
 	if (selected)
-	{
-		Ref< RigidData > rigidData = gc_new< RigidData >();
-		rigidData->showHull = false;
-		entityAdapter->setUserObject(rigidData);
-	}
-	else
-		entityAdapter->setUserObject(0);
+		m_showHull = false;
 }
 
 void RigidEntityEditor::applyModifier(
@@ -64,7 +47,7 @@ void RigidEntityEditor::applyModifier(
 	const Matrix44& viewTransform,
 	const Vector2& mouseDelta,
 	int mouseButton
-) const
+)
 {
 	// Apply transform modifier.
 	scene::DefaultEntityEditor::applyModifier(context, entityAdapter, viewTransform, mouseDelta, mouseButton);
@@ -79,15 +62,10 @@ bool RigidEntityEditor::handleCommand(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const ui::Command& command
-) const
+)
 {
-	Ref< RigidData > rigidData = entityAdapter->getUserObject< RigidData >();
-	T_ASSERT (rigidData);
-
 	if (command == L"Physics.ToggleMeshTriangles")
-	{
-		rigidData->showHull = !rigidData->showHull;
-	}
+		m_showHull = !m_showHull;
 	else
 		return false;
 
@@ -102,7 +80,6 @@ void RigidEntityEditor::drawGuide(
 {
 	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getEntityData());
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
-	Ref< RigidData > rigidData = entityAdapter->getUserObject< RigidData >();
 
 	if (context->getGuideEnable())
 	{
@@ -172,7 +149,7 @@ void RigidEntityEditor::drawGuide(
 					{
 						const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 						const std::vector< Mesh::Triangle >& triangles = 
-							(rigidData != 0 && rigidData->showHull) ?
+							m_showHull ?
 							mesh->getHullTriangles() :
 							mesh->getShapeTriangles();
 

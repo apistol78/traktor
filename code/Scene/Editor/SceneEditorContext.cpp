@@ -1,7 +1,7 @@
 #include <limits>
 #include <stack>
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/IEntityEditor.h"
@@ -20,44 +20,55 @@ namespace traktor
 		{
 
 // Find best matching entity editor.
-IEntityEditor* findEntityEditor(const RefArray< IEntityEditor >& entityEditors, const Type& entityType)
+IEntityEditor* createEntityEditor(SceneEditorContext* context, const RefArray< ISceneEditorProfile >& editorProfiles, const Type& entityDataType)
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< IEntityEditor > entityEditor;
-	
-	for (RefArray< IEntityEditor >::const_iterator i = entityEditors.begin(); i != entityEditors.end(); ++i)
+	Ref< ISceneEditorProfile > editorProfile;
+
+	for (RefArray< ISceneEditorProfile >::const_iterator i = editorProfiles.begin(); i != editorProfiles.end(); ++i)
 	{
-		TypeSet entityTypes = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
+		TypeSet entityDataTypes = (*i)->getEntityDataTypes();
+		for (TypeSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
 		{
-			if (is_type_of(**j, entityType))
+			if (is_type_of(**j, entityDataType))
 			{
-				uint32_t classDifference = type_difference(**j, entityType);
+				uint32_t classDifference = type_difference(**j, entityDataType);
 				if (classDifference < minClassDifference)
 				{
-					entityEditor = *i;
+					editorProfile = *i;
 					minClassDifference = classDifference;
 				}
 			}
 		}
 	}
 
-	return entityEditor;
+	if (!editorProfile)
+	{
+		log::debug << L"Unable to find profile supporting entity type \"" << entityDataType.getName() << L"\"" << Endl;
+		return 0;
+	}
+
+	return editorProfile->createEntityEditor(context, entityDataType);
 }
 
-// Attach entity editor in each adapter.
-void recursiveAttachEditors(EntityAdapter* entityAdapter, const RefArray< IEntityEditor >& entityEditors)
+// Create entity editor for each adapter.
+void createEntityEditorFactories(SceneEditorContext* context, const RefArray< ISceneEditorProfile >& editorProfiles, EntityAdapter* entityAdapter)
 {
-	if (entityAdapter->getEntityData())
+	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+
+	if (!entityAdapter->getEntityEditor() && entityAdapter->getRealEntityData())
 	{
-		Ref< IEntityEditor > entityEditor = findEntityEditor(entityEditors, entityAdapter->getEntityData()->getType());
+		Ref< IEntityEditor > entityEditor = createEntityEditor(
+			context,
+			editorProfiles,
+			type_of(entityAdapter->getRealEntityData())
+		);
 		if (entityEditor)
 			entityAdapter->setEntityEditor(entityEditor);
 	}
 
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-		recursiveAttachEditors(*i, entityEditors);
+		createEntityEditorFactories(context, editorProfiles, *i);
 }
 
 		}
@@ -92,7 +103,7 @@ SceneEditorContext::SceneEditorContext(
 	m_camera = gc_new< Camera >(cref(identity));
 }
 
-void SceneEditorContext::addEditorProfile(SceneEditorProfile* editorProfile)
+void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
 {
 	m_editorProfiles.push_back(editorProfile);
 }
@@ -207,11 +218,6 @@ bool SceneEditorContext::inAddReferenceMode() const
 	return m_referenceMode;
 }
 
-void SceneEditorContext::addEntityEditor(IEntityEditor* entityEditor)
-{
-	m_entityEditors.push_back(entityEditor);
-}
-
 void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)
 {
 	Ref< IEntityEditor > entityEditor = entityAdapter->getEntityEditor();
@@ -246,7 +252,7 @@ void SceneEditorContext::buildEntities()
 	{
 		Ref< EntityAdapterBuilder > entityBuilder = gc_new< EntityAdapterBuilder >(this);
 
-		for (RefArray< SceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
+		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
 		{
 			RefArray< world::IEntityFactory > entityFactories;
 			(*i)->createEntityFactories(this, entityFactories);
@@ -268,9 +274,9 @@ void SceneEditorContext::buildEntities()
 			Heap::getInstance().invalidateRefs(entityBuilder);
 		}
 
-		// Attach entity editors.
+		// Create entity editors.
 		if (m_rootEntityAdapter)
-			recursiveAttachEditors(m_rootEntityAdapter, m_entityEditors);
+			createEntityEditorFactories(this, m_editorProfiles, m_rootEntityAdapter);
 	}
 	else
 		m_rootEntityAdapter = 0;
@@ -368,10 +374,8 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		if (!(*i)->isSpatial())
-			continue;
-
-		if (!(*i)->getEntityEditor()->isPickable(*i))
+		// Must be spatial and exclusively pick-able.
+		if (!(*i)->isSpatial() || !(*i)->getEntityEditor() || !(*i)->getEntityEditor()->isPickable(*i))
 			continue;
 
 		// Transform ray into object space.

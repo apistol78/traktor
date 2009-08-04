@@ -1,7 +1,9 @@
 #include "Animation/Editor/AnimationEditorProfile.h"
 #include "Animation/Editor/AnimatedMeshEntityEditor.h"
 #include "Animation/Editor/PathEntity/PathEntityEditor.h"
+#include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Animation/Animation/AnimationFactory.h"
@@ -14,7 +16,15 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::SceneEditorProfile)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::ISceneEditorProfile)
+
+TypeSet AnimationEditorProfile::getEntityDataTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< AnimatedMeshEntityData >());
+	typeSet.insert(&type_of< PathEntityData >());
+	return typeSet;
+}
 
 void AnimationEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -25,6 +35,12 @@ void AnimationEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Animation.Editor.GotoPreviousKey"));
 	outCommands.push_back(ui::Command(L"Animation.Editor.GotoNextKey"));
 	outCommands.push_back(ui::Command(L"Animation.Editor.InsertKey"));
+}
+
+void AnimationEditorProfile::createToolBarItems(
+	ui::custom::ToolBar* toolBar
+) const
+{
 }
 
 void AnimationEditorProfile::createResourceFactories(
@@ -54,13 +70,16 @@ void AnimationEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< PathEntityRenderer >());
 }
 
-void AnimationEditorProfile::createEntityEditors(
+scene::IEntityEditor* AnimationEditorProfile::createEntityEditor(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditor >& outEntityEditors
+	const Type& entityDataType
 ) const
 {
-	outEntityEditors.push_back(gc_new< AnimatedMeshEntityEditor >());
-	outEntityEditors.push_back(gc_new< PathEntityEditor >());
+	if (is_type_of< AnimatedMeshEntityData >(entityDataType))
+		return gc_new< AnimatedMeshEntityEditor >();
+	if (is_type_of< PathEntityData >(entityDataType))
+		return gc_new< PathEntityEditor >();
+	return 0;
 }
 
 	}

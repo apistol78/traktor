@@ -1,4 +1,5 @@
 #include "Spray/Editor/SprayEditorProfile.h"
+#include "Spray/EffectEntityData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectEntityFactory.h"
 #include "Spray/EffectEntityRenderer.h"
@@ -12,7 +13,26 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SprayEditorProfile", SprayEditorProfile, scene::SceneEditorProfile)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SprayEditorProfile", SprayEditorProfile, scene::ISceneEditorProfile)
+
+TypeSet SprayEditorProfile::getEntityDataTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< EffectEntityData >());
+	return typeSet;
+}
+
+void SprayEditorProfile::getCommands(
+	std::list< ui::Command >& outCommands
+) const
+{
+}
+
+void SprayEditorProfile::createToolBarItems(
+	ui::custom::ToolBar* toolBar
+) const
+{
+}
 
 void SprayEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
@@ -38,6 +58,14 @@ void SprayEditorProfile::createEntityRenderers(
 ) const
 {
 	outEntityRenderers.push_back(gc_new< spray::EffectEntityRenderer >(context->getRenderSystem(), 1.0f, 1.0f));
+}
+
+scene::IEntityEditor* SprayEditorProfile::createEntityEditor(
+	scene::SceneEditorContext* context,
+	const Type& entityDataType
+) const
+{
+	return 0;
 }
 
 	}

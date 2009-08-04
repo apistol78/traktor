@@ -7,6 +7,9 @@
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/ExternalSpatialEntityData.h"
+#include "Database/Database.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
@@ -15,6 +18,29 @@ namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+const world::EntityData* resolveRealEntityData(db::Database* database, const world::EntityData* entityData)
+{
+	Ref< world::EntityData > realEntityData;
+	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData))
+	{
+		realEntityData = database->getObjectReadOnly< world::EntityData >(externalEntityData->getGuid());
+	}
+	else if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(entityData))
+	{
+		Ref< world::SpatialEntityData > realSpatialEntityData = database->getObjectReadOnly< world::SpatialEntityData >(externalSpatialEntityData->getGuid());
+		if (realSpatialEntityData)
+		{
+			realSpatialEntityData->setTransform(externalSpatialEntityData->getTransform());
+			realEntityData = realSpatialEntityData;
+		}
+	}
+	return realEntityData ? realEntityData : entityData;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
@@ -67,6 +93,15 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 	if (!entityData)
 		return 0;
 
+	// Resolve entity data; we cannot create external entities through external factory as we need to have both datas.
+	Ref< const world::EntityData > realEntityData = resolveRealEntityData(m_context->getSourceDatabase(), entityData);
+	T_ASSERT (realEntityData);
+
+	// Save "outer" entity data in current adapter; need this information in order to determine entity editor etc..
+	if (m_currentAdapter && !m_currentAdapter->getRealEntityData())
+		m_currentAdapter->setRealEntityData(const_cast< world::EntityData* >(realEntityData.getPtr()));
+
+	// Find entity factory.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
 	Ref< world::IEntityFactory > entityFactory;
 
@@ -75,9 +110,9 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 		const TypeSet& typeSet = (*i)->getEntityTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
-			if (is_type_of(**j, entityData->getType()))
+			if (is_type_of(**j, type_of(realEntityData)))
 			{
-				uint32_t classDifference = type_difference(**j, entityData->getType());
+				uint32_t classDifference = type_difference(**j, type_of(realEntityData));
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
@@ -89,14 +124,15 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to find entity factory for \"" << type_name(realEntityData) << L"\"" << Endl;
 		return 0;
 	}
 
-	Ref< world::Entity > entity = entityFactory->createEntity(this, name, *entityData);
+	// Create entity from entity data through specialized factory.
+	Ref< world::Entity > entity = entityFactory->createEntity(this, name, *realEntityData);
 	if (!entity)
 	{
-		log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to create entity from \"" << type_name(realEntityData) << L"\"" << Endl;
 		return 0;
 	}
 

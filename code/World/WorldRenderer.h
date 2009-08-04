@@ -204,6 +204,13 @@ private:
 		float deltaTime;
 		bool haveDepth;
 		bool haveShadows;
+
+		Frame()
+		:	deltaTime(0.0f)
+		,	haveDepth(false)
+		,	haveShadows(false)
+		{
+		}
 	};
 
 	static render::handle_t ms_techniqueDefault;

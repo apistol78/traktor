@@ -21,8 +21,6 @@ class T_DLLCLASS AnimatedMeshEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS(AnimatedMeshEntityEditor)
 
 public:
-	virtual TypeSet getEntityTypes() const;
-
 	virtual void drawGuide(
 		scene::SceneEditorContext* context,
 		render::PrimitiveRenderer* primitiveRenderer,

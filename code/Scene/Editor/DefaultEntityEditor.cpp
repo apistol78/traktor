@@ -14,11 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
-TypeSet DefaultEntityEditor::getEntityTypes() const
+DefaultEntityEditor::DefaultEntityEditor()
+:	m_inModify(false)
 {
-	TypeSet typeSet;
-	typeSet.insert(&type_of< world::SpatialEntityData >());
-	return typeSet;
 }
 
 bool DefaultEntityEditor::isPickable(
@@ -33,9 +31,18 @@ void DefaultEntityEditor::entitySelected(
 	SceneEditorContext* context,
 	EntityAdapter* entityAdapter,
 	bool selected
-) const
+)
 {
 	T_ASSERT (entityAdapter->isSpatial());
+}
+
+void DefaultEntityEditor::beginModifier(
+	SceneEditorContext* context,
+	EntityAdapter* entityAdapter
+)
+{
+	T_ASSERT (!m_inModify);
+	m_inModify = true;
 }
 
 void DefaultEntityEditor::applyModifier(
@@ -44,8 +51,9 @@ void DefaultEntityEditor::applyModifier(
 	const Matrix44& viewTransform,
 	const Vector2& mouseDelta,
 	int mouseButton
-) const
+)
 {
+	T_ASSERT (m_inModify);
 	T_ASSERT (entityAdapter->isSpatial());
 
 	Ref< IModifier > modifier = context->getModifier();
@@ -122,11 +130,20 @@ void DefaultEntityEditor::applyModifier(
 	}
 }
 
+void DefaultEntityEditor::endModifier(
+	SceneEditorContext* context,
+	EntityAdapter* entityAdapter
+)
+{
+	T_ASSERT (m_inModify);
+	m_inModify = false;
+}
+
 bool DefaultEntityEditor::handleCommand(
 	SceneEditorContext* context,
 	EntityAdapter* entityAdapter,
 	const ui::Command& command
-) const
+)
 {
 	return false;
 }

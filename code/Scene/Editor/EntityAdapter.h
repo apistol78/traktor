@@ -6,7 +6,6 @@
 #include "Core/Guid.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Misc/MD5.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -50,6 +49,10 @@ public:
 	world::EntityInstance* getInstance() const;
 
 	world::EntityData* getEntityData() const;
+
+	void setRealEntityData(world::EntityData* entityData);
+
+	world::EntityData* getRealEntityData() const;
 
 	void setEntity(world::Entity* entity);
 
@@ -134,25 +137,6 @@ public:
 
 	bool isSelected() const;
 
-	void setHash(const MD5& hash);
-
-	const MD5& getHash() const;
-
-	//@}
-
-	/*! \name User object. */
-	//@{
-
-	void setUserObject(Object* userObject);
-
-	Object* getUserObject() const;
-
-	template < typename UserType >
-	UserType* getUserObject() const
-	{
-		return dynamic_type_cast< UserType* >(getUserObject());
-	}
-
 	//@}
 
 	/*! \name Editor aid. */
@@ -171,14 +155,13 @@ public:
 private:
 	friend class SceneEditorContext;
 
+	Ref< world::EntityData > m_realEntityData;
 	Ref< world::EntityInstance > m_instance;
-	MD5 m_hash;
 	Ref< world::Entity > m_entity;
 	Ref< EntityAdapter > m_parent;
 	RefArray< EntityAdapter > m_children;
 	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;
-	Ref< Object > m_userObject;
 };
 
 	}

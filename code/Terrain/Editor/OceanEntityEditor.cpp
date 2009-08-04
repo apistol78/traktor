@@ -12,14 +12,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::IEntityEditor)
-
-TypeSet OceanEntityEditor::getEntityTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< OceanEntityData >());
-	return typeSet;
-}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::DefaultEntityEditor)
 
 bool OceanEntityEditor::isPickable(
 	scene::EntityAdapter* entityAdapter
@@ -28,21 +21,13 @@ bool OceanEntityEditor::isPickable(
 	return false;
 }
 
-void OceanEntityEditor::entitySelected(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	bool selected
-) const
-{
-}
-
 void OceanEntityEditor::applyModifier(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
 	const Vector2& mouseDelta,
 	int mouseButton
-) const
+)
 {
 }
 
@@ -50,7 +35,7 @@ bool OceanEntityEditor::handleCommand(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const ui::Command& command
-) const
+)
 {
 	Ref< OceanEntityData > oceanEntityData = checked_type_cast< OceanEntityData* >(entityAdapter->getEntityData());
 
@@ -94,15 +79,6 @@ void OceanEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-}
-
-bool OceanEntityEditor::getStatusText(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	std::wstring& outStatusText
-) const
-{
-	return false;
 }
 
 	}

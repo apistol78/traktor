@@ -1,7 +1,7 @@
 #include <limits>
 #include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/Camera.h"
@@ -182,7 +182,7 @@ void SceneRenderControl::updateWorldRenderer()
 		return;
 
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
-	for (RefArray< SceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
@@ -210,9 +210,6 @@ void SceneRenderControl::updateWorldRenderer()
 		m_worldRenderer->createRenderView(m_worldRenderView);
 	else
 		m_worldRenderer = 0;
-
-	for (RefArray< SceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-		(*i)->setupWorldRenderer(m_context, m_worldRenderer);
 }
 
 void SceneRenderControl::updatePostProcess()
@@ -297,6 +294,10 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
 	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 
+	// Are we already captured then we abort.
+	if (hasCapture())
+		return;
+
 	if (m_modifyCamera || !m_context->inAddReferenceMode())
 	{
 		// Handle entity picking if enabled.
@@ -318,6 +319,16 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 				m_modifyEntities,
 				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
 			);
+
+			// Enter modify mode in entity editors.
+			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			{
+				if ((*i)->getEntityEditor())
+					(*i)->getEntityEditor()->beginModifier(
+						m_context,
+						*i
+					);
+			}
 
 			// Issue begin modification event.
 			m_context->raisePreModify();
@@ -366,7 +377,19 @@ void SceneRenderControl::eventButtonUp(ui::Event* event)
 {
 	// Issue finished modification event.
 	if (!m_modifyCamera)
+	{
 		m_context->raisePostModify();
+
+		// Leave modify mode in entity editors.
+		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+		{
+			if ((*i)->getEntityEditor())
+				(*i)->getEntityEditor()->endModifier(
+				m_context,
+				*i
+			);
+		}
+	}
 
 	m_modifyEntities.resize(0);
 	m_modifyCamera = false;

@@ -1,7 +1,7 @@
 #include "Scene/Editor/SceneEditorPageFactory.h"
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/SceneAsset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
@@ -75,10 +75,10 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 
 	// Create profiles, resource factories and entity editors.
 	std::vector< const Type* > profileTypes;
-	type_of< SceneEditorProfile >().findAllOf(profileTypes);
+	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
 	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
-		Ref< SceneEditorProfile > profile = dynamic_type_cast< SceneEditorProfile* >((*i)->newInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->newInstance());
 		if (!profile)
 			continue;
 
@@ -86,11 +86,6 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		profile->createResourceFactories(context, resourceFactories);
 		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
 			resourceManager->addFactory(*j);
-
-		RefArray< IEntityEditor > profileEntityEditors;
-		profile->createEntityEditors(context, profileEntityEditors);
-		for (RefArray< IEntityEditor >::iterator j = profileEntityEditors.begin(); j != profileEntityEditors.end(); ++j)
-			context->addEntityEditor(*j);
 
 		context->addEditorProfile(profile);
 	}
@@ -123,10 +118,10 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 
 	// Add profile commands.
 	std::vector< const Type* > profileTypes;
-	type_of< SceneEditorProfile >().findAllOf(profileTypes);
+	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
 	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
-		Ref< SceneEditorProfile > profile = dynamic_type_cast< SceneEditorProfile* >((*i)->newInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->newInstance());
 		if (profile)
 			profile->getCommands(outCommands);
 	}
