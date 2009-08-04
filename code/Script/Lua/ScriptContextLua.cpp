@@ -182,7 +182,6 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 			returnValue = toAny(-1);
 		}
 		lua_pop(m_luaState, 1);
-		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	}
 
 	return returnValue;
