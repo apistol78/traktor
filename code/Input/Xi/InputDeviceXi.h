@@ -57,6 +57,7 @@ private:
 	DWORD m_controller;
 	XINPUT_STATE m_state;
 	bool m_connected;
+	uint32_t m_skip;
 };
 
 	}

@@ -8,6 +8,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_skipReadStateNoConnect = 15;
+
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -22,6 +24,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceXi", InputDeviceXi, IInputDevi
 InputDeviceXi::InputDeviceXi(DWORD controller)
 :	m_controller(controller)
 ,	m_connected(false)
+,	m_skip(0)
 {
 	std::memset(&m_state, 0, sizeof(m_state));
 	readState();
@@ -183,7 +186,14 @@ void InputDeviceXi::resetState()
 
 void InputDeviceXi::readState()
 {
-	m_connected = bool(XInputGetState(m_controller, &m_state) == ERROR_SUCCESS);
+	if (!m_skip)
+	{
+		m_connected = bool(XInputGetState(m_controller, &m_state) == ERROR_SUCCESS);
+		if (!m_connected)
+			m_skip = c_skipReadStateNoConnect;
+	}
+	else
+		m_skip--;
 }
 
 bool InputDeviceXi::supportRumble() const
