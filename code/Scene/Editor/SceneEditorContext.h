@@ -63,10 +63,9 @@ class Entity;
 	namespace scene
 	{
 
-class SceneEditorProfile;
+class ISceneEditorProfile;
 class Camera;
 class IModifier;
-class IEntityEditor;
 class EntityAdapter;
 class SceneAsset;
 
@@ -110,7 +109,7 @@ public:
 		physics::PhysicsManager* physicsManager
 	);
 
-	void addEditorProfile(SceneEditorProfile* editorProfile);
+	void addEditorProfile(ISceneEditorProfile* editorProfile);
 	
 	/*! \name State management. */
 	//@{
@@ -164,8 +163,6 @@ public:
 	/*! \name Entity editors. */
 	//@{
 
-	void addEntityEditor(IEntityEditor* entityEditor);
-
 	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
 
 	//@}
@@ -207,9 +204,7 @@ public:
 
 	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
 
-	RefArray< SceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
-
-	RefArray< IEntityEditor >& getEntityEditors() { return m_entityEditors; }
+	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
 	Ref< SceneAsset >& getSceneAsset() { return m_sceneAsset; }
 
@@ -258,7 +253,7 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
-	RefArray< SceneEditorProfile > m_editorProfiles;
+	RefArray< ISceneEditorProfile > m_editorProfiles;
 	Ref< Camera > m_camera;
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
@@ -270,7 +265,6 @@ private:
 	bool m_physicsEnable;
 	float m_timeScale;
 	bool m_referenceMode;
-	RefArray< IEntityEditor > m_entityEditors;
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< EntityAdapter > m_rootEntityAdapter;
 };

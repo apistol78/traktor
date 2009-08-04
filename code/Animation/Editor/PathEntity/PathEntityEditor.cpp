@@ -13,52 +13,30 @@ namespace traktor
 {
 	namespace animation
 	{
-		namespace
-		{
-
-class PathUserData : public Object
-{
-	T_RTTI_CLASS(PathUserData)
-
-public:
-	float m_time;
-
-	PathUserData()
-	:	m_time(0.0f)
-	{
-	}
-};
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathUserData", PathUserData, Object)
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityEditor", PathEntityEditor, scene::DefaultEntityEditor)
 
-TypeSet PathEntityEditor::getEntityTypes() const
+PathEntityEditor::PathEntityEditor()
+:	m_time(0.0f)
 {
-	TypeSet typeSet;
-	typeSet.insert(&type_of< PathEntityData >());
-	return typeSet;
 }
 
 void PathEntityEditor::entitySelected(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	bool selected
-) const
+)
 {
 	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
 	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
 
 	if (selected)
 	{
-		entityAdapter->setUserObject(gc_new< PathUserData >());
+		m_time = 0.0f;
 		entity->setTimeMode(PathEntity::TmManual);
 	}
 	else
 	{
-		entityAdapter->setUserObject(0);
 		entity->setTimeMode(entityData->getTimeMode());
 	}
 }
@@ -69,18 +47,16 @@ void PathEntityEditor::applyModifier(
 	const Matrix44& viewTransform,
 	const Vector2& mouseDelta,
 	int mouseButton
-) const
+)
 {
 	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
 	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
-	Ref< PathUserData > data = entityAdapter->getUserObject< PathUserData >();
-	T_ASSERT (data);
 
 	Ref< scene::IModifier > modifier = context->getModifier();
 	if (modifier)
 	{
 		Path& path = entityData->getPath();
-		Path::Frame* frame = path.getClosestKeyFrame(data->m_time);
+		Path::Frame* frame = path.getClosestKeyFrame(m_time);
 		if (frame)
 		{
 			// Use modifier to adjust closest key frame.
@@ -107,25 +83,22 @@ bool PathEntityEditor::handleCommand(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const ui::Command& command
-) const
+)
 {
 	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(entityAdapter->getEntityData());
 	Ref< PathEntity > entity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
-	Ref< PathUserData > data = entityAdapter->getUserObject< PathUserData >();
-	if (!data)
-		return false;
 
 	if (command == L"Animation.Editor.StepForward")
 	{
-		data->m_time += 0.02f;
+		m_time += 0.02f;
 		if (entity)
-			entity->setTime(data->m_time);
+			entity->setTime(m_time);
 	}
 	else if (command == L"Animation.Editor.StepBack")
 	{
-		data->m_time -= 0.02f;
+		m_time -= 0.02f;
 		if (entity)
-			entity->setTime(data->m_time);
+			entity->setTime(m_time);
 	}
 	else if (command == L"Animation.Editor.GotoPreviousKey")
 		;
@@ -134,8 +107,8 @@ bool PathEntityEditor::handleCommand(
 	else if (command == L"Animation.Editor.InsertKey")
 	{
 		Path& path = entityData->getPath();
-		Path::Frame frame = path.evaluate(data->m_time);
-		path.insert(data->m_time, frame);
+		Path::Frame frame = path.evaluate(m_time);
+		path.insert(m_time, frame);
 		context->buildEntities();
 	}
 	else
@@ -154,7 +127,6 @@ void PathEntityEditor::drawGuide(
 		return;
 
 	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
-	Ref< PathUserData > data = entityAdapter->getUserObject< PathUserData >();
 
 	// Draw entity's path.
 	const Path& path = pathEntity->getPath();
@@ -196,15 +168,12 @@ void PathEntityEditor::drawGuide(
 		}
 
 		// Draw cursor.
-		if (data)
-		{
-			Vector4 cursor = path.evaluate(data->m_time).position;
-			primitiveRenderer->drawSolidAabb(
-				cursor,
-				Vector4(0.2f, 0.2f, 0.2f),
-				Color(255, 255, 255, 200)
-			);
-		}
+		Vector4 cursor = path.evaluate(m_time).position;
+		primitiveRenderer->drawSolidAabb(
+			cursor,
+			Vector4(0.2f, 0.2f, 0.2f),
+			Color(255, 255, 255, 200)
+		);
 	}
 
 	// Draw attached entity's bounding box.

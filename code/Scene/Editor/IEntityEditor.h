@@ -46,12 +46,6 @@ class T_DLLCLASS IEntityEditor : public Object
 	T_RTTI_CLASS(IEntityEditor)
 
 public:
-	/*! \brief Get set of supported entities.
-	 *
-	 * \return Set of supported entity types.
-	 */
-	virtual TypeSet getEntityTypes() const = 0;
-
 	/*! \brief Is entity pick-able?
 	 *
 	 * Return true if entity can be selected
@@ -74,7 +68,17 @@ public:
 		SceneEditorContext* context,
 		EntityAdapter* entityAdapter,
 		bool selected
-	) const = 0;
+	) = 0;
+
+	/*! \brief Begin modifier on entity.
+	 *
+	 * \param context Scene editor context.
+	 * \param entityAdapter Selected entity adapter.
+	 */
+	virtual void beginModifier(
+		SceneEditorContext* context,
+		EntityAdapter* entityAdapter
+	) = 0;
 
 	/*! \brief Apply modifier on entity.
 	 *
@@ -90,7 +94,17 @@ public:
 		const Matrix44& viewTransform,
 		const Vector2& mouseDelta,
 		int mouseButton
-	) const = 0;
+	) = 0;
+
+	/*! \brief Begin modifier on entity.
+	 *
+	 * \param context Scene editor context.
+	 * \param entityAdapter Selected entity adapter.
+	 */
+	virtual void endModifier(
+		SceneEditorContext* context,
+		EntityAdapter* entityAdapter
+	) = 0;
 
 	/*! \brief Handle shortcut.
 	 *
@@ -102,7 +116,7 @@ public:
 		SceneEditorContext* context,
 		EntityAdapter* entityAdapter,
 		const ui::Command& command
-	) const = 0;
+	) = 0;
 
 	/*! \brief Draw guide for entity.
 	 *

@@ -1,6 +1,8 @@
 #include "Terrain/Editor/TerrainEditorProfile.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 #include "Terrain/Editor/OceanEntityEditor.h"
+#include "Terrain/TerrainEntityData.h"
+#include "Terrain/OceanEntityData.h"
 #include "Terrain/HeightfieldFactory.h"
 #include "Terrain/MaterialMaskFactory.h"
 #include "Terrain/EntityFactory.h"
@@ -15,7 +17,15 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::SceneEditorProfile)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::ISceneEditorProfile)
+
+TypeSet TerrainEditorProfile::getEntityDataTypes() const
+{
+	TypeSet typeSet;
+	typeSet.insert(&type_of< TerrainEntityData >());
+	typeSet.insert(&type_of< OceanEntityData >());
+	return typeSet;
+}
 
 void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -24,6 +34,12 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.ToggleFollowGround"));
 	outCommands.push_back(ui::Command(L"Terrain.FlushSurfaceCache"));
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
+}
+
+void TerrainEditorProfile::createToolBarItems(
+	ui::custom::ToolBar* toolBar
+) const
+{
 }
 
 void TerrainEditorProfile::createResourceFactories(
@@ -56,13 +72,16 @@ void TerrainEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< EntityRenderer >());
 }
 
-void TerrainEditorProfile::createEntityEditors(
+scene::IEntityEditor* TerrainEditorProfile::createEntityEditor(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditor >& outEntityEditors
+	const Type& entityDataType
 ) const
 {
-	outEntityEditors.push_back(gc_new< TerrainEntityEditor >());
-	outEntityEditors.push_back(gc_new< OceanEntityEditor >());
+	if (is_type_of< TerrainEntityData >(entityDataType))
+		return gc_new< TerrainEntityEditor >();
+	if (is_type_of< OceanEntityEditor >(entityDataType))
+		return gc_new< OceanEntityEditor >();
+	return 0;
 }
 
 	}

@@ -35,6 +35,16 @@ world::EntityData* EntityAdapter::getEntityData() const
 	return m_instance->getEntityData();
 }
 
+void EntityAdapter::setRealEntityData(world::EntityData* entityData)
+{
+	m_realEntityData = entityData;
+}
+
+world::EntityData* EntityAdapter::getRealEntityData() const
+{
+	return m_realEntityData;
+}
+
 void EntityAdapter::setEntity(world::Entity* entity)
 {
 	m_entity = entity;
@@ -239,26 +249,6 @@ IEntityEditor* EntityAdapter::getEntityEditor() const
 bool EntityAdapter::isSelected() const
 {
 	return m_selected;
-}
-
-void EntityAdapter::setHash(const MD5& hash)
-{
-	m_hash = hash;
-}
-
-const MD5& EntityAdapter::getHash() const
-{
-	return m_hash;
-}
-
-void EntityAdapter::setUserObject(Object* userObject)
-{
-	m_userObject = userObject;
-}
-
-Object* EntityAdapter::getUserObject() const
-{
-	return m_userObject;
 }
 
 AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const

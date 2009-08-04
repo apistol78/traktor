@@ -3,7 +3,7 @@
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
@@ -113,8 +113,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarEmbed >(m_sliderTimeScale, 100));
 
 	// Let profiles create additional toolbar items.
-	const RefArray< SceneEditorProfile >& profiles = context->getEditorProfiles();
-	for (RefArray< SceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
+	const RefArray< ISceneEditorProfile >& profiles = context->getEditorProfiles();
+	for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
 		(*i)->createToolBarItems(m_toolBarActions);
 
 	m_sceneRenderControl = gc_new< SceneRenderControl >();

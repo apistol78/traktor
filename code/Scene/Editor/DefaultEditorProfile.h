@@ -1,7 +1,7 @@
 #ifndef traktor_scene_DefaultEditorProfile_H
 #define traktor_scene_DefaultEditorProfile_H
 
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 
 namespace traktor
 {
@@ -9,11 +9,21 @@ namespace traktor
 	{
 
 /*! \brief Default scene editor profile. */
-class DefaultEditorProfile : public SceneEditorProfile
+class DefaultEditorProfile : public ISceneEditorProfile
 {
 	T_RTTI_CLASS(DefaultEditorProfile)
 
 public:
+	virtual TypeSet getEntityDataTypes() const;
+
+	virtual void getCommands(
+		std::list< ui::Command >& outCommands
+	) const;
+
+	virtual void createToolBarItems(
+		ui::custom::ToolBar* toolBar
+	) const;
+
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
 		RefArray< resource::IResourceFactory >& outResourceFactories
@@ -31,9 +41,9 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;
 
-	virtual void createEntityEditors(
+	virtual IEntityEditor* createEntityEditor(
 		SceneEditorContext* context,
-		RefArray< IEntityEditor >& outEntityEditors
+		const Type& entityDataType
 	) const;
 };
 

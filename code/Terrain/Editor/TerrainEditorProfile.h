@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_TerrainEditorProfile_H
 #define traktor_terrain_TerrainEditorProfile_H
 
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,13 +16,19 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS TerrainEditorProfile : public scene::SceneEditorProfile
+class T_DLLCLASS TerrainEditorProfile : public scene::ISceneEditorProfile
 {
 	T_RTTI_CLASS(TerrainEditorProfile)
 
 public:
+	virtual TypeSet getEntityDataTypes() const;
+
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
+	) const;
+
+	virtual void createToolBarItems(
+		ui::custom::ToolBar* toolBar
 	) const;
 
 	virtual void createResourceFactories(
@@ -42,9 +48,9 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;
 
-	virtual void createEntityEditors(
+	virtual scene::IEntityEditor* createEntityEditor(
 		scene::SceneEditorContext* context,
-		RefArray< scene::IEntityEditor >& outEntityEditors
+		const Type& entityDataType
 	) const;
 };
 

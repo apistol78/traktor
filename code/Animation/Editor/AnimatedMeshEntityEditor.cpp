@@ -16,13 +16,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntityEditor", AnimatedMeshEntityEditor, scene::DefaultEntityEditor)
 
-TypeSet AnimatedMeshEntityEditor::getEntityTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< AnimatedMeshEntityData >());
-	return typeSet;
-}
-
 void AnimatedMeshEntityEditor::drawGuide(
 	scene::SceneEditorContext* context,
 	render::PrimitiveRenderer* primitiveRenderer,

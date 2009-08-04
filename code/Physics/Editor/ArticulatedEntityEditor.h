@@ -21,19 +21,17 @@ class T_DLLCLASS ArticulatedEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS(ArticulatedEntityEditor)
 
 public:
-	virtual TypeSet getEntityTypes() const;
-
 	virtual void entitySelected(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
 		bool selected
-	) const;
+	);
 
 	virtual bool handleCommand(
 		scene::SceneEditorContext* context,
 		scene::EntityAdapter* entityAdapter,
 		const ui::Command& command
-	) const;
+	);
 
 	virtual void drawGuide(
 		scene::SceneEditorContext* context,

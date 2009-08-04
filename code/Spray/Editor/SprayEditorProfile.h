@@ -1,7 +1,7 @@
 #ifndef traktor_spray_SprayEditorProfile_H
 #define traktor_spray_SprayEditorProfile_H
 
-#include "Scene/Editor/SceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,11 +16,21 @@ namespace traktor
 	namespace spray
 	{
 
-class T_DLLCLASS SprayEditorProfile : public scene::SceneEditorProfile
+class T_DLLCLASS SprayEditorProfile : public scene::ISceneEditorProfile
 {
 	T_RTTI_CLASS(SprayEditorProfile)
 
 public:
+	virtual TypeSet getEntityDataTypes() const;
+
+	virtual void getCommands(
+		std::list< ui::Command >& outCommands
+	) const;
+
+	virtual void createToolBarItems(
+		ui::custom::ToolBar* toolBar
+	) const;
+
 	virtual void createResourceFactories(
 		scene::SceneEditorContext* context,
 		RefArray< resource::IResourceFactory >& outResourceFactories
@@ -36,6 +46,11 @@ public:
 		render::IRenderView* renderView,
 		render::PrimitiveRenderer* primitiveRenderer,
 		RefArray< world::IEntityRenderer >& outEntityRenderers
+	) const;
+
+	virtual scene::IEntityEditor* createEntityEditor(
+		scene::SceneEditorContext* context,
+		const Type& entityDataType
 	) const;
 };
 
