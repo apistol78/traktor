@@ -19,7 +19,7 @@ void* Alloc::acquireAlign(size_t size, size_t align)
 #if defined(_WIN32) && !defined(WINCE)
 	return _aligned_malloc(size, align);
 #else
-	return alloc(size);
+	return acquire(size);
 #endif
 }
 
