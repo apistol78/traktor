@@ -2,7 +2,10 @@
 #include "Database/Group.h"
 #include "Database/Provider/IProviderInstance.h"
 #include "Database/Provider/IProviderBus.h"
+#include "Xml/XmlSerializer.h"
+#include "Xml/XmlDeserializer.h"
 #include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/Stream.h"
 #include "Core/Thread/Acquire.h"
 
@@ -160,15 +163,63 @@ Serializable* Instance::getObject()
 	T_ASSERT (m_providerInstance);
 
 	Acquire< Mutex > __lock__(m_lock);
-	return m_providerInstance->getObject();
+	Ref< Serializable > object;
+	const Type* serializerType = 0;
+
+	Ref< Stream > stream = m_providerInstance->readObject(serializerType);
+	if (!stream)
+		return 0;
+
+	T_ASSERT (serializerType);
+
+	Ref< Serializer > serializer;
+	if (serializerType == &type_of< BinarySerializer >())
+		serializer = gc_new< BinarySerializer >(stream);
+	else if (serializerType == &type_of< xml::XmlDeserializer >())
+		serializer = gc_new< xml::XmlDeserializer >(stream);
+	else
+	{
+		stream->close();
+		return 0;
+	}
+
+	object = serializer->readObject();
+
+	stream->close();
+	return object;
 }
 
 bool Instance::setObject(const Serializable* object)
 {
 	T_ASSERT (m_providerInstance);
 
+	if (!object)
+		return false;
+
 	Acquire< Mutex > __lock__(m_lock);
-	return m_providerInstance->setObject(object);
+	const Type* serializerType = 0;
+
+	Ref< Stream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
+	if (!stream)
+		return false;
+
+	T_ASSERT (serializerType);
+
+	Ref< Serializer > serializer;
+	if (serializerType == &type_of< BinarySerializer >())
+		serializer = gc_new< BinarySerializer >(stream);
+	else if (serializerType == &type_of< xml::XmlSerializer >())
+		serializer = gc_new< xml::XmlSerializer >(stream);
+	else
+	{
+		stream->close();
+		return false;
+	}
+
+	bool result = serializer->writeObject(object);
+
+	stream->close();
+	return result;
 }
 
 uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const

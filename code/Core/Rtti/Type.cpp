@@ -36,6 +36,7 @@ void __registerType(const Type* type)
 		if (res > 0)
 			break;
 
+		T_ASSERT_M (res, L"Type already defined");
 		index++;
 	}
 

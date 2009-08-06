@@ -103,7 +103,7 @@ bool CompactInstance::remove()
 	return true;
 }
 
-Serializable* CompactInstance::getObject()
+Stream* CompactInstance::readObject(const Type*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -118,13 +118,11 @@ Serializable* CompactInstance::getObject()
 	if (!objectStream)
 		return 0;
 
-	Ref< Serializable > object = BinarySerializer(objectStream).readObject();
-
-	objectStream->close();
-	return object;
+	outSerializerType = &type_of< BinarySerializer >();
+	return objectStream;
 }
 
-bool CompactInstance::setObject(const Serializable* object)
+Stream* CompactInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -144,16 +142,12 @@ bool CompactInstance::setObject(const Serializable* object)
 
 	Ref< Stream > objectStream = blockFile->writeBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
-		return false;
+		return 0;
 
-	bool result = BinarySerializer(objectStream).writeObject(object);
+	m_instanceEntry->setPrimaryTypeName(primaryTypeName);
 
-	objectStream->close();
-
-	if (result)
-		m_instanceEntry->setPrimaryTypeName(type_name(object));
-
-	return result;
+	outSerializerType = &type_of< BinarySerializer >();
+	return objectStream;
 }
 
 uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames) const

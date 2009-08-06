@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-class Serializable;
+class DynamicMemoryStream;
 
 	namespace db
 	{
@@ -21,7 +21,7 @@ class ActionWriteObject : public Action
 	T_RTTI_CLASS(Action)
 
 public:
-	ActionWriteObject(const Path& instancePath, const Serializable* object);
+	ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName, DynamicMemoryStream* stream);
 
 	virtual bool execute(Context* context);
 
@@ -31,7 +31,8 @@ public:
 
 private:
 	Path m_instancePath;
-	Ref< const Serializable > m_object;
+	std::wstring m_primaryTypeName;
+	Ref< DynamicMemoryStream > m_objectStream;
 	bool m_oldObjectRenamed;
 	bool m_oldMetaRenamed;
 };

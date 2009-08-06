@@ -2,6 +2,7 @@
 #include "Editor/Settings.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Compact/CompactDatabase.h"
+#include "Database/Remote/Client/RemoteDatabase.h"
 #include "Database/Database.h"
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
@@ -40,6 +41,14 @@ db::Database* openDatabase(const std::wstring& databaseName, bool create)
 		}
 
 		providerDatabase = compactDatabase;
+	}
+	else
+	{
+		Ref< db::RemoteDatabase > remoteDatabase = gc_new< db::RemoteDatabase >();
+		if (!remoteDatabase->open(databaseName))
+			return 0;
+
+		providerDatabase = remoteDatabase;
 	}
 
 	T_ASSERT (providerDatabase);

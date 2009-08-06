@@ -14,6 +14,14 @@ DynamicMemoryStream::DynamicMemoryStream(std::vector< uint8_t >& buffer, bool re
 {
 }
 
+DynamicMemoryStream::DynamicMemoryStream(bool readAllowed, bool writeAllowed)
+:	m_buffer(m_internal)
+,	m_bufferIter(m_internal.begin())
+,	m_readAllowed(readAllowed)
+,	m_writeAllowed(writeAllowed)
+{
+}
+
 void DynamicMemoryStream::close()
 {
 	m_readAllowed =
@@ -85,6 +93,11 @@ int DynamicMemoryStream::write(const void* block, int nbytes)
 
 void DynamicMemoryStream::flush()
 {
+}
+
+const std::vector< uint8_t >& DynamicMemoryStream::getBuffer() const
+{
+	return m_buffer;
 }
 
 }

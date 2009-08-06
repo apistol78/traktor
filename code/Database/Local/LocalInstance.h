@@ -46,9 +46,9 @@ public:
 
 	virtual bool remove();
 
-	virtual Serializable* getObject();
+	virtual Stream* readObject(const Type*& outSerializerType);
 
-	virtual bool setObject(const Serializable* object);
+	virtual Stream* writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 

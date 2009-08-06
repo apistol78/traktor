@@ -9,7 +9,11 @@
 #include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/ActionWriteData.h"
 #include "Database/Local/PhysicalAccess.h"
+#include "Xml/XmlSerializer.h"
+#include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Serialization/BinarySerializer.h"
 
 namespace traktor
 {
@@ -133,23 +137,50 @@ bool LocalInstance::remove()
 	return true;
 }
 
-Serializable* LocalInstance::getObject()
+Stream* LocalInstance::readObject(const Type*& outSerializerType)
 {
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-	return readPhysicalObject(instanceObjectPath);
+
+	Ref< Stream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
+	if (!objectStream)
+		return 0;
+
+	uint8_t head[5];
+	if (objectStream->read(head, sizeof(head)) != sizeof(head))
+	{
+		objectStream->close();
+		return 0;
+	}
+
+	objectStream->seek(Stream::SeekSet, 0);
+
+	if (std::memcmp(head, "<?xml", sizeof(head)) == 0)
+		outSerializerType = &type_of< xml::XmlDeserializer >();
+	else
+		outSerializerType = &type_of< BinarySerializer >();
+
+	return objectStream;
 }
 
-bool LocalInstance::setObject(const Serializable* object)
+Stream* LocalInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
 {
 	if (!m_transaction)
 		return false;
 
+	Ref< DynamicMemoryStream > stream = gc_new< DynamicMemoryStream >(false, true);
+
+	if (!m_context->preferBinary())
+		outSerializerType = &type_of< xml::XmlSerializer >();
+	else
+		outSerializerType = &type_of< BinarySerializer >();
+
 	m_transaction->add(gc_new< ActionWriteObject >(
 		cref(m_instancePath),
-		object
+		primaryTypeName,
+		stream
 	));
 
-	return true;
+	return stream;
 }
 
 uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
