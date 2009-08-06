@@ -25,6 +25,8 @@ class T_DLLCLASS DynamicMemoryStream : public Stream
 public:
 	DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true);
 
+	DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true);
+
 	virtual void close();
 
 	virtual bool canRead() const;
@@ -45,7 +47,10 @@ public:
 
 	virtual void flush();
 
+	const std::vector< uint8_t >& getBuffer() const;
+
 private:
+	std::vector< uint8_t > m_internal;
 	std::vector< uint8_t >& m_buffer;
 	std::vector< uint8_t >::iterator m_bufferIter;
 	bool m_readAllowed;

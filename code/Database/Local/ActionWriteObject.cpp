@@ -2,6 +2,7 @@
 #include "Database/Local/Context.h"
 #include "Database/Local/PhysicalAccess.h"
 #include "Database/Local/LocalInstanceMeta.h"
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 
 namespace traktor
@@ -11,9 +12,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionWriteObject", ActionWriteObject, Action)
 
-ActionWriteObject::ActionWriteObject(const Path& instancePath, const Serializable* object)
+ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName, DynamicMemoryStream* objectStream)
 :	m_instancePath(instancePath)
-,	m_object(object)
+,	m_primaryTypeName(primaryTypeName)
+,	m_objectStream(objectStream)
 ,	m_oldObjectRenamed(false)
 ,	m_oldMetaRenamed(false)
 {
@@ -39,12 +41,21 @@ bool ActionWriteObject::execute(Context* context)
 	if (!instanceMeta)
 		return false;
 
-	if (!writePhysicalObject(instanceObjectPath, m_object, context->preferBinary()))
+	Ref< Stream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
+	if (!objectStream)
 		return false;
 
-	// Write meta data if primary type has changed.
-	std::wstring primaryTypeName = type_name(m_object);
-	if (instanceMeta->getPrimaryType() != primaryTypeName)
+	const std::vector< uint8_t >& objectBuffer = m_objectStream->getBuffer();
+	if (objectStream->write(&objectBuffer[0], objectBuffer.size()) != objectBuffer.size())
+	{
+		objectStream->close();
+		return false;
+	}
+
+	objectStream->close();
+
+	// Update meta data if primary type has changed.
+	if (instanceMeta->getPrimaryType() != m_primaryTypeName)
 	{
 		m_oldMetaRenamed = FileSystem::getInstance().move(
 			instanceMetaPath.getPathName() + L"~",
@@ -54,7 +65,7 @@ bool ActionWriteObject::execute(Context* context)
 		if (!m_oldMetaRenamed)
 			return false;
 
-		instanceMeta->setPrimaryType(type_name(m_object));
+		instanceMeta->setPrimaryType(m_primaryTypeName);
 
 		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
 			return false;

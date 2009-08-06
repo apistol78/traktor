@@ -49,8 +49,6 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
-#include "Database/Local/LocalDatabase.h"
-#include "Database/Compact/CompactDatabase.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"

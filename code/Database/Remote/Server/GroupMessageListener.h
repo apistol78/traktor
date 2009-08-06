@@ -1,0 +1,44 @@
+#ifndef traktor_db_GroupMessageListener_H
+#define traktor_db_GroupMessageListener_H
+
+#include "Core/Heap/Ref.h"
+#include "Database/Remote/Server/IMessageListenerImpl.h"
+
+namespace traktor
+{
+	namespace db
+	{
+
+class Connection;
+
+/*! \brief
+ */
+class GroupMessageListener : public IMessageListenerImpl< GroupMessageListener >
+{
+	T_RTTI_CLASS(GroupMessageListener)
+
+public:
+	GroupMessageListener(Connection* connection);
+
+private:
+	Ref< Connection > m_connection;
+
+	bool messageGetGroupName(const class DbmGetGroupName* message);
+
+	bool messageRenameGroup(const class DbmRenameGroup* message);
+
+	bool messageRemoveGroup(const class DbmRemoveGroup* message);
+
+	bool messageCreateGroup(const class DbmCreateGroup* message);
+
+	bool messageCreateInstance(const class DbmCreateInstance* message);
+
+	bool messageGetChildGroups(const class DbmGetChildGroups* message);
+
+	bool messageGetChildInstances(const class DbmGetChildInstances* message);
+};
+
+	}
+}
+
+#endif	// traktor_db_GroupMessageListener_H
