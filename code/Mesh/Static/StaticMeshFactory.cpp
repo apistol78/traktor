@@ -72,7 +72,11 @@ Object* StaticMeshFactory::create(resource::IResourceManager* resourceManager, c
 	dataStream->close();
 
 	const std::vector< StaticMeshResource::Part >& parts = resource->getParts();
-	T_ASSERT (parts.size() == mesh->getParts().size());
+	if (parts.size() != mesh->getParts().size())
+	{
+		log::error << L"Static mesh factory failed; parts mismatch" << Endl;
+		return 0;
+	}
 
 	Ref< StaticMesh > staticMesh = gc_new< StaticMesh >();
 	staticMesh->m_mesh = mesh;

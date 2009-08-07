@@ -166,7 +166,11 @@ Object* InstanceMeshFactory::create(resource::IResourceManager* resourceManager,
 	renderMesh->setBoundingBox(singleInstanceMesh->getBoundingBox());
 
 	const std::vector< InstanceMeshResource::Part >& parts = meshResource->getParts();
-	T_ASSERT (parts.size() == renderMesh->getParts().size());
+	if (parts.size() != renderMesh->getParts().size())
+	{
+		log::error << L"Instance mesh factory failed; parts mismatch" << Endl;
+		return 0;
+	}
 
 	Ref< InstanceMesh > instanceMesh = gc_new< InstanceMesh >();
 	instanceMesh->m_mesh = renderMesh;

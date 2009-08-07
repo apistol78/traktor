@@ -70,7 +70,11 @@ Object* SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, 
 	dataStream->close();
 
 	const std::vector< SkinnedMeshResource::Part >& parts = resource->getParts();
-	T_ASSERT (parts.size() == mesh->getParts().size());
+	if (parts.size() != mesh->getParts().size())
+	{
+		log::error << L"Skinned mesh factory failed; parts mismatch" << Endl;
+		return 0;
+	}
 
 	Ref< SkinnedMesh > skinnedMesh = gc_new< SkinnedMesh >();
 	skinnedMesh->m_mesh = mesh;
