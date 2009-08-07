@@ -316,8 +316,6 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	outputInstance->setObject(resource);
-
 	// Open asset data stream.
 	Ref< Stream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
@@ -341,6 +339,9 @@ bool MeshPipeline::buildOutput(
 	}
 
 	stream->close();
+
+	// Commit resource.
+	outputInstance->setObject(resource);
 	outputInstance->commit();
 
 	return true;

@@ -218,6 +218,7 @@ bool Instance::setObject(const Serializable* object)
 
 	bool result = serializer->writeObject(object);
 
+	stream->flush();
 	stream->close();
 	return result;
 }

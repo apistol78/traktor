@@ -98,7 +98,7 @@ std::wstring getDataTypeName(DataType dataType)
 uint32_t getDataElementCount(DataType dataType)
 {
 	const uint32_t c_elementCounts[] = { 1, 2, 3, 4, 4, 4, 2, 4, 2, 4, 2, 4 };
-	T_ASSERT (int(c_elementCounts) < sizeof_array(c_elementCounts));
+	T_ASSERT (int(dataType) < sizeof_array(c_elementCounts));
 	return c_elementCounts[int(dataType)];
 }
 
