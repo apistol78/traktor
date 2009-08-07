@@ -93,6 +93,9 @@ Entity* EntityBuilder::build(const EntityInstance* instance)
 	if (!entity)
 		return 0;
 
+	// Save to instances cache.
+	m_instances.insert(std::make_pair(instance, entity));
+
 	// Resolve references to this entity instance.
 	const RefArray< EntityInstance >& references = instance->getReferences();
 	for (RefArray< EntityInstance >::const_iterator i = references.begin(); i != references.end(); ++i)
@@ -107,8 +110,6 @@ Entity* EntityBuilder::build(const EntityInstance* instance)
 			log::warning << L"Unable to get reference instance" << Endl;
 	}
 
-	// Save to instances cache.
-	m_instances.insert(std::make_pair(instance, entity));
 	return entity;
 }
 
