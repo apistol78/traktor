@@ -1,6 +1,8 @@
 #include "World/Entity/GroupEntityFactory.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/GroupEntity.h"
+#include "World/Entity/SpatialGroupEntityData.h"
+#include "World/Entity/SpatialGroupEntity.h"
 #include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
@@ -14,6 +16,7 @@ const TypeSet GroupEntityFactory::getEntityTypes() const
 {
 	TypeSet typeSet;
 	typeSet.insert(&type_of< GroupEntityData >());
+	typeSet.insert(&type_of< SpatialGroupEntityData >());
 	return typeSet;
 }
 
@@ -30,6 +33,18 @@ Entity* GroupEntityFactory::createEntity(IEntityBuilder* builder, const std::wst
 				groupEntity->m_entities.push_back(childEntity);
 		}
 		return groupEntity;
+	}
+	else if (const SpatialGroupEntityData* spatialGroupData = dynamic_type_cast< const SpatialGroupEntityData* >(&entityData))
+	{
+		const RefArray< EntityInstance >& instances = spatialGroupData->getInstances();
+		Ref< SpatialGroupEntity > spatialGroupEntity = gc_new< SpatialGroupEntity >(cref(spatialGroupData->getTransform()));
+		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+		{
+			Ref< SpatialEntity > childEntity = dynamic_type_cast< SpatialEntity* >(builder->build(*i));
+			if (childEntity)
+				spatialGroupEntity->m_entities.push_back(childEntity);
+		}
+		return spatialGroupEntity;
 	}
 	else
 		return 0;

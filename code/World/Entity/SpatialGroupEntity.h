@@ -34,6 +34,8 @@ public:
 	void addEntity(SpatialEntity* entity);
 	
 	void removeEntity(SpatialEntity* entity);
+
+	void removeAllEntities();
 	
 	const RefArray< SpatialEntity >& getEntities() const;
 	
@@ -64,7 +66,6 @@ public:
 private:
 	friend class GroupEntityFactory;
 
-	std::wstring m_name;
 	Matrix44 m_transform;
 	RefArray< SpatialEntity > m_entities;
 	bool m_update;

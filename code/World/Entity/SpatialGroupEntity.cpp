@@ -53,6 +53,12 @@ void SpatialGroupEntity::removeEntity(SpatialEntity* entity)
 		m_entities.erase(i);
 	}
 }
+
+void SpatialGroupEntity::removeAllEntities()
+{
+	T_ASSERT_M (!m_update, L"Cannot remove all entities while in update; not implemented");
+	m_entities.resize(0);
+}
 	
 const RefArray< SpatialEntity >& SpatialGroupEntity::getEntities() const
 {

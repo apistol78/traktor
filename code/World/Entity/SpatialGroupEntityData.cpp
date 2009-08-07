@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "World/Entity/SpatialGroupEntityData.h"
+#include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -10,35 +11,44 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.SpatialGroupEntityData", SpatialGroupEntityData, SpatialEntityData)
 
-void SpatialGroupEntityData::addEntityData(SpatialEntityData* entityData)
+void SpatialGroupEntityData::addInstance(EntityInstance* instance)
 {
-	m_entityData.push_back(entityData);
+	m_instances.push_back(instance);
 }
 
-void SpatialGroupEntityData::removeEntityData(SpatialEntityData* entityData)
+void SpatialGroupEntityData::removeInstance(EntityInstance* instance)
 {
-	RefArray< SpatialEntityData >::iterator i = std::find(m_entityData.begin(), m_entityData.end(), entityData);
-	if (i != m_entityData.end())
-		m_entityData.erase(i);
+	RefArray< EntityInstance >::iterator i = std::find(m_instances.begin(), m_instances.end(), instance);
+	if (i != m_instances.end())
+		m_instances.erase(i);
 }
 
-RefArray< SpatialEntityData >& SpatialGroupEntityData::getEntityData()
+void SpatialGroupEntityData::removeAllInstances()
 {
-	return m_entityData;
+	m_instances.resize(0);
 }
 
-const RefArray< SpatialEntityData >& SpatialGroupEntityData::getEntityData() const
+RefArray< EntityInstance >& SpatialGroupEntityData::getInstances()
 {
-	return m_entityData;
+	return m_instances;
+}
+
+const RefArray< EntityInstance >& SpatialGroupEntityData::getInstances() const
+{
+	return m_instances;
 }
 
 void SpatialGroupEntityData::setTransform(const Matrix44& transform)
 {
 	Matrix44 deltaTransform = getTransform().inverseOrtho() * transform;
-	for (RefArray< SpatialEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	for (RefArray< EntityInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
-		Matrix44 currentTransform = (*i)->getTransform();
-		(*i)->setTransform(currentTransform * deltaTransform);
+		SpatialEntityData* entityData = dynamic_type_cast< SpatialEntityData* >((*i)->getEntityData());
+		if (entityData)
+		{
+			Matrix44 currentTransform = entityData->getTransform();
+			entityData->setTransform(currentTransform * deltaTransform);
+		}
 	}
 	SpatialEntityData::setTransform(transform);
 }
@@ -48,7 +58,8 @@ bool SpatialGroupEntityData::serialize(Serializer& s)
 	if (!SpatialEntityData::serialize(s))
 		return false;
 
-	return s >> MemberRefArray< SpatialEntityData >(L"entityData", m_entityData);
+	s >> MemberRefArray< EntityInstance >(L"instances", m_instances);
+	return true;
 }
 	
 	}
