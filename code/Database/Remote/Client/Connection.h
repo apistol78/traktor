@@ -3,6 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 
 namespace traktor
@@ -40,6 +41,7 @@ public:
 private:
 	Ref< net::TcpSocket > m_socket;
 	Ref< MessageTransport > m_messageTransport;
+	Semaphore m_messageLock;
 
 	IMessage* sendMessage(const IMessage& message);
 };

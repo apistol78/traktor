@@ -25,7 +25,7 @@ class Serializable;
 	{
 
 class IProviderDatabase;
-
+class IProviderBus;
 class Group;
 class Instance;
 
@@ -113,6 +113,7 @@ public:
 
 private:
 	Ref< IProviderDatabase > m_providerDatabase;
+	Ref< IProviderBus > m_providerBus;
 	Ref< Group > m_rootGroup;
 	Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;

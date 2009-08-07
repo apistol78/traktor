@@ -1,6 +1,7 @@
 #include "Database/Remote/Client/Connection.h"
 #include "Database/Remote/MessageTransport.h"
 #include "Net/TcpSocket.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -29,6 +30,9 @@ void Connection::destroy()
 
 IMessage* Connection::sendMessage(const IMessage& message)
 {
+	Acquire< Semaphore > scopeLock(m_messageLock);
+	Ref< IMessage > reply;
+
 	if (!m_messageTransport)
 		return 0;
 
@@ -36,10 +40,13 @@ IMessage* Connection::sendMessage(const IMessage& message)
 		return 0;
 
 #if !defined(_DEBUG)
-	Ref< IMessage > reply = m_messageTransport->receive(10000);
+	if (!m_messageTransport->receive(10000, reply))
+		return false;
 #else
-	Ref< IMessage > reply = m_messageTransport->receive(10000000);
+	if (!m_messageTransport->receive(10000000, reply))
+		return false;
 #endif
+
 	return reply;
 }
 

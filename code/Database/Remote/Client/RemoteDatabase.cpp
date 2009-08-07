@@ -1,8 +1,10 @@
 #include "Database/Remote/Client/RemoteDatabase.h"
+#include "Database/Remote/Client/RemoteBus.h"
 #include "Database/Remote/Client/RemoteGroup.h"
 #include "Database/Remote/Client/Connection.h"
 #include "Database/Remote/Messages/DbmOpen.h"
 #include "Database/Remote/Messages/DbmClose.h"
+#include "Database/Remote/Messages/DbmGetBus.h"
 #include "Database/Remote/Messages/DbmGetRootGroup.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
@@ -80,7 +82,8 @@ IProviderBus* RemoteDatabase::getBus()
 	if (!m_connection)
 		return 0;
 
-	return 0;
+	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetBus());
+	return result ? gc_new< RemoteBus >(m_connection, result->get()) : 0;
 }
 
 IProviderGroup* RemoteDatabase::getRootGroup()

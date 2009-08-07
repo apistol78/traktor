@@ -1,0 +1,42 @@
+#include "Database/Remote/Messages/MsgStringArrayResult.h"
+#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/MemberStl.h"
+
+namespace traktor
+{
+	namespace db
+	{
+
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.MsgStringArrayResult", MsgStringArrayResult, IMessage)
+
+MsgStringArrayResult::MsgStringArrayResult()
+{
+}
+
+MsgStringArrayResult::MsgStringArrayResult(const std::vector< std::wstring >& values)
+:	m_values(values)
+{
+}
+
+void MsgStringArrayResult::add(const std::wstring& value)
+{
+	m_values.push_back(value);
+}
+
+uint32_t MsgStringArrayResult::count()
+{
+	return uint32_t(m_values.size());
+}
+
+const std::wstring& MsgStringArrayResult::get(uint32_t index) const
+{
+	return m_values[index];
+}
+
+bool MsgStringArrayResult::serialize(Serializer& s)
+{
+	return s >> MemberStlVector< std::wstring >(L"handles", m_values);
+}
+
+	}
+}

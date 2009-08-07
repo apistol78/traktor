@@ -29,6 +29,8 @@ private:
 
 	bool messageClose(const class DbmClose* message);
 
+	bool messageGetBus(const class DbmGetBus* message);
+
 	bool messageGetRootGroup(const class DbmGetRootGroup* message);
 };
 

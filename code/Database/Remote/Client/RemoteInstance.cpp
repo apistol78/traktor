@@ -12,7 +12,11 @@
 #include "Database/Remote/Messages/DbmRemoveInstance.h"
 #include "Database/Remote/Messages/DbmReadObject.h"
 #include "Database/Remote/Messages/DbmWriteObject.h"
+#include "Database/Remote/Messages/DbmGetDataNames.h"
+#include "Database/Remote/Messages/DbmReadData.h"
+#include "Database/Remote/Messages/DbmWriteData.h"
 #include "Database/Remote/Messages/MsgStringResult.h"
+#include "Database/Remote/Messages/MsgStringArrayResult.h"
 #include "Database/Remote/Messages/MsgGuidResult.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
@@ -113,17 +117,30 @@ Stream* RemoteInstance::writeObject(const std::wstring& primaryTypeName, const T
 
 uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
 {
-	return 0;
+	Ref< MsgStringArrayResult > result = m_connection->sendMessage< MsgStringArrayResult >(DbmGetDataNames(m_handle));
+	if (!result)
+		return 0;
+
+	outDataNames = result->get();
+	return uint32_t(outDataNames.size());
 }
 
 Stream* RemoteInstance::readData(const std::wstring& dataName)
 {
-	return 0;
+	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
+	if (!result)
+		return 0;
+
+	return gc_new< RemoteStream >(m_connection, result->get());
 }
 
 Stream* RemoteInstance::writeData(const std::wstring& dataName)
 {
-	return 0;
+	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
+	if (!result)
+		return 0;
+
+	return gc_new< RemoteStream >(m_connection, result->get());
 }
 
 	}
