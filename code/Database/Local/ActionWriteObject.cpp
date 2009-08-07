@@ -41,18 +41,18 @@ bool ActionWriteObject::execute(Context* context)
 	if (!instanceMeta)
 		return false;
 
-	Ref< Stream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
-	if (!objectStream)
+	Ref< Stream > instanceStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
+	if (!instanceStream)
 		return false;
 
 	const std::vector< uint8_t >& objectBuffer = m_objectStream->getBuffer();
-	if (objectStream->write(&objectBuffer[0], objectBuffer.size()) != objectBuffer.size())
+	if (instanceStream->write(&objectBuffer[0], objectBuffer.size()) != objectBuffer.size())
 	{
-		objectStream->close();
+		instanceStream->close();
 		return false;
 	}
 
-	objectStream->close();
+	instanceStream->close();
 
 	// Update meta data if primary type has changed.
 	if (instanceMeta->getPrimaryType() != m_primaryTypeName)
