@@ -574,18 +574,17 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 
 		for (int x = -20; x <= 20; ++x)
 		{
-			float width = (x == 0) ? 2.0f : 0.0f;
 			float fx = float(x);
 			m_primitiveRenderer->drawLine(
 				Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 				Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-				width,
+				(int(fx + vx) == 0) ? 2.0f : 0.0f,
 				gridColor
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
 				Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-				width,
+				(int(fx + vz) == 0) ? 2.0f : 0.0f,
 				gridColor
 			);
 		}

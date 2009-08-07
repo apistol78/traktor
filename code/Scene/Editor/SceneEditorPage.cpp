@@ -377,9 +377,9 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			entityClipboardData->addInstance((*i)->getInstance());
 			if (command == L"Editor.Cut")
 			{
-				Ref< EntityAdapter > parentGroupAdapter = (*i)->getParentContainerGroup();
-				if (parentGroupAdapter)
-					parentGroupAdapter->removeChild((*i), true);
+				Ref< EntityAdapter > parentGroup = (*i)->getParent();
+				if (parentGroup->isGroup())
+					parentGroup->removeChild((*i), true);
 			}
 		}
 
@@ -429,16 +429,23 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		m_undoStack->push(m_dataObject);
 
+		bool anyRemoved = false;
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
-			Ref< EntityAdapter > parentGroupAdapter = (*i)->getParentContainerGroup();
-			if (parentGroupAdapter)
-				parentGroupAdapter->removeChild((*i), true);
+			Ref< EntityAdapter > parentGroup = (*i)->getParent();
+			if (parentGroup->isGroup())
+			{
+				parentGroup->removeChild(*i, true);
+				anyRemoved = true;
+			}
 		}
 
-		updateScene();
-		updateInstanceGrid();
-		updatePropertyObject();
+		if (anyRemoved)
+		{
+			updateScene();
+			updateInstanceGrid();
+			updatePropertyObject();
+		}
 	}
 	else if (command == L"Editor.SelectAll")
 	{
