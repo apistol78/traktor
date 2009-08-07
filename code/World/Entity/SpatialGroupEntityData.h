@@ -17,6 +17,8 @@ namespace traktor
 	namespace world
 	{
 
+class EntityInstance;
+
 /*! \brief Spatial group entity data.
  * \ingroup World
  */
@@ -25,20 +27,22 @@ class T_DLLCLASS SpatialGroupEntityData : public SpatialEntityData
 	T_RTTI_CLASS(SpatialGroupEntityData)
 
 public:
-	void addEntityData(SpatialEntityData* entityData);
+	void addInstance(EntityInstance* instance);
 
-	void removeEntityData(SpatialEntityData* entityData);
+	void removeInstance(EntityInstance* instance);
 
-	RefArray< SpatialEntityData >& getEntityData();
+	void removeAllInstances();
 
-	const RefArray< SpatialEntityData >& getEntityData() const;
+	RefArray< EntityInstance >& getInstances();
+
+	const RefArray< EntityInstance >& getInstances() const;
 
 	virtual void setTransform(const Matrix44& transform);
 	
 	virtual bool serialize(Serializer& s);
 	
 private:
-	RefArray< SpatialEntityData > m_entityData;
+	RefArray< EntityInstance > m_instances;
 };
 	
 	}
