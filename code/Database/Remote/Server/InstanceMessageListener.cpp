@@ -11,8 +11,12 @@
 #include "Database/Remote/Messages/DbmRemoveInstance.h"
 #include "Database/Remote/Messages/DbmReadObject.h"
 #include "Database/Remote/Messages/DbmWriteObject.h"
+#include "Database/Remote/Messages/DbmGetDataNames.h"
+#include "Database/Remote/Messages/DbmReadData.h"
+#include "Database/Remote/Messages/DbmWriteData.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgStringResult.h"
+#include "Database/Remote/Messages/MsgStringArrayResult.h"
 #include "Database/Remote/Messages/MsgGuidResult.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
@@ -41,6 +45,9 @@ InstanceMessageListener::InstanceMessageListener(Connection* connection)
 	registerMessage< DbmRemoveInstance >(&InstanceMessageListener::messageRemoveInstance);
 	registerMessage< DbmReadObject >(&InstanceMessageListener::messageReadObject);
 	registerMessage< DbmWriteObject >(&InstanceMessageListener::messageWriteObject);
+	registerMessage< DbmGetDataNames >(&InstanceMessageListener::messageGetDataNames);
+	registerMessage< DbmReadData >(&InstanceMessageListener::messageReadData);
+	registerMessage< DbmWriteData >(&InstanceMessageListener::messageWriteData);
 }
 
 bool InstanceMessageListener::messageGetInstancePrimaryType(const DbmGetInstancePrimaryType* message)
@@ -219,6 +226,67 @@ bool InstanceMessageListener::messageWriteObject(const DbmWriteObject* message)
 
 	uint32_t objectStreamHandle = m_connection->putObject(objectStream);
 	m_connection->sendReply(DbmWriteObjectResult(objectStreamHandle, serializerType->getName()));
+	return true;
+}
+
+bool InstanceMessageListener::messageGetDataNames(const DbmGetDataNames* message)
+{
+	uint32_t instanceHandle = message->getHandle();
+	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
+	if (!instance)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	std::vector< std::wstring > dataNames;
+	instance->getDataNames(dataNames);
+
+	m_connection->sendReply(MsgStringArrayResult(dataNames));
+	return true;
+}
+
+bool InstanceMessageListener::messageReadData(const DbmReadData* message)
+{
+	uint32_t instanceHandle = message->getHandle();
+	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
+	if (!instance)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	Ref< Stream > dataStream = instance->readData(message->getName());
+	if (!dataStream)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	uint32_t dataStreamHandle = m_connection->putObject(dataStream);
+	m_connection->sendReply(MsgHandleResult(dataStreamHandle));
+	return true;
+}
+
+bool InstanceMessageListener::messageWriteData(const DbmWriteData* message)
+{
+	uint32_t instanceHandle = message->getHandle();
+	Ref< IProviderInstance > instance = m_connection->getObject< IProviderInstance >(instanceHandle);
+	if (!instance)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	Ref< Stream > dataStream = instance->writeData(message->getName());
+	if (!dataStream)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	uint32_t dataStreamHandle = m_connection->putObject(dataStream);
+	m_connection->sendReply(MsgHandleResult(dataStreamHandle));
 	return true;
 }
 

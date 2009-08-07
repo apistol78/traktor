@@ -1,4 +1,5 @@
 #include "Database/Remote/Server/Connection.h"
+#include "Database/Remote/Server/BusMessageListener.h"
 #include "Database/Remote/Server/DatabaseMessageListener.h"
 #include "Database/Remote/Server/GroupMessageListener.h"
 #include "Database/Remote/Server/InstanceMessageListener.h"
@@ -24,11 +25,11 @@ Connection::Connection(const Configuration* configuration, net::TcpSocket* clien
 {
 	m_messageTransport = gc_new< MessageTransport >(clientSocket);
 
+	m_messageListeners.push_back(gc_new< BusMessageListener >(this));
 	m_messageListeners.push_back(gc_new< DatabaseMessageListener >(m_configuration, this));
 	m_messageListeners.push_back(gc_new< GroupMessageListener >(this));
 	m_messageListeners.push_back(gc_new< InstanceMessageListener >(this));
 	m_messageListeners.push_back(gc_new< StreamMessageListener >(this));
-	//m_messageListeners.push_back(gc_new< BusMessageListener >());
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &Connection::messageThread), L"Message thread");
 	T_ASSERT (m_thread);
@@ -59,7 +60,13 @@ void Connection::destroy()
 
 bool Connection::alive() const
 {
-	return bool(m_clientSocket != 0);
+	if (!m_thread)
+		return false;
+
+	if (m_thread->wait(0))
+		return false;
+
+	return true;
 }
 
 void Connection::sendReply(const IMessage& message)
@@ -103,7 +110,13 @@ void Connection::messageThread()
 {
 	while (!m_thread->stopped())
 	{
-		Ref< IMessage > message = m_messageTransport->receive(100);
+		Ref< IMessage > message;
+		if (!m_messageTransport->receive(100, message))
+		{
+			log::info << L"Transport disconnected; connection terminated" << Endl;
+			break;
+		}
+
 		if (!message)
 			continue;
 

@@ -3,11 +3,13 @@
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Messages/DbmOpen.h"
 #include "Database/Remote/Messages/DbmClose.h"
+#include "Database/Remote/Messages/DbmGetBus.h"
 #include "Database/Remote/Messages/DbmGetRootGroup.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Compact/CompactDatabase.h"
+#include "Database/Provider/IProviderBus.h"
 #include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/String.h"
@@ -25,6 +27,7 @@ DatabaseMessageListener::DatabaseMessageListener(const Configuration* configurat
 {
 	registerMessage< DbmOpen >(&DatabaseMessageListener::messageOpen);
 	registerMessage< DbmClose >(&DatabaseMessageListener::messageClose);
+	registerMessage< DbmGetBus >(&DatabaseMessageListener::messageGetBus);
 	registerMessage< DbmGetRootGroup >(&DatabaseMessageListener::messageGetRootGroup);
 }
 
@@ -85,6 +88,26 @@ bool DatabaseMessageListener::messageClose(const DbmClose* message)
 	m_connection->setDatabase(0);
 
 	m_connection->sendReply(MsgStatus(StSuccess));
+	return true;
+}
+
+bool DatabaseMessageListener::messageGetBus(const DbmGetBus* message)
+{
+	if (!m_connection->getDatabase())
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	Ref< IProviderBus > bus = m_connection->getDatabase()->getBus();
+	if (!bus)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	uint32_t busHandle = m_connection->putObject(bus);
+	m_connection->sendReply(MsgHandleResult(busHandle));
 	return true;
 }
 

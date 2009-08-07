@@ -30,12 +30,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
 bool Database::create(IProviderDatabase* providerDatabase)
 {
+	T_ASSERT (providerDatabase);
 	T_ASSERT (!m_providerDatabase);
+
 	m_providerDatabase = providerDatabase;
+	m_providerBus = m_providerDatabase->getBus();
 
-	Ref< IProviderBus > bus = m_providerDatabase->getBus();
-
-	m_rootGroup = gc_new< Group >(bus);
+	m_rootGroup = gc_new< Group >(m_providerBus);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
 
@@ -51,6 +52,9 @@ void Database::close()
 		m_rootGroup->internalDestroy();
 		m_rootGroup = 0;
 	}
+
+	if (m_providerBus)
+		m_providerBus = 0;
 
 	if (m_providerDatabase)
 	{
@@ -194,12 +198,11 @@ Serializable* Database::getObjectReadOnly(const Guid& guid)
 bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote)
 {
 	T_ASSERT (m_providerDatabase);
-	
-	Ref< IProviderBus > bus = m_providerDatabase->getBus();
-	if (!bus)
+
+	if (!m_providerBus)
 		return false;
 
-	if (!bus->getEvent(outEvent, outEventId, outRemote))
+	if (!m_providerBus->getEvent(outEvent, outEventId, outRemote))
 		return false;
 
 	// Possibly re-create database as we need to flush instance tree if remote has committed a tree change.
@@ -214,7 +217,7 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 		if (m_rootGroup)
 			m_rootGroup->internalDestroy();
 
-		m_rootGroup = gc_new< Group >(bus);
+		m_rootGroup = gc_new< Group >(m_providerBus);
 		if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 			T_FATAL_ERROR;
 	}

@@ -30,7 +30,7 @@ public:
 
 	bool send(const IMessage* message);
 
-	IMessage* receive(int32_t timeout);
+	bool receive(int32_t timeout, Ref< IMessage >& outMessage);
 
 private:
 	Ref< net::TcpSocket > m_socket;

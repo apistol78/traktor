@@ -44,6 +44,12 @@ private:
 	bool messageReadObject(const class DbmReadObject* message);
 
 	bool messageWriteObject(const class DbmWriteObject* message);
+
+	bool messageGetDataNames(const class DbmGetDataNames* message);
+
+	bool messageReadData(const class DbmReadData* message);
+
+	bool messageWriteData(const class DbmWriteData* message);
 };
 
 	}

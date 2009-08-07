@@ -33,35 +33,24 @@ bool MessageTransport::send(const IMessage* message)
 		return false;
 
 #if defined(_DEBUG)
-	log::debug << L"Sent " << int32_t(buffer.size()) << L" byte(s)" << Endl;
+	log::debug << L"Sent message " << type_name(message) << L" in " << int32_t(buffer.size()) << L" byte(s)" << Endl;
 #endif
 
 	return true;
 }
 
-IMessage* MessageTransport::receive(int32_t timeout)
+bool MessageTransport::receive(int32_t timeout, Ref< IMessage >& outMessage)
 {
 	int32_t result;
 
 	result = m_socket->select(true, false, false, timeout);
 	if (result <= 0)
-		return 0;
-
+		return result == 0;
+	
 	m_socketStream->setAccess(true, false);
+	outMessage = BinarySerializer(m_socketStream).readObject< IMessage >();
 
-#if defined(_DEBUG)
-	log::debug << L"Receive pending " << m_socketStream->available() << Endl;
-	int offset1 = m_socketStream->tell();
-#endif
-
-	Ref< IMessage > message = BinarySerializer(m_socketStream).readObject< IMessage >();
-
-#if defined(_DEBUG)
-	int offset2 = m_socketStream->tell();
-	log::debug << L"Received " << (offset2 - offset1) << L" byte(s)" << Endl;
-#endif
-
-	return message;
+	return outMessage != 0;
 }
 
 	}
