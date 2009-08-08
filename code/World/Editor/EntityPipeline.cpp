@@ -3,6 +3,7 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
+#include "World/Entity/SpatialGroupEntityData.h"
 #include "Editor/PipelineManager.h"
 #include "Database/Instance.h"
 
@@ -51,6 +52,12 @@ bool EntityPipeline::buildDependencies(
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		const RefArray< EntityInstance >& instances = groupEntityData->getInstances();
+		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
+			pipelineManager->addDependency(*i);
+	}
+	else if (const SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< const SpatialGroupEntityData* >(sourceAsset))
+	{
+		const RefArray< EntityInstance >& instances = spatialGroupEntityData->getInstances();
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 			pipelineManager->addDependency(*i);
 	}
