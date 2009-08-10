@@ -61,6 +61,8 @@ private:
 
 	static v8::Handle< v8::Value > invokeMethod(const v8::Arguments& arguments);
 
+	static void weakHandleCallback(v8::Persistent< v8::Value > object, void* parameter);
+
 	v8::Handle< v8::String > createString(const std::wstring& s) const;
 
 	v8::Handle< v8::Object > createObject(Object* object) const;
