@@ -54,16 +54,16 @@
       <second>Toggle twist lock</second>
     </item>
     <item>
-			<first>BROWSE_INSTANCE_SYSTEM</first>
-			<second>System</second>
+			<first>BROWSE_INSTANCE_GROUPS</first>
+			<second>Database</second>
 		</item>
+    <item>
+      <first>BROWSE_INSTANCE_INSTANCES</first>
+      <second>Instances</second>
+    </item>
 		<item>
 			<first>BROWSE_INSTANCE_TITLE</first>
 			<second>Select instance</second>
-		</item>
-		<item>
-			<first>BROWSE_INSTANCE_USER</first>
-			<second>User</second>
 		</item>
 		<item>
 			<first>BROWSE_TYPE_CATEGORY</first>

@@ -2,6 +2,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IBrowseFilter.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/TreeView.h"
@@ -11,6 +12,7 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/MiniButton.h"
 #include "I18N/Text.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -19,6 +21,8 @@
 // Resources
 #include "Resources/Files.h"
 #include "Resources/New.h"
+#include "Resources/BigIcons.h"
+#include "Resources/SmallIcons.h"
 
 namespace traktor
 {
@@ -43,14 +47,44 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	if (!splitter->create(this, true, 150))
 		return false;
 
+	Ref< ui::Container > left = gc_new< ui::Container >();
+	if (!left->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+		return false;
+
+	Ref< ui::Static > treeLabel = gc_new< ui::Static >();
+	if (!treeLabel->create(left, i18n::Text(L"BROWSE_INSTANCE_GROUPS")))
+		return false;
+
 	m_treeDatabase = gc_new< ui::TreeView >();
-	if (!m_treeDatabase->create(splitter, ui::WsClientBorder | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
+	if (!m_treeDatabase->create(left, ui::WsClientBorder | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_treeDatabase->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventTreeItemSelected));
 
+	Ref< ui::Container > right = gc_new< ui::Container >();
+	if (!right->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+		return false;
+
+	Ref< ui::Container > rightTop = gc_new< ui::Container >();
+	if (!rightTop->create(right, ui::WsNone, gc_new< ui::TableLayout >(L"100%,*,*", L"100%", 0, 0)))
+		return false;
+
+	Ref< ui::Static > listLabel = gc_new< ui::Static >();
+	if (!listLabel->create(rightTop, i18n::Text(L"BROWSE_INSTANCE_INSTANCES")))
+		return false;
+
+	m_buttonIcon = gc_new< ui::custom::MiniButton >();
+	if (!m_buttonIcon->create(rightTop, ui::Bitmap::load(c_ResourceBigIcons, sizeof(c_ResourceBigIcons), L"png")))
+		return false;
+	m_buttonIcon->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
+
+	m_buttonSmall = gc_new< ui::custom::MiniButton >();
+	if (!m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png")))
+		return false;
+	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
+
 	m_listInstances = gc_new< ui::ListView >();
-	if (!m_listInstances->create(splitter, ui::WsClientBorder | ui::ListView::WsIconNormal))
+	if (!m_listInstances->create(right, ui::WsClientBorder | ui::ListView::WsIconNormal))
 		return false;
 	m_listInstances->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
 	m_listInstances->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListItemSelected));
@@ -146,6 +180,14 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::Event* event)
 {
 	if (m_instance)
 		endModal(ui::DrOk);
+}
+
+void BrowseInstanceDialog::eventButtonClick(ui::Event* event)
+{
+	if (event->getSender() == m_buttonIcon)
+		m_listInstances->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
+	else
+		m_listInstances->setStyle(ui::ListView::WsList | ui::WsClientBorder);
 }
 
 	}

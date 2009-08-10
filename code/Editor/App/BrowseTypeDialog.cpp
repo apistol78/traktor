@@ -180,13 +180,9 @@ void BrowseTypeDialog::eventListDoubleClick(ui::Event* event)
 void BrowseTypeDialog::eventButtonClick(ui::Event* event)
 {
 	if (event->getSender() == m_buttonIcon)
-	{
 		m_typeList->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
-	}
 	else
-	{
 		m_typeList->setStyle(ui::ListView::WsList | ui::WsClientBorder);
-	}
 }
 
 	}

@@ -52,18 +52,18 @@
     <item>
       <first>ANIMATION_EDITOR_TOGGLE_TWIST_LOCK</first>
       <second>(Av-)aktivera vridningslås</second>
-    </item>   
-		<item>
-			<first>BROWSE_INSTANCE_SYSTEM</first>
-			<second>System</second>
-		</item>
-		<item>
+    </item>
+    <item>
+      <first>BROWSE_INSTANCE_GROUPS</first>
+      <second>Databas</second>
+    </item>
+    <item>
+      <first>BROWSE_INSTANCE_INSTANCES</first>
+      <second>Instancer</second>
+    </item>
+    <item>
 			<first>BROWSE_INSTANCE_TITLE</first>
 			<second>Välj instans</second>
-		</item>
-		<item>
-			<first>BROWSE_INSTANCE_USER</first>
-			<second>Användar</second>
 		</item>
 		<item>
 			<first>BROWSE_TYPE_CATEGORY</first>

@@ -12,6 +12,12 @@ class TreeView;
 class TreeViewItem;
 class ListView;
 
+		namespace custom
+		{
+
+class MiniButton;
+
+		}
 	}
 
 	namespace db
@@ -40,6 +46,8 @@ public:
 private:
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::ListView > m_listInstances;
+	Ref< ui::custom::MiniButton > m_buttonIcon;
+	Ref< ui::custom::MiniButton > m_buttonSmall;
 	Ref< db::Instance > m_instance;
 
 	void buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter);
@@ -49,6 +57,8 @@ private:
 	void eventListItemSelected(ui::Event* event);
 
 	void eventListDoubleClick(ui::Event* event);
+
+	void eventButtonClick(ui::Event* event);
 };
 
 	}
