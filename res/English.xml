@@ -270,6 +270,10 @@
       <second>Command</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
+      <second>Open last project at startup</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Shortcut</second>
     </item>

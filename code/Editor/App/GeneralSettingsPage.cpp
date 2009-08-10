@@ -53,6 +53,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 	m_editDictionary = gc_new< ui::Edit >();
 	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
 
+	m_checkOpenLastProject = gc_new< ui::CheckBox >();
+	m_checkOpenLastProject->create(container, i18n::Text(L"EDITOR_SETTINGS_OPEN_LAST_PROJECT"));
+	m_checkOpenLastProject->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.OpenLastProject"));
+
 	m_checkBuildWhenModified = gc_new< ui::CheckBox >();
 	m_checkBuildWhenModified->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_MODIFIED"));
 	m_checkBuildWhenModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenModified"));
@@ -69,6 +73,7 @@ bool GeneralSettingsPage::apply(Settings* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
+	settings->setProperty< PropertyBoolean >(L"Editor.OpenLastProject", m_checkOpenLastProject->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenModified", m_checkBuildWhenModified->isChecked());
 	return true;
 }

@@ -432,6 +432,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (m_settings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
 		maximize();
 
+	// Open last project.
+	if (m_settings->getProperty< PropertyBoolean >(L"Editor.OpenLastProject"))
+	{
+		Path projectPath = m_settings->getProperty< PropertyString >(L"Editor.LastProjectPath");
+		openProject(projectPath);
+	}
+
 	// Ensure views are in correct state.
 	updateProjectViews();
 	updateMRU();
@@ -1047,6 +1054,33 @@ void EditorForm::newProject()
 	updateProjectViews();
 }
 
+void EditorForm::openProject(const Path& path)
+{
+	if (m_project != 0 && m_projectPath == path)
+		return;
+
+	EnterLeave cursor(
+		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
+		makeFunctor(this, &EditorForm::resetCursor)
+	);
+
+	Ref< Project > project = gc_new< Project >();
+	if (project->open(path))
+	{
+		if (!closeProject())
+			return;
+
+		m_projectPath = path;
+		m_project = project;
+
+		m_mru->usedFile(path);
+	}
+
+	updateTitle();
+	updateProjectViews();
+	updateMRU();
+}
+
 void EditorForm::openProject()
 {
 	ui::FileDialog fileDialog;
@@ -1061,30 +1095,7 @@ void EditorForm::openProject()
 	}
 	fileDialog.destroy();
 
-	if (m_project != 0 && m_projectPath == projectPath)
-		return;
-
-	{
-		EnterLeave cursor(
-			makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-			makeFunctor(this, &EditorForm::resetCursor)
-		);
-
-		Ref< Project > project = gc_new< Project >();
-		if (project->open(projectPath))
-		{
-			if (!closeProject())
-				return;
-
-			m_projectPath = projectPath;
-			m_project = project;
-			m_mru->usedFile(projectPath);
-		}
-
-		updateTitle();
-		updateProjectViews();
-		updateMRU();
-	}
+	openProject(projectPath);
 }
 
 bool EditorForm::closeProject()
@@ -1107,6 +1118,7 @@ bool EditorForm::closeProject()
 	{
 		m_project->close();
 		m_project = 0;
+		m_projectPath = L"";
 	}
 
 	updateProjectViews();
@@ -1801,6 +1813,9 @@ void EditorForm::eventClose(ui::Event* event)
 	m_settings->setProperty< PropertyInteger >(L"Editor.PositionY", rc.top);
 	m_settings->setProperty< PropertyInteger >(L"Editor.SizeWidth", rc.getWidth());
 	m_settings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
+
+	// Save last project path.
+	m_settings->setProperty< PropertyString >(L"Editor.LastProjectPath", m_projectPath.getPathName());
 
 	// Save settings and pipeline hash.
 	saveSettings(L"Traktor.Editor");

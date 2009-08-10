@@ -160,6 +160,8 @@ private:
 
 	void newProject();
 
+	void openProject(const Path& path);
+
 	void openProject();
 
 	bool closeProject();
