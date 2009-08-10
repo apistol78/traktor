@@ -9,24 +9,14 @@ namespace traktor
 	{
 
 class Command;
-class DropDown;
-class CheckBox;
-class Edit;
-class ListBox;
 
-		namespace custom
-		{
-
-class GridView;
-class ShortcutEdit;
-
-		}
 	}
 
 	namespace editor
 	{
 
 class Settings;
+class ISettingsPage;
 
 class SettingsDialog : public ui::ConfigDialog
 {
@@ -39,22 +29,9 @@ public:
 
 private:
 	Ref< Settings > m_settings;
-	Ref< ui::DropDown > m_dropRenderSystem;
-	Ref< ui::CheckBox > m_checkBuildWhenModified;
-	Ref< ui::custom::GridView > m_gridShortcuts;
-	Ref< ui::custom::ShortcutEdit > m_editShortcut;
-	Ref< ui::Edit > m_editDictionary;
-	Ref< ui::ListBox > m_listModules;
+	RefArray< ISettingsPage > m_settingPages;
 
 	void eventDialogClick(ui::Event* event);
-
-	void eventShortcutSelect(ui::Event* event);
-
-	void eventShortcutModified(ui::Event* event);
-
-	void eventButtonAddModuleClick(ui::Event* event);
-
-	void eventButtonRemoveModuleClick(ui::Event* event);
 };
 
 	}

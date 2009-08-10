@@ -1545,9 +1545,11 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Settings")
 	{
 		SettingsDialog settingsDialog;
-		settingsDialog.create(this, m_settings, m_shortcutCommands);
-		settingsDialog.showModal();
-		settingsDialog.destroy();
+		if (settingsDialog.create(this, m_settings, m_shortcutCommands))
+		{
+			settingsDialog.showModal();
+			settingsDialog.destroy();
+		}
 	}
 	else if (command == L"Editor.ViewDatabase")
 	{
@@ -1577,9 +1579,11 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.About")
 	{
 		AboutDialog aboutDialog;
-		aboutDialog.create(this);
-		aboutDialog.showModal();
-		aboutDialog.destroy();
+		if (aboutDialog.create(this))
+		{
+			aboutDialog.showModal();
+			aboutDialog.destroy();
+		}
 	}
 	else if (command == L"Editor.Exit")
 		ui::Application::getInstance().exit(0);
