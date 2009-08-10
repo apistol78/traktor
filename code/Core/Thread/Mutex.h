@@ -2,7 +2,7 @@
 #define traktor_Mutex_H
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Core/Guid.h"
 
 // import/export mechanism.
@@ -19,8 +19,10 @@ namespace traktor
 /*! \brief Mutually exclusive primitive.
  * \ingroup Core
  */
-class T_DLLCLASS Mutex
+class T_DLLCLASS Mutex : public Object
 {
+	T_RTTI_CLASS(Mutex)
+
 public:
 	Mutex();
 	

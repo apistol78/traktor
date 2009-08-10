@@ -6,6 +6,10 @@
 
 namespace traktor
 {
+
+class Guid;
+class Mutex;
+
 	namespace db
 	{
 
@@ -20,11 +24,16 @@ class Transaction : public Object
 	T_RTTI_CLASS(Transaction)
 
 public:
+	bool create(const Guid& transactionGuid);
+
+	void destroy();
+
 	void add(Action* action);
 
 	bool commit(Context* context);
 
 private:
+	Ref< Mutex > m_lock;
 	RefArray< Action > m_actions;
 };
 

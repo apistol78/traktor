@@ -5,6 +5,8 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Mutex", Mutex, Object)
+
 Mutex::Mutex()
 :	m_existing(false)
 {
