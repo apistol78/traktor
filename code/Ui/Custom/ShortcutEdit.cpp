@@ -36,6 +36,7 @@ bool ShortcutEdit::create(Widget* parent, int32_t keyState, int32_t keyCode, int
 
 	addKeyDownEventHandler(createMethodHandler(this, &ShortcutEdit::eventKeyDown));
 	addPaintEventHandler(createMethodHandler(this, &ShortcutEdit::eventPaint));
+	addFocusEventHandler(createMethodHandler(this, &ShortcutEdit::eventFocus));
 
 	return true;
 }
@@ -124,6 +125,11 @@ void ShortcutEdit::eventPaint(Event* event)
 	canvas.drawText(rc.inflate(-8, 0), text, AnLeft, AnCenter);
 	
 	event->consume();
+}
+
+void ShortcutEdit::eventFocus(Event* event)
+{
+	update();
 }
 
 		}

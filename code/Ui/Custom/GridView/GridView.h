@@ -68,6 +68,8 @@ public:
 
 	void removeAllRows();
 
+	const RefArray< GridRow >& getRows() const;
+
 	uint32_t getRows(RefArray< GridRow >& outRows, uint32_t flags) const;
 
 	void addSelectEventHandler(EventHandler* eventHandler);

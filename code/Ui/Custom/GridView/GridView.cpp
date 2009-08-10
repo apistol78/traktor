@@ -126,6 +126,11 @@ void GridView::removeAllRows()
 	m_rows.resize(0);
 }
 
+const RefArray< GridRow >& GridView::getRows() const
+{
+	return m_rows;
+}
+
 uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 {
 	typedef std::pair< RefArray< GridRow >::const_iterator, RefArray< GridRow >::const_iterator > range_t;
