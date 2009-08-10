@@ -41,6 +41,8 @@ private:
 	Ref< ui::custom::GridView > m_gridShortcuts;
 	Ref< ui::custom::ShortcutEdit > m_editShortcut;
 
+	void updateShortcutGrid();
+
 	void eventShortcutSelect(ui::Event* event);
 
 	void eventShortcutModified(ui::Event* event);

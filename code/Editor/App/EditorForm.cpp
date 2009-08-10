@@ -391,19 +391,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Build shortcut accelerator table.
-	for (std::list< ui::Command >::iterator i = m_shortcutCommands.begin(); i != m_shortcutCommands.end(); ++i)
-	{
-		int keyState, keyCode;
-		if (!findShortcutCommandMapping(m_settings, i->getName(), keyState, keyCode))
-		{
-#if defined(_DEBUG)
-			log::info << L"No shortcut mapping for \"" << i->getName() << L"\"" << Endl;
-#endif
-			continue;
-		}
-
-		m_shortcutTable->addCommand(keyState, keyCode, *i);
-	}
+	updateShortcutTable();
 
 	// Load MRU registry.
 	Ref< Stream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", File::FmRead);
@@ -1030,6 +1018,25 @@ void EditorForm::updateOtherPanels()
 	}
 }
 
+void EditorForm::updateShortcutTable()
+{
+	m_shortcutTable->removeAllCommands();
+
+	for (std::list< ui::Command >::iterator i = m_shortcutCommands.begin(); i != m_shortcutCommands.end(); ++i)
+	{
+		int keyState, keyCode;
+		if (!findShortcutCommandMapping(m_settings, i->getName(), keyState, keyCode))
+		{
+#if defined(_DEBUG)
+			log::info << L"No shortcut mapping for \"" << i->getName() << L"\"" << Endl;
+#endif
+			continue;
+		}
+
+		m_shortcutTable->addCommand(keyState, keyCode, *i);
+	}
+}
+
 void EditorForm::newProject()
 {
 	if (!closeProject())
@@ -1547,7 +1554,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		SettingsDialog settingsDialog;
 		if (settingsDialog.create(this, m_settings, m_shortcutCommands))
 		{
-			settingsDialog.showModal();
+			if (settingsDialog.showModal() == ui::DrOk)
+				updateShortcutTable();
 			settingsDialog.destroy();
 		}
 	}

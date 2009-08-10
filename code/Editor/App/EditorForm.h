@@ -156,6 +156,8 @@ private:
 
 	void updateOtherPanels();
 
+	void updateShortcutTable();
+
 	void newProject();
 
 	void openProject();

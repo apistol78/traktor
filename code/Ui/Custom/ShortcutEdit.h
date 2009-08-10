@@ -50,6 +50,8 @@ private:
 	void eventKeyDown(Event* event);
 
 	void eventPaint(Event* event);
+
+	void eventFocus(Event* event);
 };
 
 		}
