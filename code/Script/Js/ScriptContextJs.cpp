@@ -268,6 +268,14 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 	return functionData->scriptContext->toValue(result);
 }
 
+void ScriptContextJs::weakHandleCallback(v8::Persistent< v8::Value > object, void* parameter)
+{
+	Ref< Object >* objectRef = reinterpret_cast< Ref< Object >* >(parameter);
+	T_ASSERT (objectRef);
+
+	delete objectRef;
+}
+
 v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) const
 {
 	return v8::String::New((const uint16_t*)s.c_str());
@@ -282,11 +290,13 @@ v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
 		{
 			if (&i->scriptClass->getExportType() == objectType)
 			{
-				// @fixme Memory leak! Must find out how to get information about when "instance" is destroyed.
 				Ref< Object >* objectRef = new Ref< Object >(object);
-				v8::Handle< v8::Object > instance = i->function->NewInstance();
-				instance->SetInternalField(0, v8::External::New(objectRef));
-				return instance;
+
+				v8::Persistent< v8::Object > instanceHandle(i->function->NewInstance());
+				instanceHandle.MakeWeak(objectRef, &ScriptContextJs::weakHandleCallback);
+				instanceHandle->SetInternalField(0, v8::External::New(objectRef));
+
+				return instanceHandle;
 			}
 		}
 	}
