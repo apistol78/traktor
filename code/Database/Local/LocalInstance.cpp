@@ -38,8 +38,11 @@ bool LocalInstance::internalCreateNew(const Path& instancePath, const Guid& inst
 	if (!internalCreate(instancePath))
 		return false;
 
-	if (!openTransaction())
+	m_transaction = gc_new< Transaction >();
+	if (!m_transaction->create(instanceGuid))
 		return false;
+
+	m_transactionName.clear();
 
 	m_transaction->add(gc_new< ActionSetGuid >(
 		cref(m_instancePath),
@@ -63,6 +66,12 @@ bool LocalInstance::openTransaction()
 		return false;
 
 	m_transaction = gc_new< Transaction >();
+	if (!m_transaction->create(getGuid()))
+	{
+		m_transaction = 0;
+		return false;
+	}
+
 	m_transactionName.clear();
 
 	return true;
@@ -83,7 +92,10 @@ bool LocalInstance::closeTransaction()
 {
 	if (!m_transaction)
 		return false;
+	
+	m_transaction->destroy();
 	m_transaction = 0;
+
 	return true;
 }
 
