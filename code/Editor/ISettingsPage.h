@@ -1,0 +1,48 @@
+#ifndef traktor_editor_ISettingsPage_H
+#define traktor_editor_ISettingsPage_H
+
+#include <list>
+#include "Core/Object.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_EDITOR_EXPORT)
+#define T_DLLCLASS T_DLLEXPORT
+#else
+#define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class Container;
+class Command;
+
+	}
+
+	namespace editor
+	{
+
+class Settings;
+
+/*! \brief Interface for settings pages.
+ * \ingroup Editor
+ */
+class T_DLLCLASS ISettingsPage : public Object
+{
+	T_RTTI_CLASS(ISettingsPage)
+
+public:
+	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands) = 0;
+
+	virtual void destroy() = 0;
+
+	virtual bool apply(Settings* settings) = 0;
+};
+
+	}
+}
+
+#endif	// traktor_editor_ISettingsPage_H
