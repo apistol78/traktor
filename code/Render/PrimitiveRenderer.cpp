@@ -824,12 +824,9 @@ void PrimitiveRenderer::end(IRenderView* renderView)
 	m_vertex = 0;
 	m_primitives.resize(0);
 
-	while (!m_projection.empty())
-		m_projection.pop_back();
-	while (!m_view.empty())
-		m_view.pop_back();
-	while (!m_world.empty())
-		m_world.pop_back();
+	m_projection.resize(0);
+	m_view.resize(0);
+	m_world.resize(0);
 }
 
 void PrimitiveRenderer::updateTransforms()
