@@ -1265,22 +1265,44 @@ void EditorForm::closeCurrentEditor()
 	if (!m_activeEditorPage)
 		return;
 
+	// Ask user when trying to close an editor which contains unsaved data.
+	if (currentModified())
+	{
+		int result = ui::MessageBox::show(
+			this,
+			i18n::Text(L"QUERY_MESSAGE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
+			i18n::Text(L"QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR"),
+			ui::MbIconExclamation | ui::MbYesNo
+		);
+		if (result == ui::DrNo)
+			return;
+	}
+
 	Ref< ui::TabPage > tabPage = m_tab->getActivePage();
 	T_ASSERT (tabPage);
 	T_ASSERT (tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
 
-	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
-
 	m_activeEditorPage->deactivate();
 	m_activeEditorPage->destroy();
+	m_activeEditorPage = 0;
+
+	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
+	T_ASSERT (instance);
 
 	instance->revert();
+	instance = 0;
 
 	m_tab->removePage(tabPage);
 	m_tab->update();
 
+	tabPage->destroy();
+	tabPage = 0;
+
 	tabPage = m_tab->getActivePage();
+
 	m_activeEditorPage = tabPage ? tabPage->getData< IEditorPage >(L"EDITORPAGE") : 0;
+	if (m_activeEditorPage)
+		m_activeEditorPage->activate();
 }
 
 void EditorForm::closeAllEditors()
