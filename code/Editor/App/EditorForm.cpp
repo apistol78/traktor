@@ -507,7 +507,7 @@ void EditorForm::setPropertyObject(Object* properties)
 	m_propertiesView->setPropertyObject(properties);
 	if (properties)
 	{
-		std::wstringstream ss;
+		StringOutputStream ss;
 		ss << i18n::Text(L"TITLE_PROPERTIES").str() << L" - " << type_name(properties);
 		m_propertiesView->setText(ss.str());
 	}
@@ -609,31 +609,6 @@ db::Instance* EditorForm::browseInstance(const IBrowseFilter* filter)
 	}
 
 	return instance;
-}
-
-bool EditorForm::isEditable(const Type& type) const
-{
-	for (RefArray< IEditorPageFactory >::const_iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
-	{
-		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
-		{
-			if (is_type_of(*(*j), type))
-				return true;
-		}
-	}
-
-	for (RefArray< IObjectEditorFactory >::const_iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
-	{
-		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
-		{
-			if (is_type_of(*(*j), type))
-				return true;
-		}
-	}
-
-	return false;
 }
 
 bool EditorForm::openEditor(db::Instance* instance)
