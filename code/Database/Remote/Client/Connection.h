@@ -20,7 +20,8 @@ class TcpSocket;
 
 class MessageTransport;
 
-/*! \brief
+/*! \brief Database connection.
+ * \ingroup Database
  */
 class Connection : public Object
 {

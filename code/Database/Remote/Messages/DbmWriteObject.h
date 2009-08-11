@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Write instance object.
+ * \ingroup Database
  */
 class DbmWriteObject : public IMessage
 {

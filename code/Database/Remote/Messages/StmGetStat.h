@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get stream status.
+ * \ingroup Database
  */
 class StmGetStat : public IMessage
 {

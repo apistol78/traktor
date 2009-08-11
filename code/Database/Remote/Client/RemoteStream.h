@@ -11,6 +11,9 @@ namespace traktor
 
 class Connection;
 
+/*! \brief Remote stream.
+ * \ingroup Database
+ */
 class RemoteStream : public Stream
 {
 	T_RTTI_CLASS(RemoteStream)

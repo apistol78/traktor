@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Read block from stream.
+ * \ingroup Database
  */
 class StmRead : public IMessage
 {

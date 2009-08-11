@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Single string result.
+ * \ingroup Database
  */
 class MsgStringResult : public IMessage
 {

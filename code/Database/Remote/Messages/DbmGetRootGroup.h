@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get database root group.
+ * \ingroup Database
  */
 class DbmGetRootGroup : public IMessage
 {

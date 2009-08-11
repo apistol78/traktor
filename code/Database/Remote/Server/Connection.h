@@ -34,7 +34,8 @@ class IMessage;
 class IMessageListener;
 class IProviderDatabase;
 
-/*! \brief
+/*! \brief Client connection.
+ * \ingroup Database
  */
 class T_DLLCLASS Connection : public Object
 {

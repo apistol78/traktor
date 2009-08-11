@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Remove group.
+ * \ingroup Database
  */
 class DbmRemoveGroup : public IMessage
 {

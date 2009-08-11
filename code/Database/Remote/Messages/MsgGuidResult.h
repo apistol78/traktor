@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Guid result.
+ * \ingroup Database
  */
 class MsgGuidResult : public IMessage
 {

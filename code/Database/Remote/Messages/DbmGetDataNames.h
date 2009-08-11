@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get instance data names.
+ * \ingroup Database
  */
 class DbmGetDataNames : public IMessage
 {

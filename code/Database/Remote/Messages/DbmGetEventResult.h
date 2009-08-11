@@ -10,7 +10,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get event result.
+ * \ingroup Database
  */
 class DbmGetEventResult : public IMessage
 {

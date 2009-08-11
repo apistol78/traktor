@@ -11,7 +11,8 @@ namespace traktor
 
 class Connection;
 
-/*! \brief
+/*! \brief Remote event bus.
+ * \ingroup Database
  */
 class RemoteBus : public IProviderBus
 {

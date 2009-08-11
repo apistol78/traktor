@@ -10,7 +10,8 @@ namespace traktor
 
 class IMessage;
 
-/*! \brief
+/*! \brief Message listener interface.
+ * \ingroup Database
  */
 class IMessageListener : public Object
 {

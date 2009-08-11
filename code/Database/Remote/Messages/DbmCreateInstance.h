@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Create instance.
+ * \ingroup Database
  */
 class DbmCreateInstance : public IMessage
 {
