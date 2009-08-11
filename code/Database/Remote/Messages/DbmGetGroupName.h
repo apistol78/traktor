@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get name of group.
+ * \ingroup Database
  */
 class DbmGetGroupName : public IMessage
 {

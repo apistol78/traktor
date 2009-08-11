@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Network message interface.
+ * \ingroup Database
  */
 class IMessage : public Serializable
 {

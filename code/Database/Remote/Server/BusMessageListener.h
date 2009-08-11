@@ -11,7 +11,8 @@ namespace traktor
 
 class Connection;
 
-/*! \brief
+/*! \brief Event bus message listener.
+ * \ingroup Database
  */
 class BusMessageListener : public IMessageListenerImpl< BusMessageListener >
 {

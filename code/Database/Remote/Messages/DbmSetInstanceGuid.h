@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Set instance guid.
+ * \ingroup Database
  */
 class DbmSetInstanceGuid : public IMessage
 {

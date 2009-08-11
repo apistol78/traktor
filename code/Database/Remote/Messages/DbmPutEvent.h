@@ -10,7 +10,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Put bus event.
+ * \ingroup Database
  */
 class DbmPutEvent : public IMessage
 {

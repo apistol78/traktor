@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Write stream block.
+ * \ingroup Database
  */
 class StmWrite : public IMessage
 {

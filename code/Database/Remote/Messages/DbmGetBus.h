@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get event bus.
+ * \ingroup Database
  */
 class DbmGetBus : public IMessage
 {

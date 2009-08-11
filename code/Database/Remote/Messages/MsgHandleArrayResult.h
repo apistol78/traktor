@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Handle array result.
+ * \ingroup Database
  */
 class MsgHandleArrayResult : public IMessage
 {

@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Rename group.
+ * \ingroup Database
  */
 class DbmRenameGroup : public IMessage
 {

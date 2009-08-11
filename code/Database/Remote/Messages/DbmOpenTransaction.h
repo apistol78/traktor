@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Open instance transaction.
+ * \ingroup Database
  */
 class DbmOpenTransaction : public IMessage
 {

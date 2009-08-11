@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Read block result.
+ * \ingroup Database
  */
 class StmReadResult : public IMessage
 {

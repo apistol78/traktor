@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Get instance's primary type.
+ * \ingroup Database
  */
 class DbmGetInstancePrimaryType : public IMessage
 {

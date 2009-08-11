@@ -11,7 +11,8 @@ namespace traktor
 
 class Connection;
 
-/*! \brief
+/*! \brief Remote group.
+ * \ingroup Database
  */
 class RemoteGroup : public IProviderGroup
 {

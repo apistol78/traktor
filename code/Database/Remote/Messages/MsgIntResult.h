@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Integer value result.
+ * \ingroup Database
  */
 class MsgIntResult : public IMessage
 {

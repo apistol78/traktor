@@ -17,7 +17,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Server configuration.
+ * \ingroup Database
  */
 class T_DLLCLASS Configuration : public Serializable
 {

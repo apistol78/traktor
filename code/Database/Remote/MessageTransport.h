@@ -19,7 +19,8 @@ class SocketStream;
 
 class IMessage;
 
-/*! \brief
+/*! \brief Network message transportation.
+ * \ingroup Database
  */
 class MessageTransport : public Object
 {

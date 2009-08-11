@@ -27,7 +27,8 @@ class TcpSocket;
 class Configuration;
 class Connection;
 
-/*! \brief
+/*! \brief Client connection manager.
+ * \ingroup Database
  */
 class T_DLLCLASS ConnectionManager : public Object
 {

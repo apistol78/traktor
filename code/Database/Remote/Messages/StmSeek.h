@@ -9,7 +9,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Seek stream.
+ * \ingroup Database
  */
 class StmSeek : public IMessage
 {

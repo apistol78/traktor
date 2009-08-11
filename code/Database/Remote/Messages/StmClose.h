@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Close stream.
+ * \ingroup Database
  */
 class StmClose : public IMessage
 {

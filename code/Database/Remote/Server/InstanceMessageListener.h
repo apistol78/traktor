@@ -11,7 +11,8 @@ namespace traktor
 
 class Connection;
 
-/*! \brief
+/*! \brief Instance message listener.
+ * \ingroup Database
  */
 class InstanceMessageListener : public IMessageListenerImpl< InstanceMessageListener >
 {

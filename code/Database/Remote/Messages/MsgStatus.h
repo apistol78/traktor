@@ -8,7 +8,8 @@ namespace traktor
 	namespace db
 	{
 
-/*! \brief
+/*! \brief Status codes.
+ * \ingroup Database
  */
 enum MsgStatusType
 {
@@ -18,7 +19,8 @@ enum MsgStatusType
 	StInvalidReply = -3
 };
 
-/*! \brief
+/*! \brief Status result.
+ * \ingroup Database
  */
 class MsgStatus : public IMessage
 {
