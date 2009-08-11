@@ -74,9 +74,6 @@ public:
 	/*! \brief Browse database instance. */
 	virtual db::Instance* browseInstance(const IBrowseFilter* filter = 0) = 0;
 
-	/*! \brief Check if type is editable. */
-	virtual bool isEditable(const Type& type) const = 0;
-
 	/*! \brief Open instance in appropriate editor. */
 	virtual bool openEditor(db::Instance* instance) = 0;
 

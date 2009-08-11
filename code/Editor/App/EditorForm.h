@@ -101,8 +101,6 @@ public:
 
 	virtual db::Instance* browseInstance(const IBrowseFilter* filter);
 
-	virtual bool isEditable(const Type& type) const;
-
 	virtual bool openEditor(db::Instance* instance);
 
 	virtual IEditorPage* getActiveEditorPage();
