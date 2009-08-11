@@ -131,8 +131,175 @@ source_data_info_t findSourceData(
 	return source_data_info_t(0, offset);
 }
 
-void createMesh(xml::Element* libraryGeometries, const RefArray< xml::Element >& instanceGeometries, const std::vector< material_ref_t >& materialRefs, Model* outModel)
+void createMesh(
+	xml::Element* mesh,
+	const std::vector< material_ref_t >& materialRefs,
+	Model* outModel
+)
 {
+	std::vector< FloatData > vertexAttributeData;
+	{
+		RefArray< xml::Element > sources;
+		mesh->get(L"source", sources);
+
+		vertexAttributeData.resize(sources.size());
+		for (uint32_t j = 0; j < sources.size(); ++j)
+		{
+			vertexAttributeData[j].id = sources[j]->getAttribute(L"id", L"")->getValue();
+
+			Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
+			if (floatArray)
+			{
+				uint32_t floatCount = parseString< uint32_t >(floatArray->getAttribute(L"count", L"")->getValue());
+				parseStringToArray(floatArray->getValue(), vertexAttributeData[j].data, floatCount);
+			}
+		}
+	}
+
+	Ref< xml::Element > vertices = mesh->getSingle(L"vertices");
+	if (!vertices)
+		return;
+
+	std::pair< std::wstring, std::wstring > vertexSourceTranslation;
+	vertexSourceTranslation.first = vertices->getAttribute(L"name", L"")->getValue();
+	vertexSourceTranslation.second = vertices->getSingle(L"input")->getAttribute(L"source", L"")->getValue();
+
+	// Fetch polygon data.
+	std::vector< PolygonData > polygonData;
+	{
+		RefArray< xml::Element > polyLists;
+		mesh->get(L"polylist", polyLists);
+
+		RefArray< xml::Element > triLists;
+		mesh->get(L"triangles", triLists);
+
+		RefArray< xml::Element > polygons;
+		mesh->get(L"polygons", polygons);
+
+		polygonData.resize(polyLists.size() + triLists.size() + polygons.size());
+		
+		uint32_t p = 0;
+		for (uint32_t j = 0; j < polyLists.size(); ++j)
+			fetchPolygonData(polygonData[p++], polyLists[j], false);
+
+		for (uint32_t j = 0; j < triLists.size(); ++j)
+			fetchPolygonData(polygonData[p++], triLists[j], true);
+
+		for (uint32_t j = 0; j < polygons.size(); ++j)
+			/* @fixme */;
+	}
+
+	for (uint32_t j = 0; j < polygonData.size(); ++j)
+	{
+		uint32_t materialIndex = c_InvalidIndex;
+		for (uint32_t k = 0; k < materialRefs.size(); ++k)
+		{
+			if (polygonData[j].material == materialRefs[k].first)
+			{
+				materialIndex = k;
+				break;
+			}
+		}
+
+		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texcoordDataInfo = findSourceData(L"TEXCOORD", polygonData[j], vertexAttributeData, vertexSourceTranslation);
+
+		uint32_t vertexOffset = vertexDataInfo.second;
+		uint32_t normalOffset = normalDataInfo.second;
+		uint32_t texcoordOffset = texcoordDataInfo.second;
+		uint32_t indexOffset = 0;
+
+		uint32_t vertexIndexStride = 0;
+		if (vertexDataInfo.first)
+			++vertexIndexStride;
+		if (normalDataInfo.first)
+			++vertexIndexStride;
+		if (texcoordDataInfo.first)
+			++vertexIndexStride;
+
+		for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
+		{
+			Polygon polygon;
+			polygon.setMaterial(materialIndex);
+
+			for (uint32_t l = 0; l < polygonData[j].vertexCounts[k]; ++l)
+			{
+				Vertex vertex;
+
+				if (vertexDataInfo.first)
+				{
+					uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
+					Vector4 position(
+						vertexDataInfo.first->data[positionIndex * 3 + 0],
+						vertexDataInfo.first->data[positionIndex * 3 + 1],
+						vertexDataInfo.first->data[positionIndex * 3 + 2],
+						1.0f
+					);
+					vertex.setPosition(outModel->addUniquePosition(position));
+				}
+
+				if (normalDataInfo.first)
+				{
+					uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
+					Vector4 normal(
+						normalDataInfo.first->data[normalIndex * 3 + 0],
+						normalDataInfo.first->data[normalIndex * 3 + 1],
+						normalDataInfo.first->data[normalIndex * 3 + 2],
+						0.0f
+					);
+					vertex.setNormal(outModel->addUniqueNormal(normal));
+				}
+
+				if (texcoordDataInfo.first)
+				{
+					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoordOffset];
+					Vector2 texCoord(
+						texcoordDataInfo.first->data[texCoordIndex * 2 + 0],
+						1.0f - texcoordDataInfo.first->data[texCoordIndex * 2 + 1]
+					);
+					vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+				}
+
+				polygon.addVertex(
+					outModel->addUniqueVertex(vertex)
+				);
+			}
+
+			polygon.flipWinding();
+			outModel->addPolygon(polygon);
+
+			indexOffset += polygonData[j].vertexCounts[k];
+		}
+	}
+}
+
+void createMesh(
+	xml::Element* libraryGeometries,
+	xml::Element* libraryControllers,
+	const RefArray< xml::Element >& instanceGeometries,
+	const RefArray< xml::Element >& instanceControllers,
+	const std::vector< material_ref_t >& materialRefs,
+	Model* outModel
+)
+{
+	for (size_t i = 0; i < instanceControllers.size(); ++i)
+	{
+		std::wstring controllerRef = instanceControllers[i]->getAttribute(L"url", L"")->getValue();
+
+		Ref< xml::Element > skin = libraryControllers->getSingle(L"controller[@id=" + dereference(controllerRef) + L"]/skin");
+		if (!skin)
+			continue;
+
+		std::wstring geometryRef = skin->getAttribute(L"source", L"")->getValue();
+
+		Ref< xml::Element > mesh = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
+		if (!mesh)
+			continue;
+
+		createMesh(mesh, materialRefs, outModel);
+	}
+
 	for (size_t i = 0; i < instanceGeometries.size(); ++i)
 	{
 		std::wstring geometryRef = instanceGeometries[i]->getAttribute(L"url", L"")->getValue();
@@ -141,136 +308,7 @@ void createMesh(xml::Element* libraryGeometries, const RefArray< xml::Element >&
 		if (!mesh)
 			continue;
 
-		// Fetch the vertex data.
-		std::vector< FloatData > vertexAttributeData;
-		{
-			RefArray< xml::Element > sources;
-			mesh->get(L"source", sources);
-
-			vertexAttributeData.resize(sources.size());
-			for (uint32_t j = 0; j < sources.size(); ++j)
-			{
-				vertexAttributeData[j].id = sources[j]->getAttribute(L"id", L"")->getValue();
-
-				Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
-				if (floatArray)
-				{
-					uint32_t floatCount = parseString< uint32_t >(floatArray->getAttribute(L"count", L"")->getValue());
-					parseStringToArray(floatArray->getValue(), vertexAttributeData[j].data, floatCount);
-				}
-			}
-		}
-
-		Ref< xml::Element > vertices = mesh->getSingle(L"vertices");
-		if (!vertices)
-			continue;
-
-		std::pair< std::wstring, std::wstring > vertexSourceTranslation;
-		vertexSourceTranslation.first = vertices->getAttribute(L"name", L"")->getValue();
-		vertexSourceTranslation.second = vertices->getSingle(L"input")->getAttribute(L"source", L"")->getValue();
-
-		// Fetch polygon data.
-		std::vector< PolygonData > polygonData;
-		{
-			RefArray< xml::Element > polyLists;
-			mesh->get(L"polylist", polyLists);
-
-			RefArray< xml::Element > triLists;
-			mesh->get(L"triangles", triLists);
-
-			polygonData.resize(polyLists.size() + triLists.size());
-			
-			uint32_t p = 0;
-			for (uint32_t j = 0; j < polyLists.size(); ++j)
-				fetchPolygonData(polygonData[p++], polyLists[j], false);
-
-			for (uint32_t j = 0; j < triLists.size(); ++j)
-				fetchPolygonData(polygonData[p++], triLists[j], true);
-		}
-
-		for (uint32_t j = 0; j < polygonData.size(); ++j)
-		{
-			uint32_t materialIndex = c_InvalidIndex;
-			for (uint32_t k = 0; k < materialRefs.size(); ++k)
-			{
-				if (polygonData[j].material == materialRefs[k].first)
-				{
-					materialIndex = k;
-					break;
-				}
-			}
-
-			source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", polygonData[j], vertexAttributeData, vertexSourceTranslation);
-			source_data_info_t normalDataInfo = findSourceData(L"NORMAL", polygonData[j], vertexAttributeData, vertexSourceTranslation);
-			source_data_info_t texcoordDataInfo = findSourceData(L"TEXCOORD", polygonData[j], vertexAttributeData, vertexSourceTranslation);
-
-			uint32_t vertexOffset = vertexDataInfo.second;
-			uint32_t normalOffset = normalDataInfo.second;
-			uint32_t texcoordOffset = texcoordDataInfo.second;
-			uint32_t indexOffset = 0;
-
-			uint32_t vertexIndexStride = 0;
-			if (vertexDataInfo.first)
-				++vertexIndexStride;
-			if (normalDataInfo.first)
-				++vertexIndexStride;
-			if (texcoordDataInfo.first)
-				++vertexIndexStride;
-
-			for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
-			{
-				Polygon polygon;
-				polygon.setMaterial(materialIndex);
-
-				for (uint32_t l = 0; l < polygonData[j].vertexCounts[k]; ++l)
-				{
-					Vertex vertex;
-
-					if (vertexDataInfo.first)
-					{
-						uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
-						Vector4 position(
-							vertexDataInfo.first->data[positionIndex * 3 + 0],
-							vertexDataInfo.first->data[positionIndex * 3 + 1],
-							vertexDataInfo.first->data[positionIndex * 3 + 2],
-							1.0f
-						);
-						vertex.setPosition(outModel->addUniquePosition(position));
-					}
-
-					if (normalDataInfo.first)
-					{
-						uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
-						Vector4 normal(
-							normalDataInfo.first->data[normalIndex * 3 + 0],
-							normalDataInfo.first->data[normalIndex * 3 + 1],
-							normalDataInfo.first->data[normalIndex * 3 + 2],
-							0.0f
-						);
-						vertex.setNormal(outModel->addUniqueNormal(normal));
-					}
-
-					if (texcoordDataInfo.first)
-					{
-						uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoordOffset];
-						Vector2 texCoord(
-							texcoordDataInfo.first->data[texCoordIndex * 2 + 0],
-							1.0f - texcoordDataInfo.first->data[texCoordIndex * 2 + 1]
-						);
-						vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
-					}
-
-					polygon.addVertex(
-						outModel->addUniqueVertex(vertex)
-					);
-				}
-
-				polygon.flipWinding();
-				outModel->addPolygon(polygon);
-
-				indexOffset += polygonData[j].vertexCounts[k];
-			}
-		}
+		createMesh(mesh, materialRefs, outModel);
 	}
 }
 
@@ -311,6 +349,7 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 	// Find references to materials and geometries.
 	std::vector< material_ref_t > materialRefs;
 	RefArray< xml::Element > instanceGeometries;
+	RefArray< xml::Element > instanceControllers;
 
 	RefArray< xml::Element > nodes;
 	visualScene->get(L"node", nodes);
@@ -326,6 +365,23 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 
 			RefArray< xml::Element > instanceMaterials;
 			instanceGeometry->get(L"bind_material/technique_common/instance_material", instanceMaterials);
+
+			for (RefArray< xml::Element >::iterator i = instanceMaterials.begin(); i != instanceMaterials.end(); ++i)
+			{
+				std::wstring symbol = (*i)->getAttribute(L"symbol", L"")->getValue();
+				std::wstring target = (*i)->getAttribute(L"target", L"")->getValue();
+				if (!symbol.empty() && !target.empty())
+					materialRefs.push_back(material_ref_t(symbol, target));
+			}
+		}
+
+		Ref< xml::Element > instanceController = node->getSingle(L"instance_controller");
+		if (instanceController)
+		{
+			instanceControllers.push_back(instanceController);
+
+			RefArray< xml::Element > instanceMaterials;
+			instanceController->get(L"bind_material/technique_common/instance_material", instanceMaterials);
 
 			for (RefArray< xml::Element >::iterator i = instanceMaterials.begin(); i != instanceMaterials.end(); ++i)
 			{
@@ -356,8 +412,16 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 	if (importFlags & IfMesh)
 	{
 		Ref< xml::Element > libraryGeometries = doc.getSingle(L"library_geometries");
-		if (libraryGeometries)
-			createMesh(libraryGeometries, instanceGeometries, materialRefs, outModel);
+		Ref< xml::Element > libraryControllers = doc.getSingle(L"library_controllers");
+
+		createMesh(
+			libraryGeometries,
+			libraryControllers,
+			instanceGeometries,
+			instanceControllers,
+			materialRefs,
+			outModel
+		);
 	}
 
 	return outModel;
