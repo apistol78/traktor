@@ -295,7 +295,7 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 		if (path.isRelative())
 			ss << m_currentDirectory.getPathName() << L"/" << path.getPathName();
 		else
-			ss << path.getPathName();
+			ss << m_currentDirectory.getVolume() << L":" << path.getPathName();
 	}
 
 	return replaceAll(ss.str(), L'/', L'\\');
