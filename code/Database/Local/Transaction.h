@@ -3,11 +3,11 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Guid.h"
 
 namespace traktor
 {
 
-class Guid;
 class Mutex;
 
 	namespace db
@@ -24,6 +24,10 @@ class Transaction : public Object
 	T_RTTI_CLASS(Transaction)
 
 public:
+	Transaction();
+
+	virtual ~Transaction();
+
 	bool create(const Guid& transactionGuid);
 
 	void destroy();
@@ -35,6 +39,10 @@ public:
 private:
 	Ref< Mutex > m_lock;
 	RefArray< Action > m_actions;
+	Guid m_transactionGuid;
+#if defined(_DEBUG)
+	bool m_locked;
+#endif
 };
 
 	}
