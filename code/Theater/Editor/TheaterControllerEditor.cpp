@@ -6,13 +6,21 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/SceneAsset.h"
 #include "World/Entity/EntityInstance.h"
+#include "Ui/Bitmap.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Command.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Container.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "Core/Heap/New.h"
+
+// Resources
+#include "Resources/Theater.h"
 
 namespace traktor
 {
@@ -42,8 +50,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterContro
 
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
+	Ref< ui::Container > container = gc_new< ui::Container >();
+	if (!container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+		return false;
+
+	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar->create(container);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 2);
+	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(L"Capture", ui::Command(L"Theater.CaptureEntities"), 0));
+	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(L"Delete", ui::Command(L"Theater.DeleteSelectedKey"), 1));
+	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventToolBarClick));
+
 	m_trackSequencer = gc_new< ui::custom::SequencerControl >();
-	if (!m_trackSequencer->create(parent))
+	if (!m_trackSequencer->create(container))
 		return false;
 
 	m_trackSequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerCursorMove));
@@ -62,6 +81,11 @@ void TheaterControllerEditor::destroy()
 		m_trackSequencer->destroy();
 		m_trackSequencer = 0;
 	}
+	if (m_toolBar)
+	{
+		m_toolBar->destroy();
+		m_toolBar = 0;
+	}
 }
 
 void TheaterControllerEditor::propertiesChanged()
@@ -74,6 +98,11 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	if (command == L"Theater.CaptureEntities")
 	{
 		captureEntities();
+		updateSequencer();
+	}
+	else if (command == L"Theater.DeleteSelectedKey")
+	{
+		deleteSelectedKey();
 		updateSequencer();
 	}
 	else
@@ -158,6 +187,17 @@ void TheaterControllerEditor::captureEntities()
 	}
 
 	m_context->buildEntities();
+}
+
+void TheaterControllerEditor::deleteSelectedKey()
+{
+	// @fixme
+}
+
+void TheaterControllerEditor::eventToolBarClick(ui::Event* event)
+{
+	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
+	handleCommand(command);
 }
 
 void TheaterControllerEditor::eventSequencerCursorMove(ui::Event* event)

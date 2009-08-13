@@ -36,7 +36,7 @@ class T_DLLCLASS Key
 	T_RTTI_CLASS(Key)
 
 public:
-	virtual bool hit(const ui::Point& position) const = 0;
+	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const = 0;
 
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) = 0;
 };
