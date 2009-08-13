@@ -89,7 +89,6 @@ private:
 	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;
 	float m_lastDeltaTime;
-	float m_dynamicPhysicsTime;
 	float m_lastPhysicsTime;
 
 	void updateWorldRenderer();

@@ -21,8 +21,6 @@ class T_DLLCLASS SprayEditorProfile : public scene::ISceneEditorProfile
 	T_RTTI_CLASS(SprayEditorProfile)
 
 public:
-	virtual TypeSet getEntityDataTypes() const;
-
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
 	) const;
@@ -48,9 +46,14 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;
 
-	virtual scene::IEntityEditor* createEntityEditor(
+	virtual void createControllerEditorFactories(
 		scene::SceneEditorContext* context,
-		const Type& entityDataType
+		RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	) const;
+
+	virtual void createEntityEditorFactories(
+		scene::SceneEditorContext* context,
+		RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 	) const;
 };
 

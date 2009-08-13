@@ -1,5 +1,5 @@
-#ifndef traktor_animation_Path_H
-#define traktor_animation_Path_H
+#ifndef traktor_TransformPath_H
+#define traktor_TransformPath_H
 
 #include "Core/Serialization/Serializable.h"
 #include "Core/Containers/AlignedVector.h"
@@ -8,7 +8,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ANIMATION_EXPORT)
+#if defined(T_CORE_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT
@@ -16,15 +16,13 @@
 
 namespace traktor
 {
-	namespace animation
-	{
 
-/*! \brief Movement path.
- * \ingroup Animation
+/*! \brief Transformation path.
+ * \ingroup Core
  */
-class T_DLLCLASS Path : public Serializable
+class T_DLLCLASS TransformPath : public Serializable
 {
-	T_RTTI_CLASS(Path)
+	T_RTTI_CLASS(TransformPath)
 
 public:
 	struct Frame
@@ -62,6 +60,8 @@ public:
 
 	virtual bool serialize(Serializer& s);
 
+	inline float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
+
 	inline float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
 	inline const AlignedVector< Key >& getKeys() const { return m_keys; }
@@ -70,7 +70,6 @@ private:
 	AlignedVector< Key > m_keys;
 };
 
-	}
 }
 
-#endif	// traktor_animation_Path_H
+#endif	// traktor_TransformPath_H

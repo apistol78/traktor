@@ -17,13 +17,18 @@ namespace traktor
 	namespace world
 	{
 
-class WorldRenderSettings;
+class IEntityBuilder;
+class IEntityManager;
 class EntityInstance;
+class WorldRenderSettings;
 
 	}
 
 	namespace scene
 	{
+
+class ISceneControllerData;
+class Scene;
 
 class T_DLLCLASS SceneAsset : public Serializable
 {
@@ -31,6 +36,8 @@ class T_DLLCLASS SceneAsset : public Serializable
 
 public:
 	SceneAsset();
+
+	Scene* createScene(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
@@ -40,11 +47,18 @@ public:
 
 	world::EntityInstance* getInstance() const;
 
+	void setControllerData(ISceneControllerData* controllerData);
+
+	ISceneControllerData* getControllerData() const;
+
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::EntityInstance > m_instance;
+	Ref< ISceneControllerData > m_controllerData;
 };
 
 	}

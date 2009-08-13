@@ -1,5 +1,4 @@
 #include "Animation/PathEntity/PathEntityData.h"
-#include "Animation/PathEntity/Path.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
@@ -44,7 +43,7 @@ bool PathEntityData::serialize(Serializer& s)
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
 
-	s >> MemberComposite< Path >(L"path", m_path);
+	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> MemberEnum< PathEntity::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
 	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
 

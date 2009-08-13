@@ -3,11 +3,16 @@
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneControllerEditorFactory.h"
+#include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SelectEvent.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/SceneAsset.h"
+#include "Scene/Scene.h"
+#include "Scene/ISceneControllerData.h"
+#include "Scene/ISceneController.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
@@ -26,6 +31,7 @@
 #include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TableLayout.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
@@ -121,6 +127,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_context->getEditor()->createAdditionalPanel(m_entityPanel, 250, false);
 
+	// Create controller panel.
+	m_controllerPanel = gc_new< ui::Container >();
+	m_controllerPanel->create(parent, ui::WsNone, gc_new< ui::FloodLayout >());
+	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
+
+	m_context->getEditor()->createAdditionalPanel(m_controllerPanel, 200, true);
+
 	// Context event handlers.
 	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostBuild));
 	m_context->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextSelect));
@@ -158,12 +171,21 @@ void SceneEditorPage::destroy()
 	settings->setProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", m_context->getCamera()->getCurrentOrientation());
 	settings->setProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale());
 
-	// Destroy entity panel.
+	// Destroy controller editor.
+	if (m_controllerEditor)
+	{
+		m_controllerEditor->destroy();
+		m_controllerEditor = 0;
+	}
+
+	// Destroy panels.
 	m_context->getEditor()->destroyAdditionalPanel(m_entityPanel);
+	m_context->getEditor()->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
 	m_entityMenu->destroy();
 	m_entityPanel->destroy();
+	m_controllerPanel->destroy();
 	m_editPanel->destroy();
 
 	// Destroy physics manager.
@@ -175,10 +197,14 @@ void SceneEditorPage::activate()
 {
 	m_editControl->setVisible(true);
 	m_context->getEditor()->showAdditionalPanel(m_entityPanel);
+	if (m_controllerPanel)
+		m_context->getEditor()->showAdditionalPanel(m_controllerPanel);
 }
 
 void SceneEditorPage::deactivate()
 {
+	if (m_controllerPanel)
+		m_context->getEditor()->hideAdditionalPanel(m_controllerPanel);
 	m_context->getEditor()->hideAdditionalPanel(m_entityPanel);
 	m_editControl->setVisible(false);
 }
@@ -220,6 +246,8 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		updateInstanceGrid();
 	}
 
+	createControllerEditor();
+
 	m_dataObject = checked_type_cast< Serializable* >(data);
 	updatePropertyObject();
 
@@ -235,6 +263,10 @@ void SceneEditorPage::propertiesChanged()
 {
 	updateScene();
 	updateInstanceGrid();
+
+	// Notify controller editor as well.
+	if (m_controllerEditor)
+		m_controllerEditor->propertiesChanged();
 }
 
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
@@ -464,8 +496,15 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = updateCameraLook();
 	else
 	{
+		// Propagate command to controller editor.
+		if (m_controllerEditor)
+			result = m_controllerEditor->handleCommand(command);
+		else
+			result = false;
+
 		// Propagate command to editor control.
-		result = m_editControl->handleCommand(command);
+		if (!result)
+			result = m_editControl->handleCommand(command);
 	}
 
 	return result;
@@ -475,6 +514,58 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_context)
 		m_context->getResourceManager()->update(eventId, true);
+}
+
+void SceneEditorPage::createControllerEditor()
+{
+	if (m_controllerEditor)
+	{
+		m_controllerEditor->destroy();
+		m_controllerEditor = 0;
+	}
+
+	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
+	if (sceneAsset)
+	{
+		Ref< ISceneControllerData > controllerData = sceneAsset->getControllerData();
+		if (controllerData)
+		{
+			RefArray< ISceneControllerEditorFactory > controllerEditorFactories;
+			Ref< ISceneControllerEditor > controllerEditor;
+
+			// Create controller editor factories.
+			const RefArray< ISceneEditorProfile >& profiles = m_context->getEditorProfiles();
+			for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
+				(*i)->createControllerEditorFactories(m_context, controllerEditorFactories);
+
+			for (RefArray< ISceneControllerEditorFactory >::iterator i = controllerEditorFactories.begin(); i != controllerEditorFactories.end(); ++i)
+			{
+				TypeSet typeSet = (*i)->getControllerDataTypes();
+				if (typeSet.find(&type_of(controllerData)) != typeSet.end())
+				{
+					controllerEditor = (*i)->createControllerEditor(type_of(controllerData));
+					if (controllerEditor)
+						break;
+				}
+			}
+
+			if (controllerEditor)
+			{
+				if (controllerEditor->create(
+					m_context,
+					m_controllerPanel
+				))
+				{
+					m_controllerEditor = controllerEditor;
+					m_controllerPanel->update();
+				}
+				else
+					log::error << L"Unable to create controller editor; create failed" << Endl;
+			}
+			else
+				log::debug << L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"" << Endl;
+		}
+	}
 }
 
 SceneAsset* SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
@@ -581,12 +672,7 @@ void SceneEditorPage::updatePropertyObject()
 		m_context->getEditor()->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
-	{
-		if (is_a< SceneAsset >(m_dataObject))
-			m_context->getEditor()->setPropertyObject(static_cast< SceneAsset* >(m_dataObject.getPtr())->getWorldRenderSettings());
-		else
-			m_context->getEditor()->setPropertyObject(m_dataObject);
-	}
+		m_context->getEditor()->setPropertyObject(m_dataObject);
 }
 
 bool SceneEditorPage::addEntity()

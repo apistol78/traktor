@@ -42,10 +42,10 @@ bool Range::hit(const ui::Point& position) const
 	return false;
 }
 
-void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient)
+void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int x1 = sequence->clientFromTime(m_start);
-	int x2 = sequence->clientFromTime(m_end);
+	int x1 = sequence->clientFromTime(m_start) - scrollOffset;
+	int x2 = sequence->clientFromTime(m_end) - scrollOffset;
 
 	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.bottom - 2);
 

@@ -38,7 +38,7 @@ class T_DLLCLASS Key
 public:
 	virtual bool hit(const ui::Point& position) const = 0;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient) = 0;
+	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) = 0;
 };
 
 		}

@@ -1,8 +1,5 @@
 #include "Physics/Editor/PhysicsEditorProfile.h"
-#include "Physics/Editor/RigidEntityEditor.h"
-#include "Physics/Editor/ArticulatedEntityEditor.h"
-#include "Physics/World/RigidEntityData.h"
-#include "Physics/World/ArticulatedEntityData.h"
+#include "Physics/Editor/PhysicsEntityEditorFactory.h"
 #include "Physics/World/EntityFactory.h"
 #include "Physics/World/EntityRenderer.h"
 #include "Physics/MeshFactory.h"
@@ -18,14 +15,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsEditorProfile", PhysicsEditorProfile, scene::ISceneEditorProfile)
-
-TypeSet PhysicsEditorProfile::getEntityDataTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< RigidEntityData >());
-	typeSet.insert(&type_of< ArticulatedEntityData >());
-	return typeSet;
-}
 
 void PhysicsEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -67,16 +56,19 @@ void PhysicsEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< EntityRenderer >());
 }
 
-scene::IEntityEditor* PhysicsEditorProfile::createEntityEditor(
+void PhysicsEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
-	if (is_type_of< RigidEntityData >(entityDataType))
-		return gc_new< RigidEntityEditor >();
-	if (is_type_of< ArticulatedEntityEditor >(entityDataType))
-		return gc_new< ArticulatedEntityEditor >();
-	return 0;
+}
+
+void PhysicsEditorProfile::createEntityEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+) const
+{
+	outEntityEditorFactories.push_back(gc_new< PhysicsEntityEditorFactory >());
 }
 
 	}

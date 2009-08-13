@@ -31,11 +31,11 @@ bool Tick::hit(const ui::Point& position) const
 	return false;
 }
 
-void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient)
+void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
-	int x = sequence->clientFromTime(m_time);
+	int x = sequence->clientFromTime(m_time) - scrollOffset;
 
-	Rect rc(rcClient.left + x - 3, rcClient.top + 2, rcClient.left + x + 3, rcClient.bottom - 2);
+	Rect rc(rcClient.left + x - 3, rcClient.top + 2, rcClient.left + x + 4, rcClient.bottom - 3);
 
 	canvas.setForeground(Color(220, 255, 220));
 	canvas.setBackground(Color(180, 230, 180));

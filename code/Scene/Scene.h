@@ -26,16 +26,21 @@ class WorldRenderSettings;
 	namespace scene
 	{
 
+class ISceneController;
+
 class T_DLLCLASS Scene : public Object
 {
 	T_RTTI_CLASS(Scene)
 
 public:
 	Scene(
+		ISceneController* controller,
 		world::IEntityManager* entityManager,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings
 	);
+
+	ISceneController* getController() const;
 
 	world::IEntityManager* getEntityManager() const;
 
@@ -46,6 +51,7 @@ public:
 private:
 	Ref< world::IEntityManager > m_entityManager;
 	Ref< world::Entity > m_rootEntity;
+	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 };
 

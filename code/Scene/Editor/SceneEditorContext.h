@@ -67,6 +67,7 @@ class ISceneEditorProfile;
 class Camera;
 class IModifier;
 class EntityAdapter;
+class Scene;
 class SceneAsset;
 
 /*! \brief Scene editor context.
@@ -150,13 +151,26 @@ public:
 
 	bool getPhysicsEnable() const;
 
+	void setAddReferenceMode(bool referenceMode);
+
+	bool inAddReferenceMode() const;
+
+	//@}
+
+	/*! \name Time control. */
+	//@{
+
+	void setPlaying(bool playing);
+
+	bool isPlaying() const;
+
 	void setTimeScale(float timeScale);
 
 	float getTimeScale() const;
 
-	void setAddReferenceMode(bool referenceMode);
+	void setTime(float time);
 
-	bool inAddReferenceMode() const;
+	float getTime() const;
 
 	//@}
 
@@ -168,13 +182,6 @@ public:
 	//@}
 
 	void setSceneAsset(SceneAsset* sceneAsset);
-
-	/*! \brief Reset entities.
-	 *
-	 * Reset entity to entity data specification;
-	 * useful when previewing physics simulation etc.
-	 */
-	void resetEntities();
 
 	void buildEntities();
 
@@ -207,6 +214,8 @@ public:
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
 	Ref< SceneAsset >& getSceneAsset() { return m_sceneAsset; }
+
+	Ref< Scene >& getScene() { return m_scene; }
 
 	Ref< EntityAdapter >& getRootEntityAdapter() { return m_rootEntityAdapter; }
 
@@ -263,9 +272,12 @@ private:
 	bool m_snapEnable;
 	float m_deltaScale;
 	bool m_physicsEnable;
-	float m_timeScale;
 	bool m_referenceMode;
+	bool m_playing;
+	float m_timeScale;
+	float m_time;
 	Ref< SceneAsset > m_sceneAsset;
+	Ref< Scene > m_scene;
 	Ref< EntityAdapter > m_rootEntityAdapter;
 };
 

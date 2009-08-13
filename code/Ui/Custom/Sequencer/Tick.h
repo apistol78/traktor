@@ -34,7 +34,7 @@ public:
 
 	virtual bool hit(const ui::Point& position) const;
 
-	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient);
+	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);
 
 private:
 	int m_time;

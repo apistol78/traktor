@@ -82,7 +82,7 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 		entityAdapter->unlink();
 
 		// Insert into map from instance to adapter.
-		m_instances.insert(std::make_pair(entityAdapter->getInstance(), entityAdapter));
+		m_cachedInstances.insert(std::make_pair(entityAdapter->getInstance(), entityAdapter));
 	}
 
 	T_ASSERT (!m_rootAdapter);
@@ -151,26 +151,35 @@ world::Entity* EntityAdapterBuilder::build(const world::EntityInstance* instance
 	Ref< EntityAdapter > entityAdapter;
 	Ref< world::Entity > entity;
 
-	std::map< const world::EntityInstance*, Ref< EntityAdapter > >::iterator i = m_instances.find(instance);
-	if (i != m_instances.end())
+	std::map< const world::EntityInstance*, Ref< EntityAdapter > >::iterator i = m_cachedInstances.find(instance);
+	if (i != m_cachedInstances.end())
+	{
 		entityAdapter = i->second;
+		entity = entityAdapter->getEntity();
+	}
 	else
+	{
 		entityAdapter = gc_new< EntityAdapter >(const_cast< world::EntityInstance* >(instance));
-
-	if (m_currentAdapter)
-		m_currentAdapter->addChild(entityAdapter, false);
-	else
-	{
-		T_ASSERT (!m_rootAdapter);
-		m_rootAdapter = entityAdapter;
+		m_cachedInstances.insert(std::make_pair(instance, entityAdapter));
 	}
 
+	if (!entity)
 	{
-		Save< Ref< EntityAdapter > > scope(m_currentAdapter, entityAdapter);
-		entity = create(instance->getName(), instance->getEntityData());
-	}
+		if (m_currentAdapter)
+			m_currentAdapter->addChild(entityAdapter, false);
+		else
+		{
+			T_ASSERT (!m_rootAdapter);
+			m_rootAdapter = entityAdapter;
+		}
 
-	entityAdapter->setEntity(entity);
+		{
+			Save< Ref< EntityAdapter > > scope(m_currentAdapter, entityAdapter);
+			entity = create(instance->getName(), instance->getEntityData());
+		}
+
+		entityAdapter->setEntity(entity);
+	}
 
 	return entity;
 }
@@ -178,7 +187,7 @@ world::Entity* EntityAdapterBuilder::build(const world::EntityInstance* instance
 void EntityAdapterBuilder::end()
 {
 	T_ASSERT (m_currentAdapter == 0);
-	m_instances.clear();
+	m_cachedInstances.clear();
 }
 
 EntityAdapter* EntityAdapterBuilder::getRootAdapter() const
