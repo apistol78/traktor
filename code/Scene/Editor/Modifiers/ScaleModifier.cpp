@@ -131,6 +131,7 @@ void ScaleModifier::draw(
 	Vector4 axisY = c_axis[mouseY] * Scalar(scaleY);
 	Vector4 axisZ = c_axis[mouseZ] * Scalar(scaleZ);
 
+	primitiveRenderer->pushDepthEnable(false);
 	primitiveRenderer->pushWorld(worldTransform);
 
 	uint32_t axisEnable = context->getAxisEnable();
@@ -185,6 +186,7 @@ void ScaleModifier::draw(
 	}
 
 	primitiveRenderer->popWorld();
+	primitiveRenderer->popDepthEnable();
 }
 
 void ScaleModifier::adjust(

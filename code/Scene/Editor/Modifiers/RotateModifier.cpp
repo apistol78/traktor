@@ -52,6 +52,8 @@ void RotateModifier::draw(
 	Matrix44 mp = rotateX(pitch) * rotateY(head) * translate(translation);
 	Matrix44 mb = rotateZ(bank) * rotateX(pitch) * rotateY(head) * translate(translation);
 
+	primitiveRenderer->pushDepthEnable(false);
+
 	// Head
 	primitiveRenderer->pushWorld(mh);
 
@@ -132,6 +134,8 @@ void RotateModifier::draw(
 	);
 
 	primitiveRenderer->popWorld();
+
+	primitiveRenderer->popDepthEnable();
 }
 
 void RotateModifier::adjust(
