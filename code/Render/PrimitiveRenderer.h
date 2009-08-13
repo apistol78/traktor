@@ -77,6 +77,10 @@ public:
 
 	void popWorld();
 
+	void pushDepthEnable(bool depthEnable);
+
+	void popDepthEnable();
+
 	void setClipDistance(float nearZ);
 
 	void drawLine(
@@ -230,15 +234,22 @@ public:
 	inline const Matrix44& getWorld() const { return m_world.back(); }
 
 private:
+	struct Batch
+	{
+		uint8_t shaderId;
+		Primitives primitives;
+	};
+
 	resource::Proxy< Shader > m_shader;
 	Ref< VertexBuffer > m_vertexBuffers[3];
 	int m_currentBuffer;
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
-	std::vector< Primitives > m_primitives;
+	AlignedVector< Batch > m_batches;
 	AlignedVector< Matrix44 > m_projection;
 	AlignedVector< Matrix44 > m_view;
 	AlignedVector< Matrix44 > m_world;
+	AlignedVector< bool > m_depthEnable;
 	Matrix44 m_worldView;
 	Matrix44 m_worldViewProj;
 	float m_viewNearZ;

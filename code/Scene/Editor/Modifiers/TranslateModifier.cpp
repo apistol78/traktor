@@ -145,6 +145,7 @@ void TranslateModifier::draw(
 	Vector4 axisZ = c_axis[mouseZ] * Scalar(scaleZ);
 
 	primitiveRenderer->pushWorld(world);
+	primitiveRenderer->pushDepthEnable(false);
 
 	uint32_t axisEnable = context->getAxisEnable();
 
@@ -242,6 +243,7 @@ void TranslateModifier::draw(
 		}
 	}
 
+	primitiveRenderer->popDepthEnable();
 	primitiveRenderer->popWorld();
 }
 

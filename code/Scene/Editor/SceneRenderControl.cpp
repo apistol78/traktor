@@ -557,12 +557,13 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 
 	// Get root entity.
 	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
+	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
 
 	// Update entities.
-	if (rootEntityAdapter && rootEntityAdapter->getEntity())
+	if (rootEntity)
 	{
 		world::EntityUpdate entityUpdate(scaledDeltaTime);
-		rootEntityAdapter->getEntity()->update(&entityUpdate);
+		rootEntity->update(&entityUpdate);
 	}
 
 	// Render world.
@@ -653,13 +654,14 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		// Render entities.
 		m_worldRenderView.setView(view);
 
-		if (rootEntityAdapter && rootEntityAdapter->getEntity())
-			m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntityAdapter->getEntity(), 0);
+		if (rootEntity)
+			m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntity, 0);
 
 		// Flush rendering queue to GPU.
 		double startRenderTime = m_timer.getElapsedTime();
 
-		m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
+		if (rootEntity)
+			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
 
 		if (m_postProcess)
 		{
@@ -667,8 +669,11 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			m_renderView->clear(render::CfColor, clearColor, 1.0f, 128);
 		}
 
-		m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
-		m_worldRenderer->flush(0);
+		if (rootEntity)
+		{
+			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->flush(0);
+		}
 
 		if (m_postProcess)
 		{
