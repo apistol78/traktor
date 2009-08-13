@@ -38,7 +38,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< world::IEntityManager > m_entityManager;
 	RefArray< world::IEntityFactory > m_entityFactories;
-	std::map< const world::EntityInstance*, Ref< EntityAdapter > > m_instances;
+	std::map< const world::EntityInstance*, Ref< EntityAdapter > > m_cachedInstances;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
 };

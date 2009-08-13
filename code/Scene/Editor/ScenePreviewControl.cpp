@@ -211,14 +211,11 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		}
 	}
 	else if (command == L"Scene.Editor.Rewind")
-	{
-		m_context->setPhysicsEnable(false);
-		m_context->resetEntities();
-	}
+		m_context->setTime(0.0f);
 	else if (command == L"Scene.Editor.Play")
-		m_context->setPhysicsEnable(true);
+		m_context->setPlaying(true);
 	else if (command == L"Scene.Editor.Stop")
-		m_context->setPhysicsEnable(false);
+		m_context->setPlaying(false);
 	else
 	{
 		// Propagate command to render control.

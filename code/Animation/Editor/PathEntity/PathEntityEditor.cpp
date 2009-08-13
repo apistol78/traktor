@@ -1,7 +1,6 @@
 #include "Animation/Editor/PathEntity/PathEntityEditor.h"
 #include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntity.h"
-#include "Animation/PathEntity/Path.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/IModifier.h"
@@ -55,8 +54,8 @@ void PathEntityEditor::applyModifier(
 	Ref< scene::IModifier > modifier = context->getModifier();
 	if (modifier)
 	{
-		Path& path = entityData->getPath();
-		Path::Frame* frame = path.getClosestKeyFrame(m_time);
+		TransformPath& path = entityData->getPath();
+		TransformPath::Frame* frame = path.getClosestKeyFrame(m_time);
 		if (frame)
 		{
 			// Use modifier to adjust closest key frame.
@@ -106,8 +105,8 @@ bool PathEntityEditor::handleCommand(
 		;
 	else if (command == L"Animation.Editor.InsertKey")
 	{
-		Path& path = entityData->getPath();
-		Path::Frame frame = path.evaluate(m_time);
+		TransformPath& path = entityData->getPath();
+		TransformPath::Frame frame = path.evaluate(m_time);
 		path.insert(m_time, frame);
 		context->buildEntities();
 	}
@@ -129,10 +128,10 @@ void PathEntityEditor::drawGuide(
 	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
 
 	// Draw entity's path.
-	const Path& path = pathEntity->getPath();
-	const AlignedVector< Path::Key >& keys = path.getKeys();
+	const TransformPath& path = pathEntity->getPath();
+	const AlignedVector< TransformPath::Key >& keys = path.getKeys();
 
-	for (AlignedVector< Path::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
+	for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 	{
 		primitiveRenderer->drawWireAabb(
 			i->value.position,

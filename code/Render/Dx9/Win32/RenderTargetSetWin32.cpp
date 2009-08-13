@@ -122,6 +122,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 
 	// Ensure all target formats is supported; try to promote format if
 	// available.
+	T_ASSERT (m_desc.count < RenderTargetSetCreateDesc::MaxTargets);
 	for (int i = 0; i < m_desc.count; ++i)
 	{
 		for (;;)

@@ -8,6 +8,8 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/SelectEvent.h"
+#include "Scene/Scene.h"
+#include "Scene/ISceneController.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -54,7 +56,6 @@ SceneRenderControl::SceneRenderControl()
 ,	m_modifyAlternative(false)
 ,	m_dirtySize(0, 0)
 ,	m_lastDeltaTime(1.0f / c_updateInterval)
-,	m_dynamicPhysicsTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
 {
 }
@@ -311,7 +312,7 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 
 		if (!m_modifyCamera)
 		{
-			// Ensure physics simulation is disabled.
+			m_context->setPlaying(false);
 			m_context->setPhysicsEnable(false);
 
 			// Get selected entities.
@@ -513,6 +514,9 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	deltaTime = float(deltaTime * 0.2f + m_lastDeltaTime * 0.8f);
 	m_lastDeltaTime = deltaTime;
 
+	float scaledTime = m_context->getTime();
+	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+
 	// Update camera.
 	Ref< Camera > camera = m_context->getCamera();
 	T_ASSERT (camera);
@@ -525,11 +529,25 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	// Update physics; update in steps of 1/60th of a second.
 	if (m_context->getPhysicsEnable())
 	{
-		m_dynamicPhysicsTime += deltaTime * m_context->getTimeScale();
-		while (m_lastPhysicsTime < m_dynamicPhysicsTime)
+		while (m_lastPhysicsTime < scaledTime)
 		{
 			m_context->getPhysicsManager()->update();
 			m_lastPhysicsTime += 1.0f / 60.0f;
+		}
+	}
+
+	// Update controller.
+	Ref< Scene > scene = m_context->getScene();
+	if (scene)
+	{
+		Ref< ISceneController > controller = scene->getController();
+		if (controller)
+		{
+			controller->update(
+				m_context->getScene(),
+				scaledTime,
+				scaledDeltaTime
+			);
 		}
 	}
 
@@ -543,7 +561,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	// Update entities.
 	if (rootEntityAdapter && rootEntityAdapter->getEntity())
 	{
-		world::EntityUpdate entityUpdate(deltaTime * m_context->getTimeScale());
+		world::EntityUpdate entityUpdate(scaledDeltaTime);
 		rootEntityAdapter->getEntity()->update(&entityUpdate);
 	}
 
@@ -636,10 +654,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderView.setView(view);
 
 		if (rootEntityAdapter && rootEntityAdapter->getEntity())
-		{
-			float scaledDeltaTime = deltaTime * m_context->getTimeScale();
 			m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntityAdapter->getEntity(), 0);
-		}
 
 		// Flush rendering queue to GPU.
 		double startRenderTime = m_timer.getElapsedTime();
@@ -681,6 +696,9 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			m_context->raisePostFrame(&eventFrame);
 		}
 	}
+
+	// Update context time.
+	m_context->setTime(scaledTime + scaledDeltaTime);
 
 	event->consume();
 }

@@ -4,10 +4,12 @@
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/SceneAsset.h"
+#include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
 #include "Core/Log/Log.h"
@@ -20,12 +22,16 @@ namespace traktor
 		{
 
 // Find best matching entity editor.
-IEntityEditor* createEntityEditor(SceneEditorContext* context, const RefArray< ISceneEditorProfile >& editorProfiles, const Type& entityDataType)
+IEntityEditor* createEntityEditor(
+	SceneEditorContext* context,
+	const RefArray< IEntityEditorFactory >& entityEditorFactories,
+	const Type& entityDataType
+)
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< ISceneEditorProfile > editorProfile;
+	Ref< IEntityEditorFactory > entityEditorFactory;
 
-	for (RefArray< ISceneEditorProfile >::const_iterator i = editorProfiles.begin(); i != editorProfiles.end(); ++i)
+	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
 	{
 		TypeSet entityDataTypes = (*i)->getEntityDataTypes();
 		for (TypeSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
@@ -35,24 +41,28 @@ IEntityEditor* createEntityEditor(SceneEditorContext* context, const RefArray< I
 				uint32_t classDifference = type_difference(**j, entityDataType);
 				if (classDifference < minClassDifference)
 				{
-					editorProfile = *i;
+					entityEditorFactory = *i;
 					minClassDifference = classDifference;
 				}
 			}
 		}
 	}
 
-	if (!editorProfile)
+	if (!entityEditorFactory)
 	{
-		log::debug << L"Unable to find profile supporting entity type \"" << entityDataType.getName() << L"\"" << Endl;
+		log::debug << L"Unable to find factory supporting entity type \"" << entityDataType.getName() << L"\"" << Endl;
 		return 0;
 	}
 
-	return editorProfile->createEntityEditor(context, entityDataType);
+	return entityEditorFactory->createEntityEditor(context, entityDataType);
 }
 
 // Create entity editor for each adapter.
-void createEntityEditorFactories(SceneEditorContext* context, const RefArray< ISceneEditorProfile >& editorProfiles, EntityAdapter* entityAdapter)
+void createEntityEditors(
+	SceneEditorContext* context,
+	const RefArray< IEntityEditorFactory >& entityEditorFactories,
+	EntityAdapter* entityAdapter
+)
 {
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 
@@ -60,7 +70,7 @@ void createEntityEditorFactories(SceneEditorContext* context, const RefArray< IS
 	{
 		Ref< IEntityEditor > entityEditor = createEntityEditor(
 			context,
-			editorProfiles,
+			entityEditorFactories,
 			type_of(entityAdapter->getRealEntityData())
 		);
 		if (entityEditor)
@@ -68,7 +78,7 @@ void createEntityEditorFactories(SceneEditorContext* context, const RefArray< IS
 	}
 
 	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-		createEntityEditorFactories(context, editorProfiles, *i);
+		createEntityEditors(context, entityEditorFactories, *i);
 }
 
 		}
@@ -96,8 +106,10 @@ SceneEditorContext::SceneEditorContext(
 ,	m_snapEnable(true)
 ,	m_deltaScale(0.05f)
 ,	m_physicsEnable(false)
-,	m_timeScale(1.0f)
 ,	m_referenceMode(false)
+,	m_playing(false)
+,	m_timeScale(1.0f)
+,	m_time(0.0f)
 {
 	const Matrix44 identity = Matrix44::identity();
 	m_camera = gc_new< Camera >(cref(identity));
@@ -198,6 +210,26 @@ bool SceneEditorContext::getPhysicsEnable() const
 	return m_physicsEnable;
 }
 
+void SceneEditorContext::setAddReferenceMode(bool referenceMode)
+{
+	m_referenceMode = referenceMode;
+}
+
+bool SceneEditorContext::inAddReferenceMode() const
+{
+	return m_referenceMode;
+}
+
+void SceneEditorContext::setPlaying(bool playing)
+{
+	m_playing = playing;
+}
+
+bool SceneEditorContext::isPlaying() const
+{
+	return m_playing;
+}
+
 void SceneEditorContext::setTimeScale(float timeScale)
 {
 	m_timeScale = timeScale;
@@ -208,14 +240,14 @@ float SceneEditorContext::getTimeScale() const
 	return m_timeScale;
 }
 
-void SceneEditorContext::setAddReferenceMode(bool referenceMode)
+void SceneEditorContext::setTime(float time)
 {
-	m_referenceMode = referenceMode;
+	m_time = time;
 }
 
-bool SceneEditorContext::inAddReferenceMode() const
+float SceneEditorContext::getTime() const
 {
-	return m_referenceMode;
+	return m_time;
 }
 
 void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter)
@@ -230,28 +262,13 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 	m_sceneAsset = sceneAsset;
 }
 
-void SceneEditorContext::resetEntities()
-{
-	//RefArray< EntityAdapter > entityAdapters;
-	//getEntities(entityAdapters);
-
-	//for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	//{
-	//	if ((*i)->isSpatial())
-	//		(*i)->forceModified();
-	//}
-
-	//buildEntities();
-
-	T_BREAKPOINT;
-}
-
 void SceneEditorContext::buildEntities()
 {
 	if (m_sceneAsset)
 	{
 		Ref< EntityAdapterBuilder > entityBuilder = gc_new< EntityAdapterBuilder >(this);
 
+		// Create entity factories.
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
 		{
 			RefArray< world::IEntityFactory > entityFactories;
@@ -263,9 +280,8 @@ void SceneEditorContext::buildEntities()
 
 		// (Re-)build entities.
 		{
-			entityBuilder->begin(0);
-			entityBuilder->build(m_sceneAsset->getInstance());
-			entityBuilder->end();
+			Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
+			m_scene = m_sceneAsset->createScene(entityBuilder, entityManager);
 
 			// Save new root entity adapter.
 			m_rootEntityAdapter = entityBuilder->getRootAdapter();
@@ -276,10 +292,18 @@ void SceneEditorContext::buildEntities()
 
 		// Create entity editors.
 		if (m_rootEntityAdapter)
-			createEntityEditorFactories(this, m_editorProfiles, m_rootEntityAdapter);
+		{
+			RefArray< IEntityEditorFactory > entityEditorFactories;
+			for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
+				(*i)->createEntityEditorFactories(this, entityEditorFactories);
+			createEntityEditors(this, entityEditorFactories, m_rootEntityAdapter);
+		}
 	}
 	else
+	{
+		m_scene = 0;
 		m_rootEntityAdapter = 0;
+	}
 
 	// Force a collect in order to as quickly as possible remove old, unused, entities.
 	Heap::getInstance().collect();

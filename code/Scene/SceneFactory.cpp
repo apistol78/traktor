@@ -1,10 +1,7 @@
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneAsset.h"
 #include "Scene/Scene.h"
-#include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/EntityManager.h"
-#include "World/Entity/EntityData.h"
-#include "World/Entity/Entity.h"
 #include "Database/Database.h"
 
 namespace traktor
@@ -39,23 +36,7 @@ Object* SceneFactory::create(resource::IResourceManager* resourceManager, const 
 		return 0;
 
 	Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
-
-	m_entityBuilder->begin(entityManager);
-
-	Ref< world::Entity > rootEntity = m_entityBuilder->build(
-		asset->getInstance()
-	);
-	
-	m_entityBuilder->end();
-
-	if (!rootEntity)
-		return 0;
-
-	return gc_new< Scene >(
-		entityManager,
-		rootEntity,
-		asset->getWorldRenderSettings()
-	);
+	return asset->createScene(m_entityBuilder, entityManager);
 }
 
 	}

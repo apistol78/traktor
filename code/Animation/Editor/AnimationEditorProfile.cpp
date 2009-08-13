@@ -1,9 +1,6 @@
 #include "Animation/Editor/AnimationEditorProfile.h"
-#include "Animation/Editor/AnimatedMeshEntityEditor.h"
-#include "Animation/Editor/PathEntity/PathEntityEditor.h"
-#include "Animation/AnimatedMeshEntityData.h"
+#include "Animation/Editor/AnimationEntityEditorFactory.h"
 #include "Animation/AnimatedMeshEntityFactory.h"
-#include "Animation/PathEntity/PathEntityData.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Animation/Animation/AnimationFactory.h"
@@ -17,14 +14,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::ISceneEditorProfile)
-
-TypeSet AnimationEditorProfile::getEntityDataTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< AnimatedMeshEntityData >());
-	typeSet.insert(&type_of< PathEntityData >());
-	return typeSet;
-}
 
 void AnimationEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -70,16 +59,19 @@ void AnimationEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< PathEntityRenderer >());
 }
 
-scene::IEntityEditor* AnimationEditorProfile::createEntityEditor(
+void AnimationEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
-	if (is_type_of< AnimatedMeshEntityData >(entityDataType))
-		return gc_new< AnimatedMeshEntityEditor >();
-	if (is_type_of< PathEntityData >(entityDataType))
-		return gc_new< PathEntityEditor >();
-	return 0;
+}
+
+void AnimationEditorProfile::createEntityEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+) const
+{
+	outEntityEditorFactories.push_back(gc_new< AnimationEntityEditorFactory >());
 }
 
 	}

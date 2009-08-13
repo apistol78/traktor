@@ -40,16 +40,16 @@ public:
 
 	virtual bool serialize(Serializer& s);
 
-	Path& getPath() { return m_path; }
+	TransformPath& getPath() { return m_path; }
 
-	const Path& getPath() const { return m_path; }
+	const TransformPath& getPath() const { return m_path; }
 
 	const PathEntity::TimeMode getTimeMode() const { return m_timeMode; }
 
 	const Ref< world::EntityInstance >& getInstance() const { return m_instance; }
 
 private:
-	Path m_path;
+	TransformPath m_path;
 	PathEntity::TimeMode m_timeMode;
 	Ref< world::EntityInstance > m_instance;
 };

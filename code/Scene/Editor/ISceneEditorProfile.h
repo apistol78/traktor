@@ -56,7 +56,8 @@ class IEntityRenderer;
 	{
 
 class SceneEditorContext;
-class IEntityEditor;
+class ISceneControllerEditorFactory;
+class IEntityEditorFactory;
 
 /*! \brief Scene editor profile.
  * \ingroup Scene
@@ -70,12 +71,6 @@ class T_DLLCLASS ISceneEditorProfile : public Object
 	T_RTTI_CLASS(ISceneEditorProfile)
 
 public:
-	/*! \brief Get supported set of entities.
-	 *
-	 * \return Type set of EntityData types.
-	 */
-	virtual TypeSet getEntityDataTypes() const = 0;
-
 	/*! \brief Get UI commands.
 	 *
 	 * \param outCommands Output list of commands.
@@ -126,15 +121,24 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const = 0;
 
+	/*! \brief Create scene controller editor factories.
+	 *
+	 * \param context Scene editor context.
+	 * \param outControllerEditorFactories Scene controller editor factories.
+	 */
+	virtual void createControllerEditorFactories(
+		SceneEditorContext* context,
+		RefArray< ISceneControllerEditorFactory >& outControllerEditorFactories
+	) const = 0;
+
 	/*! \brief Create entity editor factories.
 	 *
 	 * \param context Scene editor context.
-	 * \param entityDataType Type of entity data.
-	 * \return Entity editor instance.
+	 * \param outEntityEditorFactories Entity editor factories.
 	 */
-	virtual IEntityEditor* createEntityEditor(
+	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
-		const Type& entityDataType
+		RefArray< IEntityEditorFactory >& outEntityEditorFactories
 	) const = 0;
 };
 

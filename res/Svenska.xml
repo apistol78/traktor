@@ -866,6 +866,10 @@
       <second>Bank</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_CONTROLLER</first>
+      <second>Kontroll</second>
+    </item>
+    <item>
 			<first>SCENE_EDITOR_DELTA_SCALE</first>
 			<second>Delta {0}</second>
 		</item>

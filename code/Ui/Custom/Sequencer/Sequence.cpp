@@ -136,28 +136,8 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 			rc.right,
 			rc.bottom
 		);
-		(*j)->paint(canvas, this, rcClient);
+		(*j)->paint(canvas, this, rcClient, scrollOffset);
 	}
-
-		//const Key* key = *j;
-
-		//int x = separator + key->getTime() / c_timeScaleDenom - scrollOffset;
-		//Rect rcKey(x - 3, rc.top + 2, x + 3, rc.bottom - 2);
-
-		//if (isSelected() && key == m_selectedKey)
-		//{
-		//	canvas.setBackground(Color(255, 255, 255));
-		//	canvas.fillRect(rcKey);
-		//}
-		//else
-		//{
-		//	canvas.setForeground(Color(220, 255, 220));
-		//	canvas.setBackground(Color(180, 230, 180));
-		//	canvas.fillGradientRect(rcKey);
-		//}
-
-		//canvas.setForeground(Color(0, 0, 0));
-		//canvas.drawRect(rcKey);
 }
 
 		}

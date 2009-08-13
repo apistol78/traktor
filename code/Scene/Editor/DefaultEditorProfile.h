@@ -14,8 +14,6 @@ class DefaultEditorProfile : public ISceneEditorProfile
 	T_RTTI_CLASS(DefaultEditorProfile)
 
 public:
-	virtual TypeSet getEntityDataTypes() const;
-
 	virtual void getCommands(
 		std::list< ui::Command >& outCommands
 	) const;
@@ -41,9 +39,14 @@ public:
 		RefArray< world::IEntityRenderer >& outEntityRenderers
 	) const;
 
-	virtual IEntityEditor* createEntityEditor(
+	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
-		const Type& entityDataType
+		RefArray< ISceneControllerEditorFactory >& outControllerEditorFactories
+	) const;
+
+	virtual void createEntityEditorFactories(
+		SceneEditorContext* context,
+		RefArray< IEntityEditorFactory >& outEntityEditorFactories
 	) const;
 };
 

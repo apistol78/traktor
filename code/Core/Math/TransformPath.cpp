@@ -1,5 +1,5 @@
 #include <limits>
-#include "Animation/PathEntity/Path.h"
+#include "Core/Math/TransformPath.h"
 #include "Core/Math/Hermite.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
@@ -8,42 +8,40 @@
 
 namespace traktor
 {
-	namespace animation
+	namespace
 	{
-		namespace
-		{
 
 struct FrameAccessor
 {
-	static inline Scalar time(const Path::Key& key)
+	static inline Scalar time(const TransformPath::Key& key)
 	{
 		return Scalar(key.T);
 	}
 
-	static inline Path::Frame value(const Path::Key& key)
+	static inline TransformPath::Frame value(const TransformPath::Key& key)
 	{
-		return Path::Frame(key.value);
+		return TransformPath::Frame(key.value);
 	}
 
-	static inline Path::Frame combine(
-		const Path::Frame& v0, const Scalar& w0,
-		const Path::Frame& v1, const Scalar& w1,
-		const Path::Frame& v2, const Scalar& w2,
-		const Path::Frame& v3, const Scalar& w3
+	static inline TransformPath::Frame combine(
+		const TransformPath::Frame& v0, const Scalar& w0,
+		const TransformPath::Frame& v1, const Scalar& w1,
+		const TransformPath::Frame& v2, const Scalar& w2,
+		const TransformPath::Frame& v3, const Scalar& w3
 	)
 	{
-		Path::Frame f;
+		TransformPath::Frame f;
 		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
 		f.orientation = (v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3).normalized();
 		return f;
 	}
 };
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.Path", Path, Serializable)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.TransformPath", TransformPath, Serializable)
 
-void Path::insert(float at, const Frame& frame)
+void TransformPath::insert(float at, const Frame& frame)
 {
 	Key key;
 	key.T = at;
@@ -77,14 +75,18 @@ void Path::insert(float at, const Frame& frame)
 	}
 }
 
-Path::Frame Path::evaluate(float at) const
+TransformPath::Frame TransformPath::evaluate(float at) const
 {
-	if (m_keys.empty())
+	size_t nkeys = m_keys.size();
+	if (nkeys == 0)
 		return Frame();
-	return Hermite< Key, Scalar, Frame, FrameAccessor >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));
+	else if (nkeys == 1)
+		return m_keys[0].value;
+	else
+		return Hermite< Key, Scalar, Frame, FrameAccessor >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));
 }
 
-Path::Frame* Path::getClosestKeyFrame(float at)
+TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
 {
 	if (m_keys.empty())
 		return 0;
@@ -105,24 +107,23 @@ Path::Frame* Path::getClosestKeyFrame(float at)
 	return &m_keys[minI].value;
 }
 
-bool Path::serialize(Serializer& s)
+bool TransformPath::serialize(Serializer& s)
 {
 	return s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-bool Path::Key::serialize(Serializer& s)
+bool TransformPath::Key::serialize(Serializer& s)
 {
 	s >> Member< float >(L"T", T, 0.0f);
 	s >> MemberComposite< Frame >(L"value", value);
 	return true;
 }
 
-bool Path::Frame::serialize(Serializer& s)
+bool TransformPath::Frame::serialize(Serializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
 	s >> Member< Quaternion >(L"orientation", orientation);
 	return true;
 }
 
-	}
 }

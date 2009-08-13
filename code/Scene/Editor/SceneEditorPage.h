@@ -53,6 +53,7 @@ class EntityData;
 	namespace scene
 	{
 
+class ISceneControllerEditor;
 class ScenePreviewControl;
 class SceneEditorContext;
 class EntityAdapter;
@@ -92,6 +93,8 @@ private:
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::Container > m_entityPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
+	Ref< ui::Container > m_controllerPanel;
+	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::custom::GridView > m_instanceGrid;
@@ -99,6 +102,8 @@ private:
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< editor::UndoStack > m_undoStack;
 	uint32_t m_currentSettingsHash;
+
+	void createControllerEditor();
 
 	SceneAsset* createWhiteRoomSceneAsset(world::EntityData* entityData);
 

@@ -1,8 +1,5 @@
 #include "Terrain/Editor/TerrainEditorProfile.h"
-#include "Terrain/Editor/TerrainEntityEditor.h"
-#include "Terrain/Editor/OceanEntityEditor.h"
-#include "Terrain/TerrainEntityData.h"
-#include "Terrain/OceanEntityData.h"
+#include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Terrain/HeightfieldFactory.h"
 #include "Terrain/MaterialMaskFactory.h"
 #include "Terrain/EntityFactory.h"
@@ -18,14 +15,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::ISceneEditorProfile)
-
-TypeSet TerrainEditorProfile::getEntityDataTypes() const
-{
-	TypeSet typeSet;
-	typeSet.insert(&type_of< TerrainEntityData >());
-	typeSet.insert(&type_of< OceanEntityData >());
-	return typeSet;
-}
 
 void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -72,16 +61,19 @@ void TerrainEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(gc_new< EntityRenderer >());
 }
 
-scene::IEntityEditor* TerrainEditorProfile::createEntityEditor(
+void TerrainEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
-	if (is_type_of< TerrainEntityData >(entityDataType))
-		return gc_new< TerrainEntityEditor >();
-	if (is_type_of< OceanEntityEditor >(entityDataType))
-		return gc_new< OceanEntityEditor >();
-	return 0;
+}
+
+void TerrainEditorProfile::createEntityEditorFactories(
+	scene::SceneEditorContext* context,
+	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+) const
+{
+	outEntityEditorFactories.push_back(gc_new< TerrainEntityEditorFactory >());
 }
 
 	}

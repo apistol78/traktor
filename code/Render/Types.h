@@ -256,12 +256,14 @@ struct RenderTargetCreateDesc
 /*! \brief Descriptor for render target sets. */
 struct RenderTargetSetCreateDesc
 {
-	int32_t count;						/*!< Number of render targets in set; max 4 targets allowed. */
-	int32_t width;						/*!< Width of render targets. */
-	int32_t height;						/*!< Height of render targets. */
-	int32_t multiSample;				/*!< Number of samples; 0 no multisample. */
-	bool depthStencil;					/*!< Attach depth/stencil buffer; shared among all targets. */
-	RenderTargetCreateDesc targets[4];	/*!< Descriptor for each target. */
+	enum { MaxTargets = 8 };
+
+	int32_t count;								/*!< Number of render targets in set; max 4 targets allowed. */
+	int32_t width;								/*!< Width of render targets. */
+	int32_t height;								/*!< Height of render targets. */
+	int32_t multiSample;						/*!< Number of samples; 0 no multisample. */
+	bool depthStencil;							/*!< Attach depth/stencil buffer; shared among all targets. */
+	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
 
 	RenderTargetSetCreateDesc()
 	:	count(0)

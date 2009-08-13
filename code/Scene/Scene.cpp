@@ -10,14 +10,21 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.Scene", Scene, Object)
 
 Scene::Scene(
+	ISceneController* controller,
 	world::IEntityManager* entityManager,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings
 )
-:	m_entityManager(entityManager)
+:	m_controller(controller)
+,	m_entityManager(entityManager)
 ,	m_rootEntity(rootEntity)
 ,	m_worldRenderSettings(worldRenderSettings)
 {
+}
+
+ISceneController* Scene::getController() const
+{
+	return m_controller;
 }
 
 world::IEntityManager* Scene::getEntityManager() const

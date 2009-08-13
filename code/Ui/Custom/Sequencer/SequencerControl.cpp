@@ -25,6 +25,7 @@ namespace traktor
 
 const int c_sequenceHeight = 22;
 const int c_timeScale = 8;
+const int c_endWidth = 200;
 
 			}
 
@@ -212,7 +213,7 @@ void SequencerControl::updateScrollBars()
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	Size sequences(
-		m_separator + m_length / c_timeScale,
+		m_separator + m_length / c_timeScale + c_endWidth,
 		int(sequenceItems.size() * c_sequenceHeight) + 1
 	);
 
@@ -224,10 +225,12 @@ void SequencerControl::updateScrollBars()
 	int overflowV = std::max< int >(0, sequences.cy - rc.getHeight() + scrollHeight);
 	m_scrollBarV->setRange(overflowV);
 	m_scrollBarV->setEnable(overflowV > 0);
+	m_scrollBarV->setPage(c_sequenceHeight);
 
 	int overflowH = std::max< int >(0, sequences.cx - rc.getWidth() + scrollWidth);
 	m_scrollBarH->setRange(overflowH);
 	m_scrollBarH->setEnable(overflowH > 0);
+	m_scrollBarH->setPage(100);
 }
 
 void SequencerControl::eventButtonDown(Event* e)
@@ -350,14 +353,7 @@ void SequencerControl::eventMouseMove(Event* e)
 	CommandEvent cmdEvent(this, 0, Command(m_cursor));
 	raiseEvent(EiCursorMove, &cmdEvent);
 
-	// Calculate new cursor display position.
-	int x1 = m_separator + m_cursor / c_timeScale - scrollOffsetX;
-
-	// Redraw sequencer; update cursor range.
-	Rect rc = getInnerRect();
-	rc.left = std::min(x0, x1) - 1;
-	rc.right = std::max(x0, x1) + 1;
-	update(&rc);
+	update();
 
 	e->consume();
 }
@@ -383,8 +379,13 @@ void SequencerControl::eventPaint(Event* e)
 	// Clear background.
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
-	canvas.setBackground(getSystemColor(ScButtonShadow));
+	canvas.setBackground(Color(138, 137, 140));
 	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
+	canvas.setBackground(getSystemColor(ScButtonFace));
+	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
+
+	// Right sequence edge.
+	int end = std::min(m_separator + m_length / c_timeScale - scrollOffsetX, rc.right - scrollWidth);
 
 	// Draw sequences.
 	Rect rcSequence(
@@ -398,7 +399,7 @@ void SequencerControl::eventPaint(Event* e)
 		canvas.setClipRect(Rect(
 			rc.left,
 			rc.top,
-			rc.right - scrollWidth,
+			end,
 			rc.bottom - scrollHeight
 		));
 
@@ -414,7 +415,7 @@ void SequencerControl::eventPaint(Event* e)
 	if (x >= m_separator && x < rc.right)
 	{
 		canvas.setForeground(Color(0, 0, 0));
-		canvas.drawLine(x, rc.top, x, rc.bottom);
+		canvas.drawLine(x, rc.top, x, rc.bottom - scrollHeight - 1);
 	}
 
 	// Draw time information.
