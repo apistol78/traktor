@@ -14,6 +14,7 @@ class Event;
 		namespace custom
 		{
 
+class ToolBar;
 class SequencerControl;
 
 		}
@@ -38,12 +39,17 @@ public:
 	virtual bool handleCommand(const ui::Command& command);
 
 private:
+	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
 
 	void updateSequencer();
 
 	void captureEntities();
+
+	void deleteSelectedKey();
+
+	void eventToolBarClick(ui::Event* event);
 
 	void eventSequencerCursorMove(ui::Event* event);
 

@@ -26,9 +26,11 @@ int Tick::getTime() const
 	return m_time;
 }
 
-bool Tick::hit(const ui::Point& position) const
+void Tick::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
 {
-	return false;
+	int x = sequence->clientFromTime(m_time);
+	outLeft = x - 3;
+	outRight = x + 4;
 }
 
 void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)

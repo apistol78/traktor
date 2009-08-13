@@ -32,7 +32,7 @@ public:
 
 	int getTime() const;
 
-	virtual bool hit(const ui::Point& position) const;
+	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const;
 
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);
 

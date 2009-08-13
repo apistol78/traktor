@@ -67,18 +67,17 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 	m_selectedKey = 0;
 	for (RefList< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 	{
-		if ((*j)->hit(at))
+		int left, right;
+		(*j)->getRange(this, left, right);
+
+		left += separator - scrollOffset;
+		right += separator - scrollOffset;
+
+		if (at.x >= left && at.x <= right)
 		{
 			m_selectedKey = *j;
 			break;
 		}
-
-		//int x = separator + (*j)->getTime() / c_timeScaleDenom - scrollOffset;
-		//if (at.x >= x - 3 && at.x <= x + 3)
-		//{
-		//	m_selectedKey = *j;
-		//	break;
-		//}
 	}
 }
 

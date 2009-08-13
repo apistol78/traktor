@@ -37,9 +37,10 @@ int Range::getEnd() const
 	return m_end;
 }
 
-bool Range::hit(const ui::Point& position) const
+void Range::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
 {
-	return false;
+	outLeft = sequence->clientFromTime(m_start);
+	outRight = sequence->clientFromTime(m_end);
 }
 
 void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
