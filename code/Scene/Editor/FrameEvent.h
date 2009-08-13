@@ -21,15 +21,7 @@ class T_DLLCLASS FrameEvent : public ui::Event
 	T_RTTI_CLASS(FrameEvent)
 
 public:
-	FrameEvent(ui::EventSubject* sender, double frameTime, double renderTime);
-
-	double getFrameTime() const;
-
-	double getRenderTime() const;
-
-private:
-	double m_frameTime;
-	double m_renderTime;
+	FrameEvent(ui::EventSubject* sender);
 };
 
 	}

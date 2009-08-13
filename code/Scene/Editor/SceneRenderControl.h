@@ -39,8 +39,6 @@ class PrimitiveRenderer;
 
 class WorldRenderSettings;
 class WorldRenderer;
-class PostProcessSettings;
-class PostProcess;
 class Entity;
 
 	}
@@ -58,19 +56,26 @@ class T_DLLCLASS SceneRenderControl : public ui::Widget
 	T_RTTI_CLASS(SceneRenderControl)
 
 public:
+	enum ViewMode
+	{
+		VmPerspective,
+		VmAxisX,
+		VmAxisY,
+		VmAxisZ
+	};
+
 	SceneRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context);
+	bool create(ui::Widget* parent, SceneEditorContext* context, ViewMode viewMode);
 
 	void destroy();
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
-	void setPostProcessSettings(world::PostProcessSettings* postProcessSettings);
-
 	bool handleCommand(const ui::Command& command);
 
 private:
+	ViewMode m_viewMode;
 	Ref< SceneEditorContext > m_context;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTargetSet;
@@ -78,22 +83,16 @@ private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
-	Ref< world::PostProcessSettings > m_postProcessSettings;
-	Ref< world::PostProcess > m_postProcess;
-	Ref< ui::EventHandler > m_idleHandler;
 	Timer m_timer;
 	ui::Point m_mousePosition;
 	int m_mouseButton;
 	bool m_modifyCamera;
 	bool m_modifyAlternative;
+	Ref< Camera > m_camera;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;
-	float m_lastDeltaTime;
-	float m_lastPhysicsTime;
 
 	void updateWorldRenderer();
-
-	void updatePostProcess();
 
 	EntityAdapter* pickEntity(const ui::Point& position) const;
 

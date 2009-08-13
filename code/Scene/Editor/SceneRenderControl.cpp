@@ -8,27 +8,20 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/SelectEvent.h"
-#include "Scene/Scene.h"
-#include "Scene/ISceneController.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Physics/PhysicsManager.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/PostProcess/PostProcess.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
-#include "World/Entity/EntityUpdate.h"
-#include "Ui/Application.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
-#include "Ui/Events/IdleEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Math/Vector2.h"
@@ -40,7 +33,6 @@ namespace traktor
 		namespace
 		{
 
-const int c_updateInterval = 80;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
@@ -55,17 +47,17 @@ SceneRenderControl::SceneRenderControl()
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
 ,	m_dirtySize(0, 0)
-,	m_lastDeltaTime(1.0f / c_updateInterval)
-,	m_lastPhysicsTime(0.0f)
 {
 }
 
-bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
+bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewMode viewMode)
 {
 	m_context = context;
 	T_ASSERT (m_context);
 
-	if (!Widget::create(parent, ui::WsNone))
+	m_viewMode = viewMode;
+
+	if (!Widget::create(parent, ui::WsClientBorder))
 		return false;
 
 	render::RenderViewCreateDesc desc;
@@ -95,23 +87,14 @@ bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 
 	updateWorldRenderer();
 
+	m_camera = gc_new< Camera >(cref(Matrix44::identity()));
 	m_timer.start();
-
-	// Register our event handler in case of message idle.
-	m_idleHandler = ui::createMethodHandler(this, &SceneRenderControl::eventIdle);
-	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
 
 	return true;
 }
 
 void SceneRenderControl::destroy()
 {
-	if (m_idleHandler)
-	{
-		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
-		m_idleHandler = 0;
-	}
-
 	if (m_worldRenderer)
 	{
 		m_worldRenderer->destroy();
@@ -137,12 +120,6 @@ void SceneRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worl
 {
 	m_worldRenderSettings = worldRenderSettings;
 	updateWorldRenderer();
-}
-
-void SceneRenderControl::setPostProcessSettings(world::PostProcessSettings* postProcessSettings)
-{
-	m_postProcessSettings = postProcessSettings;
-	updatePostProcess();
 }
 
 bool SceneRenderControl::handleCommand(const ui::Command& command)
@@ -192,75 +169,35 @@ void SceneRenderControl::updateWorldRenderer()
 			worldEntityRenderers->add(*j);
 	}
 
-	world::WorldViewPort worldViewPort;
-	worldViewPort.width = sz.cx;
-	worldViewPort.height = sz.cy;
-	worldViewPort.aspect = float(sz.cx) / sz.cy;
-	worldViewPort.fov = deg2rad(80.0f);
-
 	m_worldRenderer = gc_new< world::WorldRenderer >();
 	if (m_worldRenderer->create(
 		*m_worldRenderSettings,
 		worldEntityRenderers,
 		m_context->getRenderSystem(),
 		m_renderView,
-		worldViewPort,
 		4,
 		1
 	))
-		m_worldRenderer->createRenderView(m_worldRenderView);
-	else
-		m_worldRenderer = 0;
-}
-
-void SceneRenderControl::updatePostProcess()
-{
-	if (m_postProcess)
 	{
-		m_postProcess->destroy();
-		m_postProcess = 0;
-	}
-
-	if (m_renderTargetSet)
-	{
-		m_renderTargetSet->destroy();
-		m_renderTargetSet = 0;
-	}
-
-	ui::Size sz = getInnerRect().getSize();
-
-	if (m_postProcessSettings && sz.cx > 0 && sz.cy > 0)
-	{
-		m_postProcess = gc_new< world::PostProcess >();
-		if (m_postProcess->create(
-			m_postProcessSettings,
-			m_context->getResourceManager(),
-			m_context->getRenderSystem(),
-			sz.cx,
-			sz.cy
-		))
+		if (m_viewMode == VmPerspective)
 		{
-			render::RenderTargetSetCreateDesc desc;
-
-			desc.count = 1;
-			desc.width = sz.cx;
-			desc.height = sz.cy;
-			desc.multiSample = 4;
-			desc.depthStencil = false;
-			desc.targets[0].format = render::TfR8G8B8A8;
-
-			m_renderTargetSet = m_context->getRenderSystem()->createRenderTargetSet(desc);
-			if (!m_renderTargetSet)
-			{
-				m_postProcess->destroy();
-				m_postProcess = 0;
-			}
+			world::WorldViewPerspective worldView;
+			worldView.width = sz.cx;
+			worldView.height = sz.cy;
+			worldView.aspect = float(sz.cx) / sz.cy;
+			worldView.fov = deg2rad(65.0f);
+			m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 		}
 		else
-			m_postProcess = 0;
+		{
+			world::WorldViewOrtho worldView;
+			worldView.width = 10.0f;
+			worldView.height = 10.0f;
+			m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+		}
 	}
 	else
-		m_postProcess = 0;
+		m_worldRenderer = 0;
 }
 
 EntityAdapter* SceneRenderControl::pickEntity(const ui::Point& position) const
@@ -405,9 +342,6 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 	if (!hasCapture())
 		return;
 
-	Ref< Camera > camera = m_context->getCamera();
-	T_ASSERT (camera);
-
 	int mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
@@ -429,7 +363,7 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 				entityEditor->applyModifier(
 					m_context,
 					*i,
-					camera->getCurrentView(),
+					m_camera->getCurrentView(),
 					mouseDelta,
 					mouseButton
 				);
@@ -441,14 +375,14 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 		{
 			mouseDelta *= m_context->getDeltaScale();
 			if (m_modifyAlternative)
-				camera->move(Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f));
+				m_camera->move(Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f));
 			else
-				camera->move(Vector4(mouseDelta.x, 0.0f, mouseDelta.y, 0.0f));
+				m_camera->move(Vector4(mouseDelta.x, 0.0f, mouseDelta.y, 0.0f));
 		}
 		else
 		{
 			mouseDelta *= c_cameraRotateDeltaScale;
-			camera->rotate(mouseDelta.y, mouseDelta.x);
+			m_camera->rotate(mouseDelta.y, mouseDelta.x);
 		}
 	}
 
@@ -499,57 +433,20 @@ void SceneRenderControl::eventSize(ui::Event* event)
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
 	updateWorldRenderer();
-	updatePostProcess();
 
 	m_dirtySize = sz;
 }
 
 void SceneRenderControl::eventPaint(ui::Event* event)
 {
-	double startTime = m_timer.getElapsedTime();
-
-	// Filter delta time.
 	float deltaTime = float(m_timer.getDeltaTime());
-	deltaTime = std::min(deltaTime, 1.0f / 10.0f);
-	deltaTime = float(deltaTime * 0.2f + m_lastDeltaTime * 0.8f);
-	m_lastDeltaTime = deltaTime;
-
 	float scaledTime = m_context->getTime();
-	float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
 
 	// Update camera.
-	Ref< Camera > camera = m_context->getCamera();
-	T_ASSERT (camera);
-
-	camera->update(deltaTime);
+	m_camera->update(deltaTime);
 
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
-
-	// Update physics; update in steps of 1/60th of a second.
-	if (m_context->getPhysicsEnable())
-	{
-		while (m_lastPhysicsTime < scaledTime)
-		{
-			m_context->getPhysicsManager()->update();
-			m_lastPhysicsTime += 1.0f / 60.0f;
-		}
-	}
-
-	// Update controller.
-	Ref< Scene > scene = m_context->getScene();
-	if (scene)
-	{
-		Ref< ISceneController > controller = scene->getController();
-		if (controller)
-		{
-			controller->update(
-				m_context->getScene(),
-				scaledTime,
-				scaledDeltaTime
-			);
-		}
-	}
 
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;
@@ -558,13 +455,6 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 	// Get root entity.
 	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
 	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
-
-	// Update entities.
-	if (rootEntity)
-	{
-		world::EntityUpdate entityUpdate(scaledDeltaTime);
-		rootEntity->update(&entityUpdate);
-	}
 
 	// Render world.
 	if (m_renderView->begin())
@@ -577,7 +467,7 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			128
 		);
 
-		Matrix44 view = camera->getCurrentView();
+		Matrix44 view = m_camera->getCurrentView();
 
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
@@ -655,19 +545,11 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderView.setView(view);
 
 		if (rootEntity)
-			m_worldRenderer->build(m_worldRenderView, scaledDeltaTime, rootEntity, 0);
+			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
 
 		// Flush rendering queue to GPU.
-		double startRenderTime = m_timer.getElapsedTime();
-
 		if (rootEntity)
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
-
-		if (m_postProcess)
-		{
-			m_renderView->begin(m_renderTargetSet, 0, true);
-			m_renderView->clear(render::CfColor, clearColor, 1.0f, 128);
-		}
 
 		if (rootEntity)
 		{
@@ -675,47 +557,13 @@ void SceneRenderControl::eventPaint(ui::Event* event)
 			m_worldRenderer->flush(0);
 		}
 
-		if (m_postProcess)
-		{
-			m_renderView->end();
-			m_postProcess->render(
-				m_worldRenderView,
-				m_renderView,
-				m_renderTargetSet,
-				m_worldRenderer->getDepthTargetSet(),
-				deltaTime
-			);
-		}
-
 		m_primitiveRenderer->end(m_renderView);
 
 		m_renderView->end();
 		m_renderView->present();
-
-		double stopTime = m_timer.getElapsedTime();
-
-		// Notify frame handlers about frame time.
-		if ((int32_t(stopTime * 100.0) & 15) == 0)
-		{
-			FrameEvent eventFrame(this, stopTime - startTime, stopTime - startRenderTime);
-			m_context->raisePostFrame(&eventFrame);
-		}
 	}
-
-	// Update context time.
-	m_context->setTime(scaledTime + scaledDeltaTime);
 
 	event->consume();
-}
-
-void SceneRenderControl::eventIdle(ui::Event* event)
-{
-	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
-	if (isVisible(true))
-	{
-		update();
-		idleEvent->requestMore();
-	}
 }
 
 	}

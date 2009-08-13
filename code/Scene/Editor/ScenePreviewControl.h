@@ -42,7 +42,6 @@ class WorldRenderSettings;
 
 class SceneEditorContext;
 class SceneRenderControl;
-class Camera;
 class IModifier;
 
 class T_DLLCLASS ScenePreviewControl : public ui::Container
@@ -62,8 +61,6 @@ public:
 
 	virtual ui::Size getPreferedSize() const;
 
-	inline SceneRenderControl* getRenderControl() { return m_sceneRenderControl; }
-
 private:
 	Ref< ui::custom::ToolBar > m_toolBarActions;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePick;
@@ -74,15 +71,17 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	Ref< ui::Slider > m_sliderTimeScale;
-	Ref< SceneRenderControl > m_sceneRenderControl;
+	RefArray< SceneRenderControl > m_renderControls;
 	Ref< ui::Container > m_infoContainer;
 	Ref< ui::custom::StatusBar > m_statusText;
+	Ref< ui::EventHandler > m_idleHandler;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
 	Ref< IModifier > m_modifierScale;
-	double m_frameTime;
-	double m_renderTime;
 	Ref< SceneEditorContext > m_context;
+	Timer m_timer;
+	float m_lastDeltaTime;
+	float m_lastPhysicsTime;
 
 	void updateEditState();
 
@@ -94,9 +93,7 @@ private:
 
 	void eventContextPostBuild(ui::Event* event);
 
-	void eventContextPostFrame(ui::Event* event);
-
-	void eventCameraDoubleClick(ui::Event* event);
+	void eventIdle(ui::Event* event);
 };
 
 	}

@@ -25,7 +25,6 @@
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
-#include "World/PostProcess/PostProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
@@ -143,15 +142,15 @@ bool SceneEditorPage::create(ui::Container* parent)
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	Vector4 cameraPosition = settings->getProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-	Quaternion cameraOrientation = settings->getProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", Quaternion::identity());
+	//Vector4 cameraPosition = settings->getProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
+	//Quaternion cameraOrientation = settings->getProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", Quaternion::identity());
 
-	Ref< Camera > camera = gc_new< Camera >(cref(Matrix44::identity()));
-	camera->setCurrentPosition(cameraPosition);
-	camera->setTargetPosition(cameraPosition);
-	camera->setCurrentOrientation(cameraOrientation);
-	camera->setTargetOrientation(cameraOrientation);
-	m_context->setCamera(camera);
+	//Ref< Camera > camera = gc_new< Camera >(cref(Matrix44::identity()));
+	//camera->setCurrentPosition(cameraPosition);
+	//camera->setTargetPosition(cameraPosition);
+	//camera->setCurrentOrientation(cameraOrientation);
+	//camera->setTargetOrientation(cameraOrientation);
+	//m_context->setCamera(camera);
 
 	// Restore other settings.
 	m_context->setDeltaScale(settings->getProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale()));
@@ -167,8 +166,8 @@ void SceneEditorPage::destroy()
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", m_context->getCamera()->getCurrentPosition());
-	settings->setProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", m_context->getCamera()->getCurrentOrientation());
+	//settings->setProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", m_context->getCamera()->getCurrentPosition());
+	//settings->setProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", m_context->getCamera()->getCurrentOrientation());
 	settings->setProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale());
 
 	// Destroy controller editor.
@@ -237,11 +236,11 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		m_context->setSceneAsset(sceneAsset);
 		updateScene();
 
-		m_context->setCamera(gc_new< Camera >(cref(translate(
-			0.0f,
-			0.0f,
-			-4.0f
-		))));
+		//m_context->setCamera(gc_new< Camera >(cref(translate(
+		//	0.0f,
+		//	0.0f,
+		//	-4.0f
+		//))));
 
 		updateInstanceGrid();
 	}
@@ -303,12 +302,12 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		{
 			Ref< world::ExternalSpatialEntityData > spatialEntityData = gc_new< world::ExternalSpatialEntityData >(cref(instance->getGuid()));
 
-			// Initially put entity in front of camera.
-			Ref< Camera > camera = m_context->getCamera();
-			T_ASSERT (camera);
+			//// Initially put entity in front of camera.
+			//Ref< Camera > camera = m_context->getCamera();
+			//T_ASSERT (camera);
 
-			Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -4.0f)).inverse().translation();
-			spatialEntityData->setTransform(translate(position));
+			//Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -4.0f)).inverse().translation();
+			//spatialEntityData->setTransform(translate(position));
 
 			entityData = spatialEntityData;
 		}
@@ -330,13 +329,6 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		updateInstanceGrid();
 		updatePropertyObject();
 	}
-	else if (is_type_of< world::PostProcessSettings >(*primaryType))
-	{
-		Ref< world::PostProcessSettings > postProcessSettings = instance->getObject< world::PostProcessSettings >();
-		if (postProcessSettings)
-			m_editControl->getRenderControl()->setPostProcessSettings(postProcessSettings);
-	}
-	else
 		return false;
 
 	return true;
@@ -739,9 +731,9 @@ bool SceneEditorPage::moveToSelectedEntity()
 		targetTransform = translate(targetTransform.translation());
 		targetTransform *= translate(-targetTransform.axisZ() * (boundingBox.getExtent().length() + Scalar(2.0f)));
 
-		// Move camera to new target location.
-		Ref< Camera > camera = m_context->getCamera();
-		camera->setTargetView(targetTransform);
+		//// Move camera to new target location.
+		//Ref< Camera > camera = m_context->getCamera();
+		//camera->setTargetView(targetTransform);
 
 		// Ensure look-at tool isn't toggled as camera is
 		// automatically reset to free mode when directly
@@ -762,41 +754,41 @@ bool SceneEditorPage::moveSelectedEntityIntoView()
 	if (!selectedEntities[0]->isSpatial())
 		return false;
 
-	m_undoStack->push(m_dataObject);
+	//m_undoStack->push(m_dataObject);
 
-	Ref< Camera > camera = m_context->getCamera();
-	T_ASSERT (camera);
+	//Ref< Camera > camera = m_context->getCamera();
+	//T_ASSERT (camera);
 
-	Aabb boundingBox = selectedEntities[0]->getBoundingBox();
-	float distance = boundingBox.getExtent().length() + 2.0f;
+	//Aabb boundingBox = selectedEntities[0]->getBoundingBox();
+	//float distance = boundingBox.getExtent().length() + 2.0f;
 
-	Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -distance)).inverse().translation();
+	//Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -distance)).inverse().translation();
 
-	Matrix44 entityTransform = selectedEntities[0]->getTransform();
-	entityTransform(3) = position.xyz1();
+	//Matrix44 entityTransform = selectedEntities[0]->getTransform();
+	//entityTransform(3) = position.xyz1();
 
-	selectedEntities[0]->setTransform(entityTransform);
+	//selectedEntities[0]->setTransform(entityTransform);
 	return true;
 }
 
 bool SceneEditorPage::updateCameraLook()
 {
-	if (m_toolLookAtEntity->isToggled())
-	{
-		RefArray< EntityAdapter > selectedEntities;
-		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1 || !selectedEntities[0]->isSpatial())
-		{
-			m_toolLookAtEntity->setToggled(false);
-			m_entityToolBar->update();
-			return false;
-		}
+	//if (m_toolLookAtEntity->isToggled())
+	//{
+	//	RefArray< EntityAdapter > selectedEntities;
+	//	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1 || !selectedEntities[0]->isSpatial())
+	//	{
+	//		m_toolLookAtEntity->setToggled(false);
+	//		m_entityToolBar->update();
+	//		return false;
+	//	}
 
-		m_context->getCamera()->enterLookAt(selectedEntities[0]->getTransform().translation());
-	}
-	else
-	{
-		m_context->getCamera()->enterFreeLook();
-	}
+	//	m_context->getCamera()->enterLookAt(selectedEntities[0]->getTransform().translation());
+	//}
+	//else
+	//{
+	//	m_context->getCamera()->enterFreeLook();
+	//}
 	return true;
 }
 

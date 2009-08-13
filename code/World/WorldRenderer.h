@@ -33,25 +33,42 @@ class ISimpleTexture;
 	namespace world
 	{
 
-//class EntityRenderer;
 class Entity;
 class WorldContext;
 class WorldRenderView;
 class WorldEntityRenderers;
 class PostProcess;
 
-struct WorldViewPort
+/*! \brief Perspective view port.
+ * \ingroup World
+ */
+struct WorldViewPerspective
 {
-	int width;
-	int height;
+	int32_t width;
+	int32_t height;
 	float aspect;
 	float fov;
 
-	WorldViewPort()
+	WorldViewPerspective()
 	:	width(0)
 	,	height(0)
 	,	aspect(1.0f)
-	,	fov(deg2rad(80.0f))
+	,	fov(deg2rad(65.0f))
+	{
+	}
+};
+
+/*! \brief Orthogonal view port.
+ * \ingroup World
+ */
+struct WorldViewOrtho
+{
+	float width;
+	float height;
+
+	WorldViewOrtho()
+	:	width(0.0f)
+	,	height(0.0f)
 	{
 	}
 };
@@ -120,7 +137,6 @@ public:
 		WorldEntityRenderers* entityRenderers,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		const WorldViewPort& worldViewPort,
 		int multiSample,
 		int frameCount
 	);
@@ -129,9 +145,17 @@ public:
 
 	/*! \brief Create a world render view.
 	 *
+	 * \param worldView World view.
 	 * \param outRenderView Initialized world render view.
 	 */
-	void createRenderView(WorldRenderView& outRenderView) const;
+	void createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const;
+
+	/*! \brief Create a world render view.
+	 *
+	 * \param worldView World view.
+	 * \param outRenderView Initialized world render view.
+	 */
+	void createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const;
 
 	/*! \name Render steps. */
 	//@{
@@ -224,7 +248,6 @@ private:
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
-	WorldViewPort m_worldViewPort;
 	AlignedVector< float > m_splitPositions;
 	AlignedVector< Frame > m_frames;
 	float m_time;
