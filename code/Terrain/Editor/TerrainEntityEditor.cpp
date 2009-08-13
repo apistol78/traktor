@@ -80,19 +80,19 @@ void TerrainEntityEditor::drawGuide(
 {
 	Ref< TerrainEntity > terrainEntity = checked_type_cast< TerrainEntity* >(entityAdapter->getEntity());
 
-	if (m_followGround)
-	{
-		Ref< scene::Camera > camera = context->getCamera();
-		T_ASSERT (camera);
+	//if (m_followGround)
+	//{
+	//	Ref< scene::Camera > camera = context->getCamera();
+	//	T_ASSERT (camera);
 
-		Vector4 cameraPosition = camera->getTargetPosition();
+	//	Vector4 cameraPosition = camera->getTargetPosition();
 
-		cameraPosition =
-			cameraPosition * Vector4(1.0f, 0.0f, 1.0f, 1.0f) +
-			Scalar(terrainEntity->getHeightfield()->getWorldHeight(cameraPosition.x(), cameraPosition.z()) + m_followHeight) * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+	//	cameraPosition =
+	//		cameraPosition * Vector4(1.0f, 0.0f, 1.0f, 1.0f) +
+	//		Scalar(terrainEntity->getHeightfield()->getWorldHeight(cameraPosition.x(), cameraPosition.z()) + m_followHeight) * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 
-		camera->setTargetPosition(cameraPosition);
-	}
+	//	camera->setTargetPosition(cameraPosition);
+	//}
 }
 
 	}

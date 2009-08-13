@@ -4,18 +4,20 @@
 #include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Scene/Editor/Modifiers/ScaleModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/ISceneController.h"
+#include "Scene/Scene.h"
 #include "Physics/PhysicsManager.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Instance.h"
+#include "Ui/Application.h"
 #include "Ui/Command.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
@@ -24,15 +26,17 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
+#include "Ui/Events/IdleEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/QuadSplitter.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
-#include "World/PostProcess/PostProcessSettings.h"
+#include "World/Entity/EntityUpdate.h"
+#include "World/Entity/Entity.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -49,8 +53,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
 ScenePreviewControl::ScenePreviewControl()
-:	m_frameTime(std::numeric_limits< double >::max())
-,	m_renderTime(std::numeric_limits< double >::max())
+:	m_lastDeltaTime(0.0f)
+,	m_lastPhysicsTime(0.0f)
 {
 }
 
@@ -117,16 +121,27 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
 		(*i)->createToolBarItems(m_toolBarActions);
 
-	m_sceneRenderControl = gc_new< SceneRenderControl >();
-	if (!m_sceneRenderControl->create(this, context))
-		return false;
+	// Create render controls.
+	Ref< ui::custom::QuadSplitter > quadSplitter = gc_new< ui::custom::QuadSplitter >();
+	quadSplitter->create(this, ui::Point(50, 50), true);
+
+	m_renderControls.resize(4);
+	for (int i = 0; i < 4; ++i)
+	{
+		m_renderControls[i] = gc_new< SceneRenderControl >();
+		if (!m_renderControls[i]->create(
+			quadSplitter,
+			context,
+			i == 0 ? SceneRenderControl::VmPerspective : SceneRenderControl::VmOrthogonal
+		))
+			return false;
+	}
 
 	m_infoContainer = gc_new< ui::Container >();
 	m_infoContainer->create(this, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*", 2, 0));
 
 	m_statusText = gc_new< ui::custom::StatusBar >();
 	m_statusText->create(m_infoContainer, ui::WsDoubleBuffer);
-	m_statusText->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventCameraDoubleClick));
 
 	m_modifierTranslate = gc_new< TranslateModifier >();
 	m_modifierRotate = gc_new< RotateModifier >();
@@ -135,16 +150,27 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
 	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventContextPostBuild));
-	m_context->addPostFrameEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventContextPostFrame));
 
 	updateEditState();
 	updateInformation();
 
+	// Register our event handler in case of message idle.
+	m_idleHandler = ui::createMethodHandler(this, &ScenePreviewControl::eventIdle);
+	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
+
+	m_timer.start();
 	return true;
 }
 
 void ScenePreviewControl::destroy()
 {
+	// Remove our idle handler first.
+	if (m_idleHandler)
+	{
+		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
+		m_idleHandler = 0;
+	}
+
 	// Save editor configuration.
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
@@ -157,11 +183,10 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 
 	// Destroy widgets.
-	if (m_sceneRenderControl)
-	{
-		m_sceneRenderControl->destroy();
-		m_sceneRenderControl = 0;
-	}
+	for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		(*i)->destroy();
+	m_renderControls.resize(0);
+
 	if (m_toolBarActions)
 	{
 		m_toolBarActions->destroy();
@@ -172,7 +197,8 @@ void ScenePreviewControl::destroy()
 
 void ScenePreviewControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
 {
-	m_sceneRenderControl->setWorldRenderSettings(worldRenderSettings);
+	for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		(*i)->setWorldRenderSettings(worldRenderSettings);
 }
 
 bool ScenePreviewControl::handleCommand(const ui::Command& command)
@@ -199,17 +225,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		updateEditState();
 	else if (command == L"Scene.Editor.ToggleAddReference")
 		updateEditState();
-	else if (command == L"Scene.Editor.BrowsePostProcess")
-	{
-		editor::TypeBrowseFilter filter(type_of< world::PostProcessSettings >());
-		Ref< db::Instance > postProcessInstance = m_context->getEditor()->browseInstance(&filter);
-		if (postProcessInstance)
-		{
-			Ref< world::PostProcessSettings > postProcessSettings = postProcessInstance->getObject< world::PostProcessSettings >();
-			if (postProcessSettings)
-				m_sceneRenderControl->setPostProcessSettings(postProcessSettings);
-		}
-	}
 	else if (command == L"Scene.Editor.Rewind")
 		m_context->setTime(0.0f);
 	else if (command == L"Scene.Editor.Play")
@@ -218,8 +233,17 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setPlaying(false);
 	else
 	{
-		// Propagate command to render control.
-		result = m_sceneRenderControl->handleCommand(command);
+		result = false;
+
+		// Propagate command to active render control.
+		for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		{
+			if ((*i)->hasFocus())
+			{
+				if ((result = (*i)->handleCommand(command)) == true)
+					break;
+			}
+		}
 	}
 
 	return result;
@@ -270,22 +294,13 @@ void ScenePreviewControl::updateInformation()
 	}
 
 	// Nop, show default information.
-	Ref< Camera > camera = m_context->getCamera();
-	Vector4 cameraPosition = camera->getCurrentView().inverseOrtho().translation();
-
 	uint32_t bodyCount = 0, activeBodyCount = 0;
 	Ref< physics::PhysicsManager > physicsManager = m_context->getPhysicsManager();
 	if (physicsManager)
 		physicsManager->getBodyCount(bodyCount, activeBodyCount);
 
 	StringOutputStream ss;
-	ss << i18n::Format(L"SCENE_EDITOR_CAMERA_POSITION", float(cameraPosition.x()), float(cameraPosition.y()), float(cameraPosition.z()));
-	ss << L" | ";
 	ss << i18n::Format(L"SCENE_EDITOR_DELTA_SCALE", m_context->getDeltaScale());
-	ss << L" | ";
-	ss << i18n::Format(L"SCENE_EDITOR_FRAME_TIME", int32_t(m_frameTime * 1000.0), int32_t(1.0 / m_frameTime));
-	ss << L" | ";
-	ss << i18n::Format(L"SCENE_EDITOR_RENDER_TIME", int32_t(m_renderTime * 1000.0), int32_t(1.0 / m_renderTime));
 	ss << L" | ";
 	ss << i18n::Format(L"SCENE_EDITOR_PHYSICS", int32_t(bodyCount), int32_t(activeBodyCount));
 
@@ -309,58 +324,69 @@ void ScenePreviewControl::eventContextPostBuild(ui::Event* event)
 	updateInformation();
 }
 
-void ScenePreviewControl::eventContextPostFrame(ui::Event* event)
+void ScenePreviewControl::eventIdle(ui::Event* event)
 {
-	m_frameTime = checked_type_cast< const FrameEvent* >(event)->getFrameTime();
-	m_renderTime = checked_type_cast< const FrameEvent* >(event)->getRenderTime();
-	updateInformation();
-}
-
-void ScenePreviewControl::eventCameraDoubleClick(ui::Event* event)
-{
-	Ref< Camera > camera = m_context->getCamera();
-	T_ASSERT (camera);
-
-	const Vector4& position = camera->getTargetPosition();
-	const Quaternion& orientation = camera->getTargetOrientation();
-
-	float head, pitch, bank;
-	orientation.toEulerAngles(head, pitch, bank);
-
-	Ref< ui::NumericEditValidator > validator = gc_new< ui::NumericEditValidator >(true);
-	ui::custom::InputDialog::Field fields[] =
+	ui::IdleEvent* idleEvent = checked_type_cast< ui::IdleEvent* >(event);
+	if (isVisible(true))
 	{
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_X"), toString(position.x()), validator.getPtr() },
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_Y"), toString(position.y()), validator.getPtr() },
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_Z"), toString(position.z()), validator.getPtr() },
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_HEAD"), toString(rad2deg(head)), validator.getPtr() },
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_PITCH"), toString(rad2deg(pitch)), validator.getPtr() },
-		{ i18n::Text(L"SCENE_EDITOR_CAMERA_BANK"), toString(rad2deg(bank)), validator.getPtr() }
-	};
+		// Filter delta time.
+		float deltaTime = float(m_timer.getDeltaTime());
+		deltaTime = std::min(deltaTime, 1.0f / 10.0f);
+		deltaTime = float(deltaTime * 0.2f + m_lastDeltaTime * 0.8f);
+		m_lastDeltaTime = deltaTime;
 
-	ui::custom::InputDialog inputDialog;
-	inputDialog.create(
-		this,
-		i18n::Text(L"SCENE_EDITOR_SET_CAMERA_TITLE"),
-		i18n::Text(L"SCENE_EDITOR_SET_CAMERA_MESSAGE"),
-		fields,
-		sizeof_array(fields)
-	);
-	if (inputDialog.showModal() == ui::DrOk)
-	{
-		camera->setTargetPosition(Vector4(
-			parseString< float >(fields[0].value),
-			parseString< float >(fields[1].value),
-			parseString< float >(fields[2].value),
-			1.0f
-		));
-		camera->setTargetOrientation(Quaternion(
-			deg2rad(parseString< float >(fields[3].value)),
-			deg2rad(parseString< float >(fields[4].value)),
-			deg2rad(parseString< float >(fields[5].value))
-		));
+		float scaledTime = m_context->getTime();
+		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+
+		// Update scene controller.
+		Ref< Scene > scene = m_context->getScene();
+		if (scene)
+		{
+			Ref< ISceneController > controller = scene->getController();
+			if (controller)
+			{
+				controller->update(
+					m_context->getScene(),
+					scaledTime,
+					scaledDeltaTime
+				);
+			}
+		}
+
+		// Update physics; update in steps of 1/60th of a second.
+		if (m_context->getPhysicsEnable())
+		{
+			while (m_lastPhysicsTime < scaledTime)
+			{
+				m_context->getPhysicsManager()->update();
+				m_lastPhysicsTime += 1.0f / 60.0f;
+			}
+		}
+
+		// Update entities.
+		Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
+		Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
+
+		// Update entities.
+		if (rootEntity)
+		{
+			world::EntityUpdate entityUpdate(deltaTime);
+			rootEntity->update(&entityUpdate);
+		}
+
+		// Issue updates on render controls.
+		for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+			(*i)->update();
+
+		// Issue frame handlers.
+		FrameEvent eventFrame(this);
+		m_context->raisePostFrame(&eventFrame);
+
+		// Update context time.
+		m_context->setTime(scaledTime + scaledDeltaTime);
+
+		idleEvent->requestMore();
 	}
-	inputDialog.destroy();	
 }
 
 	}

@@ -64,7 +64,6 @@ class Entity;
 	{
 
 class ISceneEditorProfile;
-class Camera;
 class IModifier;
 class EntityAdapter;
 class Scene;
@@ -114,10 +113,6 @@ public:
 	
 	/*! \name State management. */
 	//@{
-
-	void setCamera(Camera* camera);
-
-	Camera* getCamera() const;
 
 	void setModifier(IModifier* modifier);
 
@@ -263,7 +258,6 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
-	Ref< Camera > m_camera;
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;

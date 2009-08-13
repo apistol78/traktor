@@ -175,7 +175,6 @@ bool WorldRenderer::create(
 	WorldEntityRenderers* entityRenderers,
 	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
-	const WorldViewPort& worldViewPort,
 	int multiSample,
 	int frameCount
 )
@@ -184,17 +183,18 @@ bool WorldRenderer::create(
 
 	m_settings = settings;
 	m_renderView = renderView;
-	m_worldViewPort = worldViewPort;
 	m_frames.resize(frameCount);
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled)
 	{
+		render::Viewport viewPort = renderView->getViewport();
+
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 1;
-		desc.width = worldViewPort.width;
-		desc.height = worldViewPort.height;
+		desc.width = viewPort.width;
+		desc.height = viewPort.height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR16F;
@@ -332,18 +332,31 @@ void WorldRenderer::destroy()
 	}
 }
 
-void WorldRenderer::createRenderView(WorldRenderView& outRenderView) const
+void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const
 {
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
 
 	Frustum viewFrustum;
-	viewFrustum.buildPerspective(m_worldViewPort.fov, m_worldViewPort.aspect, viewNearZ, viewFarZ);
+	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
 
-	outRenderView.setViewSize(Vector2(float(m_worldViewPort.width), float(m_worldViewPort.height)));
+	outRenderView.setViewSize(Vector2(float(worldView.width), float(worldView.height)));
 	outRenderView.setViewFrustum(viewFrustum);
 	outRenderView.setCullFrustum(viewFrustum);
-	outRenderView.setProjection(perspectiveLh(m_worldViewPort.fov, m_worldViewPort.aspect, viewNearZ, viewFarZ));
+	outRenderView.setProjection(perspectiveLh(worldView.fov, worldView.aspect, viewNearZ, viewFarZ));
+}
+
+void WorldRenderer::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
+{
+	float viewFarZ = m_settings.viewFarZ;
+
+	Frustum viewFrustum;
+	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);
+
+	outRenderView.setViewSize(Vector2(worldView.width, worldView.height));
+	outRenderView.setViewFrustum(viewFrustum);
+	outRenderView.setCullFrustum(viewFrustum);
+	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
 }
 
 void WorldRenderer::build(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)

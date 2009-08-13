@@ -2,7 +2,6 @@
 #include <stack>
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/IEntityEditor.h"
@@ -111,23 +110,11 @@ SceneEditorContext::SceneEditorContext(
 ,	m_timeScale(1.0f)
 ,	m_time(0.0f)
 {
-	const Matrix44 identity = Matrix44::identity();
-	m_camera = gc_new< Camera >(cref(identity));
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
 {
 	m_editorProfiles.push_back(editorProfile);
-}
-
-void SceneEditorContext::setCamera(Camera* camera)
-{
-	m_camera = camera;
-}
-
-Camera* SceneEditorContext::getCamera() const
-{
-	return m_camera;
 }
 
 void SceneEditorContext::setModifier(IModifier* modifier)
