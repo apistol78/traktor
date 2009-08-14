@@ -63,7 +63,7 @@ void PathEntityEditor::applyModifier(
 			modifier->adjust(
 				context,
 				viewTransform,
-				mouseDelta * context->getDeltaScale(),
+				mouseDelta,
 				mouseButton,
 				transform
 			);

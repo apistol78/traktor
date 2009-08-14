@@ -41,7 +41,7 @@ class WorldRenderSettings;
 	{
 
 class SceneEditorContext;
-class SceneRenderControl;
+class ISceneRenderControl;
 class IModifier;
 
 class T_DLLCLASS ScenePreviewControl : public ui::Container
@@ -71,7 +71,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	Ref< ui::Slider > m_sliderTimeScale;
-	RefArray< SceneRenderControl > m_renderControls;
+	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< ui::Container > m_infoContainer;
 	Ref< ui::custom::StatusBar > m_statusText;
 	Ref< ui::EventHandler > m_idleHandler;

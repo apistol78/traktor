@@ -1,14 +1,12 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/SceneRenderControl.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/ISceneControllerEditorFactory.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SelectEvent.h"
-#include "Scene/Editor/Camera.h"
 #include "Scene/SceneAsset.h"
 #include "Scene/Scene.h"
 #include "Scene/ISceneControllerData.h"
@@ -152,8 +150,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	//camera->setTargetOrientation(cameraOrientation);
 	//m_context->setCamera(camera);
 
-	// Restore other settings.
-	m_context->setDeltaScale(settings->getProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale()));
+	//// Restore other settings.
+	//m_context->setDeltaScale(settings->getProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale()));
 
 	m_undoStack = gc_new< editor::UndoStack >();
 
@@ -168,7 +166,7 @@ void SceneEditorPage::destroy()
 
 	//settings->setProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", m_context->getCamera()->getCurrentPosition());
 	//settings->setProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", m_context->getCamera()->getCurrentOrientation());
-	settings->setProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale());
+	//settings->setProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale());
 
 	// Destroy controller editor.
 	if (m_controllerEditor)
