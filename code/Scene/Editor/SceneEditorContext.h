@@ -138,10 +138,6 @@ public:
 
 	bool getSnapEnable() const;
 
-	void setDeltaScale(float deltaScale);
-
-	float getDeltaScale() const;
-
 	void setPhysicsEnable(bool physicsEnable);
 
 	bool getPhysicsEnable() const;
@@ -264,7 +260,6 @@ private:
 	EditSpace m_editSpace;
 	bool m_guideEnable;
 	bool m_snapEnable;
-	float m_deltaScale;
 	bool m_physicsEnable;
 	bool m_referenceMode;
 	bool m_playing;

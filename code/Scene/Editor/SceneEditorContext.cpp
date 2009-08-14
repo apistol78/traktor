@@ -103,7 +103,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_editSpace(EsWorld)
 ,	m_guideEnable(true)
 ,	m_snapEnable(true)
-,	m_deltaScale(0.05f)
 ,	m_physicsEnable(false)
 ,	m_referenceMode(false)
 ,	m_playing(false)
@@ -175,16 +174,6 @@ void SceneEditorContext::setSnapEnable(bool snapEnable)
 bool SceneEditorContext::getSnapEnable() const
 {
 	return m_snapEnable;
-}
-
-void SceneEditorContext::setDeltaScale(float deltaScale)
-{
-	m_deltaScale = deltaScale;
-}
-
-float SceneEditorContext::getDeltaScale() const
-{
-	return m_deltaScale;
 }
 
 void SceneEditorContext::setPhysicsEnable(bool physicsEnable)

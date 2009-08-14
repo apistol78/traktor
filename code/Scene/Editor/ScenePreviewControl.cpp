@@ -1,7 +1,8 @@
 #include <sstream>
 #include <limits>
 #include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/SceneRenderControl.h"
+#include "Scene/Editor/PerspectiveRenderControl.h"
+#include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
@@ -128,13 +129,31 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_renderControls.resize(4);
 	for (int i = 0; i < 4; ++i)
 	{
-		m_renderControls[i] = gc_new< SceneRenderControl >();
-		if (!m_renderControls[i]->create(
-			quadSplitter,
-			context,
-			i == 0 ? SceneRenderControl::VmPerspective : SceneRenderControl::VmOrthogonal
-		))
-			return false;
+		if (i == 0)
+		{
+			Ref< PerspectiveRenderControl > renderControl = gc_new< PerspectiveRenderControl >();
+			if (renderControl->create(
+				quadSplitter,
+				context
+			))
+				m_renderControls[i] = renderControl;
+			else
+				return false;
+		}
+		else
+		{
+			int32_t viewPlane = i - 1;
+
+			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			if (renderControl->create(
+				quadSplitter,
+				context,
+				viewPlane
+			))
+				m_renderControls[i] = renderControl;
+			else
+				return false;
+		}
 	}
 
 	m_infoContainer = gc_new< ui::Container >();
@@ -183,7 +202,7 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 
 	// Destroy widgets.
-	for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		(*i)->destroy();
 	m_renderControls.resize(0);
 
@@ -197,7 +216,7 @@ void ScenePreviewControl::destroy()
 
 void ScenePreviewControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
 {
-	for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		(*i)->setWorldRenderSettings(worldRenderSettings);
 }
 
@@ -236,7 +255,7 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		result = false;
 
 		// Propagate command to active render control.
-		for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		{
 			if ((*i)->hasFocus())
 			{
@@ -293,15 +312,13 @@ void ScenePreviewControl::updateInformation()
 		}
 	}
 
-	// Nop, show default information.
+	// Show default information.
 	uint32_t bodyCount = 0, activeBodyCount = 0;
 	Ref< physics::PhysicsManager > physicsManager = m_context->getPhysicsManager();
 	if (physicsManager)
 		physicsManager->getBodyCount(bodyCount, activeBodyCount);
 
 	StringOutputStream ss;
-	ss << i18n::Format(L"SCENE_EDITOR_DELTA_SCALE", m_context->getDeltaScale());
-	ss << L" | ";
 	ss << i18n::Format(L"SCENE_EDITOR_PHYSICS", int32_t(bodyCount), int32_t(activeBodyCount));
 
 	m_statusText->setText(ss.str());
@@ -375,7 +392,7 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 		}
 
 		// Issue updates on render controls.
-		for (RefArray< SceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 			(*i)->update();
 
 		// Issue frame handlers.

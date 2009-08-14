@@ -1,5 +1,5 @@
 #include <limits>
-#include "Scene/Editor/SceneRenderControl.h"
+#include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
@@ -10,7 +10,6 @@
 #include "Scene/Editor/SelectEvent.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
@@ -39,9 +38,9 @@ const float c_deltaAdjustSmall = 0.01f;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SceneRenderControl", SceneRenderControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ui::Widget)
 
-SceneRenderControl::SceneRenderControl()
+PerspectiveRenderControl::PerspectiveRenderControl()
 :	m_mousePosition(0, 0)
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
@@ -50,12 +49,10 @@ SceneRenderControl::SceneRenderControl()
 {
 }
 
-bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewMode viewMode)
+bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
 	m_context = context;
 	T_ASSERT (m_context);
-
-	m_viewMode = viewMode;
 
 	if (!Widget::create(parent, ui::WsClientBorder))
 		return false;
@@ -78,12 +75,11 @@ bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	))
 		return false;
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventMouseMove));
-	addMouseWheelEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventMouseWheel));
-	addSizeEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &SceneRenderControl::eventPaint));
+	addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
+	addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
+	addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
+	addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
+	addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
 
 	updateWorldRenderer();
 
@@ -93,7 +89,7 @@ bool SceneRenderControl::create(ui::Widget* parent, SceneEditorContext* context,
 	return true;
 }
 
-void SceneRenderControl::destroy()
+void PerspectiveRenderControl::destroy()
 {
 	if (m_worldRenderer)
 	{
@@ -116,13 +112,13 @@ void SceneRenderControl::destroy()
 	Widget::destroy();
 }
 
-void SceneRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void PerspectiveRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
 {
 	m_worldRenderSettings = worldRenderSettings;
 	updateWorldRenderer();
 }
 
-bool SceneRenderControl::handleCommand(const ui::Command& command)
+bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
 
@@ -144,7 +140,7 @@ bool SceneRenderControl::handleCommand(const ui::Command& command)
 	return result;
 }
 
-void SceneRenderControl::updateWorldRenderer()
+void PerspectiveRenderControl::updateWorldRenderer()
 {
 	if (!m_worldRenderSettings)
 		return;
@@ -179,28 +175,18 @@ void SceneRenderControl::updateWorldRenderer()
 		1
 	))
 	{
-		if (m_viewMode == VmPerspective)
-		{
-			world::WorldViewPerspective worldView;
-			worldView.width = sz.cx;
-			worldView.height = sz.cy;
-			worldView.aspect = float(sz.cx) / sz.cy;
-			worldView.fov = deg2rad(65.0f);
-			m_worldRenderer->createRenderView(worldView, m_worldRenderView);
-		}
-		else
-		{
-			world::WorldViewOrtho worldView;
-			worldView.width = 10.0f;
-			worldView.height = 10.0f;
-			m_worldRenderer->createRenderView(worldView, m_worldRenderView);
-		}
+		world::WorldViewPerspective worldView;
+		worldView.width = sz.cx;
+		worldView.height = sz.cy;
+		worldView.aspect = float(sz.cx) / sz.cy;
+		worldView.fov = deg2rad(65.0f);
+		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 	}
 	else
 		m_worldRenderer = 0;
 }
 
-EntityAdapter* SceneRenderControl::pickEntity(const ui::Point& position) const
+EntityAdapter* PerspectiveRenderControl::pickEntity(const ui::Point& position) const
 {
 	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
 	ui::Rect innerRect = getInnerRect();
@@ -226,7 +212,7 @@ EntityAdapter* SceneRenderControl::pickEntity(const ui::Point& position) const
 	return m_context->queryRay(worldRayOrigin, worldRayDirection);
 }
 
-void SceneRenderControl::eventButtonDown(ui::Event* event)
+void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 {
 	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
@@ -311,7 +297,7 @@ void SceneRenderControl::eventButtonDown(ui::Event* event)
 	setFocus();
 }
 
-void SceneRenderControl::eventButtonUp(ui::Event* event)
+void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 {
 	// Issue finished modification event.
 	if (!m_modifyCamera)
@@ -337,12 +323,12 @@ void SceneRenderControl::eventButtonUp(ui::Event* event)
 		releaseCapture();
 }
 
-void SceneRenderControl::eventMouseMove(ui::Event* event)
+void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 {
 	if (!hasCapture())
 		return;
 
-	int mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
+	int32_t mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
 	Vector2 mouseDelta(
@@ -360,6 +346,13 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 		{
 			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 			if (entityEditor)
+			{
+				Vector4 worldCameraCenter = m_camera->getCurrentView().inverseOrtho().translation();
+				Vector4 worldEntityCenter = (*i)->getTransform().translation();
+
+
+
+
 				entityEditor->applyModifier(
 					m_context,
 					*i,
@@ -367,13 +360,13 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 					mouseDelta,
 					mouseButton
 				);
+			}
 		}
 	}
 	else
 	{
 		if (mouseButton == 0)
 		{
-			mouseDelta *= m_context->getDeltaScale();
 			if (m_modifyAlternative)
 				m_camera->move(Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f));
 			else
@@ -392,32 +385,7 @@ void SceneRenderControl::eventMouseMove(ui::Event* event)
 	update();
 }
 
-void SceneRenderControl::eventMouseWheel(ui::Event* event)
-{
-	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
-	
-	float deltaScale = m_context->getDeltaScale();
-
-	if (rotation < 0)
-	{
-		if (deltaScale <= c_deltaAdjust)
-			deltaScale -= c_deltaAdjustSmall;
-		else
-			deltaScale -= c_deltaAdjust;
-	}
-	else if (rotation > 0)
-	{
-		if (deltaScale < c_deltaAdjust - std::numeric_limits< float >::epsilon())
-			deltaScale += c_deltaAdjustSmall;
-		else
-			deltaScale += c_deltaAdjust;
-	}
-
-	deltaScale = std::max(deltaScale, c_deltaAdjustSmall);
-	m_context->setDeltaScale(deltaScale);
-}
-
-void SceneRenderControl::eventSize(ui::Event* event)
+void PerspectiveRenderControl::eventSize(ui::Event* event)
 {
 	if (!m_renderView || !isVisible(true))
 		return;
@@ -437,7 +405,7 @@ void SceneRenderControl::eventSize(ui::Event* event)
 	m_dirtySize = sz;
 }
 
-void SceneRenderControl::eventPaint(ui::Event* event)
+void PerspectiveRenderControl::eventPaint(ui::Event* event)
 {
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();

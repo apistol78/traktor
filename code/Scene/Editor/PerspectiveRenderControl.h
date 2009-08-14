@@ -1,35 +1,19 @@
-#ifndef traktor_scene_SceneRenderControl_H
-#define traktor_scene_SceneRenderControl_H
+#ifndef traktor_scene_PerspectiveRenderControl_H
+#define traktor_scene_PerspectiveRenderControl_H
 
+#include "Scene/Editor/ISceneRenderControl.h"
 #include "Core/Heap/Ref.h"
-#include "Ui/Widget.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "World/WorldRenderView.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
-	namespace ui
-	{
-
-class Command;
-
-	}
-
 	namespace render
 	{
 
 class IRenderView;
-class RenderTargetSet;
 class PrimitiveRenderer;
 
 	}
@@ -37,7 +21,6 @@ class PrimitiveRenderer;
 	namespace world
 	{
 
-class WorldRenderSettings;
 class WorldRenderer;
 class Entity;
 
@@ -48,37 +31,26 @@ class Entity;
 
 class SceneEditorContext;
 class Camera;
-class IModifier;
 class EntityAdapter;
 
-class T_DLLCLASS SceneRenderControl : public ui::Widget
+class PerspectiveRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(SceneRenderControl)
+	T_RTTI_CLASS(PerspectiveRenderControl)
 
 public:
-	enum ViewMode
-	{
-		VmPerspective,
-		VmAxisX,
-		VmAxisY,
-		VmAxisZ
-	};
+	PerspectiveRenderControl();
 
-	SceneRenderControl();
-
-	bool create(ui::Widget* parent, SceneEditorContext* context, ViewMode viewMode);
+	bool create(ui::Widget* parent, SceneEditorContext* context);
 
 	void destroy();
 
-	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
-	bool handleCommand(const ui::Command& command);
+	virtual bool handleCommand(const ui::Command& command);
 
 private:
-	ViewMode m_viewMode;
 	Ref< SceneEditorContext > m_context;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::RenderTargetSet > m_renderTargetSet;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
@@ -102,16 +74,12 @@ private:
 
 	void eventMouseMove(ui::Event* event);
 
-	void eventMouseWheel(ui::Event* event);
-
 	void eventSize(ui::Event* event);
 
 	void eventPaint(ui::Event* event);
-
-	void eventIdle(ui::Event* event);
 };
 
 	}
 }
 
-#endif	// traktor_scene_SceneRenderControl_H
+#endif	// traktor_scene_PerspectiveRenderControl_H
