@@ -1,6 +1,6 @@
 #include "Core/System/Win32/SharedMemoryWin32.h"
 #include "Core/Io/MemoryStream.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

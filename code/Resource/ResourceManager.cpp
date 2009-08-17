@@ -2,7 +2,7 @@
 #include "Resource/ResourceManager.h"
 #include "Resource/ResourceHandle.h"
 #include "Resource/IResourceFactory.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 

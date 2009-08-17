@@ -1,7 +1,7 @@
 #include "Scene/Editor/DefaultEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Core/Serialization/Serializable.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Ui/Command.h"
 
 // Resource factories

@@ -2,7 +2,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Static.h"
 #include "Ui/Edit.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

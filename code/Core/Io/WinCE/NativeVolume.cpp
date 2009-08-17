@@ -4,8 +4,8 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/File.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Heap/HeapNew.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Heap/GcNew.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 
@@ -21,7 +21,7 @@ NativeVolume::NativeVolume(const Path& currentDirectory)
 
 std::wstring NativeVolume::getDescription() const
 {
-	return m_currentDirectory;
+	return m_currentDirectory.getPathName();
 }
 
 File* NativeVolume::get(const Path& path)

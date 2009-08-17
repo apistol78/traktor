@@ -2,7 +2,7 @@
 #define traktor_ui_MethodHandler_H
 
 #include "Core/Heap/Ref.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Ui/EventHandler.h"
 
 // import/export mechanism.

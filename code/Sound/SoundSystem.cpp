@@ -2,7 +2,7 @@
 #include "Sound/SoundDriver.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/Sound.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Heap/Alloc.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Acquire.h"

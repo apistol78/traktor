@@ -11,7 +11,7 @@
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"

@@ -5,7 +5,7 @@
 #include "Drawing/Palette.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Color.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

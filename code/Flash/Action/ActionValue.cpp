@@ -2,7 +2,7 @@
 #include "Flash/Action/ActionBoolean.h"
 #include "Flash/Action/ActionNumber.h"
 #include "Flash/Action/ActionString.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Heap/Alloc.h"
 #include "Core/Heap/BlockAllocator.h"
 #include "Core/Singleton/SingletonManager.h"

@@ -1,5 +1,5 @@
 #include "Render/OpenGL/GlslShader.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

@@ -2,7 +2,7 @@
 #include "Core/Io/OutputStreamBuffer.h"
 #include "Core/Io/Stream.h"
 #include "Core/Io/Encoding.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

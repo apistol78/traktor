@@ -2,7 +2,7 @@
 #include <vector>
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

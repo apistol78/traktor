@@ -89,8 +89,10 @@ int EventLoopWin32::execute(EventSubject* owner)
 		{
 			IdleEvent idleEvent(owner);
 			owner->raiseEvent(EiIdle, &idleEvent);
+#if !defined(WINCE)
 			if (!idleEvent.requestedMore())
 				WaitMessage();
+#endif
 		}
 	}
 

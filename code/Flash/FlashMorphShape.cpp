@@ -2,7 +2,7 @@
 #include "Flash/FlashMorphShape.h"
 #include "Flash/FlashMorphShapeInstance.h"
 #include "Flash/Path.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

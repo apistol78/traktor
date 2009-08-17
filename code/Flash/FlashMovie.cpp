@@ -6,7 +6,7 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionGlobal.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

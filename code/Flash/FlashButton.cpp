@@ -1,6 +1,6 @@
 #include "Flash/FlashButton.h"
 #include "Flash/FlashButtonInstance.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

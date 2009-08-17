@@ -2,7 +2,7 @@
 #include "Flash/Action/Classes/AsArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

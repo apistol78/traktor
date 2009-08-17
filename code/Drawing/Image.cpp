@@ -3,7 +3,7 @@
 #include "Drawing/Palette.h"
 #include "Drawing/ImageFormat.h"
 #include "Drawing/ImageFilter.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 

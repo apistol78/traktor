@@ -1,5 +1,5 @@
 #include "Render/Dx9/HlslShader.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 

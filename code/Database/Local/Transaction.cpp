@@ -1,6 +1,6 @@
 #include "Database/Local/Transaction.h"
 #include "Database/Local/Action.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Thread/Mutex.h"
 #include "Core/Log/Log.h"
 

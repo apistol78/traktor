@@ -36,6 +36,7 @@ bool Library::open(const Path& libraryName)
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
+#if !defined(WINCE)
 	TCHAR currentPath[32767];
 
 	if (!GetEnvironmentVariable(_T("PATH"), currentPath, sizeof_array(currentPath)))
@@ -64,6 +65,9 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
 	SetEnvironmentVariable(_T("PATH"), currentPath);
 
 	return result;
+#else
+	return false;
+#endif
 }
 
 void Library::close()

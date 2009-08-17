@@ -2,7 +2,7 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/RichEdit.h"
 #include "I18N/Text.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

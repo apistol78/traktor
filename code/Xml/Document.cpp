@@ -2,7 +2,7 @@
 #include "Xml/Element.h"
 #include "Xml/Text.h"
 #include "Xml/XmlPullParser.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Misc/String.h"

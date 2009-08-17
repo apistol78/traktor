@@ -1,6 +1,6 @@
 #include <zlib.h>
 #include "Zip/InflateStream.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

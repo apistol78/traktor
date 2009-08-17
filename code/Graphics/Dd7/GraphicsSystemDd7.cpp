@@ -1,6 +1,6 @@
 #include "Graphics/Dd7/GraphicsSystemDd7.h"
 #include "Graphics/Dd7/SurfaceDd7.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

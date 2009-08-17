@@ -4,7 +4,7 @@
 #include "Ui/Itf/IBitmap.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Hermite.h"

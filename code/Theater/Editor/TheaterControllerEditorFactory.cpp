@@ -1,7 +1,7 @@
 #include "Theater/Editor/TheaterControllerEditorFactory.h"
 #include "Theater/Editor/TheaterControllerEditor.h"
 #include "Theater/TheaterControllerData.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
