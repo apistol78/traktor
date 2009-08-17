@@ -1,6 +1,7 @@
 #ifndef traktor_scene_ReferencesRenderControl_H
 #define traktor_scene_ReferencesRenderControl_H
 
+#include "Core/Heap/Ref.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 
 namespace traktor
@@ -9,7 +10,14 @@ namespace traktor
 	{
 
 class Widget;
+class Container;
 
+		namespace custom
+		{
+
+class GraphControl;
+
+		}
 	}
 
 	namespace scene
@@ -33,6 +41,10 @@ public:
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();
+
+private:
+	Ref< ui::Container > m_container;
+	Ref< ui::custom::GraphControl > m_referenceGraph;
 };
 
 	}
