@@ -1,7 +1,7 @@
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Math/Color.h"
 
 #if defined(T_USE_GDI_PLUS)

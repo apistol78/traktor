@@ -2,7 +2,7 @@
 #include "Ui/Application.h"
 #include "Ui/Itf/IBitmap.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

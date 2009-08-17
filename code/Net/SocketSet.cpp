@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Net/SocketSet.h"
 #include "Net/Socket.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

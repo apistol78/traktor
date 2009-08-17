@@ -1,6 +1,6 @@
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

@@ -6,7 +6,7 @@
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "I18N/Text.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 
 namespace traktor

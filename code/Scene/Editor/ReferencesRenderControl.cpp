@@ -7,7 +7,7 @@
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

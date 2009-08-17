@@ -72,6 +72,7 @@ std::wstring OS::getCurrentUser() const
 
 std::wstring OS::getUserHomePath() const
 {
+#if !defined(WINCE)
 	TCHAR szPath[MAX_PATH];
 	HRESULT hr;
 
@@ -86,10 +87,14 @@ std::wstring OS::getUserHomePath() const
 		return L"";
 
 	return replaceAll(tstows(szPath), L'\\', L'/');
+#else
+	return L"";
+#endif
 }
 
 std::wstring OS::getUserApplicationDataPath() const
 {
+#if !defined(WINCE)
 	TCHAR szPath[MAX_PATH];
 	HRESULT hr;
 
@@ -104,10 +109,14 @@ std::wstring OS::getUserApplicationDataPath() const
 		return L"";
 
 	return replaceAll(tstows(szPath), L'\\', L'/');
+#else
+	return L"";
+#endif
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
+#if !defined(WINCE)
 	if (s_IEIsProtectedModeProcess && s_IEGetWriteableFolderPath)
 	{
 		HRESULT hr;
@@ -134,7 +143,7 @@ std::wstring OS::getWritableFolderPath() const
 			return path;
 		}
 	}
-
+#endif
 	return getUserApplicationDataPath();
 }
 
@@ -189,9 +198,9 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 	_tcscpy_s(cmd, wstots(commandLine).c_str());
 	_tcscpy_s(cwd, wstots(workingDirectory.getPathName()).c_str());
 #else
-	_tcscpy_s(app, sizeof_array(app), wstots(file).c_str());
+	_tcscpy_s(app, sizeof_array(app), wstots(file.getPathName()).c_str());
 	_tcscpy_s(cmd, sizeof_array(cmd), wstots(commandLine).c_str());
-	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory).c_str());
+	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
 #endif
 
 	BOOL result = CreateProcess(
@@ -227,6 +236,7 @@ OS::OS()
 {
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
 
+#if !defined(WINCE)
 	// Load IEFrame library; only available on Vista.
 	s_hIeFrameLib = LoadLibrary(L"ieframe.dll");
 	if (s_hIeFrameLib)
@@ -236,6 +246,7 @@ OS::OS()
 		s_IEGetWriteableFolderPath = (IEGETWRITEABLEFOLDERPATHPROC*)GetProcAddress(s_hIeFrameLib, "IEGetWriteableFolderPath");
 		T_ASSERT (s_IEGetWriteableFolderPath);
 	}
+#endif
 }
 
 OS::~OS()

@@ -1,7 +1,7 @@
 #include <sstream>
 #include "Html/Element.h"
 #include "Html/Attribute.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Io/Stream.h"
 
 namespace traktor

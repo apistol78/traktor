@@ -2,7 +2,7 @@
 #define traktor_Serializable_H
 
 #include "Core/Object.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

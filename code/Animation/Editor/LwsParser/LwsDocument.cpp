@@ -1,7 +1,7 @@
 #include "Animation/Editor/LwsParser/LwsDocument.h"
 #include "Animation/Editor/LwsParser/LwsGroup.h"
 #include "Animation/Editor/LwsParser/LwsValue.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Misc/Split.h"

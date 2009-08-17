@@ -1,6 +1,6 @@
 #include "UnitTest/CaseHeap.h"
 #include "Core/Heap/Heap.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"

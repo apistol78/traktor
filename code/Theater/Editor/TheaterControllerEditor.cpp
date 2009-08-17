@@ -17,7 +17,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 // Resources
 #include "Resources/Theater.h"

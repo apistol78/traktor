@@ -4,7 +4,7 @@
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"

@@ -16,7 +16,7 @@
 #include "Drawing/Formats/ImageFormatTga.h"
 #include "Drawing/Formats/ImageFormatPcx.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 
 namespace traktor

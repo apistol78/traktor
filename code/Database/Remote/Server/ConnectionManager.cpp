@@ -3,7 +3,7 @@
 #include "Database/Remote/Server/Configuration.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

@@ -1,7 +1,7 @@
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/IRenderSystem.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

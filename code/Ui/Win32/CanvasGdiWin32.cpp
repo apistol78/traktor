@@ -54,7 +54,7 @@ bool CanvasGdiWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 {
 	T_ASSERT_M (!m_hDC, L"Invalid device context handle");
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(WINCE)
 	m_gdiResources = (int32_t)GetGuiResources(GetCurrentProcess(), 0);
 	if (m_hOffScreenBitmap == NULL)
 		m_gdiResources++;
@@ -189,7 +189,7 @@ void CanvasGdiWin32::endPaint(Window& hWnd)
 
 	m_hDC = NULL;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(WINCE)
 	int32_t gdiResources = (int32_t)GetGuiResources(GetCurrentProcess(), 0);
 	int32_t gdiLeak = gdiResources - m_gdiResources;
 	if (gdiLeak > 0)

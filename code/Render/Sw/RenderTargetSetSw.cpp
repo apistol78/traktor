@@ -1,7 +1,7 @@
 #include "Render/Sw/RenderTargetSetSw.h"
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Types.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

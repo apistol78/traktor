@@ -1,7 +1,7 @@
 #include <cmath>
 #include "Drawing/Filters/PerlinNoiseFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Math/Const.h"
 
 namespace traktor

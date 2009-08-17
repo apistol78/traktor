@@ -2,7 +2,7 @@
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/IScriptClass.h"
 #include "Core/Serialization/Serializable.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

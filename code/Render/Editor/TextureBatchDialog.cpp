@@ -12,7 +12,7 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "I18N/Text.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 
 // Resources
 #include "Resources/PlusMinus.h"

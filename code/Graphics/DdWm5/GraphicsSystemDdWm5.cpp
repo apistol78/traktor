@@ -1,6 +1,6 @@
 #include "Graphics/DdWm5/GraphicsSystemDdWm5.h"
 #include "Graphics/DdWm5/SurfaceDdWm5.h"
-#include "Core/Heap/HeapNew.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

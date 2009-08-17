@@ -1,6 +1,6 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
-#include "Core/Heap/New.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
