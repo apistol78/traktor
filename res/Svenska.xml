@@ -982,6 +982,38 @@
 			<second>Namnlös</second>
 		</item>
     <item>
+      <first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
+      <second>Perspektiv</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_FRONT</first>
+      <second>Fram</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_BACK</first>
+      <second>Bak</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_TOP</first>
+      <second>Ovan</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_BOTTOM</first>
+      <second>Under</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_LEFT</first>
+      <second>Vänster</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_RIGHT</first>
+      <second>Höger</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_REFERENCES</first>
+      <second>Referenser</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Lägg till beroende</second>
     </item>

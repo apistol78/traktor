@@ -49,7 +49,9 @@ void DefaultEntityEditor::applyModifier(
 	SceneEditorContext* context,
 	EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
-	const Vector2& mouseDelta,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta,
+	const Vector4& worldDelta,
 	int mouseButton
 )
 {
@@ -65,7 +67,9 @@ void DefaultEntityEditor::applyModifier(
 	modifier->adjust(
 		context,
 		viewTransform,
-		mouseDelta,
+		screenDelta,
+		viewDelta,
+		worldDelta,
 		mouseButton,
 		transform
 	);
@@ -173,33 +177,15 @@ void DefaultEntityEditor::drawGuide(
 		Vector4 lightZ = transform.axisZ();
 
 		primitiveRenderer->drawLine(
-			lightPosition - lightDirection,
-			lightPosition + lightDirection,
+			lightPosition - lightDirection * Scalar(0.5f),
+			lightPosition + lightDirection * Scalar(0.5f),
 			5.0f,
 			Color(255, 255, 0)
 		);
-		primitiveRenderer->drawLine(
-			lightPosition + lightDirection * Scalar(0.75f) + lightX * Scalar(0.25f),
-			lightPosition + lightDirection,
-			5.0f,
-			Color(255, 255, 0)
-		);
-		primitiveRenderer->drawLine(
-			lightPosition + lightDirection * Scalar(0.75f) - lightX * Scalar(0.25f),
-			lightPosition + lightDirection,
-			5.0f,
-			Color(255, 255, 0)
-		);
-		primitiveRenderer->drawLine(
-			lightPosition + lightDirection * Scalar(0.75f) + lightZ * Scalar(0.25f),
-			lightPosition + lightDirection,
-			5.0f,
-			Color(255, 255, 0)
-		);
-		primitiveRenderer->drawLine(
-			lightPosition + lightDirection * Scalar(0.75f) - lightZ * Scalar(0.25f),
-			lightPosition + lightDirection,
-			5.0f,
+		primitiveRenderer->drawArrowHead(
+			lightPosition + lightDirection * Scalar(0.5f),
+			lightPosition + lightDirection * Scalar(0.7f),
+			0.5f,
 			Color(255, 255, 0)
 		);
 

@@ -3,10 +3,20 @@
 
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
+#include "Ui/Point.h"
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Widget;
+class Event;
+
+	}
+
 	namespace render
 	{
 
@@ -33,9 +43,19 @@ class OrthogonalRenderControl : public ISceneRenderControl
 	T_RTTI_CLASS(OrthogonalRenderControl)
 
 public:
+	enum ViewPlane
+	{
+		PositiveX = 0,
+		NegativeX = 1,
+		PositiveY = 2,
+		NegativeY = 3,
+		PositiveZ = 4,
+		NegativeZ = 5
+	};
+
 	OrthogonalRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t viewPlane);
+	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane);
 
 	void destroy();
 
@@ -43,28 +63,34 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command);
 
+	virtual void update();
+
 private:
 	Ref< SceneEditorContext > m_context;
+	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
 	Timer m_timer;
-
 	ui::Point m_mousePosition;
 	int m_mouseButton;
 	bool m_modifyCamera;
 	bool m_modifyAlternative;
 	RefArray< EntityAdapter > m_modifyEntities;
-
-	int32_t m_viewPlane;
+	ViewPlane m_viewPlane;
 	float m_magnification;
 	float m_cameraX;
 	float m_cameraY;
-
 	ui::Size m_dirtySize;
 
 	void updateWorldRenderer();
+
+	Matrix44 getProjectionTransform() const;
+
+	Matrix44 getViewTransform() const;
+
+	EntityAdapter* pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);
 

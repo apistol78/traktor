@@ -129,6 +129,15 @@ void PrimitiveRenderer::destroy()
 		m_vertexStart =
 		m_vertex = 0;
 	}
+
+	for (int i = 0; i < sizeof_array(m_vertexBuffers); ++i)
+	{
+		if (m_vertexBuffers[i])
+		{
+			m_vertexBuffers[i]->destroy();
+			m_vertexBuffers[i] = 0;
+		}
+	}
 }
 
 void PrimitiveRenderer::pushProjection(const Matrix44& projection)

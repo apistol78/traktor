@@ -24,6 +24,16 @@ ToolBarButton::ToolBarButton(const std::wstring& text, const Command& command, u
 		setToggled(true);
 }
 
+void ToolBarButton::setText(const std::wstring& text)
+{
+	m_text = text;
+}
+
+const std::wstring& ToolBarButton::getText() const
+{
+	return m_text;
+}
+
 void ToolBarButton::setToggled(bool toggled)
 {
 	if (toggled)

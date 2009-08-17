@@ -25,7 +25,6 @@ class Command;
 
 class ToolBar;
 class ToolBarButton;
-class StatusBar;
 
 		}
 	}
@@ -72,8 +71,6 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	Ref< ui::Slider > m_sliderTimeScale;
 	RefArray< ISceneRenderControl > m_renderControls;
-	Ref< ui::Container > m_infoContainer;
-	Ref< ui::custom::StatusBar > m_statusText;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
@@ -85,13 +82,9 @@ private:
 
 	void updateEditState();
 
-	void updateInformation();
-
 	void eventToolBarActionClicked(ui::Event* event);
 
 	void eventTimeScaleChanged(ui::Event* event);
-
-	void eventContextPostBuild(ui::Event* event);
 
 	void eventIdle(ui::Event* event);
 };

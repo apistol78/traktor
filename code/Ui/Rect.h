@@ -67,6 +67,10 @@ public:
 	inline bool intersect(const Rect& rc) const;
 	
 	inline Rect& operator = (const Rect& rc);
+
+	inline bool operator == (const Rect& rc) const;
+
+	inline bool operator != (const Rect& rc) const;
 };
 
 	}

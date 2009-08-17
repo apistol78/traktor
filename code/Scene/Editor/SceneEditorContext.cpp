@@ -100,7 +100,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_physicsManager(physicsManager)
 ,	m_pickEnable(true)
 ,	m_axisEnable(AeXYZ)
-,	m_editSpace(EsWorld)
 ,	m_guideEnable(true)
 ,	m_snapEnable(true)
 ,	m_physicsEnable(false)
@@ -144,16 +143,6 @@ void SceneEditorContext::setAxisEnable(uint32_t axisEnable)
 uint32_t SceneEditorContext::getAxisEnable() const
 {
 	return m_axisEnable;
-}
-
-void SceneEditorContext::setEditSpace(EditSpace editSpace)
-{
-	m_editSpace = editSpace;
-}
-
-SceneEditorContext::EditSpace SceneEditorContext::getEditSpace() const
-{
-	return m_editSpace;
 }
 
 void SceneEditorContext::setGuideEnable(bool guideEnable)

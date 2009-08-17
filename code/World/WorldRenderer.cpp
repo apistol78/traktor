@@ -330,6 +330,14 @@ void WorldRenderer::destroy()
 		m_shadowTargetSet->destroy();
 		m_shadowTargetSet = 0;
 	}
+
+	if (m_depthTargetSet)
+	{
+		m_depthTargetSet->destroy();
+		m_depthTargetSet = 0;
+	}
+
+	m_renderView = 0;
 }
 
 void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const

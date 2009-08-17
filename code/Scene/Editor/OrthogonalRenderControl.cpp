@@ -4,26 +4,20 @@
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
-//#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/IModifier.h"
-//#include "Scene/Editor/FrameEvent.h"
-//#include "Scene/Editor/SelectEvent.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
-//#include "World/WorldRenderSettings.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/EntityInstance.h"
-//#include "World/Entity/Entity.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Widget.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
-//#include "Core/Misc/EnterLeave.h"
-//#include "Core/Math/Vector2.h"
 
 namespace traktor
 {
@@ -32,10 +26,8 @@ namespace traktor
 		namespace
 		{
 
-//const float c_cameraRotateDeltaScale = 0.01f;
-//const float c_deltaAdjust = 0.05f;
-//const float c_deltaAdjustSmall = 0.01f;
-const float c_deltaMagnification = 1.0f;
+const float c_cameraTranslateDeltaScale = 0.025f;
+const float c_minMagnification = 0.01f;
 
 		}
 
@@ -46,7 +38,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
-,	m_viewPlane(0)
+,	m_viewPlane(PositiveX)
 ,	m_magnification(10.0f)
 ,	m_cameraX(0.0f)
 ,	m_cameraY(0.0f)
@@ -54,14 +46,15 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 {
 }
 
-bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t viewPlane)
+bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane)
 {
 	m_context = context;
 	T_ASSERT (m_context);
 
 	m_viewPlane = viewPlane;
 
-	if (!Widget::create(parent, ui::WsClientBorder))
+	m_renderWidget = gc_new< ui::Widget >();
+	if (!m_renderWidget->create(parent))
 		return false;
 
 	render::RenderViewCreateDesc desc;
@@ -71,7 +64,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	desc.waitVBlank = false;
 	desc.mipBias = -1.0f;
 
-	m_renderView = m_context->getRenderSystem()->createRenderView(getIWidget()->getSystemHandle(), desc);
+	m_renderView = m_context->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)
 		return false;
 
@@ -82,12 +75,12 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	))
 		return false;
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseMove));
-	addMouseWheelEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseWheel));
-	addSizeEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventPaint));
+	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonDown));
+	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventButtonUp));
+	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseMove));
+	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventMouseWheel));
+	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventSize));
+	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventPaint));
 
 	updateWorldRenderer();
 
@@ -116,7 +109,11 @@ void OrthogonalRenderControl::destroy()
 		m_renderView = 0;
 	}
 
-	Widget::destroy();
+	if (m_renderWidget)
+	{
+		m_renderWidget->destroy();
+		m_renderWidget = 0;
+	}
 }
 
 void OrthogonalRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
@@ -128,37 +125,43 @@ void OrthogonalRenderControl::setWorldRenderSettings(world::WorldRenderSettings*
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
-
-	RefArray< EntityAdapter > selectedEntities;
-	m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-	for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+	if (m_renderWidget->hasFocus())
 	{
-		Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-		if (entityEditor)
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
-			// Propagate command to entity editor.
-			result = entityEditor->handleCommand(m_context, *i, command);
-			if (result)
-				break;
+			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+			if (entityEditor)
+			{
+				// Propagate command to entity editor.
+				result = entityEditor->handleCommand(m_context, *i, command);
+				if (result)
+					break;
+			}
 		}
 	}
-
 	return result;
+}
+
+void OrthogonalRenderControl::update()
+{
+	m_renderWidget->update();
 }
 
 void OrthogonalRenderControl::updateWorldRenderer()
 {
-	if (!m_worldRenderSettings)
-		return;
-
 	if (m_worldRenderer)
 	{
 		m_worldRenderer->destroy();
 		m_worldRenderer = 0;
 	}
 
-	ui::Size sz = getInnerRect().getSize();
+	if (!m_renderView || !m_worldRenderSettings)
+		return;
+
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
 
@@ -184,6 +187,62 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		m_worldRenderer = 0;
 }
 
+Matrix44 OrthogonalRenderControl::getProjectionTransform() const
+{
+	ui::Rect innerRect = m_renderWidget->getInnerRect();
+	float ratio = float(innerRect.getWidth()) / innerRect.getHeight();
+
+	world::WorldViewOrtho worldView;
+	worldView.width = m_magnification;
+	worldView.height = m_magnification / ratio;
+
+	world::WorldRenderView worldRenderView;
+	m_worldRenderer->createRenderView(worldView, worldRenderView);
+
+	return worldRenderView.getProjection();
+}
+
+Matrix44 OrthogonalRenderControl::getViewTransform() const
+{
+	switch (m_viewPlane)
+	{
+	case PositiveX:
+		return translate(0.0f, m_cameraX, m_cameraY) * rotateY(deg2rad(-90.0f));
+	case NegativeX:
+		return translate(0.0f, m_cameraX, m_cameraY) * rotateY(deg2rad(90.0f));
+	case PositiveY:
+		return translate(m_cameraX, 0.0f, m_cameraY) * rotateX(deg2rad(-90.0f));
+	case NegativeY:
+		return translate(m_cameraX, 0.0f, m_cameraY) * rotateX(deg2rad(90.0f));
+	case PositiveZ:
+		return translate(m_cameraX, m_cameraY, 0.0f);
+	case NegativeZ:
+		return translate(m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(180.0f));
+	}
+	return Matrix44::identity();
+}
+
+EntityAdapter* OrthogonalRenderControl::pickEntity(const ui::Point& position) const
+{
+	ui::Rect innerRect = m_renderWidget->getInnerRect();
+
+	Matrix44 projection = getProjectionTransform();
+	Matrix44 projectionInverse = projection.inverse();
+
+	Matrix44 view = getViewTransform();
+	Matrix44 viewInverse = view.inverse();
+
+	Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
+	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
+
+	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
+	Vector4 viewPosition = projectionInverse * clipPosition;
+	Vector4 worldRayOrigin = viewInverse * viewPosition;
+	Vector4 worldRayDirection = viewInverse.axisZ();
+
+	return m_context->queryRay(worldRayOrigin, worldRayDirection);
+}
+
 void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 {
 	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
@@ -191,11 +250,20 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 
 	// Are we already captured then we abort.
-	if (hasCapture())
+	if (m_renderWidget->hasCapture())
 		return;
 
 	if (m_modifyCamera || !m_context->inAddReferenceMode())
 	{
+		// Handle entity picking if enabled.
+		if (!m_modifyCamera && m_context->getPickEnable())
+		{
+			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
+			m_context->selectAllEntities(false);
+			m_context->selectEntity(entityAdapter);
+			m_context->raiseSelect();
+		}
+
 		if (!m_modifyCamera)
 		{
 			m_context->setPlaying(false);
@@ -221,43 +289,43 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 			m_context->raisePreModify();
 		}
 
-		setCapture();
+		m_renderWidget->setCapture();
 	}
 	else
 	{
-		//Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
-		//if (entityAdapter)
-		//{
-		//	// Get selected entities.
-		//	m_context->getEntities(
-		//		m_modifyEntities,
-		//		SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-		//	);
+		Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
+		if (entityAdapter)
+		{
+			// Get selected entities.
+			m_context->getEntities(
+				m_modifyEntities,
+				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+			);
 
-		//	if (!m_modifyEntities.empty())
-		//	{
-		//		// Issue begin modification event.
-		//		m_context->raisePreModify();
+			if (!m_modifyEntities.empty())
+			{
+				// Issue begin modification event.
+				m_context->raisePreModify();
 
-		//		// Add reference to all selected entities.
-		//		bool referenceAdded = false;
-		//		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-		//		{
-		//			if ((*i) != entityAdapter)
-		//				referenceAdded |= (*i)->addReference(entityAdapter);
-		//		}
+				// Add reference to all selected entities.
+				bool referenceAdded = false;
+				for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+				{
+					if ((*i) != entityAdapter)
+						referenceAdded |= (*i)->addReference(entityAdapter);
+				}
 
-		//		// Need to build entities so references in them will get updated.
-		//		if (referenceAdded)
-		//			m_context->buildEntities();
+				// Need to build entities so references in them will get updated.
+				if (referenceAdded)
+					m_context->buildEntities();
 
-		//		// Issue post modification event.
-		//		m_context->raisePostModify();
-		//	}
-		//}
+				// Issue post modification event.
+				m_context->raisePostModify();
+			}
+		}
 	}
 
-	setFocus();
+	m_renderWidget->setFocus();
 }
 
 void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
@@ -282,74 +350,88 @@ void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 	m_modifyCamera = false;
 	m_modifyAlternative = false;
 
-	if (hasCapture())
-		releaseCapture();
+	if (m_renderWidget->hasCapture())
+		m_renderWidget->releaseCapture();
 }
 
 void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 {
-	if (!hasCapture())
+	if (!m_renderWidget->hasCapture())
 		return;
 
 	int mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
-	Vector2 mouseDelta(
+	Vector4 screenDelta(
 		float(m_mousePosition.x - mousePosition.x),
-		float(m_mousePosition.y - mousePosition.y)
+		float(m_mousePosition.y - mousePosition.y),
+		0.0f,
+		0.0f
 	);
 
 	if (!m_modifyCamera)
 	{
-		//// Apply modifier on selected entities.
-		//Ref< IModifier > modifier = m_context->getModifier();
-		//T_ASSERT (modifier);
+		// Apply modifier on selected entities.
+		Ref< IModifier > modifier = m_context->getModifier();
+		T_ASSERT (modifier);
 
-		//for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-		//{
-		//	Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-		//	if (entityEditor)
-		//		entityEditor->applyModifier(
-		//			m_context,
-		//			*i,
-		//			m_camera->getCurrentView(),
-		//			mouseDelta,
-		//			mouseButton
-		//		);
-		//}
+		Matrix44 projection = getProjectionTransform();
+		Matrix44 projectionInverse = projection.inverse();
+
+		Matrix44 view = getViewTransform();
+		Matrix44 viewInverse = view.inverse();
+
+		ui::Rect innerRect = m_renderWidget->getInnerRect();
+		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
+
+		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+		{
+			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+			if (entityEditor)
+			{
+				// Transform screen delta into world delta at entity's position.
+				Vector4 viewDelta = clipDelta;
+				Vector4 worldDelta = viewInverse * viewDelta;
+
+				// Apply modifier through entity editor.
+				entityEditor->applyModifier(
+					m_context,
+					*i,
+					view,
+					screenDelta,
+					viewDelta,
+					worldDelta,
+					mouseButton
+				);
+			}
+		}
 	}
 	else
 	{
-		//if (mouseButton == 0)
-		//{
-		//	mouseDelta *= m_context->getDeltaScale();
-		//	if (m_modifyAlternative)
-		//		m_camera->move(Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f));
-		//	else
-		//		m_camera->move(Vector4(mouseDelta.x, 0.0f, mouseDelta.y, 0.0f));
-		//}
-		//else
-		//{
-		//	mouseDelta *= c_cameraRotateDeltaScale;
-		//	m_camera->rotate(mouseDelta.y, mouseDelta.x);
-		//}
+		m_cameraX += c_cameraTranslateDeltaScale * screenDelta.x();
+		m_cameraY += c_cameraTranslateDeltaScale * screenDelta.y();
 	}
 
 	m_mousePosition = mousePosition;
 	m_mouseButton = mouseButton;
 
-	update();
+	m_renderWidget->update();
 }
 
 void OrthogonalRenderControl::eventMouseWheel(ui::Event* event)
 {
 	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
-	m_magnification += rotation * c_deltaMagnification;
+	
+	float delta = m_magnification / 10.0f;
+	m_magnification += rotation * delta;
+
+	if (m_magnification < c_minMagnification)
+		m_magnification = c_minMagnification;
 }
 
 void OrthogonalRenderControl::eventSize(ui::Event* event)
 {
-	if (!m_renderView || !isVisible(true))
+	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
 
 	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
@@ -403,13 +485,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		world::WorldRenderView worldRenderView;
 		m_worldRenderer->createRenderView(worldView, worldRenderView);
 
-		Matrix44 view;
-		if (m_viewPlane == 0)		// X
-			view = translate(0.0f, m_cameraX, m_cameraY) * rotateY(deg2rad(-90.0f));
-		else if (m_viewPlane == 1)	// Y
-			view = translate(m_cameraX, 0.0f, m_cameraY) * rotateX(deg2rad(-90.0f));
-		else if (m_viewPlane == 2)	// Z
-			view = translate(m_cameraX, m_cameraY, 0.0f);
+		Matrix44 view = getViewTransform();
 
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(worldRenderView.getViewFrustum().getNearZ());
@@ -417,25 +493,38 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 		// Render grid.
 		const Color gridColor(0, 0, 0, 64);
-		for (int x = -20; x <= 20; ++x)
+
+		float unitsPerStep = 1.0f / 5.0f;
+		int steps = int32_t(m_magnification / unitsPerStep);
+		while (steps > 40)
 		{
-			float extent = m_magnification / 2.0f;
-			float fx = float(x) * extent / 20.0f;
+			unitsPerStep *= 2.0f;
+			steps = int32_t(m_magnification / unitsPerStep);
+		}
+
+		for (int i = -1; i <= steps + 1; ++i)
+		{
+			float fx = float(i - steps / 2.0f) * unitsPerStep + fmod(m_cameraX, unitsPerStep);
+			float fy = float(i - steps / 2.0f) * unitsPerStep + fmod(m_cameraY, unitsPerStep);
+			float fz = m_magnification;
+
 			m_primitiveRenderer->drawLine(
-				Vector4(fx, -extent, 0.0f, 1.0f),
-				Vector4(fx, extent, 0.0f, 1.0f),
+				Vector4(fx, -fz, 0.0f, 1.0f),
+				Vector4(fx, fz, 0.0f, 1.0f),
 				0.0f,
 				gridColor
 			);
+
 			m_primitiveRenderer->drawLine(
-				Vector4(-extent, fx, 0.0f, 1.0f),
-				Vector4(extent, fx, 0.0f, 1.0f),
+				Vector4(-fz, fy, 0.0f, 1.0f),
+				Vector4(fz, fy, 0.0f, 1.0f),
 				0.0f,
 				gridColor
 			);
 		}
 
-		m_primitiveRenderer->pushView(view);
+		// @hack Translate a bit as default entity editor uses distance to calculate snap guide sizes.
+		m_primitiveRenderer->pushView(view * translate(0.0f, 0.0f, 10.0f));
 
 		// Draw selection marker(s).
 		Ref< IModifier > modifier = m_context->getModifier();
@@ -444,12 +533,11 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.
 			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
 			{
-				bool modifierActive = (event->getKeyState() & ui::KsControl) == 0 && hasCapture();
 				modifier->draw(
 					m_context,
+					view,
 					(*i)->getTransform(),
 					m_primitiveRenderer,
-					modifierActive,
 					m_mouseButton
 				);
 
@@ -484,15 +572,9 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		worldRenderView.setView(view);
 
 		if (rootEntity)
-			m_worldRenderer->build(worldRenderView, deltaTime, rootEntity, 0);
-
-		// Flush rendering queue to GPU.
-		if (rootEntity)
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
-
-		if (rootEntity)
 		{
-			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->build(worldRenderView, deltaTime, rootEntity, 0);
+			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
 			m_worldRenderer->flush(0);
 		}
 

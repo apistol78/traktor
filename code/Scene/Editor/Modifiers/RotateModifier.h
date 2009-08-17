@@ -16,16 +16,18 @@ class RotateModifier : public IModifier
 public:
 	virtual void draw(
 		SceneEditorContext* context,
+		const Matrix44& viewTransform,
 		const Matrix44& worldTransform,
 		render::PrimitiveRenderer* primitiveRenderer,
-		bool active,
 		int button
 	);
 
 	virtual void adjust(
 		SceneEditorContext* context,
 		const Matrix44& viewTransform,
-		const Vector2& screenDelta,
+		const Vector4& screenDelta,
+		const Vector4& viewDelta,
+		const Vector4& worldDelta,
 		int button,
 		Matrix44& outTransform
 	);

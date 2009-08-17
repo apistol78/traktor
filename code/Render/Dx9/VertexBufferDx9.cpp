@@ -186,6 +186,8 @@ void VertexBufferDx9::forceDirty()
 
 HRESULT VertexBufferDx9::lostDevice()
 {
+	ms_activeVertexBuffer = 0;
+
 	if (!m_dynamic)
 		return S_OK;
 
@@ -193,7 +195,6 @@ HRESULT VertexBufferDx9::lostDevice()
 
 	m_d3dDevice = 0;
 	m_d3dVertexBuffer = 0;
-	ms_activeVertexBuffer = 0;
 
 	return S_OK;
 }

@@ -41,6 +41,10 @@ public:
 
 	ToolBarButton(const std::wstring& text, const Command& command, uint32_t imageIndex, int style = BsDefault);
 
+	void setText(const std::wstring& text);
+
+	const std::wstring& getText() const;
+
 	void setToggled(bool toggled);
 
 	bool isToggled() const;

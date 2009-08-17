@@ -94,12 +94,6 @@ public:
 		AeXYZ = AeX | AeY | AeZ
 	};
 
-	enum EditSpace
-	{
-		EsWorld,
-		EsObject
-	};
-
 	SceneEditorContext(
 		editor::IEditor* editor,
 		db::Database* resourceDb,
@@ -125,10 +119,6 @@ public:
 	void setAxisEnable(uint32_t axisEnable);
 
 	uint32_t getAxisEnable() const;
-
-	void setEditSpace(EditSpace editSpace);
-
-	EditSpace getEditSpace() const;
 
 	void setGuideEnable(bool guideEnable);
 
@@ -257,7 +247,6 @@ private:
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;
-	EditSpace m_editSpace;
 	bool m_guideEnable;
 	bool m_snapEnable;
 	bool m_physicsEnable;

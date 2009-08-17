@@ -1,10 +1,9 @@
 #include <sstream>
 #include <limits>
 #include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/PerspectiveRenderControl.h"
-#include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
 #include "Scene/Editor/Modifiers/ScaleModifier.h"
@@ -61,7 +60,7 @@ ScenePreviewControl::ScenePreviewControl()
 
 bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
-	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%,*", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_toolTogglePick = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), ui::Command(L"Scene.Editor.TogglePick"), 10, ui::custom::ToolBarButton::BsDefaultToggle);
@@ -96,14 +95,9 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleY);
 	m_toolBarActions->addItem(m_toolToggleZ);
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_EDIT_SPACE_WORLD"), ui::Command(L"Scene.Editor.EditSpaceWorld"), 8));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_EDIT_SPACE_OBJECT"), ui::Command(L"Scene.Editor.EditSpaceObject"), 9));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(m_toolToggleGuide);
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolToggleAddReference);
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_BROWSE_POSTPROCESS"), ui::Command(L"Scene.Editor.BrowsePostProcess"), 6));
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 13));
@@ -129,38 +123,16 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_renderControls.resize(4);
 	for (int i = 0; i < 4; ++i)
 	{
-		if (i == 0)
-		{
-			Ref< PerspectiveRenderControl > renderControl = gc_new< PerspectiveRenderControl >();
-			if (renderControl->create(
-				quadSplitter,
-				context
-			))
-				m_renderControls[i] = renderControl;
-			else
-				return false;
-		}
+		Ref< DefaultRenderControl > renderControl = gc_new< DefaultRenderControl >();
+		if (renderControl->create(
+			quadSplitter,
+			context,
+			i
+		))
+			m_renderControls[i] = renderControl;
 		else
-		{
-			int32_t viewPlane = i - 1;
-
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
-			if (renderControl->create(
-				quadSplitter,
-				context,
-				viewPlane
-			))
-				m_renderControls[i] = renderControl;
-			else
-				return false;
-		}
+			return false;
 	}
-
-	m_infoContainer = gc_new< ui::Container >();
-	m_infoContainer->create(this, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*", 2, 0));
-
-	m_statusText = gc_new< ui::custom::StatusBar >();
-	m_statusText->create(m_infoContainer, ui::WsDoubleBuffer);
 
 	m_modifierTranslate = gc_new< TranslateModifier >();
 	m_modifierRotate = gc_new< RotateModifier >();
@@ -168,10 +140,8 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
-	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventContextPostBuild));
 
 	updateEditState();
-	updateInformation();
 
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &ScenePreviewControl::eventIdle);
@@ -201,11 +171,12 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleGuide", m_toolToggleGuide->isToggled());
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 
-	// Destroy widgets.
+	// Destroy render controls.
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		(*i)->destroy();
 	m_renderControls.resize(0);
 
+	// Destroy widgets.
 	if (m_toolBarActions)
 	{
 		m_toolBarActions->destroy();
@@ -234,10 +205,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		updateEditState();
 	else if (command == L"Scene.Editor.ToggleX" || command == L"Scene.Editor.ToggleY" || command == L"Scene.Editor.ToggleZ")
 		updateEditState();
-	else if (command == L"Scene.Editor.EditSpaceWorld")
-		m_context->setEditSpace(SceneEditorContext::EsWorld);
-	else if (command == L"Scene.Editor.EditSpaceObject")
-		m_context->setEditSpace(SceneEditorContext::EsObject);
 	else if (command == L"Scene.Editor.ToggleGuide")
 		updateEditState();
 	else if (command == L"Scene.Editor.ToggleSnap")
@@ -257,11 +224,8 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		// Propagate command to active render control.
 		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		{
-			if ((*i)->hasFocus())
-			{
-				if ((result = (*i)->handleCommand(command)) == true)
-					break;
-			}
+			if ((result = (*i)->handleCommand(command)) == true)
+				break;
 		}
 	}
 
@@ -294,36 +258,6 @@ void ScenePreviewControl::updateEditState()
 	m_context->setAddReferenceMode(m_toolToggleAddReference->isToggled());
 }
 
-void ScenePreviewControl::updateInformation()
-{
-	// See if selected entity has some special message to show.
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-	{
-		std::wstring statusText;
-		if (
-			selectedEntities[0]->getEntityEditor() &&
-			selectedEntities[0]->getEntityEditor()->getStatusText(m_context, selectedEntities[0], statusText)
-		)
-		{
-			m_statusText->setText(statusText);
-			m_infoContainer->update();
-			return;
-		}
-	}
-
-	// Show default information.
-	uint32_t bodyCount = 0, activeBodyCount = 0;
-	Ref< physics::PhysicsManager > physicsManager = m_context->getPhysicsManager();
-	if (physicsManager)
-		physicsManager->getBodyCount(bodyCount, activeBodyCount);
-
-	StringOutputStream ss;
-	ss << i18n::Format(L"SCENE_EDITOR_PHYSICS", int32_t(bodyCount), int32_t(activeBodyCount));
-
-	m_statusText->setText(ss.str());
-}
-
 void ScenePreviewControl::eventToolBarActionClicked(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
@@ -334,11 +268,6 @@ void ScenePreviewControl::eventTimeScaleChanged(ui::Event* event)
 {
 	float timeScale = m_sliderTimeScale->getValue() / 100.0f;
 	m_context->setTimeScale(timeScale);
-}
-
-void ScenePreviewControl::eventContextPostBuild(ui::Event* event)
-{
-	updateInformation();
 }
 
 void ScenePreviewControl::eventIdle(ui::Event* event)

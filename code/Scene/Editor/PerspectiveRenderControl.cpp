@@ -18,6 +18,7 @@
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Widget.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
@@ -32,6 +33,8 @@ namespace traktor
 		namespace
 		{
 
+const float c_defaultFieldOfView = 45.0f;
+const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
@@ -54,7 +57,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_context = context;
 	T_ASSERT (m_context);
 
-	if (!Widget::create(parent, ui::WsClientBorder))
+	m_renderWidget = gc_new< ui::Widget >();
+	if (!m_renderWidget->create(parent))
 		return false;
 
 	render::RenderViewCreateDesc desc;
@@ -64,7 +68,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	desc.waitVBlank = false;
 	desc.mipBias = -1.0f;
 
-	m_renderView = m_context->getRenderSystem()->createRenderView(getIWidget()->getSystemHandle(), desc);
+	m_renderView = m_context->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)
 		return false;
 
@@ -75,15 +79,17 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	))
 		return false;
 
-	addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
-	addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
-	addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
-	addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
-	addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
+	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
+	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
+	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
+	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
+	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
 
 	updateWorldRenderer();
 
-	m_camera = gc_new< Camera >(cref(Matrix44::identity()));
+	m_camera = gc_new< Camera >(cref(
+		lookAt(Vector4(-4.0f, 4.0f, -4.0f, 1.0f), Vector4(0.0f, 0.0f, 0.0f, 1.0f)).inverse()
+	));
 	m_timer.start();
 
 	return true;
@@ -109,7 +115,11 @@ void PerspectiveRenderControl::destroy()
 		m_renderView = 0;
 	}
 
-	Widget::destroy();
+	if (m_renderWidget)
+	{
+		m_renderWidget->destroy();
+		m_renderWidget = 0;
+	}
 }
 
 void PerspectiveRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
@@ -121,23 +131,29 @@ void PerspectiveRenderControl::setWorldRenderSettings(world::WorldRenderSettings
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
-
-	RefArray< EntityAdapter > selectedEntities;
-	m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
-
-	for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+	if (m_renderWidget->hasFocus())
 	{
-		Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-		if (entityEditor)
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
-			// Propagate command to entity editor.
-			result = entityEditor->handleCommand(m_context, *i, command);
-			if (result)
-				break;
+			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+			if (entityEditor)
+			{
+				// Propagate command to entity editor.
+				result = entityEditor->handleCommand(m_context, *i, command);
+				if (result)
+					break;
+			}
 		}
 	}
-
 	return result;
+}
+
+void PerspectiveRenderControl::update()
+{
+	m_renderWidget->update();
 }
 
 void PerspectiveRenderControl::updateWorldRenderer()
@@ -151,7 +167,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		m_worldRenderer = 0;
 	}
 
-	ui::Size sz = getInnerRect().getSize();
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
 
@@ -179,7 +195,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		worldView.width = sz.cx;
 		worldView.height = sz.cy;
 		worldView.aspect = float(sz.cx) / sz.cy;
-		worldView.fov = deg2rad(65.0f);
+		worldView.fov = deg2rad(c_defaultFieldOfView);
 		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 	}
 	else
@@ -189,7 +205,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 EntityAdapter* PerspectiveRenderControl::pickEntity(const ui::Point& position) const
 {
 	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
-	ui::Rect innerRect = getInnerRect();
+	ui::Rect innerRect = m_renderWidget->getInnerRect();
 
 	Scalar fx(float(position.x) / innerRect.getWidth());
 	Scalar fy(float(position.y) / innerRect.getHeight());
@@ -219,7 +235,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
 
 	// Are we already captured then we abort.
-	if (hasCapture())
+	if (m_renderWidget->hasCapture())
 		return;
 
 	if (m_modifyCamera || !m_context->inAddReferenceMode())
@@ -258,7 +274,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 			m_context->raisePreModify();
 		}
 
-		setCapture();
+		m_renderWidget->setCapture();
 	}
 	else
 	{
@@ -294,7 +310,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 		}
 	}
 
-	setFocus();
+	m_renderWidget->setFocus();
 }
 
 void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
@@ -319,21 +335,23 @@ void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 	m_modifyCamera = false;
 	m_modifyAlternative = false;
 
-	if (hasCapture())
-		releaseCapture();
+	if (m_renderWidget->hasCapture())
+		m_renderWidget->releaseCapture();
 }
 
 void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 {
-	if (!hasCapture())
+	if (!m_renderWidget->hasCapture())
 		return;
 
 	int32_t mouseButton = (static_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft) ? 0 : 1;
 	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
 
-	Vector2 mouseDelta(
+	Vector4 screenDelta(
 		float(m_mousePosition.x - mousePosition.x),
-		float(m_mousePosition.y - mousePosition.y)
+		float(m_mousePosition.y - mousePosition.y),
+		0.0f,
+		0.0f
 	);
 
 	if (!m_modifyCamera)
@@ -342,22 +360,33 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		Ref< IModifier > modifier = m_context->getModifier();
 		T_ASSERT (modifier);
 
+		Matrix44 view = m_camera->getCurrentView();
+		Matrix44 viewInverse = view.inverse();
+
+		Matrix44 projection = m_worldRenderView.getProjection();
+		Matrix44 projectionInverse = projection.inverse();
+
+		ui::Rect innerRect = m_renderWidget->getInnerRect();
+		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
+
 		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
 		{
 			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
 			if (entityEditor)
 			{
-				Vector4 worldCameraCenter = m_camera->getCurrentView().inverseOrtho().translation();
-				Vector4 worldEntityCenter = (*i)->getTransform().translation();
+				// Transform screen delta into world delta at entity's position.
+				Vector4 viewPosition = view * (*i)->getTransform().translation();
+				Vector4 viewDelta = clipDelta * viewPosition.z();
+				Vector4 worldDelta = viewInverse * viewDelta;
 
-
-
-
+				// Apply modifier through entity editor.
 				entityEditor->applyModifier(
 					m_context,
 					*i,
-					m_camera->getCurrentView(),
-					mouseDelta,
+					view,
+					screenDelta,
+					viewDelta,
+					worldDelta,
 					mouseButton
 				);
 			}
@@ -367,27 +396,28 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 	{
 		if (mouseButton == 0)
 		{
+			screenDelta *= Scalar(c_cameraTranslateDeltaScale);
 			if (m_modifyAlternative)
-				m_camera->move(Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f));
+				m_camera->move(screenDelta.shuffle< 0, 1, 2, 3 >());
 			else
-				m_camera->move(Vector4(mouseDelta.x, 0.0f, mouseDelta.y, 0.0f));
+				m_camera->move(screenDelta.shuffle< 0, 2, 1, 3 >());
 		}
 		else
 		{
-			mouseDelta *= c_cameraRotateDeltaScale;
-			m_camera->rotate(mouseDelta.y, mouseDelta.x);
+			screenDelta *= Scalar(c_cameraRotateDeltaScale);
+			m_camera->rotate(screenDelta.y(), screenDelta.x());
 		}
 	}
 
 	m_mousePosition = mousePosition;
 	m_mouseButton = mouseButton;
 
-	update();
+	m_renderWidget->update();
 }
 
 void PerspectiveRenderControl::eventSize(ui::Event* event)
 {
-	if (!m_renderView || !isVisible(true))
+	if (!m_renderView || !m_renderWidget->isVisible(true))
 		return;
 
 	ui::SizeEvent* s = static_cast< ui::SizeEvent* >(event);
@@ -473,12 +503,11 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.
 			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
 			{
-				bool modifierActive = (event->getKeyState() & ui::KsControl) == 0 && hasCapture();
 				modifier->draw(
 					m_context,
+					view,
 					(*i)->getTransform(),
 					m_primitiveRenderer,
-					modifierActive,
 					m_mouseButton
 				);
 
@@ -513,15 +542,9 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderView.setView(view);
 
 		if (rootEntity)
-			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
-
-		// Flush rendering queue to GPU.
-		if (rootEntity)
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
-
-		if (rootEntity)
 		{
-			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
+			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
 			m_worldRenderer->flush(0);
 		}
 

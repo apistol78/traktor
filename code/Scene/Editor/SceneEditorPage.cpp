@@ -102,9 +102,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 4);
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), ui::Command(L"Editor.Delete"), 2));
 	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), ui::Command(L"Scene.Editor.MoveToSelectedEntity"), 0));
-	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW"), ui::Command(L"Scene.Editor.MoveSelectedEntityIntoView"), 1));
-	m_entityToolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_entityToolBar->addItem(m_toolLookAtEntity);
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
@@ -129,7 +126,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_controllerPanel->create(parent, ui::WsNone, gc_new< ui::FloodLayout >());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_context->getEditor()->createAdditionalPanel(m_controllerPanel, 200, true);
+	m_context->getEditor()->createAdditionalPanel(m_controllerPanel, 120, true);
 
 	// Context event handlers.
 	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostBuild));
@@ -139,19 +136,6 @@ bool SceneEditorPage::create(ui::Container* parent)
 	// Restore camera from settings.
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
-
-	//Vector4 cameraPosition = settings->getProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-	//Quaternion cameraOrientation = settings->getProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", Quaternion::identity());
-
-	//Ref< Camera > camera = gc_new< Camera >(cref(Matrix44::identity()));
-	//camera->setCurrentPosition(cameraPosition);
-	//camera->setTargetPosition(cameraPosition);
-	//camera->setCurrentOrientation(cameraOrientation);
-	//camera->setTargetOrientation(cameraOrientation);
-	//m_context->setCamera(camera);
-
-	//// Restore other settings.
-	//m_context->setDeltaScale(settings->getProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale()));
 
 	m_undoStack = gc_new< editor::UndoStack >();
 
@@ -163,10 +147,6 @@ void SceneEditorPage::destroy()
 	// Save camera position in editor settings.
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
-
-	//settings->setProperty< editor::PropertyVector4 >(L"SceneEditor.CameraPosition", m_context->getCamera()->getCurrentPosition());
-	//settings->setProperty< editor::PropertyQuaternion >(L"SceneEditor.CameraOrientation", m_context->getCamera()->getCurrentOrientation());
-	//settings->setProperty< editor::PropertyFloat >(L"SceneEditor.DeltaScale", m_context->getDeltaScale());
 
 	// Destroy controller editor.
 	if (m_controllerEditor)
