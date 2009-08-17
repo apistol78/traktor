@@ -177,6 +177,14 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 		{
 			T_ASSERT (!m_child[0] && !m_child[1]);
 			dock(widget, detachable);
+
+			if (m_parent)
+			{
+				if (m_parent->m_split < 0)
+					m_parent->m_split = -abs(split);
+				else
+					m_parent->m_split = abs(split);
+			}
 		}
 	}
 }
