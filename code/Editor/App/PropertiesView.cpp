@@ -55,8 +55,9 @@ void PropertiesView::destroy()
 
 void PropertiesView::setPropertyObject(Object* propertyObject)
 {
+	m_propertyList->hide();
 	m_propertyList->bind(dynamic_type_cast< Serializable* >(propertyObject));
-	m_propertyList->update();
+	m_propertyList->show();
 
 	m_propertyObject = propertyObject;
 }

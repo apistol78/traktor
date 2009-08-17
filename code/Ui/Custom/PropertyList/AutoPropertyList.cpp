@@ -34,7 +34,11 @@ bool AutoPropertyList::bind(Serializable* object)
 		return true;
 
 	InspectReflector reflector(this);
-	return reflector.serialize(m_object, m_object->getVersion());
+	if (!reflector.serialize(m_object, m_object->getVersion()))
+		return false;
+
+	update();
+	return true;
 }
 
 bool AutoPropertyList::refresh()
@@ -44,7 +48,11 @@ bool AutoPropertyList::refresh()
 		return true;
 
 	InspectReflector reflector(this);
-	return reflector.serialize(m_object, m_object->getVersion());
+	if (!reflector.serialize(m_object, m_object->getVersion()))
+		return false;
+
+	update();
+	return true;
 }
 
 bool AutoPropertyList::refresh(PropertyItem* parent, Serializable* object)
@@ -53,7 +61,11 @@ bool AutoPropertyList::refresh(PropertyItem* parent, Serializable* object)
 	parent->collapse();
 
 	InspectReflector reflector(this, parent);
-	return reflector.serialize(object, object->getVersion());
+	if (!reflector.serialize(object, object->getVersion()))
+		return false;
+
+	update();
+	return true;
 }
 
 bool AutoPropertyList::apply()
@@ -72,7 +84,11 @@ bool AutoPropertyList::addObject(PropertyItem* parent, Serializable* object)
 	parent->collapse();
 
 	InspectReflector reflector(this, parent);
-	return reflector >> Member< Serializable* >(L"item", object);
+	if (!(reflector >> Member< Serializable* >(L"item", object)))
+		return false;
+
+	update();
+	return true;
 }
 
 		}
