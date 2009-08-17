@@ -2,7 +2,6 @@
 #define traktor_scene_IEntityEditor_H
 
 #include "Core/Object.h"
-#include "Core/Math/Vector2.h"
 #include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
@@ -85,14 +84,18 @@ public:
 	 * \param context Scene editor context.
 	 * \param entityAdapter Selected entity adapter.
 	 * \param viewTransform User view transform.
-	 * \param mouseDelta Delta movement of mouse.
+	 * \param screenDelta Delta in screen space.
+	 * \param viewDelta Delta in view space.
+	 * \param worldDelta Delta in world space.
 	 * \param mouseButton Pressed mouse button.
 	 */
 	virtual void applyModifier(
 		SceneEditorContext* context,
 		EntityAdapter* entityAdapter,
 		const Matrix44& viewTransform,
-		const Vector2& mouseDelta,
+		const Vector4& screenDelta,
+		const Vector4& viewDelta,
+		const Vector4& worldDelta,
 		int mouseButton
 	) = 0;
 

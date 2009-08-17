@@ -45,12 +45,22 @@ void RigidEntityEditor::applyModifier(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
-	const Vector2& mouseDelta,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta,
+	const Vector4& worldDelta,
 	int mouseButton
 )
 {
-	// Apply transform modifier.
-	scene::DefaultEntityEditor::applyModifier(context, entityAdapter, viewTransform, mouseDelta, mouseButton);
+	// Apply default modifier.
+	scene::DefaultEntityEditor::applyModifier(
+		context,
+		entityAdapter,
+		viewTransform,
+		screenDelta,
+		viewDelta,
+		worldDelta,
+		mouseButton
+	);
 
 	// Ensure body is enabled as it might have gone to sleep.
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());

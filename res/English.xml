@@ -962,6 +962,38 @@
       <second>Unnamed</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_VIEW_PERSPECTIVE</first>
+      <second>Perspective</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_FRONT</first>
+      <second>Front</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_BACK</first>
+      <second>Back</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_TOP</first>
+      <second>Top</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_BOTTOM</first>
+      <second>Bottom</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_LEFT</first>
+      <second>Left</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_RIGHT</first>
+      <second>Right</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_VIEW_REFERENCES</first>
+      <second>References</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

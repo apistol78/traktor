@@ -30,9 +30,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RotateModifier", RotateModifier, IModifie
 
 void RotateModifier::draw(
 	SceneEditorContext* context,
+	const Matrix44& viewTransform,
 	const Matrix44& worldTransform,
 	render::PrimitiveRenderer* primitiveRenderer,
-	bool active,
 	int button
 )
 {
@@ -141,7 +141,9 @@ void RotateModifier::draw(
 void RotateModifier::adjust(
 	SceneEditorContext* context,
 	const Matrix44& viewTransform,
-	const Vector2& screenDelta,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta,
+	const Vector4& worldDelta,
 	int button,
 	Matrix44& outTransform
 )
@@ -160,14 +162,14 @@ void RotateModifier::adjust(
 	if (button == 0)
 	{
 		if (axisEnable & SceneEditorContext::AeX)
-			delta *= Quaternion(Vector4(0.0f, screenDelta.x * c_constantDeltaScale, 0.0f, 0.0f));
+			delta *= Quaternion(Vector4(0.0f, screenDelta.x() * c_constantDeltaScale, 0.0f, 0.0f));
 		if (axisEnable & SceneEditorContext::AeY)
-			delta *= Quaternion(mp * Vector4(screenDelta.y * c_constantDeltaScale, 0.0f, 0.0f, 0.0f));
+			delta *= Quaternion(mp * Vector4(screenDelta.y() * c_constantDeltaScale, 0.0f, 0.0f, 0.0f));
 	}
 	else
 	{
 		if (axisEnable & SceneEditorContext::AeZ)
-			delta *= Quaternion(mb * Vector4(0.0f, 0.0f, screenDelta.x * c_constantDeltaScale, 0.0f));
+			delta *= Quaternion(mb * Vector4(0.0f, 0.0f, screenDelta.x() * c_constantDeltaScale, 0.0f));
 	}
 
 	outTransform = delta.normalized().toMatrix44() * outTransform;

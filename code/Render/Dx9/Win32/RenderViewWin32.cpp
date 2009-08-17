@@ -88,14 +88,14 @@ void RenderViewWin32::close()
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
 
+	Unmanaged::removeFromListener();
+
 	if (m_renderSystem)
 		m_renderSystem->removeRenderView(this);
 
 	m_d3dDevice = 0;
 	m_renderSystem = 0;
 	m_context = 0;
-
-	Unmanaged::removeFromListener();
 }
 
 void RenderViewWin32::resize(int32_t width, int32_t height)
@@ -418,6 +418,9 @@ HRESULT RenderViewWin32::lostDevice()
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
 	m_renderStateStack.clear();
+	m_currentVertexBuffer = 0;
+	m_currentIndexBuffer = 0;
+	m_currentProgram = 0;
 	return S_OK;
 }
 

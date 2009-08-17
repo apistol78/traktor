@@ -7,9 +7,18 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "World/WorldRenderView.h"
+#include "Ui/Point.h"
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Widget;
+class Event;
+
+	}
+
 	namespace render
 	{
 
@@ -42,14 +51,17 @@ public:
 
 	bool create(ui::Widget* parent, SceneEditorContext* context);
 
-	void destroy();
+	virtual void destroy();
 
 	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
 	virtual bool handleCommand(const ui::Command& command);
 
+	virtual void update();
+
 private:
 	Ref< SceneEditorContext > m_context;
+	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

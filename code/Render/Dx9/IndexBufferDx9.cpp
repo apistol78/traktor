@@ -105,12 +105,12 @@ void IndexBufferDx9::unlock()
 
 HRESULT IndexBufferDx9::lostDevice()
 {
+	ms_activeIndexBuffer = 0;
+
 	if (!m_dynamic)
 		return S_OK;
 
 	m_d3dIndexBuffer = 0;
-	ms_activeIndexBuffer = 0;
-
 	return S_OK;
 }
 

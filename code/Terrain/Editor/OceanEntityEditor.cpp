@@ -25,7 +25,9 @@ void OceanEntityEditor::applyModifier(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,
 	const Matrix44& viewTransform,
-	const Vector2& mouseDelta,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta,
+	const Vector4& worldDelta,
 	int mouseButton
 )
 {

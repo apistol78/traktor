@@ -158,5 +158,19 @@ inline Rect& Rect::operator = (const Rect& rc)
 	return *this;
 }
 
+inline bool Rect::operator == (const Rect& rc) const
+{
+	return
+		left == rc.left &&
+		top == rc.top &&
+		right == rc.right &&
+		bottom == rc.bottom;
+}
+
+inline bool Rect::operator != (const Rect& rc) const
+{
+	return !(*this == rc);
+}
+
 	}
 }
