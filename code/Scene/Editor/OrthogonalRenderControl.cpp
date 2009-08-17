@@ -207,17 +207,17 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 	switch (m_viewPlane)
 	{
 	case PositiveX:
-		return translate(0.0f, m_cameraX, m_cameraY) * rotateY(deg2rad(-90.0f));
+		return translate(0.0f, m_cameraY, m_cameraX) * rotateY(deg2rad(-90.0f));
 	case NegativeX:
-		return translate(0.0f, m_cameraX, m_cameraY) * rotateY(deg2rad(90.0f));
+		return translate(0.0f, m_cameraY, -m_cameraX) * rotateY(deg2rad(90.0f));
 	case PositiveY:
 		return translate(m_cameraX, 0.0f, m_cameraY) * rotateX(deg2rad(-90.0f));
 	case NegativeY:
-		return translate(m_cameraX, 0.0f, m_cameraY) * rotateX(deg2rad(90.0f));
+		return translate(m_cameraX, 0.0f, -m_cameraY) * rotateX(deg2rad(90.0f));
 	case PositiveZ:
 		return translate(m_cameraX, m_cameraY, 0.0f);
 	case NegativeZ:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(180.0f));
+		return translate(-m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(180.0f));
 	}
 	return Matrix44::identity();
 }
@@ -408,8 +408,17 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 	}
 	else
 	{
-		m_cameraX += c_cameraTranslateDeltaScale * screenDelta.x();
-		m_cameraY += c_cameraTranslateDeltaScale * screenDelta.y();
+		Matrix44 projection = getProjectionTransform();
+		Matrix44 projectionInverse = projection.inverse();
+
+		Matrix44 view = getViewTransform();
+		Matrix44 viewInverse = view.inverse();
+
+		ui::Rect innerRect = m_renderWidget->getInnerRect();
+		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
+
+		m_cameraX += /*c_cameraTranslateDeltaScale * */clipDelta.x();
+		m_cameraY += /*c_cameraTranslateDeltaScale * */clipDelta.y();
 	}
 
 	m_mousePosition = mousePosition;
