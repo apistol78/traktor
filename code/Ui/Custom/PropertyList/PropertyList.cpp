@@ -77,23 +77,15 @@ void PropertyList::destroy()
 void PropertyList::addPropertyItem(PropertyItem* propertyItem)
 {
 	m_propertyItems.push_back(propertyItem);
-
 	propertyItem->setPropertyList(this);
 	propertyItem->createInPlaceControls(this, true);
-
-	updateScrollBar();
-	placeItems();
 }
 
 void PropertyList::removePropertyItem(PropertyItem* propertyItem)
 {
 	propertyItem->destroyInPlaceControls();
 	propertyItem->setPropertyList(0);
-
 	m_propertyItems.remove(propertyItem);
-
-	updateScrollBar();
-	placeItems();
 }
 
 void PropertyList::addPropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem)
@@ -101,9 +93,6 @@ void PropertyList::addPropertyItem(PropertyItem* parentPropertyItem, PropertyIte
 	parentPropertyItem->addChildItem(propertyItem);
 	propertyItem->setPropertyList(this);
 	propertyItem->createInPlaceControls(this, false);
-
-	updateScrollBar();
-	placeItems();
 }
 
 void PropertyList::removePropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem)
@@ -111,9 +100,6 @@ void PropertyList::removePropertyItem(PropertyItem* parentPropertyItem, Property
 	propertyItem->destroyInPlaceControls();
 	propertyItem->setPropertyList(0);
 	parentPropertyItem->removeChildItem(propertyItem);
-
-	updateScrollBar();
-	placeItems();
 }
 
 void PropertyList::removeAllPropertyItems()
@@ -133,9 +119,6 @@ void PropertyList::removeAllPropertyItems()
 		(*i)->destroyInPlaceControls();
 		(*i)->setPropertyList(0);
 	}
-
-	updateScrollBar();
-	placeItems();
 }
 
 int PropertyList::getPropertyItems(RefList< PropertyItem >& propertyItems, int flags)
@@ -244,6 +227,14 @@ void PropertyList::addCommandEventHandler(EventHandler* eventHandler)
 void PropertyList::addChangeEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiContentChange, eventHandler);
+}
+
+void PropertyList::update(const Rect* rc, bool immediate)
+{
+	updateScrollBar();
+	placeItems();
+
+	Widget::update(rc, immediate);
 }
 
 Size PropertyList::getMinimumSize() const

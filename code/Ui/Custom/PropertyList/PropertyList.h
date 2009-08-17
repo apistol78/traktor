@@ -57,7 +57,7 @@ public:
 	bool create(Widget* parent, int style = WsDoubleBuffer, IPropertyGuidResolver* guidResolver = 0);
 
 	virtual void destroy();
-	
+
 	void addPropertyItem(PropertyItem* propertyItem);
 
 	void removePropertyItem(PropertyItem* propertyItem);
@@ -85,6 +85,8 @@ public:
 	void addCommandEventHandler(EventHandler* eventHandler);
 	
 	void addChangeEventHandler(EventHandler* eventHandler);
+
+	virtual void update(const Rect* rc = 0, bool immediate = false);
 
 	virtual Size getMinimumSize() const;
 	
