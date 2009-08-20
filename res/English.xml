@@ -1370,6 +1370,22 @@
       <second>(Root)</second>
     </item>
     <item>
+      <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
+      <second>Capture entities</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_DELETE_SELECTED_KEY</first>
+      <second>Delete key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_PREVIOUS_KEY</first>
+      <second>Goto previous key</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
+      <second>Goto next key</second>
+    </item>
+    <item>
       <first>TEXT_EDIT</first>
       <second>Edit</second>
     </item>

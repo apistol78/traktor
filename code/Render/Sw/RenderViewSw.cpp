@@ -12,11 +12,19 @@
 #include "Render/VertexElement.h"
 #include "Graphics/GraphicsSystem.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
 
 #define T_DISABLE_JOBS
 //#define T_RENDER_PERFORMANCE_BARS
+
+#if defined(max)
+#	undef max
+#endif
+#if defined(min)
+#	undef min
+#endif
 
 namespace traktor
 {
@@ -433,6 +441,13 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				{
 					Vector2 T[] = { context.screen[0], context.screen[1 + j], context.screen[2 + j] };
 
+					if (isNan(T[0].x) || isNan(T[0].y) || isInfinite(T[0].x) || isInfinite(T[0].y))
+						continue;
+					if (isNan(T[1].x) || isNan(T[1].y) || isInfinite(T[1].x) || isInfinite(T[1].y))
+						continue;
+					if (isNan(T[2].x) || isNan(T[2].y) || isInfinite(T[2].x) || isInfinite(T[2].y))
+						continue;
+
 					context.triangle = T;
 					context.indices[0] = 0;
 					context.indices[1] = 1 + j;
@@ -622,6 +637,13 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				{
 					Vector2 T[] = { context.screen[0], context.screen[1 + j], context.screen[2 + j] };
 
+					if (isNan(T[0].x) || isNan(T[0].y))
+						continue;
+					if (isNan(T[1].x) || isNan(T[1].y))
+						continue;
+					if (isNan(T[2].x) || isNan(T[2].y))
+						continue;
+
 					context.triangle = T;
 					context.indices[0] = 0;
 					context.indices[1] = 1 + j;
@@ -714,8 +736,8 @@ void RenderViewSw::lineShade(const FragmentContext& context, int x, int y, float
 
 	Vector4& color = fragmentVaryings[0];
 
-	//color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-	//color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+	color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+	color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 	color *= traktor::Scalar(255.0f);
 
 	uint32_t target = 
@@ -833,10 +855,11 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 
 		if (!context.depthEnable || iw > rs.depthTarget[offset])
 		{
+			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 			color *= traktor::Scalar(255.0f);
 
 			uint32_t target = 
-				//(uint32_t(color.w()) << 24) |
 				(uint32_t(color.x()) << 16) |
 				(uint32_t(color.y()) << 8) |
 				(uint32_t(color.z()));
@@ -1038,10 +1061,11 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				break;
 			}
 
+			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
 			color *= traktor::Scalar(255.0f);
 
 			target = 
-				//(uint32_t(color.w()) << 24) |
 				(uint32_t(color.x()) << 16) |
 				(uint32_t(color.y()) << 8) |
 				(uint32_t(color.z()));

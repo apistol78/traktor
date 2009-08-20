@@ -15,7 +15,7 @@ namespace traktor
 
 void CaseRenderSw::run()
 {
-#if !defined(__GNUC__) && !defined(_WIN64)
+#if !defined(__GNUC__) && !defined(_WIN64) && !defined(WINCE)
 	render::Interpreter interpreter;
 	render::InterpreterFixed interpreterFixed;
 	render::JitX86 jit;

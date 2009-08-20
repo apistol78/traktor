@@ -13051,6 +13051,9 @@
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[8]/project/dependencies/item[6]/project"/>
 				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>

@@ -123,6 +123,7 @@ void ShaderParameters::endParameters(RenderContext* context)
 void ShaderParameters::setBooleanParameter(handle_t handle, bool param)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtBoolean);
 	write< bool >(m_parameterLast, param);
@@ -131,6 +132,7 @@ void ShaderParameters::setBooleanParameter(handle_t handle, bool param)
 void ShaderParameters::setFloatParameter(handle_t handle, float param)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtFloat);
 	write< float >(m_parameterLast, param);
@@ -139,6 +141,7 @@ void ShaderParameters::setFloatParameter(handle_t handle, float param)
 void ShaderParameters::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtFloatArray);
 	write< int >(m_parameterLast, length);
@@ -148,6 +151,7 @@ void ShaderParameters::setFloatArrayParameter(handle_t handle, const float* para
 void ShaderParameters::setVectorParameter(handle_t handle, const Vector4& param)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtVector);
 	align< Vector4 >(m_parameterLast);
@@ -157,6 +161,7 @@ void ShaderParameters::setVectorParameter(handle_t handle, const Vector4& param)
 void ShaderParameters::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtVectorArray);
 	write< int >(m_parameterLast, length);
@@ -167,6 +172,7 @@ void ShaderParameters::setVectorArrayParameter(handle_t handle, const Vector4* p
 void ShaderParameters::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrix);
 	align< Matrix44 >(m_parameterLast);
@@ -176,6 +182,7 @@ void ShaderParameters::setMatrixParameter(handle_t handle, const Matrix44& param
 void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtMatrixArray);
 	write< int >(m_parameterLast, length);
@@ -186,6 +193,7 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 void ShaderParameters::setSamplerTexture(handle_t handle, ITexture* texture)
 {
 	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
 	write< int >(m_parameterLast, PmtTexture);
 	write< ITexture* >(m_parameterLast, texture);
@@ -198,6 +206,8 @@ void ShaderParameters::fixup(Shader* shader) const
 
 	for (uint8_t* parameter = m_parameterFirst; parameter < m_parameterLast; )
 	{
+		align< handle_t >(parameter);
+
 		handle_t handle = read< handle_t >(parameter);
 		int type = read< int >(parameter);
 

@@ -860,6 +860,7 @@ void emitVertexInput(EmitterContext& cx, VertexInput* node)
 	case DtFloat2:
 	case DtShort2:
 	case DtShort2N:
+	case DtHalf2:
 		type = VtFloat2;
 		break;
 
@@ -872,6 +873,7 @@ void emitVertexInput(EmitterContext& cx, VertexInput* node)
 	case DtByte4N:
 	case DtShort4:
 	case DtShort4N:
+	case DtHalf4:
 		type = VtFloat4;
 		break;
 

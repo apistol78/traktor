@@ -86,7 +86,7 @@ TransformPath::Frame TransformPath::evaluate(float at) const
 		return Hermite< Key, Scalar, Frame, FrameAccessor >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));
 }
 
-TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
+TransformPath::Key* TransformPath::getClosestKey(float at)
 {
 	if (m_keys.empty())
 		return 0;
@@ -104,7 +104,61 @@ TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
 		}
 	}
 
-	return &m_keys[minI].value;
+	return &m_keys[minI];
+}
+
+TransformPath::Key* TransformPath::getClosestPreviousKey(float at)
+{
+	if (m_keys.empty())
+		return 0;
+
+	float minT = std::numeric_limits< float >::max();
+	Key* minK = 0;
+
+	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	{
+		if (at <= m_keys[i].T + FUZZY_EPSILON)
+			continue;
+
+		float dT = at - m_keys[i].T;
+		if (dT < minT)
+		{
+			minT = dT;
+			minK = &m_keys[i];
+		}
+	}
+
+	return minK;
+}
+
+TransformPath::Key* TransformPath::getClosestNextKey(float at)
+{
+	if (m_keys.empty())
+		return 0;
+
+	float minT = std::numeric_limits< float >::max();
+	Key* minK = 0;
+
+	for (uint32_t i = 0; i < uint32_t(m_keys.size()); ++i)
+	{
+		if (at >= m_keys[i].T - FUZZY_EPSILON)
+			continue;
+
+		float dT = m_keys[i].T - at;
+		if (dT < minT)
+		{
+			minT = dT;
+			minK = &m_keys[i];
+		}
+	}
+
+	return minK;
+}
+
+TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
+{
+	TransformPath::Key* closestKey = getClosestKey(at);
+	return closestKey ? &closestKey->value : 0;
 }
 
 bool TransformPath::serialize(Serializer& s)

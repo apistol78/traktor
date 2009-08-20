@@ -2,9 +2,13 @@
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Settings.h"
+#include "Editor/Assets.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Compact/CompactDatabase.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Xml/XmlDeserializer.h"
 #include "Core/Library/Library.h"
 #include "Core/Io/FileSystem.h"
@@ -64,7 +68,7 @@ editor::Settings* loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (!globalGroup)
-		globalGroup = gc_new< editor::PropertyGroup >();
+		return 0;
 
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
@@ -122,11 +126,12 @@ int main(int argc, const char** argv)
 	T_FORCE_LINK_REF(editor::PropertySerializable);
 #endif
 
-	if (cmdLine.getCount() < 1)
+	if (cmdLine.hasOption('h'))
 	{
 		log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
 		log::info << L"       -f    Force rebuild" << Endl;
 		log::info << L"       -s    Settings (default \"Traktor.Editor\")" << Endl;
+		log::info << L"       -h    Show this help" << Endl;
 		return 0;
 	}
 
@@ -205,14 +210,27 @@ int main(int argc, const char** argv)
 	log::info << L"Collecting dependencies..." << Endl;
 	log::info << IncreaseIndent;
 
-	Guid assetGuid(cmdLine.getString(0));
-	if (assetGuid.isNull() || !assetGuid.isValid())
+	if (cmdLine.getCount() > 0)
 	{
-		log::error << L"Invalid asset guid" << Endl;
-		return 7;
+		for (int32_t i = 0; i < cmdLine.getCount(); ++i)
+		{
+			Guid assetGuid(cmdLine.getString(i));
+			if (assetGuid.isNull() || !assetGuid.isValid())
+			{
+				log::error << L"Invalid asset guid (" << i << L")" << Endl;
+				return 7;
+			}
+			pipelineManager.addDependency(assetGuid);
+		}
 	}
+	else
+	{
+		RefArray< db::Instance > assetInstances;
+		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 
-	pipelineManager.addDependency(assetGuid);
+		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+			pipelineManager.addDependency(*i);
+	}
 
 	log::info << DecreaseIndent;
 

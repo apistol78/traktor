@@ -79,6 +79,13 @@ void* RenderContext::alloc(int blockSize)
 	return ptr;
 }
 
+void* RenderContext::alloc(int blockSize, int align)
+{
+	T_ASSERT (align > 0);
+	m_heapPtr = reinterpret_cast< uint8_t* >((size_t(m_heapPtr) + (align - 1)) & ~(align - 1));
+	return alloc(blockSize);
+}
+
 void RenderContext::draw(RenderBlock* renderBlock)
 {
 	if (renderBlock->type == RbtOpaque)
