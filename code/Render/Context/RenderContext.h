@@ -45,8 +45,11 @@ public:
 
 	virtual ~RenderContext();
 
-	/*! \brief Allocate a block of memory from context's heap. */
+	/*! \brief Allocate a unaligned block of memory from context's heap. */
 	void* alloc(int blockSize);
+
+	/*! \brief Allocate a aligned block of memory from context's heap. */
+	void* alloc(int blockSize, int align);
 
 	/*! \brief Allocate object from context's heap.
 	 *
@@ -56,7 +59,7 @@ public:
 	template < typename ObjectType >
 	ObjectType* alloc()
 	{
-		ObjectType* object = reinterpret_cast< ObjectType* >(alloc(sizeof(ObjectType)));
+		ObjectType* object = reinterpret_cast< ObjectType* >(alloc(sizeof(ObjectType), alignOf< ObjectType >()));
 		new (object) ObjectType();
 		return object;
 	}

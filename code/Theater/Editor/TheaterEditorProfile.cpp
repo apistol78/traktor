@@ -16,6 +16,8 @@ void TheaterEditorProfile::getCommands(
 {
 	outCommands.push_back(ui::Command(L"Theater.CaptureEntities"));
 	outCommands.push_back(ui::Command(L"Theater.DeleteSelectedKey"));
+	outCommands.push_back(ui::Command(L"Theater.GotoPreviousKey"));
+	outCommands.push_back(ui::Command(L"Theater.GotoNextKey"));
 }
 
 void TheaterEditorProfile::createToolBarItems(

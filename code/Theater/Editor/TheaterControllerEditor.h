@@ -49,6 +49,10 @@ private:
 
 	void deleteSelectedKey();
 
+	void gotoPreviousKey();
+
+	void gotoNextKey();
+
 	void eventToolBarClick(ui::Event* event);
 
 	void eventSequencerCursorMove(ui::Event* event);

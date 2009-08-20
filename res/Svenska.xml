@@ -1418,6 +1418,22 @@
       <second>Namnlös</second>
     </item>
     <item>
+      <first>THEATER_EDITOR_CAPTURE_ENTITIES</first>
+      <second>Spara position(er)</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_DELETE_SELECTED_KEY</first>
+      <second>Ta bort</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_PREVIOUS_KEY</first>
+      <second>Gå till föregående nyckel</second>
+    </item>
+    <item>
+      <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
+      <second>Gå till nästa nyckel</second>
+    </item>
+    <item>
       <first>TEXT_EDIT</first>
       <second>Redigera</second>
     </item>

@@ -25,7 +25,7 @@ void TranslateModifier::draw(
 	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
 
 	primitiveRenderer->pushView(viewTransform);
-	primitiveRenderer->pushWorld(worldTransform);
+	primitiveRenderer->pushWorld(translate(worldTransform.translation()));
 	primitiveRenderer->pushDepthEnable(false);
 
 	uint32_t axisEnable = context->getAxisEnable();

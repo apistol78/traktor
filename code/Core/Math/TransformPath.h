@@ -56,6 +56,12 @@ public:
 
 	Frame evaluate(float at) const;
 
+	Key* getClosestKey(float at);
+
+	Key* getClosestPreviousKey(float at);
+
+	Key* getClosestNextKey(float at);
+
 	Frame* getClosestKeyFrame(float at);
 
 	virtual bool serialize(Serializer& s);
