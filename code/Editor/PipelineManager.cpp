@@ -445,6 +445,9 @@ void PipelineManager::addUniqueDependency(
 	if (m_currentDependency)
 		m_currentDependency->dependencies.push_back(dependency);
 
+	uint32_t dependencyIndex = uint32_t(m_dependencies.size());
+	m_dependencies.push_back(dependency);
+
 	bool result;
 	{
 		Save< Ref< Dependency > > save(m_currentDependency, dependency);
@@ -456,8 +459,12 @@ void PipelineManager::addUniqueDependency(
 		);
 	}
 
-	if (result)
-		m_dependencies.push_back(dependency);
+	if (!result)
+	{
+		// Pipeline build dependencies failed; remove dependency from array.
+		T_ASSERT (dependencyIndex < m_dependencies.size());
+		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
+	}
 }
 
 void PipelineManager::buildThread()
