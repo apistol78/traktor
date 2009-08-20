@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.scene.SceneAsset" version="1">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings">
+		<viewNearZ>0.1</viewNearZ>
+		<viewFarZ>20</viewFarZ>
+		<depthPassEnabled>false</depthPassEnabled>
+		<shadowsEnabled>false</shadowsEnabled>
+		<shadowCascadingSlices>4</shadowCascadingSlices>
+		<shadowCascadingLambda>0.75</shadowCascadingLambda>
+		<shadowFarZ>50</shadowFarZ>
+		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowMapBias>0.001</shadowMapBias>
+	</worldRenderSettings>
+	<instance type="traktor.world.EntityInstance">
+		<name>Root</name>
+		<entityData type="traktor.world.GroupEntityData">
+			<instances>
+				<item type="traktor.world.EntityInstance">
+					<name>Light</name>
+					<entityData type="traktor.world.DirectionalLightEntityData">
+						<transform>
+							-0.899534, 0.152429, 0.40943, 0, 
+							-0.141117, 0.785562, -0.602495, 0, 
+							-0.413463, -0.599728, -0.685123, 0, 
+							0.00292408, 2.16524, -2.08202, 1
+						</transform>
+						<sunColor>1, 1, 1, 0</sunColor>
+						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+						<shadowColor>0, 0, 0, 0</shadowColor>
+					</entityData>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance">
+					<name>Mesh</name>
+					<entityData type="traktor.mesh.StaticMeshEntityData">
+						<transform>
+							0.419624, 0.585997, -0.693201, 0, 
+							0.868673, -0.480779, 0.119418, 0, 
+							-0.263299, -0.652275, -0.710786, 0, 
+							0, 0, 0, 1
+						</transform>
+						<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+					</entityData>
+					<references/>
+				</item>
+			</instances>
+		</entityData>
+		<references/>
+	</instance>
+	<controllerData type="traktor.theater.TheaterControllerData">
+		<duration>20</duration>
+		<trackData>
+			<item type="traktor.theater.TrackData">
+				<instance ref="/object/instance/entityData/instances/item[1]"/>
+				<path>
+					<keys>
+						<item>
+							<T>0</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, 0, 0, 1</orientation>
+							</value>
+						</item>
+						<item>
+							<T>3.744</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, 0.708366, 0, 0.705845</orientation>
+							</value>
+						</item>
+						<item>
+							<T>5.616</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0.426284, 0.804826, -0.327808, 0.251155</orientation>
+							</value>
+						</item>
+						<item>
+							<T>7.288</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, 0.999995, 0, 0.0032492</orientation>
+							</value>
+						</item>
+						<item>
+							<T>9.016</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0.84919, -0.157175, 0.309444, 0.398016</orientation>
+							</value>
+						</item>
+						<item>
+							<T>11.392</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, -0.704674, 0, 0.709532</orientation>
+							</value>
+						</item>
+						<item>
+							<T>13.968</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>-0.924225, 0.141437, -0.337544, 0.108941</orientation>
+							</value>
+						</item>
+						<item>
+							<T>16.768</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, -0.945829, 0, 0.324665</orientation>
+							</value>
+						</item>
+						<item>
+							<T>18.688</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0.807957, 0.450106, -0.295962, 0.23878</orientation>
+							</value>
+						</item>
+						<item>
+							<T>20</T>
+							<value>
+								<position>0, 0, 0, 1</position>
+								<orientation>0, -0.0315873, 0, 0.999501</orientation>
+							</value>
+						</item>
+					</keys>
+				</path>
+			</item>
+		</trackData>
+	</controllerData>
+</object>
