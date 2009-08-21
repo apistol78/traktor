@@ -1,11 +1,13 @@
 #ifndef traktor_editor_IEditor_H
 #define traktor_editor_IEditor_H
 
+#include <vector>
 #include "Core/Config.h"
 
 namespace traktor
 {
 
+class Type;
 class Guid;
 
 	namespace db
