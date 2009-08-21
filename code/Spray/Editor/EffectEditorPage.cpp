@@ -3,6 +3,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Ui/Bitmap.h"
@@ -43,10 +44,12 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
 {
 }
 
-bool EffectEditorPage::create(ui::Container* parent)
+bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
-	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
+	m_site = site;
+	T_ASSERT (m_site);
 
+	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
@@ -126,7 +129,7 @@ bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
 		return false;
 
 	m_previewControl->setEffect(m_effect);
-	m_editor->setPropertyObject(m_effect);
+	m_site->setPropertyObject(m_effect);
 
 	updateSequencer();
 	return true;
@@ -245,10 +248,10 @@ void EffectEditorPage::eventLayerSelect(ui::Event* event)
 		Ref< EffectLayer > layer = selectedItems.front()->getData< EffectLayer >(L"LAYER");
 		T_ASSERT (layer);
 
-		m_editor->setPropertyObject(layer);
+		m_site->setPropertyObject(layer);
 	}
 	else
-		m_editor->setPropertyObject(m_effect);
+		m_site->setPropertyObject(m_effect);
 }
 
 void EffectEditorPage::eventTimeCursorMove(ui::Event* event)

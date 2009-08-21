@@ -8,6 +8,7 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
@@ -154,8 +155,11 @@ AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
 {
 }
 
-bool AnimationEditorPage::create(ui::Container* parent)
+bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	m_site = site;
+	T_ASSERT (m_site);
+
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	Ref< ui::custom::QuadSplitter > splitter = gc_new< ui::custom::QuadSplitter >();
@@ -206,7 +210,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_sequencer->addTimerEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventSequencerTimer));
 	m_sequencer->startTimer(30);
 
-	m_editor->createAdditionalPanel(m_sequencerPanel, 100, true);
+	m_site->createAdditionalPanel(m_sequencerPanel, 100, true);
 
 	// Build popup menu.
 	m_menuPopup = gc_new< ui::PopupMenu >();
@@ -270,7 +274,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 
 void AnimationEditorPage::destroy()
 {
-	m_editor->destroyAdditionalPanel(m_sequencerPanel);
+	m_site->destroyAdditionalPanel(m_sequencerPanel);
 
 	// Destroy render widgets.
 	for (int i = 0; i < sizeof_array(m_renderWidgets); ++i)
@@ -287,12 +291,10 @@ void AnimationEditorPage::destroy()
 
 void AnimationEditorPage::activate()
 {
-	m_editor->showAdditionalPanel(m_sequencerPanel);
 }
 
 void AnimationEditorPage::deactivate()
 {
-	m_editor->hideAdditionalPanel(m_sequencerPanel);
 }
 
 bool AnimationEditorPage::setDataObject(db::Instance* instance, Object* data)

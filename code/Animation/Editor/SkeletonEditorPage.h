@@ -75,7 +75,7 @@ class T_DLLCLASS SkeletonEditorPage : public editor::IEditorPage
 public:
 	SkeletonEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 
@@ -97,6 +97,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IEditorPageSite > m_site;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::PopupMenu > m_boneMenu;

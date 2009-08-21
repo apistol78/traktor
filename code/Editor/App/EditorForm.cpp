@@ -1,4 +1,5 @@
 #include "Editor/App/EditorForm.h"
+#include "Editor/App/EditorPageSite.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/HeapView.h"
@@ -28,6 +29,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/FloodLayout.h"
 #include "Ui/ShortcutTable.h"
+#include "Ui/Dock.h"
 #include "Ui/DockPane.h"
 #include "Ui/MenuBar.h"
 #include "Ui/PopupMenu.h"
@@ -502,82 +504,6 @@ render::IRenderSystem* EditorForm::getRenderSystem()
 	return m_renderSystem;
 }
 
-void EditorForm::setPropertyObject(Object* properties)
-{
-	m_propertiesView->setPropertyObject(properties);
-	if (properties)
-	{
-		StringOutputStream ss;
-		ss << i18n::Text(L"TITLE_PROPERTIES").str() << L" - " << type_name(properties);
-		m_propertiesView->setText(ss.str());
-	}
-	else
-		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-	m_dock->update();
-}
-
-Object* EditorForm::getPropertyObject()
-{
-	return m_propertiesView->getPropertyObject();
-}
-
-void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, bool south)
-{
-	T_ASSERT (widget);
-	
-	widget->setParent(m_dock);
-
-	if (!south)
-	{
-		m_paneAdditionalEast->dock(
-			widget,
-			true,
-			ui::DockPane::DrSouth,
-			size
-		);
-	}
-	else
-	{
-		m_paneAdditionalSouth->dock(
-			widget,
-			true,
-			ui::DockPane::DrEast,
-			size
-		);
-	}
-
-	m_otherPanels.push_back(widget);
-	updateOtherPanels();
-}
-
-void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
-{
-	T_ASSERT (widget);
-
-	RefArray< ui::Widget >::iterator i = std::find(m_otherPanels.begin(), m_otherPanels.end(), widget);
-	T_ASSERT (i != m_otherPanels.end());
-	m_otherPanels.erase(i);
-
-	m_paneAdditionalEast->undock(widget);
-	m_paneAdditionalSouth->undock(widget);
-
-	updateOtherPanels();
-}
-
-void EditorForm::showAdditionalPanel(ui::Widget* widget)
-{
-	T_ASSERT (widget);
-	widget->show();
-	m_dock->update();
-}
-
-void EditorForm::hideAdditionalPanel(ui::Widget* widget)
-{
-	T_ASSERT (widget);
-	widget->hide();
-	m_dock->update();
-}
-
 const Type* EditorForm::browseType(const Type* base)
 {
 	const Type* type = 0;
@@ -713,23 +639,31 @@ bool EditorForm::openEditor(db::Instance* instance)
 		Ref< ui::TabPage > tabPage = gc_new< ui::TabPage >();
 		tabPage->create(m_tab, instance->getName(), iconIndex, gc_new< ui::FloodLayout >());
 
-		if (!editorPage->create(tabPage))
+		// Create editor site for this page.
+		Ref< EditorPageSite > site = gc_new< EditorPageSite >(this, false);
+
+		// Create editor page.
+		if (!editorPage->create(tabPage, site))
 		{
 			log::error << L"Failed to create editor" << Endl;
 			instance->revert();
 			return false;
 		}
 
+		// Save references to editor in tab page's user data.
+		tabPage->setData(L"EDITORPAGESITE", site);
+		tabPage->setData(L"EDITORPAGE", editorPage);
+		tabPage->setData(L"INSTANCE", instance);
+
+		// Add tab page to tab container.
 		m_tab->addPage(tabPage);
 		m_tab->update(0, true);
 
-		// Activate editor page and load resource.
+		// Activate newly created editor page.
 		setActiveEditorPage(editorPage);
-		editorPage->setDataObject(instance, object);
 
-		// Add new page to tab control, keep information about editor in tab's data.
-		tabPage->setData(L"EDITORPAGE", editorPage);
-		tabPage->setData(L"INSTANCE", instance);
+		// Finally provide data object to editor page.
+		editorPage->setDataObject(instance, object);
 		tabPage->setData(L"HASH", gc_new< DeepHash >(checked_type_cast< Serializable* >(editorPage->getDataObject())));
 	}
 	else if (objectEditorFactory)
@@ -747,7 +681,6 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 
 		objectEditorDialog->show();
-		//objectEditorDialog->setForeground();
 	}
 	else
 	{
@@ -772,20 +705,9 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 	if (m_activeEditorPage)
 	{
-		// Notify page about deactivation.
 		m_activeEditorPage->deactivate();
-
-		for (int i = 0; i < pageCount; ++i)
-		{
-			Ref< ui::TabPage > page = m_tab->getPage(i);
-			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
-			{
-				// Save property object; attach to tab page.
-				Ref< Object > properties = getPropertyObject();
-				page->setData(L"PROPERTIES", properties);
-				break;
-			}
-		}
+		if (m_activeEditorPageSite)
+			m_activeEditorPageSite->hide();
 	}
 
 	m_activeEditorPage = editorPage;
@@ -797,18 +719,98 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 			Ref< ui::TabPage > page = m_tab->getPage(i);
 			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 			{
-				// Set tab page as active.
 				m_tab->setActivePage(page);
-
-				// Get property object; attached to tab page.
-				Ref< Object > properties = page->getData< Object >(L"PROPERTIES");
-				setPropertyObject(properties);
+				m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
 				break;
 			}
 		}
 
-		// Notify page about activation.
+		if (m_activeEditorPageSite)
+			m_activeEditorPageSite->show();
+
 		m_activeEditorPage->activate();
+	}
+
+	updateAdditionalPanelMenu();
+}
+
+void EditorForm::setPropertyObject(Object* properties)
+{
+	m_propertiesView->setPropertyObject(properties);
+	if (properties)
+	{
+		StringOutputStream ss;
+		ss << i18n::Text(L"TITLE_PROPERTIES").str() << L" - " << type_name(properties);
+		m_propertiesView->setText(ss.str());
+	}
+	else
+		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
+	m_dock->update();
+}
+
+void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, bool south)
+{
+	T_ASSERT (widget);
+	
+	widget->setParent(m_dock);
+
+	if (!south)
+	{
+		m_paneAdditionalEast->dock(
+			widget,
+			true,
+			ui::DockPane::DrSouth,
+			size
+		);
+	}
+	else
+	{
+		m_paneAdditionalSouth->dock(
+			widget,
+			true,
+			ui::DockPane::DrEast,
+			size
+		);
+	}
+}
+
+void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
+{
+	T_ASSERT (widget);
+
+	m_paneAdditionalEast->undock(widget);
+	m_paneAdditionalSouth->undock(widget);
+}
+
+void EditorForm::showAdditionalPanel(ui::Widget* widget)
+{
+	T_ASSERT (widget);
+	widget->show();
+	m_dock->update();
+}
+
+void EditorForm::hideAdditionalPanel(ui::Widget* widget)
+{
+	T_ASSERT (widget);
+	widget->hide();
+	m_dock->update();
+}
+
+void EditorForm::updateAdditionalPanelMenu()
+{
+	m_menuItemOtherPanels->removeAll();
+
+	if (m_activeEditorPageSite)
+	{
+		const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
+		for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
+		{
+			Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(
+				ui::Command(L"Editor.ViewOther", i->first),
+				i->first->getText()
+			);
+			m_menuItemOtherPanels->add(menuItem);
+		}
 	}
 }
 
@@ -984,19 +986,6 @@ void EditorForm::updateMRU()
 		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Editor.MRU"), i->getPathName());
 		menuItem->setData(L"PATH", gc_new< Path >(cref(*i)));
 		m_menuItemMRU->add(menuItem);
-	}
-}
-
-void EditorForm::updateOtherPanels()
-{
-	m_menuItemOtherPanels->removeAll();
-	for (uint32_t i = 0; i < uint32_t(m_otherPanels.size()); ++i)
-	{
-		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(
-			ui::Command(i, L"Editor.ViewOther"),
-			m_otherPanels[i]->getText()
-		);
-		m_menuItemOtherPanels->add(menuItem);
 	}
 }
 
@@ -1590,8 +1579,9 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.ViewOther")
 	{
-		m_otherPanels[command.getId()]->show();
-		m_dock->update();
+		Ref< ui::Widget > panelWidget = checked_type_cast< ui::Widget* >(command.getData());
+		if (panelWidget)
+			showAdditionalPanel(panelWidget);
 	}
 	else if (command == L"Editor.About")
 	{

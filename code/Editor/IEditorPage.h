@@ -34,6 +34,8 @@ class Command;
 	namespace editor
 	{
 
+class IEditorPageSite;
+
 /*! \brief Editor page base.
  * \ingroup Editor
  *
@@ -45,7 +47,7 @@ class T_DLLCLASS IEditorPage : public Object
 	T_RTTI_CLASS(IEditorPage)
 
 public:
-	virtual bool create(ui::Container* parent) = 0;
+	virtual bool create(ui::Container* parent, IEditorPageSite* site) = 0;
 
 	virtual void destroy() = 0;
 

@@ -4,6 +4,7 @@
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/Animation.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Database/Instance.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -38,8 +39,11 @@ StateGraphEditorPage::StateGraphEditorPage(editor::IEditor* editor)
 {
 }
 
-bool StateGraphEditorPage::create(ui::Container* parent)
+bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	m_site = site;
+	T_ASSERT (m_site);
+
 	Ref< ui::Container > container = gc_new< ui::Container >();
 	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
 
@@ -108,7 +112,7 @@ bool StateGraphEditorPage::setDataObject(db::Instance* /*instance*/, Object* dat
 
 	updateGraph();
 
-	m_editor->setPropertyObject(0);
+	m_site->setPropertyObject(0);
 
 	return true;
 }
@@ -531,17 +535,17 @@ void StateGraphEditorPage::eventSelect(ui::Event* event)
 		Ref< State > state = nodes[0]->getData< State >(L"STATE");
 		T_ASSERT (state);
 
-		m_editor->setPropertyObject(state);
+		m_site->setPropertyObject(state);
 	}
 	else if (m_editorGraph->getSelectedEdges(edges) == 1)
 	{
 		Ref< Transition > transition = edges[0]->getData< Transition >(L"TRANSITION");
 		T_ASSERT (transition);
 
-		m_editor->setPropertyObject(transition);
+		m_site->setPropertyObject(transition);
 	}
 	else
-		m_editor->setPropertyObject(0);
+		m_site->setPropertyObject(0);
 }
 
 void StateGraphEditorPage::eventNodeMoved(ui::Event* event)
@@ -564,7 +568,7 @@ void StateGraphEditorPage::eventNodeMoved(ui::Event* event)
 
 	// Update properties.
 	if (node->isSelected())
-		m_editor->setPropertyObject(state);
+		m_site->setPropertyObject(state);
 }
 
 void StateGraphEditorPage::eventEdgeConnect(ui::Event* event)

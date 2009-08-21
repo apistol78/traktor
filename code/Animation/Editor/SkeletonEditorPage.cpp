@@ -4,6 +4,7 @@
 #include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
@@ -67,8 +68,11 @@ SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
 {
 }
 
-bool SkeletonEditorPage::create(ui::Container* parent)
+bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	m_site = site;
+	T_ASSERT (site);
+
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	m_renderWidget = gc_new< ui::Widget >();
@@ -96,7 +100,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_treeSkeleton->addSelectEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeSelect));
 	m_treeSkeleton->addEditedEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeEdited));
 
-	m_editor->createAdditionalPanel(m_skeletonPanel, 250, false);
+	m_site->createAdditionalPanel(m_skeletonPanel, 250, false);
 
 	render::RenderViewCreateDesc desc;
 	desc.depthBits = 16;
@@ -132,7 +136,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 
 void SkeletonEditorPage::destroy()
 {
-	m_editor->destroyAdditionalPanel(m_skeletonPanel);
+	m_site->destroyAdditionalPanel(m_skeletonPanel);
 	
 	m_renderView->close();
 
@@ -144,18 +148,16 @@ void SkeletonEditorPage::destroy()
 
 void SkeletonEditorPage::activate()
 {
-	m_editor->showAdditionalPanel(m_skeletonPanel);
 }
 
 void SkeletonEditorPage::deactivate()
 {
-	m_editor->hideAdditionalPanel(m_skeletonPanel);
 }
 
 bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
 	m_skeleton = checked_type_cast< Skeleton* >(data);
-	m_editor->setPropertyObject(m_skeleton);
+	m_site->setPropertyObject(m_skeleton);
 
 	Aabb boundingBox = calculateBoundingBox(m_skeleton);
 	
@@ -201,7 +203,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		createSkeletonTreeNodes();
 
-		m_editor->setPropertyObject(m_skeleton);
+		m_site->setPropertyObject(m_skeleton);
 		m_renderWidget->update();
 	}
 	else if (command == L"Editor.Redo")
@@ -213,7 +215,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		createSkeletonTreeNodes();
 
-		m_editor->setPropertyObject(m_skeleton);
+		m_site->setPropertyObject(m_skeleton);
 		m_renderWidget->update();
 	}
 	else if (command == L"Editor.Delete")
@@ -239,7 +241,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		createSkeletonTreeNodes();
 
-		m_editor->setPropertyObject(m_skeleton);
+		m_site->setPropertyObject(m_skeleton);
 		m_renderWidget->update();
 	}
 	else if (command == L"Skeleton.Editor.AddBone")
@@ -259,7 +261,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		createSkeletonTreeNodes();
 
-		m_editor->setPropertyObject(bone);
+		m_site->setPropertyObject(bone);
 		m_renderWidget->update();
 	}
 	else
@@ -536,9 +538,9 @@ void SkeletonEditorPage::eventTreeSelect(ui::Event* event)
 	m_selectedBone = findIndexOfBone(m_skeleton, bone);
 
 	if (bone)
-		m_editor->setPropertyObject(bone);
+		m_site->setPropertyObject(bone);
 	else
-		m_editor->setPropertyObject(m_skeleton);
+		m_site->setPropertyObject(m_skeleton);
 
 	m_renderWidget->update();
 }

@@ -21,7 +21,7 @@ DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor)
 {
 }
 
-bool DictionaryEditorPage::create(ui::Container* parent)
+bool DictionaryEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
 	m_gridDictionary = gc_new< ui::custom::GridView >();
 	m_gridDictionary->create(parent, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);

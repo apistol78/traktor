@@ -38,7 +38,7 @@ FlashEditorPage::FlashEditorPage(editor::IEditor* editor)
 {
 }
 
-bool FlashEditorPage::create(ui::Container* parent)
+bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 	Ref< editor::IProject > project = m_editor->getProject();

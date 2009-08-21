@@ -2,7 +2,6 @@
 #define traktor_editor_IEditor_H
 
 #include "Core/Config.h"
-#include "Ui/Dock.h"
 
 namespace traktor
 {
@@ -49,24 +48,6 @@ public:
 
 	/*! \brief Get editor render system. */
 	virtual render::IRenderSystem* getRenderSystem() = 0;
-
-	/*! \brief Attach object to property list. */
-	virtual void setPropertyObject(Object* properties) = 0;
-
-	/*! \brief Get attached object in property list. */
-	virtual Object* getPropertyObject() = 0;
-
-	/*! \brief Create additional docking panel. */
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south) = 0;
-
-	/*! \brief Destroy additional docking panel. */
-	virtual void destroyAdditionalPanel(ui::Widget* widget) = 0;
-
-	/*! \brief Show additional docking panel. */
-	virtual void showAdditionalPanel(ui::Widget* widget) = 0;
-
-	/*! \brief Hide additional docking panel. */
-	virtual void hideAdditionalPanel(ui::Widget* widget) = 0;
 
 	/*! \brief Browse for rtti type. */
 	virtual const Type* browseType(const Type* base = 0) = 0;

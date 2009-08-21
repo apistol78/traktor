@@ -66,7 +66,7 @@ class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 public:
 	SceneEditorPage(SceneEditorContext* context);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 
@@ -88,6 +88,7 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
+	Ref< editor::IEditorPageSite > m_site;
 	Ref< Serializable > m_dataObject;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;

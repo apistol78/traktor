@@ -12,6 +12,7 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/ISceneController.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
@@ -76,8 +77,11 @@ SceneEditorPage::SceneEditorPage(SceneEditorContext* context)
 {
 }
 
-bool SceneEditorPage::create(ui::Container* parent)
+bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	m_site = site;
+	T_ASSERT (m_site);
+
 	// Create editor panel.
 	m_editPanel = gc_new< ui::Container >();
 	m_editPanel->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%", 0, 0));
@@ -119,14 +123,14 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontBold = gc_new< ui::Font >(cref(m_instanceGrid->getFont()));
 	m_instanceGridFontBold->setBold(true);
 
-	m_context->getEditor()->createAdditionalPanel(m_entityPanel, 250, false);
+	m_site->createAdditionalPanel(m_entityPanel, 250, false);
 
 	// Create controller panel.
 	m_controllerPanel = gc_new< ui::Container >();
 	m_controllerPanel->create(parent, ui::WsNone, gc_new< ui::FloodLayout >());
 	m_controllerPanel->setText(i18n::Text(L"SCENE_EDITOR_CONTROLLER"));
 
-	m_context->getEditor()->createAdditionalPanel(m_controllerPanel, 120, true);
+	m_site->createAdditionalPanel(m_controllerPanel, 120, true);
 
 	// Context event handlers.
 	m_context->addPostBuildEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostBuild));
@@ -156,8 +160,8 @@ void SceneEditorPage::destroy()
 	}
 
 	// Destroy panels.
-	m_context->getEditor()->destroyAdditionalPanel(m_entityPanel);
-	m_context->getEditor()->destroyAdditionalPanel(m_controllerPanel);
+	m_site->destroyAdditionalPanel(m_entityPanel);
+	m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
 	m_entityMenu->destroy();
@@ -173,16 +177,10 @@ void SceneEditorPage::destroy()
 void SceneEditorPage::activate()
 {
 	m_editControl->setVisible(true);
-	m_context->getEditor()->showAdditionalPanel(m_entityPanel);
-	if (m_controllerPanel)
-		m_context->getEditor()->showAdditionalPanel(m_controllerPanel);
 }
 
 void SceneEditorPage::deactivate()
 {
-	if (m_controllerPanel)
-		m_context->getEditor()->hideAdditionalPanel(m_controllerPanel);
-	m_context->getEditor()->hideAdditionalPanel(m_entityPanel);
 	m_editControl->setVisible(false);
 }
 
@@ -213,12 +211,6 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 		m_context->setSceneAsset(sceneAsset);
 		updateScene();
-
-		//m_context->setCamera(gc_new< Camera >(cref(translate(
-		//	0.0f,
-		//	0.0f,
-		//	-4.0f
-		//))));
 
 		updateInstanceGrid();
 	}
@@ -639,10 +631,10 @@ void SceneEditorPage::updatePropertyObject()
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
 		T_ASSERT (entityAdapter);
 
-		m_context->getEditor()->setPropertyObject(entityAdapter->getEntityData());
+		m_site->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
-		m_context->getEditor()->setPropertyObject(m_dataObject);
+		m_site->setPropertyObject(m_dataObject);
 }
 
 bool SceneEditorPage::addEntity()
