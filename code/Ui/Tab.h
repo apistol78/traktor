@@ -107,6 +107,10 @@ private:
 	void eventSize(Event* event);
 
 	void eventPaint(Event* event);
+
+#if defined(_DEBUG)
+	void checkPageStates();
+#endif
 };
 
 	}
