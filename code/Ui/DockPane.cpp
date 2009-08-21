@@ -358,7 +358,7 @@ DockPane* DockPane::findWidgetPane(Widget* widget)
 
 DockPane* DockPane::getFromPosition(const Point& position)
 {
-	if (!m_rect.inside(position))
+	if (!m_rect.inside(position) || (m_widget && !m_widget->isVisible(false)))
 		return 0;
 
 	for (int i = 0; i < 2; ++i)
@@ -378,7 +378,7 @@ bool DockPane::hitGripper(const Point& position) const
 {
 	T_ASSERT (m_rect.inside(position));
 
-	if (isSplitter())
+	if (isSplitter() || (m_widget && !m_widget->isVisible(false)))
 		return false;
 
 	return position.y >= m_rect.top && position.y <= m_rect.top + c_gripperDim;

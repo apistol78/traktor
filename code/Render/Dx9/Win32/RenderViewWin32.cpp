@@ -8,6 +8,8 @@
 #include "Render/Dx9/IndexBufferDx9.h"
 #include "Core/Log/Log.h"
 
+#define T_LOG_DRAW_CALLS 0
+
 namespace traktor
 {
 	namespace render
@@ -354,7 +356,7 @@ void RenderViewWin32::draw(const Primitives& primitives)
 		);
 	}
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && T_LOG_DRAW_CALLS
 	m_drawCalls++;
 #endif
 }
@@ -394,7 +396,7 @@ void RenderViewWin32::present()
 	if (m_context)
 		m_context->deleteResources();
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && T_LOG_DRAW_CALLS
 	if ((++m_frameCount & 63) == 0)
 	{
 		uint32_t drawCallsPerFrame = m_drawCalls / 64;
