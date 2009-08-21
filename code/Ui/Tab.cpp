@@ -101,6 +101,9 @@ int Tab::addPage(TabPage* page)
 
 	m_selectedPage = page;
 
+#if defined(_DEBUG)
+	checkPageStates();
+#endif
 	return int(m_pages.size() - 1);
 }
 
@@ -144,6 +147,10 @@ void Tab::removePage(TabPage* page)
 			for (page_state_vector_t::iterator j = m_pages.begin(); j != m_pages.end(); ++j)
 				j->depth--;
 
+#if defined(_DEBUG)
+			checkPageStates();
+#endif
+
 			PageState* newPageState = findPageState(0);
 			if (newPageState)
 			{
@@ -152,6 +159,10 @@ void Tab::removePage(TabPage* page)
 			}
 			else
 				m_selectedPage = 0;
+
+#if defined(_DEBUG)
+			checkPageStates();
+#endif
 		}
 	}
 }
@@ -163,6 +174,9 @@ void Tab::removeAllPages()
 
 void Tab::setActivePage(TabPage* page)
 {
+	if (page == m_selectedPage)
+		return;
+
 	if (m_selectedPage)
 	{
 		PageState* state = findPageState(m_selectedPage);
@@ -170,18 +184,32 @@ void Tab::setActivePage(TabPage* page)
 
 		m_selectedPage->setVisible(false);
 	}
+
+#if defined(_DEBUG)
+	checkPageStates();
+#endif
+
 	if ((m_selectedPage = page) != 0)
 	{
 		PageState* state = findPageState(page);
 		T_ASSERT (state);
 
+#if defined(_DEBUG)
+		checkPageStates();
+#endif
+
+		int depth = state->depth;
 		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 		{
-			if (i->depth <= state->depth)
+			if (i->depth <= depth)
 				i->depth++;
 		}
 
 		state->depth = 0;
+
+#if defined(_DEBUG)
+		checkPageStates();
+#endif
 
 		m_selectedPage->setVisible(true);
 	}
@@ -195,7 +223,11 @@ TabPage* Tab::getActivePage()
 TabPage* Tab::cycleActivePage(bool forward)
 {
 	if (m_pages.size() < 2)
-		return 0;
+		return m_selectedPage;
+
+#if defined(_DEBUG)
+	checkPageStates();
+#endif
 
 	int maxDepth = int(m_pages.size() - 1);
 
@@ -216,11 +248,19 @@ TabPage* Tab::cycleActivePage(bool forward)
 		}
 	}
 
+#if defined(_DEBUG)
+	checkPageStates();
+#endif
+
 	if (m_selectedPage)
 		m_selectedPage->setVisible(false);
 
 	PageState* pageState = findPageState(0);
 	T_ASSERT (pageState);
+
+#if defined(_DEBUG)
+	checkPageStates();
+#endif
 
 	m_selectedPage = pageState->page;
 	m_selectedPage->setVisible(true);
@@ -306,6 +346,10 @@ void Tab::eventButtonDown(Event* event)
 			}
 			if (selectPage && selectPage != m_selectedPage)
 			{
+#if defined(_DEBUG)
+				checkPageStates();
+#endif
+
 				if (m_selectedPage)
 				{
 					PageState* state = findPageState(m_selectedPage);
@@ -333,6 +377,10 @@ void Tab::eventButtonDown(Event* event)
 
 					m_selectedPage->setVisible(true);
 				}
+
+#if defined(_DEBUG)
+				checkPageStates();
+#endif
 			}
 		}
 
@@ -522,6 +570,22 @@ void Tab::drawClose(Canvas& canvas, int x, int y)
 	canvas.drawLine(Point(x + 6, y), Point(x, y + 6));
 	canvas.drawLine(Point(x + 7, y), Point(x + 1, y + 6));
 }
+
+#if defined(_DEBUG)
+void Tab::checkPageStates()
+{
+	std::vector< int > counts(m_pages.size(), 0);
+	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
+	{
+		int depth = i->depth;
+		T_ASSERT (depth < counts.size());
+
+		counts[depth]++;
+	}
+	for (std::vector< int >::const_iterator i = counts.begin(); i != counts.end(); ++i)
+		T_ASSERT (*i == 1);
+}
+#endif
 
 Tab::PageState::PageState(TabPage* page_, int right_)
 :	page(page_)
