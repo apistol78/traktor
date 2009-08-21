@@ -34,16 +34,19 @@ ResourceManager::ResourceManager()
 
 void ResourceManager::addFactory(IResourceFactory* factory)
 {
+	Acquire< Semaphore > scope(m_lock);
 	m_factories.push_back(factory);
 }
 
 void ResourceManager::removeFactory(IResourceFactory* factory)
 {
+	Acquire< Semaphore > scope(m_lock);
 	m_factories.remove(factory);
 }
 
 void ResourceManager::removeAllFactories()
 {
+	Acquire< Semaphore > scope(m_lock);
 	m_factories.clear();
 }
 
