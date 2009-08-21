@@ -83,6 +83,13 @@ public:
 		proxy.replace(handle);
 		return true;
 	}
+
+	template < typename ResourceType >
+	void flush(Proxy< ResourceType >& proxy)
+	{
+		flush(proxy.getGuid());
+		proxy.setPtr(0);
+	}
 };
 
 	}
