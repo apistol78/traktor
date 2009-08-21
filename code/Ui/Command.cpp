@@ -33,6 +33,22 @@ Command::Command(uint32_t id, const std::wstring& name)
 {
 }
 
+Command::Command(const std::wstring& name, Object* data)
+:	m_flags(CfName | CfData)
+,	m_id(0)
+,	m_name(name)
+,	m_data(data)
+{
+}
+
+Command::Command(uint32_t id, const std::wstring& name, Object* data)
+:	m_flags(CfId | CfName | CfData)
+,	m_id(id)
+,	m_name(name)
+,	m_data(data)
+{
+}
+
 uint32_t Command::getFlags() const
 {
 	return m_flags;
@@ -48,6 +64,11 @@ const std::wstring& Command::getName() const
 	return m_name;
 }
 
+Object* Command::getData() const
+{
+	return m_data;
+}
+
 bool Command::operator == (const Command& command) const
 {
 	if (m_flags != command.m_flags)
@@ -57,6 +78,9 @@ bool Command::operator == (const Command& command) const
 		return false;
 
 	if ((m_flags & CfName) == CfName && m_name != command.m_name)
+		return false;
+
+	if ((m_flags & CfData) == CfData && m_data != command.m_data)
 		return false;
 
 	return true;

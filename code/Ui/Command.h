@@ -1,6 +1,7 @@
 #ifndef traktor_ui_ShortcutCommand_H
 #define traktor_ui_ShortcutCommand_H
 
+#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -28,7 +29,8 @@ public:
 	{
 		CfNone = 0,
 		CfId = 1,
-		CfName = 2
+		CfName = 2,
+		CfData = 4
 	};
 
 	Command();
@@ -39,11 +41,17 @@ public:
 
 	explicit Command(uint32_t id, const std::wstring& name);
 
+	explicit Command(const std::wstring& name, Object* data);
+
+	explicit Command(uint32_t id, const std::wstring& name, Object* data);
+
 	uint32_t getFlags() const;
 
 	uint32_t getId() const;
 
 	const std::wstring& getName() const;
+
+	Object* getData() const;
 
 	bool operator == (const Command& command) const;
 
@@ -55,6 +63,7 @@ private:
 	uint32_t m_flags;
 	uint32_t m_id;
 	std::wstring m_name;
+	Ref< Object > m_data;
 };
 
 	}

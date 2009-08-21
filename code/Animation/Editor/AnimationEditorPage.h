@@ -78,7 +78,7 @@ class T_DLLCLASS AnimationEditorPage : public editor::IEditorPage
 public:
 	AnimationEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 
@@ -100,6 +100,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IEditorPageSite > m_site;
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];

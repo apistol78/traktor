@@ -55,7 +55,7 @@ class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
 public:
 	FlashEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 

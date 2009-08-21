@@ -46,7 +46,7 @@ class T_DLLCLASS DictionaryEditorPage : public editor::IEditorPage
 public:
 	DictionaryEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 

@@ -55,7 +55,7 @@ class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 public:
 	ShaderGraphEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 
@@ -77,6 +77,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IEditorPageSite > m_site;
 	Ref< editor::UndoStack > m_undoStack;
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;

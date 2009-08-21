@@ -15,6 +15,7 @@
 #include "Render/ShaderGraphAdjacency.h"
 #include "Render/Edge.h"
 #include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
@@ -96,8 +97,11 @@ ShaderGraphEditorPage::ShaderGraphEditorPage(editor::IEditor* editor)
 {
 }
 
-bool ShaderGraphEditorPage::create(ui::Container* parent)
+bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	m_site = site;
+	T_ASSERT (m_site);
+
 	Ref< ui::Container > container = gc_new< ui::Container >();
 	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
 
@@ -216,7 +220,7 @@ bool ShaderGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	updateGraph();
 
-	m_editor->setPropertyObject(0);
+	m_site->setPropertyObject(0);
 	m_undoStack = gc_new< editor::UndoStack >();
 
 	m_fragmentGuid = instance->getGuid();
@@ -448,7 +452,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			updateGraph();
 
-			m_editor->setPropertyObject(0);
+			m_site->setPropertyObject(0);
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -471,7 +475,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 			updateGraph();
 
-			m_editor->setPropertyObject(0);
+			m_site->setPropertyObject(0);
 		}
 	}
 	else if (command == L"ShaderGraph.Editor.OpenReferee")
@@ -872,10 +876,10 @@ void ShaderGraphEditorPage::eventSelect(ui::Event* event)
 		Ref< Node > shaderNode = nodes[0]->getData< Node >(L"SHADERNODE");
 		T_ASSERT (shaderNode);
 
-		m_editor->setPropertyObject(shaderNode);
+		m_site->setPropertyObject(shaderNode);
 	}
 	else
-		m_editor->setPropertyObject(0);
+		m_site->setPropertyObject(0);
 }
 
 void ShaderGraphEditorPage::eventNodeMoved(ui::Event* event)
@@ -902,7 +906,7 @@ void ShaderGraphEditorPage::eventNodeMoved(ui::Event* event)
 
 	// Update properties.
 	if (editorNode->isSelected())
-		m_editor->setPropertyObject(shaderNode);
+		m_site->setPropertyObject(shaderNode);
 }
 
 void ShaderGraphEditorPage::eventNodeDoubleClick(ui::Event* event)
@@ -918,7 +922,7 @@ void ShaderGraphEditorPage::eventNodeDoubleClick(ui::Event* event)
 	);
 
 	// Update properties.
-	m_editor->setPropertyObject(shaderNode);
+	m_site->setPropertyObject(shaderNode);
 
 	// Refresh graph; information might have changed.
 	refreshGraph();

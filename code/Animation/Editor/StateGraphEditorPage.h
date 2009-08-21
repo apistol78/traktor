@@ -53,7 +53,7 @@ class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 public:
 	StateGraphEditorPage(editor::IEditor* editor);
 
-	virtual bool create(ui::Container* parent);
+	virtual bool create(ui::Container* parent, editor::IEditorPageSite* site);
 
 	virtual void destroy();
 
@@ -75,6 +75,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< editor::IEditorPageSite > m_site;
 	Ref< StateGraph > m_stateGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;

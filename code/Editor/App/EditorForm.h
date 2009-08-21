@@ -57,6 +57,7 @@ class IEditorPage;
 class IObjectEditorFactory;
 class IObjectEditor;
 class IEditorTool;
+class EditorPageSite;
 class PipelineHash;
 class MRU;
 
@@ -85,18 +86,6 @@ public:
 
 	virtual render::IRenderSystem* getRenderSystem();
 
-	virtual void setPropertyObject(Object* properties);
-
-	virtual Object* getPropertyObject();
-
-	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south);
-
-	virtual void destroyAdditionalPanel(ui::Widget* widget);
-
-	virtual void showAdditionalPanel(ui::Widget* widget);
-
-	virtual void hideAdditionalPanel(ui::Widget* widget);
-
 	virtual const Type* browseType(const Type* base);
 
 	virtual db::Instance* browseInstance(const IBrowseFilter* filter);
@@ -116,6 +105,8 @@ public:
 	//@}
 
 private:
+	friend class EditorPageSite;
+
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
 	RefArray< IEditorTool > m_editorTools;
@@ -124,7 +115,6 @@ private:
 	Ref< ui::Dock > m_dock;
 	Ref< ui::DockPane > m_paneAdditionalEast;
 	Ref< ui::DockPane > m_paneAdditionalSouth;
-	RefArray< ui::Widget > m_otherPanels;
 	Ref< ui::MenuBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
@@ -143,16 +133,27 @@ private:
 	Path m_projectPath;
 	Ref< Project > m_project;
 	Ref< IEditorPage > m_activeEditorPage;
+	Ref< EditorPageSite > m_activeEditorPageSite;
 	Ref< MRU > m_mru;
 	Thread* m_threadBuild;
+
+	void setPropertyObject(Object* properties);
+
+	void createAdditionalPanel(ui::Widget* widget, int size, bool south);
+
+	void destroyAdditionalPanel(ui::Widget* widget);
+
+	void showAdditionalPanel(ui::Widget* widget);
+
+	void hideAdditionalPanel(ui::Widget* widget);
+
+	void updateAdditionalPanelMenu();
 
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
 
 	void updateTitle();
 
 	void updateMRU();
-
-	void updateOtherPanels();
 
 	void updateShortcutTable();
 
