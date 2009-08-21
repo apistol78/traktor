@@ -85,9 +85,13 @@ IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
 void ResourceManager::update(const Guid& guid, bool force)
 {
 	Acquire< Semaphore > scope(m_lock);
-	Ref< ResourceHandle > handle = m_cache[guid];
-	if (!handle)
+
+	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
+	if (i == m_cache.end())
 		return;
+
+	Ref< ResourceHandle > handle = i->second;
+	T_ASSERT (handle);
 
 	if (!force && handle->get())
 		return;
@@ -102,9 +106,15 @@ void ResourceManager::update(const Guid& guid, bool force)
 void ResourceManager::flush(const Guid& guid)
 {
 	Acquire< Semaphore > scope(m_lock);
-	Ref< ResourceHandle > handle = m_cache[guid];
-	if (handle)
-		handle->flush();
+
+	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
+	if (i == m_cache.end())
+		return;
+
+	Ref< ResourceHandle > handle = i->second;
+	T_ASSERT (handle);
+
+	handle->flush();
 }
 
 void ResourceManager::flush()

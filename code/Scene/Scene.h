@@ -40,6 +40,10 @@ public:
 		world::WorldRenderSettings* worldRenderSettings
 	);
 
+	virtual ~Scene();
+
+	void destroy();
+
 	ISceneController* getController() const;
 
 	world::IEntityManager* getEntityManager() const;
