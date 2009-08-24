@@ -34,6 +34,22 @@ struct DeleteObjectCallback : public ContextOpenGL::DeleteCallback
 	}
 };
 
+struct DeleteListCallback : public ContextOpenGL::DeleteCallback
+{
+	GLuint m_listName;
+
+	DeleteListCallback(GLuint listName)
+	:	m_listName(listName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteLists(m_listName, 1));
+		delete this;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
@@ -277,6 +293,13 @@ void ProgramOpenGL::destroy()
 	{
 		ms_activeProgram = 0;
 		m_dirty = true;
+	}
+
+	if (m_state)
+	{
+		if (m_context)
+			m_context->deleteResource(new DeleteListCallback(m_state));
+		m_state = 0;
 	}
 
 	if (m_program)
