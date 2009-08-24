@@ -1247,7 +1247,12 @@ void EditorForm::closeCurrentEditor()
 	T_ASSERT (tabPage->getData(L"EDITORPAGE") == m_activeEditorPage);
 
 	m_activeEditorPage->deactivate();
+	if (m_activeEditorPageSite)
+		m_activeEditorPageSite->hide();
+
 	m_activeEditorPage->destroy();
+
+	m_activeEditorPageSite = 0;
 	m_activeEditorPage = 0;
 
 	Ref< db::Instance > instance = checked_type_cast< db::Instance* >(tabPage->getData(L"INSTANCE"));
@@ -1263,10 +1268,10 @@ void EditorForm::closeCurrentEditor()
 	tabPage = 0;
 
 	tabPage = m_tab->getActivePage();
-
-	m_activeEditorPage = tabPage ? tabPage->getData< IEditorPage >(L"EDITORPAGE") : 0;
-	if (m_activeEditorPage)
-		m_activeEditorPage->activate();
+	if (tabPage)
+		setActiveEditorPage(tabPage->getData< IEditorPage >(L"EDITORPAGE"));
+	else
+		setActiveEditorPage(0);
 }
 
 void EditorForm::closeAllEditors()
