@@ -11,6 +11,7 @@
 #include "Ui/Custom/BackgroundWorkerStatus.h"
 #include "I18N/Text.h"
 #include "Core/Io/Stream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Log/Log.h"
@@ -67,9 +68,8 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 				continue;
 			}
 
-			uint8_t block[4096]; int blockSize;
-			while ((blockSize = sourceStream->read(block, sizeof(block))) > 0)
-				targetStream->write(block, blockSize);
+			if (!StreamCopy(targetStream, sourceStream).execute())
+				log::error << L"Failed, unable to copy data" << Endl;
 
 			targetStream->close();
 			sourceStream->close();
