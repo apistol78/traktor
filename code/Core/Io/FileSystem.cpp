@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Volume.h"
 #include "Core/Io/Stream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
@@ -140,9 +141,6 @@ bool FileSystem::move(const Path& destination, const Path& source, bool overwrit
 
 bool FileSystem::copy(const Path& destination, const Path& source, bool overwrite)
 {
-	uint8_t buf[4096];
-	int avail;
-
 	// Verify that file doesn't exist.
 	if (overwrite == false)
 	{
@@ -167,27 +165,13 @@ bool FileSystem::copy(const Path& destination, const Path& source, bool overwrit
 	}
 
 	// Copy entire content.
-	while ((avail = src->available()) > 0)
-	{
-		int copy = std::min< int >(avail, sizeof(buf));
-		int read = src->read(buf, copy);
-		if (read < 0)
-		{
-			log::error << L"Failed to read " << int32_t(copy) << L" bytes from stream, copy incomplete" << Endl;
-			break;
-		}
-		if (dst->write(buf, read) != read)
-		{
-			log::error << L"Failed to write " << int32_t(read) << L" bytes into stream, copy incomplete" << Endl;
-			break;
-		}
-	}
+	bool result = StreamCopy(dst, src).execute();
 
 	// Finished, close streams.
 	dst->close();
 	src->close();
 
-	return true;
+	return result;
 }
 
 bool FileSystem::makeDirectory(const Path& directory)
