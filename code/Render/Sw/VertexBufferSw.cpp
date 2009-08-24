@@ -1,12 +1,27 @@
 #include "Render/Sw/VertexBufferSw.h"
 #include "Render/VertexElement.h"
+#include "Core/Heap/Alloc.h"
 #include "Core/Math/Half.h"
+#include "Core/Math/Float.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+float safeHalfToFloat(half_t half)
+{
+	float value = halfToFloat(half);
+	if (isNan(value) || isInfinite(value))
+		return 0.0f;
+	else
+		return value;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferSw", VertexBufferSw, VertexBuffer)
 
@@ -14,16 +29,18 @@ VertexBufferSw::VertexBufferSw(const std::vector< VertexElement >& vertexElement
 :	VertexBuffer(bufferSize)
 ,	m_vertexElements(vertexElements)
 ,	m_vertexStride(getVertexSize(vertexElements))
-,	m_data(vertexElements.size() * bufferSize / m_vertexStride)
+,	m_vertexCount(vertexElements.size() * bufferSize / m_vertexStride)
 ,	m_lock(0)
 ,	m_lockOffset(0)
 ,	m_lockCount(0)
 {
 	T_ASSERT (bufferSize % m_vertexStride == 0);
+	m_data = new vertex_tuple_t[m_vertexCount];
 }
 
 void VertexBufferSw::destroy()
 {
+	m_data.release();
 }
 
 void* VertexBufferSw::lock()
@@ -31,9 +48,9 @@ void* VertexBufferSw::lock()
 	if (m_lock)
 		return 0;
 
-	m_lock = new uint8_t [getBufferSize()];
+	m_lock = (uint8_t*)Alloc::acquireAlign(getBufferSize(), alignOf< Vector4 >());
 	m_lockOffset = 0;
-	m_lockCount = getBufferSize() / m_vertexStride;
+	m_lockCount = m_vertexCount;
 
 	return m_lock;
 }
@@ -43,7 +60,7 @@ void* VertexBufferSw::lock(uint32_t vertexOffset, uint32_t vertexCount)
 	if (m_lock)
 		return 0;
 
-	m_lock = new uint8_t [vertexCount * m_vertexStride];
+	m_lock = (uint8_t*)Alloc::acquireAlign(vertexCount * m_vertexStride, alignOf< Vector4 >());
 	m_lockOffset = vertexOffset;
 	m_lockCount = vertexCount;
 
@@ -63,115 +80,91 @@ void VertexBufferSw::unlock()
 		{
 			uint8_t* source = lockIter + j->getOffset();
 
-			Vector4& out = m_data[offset];
+			vertex_tuple_t& out = m_data[offset];
 			switch (j->getDataType())
 			{
 			case DtFloat1:
-				out.set(
-					*reinterpret_cast< const float* >(source),
-					0.0f,
-					0.0f,
-					(j->getDataUsage() == DuPosition) ? 1.0f : 0.0f
-				);
+				out[0] = *reinterpret_cast< const float* >(source);
+				out[1] = 0.0f;
+				out[2] = 0.0f;
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtFloat2:
-				out.set(
-					*reinterpret_cast< const float* >(source),
-					*reinterpret_cast< const float* >(source + sizeof(float)),
-					0.0f,
-					(j->getDataUsage() == DuPosition) ? 1.0f : 0.0f
-				);
+				out[0] = *reinterpret_cast< const float* >(source);
+				out[1] = *reinterpret_cast< const float* >(source + sizeof(float));
+				out[2] = 0.0f;
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtFloat3:
-				out.set(
-					*reinterpret_cast< const float* >(source),
-					*reinterpret_cast< const float* >(source + sizeof(float)),
-					*reinterpret_cast< const float* >(source + sizeof(float) * 2),
-					(j->getDataUsage() == DuPosition) ? 1.0f : 0.0f
-				);
+				out[0] = *reinterpret_cast< const float* >(source);
+				out[1] = *reinterpret_cast< const float* >(source + sizeof(float));
+				out[2] = *reinterpret_cast< const float* >(source + sizeof(float) * 2);
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtFloat4:
-				out.set(
-					*reinterpret_cast< const float* >(source),
-					*reinterpret_cast< const float* >(source + sizeof(float)),
-					*reinterpret_cast< const float* >(source + sizeof(float) * 2),
-					*reinterpret_cast< const float* >(source + sizeof(float) * 3)
-				);
+				out[0] = *reinterpret_cast< const float* >(source);
+				out[1] = *reinterpret_cast< const float* >(source + sizeof(float));
+				out[2] = *reinterpret_cast< const float* >(source + sizeof(float) * 2);
+				out[3] = *reinterpret_cast< const float* >(source + sizeof(float) * 3);
 				break;
 
 			case DtByte4:
-				out.set(
-					*reinterpret_cast< unsigned char* >(source),
-					*reinterpret_cast< unsigned char* >(source + 1),
-					*reinterpret_cast< unsigned char* >(source + 2),
-					*reinterpret_cast< unsigned char* >(source + 3)
-				);
+				out[0] = *reinterpret_cast< const uint8_t* >(source);
+				out[1] = *reinterpret_cast< const uint8_t* >(source + 1);
+				out[2] = *reinterpret_cast< const uint8_t* >(source + 2);
+				out[3] = *reinterpret_cast< const uint8_t* >(source + 3);
 				break;
 
 			case DtByte4N:
-				out.set(
-					*reinterpret_cast< unsigned char* >(source) / 255.0f,
-					*reinterpret_cast< unsigned char* >(source + 1) / 255.0f,
-					*reinterpret_cast< unsigned char* >(source + 2) / 255.0f,
-					*reinterpret_cast< unsigned char* >(source + 3) / 255.0f
-				);
+				out[0] = *reinterpret_cast< const uint8_t* >(source) / 255.0f;
+				out[1] = *reinterpret_cast< const uint8_t* >(source + 1) / 255.0f;
+				out[2] = *reinterpret_cast< const uint8_t* >(source + 2) / 255.0f;
+				out[3] = *reinterpret_cast< const uint8_t* >(source + 3) / 255.0f;
 				break;
 
 			case DtShort2:
-				out.set(
-					*reinterpret_cast< short* >(source),
-					*reinterpret_cast< short* >(source + sizeof(short)),
-					0.0f,
-					0.0f
-				);
+				out[0] = *reinterpret_cast< const int16_t* >(source);
+				out[1] = *reinterpret_cast< const int16_t* >(source + sizeof(short));
+				out[2] = 0.0f;
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtShort4:
-				out.set(
-					*reinterpret_cast< short* >(source),
-					*reinterpret_cast< short* >(source + sizeof(short)),
-					*reinterpret_cast< short* >(source + sizeof(short) * 2),
-					*reinterpret_cast< short* >(source + sizeof(short) * 3)
-				);
+				out[0] = *reinterpret_cast< const int16_t* >(source);
+				out[1] = *reinterpret_cast< const int16_t* >(source + sizeof(short));
+				out[2] = *reinterpret_cast< const int16_t* >(source + sizeof(short) * 2);
+				out[3] = *reinterpret_cast< const int16_t* >(source + sizeof(short) * 3);
 				break;
 
 			case DtShort2N:
-				out.set(
-					*reinterpret_cast< short* >(source) / 32767.0f,
-					*reinterpret_cast< short* >(source + sizeof(short)) / 32767.0f,
-					0.0f,
-					0.0f
-				);
+				out[0] = *reinterpret_cast< const int16_t* >(source) / 32767.0f;
+				out[1] = *reinterpret_cast< const int16_t* >(source + sizeof(short)) / 32767.0f;
+				out[2] = 0.0f;
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtShort4N:
-				out.set(
-					*reinterpret_cast< short* >(source) / 32767.0f,
-					*reinterpret_cast< short* >(source + sizeof(short)) / 32767.0f,
-					*reinterpret_cast< short* >(source + sizeof(short) * 2) / 32767.0f,
-					*reinterpret_cast< short* >(source + sizeof(short) * 3) / 32767.0f
-				);
+				out[0] = *reinterpret_cast< const int16_t* >(source) / 32767.0f;
+				out[1] = *reinterpret_cast< const int16_t* >(source + sizeof(short)) / 32767.0f;
+				out[2] = *reinterpret_cast< const int16_t* >(source + sizeof(short) * 2) / 32767.0f;
+				out[3] = *reinterpret_cast< const int16_t* >(source + sizeof(short) * 3) / 32767.0f;
 				break;
 
 			case DtHalf2:
-				out.set(
-					halfToFloat(*reinterpret_cast< half_t* >(source)),
-					halfToFloat(*reinterpret_cast< half_t* >(source + sizeof(half_t))),
-					0.0f,
-					0.0f
-				);
+				out[0] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source));
+				out[1] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source + sizeof(half_t)));
+				out[2] = 0.0f;
+				out[3] = (j->getDataUsage() == DuPosition) ? 1.0f : 0.0f;
 				break;
 
 			case DtHalf4:
-				out.set(
-					halfToFloat(*reinterpret_cast< half_t* >(source)),
-					halfToFloat(*reinterpret_cast< half_t* >(source + sizeof(half_t))),
-					halfToFloat(*reinterpret_cast< half_t* >(source + sizeof(half_t) * 2)),
-					halfToFloat(*reinterpret_cast< half_t* >(source + sizeof(half_t) * 3))
-				);
+				out[0] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source));
+				out[1] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source + sizeof(half_t)));
+				out[2] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source + sizeof(half_t) * 2));
+				out[3] = safeHalfToFloat(*reinterpret_cast< const half_t* >(source + sizeof(half_t) * 3));
 				break;
 
 			default:
@@ -183,7 +176,7 @@ void VertexBufferSw::unlock()
 		lockIter += m_vertexStride;
 	}
 
-	delete[] m_lock;
+	Alloc::freeAlign(m_lock);
 	m_lock = 0;
 }
 

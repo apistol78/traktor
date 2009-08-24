@@ -132,6 +132,8 @@ void RenderViewSw::setViewport(const Viewport& viewport)
 	m_viewPort.top = viewport.top / c_targetScale;
 	m_viewPort.width = viewport.width / c_targetScale;
 	m_viewPort.height = viewport.height / c_targetScale;
+	m_viewPort.nearZ = viewport.nearZ;
+	m_viewPort.farZ = viewport.farZ;
 }
 
 Viewport RenderViewSw::getViewport()
@@ -193,7 +195,11 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 	uint32_t* colorTarget = rs.colorTarget;
 	if (colorTarget)
 	{
-		uint32_t clear = 0x00000000;
+		uint32_t clear =
+			(uint32_t(color[0] * 255.0f) << 16) |
+			(uint32_t(color[1] * 255.0f) << 8) |
+			(uint32_t(color[2] * 255.0f));
+
 		for (uint32_t i = 0; i < count; ++i)
 			colorTarget[i] = clear;
 	}
@@ -278,16 +284,20 @@ void RenderViewSw::present()
 void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const
 {
 	const std::vector< VertexElement >& vertexElements = m_currentVertexBuffer->getVertexElements();
-	const Vector4* vertices = m_currentVertexBuffer->getData();
+	const VertexBufferSw::vertex_tuple_t* vertices = m_currentVertexBuffer->getData();
 
 	uint32_t vertexElementCount = uint32_t(vertexElements.size());
 	uint32_t vertexOffset = index * vertexElementCount;
 
+	T_ASSERT (vertexElementCount + vertexOffset <= m_currentVertexBuffer->getVertexCount());
+
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
 		uint32_t varyingOffset = getVaryingOffset(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
-		outVertexVarying[varyingOffset] = vertices[i + vertexOffset];
+		outVertexVarying[varyingOffset] = Vector4((const float *)vertices[i + vertexOffset]);
 	}
+
+	checkVaryings(outVertexVarying);
 }
 
 void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, varying_data_t& outInterpolatorVarying) /*const*/
@@ -297,6 +307,8 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 	timerVertexProgram.start();
 #endif
 
+	checkVaryings(vertexVarying);
+
 	m_processor->execute(
 		m_currentProgram->getVertexProgram(),
 		m_currentProgram->getParameters(),		// Uniforms
@@ -304,6 +316,8 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 		0,										// Samplers
 		(Vector4*)&outInterpolatorVarying		// Output, interpolates, varyings
 	);
+
+	checkVaryings(outInterpolatorVarying);
 
 #if defined(T_RENDER_PERFORMANCE_BARS)
 	m_vertexProgramTime += timerVertexProgram.getElapsedTime();
@@ -323,10 +337,16 @@ void RenderViewSw::clipPlanes(FragmentContext& context, uint32_t vertexCount) co
 		if ((v1[0].z() >= nz) ^ (v2[0].z() >= nz))
 		{
 			float d = (nz - v1[0].z()) / (v2[0].z() - v1[0].z());
-			interpolateVaryings(v1, v2, d, context.clippedVaryings[cc++]);
+			interpolateVaryings(v1, v2, d, context.clippedVaryings[cc]);
+			checkVaryings(context.clippedVaryings[cc]);
+			++cc;
 		}
 		if (v2[0].z() >= nz)
-			copyVaryings(context.clippedVaryings[cc++], v2);
+		{
+			copyVaryings(context.clippedVaryings[cc], v2);
+			checkVaryings(context.clippedVaryings[cc]);
+			++cc;
+		}
 	}
 }
 
@@ -337,6 +357,12 @@ void RenderViewSw::projectScreen(FragmentContext& context) const
 	{
 		const Vector4& position = context.clippedVaryings[i][0];
 		float iw = 1.0f / position.w();
+
+#if defined(_DEBUG)
+		if (isInfinite(iw))
+			iw = 1.0f;
+#endif
+
 		context.screen[i].x = (position.x() * iw * 0.5f + 0.5f) * rs.viewPort.width + rs.viewPort.left;
 		context.screen[i].y = (0.5f - position.y() * iw * 0.5f) * rs.viewPort.height + rs.viewPort.top;
 	}
@@ -397,6 +423,10 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				for (uint32_t j = 0; j < context.clippedCount; ++j)
 				{
 					float iw = 1.0f / context.clippedVaryings[j][0].w();
+#if defined(_DEBUG)
+					if (isNan(iw) || isInfinite(iw))
+						iw = 1.0f;
+#endif
 
 					context.clippedVaryings[j][0] =
 						context.clippedVaryings[j][0].xyz0() + Vector4(0.0f, 0.0f, 0.0f, iw);
@@ -441,12 +471,14 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				{
 					Vector2 T[] = { context.screen[0], context.screen[1 + j], context.screen[2 + j] };
 
+#if defined(_DEBUG)
 					if (isNan(T[0].x) || isNan(T[0].y) || isInfinite(T[0].x) || isInfinite(T[0].y))
 						continue;
 					if (isNan(T[1].x) || isNan(T[1].y) || isInfinite(T[1].x) || isInfinite(T[1].y))
 						continue;
 					if (isNan(T[2].x) || isNan(T[2].y) || isInfinite(T[2].x) || isInfinite(T[2].y))
 						continue;
+#endif
 
 					context.triangle = T;
 					context.indices[0] = 0;
@@ -592,6 +624,10 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				for (uint32_t j = 0; j < context.clippedCount; ++j)
 				{
 					float iw = 1.0f / context.clippedVaryings[j][0].w();
+#if defined(_DEBUG)
+					if (isNan(iw) || isInfinite(iw))
+						iw = 1.0f;
+#endif
 
 					context.clippedVaryings[j][0] =
 						context.clippedVaryings[j][0].xyz0() +
@@ -637,12 +673,14 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				{
 					Vector2 T[] = { context.screen[0], context.screen[1 + j], context.screen[2 + j] };
 
+#if defined(_DEBUG)
 					if (isNan(T[0].x) || isNan(T[0].y))
 						continue;
 					if (isNan(T[1].x) || isNan(T[1].y))
 						continue;
 					if (isNan(T[2].x) || isNan(T[2].y))
 						continue;
+#endif
 
 					context.triangle = T;
 					context.indices[0] = 0;

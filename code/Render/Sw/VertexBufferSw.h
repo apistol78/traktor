@@ -4,7 +4,7 @@
 #include <vector>
 #include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/VertexBuffer.h"
 
 // import/export mechanism.
@@ -30,6 +30,8 @@ class T_DLLCLASS VertexBufferSw : public VertexBuffer
 	T_RTTI_CLASS(VertexBufferSw)
 
 public:
+	typedef float vertex_tuple_t [4];
+
 	VertexBufferSw(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize);
 
 	virtual void destroy();
@@ -42,12 +44,15 @@ public:
 
 	const std::vector< VertexElement >& getVertexElements() const { return m_vertexElements; }
 
-	const Vector4* getData() const { return &m_data[0]; }
+	const uint32_t getVertexCount() const { return m_vertexCount; }
+
+	const vertex_tuple_t* getData() { return m_data.ptr(); }
 
 private:
 	std::vector< VertexElement > m_vertexElements;
 	uint32_t m_vertexStride;
-	AlignedVector< Vector4 > m_data;
+	uint32_t m_vertexCount;
+	AutoArrayPtr< vertex_tuple_t > m_data;
 	uint8_t* m_lock;
 	uint32_t m_lockOffset;
 	uint32_t m_lockCount;
