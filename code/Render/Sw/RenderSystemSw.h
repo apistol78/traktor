@@ -18,13 +18,6 @@
 
 namespace traktor
 {
-	namespace graphics
-	{
-
-class GraphicsSystem;
-
-	}
-
 	namespace render
 	{
 
@@ -75,7 +68,6 @@ public:
 	virtual IProgram* createProgram(const ProgramResource* programResource);
 
 private:
-	Ref< graphics::GraphicsSystem > m_graphicsSystem;
 	Ref< Processor > m_processor;
 #if defined(_WIN32)
 	HWND m_hWnd;

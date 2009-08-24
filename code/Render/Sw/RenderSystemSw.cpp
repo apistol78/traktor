@@ -52,13 +52,6 @@ RenderSystemSw::RenderSystemSw()
 :	m_hWnd(NULL)
 #endif
 {
-#if defined(_WIN32)
-#	if !defined(WINCE)
-	m_graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
-#	else
-	m_graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
-#	endif
-#endif
 	m_processor = gc_new< ProcessorImpl >();
 }
 
@@ -88,27 +81,12 @@ void RenderSystemSw::destroy()
 
 int RenderSystemSw::getDisplayModeCount() const
 {
-	std::vector< graphics::DisplayMode > displayModes;
-	if (!m_graphicsSystem->getDisplayModes(displayModes))
-		return 0;
-	return int(displayModes.size());
+	return 0;
 }
 
 DisplayMode* RenderSystemSw::getDisplayMode(int index)
 {
-	std::vector< graphics::DisplayMode > displayModes;
-	if (!m_graphicsSystem->getDisplayModes(displayModes))
-		return 0;
-
-	if (index >= int(displayModes.size()))
-		return 0;
-
-	return gc_new< DisplayMode >(
-		index,
-		displayModes[index].width,
-		displayModes[index].height,
-		16
-	);
+	return 0;
 }
 
 DisplayMode* RenderSystemSw::getCurrentDisplayMode()
@@ -142,6 +120,7 @@ bool RenderSystemSw::handleMessages()
 
 IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
+	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
 #if defined(_WIN32)
@@ -168,6 +147,14 @@ IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, co
 
 #endif
 
+#if defined(_WIN32)
+#	if !defined(WINCE)
+	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+#	else
+	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+#	endif
+#endif
+
 	graphicsDesc.windowHandle = m_hWnd;
 	graphicsDesc.fullScreen = true;
 	graphicsDesc.displayMode.width = displayMode->getWidth();
@@ -175,16 +162,24 @@ IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, co
 	graphicsDesc.displayMode.bits = displayMode->getColorBits();
 	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
 
-	if (!m_graphicsSystem->create(graphicsDesc))
+	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
 
-	return gc_new< RenderViewSw >(this, m_graphicsSystem, m_processor);
+	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
 }
 
 IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
+
+#if defined(_WIN32)
+#	if !defined(WINCE)
+	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+#	else
+	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+#	endif
+#endif
 
 	graphicsDesc.windowHandle = windowHandle;
 	graphicsDesc.fullScreen = false;
@@ -193,10 +188,10 @@ IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderVi
 	graphicsDesc.displayMode.bits = 32;
 	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
 
-	if (!m_graphicsSystem->create(graphicsDesc))
+	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
 
-	return gc_new< RenderViewSw >(this, m_graphicsSystem, m_processor);
+	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
 }
 
 VertexBuffer* RenderSystemSw::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -277,7 +272,7 @@ IProgram* RenderSystemSw::createProgram(const ProgramResource* programResource)
 	if (!pixelProgram)
 		return 0;
 
-//#if defined(_DEBUG)
+#if defined(_DEBUG)
 	log::info << L"Vertex program:" << Endl;
 	cx.getVertexProgram().dump(log::info, parameters.uniforms);
 	log::info << Endl;
@@ -285,7 +280,7 @@ IProgram* RenderSystemSw::createProgram(const ProgramResource* programResource)
 	log::info << L"Pixel program:" << Endl;
 	cx.getPixelProgram().dump(log::info, parameters.uniforms);
 	log::info << Endl;
-//#endif
+#endif
 
 	// Get emitter parameters.
 	std::map< handle_t, int > parameterMap;
