@@ -28,6 +28,12 @@ class T_DLLCLASS OS : public Singleton
 public:
 	static OS& getInstance();
 
+	/*! \brief Get number of CPU cores.
+	 *
+	 * \return Number of CPU cores.
+	 */
+	uint32_t getCPUCoreCount() const;
+
 	/*! \brief Get network name of computer.
 	 *
 	 * \return Computer network name.

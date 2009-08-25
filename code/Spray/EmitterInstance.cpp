@@ -6,7 +6,7 @@
 #include "Spray/EmitterUpdateContext.h"
 #include "Render/Shader.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
