@@ -38,13 +38,11 @@ public:
 	const Type* getElementType() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent, bool visible);
+	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
-
-	virtual void showInPlaceControls(bool show);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 

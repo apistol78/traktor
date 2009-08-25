@@ -46,6 +46,7 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 {
 	for (int i = 0; i < m_dimension; ++i)
 	{
+		T_ASSERT (!m_editors[i]);
 		m_editors[i] = gc_new< Edit >();
 		m_editors[i]->create(
 			parent,
@@ -72,6 +73,9 @@ void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widg
 {
 	for (int i = 0; i < m_dimension; ++i)
 	{
+		if (!m_editors[i])
+			continue;
+
 		Rect rcSub(
 			rc.left + (c_valueWidth * i) / m_dimension,
 			rc.top,

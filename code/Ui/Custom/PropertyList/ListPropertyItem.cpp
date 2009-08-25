@@ -62,17 +62,19 @@ std::wstring ListPropertyItem::getSelectedItem() const
 	return m_listBox->getSelectedItem();
 }
 
-void ListPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void ListPropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_buttonDrop);
 	m_buttonDrop = gc_new< MiniButton >();
 	m_buttonDrop->create(parent, L"...");
-	m_buttonDrop->setVisible(visible);
 	m_buttonDrop->addClickEventHandler(createMethodHandler(this, &ListPropertyItem::eventDropClick));
 
+	T_ASSERT (!m_listForm);
 	m_listForm = gc_new< ToolForm >();
 	m_listForm->create(parent, L"List", 0, 0, WsNone, gc_new< ui::FloodLayout >());
 	m_listForm->setVisible(false);
 
+	T_ASSERT (!m_listBox);
 	m_listBox = gc_new< ListBox >();
 	m_listBox->create(m_listForm);
 	m_listBox->addSelectEventHandler(createMethodHandler(this, &ListPropertyItem::eventSelect));
@@ -81,24 +83,31 @@ void ListPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 
 void ListPropertyItem::destroyInPlaceControls()
 {
-	m_buttonDrop->destroy();
-	m_buttonDrop = 0;
+	if (m_buttonDrop)
+	{
+		m_buttonDrop->destroy();
+		m_buttonDrop = 0;
+	}
 
-	m_listBox->destroy();
-	m_listBox = 0;
+	if (m_listBox)
+	{
+		m_listBox->destroy();
+		m_listBox = 0;
+	}
 }
 
 void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
-	outChildRects.push_back(WidgetRect(
-		m_buttonDrop,
-		Rect(
-			rc.right - rc.getHeight(),
-			rc.top,
-			rc.right,
-			rc.bottom
-		)
-	));
+	if (m_buttonDrop)
+		outChildRects.push_back(WidgetRect(
+			m_buttonDrop,
+			Rect(
+				rc.right - rc.getHeight(),
+				rc.top,
+				rc.right,
+				rc.bottom
+			)
+		));
 
 	m_listRect = Rect(
 		rc.left,
@@ -106,11 +115,6 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 		rc.right,
 		rc.top + rc.getHeight() + 16 * 4
 	);
-}
-
-void ListPropertyItem::showInPlaceControls(bool show)
-{
-	m_buttonDrop->setVisible(show);
 }
 
 void ListPropertyItem::paintValue(Canvas& canvas, const Rect& rc)

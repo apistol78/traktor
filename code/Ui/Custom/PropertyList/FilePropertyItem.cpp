@@ -32,8 +32,9 @@ const Path& FilePropertyItem::getPath() const
 	return m_path;
 }
 
-void FilePropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void FilePropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_editor);
 	m_editor = gc_new< Edit >();
 	m_editor->create(
 		parent,
@@ -43,43 +44,48 @@ void FilePropertyItem::createInPlaceControls(Widget* parent, bool visible)
 	m_editor->setVisible(false);
 	m_editor->addFocusEventHandler(createMethodHandler(this, &FilePropertyItem::eventEditFocus));
 
+	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
 	m_buttonEdit->create(parent, L"...");
-	m_buttonEdit->setVisible(visible);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &FilePropertyItem::eventClick));
 }
 
 void FilePropertyItem::destroyInPlaceControls()
 {
-	m_buttonEdit->destroy();
-	m_editor->destroy();
+	if (m_buttonEdit)
+	{
+		m_buttonEdit->destroy();
+		m_buttonEdit = 0;
+	}
+	if (m_editor)
+	{
+		m_editor->destroy();
+		m_editor = 0;
+	}
 }
 
 void FilePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
-	outChildRects.push_back(WidgetRect(
-		m_editor,
-		Rect(
-			rc.left,
-			rc.top,
-			rc.right - rc.getHeight(),
-			rc.bottom
-		)
-	));
-	outChildRects.push_back(WidgetRect(
-		m_buttonEdit,
-		Rect(
-			rc.right - rc.getHeight(),
-			rc.top,
-			rc.right,
-			rc.bottom
-		)
-	));
-}
-
-void FilePropertyItem::showInPlaceControls(bool show)
-{
-	m_buttonEdit->setVisible(show);
+	if (m_editor)
+		outChildRects.push_back(WidgetRect(
+			m_editor,
+			Rect(
+				rc.left,
+				rc.top,
+				rc.right - rc.getHeight(),
+				rc.bottom
+			)
+		));
+	if (m_buttonEdit)
+		outChildRects.push_back(WidgetRect(
+			m_buttonEdit,
+			Rect(
+				rc.right - rc.getHeight(),
+				rc.top,
+				rc.right,
+				rc.bottom
+			)
+		));
 }
 
 void FilePropertyItem::mouseButtonDown(MouseEvent* event)
