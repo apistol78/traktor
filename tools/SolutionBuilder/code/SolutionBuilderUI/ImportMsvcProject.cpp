@@ -42,7 +42,7 @@ namespace
 			);
 
 			Ref< ::File > file = gc_new< ::File >();
-			file->setFileName(relativePath);
+			file->setFileName(relativePath.getPathName());
 
 			if (filter)
 				filter->addItem(file);
@@ -84,7 +84,7 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 	if (fileDialog.showModal(filePath))
 	{
 		xml::Document document;
-		if (document.loadFromFile(filePath))
+		if (document.loadFromFile(filePath.getPathName()))
 		{
 			Ref< xml::Attribute > attribName = document.getDocumentElement()->getAttribute(L"Name");
 			std::wstring projectName = attribName ? attribName->getValue() : L"Unnamed";

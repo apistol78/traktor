@@ -32,7 +32,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"MRU", MRU, Serializable)
 void MRU::usedFile(const Path& filePath)
 {
 	// Always handle absolute paths.
-	std::wstring fullPath = FileSystem::getInstance().getAbsolutePath(filePath);
+	std::wstring fullPath = FileSystem::getInstance().getAbsolutePath(filePath).getPathName();
 
 	// Remove existing entry; we will re-add below as most recent.
 	std::vector< std::wstring >::iterator i = std::find_if(m_filePaths.begin(), m_filePaths.end(), IgnoreCasePredicate(fullPath));

@@ -250,8 +250,8 @@ void SolutionForm::updateMRU()
 
 	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
 	{
-		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"File.MRU"), (std::wstring)(*i));
-		menuItem->setData(L"PATH", DeepClone(&(*i)).create());
+		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"File.MRU"), i->getPathName());
+		menuItem->setData(L"PATH", gc_new< Path >(*i));
 		m_menuItemMRU->add(menuItem);
 	}
 }
@@ -340,7 +340,7 @@ bool SolutionForm::loadSolution(const traktor::Path& fileName)
 	updateSolutionTree();
 
 	m_solutionHash = DeepHash(m_solution).get();
-	m_solutionFileName = fileName;
+	m_solutionFileName = fileName.getPathName();
 
 	m_mru->usedFile(fileName);
 
@@ -418,7 +418,7 @@ void SolutionForm::commandSave(bool saveAs)
 	if (result)
 	{
 		m_solutionHash = DeepHash(m_solution).get();
-		m_solutionFileName = filePath;
+		m_solutionFileName = filePath.getPathName();
 
 		m_mru->usedFile(filePath);
 
@@ -504,7 +504,7 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 			updateSolutionTree();
 
 			m_solutionHash = DeepHash(m_solution).get();
-			m_solutionFileName = *path;
+			m_solutionFileName = path->getPathName();
 
 			m_mru->usedFile(*path);
 
@@ -620,7 +620,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 							if (FileSystem::getInstance().getRelativePath(*i, sourcePath, relativePath))
 							{
 								Ref< ::File > file = gc_new< ::File >();
-								file->setFileName(relativePath);
+								file->setFileName(relativePath.getPathName());
 
 								project->addItem(file);
 
@@ -628,7 +628,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 								selectedItem->expand();
 							}
 							else
-								traktor::log::error << L"Unable to get relative path from \"" << *i << L"\", not accessible from project's source path?" << Endl;
+								traktor::log::error << L"Unable to get relative path from \"" << i->getPathName() << L"\", not accessible from project's source path?" << Endl;
 						}
 					}
 					fileDialog.destroy();
@@ -708,7 +708,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 							if (FileSystem::getInstance().getRelativePath(*i, sourcePath, relativePath))
 							{
 								Ref< ::File > file = gc_new< ::File >();
-								file->setFileName(relativePath);
+								file->setFileName(relativePath.getPathName());
 
 								filter->addItem(file);
 
@@ -716,7 +716,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 								selectedItem->expand();
 							}
 							else
-								traktor::log::error << L"Unable to get relative path from \"" << *i << L"\", not accessible from project's source path?" << Endl;
+								traktor::log::error << L"Unable to get relative path from \"" << i->getPathName() << L"\", not accessible from project's source path?" << Endl;
 						}
 					}
 					fileDialog.destroy();

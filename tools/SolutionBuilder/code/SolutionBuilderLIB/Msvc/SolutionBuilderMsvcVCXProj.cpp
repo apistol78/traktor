@@ -28,7 +28,7 @@ namespace
 
 	std::wstring systemPath(const Path& path)
 	{
-		return replaceAll< std::wstring >(path, L'/', L'\\');
+		return replaceAll< std::wstring >(path.getPathName(), L'/', L'\\');
 	}
 
 }
