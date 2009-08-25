@@ -2,6 +2,7 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/System/OS.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Misc/String.h"
 
@@ -155,7 +156,10 @@ JobManager::JobManager()
 	for (uint32_t i = 0; i < MaxQueuedJobs; ++i)
 		m_queue[i] = 0;
 
-	m_threadWorkers.resize(4);
+	uint32_t cores = OS::getInstance().getCPUCoreCount();
+	T_ASSERT (cores > 0);
+
+	m_threadWorkers.resize(cores);
 	for (uint32_t i = 0; i < uint32_t(m_threadWorkers.size()); ++i)
 	{
 		m_threadWorkers[i] = ThreadManager::getInstance().create(makeFunctor< JobManager >(this, &JobManager::threadWorker, int(i)), L"Job worker thread " + toString(i), i + 1);

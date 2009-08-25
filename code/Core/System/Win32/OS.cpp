@@ -40,6 +40,13 @@ OS& OS::getInstance()
 	return *s_instance;
 }
 
+uint32_t OS::getCPUCoreCount() const
+{
+	SYSTEM_INFO si;
+	GetSystemInfo(&si);
+	return si.dwNumberOfProcessors;
+}
+
 std::wstring OS::getComputerName() const
 {
 #if !defined(WINCE)
