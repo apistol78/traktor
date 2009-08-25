@@ -41,7 +41,7 @@ public:
 	const vector_t& getValue() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent, bool visible);
+	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
 

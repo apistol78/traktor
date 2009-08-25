@@ -9,6 +9,7 @@
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
+#include "World/Entity/SpatialGroupEntityData.h"
 #include "Core/Math/Const.h"
 
 namespace traktor
@@ -156,7 +157,12 @@ void EntityAdapter::removeReference(EntityAdapter* reference)
 
 bool EntityAdapter::isGroup() const
 {
-	return is_a< world::GroupEntityData >(getEntityData());
+	if (is_a< world::GroupEntityData >(getEntityData()))
+		return true;
+	if (is_a< world::SpatialGroupEntityData >(getEntityData()))
+		return true;
+	else
+		return false;
 }
 
 EntityAdapter* EntityAdapter::getParent() const
@@ -194,6 +200,8 @@ bool EntityAdapter::addChild(EntityAdapter* child, bool modifyEntityData)
 	{
 		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
 			groupEntityData->addInstance(child->getInstance());
+		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
+			spatialGroupEntityData->addInstance(child->getInstance());
 		else
 			return false;
 	}
@@ -213,6 +221,8 @@ void EntityAdapter::removeChild(EntityAdapter* child, bool modifyEntityData)
 	{
 		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
 			groupEntityData->removeInstance(child->getInstance());
+		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
+			spatialGroupEntityData->removeInstance(child->getInstance());
 	}
 
 	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
