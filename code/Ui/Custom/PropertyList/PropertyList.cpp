@@ -78,7 +78,7 @@ void PropertyList::addPropertyItem(PropertyItem* propertyItem)
 {
 	m_propertyItems.push_back(propertyItem);
 	propertyItem->setPropertyList(this);
-	propertyItem->createInPlaceControls(this, true);
+	propertyItem->createInPlaceControls(this);
 }
 
 void PropertyList::removePropertyItem(PropertyItem* propertyItem)
@@ -92,7 +92,8 @@ void PropertyList::addPropertyItem(PropertyItem* parentPropertyItem, PropertyIte
 {
 	parentPropertyItem->addChildItem(propertyItem);
 	propertyItem->setPropertyList(this);
-	propertyItem->createInPlaceControls(this, false);
+	if (parentPropertyItem->isExpanded())
+		propertyItem->createInPlaceControls(this);
 }
 
 void PropertyList::removePropertyItem(PropertyItem* parentPropertyItem, PropertyItem* propertyItem)

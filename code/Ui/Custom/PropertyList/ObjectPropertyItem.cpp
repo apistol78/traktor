@@ -41,35 +41,35 @@ Object* ObjectPropertyItem::getObject() const
 	return m_object;
 }
 
-void ObjectPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
 	m_buttonEdit->create(parent, L"...");
-	m_buttonEdit->setVisible(visible);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ObjectPropertyItem::eventClick));
 }
 
 void ObjectPropertyItem::destroyInPlaceControls()
 {
-	m_buttonEdit->destroy();
+	if (m_buttonEdit)
+	{
+		m_buttonEdit->destroy();
+		m_buttonEdit = 0;
+	}
 }
 
 void ObjectPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
-	outChildRects.push_back(WidgetRect(
-		m_buttonEdit,
-		Rect(
-			rc.right - rc.getHeight(),
-			rc.top,
-			rc.right,
-			rc.bottom
-		)
-	));
-}
-
-void ObjectPropertyItem::showInPlaceControls(bool show)
-{
-	m_buttonEdit->setVisible(show);
+	if (m_buttonEdit)
+		outChildRects.push_back(WidgetRect(
+			m_buttonEdit,
+			Rect(
+				rc.right - rc.getHeight(),
+				rc.top,
+				rc.right,
+				rc.bottom
+			)
+		));
 }
 
 void ObjectPropertyItem::paintValue(Canvas& canvas, const Rect& rc)

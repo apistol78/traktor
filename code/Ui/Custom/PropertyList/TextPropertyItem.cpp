@@ -40,6 +40,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 {
 	if (!m_multiLine)
 	{
+		T_ASSERT (!m_editor);
 		m_editor = gc_new< Edit >();
 		m_editor->create(
 			parent,
@@ -51,6 +52,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 	}
 	else
 	{
+		T_ASSERT (!m_buttonEdit);
 		m_buttonEdit = gc_new< MiniButton >();
 		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
 		m_buttonEdit->setVisible(visible);
@@ -98,12 +100,6 @@ void TextPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 			)
 		));
 	}
-}
-
-void TextPropertyItem::showInPlaceControls(bool show)
-{
-	if (m_buttonEdit)
-		m_buttonEdit->setVisible(show);
 }
 
 void TextPropertyItem::mouseButtonDown(MouseEvent* event)

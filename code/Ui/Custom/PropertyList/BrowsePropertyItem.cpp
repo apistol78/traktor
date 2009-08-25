@@ -46,17 +46,17 @@ const Guid& BrowsePropertyItem::getValue() const
 	return m_value;
 }
 
-void BrowsePropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
 	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
-	m_buttonEdit->setVisible(visible);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventEditClick));
 	m_buttonEdit->setEnable(!m_value.isNull());
 	
+	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = gc_new< MiniButton >();
 	m_buttonBrowse->create(parent, L"...");
-	m_buttonBrowse->setVisible(visible);
 	m_buttonBrowse->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventBrowseClick));
 }
 
@@ -77,30 +77,26 @@ void BrowsePropertyItem::destroyInPlaceControls()
 void BrowsePropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
 	int width = rc.getHeight();
-	outChildRects.push_back(WidgetRect(
-		m_buttonEdit,
-		Rect(
-			rc.right - width * 2,
-			rc.top,
-			rc.right - width,
-			rc.bottom
-		)
-	));
-	outChildRects.push_back(WidgetRect(
-		m_buttonBrowse,
-		Rect(
-			rc.right - width,
-			rc.top,
-			rc.right,
-			rc.bottom
-		)
-	));
-}
-
-void BrowsePropertyItem::showInPlaceControls(bool show)
-{
-	m_buttonEdit->setVisible(show);
-	m_buttonBrowse->setVisible(show);
+	if (m_buttonEdit)
+		outChildRects.push_back(WidgetRect(
+			m_buttonEdit,
+			Rect(
+				rc.right - width * 2,
+				rc.top,
+				rc.right - width,
+				rc.bottom
+			)
+		));
+	if (m_buttonBrowse)
+		outChildRects.push_back(WidgetRect(
+			m_buttonBrowse,
+			Rect(
+				rc.right - width,
+				rc.top,
+				rc.right,
+				rc.bottom
+			)
+		));
 }
 
 void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)

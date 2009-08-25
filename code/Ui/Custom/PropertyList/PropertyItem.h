@@ -78,13 +78,11 @@ protected:
 
 	void removeChildItem(PropertyItem* childItem);
 
-	virtual void createInPlaceControls(Widget* parent, bool visible);
+	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
 
 	virtual void resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects);
-
-	virtual void showInPlaceControls(bool show);
 
 	virtual void mouseButtonDown(MouseEvent* event);
 
@@ -108,7 +106,7 @@ private:
 	Ref< PropertyItem > m_parent;
 	RefList< PropertyItem > m_childItems;
 
-	void showChildrenInPlaceControls(bool show);
+	void updateChildrenInPlaceControls(bool create);
 };
 
 		}

@@ -50,7 +50,7 @@ void PropertyItem::expand()
 	if (!m_expanded)
 	{
 		m_expanded = true;
-		showChildrenInPlaceControls(true);
+		updateChildrenInPlaceControls(true);
 	}
 }
 
@@ -59,7 +59,7 @@ void PropertyItem::collapse()
 	if (m_expanded)
 	{
 		m_expanded = false;
-		showChildrenInPlaceControls(false);
+		updateChildrenInPlaceControls(false);
 	}
 }
 
@@ -153,7 +153,7 @@ void PropertyItem::removeChildItem(PropertyItem* childItem)
 	}
 }
 
-void PropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void PropertyItem::createInPlaceControls(Widget* parent)
 {
 }
 
@@ -162,10 +162,6 @@ void PropertyItem::destroyInPlaceControls()
 }
 
 void PropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
-{
-}
-
-void PropertyItem::showInPlaceControls(bool show)
 {
 }
 
@@ -233,13 +229,17 @@ void PropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 }
 
-void PropertyItem::showChildrenInPlaceControls(bool show)
+void PropertyItem::updateChildrenInPlaceControls(bool create)
 {
 	for (RefList< PropertyItem >::iterator i = m_childItems.begin(); i != m_childItems.end(); ++i)
 	{
-		(*i)->showInPlaceControls(show);
 		if ((*i)->isExpanded())
-			(*i)->showChildrenInPlaceControls(show);
+			(*i)->updateChildrenInPlaceControls(create);
+
+		if (create)
+			(*i)->createInPlaceControls(m_propertyList);
+		else
+			(*i)->destroyInPlaceControls();
 	}
 }
 

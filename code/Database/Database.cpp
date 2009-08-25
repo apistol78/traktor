@@ -117,13 +117,18 @@ Group* Database::createGroup(const std::wstring& groupPath)
 Instance* Database::getInstance(const Guid& instanceGuid)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
 
+	if (instanceGuid.isNull() || !instanceGuid.isValid())
+		return 0;
+
+	Acquire< Semaphore > scopeLock(m_lock);
 	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
 	
 	// In case no instance was found or reference has been invalidated we need to rebuild instance map.
 	if (i == m_instanceMap.end() || !i->second)
 	{
+		log::debug << L"Building instance cache" << Endl;
+
 		m_instanceMap.clear();
 		buildInstanceMap(m_rootGroup, m_instanceMap);
 

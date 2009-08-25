@@ -75,8 +75,9 @@ void NumericPropertyItem::setLimit(double limitMin, double limitMax)
 	setLimitMax(limitMax);
 }
 
-void NumericPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void NumericPropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_editor);
 	m_editor = gc_new< Edit >();
 	m_editor->create(
 		parent,
@@ -94,13 +95,20 @@ void NumericPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 
 void NumericPropertyItem::destroyInPlaceControls()
 {
-	m_editor->destroy();
+	if (m_editor)
+	{
+		m_editor->destroy();
+		m_editor = 0;
+	}
 }
 
 void NumericPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
-	Rect rcEditor(rc.left, rc.top, rc.right - rc.getHeight(), rc.bottom);
-	outChildRects.push_back(WidgetRect(m_editor, rcEditor));
+	if (m_editor)
+	{
+		Rect rcEditor(rc.left, rc.top, rc.right - rc.getHeight(), rc.bottom);
+		outChildRects.push_back(WidgetRect(m_editor, rcEditor));
+	}
 }
 
 void NumericPropertyItem::mouseButtonDown(MouseEvent* event)

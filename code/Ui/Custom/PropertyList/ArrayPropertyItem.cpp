@@ -31,11 +31,11 @@ const Type* ArrayPropertyItem::getElementType() const
 	return m_elementType;
 }
 
-void ArrayPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
+	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
 	m_buttonEdit->create(parent, m_elementType ? L"..." : L"+");
-	m_buttonEdit->setVisible(visible);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
 }
 
@@ -62,12 +62,6 @@ void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widge
 			)
 		));
 	}
-}
-
-void ArrayPropertyItem::showInPlaceControls(bool show)
-{
-	if (m_buttonEdit)
-		m_buttonEdit->setVisible(show);
 }
 
 void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
