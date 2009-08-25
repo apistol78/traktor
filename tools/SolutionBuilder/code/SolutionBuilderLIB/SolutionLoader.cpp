@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"SolutionLoader", SolutionLoader, traktor::Object)
 Solution* SolutionLoader::load(const std::wstring& fileName)
 {
 	// Resolve absolute path to use as key.
-	std::wstring pathName = traktor::toLower(traktor::FileSystem::getInstance().getAbsolutePath(fileName));
+	std::wstring pathName = traktor::toLower(traktor::FileSystem::getInstance().getAbsolutePath(fileName).getPathName());
 
 	// Have we already loaded the solution.
 	std::map< std::wstring, traktor::Ref< Solution > >::iterator i = m_solutions.find(pathName);

@@ -563,7 +563,7 @@ void SolutionBuilderMsvc2005::addItem(
 			);
 
 			s << L"\t\t<File" << Endl;
-			s << L"\t\t\tRelativePath=\"..\\" << replaceAll< std::wstring >(relativePath, '/', '\\') << L"\"" << Endl;
+			s << L"\t\t\tRelativePath=\"..\\" << replaceAll< std::wstring >(relativePath.getPathName(), '/', '\\') << L"\"" << Endl;
 			s << L"\t\t/>" << Endl;
 		}
 	}
@@ -643,7 +643,7 @@ void SolutionBuilderMsvc2005::collectAdditionalLibraries(
 std::wstring SolutionBuilderMsvc2005::resolvePath(const std::wstring& path) const
 {
 	if (m_settings.resolvePaths)
-		return Path(path).c_str();
+		return Path(path).getPathName();
 	else
 		return path;
 }

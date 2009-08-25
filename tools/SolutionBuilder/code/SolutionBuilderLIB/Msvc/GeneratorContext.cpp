@@ -52,7 +52,7 @@ std::wstring GeneratorContext::getProjectRelativePath(const std::wstring& path, 
 
 	// Don't modify absolute paths.
 	if (!resolvedPath.isRelative())
-		return resolve ? (std::wstring)resolvedPath : path;
+		return resolve ? resolvedPath.getPathName() : path;
 
 	// Transform path into relative to vcproj file.
 	Path relativePath;
@@ -62,9 +62,9 @@ std::wstring GeneratorContext::getProjectRelativePath(const std::wstring& path, 
 		fileSystem.getAbsolutePath(get(L"PROJECT_PATH")),
 		relativePath
 	))
-		return relativePath;
+		return relativePath.getPathName();
 
-	return resolve ? (std::wstring)resolvedPath : path;
+	return resolve ? resolvedPath.getPathName() : path;
 }
 
 std::wstring GeneratorContext::generateGUID(const std::wstring& key) const

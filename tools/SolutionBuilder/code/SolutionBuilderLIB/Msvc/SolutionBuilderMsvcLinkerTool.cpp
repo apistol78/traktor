@@ -141,7 +141,7 @@ void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, S
 						rootPath,
 						relativePath
 					);
-					context.set(L"MODULE_DEFINITION_FILE", relativePath);
+					context.set(L"MODULE_DEFINITION_FILE", relativePath.getPathName());
 				}
 			}
 		}

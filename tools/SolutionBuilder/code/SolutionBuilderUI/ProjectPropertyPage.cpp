@@ -249,7 +249,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::Event* event)
 	Path filePath;
 	if (fileDialog.showModal(filePath))
 	{
-		Ref< Solution > solution = SolutionLoader().load(filePath);
+		Ref< Solution > solution = SolutionLoader().load(filePath.getPathName());
 		if (solution)
 		{
 			ImportProjectDialog importDialog;
@@ -261,7 +261,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::Event* event)
 				importDialog.getSelectedProjects(externalProjects);
 
 				for (RefArray< Project >::iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
-					m_project->addDependency(gc_new< ExternalDependency >(filePath, (*i)->getName()));
+					m_project->addDependency(gc_new< ExternalDependency >(filePath.getPathName(), (*i)->getName()));
 
 				updateDependencyList();
 			}

@@ -296,9 +296,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 					includePath
 				);
 				if (m_platform == MpWin32)
-					s << L"/I" << std::wstring(includePath) << L" ";
+					s << L"/I" << std::wstring(includePath.getPathName()) << L" ";
 				else if (m_platform == MpMacOSX || m_platform == MpLinux)
-					s << L"-I" << std::wstring(includePath) << L" ";
+					s << L"-I" << std::wstring(includePath.getPathName()) << L" ";
 			}
 			else
 			{
@@ -520,9 +520,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				relativePath
 			);
 
-			if (std::wstring(relativePath).empty())
+			if (relativePath.getPathName().empty())
 			{
-				traktor::log::warning << L"Unable to add file \"" << *k << L"\", unable to resolve relative path from \"" << absoluteRootPath << L"\" to \"" << absoluteFilePath << L"\"" << Endl;
+				traktor::log::warning << L"Unable to add file \"" << k->getPathName() << L"\", unable to resolve relative path from \"" << absoluteRootPath.getPathName() << L"\" to \"" << absoluteFilePath.getPathName() << L"\"" << Endl;
 				continue;
 			}
 
@@ -530,8 +530,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			std::wstring fileNameNoExt = relativePath.getFileNameNoExtension();
 
 			s << project->getName() << L"/Resources/" << fileNameNoExt << L".h : \\" << Endl;
-			s << L"\t" << relativePath << Endl;
-			s << L"\t$(BINARY_INCLUDE) " << relativePath << L" $@ c_Resource" << fileNameNoExt << Endl;
+			s << L"\t" << relativePath.getPathName() << Endl;
+			s << L"\t$(BINARY_INCLUDE) " << relativePath.getPathName() << L" $@ c_Resource" << fileNameNoExt << Endl;
 			s << Endl;
 		}
 
@@ -552,9 +552,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				relativePath
 			);
 
-			if (std::wstring(relativePath).empty())
+			if (relativePath.getPathName().empty())
 			{
-				traktor::log::warning << L"Unable to add file \"" << *k << L"\", unable to resolve relative path from \"" << absoluteRootPath << L"\" to \"" << absoluteFilePath << L"\"" << Endl;
+				traktor::log::warning << L"Unable to add file \"" << k->getPathName() << L"\", unable to resolve relative path from \"" << absoluteRootPath.getPathName() << L"\" to \"" << absoluteFilePath.getPathName() << L"\"" << Endl;
 				continue;
 			}
 
@@ -562,7 +562,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			scanDependencies(
 				solution,
 				configuration,
-				*k,
+				k->getPathName(),
 				resolvedDependencies
 			);
 
@@ -573,7 +573,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".obj : \\" << Endl;
 			else if (m_platform == MpMacOSX || m_platform == MpLinux)
 				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".o : \\" << Endl;
-			s << L"\t" << relativePath;
+			s << L"\t" << relativePath.getPathName();
 
 			for (std::set< std::wstring >::iterator j = resolvedDependencies.begin(); j != resolvedDependencies.end(); ++j)
 				s << L" \\" << Endl << L"\t" << *j;
@@ -594,9 +594,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			profile += L")";
 
 			if (m_platform == MpWin32)
-				s << L"\t$(CC) " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << std::wstring(relativePath) << L" /Fo$@" << Endl;
+				s << L"\t$(CC) " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" /Fo$@" << Endl;
 			else if (m_platform == MpMacOSX || m_platform == MpLinux)
-				s << L"\t$(CC) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << std::wstring(relativePath) << L" -o $@" << Endl;
+				s << L"\t$(CC) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" -o $@" << Endl;
 			s << Endl;
 		}
 	}
@@ -681,11 +681,11 @@ void SolutionBuilderMake::collectLinkDependencies(
 			Path libraryPathRelative;
 			if (!FileSystem::getInstance().getRelativePath(libraryPath, rootPath, libraryPathRelative))
 			{
-				traktor::log::warning << L"Unable to construct relative path to \"" << libraryPath << L"\"" << Endl;
+				traktor::log::warning << L"Unable to construct relative path to \"" << libraryPath.getPathName() << L"\"" << Endl;
 				continue;
 			}
 
-			outLibraryPaths.insert(libraryPathRelative);
+			outLibraryPaths.insert(libraryPathRelative.getPathName());
 
 			// Add libraries.
 			std::wstring librarySuffix = configuration->getTargetProfile() == Configuration::TpDebug ? L"_d" : L"";
@@ -795,7 +795,7 @@ bool SolutionBuilderMake::scanDependencies(
 				solution->getRootPath(),
 				relativeDependencyName
 			);
-			if (std::wstring(relativeDependencyName).empty())
+			if (relativeDependencyName.getPathName().empty())
 				continue;
 
 			resolvedDependencies.insert(relativeDependencyName.getPathName());
