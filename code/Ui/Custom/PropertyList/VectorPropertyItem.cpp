@@ -42,7 +42,7 @@ const VectorPropertyItem::vector_t& VectorPropertyItem::getValue() const
 	return m_value;
 }
 
-void VectorPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void VectorPropertyItem::createInPlaceControls(Widget* parent)
 {
 	for (int i = 0; i < m_dimension; ++i)
 	{
@@ -66,7 +66,13 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 void VectorPropertyItem::destroyInPlaceControls()
 {
 	for (int i = 0; i < m_dimension; ++i)
-		m_editors[i]->destroy();
+	{
+		if (m_editors[i])
+		{
+			m_editors[i]->destroy();
+			m_editors[i] = 0;
+		}
+	}
 }
 
 void VectorPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)

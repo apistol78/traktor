@@ -40,7 +40,7 @@ public:
 	const std::wstring& getValue() const;
 
 protected:
-	virtual void createInPlaceControls(Widget* parent, bool visible);
+	virtual void createInPlaceControls(Widget* parent);
 
 	virtual void destroyInPlaceControls();
 

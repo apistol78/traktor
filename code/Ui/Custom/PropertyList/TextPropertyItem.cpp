@@ -36,7 +36,7 @@ const std::wstring& TextPropertyItem::getValue() const
 	return m_value;
 }
 
-void TextPropertyItem::createInPlaceControls(Widget* parent, bool visible)
+void TextPropertyItem::createInPlaceControls(Widget* parent)
 {
 	if (!m_multiLine)
 	{
@@ -55,7 +55,6 @@ void TextPropertyItem::createInPlaceControls(Widget* parent, bool visible)
 		T_ASSERT (!m_buttonEdit);
 		m_buttonEdit = gc_new< MiniButton >();
 		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
-		m_buttonEdit->setVisible(visible);
 		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &TextPropertyItem::eventClick));
 	}
 }
