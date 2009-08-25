@@ -269,18 +269,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 
 		// Create external reference to entity data.
 		if (is_type_of< world::SpatialEntityData >(*primaryType))
-		{
-			Ref< world::ExternalSpatialEntityData > spatialEntityData = gc_new< world::ExternalSpatialEntityData >(cref(instance->getGuid()));
-
-			//// Initially put entity in front of camera.
-			//Ref< Camera > camera = m_context->getCamera();
-			//T_ASSERT (camera);
-
-			//Vector4 position = (camera->getTargetView() * translate(0.0f, 0.0f, -4.0f)).inverse().translation();
-			//spatialEntityData->setTransform(translate(position));
-
-			entityData = spatialEntityData;
-		}
+			entityData = gc_new< world::ExternalSpatialEntityData >(cref(instance->getGuid()));
 		else
 			entityData = gc_new< world::ExternalEntityData >(cref(instance->getGuid()));
 
@@ -631,7 +620,10 @@ void SceneEditorPage::updatePropertyObject()
 		Ref< EntityAdapter > entityAdapter = entityAdapters.front();
 		T_ASSERT (entityAdapter);
 
-		m_site->setPropertyObject(entityAdapter->getEntityData());
+		if (entityAdapter->getInstance())
+			m_site->setPropertyObject(entityAdapter->getInstance());
+		else
+			m_site->setPropertyObject(entityAdapter->getEntityData());
 	}
 	else
 		m_site->setPropertyObject(m_dataObject);
