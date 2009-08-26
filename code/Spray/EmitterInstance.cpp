@@ -55,6 +55,8 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Matrix44& tran
 		}
 	}
 
+	synchronize();
+
 	// Erase dead particles.
 	for (PointVector::iterator i = m_points.begin(); i != m_points.end(); )
 	{
@@ -86,8 +88,6 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Matrix44& tran
 		m_boundingBox.contain(i->position);
 
 #if defined(T_USE_UPDATE_JOBS)
-	synchronize();
-
 	// Execute modifiers.
 	size_t size = m_points.size();
 	if (size >= 4)
