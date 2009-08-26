@@ -175,9 +175,13 @@ void OrthogonalRenderControl::updateWorldRenderer()
 			worldEntityRenderers->add(*j);
 	}
 
+	// Create a copy of the render settings; we don't want to enable shadows in this view.
+	world::WorldRenderSettings worldRenderSettings = *m_worldRenderSettings;
+	worldRenderSettings.shadowsEnabled = false;
+
 	m_worldRenderer = gc_new< world::WorldRenderer >();
 	if (!m_worldRenderer->create(
-		*m_worldRenderSettings,
+		worldRenderSettings,
 		worldEntityRenderers,
 		m_context->getRenderSystem(),
 		m_renderView,
