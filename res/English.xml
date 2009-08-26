@@ -994,6 +994,18 @@
       <second>References</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SINGLE_VIEW</first>
+      <second>Single view</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_DOUBLE_VIEW</first>
+      <second>Double view</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_QUADRUPLE_VIEW</first>
+      <second>Four views</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

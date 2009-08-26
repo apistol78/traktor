@@ -32,6 +32,7 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
+#include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/QuadSplitter.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
@@ -53,7 +54,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ScenePreviewControl", ScenePreviewControl, ui::Widget)
 
 ScenePreviewControl::ScenePreviewControl()
-:	m_lastDeltaTime(0.0f)
+:	m_splitType(StQuadruple)
+,	m_lastDeltaTime(0.0f)
 ,	m_lastPhysicsTime(0.0f)
 {
 }
@@ -83,7 +85,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolBarActions = gc_new< ui::custom::ToolBar >();
 	m_toolBarActions->create(this, ui::WsBorder);
-	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 13);
+	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 16);
 	m_toolBarActions->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarActions->addItem(m_toolTogglePick);
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
@@ -100,9 +102,9 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleAddReference);
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 13));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_PLAY"), ui::Command(L"Scene.Editor.Play"), 14));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_STOP"), ui::Command(L"Scene.Editor.Stop"), 15));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 16));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_PLAY"), ui::Command(L"Scene.Editor.Play"), 17));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_STOP"), ui::Command(L"Scene.Editor.Stop"), 18));
 
 	m_sliderTimeScale = gc_new< ui::Slider >();
 	m_sliderTimeScale->create(m_toolBarActions);
@@ -111,28 +113,15 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_sliderTimeScale->addChangeEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventTimeScaleChanged));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarEmbed >(m_sliderTimeScale, 100));
 
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), ui::Command(L"Scene.Editor.SingleView"), 13));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), ui::Command(L"Scene.Editor.DoubleView"), 14));
+	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), ui::Command(L"Scene.Editor.QuadrupleView"), 15));
+
 	// Let profiles create additional toolbar items.
 	const RefArray< ISceneEditorProfile >& profiles = context->getEditorProfiles();
 	for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
 		(*i)->createToolBarItems(m_toolBarActions);
-
-	// Create render controls.
-	Ref< ui::custom::QuadSplitter > quadSplitter = gc_new< ui::custom::QuadSplitter >();
-	quadSplitter->create(this, ui::Point(50, 50), true);
-
-	m_renderControls.resize(4);
-	for (int i = 0; i < 4; ++i)
-	{
-		Ref< DefaultRenderControl > renderControl = gc_new< DefaultRenderControl >();
-		if (renderControl->create(
-			quadSplitter,
-			context,
-			i
-		))
-			m_renderControls[i] = renderControl;
-		else
-			return false;
-	}
 
 	m_modifierTranslate = gc_new< TranslateModifier >();
 	m_modifierRotate = gc_new< RotateModifier >();
@@ -141,6 +130,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
 
+	updateRenderControls();
 	updateEditState();
 
 	// Register our event handler in case of message idle.
@@ -187,6 +177,8 @@ void ScenePreviewControl::destroy()
 
 void ScenePreviewControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
 {
+	m_worldRenderSettings = worldRenderSettings;
+
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
 		(*i)->setWorldRenderSettings(worldRenderSettings);
 }
@@ -217,6 +209,21 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setPlaying(true);
 	else if (command == L"Scene.Editor.Stop")
 		m_context->setPlaying(false);
+	else if (command == L"Scene.Editor.SingleView")
+	{
+		m_splitType = StSingle;
+		updateRenderControls();
+	}
+	else if (command == L"Scene.Editor.DoubleView")
+	{
+		m_splitType = StDouble;
+		updateRenderControls();
+	}
+	else if (command == L"Scene.Editor.QuadrupleView")
+	{
+		m_splitType = StQuadruple;
+		updateRenderControls();
+	}
 	else
 	{
 		result = false;
@@ -235,6 +242,74 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 ui::Size ScenePreviewControl::getPreferedSize() const
 {
 	return ui::Size(256, 256);
+}
+
+void ScenePreviewControl::updateRenderControls()
+{
+	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
+		(*i)->destroy();
+
+	m_renderControls.resize(0);
+
+	if (m_splitterRenderControls)
+	{
+		m_splitterRenderControls->destroy();
+		m_splitterRenderControls = 0;
+	}
+
+	if (m_splitType == StSingle)
+	{
+		m_renderControls.resize(1);
+
+		Ref< DefaultRenderControl > renderControl = gc_new< DefaultRenderControl >();
+		if (renderControl->create(
+			this,
+			m_context,
+			0
+		))
+			m_renderControls[0] = renderControl;
+	}
+	else if (m_splitType == StDouble)
+	{
+		Ref< ui::custom::Splitter > doubleSplitter = gc_new< ui::custom::Splitter >();
+		doubleSplitter->create(this, true, 50, true);
+
+		m_renderControls.resize(2);
+		for (int i = 0; i < 2; ++i)
+		{
+			Ref< DefaultRenderControl > renderControl = gc_new< DefaultRenderControl >();
+			if (renderControl->create(
+				doubleSplitter,
+				m_context,
+				i
+			))
+				m_renderControls[i] = renderControl;
+		}
+
+		m_splitterRenderControls = doubleSplitter;
+	}
+	else if (m_splitType == StQuadruple)
+	{
+		Ref< ui::custom::QuadSplitter > quadSplitter = gc_new< ui::custom::QuadSplitter >();
+		quadSplitter->create(this, ui::Point(50, 50), true);
+
+		m_renderControls.resize(4);
+		for (int i = 0; i < 4; ++i)
+		{
+			Ref< DefaultRenderControl > renderControl = gc_new< DefaultRenderControl >();
+			if (renderControl->create(
+				quadSplitter,
+				m_context,
+				i
+			))
+				m_renderControls[i] = renderControl;
+		}
+
+		m_splitterRenderControls = quadSplitter;
+	}
+
+	update();
+	setWorldRenderSettings(m_worldRenderSettings);
 }
 
 void ScenePreviewControl::updateEditState()

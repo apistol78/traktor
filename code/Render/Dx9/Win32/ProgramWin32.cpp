@@ -348,9 +348,12 @@ void ProgramWin32::destroy()
 
 	m_shaderCache = 0;
 
-	m_context->releaseComRef(m_d3dDevice);
-	m_context->releaseComRef(m_d3dVertexShader);
-	m_context->releaseComRef(m_d3dPixelShader);
+	if (m_context)
+	{
+		m_context->releaseComRef(m_d3dDevice);
+		m_context->releaseComRef(m_d3dVertexShader);
+		m_context->releaseComRef(m_d3dPixelShader);
+	}
 
 	Unmanaged::removeFromListener();
 }

@@ -69,7 +69,10 @@ void Shader::setFloatParameter(handle_t handle, float param)
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setFloatParameter(handle, param);
+	{
+		if (i->program)
+			i->program->setFloatParameter(handle, param);
+	}
 }
 
 void Shader::setFloatArrayParameter(handle_t handle, const float* param, int length)
@@ -78,7 +81,10 @@ void Shader::setFloatArrayParameter(handle_t handle, const float* param, int len
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setFloatArrayParameter(handle, param, length);
+	{
+		if (i->program)
+			i->program->setFloatArrayParameter(handle, param, length);
+	}
 }
 
 void Shader::setVectorParameter(handle_t handle, const Vector4& param)
@@ -87,7 +93,10 @@ void Shader::setVectorParameter(handle_t handle, const Vector4& param)
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setVectorParameter(handle, param);
+	{
+		if (i->program)
+			i->program->setVectorParameter(handle, param);
+	}
 }
 
 void Shader::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
@@ -96,7 +105,10 @@ void Shader::setVectorArrayParameter(handle_t handle, const Vector4* param, int 
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setVectorArrayParameter(handle, param, length);
+	{
+		if (i->program)
+			i->program->setVectorArrayParameter(handle, param, length);
+	}
 }
 
 void Shader::setMatrixParameter(handle_t handle, const Matrix44& param)
@@ -105,7 +117,10 @@ void Shader::setMatrixParameter(handle_t handle, const Matrix44& param)
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setMatrixParameter(handle, param);
+	{
+		if (i->program)
+			i->program->setMatrixParameter(handle, param);
+	}
 }
 
 void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
@@ -114,7 +129,10 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setMatrixArrayParameter(handle, param, length);
+	{
+		if (i->program)
+			i->program->setMatrixArrayParameter(handle, param, length);
+	}
 }
 
 void Shader::setSamplerTexture(handle_t handle, ITexture* texture)
@@ -123,7 +141,10 @@ void Shader::setSamplerTexture(handle_t handle, ITexture* texture)
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setSamplerTexture(handle, texture);
+	{
+		if (i->program)
+			i->program->setSamplerTexture(handle, texture);
+	}
 }
 
 void Shader::setStencilReference(uint32_t stencilReference)
@@ -132,7 +153,10 @@ void Shader::setStencilReference(uint32_t stencilReference)
 		return;
 
 	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-		i->program->setStencilReference(stencilReference);
+	{
+		if (i->program)
+			i->program->setStencilReference(stencilReference);
+	}
 }
 
 void Shader::draw(IRenderView* renderView, const Primitives& primitives)
@@ -164,7 +188,7 @@ void Shader::updateCurrentProgram()
 	{
 		if (i->parameterValue == value)
 		{
-			m_currentProgram  = i->program;
+			m_currentProgram = i->program;
 			break;
 		}
 	}

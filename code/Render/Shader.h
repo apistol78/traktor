@@ -131,7 +131,7 @@ private:
 	std::map< handle_t, uint32_t > m_parameterBits;
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
-	IProgram* m_currentProgram;
+	Ref< IProgram > m_currentProgram;
 
 	void updateCurrentProgram();
 };
