@@ -111,6 +111,9 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.Rewind"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Play"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Stop"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.SingleView"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.DoubleView"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.QuadrupleView"));
 
 	// Add profile commands.
 	std::vector< const Type* > profileTypes;

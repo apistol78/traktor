@@ -46,6 +46,8 @@ RenderSystemWin32::RenderSystemWin32()
 
 bool RenderSystemWin32::create()
 {
+	HRESULT hr;
+
 	m_d3d.getAssign() = Direct3DCreate9(D3D_SDK_VERSION);
 	T_ASSERT (m_d3d);
 
@@ -80,6 +82,73 @@ bool RenderSystemWin32::create()
 	if (!m_hWnd)
 		return false;
 
+	// Create "resource" device.
+	DWORD dwBehaviour =
+		D3DCREATE_HARDWARE_VERTEXPROCESSING |
+		D3DCREATE_FPU_PRESERVE |
+		D3DCREATE_MULTITHREADED |
+		D3DCREATE_PUREDEVICE;
+
+	D3DPRESENT_PARAMETERS d3dPresentNull;
+
+	std::memset(&d3dPresentNull, 0, sizeof(d3dPresentNull));
+	d3dPresentNull.BackBufferFormat = D3DFMT_A8R8G8B8;
+	d3dPresentNull.BackBufferCount = 1;
+	d3dPresentNull.BackBufferWidth = 1;
+	d3dPresentNull.BackBufferHeight = 1;
+	d3dPresentNull.MultiSampleType = (D3DMULTISAMPLE_TYPE)0;
+	d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dPresentNull.hDeviceWindow = m_hWnd;
+	d3dPresentNull.Windowed = TRUE;
+	d3dPresentNull.EnableAutoDepthStencil = FALSE;
+	d3dPresentNull.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+
+	hr = m_d3d->CreateDevice(
+		0,
+		D3DDEVTYPE_HAL,
+		d3dPresentNull.hDeviceWindow,
+		dwBehaviour,
+		&d3dPresentNull,
+		&m_d3dDevice.getAssign()
+	);
+	if (FAILED(hr) || !m_d3dDevice)
+	{
+		log::error << L"CreateDevice failed; unable to create device" << Endl;
+		return false;
+	}
+
+	D3DCAPS9 d3dDeviceCaps;
+	std::memset(&d3dDeviceCaps, 0, sizeof(d3dDeviceCaps));
+	hr = m_d3dDevice->GetDeviceCaps(&d3dDeviceCaps);
+	if (SUCCEEDED(hr))
+	{
+		// Ensure device supports at least SM 3.0.
+		if (d3dDeviceCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
+		{
+			log::error << L"Reset device failed, need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.VertexShaderVersion)) << L")" << Endl;
+			return false;
+		}
+		if (d3dDeviceCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
+		{
+			log::error << L"Reset device failed, need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.PixelShaderVersion)) << L")" << Endl;
+			return false;
+		}
+
+		log::debug << L"D3DCAPS9.MaxVertexShaderConst = " << uint32_t(d3dDeviceCaps.MaxVertexShaderConst) << Endl;
+	}
+	else
+		log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
+
+	T_ASSERT (!m_shaderCache);
+	m_shaderCache= gc_new< ShaderCache >();
+
+	T_ASSERT (!m_parameterCache);
+	m_parameterCache = new ParameterCache(this, m_d3dDevice);
+
+	T_ASSERT (!m_vertexDeclCache);
+	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
+
 	m_context = gc_new< ContextDx9 >();
 	return true;
 }
@@ -87,7 +156,23 @@ bool RenderSystemWin32::create()
 void RenderSystemWin32::destroy()
 {
 	T_ASSERT (m_renderViews.empty());
-	T_ASSERT (m_unmanagedList.empty());
+
+	// Ensure no objects of DX9 renderer still exists.
+	Heap& heap = Heap::getInstance();
+	heap.collectAllOf(type_of< VertexBufferDx9 >());
+	heap.collectAllOf(type_of< IndexBufferDx9 >());
+	heap.collectAllOf(type_of< ProgramWin32 >());
+	heap.collectAllOf(type_of< SimpleTextureDx9 >());
+	heap.collectAllOf(type_of< CubeTextureDx9 >());
+	heap.collectAllOf(type_of< VolumeTextureDx9 >());
+	heap.collectAllOf(type_of< RenderTargetSetWin32 >());
+
+	// In case there are any unmanaged resources still lingering we tell them to get lost.
+	for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
+	{
+		if (*i)
+			(*i)->lostDevice();
+	}
 
 	if (m_context)
 	{
@@ -366,128 +451,21 @@ HRESULT RenderSystemWin32::resetDevice()
 			(*i)->lostDevice();
 	}
 
-	RefList< RenderViewWin32 >::iterator i = m_renderViews.begin();
-	if (i == m_renderViews.end())
-	{
-		// We've no render views, collect all resources and release device if any.
-		Heap& heap = Heap::getInstance();
-
-		heap.collectAllOf(type_of< VertexBufferDx9 >());
-		heap.collectAllOf(type_of< IndexBufferDx9 >());
-		heap.collectAllOf(type_of< ProgramWin32 >());
-		heap.collectAllOf(type_of< SimpleTextureDx9 >());
-		heap.collectAllOf(type_of< CubeTextureDx9 >());
-		heap.collectAllOf(type_of< VolumeTextureDx9 >());
-		heap.collectAllOf(type_of< RenderTargetSetWin32 >());
-
-		m_d3dDevice.release();
-
-		if (m_shaderCache)
-		{
-			m_shaderCache->releaseAll();
-			m_shaderCache = 0;
-		}
-
-		if (m_parameterCache)
-		{
-			delete m_parameterCache;
-			m_parameterCache = 0;
-		}
-
-		if (m_vertexDeclCache)
-		{
-			delete m_vertexDeclCache;
-			m_vertexDeclCache = 0;
-		}
-
-		// Delete any pending resources.
-		m_context->deleteResources();
-
-		return S_OK;
-	}
-
 	// Delete any pending resources.
 	m_context->deleteResources();
+
+	RefList< RenderViewWin32 >::iterator i = m_renderViews.begin();
+	if (i == m_renderViews.end())
+		return S_OK;
 
 	D3DPRESENT_PARAMETERS d3dPresent = (*i)->getD3DPresent();
 	if (d3dPresent.Windowed)
 	{
-		if (!m_d3dDevice)
+		hr = m_d3dDevice->Reset(&d3dPresent);
+		if (FAILED(hr))
 		{
-			DWORD dwBehaviour =
-				D3DCREATE_HARDWARE_VERTEXPROCESSING |
-				D3DCREATE_FPU_PRESERVE |
-				D3DCREATE_MULTITHREADED |
-				D3DCREATE_PUREDEVICE;
-			
-			D3DPRESENT_PARAMETERS d3dPresentNull;
-
-			std::memset(&d3dPresentNull, 0, sizeof(d3dPresentNull));
-			d3dPresentNull.BackBufferFormat = D3DFMT_A8R8G8B8;
-			d3dPresentNull.BackBufferCount = 1;
-			d3dPresentNull.BackBufferWidth = 1;
-			d3dPresentNull.BackBufferHeight = 1;
-			d3dPresentNull.MultiSampleType = (D3DMULTISAMPLE_TYPE)0;
-			d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
-			d3dPresentNull.hDeviceWindow = m_hWnd;
-			d3dPresentNull.Windowed = TRUE;
-			d3dPresentNull.EnableAutoDepthStencil = FALSE;
-			d3dPresentNull.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-			d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
-			hr = m_d3d->CreateDevice(
-				0,
-				D3DDEVTYPE_HAL,
-				d3dPresentNull.hDeviceWindow,
-				dwBehaviour,
-				&d3dPresentNull,
-				&m_d3dDevice.getAssign()
-			);
-			if (FAILED(hr) || !m_d3dDevice)
-			{
-				log::error << L"Reset device failed, unable to create device" << Endl;
-				return hr;
-			}
-
-			D3DCAPS9 d3dDeviceCaps;
-			std::memset(&d3dDeviceCaps, 0, sizeof(d3dDeviceCaps));
-			hr = m_d3dDevice->GetDeviceCaps(&d3dDeviceCaps);
-			if (SUCCEEDED(hr))
-			{
-				// Ensure device supports at least SM 3.0.
-				if (d3dDeviceCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
-				{
-					log::error << L"Reset device failed, need atleast VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.VertexShaderVersion)) << L")" << Endl;
-					return S_FALSE;
-				}
-				if (d3dDeviceCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
-				{
-					log::error << L"Reset device failed, need atleast PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.PixelShaderVersion)) << L")" << Endl;
-					return S_FALSE;
-				}
-
-				log::debug << L"D3DCAPS9.MaxVertexShaderConst = " << uint32_t(d3dDeviceCaps.MaxVertexShaderConst) << Endl;
-			}
-			else
-				log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
-
-			T_ASSERT (!m_shaderCache);
-			m_shaderCache= gc_new< ShaderCache >();
-
-			T_ASSERT (!m_parameterCache);
-			m_parameterCache = new ParameterCache(this, m_d3dDevice);
-
-			T_ASSERT (!m_vertexDeclCache);
-			m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
-		}
-		else
-		{
-			hr = m_d3dDevice->Reset(&d3dPresent);
-			if (FAILED(hr))
-			{
-				log::error << L"Reset device failed, unable to reset" << Endl;
-				return hr;
-			}
+			log::error << L"Reset device failed; unable to continue" << Endl;
+			return hr;
 		}
 
 		// Create additional swap chains for all windowed render views.
@@ -535,42 +513,11 @@ HRESULT RenderSystemWin32::resetDevice()
 	{
 		T_ASSERT (m_renderViews.size() == 1);
 
-		if (!m_d3dDevice)
+		hr = m_d3dDevice->Reset(&d3dPresent);
+		if (FAILED(hr))
 		{
-			DWORD dwBehaviour =
-				D3DCREATE_HARDWARE_VERTEXPROCESSING |
-				D3DCREATE_FPU_PRESERVE |
-				D3DCREATE_MULTITHREADED |
-				D3DCREATE_PUREDEVICE;
-
-			hr = m_d3d->CreateDevice(
-				0,
-				D3DDEVTYPE_HAL,
-				d3dPresent.hDeviceWindow,
-				dwBehaviour,
-				&d3dPresent,
-				&m_d3dDevice.getAssign()
-			);
-			if (FAILED(hr) || !m_d3dDevice)
-			{
-				log::error << L"Reset device failed, unable to create device" << Endl;
-				return hr;
-			}
-
-			T_ASSERT (!m_shaderCache);
-			m_shaderCache = gc_new< ShaderCache >();
-
-			T_ASSERT (!m_parameterCache);
-			m_parameterCache = new ParameterCache(this, m_d3dDevice);
-		}
-		else
-		{
-			hr = m_d3dDevice->Reset(&d3dPresent);
-			if (FAILED(hr))
-			{
-				log::error << L"Reset device failed, unable to reset" << Endl;
-				return hr;
-			}
+			log::error << L"Reset device failed, unable to continue" << Endl;
+			return hr;
 		}
 
 		ComRef< IDirect3DSwapChain9 > d3dSwapChain;

@@ -89,13 +89,13 @@ void RenderViewWin32::close()
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
+	m_d3dDevice = 0;
 
 	Unmanaged::removeFromListener();
 
 	if (m_renderSystem)
 		m_renderSystem->removeRenderView(this);
 
-	m_d3dDevice = 0;
 	m_renderSystem = 0;
 	m_context = 0;
 }

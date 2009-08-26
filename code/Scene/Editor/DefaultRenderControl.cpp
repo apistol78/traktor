@@ -54,6 +54,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 void DefaultRenderControl::destroy()
 {
+	m_toolButtonView = 0;
+
 	if (m_renderControl)
 	{
 		m_renderControl->destroy();

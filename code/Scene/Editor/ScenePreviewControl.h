@@ -61,6 +61,13 @@ public:
 	virtual ui::Size getPreferedSize() const;
 
 private:
+	enum SplitType
+	{
+		StSingle,
+		StDouble,
+		StQuadruple
+	};
+
 	Ref< ui::custom::ToolBar > m_toolBarActions;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePick;
 	Ref< ui::custom::ToolBarButton > m_toolToggleX;
@@ -70,8 +77,11 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	Ref< ui::Slider > m_sliderTimeScale;
+	SplitType m_splitType;
+	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< ui::EventHandler > m_idleHandler;
+	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
 	Ref< IModifier > m_modifierScale;
@@ -79,6 +89,8 @@ private:
 	Timer m_timer;
 	float m_lastDeltaTime;
 	float m_lastPhysicsTime;
+
+	void updateRenderControls();
 
 	void updateEditState();
 
