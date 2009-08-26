@@ -17,6 +17,7 @@
 #include "Xml/XmlSerializer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
+#include "Core/Thread/JobManager.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
@@ -82,6 +83,105 @@ void traverseDependencies(editor::PipelineManager* pipelineManager, const Shader
 		}
 	}
 }
+
+struct BuildCombinationTask
+{
+	ShaderGraphCombinations* combinations;
+	uint32_t combination;
+	ShaderResource* shaderResource;
+	ShaderResource::Technique* shaderResourceTechnique;
+	ShaderResource::Combination* shaderResourceCombination;
+	render::IRenderSystem* renderSystem;
+	int optimize;
+	bool validate;
+	bool result;
+
+	void execute()
+	{
+		const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();
+
+		// Map parameter value for this combination.
+		std::vector< std::wstring > parameterCombination = combinations->getParameterCombination(combination);
+		for (std::vector< std::wstring >::iterator j = parameterCombination.begin(); j != parameterCombination.end(); ++j)
+			shaderResourceCombination->parameterValue |= parameterBits.find(*j)->second;
+
+		// Generate combination shader graph.
+		Ref< ShaderGraph > shaderGraphCombination = combinations->generate(combination);
+		T_ASSERT (shaderGraphCombination);
+
+#if defined(_DEBUG)
+		// Ensure shader graph is valid as a program.
+		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
+		{
+			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
+			return;
+		}
+#endif
+		// Merge identical branches.
+		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).mergeBranches();
+		if (!shaderGraphCombination)
+		{
+			log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
+			return;
+		}
+
+#if defined(_DEBUG)
+		// Ensure shader graph is valid as a program.
+		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
+		{
+			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
+			return;
+		}
+#endif
+		// Insert interpolation nodes at optimal locations.
+		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
+		if (!shaderGraphCombination)
+		{
+			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
+			return;
+		}
+
+#if defined(_DEBUG)
+		// Ensure shader graph is valid as a program.
+		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
+		{
+			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
+			return;
+		}
+#endif
+
+		if (renderSystem)
+		{
+			Ref< ProgramResource > programResource = renderSystem->compileProgram(shaderGraphCombination, optimize, validate);
+			if (!programResource)
+			{
+				log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
+				return;
+			}
+
+			RefArray< Sampler > samplerNodes;
+			shaderGraphCombination->findNodesOf< Sampler >(samplerNodes);
+
+			for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+			{
+				const Guid& textureGuid = (*i)->getExternal();
+				if (!textureGuid.isNull() && textureGuid.isValid())
+				{
+					programResource->addTexture(
+						(*i)->getParameterName(),
+						textureGuid
+					);
+				}
+			}
+
+			shaderResourceCombination->program = programResource;
+		}
+		else
+			shaderResourceCombination->program = shaderGraphCombination;
+
+		result = true;
+	}
+};
 
 		}
 
@@ -205,6 +305,11 @@ bool ShaderPipeline::buildOutput(
 	}
 #endif
 
+	RefArray< ShaderGraphCombinations > shaderGraphCombinations;
+	std::vector< ShaderResource::Technique* > shaderResourceTechniques;
+	std::vector< BuildCombinationTask* > tasks;
+	RefArray< Job > jobs;
+
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph);
 	std::set< std::wstring > techniqueNames = techniques.getNames();
@@ -225,15 +330,17 @@ bool ShaderPipeline::buildOutput(
 			return false;
 		}
 #endif
-		ShaderGraphCombinations combinations(shaderGraphTechnique);
-		uint32_t combinationCount = combinations.getCombinationCount();
+		Ref< ShaderGraphCombinations > combinations = gc_new< ShaderGraphCombinations >(shaderGraphTechnique);
+		uint32_t combinationCount = combinations->getCombinationCount();
+		shaderGraphCombinations.push_back(combinations);
 
-		ShaderResource::Technique shaderResourceTechnique;
-		shaderResourceTechnique.name = *i;
-		shaderResourceTechnique.parameterMask = 0;
+		ShaderResource::Technique* shaderResourceTechnique = new ShaderResource::Technique();
+		shaderResourceTechnique->name = *i;
+		shaderResourceTechnique->parameterMask = 0;
+		shaderResourceTechniques.push_back(shaderResourceTechnique);
 
 		// Map parameter name to unique bits; also build parameter mask for this technique.
-		std::vector< std::wstring > parameterNames = combinations.getParameterNames();
+		std::vector< std::wstring > parameterNames = combinations->getParameterNames();
 		for (std::vector< std::wstring >::iterator j = parameterNames.begin(); j != parameterNames.end(); ++j)
 		{
 			if (shaderResource->m_parameterBits.find(*j) == shaderResource->m_parameterBits.end())
@@ -241,122 +348,71 @@ bool ShaderPipeline::buildOutput(
 				shaderResource->m_parameterBits.insert(std::make_pair(*j, parameterBit));
 				parameterBit <<= 1;
 			}
-			shaderResourceTechnique.parameterMask |= shaderResource->m_parameterBits[*j];
+			shaderResourceTechnique->parameterMask |= shaderResource->m_parameterBits[*j];
 		}
 
 		// Optimize and compile all combination programs.
+		log::info << L"Spawning " << combinationCount << L" tasks..." << Endl;
+
 		for (uint32_t combination = 0; combination < combinationCount; ++combination)
 		{
-			log::info << L"Building combination " << (combination + 1) << L"/" << combinationCount << L"..." << Endl;
-			log::info << IncreaseIndent;
+			BuildCombinationTask* task = new BuildCombinationTask();
+			task->combinations = combinations;
+			task->combination = combination;
+			task->shaderResource = shaderResource;
+			task->shaderResourceTechnique = shaderResourceTechnique;
+			task->shaderResourceCombination = new ShaderResource::Combination;
+			task->shaderResourceCombination->parameterValue = 0;
+			task->renderSystem = m_renderSystem;
+			task->optimize = m_optimize;
+			task->validate = m_validate;
+			task->result = false;
 
-			ShaderResource::Combination shaderResourceCombination;
-			shaderResourceCombination.parameterValue = 0;
+			Ref< Job > job = gc_new< Job >(makeFunctor(task, &BuildCombinationTask::execute));
+			JobManager::getInstance().add(*job);
 
-			// Map parameter value for this combination.
-			std::vector< std::wstring > parameterCombination = combinations.getParameterCombination(combination);
-			for (std::vector< std::wstring >::iterator j = parameterCombination.begin(); j != parameterCombination.end(); ++j)
-				shaderResourceCombination.parameterValue |= shaderResource->m_parameterBits[*j];
-
-			// Generate combination shader graph.
-			Ref< ShaderGraph > shaderGraphCombination = combinations.generate(combination);
-			T_ASSERT (shaderGraphCombination);
-
-#if defined(_DEBUG)
-			// Ensure shader graph is valid as a program.
-			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-			{
-				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-				return false;
-			}
-#endif
-			// Merge identical branches.
-			log::info << L"Merging identical branches..." << Endl;
-			shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).mergeBranches();
-			if (!shaderGraphCombination)
-			{
-				log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
-				return false;
-			}
-
-#if defined(_DEBUG)
-			// Ensure shader graph is valid as a program.
-			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-			{
-				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-				return false;
-			}
-#endif
-			// Insert interpolation nodes at optimal locations.
-			log::info << L"Inserting interpolators..." << Endl;
-			shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
-			if (!shaderGraphCombination)
-			{
-				log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
-				return false;
-			}
-
-			// Write complete shader graphs.
-			if (m_debugCompleteGraphs)
-			{
-				Path path = m_debugPath + L"/" + outputPath + L"_" + *i + L"_" + toString(combination + 1) + L".xml";
-				FileSystem::getInstance().makeAllDirectories(path.getPathOnly());
-
-				Ref< Stream > file = FileSystem::getInstance().open(path, File::FmWrite);
-				if (file)
-				{
-					xml::XmlSerializer(file).writeObject(shaderGraphCombination);
-					file->close();
-				}
-				else
-					log::warning << L"Unable to create debug file" << Endl;
-			}
-
-#if defined(_DEBUG)
-			// Ensure shader graph is valid as a program.
-			if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-			{
-				log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-				return false;
-			}
-#endif
-
-			if (m_renderSystem)
-			{
-				log::info << L"Compiling program..." << Endl;
-				Ref< ProgramResource > programResource = m_renderSystem->compileProgram(shaderGraphCombination, m_optimize, m_validate);
-				if (!programResource)
-				{
-					log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
-					return false;
-				}
-
-				RefArray< Sampler > samplerNodes;
-				shaderGraphCombination->findNodesOf< Sampler >(samplerNodes);
-
-				for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
-				{
-					const Guid& textureGuid = (*i)->getExternal();
-					if (!textureGuid.isNull() && textureGuid.isValid())
-					{
-						programResource->m_textures.push_back(std::make_pair(
-							(*i)->getParameterName(),
-							textureGuid
-						));
-					}
-				}
-
-				shaderResourceCombination.program = programResource;
-			}
-			else
-				shaderResourceCombination.program = shaderGraphCombination;
-
-			shaderResourceTechnique.combinations.push_back(shaderResourceCombination);
-			log::info << DecreaseIndent;
+			tasks.push_back(task);
+			jobs.push_back(job);
 		}
 
-		shaderResource->m_techniques.push_back(shaderResourceTechnique);
 		log::info << DecreaseIndent;
+	}
+
+	log::info << L"Collecting task(s)..." << Endl;
+
+	uint32_t failed = 0;
+	for (size_t i = 0; i < jobs.size(); ++i)
+	{
+		jobs[i]->wait();
+
+		if (tasks[i]->result)
+		{
+			ShaderResource::Technique* technique = tasks[i]->shaderResourceTechnique;
+			ShaderResource::Combination* combination = tasks[i]->shaderResourceCombination;
+			technique->combinations.push_back(*combination);
+		}
+		else
+			++failed;
+
+		delete tasks[i]->shaderResourceCombination;
+		delete tasks[i];
+	}
+
+	for (std::vector< ShaderResource::Technique* >::iterator i = shaderResourceTechniques.begin(); i != shaderResourceTechniques.end(); ++i)
+	{
+		shaderResource->m_techniques.push_back(**i);
+		delete *i;
+	}
+
+	shaderResourceTechniques.resize(0);
+	shaderGraphCombinations.resize(0);
+
+	log::info << L"All task(s) collected" << Endl;
+
+	if (failed)
+	{
+		log::error << L"ShaderPipeline failed; " << failed << L" task(s) failed" << Endl;
+		return false;
 	}
 
 	// Create output instance.

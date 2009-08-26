@@ -26,6 +26,8 @@ class T_DLLCLASS ProgramResource : public Serializable
 	T_RTTI_CLASS(ProgramResource)
 
 public:
+	void addTexture(const std::wstring& parameterName, const Guid& guid);
+
 	const std::vector< std::pair< std::wstring, Guid > >& getTextures() const;
 
 	virtual bool serialize(Serializer& s);

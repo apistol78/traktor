@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramResource", ProgramResource, Serializable)
 
+void ProgramResource::addTexture(const std::wstring& parameterName, const Guid& guid)
+{
+	m_textures.push_back(std::make_pair(parameterName, guid));
+}
+
 const std::vector< std::pair< std::wstring, Guid > >& ProgramResource::getTextures() const
 {
 	return m_textures;

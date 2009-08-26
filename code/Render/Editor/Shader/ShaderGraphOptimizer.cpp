@@ -236,7 +236,7 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 			break;
 	}
 
-	log::info << L"Merged " << mergedNodes << L" node(s)" << Endl;
+	log::debug << L"Merged " << mergedNodes << L" node(s)" << Endl;
 	return m_shaderGraph;
 }
 
@@ -251,7 +251,7 @@ ShaderGraph* ShaderGraphOptimizer::insertInterpolators()
 	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
 		insertInterpolators(*i);
 	
-	log::info << L"Inserted " << m_insertedCount << L" interpolator(s)" << Endl;
+	log::debug << L"Inserted " << m_insertedCount << L" interpolator(s)" << Endl;
 	return m_shaderGraph;
 }
 
