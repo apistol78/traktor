@@ -1030,6 +1030,14 @@
       <second>Fyra vyer</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS</first>
+      <second>Scene editor</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
+      <second>Invertera mushjul</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Lägg till beroende</second>
     </item>

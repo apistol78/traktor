@@ -5,6 +5,8 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
@@ -421,8 +423,8 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
 		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
 
-		m_cameraX += /*c_cameraTranslateDeltaScale * */clipDelta.x();
-		m_cameraY += /*c_cameraTranslateDeltaScale * */clipDelta.y();
+		m_cameraX += clipDelta.x();
+		m_cameraY += clipDelta.y();
 	}
 
 	m_mousePosition = mousePosition;
@@ -436,7 +438,11 @@ void OrthogonalRenderControl::eventMouseWheel(ui::Event* event)
 	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
 	
 	float delta = m_magnification / 10.0f;
-	m_magnification += rotation * delta;
+
+	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
+		m_magnification -= rotation * delta;
+	else
+		m_magnification += rotation * delta;
 
 	if (m_magnification < c_minMagnification)
 		m_magnification = c_minMagnification;
