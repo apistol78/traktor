@@ -262,8 +262,12 @@
       <second>Build asset before editing</second>
     </item>
     <item>
-      <first>EDITOR_SETTINGS_BUILD_WHEN_MODIFIED</first>
-      <second>Build asset when modified</second>
+      <first>EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED</first>
+      <second>Build when source modified</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_BUILD_WHEN_ASSET_MODIFIED</first>
+      <second>Build when asset modified</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_COMMAND</first>

@@ -124,9 +124,10 @@ struct FindInstanceByType
 
 	bool operator () (const Instance* instance) const
 	{
-		if (!instance->getPrimaryType())
+		const Type* primaryType = instance->getPrimaryType();
+		if (!primaryType)
 			return false;
-		return is_type_of(instanceType, *instance->getPrimaryType());
+		return is_type_of(instanceType, *primaryType);
 	}
 };
 

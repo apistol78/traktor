@@ -22,6 +22,7 @@
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Assets.h"
+#include "Editor/Asset.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
@@ -1852,7 +1853,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		if (remote)
 			updateView = true;
 	}
-	if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenModified", true))
+	if (commited && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
 		buildAssets(false);
 
 	std::vector< Guid > eventIds;
@@ -1884,6 +1885,36 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		}
 
 		log::debug << L"Database change(s) notified" << Endl;
+	}
+
+	// Check asset sources.
+	if (m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified"))
+	{
+		std::vector< Guid > modifiedAssets;
+
+		RefArray< db::Instance > assetInstances;
+		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Asset >()), assetInstances);
+
+		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+		{
+			Ref< Asset > asset = (*i)->getObject< Asset >();
+			if (asset)
+			{
+				const Path& fileName = asset->getFileName();
+				Ref< File > file = FileSystem::getInstance().get(fileName);
+				if (file && (file->getFlags() & File::FfArchive) == File::FfArchive)
+				{
+					modifiedAssets.push_back((*i)->getGuid());
+					FileSystem::getInstance().modify(fileName, (file->getFlags() & ~File::FfArchive));
+				}
+			}
+		}
+
+		if (!modifiedAssets.empty())
+		{
+			log::debug << L"Modified source asset(s) detected; building asset(s)..." << Endl;
+			buildAssets(modifiedAssets, false);
+		}
 	}
 
 	// We need to update database view as another process has modified database.
