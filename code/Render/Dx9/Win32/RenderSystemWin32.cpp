@@ -157,16 +157,6 @@ void RenderSystemWin32::destroy()
 {
 	T_ASSERT (m_renderViews.empty());
 
-	// Ensure no objects of DX9 renderer still exists.
-	Heap& heap = Heap::getInstance();
-	heap.collectAllOf(type_of< VertexBufferDx9 >());
-	heap.collectAllOf(type_of< IndexBufferDx9 >());
-	heap.collectAllOf(type_of< ProgramWin32 >());
-	heap.collectAllOf(type_of< SimpleTextureDx9 >());
-	heap.collectAllOf(type_of< CubeTextureDx9 >());
-	heap.collectAllOf(type_of< VolumeTextureDx9 >());
-	heap.collectAllOf(type_of< RenderTargetSetWin32 >());
-
 	// In case there are any unmanaged resources still lingering we tell them to get lost.
 	for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
 	{
