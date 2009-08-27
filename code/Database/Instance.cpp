@@ -104,11 +104,15 @@ bool Instance::commit(uint32_t flags)
 	if (m_providerBus)
 	{
 		Guid guid = getGuid();
-		m_providerBus->putEvent(PeCommited, guid);
-		if (m_removed)
-			m_providerBus->putEvent(PeRemoved, guid);
-		if (m_renamed)
-			m_providerBus->putEvent(PeRenamed, guid);
+		if (!m_removed && !m_renamed)
+			m_providerBus->putEvent(PeCommited, guid);
+		else
+		{
+			if (m_removed)
+				m_providerBus->putEvent(PeRemoved, guid);
+			if (m_renamed)
+				m_providerBus->putEvent(PeRenamed, guid);
+		}
 	}
 
 	if (m_removed)
