@@ -1559,7 +1559,10 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		if (settingsDialog.create(this, m_settings, m_shortcutCommands))
 		{
 			if (settingsDialog.showModal() == ui::DrOk)
+			{
+				saveSettings(L"Traktor.Editor");
 				updateShortcutTable();
+			}
 			settingsDialog.destroy();
 		}
 	}
