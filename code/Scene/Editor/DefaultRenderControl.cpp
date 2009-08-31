@@ -2,6 +2,7 @@
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/ReferencesRenderControl.h"
+#include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
@@ -159,7 +160,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 5:	// Left
 		{
 			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
 				m_renderControl = renderControl;
@@ -170,7 +171,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 6:	// Right
 		{
 			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
 				m_renderControl = renderControl;
@@ -184,6 +185,17 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 			if (renderControl->create(m_container, m_context))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES"));
+				m_renderControl = renderControl;
+			}
+		}
+		break;
+
+	case 8:	// Debug
+		{
+			Ref< DebugRenderControl > renderControl = gc_new< DebugRenderControl >();
+			if (renderControl->create(m_container, m_context))
+			{
+				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 				m_renderControl = renderControl;
 			}
 		}
@@ -213,7 +225,9 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(4), i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM")));
 		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(5), i18n::Text(L"SCENE_EDITOR_VIEW_LEFT")));
 		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(6), i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT")));
+		popupMenu->add(gc_new< ui::MenuItem >(L"-"));
 		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(7), i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES")));
+		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(8), i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG")));
 
 		Ref< ui::MenuItem > selectedItem = popupMenu->show(m_toolBar, ui::Point(0, 0));
 		if (selectedItem)

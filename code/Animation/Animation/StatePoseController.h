@@ -3,7 +3,7 @@
 
 #include <map>
 #include "Resource/Proxy.h"
-#include "Animation/PoseController.h"
+#include "Animation/IPoseController.h"
 #include "Animation/Animation/StateContext.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class StateContext;
 /*! \brief Animation pose evaluation controller.
  * \ingroup Animation
  */
-class T_DLLCLASS StatePoseController : public PoseController
+class T_DLLCLASS StatePoseController : public IPoseController
 {
 	T_RTTI_CLASS(StatePoseController)
 

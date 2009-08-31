@@ -29,10 +29,10 @@ T_FORCE_INLINE NxVec3 toNxVec3(const Vector4& v)
 T_FORCE_INLINE Matrix44 fromNxMat34(const NxMat34& m)
 {
 	return Matrix44(
-		m.M(0, 0), m.M(1, 0), m.M(2, 0), 0.0f,
-		m.M(0, 1), m.M(1, 1), m.M(2, 1), 0.0f,
-		m.M(0, 2), m.M(1, 2), m.M(2, 2), 0.0f,
-		m.t[0], m.t[1], m.t[2], 1.0f
+		m.M(0, 0), m.M(0, 1), m.M(0, 2), m.t[0],
+		m.M(1, 0), m.M(1, 1), m.M(1, 2), m.t[1],
+		m.M(2, 0), m.M(2, 1), m.M(2, 2), m.t[2],
+		0.0f, 0.0f, 0.0f, 1.0f
 	);
 }
 
@@ -40,10 +40,10 @@ T_FORCE_INLINE Matrix44 fromNxMat34(const NxMat34& m)
 T_FORCE_INLINE NxMat34 toNxMat34(const Matrix44& m)
 {
 	NxMat34 r;
-	r.M(0, 0) = m(0, 0); r.M(1, 0) = m(0, 1); r.M(2, 0) = m(0, 2);
-	r.M(0, 1) = m(1, 0); r.M(1, 1) = m(1, 1); r.M(2, 1) = m(1, 2);
-	r.M(0, 2) = m(2, 0); r.M(1, 2) = m(2, 1); r.M(2, 2) = m(2, 2);
-	r.t[0] = m(3, 0); r.t[1] = m(3, 1); r.t[2] = m(3, 2);
+	r.M(0, 0) = m(0, 0); r.M(1, 0) = m(1, 0); r.M(2, 0) = m(2, 0);
+	r.M(0, 1) = m(0, 1); r.M(1, 1) = m(1, 1); r.M(2, 1) = m(2, 1);
+	r.M(0, 2) = m(0, 2); r.M(1, 2) = m(1, 2); r.M(2, 2) = m(2, 2);
+	r.t[0] = m(0, 3); r.t[1] = m(1, 3); r.t[2] = m(2, 3);
 	return r;
 }
 

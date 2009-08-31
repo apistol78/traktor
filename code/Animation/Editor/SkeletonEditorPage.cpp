@@ -411,7 +411,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
 
-	Matrix44 viewTransform = rotateY(m_cameraHead) * translate(0.0f, m_cameraY, m_cameraZ);
+	Matrix44 viewTransform = translate(0.0f, m_cameraY, m_cameraZ) * rotateY(m_cameraHead);
 	Matrix44 projectionTransform = perspectiveLh(
 		80.0f * PI / 180.0f,
 		aspect,

@@ -35,8 +35,6 @@ public:
 
 	void rotate(float dy, float dx);
 
-	void setCurrentView(const Matrix44& transform);
-
 	void setTargetView(const Matrix44& transform);
 
 	void update(float deltaTime);

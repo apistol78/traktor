@@ -16,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPoseController", RagDollPoseController, PoseController)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RagDollPoseController", RagDollPoseController, IPoseController)
 
 RagDollPoseController::~RagDollPoseController()
 {
@@ -70,7 +70,7 @@ bool RagDollPoseController::create(
 		if (!limb)
 			return false;
 
-		limb->setTransform(translate(centerOfMass) * boneTransforms[i] * worldTransform);
+		limb->setTransform(worldTransform * boneTransforms[i] * translate(centerOfMass));
 		
 		// Set initial velocities.
 		if (!velocities.empty())
@@ -157,7 +157,7 @@ void RagDollPoseController::evaluate(
 
 		Vector4 centerOfMass = Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f);
 
-		outPoseTransforms[i] = translate(centerOfMass) * m_limbs[i]->getTransform() * worldTransformInv;
+		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * translate(centerOfMass);
 	}
 
 	outUpdateController = true;

@@ -48,6 +48,8 @@ public:
 
 	virtual bool serialize(Serializer& s);
 
+	inline resource::Proxy< Animation >& getAnimation() { return m_animation; }
+
 	inline const resource::Proxy< Animation >& getAnimation() const { return m_animation; }
 
 private:

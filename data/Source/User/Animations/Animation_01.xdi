@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.animation.Animation">
+	<poses>
+		<item>
+			<at>0</at>
+			<pose>
+				<bones/>
+			</pose>
+		</item>
+		<item>
+			<at>1.768</at>
+			<pose>
+				<bones>
+					<item>
+						<index>0</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>-0.636464, -0.158876, -0.0773538, 0.750792</orientation>
+					</item>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>-0.189989, 0.643961, -0.239396, 0.701361</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+		<item>
+			<at>3.736</at>
+			<pose>
+				<bones>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>0.00151358, 0.0029275, 0.000496891, 0.999994</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+		<item>
+			<at>5.936</at>
+			<pose>
+				<bones>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>-0.710089, 0.0147286, 0.0301665, 0.703312</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+		<item>
+			<at>6.944</at>
+			<pose>
+				<bones>
+					<item>
+						<index>0</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>0.365848, 0.0190168, -0.0260554, 0.930115</orientation>
+					</item>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>0.224573, 0.042382, 0.785456, 0.575178</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+		<item>
+			<at>7.904</at>
+			<pose>
+				<bones>
+					<item>
+						<index>0</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>0.59978, 0.0311766, -0.0427158, 0.798416</orientation>
+					</item>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>-0.0222311, -0.69, -0.0132874, 0.723346</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+		<item>
+			<at>10</at>
+			<pose>
+				<bones>
+					<item>
+						<index>1</index>
+						<offset>0, 0, 0, 0</offset>
+						<orientation>0.0397361, 0.076856, 0.0130449, 0.996165</orientation>
+					</item>
+				</bones>
+			</pose>
+		</item>
+	</poses>
+</object>

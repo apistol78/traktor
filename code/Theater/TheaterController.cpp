@@ -32,7 +32,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 
 		const TransformPath& path = (*i)->getPath();
 		TransformPath::Frame frame = path.evaluate(time);
-		Matrix44 transform = frame.orientation.toMatrix44() * translate(frame.position);
+		Matrix44 transform = translate(frame.position) * frame.orientation.toMatrix44();
 		entity->setTransform(transform);
 	}
 

@@ -2,7 +2,7 @@
 #define traktor_animation_RagDollPoseController_H
 
 #include "Core/Heap/Ref.h"
-#include "Animation/PoseController.h"
+#include "Animation/IPoseController.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class Joint;
 /*! \brief Rag doll pose evaluation controller.
  * \ingroup Animation
  */
-class T_DLLCLASS RagDollPoseController : public PoseController
+class T_DLLCLASS RagDollPoseController : public IPoseController
 {
 	T_RTTI_CLASS(RagDollPoseController)
 

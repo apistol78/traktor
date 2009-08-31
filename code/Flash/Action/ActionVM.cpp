@@ -436,14 +436,14 @@ void ActionVM::execute(ActionFrame* frame)
 			case 0:
 				{
 					Matrix33 transform = movieClip->getTransform();
-					transform.e31 = float(value.getNumberSafe() * 20.0f);
+					transform.e13 = float(value.getNumberSafe() * 20.0f);
 					movieClip->setTransform(transform);
 				}
 				break;
 			case 1:
 				{
 					Matrix33 transform = movieClip->getTransform();
-					transform.e32 = float(value.getNumberSafe() * 20.0f);
+					transform.e23 = float(value.getNumberSafe() * 20.0f);
 					movieClip->setTransform(transform);
 				}
 				break;

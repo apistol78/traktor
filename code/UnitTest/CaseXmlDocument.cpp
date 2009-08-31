@@ -32,7 +32,7 @@ void CaseXmlDocument::run()
 	MemoryStream stream((void*)c_validXml, sizeof(c_validXml), true, false);
 	if (!doc.loadFromStream(&stream))
 	{
-		failed("XML load from stream failed");
+		failed(L"XML load from stream failed");
 		return;
 	}
 

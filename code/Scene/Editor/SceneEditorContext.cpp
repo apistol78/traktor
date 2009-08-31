@@ -11,6 +11,7 @@
 #include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
+#include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -379,15 +380,25 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 		// Trace bounding box to see if ray intersect.
 		Scalar distance;
-		if (boundingBox.intersect(objectRayOrigin, objectRayOrigin + objectRayDirection * minDistance, distance))
+		if (boundingBox.intersect(objectRayOrigin, objectRayOrigin + objectRayDirection * (minDistance - Scalar(FUZZY_EPSILON)), distance))
 		{
-			T_ASSERT (distance < minDistance);
+			T_ASSERT (distance <= minDistance);
 			minEntityAdapter = *i;
 			minDistance = distance;
 		}
 	}
 
 	return minEntityAdapter;
+}
+
+void SceneEditorContext::setDebugTexture(render::ITexture* debugTexture)
+{
+	m_debugTexture = debugTexture;
+}
+
+render::ITexture* SceneEditorContext::getDebugTexture()
+{
+	return m_debugTexture;
 }
 
 void SceneEditorContext::raisePreModify()

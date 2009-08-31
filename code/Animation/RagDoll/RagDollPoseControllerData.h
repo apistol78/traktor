@@ -1,7 +1,7 @@
 #ifndef traktor_animation_RagDollPoseControllerData_H
 #define traktor_animation_RagDollPoseControllerData_H
 
-#include "Animation/PoseControllerData.h"
+#include "Animation/IPoseControllerData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,17 @@ namespace traktor
 /*! \brief Pose evaluation controller data.
  * \ingroup Animation
  */
-class T_DLLCLASS RagDollPoseControllerData : public PoseControllerData
+class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 {
 	T_RTTI_CLASS(RagDollPoseControllerData)
 
 public:
-	virtual PoseController* createInstance(physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Matrix44& worldTransform);
+	virtual IPoseController* createInstance(
+		resource::IResourceManager* resourceManager,
+		physics::PhysicsManager* physicsManager,
+		const Skeleton* skeleton,
+		const Matrix44& worldTransform
+	);
 
 	virtual bool serialize(Serializer& s);
 };

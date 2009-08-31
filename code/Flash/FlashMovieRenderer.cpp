@@ -63,7 +63,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				layer.instance->getTransform() * transform
+				transform * layer.instance->getTransform()
 			);
 			++i;
 		}
@@ -74,7 +74,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				layer.instance->getTransform() * transform
+				transform * layer.instance->getTransform()
 			);
 
 			m_displayRenderer->endMask();
@@ -88,7 +88,7 @@ void FlashMovieRenderer::renderSprite(
 				renderCharacter(
 					movie,
 					clippedLayer.instance,
-					clippedLayer.instance->getTransform() * transform
+					transform * clippedLayer.instance->getTransform()
 				);
 			}
 
@@ -97,7 +97,7 @@ void FlashMovieRenderer::renderSprite(
 			renderCharacter(
 				movie,
 				layer.instance,
-				layer.instance->getTransform() * transform
+				transform * layer.instance->getTransform()
 			);
 
 			m_displayRenderer->endMask();
@@ -171,7 +171,7 @@ void FlashMovieRenderer::renderCharacter(
 
 			m_displayRenderer->renderGlyph(
 				*movie,
-				scale(scaleOffset, scaleOffset) * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * text->getTextMatrix() * transform,
+				transform * text->getTextMatrix() * translate(i->offsetX - glyphReferenceX, i->offsetY - glyphReferenceY) * scale(scaleOffset, scaleOffset),
 				*shape,
 				i->color,
 				characterInstance->getColorTransform()
@@ -245,7 +245,7 @@ void FlashMovieRenderer::renderCharacter(
 
 				m_displayRenderer->renderGlyph(
 					*movie,
-					scale(fontScale * fontHeight, fontScale * fontHeight) * translate(offsetX, offsetY) * transform,
+					transform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
 					*glyphShape,
 					color,
 					characterInstance->getColorTransform()
@@ -289,7 +289,7 @@ void FlashMovieRenderer::renderCharacter(
 			renderCharacter(
 				movie,
 				referenceInstance,
-				j->placeMatrix * transform
+				transform * j->placeMatrix
 			);
 		}
 

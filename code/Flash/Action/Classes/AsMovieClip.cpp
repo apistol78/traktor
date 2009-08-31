@@ -667,7 +667,7 @@ void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	float x = transform.e11;
-	float y = transform.e12;
+	float y = transform.e21;
 	float a = atan2(y, x);
 	ca.ret = ActionValue(rad2deg(a));
 }
@@ -678,7 +678,7 @@ void AsMovieClip::MovieClip_set_rotation(CallArgs& ca)
 	Matrix33 transform = movieClipInstance->getTransform();
 	movieClipInstance->setTransform(
 		rotate(deg2rad(float(ca.args[0].getNumberSafe()))) *
-		translate(transform.e31, transform.e32)
+		translate(transform.e13, transform.e23)
 	);
 }
 
@@ -803,14 +803,14 @@ void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 void AsMovieClip::MovieClip_get_x(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e31 / 20.0);
+	ca.ret = ActionValue(movieClipInstance->getTransform().e13 / 20.0);
 }
 
 void AsMovieClip::MovieClip_set_x(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e31 = float(ca.args[0].getNumberSafe() * 20.0);
+	transform.e13 = float(ca.args[0].getNumberSafe() * 20.0);
 	movieClipInstance->setTransform(transform);
 }
 
@@ -841,14 +841,14 @@ void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
 void AsMovieClip::MovieClip_get_y(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e32 / 20.0);
+	ca.ret = ActionValue(movieClipInstance->getTransform().e23 / 20.0);
 }
 
 void AsMovieClip::MovieClip_set_y(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
-	transform.e32 = float(ca.args[0].getNumberSafe() * 20.0);
+	transform.e23 = float(ca.args[0].getNumberSafe() * 20.0);
 	movieClipInstance->setTransform(transform);
 }
 

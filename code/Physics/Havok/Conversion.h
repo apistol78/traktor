@@ -59,7 +59,9 @@ T_FORCE_INLINE Matrix44 fromHkTransform(const hkTransform& t)
 {
 	float T_ALIGN16 e[4 * 4];
 	t.get4x4ColumnMajor(e);
-	return Matrix44(e);
+	Matrix44 m;
+	m.load(e);
+	return m;
 }
 
 /*! \brief Convert to Havok transform. */

@@ -21,6 +21,13 @@ class SkinnedMesh;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -33,7 +40,7 @@ class PhysicsManager;
 
 class AnimatedMeshEntity;
 class Skeleton;
-class PoseControllerData;
+class IPoseControllerData;
 
 /*! \brief Animated mesh entity data.
  * \ingroup Animation
@@ -43,7 +50,7 @@ class T_DLLCLASS AnimatedMeshEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(AnimatedMeshEntityData)
 
 public:
-	AnimatedMeshEntity* createEntity(physics::PhysicsManager* physicsManager) const;
+	AnimatedMeshEntity* createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
 
 	virtual bool serialize(Serializer& s);
 
@@ -51,12 +58,12 @@ public:
 
 	inline const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
-	inline const Ref< PoseControllerData >& getPoseControllerData() const { return m_poseController; }
+	inline const Ref< IPoseControllerData >& getPoseControllerData() const { return m_poseController; }
 
 private:
-	resource::Proxy< mesh::SkinnedMesh > m_mesh;
-	resource::Proxy< Skeleton > m_skeleton;
-	Ref< PoseControllerData > m_poseController;
+	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
+	mutable resource::Proxy< Skeleton > m_skeleton;
+	Ref< IPoseControllerData > m_poseController;
 };
 
 	}

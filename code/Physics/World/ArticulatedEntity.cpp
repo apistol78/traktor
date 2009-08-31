@@ -47,12 +47,12 @@ void ArticulatedEntity::update(const world::EntityUpdate* update)
 
 void ArticulatedEntity::setTransform(const Matrix44& transform)
 {
-	Matrix44 deltaTransform = m_transform.inverseOrtho() * transform;
+	Matrix44 deltaTransform = transform * m_transform.inverseOrtho();
 	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		Matrix44 currentTransform;
 		if ((*i)->getTransform(currentTransform))
-			(*i)->setTransform(currentTransform * deltaTransform);
+			(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	m_transform = transform;
 }

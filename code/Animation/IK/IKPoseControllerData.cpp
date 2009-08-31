@@ -8,20 +8,30 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.IKPoseControllerData", IKPoseControllerData, PoseControllerData)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.IKPoseControllerData", IKPoseControllerData, IPoseControllerData)
 
 IKPoseControllerData::IKPoseControllerData()
 :	m_solverIterations(10)
 {
 }
 
-PoseController* IKPoseControllerData::createInstance(physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Matrix44& worldTransform)
+IPoseController* IKPoseControllerData::createInstance(
+	resource::IResourceManager* resourceManager,
+	physics::PhysicsManager* physicsManager,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform
+)
 {
-	Ref< PoseController > neutralPoseController;
+	Ref< IPoseController > neutralPoseController;
 
 	if (m_neutralPoseController)
 	{
-		neutralPoseController = m_neutralPoseController->createInstance(physicsManager, skeleton, worldTransform);
+		neutralPoseController = m_neutralPoseController->createInstance(
+			resourceManager,
+			physicsManager,
+			skeleton,
+			worldTransform
+		);
 		if (!neutralPoseController)
 			return 0;
 	}
@@ -32,7 +42,7 @@ PoseController* IKPoseControllerData::createInstance(physics::PhysicsManager* ph
 
 bool IKPoseControllerData::serialize(Serializer& s)
 {
-	s >> MemberRef< PoseControllerData >(L"neutralPoseController", m_neutralPoseController);
+	s >> MemberRef< IPoseControllerData >(L"neutralPoseController", m_neutralPoseController);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
 	return true;
 }

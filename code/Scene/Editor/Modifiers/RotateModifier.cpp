@@ -19,9 +19,16 @@ void getEulerAngles(
 	float& outBank
 )
 {
-	outHead = std::atan2(m(0, 2), m(2, 2));
-	outPitch = -std::asin(-m(1, 2));
-	outBank = -std::atan2(m(1, 0), m(1, 1));
+	Vector4 ax = m.axisX();
+	outHead = std::atan2(ax.z(), ax.x());
+
+	Vector4 az = m.axisZ();
+	Vector4 yz = rotateY(-outHead) * az;
+	outPitch = std::atan2(yz.y(), yz.z());
+
+	Vector4 ay = m.axisY();
+	Vector4 xy = rotateX(outPitch) * (rotateY(-outHead) * ay);
+	outBank = -std::atan2(xy.x(), xy.y());
 }
 		
 		}
@@ -48,14 +55,14 @@ void RotateModifier::draw(
 	float head, pitch, bank;
 	getEulerAngles(worldTransform, head, pitch, bank);
 
-	Matrix44 mh = rotateY(head) * translate(translation);
-	Matrix44 mp = rotateX(pitch) * rotateY(head) * translate(translation);
-	Matrix44 mb = rotateZ(bank) * rotateX(pitch) * rotateY(head) * translate(translation);
+	Matrix44 mh = rotateY(head);
+	Matrix44 mp = rotateZ(pitch);
+	Matrix44 mb = rotateZ(bank);
 
 	primitiveRenderer->pushDepthEnable(false);
 
 	// Head
-	primitiveRenderer->pushWorld(mh);
+	primitiveRenderer->pushWorld(mh * translate(translation));
 
 	for (int i = 0; i < 64; ++i)
 	{
@@ -67,7 +74,7 @@ void RotateModifier::draw(
 		primitiveRenderer->drawLine(
 			Vector4(c1, 0.0f, s1, 0.0f),
 			Vector4(c2, 0.0f, s2, 0.0f),
-			axisEnable & SceneEditorContext::AeX ? 4.0f : 0.0f,
+			axisEnable & SceneEditorContext::AeX ? 2.0f : 0.0f,
 			Color(255, 0, 0)
 		);
 	}
@@ -75,41 +82,14 @@ void RotateModifier::draw(
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, guideRadius, 1.0f),
-		axisEnable & SceneEditorContext::AeX ? 4.0f : 0.0f,
+		axisEnable & SceneEditorContext::AeX ? 2.0f : 0.0f,
 		Color(255, 0, 0)
 	);
 
 	primitiveRenderer->popWorld();
 
 	// Pitch
-	primitiveRenderer->pushWorld(mp);
-
-	for (int i = 0; i < 64; ++i)
-	{
-		float s1 = std::sin(2.0f * PI * i / 64.0f) * guideRadius;
-		float c1 = std::cos(2.0f * PI * i / 64.0f) * guideRadius;
-		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * guideRadius;
-		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * guideRadius;
-
-		primitiveRenderer->drawLine(
-			Vector4(0.0f, s1, c1, 0.0f),
-			Vector4(0.0f, s2, c2, 0.0f),
-			axisEnable & SceneEditorContext::AeY ? 4.0f : 0.0f,
-			Color(0, 255, 0)
-		);
-	}
-
-	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-		Vector4(0.0f, guideRadius, 0.0f, 1.0f),
-		axisEnable & SceneEditorContext::AeY ? 4.0f : 0.0f,
-		Color(0, 255, 0)
-	);
-
-	primitiveRenderer->popWorld();
-
-	// Bank
-	primitiveRenderer->pushWorld(mb);
+	primitiveRenderer->pushWorld(mp * rotateY(PI / 2.0f) * mh * translate(translation));
 
 	for (int i = 0; i < 64; ++i)
 	{
@@ -121,7 +101,34 @@ void RotateModifier::draw(
 		primitiveRenderer->drawLine(
 			Vector4(c1, s1, 0.0f, 0.0f),
 			Vector4(c2, s2, 0.0f, 0.0f),
-			axisEnable & SceneEditorContext::AeZ ? 4.0f : 0.0f,
+			axisEnable & SceneEditorContext::AeY ? 2.0f : 0.0f,
+			Color(0, 255, 0)
+		);
+	}
+
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(guideRadius, 0.0f, 0.0f, 1.0f),
+		axisEnable & SceneEditorContext::AeY ? 2.0f : 0.0f,
+		Color(0, 255, 0)
+	);
+
+	primitiveRenderer->popWorld();
+
+	// Bank
+	primitiveRenderer->pushWorld(mb * mh * translate(translation));
+
+	for (int i = 0; i < 64; ++i)
+	{
+		float s1 = std::sin(2.0f * PI * i / 64.0f) * guideRadius;
+		float c1 = std::cos(2.0f * PI * i / 64.0f) * guideRadius;
+		float s2 = std::sin(2.0f * PI * (i + 1) / 64.0f) * guideRadius;
+		float c2 = std::cos(2.0f * PI * (i + 1) / 64.0f) * guideRadius;
+
+		primitiveRenderer->drawLine(
+			Vector4(c1, s1, 0.0f, 0.0f),
+			Vector4(c2, s2, 0.0f, 0.0f),
+			axisEnable & SceneEditorContext::AeZ ? 2.0f : 0.0f,
 			Color(0, 0, 255)
 		);
 	}
@@ -129,7 +136,7 @@ void RotateModifier::draw(
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(guideRadius, 0.0f, 0.0f, 1.0f),
-		axisEnable & SceneEditorContext::AeZ ? 4.0f : 0.0f,
+		axisEnable & SceneEditorContext::AeZ ? 2.0f : 0.0f,
 		Color(0, 0, 255)
 	);
 
@@ -151,28 +158,21 @@ void RotateModifier::adjust(
 	const float c_constantDeltaScale = 0.02f;
 	uint32_t axisEnable = context->getAxisEnable();
 
-	float head, pitch, bank;
-	getEulerAngles(outTransform, head, pitch, bank);
+	Matrix44 R = outTransform;
+	//R(3) = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
 
-	Matrix44 mp = rotateY(head);
-	Matrix44 mb = rotateX(pitch) * rotateY(head);
+	Matrix44 mdh = (button == 0) ? rotateY(screenDelta.x() * c_constantDeltaScale) : Matrix44::identity();
+	Matrix44 mdp = (button == 0) ? rotateX(screenDelta.y() * c_constantDeltaScale) : Matrix44::identity();
+	Matrix44 mdb = (button != 0) ? rotateZ(screenDelta.x() * c_constantDeltaScale) : Matrix44::identity();
 
-	Quaternion delta = Quaternion::identity();
+	Matrix44 T = R * mdh * (R.inverse() * mdb * R) * (R.inverse() * mdp * R);
 
-	if (button == 0)
-	{
-		if (axisEnable & SceneEditorContext::AeX)
-			delta *= Quaternion(Vector4(0.0f, screenDelta.x() * c_constantDeltaScale, 0.0f, 0.0f));
-		if (axisEnable & SceneEditorContext::AeY)
-			delta *= Quaternion(mp * Vector4(screenDelta.y() * c_constantDeltaScale, 0.0f, 0.0f, 0.0f));
-	}
-	else
-	{
-		if (axisEnable & SceneEditorContext::AeZ)
-			delta *= Quaternion(mb * Vector4(0.0f, 0.0f, screenDelta.x() * c_constantDeltaScale, 0.0f));
-	}
-
-	outTransform = delta.normalized().toMatrix44() * outTransform;
+	outTransform = Matrix44(
+		T.axisX().normalized(),
+		T.axisY().normalized(),
+		T.axisZ().normalized(),
+		outTransform.translation()
+	);
 }
 
 	}

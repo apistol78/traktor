@@ -91,7 +91,7 @@ void RigidEntityEditor::drawGuide(
 	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getEntityData());
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
 
-	if (context->getGuideEnable())
+	if (context->getGuideEnable() || entityAdapter->isSelected())
 	{
 		primitiveRenderer->pushWorld(entityAdapter->getTransform());
 

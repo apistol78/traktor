@@ -11,9 +11,9 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IKPoseController", IKPoseController, PoseController)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IKPoseController", IKPoseController, IPoseController)
 
-IKPoseController::IKPoseController(physics::PhysicsManager* physicsManager, PoseController* poseController, uint32_t solverIterations)
+IKPoseController::IKPoseController(physics::PhysicsManager* physicsManager, IPoseController* poseController, uint32_t solverIterations)
 :	m_physicsManager(physicsManager)
 ,	m_poseController(poseController)
 ,	m_solverIterations(solverIterations)

@@ -12,7 +12,7 @@ namespace traktor
 	/*! \brief Format helper of Vector2 instances.
 	 * \ingroup Core
 	 */
-	OutputStream& operator << (OutputStream& os, const Vector2& v)
+	inline OutputStream& operator << (OutputStream& os, const Vector2& v)
 	{
 		os << L"{ " << v.x << L", " << v.y << L" }";
 		return os;
@@ -21,7 +21,7 @@ namespace traktor
 	/*! \brief Format helper of Vector4 instances.
 	 * \ingroup Core
 	 */
-	OutputStream& operator << (OutputStream& os, const Vector4& v)
+	inline OutputStream& operator << (OutputStream& os, const Vector4& v)
 	{
 		os << L"{ " << v.x() << L", " << v.y() << L", " << v.z() << L", " << v.w() << L" }";
 		return os;
@@ -30,7 +30,7 @@ namespace traktor
 	/*! \brief Format helper of Quaternion instances.
 	 * \ingroup Core
 	 */
-	OutputStream& operator << (OutputStream& os, const Quaternion& q)
+	inline OutputStream& operator << (OutputStream& os, const Quaternion& q)
 	{
 		os << L"{ " << q.x << L", " << q.y << L", " << q.z << L", " << q.w << L" }";
 		return os;

@@ -45,7 +45,7 @@ void AnimationEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< AnimatedMeshEntityFactory >(context->getPhysicsManager()));
+	outEntityFactories.push_back(gc_new< AnimatedMeshEntityFactory >(context->getResourceManager(), context->getPhysicsManager()));
 	outEntityFactories.push_back(gc_new< PathEntityFactory >());
 }
 

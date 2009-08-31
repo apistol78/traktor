@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.scene.SceneAsset" version="1">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings">
+		<viewNearZ>0.1</viewNearZ>
+		<viewFarZ>40</viewFarZ>
+		<depthPassEnabled>false</depthPassEnabled>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowCascadingSlices>1</shadowCascadingSlices>
+		<shadowCascadingLambda>0.75</shadowCascadingLambda>
+		<shadowFarZ>20</shadowFarZ>
+		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowMapBias>2</shadowMapBias>
+	</worldRenderSettings>
+	<instance type="traktor.world.EntityInstance">
+		<name>Root</name>
+		<entityData type="traktor.world.GroupEntityData">
+			<instances>
+				<item type="traktor.world.EntityInstance">
+					<name>Light</name>
+					<entityData type="traktor.world.DirectionalLightEntityData">
+						<transform>
+							0, 0, -1, 0, 
+							0, 1, 0, 0, 
+							1, 0, 0, 0, 
+							-2.8169, 2.45067, -2.3101, 1
+						</transform>
+						<sunColor>1, 1, 1, 0</sunColor>
+						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+						<shadowColor>0, 0, 0, 0</shadowColor>
+					</entityData>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance">
+					<name>Dynamic Mesh</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							0.928664, 0.262179, 0.262384, 0, 
+							-0.00199957, 0.710911, -0.70328, 0, 
+							-0.370916, 0.652587, 0.660721, 0, 
+							-4.31795, 7.74758, 4.07646, 1
+						</transform>
+						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0, 0, 0, 1
+								</localTransform>
+								<extent>0.5, 0.5, 0.5, 0</extent>
+							</shape>
+							<mass>1</mass>
+							<autoDeactivate>true</autoDeactivate>
+							<initiallyActive>true</initiallyActive>
+							<initiallyEnabled>true</initiallyEnabled>
+							<linearDamping>0</linearDamping>
+							<angularDamping>0</angularDamping>
+							<friction>0.75</friction>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									-3.28368, 7.4771, 1.37278, 1
+								</transform>
+								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+							</entityData>
+							<references/>
+						</instance>
+					</entityData>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance">
+					<name>Static plane</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							0.764842, 0.190379, 0.615445, 0, 
+							-1.2666e-007, 0.955337, -0.29552, 0, 
+							-0.644217, 0.226026, 0.730682, 0, 
+							0, 0, 0, 1
+						</transform>
+						<bodyDesc type="traktor.physics.StaticBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0, 0, 0, 1
+								</localTransform>
+								<extent>10, 0.5, 10, 0</extent>
+							</shape>
+							<initiallyEnabled>true</initiallyEnabled>
+							<friction>0.2</friction>
+							<kinematic>false</kinematic>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0, 0, 0, 1
+								</transform>
+								<mesh>{7519242E-4DF5-C047-9528-C97E6B6C8884}</mesh>
+							</entityData>
+							<references/>
+						</instance>
+					</entityData>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance">
+					<name>Dynamic Mesh</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							0.836467, -0.243894, 0.490753, 0, 
+							0.000799843, 0.896049, 0.443955, 0, 
+							-0.548017, -0.37096, 0.749711, 0, 
+							0.679146, 6.66567, -1.31445, 1
+						</transform>
+						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0, 0, 0, 1
+								</localTransform>
+								<extent>0.5, 0.5, 0.5, 0</extent>
+							</shape>
+							<mass>1</mass>
+							<autoDeactivate>true</autoDeactivate>
+							<initiallyActive>true</initiallyActive>
+							<initiallyEnabled>true</initiallyEnabled>
+							<linearDamping>0</linearDamping>
+							<angularDamping>0</angularDamping>
+							<friction>0.75</friction>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0.13682, 7.4771, 0.131701, 1
+								</transform>
+								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+							</entityData>
+							<references/>
+						</instance>
+					</entityData>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance">
+					<name>Dynamic Mesh</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							0.913089, -0.188295, 0.361681, 0, 
+							2.00234e-007, 0.886995, 0.461779, 0, 
+							-0.40776, -0.421645, 0.809905, 0, 
+							4.02041, 7.96396, 4.91029, 1
+						</transform>
+						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0, 0, 0, 1
+								</localTransform>
+								<extent>0.5, 0.5, 0.5, 0</extent>
+							</shape>
+							<mass>1</mass>
+							<autoDeactivate>true</autoDeactivate>
+							<initiallyActive>true</initiallyActive>
+							<initiallyEnabled>true</initiallyEnabled>
+							<linearDamping>0</linearDamping>
+							<angularDamping>0</angularDamping>
+							<friction>0.75</friction>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									1, 0, 0, 0, 
+									0, 1, 0, 0, 
+									0, 0, 1, 0, 
+									0.13682, 7.4771, 0.131701, 1
+								</transform>
+								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+							</entityData>
+							<references/>
+						</instance>
+					</entityData>
+					<references/>
+				</item>
+			</instances>
+		</entityData>
+		<references/>
+	</instance>
+	<controllerData/>
+</object>

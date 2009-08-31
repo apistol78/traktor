@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -32,13 +39,14 @@ class T_DLLCLASS AnimatedMeshEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS(AnimatedMeshEntityFactory)
 
 public:
-	AnimatedMeshEntityFactory(physics::PhysicsManager* physicsManager);
+	AnimatedMeshEntityFactory(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager);
 
 	virtual const TypeSet getEntityTypes() const;
 
 	virtual world::Entity* createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData) const;
 
 private:
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< physics::PhysicsManager > m_physicsManager;
 };
 
