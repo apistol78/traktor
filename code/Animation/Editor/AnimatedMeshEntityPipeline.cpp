@@ -1,6 +1,6 @@
 #include "Animation/Editor/AnimatedMeshEntityPipeline.h"
 #include "Animation/AnimatedMeshEntityData.h"
-#include "Animation/PoseControllerData.h"
+#include "Animation/IPoseControllerData.h"
 #include "Editor/PipelineManager.h"
 
 namespace traktor

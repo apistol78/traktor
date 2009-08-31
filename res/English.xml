@@ -998,6 +998,10 @@
       <second>References</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_VIEW_DEBUG</first>
+      <second>Debug</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SINGLE_VIEW</first>
       <second>Single view</second>
     </item>

@@ -107,12 +107,12 @@ void SpatialGroupEntity::update(const EntityUpdate* update)
 
 void SpatialGroupEntity::setTransform(const Matrix44& transform)
 {
-	Matrix44 deltaTransform = m_transform.inverseOrtho() * transform;
+	Matrix44 deltaTransform = transform * m_transform.inverseOrtho();
 	for (RefArray< SpatialEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		Matrix44 currentTransform;
 		if ((*i)->getTransform(currentTransform))
-			(*i)->setTransform(currentTransform * deltaTransform);
+			(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	m_transform = transform;
 }

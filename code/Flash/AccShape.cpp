@@ -154,7 +154,7 @@ bool AccShape::create(
 				{
 					// Create gradient texture.
 					texture = textureCache.getGradientTexture(style);
-					textureMatrix = style.getGradientMatrix().inverse() * scale(1.0f / 32768.0f, 1.0f / 32768.0f) * translate(0.5f, 0.5f);
+					textureMatrix = translate(0.5f, 0.5f) * scale(1.0f / 32768.0f, 1.0f / 32768.0f) * style.getGradientMatrix().inverse();
 				}
 				else if (colorRecords.size() == 1)
 				{
@@ -170,7 +170,7 @@ bool AccShape::create(
 				{
 					T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");
 					texture = textureCache.getBitmapTexture(*bitmap);
-					textureMatrix = style.getFillBitmapMatrix().inverse() * scale(1.0f / texture->getWidth(), 1.0f / texture->getHeight());
+					textureMatrix = scale(1.0f / texture->getWidth(), 1.0f / texture->getHeight()) * style.getFillBitmapMatrix().inverse();
 				}
 			}
 

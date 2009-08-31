@@ -22,7 +22,7 @@
 							-0.899534, 0.152429, 0.40943, 0, 
 							-0.141117, 0.785562, -0.602495, 0, 
 							-0.413463, -0.599728, -0.685123, 0, 
-							0.00292408, 2.16524, -2.08202, 1
+							0.297718, 2.08424, -2.3101, 1
 						</transform>
 						<sunColor>1, 1, 1, 0</sunColor>
 						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
@@ -35,9 +35,9 @@
 					<entityData type="traktor.mesh.StaticMeshEntityData">
 						<transform>
 							1, 0, 0, 0, 
-							0, 1, 0, 0,
-							0, 0, 1, 0,
-							0, 0, 0, 1
+							0, 1, 0, 0, 
+							0, 0, 1, 0, 
+							-0.362085, 0.0945361, 0.456622, 1
 						</transform>
 						<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 					</entityData>
@@ -47,5 +47,5 @@
 		</entityData>
 		<references/>
 	</instance>
-  <controllerData/>
+	<controllerData/>
 </object>

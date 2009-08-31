@@ -156,6 +156,41 @@ T_MATH_INLINE void Vector4::store(float* out) const
 	out[3] = _w;
 }
 
+T_MATH_INLINE Scalar Vector4::get(int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return _x;
+	case 1:
+		return _y;
+	case 2:
+		return _z;
+	case 3:
+		return _w;
+	}
+	return Scalar();
+}
+
+T_MATH_INLINE void Vector4::set(int index, const Scalar& value)
+{
+	switch (index)
+	{
+	case 0:
+		_x = value.m_data;
+		break;
+	case 1:
+		_y = value.m_data;
+		break;
+	case 2:
+		_z = value.m_data;
+		break;
+	case 3:
+		_w = value.m_data;
+		break;
+	}
+}
+
 T_MATH_INLINE Vector4& Vector4::operator = (const Vector4& v)
 {
 	_x = v._x;

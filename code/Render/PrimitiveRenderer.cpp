@@ -23,11 +23,14 @@ enum ShaderId
 {
 	SiWire,
 	SiSolid,
+	SiTexture,
 	SiWireDepth,
-	SiSolidDepth
+	SiSolidDepth,
+	SiTextureDepth
 };
 
-static render::handle_t s_handles[4];
+static render::handle_t s_handles[6];
+static render::handle_t s_textureHandle;
 
 		}
 
@@ -37,11 +40,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PrimitiveRenderer", PrimitiveRenderer, O
 struct Vertex
 {
 	float pos[4];
+	float texCoord[2];
 	uint32_t rgb;
 	
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color& rgb_)
 	{
 		pos_.store(pos);
+		rgb = rgb_;
+
+#if defined(T_BIG_ENDIAN)
+		swap8in32(rgb);
+#endif
+	}
+
+	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color& rgb_)
+	{
+		pos_.store(pos);
+		texCoord[0] = texCoord_.x;
+		texCoord[1] = texCoord_.y;
 		rgb = rgb_;
 
 #if defined(T_BIG_ENDIAN)
@@ -61,8 +77,11 @@ PrimitiveRenderer::PrimitiveRenderer()
 {
 	s_handles[0] = render::getParameterHandle(L"Wire");
 	s_handles[1] = render::getParameterHandle(L"Solid");
-	s_handles[2] = render::getParameterHandle(L"WireDepth");
-	s_handles[3] = render::getParameterHandle(L"SolidDepth");
+	s_handles[2] = render::getParameterHandle(L"Texture");
+	s_handles[3] = render::getParameterHandle(L"WireDepth");
+	s_handles[4] = render::getParameterHandle(L"SolidDepth");
+	s_handles[5] = render::getParameterHandle(L"TextureDepth");
+	s_textureHandle = render::getParameterHandle(L"Texture");
 }
 
 bool PrimitiveRenderer::create(
@@ -89,6 +108,12 @@ bool PrimitiveRenderer::create(
 		DuPosition,
 		DtFloat4,
 		offsetof(Vertex, pos),
+		0
+	));
+	vertexElements.push_back(VertexElement(
+		DuCustom,
+		DtFloat2,
+		offsetof(Vertex, texCoord),
 		0
 	));
 	vertexElements.push_back(VertexElement(
@@ -661,6 +686,63 @@ void PrimitiveRenderer::drawSolidQuad(
 	drawSolidTriangle(vert1, color1, vert3, color3, vert4, color4);
 }
 
+void PrimitiveRenderer::drawTextureTriangle(
+	const Vector4& vert1,
+	const Vector2& texCoord1,
+	const Vector4& vert2,
+	const Vector2& texCoord2,
+	const Vector4& vert3,
+	const Vector2& texCoord3,
+	const Color& color,
+	ITexture* texture
+)
+{
+	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
+		return;
+
+	Vector4 v1 = m_worldViewProj * Vector4(vert1.x(), vert1.y(), vert1.z(), 1.0f);
+	Vector4 v2 = m_worldViewProj * Vector4(vert2.x(), vert2.y(), vert2.z(), 1.0f);
+	Vector4 v3 = m_worldViewProj * Vector4(vert3.x(), vert3.y(), vert3.z(), 1.0f);
+
+	uint8_t shaderId = m_depthEnable.back() ? SiTextureDepth : SiTexture;
+	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	{
+		Batch batch;
+		batch.shaderId = shaderId;
+		batch.texture = texture;
+		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
+		m_batches.push_back(batch);
+	}
+
+	m_vertex->set(v1, texCoord1, color);
+	m_vertex++;
+
+	m_vertex->set(v2, texCoord2, color);
+	m_vertex++;
+
+	m_vertex->set(v3, texCoord3, color);
+	m_vertex++;
+
+	m_batches.back().primitives.count++;
+}
+
+void PrimitiveRenderer::drawTextureQuad(
+	const Vector4& vert1,
+	const Vector2& texCoord1,
+	const Vector4& vert2,
+	const Vector2& texCoord2,
+	const Vector4& vert3,
+	const Vector2& texCoord3,
+	const Vector4& vert4,
+	const Vector2& texCoord4,
+	const Color& color,
+	ITexture* texture
+)
+{
+	drawTextureTriangle(vert1, texCoord1, vert2, texCoord2, vert3, texCoord3, color, texture);
+	drawTextureTriangle(vert1, texCoord1, vert3, texCoord3, vert4, texCoord4, color, texture);
+}
+
 void PrimitiveRenderer::drawProtractor(
 	const Vector4& position,
 	const Vector4& base,
@@ -845,6 +927,8 @@ void PrimitiveRenderer::end(IRenderView* renderView)
 		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{
 			m_shader->setTechnique(s_handles[i->shaderId]);
+			if (i->texture)
+				m_shader->setSamplerTexture(s_textureHandle, i->texture);
 			m_shader->draw(renderView, i->primitives);
 		}
 	}
@@ -863,8 +947,8 @@ void PrimitiveRenderer::end(IRenderView* renderView)
 
 void PrimitiveRenderer::updateTransforms()
 {
-	m_worldView = m_world.back() * m_view.back();
-	m_worldViewProj = m_worldView * m_projection.back();
+	m_worldView = m_view.back() * m_world.back();
+	m_worldViewProj = m_projection.back() * m_worldView;
 }
 
 	}

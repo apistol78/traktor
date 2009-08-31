@@ -90,9 +90,9 @@ void PathEntity::update(const world::EntityUpdate* update)
 	}
 
 	TransformPath::Frame frame = m_path.evaluate(m_time);
-	Matrix44 transform = frame.orientation.toMatrix44() * translate(frame.position);
+	Matrix44 transform = translate(frame.position) * frame.orientation.toMatrix44();
 
-	m_entity->setTransform(transform * m_transform);
+	m_entity->setTransform(m_transform * transform);
 	m_entity->update(update);
 }
 

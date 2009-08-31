@@ -1018,6 +1018,10 @@
       <second>Referenser</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_VIEW_DEBUG</first>
+      <second>Debug</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SINGLE_VIEW</first>
       <second>Enkel vy</second>
     </item>

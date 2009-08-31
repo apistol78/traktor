@@ -15,7 +15,7 @@ const Scalar c_minLookAtDistance(0.1f);
 inline void decompose(const Matrix44& transform, Vector4& outPosition, Quaternion& outOrientation)
 {
 	outPosition = transform.translation();
-	outOrientation = Quaternion(transform);
+	outOrientation = Quaternion(transform).inverse();
 }
 
 		}
@@ -23,7 +23,7 @@ inline void decompose(const Matrix44& transform, Vector4& outPosition, Quaternio
 Camera::Camera(const Matrix44& transform)
 :	m_lookMode(LmFree)
 {
-	decompose(transform, m_target.position, m_target.orientation);
+	decompose(transform.inverse(), m_target.position, m_target.orientation);
 	m_current = m_target;
 }
 
@@ -45,7 +45,7 @@ void Camera::move(const Vector4& direction)
 	switch (m_lookMode)
 	{
 	case LmFree:
-		m_target.position += m_target.orientation.toMatrix44().inverseOrtho() * direction;
+		m_target.position += m_target.orientation.inverse() * direction;
 		break;
 
 	case LmLookAt:
@@ -54,7 +54,7 @@ void Camera::move(const Vector4& direction)
 			if (m_lookAtDistance < c_minLookAtDistance)
 				m_lookAtDistance = c_minLookAtDistance;
 
-			m_target.position += m_target.orientation.toMatrix44().inverseOrtho() * direction;
+			m_target.position += m_target.orientation.inverse() * direction;
 			m_target.position = m_lookAtPosition + (m_target.position - m_lookAtPosition).normalized() * m_lookAtDistance;
 			m_target.orientation = Quaternion(lookAt(m_target.position, m_lookAtPosition).inverseOrtho());
 		}
@@ -80,16 +80,10 @@ void Camera::rotate(float dy, float dx)
 	m_current = m_target;
 }
 
-void Camera::setCurrentView(const Matrix44& transform)
-{
-	enterFreeLook();
-	decompose(transform, m_current.position, m_current.orientation);
-}
-
 void Camera::setTargetView(const Matrix44& transform)
 {
 	enterFreeLook();
-	decompose(transform, m_target.position, m_target.orientation);
+	decompose(transform.inverse(), m_target.position, m_target.orientation);
 }
 
 void Camera::update(float deltaTime)
@@ -104,12 +98,12 @@ void Camera::update(float deltaTime)
 
 Matrix44 Camera::getCurrentView() const
 {
-	return translate(-m_current.position) * m_current.orientation.toMatrix44();
+	return m_current.orientation.toMatrix44() * translate(-m_current.position);
 }
 
 Matrix44 Camera::getTargetView() const
 {
-	return translate(-m_target.position) * m_target.orientation.toMatrix44();
+	return m_target.orientation.toMatrix44() * translate(-m_target.position);
 }
 
 	}

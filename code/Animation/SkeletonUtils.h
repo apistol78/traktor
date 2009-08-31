@@ -35,6 +35,12 @@ void T_DLLCLASS calculateBoneTransforms(
 	AlignedVector< Matrix44 >& outBoneTransforms
 );
 
+void T_DLLCLASS calculatePoseLocalTransforms(
+	const Skeleton* skeleton,
+	const Pose* pose,
+	AlignedVector< Matrix44 >& outBoneLocalTransforms
+);
+
 void T_DLLCLASS calculatePoseTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,

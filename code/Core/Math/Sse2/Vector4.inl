@@ -111,6 +111,41 @@ T_MATH_INLINE void Vector4::store(float* out) const
 	_mm_storeu_ps(out, m_data);
 }
 
+T_MATH_INLINE Scalar Vector4::get(int index) const
+{
+	switch (index)
+	{
+	case 0:
+		return x();
+	case 1:
+		return y();
+	case 2:
+		return z();
+	case 3:
+		return w();
+	}
+	return Scalar();
+}
+
+T_MATH_INLINE void Vector4::set(int index, const Scalar& value)
+{
+	switch (index)
+	{
+	case 0:
+		*this = *this * Vector4(0.0f, 1.0f, 1.0f, 1.0f) + Vector4(value, 0.0f, 0.0f, 0.0f);
+		break;
+	case 1:
+		*this = *this * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(0.0f, value, 0.0f, 0.0f);
+		break;
+	case 2:
+		*this = *this * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, value, 0.0f);
+		break;
+	case 3:
+		*this = *this * Vector4(1.0f, 1.0f, 1.0f, 0.0f) + Vector4(0.0f, 0.0f, 0.0f, value);
+		break;
+	}
+}
+
 T_MATH_INLINE Vector4& Vector4::operator = (const Vector4& v)
 {
 	m_data = v.m_data;
@@ -202,18 +237,7 @@ T_MATH_INLINE bool Vector4::operator != (const Vector4& v) const
 
 T_MATH_INLINE Scalar Vector4::operator [] (int index) const
 {
-	switch (index)
-	{
-	case 0:
-		return x();
-	case 1:
-		return y();
-	case 2:
-		return z();
-	case 3:
-		return w();
-	}
-	return Scalar();
+	return get(index);
 }
 
 T_MATH_INLINE Vector4 operator + (const Vector4& l, const Scalar& r)

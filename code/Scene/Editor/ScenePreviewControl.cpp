@@ -206,9 +206,15 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.Rewind")
 		m_context->setTime(0.0f);
 	else if (command == L"Scene.Editor.Play")
+	{
 		m_context->setPlaying(true);
+		m_context->setPhysicsEnable(true);
+	}
 	else if (command == L"Scene.Editor.Stop")
+	{
 		m_context->setPlaying(false);
+		m_context->setPhysicsEnable(false);
+	}
 	else if (command == L"Scene.Editor.SingleView")
 	{
 		m_splitType = StSingle;

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.flash.FlashMovieAsset">
+	<fileName>$(TRAKTOR_HOME)/data/Assets/User/Flash/Flash-01.swf</fileName>
+</object>

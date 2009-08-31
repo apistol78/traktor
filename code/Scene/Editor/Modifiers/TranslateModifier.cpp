@@ -20,7 +20,7 @@ void TranslateModifier::draw(
 	const Scalar c_guideScale(0.1f);
 	const Scalar c_guideMinLength(1.0f);
 
-	Scalar cameraDistance = (viewTransform * worldTransform).translation().length();
+	Scalar cameraDistance = (worldTransform * viewTransform).translation().length();
 	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
 	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
 
@@ -84,7 +84,7 @@ void TranslateModifier::adjust(
 	Matrix44& outTransform
 )
 {
-	outTransform = outTransform * translate(worldDelta);
+	outTransform = translate(worldDelta) * outTransform;
 }
 
 	}

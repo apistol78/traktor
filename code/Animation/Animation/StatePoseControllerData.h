@@ -2,7 +2,7 @@
 #define traktor_animation_StatePoseControllerData_H
 
 #include "Resource/Proxy.h"
-#include "Animation/PoseControllerData.h"
+#include "Animation/IPoseControllerData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,12 +22,17 @@ class StateGraph;
 /*! \brief Animation evaluation controller data.
  * \ingroup Animation
  */
-class T_DLLCLASS StatePoseControllerData : public PoseControllerData
+class T_DLLCLASS StatePoseControllerData : public IPoseControllerData
 {
 	T_RTTI_CLASS(StatePoseControllerData)
 
 public:
-	virtual PoseController* createInstance(physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Matrix44& worldTransform);
+	virtual IPoseController* createInstance(
+		resource::IResourceManager* resourceManager,
+		physics::PhysicsManager* physicsManager,
+		const Skeleton* skeleton,
+		const Matrix44& worldTransform
+	);
 
 	virtual bool serialize(Serializer& s);
 

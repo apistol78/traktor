@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.SpatialGroupEntityData">
+	<transform>
+		1, 0, 0, 0, 
+		0, 1, 0, 0, 
+		0, 0, 1, 0, 
+		-0.014245, 0, 0, 1
+	</transform>
+	<instances>
+		<item type="traktor.world.EntityInstance">
+			<name>Unnamed</name>
+			<entityData type="traktor.mesh.StaticMeshEntityData">
+				<transform>
+					1, 0, 0, 0, 
+					0, 1, 0, 0, 
+					0, 0, 1, 0, 
+					0.170934, -0.17094, -0.02849, 1
+				</transform>
+				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+			</entityData>
+			<references/>
+		</item>
+		<item type="traktor.world.EntityInstance">
+			<name>Unnamed</name>
+			<entityData type="traktor.mesh.StaticMeshEntityData">
+				<transform>
+					1, 0, 0, 0, 
+					0, 1, 0, 0, 
+					0, 0, 1, 0, 
+					-1.07236, 1.19658, 0.014245, 1
+				</transform>
+				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
+			</entityData>
+			<references/>
+		</item>
+	</instances>
+</object>

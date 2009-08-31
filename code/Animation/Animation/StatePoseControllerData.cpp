@@ -1,18 +1,36 @@
 #include "Animation/Animation/StatePoseControllerData.h"
 #include "Animation/Animation/StatePoseController.h"
 #include "Animation/Animation/StateGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Animation/Animation/State.h"
+#include "Animation/Animation/Animation.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Core/Serialization/Serializer.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.StatePoseControllerData", StatePoseControllerData, PoseControllerData)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.StatePoseControllerData", StatePoseControllerData, IPoseControllerData)
 
-PoseController* StatePoseControllerData::createInstance(physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Matrix44& worldTransform)
+IPoseController* StatePoseControllerData::createInstance(
+	resource::IResourceManager* resourceManager,
+	physics::PhysicsManager* physicsManager,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform
+)
 {
+	if (!resourceManager->bind(m_stateGraph))
+		return 0;
+
+	const RefArray< State >& states = m_stateGraph->getStates();
+	for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
+	{
+		if (!resourceManager->bind((*i)->getAnimation()))
+			return 0;
+	}
+
 	return gc_new< StatePoseController >(cref(m_stateGraph));
 }
 

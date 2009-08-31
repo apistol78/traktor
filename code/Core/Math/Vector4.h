@@ -76,6 +76,10 @@ public:
 
 	T_MATH_INLINE void store(float* out) const;
 
+	T_MATH_INLINE Scalar get(int index) const;
+
+	T_MATH_INLINE void set(int index, const Scalar& value);
+
 	T_MATH_INLINE Vector4& operator = (const Vector4& v);
 
 	T_MATH_INLINE Vector4 operator - () const;

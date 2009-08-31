@@ -37,9 +37,9 @@ inline btVector3 toBtVector3(const Vector4& v)
 inline Matrix33 fromBtMatrix(const btMatrix3x3& matrix)
 {
 	return Matrix33(
-		matrix.getRow(0).x(), matrix.getRow(1).x(), matrix.getRow(2).x(),
-		matrix.getRow(0).y(), matrix.getRow(1).y(), matrix.getRow(2).y(),
-		matrix.getRow(0).z(), matrix.getRow(1).z(), matrix.getRow(2).z()
+		matrix.getRow(0).x(), matrix.getRow(0).y(), matrix.getRow(0).z(),
+		matrix.getRow(1).x(), matrix.getRow(1).y(), matrix.getRow(1).z(),
+		matrix.getRow(2).x(), matrix.getRow(2).y(), matrix.getRow(2).z()
 	);
 }
 
@@ -50,10 +50,10 @@ inline Matrix44 fromBtTransform(const btTransform& transform)
 	const btVector3& origin = transform.getOrigin();
 
 	return Matrix44(
-		basis.getRow(0).x(), basis.getRow(1).x(), basis.getRow(2).x(), 0.0f,
-		basis.getRow(0).y(), basis.getRow(1).y(), basis.getRow(2).y(), 0.0f,
-		basis.getRow(0).z(), basis.getRow(1).z(), basis.getRow(2).z(), 0.0f,
-		origin.x(), origin.y(), origin.z(), 1.0f
+		basis.getRow(0).x(), basis.getRow(0).y(), basis.getRow(0).z(), origin.x(),
+		basis.getRow(1).x(), basis.getRow(1).y(), basis.getRow(1).z(), origin.y(),
+		basis.getRow(2).x(), basis.getRow(2).y(), basis.getRow(2).z(), origin.z(),
+		0.0f, 0.0f, 0.0f, 1.0f
 	);
 }
 
@@ -61,9 +61,9 @@ inline Matrix44 fromBtTransform(const btTransform& transform)
 inline btTransform toBtTransform(const Matrix44& transform)
 {
 	btMatrix3x3 basis(
-		transform.axisX().x(), transform.axisY().x(), transform.axisZ().x(),
-		transform.axisX().y(), transform.axisY().y(), transform.axisZ().y(),
-		transform.axisX().z(), transform.axisY().z(), transform.axisZ().z()
+		transform(0, 0), transform(0, 1), transform(0, 2),
+		transform(1, 0), transform(1, 1), transform(1, 2),
+		transform(2, 0), transform(2, 1), transform(2, 2)
 	);
 	btVector3 origin = toBtVector3(transform.translation());
 	return btTransform(basis, origin);

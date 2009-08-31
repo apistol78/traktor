@@ -3,6 +3,7 @@
 
 #include <stack>
 #include "Core/Math/Color.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Aabb.h"
@@ -32,6 +33,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class ITexture;
 class Shader;
 class VertexBuffer;
 
@@ -202,6 +204,30 @@ public:
 		const Color& color4
 	);
 
+	void drawTextureTriangle(
+		const Vector4& vert1,
+		const Vector2& texCoord1,
+		const Vector4& vert2,
+		const Vector2& texCoord2,
+		const Vector4& vert3,
+		const Vector2& texCoord3,
+		const Color& color,
+		ITexture* texture
+	);
+
+	void drawTextureQuad(
+		const Vector4& vert1,
+		const Vector2& texCoord1,
+		const Vector4& vert2,
+		const Vector2& texCoord2,
+		const Vector4& vert3,
+		const Vector2& texCoord3,
+		const Vector4& vert4,
+		const Vector2& texCoord4,
+		const Color& color,
+		ITexture* texture
+	);
+
 	void drawProtractor(
 		const Vector4& position,
 		const Vector4& base,
@@ -237,6 +263,7 @@ private:
 	struct Batch
 	{
 		uint8_t shaderId;
+		ITexture* texture;
 		Primitives primitives;
 	};
 

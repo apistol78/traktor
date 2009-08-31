@@ -56,10 +56,11 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& axisAngle)
 
 	if (abs(angle) >= FUZZY_EPSILON)
 	{
-		x = axisAngle.x() * sinf(angle / 2.0f) / angle;
-		y = axisAngle.y() * sinf(angle / 2.0f) / angle;
-		z = axisAngle.z() * sinf(angle / 2.0f) / angle;
-		w = cosf(angle / 2.0f);
+		float half = angle / 2.0f;
+		x = axisAngle.x() * sinf(half) / angle;
+		y = axisAngle.y() * sinf(half) / angle;
+		z = axisAngle.z() * sinf(half) / angle;
+		w = cosf(half);
 	}
 	else
 	{
@@ -201,17 +202,17 @@ T_MATH_INLINE Matrix44 Quaternion::toMatrix44() const
 	VALIDATE(*this);
 	return Matrix44(
 		1.0f - 2.0f * y * y - 2.0f * z * z,
-		2.0f * x * y + 2.0f * w * z,
-		2.0f * x * z - 2.0f * w * y,
-		0.0f,
-
 		2.0f * x * y - 2.0f * w * z,
-		1.0f - 2.0f * x * x - 2.0f * z * z,
-		2.0f * y * z + 2.0f * w * x,
+		2.0f * x * z + 2.0f * w * y,
 		0.0f,
 
-		2.0f * x * z + 2.0f * w * y,
+		2.0f * x * y + 2.0f * w * z,
+		1.0f - 2.0f * x * x - 2.0f * z * z,
 		2.0f * y * z - 2.0f * w * x,
+		0.0f,
+
+		2.0f * x * z - 2.0f * w * y,
+		2.0f * y * z + 2.0f * w * x,
 		1.0f - 2.0f * x * x - 2.0f * y * y,
 		0.0f,
 
@@ -292,7 +293,7 @@ T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 	VALIDATE(q);
 	Quaternion qv(v.x(), v.y(), v.z(), 0.0f);
 	Quaternion qvp = q * qv * q.inverse();
-	return Vector4(qvp.x, qvp.y, qvp.z, 0.0f);
+	return Vector4(qvp.x, qvp.y, qvp.z, v.w());
 }
 
 T_MATH_INLINE Quaternion lerp(const Quaternion& a, const Quaternion& b, float c)

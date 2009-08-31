@@ -4,7 +4,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Bone.h"
-#include "Animation/PoseController.h"
+#include "Animation/IPoseController.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Render/PrimitiveRenderer.h"
@@ -30,7 +30,7 @@ void AnimatedMeshEntityEditor::drawGuide(
 	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
 	const AlignedVector< Matrix44 >& poseTransforms = animatedEntity->getPoseTransforms();
 
-	if (skeleton.validate() && poseTransforms.size() == skeleton->getBoneCount())
+	if (skeleton.valid() && poseTransforms.size() == skeleton->getBoneCount())
 	{
 		for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 		{
@@ -70,35 +70,35 @@ void AnimatedMeshEntityEditor::drawGuide(
 			primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
 		}
 
-		Ref< PoseController > poseController = animatedEntity->getPoseController();
-		if (poseController)
-		{
-			AlignedVector< PoseController::Velocity > velocities;
-			poseController->estimateVelocities(skeleton, velocities);
-			if (!velocities.empty())
-			{
-				for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-				{
-					const Bone* bone = skeleton->getBone(i);
+		//Ref< IPoseController > poseController = animatedEntity->getPoseController();
+		//if (poseController)
+		//{
+		//	AlignedVector< IPoseController::Velocity > velocities;
+		//	poseController->estimateVelocities(skeleton, velocities);
+		//	if (!velocities.empty())
+		//	{
+		//		for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+		//		{
+		//			const Bone* bone = skeleton->getBone(i);
 
-					Vector4 start = poseTransforms[i].translation();
-					Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
-					Vector4 mid = (start + end) / Scalar(2.0f);
+		//			Vector4 start = poseTransforms[i].translation();
+		//			Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+		//			Vector4 mid = (start + end) / Scalar(2.0f);
 
-					primitiveRenderer->drawLine(
-						mid,
-						mid + velocities[i].linear,
-						Color(255, 0, 0, 128)
-					);
+		//			primitiveRenderer->drawLine(
+		//				mid,
+		//				mid + velocities[i].linear,
+		//				Color(255, 0, 0, 128)
+		//			);
 
-					primitiveRenderer->drawLine(
-						mid,
-						mid + velocities[i].angular,
-						Color(0, 0, 255, 128)
-					);
-				}
-			}
-		}
+		//			primitiveRenderer->drawLine(
+		//				mid,
+		//				mid + velocities[i].angular,
+		//				Color(0, 0, 255, 128)
+		//			);
+		//		}
+		//	}
+		//}
 	}
 
 	primitiveRenderer->popWorld();

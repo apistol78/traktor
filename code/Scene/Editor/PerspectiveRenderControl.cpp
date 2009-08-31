@@ -10,6 +10,7 @@
 #include "Scene/Editor/SelectEvent.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
@@ -88,7 +89,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	updateWorldRenderer();
 
 	m_camera = gc_new< Camera >(cref(
-		lookAt(Vector4(-4.0f, 4.0f, -4.0f, 1.0f), Vector4(0.0f, 0.0f, 0.0f, 1.0f)).inverse()
+		lookAt(Vector4(-4.0f, 4.0f, -4.0f, 1.0f), Vector4(0.0f, 0.0f, 0.0f, 1.0f))
 	));
 	m_timer.start();
 
@@ -197,6 +198,13 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		worldView.aspect = float(sz.cx) / sz.cy;
 		worldView.fov = deg2rad(c_defaultFieldOfView);
 		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+
+		// Expose shadow map to debug view.
+		Ref< render::RenderTargetSet > shadowTargetSet = m_worldRenderer->getShadowTargetSet();
+		if (shadowTargetSet)
+			m_context->setDebugTexture(shadowTargetSet->getColorTexture(0));
+		else
+			m_context->setDebugTexture(0);
 	}
 	else
 		m_worldRenderer = 0;
@@ -475,7 +483,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		// Render XZ grid.
 		const Color gridColor(0, 0, 0, 64);
 
-		Vector4 viewPosition = view.inverseOrtho().translation();
+		Vector4 viewPosition = view.inverse().translation();
 		float vx = floorf(viewPosition.x());
 		float vz = floorf(viewPosition.z());
 

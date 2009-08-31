@@ -17,7 +17,9 @@ void calculateBoneLocalTransforms(
 	T_ASSERT (skeleton);
 	outBoneLocalTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-		outBoneLocalTransforms[i] = skeleton->getBone(i)->getOrientation().toMatrix44() * translate(skeleton->getBone(i)->getPosition());
+		outBoneLocalTransforms[i] =
+			skeleton->getBone(i)->getOrientation().toMatrix44() *
+			translate(skeleton->getBone(i)->getPosition());
 }
 
 void calculateBoneTransforms(
@@ -27,19 +29,35 @@ void calculateBoneTransforms(
 {
 	T_ASSERT (skeleton);
 
-	AlignedVector< Matrix44 > boneLocalTransforms;
-	calculateBoneLocalTransforms(skeleton, boneLocalTransforms);
+	AlignedVector< Matrix44 > localBoneTransforms;
+	calculateBoneLocalTransforms(skeleton, localBoneTransforms);
 
 	outBoneTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 	{
-		outBoneTransforms[i] = boneLocalTransforms[i];
+		outBoneTransforms[i] = localBoneTransforms[i];
 		for (int32_t boneIndex = skeleton->getBone(i)->getParent(); boneIndex >= 0; boneIndex = skeleton->getBone(boneIndex)->getParent())
 		{
-			Matrix44 parentLocalTransform = translate(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength(), 1.0f)) * boneLocalTransforms[boneIndex];
-			outBoneTransforms[i] = outBoneTransforms[i] * parentLocalTransform;
+			Matrix44 localParentTransform = localBoneTransforms[boneIndex] * translate(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength()));
+			outBoneTransforms[i] = localParentTransform * outBoneTransforms[i];
 		}
 	}
+}
+
+void calculatePoseLocalTransforms(
+	const Skeleton* skeleton,
+	const Pose* pose,
+	AlignedVector< Matrix44 >& outBoneLocalTransforms
+)
+{
+	T_ASSERT (skeleton);
+	T_ASSERT (pose);
+
+	outBoneLocalTransforms.resize(skeleton->getBoneCount());
+	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+		outBoneLocalTransforms[i] = 
+			(skeleton->getBone(i)->getOrientation() * pose->getBoneOrientation(i)).toMatrix44() *
+			translate(skeleton->getBone(i)->getPosition() + pose->getBoneOffset(i));
 }
 
 void calculatePoseTransforms(
@@ -51,17 +69,8 @@ void calculatePoseTransforms(
 	T_ASSERT (skeleton);
 	T_ASSERT (pose);
 
-	AlignedVector< Matrix44 > localPoseTransforms(skeleton->getBoneCount());
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-		localPoseTransforms[i] = 
-			(
-				skeleton->getBone(i)->getOrientation() *
-				pose->getBoneOrientation(i)
-			).toMatrix44() *
-			translate(
-				skeleton->getBone(i)->getPosition() +
-				pose->getBoneOffset(i)
-			);
+	AlignedVector< Matrix44 > localPoseTransforms;
+	calculatePoseLocalTransforms(skeleton, pose, localPoseTransforms);
 
 	outBoneTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
@@ -69,8 +78,8 @@ void calculatePoseTransforms(
 		outBoneTransforms[i] = localPoseTransforms[i];
 		for (int32_t boneIndex = skeleton->getBone(i)->getParent(); boneIndex >= 0; boneIndex = skeleton->getBone(boneIndex)->getParent())
 		{
-			Matrix44 localParentTransform = translate(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength(), 1.0f)) * localPoseTransforms[boneIndex];
-			outBoneTransforms[i] = outBoneTransforms[i] * localParentTransform;
+			Matrix44 localParentTransform = localPoseTransforms[boneIndex] * translate(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength()));
+			outBoneTransforms[i] = localParentTransform * outBoneTransforms[i];
 		}
 	}
 }

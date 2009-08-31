@@ -27,7 +27,7 @@ class SkinnedMesh;
 	{
 
 class Skeleton;
-class PoseController;
+class IPoseController;
 
 /*! \brief Animated mesh entity.
  * \ingroup Animation
@@ -41,7 +41,7 @@ public:
 		const Matrix44& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
-		PoseController* poseController,
+		IPoseController* poseController,
 		const std::vector< int >& boneRemap
 	);
 	
@@ -59,9 +59,9 @@ public:
 
 	inline const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
-	inline void setPoseController(PoseController* poseController) { m_poseController = poseController; }
+	inline void setPoseController(IPoseController* poseController) { m_poseController = poseController; }
 
-	inline const Ref< PoseController >& getPoseController() const { return m_poseController; }
+	inline const Ref< IPoseController >& getPoseController() const { return m_poseController; }
 
 	inline const AlignedVector< Matrix44 >& getBoneTransforms() const { return m_boneTransforms; }
 
@@ -70,7 +70,7 @@ public:
 private:
 	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	mutable resource::Proxy< Skeleton > m_skeleton;
-	Ref< PoseController > m_poseController;
+	Ref< IPoseController > m_poseController;
 	std::vector< int > m_boneRemap;
 	AlignedVector< Matrix44 > m_boneTransforms;
 	AlignedVector< Matrix44 > m_poseTransforms;

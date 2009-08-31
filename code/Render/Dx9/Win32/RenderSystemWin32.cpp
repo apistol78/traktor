@@ -24,6 +24,8 @@
 #include "Core/Io/Stream.h"
 #include "Core/Log/Log.h"
 
+#define T_ENABLE_NVIDIA_PERHUD 1
+
 namespace traktor
 {
 	namespace render
@@ -82,6 +84,25 @@ bool RenderSystemWin32::create()
 	if (!m_hWnd)
 		return false;
 
+	UINT d3dAdapter = D3DADAPTER_DEFAULT;
+	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
+
+#if T_ENABLE_NVIDIA_PERHUD
+	for (UINT adapter = 0; adapter < m_d3d->GetAdapterCount(); ++adapter)
+	{
+		D3DADAPTER_IDENTIFIER9 d3did;
+		
+		hr = m_d3d->GetAdapterIdentifier(adapter, 0, &d3did);
+		if (strstr(d3did.Description, "PerfHUD") != 0)
+		{
+			log::debug << L"Found PerfHUD device!" << Endl;
+			d3dAdapter = adapter;
+			d3dDevType = D3DDEVTYPE_REF;
+			break;
+		}
+	}
+#endif
+
 	// Create "resource" device.
 	DWORD dwBehaviour =
 		D3DCREATE_HARDWARE_VERTEXPROCESSING |
@@ -105,8 +126,8 @@ bool RenderSystemWin32::create()
 	d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	hr = m_d3d->CreateDevice(
-		0,
-		D3DDEVTYPE_HAL,
+		d3dAdapter,
+		d3dDevType,
 		d3dPresentNull.hDeviceWindow,
 		dwBehaviour,
 		&d3dPresentNull,

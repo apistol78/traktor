@@ -3,6 +3,9 @@
 
 #include <string>
 #include <sstream>
+#include "Core/Io/Path.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -13,67 +16,67 @@ public:
 	virtual void run() = 0;
 
 protected:
-	void succeeded(const std::string& message);
+	void succeeded(const std::wstring& message);
 
-	void failed(const std::string& message);
+	void failed(const std::wstring& message);
 };
 
 #define CASE_ASSERT(condition) \
 	{ \
-		std::stringstream ss; \
+		StringOutputStream ss; \
 		if (!(condition)) \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #condition << "\" failed"; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#condition) << L"\" failed"; \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #condition << "\" succeeded"; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#condition) << L"\" succeeded"; \
 			succeeded(ss.str()); \
 		} \
 	}
 
 #define CASE_ASSERT_EQUAL(expr1, expr2) \
 	{ \
-		std::stringstream ss; \
+		StringOutputStream ss; \
 		if ((expr1) != (expr2)) \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" failed, not equal to " << #expr2; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" succeeded"; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" succeeded"; \
 			succeeded(ss.str()); \
 		} \
 	}
 
 #define CASE_ASSERT_NOT_EQUAL(expr1, expr2) \
 	{ \
-		std::stringstream ss; \
+		StringOutputStream ss; \
 		if ((expr1) == (expr2)) \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" failed, not equal to " << #expr2; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" failed, not equal to " << mbstows(#expr2); \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" succeeded"; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" succeeded"; \
 			succeeded(ss.str()); \
 		} \
 	}
 
 #define CASE_ASSERT_COMPARE(expr1, expr2, compare) \
 	{ \
-		std::stringstream ss; \
+		StringOutputStream ss; \
 		if (!compare((expr1), (expr2))) \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" failed, compared to " << #expr2; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" failed, compared to " << mbstows(#expr2); \
 			failed(ss.str()); \
 		} \
 		else \
 		{ \
-			ss << __FILE__ " (" << __LINE__ << ") \"" << #expr1 << "\" succeeded"; \
+			ss << Path(mbstows(__FILE__)).getFileName() << L" (" << __LINE__ << L") \"" << mbstows(#expr1) << L"\" succeeded"; \
 			succeeded(ss.str()); \
 		} \
 	}

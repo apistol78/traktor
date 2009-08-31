@@ -2,7 +2,7 @@
 #define traktor_animation_IKPoseController_H
 
 #include "Core/Heap/Ref.h"
-#include "Animation/PoseController.h"
+#include "Animation/IPoseController.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,12 +28,12 @@ class Body;
 /*! \brief IK pose evaluation controller.
  * \ingroup Animation
  */
-class T_DLLCLASS IKPoseController : public PoseController
+class T_DLLCLASS IKPoseController : public IPoseController
 {
 	T_RTTI_CLASS(IKPoseController)
 
 public:
-	IKPoseController(physics::PhysicsManager* physicsManager, PoseController* poseController, uint32_t solverIterations);
+	IKPoseController(physics::PhysicsManager* physicsManager, IPoseController* poseController, uint32_t solverIterations);
 
 	void setIgnoreBody(physics::Body* ignoreBody);
 
@@ -51,11 +51,11 @@ public:
 		AlignedVector< Velocity >& outVelocities
 	);
 
-	inline PoseController* getNeutralPoseController() const { return m_poseController; }
+	inline IPoseController* getNeutralPoseController() const { return m_poseController; }
 
 private:
 	Ref< physics::PhysicsManager > m_physicsManager;
-	Ref< PoseController > m_poseController;
+	Ref< IPoseController > m_poseController;
 	uint32_t m_solverIterations;
 	Ref< physics::Body > m_ignoreBody;
 };

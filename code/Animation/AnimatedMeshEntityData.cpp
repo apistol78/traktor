@@ -1,13 +1,14 @@
 #include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/AnimatedMeshEntity.h"
-#include "Animation/PoseControllerData.h"
+#include "Animation/IPoseControllerData.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Resource/Member.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -17,30 +18,29 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.AnimatedMeshEntityData", AnimatedMeshEntityData, world::SpatialEntityData)
 
-AnimatedMeshEntity* AnimatedMeshEntityData::createEntity(physics::PhysicsManager* physicsManager) const
+AnimatedMeshEntity* AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
 {
-	resource::Proxy< mesh::SkinnedMesh > mesh = m_mesh;
-	if (!mesh.validate())
+	if (!resourceManager->bind(m_mesh) || !resourceManager->bind(m_skeleton))
 		return 0;
 
-	resource::Proxy< Skeleton > skeleton = m_skeleton;
-	if (!skeleton.validate())
+	if (!m_mesh.valid() || !m_skeleton.valid())
 		return 0;
 
-	Ref< PoseController > poseController;
+	Ref< IPoseController > poseController;
 	if (m_poseController)
 		poseController = m_poseController->createInstance(
+			resourceManager,
 			physicsManager,
-			skeleton,
+			m_skeleton,
 			getTransform()
 		);
 
-	std::vector< int > boneRemap(skeleton->getBoneCount());
+	std::vector< int > boneRemap(m_skeleton->getBoneCount());
 
-	const std::map< std::wstring, int >& boneMap = mesh->getBoneMap();
-	for (int i = 0; i < int(skeleton->getBoneCount()); ++i)
+	const std::map< std::wstring, int >& boneMap = m_mesh->getBoneMap();
+	for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
 	{
-		const Bone* bone = skeleton->getBone(i);
+		const Bone* bone = m_skeleton->getBone(i);
 
 		std::map< std::wstring, int >::const_iterator j = boneMap.find(bone->getName());
 		if (j == boneMap.end())
@@ -55,8 +55,8 @@ AnimatedMeshEntity* AnimatedMeshEntityData::createEntity(physics::PhysicsManager
 
 	return gc_new< AnimatedMeshEntity >(
 		cref(getTransform()),
-		cref(mesh),
-		cref(skeleton),
+		cref(m_mesh),
+		cref(m_skeleton),
 		poseController,
 		cref(boneRemap)
 	);
@@ -69,7 +69,7 @@ bool AnimatedMeshEntityData::serialize(Serializer& s)
 	
 	s >> resource::Member< mesh::SkinnedMesh, mesh::SkinnedMeshResource >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
-	s >> MemberRef< PoseControllerData >(L"poseController", m_poseController);
+	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
 
 	return true;
 }

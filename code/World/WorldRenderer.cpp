@@ -11,6 +11,7 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Core/Math/Random.h"
+#include "Core/Math/Format.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -39,9 +40,19 @@ public:
 	) const
 	{
 		// Calculate light axises.
-		Vector4 lightAxisZ = -lightDirection.normalized();
-		Vector4 lightAxisX = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), lightAxisZ).normalized();
-		Vector4 lightAxisY = cross(lightAxisZ, lightAxisX).normalized();
+		Vector4 lightAxisX, lightAxisY, lightAxisZ;
+
+		lightAxisZ = -lightDirection.normalized();
+		if (abs(lightDirection.y() - Scalar(1.0f)) > FUZZY_EPSILON)
+		{
+			lightAxisX = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), lightAxisZ).normalized();
+			lightAxisY = cross(lightAxisZ, lightAxisX).normalized();
+		}
+		else
+		{
+			lightAxisX = cross(Vector4(-1.0f, 0.0f, 0.0f, 0.0f), lightAxisZ).normalized();
+			lightAxisY = cross(lightAxisZ, lightAxisX).normalized();
+		}
 		T_ASSERT (cross(lightAxisX, lightAxisY).normalized() == lightAxisZ);
 
 		// Calculate bounding box of view frustum in light space.
@@ -602,16 +613,14 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 
 		// Modify perspective transform so near and far clip planes are accurate.
 		Matrix44 sliceProjection = projection;
-		Vector4& r3 = sliceProjection(2);
-		r3 = r3 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, zf / (zf - zn), 0.0f);
-		Vector4& r4 = sliceProjection(3);
-		r4 = r4 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, -zn * zf / (zf - zn), 0.0f);
+		sliceProjection.set(2, 2, Scalar(zf / (zf - zn)));
+		sliceProjection.set(2, 3, Scalar(-zn * zf / (zf - zn)));
 
 		// Render visuals.
 		worldRenderView.resetLights();
 		worldRenderView.setProjection(sliceProjection);
 		worldRenderView.setCullFrustum(sliceFrustum);
-		worldRenderView.setViewToLightSpace(viewInverse * shadowLightView * shadowLightProjectionSelfShadow);
+		worldRenderView.setViewToLightSpace(shadowLightProjectionSelfShadow * shadowLightView * viewInverse);
 		worldRenderView.setEyePosition(eyePosition);
 		worldRenderView.setShadowMap(
 			m_shadowTargetSet->getColorTexture(slice),
@@ -640,10 +649,8 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 
 		// Modify perspective transform so near and far clip planes are accurate.
 		Matrix44 sliceProjection = projection;
-		Vector4& r3 = sliceProjection(2);
-		r3 = r3 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, zf / (zf - zn), 0.0f);
-		Vector4& r4 = sliceProjection(3);
-		r4 = r4 * Vector4(1.0f, 1.0f, 0.0f, 1.0f) + Vector4(0.0f, 0.0f, -zn * zf / (zf - zn), 0.0f);
+		sliceProjection.set(2, 2, Scalar(zf / (zf - zn)));
+		sliceProjection.set(2, 3, Scalar(-zn * zf / (zf - zn)));
 
 		worldRenderView.resetLights();
 		worldRenderView.setProjection(sliceProjection);

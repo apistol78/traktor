@@ -1,66 +1,54 @@
 #include "UnitTest/CaseMatrix44.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Matrix44.h"
+#include "UnitTest/MathCompare.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
 {
-	namespace
-	{
-
-bool compareEqual(const Vector4& a, const Vector4& b)
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		if (std::fabs(a[i] - b[i]) > FUZZY_EPSILON)
-			return false;
-	}
-	return true;
-}
-
-bool compareEqual(const Matrix44& a, const Matrix44& b)
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		if (!compareEqual(a(i), b(i)))
-			return false;
-	}
-	return true;
-}
-
-bool compareNotEqual(const Vector4& a, const Vector4& b)
-{
-	for (int i = 0; i < 4; ++i)
-	{
-		if (std::fabs(a[i] - b[i]) > FUZZY_EPSILON)
-			return true;
-	}
-	return false;
-}
-
-	}
 
 void CaseMatrix44::run()
 {
-	Matrix44 m(
-		1.0f, 2.0f, 3.0f, 4.0f,
-		5.0f, 6.0f, 7.0f, 8.0f,
-		9.0f, 10.0f, 11.0f, 12.0f,
-		13.0f, 14.0f, 15.0f, 16.0f
-	);
-	Matrix44 mt(
-		1.0f, 5.0f, 9.0f, 13.0f,
-		2.0f, 6.0f, 10.0f, 14.0f,
-		3.0f, 7.0f, 11.0f, 15.0f,
-		4.0f, 8.0f, 12.0f, 16.0f
-	);
+	{
 
-	CASE_ASSERT_COMPARE(m.axisX(), Vector4(1.0f, 2.0f, 3.0f, 4.0f), compareEqual);
-	CASE_ASSERT_COMPARE(m.axisY(), Vector4(5.0f, 6.0f, 7.0f, 8.0f), compareEqual);
-	CASE_ASSERT_COMPARE(m.axisZ(), Vector4(9.0f, 10.0f, 11.0f, 12.0f), compareEqual);
-	CASE_ASSERT_COMPARE(m.translation(), Vector4(13.0f, 14.0f, 15.0f, 16.0f), compareEqual);
+		Matrix44 ml(
+			1.0f, 2.0f, 2.0f, 2.0f,
+			3.0f, 0.0f, 0.0f, 0.0f,
+			3.0f, 0.0f, 0.0f, 0.0f,
+			3.0f, 0.0f, 0.0f, 0.0f
+		);
+		Matrix44 mr(
+			3.0f, 4.0f, 4.0f, 4.0f,
+			5.0f, 0.0f, 0.0f, 0.0f,
+			5.0f, 0.0f, 0.0f, 0.0f,
+			5.0f, 0.0f, 0.0f, 0.0f
+		);
 
-	CASE_ASSERT_COMPARE(m.transpose(), mt, compareEqual);
+		Matrix44 Mc = ml * mr;
+		Matrix44 Mw = mr * ml;
+
+		CASE_ASSERT_EQUAL (Mc(0, 0), 33.0f);
+	}
+
+	{
+		Matrix44 m(
+			1.0f, 2.0f, 3.0f, 4.0f,
+			5.0f, 6.0f, 7.0f, 8.0f,
+			9.0f, 10.0f, 11.0f, 12.0f,
+			13.0f, 14.0f, 15.0f, 16.0f
+			);
+		Matrix44 mt(
+			1.0f, 5.0f, 9.0f, 13.0f,
+			2.0f, 6.0f, 10.0f, 14.0f,
+			3.0f, 7.0f, 11.0f, 15.0f,
+			4.0f, 8.0f, 12.0f, 16.0f
+			);
+
+		CASE_ASSERT_COMPARE(m.axisX(),			Vector4(1.0f, 5.0f, 9.0f, 13.0f), compareVectorEqual);
+		CASE_ASSERT_COMPARE(m.axisY(),			Vector4(2.0f, 6.0f, 10.0f, 14.0f), compareVectorEqual);
+		CASE_ASSERT_COMPARE(m.axisZ(),			Vector4(3.0f, 7.0f, 11.0f, 15.0f), compareVectorEqual);
+		CASE_ASSERT_COMPARE(m.translation(),	Vector4(4.0f, 8.0f, 12.0f, 16.0f), compareVectorEqual);
+
+		CASE_ASSERT_COMPARE(m.transpose(), mt, compareMatrixEqual);
+	}
 
 	Matrix44 md(
 		1.0f, 0.0f, 0.0f, 0.0f,
@@ -76,7 +64,15 @@ void CaseMatrix44::run()
 	Matrix44 mdi1 = md.inverse();
 	Matrix44 mdi2 = md.inverseOrtho();
 
-	CASE_ASSERT_COMPARE(mdi1, mdi2, compareEqual);
+	CASE_ASSERT_COMPARE(mdi1, mdi2, compareMatrixEqual);
+
+	Matrix44 mx = rotateX(PI / 2.0f);
+	Matrix44 my = rotateY(PI / 2.0f);
+	Matrix44 mz = rotateZ(PI / 2.0f);
+
+	Vector4 vx = mx * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	Vector4 vy = my * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+	Vector4 vz = mz * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
 }
 
 }

@@ -1,17 +1,17 @@
-#include <iostream>
 #include "UnitTest/Case.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
 
-void Case::succeeded(const std::string& message)
+void Case::succeeded(const std::wstring& message)
 {
-	std::cout << message << std::endl;
+	log::info << message << Endl;
 }
 
-void Case::failed(const std::string& message)
+void Case::failed(const std::wstring& message)
 {
-	std::cerr << message << std::endl;
+	log::error << message << Endl;
 }
 
 }

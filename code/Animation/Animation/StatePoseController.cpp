@@ -12,7 +12,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StatePoseController", StatePoseController, PoseController)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.StatePoseController", StatePoseController, IPoseController)
 
 StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& stateGraph)
 :	m_stateGraph(stateGraph)
@@ -44,7 +44,7 @@ void StatePoseController::evaluate(
 	Pose currentPose;
 
 	// Validate state graph.
-	if (!m_stateGraph.valid())
+	if (!m_stateGraph.valid() || !m_currentState)
 	{
 		if (!m_stateGraph.validate() || !m_stateGraph->getRootState())
 			return;

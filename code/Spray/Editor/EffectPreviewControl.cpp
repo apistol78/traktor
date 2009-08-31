@@ -285,7 +285,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
 
-	Matrix44 viewTransform = rotateY(m_angleHead) * translate(m_effectPosition);
+	Matrix44 viewTransform = translate(m_effectPosition) * rotateY(m_angleHead);
 	Matrix44 projectionTransform = perspectiveLh(
 		80.0f * PI / 180.0f,
 		aspect,

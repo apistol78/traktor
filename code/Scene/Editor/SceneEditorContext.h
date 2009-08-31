@@ -40,6 +40,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ITexture;
 class PrimitiveRenderer;
 
 	}
@@ -177,6 +178,15 @@ public:
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
 
+	/*! \name Debug texture view. */
+	//@{
+
+	void setDebugTexture(render::ITexture* debugTexture);
+
+	render::ITexture* getDebugTexture();
+
+	//@}
+
 	/*! \name Accessors. */
 	//@{
 
@@ -242,6 +252,7 @@ private:
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
+	Ref< render::ITexture > m_debugTexture;
 	Ref< physics::PhysicsManager > m_physicsManager;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	Ref< IModifier > m_modifier;

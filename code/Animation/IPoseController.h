@@ -1,5 +1,5 @@
-#ifndef traktor_animation_PoseController_H
-#define traktor_animation_PoseController_H
+#ifndef traktor_animation_IPoseController_H
+#define traktor_animation_IPoseController_H
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
@@ -23,9 +23,9 @@ class Skeleton;
 /*! \brief Pose evaluation controller.
  * \ingroup Animation
  */
-class T_DLLCLASS PoseController : public Object
+class T_DLLCLASS IPoseController : public Object
 {
-	T_RTTI_CLASS(PoseController)
+	T_RTTI_CLASS(IPoseController)
 
 public:
 	struct Velocity
@@ -52,4 +52,4 @@ public:
 	}
 }
 
-#endif	// traktor_animation_PoseController_H
+#endif	// traktor_animation_IPoseController_H

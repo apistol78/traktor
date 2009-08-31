@@ -3,7 +3,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Bone.h"
-#include "Animation/PoseController.h"
+#include "Animation/IPoseController.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -20,7 +20,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	const Matrix44& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
-	PoseController* poseController,
+	IPoseController* poseController,
 	const std::vector< int >& boneRemap
 )
 :	mesh::MeshEntity(transform)
@@ -114,7 +114,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		{
 			int boneIndex = m_boneRemap[i];
 			if (boneIndex >= 0)
-				m_skinTransforms[boneIndex] = m_boneTransforms[i].inverseOrtho() * m_poseTransforms[i];
+				m_skinTransforms[boneIndex] = m_poseTransforms[i] * m_boneTransforms[i].inverse();
 		}
 	}
 	else

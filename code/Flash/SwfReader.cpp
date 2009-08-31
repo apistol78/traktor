@@ -845,9 +845,9 @@ SwfMatrix SwfReader::readMatrix()
 	m_bs->alignByte();
 
 	SwfMatrix matrix;
-	matrix.m[0] = scaleX / 65536.0f;		matrix.m[1] = rotateSkew0 / 65536.0f;	matrix.m[2] = 0.0f;
-	matrix.m[3] = rotateSkew1 / 65536.0f;	matrix.m[4] = scaleY / 65536.0f;		matrix.m[5] = 0.0f;
-	matrix.m[6] = float(translateX);		matrix.m[7] = float(translateY);		matrix.m[8] = 1.0f;
+	matrix.m[0] = scaleX / 65536.0f;		matrix.m[1] = rotateSkew1 / 65536.0f;	matrix.m[2] = float(translateX);
+	matrix.m[3] = rotateSkew0 / 65536.0f;	matrix.m[4] = scaleY / 65536.0f;		matrix.m[5] = float(translateY);
+	matrix.m[6] = 0.0f;						matrix.m[7] = 0.0f;						matrix.m[8] = 1.0f;
 
 	return matrix;
 }

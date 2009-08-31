@@ -2,5 +2,9 @@
 <object type="traktor.editor.Assets">
 	<dependencies>
 		<item>{BDB753F7-39AF-414C-84CB-B02148F2777E}</item>
+		<item>{B7FEA388-52B3-334C-B093-E3319BAB86F3}</item>
+		<item>{6B4963D3-1878-0C46-8063-36F0CAFCF4BF}</item>
+		<item>{C15DB1D7-C185-FA4C-97BA-525F92E801BD}</item>
+		<item>{8EC34F2C-DA83-2D42-9C07-E14B7F344C83}</item>
 	</dependencies>
 </object>

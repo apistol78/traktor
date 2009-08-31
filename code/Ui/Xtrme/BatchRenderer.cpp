@@ -150,10 +150,10 @@ void BatchRenderer::end(const Size& size)
 		float ih = 1.0f / size.cy;
 
 		Matrix44 transform(
-			iw * 2.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, -ih * 2.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			-1.0f/* - iw * 0.5f*/, 1.0f/* + ih * 0.5f*/, 0.0f, 1.0f
+			iw * 2.0f,       0.0f, 0.0f, -1.0f,
+			     0.0f, -ih * 2.0f, 0.0f,  1.0f,
+			     0.0f,       0.0f, 1.0f,  0.0f,
+			     0.0f,       0.0f, 0.0f,  1.0f
 		);
 
 		for (size_t i = 0; i < sizeof_array(m_programs); ++i)

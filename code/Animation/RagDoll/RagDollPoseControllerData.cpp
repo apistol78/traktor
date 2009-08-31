@@ -7,17 +7,22 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, PoseControllerData)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, IPoseControllerData)
 
-PoseController* RagDollPoseControllerData::createInstance(physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Matrix44& worldTransform)
+IPoseController* RagDollPoseControllerData::createInstance(
+	resource::IResourceManager* resourceManager,
+	physics::PhysicsManager* physicsManager,
+	const Skeleton* skeleton,
+	const Matrix44& worldTransform
+)
 {
 	AlignedVector< Matrix44 > boneTransforms;
 	calculateBoneTransforms(skeleton, boneTransforms);
 
-	AlignedVector< PoseController::Velocity > velocities;
+	AlignedVector< IPoseController::Velocity > velocities;
 	for (uint32_t i = 0; i < uint32_t(boneTransforms.size()); ++i)
 	{
-		PoseController::Velocity velocity;
+		IPoseController::Velocity velocity;
 		velocity.linear =
 		velocity.angular = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		velocities.push_back(velocity);

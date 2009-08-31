@@ -897,7 +897,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 		);
 	}
 
-	Matrix44 view = rotateY(data->cameraAngleX) * rotateX(data->cameraAngleY) * translate(data->cameraOffset * m_cameraOffsetScale);
+	Matrix44 view = translate(data->cameraOffset * m_cameraOffsetScale) * rotateX(data->cameraAngleY) * rotateY(data->cameraAngleX);
 
 	// Set transformation in picker.
 	data->picker->setPerspectiveTransform(projection);
