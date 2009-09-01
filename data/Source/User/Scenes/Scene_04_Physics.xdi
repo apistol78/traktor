@@ -2,12 +2,12 @@
 <object type="traktor.scene.SceneAsset" version="1">
 	<worldRenderSettings type="traktor.world.WorldRenderSettings">
 		<viewNearZ>0.1</viewNearZ>
-		<viewFarZ>80</viewFarZ>
+		<viewFarZ>200</viewFarZ>
 		<depthPassEnabled>false</depthPassEnabled>
 		<shadowsEnabled>true</shadowsEnabled>
 		<shadowCascadingSlices>1</shadowCascadingSlices>
 		<shadowCascadingLambda>0.75</shadowCascadingLambda>
-		<shadowFarZ>80</shadowFarZ>
+		<shadowFarZ>150</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>2</shadowMapBias>
 	</worldRenderSettings>
@@ -33,7 +33,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>-4.31795, 7.74758, 4.07646, 0</translation>
+							<translation>-4.31795, 17.0595, 8.39383, 0</translation>
 							<rotation>-0.373173, -0.174302, 0.0727095, 0.908336</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -107,7 +107,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>0.679146, 6.66567, -1.31445, 0</translation>
+							<translation>0.679146, 17.3321, 11.4683, 0</translation>
 							<rotation>0.21835, -0.278331, -0.0655639, 0.933036</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -146,7 +146,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>4.27125, 9.33435, -5.59167, 0</translation>
+							<translation>4.27125, 20.932, 9.73074, 0</translation>
 							<rotation>-0.00409777, -0.644116, 0.00133287, 0.764916</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -290,8 +290,8 @@
 					<name>Static plane</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>6.65473e-008, -24.9049, -1.52239, 0</translation>
-							<rotation>-0.00399548, -0.0016626, -0.00161266, 0.999989</rotation>
+							<translation>1.6476e-006, 11.5221, 34.6482, 0</translation>
+							<rotation>-0.0739278, -0.00154582, -0.00172509, 0.997261</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.StaticBodyDesc" version="3">
 							<shape type="traktor.physics.BoxShapeDesc">
@@ -302,8 +302,8 @@
 								<extent>10, 0.5, 10, 0</extent>
 							</shape>
 							<initiallyEnabled>true</initiallyEnabled>
-							<friction>0.8</friction>
-							<kinematic>false</kinematic>
+							<friction>1</friction>
+							<kinematic>true</kinematic>
 						</bodyDesc>
 						<instance type="traktor.world.EntityInstance" version="1">
 							<name>Mesh</name>
@@ -325,7 +325,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>4.27125, 10.9565, 0.139947, 0</translation>
+							<translation>4.27125, 19.8452, 6.99694, 0</translation>
 							<rotation>-0.00409777, -0.644116, 0.00133287, 0.764916</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -364,7 +364,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>2.63609, 14.1101, 3.70869, 0</translation>
+							<translation>2.63609, 21.1364, 13.9518, 0</translation>
 							<rotation>0.253945, -0.618885, 0.227242, 0.70771</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -403,7 +403,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>1.46812, 10.9652, -3.10437, 0</translation>
+							<translation>1.46812, 24.2559, 8.15464, 0</translation>
 							<rotation>-0.292224, -0.584367, -0.23188, 0.720661</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -442,7 +442,7 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							<translation>6.95758, 11.8909, 0.139947, 0</translation>
+							<translation>6.95758, 24.5044, 12.1608, 0</translation>
 							<rotation>0.327547, -0.568205, 0.269063, 0.705309</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
@@ -477,10 +477,231 @@
 					<instanceData/>
 					<references/>
 				</item>
+				<item type="traktor.world.EntityInstance" version="1">
+					<name>Static plane</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							<translation>5.43952e-007, 9.39662, 12.4442, 0</translation>
+							<rotation>0.00600414, -0.00167867, -0.00159599, 0.999979</rotation>
+						</transform>
+						<bodyDesc type="traktor.physics.StaticBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
+								</localTransform>
+								<extent>10, 0.5, 10, 0</extent>
+							</shape>
+							<initiallyEnabled>true</initiallyEnabled>
+							<friction>0.2</friction>
+							<kinematic>false</kinematic>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance" version="1">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
+								</transform>
+								<mesh>{7519242E-4DF5-C047-9528-C97E6B6C8884}</mesh>
+							</entityData>
+							<instanceData/>
+							<references/>
+						</instance>
+					</entityData>
+					<instanceData/>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance" version="1">
+					<name>Static plane</name>
+					<entityData type="traktor.physics.RigidEntityData">
+						<transform>
+							<translation>0.00759754, 20.513, 3.07714, 0</translation>
+							<rotation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</rotation>
+						</transform>
+						<bodyDesc type="traktor.physics.StaticBodyDesc" version="3">
+							<shape type="traktor.physics.BoxShapeDesc">
+								<localTransform>
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
+								</localTransform>
+								<extent>10, 0.5, 10, 0</extent>
+							</shape>
+							<initiallyEnabled>true</initiallyEnabled>
+							<friction>0.2</friction>
+							<kinematic>true</kinematic>
+						</bodyDesc>
+						<instance type="traktor.world.EntityInstance" version="1">
+							<name>Mesh</name>
+							<entityData type="traktor.mesh.StaticMeshEntityData">
+								<transform>
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
+								</transform>
+								<mesh>{7519242E-4DF5-C047-9528-C97E6B6C8884}</mesh>
+							</entityData>
+							<instanceData/>
+							<references/>
+						</instance>
+					</entityData>
+					<instanceData/>
+					<references/>
+				</item>
 			</instances>
 		</entityData>
 		<instanceData/>
 		<references/>
 	</instance>
-	<controllerData/>
+	<controllerData type="traktor.theater.TheaterControllerData">
+		<duration>200</duration>
+		<trackData>
+			<item type="traktor.theater.TrackData">
+				<instance ref="/object/instance/entityData/instances/item[14]"/>
+				<path>
+					<keys>
+						<item>
+							<T>0</T>
+							<value>
+								<position>1.31301e-006, 15.5327, 30.7458, 0</position>
+								<orientation>-0.318359, -0.00107095, -0.00205386, 0.947967</orientation>
+							</value>
+						</item>
+						<item>
+							<T>1.408</T>
+							<value>
+								<position>-0.000476365, 19.6103, 27.1382, 0</position>
+								<orientation>-0.527512, -0.000570752, -0.00224488, 0.849544</orientation>
+							</value>
+						</item>
+						<item>
+							<T>2.8</T>
+							<value>
+								<position>9.02885e-007, 19.8937, 20.6556, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>4.32</T>
+							<value>
+								<position>0.0075983, 19.8885, 20.3397, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>9.16</T>
+							<value>
+								<position>0.00759755, 20.145, 3.06674, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>10.384</T>
+							<value>
+								<position>0.00759749, 20.5663, 1.63404, 0</position>
+								<orientation>-0.706115, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>11.5142</T>
+							<value>
+								<position>0.00759757, 20.1137, 3.57884, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>20.472</T>
+							<value>
+								<position>0.00759754, 20.513, 3.07714, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>21.808</T>
+							<value>
+								<position>0.00759836, 37.8251, 21.9256, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>33.008</T>
+							<value>
+								<position>0.00759832, 19.8831, 21.1398, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>33.352</T>
+							<value>
+								<position>0.00759832, 19.8831, 21.1398, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+						<item>
+							<T>38.528</T>
+							<value>
+								<position>0.00759755, 20.145, 3.19771, 0</position>
+								<orientation>-0.706114, -4.78065e-005, -0.0023158, 0.708094</orientation>
+							</value>
+						</item>
+					</keys>
+				</path>
+			</item>
+			<item type="traktor.theater.TrackData">
+				<instance ref="/object/instance/entityData/instances/item[8]"/>
+				<path>
+					<keys>
+						<item>
+							<T>0</T>
+							<value>
+								<position>6.65473e-008, -24.9049, -1.52239, 0</position>
+								<orientation>-0.00399548, -0.0016626, -0.00161266, 0.999989</orientation>
+							</value>
+						</item>
+						<item>
+							<T>20.5162</T>
+							<value>
+								<position>6.65473e-008, -24.9049, -1.52239, 0</position>
+								<orientation>-0.00399548, -0.0016626, -0.00161266, 0.999989</orientation>
+							</value>
+						</item>
+						<item>
+							<T>20.96</T>
+							<value>
+								<position>6.65473e-008, -24.9049, -1.52239, 0</position>
+								<orientation>-0.00399548, -0.0016626, -0.00161266, 0.999989</orientation>
+							</value>
+						</item>
+						<item>
+							<T>23.584</T>
+							<value>
+								<position>1.25888e-006, -19.3467, 25.7552, 0</position>
+								<orientation>-0.00399548, -0.00166264, -0.0016127, 0.999989</orientation>
+							</value>
+						</item>
+						<item>
+							<T>26.136</T>
+							<value>
+								<position>1.58598e-006, -3.58767, 33.2386, 0</position>
+								<orientation>-0.0639517, -0.00156297, -0.00170953, 0.99795</orientation>
+							</value>
+						</item>
+						<item>
+							<T>28.648</T>
+							<value>
+								<position>1.6476e-006, 11.5221, 34.6482, 0</position>
+								<orientation>-0.0739278, -0.00154582, -0.00172509, 0.997261</orientation>
+							</value>
+						</item>
+						<item>
+							<T>29.784</T>
+							<value>
+								<position>1.33117e-006, 19.2524, 27.4091, 0</position>
+								<orientation>-0.499693, -0.00064324, -0.00222526, 0.8662</orientation>
+							</value>
+						</item>
+					</keys>
+				</path>
+			</item>
+		</trackData>
+	</controllerData>
 </object>
