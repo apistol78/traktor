@@ -24,7 +24,7 @@ const TypeSet ExternalEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const
+Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
 {
 	Ref< EntityData > realEntityData;
 
@@ -45,7 +45,7 @@ Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::
 	if (!realEntityData)
 		return 0;
 
-	return builder->create(name, realEntityData);
+	return builder->create(name, realEntityData, instanceData);
 }
 
 	}

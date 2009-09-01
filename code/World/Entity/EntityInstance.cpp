@@ -41,6 +41,16 @@ EntityData* EntityInstance::getEntityData() const
 	return m_entityData;
 }
 
+void EntityInstance::setInstanceData(Serializable* instanceData)
+{
+	m_instanceData = instanceData;
+}
+
+Serializable* EntityInstance::getInstanceData() const
+{
+	return m_instanceData;
+}
+
 void EntityInstance::addReference(EntityInstance* reference)
 {
 	m_references.push_back(reference);
@@ -63,10 +73,19 @@ const RefArray< EntityInstance >& EntityInstance::getReferences() const
 	return m_references;
 }
 
+int EntityInstance::getVersion() const
+{
+	return 1;
+}
+
 bool EntityInstance::serialize(Serializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRef< EntityData >(L"entityData", m_entityData);
+
+	if (s.getVersion() >= 1)
+		s >> MemberRef< Serializable >(L"instanceData", m_instanceData);
+
 	s >> MemberRefArray< EntityInstance >(L"references", m_references);
 	return true;
 }

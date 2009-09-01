@@ -32,7 +32,7 @@ void EntityBuilder::begin(IEntityManager* entityManager)
 	m_entityManager = entityManager;
 }
 
-Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entityData)
+Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entityData, const Object* instanceData)
 {
 	if (!entityData)
 		return 0;
@@ -63,7 +63,7 @@ Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entity
 		return 0;
 	}
 
-	Ref< Entity > entity = entityFactory->createEntity(this, name, *entityData);
+	Ref< Entity > entity = entityFactory->createEntity(this, name, *entityData, instanceData);
 	if (!entity)
 	{
 		log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
@@ -89,7 +89,7 @@ Entity* EntityBuilder::build(const EntityInstance* instance)
 
 	// Create entity from entity data.
 	Ref< const EntityData > entityData = instance->getEntityData();
-	Ref< Entity > entity = create(instance->getName(), entityData);
+	Ref< Entity > entity = create(instance->getName(), entityData, instance->getInstanceData());
 	if (!entity)
 		return 0;
 

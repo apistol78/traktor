@@ -19,7 +19,7 @@ const TypeSet LightEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* LightEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const
+Entity* LightEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
 {
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{

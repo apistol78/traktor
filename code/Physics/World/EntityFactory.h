@@ -33,7 +33,8 @@ public:
 	virtual world::Entity* createEntity(
 		world::IEntityBuilder* builder,
 		const std::wstring& name,
-		const world::EntityData& entityData
+		const world::EntityData& entityData,
+		const Object* instanceData
 	) const;
 
 private:

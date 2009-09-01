@@ -26,7 +26,7 @@ public:
 
 	virtual void begin(world::IEntityManager* entityManager);
 
-	virtual world::Entity* create(const std::wstring& name, const world::EntityData* entityData);
+	virtual world::Entity* create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData);
 
 	virtual world::Entity* build(const world::EntityInstance* instance);
 

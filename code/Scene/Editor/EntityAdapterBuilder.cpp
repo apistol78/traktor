@@ -88,7 +88,7 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 	T_ASSERT (!m_rootAdapter);
 }
 
-world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const world::EntityData* entityData)
+world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData)
 {
 	if (!entityData)
 		return 0;
@@ -129,7 +129,7 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 	}
 
 	// Create entity from entity data through specialized factory.
-	Ref< world::Entity > entity = entityFactory->createEntity(this, name, *realEntityData);
+	Ref< world::Entity > entity = entityFactory->createEntity(this, name, *realEntityData, instanceData);
 	if (!entity)
 	{
 		log::error << L"Unable to create entity from \"" << type_name(realEntityData) << L"\"" << Endl;
@@ -175,7 +175,7 @@ world::Entity* EntityAdapterBuilder::build(const world::EntityInstance* instance
 
 		{
 			Save< Ref< EntityAdapter > > scope(m_currentAdapter, entityAdapter);
-			entity = create(instance->getName(), instance->getEntityData());
+			entity = create(instance->getName(), instance->getEntityData(), instance->getInstanceData());
 		}
 
 		entityAdapter->setEntity(entity);

@@ -36,7 +36,7 @@ public:
 
 	virtual void begin(IEntityManager* entityManager) = 0;
 
-	virtual Entity* create(const std::wstring& name, const EntityData* entityData) = 0;
+	virtual Entity* create(const std::wstring& name, const EntityData* entityData, const Object* instanceData) = 0;
 
 	virtual Entity* build(const EntityInstance* instance) = 0;
 

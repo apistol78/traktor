@@ -30,7 +30,12 @@ class T_DLLCLASS IEntityFactory : public Object
 public:
 	virtual const TypeSet getEntityTypes() const = 0;
 
-	virtual Entity* createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData) const = 0;
+	virtual Entity* createEntity(
+		IEntityBuilder* builder,
+		const std::wstring& name,
+		const EntityData& entityData,
+		const Object* instanceData
+	) const = 0;
 };
 
 	}
