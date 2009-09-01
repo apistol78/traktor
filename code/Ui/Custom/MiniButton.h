@@ -30,6 +30,8 @@ public:
 
 	bool create(Widget* parent, Bitmap* image);
 
+	void setImage(Bitmap* image);
+
 	virtual Size getPreferedSize() const;
 	
 	void addClickEventHandler(EventHandler* eventHandler);
