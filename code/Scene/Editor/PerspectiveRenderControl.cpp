@@ -8,6 +8,8 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/SelectEvent.h"
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
@@ -35,6 +37,8 @@ namespace traktor
 		{
 
 const float c_defaultFieldOfView = 45.0f;
+const float c_minFieldOfView = 4.0f;
+const float c_maxFieldOfView = 90.0f;
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
@@ -45,7 +49,8 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ui::Widget)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_mousePosition(0, 0)
+:	m_fieldOfView(c_defaultFieldOfView)
+,	m_mousePosition(0, 0)
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
@@ -83,6 +88,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonDown));
 	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventButtonUp));
 	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseMove));
+	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventMouseWheel));
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
 
@@ -192,12 +198,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		1
 	))
 	{
-		world::WorldViewPerspective worldView;
-		worldView.width = sz.cx;
-		worldView.height = sz.cy;
-		worldView.aspect = float(sz.cx) / sz.cy;
-		worldView.fov = deg2rad(c_defaultFieldOfView);
-		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+		updateWorldRenderView();
 
 		// Expose shadow map to debug view.
 		Ref< render::RenderTargetSet > shadowTargetSet = m_worldRenderer->getShadowTargetSet();
@@ -208,6 +209,18 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 	else
 		m_worldRenderer = 0;
+}
+
+void PerspectiveRenderControl::updateWorldRenderView()
+{
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+
+	world::WorldViewPerspective worldView;
+	worldView.width = sz.cx;
+	worldView.height = sz.cy;
+	worldView.aspect = float(sz.cx) / sz.cy;
+	worldView.fov = deg2rad(m_fieldOfView);
+	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
 EntityAdapter* PerspectiveRenderControl::pickEntity(const ui::Point& position) const
@@ -421,6 +434,23 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 	m_mouseButton = mouseButton;
 
 	m_renderWidget->update();
+}
+
+void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
+{
+	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
+
+	const float delta = 1.0f;
+
+	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
+		m_fieldOfView -= rotation * delta;
+	else
+		m_fieldOfView += rotation * delta;
+
+	m_fieldOfView = max(m_fieldOfView, c_minFieldOfView);
+	m_fieldOfView = min(m_fieldOfView, c_maxFieldOfView);
+
+	updateWorldRenderView();
 }
 
 void PerspectiveRenderControl::eventSize(ui::Event* event)

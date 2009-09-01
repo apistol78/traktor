@@ -67,6 +67,7 @@ private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
+	float m_fieldOfView;
 	Timer m_timer;
 	ui::Point m_mousePosition;
 	int m_mouseButton;
@@ -78,6 +79,8 @@ private:
 
 	void updateWorldRenderer();
 
+	void updateWorldRenderView();
+
 	EntityAdapter* pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);
@@ -85,6 +88,8 @@ private:
 	void eventButtonUp(ui::Event* event);
 
 	void eventMouseMove(ui::Event* event);
+
+	void eventMouseWheel(ui::Event* event);
 
 	void eventSize(ui::Event* event);
 
