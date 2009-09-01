@@ -574,7 +574,7 @@ bool AnimationEditorPage::calculateRelativeTwist(int poseIndex, int boneIndex, f
 
 	Pose& pose = m_animation->getKeyPose(poseIndex).pose;
 
-	AlignedVector< Matrix44 > poseTransforms;
+	AlignedVector< Transform > poseTransforms;
 	calculatePoseTransforms(m_skeleton, &pose, poseTransforms);
 
 	Vector4 parentAxisX = poseTransforms[parentId] * Vector4(1.0f, 0.0f, 0.0f);
@@ -604,7 +604,7 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 	Pose pose;
 	m_animation->getPose(time, pose);
 
-	AlignedVector< Matrix44 > boneTransforms;
+	AlignedVector< Transform > boneTransforms;
 	calculatePoseTransforms(
 		m_skeleton,
 		&pose,
@@ -616,7 +616,7 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 		bool continueUpdate = true;
 		IKPoseController(0, 0, 10).evaluate(
 			0.0f,
-			Matrix44::identity(),
+			Transform::identity(),
 			m_skeleton,
 			boneTransforms,
 			boneTransforms,
@@ -948,7 +948,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			Pose pose;
 			m_animation->getPose(time, pose);
 
-			AlignedVector< Matrix44 > boneTransforms;
+			AlignedVector< Transform > boneTransforms;
 			calculatePoseTransforms(
 				m_skeleton,
 				&pose,
@@ -968,7 +968,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 					center + extent
 				);
 
-				data->picker->addVolume(boneTransforms[i], boneVolume, i);
+				data->picker->addVolume(boneTransforms[i].toMatrix44(), boneVolume, i);
 			}
 		}
 

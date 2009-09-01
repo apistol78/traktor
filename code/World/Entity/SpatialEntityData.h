@@ -2,7 +2,7 @@
 #define traktor_world_SpatialEntityData_H
 
 #include "World/Entity/EntityData.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,14 +27,14 @@ class T_DLLCLASS SpatialEntityData : public EntityData
 public:
 	SpatialEntityData();
 	
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 	
-	virtual const Matrix44& getTransform() const;
+	virtual const Transform& getTransform() const;
 
 	virtual bool serialize(Serializer& s);
 	
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 };
 	
 	}

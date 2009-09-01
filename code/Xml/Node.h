@@ -15,6 +15,9 @@
 
 namespace traktor
 {
+
+class OutputStream;
+
 	namespace xml
 	{
 
@@ -34,7 +37,11 @@ public:
 
 	virtual void setValue(const std::wstring& value);
 
+	virtual void write(OutputStream& os) const;
+
 	void addChild(Node* child);
+
+	void removeAllChildren();
 	
 	void insertBefore(Node* child, Node* node);
 	

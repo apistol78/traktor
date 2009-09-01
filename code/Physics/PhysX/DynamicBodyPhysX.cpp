@@ -28,12 +28,12 @@ DynamicBodyPhysX::DynamicBodyPhysX(DestroyCallbackPhysX* callback, NxActor* acto
 {
 }
 
-void DynamicBodyPhysX::setTransform(const Matrix44& transform)
+void DynamicBodyPhysX::setTransform(const Transform& transform)
 {
 	m_actor->setGlobalPose(toNxMat34(transform));
 }
 
-Matrix44 DynamicBodyPhysX::getTransform() const
+Transform DynamicBodyPhysX::getTransform() const
 {
 	return fromNxMat34(m_actor->getGlobalPose());
 }

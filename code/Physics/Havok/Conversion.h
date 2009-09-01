@@ -2,9 +2,8 @@
 #define traktor_physics_Conversion_H
 
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Quaternion.h"
 #include "Core/Math/Matrix33.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 namespace traktor
 {
@@ -24,6 +23,18 @@ T_FORCE_INLINE Vector4 fromHkVector4(const hkVector4& v)
 T_FORCE_INLINE hkVector4 toHkVector4(const Vector4& v)
 {
 	return hkVector4(v.x(), v.y(), v.z(), v.w());
+}
+
+/*! \brief Convert from Havok quaternion. */
+T_FORCE_INLINE Quaternion fromHkQuaternion(const hkQuaternion& q)
+{
+	return Quaternion(q.m_vec(0), q.m_vec(1), q.m_vec(2), q.m_vec(3));
+}
+
+/*! \brief Convert to Havok quaternion. */
+T_FORCE_INLINE hkQuaternion toHkQuaternion(const Quaternion& q)
+{
+	return hkQuaternion(q.x, q.y, q.z, q.w);
 }
 
 /*! \brief Convert from Havok matrix. */
@@ -55,25 +66,20 @@ T_FORCE_INLINE hkMatrix3 toHkMatrix3(const Matrix33& m)
 }
 
 /*! \brief Convert from Havok transform. */
-T_FORCE_INLINE Matrix44 fromHkTransform(const hkTransform& t)
+T_FORCE_INLINE Transform fromHkTransform(const hkTransform& t)
 {
-	float T_ALIGN16 e[4 * 4];
-	t.get4x4ColumnMajor(e);
-	Matrix44 m;
-	m.load(e);
-	return m;
+	hkVector4 hkt = t.getTranslation();
+	hkQuaternion hkr = hkQuaternion(t.getRotation());
+	return Transform(fromHkVector4(hkt), fromHkQuaternion(hkr));
 }
 
 /*! \brief Convert to Havok transform. */
-T_FORCE_INLINE hkTransform toHkTransform(const Matrix44& m)
+T_FORCE_INLINE hkTransform toHkTransform(const Transform& m)
 {
-	float T_ALIGN16 e[4 * 4];
-	m.store(e);
-
-	hkTransform t;
-	t.set4x4ColumnMajor(e);
-
-	return t;
+	return hkTransform(
+		toHkQuaternion(m.rotation()),
+		toHkVector4(m.translation())
+	);
 }
 
 //@}

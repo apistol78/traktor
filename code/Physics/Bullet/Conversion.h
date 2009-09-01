@@ -2,9 +2,8 @@
 #define traktor_physics_Conversion_H
 
 #include "Core/Math/Float.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix33.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 namespace traktor
 {
@@ -33,6 +32,18 @@ inline btVector3 toBtVector3(const Vector4& v)
 	return btVector3(v.x(), v.y(), v.z());
 }
 
+/*! \brief Convert from Bullet quaternion. */
+inline Quaternion fromBtQuaternion(const btQuaternion& q)
+{
+	return Quaternion(q.x(), q.y(), q.z(), q.w());
+}
+
+/*! \brief Convert to Bullet quaternion. */
+inline btQuaternion toBtQuaternion(const Quaternion& q)
+{
+	return btQuaternion(q.x, q.y, q.z, q.w);
+}
+
 /*! \brief Convert from Bullet matrix. */
 inline Matrix33 fromBtMatrix(const btMatrix3x3& matrix)
 {
@@ -44,27 +55,18 @@ inline Matrix33 fromBtMatrix(const btMatrix3x3& matrix)
 }
 
 /*! \brief Convert from Bullet transform. */
-inline Matrix44 fromBtTransform(const btTransform& transform)
+inline Transform fromBtTransform(const btTransform& transform)
 {
-	const btMatrix3x3& basis = transform.getBasis();
-	const btVector3& origin = transform.getOrigin();
-
-	return Matrix44(
-		basis.getRow(0).x(), basis.getRow(0).y(), basis.getRow(0).z(), origin.x(),
-		basis.getRow(1).x(), basis.getRow(1).y(), basis.getRow(1).z(), origin.y(),
-		basis.getRow(2).x(), basis.getRow(2).y(), basis.getRow(2).z(), origin.z(),
-		0.0f, 0.0f, 0.0f, 1.0f
+	return Transform(
+		fromBtVector3(transform.getOrigin(), 0.0f),
+		fromBtQuaternion(transform.getRotation())
 	);
 }
 
 /*! \brief Convert to Bullet transform. */
-inline btTransform toBtTransform(const Matrix44& transform)
+inline btTransform toBtTransform(const Transform& transform)
 {
-	btMatrix3x3 basis(
-		transform(0, 0), transform(0, 1), transform(0, 2),
-		transform(1, 0), transform(1, 1), transform(1, 2),
-		transform(2, 0), transform(2, 1), transform(2, 2)
-	);
+	btQuaternion basis = toBtQuaternion(transform.rotation());
 	btVector3 origin = toBtVector3(transform.translation());
 	return btTransform(basis, origin);
 }

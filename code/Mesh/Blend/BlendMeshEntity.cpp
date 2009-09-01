@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMeshEntity", BlendMeshEntity, MeshEntity)
 
-BlendMeshEntity::BlendMeshEntity(const Matrix44& transform, const resource::Proxy< BlendMesh >& mesh)
+BlendMeshEntity::BlendMeshEntity(const Transform& transform, const resource::Proxy< BlendMesh >& mesh)
 :	MeshEntity(transform)
 ,	m_mesh(mesh)
 {

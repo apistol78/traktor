@@ -14,6 +14,9 @@
 
 namespace traktor
 {
+
+class OutputStream;
+
 	namespace xml
 	{
 	
@@ -34,6 +37,8 @@ public:
 	virtual void setName(const std::wstring& name);
 
 	virtual std::wstring getValue() const;
+
+	virtual void write(OutputStream& os) const;
 
 	int get(const std::wstring& path, RefArray< Element >& elements);
 	

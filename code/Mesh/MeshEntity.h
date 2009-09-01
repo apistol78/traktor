@@ -39,11 +39,11 @@ class T_DLLCLASS MeshEntity : public world::SpatialEntity
 	T_RTTI_CLASS(MeshEntity)
 
 public:
-	MeshEntity(const Matrix44& transform);
+	MeshEntity(const Transform& transform);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 	
 	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance) = 0;
 
@@ -56,7 +56,7 @@ public:
 	inline IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
-	Matrix44 m_transform;
+	Transform m_transform;
 	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
 };

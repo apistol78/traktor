@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.TranslateModifier", TranslateModifier, IM
 void TranslateModifier::draw(
 	SceneEditorContext* context,
 	const Matrix44& viewTransform,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	render::PrimitiveRenderer* primitiveRenderer,
 	int button
 )
@@ -20,7 +20,7 @@ void TranslateModifier::draw(
 	const Scalar c_guideScale(0.1f);
 	const Scalar c_guideMinLength(1.0f);
 
-	Scalar cameraDistance = (worldTransform * viewTransform).translation().length();
+	Scalar cameraDistance = (worldTransform.toMatrix44() * viewTransform).translation().length();
 	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
 	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
 
@@ -81,10 +81,10 @@ void TranslateModifier::adjust(
 	const Vector4& viewDelta,
 	const Vector4& worldDelta,
 	int button,
-	Matrix44& outTransform
+	Transform& outTransform
 )
 {
-	outTransform = translate(worldDelta) * outTransform;
+	outTransform = Transform(worldDelta) * outTransform;
 }
 
 	}

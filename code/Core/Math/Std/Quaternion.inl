@@ -227,8 +227,8 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 {
 	VALIDATE(*this);
 	outHead  = atan2f(2.0f * y * w - 2.0f * x * z, 1.0f - 2.0f * y * y - 2.0f * z *z);
-	outPitch = asinf (2.0f * x * y + 2.0f * z * w);
-	outBank  = atan2f(2.0f * x * w - 2.0f * y * z, 1.0f - 2.0f * x * x - 2 * z * z);
+	outPitch = atan2f(2.0f * x * w - 2.0f * y * z, 1.0f - 2.0f * x * x - 2 * z * z);
+	outBank  = asinf (2.0f * x * y + 2.0f * z * w);
 }
 
 T_MATH_INLINE Quaternion& Quaternion::operator *= (const Quaternion& r)

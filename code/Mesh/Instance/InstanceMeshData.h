@@ -3,7 +3,7 @@
 
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 namespace traktor
 {
@@ -27,15 +27,14 @@ struct InstanceMeshData
 };
 #pragma pack()
 
-inline InstanceMeshData packInstanceMeshData(const Matrix44& transform, float userParameter)
+inline InstanceMeshData packInstanceMeshData(const Transform& transform, float userParameter)
 {
-	Quaternion rotation = Quaternion(transform).normalized();
 	InstanceMeshData imd;
 
-	imd.rotation[0] = rotation.x;
-	imd.rotation[1] = rotation.y;
-	imd.rotation[2] = rotation.z;
-	imd.rotation[3] = rotation.w;
+	imd.rotation[0] = transform.rotation().x;
+	imd.rotation[1] = transform.rotation().y;
+	imd.rotation[2] = transform.rotation().z;
+	imd.rotation[3] = transform.rotation().w;
 	imd.translation[0] = transform.translation().x();
 	imd.translation[1] = transform.translation().y();
 	imd.translation[2] = transform.translation().z();

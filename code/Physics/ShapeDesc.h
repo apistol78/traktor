@@ -2,7 +2,7 @@
 #define traktor_physics_ShapeDesc_H
 
 #include "Core/Serialization/Serializable.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,14 +27,14 @@ class T_DLLCLASS ShapeDesc : public Serializable
 public:
 	ShapeDesc();
 
-	void setLocalTransform(const Matrix44& localTransform);
+	void setLocalTransform(const Transform& localTransform);
 
-	const Matrix44& getLocalTransform() const;
+	const Transform& getLocalTransform() const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
-	Matrix44 m_localTransform;
+	Transform m_localTransform;
 };
 
 	}

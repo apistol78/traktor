@@ -2,7 +2,7 @@
 #define traktor_world_SpatialEntity_H
 
 #include "World/Entity/Entity.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Aabb.h"
 
 // import/export mechanism.
@@ -30,14 +30,14 @@ public:
 	 *
 	 * \param transform Entity transform.
 	 */
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
 	/*! \brief Get entity transform.
 	 *
 	 * \param outTransform Returning entity transform.
 	 * \return True if entity have a transform.
 	 */
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	/*! \brief Get entity bounding box.
 	 * Return entity bounding box in entity space.

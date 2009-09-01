@@ -14,12 +14,12 @@ StaticBodyPhysX::StaticBodyPhysX(DestroyCallbackPhysX* callback, NxActor* actor)
 {
 }
 
-void StaticBodyPhysX::setTransform(const Matrix44& transform)
+void StaticBodyPhysX::setTransform(const Transform& transform)
 {
 	m_actor->setGlobalPose(toNxMat34(transform));
 }
 
-Matrix44 StaticBodyPhysX::getTransform() const
+Transform StaticBodyPhysX::getTransform() const
 {
 	return fromNxMat34(m_actor->getGlobalPose());
 }

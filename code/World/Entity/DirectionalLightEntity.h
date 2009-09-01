@@ -25,7 +25,7 @@ class T_DLLCLASS DirectionalLightEntity : public SpatialEntity
 
 public:
 	DirectionalLightEntity(
-		const Matrix44& transform,
+		const Transform& transform,
 		const Vector4& sunColor,
 		const Vector4& baseColor,
 		const Vector4& shadowColor
@@ -33,9 +33,9 @@ public:
 
 	virtual void update(const EntityUpdate* update);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -46,7 +46,7 @@ public:
 	inline const Vector4& getShadowColor() const { return m_shadowColor; }
 
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;

@@ -290,7 +290,7 @@ bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 	for (int r = 0; r < 4; ++r)
 	{
 		for (int c = 0; c < 4; ++c)
-			(*m).set(r, c, Scalar(v[r + c * 4]));	// @fixme Wrong order
+			(*m).set(r, c, Scalar(v[c + r * 4]));
 	}
 
 	return true;

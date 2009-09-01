@@ -26,6 +26,12 @@ void Node::setValue(const std::wstring& value)
 {
 }
 
+void Node::write(OutputStream& os) const
+{
+	for (Node* child = m_firstChild; child != 0; child = child->m_nextSibling)
+		child->write(os);
+}
+
 void Node::addChild(Node* child)
 {
 	child->m_parent = this;
@@ -38,6 +44,17 @@ void Node::addChild(Node* child)
 		m_firstChild = child;
 		
 	m_lastChild = child;
+}
+
+void Node::removeAllChildren()
+{
+	for (Ref< Node > child = m_firstChild; child; child = child->m_nextSibling)
+	{
+		T_ASSERT (child->m_parent == this);
+		child->m_parent = 0;
+	}
+	m_firstChild = 0;
+	m_lastChild = 0;
 }
 
 void Node::insertBefore(Node* child, Node* node)

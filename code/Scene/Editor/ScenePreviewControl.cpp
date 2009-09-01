@@ -6,7 +6,6 @@
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
-#include "Scene/Editor/Modifiers/ScaleModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
@@ -91,7 +90,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), ui::Command(L"Scene.Editor.Translate"), 0));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_ROTATE"), ui::Command(L"Scene.Editor.Rotate"), 1));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_SCALE"), ui::Command(L"Scene.Editor.Scale"), 11));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(m_toolToggleX);
 	m_toolBarActions->addItem(m_toolToggleY);
@@ -125,7 +123,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_modifierTranslate = gc_new< TranslateModifier >();
 	m_modifierRotate = gc_new< RotateModifier >();
-	m_modifierScale = gc_new< ScaleModifier >();
 
 	m_context = context;
 	m_context->setModifier(m_modifierTranslate);
@@ -191,8 +188,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 		m_context->setModifier(m_modifierTranslate);
 	else if (command == L"Scene.Editor.Rotate")
 		m_context->setModifier(m_modifierRotate);
-	else if (command == L"Scene.Editor.Scale")
-		m_context->setModifier(m_modifierScale);
 	else if (command == L"Scene.Editor.TogglePick")
 		updateEditState();
 	else if (command == L"Scene.Editor.ToggleX" || command == L"Scene.Editor.ToggleY" || command == L"Scene.Editor.ToggleZ")

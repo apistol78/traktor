@@ -369,7 +369,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 			continue;
 
 		// Transform ray into object space.
-		Matrix44 worldInv = (*i)->getTransform().inverseOrtho();
+		Transform worldInv = (*i)->getTransform().inverse();
 		Vector4 objectRayOrigin = worldInv * worldRayOrigin;
 		Vector4 objectRayDirection = worldInv * worldRayDirection;
 

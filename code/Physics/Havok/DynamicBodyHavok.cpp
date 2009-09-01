@@ -29,12 +29,12 @@ DynamicBodyHavok::DynamicBodyHavok(DestroyCallbackHavok* callback, const HvkRef<
 {
 }
 
-void DynamicBodyHavok::setTransform(const Matrix44& transform)
+void DynamicBodyHavok::setTransform(const Transform& transform)
 {
 	m_rigidBody->setTransform(toHkTransform(transform));
 }
 
-Matrix44 DynamicBodyHavok::getTransform() const
+Transform DynamicBodyHavok::getTransform() const
 {
 	return fromHkTransform(m_rigidBody->getTransform());
 }

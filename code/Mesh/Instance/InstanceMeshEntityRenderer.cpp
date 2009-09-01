@@ -33,13 +33,13 @@ void InstanceMeshEntityRenderer::render(
 		return;
 
 	Aabb boundingBox = meshEntity->getBoundingBox();
-	Matrix44 transform; meshEntity->getTransform(transform);
+	Transform transform; meshEntity->getTransform(transform);
 
 	float distance = 0.0f;
 	if (!isMeshVisible(
 		boundingBox,
 		worldRenderView->getCullFrustum(),
-		worldRenderView->getView() * transform,
+		worldRenderView->getView() * transform.toMatrix44(),
 		worldRenderView->getProjection(),
 		1e-4f,
 		distance

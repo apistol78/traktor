@@ -17,7 +17,7 @@ EffectLayerInstance::EffectLayerInstance(const EffectLayer* layer, EmitterInstan
 {
 }
 
-void EffectLayerInstance::update(EmitterUpdateContext& context, const Matrix44& transform, float time, bool enable)
+void EffectLayerInstance::update(EmitterUpdateContext& context, const Transform& transform, float time, bool enable)
 {
 	if (time >= m_start && time <= m_end)
 		m_emitterInstance->update(context, transform, enable);

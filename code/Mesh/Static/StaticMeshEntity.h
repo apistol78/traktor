@@ -24,7 +24,7 @@ class T_DLLCLASS StaticMeshEntity : public MeshEntity
 	T_RTTI_CLASS(StaticMeshEntity)
 
 public:
-	StaticMeshEntity(const Matrix44& transform, const resource::Proxy< StaticMesh >& mesh);
+	StaticMeshEntity(const Transform& transform, const resource::Proxy< StaticMesh >& mesh);
 	
 	virtual Aabb getBoundingBox() const;
 

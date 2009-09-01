@@ -73,15 +73,15 @@ ArticulatedEntity* ArticulatedEntityData::createEntity(
 	);
 }
 
-void ArticulatedEntityData::setTransform(const Matrix44& transform)
+void ArticulatedEntityData::setTransform(const Transform& transform)
 {
-	Matrix44 deltaTransform = getTransform().inverseOrtho() * transform;
+	Transform deltaTransform = getTransform().inverse() * transform;
 	for (RefArray< world::EntityInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
 		world::SpatialEntityData* entityData = dynamic_type_cast< world::SpatialEntityData* >((*i)->getEntityData());
 		if (entityData)
 		{
-			Matrix44 currentTransform = entityData->getTransform();
+			Transform currentTransform = entityData->getTransform();
 			entityData->setTransform(currentTransform * deltaTransform);
 		}
 	}

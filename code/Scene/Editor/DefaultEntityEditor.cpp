@@ -62,7 +62,7 @@ void DefaultEntityEditor::applyModifier(
 	if (!modifier)
 		return;
 
-	Matrix44 transform = entityAdapter->getTransform();
+	Transform transform = entityAdapter->getTransform();
 	
 	modifier->adjust(
 		context,
@@ -130,7 +130,7 @@ void DefaultEntityEditor::applyModifier(
 		}
 		
 		if (minDistance <= 0.2f)
-			entityAdapter->setTransform(transform * translate(minTranslate));
+			entityAdapter->setTransform(transform * Transform(minTranslate));
 	}
 }
 
@@ -163,7 +163,7 @@ void DefaultEntityEditor::drawGuide(
 	if (!context->getGuideEnable() && !entityAdapter->isSelected())
 		return;
 
-	Matrix44 transform = entityAdapter->getTransform();
+	Transform transform = entityAdapter->getTransform();
 	
 	Aabb boundingBox = entityAdapter->getBoundingBox();
 	boundingBox.mn -= c_expandBoundingBox;
@@ -189,13 +189,13 @@ void DefaultEntityEditor::drawGuide(
 			Color(255, 255, 0)
 		);
 
-		primitiveRenderer->pushWorld(transform);
+		primitiveRenderer->pushWorld(transform.toMatrix44());
 		primitiveRenderer->drawWireAabb(Aabb(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), Color(255, 255, 0));
 		primitiveRenderer->popWorld();
 	}
 	else
 	{
-		primitiveRenderer->pushWorld(transform);
+		primitiveRenderer->pushWorld(transform.toMatrix44());
 		if (entityAdapter->isSelected())
 		{
 			primitiveRenderer->drawSolidAabb(boundingBox, Color(255, 128, 128, 128));
@@ -209,7 +209,7 @@ void DefaultEntityEditor::drawGuide(
 		{
 			Matrix44 viewInverse = primitiveRenderer->getView().inverseOrtho();
 
-			Scalar cameraDistance = (transform * primitiveRenderer->getView()).translation().length();
+			Scalar cameraDistance = (transform.toMatrix44() * primitiveRenderer->getView()).translation().length();
 			Scalar snapSize = cameraDistance * Scalar(0.005f);
 
 			Vector4 axisX = viewInverse.axisX() * snapSize;

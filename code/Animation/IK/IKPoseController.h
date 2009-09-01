@@ -39,10 +39,10 @@ public:
 
 	virtual void evaluate(
 		float deltaTime,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		const Skeleton* skeleton,
-		const AlignedVector< Matrix44 >& boneTransforms,
-		AlignedVector< Matrix44 >& outPoseTransforms,
+		const AlignedVector< Transform >& boneTransforms,
+		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
 	);
 

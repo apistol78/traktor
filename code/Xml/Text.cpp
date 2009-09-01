@@ -1,4 +1,5 @@
 #include "Xml/Text.h"
+#include "Core/Io/OutputStream.h"
 
 namespace traktor
 {
@@ -20,6 +21,11 @@ std::wstring Text::getValue() const
 void Text::setValue(const std::wstring& value)
 {
 	m_text = value;
+}
+
+void Text::write(OutputStream& os) const
+{
+	os << m_text;
 }
 
 	}

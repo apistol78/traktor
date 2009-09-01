@@ -2,7 +2,7 @@
 #define traktor_scene_IModifier_H
 
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 namespace traktor
 {
@@ -27,7 +27,7 @@ public:
 	virtual void draw(
 		SceneEditorContext* context,
 		const Matrix44& viewTransform,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		render::PrimitiveRenderer* primitiveRenderer,
 		int button
 	) = 0;
@@ -39,7 +39,7 @@ public:
 		const Vector4& viewDelta,
 		const Vector4& worldDelta,
 		int button,
-		Matrix44& outTransform
+		Transform& outTransform
 	) = 0;
 };
 

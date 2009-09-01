@@ -4,7 +4,7 @@
 #include "Resource/Proxy.h"
 #include "Core/Object.h"
 #include "Core/Math/Aabb.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Render/Shader.h"
 
 // import/export mechanism.
@@ -66,7 +66,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		Instance* instance,
 		const std::vector< float >& blendWeights,
 		float distance,

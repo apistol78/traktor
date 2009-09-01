@@ -133,6 +133,33 @@ Aabb Aabb::transform(const Matrix44& m) const
 	return aabb;
 }
 
+Aabb Aabb::transform(const Transform& tf) const
+{
+	Vector4 c = tf * getCenter();
+
+	Vector4 ax = tf.rotation() * Vector4(1.0f, 0.0f, 0.0f);
+	Vector4 ay = tf.rotation() * Vector4(0.0f, 1.0f, 0.0f);
+	Vector4 az = tf.rotation() * Vector4(0.0f, 0.0f, 1.0f);
+
+	Vector4 e = getExtent();
+	Vector4 x = ax * e.x();
+	Vector4 y = ay * e.y();
+	Vector4 z = az * e.z();
+
+	Vector4 first = c + x + y + z;
+	Aabb aabb(first, first);
+
+	aabb.contain(c - x + y + z);
+	aabb.contain(c + x - y + z);
+	aabb.contain(c - x - y + z);
+	aabb.contain(c + x + y - z);
+	aabb.contain(c - x + y - z);
+	aabb.contain(c + x - y - z);
+	aabb.contain(c - x - y - z);
+
+	return aabb;
+}
+
 const int* Aabb::getFaces()
 {
 	static const int s_faces[] =

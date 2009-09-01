@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PointLightEntity", PointLightEntity, SpatialEntity)
 
 PointLightEntity::PointLightEntity(
-	const Matrix44& transform,
+	const Transform& transform,
 	const Vector4& sunColor,
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
@@ -26,12 +26,12 @@ void PointLightEntity::update(const EntityUpdate* update)
 {
 }
 
-void PointLightEntity::setTransform(const Matrix44& transform)
+void PointLightEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool PointLightEntity::getTransform(Matrix44& outTransform) const
+bool PointLightEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;

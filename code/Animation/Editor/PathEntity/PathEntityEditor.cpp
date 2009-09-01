@@ -61,7 +61,7 @@ void PathEntityEditor::applyModifier(
 		if (frame)
 		{
 			// Use modifier to adjust closest key frame.
-			Matrix44 transform = frame->orientation.toMatrix44() * translate(frame->position);
+			Transform transform(frame->position, frame->orientation);
 			modifier->adjust(
 				context,
 				viewTransform,
@@ -72,7 +72,7 @@ void PathEntityEditor::applyModifier(
 				transform
 			);
 			frame->position = transform.translation();
-			frame->orientation = Quaternion(transform.inverse()).normalized();
+			frame->orientation = transform.rotation();
 
 			// Update entity's path to reflect changes as we're editing the entity data's path
 			// initially.
@@ -182,11 +182,11 @@ void PathEntityEditor::drawGuide(
 	// Draw attached entity's bounding box.
 	if (world::SpatialEntity* attachedEntity = pathEntity->getEntity())
 	{
-		Matrix44 transform;
+		Transform transform;
 		if (!attachedEntity->getTransform(transform))
-			transform = Matrix44::identity();
+			transform = Transform::identity();
 
-		primitiveRenderer->pushWorld(transform);
+		primitiveRenderer->pushWorld(transform.toMatrix44());
 		primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color(255, 255, 0));
 		primitiveRenderer->popWorld();
 	}

@@ -8,17 +8,17 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.CompositeMeshEntity", CompositeMeshEntity, MeshEntity)
 
-CompositeMeshEntity::CompositeMeshEntity(const Matrix44& transform)
+CompositeMeshEntity::CompositeMeshEntity(const Transform& transform)
 :	MeshEntity(transform)
 {
 }
 
-void CompositeMeshEntity::setTransform(const Matrix44& transform)
+void CompositeMeshEntity::setTransform(const Transform& transform)
 {
-	Matrix44 deltaTransform = transform * m_transform.inverseOrtho();
+	Transform deltaTransform = transform * m_transform.inverse();
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 	{
-		Matrix44 currentTransform;
+		Transform currentTransform;
 		if (i->second->getTransform(currentTransform))
 			i->second->setTransform(deltaTransform * currentTransform);
 	}
@@ -27,7 +27,7 @@ void CompositeMeshEntity::setTransform(const Matrix44& transform)
 
 Aabb CompositeMeshEntity::getBoundingBox() const
 {
-	Matrix44 invTransform = m_transform.inverseOrtho();
+	Transform invTransform = m_transform.inverse();
 
 	Aabb boundingBox;
 	for (std::map< std::wstring, Ref< MeshEntity > >::const_iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)

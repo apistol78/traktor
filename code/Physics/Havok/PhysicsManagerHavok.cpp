@@ -381,7 +381,7 @@ Body* PhysicsManagerHavok::createBody(const BodyDesc* desc)
 	}
 
 	// Create compound shape which has the shape's local transformation.
-	if (shapeDesc->getLocalTransform() != Matrix44::identity())
+	if (shapeDesc->getLocalTransform() != Transform::identity())
 	{
 		// Build Havok local transformation; need to renormalize rotation.
 		hkTransform localTransform = toHkTransform(shapeDesc->getLocalTransform());
@@ -462,7 +462,7 @@ Body* PhysicsManagerHavok::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerHavok::createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2)
+Joint* PhysicsManagerHavok::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	T_ASSERT (desc);
 	T_ASSERT (body1);

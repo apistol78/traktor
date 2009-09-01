@@ -5,6 +5,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Io/Stream.h"
+#include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,12 +31,16 @@ class T_DLLCLASS Document : public Object
 	T_RTTI_CLASS(Document)
 
 public:
-	bool loadFromFile(const std::wstring& filename);
+	bool loadFromFile(const Path& fileName);
 	
 	bool loadFromStream(Stream* stream);
 	
 	bool loadFromText(const std::wstring& text);
 	
+	bool saveAsFile(const Path& fileName);
+
+	bool saveIntoStream(Stream* stream);
+
 	int get(const std::wstring& path, RefArray< Element >& elements);
 	
 	Element* getSingle(const std::wstring& path);

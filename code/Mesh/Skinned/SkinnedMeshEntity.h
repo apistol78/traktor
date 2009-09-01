@@ -25,7 +25,7 @@ class T_DLLCLASS SkinnedMeshEntity : public MeshEntity
 	T_RTTI_CLASS(SkinnedMeshEntity)
 
 public:
-	SkinnedMeshEntity(const Matrix44& transform, const resource::Proxy< SkinnedMesh >& mesh);
+	SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh);
 
 	void setBoneTransforms(const AlignedVector< Matrix44 >& boneTransforms);
 

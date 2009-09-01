@@ -5,6 +5,7 @@
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -60,6 +61,13 @@ public:
 	 * \return Transformed bounding box.
 	 */
 	Aabb transform(const Matrix44& m) const;
+
+	/*! \brief Transform bounding box.
+	*
+	* \param m Transformation.
+	* \return Transformed bounding box.
+	*/
+	Aabb transform(const Transform& tf) const;
 
 	/*! \brief Return 6 faces, 4 indices each (24 integers total). */
 	static const int* getFaces();

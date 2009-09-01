@@ -27,10 +27,10 @@ void IKPoseController::setIgnoreBody(physics::Body* ignoreBody)
 
 void IKPoseController::evaluate(
 	float deltaTime,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Matrix44 >& boneTransforms,
-	AlignedVector< Matrix44 >& outPoseTransforms,
+	const AlignedVector< Transform >& boneTransforms,
+	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
 )
 {
@@ -56,7 +56,7 @@ void IKPoseController::evaluate(
 		outPoseTransforms = boneTransforms;
 
 	// Calculate resting bone transforms.
-	AlignedVector< Matrix44 > boneLocalTransforms;
+	AlignedVector< Transform > boneLocalTransforms;
 	calculateBoneLocalTransforms(skeleton, boneLocalTransforms);
 
 	// Build node system.
@@ -116,7 +116,7 @@ void IKPoseController::evaluate(
 					result
 				))
 				{
-					ep = worldTransform.inverseOrtho() * result.position;
+					ep = worldTransform.inverse() * result.position;
 				}
 			}
 
@@ -166,12 +166,12 @@ void IKPoseController::evaluate(
 		Vector4 axisY = cross(axisZ, outPoseTransforms[i].axisX()).normalized();
 		Vector4 axisX = cross(axisY, axisZ).normalized();
 
-		outPoseTransforms[i] = Matrix44(
+		outPoseTransforms[i] = Transform(Matrix44(
 			axisX,
 			axisY,
 			axisZ,
 			sp
-		);
+		));
 	}
 }
 

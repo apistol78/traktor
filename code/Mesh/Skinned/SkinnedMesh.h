@@ -57,7 +57,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		const AlignedVector< Matrix44 >& boneTransforms,
 		float distance,
 		const IMeshParameterCallback* parameterCallback

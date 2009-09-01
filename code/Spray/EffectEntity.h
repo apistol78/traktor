@@ -38,13 +38,13 @@ class T_DLLCLASS EffectEntity : public world::SpatialEntity
 	T_RTTI_CLASS(EffectEntity)
 
 public:
-	EffectEntity(resource::IResourceManager* resourceManager, const Matrix44& transform, const resource::Proxy< Effect >& effect);
+	EffectEntity(resource::IResourceManager* resourceManager, const Transform& transform, const resource::Proxy< Effect >& effect);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -60,7 +60,7 @@ public:
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;
-	Matrix44 m_transform;
+	Transform m_transform;
 	resource::Proxy< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
 	EmitterUpdateContext m_context;

@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb.h"
 
@@ -35,7 +35,7 @@ class T_DLLCLASS EffectInstance : public Object
 public:
 	EffectInstance(const Effect* effect);
 
-	void update(EmitterUpdateContext& context, const Matrix44& transform, bool enable);
+	void update(EmitterUpdateContext& context, const Transform& transform, bool enable);
 
 	void synchronize();
 

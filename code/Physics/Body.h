@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,13 +33,13 @@ public:
 	virtual void destroy() = 0;
 
 	/*! \brief Set rigid body world transform. */
-	virtual void setTransform(const Matrix44& transform) = 0;
+	virtual void setTransform(const Transform& transform) = 0;
 
 	/*! \brief Get rigid body world transform.
 	 *
 	 * \return World transform.
 	 */
-	virtual Matrix44 getTransform() const = 0;
+	virtual Transform getTransform() const = 0;
 
 	/*! \brief Set rigid body active state.
 	 *

@@ -31,13 +31,13 @@ DynamicBodyBullet::DynamicBodyBullet(DestroyCallback* callback, btDynamicsWorld*
 {
 }
 
-void DynamicBodyBullet::setTransform(const Matrix44& transform)
+void DynamicBodyBullet::setTransform(const Transform& transform)
 {
 	T_ASSERT (m_body);
 	m_body->setWorldTransform(toBtTransform(transform));
 }
 
-Matrix44 DynamicBodyBullet::getTransform() const
+Transform DynamicBodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
 	return fromBtTransform(m_body->getWorldTransform());

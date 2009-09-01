@@ -224,9 +224,9 @@ T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
 T_MATH_INLINE void Matrix44::load(const float* in)
 {
 	m_c[0] = Vector4(&in[0]);
-	m_c[0] = Vector4(&in[4]);
-	m_c[0] = Vector4(&in[8]);
-	m_c[0] = Vector4(&in[12]);
+	m_c[1] = Vector4(&in[4]);
+	m_c[2] = Vector4(&in[8]);
+	m_c[3] = Vector4(&in[12]);
 }
 
 T_MATH_INLINE void Matrix44::store(float* out) const

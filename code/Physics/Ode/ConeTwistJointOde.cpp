@@ -45,10 +45,10 @@ void ConeTwistJointOde::update(float deltaTime)
 	const float c_tau = 0.3f;
 	const float c_damping = 1.0f;
 
-	Matrix44 tf1 = m_body1->getTransform();
-	Matrix44 tf2 = m_body2->getTransform();
-	Matrix44 tfInv1 = tf1.inverse();
-	Matrix44 tfInv2 = tf2.inverse();
+	Transform tf1 = m_body1->getTransform();
+	Transform tf2 = m_body2->getTransform();
+	Transform tfInv1 = tf1.inverse();
+	Transform tfInv2 = tf2.inverse();
 
 	Vector4 centerOfMass1 = tf1.translation();
 	Vector4 centerOfMass2 = tf2.translation();

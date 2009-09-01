@@ -2,7 +2,7 @@
 #define traktor_physics_DynamicBodyState_H
 
 #include "Core/Serialization/Serializable.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -28,9 +28,9 @@ class T_DLLCLASS DynamicBodyState : public Serializable
 public:
 	DynamicBodyState();
 
-	void setTransform(const Matrix44& transform);
+	void setTransform(const Transform& transform);
 
-	const Matrix44& getTransform() const;
+	const Transform& getTransform() const;
 
 	void setLinearVelocity(const Vector4& velocity);
 
@@ -45,7 +45,7 @@ public:
 	virtual bool serialize(Serializer& s);
 
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 	Vector4 m_linearVelocity;
 	Vector4 m_angularVelocity;
 };

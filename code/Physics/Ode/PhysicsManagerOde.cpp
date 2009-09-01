@@ -139,8 +139,8 @@ public:
 		dGeomID geomId = 0;
 		dSpaceID spaceId = 0;
 
-		const Matrix44& localTransform = shapeDesc->getLocalTransform();
-		if (localTransform == Matrix44::identity())
+		const Transform& localTransform = shapeDesc->getLocalTransform();
+		if (localTransform == Transform::identity())
 			spaceId = m_spaceId;
 
 		if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
@@ -255,11 +255,12 @@ public:
 			const Vector4& p = localTransform.translation();
 			dGeomSetPosition(geomId, p.x(), p.y(), p.z());
 
+			Matrix44 lm = localTransform.toMatrix44();
 			dMatrix3 rotation =
 			{
-				localTransform(0, 0), localTransform(1, 0), localTransform(2, 0), 0.0f,
-				localTransform(0, 1), localTransform(1, 1), localTransform(2, 1), 0.0f,
-				localTransform(0, 2), localTransform(1, 2), localTransform(2, 2), 0.0f
+				lm(0, 0), lm(1, 0), lm(2, 0), 0.0f,
+				lm(0, 1), lm(1, 1), lm(2, 1), 0.0f,
+				lm(0, 2), lm(1, 2), lm(2, 2), 0.0f
 			};
 			dGeomSetRotation(geomId, rotation);
 
@@ -366,7 +367,7 @@ public:
 		return body;
 	}
 
-	Joint* createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2)
+	Joint* createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 	{
 		if (!desc)
 			return 0;
@@ -683,7 +684,7 @@ Body* PhysicsManagerOde::createBody(const BodyDesc* desc)
 	return m_impl->createBody(desc);
 }
 
-Joint* PhysicsManagerOde::createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2)
+Joint* PhysicsManagerOde::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	return m_impl->createJoint(desc, transform, body1, body2);
 }

@@ -38,15 +38,15 @@ const RefArray< EntityInstance >& SpatialGroupEntityData::getInstances() const
 	return m_instances;
 }
 
-void SpatialGroupEntityData::setTransform(const Matrix44& transform)
+void SpatialGroupEntityData::setTransform(const Transform& transform)
 {
-	Matrix44 deltaTransform = getTransform().inverseOrtho() * transform;
+	Transform deltaTransform = getTransform().inverse() * transform;
 	for (RefArray< EntityInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
 		SpatialEntityData* entityData = dynamic_type_cast< SpatialEntityData* >((*i)->getEntityData());
 		if (entityData)
 		{
-			Matrix44 currentTransform = entityData->getTransform();
+			Transform currentTransform = entityData->getTransform();
 			entityData->setTransform(currentTransform * deltaTransform);
 		}
 	}

@@ -74,9 +74,9 @@ public:
 
 	bool isSpatial() const;
 
-	void setTransform(const Matrix44& transform);
+	void setTransform(const Transform& transform);
 
-	Matrix44 getTransform() const;
+	Transform getTransform() const;
 
 	Aabb getBoundingBox() const;
 

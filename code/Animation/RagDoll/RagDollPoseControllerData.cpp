@@ -13,10 +13,10 @@ IPoseController* RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
-	const Matrix44& worldTransform
+	const Transform& worldTransform
 )
 {
-	AlignedVector< Matrix44 > boneTransforms;
+	AlignedVector< Transform > boneTransforms;
 	calculateBoneTransforms(skeleton, boneTransforms);
 
 	AlignedVector< IPoseController::Velocity > velocities;

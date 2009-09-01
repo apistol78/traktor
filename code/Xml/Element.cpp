@@ -5,6 +5,7 @@
 #include "Xml/Text.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
+#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -30,13 +31,45 @@ void Element::setName(const std::wstring& name)
 
 std::wstring Element::getValue() const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 	for (Node* child = getFirstChild(); child != 0; child = child->getNextSibling())
 	{
 		if (is_a< Text >(child))
 			ss << static_cast< Text* >(child)->getValue();
 	}
 	return ss.str();
+}
+
+void Element::write(OutputStream& os) const
+{
+	os << L"<" << m_name;
+	for (Attribute* attr = getFirstAttribute(); attr; attr = attr->getNext())
+		os << L" " << attr->getName() << L"=\"" << attr->getValue() << L"\"";
+
+	if (getFirstChild())
+	{
+		os << L">";
+		os << IncreaseIndent;
+
+		uint32_t childElements = 0, childText = 0;
+		for (Node* child = getFirstChild(); child; child = child->getNextSibling())
+		{
+			if (is_a< Element >(child))
+				++childElements;
+			else if (is_a< Text >(child))
+				++childText;
+		}
+
+		if (childElements > 0 || childText > 1)
+			os << Endl;
+
+		Node::write(os);
+
+		os << DecreaseIndent;
+		os << L"</" << m_name << L">" << Endl;
+	}
+	else
+		os << L"/>" << Endl;
 }
 
 int Element::get(const std::wstring& path, RefArray< Element >& elements)
@@ -200,13 +233,16 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	if (attr == 0)
 	{
 		attr = gc_new< Attribute >(name);
-		attr->m_previous = 0;
-		attr->m_next = m_firstAttribute;
+		attr->m_previous = m_lastAttribute;
+		attr->m_next = 0;
 		
-		if (m_firstAttribute != 0)
-			m_firstAttribute->m_previous = attr;
+		if (!m_firstAttribute)
+			m_firstAttribute = attr;
 
-		m_firstAttribute = attr;
+		if (m_lastAttribute)
+			m_lastAttribute->m_next = attr;
+
+		m_lastAttribute = attr;
 	}
 	attr->setValue(value);
 }

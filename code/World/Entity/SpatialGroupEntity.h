@@ -25,7 +25,7 @@ class T_DLLCLASS SpatialGroupEntity : public SpatialEntity
 	T_RTTI_CLASS(SpatialGroupEntity)
 
 public:
-	SpatialGroupEntity(const Matrix44& transform);
+	SpatialGroupEntity(const Transform& transform);
 
 	virtual ~SpatialGroupEntity();
 
@@ -45,9 +45,9 @@ public:
 	
 	virtual void update(const EntityUpdate* update);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -66,7 +66,7 @@ public:
 private:
 	friend class GroupEntityFactory;
 
-	Matrix44 m_transform;
+	Transform m_transform;
 	RefArray< SpatialEntity > m_entities;
 	bool m_update;
 	RefArray< SpatialEntity > m_remove;

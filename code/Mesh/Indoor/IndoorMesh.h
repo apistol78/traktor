@@ -52,7 +52,7 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		const world::WorldRenderView* worldRenderView,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		float distance,
 		const IMeshParameterCallback* parameterCallback
 	);

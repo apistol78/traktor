@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb.h"
 
@@ -32,7 +32,7 @@ class T_DLLCLASS EffectLayerInstance : public Object
 public:
 	EffectLayerInstance(const EffectLayer* layer, EmitterInstance* emitterInstance);
 
-	void update(EmitterUpdateContext& context, const Matrix44& transform, float time, bool enable);
+	void update(EmitterUpdateContext& context, const Transform& transform, float time, bool enable);
 
 	void synchronize();
 

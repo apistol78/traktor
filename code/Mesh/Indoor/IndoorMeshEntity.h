@@ -24,7 +24,7 @@ class T_DLLCLASS IndoorMeshEntity : public MeshEntity
 	T_RTTI_CLASS(IndoorMeshEntity)
 
 public:
-	IndoorMeshEntity(const Matrix44& transform, const resource::Proxy< IndoorMesh >& mesh);
+	IndoorMeshEntity(const Transform& transform, const resource::Proxy< IndoorMesh >& mesh);
 
 	virtual Aabb getBoundingBox() const;
 

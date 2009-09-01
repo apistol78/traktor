@@ -14,7 +14,7 @@ GravityModifier::GravityModifier()
 {
 }
 
-void GravityModifier::update(const Scalar& deltaTime, const Matrix44& transform, PointVector& points, size_t first, size_t last) const
+void GravityModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
 		points[i].velocity += m_gravity * Scalar(points[i].inverseMass) * deltaTime;

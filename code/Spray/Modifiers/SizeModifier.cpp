@@ -14,7 +14,7 @@ SizeModifier::SizeModifier()
 {
 }
 
-void SizeModifier::update(const Scalar& deltaTime, const Matrix44& transform, PointVector& points, size_t first, size_t last) const
+void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
 		points[i].size += m_adjustRate * deltaTime;

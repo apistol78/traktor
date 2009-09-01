@@ -174,7 +174,7 @@ void TheaterControllerEditor::captureEntities()
 		if (!(*i)->isSpatial())
 			continue;
 
-		Matrix44 transform = (*i)->getTransform();
+		Transform transform = (*i)->getTransform();
 
 		Ref< world::EntityInstance > instance = (*i)->getInstance();
 		T_ASSERT (instance);
@@ -198,13 +198,13 @@ void TheaterControllerEditor::captureEntities()
 		if (closestKey && abs(closestKey->T - time) < c_clampKeyDistance)
 		{
 			closestKey->value.position = transform.translation();
-			closestKey->value.orientation = Quaternion(transform.inverse()).normalized();
+			closestKey->value.orientation = transform.rotation();
 		}
 		else
 		{
 			TransformPath::Frame frame;
 			frame.position = transform.translation();
-			frame.orientation = Quaternion(transform.inverse()).normalized();
+			frame.orientation = transform.rotation();
 			pathData.insert(time, frame);
 		}
 	}

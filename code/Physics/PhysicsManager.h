@@ -4,7 +4,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -127,7 +127,7 @@ public:
 	 * \param body2 Second rigid body, can be null if joint is created with the world.
 	 * \return Joint instance.
 	 */
-	virtual Joint* createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2) = 0;
+	virtual Joint* createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) = 0;
 
 	/*! \brief Update simulation.
 	 *

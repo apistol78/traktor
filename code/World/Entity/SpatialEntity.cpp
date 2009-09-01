@@ -7,12 +7,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SpatialEntity", SpatialEntity, Entity)
 
-void SpatialEntity::setTransform(const Matrix44& transform)
+void SpatialEntity::setTransform(const Transform& transform)
 {
 	// Don't do anything.
 }
 
-bool SpatialEntity::getTransform(Matrix44& outTransform) const
+bool SpatialEntity::getTransform(Transform& outTransform) const
 {
 	// Doesn't have a transform.
 	return false;
@@ -24,7 +24,7 @@ Aabb SpatialEntity::getWorldBoundingBox() const
 	if (boundingBox.empty())
 		return Aabb();
 
-	Matrix44 transform;
+	Transform transform;
 	return getTransform(transform) ? boundingBox.transform(transform) : boundingBox;
 }
 

@@ -25,10 +25,10 @@ void AnimatedMeshEntityEditor::drawGuide(
 	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getEntityData());
 	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(entityAdapter->getEntity());
 
-	primitiveRenderer->pushWorld(entityAdapter->getTransform());
+	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
 
 	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
-	const AlignedVector< Matrix44 >& poseTransforms = animatedEntity->getPoseTransforms();
+	const AlignedVector< Transform >& poseTransforms = animatedEntity->getPoseTransforms();
 
 	if (skeleton.valid() && poseTransforms.size() == skeleton->getBoneCount())
 	{

@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshEntity", SkinnedMeshEntity, MeshEntity)
 
-SkinnedMeshEntity::SkinnedMeshEntity(const Matrix44& transform, const resource::Proxy< SkinnedMesh >& mesh)
+SkinnedMeshEntity::SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh)
 :	MeshEntity(transform)
 ,	m_mesh(mesh)
 {
