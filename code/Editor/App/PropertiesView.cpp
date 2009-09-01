@@ -167,19 +167,31 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 		if (!objectType)
 			objectType = &type_of< Serializable >();
 
-		objectType = m_editor->browseType(objectType);
-		if (objectType)
+		if (!objectItem->getObject())
 		{
-			Ref< Serializable > object = dynamic_type_cast< Serializable* >(objectType->newInstance());
-			if (object)
+			objectType = m_editor->browseType(objectType);
+			if (objectType)
 			{
-				objectItem->setObject(object);
+				Ref< Serializable > object = dynamic_type_cast< Serializable* >(objectType->newInstance());
+				if (object)
+				{
+					objectItem->setObject(object);
 
-				m_propertyList->refresh(objectItem, object);
-				m_propertyList->apply();
+					m_propertyList->refresh(objectItem, object);
+					m_propertyList->apply();
 
-				m_editor->getActiveEditorPage()->propertiesChanged();
+					m_editor->getActiveEditorPage()->propertiesChanged();
+				}
 			}
+		}
+		else
+		{
+			objectItem->setObject(0);
+
+			m_propertyList->refresh(objectItem, 0);
+			m_propertyList->apply();
+
+			m_editor->getActiveEditorPage()->propertiesChanged();
 		}
 	}
 	

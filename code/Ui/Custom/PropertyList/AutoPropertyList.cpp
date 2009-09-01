@@ -60,9 +60,12 @@ bool AutoPropertyList::refresh(PropertyItem* parent, Serializable* object)
 	removeAllChildren(this, parent);
 	parent->collapse();
 
-	InspectReflector reflector(this, parent);
-	if (!reflector.serialize(object, object->getVersion()))
-		return false;
+	if (object)
+	{
+		InspectReflector reflector(this, parent);
+		if (!reflector.serialize(object, object->getVersion()))
+			return false;
+	}
 
 	update();
 	return true;

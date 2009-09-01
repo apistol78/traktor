@@ -45,6 +45,11 @@ bool MiniButton::create(Widget* parent, Bitmap* image)
 	return true;
 }
 
+void MiniButton::setImage(Bitmap* image)
+{
+	m_image = image;
+}
+
 Size MiniButton::getPreferedSize() const
 {
 	if (m_image)
