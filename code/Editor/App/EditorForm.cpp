@@ -1615,15 +1615,30 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else
 	{
+		bool activeEditorFocus = false;
+
 		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-		if (!tabPage || !tabPage->containFocus())
-			return false;
+		if (tabPage && tabPage->containFocus())
+			activeEditorFocus = true;
 
-		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		if (!editorPage)
-			return false;
+		if (!activeEditorFocus && m_activeEditorPageSite)
+		{
+			const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
+			for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
+			{
+				if (i->first && i->first->containFocus())
+				{
+					activeEditorFocus = true;
+					break;
+				}
+			}
+		}
 
-		result = editorPage->handleCommand(command);
+		if (activeEditorFocus)		
+		{
+			if (m_activeEditorPage)
+				result = m_activeEditorPage->handleCommand(command);
+		}
 	}
 
 	return result;

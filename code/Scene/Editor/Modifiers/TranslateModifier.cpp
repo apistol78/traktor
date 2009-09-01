@@ -84,7 +84,17 @@ void TranslateModifier::adjust(
 	Transform& outTransform
 )
 {
-	outTransform = Transform(worldDelta) * outTransform;
+	uint32_t axisEnable = context->getAxisEnable();
+
+	Vector4 worldDeltaAdjust = worldDelta;
+	if ((axisEnable & SceneEditorContext::AeX) == 0)
+		worldDeltaAdjust *= Vector4(0.0f, 1.0f, 1.0f);
+	if ((axisEnable & SceneEditorContext::AeY) == 0)
+		worldDeltaAdjust *= Vector4(1.0f, 0.0f, 1.0f);
+	if ((axisEnable & SceneEditorContext::AeZ) == 0)
+		worldDeltaAdjust *= Vector4(1.0f, 1.0f, 0.0f);
+
+	outTransform = Transform(worldDeltaAdjust) * outTransform;
 }
 
 	}

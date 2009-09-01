@@ -381,11 +381,11 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		Ref< IModifier > modifier = m_context->getModifier();
 		T_ASSERT (modifier);
 
-		Matrix44 view = m_camera->getCurrentView();
-		Matrix44 viewInverse = view.inverse();
-
 		Matrix44 projection = m_worldRenderView.getProjection();
 		Matrix44 projectionInverse = projection.inverse();
+
+		Matrix44 view = m_camera->getCurrentView();
+		Matrix44 viewInverse = view.inverse();
 
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
 		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
@@ -396,7 +396,7 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 			if (entityEditor)
 			{
 				// Transform screen delta into world delta at entity's position.
-				Vector4 viewPosition = view * (*i)->getTransform().translation();
+				Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
 				Vector4 viewDelta = clipDelta * viewPosition.z();
 				Vector4 worldDelta = viewInverse * viewDelta;
 
