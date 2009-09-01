@@ -3,7 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,10 +36,10 @@ public:
 
 	virtual void evaluate(
 		float deltaTime,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		const Skeleton* skeleton,
-		const AlignedVector< Matrix44 >& boneTransforms,
-		AlignedVector< Matrix44 >& outPoseTransforms,
+		const AlignedVector< Transform >& boneTransforms,
+		AlignedVector< Transform >& outPoseTransforms,
 		bool& outUpdateController
 	) = 0;
 

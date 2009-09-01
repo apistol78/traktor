@@ -678,31 +678,31 @@ bool SceneEditorPage::addEntity()
 
 bool SceneEditorPage::moveToSelectedEntity()
 {
-	RefArray< EntityAdapter > selectedEntities;
-	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
-		return false;
+	//RefArray< EntityAdapter > selectedEntities;
+	//if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+	//	return false;
 
-	if (!selectedEntities[0]->isSpatial())
-		return false;
+	//if (!selectedEntities[0]->isSpatial())
+	//	return false;
 
-	Aabb boundingBox = selectedEntities[0]->getBoundingBox();
-	if (!boundingBox.empty())
-	{
-		// Calculate target transform so entity is visible in front of camera.
-		Matrix44 targetTransform = selectedEntities[0]->getTransform();
-		targetTransform = translate(targetTransform.translation());
-		targetTransform *= translate(-targetTransform.axisZ() * (boundingBox.getExtent().length() + Scalar(2.0f)));
+	//Aabb boundingBox = selectedEntities[0]->getBoundingBox();
+	//if (!boundingBox.empty())
+	//{
+	//	// Calculate target transform so entity is visible in front of camera.
+	//	Matrix44 targetTransform = selectedEntities[0]->getTransform();
+	//	targetTransform = translate(targetTransform.translation());
+	//	targetTransform *= translate(-targetTransform.axisZ() * (boundingBox.getExtent().length() + Scalar(2.0f)));
 
-		//// Move camera to new target location.
-		//Ref< Camera > camera = m_context->getCamera();
-		//camera->setTargetView(targetTransform);
+	//	//// Move camera to new target location.
+	//	//Ref< Camera > camera = m_context->getCamera();
+	//	//camera->setTargetView(targetTransform);
 
-		// Ensure look-at tool isn't toggled as camera is
-		// automatically reset to free mode when directly
-		// modifying target view.
-		m_toolLookAtEntity->setToggled(false);
-		m_entityToolBar->update();
-	}
+	//	// Ensure look-at tool isn't toggled as camera is
+	//	// automatically reset to free mode when directly
+	//	// modifying target view.
+	//	m_toolLookAtEntity->setToggled(false);
+	//	m_entityToolBar->update();
+	//}
 	
 	return true;
 }

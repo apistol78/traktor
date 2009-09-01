@@ -34,7 +34,7 @@ const Aabb& SkinnedMesh::getBoundingBox() const
 void SkinnedMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	const AlignedVector< Matrix44 >& boneTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
@@ -62,7 +62,7 @@ void SkinnedMesh::render(
 			parameterCallback->setParameters(renderBlock->shaderParams);
 		if (!boneTransforms.empty())
 			renderBlock->shaderParams->setMatrixArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform, getBoundingBox());
+		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;

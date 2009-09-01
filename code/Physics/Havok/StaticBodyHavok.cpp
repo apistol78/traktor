@@ -14,12 +14,12 @@ StaticBodyHavok::StaticBodyHavok(DestroyCallbackHavok* callback, const HvkRef< h
 {
 }
 
-void StaticBodyHavok::setTransform(const Matrix44& transform)
+void StaticBodyHavok::setTransform(const Transform& transform)
 {
 	m_rigidBody->setTransform(toHkTransform(transform));
 }
 
-Matrix44 StaticBodyHavok::getTransform() const
+Transform StaticBodyHavok::getTransform() const
 {
 	return fromHkTransform(m_rigidBody->getTransform());
 }

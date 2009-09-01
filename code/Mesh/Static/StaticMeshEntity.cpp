@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMeshEntity", StaticMeshEntity, MeshEntity)
 
-StaticMeshEntity::StaticMeshEntity(const Matrix44& transform, const resource::Proxy< StaticMesh >& mesh)
+StaticMeshEntity::StaticMeshEntity(const Transform& transform, const resource::Proxy< StaticMesh >& mesh)
 :	MeshEntity(transform)
 ,	m_mesh(mesh)
 {

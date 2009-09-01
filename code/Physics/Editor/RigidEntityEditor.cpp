@@ -93,7 +93,7 @@ void RigidEntityEditor::drawGuide(
 
 	if (context->getGuideEnable() || entityAdapter->isSelected())
 	{
-		primitiveRenderer->pushWorld(entityAdapter->getTransform());
+		primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
 
 		// Draw collision shape geometry.
 		Ref< const BodyDesc > bodyDesc = rigidEntityData->getBodyDesc();
@@ -102,7 +102,7 @@ void RigidEntityEditor::drawGuide(
 			Ref< const ShapeDesc > shapeDesc = bodyDesc->getShape();
 			if (shapeDesc)
 			{
-				primitiveRenderer->pushWorld(primitiveRenderer->getWorld() * shapeDesc->getLocalTransform());
+				primitiveRenderer->pushWorld(primitiveRenderer->getWorld() * shapeDesc->getLocalTransform().toMatrix44());
 
 				if (const BoxShapeDesc* boxShapeDesc = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 				{

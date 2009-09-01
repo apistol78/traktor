@@ -2,7 +2,7 @@
 #define traktor_animation_IPoseControllerData_H
 
 #include "Core/Serialization/Serializable.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,7 +46,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
-		const Matrix44& worldTransform
+		const Transform& worldTransform
 	) = 0;
 };
 

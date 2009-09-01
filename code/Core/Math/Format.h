@@ -14,7 +14,7 @@ namespace traktor
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Vector2& v)
 	{
-		os << L"{ " << v.x << L", " << v.y << L" }";
+		os << v.x << L", " << v.y;
 		return os;
 	}
 
@@ -23,7 +23,7 @@ namespace traktor
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Vector4& v)
 	{
-		os << L"{ " << v.x() << L", " << v.y() << L", " << v.z() << L", " << v.w() << L" }";
+		os << v.x() << L", " << v.y() << L", " << v.z() << L", " << v.w();
 		return os;
 	}
 
@@ -32,7 +32,7 @@ namespace traktor
 	 */
 	inline OutputStream& operator << (OutputStream& os, const Quaternion& q)
 	{
-		os << L"{ " << q.x << L", " << q.y << L", " << q.z << L", " << q.w << L" }";
+		os << q.x << L", " << q.y << L", " << q.z << L", " << q.w;
 		return os;
 	}
 

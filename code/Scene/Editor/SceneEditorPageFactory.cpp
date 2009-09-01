@@ -100,7 +100,6 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.AddEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Translate"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Rotate"));
-	outCommands.push_back(ui::Command(L"Scene.Editor.Scale"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.TogglePick"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleX"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleY"));

@@ -140,7 +140,7 @@ bool CloudEntity::create(
 
 	m_particleData = particleData;
 
-	m_transform = Matrix44::identity();
+	m_transform = Transform::identity();
 	m_lastLightDirection.set(0.0f, 0.0f, 0.0f, 0.0f);
 	m_lastEyePosition.set(0.0f, 0.0f, 0.0f, 0.0f);
 
@@ -174,7 +174,7 @@ void CloudEntity::renderCluster(
 	const Aabb& clusterBoundingBox = cluster.getBoundingBox();
 	const Matrix44& projection = worldRenderView->getProjection();
 	const Matrix44& view = worldRenderView->getView();
-	Matrix44 worldView = m_transform * view;
+	Matrix44 worldView = m_transform.toMatrix44() * view;
 
 	// Calculate billboard view transform.
 	Vector4 extents[8];
@@ -268,7 +268,7 @@ void CloudEntity::renderCluster(
 
 	Matrix44 clusterProjection = perspectiveLh(PI / 2.0f, 1.0f, 1.0f, 1000.0f);
 	Matrix44 clusterView = worldRenderView->getView();
-	Matrix44 clusterWorld = m_transform;
+	Matrix44 clusterWorld = m_transform.toMatrix44();
 
 	float scaleX = 2.0f * maxZ / (maxX - minX);
 	float scaleY = 2.0f * maxZ / (maxY - minY);
@@ -470,12 +470,12 @@ void CloudEntity::renderCluster(
 	renderContext->draw(renderBlock);
 }
 
-void CloudEntity::setTransform(const Matrix44& transform)
+void CloudEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool CloudEntity::getTransform(Matrix44& outTransform) const
+bool CloudEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;

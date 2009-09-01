@@ -27,9 +27,9 @@ class T_DLLCLASS DynamicBodyHavok : public BodyHavok< DynamicBody >
 public:
 	DynamicBodyHavok(DestroyCallbackHavok* callback, const HvkRef< hkpRigidBody >& rigidBody, float simulationDeltaTime);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual Matrix44 getTransform() const;
+	virtual Transform getTransform() const;
 
 	virtual void reset();
 

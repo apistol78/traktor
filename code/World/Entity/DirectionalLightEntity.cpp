@@ -8,7 +8,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DirectionalLightEntity", DirectionalLightEntity, SpatialEntity)
 
 DirectionalLightEntity::DirectionalLightEntity(
-	const Matrix44& transform,
+	const Transform& transform,
 	const Vector4& sunColor,
 	const Vector4& baseColor,
 	const Vector4& shadowColor
@@ -24,12 +24,12 @@ void DirectionalLightEntity::update(const EntityUpdate* update)
 {
 }
 
-void DirectionalLightEntity::setTransform(const Matrix44& transform)
+void DirectionalLightEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool DirectionalLightEntity::getTransform(Matrix44& outTransform) const
+bool DirectionalLightEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;

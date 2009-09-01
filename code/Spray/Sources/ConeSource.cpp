@@ -22,7 +22,7 @@ ConeSource::ConeSource()
 
 void ConeSource::emit(
 	EmitterUpdateContext& context,
-	const Matrix44& transform,
+	const Transform& transform,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance
 ) const

@@ -37,9 +37,9 @@ public:
 
 	virtual void update(const world::EntityUpdate* update);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 

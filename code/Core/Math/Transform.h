@@ -42,9 +42,19 @@ public:
 
 	T_MATH_INLINE const Quaternion& rotation() const;
 
+	T_MATH_INLINE Vector4 axisX() const;
+
+	T_MATH_INLINE Vector4 axisY() const;
+	
+	T_MATH_INLINE Vector4 axisZ() const;
+
 	T_MATH_INLINE Transform inverse() const;
 
 	T_MATH_INLINE Matrix44 toMatrix44() const;
+
+	T_MATH_INLINE bool operator == (const Transform& rh) const;
+
+	T_MATH_INLINE bool operator != (const Transform& rh) const;
 
 	virtual bool serialize(Serializer& s);
 

@@ -47,7 +47,7 @@ void RigidEntity::update(const world::EntityUpdate* update)
 	}
 }
 
-void RigidEntity::setTransform(const Matrix44& transform)
+void RigidEntity::setTransform(const Transform& transform)
 {
 	if (m_body)
 		m_body->setTransform(transform);
@@ -55,7 +55,7 @@ void RigidEntity::setTransform(const Matrix44& transform)
 		m_entity->setTransform(transform);
 }
 
-bool RigidEntity::getTransform(Matrix44& outTransform) const
+bool RigidEntity::getTransform(Transform& outTransform) const
 {
 	if (m_body)
 	{

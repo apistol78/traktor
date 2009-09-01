@@ -2,7 +2,7 @@
 #define traktor_spray_Modifier_H
 
 #include "Core/Serialization/Serializable.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Spray/Point.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class T_DLLCLASS Modifier : public Serializable
 	T_RTTI_CLASS(Modifier)
 
 public:
-	virtual void update(const Scalar& deltaTime, const Matrix44& transform, PointVector& points, size_t first, size_t last) const = 0;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const = 0;
 };
 
 	}

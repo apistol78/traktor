@@ -42,15 +42,15 @@ public:
 		TmPingPong
 	};
 
-	PathEntity(const Matrix44& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity);
+	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity);
 
 	virtual ~PathEntity();
 
 	virtual void destroy();
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -77,7 +77,7 @@ public:
 	world::SpatialEntity* getEntity() { return m_entity; }
 
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;
 	Ref< world::SpatialEntity > m_entity;

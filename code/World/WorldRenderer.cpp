@@ -43,7 +43,7 @@ public:
 		Vector4 lightAxisX, lightAxisY, lightAxisZ;
 
 		lightAxisZ = -lightDirection.normalized();
-		if (abs(lightDirection.y() - Scalar(1.0f)) > FUZZY_EPSILON)
+		if (Scalar(1.0f) - abs(lightAxisZ.y()) > FUZZY_EPSILON)
 		{
 			lightAxisX = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), lightAxisZ).normalized();
 			lightAxisY = cross(lightAxisZ, lightAxisX).normalized();

@@ -37,7 +37,7 @@ public:
 
 	const RefArray< EntityInstance >& getInstances() const;
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 	
 	virtual bool serialize(Serializer& s);
 	

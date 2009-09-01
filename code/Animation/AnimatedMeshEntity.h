@@ -38,7 +38,7 @@ class T_DLLCLASS AnimatedMeshEntity : public mesh::MeshEntity
 
 public:
 	AnimatedMeshEntity(
-		const Matrix44& transform,
+		const Transform& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
 		IPoseController* poseController,
@@ -51,9 +51,9 @@ public:
 
 	virtual void update(const world::EntityUpdate* update);
 
-	bool getBoneTransform(const std::wstring& boneName, Matrix44& outTransform) const;
+	bool getBoneTransform(const std::wstring& boneName, Transform& outTransform) const;
 
-	bool getPoseTransform(const std::wstring& boneName, Matrix44& outTransform) const;
+	bool getPoseTransform(const std::wstring& boneName, Transform& outTransform) const;
 
 	bool getSkinTransform(const std::wstring& boneName, Matrix44& outTransform) const;
 
@@ -63,17 +63,17 @@ public:
 
 	inline const Ref< IPoseController >& getPoseController() const { return m_poseController; }
 
-	inline const AlignedVector< Matrix44 >& getBoneTransforms() const { return m_boneTransforms; }
+	inline const AlignedVector< Transform >& getBoneTransforms() const { return m_boneTransforms; }
 
-	inline const AlignedVector< Matrix44 >& getPoseTransforms() const { return m_poseTransforms; }
+	inline const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
 
 private:
 	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	mutable resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
 	std::vector< int > m_boneRemap;
-	AlignedVector< Matrix44 > m_boneTransforms;
-	AlignedVector< Matrix44 > m_poseTransforms;
+	AlignedVector< Transform > m_boneTransforms;
+	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Matrix44 > m_skinTransforms;
 	float m_totalTime;
 	bool m_updateController;

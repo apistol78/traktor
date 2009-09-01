@@ -25,7 +25,7 @@ class T_DLLCLASS PointLightEntity : public SpatialEntity
 
 public:
 	PointLightEntity(
-		const Matrix44& transform,
+		const Transform& transform,
 		const Vector4& sunColor,
 		const Vector4& baseColor,
 		const Vector4& shadowColor,
@@ -34,9 +34,9 @@ public:
 
 	virtual void update(const EntityUpdate* update);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -49,7 +49,7 @@ public:
 	inline float getRange() const { return m_range; }
 
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;

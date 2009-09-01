@@ -26,7 +26,7 @@ class T_DLLCLASS DragModifier : public Modifier
 public:
 	DragModifier();
 
-	virtual void update(const Scalar& deltaTime, const Matrix44& transform, PointVector& points, size_t first, size_t last) const;
+	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 
 	virtual bool serialize(Serializer& s);
 

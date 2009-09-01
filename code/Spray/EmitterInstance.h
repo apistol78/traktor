@@ -3,7 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Thread/JobManager.h"
@@ -41,7 +41,7 @@ public:
 
 	virtual ~EmitterInstance();
 
-	void update(EmitterUpdateContext& context, const Matrix44& transform, bool emit);
+	void update(EmitterUpdateContext& context, const Transform& transform, bool emit);
 
 	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
 
@@ -68,7 +68,7 @@ private:
 	Aabb m_boundingBox;
 	mutable Job m_jobs[4];
 
-	void updateTask(float deltaTime, const Matrix44& transform, size_t first, size_t last);
+	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
 };
 
 	}

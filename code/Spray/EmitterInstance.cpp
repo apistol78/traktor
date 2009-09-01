@@ -35,7 +35,7 @@ EmitterInstance::~EmitterInstance()
 	synchronize();
 }
 
-void EmitterInstance::update(EmitterUpdateContext& context, const Matrix44& transform, bool emit)
+void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit)
 {
 	// Warm up instance.
 	if (!m_warm)
@@ -101,10 +101,10 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Matrix44& tran
 			size
 		};
 
-		m_jobs[0] = makeFunctor< EmitterInstance, float, const Matrix44&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[0], pivots[1]);
-		m_jobs[1] = makeFunctor< EmitterInstance, float, const Matrix44&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[1], pivots[2]);
-		m_jobs[2] = makeFunctor< EmitterInstance, float, const Matrix44&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[2], pivots[3]);
-		m_jobs[3] = makeFunctor< EmitterInstance, float, const Matrix44&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[3], pivots[4]);
+		m_jobs[0] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[0], pivots[1]);
+		m_jobs[1] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[1], pivots[2]);
+		m_jobs[2] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[2], pivots[3]);
+		m_jobs[3] = makeFunctor< EmitterInstance, float, const Transform&, size_t, size_t >(this, &EmitterInstance::updateTask, context.deltaTime, cref(transform), pivots[3], pivots[4]);
 
 		JobManager& jobManager = JobManager::getInstance();
 		jobManager.add(m_jobs[0]);
@@ -146,7 +146,7 @@ void EmitterInstance::synchronize() const
 #endif
 }
 
-void EmitterInstance::updateTask(float deltaTime, const Matrix44& transform, size_t first, size_t last)
+void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t first, size_t last)
 {
 	Scalar deltaTimeScalar(deltaTime);
 	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();

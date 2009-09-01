@@ -31,7 +31,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,
-		const Matrix44& worldTransform
+		const Transform& worldTransform
 	);
 
 	virtual bool serialize(Serializer& s);

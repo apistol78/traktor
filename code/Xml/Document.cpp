@@ -4,7 +4,9 @@
 #include "Xml/XmlPullParser.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -14,9 +16,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Document", Document, Object)
 
-bool Document::loadFromFile(const std::wstring& filename)
+bool Document::loadFromFile(const Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(filename, File::FmRead);
+	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	bool result = false;
 	
 	if (file != 0)
@@ -89,6 +91,33 @@ bool Document::loadFromText(const std::wstring& text)
 		true,
 		false
 	));
+}
+
+bool Document::saveAsFile(const Path& fileName)
+{
+	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+	if (!file)
+		return false;
+
+	bool result = saveIntoStream(file);
+	file->close();
+
+	return result;
+}
+
+bool Document::saveIntoStream(Stream* stream)
+{
+	if (!stream)
+		return false;
+
+	FileOutputStream os(stream, gc_new< Utf8Encoding >());
+	os << L"<?xml version=\"1.0\" encoding=\"utf-8\"?>" << Endl;
+
+	if (m_docElement)
+		m_docElement->write(os);
+
+	os.flush();
+	return true;
 }
 
 int Document::get(const std::wstring& path, RefArray< Element >& elements)

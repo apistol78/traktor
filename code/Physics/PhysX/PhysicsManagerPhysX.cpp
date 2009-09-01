@@ -300,7 +300,7 @@ Body* PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 		return 0;
 	}
 
-	if (shapeDesc->getLocalTransform() != Matrix44::identity())
+	if (shapeDesc->getLocalTransform() != Transform::identity())
 	{
 	}
 
@@ -363,7 +363,7 @@ Body* PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2)
+Joint* PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	NxActor* actor1 = 0;
 	NxActor* actor2 = 0;

@@ -1,5 +1,6 @@
 #include "Physics/DynamicBodyState.h"
 #include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
@@ -9,18 +10,18 @@ namespace traktor
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.DynamicBodyState", DynamicBodyState, Serializable)
 
 DynamicBodyState::DynamicBodyState()
-:	m_transform(Matrix44::identity())
+:	m_transform(Transform::identity())
 ,	m_linearVelocity(Vector4::zero())
 ,	m_angularVelocity(Vector4::zero())
 {
 }
 
-void DynamicBodyState::setTransform(const Matrix44& transform)
+void DynamicBodyState::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-const Matrix44& DynamicBodyState::getTransform() const
+const Transform& DynamicBodyState::getTransform() const
 {
 	return m_transform;
 }
@@ -47,17 +48,8 @@ const Vector4& DynamicBodyState::getAngularVelocity() const
 
 DynamicBodyState DynamicBodyState::interpolate(const DynamicBodyState& stateTarget, const Scalar& interpolate) const
 {
-	const Matrix44& st = m_transform;
-	const Matrix44& et = stateTarget.m_transform;
-
-	Quaternion sq(st/*.transpose()*/), eq(et/*.transpose()*/);
-	Vector4 sp(st.translation()), ep(et.translation());
-
-	Quaternion q = slerp(sq, eq, interpolate).normalized();
-	Vector4 p = lerp(sp, ep, interpolate);
-
 	DynamicBodyState state;
-	state.m_transform = q.inverse().toMatrix44() * translate(p);
+	state.m_transform = lerp(m_transform, stateTarget.m_transform, interpolate);
 	state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate);
 	state.m_angularVelocity = lerp(m_angularVelocity, stateTarget.m_angularVelocity, interpolate);
 	return state;
@@ -65,7 +57,7 @@ DynamicBodyState DynamicBodyState::interpolate(const DynamicBodyState& stateTarg
 
 bool DynamicBodyState::serialize(Serializer& s)
 {
-	s >> Member< Matrix44 >(L"transform", m_transform);
+	s >> MemberComposite< Transform >(L"transform", m_transform);
 	s >> Member< Vector4 >(L"linearVelocity", m_linearVelocity);
 	s >> Member< Vector4 >(L"angularVelocity", m_angularVelocity);
 	return true;

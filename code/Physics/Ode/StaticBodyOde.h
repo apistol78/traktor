@@ -33,9 +33,9 @@ public:
 
 	virtual void destroy();
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual Matrix44 getTransform() const;
+	virtual Transform getTransform() const;
 
 	virtual void setActive(bool active);
 

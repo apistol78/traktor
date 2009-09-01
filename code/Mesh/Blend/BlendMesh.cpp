@@ -170,7 +170,7 @@ BlendMesh::Instance* BlendMesh::createInstance() const
 void BlendMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	Instance* instance,
 	const std::vector< float >& blendWeights,
 	float distance,
@@ -245,7 +245,7 @@ void BlendMesh::render(
 		renderBlock->shaderParams->beginParameters(renderContext);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->shaderParams);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform, getBoundingBox());
+		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;

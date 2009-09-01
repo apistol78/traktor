@@ -3,7 +3,7 @@
 
 #include "Core/Config.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Core/Math/Aabb.h"
 
 // import/export mechanism.
@@ -27,24 +27,24 @@ class Pose;
 
 void T_DLLCLASS calculateBoneLocalTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Matrix44 >& outBoneTransforms
+	AlignedVector< Transform >& outBoneTransforms
 );
 
 void T_DLLCLASS calculateBoneTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Matrix44 >& outBoneTransforms
+	AlignedVector< Transform >& outBoneTransforms
 );
 
 void T_DLLCLASS calculatePoseLocalTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Matrix44 >& outBoneLocalTransforms
+	AlignedVector< Transform >& outBoneLocalTransforms
 );
 
 void T_DLLCLASS calculatePoseTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Matrix44 >& outBoneTransforms
+	AlignedVector< Transform >& outBoneTransforms
 );
 
 Aabb T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton);

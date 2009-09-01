@@ -4,6 +4,8 @@ namespace traktor
 {
 
 T_MATH_INLINE Transform::Transform()
+:	m_translation(Vector4::zero())
+,	m_rotation(Quaternion::identity())
 {
 }
 
@@ -53,6 +55,21 @@ T_MATH_INLINE const Quaternion& Transform::rotation() const
 	return m_rotation;
 }
 
+T_MATH_INLINE Vector4 Transform::axisX() const
+{
+	return m_rotation * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
+}
+
+T_MATH_INLINE Vector4 Transform::axisY() const
+{
+	return m_rotation * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+}
+
+T_MATH_INLINE Vector4 Transform::axisZ() const
+{
+	return m_rotation * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+}
+
 T_MATH_INLINE Transform Transform::inverse() const
 {
 	return Transform(
@@ -64,6 +81,16 @@ T_MATH_INLINE Transform Transform::inverse() const
 T_MATH_INLINE Matrix44 Transform::toMatrix44() const
 {
 	return translate(m_translation) * m_rotation.toMatrix44();
+}
+
+T_MATH_INLINE bool Transform::operator == (const Transform& rh) const
+{
+	return m_translation == rh.m_translation && m_rotation == rh.m_rotation;
+}
+
+T_MATH_INLINE bool Transform::operator != (const Transform& rh) const
+{
+	return m_translation != rh.m_translation || m_rotation != rh.m_rotation;
 }
 
 T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& lh, const Transform& rh)

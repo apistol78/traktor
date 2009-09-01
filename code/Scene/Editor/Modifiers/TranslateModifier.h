@@ -17,7 +17,7 @@ public:
 	virtual void draw(
 		SceneEditorContext* context,
 		const Matrix44& viewTransform,
-		const Matrix44& worldTransform,
+		const Transform& worldTransform,
 		render::PrimitiveRenderer* primitiveRenderer,
 		int button
 	);
@@ -29,7 +29,7 @@ public:
 		const Vector4& viewDelta,
 		const Vector4& worldDelta,
 		int button,
-		Matrix44& outTransform
+		Transform& outTransform
 	);
 };
 

@@ -17,7 +17,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntity", AnimatedMeshEntity, mesh::MeshEntity)
 
 AnimatedMeshEntity::AnimatedMeshEntity(
-	const Matrix44& transform,
+	const Transform& transform,
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
 	IPoseController* poseController,
@@ -103,7 +103,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		);
 
 		while (m_poseTransforms.size() < m_boneTransforms.size())
-			m_poseTransforms.push_back(Matrix44::identity());
+			m_poseTransforms.push_back(Transform::identity());
 
 		m_skinTransforms.resize(m_boneTransforms.size());
 		
@@ -114,7 +114,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		{
 			int boneIndex = m_boneRemap[i];
 			if (boneIndex >= 0)
-				m_skinTransforms[boneIndex] = m_poseTransforms[i] * m_boneTransforms[i].inverse();
+				m_skinTransforms[boneIndex] = (m_poseTransforms[i] * m_boneTransforms[i].inverse()).toMatrix44();
 		}
 	}
 	else
@@ -125,7 +125,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 	}
 }
 
-bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Matrix44& outTransform) const
+bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const
 {
 	uint32_t index;
 
@@ -138,7 +138,7 @@ bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Matrix44
 	return true;
 }
 
-bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Matrix44& outTransform) const
+bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transform& outTransform) const
 {
 	uint32_t index;
 

@@ -1,9 +1,7 @@
 #ifndef traktor_physics_Conversion_H
 #define traktor_physics_Conversion_H
 
-#include "Core/Math/Vector4.h"
-#include "Core/Math/Quaternion.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 namespace traktor
 {
@@ -26,19 +24,20 @@ T_FORCE_INLINE NxVec3 toNxVec3(const Vector4& v)
 }
 
 /*! \brief Convert from PhysX matrix. */
-T_FORCE_INLINE Matrix44 fromNxMat34(const NxMat34& m)
+T_FORCE_INLINE Transform fromNxMat34(const NxMat34& m)
 {
-	return Matrix44(
+	return Transform(Matrix44(
 		m.M(0, 0), m.M(0, 1), m.M(0, 2), m.t[0],
 		m.M(1, 0), m.M(1, 1), m.M(1, 2), m.t[1],
 		m.M(2, 0), m.M(2, 1), m.M(2, 2), m.t[2],
 		0.0f, 0.0f, 0.0f, 1.0f
-	);
+	));
 }
 
 /*! \brief Convert to PhysX matrix. */
-T_FORCE_INLINE NxMat34 toNxMat34(const Matrix44& m)
+T_FORCE_INLINE NxMat34 toNxMat34(const Transform& t)
 {
+	Matrix44 m = t.toMatrix44();
 	NxMat34 r;
 	r.M(0, 0) = m(0, 0); r.M(1, 0) = m(1, 0); r.M(2, 0) = m(2, 0);
 	r.M(0, 1) = m(0, 1); r.M(1, 1) = m(1, 1); r.M(2, 1) = m(2, 1);

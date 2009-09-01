@@ -31,9 +31,9 @@ class T_DLLCLASS StaticBodyBullet : public BodyBullet< StaticBody >
 public:
 	StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual Matrix44 getTransform() const;
+	virtual Transform getTransform() const;
 
 	virtual void setActive(bool active);
 

@@ -27,9 +27,9 @@ class T_DLLCLASS StaticBodyPhysX : public BodyPhysX< StaticBody >
 public:
 	StaticBodyPhysX(DestroyCallbackPhysX* callback, NxActor* actor);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual Matrix44 getTransform() const;
+	virtual Transform getTransform() const;
 
 	virtual void setActive(bool active);
 

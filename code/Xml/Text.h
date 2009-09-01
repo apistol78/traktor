@@ -30,6 +30,8 @@ public:
 
 	virtual void setValue(const std::wstring& value);
 
+	virtual void write(OutputStream& os) const;
+
 private:
 	std::wstring m_text;
 };

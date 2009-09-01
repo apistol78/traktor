@@ -1,6 +1,6 @@
 #include "World/Entity/SpatialEntityData.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
@@ -10,23 +10,23 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.SpatialEntityData", SpatialEntityData, EntityData)
 
 SpatialEntityData::SpatialEntityData()
-:	m_transform(Matrix44::identity())
+:	m_transform(Transform::identity())
 {
 }
 
-void SpatialEntityData::setTransform(const Matrix44& transform)
+void SpatialEntityData::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 	
-const Matrix44& SpatialEntityData::getTransform() const
+const Transform& SpatialEntityData::getTransform() const
 {
 	return m_transform;
 }
 
 bool SpatialEntityData::serialize(Serializer& s)
 {
-	return s >> Member< Matrix44 >(L"transform", m_transform);
+	return s >> MemberComposite< Transform >(L"transform", m_transform);
 }
 
 	}

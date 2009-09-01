@@ -10,7 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntity", ArticulatedEntity, world::SpatialEntity)
 
 ArticulatedEntity::ArticulatedEntity(
-	const Matrix44& transform,
+	const Transform& transform,
 	const RefArray< RigidEntity >& entities,
 	const RefArray< Joint >& joints
 )
@@ -45,19 +45,19 @@ void ArticulatedEntity::update(const world::EntityUpdate* update)
 		(*i)->update(update);
 }
 
-void ArticulatedEntity::setTransform(const Matrix44& transform)
+void ArticulatedEntity::setTransform(const Transform& transform)
 {
-	Matrix44 deltaTransform = transform * m_transform.inverseOrtho();
+	Transform deltaTransform = transform * m_transform.inverse();
 	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Matrix44 currentTransform;
+		Transform currentTransform;
 		if ((*i)->getTransform(currentTransform))
 			(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	m_transform = transform;
 }
 
-bool ArticulatedEntity::getTransform(Matrix44& outTransform) const
+bool ArticulatedEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;
@@ -65,7 +65,7 @@ bool ArticulatedEntity::getTransform(Matrix44& outTransform) const
 
 Aabb ArticulatedEntity::getBoundingBox() const
 {
-	Matrix44 invTransform = m_transform.inverseOrtho();
+	Transform invTransform = m_transform.inverse();
 
 	Aabb boundingBox;
 	for (RefArray< RigidEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)

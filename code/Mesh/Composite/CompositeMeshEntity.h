@@ -23,9 +23,9 @@ class T_DLLCLASS CompositeMeshEntity : public MeshEntity
 	T_RTTI_CLASS(CompositeMeshEntity)
 
 public:
-	CompositeMeshEntity(const Matrix44& transform);
+	CompositeMeshEntity(const Transform& transform);
 	
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
 	virtual Aabb getBoundingBox() const;
 

@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SpatialGroupEntity", SpatialGroupEntity, SpatialEntity)
 
-SpatialGroupEntity::SpatialGroupEntity(const Matrix44& transform)
+SpatialGroupEntity::SpatialGroupEntity(const Transform& transform)
 :	m_transform(transform)
 ,	m_update(false)
 {
@@ -105,19 +105,19 @@ void SpatialGroupEntity::update(const EntityUpdate* update)
 	}
 }
 
-void SpatialGroupEntity::setTransform(const Matrix44& transform)
+void SpatialGroupEntity::setTransform(const Transform& transform)
 {
-	Matrix44 deltaTransform = transform * m_transform.inverseOrtho();
+	Transform deltaTransform = transform * m_transform.inverse();
 	for (RefArray< SpatialEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		Matrix44 currentTransform;
+		Transform currentTransform;
 		if ((*i)->getTransform(currentTransform))
 			(*i)->setTransform(deltaTransform * currentTransform);
 	}
 	m_transform = transform;
 }
 
-bool SpatialGroupEntity::getTransform(Matrix44& outTransform) const
+bool SpatialGroupEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;
@@ -125,7 +125,7 @@ bool SpatialGroupEntity::getTransform(Matrix44& outTransform) const
 
 Aabb SpatialGroupEntity::getBoundingBox() const
 {
-	Matrix44 invTransform = m_transform.inverseOrtho();
+	Transform invTransform = m_transform.inverse();
 
 	Aabb boundingBox;
 	for (RefArray< SpatialEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)

@@ -7,19 +7,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntity", MeshEntity, world::SpatialEntity)
 
-MeshEntity::MeshEntity(const Matrix44& transform)
+MeshEntity::MeshEntity(const Transform& transform)
 :	m_transform(transform)
 ,	m_userParameter(0.0f)
 ,	m_parameterCallback(0)
 {
 }
 
-void MeshEntity::setTransform(const Matrix44& transform)
+void MeshEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool MeshEntity::getTransform(Matrix44& outTransform) const
+bool MeshEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;

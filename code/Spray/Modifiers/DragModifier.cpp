@@ -15,7 +15,7 @@ DragModifier::DragModifier()
 {
 }
 
-void DragModifier::update(const Scalar& deltaTime, const Matrix44& transform, PointVector& points, size_t first, size_t last) const
+void DragModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	for (size_t i = first; i < last; ++i)
 	{

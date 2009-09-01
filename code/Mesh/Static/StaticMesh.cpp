@@ -31,7 +31,7 @@ const Aabb& StaticMesh::getBoundingBox() const
 void StaticMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	float distance,
 	float userParameter,
 	const IMeshParameterCallback* parameterCallback
@@ -58,7 +58,7 @@ void StaticMesh::render(
 		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->shaderParams);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform, getBoundingBox());
+		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;

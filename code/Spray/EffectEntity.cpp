@@ -18,7 +18,7 @@ const float c_maxDeltaTime = 1.0f / 30.0f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::SpatialEntity)
 
-EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Matrix44& transform, const resource::Proxy< Effect >& effect)
+EffectEntity::EffectEntity(resource::IResourceManager* resourceManager, const Transform& transform, const resource::Proxy< Effect >& effect)
 :	m_resourceManager(resourceManager)
 ,	m_transform(transform)
 ,	m_effect(effect)
@@ -35,12 +35,12 @@ void EffectEntity::render(const Plane& cameraPlane, PointRenderer* pointRenderer
 		m_effectInstance->render(pointRenderer, cameraPlane);
 }
 
-void EffectEntity::setTransform(const Matrix44& transform)
+void EffectEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool EffectEntity::getTransform(Matrix44& outTransform) const
+bool EffectEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;
@@ -55,7 +55,7 @@ Aabb EffectEntity::getBoundingBox() const
 	if (worldBoundingBox.empty())
 		return Aabb();
 
-	return worldBoundingBox.transform(m_transform.inverseOrtho());
+	return worldBoundingBox.transform(m_transform.inverse());
 }
 
 Aabb EffectEntity::getWorldBoundingBox() const

@@ -34,10 +34,10 @@ void StatePoseController::setTimeFactor(float timeFactor)
 
 void StatePoseController::evaluate(
 	float deltaTime,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Matrix44 >& boneTransforms,
-	AlignedVector< Matrix44 >& outPoseTransforms,
+	const AlignedVector< Transform >& boneTransforms,
+	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
 )
 {
@@ -219,7 +219,7 @@ void StatePoseController::estimateVelocities(
 		return;
 
 	const Scalar c_deltaTime = Scalar(1.0f / 30.0f);
-	AlignedVector< Matrix44 > poseTransforms0, poseTransforms1;
+	AlignedVector< Transform > poseTransforms0, poseTransforms1;
 	Pose pose0, pose1;
 
 	float time = m_currentStateContext.getTime();
@@ -244,8 +244,8 @@ void StatePoseController::estimateVelocities(
 
 		const Vector4& p1 = poseTransforms0[i] * centerOfMass;
 		const Vector4& p2 = poseTransforms1[i] * centerOfMass;
-		Quaternion q1(poseTransforms0[i]);
-		Quaternion q2(poseTransforms1[i]);
+		const Quaternion& q1 = poseTransforms0[i].rotation();
+		const Quaternion& q2 = poseTransforms1[i].rotation();
 
 		Vector4 dp = p2 - p1;
 		Quaternion dq = (q1.inverse() * q2).normalized();

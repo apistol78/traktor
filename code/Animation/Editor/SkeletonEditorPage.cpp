@@ -438,7 +438,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			);
 		}
 
-		AlignedVector< Matrix44 > boneTransforms;
+		AlignedVector< Transform > boneTransforms;
 		calculateBoneTransforms(
 			m_skeleton,
 			boneTransforms
@@ -484,7 +484,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			if (bone->getEnableLimits())
 			{
 				m_primitiveRenderer->drawCone(
-					boneTransforms[i],
+					boneTransforms[i].toMatrix44(),
 					bone->getConeLimit().x,
 					bone->getConeLimit().y,
 					radius,

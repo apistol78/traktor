@@ -64,35 +64,36 @@ void DynamicBodyOde::destroy()
 	}
 }
 
-void DynamicBodyOde::setTransform(const Matrix44& transform)
+void DynamicBodyOde::setTransform(const Transform& transform)
 {
 	T_ASSERT (m_bodyId != 0);
 
 	const Vector4& p = transform.translation();
 	dBodySetPosition(m_bodyId, p.x(), p.y(), p.z());
 
+	Matrix44 tm = transform.toMatrix44();
 	dMatrix3 rotation =
 	{
-		transform(0, 0), transform(1, 0), transform(2, 0), 0.0f,
-		transform(0, 1), transform(1, 1), transform(2, 1), 0.0f,
-		transform(0, 2), transform(1, 2), transform(2, 2), 0.0f
+		tm(0, 0), tm(0, 1), tm(0, 2), 0.0f,
+		tm(1, 0), tm(1, 1), tm(1, 2), 0.0f,
+		tm(2, 0), tm(2, 1), tm(2, 2), 0.0f
 	};
 	dBodySetRotation(m_bodyId, rotation);
 }
 
-Matrix44 DynamicBodyOde::getTransform() const
+Transform DynamicBodyOde::getTransform() const
 {
 	T_ASSERT (m_bodyId != 0);
 
 	const dReal* p = dBodyGetPosition(m_bodyId);
 	const dReal* r = dBodyGetRotation(m_bodyId);
 
-	return Matrix44(
-		r[0], r[4], r[8] , 0.0f,
-		r[1], r[5], r[9] , 0.0f,
-		r[2], r[6], r[10], 0.0f,
-		p[0], p[1], p[2] , 1.0f
-	);
+	return Transform(Matrix44(
+		r[0], r[1], r[2] , p[0],
+		r[4], r[5], r[6] , p[1],
+		r[8], r[9], r[10], p[2],
+		0.0f, 0.0f,  0.0f, 1.0f
+	));
 }
 
 void DynamicBodyOde::reset()

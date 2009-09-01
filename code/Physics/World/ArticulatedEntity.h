@@ -28,7 +28,7 @@ class T_DLLCLASS ArticulatedEntity : public world::SpatialEntity
 
 public:
 	ArticulatedEntity(
-		const Matrix44& transform,
+		const Transform& transform,
 		const RefArray< RigidEntity >& entities,
 		const RefArray< Joint >& joints
 	);
@@ -37,9 +37,9 @@ public:
 
 	virtual void update(const world::EntityUpdate* update);
 
-	virtual void setTransform(const Matrix44& transform);
+	virtual void setTransform(const Transform& transform);
 
-	virtual bool getTransform(Matrix44& outTransform) const;
+	virtual bool getTransform(Transform& outTransform) const;
 
 	virtual Aabb getBoundingBox() const;
 
@@ -48,7 +48,7 @@ public:
 	const RefArray< Joint >& getJoints() const { return m_joints; }
 
 private:
-	Matrix44 m_transform;
+	Transform m_transform;
 	RefArray< RigidEntity > m_entities;
 	RefArray< Joint > m_joints;
 };

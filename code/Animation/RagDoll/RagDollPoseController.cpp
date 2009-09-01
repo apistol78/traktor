@@ -39,8 +39,8 @@ RagDollPoseController::~RagDollPoseController()
 bool RagDollPoseController::create(
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,
-	const Matrix44& worldTransform,
-	const AlignedVector< Matrix44 >& boneTransforms,
+	const Transform& worldTransform,
+	const AlignedVector< Transform >& boneTransforms,
 	const AlignedVector< Velocity >& velocities,
 	bool initiallyDisabled
 )
@@ -70,7 +70,7 @@ bool RagDollPoseController::create(
 		if (!limb)
 			return false;
 
-		limb->setTransform(worldTransform * boneTransforms[i] * translate(centerOfMass));
+		limb->setTransform(worldTransform * boneTransforms[i] * Transform(centerOfMass));
 		
 		// Set initial velocities.
 		if (!velocities.empty())
@@ -136,17 +136,16 @@ bool RagDollPoseController::create(
 
 void RagDollPoseController::evaluate(
 	float deltaTime,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Matrix44 >& boneTransforms,
-	AlignedVector< Matrix44 >& outPoseTransforms,
+	const AlignedVector< Transform >& boneTransforms,
+	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
 )
 {
 	T_ASSERT (boneTransforms.size() == m_limbs.size());
 
-	Matrix44 worldTransformInv = worldTransform.inverseOrtho();
-
+	Transform worldTransformInv = worldTransform.inverse();
 	uint32_t limbCount = uint32_t(m_limbs.size());
 	
 	outPoseTransforms.resize(limbCount);
@@ -156,8 +155,7 @@ void RagDollPoseController::evaluate(
 		T_ASSERT (bone);
 
 		Vector4 centerOfMass = Vector4(0.0f, 0.0f, -bone->getLength() * 0.5f, 1.0f);
-
-		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * translate(centerOfMass);
+		outPoseTransforms[i] = worldTransformInv * m_limbs[i]->getTransform() * Transform(centerOfMass);
 	}
 
 	outUpdateController = true;

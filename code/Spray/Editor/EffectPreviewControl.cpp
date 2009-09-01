@@ -192,7 +192,7 @@ void EffectPreviewControl::syncEffect()
 		float deltaTime = min(c_deltaTime, currentTime - T);
 		syncContext.deltaTime = deltaTime;
 
-		m_effectInstance->update(syncContext, Matrix44::identity(), true);
+		m_effectInstance->update(syncContext, Transform::identity(), true);
 		m_effectInstance->synchronize();
 	}
 
@@ -347,7 +347,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_context.deltaTime = deltaTime * m_timeScale;
 
-		m_effectInstance->update(m_context, Matrix44::identity(), true);
+		m_effectInstance->update(m_context, Transform::identity(), true);
 		m_effectInstance->synchronize();
 		m_effectInstance->render(m_pointRenderer, cameraPlane);
 

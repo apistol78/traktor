@@ -263,7 +263,7 @@ Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
 	T_ASSERT (shape);
 
 	// Create compound shape which has the shape's local transformation.
-	if (shapeDesc->getLocalTransform() != Matrix44::identity())
+	if (shapeDesc->getLocalTransform() != Transform::identity())
 	{
 		btCompoundShape* compound = new btCompoundShape();
 		compound->addChildShape(toBtTransform(shapeDesc->getLocalTransform()), shape);
@@ -350,7 +350,7 @@ Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerBullet::createJoint(const JointDesc* desc, const Matrix44& transform, Body* body1, Body* body2)
+Joint* PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	Acquire< CriticalSection > __lock__(m_lock);
 

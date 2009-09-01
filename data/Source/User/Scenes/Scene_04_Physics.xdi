@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="1">
+<object type="traktor.scene.SceneAsset" version="1">	
 	<worldRenderSettings type="traktor.world.WorldRenderSettings">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>40</viewFarZ>
@@ -19,10 +19,8 @@
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
-							0, 0, -1, 0, 
-							0, 1, 0, 0, 
-							1, 0, 0, 0, 
-							-2.8169, 2.45067, -2.3101, 1
+							<translation>-2.8169, 2.45067, -2.3101, 0</translation>
+							<rotation>0, 0.707107, 0, 0.707107</rotation>
 						</transform>
 						<sunColor>1, 1, 1, 0</sunColor>
 						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
@@ -34,18 +32,14 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							0.928664, 0.262179, 0.262384, 0, 
-							-0.00199957, 0.710911, -0.70328, 0, 
-							-0.370916, 0.652587, 0.660721, 0, 
-							-4.31795, 7.74758, 4.07646, 1
+							<translation>-4.31795, 7.74758, 4.07646, 0</translation>
+							<rotation>-0.373173, -0.174302, 0.0727095, 0.908336</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
 							<shape type="traktor.physics.BoxShapeDesc">
 								<localTransform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0, 0, 0, 1
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</localTransform>
 								<extent>0.5, 0.5, 0.5, 0</extent>
 							</shape>
@@ -61,10 +55,8 @@
 							<name>Mesh</name>
 							<entityData type="traktor.mesh.StaticMeshEntityData">
 								<transform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									-3.28368, 7.4771, 1.37278, 1
+									<translation>-3.28368, 7.4771, 1.37278, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</transform>
 								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 							</entityData>
@@ -77,18 +69,14 @@
 					<name>Static plane</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							0.764842, 0.190379, 0.615445, 0, 
-							-1.2666e-007, 0.955337, -0.29552, 0, 
-							-0.644217, 0.226026, 0.730682, 0, 
-							0, 0, 0, 1
+							<translation>0, 0, 0, 0</translation>
+							<rotation>-0.140378, -0.339047, 0.0512419, 0.928825</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.StaticBodyDesc" version="3">
 							<shape type="traktor.physics.BoxShapeDesc">
 								<localTransform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0, 0, 0, 1
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</localTransform>
 								<extent>10, 0.5, 10, 0</extent>
 							</shape>
@@ -100,10 +88,8 @@
 							<name>Mesh</name>
 							<entityData type="traktor.mesh.StaticMeshEntityData">
 								<transform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0, 0, 0, 1
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</transform>
 								<mesh>{7519242E-4DF5-C047-9528-C97E6B6C8884}</mesh>
 							</entityData>
@@ -116,18 +102,14 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							0.836467, -0.243894, 0.490753, 0, 
-							0.000799843, 0.896049, 0.443955, 0, 
-							-0.548017, -0.37096, 0.749711, 0, 
-							0.679146, 6.66567, -1.31445, 1
+							<translation>0.679146, 6.66567, -1.31445, 0</translation>
+							<rotation>0.21835, -0.278331, -0.0655639, 0.933036</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
 							<shape type="traktor.physics.BoxShapeDesc">
 								<localTransform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0, 0, 0, 1
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</localTransform>
 								<extent>0.5, 0.5, 0.5, 0</extent>
 							</shape>
@@ -143,10 +125,8 @@
 							<name>Mesh</name>
 							<entityData type="traktor.mesh.StaticMeshEntityData">
 								<transform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0.13682, 7.4771, 0.131701, 1
+									<translation>0.13682, 7.4771, 0.131701, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</transform>
 								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 							</entityData>
@@ -159,18 +139,14 @@
 					<name>Dynamic Mesh</name>
 					<entityData type="traktor.physics.RigidEntityData">
 						<transform>
-							0.913089, -0.188295, 0.361681, 0, 
-							2.00234e-007, 0.886995, 0.461779, 0, 
-							-0.40776, -0.421645, 0.809905, 0, 
-							4.02041, 7.96396, 4.91029, 1
+							<translation>4.02041, 7.96396, 4.91029, 0</translation>
+							<rotation>0.23248, -0.202485, -0.0495514, 0.949999</rotation>
 						</transform>
 						<bodyDesc type="traktor.physics.DynamicBodyDesc" version="3">
 							<shape type="traktor.physics.BoxShapeDesc">
 								<localTransform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0, 0, 0, 1
+									<translation>0, 0, 0, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</localTransform>
 								<extent>0.5, 0.5, 0.5, 0</extent>
 							</shape>
@@ -186,10 +162,8 @@
 							<name>Mesh</name>
 							<entityData type="traktor.mesh.StaticMeshEntityData">
 								<transform>
-									1, 0, 0, 0, 
-									0, 1, 0, 0, 
-									0, 0, 1, 0, 
-									0.13682, 7.4771, 0.131701, 1
+									<translation>0.13682, 7.4771, 0.131701, 0</translation>
+									<rotation>0, 0, 0, 1</rotation>
 								</transform>
 								<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 							</entityData>

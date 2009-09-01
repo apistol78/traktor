@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntity", PathEntity, world::SpatialEntity)
 
-PathEntity::PathEntity(const Matrix44& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity)
+PathEntity::PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity)
 :	m_transform(transform)
 ,	m_path(path)
 ,	m_timeMode(timeMode)
@@ -34,12 +34,12 @@ void PathEntity::destroy()
 	}
 }
 
-void PathEntity::setTransform(const Matrix44& transform)
+void PathEntity::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool PathEntity::getTransform(Matrix44& outTransform) const
+bool PathEntity::getTransform(Transform& outTransform) const
 {
 	outTransform = m_transform;
 	return true;
@@ -90,7 +90,7 @@ void PathEntity::update(const world::EntityUpdate* update)
 	}
 
 	TransformPath::Frame frame = m_path.evaluate(m_time);
-	Matrix44 transform = translate(frame.position) * frame.orientation.toMatrix44();
+	Transform transform(frame.position, frame.orientation);
 
 	m_entity->setTransform(m_transform * transform);
 	m_entity->update(update);

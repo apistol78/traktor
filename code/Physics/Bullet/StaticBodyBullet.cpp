@@ -15,7 +15,7 @@ StaticBodyBullet::StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* d
 {
 }
 
-void StaticBodyBullet::setTransform(const Matrix44& transform)
+void StaticBodyBullet::setTransform(const Transform& transform)
 {
 	T_ASSERT (m_body);
 	
@@ -27,7 +27,7 @@ void StaticBodyBullet::setTransform(const Matrix44& transform)
 		m_body->getMotionState()->setWorldTransform(bt);
 }
 
-Matrix44 StaticBodyBullet::getTransform() const
+Transform StaticBodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
 	return fromBtTransform(m_body->getWorldTransform());

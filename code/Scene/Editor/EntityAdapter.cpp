@@ -71,7 +71,7 @@ bool EntityAdapter::isSpatial() const
 	return is_a< world::SpatialEntityData >(getEntityData());
 }
 
-void EntityAdapter::setTransform(const Matrix44& transform)
+void EntityAdapter::setTransform(const Transform& transform)
 {
 	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
 		spatialEntityData->setTransform(transform);
@@ -79,11 +79,11 @@ void EntityAdapter::setTransform(const Matrix44& transform)
 		spatialEntity->setTransform(transform);
 }
 
-Matrix44 EntityAdapter::getTransform() const
+Transform EntityAdapter::getTransform() const
 {
 	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
 	{
-		Matrix44 transform;
+		Transform transform;
 		if (spatialEntity->getTransform(transform))
 			return transform;
 	}
@@ -91,7 +91,7 @@ Matrix44 EntityAdapter::getTransform() const
 	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
 		return spatialEntityData->getTransform();
 
-	return Matrix44::identity();
+	return Transform::identity();
 }
 
 Aabb EntityAdapter::getBoundingBox() const
@@ -268,7 +268,7 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 	world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity);
 	if (spatialEntity)
 	{
-		Matrix44 transform = getTransform();
+		Transform transform = getTransform();
 		Aabb boundingBox = spatialEntity->getBoundingBox();
 		if (!boundingBox.empty())
 		{

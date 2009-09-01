@@ -447,26 +447,20 @@ bool BinarySerializer::operator >> (const Member< Matrix33 >& m)
 
 bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 {
+	float T_MATH_ALIGN16 values[16];
 	bool result = true;
+
 	if (m_direction == SdRead)
 	{
-		for (int r = 0; r < 4; ++r)
-		{
-			for (int c = 0; c < 4; ++c)
-			{
-				float value;
-				result &= read_primitive< float >(m_stream, value);
-				(*m).set(r, c, Scalar(value));
-			}
-		}
+		for (int i = 0; i < 16; ++i)
+			result &= read_primitive< float >(m_stream, values[i]);
+		(*m).load(values);
 	}
 	else
 	{
-		for (int r = 0; r < 4; ++r)
-		{
-			for (int c = 0; c < 4; ++c)
-				result &= write_primitive< float >(m_stream, (*m).get(r, c));
-		}
+		(*m).store(values);
+		for (int i = 0; i < 16; ++i)
+			result &= write_primitive< float >(m_stream, values[i]);
 	}
 	return result;
 }

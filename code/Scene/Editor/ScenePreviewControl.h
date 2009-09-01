@@ -84,7 +84,6 @@ private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
-	Ref< IModifier > m_modifierScale;
 	Ref< SceneEditorContext > m_context;
 	Timer m_timer;
 	float m_lastDeltaTime;

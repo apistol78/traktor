@@ -42,10 +42,10 @@ ConeTwistJointBullet::ConeTwistJointBullet(DestroyCallback* callback, JointConst
 
 void ConeTwistJointBullet::prepare()
 {
-	Matrix44 tf1 = m_body1->getTransform();
-	Matrix44 tf2 = m_body2->getTransform();
-	Matrix44 tfInv1 = tf1.inverseOrtho();
-	Matrix44 tfInv2 = tf2.inverseOrtho();
+	Transform tf1 = m_body1->getTransform();
+	Transform tf2 = m_body2->getTransform();
+	Transform tfInv1 = tf1.inverse();
+	Transform tfInv2 = tf2.inverse();
 
 	Vector4 centerOfMass1 = tf1.translation();
 	Vector4 centerOfMass2 = tf2.translation();
@@ -124,8 +124,8 @@ void ConeTwistJointBullet::update(float deltaTime)
 	const float c_tau = 0.1f;
 	const float c_damping = 1.0f;
 
-	Matrix44 tf1 = m_body1->getTransform();
-	Matrix44 tf2 = m_body2->getTransform();
+	Transform tf1 = m_body1->getTransform();
+	Transform tf2 = m_body2->getTransform();
 
 	Vector4 centerOfMass1 = tf1.translation();
 	Vector4 centerOfMass2 = tf2.translation();

@@ -2,7 +2,7 @@
 #define traktor_spray_Source_H
 
 #include "Core/Serialization/Serializable.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 #include "Spray/Point.h"
 
 // import/export mechanism.
@@ -33,7 +33,7 @@ public:
 
 	virtual void emit(
 		EmitterUpdateContext& context,
-		const Matrix44& transform,
+		const Transform& transform,
 		uint32_t emitCount,
 		EmitterInstance& emitterInstance
 	) const = 0;

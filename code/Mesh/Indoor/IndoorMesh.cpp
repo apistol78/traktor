@@ -32,7 +32,7 @@ const Aabb& IndoorMesh::getBoundingBox() const
 void IndoorMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
-	const Matrix44& worldTransform,
+	const Transform& worldTransform,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -106,7 +106,7 @@ void IndoorMesh::render(
 			renderBlock->shaderParams->beginParameters(renderContext);
 			if (parameterCallback)
 				parameterCallback->setParameters(renderBlock->shaderParams);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform, getBoundingBox());
+			worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
 			renderBlock->shaderParams->endParameters(renderContext);
 
 			renderContext->draw(renderBlock);

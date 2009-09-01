@@ -47,7 +47,7 @@ void ArticulatedEntityEditor::drawGuide(
 	const RefArray< world::EntityInstance >& instances = articulatedEntityData->getInstances();
 	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 
-	Matrix44 transform = articulatedEntityData->getTransform();
+	Transform transform = articulatedEntityData->getTransform();
 
 	for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
 	{
@@ -63,9 +63,9 @@ void ArticulatedEntityEditor::drawGuide(
 		Ref< scene::EntityAdapter > entity1 = context->findAdapterFromInstance(instance1);
 		Ref< scene::EntityAdapter > entity2 = instance2 ? context->findAdapterFromInstance(instance2) : 0;
 
-		Matrix44 body1OriginalTransformInv = entity1->getTransform().inverseOrtho();
-		Matrix44 body1Transform = entity1->getTransform();
-		Matrix44 jointTransform = transform * body1OriginalTransformInv * body1Transform;
+		Transform body1OriginalTransformInv = entity1->getTransform().inverse();
+		Transform body1Transform = entity1->getTransform();
+		Transform jointTransform = transform * body1OriginalTransformInv * body1Transform;
 		Vector4 body1Center = body1Transform.translation();
 
 		if (const BallJointDesc* ballJointDesc = dynamic_type_cast< const BallJointDesc* >(constraint.jointDesc))
