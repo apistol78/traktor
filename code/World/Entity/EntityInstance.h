@@ -62,6 +62,18 @@ public:
 	 */
 	virtual EntityData* getEntityData() const;
 
+	/*! \brief Set per-instance custom data.
+	 *
+	 * \param customData Per-instance custom data.
+	 */
+	virtual void setInstanceData(Serializable* instanceData);
+
+	/*! \brief Get per-instance custom data.
+	 *
+	 * \return Instance custom data.
+	 */
+	virtual Serializable* getInstanceData() const;
+
 	/*! \brief Add instance reference.
 	 *
 	 * \param reference Reference to add.
@@ -83,11 +95,14 @@ public:
 	 */
 	virtual const RefArray< EntityInstance >& getReferences() const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 private:
 	std::wstring m_name;
 	Ref< EntityData > m_entityData;
+	Ref< Serializable > m_instanceData;
 	RefArray< EntityInstance > m_references;
 };
 

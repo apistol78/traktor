@@ -27,7 +27,8 @@ const TypeSet EntityFactory::getEntityTypes() const
 world::Entity* EntityFactory::createEntity(
 	world::IEntityBuilder* builder,
 	const std::wstring& name,
-	const world::EntityData& entityData
+	const world::EntityData& entityData,
+	const Object* instanceData
 ) const
 {
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(&entityData))
