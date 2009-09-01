@@ -60,7 +60,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 		return false;
 
 	render::RenderViewCreateDesc desc;
-	desc.depthBits = 16;
+	desc.depthBits = 24;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
