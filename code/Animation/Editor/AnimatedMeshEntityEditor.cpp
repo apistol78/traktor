@@ -32,14 +32,13 @@ void AnimatedMeshEntityEditor::drawGuide(
 
 	if (skeleton.valid() && poseTransforms.size() == skeleton->getBoneCount())
 	{
+		const Color color(255, 255, 0, 180);
 		for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 		{
 			const Bone* bone = skeleton->getBone(i);
 
-			Vector4 start = poseTransforms[i].translation();
-			Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
-
-			Color color = Color(255, 255, 0, 180);
+			Vector4 start = poseTransforms[i].translation().xyz1();
+			Vector4 end = (poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f)).xyz1();
 
 			Vector4 d = poseTransforms[i].axisZ();
 			Vector4 a = poseTransforms[i].axisX();
@@ -69,36 +68,6 @@ void AnimatedMeshEntityEditor::drawGuide(
 			primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 180));
 			primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
 		}
-
-		//Ref< IPoseController > poseController = animatedEntity->getPoseController();
-		//if (poseController)
-		//{
-		//	AlignedVector< IPoseController::Velocity > velocities;
-		//	poseController->estimateVelocities(skeleton, velocities);
-		//	if (!velocities.empty())
-		//	{
-		//		for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-		//		{
-		//			const Bone* bone = skeleton->getBone(i);
-
-		//			Vector4 start = poseTransforms[i].translation();
-		//			Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
-		//			Vector4 mid = (start + end) / Scalar(2.0f);
-
-		//			primitiveRenderer->drawLine(
-		//				mid,
-		//				mid + velocities[i].linear,
-		//				Color(255, 0, 0, 128)
-		//			);
-
-		//			primitiveRenderer->drawLine(
-		//				mid,
-		//				mid + velocities[i].angular,
-		//				Color(0, 0, 255, 128)
-		//			);
-		//		}
-		//	}
-		//}
 	}
 
 	primitiveRenderer->popWorld();
