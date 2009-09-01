@@ -199,7 +199,12 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.ToggleAddReference")
 		updateEditState();
 	else if (command == L"Scene.Editor.Rewind")
+	{
 		m_context->setTime(0.0f);
+		m_context->setPlaying(false);
+		m_context->setPhysicsEnable(false);
+		m_context->buildEntities();
+	}
 	else if (command == L"Scene.Editor.Play")
 	{
 		m_context->setPlaying(true);
@@ -378,6 +383,9 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 		// Update physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())
 		{
+			if (m_lastPhysicsTime > scaledTime)
+				m_lastPhysicsTime = scaledTime;
+
 			while (m_lastPhysicsTime < scaledTime)
 			{
 				m_context->getPhysicsManager()->update();
