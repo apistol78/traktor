@@ -40,7 +40,7 @@ struct VertexElementPred
 	{
 		return
 			lh.getDataUsage() == rh.getDataUsage() &&
-			lh.getDataType() == lh.getDataType() &&
+			lh.getDataType() == rh.getDataType() &&
 			lh.getOffset() == rh.getOffset() &&
 			lh.getIndex() == rh.getIndex();
 	}
