@@ -125,6 +125,8 @@ void createNormalTextureJob(
 				Vector4(s, (h - h2) * c_scaleHeight, 0.0f)
 			).normalized();
 
+			normal *= Vector4(-1.0f, 1.0f, -1.0f, 0.0f);
+
 			uint8_t* p = &data[(x + y * dim) * 4];
 			p[0] = uint8_t((normal.z() * 0.5f + 0.5f) * 255);
 			p[1] = uint8_t((normal.y() * 0.5f + 0.5f) * 255);
