@@ -1634,6 +1634,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			}
 		}
 
+		result = false;
 		if (activeEditorFocus)		
 		{
 			if (m_activeEditorPage)
