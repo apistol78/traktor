@@ -27,7 +27,7 @@
 			<comment></comment>
 			<position>
 				<first>-676</first>
-				<second>345</second>
+				<second>344</second>
 			</position>
 			<swizzle>0x01</swizzle>
 		</item>
@@ -94,8 +94,8 @@
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>-869</first>
-				<second>334</second>
+				<first>-924</first>
+				<second>337</second>
 			</position>
 			<parameterName>OceanAltitude</parameterName>
 			<type>PtScalar</type>
@@ -251,12 +251,13 @@
 				<second>388</second>
 			</position>
 		</item>
-		<item type="traktor.render.Conditional">
+		<item type="traktor.render.Conditional" version="1">
 			<comment>Horizon</comment>
 			<position>
 				<first>-24</first>
 				<second>357</second>
 			</position>
+			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Mul">
@@ -607,16 +608,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1038,6 +1029,16 @@
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
