@@ -48,9 +48,9 @@ void EditorPageSite::hide()
 
 void EditorPageSite::setPropertyObject(Object* properties)
 {
-	m_properties = properties;
-	if (m_active)
+	if (m_active && m_properties != properties)
 		m_editor->setPropertyObject(properties);
+	m_properties = properties;
 }
 
 void EditorPageSite::createAdditionalPanel(ui::Widget* widget, int size, bool south)
