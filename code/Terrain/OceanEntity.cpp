@@ -122,8 +122,10 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	if (!m_shader->hasTechnique(worldRenderView->getTechnique()))
 		return;
 
-	Vector4 cameraPosition = worldRenderView->getView().inverseOrtho().translation();
-	Matrix44 oceanWorld = translate(cameraPosition.x(), m_altitude, cameraPosition.z());
+	Matrix44 viewInverse = worldRenderView->getView().inverse();
+
+	Vector4 cameraPosition = worldRenderView->getEyePosition();
+	Matrix44 oceanWorld = translate(-cameraPosition.x(), -m_altitude, -cameraPosition.z());
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
@@ -144,13 +146,13 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	renderBlock->shaderParams->setFloatParameter(L"OceanAltitude", m_altitude);
 	renderBlock->shaderParams->setVectorParameter(L"CameraPosition", cameraPosition);
 	renderBlock->shaderParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
-	renderBlock->shaderParams->setMatrixParameter(L"ViewInverse", worldRenderView->getView().inverse());
+	renderBlock->shaderParams->setMatrixParameter(L"ViewInverse", viewInverse);
 	renderBlock->shaderParams->setFloatParameter(L"ViewRatio", worldRenderView->getViewSize().x / worldRenderView->getViewSize().y);
 
 	if (m_heightfield.validate())
 	{
-		renderBlock->shaderParams->setVectorParameter(L"WorldOrigin", -m_heightfield->getResource().getWorldExtent() * Scalar(0.5f));
-		renderBlock->shaderParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent());
+		renderBlock->shaderParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
+		renderBlock->shaderParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
 		renderBlock->shaderParams->setSamplerTexture(L"Heightfield", m_heightfield->getHeightTexture());
 	}
 
