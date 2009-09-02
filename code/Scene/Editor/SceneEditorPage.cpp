@@ -832,6 +832,7 @@ void SceneEditorPage::eventContextPostBuild(ui::Event* event)
 void SceneEditorPage::eventContextSelect(ui::Event* event)
 {
 	updateInstanceGrid();
+	updatePropertyObject();
 }
 
 void SceneEditorPage::eventContextPreModify(ui::Event* event)
