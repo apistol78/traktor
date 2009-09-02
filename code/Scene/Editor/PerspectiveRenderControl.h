@@ -73,6 +73,7 @@ private:
 	int m_mouseButton;
 	bool m_modifyCamera;
 	bool m_modifyAlternative;
+	bool m_modifyBegun;
 	Ref< Camera > m_camera;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;

@@ -40,6 +40,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
+,	m_modifyBegun(false)
 ,	m_viewPlane(PositiveX)
 ,	m_magnification(10.0f)
 ,	m_cameraX(0.0f)
@@ -259,10 +260,14 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 	if (m_renderWidget->hasCapture())
 		return;
 
-	if (m_modifyCamera || !m_context->inAddReferenceMode())
+	if (m_modifyCamera)
+	{
+		m_renderWidget->setCapture();
+	}
+	else  if (!m_context->inAddReferenceMode())
 	{
 		// Handle entity picking if enabled.
-		if (!m_modifyCamera && m_context->getPickEnable())
+		if (m_context->getPickEnable())
 		{
 			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
 			m_context->selectAllEntities(false);
@@ -270,31 +275,10 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 			m_context->raiseSelect();
 		}
 
-		if (!m_modifyCamera)
-		{
-			m_context->setPlaying(false);
-			m_context->setPhysicsEnable(false);
+		m_context->setPlaying(false);
+		m_context->setPhysicsEnable(false);
 
-			// Get selected entities.
-			m_context->getEntities(
-				m_modifyEntities,
-				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-			);
-
-			// Enter modify mode in entity editors.
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			{
-				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->beginModifier(
-						m_context,
-						*i
-					);
-			}
-
-			// Issue begin modification event.
-			m_context->raisePreModify();
-		}
-
+		m_modifyBegun = false;
 		m_renderWidget->setCapture();
 	}
 	else
@@ -339,22 +323,26 @@ void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 	// Issue finished modification event.
 	if (!m_modifyCamera)
 	{
-		m_context->raisePostModify();
-
-		// Leave modify mode in entity editors.
-		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+		if (m_modifyBegun)
 		{
-			if ((*i)->getEntityEditor())
-				(*i)->getEntityEditor()->endModifier(
-				m_context,
-				*i
-			);
+			m_context->raisePostModify();
+
+			// Leave modify mode in entity editors.
+			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			{
+				if ((*i)->getEntityEditor())
+					(*i)->getEntityEditor()->endModifier(
+						m_context,
+						*i
+					);
+			}
 		}
 	}
 
 	m_modifyEntities.resize(0);
 	m_modifyCamera = false;
 	m_modifyAlternative = false;
+	m_modifyBegun = false;
 
 	if (m_renderWidget->hasCapture())
 		m_renderWidget->releaseCapture();
@@ -377,6 +365,34 @@ void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 
 	if (!m_modifyCamera)
 	{
+		if (!m_modifyBegun)
+		{
+			// Clone selection set.
+			if (m_modifyAlternative)
+				m_context->cloneSelected();
+
+			// Get selected entities.
+			m_context->getEntities(
+				m_modifyEntities,
+				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
+			);
+
+			// Enter modify mode in entity editors.
+			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
+			{
+				if ((*i)->getEntityEditor())
+					(*i)->getEntityEditor()->beginModifier(
+					m_context,
+					*i
+				);
+			}
+
+			// Issue begin modification event.
+			m_context->raisePreModify();
+
+			m_modifyBegun = true;
+		}
+
 		// Apply modifier on selected entities.
 		Ref< IModifier > modifier = m_context->getModifier();
 		T_ASSERT (modifier);

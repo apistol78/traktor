@@ -77,6 +77,7 @@ private:
 	int m_mouseButton;
 	bool m_modifyCamera;
 	bool m_modifyAlternative;
+	bool m_modifyBegun;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ViewPlane m_viewPlane;
 	float m_magnification;
