@@ -178,6 +178,8 @@ public:
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
 
+	void cloneSelected();
+
 	/*! \name Debug texture view. */
 	//@{
 

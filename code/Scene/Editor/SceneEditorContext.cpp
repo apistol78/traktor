@@ -11,6 +11,8 @@
 #include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/EntityInstance.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
 
@@ -389,6 +391,30 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	}
 
 	return minEntityAdapter;
+}
+
+void SceneEditorContext::cloneSelected()
+{
+	RefArray< EntityAdapter > selectedEntityAdapters;
+	getEntities(selectedEntityAdapters, GfDescendants | GfSelectedOnly);
+
+	for (RefArray< EntityAdapter >::iterator i = selectedEntityAdapters.begin(); i != selectedEntityAdapters.end(); ++i)
+	{
+		Ref< EntityAdapter > parentContainerGroup = (*i)->getParentContainerGroup();
+		T_ASSERT (parentContainerGroup);
+
+		Ref< world::EntityInstance > cloneEntityInstance = DeepClone((*i)->getInstance()).create< world::EntityInstance >();
+		T_ASSERT (cloneEntityInstance);
+
+		Ref< EntityAdapter > cloneEntityAdapter = gc_new< EntityAdapter >(cloneEntityInstance);
+		parentContainerGroup->addChild(cloneEntityAdapter, true);
+
+		(*i)->m_selected = false;
+		cloneEntityAdapter->m_selected = true;
+	}
+
+	buildEntities();
+	raiseSelect();
 }
 
 void SceneEditorContext::setDebugTexture(render::ITexture* debugTexture)
