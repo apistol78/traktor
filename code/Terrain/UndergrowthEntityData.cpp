@@ -9,8 +9,9 @@
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Core/Serialization/Serializer.h"
 
 namespace traktor
 {
@@ -21,6 +22,9 @@ T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", Underg
 
 UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
+	if (!resourceManager->bind(m_heightfield) || !resourceManager->bind(m_materialMask) || !resourceManager->bind(m_shader))
+		return 0;
+
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(UndergrowthEntity::Vertex, position)));
 	vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtHalf2, offsetof(UndergrowthEntity::Vertex, normal)));

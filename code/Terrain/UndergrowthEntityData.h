@@ -52,9 +52,9 @@ public:
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< Heightfield > m_heightfield;
-	resource::Proxy< MaterialMask > m_materialMask;
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< Heightfield > m_heightfield;
+	mutable resource::Proxy< MaterialMask > m_materialMask;
+	mutable resource::Proxy< render::Shader > m_shader;
 	UndergrowthEntity::Settings m_settings;
 };
 

@@ -152,8 +152,6 @@ bool HeightfieldPipeline::buildOutput(
 		return false;
 	}
 
-	instance->setObject(resource);
-
 	Ref< Stream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
@@ -182,6 +180,8 @@ bool HeightfieldPipeline::buildOutput(
 	resource->m_worldExtent = heightfieldAsset->m_worldExtent;
 	resource->m_patchDim = heightfieldAsset->m_patchDim;
 	resource->m_detailSkip = heightfieldAsset->m_detailSkip;
+
+	instance->setObject(resource);
 
 	return instance->commit();
 }
