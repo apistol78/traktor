@@ -2,9 +2,8 @@
 #define traktor_editor_PipelineManager_H
 
 #include <map>
+#include "Editor/IPipelineManager.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Object.h"
-#include "Core/Guid.h"
 #include "Core/Thread/Event.h"
 
 // import/export mechanism.
@@ -19,26 +18,16 @@ namespace traktor
 {
 
 class Thread;
-class Serializable;
-
-	namespace db
-	{
-
-class Database;
-class Instance;
-
-	}
 
 	namespace editor
 	{
 
 class PipelineHash;
-class IPipeline;
 
 /*! \brief Pipeline manager.
  * \ingroup Editor
  */
-class T_DLLCLASS PipelineManager : public Object
+class T_DLLCLASS PipelineManager : public IPipelineManager
 {
 	T_RTTI_CLASS(PipelineManager)
 
@@ -69,6 +58,7 @@ public:
 		Guid outputGuid;
 		Ref< const Object > buildParams;
 		RefArray< Dependency > dependencies;
+		std::set< Path > files;
 		uint32_t checksum;
 		bool build;
 		uint32_t reason;
@@ -79,6 +69,7 @@ public:
 	PipelineManager(
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
+		IPipelineCache* cache,
 		const RefArray< IPipeline >& pipelines,
 		PipelineHash* hash,
 		Listener* listener = 0
@@ -95,17 +86,21 @@ public:
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
-		bool build = true
+		bool build
 	);
 
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
-		bool build = true
+		bool build
 	);
 
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
-		bool build = true
+		bool build
+	);
+
+	virtual void addDependency(
+		const Path& fileName
 	);
 
 	virtual bool build(bool rebuild);
@@ -114,21 +109,18 @@ public:
 
 	virtual db::Database* getOutputDatabase() const;
 
+	virtual IPipelineCache* getCache() const;
+
 	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 
-	virtual const RefArray< Dependency >& getDependencies() const;
-
-	template < typename T >
-	const T* getObjectReadOnly(const Guid& guid)
-	{
-		return dynamic_type_cast< const T* >(getObjectReadOnly(guid));
-	}
+	const RefArray< Dependency >& getDependencies() const { return m_dependencies; }
 
 private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
+	Ref< IPipelineCache > m_cache;
 	Ref< PipelineHash > m_hash;
 	Listener* m_listener;
 	RefArray< IPipeline > m_pipelines;

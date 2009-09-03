@@ -29,17 +29,9 @@ bool PipelineHash::get(const Guid& guid, Hash& outHash) const
 	return true;
 }
 
-int PipelineHash::getVersion() const
-{
-	return 2;
-}
-
 bool PipelineHash::serialize(Serializer& s)
 {
-	if (s.getVersion() >= 2)
-		return s >> MemberStlMap< Guid, Hash, MemberStlPair< Guid, Hash, Member< Guid >, MemberComposite< Hash > > >(L"hash", m_hash);
-	else
-		return true;
+	return s >> MemberStlMap< Guid, Hash, MemberStlPair< Guid, Hash, Member< Guid >, MemberComposite< Hash > > >(L"hash", m_hash);
 }
 
 PipelineHash::Hash::Hash()
@@ -50,7 +42,16 @@ PipelineHash::Hash::Hash()
 bool PipelineHash::Hash::serialize(Serializer& s)
 {
 	s >> Member< uint32_t >(L"checksum", checksum);
-	s >> MemberComposite< DateTime >(L"assetTimestamp", assetTimestamp);
+	s >> MemberStlMap<
+		Path,
+		DateTime,
+		MemberStlPair<
+			Path,
+			DateTime,
+			Member< Path >,
+			MemberComposite< DateTime >
+		>
+	>(L"timeStamps", timeStamps);
 	s >> Member< uint32_t >(L"pipelineVersion", pipelineVersion);
 	return true;
 }

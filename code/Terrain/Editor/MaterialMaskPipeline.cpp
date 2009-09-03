@@ -2,7 +2,7 @@
 #include "Terrain/Editor/MaterialMaskPipeline.h"
 #include "Terrain/Editor/MaterialMaskAsset.h"
 #include "Terrain/MaterialMaskResource.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Drawing/Image.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
@@ -38,18 +38,21 @@ TypeSet MaterialMaskPipeline::getAssetTypes() const
 }
 
 bool MaterialMaskPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
+	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
+	pipelineManager->addDependency(maskAsset->getFileName());
 	return true;
 }
 
 bool MaterialMaskPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

@@ -1,6 +1,7 @@
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
+#include "Editor/MemCachedPipelineCache.h"
 #include "Editor/Settings.h"
 #include "Editor/Assets.h"
 #include "Database/Local/LocalDatabase.h"
@@ -205,7 +206,20 @@ int main(int argc, const char** argv)
 		pipelines.push_back(pipeline);
 	}
 
-	editor::PipelineManager pipelineManager(sourceDatabase, outputDatabase, pipelines, pipelineHash);
+	Ref< editor::IPipelineCache > pipelineCache = gc_new< editor::MemCachedPipelineCache >();
+	if (!pipelineCache->create(settings))
+	{
+		log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
+		pipelineCache = 0;
+	}
+
+	editor::PipelineManager pipelineManager(
+		sourceDatabase,
+		outputDatabase,
+		pipelineCache,
+		pipelines,
+		pipelineHash
+	);
 
 	log::info << L"Collecting dependencies..." << Endl;
 	log::info << IncreaseIndent;
@@ -220,7 +234,7 @@ int main(int argc, const char** argv)
 				log::error << L"Invalid asset guid (" << i << L")" << Endl;
 				return 7;
 			}
-			pipelineManager.addDependency(assetGuid);
+			pipelineManager.addDependency(assetGuid, true);
 		}
 	}
 	else
@@ -229,7 +243,7 @@ int main(int argc, const char** argv)
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
-			pipelineManager.addDependency(*i);
+			pipelineManager.addDependency(*i, true);
 	}
 
 	log::info << DecreaseIndent;

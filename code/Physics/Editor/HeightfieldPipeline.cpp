@@ -2,7 +2,7 @@
 #include "Physics/Editor/HeightfieldAsset.h"
 #include "Physics/HeightfieldResource.h"
 #include "Physics/Heightfield.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -81,18 +81,21 @@ TypeSet HeightfieldPipeline::getAssetTypes() const
 }
 
 bool HeightfieldPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
+	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
+	pipelineManager->addDependency(heightfieldAsset->getFileName());
 	return true;
 }
 
 bool HeightfieldPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

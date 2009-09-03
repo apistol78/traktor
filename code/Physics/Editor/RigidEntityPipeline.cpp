@@ -3,7 +3,7 @@
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ TypeSet RigidEntityPipeline::getAssetTypes() const
 }
 
 bool RigidEntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams

@@ -1,7 +1,7 @@
 #include "Physics/Editor/ArticulatedEntityPipeline.h"
 #include "Physics/World/ArticulatedEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ TypeSet ArticulatedEntityPipeline::getAssetTypes() const
 }
 
 bool ArticulatedEntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams

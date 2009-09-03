@@ -7142,6 +7142,130 @@
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
+							<item type="ProjectDependency">
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Net</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_NET_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries>
+												<item>ws2_32.lib</item>
+											</libraries>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_NET_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries>
+												<item>ws2_32.lib</item>
+											</libraries>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries>
+												<item>ws2_32.lib</item>
+											</libraries>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries>
+												<item>ws2_32.lib</item>
+											</libraries>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Ftp</name>
+											<items>
+												<item type="File">
+													<fileName>Ftp/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Http</name>
+											<items>
+												<item type="File">
+													<fileName>Http/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Smtp</name>
+											<items>
+												<item type="File">
+													<fileName>Smtp/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>File</name>
+											<items>
+												<item type="File">
+													<fileName>File/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -8405,128 +8529,7 @@
 					<project ref="/object/projects/item[22]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Net</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
-						<configurations>
-							<item type="Configuration">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_NET_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>ws2_32.lib</item>
-								</libraries>
-							</item>
-							<item type="Configuration">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_NET_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>ws2_32.lib</item>
-								</libraries>
-							</item>
-							<item type="Configuration">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>ws2_32.lib</item>
-								</libraries>
-							</item>
-							<item type="Configuration">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries>
-									<item>ws2_32.lib</item>
-								</libraries>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Ftp</name>
-								<items>
-									<item type="File">
-										<fileName>Ftp/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Http</name>
-								<items>
-									<item type="File">
-										<fileName>Http/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Smtp</name>
-								<items>
-									<item type="File">
-										<fileName>Smtp/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>File</name>
-								<items>
-									<item type="File">
-										<fileName>File/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency">
-								<project ref="/object/projects/item[16]/dependencies/item/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8619,7 +8622,7 @@
 					<project ref="/object/projects/item[22]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[23]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8698,7 +8701,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[23]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -10305,7 +10308,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[41]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[23]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>

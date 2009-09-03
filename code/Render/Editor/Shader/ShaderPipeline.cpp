@@ -10,7 +10,7 @@
 #include "Render/External.h"
 #include "Render/FragmentLinker.h"
 #include "Render/ProgramResource.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Editor/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -31,7 +31,7 @@ namespace traktor
 class FragmentReaderAdapter : public FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::PipelineManager* pipelineManager)
+	FragmentReaderAdapter(editor::IPipelineManager* pipelineManager)
 	:	m_pipelineManager(pipelineManager)
 	{
 	}
@@ -42,11 +42,11 @@ public:
 	}
 
 private:
-	Ref< editor::PipelineManager > m_pipelineManager;
+	Ref< editor::IPipelineManager > m_pipelineManager;
 };
 
 /*! \brief Traverse shader graphs to find all dependencies. */
-void traverseDependencies(editor::PipelineManager* pipelineManager, const ShaderGraph* shaderGraph, std::set< Guid >& outDependencies)
+void traverseDependencies(editor::IPipelineManager* pipelineManager, const ShaderGraph* shaderGraph, std::set< Guid >& outDependencies)
 {
 	// Traverse fragment graphs.
 	RefArray< External > externalNodes;
@@ -79,7 +79,7 @@ void traverseDependencies(editor::PipelineManager* pipelineManager, const Shader
 		if (textureGuid.isValid() && !textureGuid.isNull())
 		{
 			outDependencies.insert(textureGuid);
-			pipelineManager->addDependency(textureGuid);
+			pipelineManager->addDependency(textureGuid, true);
 		}
 	}
 }
@@ -252,7 +252,7 @@ TypeSet ShaderPipeline::getAssetTypes() const
 }
 
 bool ShaderPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -267,8 +267,9 @@ bool ShaderPipeline::buildDependencies(
 }
 
 bool ShaderPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

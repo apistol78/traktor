@@ -3,7 +3,6 @@
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
-#include "Editor/Asset.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Core/Thread/ThreadManager.h"
@@ -21,17 +20,19 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineManager", PipelineManager, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineManager", PipelineManager, IPipelineManager)
 
 PipelineManager::PipelineManager(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
+	IPipelineCache* cache,
 	const RefArray< IPipeline >& pipelines,
 	PipelineHash* hash,
 	Listener* listener
 )
 :	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
+,	m_cache(cache)
 ,	m_pipelines(pipelines)
 ,	m_hash(hash)
 ,	m_listener(listener)
@@ -205,6 +206,14 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 	);
 }
 
+void PipelineManager::addDependency(
+	const Path& fileName
+)
+{
+	T_ASSERT (m_currentDependency);
+	m_currentDependency->files.insert(fileName);
+}
+
 bool PipelineManager::build(bool rebuild)
 {
 	PipelineHash::Hash hash;
@@ -234,16 +243,25 @@ bool PipelineManager::build(bool rebuild)
 			}
 			else
 			{
-				// Not modified, check if source file has been modified.
-				const Asset* asset = dynamic_type_cast< const Asset* >((*i)->sourceAsset);
-				if (asset)
+				const std::set< Path >& files = (*i)->files;
+				for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
 				{
-					Ref< File > sourceFile = FileSystem::getInstance().get(asset->getFileName());
-					if (sourceFile && sourceFile->getLastWriteTime() != hash.assetTimestamp)
+					std::map< Path, DateTime >::const_iterator timeStampIt = hash.timeStamps.find(*j);
+					if (timeStampIt != hash.timeStamps.end())
 					{
-						// Time stamps doesn't match; assume it has been modified.
-						log::info << L"Asset \"" << (*i)->name << L"\" modified; data has been modified" << Endl;
-						(*i)->reason |= IPipeline::BrSourceModified;
+						Ref< File > sourceFile = FileSystem::getInstance().get(*j);
+						if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
+						{
+							log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
+							(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
+							break;
+						}
+					}
+					else
+					{
+						log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
+						(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
+						break;
 					}
 				}
 			}
@@ -280,14 +298,14 @@ bool PipelineManager::build(bool rebuild)
 		hash.checksum = (*i)->checksum;
 		hash.pipelineVersion = (*i)->pipeline->getVersion();
 
-		const Asset* asset = dynamic_type_cast< const Asset* >((*i)->sourceAsset);
-		if (asset)
+		const std::set< Path >& files = (*i)->files;
+		for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
 		{
-			Ref< File > sourceFile = FileSystem::getInstance().get(asset->getFileName());
+			Ref< File > sourceFile = FileSystem::getInstance().get(*j);
 			if (sourceFile)
-				hash.assetTimestamp = sourceFile->getLastWriteTime();
+				hash.timeStamps[*j] = sourceFile->getLastWriteTime();
 			else
-				log::warning << L"Unable to read timestamp of asset " << (*i)->name << Endl;
+				log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
 		}
 
 		// Skip building asset; just update hash.
@@ -326,6 +344,7 @@ bool PipelineManager::build(bool rebuild)
 			bool result = (*i)->pipeline->buildOutput(
 				this,
 				(*i)->sourceAsset,
+				(*i)->checksum,
 				(*i)->buildParams,
 				(*i)->outputPath,
 				(*i)->outputGuid,
@@ -375,6 +394,11 @@ db::Database* PipelineManager::getOutputDatabase() const
 	return m_outputDatabase;
 }
 
+IPipelineCache* PipelineManager::getCache() const
+{
+	return m_cache;
+}
+
 db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	return m_outputDatabase->createInstance(
@@ -398,11 +422,6 @@ const Serializable* PipelineManager::getObjectReadOnly(const Guid& instanceGuid)
 	}
 
 	return object;
-}
-
-const RefArray< PipelineManager::Dependency >& PipelineManager::getDependencies() const
-{
-	return m_dependencies;
 }
 
 PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) const

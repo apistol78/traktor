@@ -1,7 +1,7 @@
 #include "Animation/Editor/PathEntity/PathEntityPipeline.h"
 #include "Animation/PathEntity/PathEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ TypeSet PathEntityPipeline::getAssetTypes() const
 }
 
 bool PathEntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams

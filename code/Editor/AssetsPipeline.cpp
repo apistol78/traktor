@@ -1,6 +1,6 @@
 #include "Editor/AssetsPipeline.h"
 #include "Editor/Assets.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -31,7 +31,7 @@ TypeSet AssetsPipeline::getAssetTypes() const
 }
 
 bool AssetsPipeline::buildDependencies(
-	PipelineManager* pipelineManager,
+	IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -39,13 +39,14 @@ bool AssetsPipeline::buildDependencies(
 {
 	const Assets* assets = checked_type_cast< const Assets* >(sourceAsset);
 	for (std::vector< Guid >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
-		pipelineManager->addDependency(*i);
+		pipelineManager->addDependency(*i, true);
 	return true;
 }
 
 bool AssetsPipeline::buildOutput(
-	PipelineManager* pipelineManager,
+	IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

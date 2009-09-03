@@ -1,6 +1,6 @@
 #include "Script/Editor/ScriptPipeline.h"
 #include "Script/Script.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-Script* resolveScript(editor::PipelineManager* pipelineManager, const Script* unresolvedScript)
+Script* resolveScript(editor::IPipelineManager* pipelineManager, const Script* unresolvedScript)
 {
 	const std::vector< Guid >& dependencies = unresolvedScript->getDependencies();
 	if (dependencies.empty())
@@ -55,7 +55,7 @@ TypeSet ScriptPipeline::getAssetTypes() const
 }
 
 bool ScriptPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -71,8 +71,9 @@ bool ScriptPipeline::buildDependencies(
 }
 
 bool ScriptPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -89,6 +90,7 @@ bool ScriptPipeline::buildOutput(
 	return DefaultPipeline::buildOutput(
 		pipelineManager,
 		outputScript,
+		sourceAssetHash,
 		buildParams,
 		outputPath,
 		outputGuid,

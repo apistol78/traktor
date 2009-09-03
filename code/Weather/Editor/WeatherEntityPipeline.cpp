@@ -1,6 +1,6 @@
 #include "Weather/Editor/WeatherEntityPipeline.h"
 #include "Weather/Sky/SkyEntityData.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -17,14 +17,14 @@ TypeSet WeatherEntityPipeline::getAssetTypes() const
 }
 
 bool WeatherEntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(sourceAsset))
-		pipelineManager->addDependency(skyEntityData->getShader().getGuid());
+		pipelineManager->addDependency(skyEntityData->getShader().getGuid(), true);
 	return true;
 }
 
