@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class SurfaceDdWm5;
+class SurfaceOffscreen;
 
 class T_DLLCLASS GraphicsSystemDdWm5 : public GraphicsSystem
 {
@@ -48,11 +49,9 @@ private:
 	HWND m_hWnd;
 	ComRef< IDirectDraw > m_dd;
 	ComRef< IDirectDrawSurface > m_ddsPrimary;
-	ComRef< IDirectDrawSurface > m_ddsSecondary;
-	ComRef< IDirectDrawClipper > m_ddClipper;
 	DDPIXELFORMAT m_ddPixelFormat;
 	Ref< SurfaceDdWm5 > m_primary;
-	Ref< SurfaceDdWm5 > m_secondary;
+	Ref< SurfaceOffscreen > m_secondary;
 };
 
 	}

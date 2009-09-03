@@ -120,7 +120,7 @@ T_MATH_INLINE Vector4 Vector4::xyz1() const
 T_MATH_INLINE Scalar Vector4::length() const
 {
 	VALIDATE(*this);
-	return Scalar(std::sqrt(length2()));
+	return Scalar(float(std::sqrt(length2())));
 }
 
 T_MATH_INLINE Scalar Vector4::length2() const
@@ -161,13 +161,13 @@ T_MATH_INLINE Scalar Vector4::get(int index) const
 	switch (index)
 	{
 	case 0:
-		return _x;
+		return Scalar(_x);
 	case 1:
-		return _y;
+		return Scalar(_y);
 	case 2:
-		return _z;
+		return Scalar(_z);
 	case 3:
-		return _w;
+		return Scalar(_w);
 	}
 	return Scalar();
 }

@@ -2,9 +2,10 @@
 #define traktor_render_RenderSystemSw_H
 
 #if defined(_WIN32)
-#define _WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <tchar.h>
+#	define _WIN32_LEAN_AND_MEAN
+#	include <windows.h>
+#	include <tchar.h>
+#	include "Graphics/GraphicsSystem.h"
 #endif
 #include "Render/IRenderSystem.h"
 
@@ -71,6 +72,7 @@ private:
 	Ref< Processor > m_processor;
 #if defined(_WIN32)
 	HWND m_hWnd;
+	std::vector< graphics::DisplayMode > m_displayModes;
 
 	static LRESULT WINAPI wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 #endif
