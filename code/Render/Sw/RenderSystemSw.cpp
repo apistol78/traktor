@@ -71,6 +71,22 @@ bool RenderSystemSw::create()
 	wc.lpszClassName = c_windowClassName;
 	RegisterClass(&wc);
 
+	Ref< graphics::GraphicsSystem > graphicsSystem;
+
+#if defined(_WIN32)
+#	if !defined(WINCE)
+	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+#	else
+	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+#	endif
+#endif
+
+	if (graphicsSystem)
+	{
+		graphicsSystem->getDisplayModes(m_displayModes);
+		graphicsSystem->destroy();
+	}
+
 #endif
 	return true;
 }
@@ -81,12 +97,17 @@ void RenderSystemSw::destroy()
 
 int RenderSystemSw::getDisplayModeCount() const
 {
-	return 0;
+	return int(m_displayModes.size());
 }
 
 DisplayMode* RenderSystemSw::getDisplayMode(int index)
 {
-	return 0;
+	return gc_new< DisplayMode >(
+		index,
+		m_displayModes[index].width,
+		m_displayModes[index].height,
+		m_displayModes[index].bits
+	);
 }
 
 DisplayMode* RenderSystemSw::getCurrentDisplayMode()

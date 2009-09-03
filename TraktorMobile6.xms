@@ -5532,6 +5532,10 @@
 							<fileName>../../../res/SmallPen.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/SmallCross.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
