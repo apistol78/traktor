@@ -73,7 +73,7 @@ void MeshPipeline::destroy()
 
 uint32_t MeshPipeline::getVersion() const
 {
-	return 2;
+	return 3;
 }
 
 TypeSet MeshPipeline::getAssetTypes() const
@@ -184,7 +184,7 @@ bool MeshPipeline::buildDependencies(
 		pipelineManager->addDependency(
 			materialShaderGraph,
 			name,
-			m_materialOutputPath + L"/" + vertexShaderGuid.format() + L"/" + name,
+			m_materialOutputPath + L"/" + vertexShaderGuid.format() + L"/" + materialShaderInstance->getGuid().format(),
 			materialGuid
 		);
 
