@@ -7,7 +7,7 @@
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/MeshResource.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Editor/Settings.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -33,7 +33,7 @@ namespace traktor
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::PipelineManager* pipelineManager)
+	FragmentReaderAdapter(editor::IPipelineManager* pipelineManager)
 	:	m_pipelineManager(pipelineManager)
 	{
 	}
@@ -44,7 +44,7 @@ public:
 	}
 
 private:
-	Ref< editor::PipelineManager > m_pipelineManager;
+	Ref< editor::IPipelineManager > m_pipelineManager;
 };
 
 Guid combineGuids(const Guid& g1, const Guid& g2)
@@ -84,20 +84,22 @@ TypeSet MeshPipeline::getAssetTypes() const
 }
 
 bool MeshPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
+	Path fileName = asset->getFileName();
 	T_ASSERT (asset);
+
+	pipelineManager->addDependency(fileName);
 
 	// Create parameter object.
 	Ref< MeshPipelineParams > params = gc_new< MeshPipelineParams >();
 
 	// Import source model.
-	Path fileName = asset->getFileName();
 	params->m_model = model::ModelFormat::readAny(fileName);
 	if (!params->m_model)
 	{
@@ -185,7 +187,8 @@ bool MeshPipeline::buildDependencies(
 			materialShaderGraph,
 			name,
 			m_materialOutputPath + L"/" + vertexShaderGuid.format() + L"/" + materialShaderInstance->getGuid().format(),
-			materialGuid
+			materialGuid,
+			true
 		);
 
 		// Remember material information.
@@ -204,8 +207,9 @@ bool MeshPipeline::buildDependencies(
 }
 
 bool MeshPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

@@ -33,15 +33,16 @@ public:
 	virtual TypeSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
-		PipelineManager* pipelineManager,
+		IPipelineManager* pipelineManager,
 		const db::Instance* sourceInstance,
 		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
-		PipelineManager* pipelineManager,
+		IPipelineManager* pipelineManager,
 		const Serializable* sourceAsset,
+		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

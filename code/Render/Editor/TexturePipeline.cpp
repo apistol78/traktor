@@ -174,18 +174,21 @@ TypeSet TexturePipeline::getAssetTypes() const
 }
 
 bool TexturePipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
+	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
+	pipelineManager->addDependency(textureAsset->getFileName());
 	return true;
 }
 
 bool TexturePipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

@@ -352,6 +352,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
 		project->getSourceDatabase(),
 		project->getOutputDatabase(),
+		(IPipelineCache*)0,
 		pipelines,
 		pipelineHash
 	);

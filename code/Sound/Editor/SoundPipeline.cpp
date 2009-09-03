@@ -7,7 +7,7 @@
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
@@ -56,18 +56,21 @@ TypeSet SoundPipeline::getAssetTypes() const
 }
 
 bool SoundPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
+	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
+	pipelineManager->addDependency(soundAsset->getFileName());
 	return true;
 }
 
 bool SoundPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

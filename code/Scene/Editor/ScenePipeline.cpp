@@ -1,7 +1,7 @@
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/SceneAsset.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Core/Log/Log.h"
 
@@ -34,7 +34,7 @@ TypeSet ScenePipeline::getAssetTypes() const
 }
 
 bool ScenePipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -46,8 +46,9 @@ bool ScenePipeline::buildDependencies(
 }
 
 bool ScenePipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

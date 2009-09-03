@@ -21,6 +21,7 @@
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
+#include "Editor/MemCachedPipelineCache.h"
 #include "Editor/Assets.h"
 #include "Editor/Asset.h"
 #include "Ui/Application.h"
@@ -842,10 +843,18 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
+	Ref< IPipelineCache > pipelineCache = gc_new< MemCachedPipelineCache >();
+	if (!pipelineCache->create(m_settings))
+	{
+		log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
+		pipelineCache = 0;
+	}
+
 	StatusListener listener(m_buildProgress);
 	PipelineManager pipelineManager(
 		m_project->getSourceDatabase(),
 		m_project->getOutputDatabase(),
+		pipelineCache,
 		pipelines,
 		pipelineHash,
 		&listener
@@ -857,7 +866,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
-		pipelineManager.addDependency(*i);
+		pipelineManager.addDependency(*i, true);
 
 	log::info << DecreaseIndent;
 

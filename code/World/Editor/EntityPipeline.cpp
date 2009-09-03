@@ -4,7 +4,7 @@
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/SpatialGroupEntityData.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 
 namespace traktor
@@ -37,7 +37,7 @@ TypeSet EntityPipeline::getAssetTypes() const
 }
 
 bool EntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -46,9 +46,9 @@ bool EntityPipeline::buildDependencies(
 	if (const EntityInstance* instance = dynamic_type_cast< const EntityInstance* >(sourceAsset))
 		pipelineManager->addDependency(instance->getEntityData());
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
-		pipelineManager->addDependency(externalEntityData->getGuid());
+		pipelineManager->addDependency(externalEntityData->getGuid(), true);
 	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(sourceAsset))
-		pipelineManager->addDependency(externalSpatialEntityData->getGuid());
+		pipelineManager->addDependency(externalSpatialEntityData->getGuid(), true);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		const RefArray< EntityInstance >& instances = groupEntityData->getInstances();
@@ -65,8 +65,9 @@ bool EntityPipeline::buildDependencies(
 }
 
 bool EntityPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

@@ -2,7 +2,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 
 namespace traktor
@@ -34,7 +34,7 @@ TypeSet EffectPipeline::getAssetTypes() const
 }
 
 bool EffectPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -47,15 +47,16 @@ bool EffectPipeline::buildDependencies(
 	{
 		const Emitter* emitter = (*i)->getEmitter();
 		if (emitter)
-			pipelineManager->addDependency(emitter->getShader().getGuid());
+			pipelineManager->addDependency(emitter->getShader().getGuid(), true);
 	}
 
 	return true;
 }
 
 bool EffectPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

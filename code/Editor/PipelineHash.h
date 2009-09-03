@@ -4,8 +4,9 @@
 #include <map>
 #include "Core/Serialization/Serializable.h"
 #include "Core/Date/DateTime.h"
-#include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Io/Path.h"
+#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,8 +36,8 @@ public:
 	struct Hash
 	{
 		uint32_t checksum;
-		DateTime assetTimestamp;
 		uint32_t pipelineVersion;
+		std::map< Path, DateTime > timeStamps;
 
 		Hash();
 
@@ -46,8 +47,6 @@ public:
 	void set(const Guid& guid, const Hash& hash);
 
 	bool get(const Guid& guid, Hash& outHash) const;
-
-	virtual int getVersion() const;
 
 	virtual bool serialize(Serializer& s);
 

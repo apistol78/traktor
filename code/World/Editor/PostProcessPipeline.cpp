@@ -6,7 +6,7 @@
 #include "World/PostProcess/PostProcessStepRepeat.h"
 #include "World/PostProcess/PostProcessStepSimple.h"
 #include "World/PostProcess/PostProcessStepSsao.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 
 namespace traktor
@@ -38,7 +38,7 @@ TypeSet PostProcessPipeline::getAssetTypes() const
 }
 
 bool PostProcessPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -56,7 +56,7 @@ bool PostProcessPipeline::buildDependencies(
 		Ref< PostProcessStep > step = ss.front(); ss.pop_front();
 
 		if (const PostProcessStepBlur* stepBlur = dynamic_type_cast< const PostProcessStepBlur* >(step))
-			pipelineManager->addDependency(stepBlur->getShader().getGuid());
+			pipelineManager->addDependency(stepBlur->getShader().getGuid(), true);
 		else if (const PostProcessStepChain* stepChain = dynamic_type_cast< const PostProcessStepChain* >(step))
 		{
 			const RefArray< PostProcessStep >& steps = stepChain->getSteps();
@@ -64,21 +64,22 @@ bool PostProcessPipeline::buildDependencies(
 				ss.push_back(*i);
 		}
 		else if (const PostProcessStepLuminance* stepLuminance = dynamic_type_cast< const PostProcessStepLuminance* >(step))
-			pipelineManager->addDependency(stepLuminance->getShader().getGuid());
+			pipelineManager->addDependency(stepLuminance->getShader().getGuid(), true);
 		else if (const PostProcessStepRepeat* stepRepeat = dynamic_type_cast< const PostProcessStepRepeat* >(step))
 			ss.push_back(stepRepeat->getStep());
 		else if (const PostProcessStepSimple* stepSimple = dynamic_type_cast< const PostProcessStepSimple* >(step))
-			pipelineManager->addDependency(stepSimple->getShader().getGuid());
+			pipelineManager->addDependency(stepSimple->getShader().getGuid(), true);
 		else if (const PostProcessStepSsao* stepSsao = dynamic_type_cast< const PostProcessStepSsao* >(step))
-			pipelineManager->addDependency(stepSsao->getShader().getGuid());
+			pipelineManager->addDependency(stepSsao->getShader().getGuid(), true);
 	}
 
 	return true;
 }
 
 bool PostProcessPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

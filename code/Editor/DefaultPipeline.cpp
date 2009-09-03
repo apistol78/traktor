@@ -1,5 +1,5 @@
 #include "Editor/DefaultPipeline.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Log/Log.h"
@@ -33,7 +33,7 @@ TypeSet DefaultPipeline::getAssetTypes() const
 }
 
 bool DefaultPipeline::buildDependencies(
-	PipelineManager* pipelineManager,
+	IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -43,8 +43,9 @@ bool DefaultPipeline::buildDependencies(
 }
 
 bool DefaultPipeline::buildOutput(
-	PipelineManager* pipelineManager,
+	IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

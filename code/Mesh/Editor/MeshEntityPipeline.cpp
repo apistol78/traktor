@@ -6,7 +6,7 @@
 #include "Mesh/Skinned/SkinnedMeshEntityData.h"
 #include "Mesh/Static/StaticMeshEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 
 namespace traktor
 {
@@ -28,14 +28,14 @@ TypeSet MeshEntityPipeline::getAssetTypes() const
 }
 
 bool MeshEntityPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const BlendMeshEntityData* blendMeshEntityData = dynamic_type_cast< const BlendMeshEntityData* >(sourceAsset))
-		pipelineManager->addDependency(blendMeshEntityData->getMesh().getGuid());
+		pipelineManager->addDependency(blendMeshEntityData->getMesh().getGuid(), true);
 	if (const CompositeMeshEntityData* compositeMeshEntityData = dynamic_type_cast< const CompositeMeshEntityData* >(sourceAsset))
 	{
 		const RefArray< world::EntityInstance >& instances = compositeMeshEntityData->getInstances();
@@ -43,13 +43,13 @@ bool MeshEntityPipeline::buildDependencies(
 			pipelineManager->addDependency(*i);
 	}
 	if (const IndoorMeshEntityData* indoorMeshEntityData = dynamic_type_cast< const IndoorMeshEntityData* >(sourceAsset))
-		pipelineManager->addDependency(indoorMeshEntityData->getMesh().getGuid());
+		pipelineManager->addDependency(indoorMeshEntityData->getMesh().getGuid(), true);
 	if (const InstanceMeshEntityData* instanceMeshEntityData = dynamic_type_cast< const InstanceMeshEntityData* >(sourceAsset))
-		pipelineManager->addDependency(instanceMeshEntityData->getMesh().getGuid());
+		pipelineManager->addDependency(instanceMeshEntityData->getMesh().getGuid(), true);
 	if (const SkinnedMeshEntityData* skinnedMeshEntityData = dynamic_type_cast< const SkinnedMeshEntityData* >(sourceAsset))
-		pipelineManager->addDependency(skinnedMeshEntityData->getMesh().getGuid());
+		pipelineManager->addDependency(skinnedMeshEntityData->getMesh().getGuid(), true);
 	if (const StaticMeshEntityData* staticMeshEntityData = dynamic_type_cast< const StaticMeshEntityData* >(sourceAsset))
-		pipelineManager->addDependency(staticMeshEntityData->getMesh().getGuid());
+		pipelineManager->addDependency(staticMeshEntityData->getMesh().getGuid(), true);
 
 	return true;
 }

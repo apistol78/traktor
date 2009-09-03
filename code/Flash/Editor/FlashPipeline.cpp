@@ -1,7 +1,7 @@
 #include "Flash/Editor/FlashPipeline.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Flash/FlashMovieResource.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
@@ -36,25 +36,30 @@ TypeSet FlashPipeline::getAssetTypes() const
 }
 
 bool FlashPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
+	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
+	pipelineManager->addDependency(movieAsset->getFileName());
+
 	// Add dependencies to shaders.
-	pipelineManager->addDependency(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"));	// Solid
-	pipelineManager->addDependency(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"));	// Textured
-	pipelineManager->addDependency(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"));	// Solid Mask
-	pipelineManager->addDependency(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"));	// Textured Mask
-	pipelineManager->addDependency(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"));	// Increment Mask
-	pipelineManager->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"));	// Decrement Mask
+	pipelineManager->addDependency(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"), true);	// Solid
+	pipelineManager->addDependency(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"), true);	// Textured
+	pipelineManager->addDependency(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"), true);	// Solid Mask
+	pipelineManager->addDependency(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"), true);	// Textured Mask
+	pipelineManager->addDependency(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"), true);	// Increment Mask
+	pipelineManager->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"), true);	// Decrement Mask
+
 	return true;
 }
 
 bool FlashPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,

@@ -29,7 +29,7 @@ class Instance;
 	{
 
 class Settings;
-class PipelineManager;
+class IPipelineManager;
 
 /*! \brief Source asset pipeline.
  * \ingroup Editor
@@ -43,8 +43,9 @@ public:
 	{
 		BrNone = 0,					/*!< No reason, buildOutput shouldn't even be called. */
 		BrDependencyModified = 1,	/*!< Dependent resource has been modified. */
-		BrSourceModified = 2,		/*!< Source asset has been modified. */
-		BrForced = 4				/*!< Forced build issued, must build even if output is up-to-date. */
+		BrSourceModified = 2,		/*!< Source has been modified. */
+		BrAssetModified = 4,		/*!< Asset has been modified; only valid for Asset classes and are always combined with BrSourceModified. */
+		BrForced = 4,				/*!< Forced build issued, must build even if output is up-to-date. */
 	};
 
 	/*! \brief Create pipeline.
@@ -72,7 +73,7 @@ public:
 	 * \param True if successful.
 	 */
 	virtual bool buildDependencies(
-		PipelineManager* pipelineManager,
+		IPipelineManager* pipelineManager,
 		const db::Instance* sourceInstance,
 		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
@@ -82,6 +83,7 @@ public:
 	 *
 	 * \param pipelineManager Pipeline manager issuing build.
 	 * \param sourceAsset Source asset object.
+	 * \param sourceAssetHash Source asset hash key.
 	 * \param buildParams User defined parameter object.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
@@ -89,8 +91,9 @@ public:
 	 * \return True if successful.
 	 */
 	virtual bool buildOutput(
-		PipelineManager* pipelineManager,
+		IPipelineManager* pipelineManager,
 		const Serializable* sourceAsset,
+		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

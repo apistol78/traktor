@@ -2,7 +2,7 @@
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshResource.h"
 #include "Physics/Mesh.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
@@ -39,7 +39,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 }
 
 bool MeshPipeline::buildDependencies(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -49,8 +49,9 @@ bool MeshPipeline::buildDependencies(
 }
 
 bool MeshPipeline::buildOutput(
-	editor::PipelineManager* pipelineManager,
+	editor::IPipelineManager* pipelineManager,
 	const Serializable* sourceAsset,
+	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
