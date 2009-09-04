@@ -270,7 +270,11 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 		if (m_context->getPickEnable())
 		{
 			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
-			m_context->selectAllEntities(false);
+
+			// De-select all other if shift isn't held.
+			if ((event->getKeyState() & ui::KsShift) == 0)
+				m_context->selectAllEntities(false);
+
 			m_context->selectEntity(entityAdapter);
 			m_context->raiseSelect();
 		}
