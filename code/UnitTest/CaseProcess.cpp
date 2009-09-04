@@ -10,7 +10,7 @@ namespace traktor
 void CaseProcess::run()
 {
 	{
-		Ref< Process > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/SolutionBuilderUI.exe", L"", L"");
+		Ref< Process > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-1.bat", L"", L"", false);
 		CASE_ASSERT(process != 0);
 
 		if (process)
@@ -24,7 +24,7 @@ void CaseProcess::run()
 	}
 
 	{
-		Ref< Process > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/SolutionBuilderUI.exe", L"TraktorWin32.xms", L"c:\\Private\\traktor\\main");
+		Ref< Process > process = OS::getInstance().execute(L"$(TRAKTOR_HOME)/bin/unittest-process-2.bat", L"Hello", L"", false);
 		CASE_ASSERT(process != 0);
 
 		if (process)
