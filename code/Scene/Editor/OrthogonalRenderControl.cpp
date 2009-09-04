@@ -231,7 +231,8 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 
 EntityAdapter* OrthogonalRenderControl::pickEntity(const ui::Point& position) const
 {
-	ui::Rect innerRect = m_renderWidget->getInnerRect();
+	const float c_viewFarOffset = 1.0f;
+	const ui::Rect innerRect = m_renderWidget->getInnerRect();
 
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 projectionInverse = projection.inverse();
@@ -243,7 +244,7 @@ EntityAdapter* OrthogonalRenderControl::pickEntity(const ui::Point& position) co
 	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
 
 	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
-	Vector4 viewPosition = projectionInverse * clipPosition;
+	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_worldRenderSettings->viewFarZ - c_viewFarOffset));
 	Vector4 worldRayOrigin = viewInverse * viewPosition;
 	Vector4 worldRayDirection = viewInverse.axisZ();
 
