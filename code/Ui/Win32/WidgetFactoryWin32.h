@@ -71,6 +71,8 @@ public:
 
 	virtual IBitmap* createBitmap();
 
+	virtual IClipboard* createClipboard();
+
 	virtual bool getSystemColor(SystemColor systemColor, Color& outColor);
 };
 

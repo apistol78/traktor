@@ -52,6 +52,13 @@ enum DialogResult
 	DrYes			= DrOk
 };
 
+enum ClipboardContentType
+{
+	CtEmpty,
+	CtObject,
+	CtText
+};
+
 enum Cursor
 {
 	CrNone,

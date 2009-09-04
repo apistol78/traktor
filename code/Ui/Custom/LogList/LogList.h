@@ -50,6 +50,8 @@ public:
 
 	uint32_t getFilter() const;
 
+	bool copyLog(uint32_t filter = ~0UL);
+
 	virtual Size getPreferedSize() const;
 
 private:

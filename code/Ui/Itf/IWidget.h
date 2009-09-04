@@ -7,14 +7,6 @@
 #include "Ui/Rect.h"
 #include "Ui/Font.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace ui
@@ -29,7 +21,7 @@ struct IWidgetRect
 /*! \brief Widget interface.
  * \ingroup UI
  */
-class T_DLLCLASS IWidget
+class IWidget
 {
 public:
 	virtual ~IWidget() {}
