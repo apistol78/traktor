@@ -25,6 +25,7 @@
 #include "Ui/Win32/UserWidgetWin32.h"
 #include "Ui/Win32/NativeWin32.h"
 #include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/ClipboardWin32.h"
 
 namespace traktor
 {
@@ -159,6 +160,11 @@ INative* WidgetFactoryWin32::createNative(EventSubject* owner)
 IBitmap* WidgetFactoryWin32::createBitmap()
 {
 	return new BitmapWin32();
+}
+
+IClipboard* WidgetFactoryWin32::createClipboard()
+{
+	return new ClipboardWin32();
 }
 
 bool WidgetFactoryWin32::getSystemColor(SystemColor systemColor, Color& outColor)

@@ -541,7 +541,15 @@
 			<first>IMPORT_TEXTURE_TITLE</first>
 			<second>Import texture</second>
 		</item>
-		<item>
+    <item>
+      <first>LOG_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>LOG_COPY_FILTERED</first>
+      <second>Copy filtered</second>
+    </item>
+    <item>
 			<first>LOG_CLEAR_ALL</first>
 			<second>Clear all</second>
 		</item>

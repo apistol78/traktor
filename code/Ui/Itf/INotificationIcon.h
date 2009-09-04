@@ -4,14 +4,6 @@
 #include "Core/Config.h"
 #include "Core/Heap/Ref.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace ui
@@ -23,7 +15,7 @@ class IBitmap;
 /*! \brief NotificationIcon interface.
  * \ingroup UI
  */
-class T_DLLCLASS INotificationIcon
+class INotificationIcon
 {
 public:
 	virtual bool create(const std::wstring& text, IBitmap* image) = 0;

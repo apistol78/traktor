@@ -10,14 +10,6 @@
 #include "Ui/Rect.h"
 #include "Core/Math/Color.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace ui
@@ -28,7 +20,7 @@ class IBitmap;
 /*! \brief Canvas interface.
  * \ingroup UI
  */
-class T_DLLCLASS ICanvas
+class ICanvas
 {
 public:
 	virtual void setForeground(const Color& foreground) = 0;

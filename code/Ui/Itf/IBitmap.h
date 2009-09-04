@@ -4,14 +4,6 @@
 #include "Core/Config.h"
 #include "Ui/Rect.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 
@@ -30,7 +22,7 @@ class Image;
 /*! \brief Bitmap interface.
  * \ingroup UI
  */
-class T_DLLCLASS IBitmap
+class IBitmap
 {
 public:
 	virtual bool create(uint32_t width, uint32_t height) = 0;

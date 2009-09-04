@@ -6,14 +6,6 @@
 #include "Core/Math/Color.h"
 #include "Ui/Enums.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace ui
@@ -47,11 +39,12 @@ class ITreeView;
 class IUserWidget;
 class INative;
 class IBitmap;
+class IClipboard;
 
 /*! \brief Widget factory interface.
  * \ingroup UI
  */
-class T_DLLCLASS IWidgetFactory
+class IWidgetFactory
 {
 public:
 	virtual ~IWidgetFactory() {}
@@ -107,6 +100,8 @@ public:
 	virtual INative* createNative(EventSubject* owner) = 0;
 
 	virtual IBitmap* createBitmap() = 0;
+
+	virtual IClipboard* createClipboard() = 0;
 
 	virtual bool getSystemColor(SystemColor systemColor, Color& outColor) = 0;
 };

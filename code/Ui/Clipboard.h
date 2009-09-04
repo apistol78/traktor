@@ -1,8 +1,9 @@
 #ifndef traktor_ui_Clipboard_H
 #define traktor_ui_Clipboard_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Ui/Enums.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,11 +16,12 @@
 namespace traktor
 {
 
-class DeepClone;
 class Serializable;
 
 	namespace ui
 	{
+
+class IClipboard;
 
 /*! \brief Clipboard
  * \ingroup UI
@@ -29,12 +31,22 @@ class T_DLLCLASS Clipboard : public Object
 	T_RTTI_CLASS(Clipboard)
 
 public:
-	void setObject(Serializable* object);
+	Clipboard(IClipboard* clipboard);
 
-	Serializable* getObject();
+	virtual ~Clipboard();
+
+	bool setObject(Serializable* object);
+
+	bool setText(const std::wstring& text);
+
+	ClipboardContentType getContentType() const;
+
+	Serializable* getObject() const;
+
+	std::wstring getText() const;
 
 private:
-	Ref< DeepClone > m_clone;
+	IClipboard* m_clipboard;
 };
 
 	}

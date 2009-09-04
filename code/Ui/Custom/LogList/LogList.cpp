@@ -1,5 +1,6 @@
 #include "Ui/Custom/LogList/LogList.h"
 #include "Ui/Application.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/MethodHandler.h"
@@ -8,6 +9,7 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Drawing/Image.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 
 // Resources
@@ -84,6 +86,17 @@ void LogList::setFilter(uint32_t filter)
 uint32_t LogList::getFilter() const
 {
 	return m_filter;
+}
+
+bool LogList::copyLog(uint32_t filter)
+{
+	StringOutputStream ss;
+	for (log_list_t::iterator i = m_logFull.begin(); i != m_logFull.end(); ++i)
+	{
+		if ((i->first & filter) != 0)
+			ss << i->second << Endl;
+	}
+	return Application::getInstance().getClipboard()->setText(ss.str());
 }
 
 Size LogList::getPreferedSize() const

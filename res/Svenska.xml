@@ -561,6 +561,14 @@
 			<first>IMPORT_TEXTURE_TITLE</first>
 			<second>Välj textur</second>
 		</item>
+    <item>
+      <first>LOG_COPY</first>
+      <second>Kopiera</second>
+    </item>
+    <item>
+      <first>LOG_COPY_FILTERED</first>
+      <second>Kopiera enbart filtrerade</second>
+    </item>
 		<item>
 			<first>LOG_CLEAR_ALL</first>
 			<second>Rensa allt</second>
