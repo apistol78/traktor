@@ -63,6 +63,8 @@
 #include "Zip/Volume.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/System/OS.h"
+#include "Core/System/Process.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Io/FileSystem.h"
@@ -222,6 +224,34 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_REBUILD"), ui::Command(L"Editor.Rebuild"), 9));
+
+	// Add external tools.
+	{
+		Ref< PropertyGroup > externalToolsGroup = dynamic_type_cast< PropertyGroup* >(m_settings->getProperty(L"Editor.ExternalTools"));
+		if (externalToolsGroup)
+		{
+			m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
+
+			const std::map< std::wstring, Ref< PropertyValue > >& values = PropertyGroup::get(externalToolsGroup);
+			for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
+			{
+				Ref< PropertyGroup > externalToolGroup = dynamic_type_cast< PropertyGroup* >(i->second);
+				T_ASSERT_M(externalToolGroup, L"Malformed setting; must be a property group");
+
+				std::wstring title = externalToolGroup->getProperty< PropertyString >(L"Title");
+				T_ASSERT (!title.empty());
+
+				Ref< ui::custom::ToolBarButton > toolButton = gc_new< ui::custom::ToolBarButton >(
+					i18n::Text(title),
+					ui::Command(L"Editor.ExternalTool", externalToolGroup),
+					0,
+					ui::custom::ToolBarButton::BsText
+				);
+				m_toolBar->addItem(toolButton);
+			}
+		}
+	}
+
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
@@ -1612,6 +1642,25 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Exit")
 		ui::Application::getInstance().exit(0);
+	else if (command == L"Editor.ExternalTool")
+	{
+		Ref< const PropertyGroup > externalToolGroup = checked_type_cast< const PropertyGroup*, false >(command.getData());
+		
+		std::wstring command = externalToolGroup->getProperty< PropertyString >(L"Command");
+		std::wstring arguments = externalToolGroup->getProperty< PropertyString >(L"Arguments");
+		std::wstring directory = externalToolGroup->getProperty< PropertyString >(L"Directory");
+
+		Ref< Process > process = OS::getInstance().execute(command, arguments, directory);
+		if (!process)
+		{
+			ui::MessageBox::show(
+				this,
+				i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_START_EXTERNAL_TOOL"),
+				i18n::Text(L"ERROR_TITLE_UNABLE_TO_START_EXTERNAL_TOOL"),
+				ui::MbIconError | ui::MbOk
+			);
+		}
+	}
 	else if ((command.getFlags() & ui::Command::CfId) == ui::Command::CfId)
 	{
 		Ref< IEditorTool > tool = m_editorTools[command.getId()];

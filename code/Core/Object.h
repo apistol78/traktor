@@ -119,6 +119,22 @@ inline T checked_type_cast(Object* o)
  * The cast will assert if object is of incorrect type.
  *
  * \param T Cast to type.
+ * \param AllowNull If object is allowed to be null.
+ * \param o Object.
+ * \return Casted value.
+ */
+template < typename T, bool AllowNull >
+inline T checked_type_cast(Object* o)
+{
+	T_ASSERT ((AllowNull || o) && is_a< T >(o));
+	return static_cast< T >(o);
+}
+
+/*! \brief Safe cast object.
+ *
+ * The cast will assert if object is of incorrect type.
+ *
+ * \param T Cast to type.
  * \param o Object.
  * \return Casted value.
  */
