@@ -9,6 +9,7 @@
 #include "Core/Heap/Heap.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -190,7 +191,7 @@ bool OS::exploreFile(const Path& file) const
 #endif
 }
 
-Process* OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory) const
+Process* OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute) const
 {
 	STARTUPINFO si;
 	std::memset(&si, 0, sizeof(si));
@@ -199,24 +200,28 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 	PROCESS_INFORMATION pi;
 	std::memset(&pi, 0, sizeof(pi));
 
-	TCHAR app[MAX_PATH], cmd[32768], cwd[MAX_PATH];
+	TCHAR cmd[32768], cwd[MAX_PATH];
+
+	StringOutputStream ss;
+	ss << L"\"" << file.getPathName() << L"\"";
+	if (!commandLine.empty())
+		ss << L" " << commandLine;
+
 #if !defined(WINCE)
-	_tcscpy_s(app, wstots(file.getPathName()).c_str());
-	_tcscpy_s(cmd, wstots(commandLine).c_str());
+	_tcscpy_s(cmd, wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, wstots(workingDirectory.getPathName()).c_str());
 #else
-	_tcscpy_s(app, sizeof_array(app), wstots(file.getPathName()).c_str());
-	_tcscpy_s(cmd, sizeof_array(cmd), wstots(commandLine).c_str());
+	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
 #endif
 
 	BOOL result = CreateProcess(
-		app,
-		(cmd[0] != L'\0' ? cmd : NULL),
+		NULL,
+		cmd,
 		NULL,
 		NULL,
 		TRUE,
-		CREATE_NEW_CONSOLE,
+		mute ? NULL : CREATE_NEW_CONSOLE,
 		NULL,
 		(cwd[0] != L'\0' ? cwd : NULL),
 		&si,
