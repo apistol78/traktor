@@ -159,6 +159,11 @@ IBitmap* WidgetFactoryWx::createBitmap()
 	return new BitmapWx();
 }
 
+IClipboard* WidgetFactoryWx::createClipboard()
+{
+	return 0;
+}
+
 bool WidgetFactoryWx::getSystemColor(SystemColor systemColor, Color& outColor)
 {
 	const wxSystemColour c_systemColors[] =

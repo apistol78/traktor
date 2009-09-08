@@ -2,6 +2,7 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Math/Color.h"
 
 namespace traktor
