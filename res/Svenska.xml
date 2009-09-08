@@ -698,14 +698,58 @@
       <second>Välj källmodell</second>
     </item>
     <item>
-      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS</first>
-      <second>Skapa standard material?</second>
+      <first>MESHASSET_EDITOR_FILENAME</first>
+      <second>Filnamn</second>
     </item>
     <item>
-      <first>MESHASSET_WIZARDTOOL_CREATE_MATERIALS_TITLE</first>
-      <second>Skapa material?</second>
+      <first>MESHASSET_EDITOR_MESH_TYPE</first>
+      <second>Mesh typ</second>
     </item>
-		<item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_BLEND</first>
+      <second>Morf</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_INDOOR</first>
+      <second>Inomhus</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_INSTANCE</first>
+      <second>Instans</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_SKINNED</first>
+      <second>Skin</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_STATIC</first>
+      <second>Statisk</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_CREATE_SHADER</first>
+      <second>Skapa shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_BROWSE_SHADER</first>
+      <second>Välj shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_REMOVE_SHADER</first>
+      <second>Ta bort shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MATERIAL</first>
+      <second>Material</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_SHADER</first>
+      <second>Shader</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_NOT_ASSIGNED</first>
+      <second>[ Automatisk shader ]</second>
+    </item>
+    <item>
 			<first>NEW_BATCH_DESCRIPTION</first>
 			<second>Skapa nytt import skript...</second>
 		</item>

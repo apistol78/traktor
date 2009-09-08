@@ -37,13 +37,21 @@ public:
 
 	virtual const Type* getOutputType() const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
-private:
-	friend class MeshAssetWizardTool;
-	friend class MeshPipeline;
+	void setMeshType(MeshType meshType) { m_meshType = meshType; }
 
+	MeshType getMeshType() const { return m_meshType; }
+
+	void setMaterialShaders(const std::map< std::wstring, Guid >& materialShaders) { m_materialShaders = materialShaders; }
+
+	const std::map< std::wstring, Guid >& getMaterialShaders() const { return m_materialShaders; }
+
+private:
 	MeshType m_meshType;
+	std::map< std::wstring, Guid > m_materialShaders;
 };
 
 	}

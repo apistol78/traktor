@@ -282,7 +282,7 @@ bool ShaderPipeline::buildOutput(
 
 	// Link shader fragments.
 	FragmentReaderAdapter fragmentReader(pipelineManager);
-	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph);
+	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	if (!shaderGraph)
 	{
 		log::error << L"ShaderPipeline failed; unable to link shader fragments" << Endl;

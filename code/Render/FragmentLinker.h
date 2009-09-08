@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class ShaderGraph;
+class External;
 
 /*! \brief Shader fragment linker.
  * \ingroup Render
@@ -51,15 +52,19 @@ public:
 	 *
 	 * Resolving External nodes within shader graph and replacing
 	 * them with resolved shader graph fragment.
-	 */
-	ShaderGraph* resolve(const ShaderGraph* shaderGraph);
-
-	/*! \brief Merge shader graph fragments.
 	 *
-	 * Graphs are merged left->right, i.e. output ports from left graph
-	 * is connected to input ports in the right graph.
+	 * \param shaderGraph Shader graph to resolve.
+	 * \param fullResolve Perform full resolve, child external references as well.
+	 * \return Resolved shader graph.
 	 */
-	ShaderGraph* merge(const ShaderGraph* shaderGraphLeft, const ShaderGraph* shaderGraphRight);
+	ShaderGraph* resolve(const ShaderGraph* shaderGraph, bool fullResolve);
+
+	///*! \brief Merge shader graph fragments.
+	// *
+	// * Graphs are merged left->right, i.e. output ports from left graph
+	// * is connected to input ports in the right graph.
+	// */
+	//ShaderGraph* merge(const ShaderGraph* shaderGraphLeft, const ShaderGraph* shaderGraphRight);
 
 private:
 	FragmentReader* m_fragmentReader;

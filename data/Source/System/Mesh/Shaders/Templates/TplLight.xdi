@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>398</first>
+				<second>296</second>
+			</position>
+			<name>T_WorldNormal</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>395</first>
+				<second>260</second>
+			</position>
+			<name>T_WorldPosition</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>405</first>
+				<second>332</second>
+			</position>
+			<name>T_DiffuseTerm</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>404</first>
+				<second>368</second>
+			</position>
+			<name>T_DiffuseColor</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>367</first>
+				<second>404</second>
+			</position>
+			<name>T_SpecularRoughness</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>402</first>
+				<second>440</second>
+			</position>
+			<name>T_ViewPosition</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>404</first>
+				<second>476</second>
+			</position>
+			<name>T_EyeDirection</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>397</first>
+				<second>512</second>
+			</position>
+			<name>T_SpecularTerm</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>941</first>
+				<second>377</second>
+			</position>
+			<name>T_FragmentColor</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment></comment>
+			<position>
+				<first>771</first>
+				<second>393</second>
+			</position>
+			<value>0</value>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

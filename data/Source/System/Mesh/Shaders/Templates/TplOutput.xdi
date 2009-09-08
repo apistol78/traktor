@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>553</first>
+				<second>307</second>
+			</position>
+			<name>T_FragmentColor</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>565</first>
+				<second>339</second>
+			</position>
+			<name>T_ViewPosition</name>
+		</item>
+	</nodes>
+	<edges/>
+</object>

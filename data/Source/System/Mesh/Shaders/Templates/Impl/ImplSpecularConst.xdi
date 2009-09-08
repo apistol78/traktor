@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>909</first>
+				<second>445</second>
+			</position>
+			<name>T_SpecularRoughness</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>909</first>
+				<second>404</second>
+			</position>
+			<name>T_SpecularTerm</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>Tag_SpecularRoughness</comment>
+			<position>
+				<first>668</first>
+				<second>366</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>534</first>
+				<second>423</second>
+			</position>
+			<name>T_TexCoord</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>Tag_SpecularTerm</comment>
+			<position>
+				<first>668</first>
+				<second>319</second>
+			</position>
+			<value>0</value>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>
