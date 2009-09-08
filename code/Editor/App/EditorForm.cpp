@@ -540,7 +540,7 @@ const Type* EditorForm::browseType(const Type* base)
 {
 	const Type* type = 0;
 
-	BrowseTypeDialog dlgBrowse;
+	BrowseTypeDialog dlgBrowse(m_settings);
 	if (dlgBrowse.create(this, base))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
@@ -557,7 +557,7 @@ db::Instance* EditorForm::browseInstance(const IBrowseFilter* filter)
 
 	if (m_project)
 	{
-		BrowseInstanceDialog dlgBrowse;
+		BrowseInstanceDialog dlgBrowse(m_settings);
 		if (dlgBrowse.create(this, m_project->getSourceDatabase(), filter))
 		{
 			if (dlgBrowse.showModal() == ui::DrOk)

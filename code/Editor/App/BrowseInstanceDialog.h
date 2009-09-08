@@ -32,6 +32,7 @@ class Instance;
 	namespace editor
 	{
 
+class Settings;
 class IBrowseFilter;
 
 class BrowseInstanceDialog : public ui::ConfigDialog
@@ -39,11 +40,14 @@ class BrowseInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS(BrowseInstanceDialog)
 
 public:
+	BrowseInstanceDialog(Settings* settings);
+
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
 	db::Instance* getInstance();
 
 private:
+	Ref< Settings > m_settings;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::ListView > m_listInstances;
 	Ref< ui::custom::MiniButton > m_buttonIcon;

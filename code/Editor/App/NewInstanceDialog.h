@@ -24,11 +24,15 @@ class MiniButton;
 	namespace editor
 	{
 
+class Settings;
+
 class NewInstanceDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS(NewInstanceDialog)
 
 public:
+	NewInstanceDialog(Settings* settings);
+
 	bool create(ui::Widget* parent);
 
 	const std::wstring& getTypeName() const;
@@ -36,6 +40,7 @@ public:
 	const std::wstring& getInstanceName() const;
 
 private:
+	Ref< Settings > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::ListView > m_typeList;
 	Ref< ui::custom::MiniButton > m_buttonIcon;
