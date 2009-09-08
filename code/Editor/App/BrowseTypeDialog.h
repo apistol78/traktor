@@ -23,16 +23,21 @@ class MiniButton;
 	namespace editor
 	{
 
+class Settings;
+
 class BrowseTypeDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS(BrowseTypeDialog)
 
 public:
+	BrowseTypeDialog(Settings* settings);
+
 	bool create(ui::Widget* parent, const Type* base);
 
 	const Type* getSelectedType() const;
 
 private:
+	Ref< Settings > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::ListView > m_typeList;
 	Ref< ui::custom::MiniButton > m_buttonIcon;

@@ -1,4 +1,5 @@
 #include "Editor/App/NewInstanceDialog.h"
+#include "Editor/Settings.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Static.h"
@@ -23,12 +24,19 @@
 #include "Resources/BigIcons.h"
 #include "Resources/SmallIcons.h"
 
+#pragma warning(disable: 4344)
+
 namespace traktor
 {
 	namespace editor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
+
+NewInstanceDialog::NewInstanceDialog(Settings* settings)
+:	m_settings(settings)
+{
+}
 
 bool NewInstanceDialog::create(ui::Widget* parent)
 {
@@ -40,8 +48,8 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"NEW_INSTANCE_TITLE"),
-		550,
-		450,
+		640,
+		500,
 		ui::ConfigDialog::WsDefaultResizable,
 		gc_new< ui::TableLayout >(L"100%", L"100%,*", 4, 4)
 	))
@@ -50,7 +58,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	addClickEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventDialogClick));
 
 	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
-	splitter->create(this, true, 150);
+	splitter->create(this, true, 200);
 
 	Ref< ui::Container > left = gc_new< ui::Container >();
 	left->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0));
@@ -80,8 +88,10 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png"));
 	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &NewInstanceDialog::eventButtonClick));
 
+	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 0);
+
 	m_typeList = gc_new< ui::ListView >();
-	m_typeList->create(right, ui::ListView::WsIconNormal | ui::WsClientBorder);
+	m_typeList->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList));
 	m_typeList->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
 
 	Ref< ui::Container > bottom = gc_new< ui::Container >();
@@ -180,10 +190,12 @@ void NewInstanceDialog::eventButtonClick(ui::Event* event)
 	if (event->getSender() == m_buttonIcon)
 	{
 		m_typeList->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
+		m_settings->setProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 0);
 	}
 	else
 	{
 		m_typeList->setStyle(ui::ListView::WsList | ui::WsClientBorder);
+		m_settings->setProperty< PropertyInteger >(L"Editor.NewInstance.IconSize", 1);
 	}
 }
 

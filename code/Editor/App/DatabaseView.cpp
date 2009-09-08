@@ -531,7 +531,7 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 
 		if (command == L"Editor.Database.NewInstance")	// New instance...
 		{
-			NewInstanceDialog newInstanceDlg;
+			NewInstanceDialog newInstanceDlg(m_editor->getSettings());
 			newInstanceDlg.create(this);
 
 			if (newInstanceDlg.showModal() == ui::DrOk)

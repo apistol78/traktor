@@ -236,16 +236,21 @@ LRESULT DialogWin32::eventSizing(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 
 LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
 {
+	CloseEvent closeEvent(m_owner, 0);
+	m_owner->raiseEvent(EiClose, &closeEvent);
+
+	if (closeEvent.consumed() && closeEvent.cancelled())
+	{
+		skip = true;
+		return FALSE;
+	}
+
 	if (m_modal)
 	{
 		endModal(DrCancel);
 		skip = false;
 	}
-	else
-	{
-		CloseEvent closeEvent(m_owner, 0);
-		m_owner->raiseEvent(EiClose, &closeEvent);
-	}
+
 	return TRUE;
 }
 

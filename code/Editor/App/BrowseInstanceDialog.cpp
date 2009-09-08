@@ -1,6 +1,6 @@
 #include "Editor/App/BrowseInstanceDialog.h"
-#include "Editor/IEditor.h"
 #include "Editor/IBrowseFilter.h"
+#include "Editor/Settings.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
@@ -24,6 +24,8 @@
 #include "Resources/BigIcons.h"
 #include "Resources/SmallIcons.h"
 
+#pragma warning(disable: 4344)
+
 namespace traktor
 {
 	namespace editor
@@ -31,20 +33,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
+BrowseInstanceDialog::BrowseInstanceDialog(Settings* settings)
+:	m_settings(settings)
+{
+}
+
 bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter)
 {
 	if (!ui::ConfigDialog::create(
 		parent,
 		i18n::Text(L"BROWSE_INSTANCE_TITLE"),
-		550,
-		450,
+		640,
+		500,
 		ui::ConfigDialog::WsDefaultResizable,
 		gc_new< ui::TableLayout >(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
 
 	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
-	if (!splitter->create(this, true, 150))
+	if (!splitter->create(this, true, 200))
 		return false;
 
 	Ref< ui::Container > left = gc_new< ui::Container >();
@@ -83,8 +90,10 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		return false;
 	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
 
+	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 0);
+
 	m_listInstances = gc_new< ui::ListView >();
-	if (!m_listInstances->create(right, ui::WsClientBorder | ui::ListView::WsIconNormal))
+	if (!m_listInstances->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList)))
 		return false;
 	m_listInstances->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
 	m_listInstances->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListItemSelected));
@@ -185,9 +194,15 @@ void BrowseInstanceDialog::eventListDoubleClick(ui::Event* event)
 void BrowseInstanceDialog::eventButtonClick(ui::Event* event)
 {
 	if (event->getSender() == m_buttonIcon)
+	{
 		m_listInstances->setStyle(ui::ListView::WsIconNormal | ui::WsClientBorder);
+		m_settings->setProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 0);
+	}
 	else
+	{
 		m_listInstances->setStyle(ui::ListView::WsList | ui::WsClientBorder);
+		m_settings->setProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 1);
+	}
 }
 
 	}
