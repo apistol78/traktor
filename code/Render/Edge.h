@@ -30,7 +30,11 @@ class T_DLLCLASS Edge : public Serializable
 public:
 	Edge(const OutputPin* source = 0, const InputPin* destination = 0);
 
+	void setSource(const OutputPin* source);
+
 	const OutputPin* getSource() const;
+
+	void setDestination(const InputPin* destination);
 
 	const InputPin* getDestination() const;
 

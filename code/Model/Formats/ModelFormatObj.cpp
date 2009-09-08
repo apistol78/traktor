@@ -110,9 +110,25 @@ Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 		}
 		else if (startsWith(str, L"usemtl "))
 		{
-			Material material;
-			material.setName(str.substr(7));
-			materialId = md->addMaterial(material);
+			materialId = ~0UL;
+
+			std::wstring materialName = str.substr(7);
+			const std::vector< Material >& materials = md->getMaterials();
+			for (uint32_t i = 0; i < uint32_t(materials.size()); ++i)
+			{
+				if (materials[i].getName() == materialName)
+				{
+					materialId = i;
+					break;
+				}
+			}
+
+			if (materialId == ~0UL)
+			{
+				Material material;
+				material.setName(str.substr(7));
+				materialId = md->addMaterial(material);
+			}
 		}
 	}
 

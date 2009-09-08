@@ -1,16 +1,12 @@
 #include <map>
-#include <list>
-#include <vector>
 #include <algorithm>
 #include "Render/FragmentLinker.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/Nodes.h"
 #include "Render/External.h"
 #include "Render/Edge.h"
 #include "Core/Serialization/DeepClone.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -19,18 +15,28 @@ namespace traktor
 		namespace
 		{
 
-struct OutputPortPredicate
-{
-	std::wstring m_name;
+const ImmutableNode::InputPinDesc c_EstPort_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_EstPort_o[] = { L"Output", 0 };
 
-	OutputPortPredicate(const std::wstring& name)
-	:	m_name(name)
+class EstPort : public ImmutableNode
+{
+	T_RTTI_CLASS(EstPort)
+
+public:
+	EstPort()
+	:	ImmutableNode(c_EstPort_i, c_EstPort_o)
 	{
 	}
+};
 
-	bool operator () (const OutputPort* outputPort) const
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.FragmentLinker.EstPort", EstPort, ImmutableNode)
+
+template < typename NodeType >
+struct NodeTypePred
+{
+	bool operator () (Node* node) const
 	{
-		return outputPort->getName() == m_name;
+		return &type_of(node) == &type_of< NodeType >();
 	}
 };
 
@@ -48,237 +54,134 @@ FragmentLinker::FragmentLinker(FragmentReader& fragmentReader)
 {
 }
 
-ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph)
+ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve)
 {
-	if (!shaderGraph)
-		return 0;
+	Ref< ShaderGraph > resolvedShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	RefArray< Node > originalNodes = resolvedShaderGraph->getNodes();
+	RefArray< Edge > resolvedEdges = resolvedShaderGraph->getEdges();
+	RefArray< Node > resolvedNodes;
 
-	Ref< ShaderGraph > resolvedGraph = gc_new< ShaderGraph >();
-
-	std::map< const Node*, Ref< const ShaderGraph > > fragmentGraphs;
-	RefArray< Edge > unresolvedEdges;
-
-	const RefArray< Edge >& edges = shaderGraph->getEdges();
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
-		unresolvedEdges.push_back(*i);
-
-	const RefArray< Node >& nodes = shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	for (RefArray< Node >::iterator i = originalNodes.begin(); i != originalNodes.end(); ++i)
 	{
-		Node* node = *i;
-		if (is_a< External >(node))
+		External* externalNode = dynamic_type_cast< External* >(*i);
+		if (externalNode)
 		{
-			Guid fragmentGuid = static_cast< const External* >(node)->getFragmentGuid();
-
-			Ref< const ShaderGraph > fragmentGraph = m_fragmentReader->read(fragmentGuid);
-			if (!fragmentGraph)
+			Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());
+			if (fragmentShaderGraph)
 			{
-				log::error << L"Unable to read fragment " << fragmentGuid.format() << Endl;
-				return 0;
-			}
-
-			// Create a clone of the graph as we don't want duplicate references in graphs.
-			fragmentGraph = DeepClone(fragmentGraph).create< ShaderGraph >();
-			T_ASSERT (fragmentGraph);
-
-			// Resolve sub external references.
-			fragmentGraph = resolve(fragmentGraph);
-			if (!fragmentGraph)
-			{
-				log::error << L"Unable to resolve fragment " << fragmentGuid.format() << Endl;
-				return 0;
-			}
-
-			const RefArray< Edge >& fragmentEdges = fragmentGraph->getEdges();
-			for (RefArray< Edge >::const_iterator j = fragmentEdges.begin(); j != fragmentEdges.end(); ++j)
-			{
-				if (
-					!is_a< InputPort >((*j)->getSource()->getNode()) && 
-					!is_a< OutputPort >((*j)->getDestination()->getNode())
-				)
-					unresolvedEdges.push_back(*j);
-			}
-
-			const RefArray< Node >& fragmentNodes = fragmentGraph->getNodes();
-			for (RefArray< Node >::const_iterator j = fragmentNodes.begin(); j != fragmentNodes.end(); ++j)
-			{
-				Node* fragmentNode = *j;
-				T_ASSERT (!is_a< External >(fragmentNode));
-
-				if (!is_a< InputPort >(fragmentNode) && !is_a< OutputPort >(fragmentNode))
-					resolvedGraph->addNode(fragmentNode);
-			}
-
-			fragmentGraphs[node] = fragmentGraph;
-		}
-		else
-			resolvedGraph->addNode(node);
-	}
-
-	for (RefArray< Edge >::iterator i = unresolvedEdges.begin(); i != unresolvedEdges.end(); ++i)
-	{
-		Edge* edge = *i;
-
-		const OutputPin* sourcePin = edge->getSource();
-		if (is_a< External >(sourcePin->getNode()))
-		{
-			Ref< const ShaderGraph > fragmentGraph = fragmentGraphs[sourcePin->getNode()];
-			T_ASSERT (fragmentGraph);
-
-			const RefArray< Node >& fragmentNodes = fragmentGraph->getNodes();
-			for (RefArray< Node >::const_iterator j = fragmentNodes.begin(); j != fragmentNodes.end(); ++j)
-			{
-				OutputPort* fragmentPort = dynamic_type_cast< OutputPort* >(*j);
-				if (fragmentPort && fragmentPort->getName() == sourcePin->getName())
+				if (fullResolve)
 				{
-					sourcePin = ShaderGraphAdjacency(fragmentGraph).findSourcePin(fragmentPort->findInputPin(L"Input"));
-					T_ASSERT (sourcePin);
-					break;
+					fragmentShaderGraph = resolve(fragmentShaderGraph, fullResolve);
+					if (!fragmentShaderGraph)
+						return 0;
 				}
-			}
-		}
 
-		std::vector< const InputPin* > destinationPins;
-		const InputPin* destinationPin = edge->getDestination();
-		if (is_a< External >(destinationPin->getNode()))
-		{
-			Ref< const ShaderGraph > fragmentGraph = fragmentGraphs[destinationPin->getNode()];
-			T_ASSERT (fragmentGraph);
+				std::map< std::wstring, EstPort* > inputEstPorts;
+				std::map< std::wstring, EstPort* > outputEstPorts;
 
-			const RefArray< Node >& fragmentNodes = fragmentGraph->getNodes();
-			for (RefArray< Node >::const_iterator j = fragmentNodes.begin(); j != fragmentNodes.end(); ++j)
-			{
-				InputPort* fragmentPort = dynamic_type_cast< InputPort* >(*j);
-				if (fragmentPort && fragmentPort->getName() == destinationPin->getName())
+				for (int j = 0; j < externalNode->getInputPinCount(); ++j)
 				{
-					ShaderGraphAdjacency(fragmentGraph).findDestinationPins(fragmentPort->findOutputPin(L"Output"), destinationPins);
-					break;
+					Ref< EstPort > inputEstPort = gc_new< EstPort >();
+					inputEstPorts[externalNode->getInputPin(j)->getName()] = inputEstPort;
+					resolvedNodes.push_back(inputEstPort);
+
+					for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
+					{
+						if ((*k)->getDestination() == externalNode->getInputPin(j))
+							(*k)->setDestination(inputEstPort->getInputPin(0));
+					}
+				}
+
+				for (int j = 0; j < externalNode->getOutputPinCount(); ++j)
+				{
+					Ref< EstPort > outputEstPort = gc_new< EstPort >();
+					outputEstPorts[externalNode->getOutputPin(j)->getName()] = outputEstPort;
+					resolvedNodes.push_back(outputEstPort);
+
+					for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
+					{
+						if ((*k)->getSource() == externalNode->getOutputPin(j))
+							(*k)->setSource(outputEstPort->getOutputPin(0));
+					}
+				}
+				
+				const RefArray< Edge >& fragmentEdges = fragmentShaderGraph->getEdges();
+				for (RefArray< Edge >::const_iterator j = fragmentEdges.begin(); j != fragmentEdges.end(); ++j)
+				{
+					const OutputPin* sourcePin;
+					const InputPin* destinationPin;
+
+					if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >((*j)->getSource()->getNode()))
+					{
+						std::map< std::wstring, EstPort* >::iterator it = inputEstPorts.find(inputPort->getName());
+						sourcePin = (it != inputEstPorts.end()) ? it->second->getOutputPin(0) : 0;
+					}
+					else
+						sourcePin = (*j)->getSource();
+
+					if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >((*j)->getDestination()->getNode()))
+					{
+						std::map< std::wstring, EstPort* >::iterator it = outputEstPorts.find(outputPort->getName());
+						destinationPin = (it != outputEstPorts.end()) ? it->second->getInputPin(0) : 0;
+					}
+					else
+						destinationPin = (*j)->getDestination();
+
+					if (sourcePin && destinationPin)
+						resolvedEdges.push_back(gc_new< Edge >(sourcePin, destinationPin));
+				}
+
+				const RefArray< Node >& fragmentNodes = fragmentShaderGraph->getNodes();
+				for (RefArray< Node >::const_iterator j = fragmentNodes.begin(); j != fragmentNodes.end(); ++j)
+				{
+					if (!is_a< InputPort >(*j) && !is_a< OutputPort >(*j))
+						resolvedNodes.push_back(*j);
 				}
 			}
 		}
 		else
-			destinationPins.push_back(destinationPin);
-
-		for (std::vector< const InputPin* >::iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
-		{
-			T_ASSERT (!is_a< External >(sourcePin->getNode()));
-			T_ASSERT (!is_a< External >((*j)->getNode()));
-			resolvedGraph->addEdge(gc_new< Edge >(sourcePin, *j));
-		}
-	}
-
-	return resolvedGraph;
-}
-
-ShaderGraph* FragmentLinker::merge(const ShaderGraph* shaderGraphLeft, const ShaderGraph* shaderGraphRight)
-{
-	if (!shaderGraphLeft || !shaderGraphRight)
-		return 0;
-
-	const RefArray< Node >& nodesLeft = shaderGraphLeft->getNodes();
-	const RefArray< Node >& nodesRight = shaderGraphRight->getNodes();
-
-	const RefArray< Edge >& edgesLeft = shaderGraphLeft->getEdges();
-	const RefArray< Edge >& edgesRight = shaderGraphRight->getEdges();
-
-	RefArray< Node > resolvedNodes; resolvedNodes.reserve(nodesLeft.size() + nodesRight.size());
-	RefArray< Edge > resolvedEdges; resolvedEdges.reserve(edgesLeft.size() + edgesRight.size());
-
-	std::set< OutputPort* > outputPorts;
-	std::set< InputPort* > inputPorts;
-
-	for (RefArray< Node >::const_iterator i = nodesLeft.begin(); i != nodesLeft.end(); ++i)
-	{
-		if (!is_a< OutputPort >(*i))
 			resolvedNodes.push_back(*i);
-		else
-			outputPorts.insert(static_cast< OutputPort* >(*i));
 	}
 
-	for (RefArray< Node >::const_iterator i = nodesRight.begin(); i != nodesRight.end(); ++i)
+	for (;;)
 	{
-		if (!is_a< InputPort >(*i))
-			resolvedNodes.push_back(*i);
-		else
-			inputPorts.insert(static_cast< InputPort* >(*i));
-	}	
+		RefArray< Node >::iterator i = std::find_if(resolvedNodes.begin(), resolvedNodes.end(), NodeTypePred< EstPort >());
+		if (i == resolvedNodes.end())
+			break;
 
-	for (RefArray< Edge >::const_iterator i = edgesLeft.begin(); i != edgesLeft.end(); ++i)
-	{
-		Node* sourceNode = (*i)->getSource()->getNode();
-		Node* destinationNode = (*i)->getDestination()->getNode();
-
-		bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), sourceNode) != resolvedNodes.end();
-		bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(), destinationNode) != resolvedNodes.end();
-		if (foundSource && foundDestination)
-			resolvedEdges.push_back(*i);
-	}
-
-	for (RefArray< Edge >::const_iterator i = edgesRight.begin(); i != edgesRight.end(); ++i)
-	{
-		Node* sourceNode = (*i)->getSource()->getNode();
-		Node* destinationNode = (*i)->getDestination()->getNode();
-
-		bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), sourceNode) != resolvedNodes.end();
-		bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(), destinationNode) != resolvedNodes.end();
-		if (foundSource && foundDestination)
-			resolvedEdges.push_back(*i);
-	}
-
-	ShaderGraphAdjacency shaderGraphLeftAdj(shaderGraphLeft);
-	ShaderGraphAdjacency shaderGraphRightAdj(shaderGraphRight);
-
-	for (RefArray< Node >::const_iterator i = nodesRight.begin(); i != nodesRight.end(); ++i)
-	{
-		InputPort* inputPort = dynamic_type_cast< InputPort* >(*i);
-		if (!inputPort)
-			continue;
-
+		const OutputPin* sourcePin = 0;
 		std::vector< const InputPin* > destinationPins;
-		if (!shaderGraphRightAdj.findDestinationPins(inputPort->getOutputPin(0), destinationPins))
-			continue;
 
-		std::set< OutputPort* >::iterator j = std::find_if(outputPorts.begin(), outputPorts.end(), OutputPortPredicate(inputPort->getName()));
-		if (j != outputPorts.end())
+		for (RefArray< Edge >::iterator j = resolvedEdges.begin(); j != resolvedEdges.end(); )
 		{
-			const OutputPin* sourcePin = shaderGraphLeftAdj.findSourcePin((*j)->getInputPin(0));
-
-			bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), sourcePin->getNode()) != resolvedNodes.end();
-			if (!foundSource)
-				resolvedNodes.push_back(sourcePin->getNode());
-
-			for (std::vector< const InputPin* >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
+			if ((*j)->getSource()->getNode() == *i)
 			{
-				bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(),(*k)->getNode()) != resolvedNodes.end();
-				if (!foundDestination)
-					resolvedNodes.push_back((*k)->getNode());
-
-				resolvedEdges.push_back(gc_new< Edge >(sourcePin, *k));
+				destinationPins.push_back((*j)->getDestination());
+				j = resolvedEdges.erase(j);
 			}
+			else if ((*j)->getDestination()->getNode() == *i)
+			{
+				T_ASSERT (!sourcePin);
+				sourcePin = (*j)->getSource();
+				j = resolvedEdges.erase(j);
+			}
+			else
+				++j;
 		}
-		else
+
+		if (sourcePin)
 		{
-			bool foundSource = std::find(resolvedNodes.begin(), resolvedNodes.end(), inputPort) != resolvedNodes.end();
-			if (!foundSource)
-				resolvedNodes.push_back(inputPort);
-
-			for (std::vector< const InputPin* >::iterator k = destinationPins.begin(); k != destinationPins.end(); ++k)
-			{
-				bool foundDestination = std::find(resolvedNodes.begin(), resolvedNodes.end(),(*k)->getNode()) != resolvedNodes.end();
-				if (!foundDestination)
-					resolvedNodes.push_back((*k)->getNode());
-
-				resolvedEdges.push_back(gc_new< Edge >(inputPort->getOutputPin(0), *k));
-			}
+			for (std::vector< const InputPin* >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
+				resolvedEdges.push_back(gc_new< Edge >(sourcePin, *j));
 		}
+
+		resolvedNodes.erase(i);
 	}
 
-	Ref< ShaderGraph > resolvedGraph = gc_new< ShaderGraph >(
-		cref(resolvedNodes),
-		cref(resolvedEdges)
+	return gc_new< ShaderGraph >(
+		resolvedNodes,
+		resolvedEdges
 	);
-
-	return resolvedGraph;
 }
 
 	}

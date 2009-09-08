@@ -70,6 +70,10 @@ public:
 
 	float getSpecularTerm() const;
 
+	void setSpecularRoughness(float specularRoughness);
+
+	float getSpecularRoughness() const;
+
 	void setDoubleSided(bool doubleSided);
 
 	bool isDoubleSided() const;
@@ -83,6 +87,7 @@ private:
 	Color m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
+	float m_specularRoughness;
 	bool m_doubleSided;
 };
 
