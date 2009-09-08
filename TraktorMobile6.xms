@@ -6041,6 +6041,14 @@
 					<fileName>SliderWin32.h</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>ClipboardWin32.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ClipboardWin32.h</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
