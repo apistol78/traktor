@@ -3,5 +3,5 @@
 	<rootGroupPath>$(TRAKTOR_HOME)/data/Target/Sw/Output</rootGroupPath>
 	<eventMonitorEnable>true</eventMonitorEnable>
 	<eventFile>$(TRAKTOR_HOME)/data/Target/Sw/Temp/Output.xvs</eventFile>
-  <useBinary>false</useBinary>
+  <useBinary>true</useBinary>
 </object>
