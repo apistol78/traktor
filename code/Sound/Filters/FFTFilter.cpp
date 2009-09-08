@@ -141,7 +141,7 @@ struct PairAccessor
 
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.FFTFilter", FFTFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.FFTFilter", FFTFilter, IFilter)
 
 FFTFilter::FFTFilter(uint32_t sampleRate)
 :	m_sampleRate(sampleRate)

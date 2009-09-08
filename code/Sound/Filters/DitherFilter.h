@@ -1,7 +1,7 @@
 #ifndef traktor_sound_DitherFilter_H
 #define traktor_sound_DitherFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Dither filter.
  * \ingroup Sound
  */
-class T_DLLCLASS DitherFilter : public Filter
+class T_DLLCLASS DitherFilter : public IFilter
 {
 	T_RTTI_CLASS(DitherFilter)
 

@@ -2,7 +2,7 @@
 #define traktor_sound_WavStreamDecoder_H
 
 #include "Core/Heap/Ref.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +36,7 @@ struct WaveFormat
 
 /*! \brief WAV stream decoder.
  */
-class T_DLLCLASS WavStreamDecoder : public StreamDecoder
+class T_DLLCLASS WavStreamDecoder : public IStreamDecoder
 {
 	T_RTTI_CLASS(WavStreamDecoder)
 

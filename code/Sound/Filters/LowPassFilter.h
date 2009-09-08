@@ -1,7 +1,7 @@
 #ifndef traktor_sound_LowPassFilter_H
 #define traktor_sound_LowPassFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Low pass filter.
  * \ingroup Sound
  */
-class T_DLLCLASS LowPassFilter : public Filter
+class T_DLLCLASS LowPassFilter : public IFilter
 {
 	T_RTTI_CLASS(LowPassFilter)
 

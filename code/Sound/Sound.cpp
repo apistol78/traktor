@@ -7,12 +7,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.Sound", Sound, Object)
 
-Sound::Sound(SoundBuffer* soundBuffer)
+Sound::Sound(ISoundBuffer* soundBuffer)
 :	m_soundBuffer(soundBuffer)
 {
 }
 
-SoundBuffer* Sound::getSoundBuffer()
+ISoundBuffer* Sound::getSoundBuffer()
 {
 	return m_soundBuffer;
 }

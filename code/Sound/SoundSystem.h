@@ -21,7 +21,7 @@ namespace traktor
 	namespace sound
 	{
 
-class SoundDriver;
+class ISoundDriver;
 class SoundChannel;
 class Sound;
 
@@ -37,7 +37,7 @@ class T_DLLCLASS SoundSystem : public Object
 	T_RTTI_CLASS(SoundSystem)
 
 public:
-	SoundSystem(SoundDriver* driver);
+	SoundSystem(ISoundDriver* driver);
 
 	bool create(const SoundSystemCreateDesc& desc);
 
@@ -91,7 +91,7 @@ public:
 	void getThreadPerformances(double& outMixerTime, double& outSubmitTime) const;
 
 private:
-	Ref< SoundDriver > m_driver;
+	Ref< ISoundDriver > m_driver;
 	SoundSystemCreateDesc m_desc;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;

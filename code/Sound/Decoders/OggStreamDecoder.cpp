@@ -237,7 +237,7 @@ private:
 	bool m_readPacket;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.OggStreamDecoder", OggStreamDecoder, StreamDecoder)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.OggStreamDecoder", OggStreamDecoder, IStreamDecoder)
 
 bool OggStreamDecoder::create(Stream* stream)
 {

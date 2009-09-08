@@ -1,7 +1,7 @@
 #ifndef traktor_sound_RingModulationFilter_H
 #define traktor_sound_RingModulationFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Ring modulation filter.
  * \ingroup Sound
  */
-class T_DLLCLASS RingModulationFilter : public Filter
+class T_DLLCLASS RingModulationFilter : public IFilter
 {
 	T_RTTI_CLASS(RingModulationFilter)
 

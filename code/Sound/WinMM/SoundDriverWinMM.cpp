@@ -47,7 +47,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverWinMM", SoundDriverWinMM, SoundDriver)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverWinMM", SoundDriverWinMM, ISoundDriver)
 
 SoundDriverWinMM::SoundDriverWinMM()
 :	m_wo(NULL)

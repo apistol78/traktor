@@ -18,7 +18,7 @@ namespace traktor
 	namespace sound
 	{
 
-class Filter;
+class IFilter;
 class Sound;
 
 /*! \brief Virtual sound channel.
@@ -40,9 +40,9 @@ public:
 
 	void setVolume(float volume);
 
-	void setFilter(Filter* filter);
+	void setFilter(IFilter* filter);
 
-	Filter* getFilter() const;
+	IFilter* getFilter() const;
 
 	bool isPlaying() const;
 
@@ -53,7 +53,7 @@ private:
 
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
-	Ref< Filter > m_filter;
+	Ref< IFilter > m_filter;
 	Ref< Sound > m_sound;
 	double m_time;
 	uint32_t m_repeat;

@@ -5,7 +5,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.CombFilter", CombFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.CombFilter", CombFilter, IFilter)
 
 CombFilter::CombFilter(uint32_t samplesLength, float feedback, float damp)
 :	m_feedback(feedback)

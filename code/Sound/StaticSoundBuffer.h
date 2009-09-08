@@ -1,7 +1,8 @@
 #ifndef traktor_sound_StaticSoundBuffer_H
 #define traktor_sound_StaticSoundBuffer_H
 
-#include "Sound/SoundBuffer.h"
+#include "Sound/ISoundBuffer.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -11,7 +12,7 @@ namespace traktor
 /*! \brief Static sound buffer.
  * \ingroup Sound
  */
-class T_DLLCLASS StaticSoundBuffer : public SoundBuffer
+class T_DLLCLASS StaticSoundBuffer : public ISoundBuffer
 {
 	T_RTTI_CLASS(StaticSoundBuffer)
 
@@ -34,7 +35,7 @@ private:
 	uint32_t m_sampleRate;
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
-	int16_t* m_samples[SbcMaxChannelCount];
+	AutoArrayPtr< int16_t > m_samples[SbcMaxChannelCount];
 	float m_blocks[SbcMaxChannelCount][4096];
 };
 

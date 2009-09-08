@@ -151,7 +151,7 @@ private:
 	}
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.FlacStreamDecoder", FlacStreamDecoder, StreamDecoder)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.FlacStreamDecoder", FlacStreamDecoder, IStreamDecoder)
 
 bool FlacStreamDecoder::create(Stream* stream)
 {

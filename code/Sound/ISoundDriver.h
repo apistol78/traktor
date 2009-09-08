@@ -1,5 +1,5 @@
-#ifndef traktor_sound_SoundDriver_H
-#define traktor_sound_SoundDriver_H
+#ifndef traktor_sound_ISoundDriver_H
+#define traktor_sound_ISoundDriver_H
 
 #include "Core/Object.h"
 #include "Sound/Types.h"
@@ -34,9 +34,9 @@ namespace traktor
  * It the drivers responsibility to ensure that there are no glitches in the
  * playback by any means necessary.
  */
-class T_DLLCLASS SoundDriver : public Object
+class T_DLLCLASS ISoundDriver : public Object
 {
-	T_RTTI_CLASS(SoundDriver)
+	T_RTTI_CLASS(ISoundDriver)
 
 public:
 	virtual bool create(const SoundDriverCreateDesc& desc) = 0;
@@ -51,4 +51,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_SoundDriver_H
+#endif	// traktor_sound_ISoundDriver_H

@@ -1,7 +1,7 @@
 #ifndef traktor_sound_SurroundFilter_H
 #define traktor_sound_SurroundFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 
@@ -23,7 +23,7 @@ class SurroundEnvironment;
 /*! \brief Surround filter.
  * \ingroup Sound
  */
-class T_DLLCLASS SurroundFilter : public Filter
+class T_DLLCLASS SurroundFilter : public IFilter
 {
 	T_RTTI_CLASS(SurroundFilter)
 

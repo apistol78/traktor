@@ -18,6 +18,7 @@
 #include "UnitTest/CaseZip.h"
 #include "UnitTest/CaseSpatialHashArray.h"
 #include "UnitTest/CaseRenderSw.h"
+#include "UnitTest/CaseSound.h"
 #include "Core/Log/Log.h"
 
 using namespace traktor;
@@ -33,8 +34,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//log::info << L"Case meta" << Endl;
 	//traktor::CaseMeta().run();
 
-	log::info << L"Case process" << Endl;
-	traktor::CaseProcess().run();
+	//log::info << L"Case process" << Endl;
+	//traktor::CaseProcess().run();
 
 	//log::info << L"Case thread" << Endl;
 	//traktor::CaseThread().run();
@@ -80,6 +81,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case software renderer" << Endl;
 	//traktor::CaseRenderSw().run();
+
+	log::info << L"Case sound" << Endl;
+	traktor::CaseSound().run();
 
 	log::info << L"Finished" << Endl;
 }

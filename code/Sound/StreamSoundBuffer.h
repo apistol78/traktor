@@ -2,26 +2,26 @@
 #define traktor_sound_StreamSoundBuffer_H
 
 #include "Core/Heap/Ref.h"
-#include "Sound/SoundBuffer.h"
+#include "Sound/ISoundBuffer.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-class StreamDecoder;
+class IStreamDecoder;
 
 /*! \brief Stream sound buffer.
  * \ingroup Sound
  */
-class T_DLLCLASS StreamSoundBuffer : public SoundBuffer
+class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
 {
 	T_RTTI_CLASS(StreamSoundBuffer)
 
 public:
 	StreamSoundBuffer();
 
-	bool create(StreamDecoder* streamDecoder);
+	bool create(IStreamDecoder* streamDecoder);
 
 	void destroy();
 
@@ -30,7 +30,7 @@ public:
 	virtual bool getBlock(double time, SoundBlock& outBlock);
 
 private:
-	Ref< StreamDecoder > m_streamDecoder;
+	Ref< IStreamDecoder > m_streamDecoder;
 	double m_duration;
 	double m_time;
 };

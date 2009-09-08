@@ -1,7 +1,7 @@
 #ifndef traktor_sound_SoundDriverNull_H
 #define traktor_sound_SoundDriverNull_H
 
-#include "Sound/SoundDriver.h"
+#include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Null device sound driver.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundDriverNull : public SoundDriver
+class T_DLLCLASS SoundDriverNull : public ISoundDriver
 {
 	T_RTTI_CLASS(SoundDriverNull)
 

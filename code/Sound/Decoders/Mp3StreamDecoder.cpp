@@ -148,7 +148,7 @@ private:
 	uint32_t m_consumedCount;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.Mp3StreamDecoder", Mp3StreamDecoder, StreamDecoder)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.Mp3StreamDecoder", Mp3StreamDecoder, IStreamDecoder)
 
 bool Mp3StreamDecoder::create(Stream* stream)
 {

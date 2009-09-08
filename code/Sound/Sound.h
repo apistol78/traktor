@@ -18,7 +18,7 @@ namespace traktor
 	namespace sound
 	{
 
-class SoundBuffer;
+class ISoundBuffer;
 
 /*! \brief Sound container class.
  * \ingroup Sound
@@ -28,12 +28,12 @@ class T_DLLCLASS Sound : public Object
 	T_RTTI_CLASS(Sound)
 
 public:
-	Sound(SoundBuffer* soundBuffer);
+	Sound(ISoundBuffer* soundBuffer);
 
-	SoundBuffer* getSoundBuffer();
+	ISoundBuffer* getSoundBuffer();
 
 private:
-	Ref< SoundBuffer > m_soundBuffer;
+	Ref< ISoundBuffer > m_soundBuffer;
 };
 
 	}

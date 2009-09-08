@@ -2,7 +2,7 @@
 #define traktor_sound_FFTFilter_H
 
 #include <vector>
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ namespace traktor
 /*! \brief FFT filter.
  * \ingroup Sound
  */
-class T_DLLCLASS FFTFilter : public Filter
+class T_DLLCLASS FFTFilter : public IFilter
 {
 	T_RTTI_CLASS(FFTFilter)
 

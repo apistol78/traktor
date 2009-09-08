@@ -5,7 +5,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.DitherFilter", DitherFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.DitherFilter", DitherFilter, IFilter)
 
 DitherFilter::DitherFilter(uint32_t bitsPerSample)
 :	m_ditherAmplitude(1.0f / (1 << bitsPerSample))

@@ -2,7 +2,7 @@
 #define traktor_sound_GroupFilter_H
 
 #include "Core/Heap/Ref.h"
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,17 +20,17 @@ namespace traktor
 /*! \brief Group filter.
  * \ingroup Sound
  */
-class T_DLLCLASS GroupFilter : public Filter
+class T_DLLCLASS GroupFilter : public IFilter
 {
 	T_RTTI_CLASS(GroupFilter)
 
 public:
-	void addFilter(Filter* filter);
+	void addFilter(IFilter* filter);
 
 	virtual void apply(SoundBlock& outBlock);
 
 private:
-	RefArray< Filter > m_filters;
+	RefArray< IFilter > m_filters;
 };
 
 	}

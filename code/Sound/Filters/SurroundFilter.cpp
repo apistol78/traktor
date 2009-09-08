@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
 
 SurroundFilter::SurroundFilter(SurroundEnvironment* environment)
 :	m_environment(environment)

@@ -1,5 +1,5 @@
-#ifndef traktor_sound_SoundBuffer_H
-#define traktor_sound_SoundBuffer_H
+#ifndef traktor_sound_ISoundBuffer_H
+#define traktor_sound_ISoundBuffer_H
 
 #include "Core/Object.h"
 #include "Sound/Types.h"
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Sound buffer base class.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundBuffer : public Object
+class T_DLLCLASS ISoundBuffer : public Object
 {
-	T_RTTI_CLASS(SoundBuffer)
+	T_RTTI_CLASS(ISoundBuffer)
 
 public:
 	virtual double getDuration() const = 0;
@@ -33,4 +33,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_SoundBuffer_H
+#endif	// traktor_sound_ISoundBuffer_H

@@ -22,7 +22,7 @@ struct RiffChunk
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.WavStreamDecoder", WavStreamDecoder, StreamDecoder)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.WavStreamDecoder", WavStreamDecoder, IStreamDecoder)
 
 bool WavStreamDecoder::create(Stream* stream)
 {

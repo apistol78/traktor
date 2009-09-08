@@ -1,5 +1,5 @@
 #include "Sound/StreamSoundBuffer.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, SoundBuffer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
 StreamSoundBuffer::StreamSoundBuffer()
 :	m_duration(0.0)
@@ -15,7 +15,7 @@ StreamSoundBuffer::StreamSoundBuffer()
 {
 }
 
-bool StreamSoundBuffer::create(StreamDecoder* streamDecoder)
+bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 {
 	if (!(m_streamDecoder = streamDecoder))
 		return false;
