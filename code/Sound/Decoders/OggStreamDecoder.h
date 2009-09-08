@@ -2,7 +2,7 @@
 #define traktor_sound_OggStreamDecoder_H
 
 #include "Core/Heap/Ref.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ class OggStreamDecoderImpl;
 /*! \brief OGG stream decoder.
  * \ingroup Sound
  */
-class T_DLLCLASS OggStreamDecoder : public StreamDecoder
+class T_DLLCLASS OggStreamDecoder : public IStreamDecoder
 {
 	T_RTTI_CLASS(OggStreamDecoder)
 

@@ -8,7 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverNull", SoundDriverNull, SoundDriver)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverNull", SoundDriverNull, ISoundDriver)
 
 bool SoundDriverNull::create(const SoundDriverCreateDesc& desc)
 {

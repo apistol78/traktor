@@ -4,7 +4,7 @@
 #include "Sound/SoundSystem.h"
 #include "Sound/StaticSoundBuffer.h"
 #include "Sound/StreamSoundBuffer.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 #include "Sound/Sound.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -91,7 +91,7 @@ Object* SoundFactory::create(resource::IResourceManager* resourceManager, const 
 	}
 	else if (StreamSoundResource* streamResource = dynamic_type_cast< StreamSoundResource* >(resource))
 	{
-		Ref< StreamDecoder > streamDecoder = checked_type_cast< StreamDecoder* >(streamResource->getDecoderType()->newInstance());
+		Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(streamResource->getDecoderType()->newInstance());
 		if (!streamDecoder->create(stream))
 		{
 			log::error << L"Unable to create sound, unable to create stream decoder" << Endl;

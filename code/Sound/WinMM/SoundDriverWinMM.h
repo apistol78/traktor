@@ -2,7 +2,7 @@
 #define traktor_sound_SoundDriverWinMM_H
 
 #include <windows.h>
-#include "Sound/SoundDriver.h"
+#include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*!
  * \ingroup WMM
  */
-class T_DLLCLASS SoundDriverWinMM : public SoundDriver
+class T_DLLCLASS SoundDriverWinMM : public ISoundDriver
 {
 	T_RTTI_CLASS(SoundDriverWinMM)
 

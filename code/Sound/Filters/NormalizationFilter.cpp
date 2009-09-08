@@ -6,7 +6,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.NormalizationFilter", NormalizationFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.NormalizationFilter", NormalizationFilter, IFilter)
 
 NormalizationFilter::NormalizationFilter(float targetEnergy, float energyThreshold, float attackRate)
 :	m_targetEnergy(targetEnergy)

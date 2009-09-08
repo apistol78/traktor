@@ -2,7 +2,7 @@
 #define traktor_sound_SoundDriverDs8_H
 
 #include "Sound/Ds8/Platform.h"
-#include "Sound/SoundDriver.h"
+#include "Sound/ISoundDriver.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ namespace traktor
 /*!
  * \ingroup DS8
  */
-class T_DLLCLASS SoundDriverDs8 : public SoundDriver
+class T_DLLCLASS SoundDriverDs8 : public ISoundDriver
 {
 	T_RTTI_CLASS(SoundDriverDs8)
 

@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EqualizerFilter", EqualizerFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EqualizerFilter", EqualizerFilter, IFilter)
 
 EqualizerFilter::EqualizerFilter(float gain)
 :	m_gain(gain)

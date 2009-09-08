@@ -5,7 +5,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.LowPassFilter", LowPassFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.LowPassFilter", LowPassFilter, IFilter)
 
 LowPassFilter::LowPassFilter(float cutOff)
 :	m_cutOff(cutOff)

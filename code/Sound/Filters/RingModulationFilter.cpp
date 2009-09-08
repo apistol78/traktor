@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RingModulationFilter", RingModulationFilter, Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RingModulationFilter", RingModulationFilter, IFilter)
 
 RingModulationFilter::RingModulationFilter(uint32_t sampleRate, uint32_t ringFrequency)
 :	m_sampleRate(sampleRate)

@@ -1,7 +1,7 @@
 #ifndef traktor_sound_NormalizationFilter_H
 #define traktor_sound_NormalizationFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 #include "Core/Math/Random.h"
 
 // import/export mechanism.
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Normalization filter.
  * \ingroup Sound
  */
-class T_DLLCLASS NormalizationFilter : public Filter
+class T_DLLCLASS NormalizationFilter : public IFilter
 {
 	T_RTTI_CLASS(NormalizationFilter)
 

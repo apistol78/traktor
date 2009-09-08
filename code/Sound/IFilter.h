@@ -1,5 +1,5 @@
-#ifndef traktor_sound_Filter_H
-#define traktor_sound_Filter_H
+#ifndef traktor_sound_IFilter_H
+#define traktor_sound_IFilter_H
 
 #include "Core/Object.h"
 #include "Sound/Types.h"
@@ -17,12 +17,12 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Filter base class.
+/*! \brief IFilter base class.
  * \ingroup Sound
  */
-class T_DLLCLASS Filter : public Object
+class T_DLLCLASS IFilter : public Object
 {
-	T_RTTI_CLASS(Filter)
+	T_RTTI_CLASS(IFilter)
 
 public:
 	virtual void apply(SoundBlock& outBlock) = 0;
@@ -31,4 +31,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_Filter_H
+#endif	// traktor_sound_IFilter_H

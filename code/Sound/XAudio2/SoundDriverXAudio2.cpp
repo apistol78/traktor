@@ -47,7 +47,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverXAudio2", SoundDriverXAudio2, SoundDriver)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverXAudio2", SoundDriverXAudio2, ISoundDriver)
 
 SoundDriverXAudio2::SoundDriverXAudio2()
 :	m_voiceCallback(0)
@@ -165,7 +165,7 @@ void SoundDriverXAudio2::wait()
 	if (!m_sourceVoice)
 		return;
 
-	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= sizeof_array(m_buffers) - 1)
+	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= 2)
 		WaitForSingleObject(m_eventNotify, INFINITE);
 }
 

@@ -1,7 +1,7 @@
 #ifndef traktor_sound_CombFilter_H
 #define traktor_sound_CombFilter_H
 
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Comb filter.
  * \ingroup Sound
  */
-class T_DLLCLASS CombFilter : public Filter
+class T_DLLCLASS CombFilter : public IFilter
 {
 	T_RTTI_CLASS(CombFilter)
 

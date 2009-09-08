@@ -1,8 +1,8 @@
 #include <cmath>
 #include "Sound/SoundChannel.h"
-#include "Sound/Filter.h"
+#include "Sound/IFilter.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundBuffer.h"
+#include "Sound/ISoundBuffer.h"
 #include "Core/Heap/Alloc.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -37,12 +37,12 @@ void SoundChannel::setVolume(float volume)
 	m_volume = volume;
 }
 
-void SoundChannel::setFilter(Filter* filter)
+void SoundChannel::setFilter(IFilter* filter)
 {
 	m_filter = filter;
 }
 
-Filter* SoundChannel::getFilter() const
+IFilter* SoundChannel::getFilter() const
 {
 	return m_filter;
 }
@@ -70,7 +70,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	if (!m_sound)
 		return false;
 
-	Ref< SoundBuffer > soundBuffer = m_sound->getSoundBuffer();
+	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();
 	if (!soundBuffer)
 		return false;
 

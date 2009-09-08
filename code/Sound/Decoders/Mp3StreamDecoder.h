@@ -2,7 +2,7 @@
 #define traktor_sound_Mp3StreamDecoder_H
 
 #include "Core/Heap/Ref.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +22,7 @@ class Mp3StreamDecoderImpl;
 /*! \brief MP3 stream decoder.
  * \ingroup Sound
  */
-class T_DLLCLASS Mp3StreamDecoder : public StreamDecoder
+class T_DLLCLASS Mp3StreamDecoder : public IStreamDecoder
 {
 	T_RTTI_CLASS(Mp3StreamDecoder)
 

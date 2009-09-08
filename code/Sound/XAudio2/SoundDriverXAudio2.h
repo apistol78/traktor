@@ -6,7 +6,7 @@
 #include <windows.h>
 #endif
 #include <xaudio2.h>
-#include "Sound/SoundDriver.h"
+#include "Sound/ISoundDriver.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -25,7 +25,7 @@ namespace traktor
 /*!
  * \ingroup XA2
  */
-class T_DLLCLASS SoundDriverXAudio2 : public SoundDriver
+class T_DLLCLASS SoundDriverXAudio2 : public ISoundDriver
 {
 	T_RTTI_CLASS(SoundDriverXAudio2)
 
@@ -50,7 +50,7 @@ private:
 	WAVEFORMATEX m_wfx;
 	HANDLE m_eventNotify;
 	uint32_t m_bufferSize;
-	uint8_t* m_buffers[4];
+	uint8_t* m_buffers[3];
 	uint32_t m_nextSubmitBuffer;
 };
 

@@ -1,5 +1,5 @@
-#ifndef traktor_sound_StreamDecoder_H
-#define traktor_sound_StreamDecoder_H
+#ifndef traktor_sound_IStreamDecoder_H
+#define traktor_sound_IStreamDecoder_H
 
 #include "Core/Object.h"
 #include "Sound/Types.h"
@@ -28,9 +28,9 @@ class Stream;
  * Thus it's not required for the decoder itself to keep track
  * of timing, just return a continuous stream of sound blocks.
  */
-class T_DLLCLASS StreamDecoder : public Object
+class T_DLLCLASS IStreamDecoder : public Object
 {
-	T_RTTI_CLASS(StreamDecoder)
+	T_RTTI_CLASS(IStreamDecoder)
 
 public:
 	virtual bool create(Stream* stream) = 0;
@@ -47,4 +47,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_StreamDecoder_H
+#endif	// traktor_sound_IStreamDecoder_H

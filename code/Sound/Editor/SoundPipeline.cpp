@@ -2,7 +2,7 @@
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
-#include "Sound/StreamDecoder.h"
+#include "Sound/IStreamDecoder.h"
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
@@ -80,7 +80,7 @@ bool SoundPipeline::buildOutput(
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	Path fileName = soundAsset->getFileName();
 
-	Ref< StreamDecoder > decoder;
+	Ref< IStreamDecoder > decoder;
 	if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)
 		decoder = gc_new< sound::WavStreamDecoder >();
 	else if (compareIgnoreCase(fileName.getExtension(), L"flac") == 0)

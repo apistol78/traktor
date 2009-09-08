@@ -1,5 +1,5 @@
 #include "Sound/SoundSystem.h"
-#include "Sound/SoundDriver.h"
+#include "Sound/ISoundDriver.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/Sound.h"
 #include "Core/Heap/GcNew.h"
@@ -25,7 +25,7 @@ const uint32_t c_mixerFramesAhead = 2;	//< Number of frames the mixer thread sho
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
-SoundSystem::SoundSystem(SoundDriver* driver)
+SoundSystem::SoundSystem(ISoundDriver* driver)
 :	m_driver(driver)
 ,	m_threadMixer(0)
 ,	m_threadSubmit(0)
@@ -260,6 +260,9 @@ void SoundSystem::threadMixer()
 			}
 		}
 		m_time += double(m_desc.driverDesc.frameSamples) / m_desc.driverDesc.sampleRate;
+
+		if (m_threadMixer->stopped())
+			break;
 
 		m_submitQueueLock.acquire();
 		m_submitQueue.push_back(frameBlock);
