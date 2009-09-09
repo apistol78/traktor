@@ -41,7 +41,10 @@ void Solution::removeProject(Project* project)
 		for (traktor::RefList< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); )
 		{
 			if (!traktor::is_a< ProjectDependency >(*j))
+			{
+				j++;
 				continue;
+			}
 
 			if (static_cast< ProjectDependency* >(*j)->getProject() == project)
 				j = dependencies.erase(j);
