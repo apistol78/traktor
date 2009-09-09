@@ -10,9 +10,9 @@ Library::~Library()
 {
 }
 
-bool Library::open(const Path& libraryName)
+bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
-	std::wstring resolved = libraryName;
+	std::wstring resolved = libraryName.getPathName();
 
 #if !defined(_DEBUG)
 	std::wstring library = L"@executable_path/lib" + resolved + L".dylib";

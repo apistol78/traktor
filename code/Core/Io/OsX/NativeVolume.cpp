@@ -6,7 +6,7 @@
 #include "Core/Io/OsX/NativeVolume.h"
 #include "Core/Io/OsX/NativeStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -16,8 +16,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, Volume)
 
-NativeVolume::NativeVolume(const Path& currentDirectory) :
-	m_currentDirectory(currentDirectory)
+NativeVolume::NativeVolume(const Path& currentDirectory)
+:	m_currentDirectory(currentDirectory)
 {
 }
 
@@ -82,6 +82,11 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	return int(out.size());
 }
 
+bool NativeVolume::modify(const Path& fileName, uint32_t flags)
+{
+	return false;
+}
+
 Stream* NativeVolume::open(const Path& filename, uint32_t mode)
 {
 	FILE* fp = fopen(
@@ -104,7 +109,10 @@ bool NativeVolume::remove(const Path& filename)
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
-	int status = mkdir(wstombs(directory).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	int status = mkdir(
+		wstombs(directory.getPathName()).c_str(),
+		S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
+	);
 	if (status != 0 && errno != EEXIST)
 		return false;
 	return true;

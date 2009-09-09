@@ -29,6 +29,8 @@ public:
 	virtual File* get(const Path& path);
 
 	virtual int find(const Path& mask, RefArray< File >& out);
+
+	virtual bool modify(const Path& fileName, uint32_t flags);
 	
 	virtual Stream* open(const Path& filename, uint32_t mode);
 	

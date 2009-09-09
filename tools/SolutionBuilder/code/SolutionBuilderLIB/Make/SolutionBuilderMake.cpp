@@ -24,6 +24,8 @@ using namespace traktor;
 namespace
 {
 
+#define SCAN_RECURSIVE_DEPENDENCIES 0	// Scan header dependencies recursive.
+
 void collectFiles(const Project* project, const RefList< ProjectItem >& items, std::set< Path >& outFiles)
 {
 	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
@@ -370,6 +372,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 		// Define target's object dependencies.
 		bool firstTarget = true;
+		uint32_t targetCount = 0;
+
 		for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
 		{
 			std::wstring extension = toLower(k->getExtension());
@@ -385,7 +389,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			
 				firstTarget = false;
 			}
-			else if (extension == L"c" || extension == L"cc" || extension == L"cpp")
+			else if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"mm")
 			{
 				std::wstring fileName = k->getFileName();
 				std::wstring fileNameNoExt = k->getFileNameNoExtension();
@@ -394,11 +398,12 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 					s << L" \\" << Endl;
 
 				if (m_platform == MpWin32)
-					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".obj";
+					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".obj";
 				else if (m_platform == MpMacOSX || m_platform == MpLinux)
-					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".o";
+					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".o";
 
 				firstTarget = false;
+				targetCount++;
 			}
 		}
 		s << Endl;
@@ -536,10 +541,11 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		}
 
 		// Create compile rules.
+		targetCount = 0;
 		for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
 		{
 			std::wstring extension = toLower(k->getExtension());
-			if (extension != L"c" && extension != L"cc" && extension != L"cpp")
+			if (extension != L"c" && extension != L"cc" && extension != L"cpp" && extension != L"mm")
 				continue;
 
 			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
@@ -570,9 +576,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			std::wstring fileNameNoExt = relativePath.getFileNameNoExtension();
 
 			if (m_platform == MpWin32)
-				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".obj : \\" << Endl;
+				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".obj : \\" << Endl;
 			else if (m_platform == MpMacOSX || m_platform == MpLinux)
-				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L".o : \\" << Endl;
+				s << project->getName() << L"/" << configuration->getName() << L"/" << fileNameNoExt << L"_" << targetCount << L".o : \\" << Endl;
 			s << L"\t" << relativePath.getPathName();
 
 			for (std::set< std::wstring >::iterator j = resolvedDependencies.begin(); j != resolvedDependencies.end(); ++j)
@@ -580,7 +586,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			
 			s << Endl;
 
-			std::wstring profile = L"$(CC_FLAGS";
+			std::wstring profile = (extension != L"mm") ? L"$(CC_FLAGS" : L"$(MM_FLAGS";
 			if (configuration->getTargetProfile() == Configuration::TpDebug)
 				profile += L"_DEBUG";
 			else if (configuration->getTargetProfile() == Configuration::TpRelease)
@@ -595,9 +601,18 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 			if (m_platform == MpWin32)
 				s << L"\t$(CC) " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" /Fo$@" << Endl;
-			else if (m_platform == MpMacOSX || m_platform == MpLinux)
+			else if (m_platform == MpMacOSX)
+			{
+				if (extension == L"mm")
+					s << L"\t$(MM) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" -o $@" << Endl;
+				else
+					s << L"\t$(CC) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" -o $@" << Endl;
+			}
+			else if (m_platform == MpLinux)
 				s << L"\t$(CC) -c " << profile << L" $(" << toUpper(configuration->getName()) << L"_INCLUDE) $(" << toUpper(configuration->getName()) << L"_DEFINES) " << relativePath.getPathName() << L" -o $@" << Endl;
 			s << Endl;
+
+			targetCount++;
 		}
 	}
 
@@ -769,7 +784,13 @@ bool SolutionBuilderMake::scanDependencies(
 		if (dep.length() <= 2 || dep[0] != L'\"')
 			continue;
 
-		dep = dep.substr(1, dep.length() - 2);
+		dep = dep.substr(1);
+
+		p = dep.find_first_of('\"');
+		if (p == line.npos)
+			continue;
+
+		dep = dep.substr(0, p);
 
 		if (visitedDependencies.find(dep) != visitedDependencies.end())
 			continue;
@@ -780,6 +801,8 @@ bool SolutionBuilderMake::scanDependencies(
 		for (std::vector< std::wstring >::iterator i = includePaths.begin(); i != includePaths.end(); ++i)
 		{
 			std::wstring dependencyName = (*i) + L"/" + dep;
+
+#if SCAN_RECURSIVE_DEPENDENCIES
 			if (!scanDependencies(
 				solution,
 				configuration,
@@ -788,6 +811,7 @@ bool SolutionBuilderMake::scanDependencies(
 				resolvedDependencies
 			))
 				continue;
+#endif
 
 			Path relativeDependencyName;
 			FileSystem::getInstance().getRelativePath(

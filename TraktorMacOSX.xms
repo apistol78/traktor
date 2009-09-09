@@ -3751,11 +3751,11 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>__WXMSW__</item>
+						<item>__WXCOCOA__</item>
 						<item>__WXDEBUG__</item>
 					</definitions>
 					<libraryPaths/>
@@ -3768,11 +3768,11 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>__WXMSW__</item>
+						<item>__WXCOCOA__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -3784,11 +3784,11 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>__WXMSW__</item>
+						<item>__WXCOCOA__</item>
 						<item>__WXDEBUG__</item>
 					</definitions>
 					<libraryPaths/>
@@ -3801,11 +3801,11 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>__WXMSW__</item>
+						<item>__WXCOCOA__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -4514,536 +4514,6 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>msw</name>
-					<items>
-						<item type="File">
-							<fileName>msw/aboutdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/accel.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/app.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/basemsw.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/bitmap.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/bmpbuttn.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/brush.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/button.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/caret.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/checkbox.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/checklst.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/choice.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/clipbrd.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/colordlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/colour.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/combo.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/combobox.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/control.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/crashrpt.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/cursor.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/data.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/datectrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dc.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dcclient.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dcmemory.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dcprint.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dcscreen.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dde.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/debughlp.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dialog.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dialup.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dib.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dir.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dirdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/display.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dlmsw.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/dragimag.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/enhmeta.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/evtloop.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/fdrepdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/filedlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/font.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/fontdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/fontenum.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/fontutil.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/frame.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/gauge95.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/gdiimage.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/gdiobj.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/glcanvas.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/graphics.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/gsocket.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/gsockmsw.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/helpbest.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/helpchm.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/helpwin.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/icon.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/imaglist.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/iniconf.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/joystick.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/listbox.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/listctrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/main.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mdi.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mediactrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mediactrl_am.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mediactrl_qt.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mediactrl_wmp10.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/menu.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/menuitem.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/metafile.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mimetype.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/minifram.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/msgdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/mslu.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/nativdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/notebook.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/ownerdrw.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/palette.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/pen.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/penwin.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/popupwin.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/power.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/printdlg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/printwin.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/radiobox.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/radiobut.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/regconf.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/region.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/registry.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/renderer.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/scrolbar.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/settings.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/slider95.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/snglinst.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/sound.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/spinbutt.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/spinctrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/stackwalk.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/statbmp.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/statbox.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/statbr95.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/statline.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/stattext.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/stdpaths.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/tabctrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/taskbar.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/tbar95.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/textctrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/tglbtn.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/thread.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/timer.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/tooltip.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/toplevel.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/treectrl.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/urlmsw.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/utils.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/utilsexc.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/utilsgui.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/uxtheme.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/window.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>msw/volume.cpp</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>ole</name>
-							<items>
-								<item type="File">
-									<fileName>msw/ole/access.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/activex.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/automtn.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/dataobj.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/dropsrc.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/droptgt.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/oleutils.cpp</fileName>
-									<items/>
-								</item>
-								<item type="File">
-									<fileName>msw/ole/uuid.cpp</fileName>
-									<items/>
-								</item>
-							</items>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
 					<name>generic</name>
 					<items>
 						<item type="File">
@@ -5329,6 +4799,332 @@
 						<item type="File">
 							<fileName>generic/vscroll.cpp</fileName>
 							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>mac</name>
+					<items>
+						<item type="Filter">
+							<name>cocoa</name>
+							<items>
+								<item type="File">
+									<fileName>cocoa/app.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/bitmap.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/bmpbuttn.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/brush.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/button.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/checkbox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/checklst.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/choice.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/clipbrd.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/colordlg.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/colour.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/combobox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/control.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/cursor.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/data.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dataobj.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dc.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dcclient.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dcmemory.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dcscreen.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dialog.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dirdlg.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/display.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/drawer.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/dummy.r</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/evtloop.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/filedlg.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/font.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/fontdlg.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/fontenum.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/fontutil.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/frame.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/gauge.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/glcanvas.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/icon.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/listbox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/main.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/mbarman.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/mdi.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/mediactrl.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/menu.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/menuitem.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/msgdlg.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/notebook.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSBox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSButton.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSControl.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSMenu.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSPanel.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSScroller.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSSlider.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSTableView.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSTabView.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSTextField.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSView.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/NSWindow.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/ObjcRef.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/pen.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/radiobox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/radiobut.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/region.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/scrolbar.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/settings.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/slider.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/sound.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/spinbutt.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/statbmp.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/statbox.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/statline2.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/stattext.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/taskbar.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/textctrl.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/timer.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/toolbar.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/tooltip.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/toplevel.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/utils.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/utilsexc.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>cocoa/window.mm</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>

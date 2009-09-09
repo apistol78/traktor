@@ -1,5 +1,5 @@
 #include <string>
-#include <malloc.h>
+#include <stdlib.h>
 #include "Core/Rtti/Type.h"
 #include "Core/Misc/TString.h"
 

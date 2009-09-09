@@ -40,7 +40,11 @@ template < >
 struct ConvertPolicy< std::wstring, int32_t >
 {
 	static int32_t convert(const std::wstring& piece) {
+#if defined(WIN32)
 		return int32_t(_wtoi(piece.c_str()));
+#else
+		return std::wcstol(piece.c_str(), 0, 0);
+#endif
 	}
 };
 
@@ -72,10 +76,10 @@ template < >
 struct ConvertPolicy< std::wstring, float >
 {
 	static float convert(const std::wstring& piece) {
-#if !defined(WINCE)
+#if defined(WIN32) && !defined(WINCE)
 		return float(_wtof(piece.c_str()));
 #else
-		return float(std::atof(wstombs(piece).c_str()));
+		return float(std::wcstod(piece.c_str(), 0));
 #endif
 	}
 };

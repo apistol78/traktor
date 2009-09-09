@@ -49,8 +49,8 @@ public:
 	public:
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef ItemType value_type;
-		typedef typename int difference_type;
-		typedef typename const ItemType* pointer;
+		typedef int difference_type;
+		typedef const value_type* pointer;
 
 		pointer operator * () const
 		{
@@ -105,7 +105,7 @@ public:
 	protected:
 		friend class IntrusiveList;
 		const IntrusiveList* m_list;
-		ItemType* m_current;
+		value_type* m_current;
 
 		explicit const_iterator(const IntrusiveList* list, ItemType* current)
 		:	m_list(list)
@@ -119,57 +119,58 @@ public:
 	public:
 		typedef std::bidirectional_iterator_tag iterator_category;
 		typedef ItemType value_type;
-		typedef typename int difference_type;
-		typedef typename ItemType* pointer;
+		typedef int difference_type;
+		typedef value_type* pointer;
+		typedef const_iterator _O;
 
 		pointer operator * () const
 		{
-			return m_current;
+			return _O::m_current;
 		}
 
 		pointer operator -> () const
 		{
-			return m_current;
+			return _O::m_current;
 		}
 
 		iterator& operator ++ ()
 		{
-			T_ASSERT (m_current);
-			m_current = L(m_current).next();
+			T_ASSERT (_O::m_current);
+			_O::m_current = L(_O::m_current).next();
 			return *this;
 		}
 
 		iterator operator ++ (int)
 		{
-			T_ASSERT (m_current);
-			iterator it(m_list, m_current);
-			m_current = L(m_current).next();
+			T_ASSERT (_O::m_current);
+			iterator it(_O::m_list, _O::m_current);
+			_O::m_current = L(_O::m_current).next();
 			return it;
 		}
 
 		iterator& operator -- ()
 		{
-			T_ASSERT (m_current);
-			m_current = L(m_current).prev();
+			T_ASSERT (_O::m_current);
+			_O::m_current = L(_O::m_current).prev();
 			return *this;
 		}
 
 		iterator operator -- (int)
 		{
-			T_ASSERT (m_current);
-			iterator it(m_list, m_current);
-			m_current = L(m_current).prev();
+			T_ASSERT (_O::m_current);
+			iterator it(_O::m_list,_O:: m_current);
+			_O::m_current = L(_O::m_current).prev();
 			return it;
 		}
 
 		bool operator == (const iterator& r) const
 		{
-			return m_current == r.m_current;
+			return _O::m_current == r.m_current;
 		}
 
 		bool operator != (const iterator& r) const
 		{
-			return m_current != r.m_current;
+			return _O::m_current != r.m_current;
 		}
 
 	protected:
