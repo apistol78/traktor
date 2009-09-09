@@ -1,17 +1,32 @@
 #include <libkern/OSAtomic.h>
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
 
-int32_t Atomic::increment(volatile int32_t& value)
+int32_t Atomic::increment(int32_t& value)
 {
 	return OSAtomicIncrement32((int32_t*)(&value));
 }
 
-int32_t Atomic::decrement(volatile int32_t& value)
+int32_t Atomic::decrement(int32_t& value)
 {
 	return OSAtomicDecrement32((int32_t*)(&value));
+}
+
+uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
+{
+	OSAtomicCompareAndSwap32(*(int32_t*)&s, *(int32_t*)&v, (int32_t*)&s);
+}
+
+uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
+{
+	static Semaphore lock;
+	lock.acquire();
+	uint64_t o = s; s = v;
+	lock.release();
+	return o;
 }
 
 }

@@ -45,20 +45,20 @@ class AlignedVector
 
 public:
 	typedef ItemType value_type;
-	typedef typename int difference_type;
-	typedef typename const ItemType* const_pointer;
-	typedef typename const ItemType& const_reference;
-	typedef typename ItemType* pointer;
-	typedef typename ItemType& reference;
+	typedef int difference_type;
+	typedef const value_type* const_pointer;
+	typedef const value_type& const_reference;
+	typedef value_type* pointer;
+	typedef value_type& reference;
 
 	class const_iterator
 	{
 	public:
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef ItemType value_type;
-		typedef typename int difference_type;
-		typedef typename const ItemType* pointer;
-		typedef typename const ItemType& reference;
+		typedef int difference_type;
+		typedef const value_type* pointer;
+		typedef const value_type& reference;
 
 		reference operator * () const
 		{
@@ -139,66 +139,67 @@ public:
 	class iterator : public const_iterator
 	{
 	public:
+		typedef const_iterator _O;
 		typedef std::random_access_iterator_tag iterator_category;
 		typedef ItemType value_type;
-		typedef typename int difference_type;
-		typedef typename ItemType* pointer;
-		typedef typename ItemType& reference;
+		typedef int difference_type;
+		typedef value_type* pointer;
+		typedef value_type& reference;
 
 		reference operator * ()
 		{
-			return *m_ptr;
+			return *_O::m_ptr;
 		}
 
 		pointer operator -> ()
 		{
-			return m_ptr;
+			return _O::m_ptr;
 		}
 
 		iterator operator + (int offset) const
 		{
-			return iterator(m_ptr + offset);
+			return iterator(_O::m_ptr + offset);
 		}
 
 		iterator operator - (int offset) const
 		{
-			return iterator(m_ptr - offset);
+			return iterator(_O::m_ptr - offset);
 		}
 
 		iterator operator ++ ()		// pre-fix
 		{
-			return iterator(++m_ptr);
+			return iterator(++_O::m_ptr);
 		}
 
 		iterator operator ++ (int)	// post-fix
 		{
-			return iterator(m_ptr++);
+			return iterator(_O::m_ptr++);
 		}
 
 		iterator& operator -- ()
 		{
-			--m_ptr;
+			--_O::m_ptr;
 			return *this;
 		}
 
 		bool operator == (const iterator& r) const
 		{
-			return m_ptr == r.m_ptr;
+			return _O::m_ptr == r.m_ptr;
 		}
 
 		bool operator != (const iterator& r) const
 		{
-			return m_ptr != r.m_ptr;
+			return _O::m_ptr != r.m_ptr;
 		}
 
 		bool operator < (const iterator& r) const
 		{
-			return m_ptr < r.m_ptr;
+			return _O::m_ptr < r.m_ptr;
 		}
 
 		difference_type operator - (const const_iterator& r) const
 		{
-			return difference_type(m_ptr - r.m_ptr);
+			return difference_type(_O::m_ptr - r.m_ptr);
 		}
 
 	protected:
@@ -508,7 +509,7 @@ public:
 			Constructor::construct(m_data[i + size], ItemType());
 
 		// Move items to make room for items to be inserted.
-		size_t move = min(size, count);
+		size_t move = std::min< size_t >(size, count);
 		for (size_t i = offset; i < offset + move; ++i)
 			m_data[i + count] = m_data[i];
 

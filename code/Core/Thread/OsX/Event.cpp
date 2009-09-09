@@ -38,12 +38,12 @@ Event::~Event()
 	delete in;
 }
 
-void Event::pulse()
+void Event::pulse(int count)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
-	++in->signal;
+	in->signal += count;
 	pthread_cond_broadcast(&in->cond);
 
 	pthread_mutex_unlock(&in->mutex);
