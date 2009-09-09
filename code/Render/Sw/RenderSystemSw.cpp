@@ -194,20 +194,26 @@ IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderVi
 	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
-#if defined(_WIN32)
-#	if !defined(WINCE)
-	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
-#	else
-	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
-#	endif
-#endif
-
 	graphicsDesc.windowHandle = windowHandle;
 	graphicsDesc.fullScreen = false;
 	graphicsDesc.displayMode.width = 16;
 	graphicsDesc.displayMode.height = 16;
 	graphicsDesc.displayMode.bits = 32;
 	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
+
+#if defined(_WIN32)
+#	if !defined(WINCE)
+	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+#	else
+	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+#	endif
+
+	RECT rc;
+	GetClientRect((HWND)windowHandle, &rc);
+	graphicsDesc.displayMode.width = std::max(int(rc.right - rc.left), 16);
+	graphicsDesc.displayMode.height = std::max(int(rc.bottom - rc.top), 16);
+
+#endif
 
 	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
