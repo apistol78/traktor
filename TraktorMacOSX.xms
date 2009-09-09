@@ -3,9 +3,10 @@
 	<name>Traktor MacOSX</name>
 	<rootPath>$(TRAKTOR_HOME)/build/macosx</rootPath>
 	<projects>
-		<item type="Project">
-			<name>Extern.bullet-2.71</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.71</sourcePath>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.bullet-2.74</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.74</sourcePath>
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
@@ -13,12 +14,11 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -29,12 +29,11 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -45,12 +44,11 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -61,12 +59,11 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.71/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -198,7 +195,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.expat-2.0.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
 			<configurations>
@@ -295,7 +293,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.freetype-2.3.5</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
 			<configurations>
@@ -1336,7 +1335,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.jpeg-6b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/jpeg-6b</sourcePath>
 			<configurations>
@@ -1413,7 +1413,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.libflac-1.2.1</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC</sourcePath>
 			<configurations>
@@ -1589,7 +1590,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.libmad-0.15.1b</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</sourcePath>
 			<configurations>
@@ -1779,7 +1781,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.libogg-1.1.3</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.1.3/src</sourcePath>
 			<configurations>
@@ -1860,7 +1863,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.libvorbis-1.2.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.0/lib</sourcePath>
 			<configurations>
@@ -2214,7 +2218,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.lpng128</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lpng128</sourcePath>
 			<configurations>
@@ -2293,7 +2298,290 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.lua-5.1.4</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>lapi.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lapi.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lauxlib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lauxlib.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lbaselib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lcode.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lcode.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldblib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldebug.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldebug.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldo.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldo.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ldump.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lfunc.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lfunc.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lgc.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lgc.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>linit.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>liolib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>llex.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>llex.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>llimits.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lmathlib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lmem.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lmem.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>loadlib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lobject.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lobject.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lopcodes.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lopcodes.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>loslib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lparser.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lparser.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lstate.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lstate.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lstring.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lstring.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lstrlib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ltable.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ltable.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ltablib.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ltm.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ltm.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lua.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lua.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>luaconf.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lualib.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lundump.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lundump.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lvm.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lvm.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lzio.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lzio.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>print.c</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.lwObject</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/lwObject</sourcePath>
 			<configurations>
@@ -2364,7 +2652,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.ode-0.9</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/ode-0.9</sourcePath>
 			<configurations>
@@ -2465,7 +2754,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.squish-1.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/squish-1.10</sourcePath>
 			<configurations>
@@ -2542,7 +2832,2511 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.v8</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/v8/src</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>V8_TARGET_ARCH_IA32</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>ws2_32.lib</item>
+						<item>winmm.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>V8_TARGET_ARCH_IA32</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>ws2_32.lib</item>
+						<item>winmm.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>V8_TARGET_ARCH_IA32</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>ws2_32.lib</item>
+						<item>winmm.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/v8/src</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>V8_TARGET_ARCH_IA32</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>ws2_32.lib</item>
+						<item>winmm.lib</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>src</name>
+					<items>
+						<item type="File">
+							<fileName>accessors.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>allocation.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>api.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>assembler.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>ast.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>bootstrapper.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>builtins.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>checks.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>codegen.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>code-stubs.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>compilation-cache.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>compiler.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>contexts.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>conversions.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>counters.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>dateparser.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>debug.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>debug-agent.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>disassembler.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>execution.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>factory.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>flags.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>frames.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>func-name-inferrer.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>global-handles.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>handles.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>hashmap.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>heap.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>ic.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>interpreter-irregexp.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jsregexp.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jump-target.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>log.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>log-utils.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>mark-compact.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>messages.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>objects.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>objects-debug.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>oprofile-agent.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>parser.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>platform-win32.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>prettyprinter.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>property.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler-irregexp.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler-tracer.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-stack.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>register-allocator.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>rewriter.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>runtime.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scanner.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scopeinfo.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scopes.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>serialize.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>snapshot-common.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>snapshot-empty.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>spaces.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>string-stream.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>stub-cache.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>token.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>top.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unicode.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>usage-analyzer.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>utils.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8-counters.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8threads.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>variables.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>version.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>virtual-frame.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>zone.cc</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>accessors.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>allocation.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>api.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>apiutils.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>arguments.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>assembler.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>ast.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>bootstrapper.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>builtins.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>bytecodes-irregexp.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>char-predicates.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>char-predicates-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>checks.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>code.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>codegen.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>codegen-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>code-stubs.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>compilation-cache.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>compiler.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>contexts.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>conversions.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>conversions-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>counters.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>cpu.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>dateparser.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>dateparser-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>debug.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>debug-agent.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>disasm.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>disassembler.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>execution.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>factory.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>flag-definitions.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>flags.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>frame-element.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>frames.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>frames-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>func-name-inferrer.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>global-handles.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>globals.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>handles.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>handles-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>hashmap.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>heap.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>heap-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>ic.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>ic-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>interpreter-irregexp.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jsregexp.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jsregexp-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jump-target.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>jump-target-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>list.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>list-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>log.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>log-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>log-utils.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>macro-assembler.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>mark-compact.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>memory.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>messages.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>natives.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>objects.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>objects-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>oprofile-agent.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>parser.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>platform.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>prettyprinter.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>property.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler-irregexp.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler-irregexp-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-macro-assembler-tracer.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>regexp-stack.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>register-allocator.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>register-allocator-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>rewriter.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>runtime.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scanner.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scopeinfo.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>scopes.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>serialize.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>shell.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>smart-pointer.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>snapshot.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>spaces.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>spaces-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>string-stream.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>stub-cache.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>token.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>top.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unicode.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unicode-inl.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>usage-analyzer.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>utils.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8-counters.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>v8threads.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>variables.h</fileName>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>ia32</name>
+							<items>
+								<item type="File">
+									<fileName>ia32/assembler-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/assembler-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/assembler-ia32-inl.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/builtins-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/codegen-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/codegen-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/codegen-ia32-inl.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/cpu-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/debug-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/disasm-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/frames-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/frames-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/ic-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/jump-target-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/macro-assembler-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/macro-assembler-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/regexp-macro-assembler-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/regexp-macro-assembler-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/register-allocator-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/register-allocator-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/register-allocator-ia32-inl.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/simulator-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/simulator-ia32.h</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/stub-cache-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/virtual-frame-ia32.cc</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>ia32/virtual-frame-ia32.h</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>derived</name>
+							<items>
+								<item type="File">
+									<fileName>derived/natives.cc</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>include</name>
+					<items>
+						<item type="File">
+							<fileName>../include/v8.h</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../include/v8-debug.h</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>dtoa</name>
+					<items>
+						<item type="File">
+							<fileName>dtoa-config.c</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Extern.wxWidgets-2.8.10</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>__WXMSW__</item>
+						<item>__WXDEBUG__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>__WXMSW__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>__WXMSW__</item>
+						<item>__WXDEBUG__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>__WXMSW__</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>common</name>
+					<items>
+						<item type="File">
+							<fileName>common/accesscmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/anidecod.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/animatecmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/appbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/appcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/arcall.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/arcfind.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/archive.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/artprov.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/artstd.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/bmpbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/bookctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/choiccmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/clipcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/clntdata.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/clrpickercmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/cmdline.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/cmdproc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/cmndata.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/colourcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/combocmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/config.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/containr.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/convauto.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/cshelp.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/ctrlcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/ctrlsub.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/datacmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/datavcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/datetime.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/datstrm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/db.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dbgrid.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dbtable.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dcbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dcbufcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dcgraph.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/debugrpt.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dircmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dlgcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dndcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dobjcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/docmdi.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/docview.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dpycmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dseldlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dummy.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dynarray.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dynlib.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/dynload.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/effects.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/emptydmy.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/encconv.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/event.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/evtloopcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fddlgcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/ffile.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/file.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fileback.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fileconf.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filefn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filename.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filepickercmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filesys.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filtall.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/filtfind.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fldlgcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fmapbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fontcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fontenumcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fontmap.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fontpickercmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/framecmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fs_arc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fs_filter.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fs_inet.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/fs_mem.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/ftp.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/gaugecmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/gbsizer.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/gdicmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/geometry.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/gifdecod.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/graphcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/hash.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/hashmap.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/helpbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/http.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/iconbndl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagall.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagbmp.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/image.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagfill.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imaggif.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagiff.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagpcx.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagpnm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagtga.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/imagxpm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/init.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/intl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/ipcbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/layout.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/lboxcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/list.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/listctrlcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/log.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/longlong.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/matrix.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/mediactrlcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/memory.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/menucmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/mimecmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/module.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/msgout.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/mstream.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/nbkbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/object.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/overlaycmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/paper.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/pickerbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/platinfo.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/popupcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/powercmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/prntbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/process.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/protocol.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/quantize.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/radiocmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/rendcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/rgncmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sckaddr.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sckfile.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sckipc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sckstrm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/settcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sizer.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/socket.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/srchcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sstream.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/statbar.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/stdpbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/stockitem.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/stopwatch.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/strconv.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/stream.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/string.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/sysopt.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/tarstrm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/taskbarcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/tbarbase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/textbuf.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/textcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/textfile.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/timercmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/tokenzr.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/toplvcmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/treebase.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/txtstrm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/uri.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/url.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/utilscmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/valgen.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/validate.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/valtext.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/variant.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/wfstream.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/wincmn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/wxchar.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/xpmdecod.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/xti.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/xtistrm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/xtixml.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>common/zstream.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>msw</name>
+					<items>
+						<item type="File">
+							<fileName>msw/aboutdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/accel.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/app.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/basemsw.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/bitmap.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/bmpbuttn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/brush.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/button.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/caret.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/checkbox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/checklst.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/choice.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/clipbrd.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/colordlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/colour.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/combo.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/combobox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/control.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/crashrpt.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/cursor.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/data.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/datectrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dcclient.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dcmemory.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dcprint.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dcscreen.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dde.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/debughlp.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dialog.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dialup.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dib.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dir.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dirdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/display.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dlmsw.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/dragimag.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/enhmeta.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/evtloop.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/fdrepdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/filedlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/font.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/fontdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/fontenum.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/fontutil.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/frame.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/gauge95.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/gdiimage.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/gdiobj.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/glcanvas.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/graphics.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/gsocket.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/gsockmsw.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/helpbest.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/helpchm.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/helpwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/icon.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/imaglist.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/iniconf.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/joystick.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/listbox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/listctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/main.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mdi.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mediactrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mediactrl_am.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mediactrl_qt.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mediactrl_wmp10.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/menu.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/menuitem.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/metafile.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mimetype.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/minifram.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/msgdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/mslu.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/nativdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/notebook.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/ownerdrw.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/palette.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/pen.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/penwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/popupwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/power.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/printdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/printwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/radiobox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/radiobut.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/regconf.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/region.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/registry.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/renderer.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/scrolbar.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/settings.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/slider95.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/snglinst.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/sound.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/spinbutt.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/spinctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/stackwalk.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/statbmp.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/statbox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/statbr95.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/statline.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/stattext.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/stdpaths.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/tabctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/taskbar.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/tbar95.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/textctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/tglbtn.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/thread.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/timer.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/tooltip.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/toplevel.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/treectrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/urlmsw.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/utils.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/utilsexc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/utilsgui.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/uxtheme.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/window.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>msw/volume.cpp</fileName>
+							<items/>
+						</item>
+						<item type="Filter">
+							<name>ole</name>
+							<items>
+								<item type="File">
+									<fileName>msw/ole/access.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/activex.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/automtn.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/dataobj.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/dropsrc.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/droptgt.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/oleutils.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>msw/ole/uuid.cpp</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>generic</name>
+					<items>
+						<item type="File">
+							<fileName>generic/aboutdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/accel.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/animateg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/bmpcboxg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/busyinfo.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/buttonbar.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/calctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/caret.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/choicbkg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/choicdgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/clrpickerg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/collpaneg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/colour.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/colrdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/combog.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/datavgen.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/datectlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/dbgrptg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/dcpsg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/dirctrlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/dirdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/dragimgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/fdrepdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/filedlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/filepickerg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/fontdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/fontpickerg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/graphicc.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/grid.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/gridctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/gridsel.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/helpext.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/htmllbox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/hyperlink.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/icon.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/imaglist.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/laywin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/listbkg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/listctrl.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/logg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/mask.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/mdig.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/notebook.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/numdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/odcombo.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/panelg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/printps.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/prntdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/progdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/propdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/renderg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/sashwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/scrlwing.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/selstore.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/spinctlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/splash.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/splitter.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/srchctlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/statline.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/statusbr.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/tabg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/textdlgg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/timer.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/tipdlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/tipwin.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/toolbkg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/treebkg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/treectlg.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/wizard.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/vlbox.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>generic/vscroll.cpp</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Extern.zlib-1.2.3</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</sourcePath>
 			<configurations>
@@ -2617,7 +5411,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Animation</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Animation</sourcePath>
 			<configurations>
@@ -2714,10 +5509,20 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Animation</name>
+					<items>
+						<item type="File">
+							<fileName>Animation/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Core</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Core</sourcePath>
 						<configurations>
@@ -2994,12 +5799,22 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Meta</name>
+								<items>
+									<item type="File">
+										<fileName>Meta/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies/>
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.World</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/World</sourcePath>
 						<configurations>
@@ -3090,10 +5905,11 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Render</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Render</sourcePath>
 									<configurations>
@@ -3193,10 +6009,11 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project type="Project">
+											<project type="Project" version="1">
+												<enable>true</enable>
 												<name>Traktor.Resource</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Resource</sourcePath>
 												<configurations>
@@ -3269,13 +6086,14 @@
 												</items>
 												<dependencies>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item/project"/>
 													</item>
 												</dependencies>
 											</project>
 										</item>
 										<item type="ProjectDependency">
-											<project type="Project">
+											<project type="Project" version="1">
+												<enable>true</enable>
 												<name>Traktor.Zip</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Zip</sourcePath>
 												<configurations>
@@ -3397,10 +6215,10 @@
 												</items>
 												<dependencies>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[12]"/>
+														<project ref="/object/projects/item[15]"/>
 													</item>
 												</dependencies>
 											</project>
@@ -3409,10 +6227,11 @@
 								</project>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Database</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Database</sourcePath>
 									<configurations>
@@ -3483,19 +6302,10 @@
 											<items/>
 										</item>
 										<item type="Filter">
-											<name>Local</name>
+											<name>Provider</name>
 											<items>
 												<item type="File">
-													<fileName>Local/*.*</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-										<item type="Filter">
-											<name>Compact</name>
-											<items>
-												<item type="File">
-													<fileName>Compact/*.*</fileName>
+													<fileName>Provider/*.*</fileName>
 													<items/>
 												</item>
 											</items>
@@ -3503,10 +6313,11 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project type="Project">
+											<project type="Project" version="1">
+												<enable>true</enable>
 												<name>Traktor.Xml</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Xml</sourcePath>
 												<configurations>
@@ -3583,7 +6394,7 @@
 												</items>
 												<dependencies>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency">
 														<project ref="/object/projects/item[1]"/>
@@ -3598,7 +6409,8 @@
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Mesh</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Mesh</sourcePath>
 						<configurations>
@@ -3713,31 +6525,41 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Composite</name>
+								<items>
+									<item type="File">
+										<fileName>Composite/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Physics</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Physics</sourcePath>
 						<configurations>
@@ -3819,23 +6641,24 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Animation.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Animation/Editor</sourcePath>
 			<configurations>
@@ -3923,19 +6746,24 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]"/>
+					<project ref="/object/projects/item[16]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Editor</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Editor</sourcePath>
 						<configurations>
@@ -4008,10 +6836,11 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Ui</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
 									<configurations>
@@ -4093,10 +6922,11 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project type="Project">
+											<project type="Project" version="1">
+												<enable>true</enable>
 												<name>Traktor.Drawing</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Drawing</sourcePath>
 												<configurations>
@@ -4182,10 +7012,28 @@
 														<fileName>*.*</fileName>
 														<items/>
 													</item>
+													<item type="Filter">
+														<name>Filters</name>
+														<items>
+															<item type="File">
+																<fileName>Filters/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Formats</name>
+														<items>
+															<item type="File">
+																<fileName>Formats/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency">
 														<project ref="/object/projects/item[8]"/>
@@ -4194,10 +7042,129 @@
 														<project ref="/object/projects/item[3]"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[12]"/>
+														<project ref="/object/projects/item[15]"/>
 													</item>
 												</dependencies>
 											</project>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Net</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_NET_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_NET_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader></precompiledHeader>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Ftp</name>
+											<items>
+												<item type="File">
+													<fileName>Ftp/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Http</name>
+											<items>
+												<item type="File">
+													<fileName>Http/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Smtp</name>
+											<items>
+												<item type="File">
+													<fileName>Smtp/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>File</name>
+											<items>
+												<item type="File">
+													<fileName>File/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -4206,13 +7173,14 @@
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.I18N</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
 						<configurations>
@@ -4285,13 +7253,14 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Scene.Editor</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Scene/Editor</sourcePath>
 						<configurations>
@@ -4373,25 +7342,26 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Scene</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Scene</sourcePath>
 									<configurations>
@@ -4464,25 +7434,26 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[2]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Ui.Custom</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
 									<configurations>
@@ -4654,16 +7625,17 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project type="Project">
+											<project type="Project" version="1">
+												<enable>true</enable>
 												<name>Traktor.Ui.Xtrme</name>
 												<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
 												<configurations>
@@ -4740,22 +7712,22 @@
 												</items>
 												<dependencies>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 													</item>
 													<item type="ProjectDependency">
-														<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+														<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 													</item>
 													<item type="ProjectDependency">
 														<project ref="/object/projects/item[2]"/>
@@ -4767,13 +7739,14 @@
 								</project>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project type="Project">
+								<project type="Project" version="1">
+									<enable>true</enable>
 									<name>Traktor.Weather</name>
 									<sourcePath>$(TRAKTOR_HOME)/code/Weather</sourcePath>
 									<configurations>
@@ -4864,16 +7837,16 @@
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency">
-											<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -4883,11 +7856,530 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[13]/dependencies/item/project"/>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[3]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[16]/dependencies/item/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Compact</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_COMPACT_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_COMPACT_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Local</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Remote</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Messages</name>
+					<items>
+						<item type="File">
+							<fileName>Messages/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Remote.Client</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Client</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[22]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Remote.Server</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[20]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[21]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[22]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Remote.Server.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server/App</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[24]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Editor.App</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Editor/App</sourcePath>
 			<configurations>
@@ -4957,140 +8449,48 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
-						<name>Traktor.Net</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Net</sourcePath>
-						<configurations>
-							<item type="Configuration">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_NET_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-							</item>
-							<item type="Configuration">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_NET_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-							</item>
-							<item type="Configuration">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-							</item>
-							<item type="Configuration">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Ftp</name>
-								<items>
-									<item type="File">
-										<fileName>Ftp/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Http</name>
-								<items>
-									<item type="File">
-										<fileName>Http/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Smtp</name>
-								<items>
-									<item type="File">
-										<fileName>Smtp/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project type="Project" version="1">
+						<enable>false</enable>
 						<name>Traktor.Ui.Wx</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
 						<configurations>
@@ -5101,16 +8501,20 @@
 								<precompiledHeader></precompiledHeader>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=yes --cppflags`</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WX_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>__WXMAC__</item>
+									<item>_UNICODE</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=yes --libs`</item>
+									<item>comctl32.lib</item>
+									<item>rpcrt4.lib</item>
+									<item>msimg32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -5120,16 +8524,20 @@
 								<precompiledHeader></precompiledHeader>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=no --cppflags`</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WX_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>__WXMAC__</item>
+									<item>_UNICODE</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=no --libs`</item>
+									<item>comctl32.lib</item>
+									<item>rpcrt4.lib</item>
+									<item>msimg32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -5139,16 +8547,20 @@
 								<precompiledHeader></precompiledHeader>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=yes --cppflags`</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>__WXMAC__</item>
+									<item>_UNICODE</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=yes --libs`</item>
+									<item>comctl32.lib</item>
+									<item>rpcrt4.lib</item>
+									<item>msimg32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -5158,16 +8570,20 @@
 								<precompiledHeader></precompiledHeader>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=no --cppflags`</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>__WXMAC__</item>
+									<item>_UNICODE</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>`/usr/local/bin/wx-config --inplace --unicode=yes --static=yes --debug=no --libs`</item>
+									<item>comctl32.lib</item>
+									<item>rpcrt4.lib</item>
+									<item>msimg32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 						</configurations>
@@ -5176,29 +8592,40 @@
 								<fileName>*.*</fileName>
 								<items/>
 							</item>
+							<item type="Filter">
+								<name>Resources</name>
+								<items>
+									<item type="File">
+										<fileName>$(TRAKTOR_HOME)/res/traktor.ui.rc</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>$(TRAKTOR_HOME)/res/traktor.ico</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[14]"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
-				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Flash</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Flash</sourcePath>
 			<configurations>
@@ -5289,22 +8716,23 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Html</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Html</sourcePath>
 						<configurations>
@@ -5377,14 +8805,15 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Flash.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Flash/Editor</sourcePath>
 			<configurations>
@@ -5454,35 +8883,40 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[29]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Graphics</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Graphics</sourcePath>
 			<configurations>
@@ -5555,13 +8989,14 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[20]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[6]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[29]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.I18N.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/I18N/Editor</sourcePath>
 			<configurations>
@@ -5634,23 +9069,24 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Input</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Input</sourcePath>
 			<configurations>
@@ -5723,15 +9159,16 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[13]/dependencies/item[2]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[16]/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Mesh.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
 			<configurations>
@@ -5849,22 +9286,23 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Model</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
 						<configurations>
@@ -5939,10 +9377,10 @@
 								<items/>
 							</item>
 							<item type="Filter">
-								<name>Import</name>
+								<name>Formats</name>
 								<items>
 									<item type="File">
-										<fileName>Import/*.*</fileName>
+										<fileName>Formats/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -5950,22 +9388,26 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[9]"/>
+								<project ref="/object/projects/item[10]"/>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project type="Project">
+					<project type="Project" version="1">
+						<enable>true</enable>
 						<name>Traktor.Render.Editor</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
 						<configurations>
@@ -6051,44 +9493,45 @@
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[28]/dependencies/item[5]/project"/>
+								<project ref="/object/projects/item[37]/dependencies/item[5]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+								<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[11]"/>
+								<project ref="/object/projects/item[12]"/>
 							</item>
 						</dependencies>
 					</project>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[28]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[8]/project"/>
-		<item ref="/object/projects/item[13]/dependencies/item[5]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[37]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[5]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Physics.Bullet</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
 			<configurations>
@@ -6169,20 +9612,21 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
 					<project ref="/object/projects/item"/>
-				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Physics.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Editor</sourcePath>
 			<configurations>
@@ -6255,35 +9699,36 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[28]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[37]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Physics.Ode</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Ode</sourcePath>
 			<configurations>
@@ -6360,19 +9805,20 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[28]/dependencies/item[8]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[37]/dependencies/item[8]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
 			<configurations>
@@ -6465,17 +9911,18 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[6]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[7]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Sound</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 			<configurations>
@@ -6586,10 +10033,10 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[4]"/>
@@ -6605,7 +10052,8 @@
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Sound.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Editor</sourcePath>
 			<configurations>
@@ -6678,23 +10126,24 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[41]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Spray</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray</sourcePath>
 			<configurations>
@@ -6785,23 +10234,24 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Spray.Editor</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Spray/Editor</sourcePath>
 			<configurations>
@@ -6874,44 +10324,45 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[43]"/>
+					<project ref="/object/projects/item[52]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[12]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project">
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Terrain</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Terrain</sourcePath>
 			<configurations>
@@ -6984,28 +10435,113 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[14]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[9]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[14]/dependencies/item[7]/project/dependencies/item[12]/project"/>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-		<item type="Project">
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+		<item ref="/object/projects/item[28]/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.World.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WORLD_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WORLD_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>UnitTest</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
 			<configurations>
@@ -7080,13 +10616,13 @@
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[13]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
