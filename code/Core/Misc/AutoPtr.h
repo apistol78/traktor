@@ -105,6 +105,11 @@ namespace traktor
 			return m_ptr;
 		}
 
+		const Type* c_ptr() const
+		{
+			return m_ptr;
+		}
+
 		AutoArrayPtr< Type >& operator = (Type* ptr_)
 		{
 			release();

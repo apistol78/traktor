@@ -20,7 +20,7 @@ FlashBitmap::FlashBitmap()
 
 FlashBitmap::~FlashBitmap()
 {
-	delete[] m_bits;
+	m_bits.release();
 }
 
 bool FlashBitmap::create(drawing::Image* image)
@@ -49,15 +49,15 @@ bool FlashBitmap::create(drawing::Image* image)
 #endif
 	}
 
-	memcpy(
-		m_bits,
+	std::memcpy(
+		m_bits.ptr(),
 		clone->getData(),
 		image->getWidth() * image->getHeight() * sizeof(SwfColor)
 	);
 
 	if (!hasAlpha)
 	{
-		for (uint32_t i = 0; i < image->getWidth() * image->getHeight(); ++i)
+		for (int32_t i = 0; i < image->getWidth() * image->getHeight(); ++i)
 			m_bits[i].alpha = 255;
 	}
 
@@ -84,12 +84,12 @@ uint16_t FlashBitmap::getHeight() const
 
 const SwfColor* FlashBitmap::getBits() const
 {
-	return m_bits;
+	return m_bits.c_ptr();
 }
 
 void FlashBitmap::setPixel(uint16_t x, uint16_t y, const SwfColor& color)
 {
-	if (m_bits)
+	if (m_bits.ptr())
 		m_bits[x + y * m_width] = color;
 }
 
