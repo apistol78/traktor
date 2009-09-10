@@ -1,0 +1,11 @@
+#define TOKEN_NAMESPACE                       1
+#define TOKEN_LITERAL                         2
+#define TOKEN_OPEN_BRACE                      3
+#define TOKEN_CLOSE_BRACE                     4
+#define TOKEN_CLASS                           5
+#define TOKEN_PUBLIC                          6
+#define TOKEN_PRIVATE                         7
+#define TOKEN_COLON                           8
+#define TOKEN_SEMI_COLON                      9
+#define TOKEN_OPEN_BRACKET                   10
+#define TOKEN_CLOSE_BRACKET                  11
