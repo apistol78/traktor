@@ -375,7 +375,7 @@ public:
 	 * settings->setProperty< PropertyBoolean >("foo", true);
 	 */
 	template < typename PropertyType >
-	void setProperty(const std::wstring& propertyName, typename const PropertyType::value_type_t& value)
+	void setProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& value)
 	{
 		setProperty(propertyName, gc_new< PropertyType >(cref(value)));
 	}
@@ -385,7 +385,7 @@ public:
 	 * bool foo = settings->getProperty< PropertyBoolean >("foo", false);
 	 */
 	template < typename PropertyType >
-	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, typename const PropertyType::value_type_t& defaultValue) const
+	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& defaultValue) const
 	{
 		const PropertyValue* value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
