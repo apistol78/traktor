@@ -1,0 +1,22 @@
+#ifndef ddc_ICodeGenerator_H
+#define ddc_ICodeGenerator_H
+
+#include <Core/Object.h>
+#include <Core/Io/Path.h>
+
+namespace ddc
+{
+
+class DfnNode;
+
+class ICodeGenerator : public traktor::Object
+{
+	T_RTTI_CLASS(ICodeGenerator)
+
+public:
+	virtual bool generate(const traktor::Path& sourceFilePath, const DfnNode* node) const = 0;
+};
+
+}
+
+#endif	// ddc_ICodeGenerator_H
