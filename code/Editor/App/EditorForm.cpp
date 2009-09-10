@@ -238,11 +238,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 				Ref< PropertyGroup > externalToolGroup = dynamic_type_cast< PropertyGroup* >(i->second);
 				T_ASSERT_M(externalToolGroup, L"Malformed setting; must be a property group");
 
-				std::wstring title = externalToolGroup->getProperty< PropertyString >(L"Title");
-				T_ASSERT (!title.empty());
-
 				Ref< ui::custom::ToolBarButton > toolButton = gc_new< ui::custom::ToolBarButton >(
-					i18n::Text(title),
+					i18n::Text(i->first),
 					ui::Command(L"Editor.ExternalTool", externalToolGroup),
 					0,
 					ui::custom::ToolBarButton::BsText
@@ -1650,6 +1647,15 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		std::wstring arguments = externalToolGroup->getProperty< PropertyString >(L"Arguments");
 		std::wstring directory = externalToolGroup->getProperty< PropertyString >(L"Directory");
 
+		// @hack
+		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
+		if (tabPage)
+		{
+			Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
+			if (instance)
+				arguments = replaceAll< std::wstring >(arguments, L"$(ACTIVE_INSTANCE_PATH)", instance->getPath());
+		}
+		
 		Ref< Process > process = OS::getInstance().execute(command, arguments, directory);
 		if (!process)
 		{
