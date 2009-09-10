@@ -73,8 +73,13 @@ struct ObjectInfo
 #	define HEAP_LOCK_RELEASE
 #endif
 
+#if !defined(WINCE)
 const int32_t c_objectsThreshold = 1000;			//!< Number of objects allocated before issuing GC.
 const int32_t c_refsRemovedThreshold = 30000;		//!< Number of references removed before issuing GC.
+#else
+const int32_t c_objectsThreshold = 100;				//!< Number of objects allocated before issuing GC.
+const int32_t c_refsRemovedThreshold = 3000;		//!< Number of references removed before issuing GC.
+#endif
 const int32_t c_promoteNonVisitedThreshold = 100;	//!< Milliseconds until objects get promoted from non-visited into collectable.
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)

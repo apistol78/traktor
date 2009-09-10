@@ -1,9 +1,10 @@
 #ifndef traktor_flash_FlashBitmap_H
 #define traktor_flash_FlashBitmap_H
 
-#include "Core/Heap/Ref.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -63,7 +64,7 @@ public:
 private:
 	uint16_t m_width;
 	uint16_t m_height;
-	SwfColor* m_bits;
+	AutoArrayPtr< SwfColor > m_bits;
 };
 
 	}

@@ -41,7 +41,13 @@ public:
 		RfAlphaBlend = 2
 	};
 
-	RenderContext(IRenderView* renderView, uint32_t heapSize = 4 * 1024 * 1024);
+#if defined(WINCE)
+	enum { DefaultHeapSize = 512 * 1024 };
+#else
+	enum { DefaultHeapSize = 4 * 1024 * 1024 };
+#endif
+
+	RenderContext(IRenderView* renderView, uint32_t heapSize = DefaultHeapSize);
 
 	virtual ~RenderContext();
 
