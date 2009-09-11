@@ -229,16 +229,23 @@ void ToolBar::eventPaint(Event* event)
 	Rect rc = getInnerRect();
 	int mid = rc.getCenter().y;
 
-	canvas.setForeground(Color(245, 244, 242));
-	canvas.setBackground(Color(234, 232, 228));
+	Color c1 = getSystemColor(ScMenuBackground);
+	Color c0 = lerp(c1, Color(255, 255, 255), 0.5f);
+	Color c2 = lerp(c1, Color(0, 0, 0), 0.2f);
+
+	canvas.setForeground(c0);
+	canvas.setBackground(c1);
 	canvas.fillGradientRect(Rect(rc.left, rc.top, rc.right, mid + 1));
 
-	canvas.setForeground(Color(234, 232, 228));
-	canvas.setBackground(Color(213, 210, 202));
+	canvas.setForeground(c1);
+	canvas.setBackground(c2);
 	canvas.fillGradientRect(Rect(rc.left, mid - 1, rc.right, rc.bottom));
 
-	canvas.setForeground(getSystemColor(ScButtonShadow));
-	canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
+	if (m_style & WsUnderline)
+	{
+		canvas.setForeground(getSystemColor(ScButtonShadow));
+		canvas.drawLine(rc.left, rc.bottom - 1, rc.right, rc.bottom - 1);
+	}
 
 	int x = rc.left + c_marginWidth;
 	int y = rc.top + c_marginHeight;

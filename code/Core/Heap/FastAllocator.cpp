@@ -7,7 +7,11 @@ namespace traktor
 	namespace
 	{
 
-const uint32_t c_blockCount = 8192;
+#if !defined(WINCE)
+const uint32_t c_blockCount = 8192;		// (256 + 128 + 64 + 32 + 16) * 8192 = 4063232 ~4 Mb
+#else
+const uint32_t c_blockCount = 2048;		// (256 + 128 + 64 + 32 + 16) * 2048 = 1015808 ~1 Mb
+#endif
 
 	}
 

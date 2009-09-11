@@ -20,7 +20,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteStream", RemoteStream, Stream)
 RemoteStream::RemoteStream(Connection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
+,	m_canRead(false)
+,	m_canWrite(false)
+,	m_canSeek(false)
 {
+	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
+	if (result)
+	{
+		m_canRead = result->canRead();
+		m_canWrite = result->canWrite();
+		m_canSeek = result->canSeek();
+	}
 }
 
 void RemoteStream::close()
@@ -30,42 +40,51 @@ void RemoteStream::close()
 
 bool RemoteStream::canRead() const
 {
-	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
-	return result ? result->canRead() : false;
+	return m_canRead;
 }
 
 bool RemoteStream::canWrite() const
 {
-	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
-	return result ? result->canWrite() : false;
+	return m_canWrite;
 }
 
 bool RemoteStream::canSeek() const
 {
-	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
-	return result ? result->canSeek() : false;
+	return m_canSeek;
 }
 
 int RemoteStream::tell() const
 {
+	if (!m_canSeek)
+		return -1;
+
 	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
-	return result ? result->tell() : false;
+	return result ? result->tell() : -1;
 }
 
 int RemoteStream::available() const
 {
+	if (!m_canSeek)
+		return 0;
+
 	Ref< StmStatResult > result = m_connection->sendMessage< StmStatResult >(StmGetStat(m_handle));
-	return result ? result->available() : false;
+	return result ? result->available() : 0;
 }
 
 int RemoteStream::seek(SeekOriginType origin, int offset)
 {
+	if (!m_canSeek)
+		return -1;
+
 	Ref< MsgIntResult > result = m_connection->sendMessage< MsgIntResult >(StmSeek(m_handle, origin, offset));
 	return result ? result->get() : 0;
 }
 
 int RemoteStream::read(void* block, int nbytes)
 {
+	if (!m_canRead)
+		return -1;
+
 	uint8_t* blockPtr = static_cast< uint8_t* >(block);
 
 	while (nbytes > 0)
@@ -94,6 +113,9 @@ int RemoteStream::read(void* block, int nbytes)
 
 int RemoteStream::write(const void* block, int nbytes)
 {
+	if (!m_canWrite)
+		return -1;
+
 	const uint8_t* blockPtr = static_cast< const uint8_t* >(block);
 
 	while (nbytes > 0)

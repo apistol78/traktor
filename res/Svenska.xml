@@ -585,6 +585,18 @@
       <first>LOG_VIEW_ERROR</first>
       <second>Visa fel</second>
     </item>
+    <item>
+      <first>MENU_BUILD</first>
+      <second>Bygg</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_BUILD</first>
+      <second>Bygg</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_REBUILD</first>
+      <second>Bygg om</second>
+    </item>
 		<item>
 			<first>MENU_EDIT</first>
 			<second>Redigera</second>
@@ -1556,6 +1568,10 @@
     <item>
       <first>TOOLBAR_BUILD</first>
       <second>Bygg tillgångar</second>
+    </item>
+    <item>
+      <first>TOOLBAR_CANCEL_BUILD</first>
+      <second>Avbryt bygga tillgångar</second>
     </item>
     <item>
 			<first>TOOLBAR_COPY</first>

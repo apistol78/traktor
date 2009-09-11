@@ -16,7 +16,6 @@
 #include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
 
-#define T_DISABLE_JOBS
 //#define T_RENDER_PERFORMANCE_BARS
 
 #if defined(max)
@@ -99,7 +98,7 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSyste
 RenderViewSw::~RenderViewSw()
 {
 	T_ASSERT (!m_graphicsSystem);
-	delete[] m_depthBuffer;
+	m_depthBuffer.release();
 }
 
 void RenderViewSw::close()
@@ -119,7 +118,6 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	delete[] m_depthBuffer;
 	m_depthBuffer = new float [(m_frameBufferSurfaceDesc.pitch >> 2) * m_frameBufferSurfaceDesc.height];
 
 	m_viewPort.width = width / c_targetScale;
@@ -151,7 +149,7 @@ bool RenderViewSw::begin()
 	{
 		m_viewPort,
 		frameBuffer,
-		m_depthBuffer,
+		m_depthBuffer.ptr(),
 		m_frameBufferSurfaceDesc.height,
 		m_frameBufferSurfaceDesc.pitch >> 2
 	};
@@ -239,12 +237,6 @@ void RenderViewSw::draw(const Primitives& primitives)
 void RenderViewSw::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
-
-#if !defined(T_DISABLE_JOBS)
-	// Synchronize jobs.
-	for (int j = 0; j < MaxJobCount; ++j)
-		m_jobs[j].wait();
-#endif
 
 #if defined(T_RENDER_PERFORMANCE_BARS)
 	uint32_t* colorTarget = m_renderStateStack.back().colorTarget;
@@ -526,12 +518,6 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 						}
 					}
 				}
-
-#if !defined(T_DISABLE_JOBS)
-				// Synchronize jobs.
-				for (int j = 0; j < MaxJobCount; ++j)
-					m_jobs[j].wait();
-#endif
 			}
 		}
 		break;
@@ -725,12 +711,6 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 						}
 					}
 				}
-
-#if !defined(T_DISABLE_JOBS)
-				// Synchronize jobs.
-				for (int j = 0; j < MaxJobCount; ++j)
-					m_jobs[j].wait();
-#endif
 			}
 		}
 		break;
@@ -794,22 +774,10 @@ void RenderViewSw::lineShade(const FragmentContext& context, int x, int y, float
 
 void RenderViewSw::triangleShade(const FragmentContext& context, int x1, int x2, int y)
 {
-#if !defined(T_DISABLE_JOBS)
-	Job& job = m_jobs[y & (MaxJobCount - 1)];
-
-	job.wait();
-	if (!context.blendEnable)
-		job = makeFunctor< RenderViewSw, const FragmentContext&, int, int, int >(this, &RenderViewSw::triangleShadeOpaque, context, x1, x2, y);
-	else
-		job = makeFunctor< RenderViewSw, const FragmentContext&, int, int, int >(this, &RenderViewSw::triangleShadeBlend, context, x1, x2, y);
-
-	JobManager::getInstance().add(job);
-#else
 	if (!context.blendEnable)
 		triangleShadeOpaque(context, x1, x2, y);
 	else
 		triangleShadeBlend(context, x1, x2, y);
-#endif
 }
 
 void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, int x2, int y)
@@ -858,51 +826,49 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
 	}
 
-	for (int x = x1; x < x2; ++x, ++offset)
+	uint32_t fragmentColor = 0;
+
+	for (int x = 0; x < x2 - x1; ++x, ++offset)
 	{
-		traktor::Scalar t = traktor::Scalar(x - x1) * ix;
+		traktor::Scalar t = traktor::Scalar(x) * ix;
 		traktor::Scalar iw = iw1 + (iw2 - iw1) * traktor::Scalar(t);
-
-		// Calculate per pixel varyings.
-		for (uint32_t i = 6; i < 6 + icount; ++i)
-		{
-			pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
-			surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
-		}
-
-		// Execute pixel program.
-#if defined(T_RENDER_PERFORMANCE_BARS)
-		Timer timerPixelProgram;
-		timerPixelProgram.start();
-#endif
-
-		m_processor->execute(
-			pixelProgram,
-			parameters,
-			pixelVaryings,
-			samplers,
-			fragmentVaryings
-		);
-
-#if defined(T_RENDER_PERFORMANCE_BARS)
-		m_pixelProgramTime += timerPixelProgram.getElapsedTime();
-#endif
-
-		// Write color to current target.
-		Vector4 color = fragmentVaryings[0];
 
 		if (!context.depthEnable || iw > rs.depthTarget[offset])
 		{
-			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			color *= traktor::Scalar(255.0f);
+			for (uint32_t i = 6; i < 6 + icount; ++i)
+			{
+				pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
+				surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
+			}
 
-			uint32_t target = 
-				(uint32_t(color.x()) << 16) |
-				(uint32_t(color.y()) << 8) |
-				(uint32_t(color.z()));
+			// Execute fragment program every Nth pixel.
+#if defined(WINCE)
+			if ((x & 3) == 0)
+#else
+			if ((x & 1) == 0)
+#endif
+			{
+				m_processor->execute(
+					pixelProgram,
+					parameters,
+					pixelVaryings,
+					samplers,
+					fragmentVaryings
+				);
 
-			rs.colorTarget[offset] = target;
+				// Write color to current target.
+				Vector4& color = fragmentVaryings[0];
+				color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+				color *= traktor::Scalar(255.0f);
+
+				fragmentColor = 
+					(uint32_t(color.x()) << 16) |
+					(uint32_t(color.y()) << 8) |
+					(uint32_t(color.z()));
+			}
+
+			rs.colorTarget[offset] = fragmentColor;
 
 			if (context.depthWriteEnable)
 				rs.depthTarget[offset] = iw;
@@ -912,208 +878,208 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 
 void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, int x2, int y)
 {
-	RenderState& rs = m_renderStateStack.back();
-
-	Processor::image_t pixelProgram = m_currentProgram->getPixelProgram();
-	const Vector4* parameters = m_currentProgram->getParameters();
-	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
-	uint32_t icount = m_currentProgram->getInterpolatorCount();
-	uint32_t offset = x1 + y * rs.targetPitch;
-
-	// Calculate barycentric coordinates.
-	const Vector2* T = context.triangle;
-	const uint32_t* I = context.indices;
-
-	// f12(x,y) = (y1 - y2) * x + (x2 - x1) * y + x1 * y2 - x2 * y1
-	traktor::Scalar alpha1 = traktor::Scalar(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
-	traktor::Scalar alpha2 = traktor::Scalar(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
-
-	// f20(x,y) = (y2 - y0) * x + (x0 - x2) * y + x2 * y0 - x0 * y2
-	traktor::Scalar beta1 = traktor::Scalar(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
-	traktor::Scalar beta2 = traktor::Scalar(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
-
-	// f01(x,y) = (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0
-	traktor::Scalar gamma1 = traktor::Scalar(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
-	traktor::Scalar gamma2 = traktor::Scalar(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
-
-	// Calculate surface interpolators.
-	varying_data_t surfaceInterpolators[2];
-	varying_data_t pixelVaryings;
-	varying_data_t fragmentVaryings;
-
-	surfaceInterpolators[0][0] = context.clippedVaryings[I[0]][0] * alpha1 + context.clippedVaryings[I[1]][0] * beta1 + context.clippedVaryings[I[2]][0] * gamma1;
-	surfaceInterpolators[1][0] = context.clippedVaryings[I[0]][0] * alpha2 + context.clippedVaryings[I[1]][0] * beta2 + context.clippedVaryings[I[2]][0] * gamma2;
-
-	traktor::Scalar iw1 = surfaceInterpolators[0][0].w();
-	traktor::Scalar iw2 = surfaceInterpolators[1][0].w();
-	traktor::Scalar ix = traktor::Scalar(1.0f / float(x2 - x1));
-
-	// Only interpolate DuCustom across surface.
-	for (uint32_t i = 6; i < 6 + icount; ++i)
-	{
-		surfaceInterpolators[0][i] = context.clippedVaryings[I[0]][i] * alpha1 + context.clippedVaryings[I[1]][i] * beta1 + context.clippedVaryings[I[2]][i] * gamma1;
-		surfaceInterpolators[1][i] = context.clippedVaryings[I[0]][i] * alpha2 + context.clippedVaryings[I[1]][i] * beta2 + context.clippedVaryings[I[2]][i] * gamma2;
-		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
-	}
-
-	for (int x = x1; x < x2; ++x, ++offset)
-	{
-		traktor::Scalar t = traktor::Scalar(x - x1) * ix;
-		traktor::Scalar iw = iw1 + (iw2 - iw1) * t;
-
-		// Calculate per pixel varyings.
-		for (uint32_t i = 6; i < 6 + icount; ++i)
-		{
-			pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
-			surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
-		}
-
-		// Execute pixel program.
-#if defined(T_RENDER_PERFORMANCE_BARS)
-		Timer timerPixelProgram;
-		timerPixelProgram.start();
-#endif
-
-		m_processor->execute(
-			pixelProgram,
-			parameters,
-			pixelVaryings,
-			samplers,
-			fragmentVaryings
-		);
-
-#if defined(T_RENDER_PERFORMANCE_BARS)
-		m_pixelProgramTime += timerPixelProgram.getElapsedTime();
-#endif
-
-		// Write color to current target.
-		T_ALIGN16 Vector4 color = fragmentVaryings[0];
-
-		if (!context.depthEnable || iw > rs.depthTarget[offset])
-		{
-			uint32_t target = rs.colorTarget[offset];
-
-			Vector4 destination(
-				((target >> 16) & 255) / 255.0f,
-				((target >> 8) & 255) / 255.0f,
-				(target & 255) / 255.0f,
-				((target >> 24) & 255) / 255.0f
-			);
-
-			switch (m_currentProgram->getRenderState().blendSource)
-			{
-			case PixelOutput::BfOne:
-				break;
-
-			case PixelOutput::BfZero:
-				color.set(0.0f, 0.0f, 0.0f, 0.0f);
-				break;
-
-			case PixelOutput::BfSourceColor:
-				color *= color;
-				break;
-
-			case PixelOutput::BfOneMinusSourceColor:
-				color *= traktor::Scalar(1.0f) - color;
-				break;
-
-			case PixelOutput::BfDestinationColor:
-				color *= destination;
-				break;
-
-			case PixelOutput::BfOneMinusDestinationColor:
-				color *= traktor::Scalar(1.0f) - destination;
-				break;
-
-			case PixelOutput::BfSourceAlpha:
-				color *= color.w();
-				break;
-
-			case PixelOutput::BfOneMinusSourceAlpha:
-				color *= traktor::Scalar(1.0f) - color.w();
-				break;
-
-			case PixelOutput::BfDestinationAlpha:
-				color *= destination.w();
-				break;
-
-			case PixelOutput::BfOneMinusDestinationAlpha:
-				color *= traktor::Scalar(1.0f) - destination.w();
-				break;
-			}
-			
-			switch (m_currentProgram->getRenderState().blendDestination)
-			{
-			case PixelOutput::BfOne:
-				break;
-
-			case PixelOutput::BfZero:
-				destination.set(0.0f, 0.0f, 0.0f, 0.0f);
-				break;
-
-			case PixelOutput::BfSourceColor:
-				destination *= color;
-				break;
-
-			case PixelOutput::BfOneMinusSourceColor:
-				destination *= traktor::Scalar(1.0f) - color;
-				break;
-
-			case PixelOutput::BfDestinationColor:
-				destination *= destination;
-				break;
-
-			case PixelOutput::BfOneMinusDestinationColor:
-				destination *= traktor::Scalar(1.0f) - destination;
-				break;
-
-			case PixelOutput::BfSourceAlpha:
-				destination *= color.w();
-				break;
-
-			case PixelOutput::BfOneMinusSourceAlpha:
-				destination *= traktor::Scalar(1.0f) - color.w();
-				break;
-
-			case PixelOutput::BfDestinationAlpha:
-				destination *= destination.w();
-				break;
-
-			case PixelOutput::BfOneMinusDestinationAlpha:
-				destination *= traktor::Scalar(1.0f) - destination.w();
-				break;
-			}
-
-			switch (m_currentProgram->getRenderState().blendOperation)
-			{
-			case PixelOutput::BoAdd:
-				color = color + destination;
-				break;
-
-			case PixelOutput::BoSubtract:
-				color = color - destination;
-				break;
-
-			case PixelOutput::BoReverseSubtract:
-				color = destination - color;
-				break;
-			}
-
-			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			color *= traktor::Scalar(255.0f);
-
-			target = 
-				(uint32_t(color.x()) << 16) |
-				(uint32_t(color.y()) << 8) |
-				(uint32_t(color.z()));
-
-			rs.colorTarget[offset] = target;
-
-			if (context.depthWriteEnable)
-				rs.depthTarget[offset] = iw;
-		}
-	}
+//	RenderState& rs = m_renderStateStack.back();
+//
+//	Processor::image_t pixelProgram = m_currentProgram->getPixelProgram();
+//	const Vector4* parameters = m_currentProgram->getParameters();
+//	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
+//	uint32_t icount = m_currentProgram->getInterpolatorCount();
+//	uint32_t offset = x1 + y * rs.targetPitch;
+//
+//	// Calculate barycentric coordinates.
+//	const Vector2* T = context.triangle;
+//	const uint32_t* I = context.indices;
+//
+//	// f12(x,y) = (y1 - y2) * x + (x2 - x1) * y + x1 * y2 - x2 * y1
+//	traktor::Scalar alpha1 = traktor::Scalar(((T[1].y - T[2].y) * x1 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+//	traktor::Scalar alpha2 = traktor::Scalar(((T[1].y - T[2].y) * x2 + (T[2].x - T[1].x) * y + context.baryOffset[0]) * context.baryDenom[0]);
+//
+//	// f20(x,y) = (y2 - y0) * x + (x0 - x2) * y + x2 * y0 - x0 * y2
+//	traktor::Scalar beta1 = traktor::Scalar(((T[2].y - T[0].y) * x1 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+//	traktor::Scalar beta2 = traktor::Scalar(((T[2].y - T[0].y) * x2 + (T[0].x - T[2].x) * y + context.baryOffset[1]) * context.baryDenom[1]);
+//
+//	// f01(x,y) = (y0 - y1) * x + (x1 - x0) * y + x0 * y1 - x1 * y0
+//	traktor::Scalar gamma1 = traktor::Scalar(((T[0].y - T[1].y) * x1 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+//	traktor::Scalar gamma2 = traktor::Scalar(((T[0].y - T[1].y) * x2 + (T[1].x - T[0].x) * y + context.baryOffset[2]) * context.baryDenom[2]);
+//
+//	// Calculate surface interpolators.
+//	varying_data_t surfaceInterpolators[2];
+//	varying_data_t pixelVaryings;
+//	varying_data_t fragmentVaryings;
+//
+//	surfaceInterpolators[0][0] = context.clippedVaryings[I[0]][0] * alpha1 + context.clippedVaryings[I[1]][0] * beta1 + context.clippedVaryings[I[2]][0] * gamma1;
+//	surfaceInterpolators[1][0] = context.clippedVaryings[I[0]][0] * alpha2 + context.clippedVaryings[I[1]][0] * beta2 + context.clippedVaryings[I[2]][0] * gamma2;
+//
+//	traktor::Scalar iw1 = surfaceInterpolators[0][0].w();
+//	traktor::Scalar iw2 = surfaceInterpolators[1][0].w();
+//	traktor::Scalar ix = traktor::Scalar(1.0f / float(x2 - x1));
+//
+//	// Only interpolate DuCustom across surface.
+//	for (uint32_t i = 6; i < 6 + icount; ++i)
+//	{
+//		surfaceInterpolators[0][i] = context.clippedVaryings[I[0]][i] * alpha1 + context.clippedVaryings[I[1]][i] * beta1 + context.clippedVaryings[I[2]][i] * gamma1;
+//		surfaceInterpolators[1][i] = context.clippedVaryings[I[0]][i] * alpha2 + context.clippedVaryings[I[1]][i] * beta2 + context.clippedVaryings[I[2]][i] * gamma2;
+//		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
+//	}
+//
+//	for (int x = x1; x < x2; ++x, ++offset)
+//	{
+//		traktor::Scalar t = traktor::Scalar(x - x1) * ix;
+//		traktor::Scalar iw = iw1 + (iw2 - iw1) * t;
+//
+//		if (!context.depthEnable || iw > rs.depthTarget[offset])
+//		{
+//			// Calculate per pixel varyings.
+//			for (uint32_t i = 6; i < 6 + icount; ++i)
+//			{
+//				pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
+//				surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
+//			}
+//
+//		// Execute pixel program.
+//#if defined(T_RENDER_PERFORMANCE_BARS)
+//			Timer timerPixelProgram;
+//			timerPixelProgram.start();
+//#endif
+//
+//			m_processor->execute(
+//				pixelProgram,
+//				parameters,
+//				pixelVaryings,
+//				samplers,
+//				fragmentVaryings
+//			);
+//
+//#if defined(T_RENDER_PERFORMANCE_BARS)
+//			m_pixelProgramTime += timerPixelProgram.getElapsedTime();
+//#endif
+//
+//			// Write color to current target.
+//			Vector4& color = fragmentVaryings[0];
+//
+//			uint32_t target = rs.colorTarget[offset];
+//
+//			Vector4 destination(
+//				((target >> 16) & 255) / 255.0f,
+//				((target >> 8) & 255) / 255.0f,
+//				(target & 255) / 255.0f,
+//				((target >> 24) & 255) / 255.0f
+//			);
+//
+//			switch (m_currentProgram->getRenderState().blendSource)
+//			{
+//			case PixelOutput::BfOne:
+//				break;
+//
+//			case PixelOutput::BfZero:
+//				color.set(0.0f, 0.0f, 0.0f, 0.0f);
+//				break;
+//
+//			case PixelOutput::BfSourceColor:
+//				color *= color;
+//				break;
+//
+//			case PixelOutput::BfOneMinusSourceColor:
+//				color *= traktor::Scalar(1.0f) - color;
+//				break;
+//
+//			case PixelOutput::BfDestinationColor:
+//				color *= destination;
+//				break;
+//
+//			case PixelOutput::BfOneMinusDestinationColor:
+//				color *= traktor::Scalar(1.0f) - destination;
+//				break;
+//
+//			case PixelOutput::BfSourceAlpha:
+//				color *= color.w();
+//				break;
+//
+//			case PixelOutput::BfOneMinusSourceAlpha:
+//				color *= traktor::Scalar(1.0f) - color.w();
+//				break;
+//
+//			case PixelOutput::BfDestinationAlpha:
+//				color *= destination.w();
+//				break;
+//
+//			case PixelOutput::BfOneMinusDestinationAlpha:
+//				color *= traktor::Scalar(1.0f) - destination.w();
+//				break;
+//			}
+//			
+//			switch (m_currentProgram->getRenderState().blendDestination)
+//			{
+//			case PixelOutput::BfOne:
+//				break;
+//
+//			case PixelOutput::BfZero:
+//				destination.set(0.0f, 0.0f, 0.0f, 0.0f);
+//				break;
+//
+//			case PixelOutput::BfSourceColor:
+//				destination *= color;
+//				break;
+//
+//			case PixelOutput::BfOneMinusSourceColor:
+//				destination *= traktor::Scalar(1.0f) - color;
+//				break;
+//
+//			case PixelOutput::BfDestinationColor:
+//				destination *= destination;
+//				break;
+//
+//			case PixelOutput::BfOneMinusDestinationColor:
+//				destination *= traktor::Scalar(1.0f) - destination;
+//				break;
+//
+//			case PixelOutput::BfSourceAlpha:
+//				destination *= color.w();
+//				break;
+//
+//			case PixelOutput::BfOneMinusSourceAlpha:
+//				destination *= traktor::Scalar(1.0f) - color.w();
+//				break;
+//
+//			case PixelOutput::BfDestinationAlpha:
+//				destination *= destination.w();
+//				break;
+//
+//			case PixelOutput::BfOneMinusDestinationAlpha:
+//				destination *= traktor::Scalar(1.0f) - destination.w();
+//				break;
+//			}
+//
+//			switch (m_currentProgram->getRenderState().blendOperation)
+//			{
+//			case PixelOutput::BoAdd:
+//				color = color + destination;
+//				break;
+//
+//			case PixelOutput::BoSubtract:
+//				color = color - destination;
+//				break;
+//
+//			case PixelOutput::BoReverseSubtract:
+//				color = destination - color;
+//				break;
+//			}
+//
+//			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+//			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+//			color *= traktor::Scalar(255.0f);
+//
+//			target = 
+//				(uint32_t(color.x()) << 16) |
+//				(uint32_t(color.y()) << 8) |
+//				(uint32_t(color.z()));
+//
+//			rs.colorTarget[offset] = target;
+//
+//			if (context.depthWriteEnable)
+//				rs.depthTarget[offset] = iw;
+//		}
+//	}
 }
 
 	}

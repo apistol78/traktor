@@ -1,13 +1,13 @@
 #ifndef traktor_render_RenderViewSw_H
 #define traktor_render_RenderViewSw_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderView.h"
 #include "Render/Sw/VaryingUtils.h"
 #include "Graphics/Surface.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Thread/JobManager.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -119,7 +119,7 @@ private:
 	//@{
 	Ref< graphics::Surface > m_frameBufferSurface;
 	graphics::SurfaceDesc m_frameBufferSurfaceDesc;
-	float* m_depthBuffer;
+	AutoArrayPtr< float > m_depthBuffer;
 	//@}
 
 	std::list< RenderState > m_renderStateStack;
@@ -134,9 +134,6 @@ private:
 	mutable double m_vertexProgramTime;
 	mutable double m_pixelProgramTime;
 	//@}
-
-	enum { MaxJobCount = 16 };
-	Job m_jobs[MaxJobCount];
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 

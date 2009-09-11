@@ -44,6 +44,9 @@ public:
 private:
 	Ref< Connection > m_connection;
 	uint32_t m_handle;
+	bool m_canRead;
+	bool m_canWrite;
+	bool m_canSeek;
 };
 
 	}

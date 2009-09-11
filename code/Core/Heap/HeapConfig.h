@@ -17,14 +17,12 @@
 #		define T_HEAP_CONCURRENT_COLLECT
 #	endif
 #	define T_HEAP_THREAD_SAFE
-//#	define T_HEAP_DEBUG_ALLOCATOR
 #else	// _RELEASE
 #	if !defined(WINCE)
-#		define T_HEAP_FAST_ALLOCATOR
 #		define T_HEAP_CONCURRENT_COLLECT
 #	endif
+#	define T_HEAP_FAST_ALLOCATOR
 #	define T_HEAP_THREAD_SAFE
-//#	define T_HEAP_DEBUG_ALLOCATOR
 #endif
 
 //@}

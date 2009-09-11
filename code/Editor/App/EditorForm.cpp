@@ -209,10 +209,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuView->add(m_menuItemOtherPanels);
 	m_menuBar->add(menuView);
 
+	Ref< ui::MenuItem > menuBuild = gc_new< ui::MenuItem >(i18n::Text(L"MENU_BUILD"));
+	menuBuild->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
+	menuBuild->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
+	m_menuBar->add(menuBuild);
+
 	// Create toolbar.
 	m_toolBar = gc_new< ui::custom::ToolBar >();
-	m_toolBar->create(this);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 10);
+	m_toolBar->create(this, ui::WsNone);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 12);
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_SAVE"), ui::Command(L"Editor.Save"), 2));
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_CUT"), ui::Command(L"Editor.Cut"), 3));
@@ -223,7 +228,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_REDO"), ui::Command(L"Editor.Redo"), 7));
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_REBUILD"), ui::Command(L"Editor.Rebuild"), 9));
+	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), ui::Command(L"Editor.CancelBuild"), 10));
 
 	// Add external tools.
 	{
@@ -241,8 +246,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 				Ref< ui::custom::ToolBarButton > toolButton = gc_new< ui::custom::ToolBarButton >(
 					i18n::Text(i->first),
 					ui::Command(L"Editor.ExternalTool", externalToolGroup),
-					0,
-					ui::custom::ToolBarButton::BsText
+					11,
+					ui::custom::ToolBarButton::BsIcon | ui::custom::ToolBarButton::BsText
 				);
 				m_toolBar->addItem(toolButton);
 			}
@@ -413,6 +418,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Delete"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
 
 	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
@@ -916,23 +922,28 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	savePipelineHash(pipelineHash);
 }
 
-void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
+void EditorForm::buildCancel()
 {
-	if (!m_project)
-		return;
-
-	// Stop current build.
 	if (m_threadBuild)
 	{
 		if (!m_threadBuild->finished())
 		{
 			if (!m_threadBuild->stop())
-				log::error << L"Unable to stop previous build thread" << Endl;
+				log::error << L"Unable to stop build thread" << Endl;
 		}
 
 		ThreadManager::getInstance().destroy(m_threadBuild);
 		m_threadBuild = 0;
 	}
+}
+
+void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
+{
+	if (!m_project)
+		return;
+
+	// Stop current build if any.
+	buildCancel();
 
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
@@ -1585,6 +1596,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		buildAssets(false);
 	else if (command == L"Editor.Rebuild")
 		buildAssets(true);
+	else if (command == L"Editor.CancelBuild")
+		buildCancel();
 	else if (command == L"Editor.ActivatePreviousEditor")
 		activatePreviousEditor();
 	else if (command == L"Editor.ActivateNextEditor")

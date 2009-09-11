@@ -101,7 +101,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				material.setDiffuseMap(textureName, diffuseBlendOperator);
 			}
 			else
-				log::warning << L"No diffuse texture clip for surface \"" << material.getName() << L"\"" << Endl;
+				log::debug << L"No diffuse texture clip for surface \"" << material.getName() << L"\"" << Endl;
 		}
 
 		const lwTexture* texSpecular = getLwTexture(surface->specularity.tex);
@@ -114,7 +114,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				material.setSpecularMap(textureName);
 			}
 			else
-				log::warning << L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"" << Endl;
+				log::debug << L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"" << Endl;
 		}
 
 		const lwTexture* texBump = getLwTexture(surface->bump.tex);
@@ -127,7 +127,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				material.setNormalMap(textureName);
 			}
 			else
-				log::warning << L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"" << Endl;
+				log::debug << L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"" << Endl;
 		}
 
 		material.setColor(Color(
