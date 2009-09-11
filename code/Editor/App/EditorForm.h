@@ -151,6 +151,8 @@ private:
 
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
 
+	void buildCancel();
+
 	void updateTitle();
 
 	void updateMRU();

@@ -34,9 +34,14 @@ class T_DLLCLASS ToolBar : public Widget
 	T_RTTI_CLASS(ToolBar)
 
 public:
+	enum WidgetStyles
+	{
+		WsUnderline = (WsUser)
+	};
+
 	ToolBar();
 
-	bool create(Widget* parent, int style = WsNone);
+	bool create(Widget* parent, int style = WsUnderline);
 
 	void destroy();
 

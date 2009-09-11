@@ -564,7 +564,19 @@
     <item>
       <first>LOG_VIEW_ERROR</first>
       <second>View errors</second>
-    </item>    
+    </item>
+    <item>
+      <first>MENU_BUILD</first>
+      <second>Build</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_BUILD</first>
+      <second>Build</second>
+    </item>
+    <item>
+      <first>MENU_BUILD_REBUILD</first>
+      <second>Rebuild</second>
+    </item>
 		<item>
 			<first>MENU_EDIT</first>
 			<second>Edit</second>
@@ -1512,6 +1524,10 @@
     <item>
       <first>TOOLBAR_BUILD</first>
       <second>Build assets</second>
+    </item>
+    <item>
+      <first>TOOLBAR_CANCEL_BUILD</first>
+      <second>Cancel build</second>
     </item>
 		<item>
 			<first>TOOLBAR_COPY</first>

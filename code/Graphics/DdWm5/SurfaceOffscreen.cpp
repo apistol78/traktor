@@ -42,13 +42,13 @@ void SurfaceOffscreen::blt(
 {
 	const SurfaceDesc& sourceDesc = checked_type_cast< SurfaceOffscreen* >(sourceSurface)->m_surfaceDesc;
 
-	unsigned char* w = &m_data[x + y * m_surfaceDesc.pitch];
-	unsigned char* r = &checked_type_cast< SurfaceOffscreen* >(sourceSurface)->m_data[sourceX + y * sourceDesc.pitch];
+	uint8_t* w = &m_data[x + y * m_surfaceDesc.pitch];
+	uint8_t* r = &checked_type_cast< SurfaceOffscreen* >(sourceSurface)->m_data[sourceX + y * sourceDesc.pitch];
 
 	for (int iy = 0; iy < height; ++iy)
 	{
-		unsigned char* wr = w;
-		unsigned char* rr = r;
+		uint8_t* wr = w;
+		uint8_t* rr = r;
 
 		for (int ix = 0; ix < width; ++ix)
 		{

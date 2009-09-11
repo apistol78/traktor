@@ -36,6 +36,7 @@ public:
 private:
 	Ref< net::TcpSocket > m_socket;
 	Ref< net::SocketStream > m_socketStream;
+	std::vector< uint8_t > m_buffer;
 };
 
 	}
