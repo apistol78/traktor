@@ -10,52 +10,6 @@ namespace traktor
 	{
 		namespace
 		{
-//
-//bool getDDPixelFormat(PixelFormatEnum pixelFormat, DDPIXELFORMAT& ddpf)
-//{
-//	memset(&ddpf, 0, sizeof(ddpf));
-//	ddpf.dwSize = sizeof(ddpf);
-//	ddpf.dwFlags = DDPF_RGB;
-//	ddpf.dwRGBBitCount = getColorBits(pixelFormat);
-//
-//	switch (pixelFormat)
-//	{
-//	case PfeR5G5B5:
-//		ddpf.dwRBitMask = 0x00007C00;
-//		ddpf.dwGBitMask = 0x000003E0;
-//		ddpf.dwBBitMask = 0x0000001F;
-//		break;
-//
-//	case PfeA1R5G5B5:
-//		ddpf.dwRBitMask = 0x00007C00;
-//		ddpf.dwGBitMask = 0x000003E0;
-//		ddpf.dwBBitMask = 0x0000001F;
-//		break;
-//
-//	case PfeR5G6B5:
-//		ddpf.dwRBitMask = 0x0000F800;
-//		ddpf.dwGBitMask = 0x000007E0;
-//		ddpf.dwBBitMask = 0x0000001F;
-//		break;
-//
-//	case PfeR8G8B8:
-//		ddpf.dwRBitMask = 0x00FF0000;
-//		ddpf.dwGBitMask = 0x0000FF00;
-//		ddpf.dwBBitMask = 0x000000FF;
-//		break;
-//
-//	case PfeA8R8G8B8:
-//		ddpf.dwRBitMask = 0x00FF0000;
-//		ddpf.dwGBitMask = 0x0000FF00;
-//		ddpf.dwBBitMask = 0x000000FF;
-//		break;
-//
-//	default:
-//		return false;
-//	}
-//
-//	return true;
-//}
 
 const wchar_t* translateError(HRESULT hr)
 {
@@ -93,28 +47,6 @@ HRESULT WINAPI enumDisplayModeCallback(LPDDSURFACEDESC ddsd, LPVOID context)
 	outDisplayModes.push_back(dm);
 	return S_OK;
 }
-//
-//IDirectDrawSurface* createSecondarySurface(IDirectDraw* dd, DWORD dwFlags, DWORD dwCaps, PixelFormatEnum pixelFormat, DWORD dwWidth, DWORD dwHeight)
-//{
-//	IDirectDrawSurface* ddsSecondary;
-//	DDSURFACEDESC ddsd;
-//	HRESULT hr;
-//
-//	memset(&ddsd, 0, sizeof(ddsd));
-//	ddsd.dwSize = sizeof(ddsd);
-//	ddsd.dwFlags = dwFlags | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
-//	ddsd.dwWidth = dwWidth;
-//	ddsd.dwHeight = dwHeight;
-//	ddsd.ddsCaps.dwCaps = dwCaps;
-//
-//	getDDPixelFormat(pixelFormat, ddsd.ddpfPixelFormat);
-//
-//	hr = dd->CreateSurface(&ddsd, &ddsSecondary, NULL);
-//	if (FAILED(hr))
-//		return 0;
-//
-//	return ddsSecondary;
-//}
 
 		}
 
@@ -158,10 +90,7 @@ bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 		0
 	);
 	if (FAILED(hr))
-	{
-		log::error << L"Create graphics failed; unable to set display mode (" << translateError(hr) << L")" << Endl;
-		return false;
-	}
+		log::warning << L"Create graphics failed; unable to set display mode (" << translateError(hr) << L")" << Endl;
 
 	DDSURFACEDESC ddsd;
 
@@ -221,7 +150,7 @@ void GraphicsSystemDdWm5::flip(bool waitVBlank)
 	DDSURFACEDESC ddsd;
 	HRESULT hr;
 
-	memset(&ddsd, 0, sizeof(ddsd));
+	std::memset(&ddsd, 0, sizeof(ddsd));
 	ddsd.dwSize = sizeof(ddsd);
 
 	hr = m_ddsPrimary->Lock(NULL, &ddsd, DDLOCK_WRITEONLY, NULL);

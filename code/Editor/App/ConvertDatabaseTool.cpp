@@ -14,6 +14,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -166,7 +167,9 @@ bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 	ui::custom::BackgroundWorkerDialog dialogLoader;
 	if (dialogLoader.create(parent, i18n::Text(L"CONVERT_DATABASE_CONVERTING_TITLE"), i18n::Text(L"CONVERT_DATABASE_CONVERTING_MESSAGE")))
 	{
-		dialogLoader.execute(threadConvert, &status);
+		threadConvert->start();
+		if (dialogLoader.execute(threadConvert, &status) != ui::DrOk)
+			threadConvert->stop();
 		dialogLoader.destroy();
 	}
 

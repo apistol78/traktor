@@ -2,6 +2,7 @@
 #define traktor_Process_H
 
 #include "Core/Object.h"
+#include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,18 +21,13 @@ namespace traktor
  * System process wrapper; interface to
  * query system processes.
  */
-class T_DLLCLASS Process : public Object
+class T_DLLCLASS Process
+:	public Object
+,	public IWaitable
 {
 	T_RTTI_CLASS(Process)
 
 public:
-	/*! \brief Wait until process terminates.
-	 *
-	 * \param timeout Timeout in milliseconds, 0 means infinity.
-	 * \return True if process terminated during timeout.
-	 */
-	virtual bool wait(uint32_t timeout = 0) = 0;
-
 	/*! \brief Get exit code returned by process.
 	 *
 	 * \return Exit code.

@@ -44,7 +44,6 @@
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridDragEvent.h"
-#include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
 #include "Database/Instance.h"
