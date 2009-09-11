@@ -377,6 +377,10 @@
 			<first>ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE</first>
 			<second>Kan ej spara instans</second>
 		</item>
+    <item>
+      <first>EXECUTE_TOOL_TITLE</first>
+      <second>Utför verktyg</second>
+    </item>
 		<item>
 			<first>IMPORT_ANIMATION_DESCRIPTION</first>
 			<second>Animation</second>

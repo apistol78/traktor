@@ -368,7 +368,11 @@
     <item>
       <first>ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE</first>
       <second>Unable to save instance</second>
-    </item>    
+    </item>
+    <item>
+      <first>EXECUTE_TOOL_TITLE</first>
+      <second>Execute tool</second>
+    </item>
 		<item>
 			<first>IMPORT_ANIMATION_DESCRIPTION</first>
 			<second>Animation...</second>

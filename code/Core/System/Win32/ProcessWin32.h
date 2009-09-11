@@ -28,7 +28,7 @@ public:
 
 	virtual ~ProcessWin32();
 
-	virtual bool wait(uint32_t timeout);
+	virtual bool wait(int32_t timeout);
 
 	virtual int32_t exitCode() const;
 

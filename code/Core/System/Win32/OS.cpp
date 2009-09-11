@@ -221,7 +221,7 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 		NULL,
 		NULL,
 		TRUE,
-		mute ? NULL : CREATE_NEW_CONSOLE,
+		mute ? CREATE_NO_WINDOW : CREATE_NEW_CONSOLE,
 		NULL,
 		(cwd[0] != L'\0' ? cwd : NULL),
 		&si,

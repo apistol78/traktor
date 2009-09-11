@@ -1,7 +1,7 @@
 #ifndef traktor_Signal_H
 #define traktor_Signal_H
 
-#include "Core/Config.h"
+#include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ public:
 
 	void reset();
 
-	bool wait(int timeout = -1);
+	virtual bool wait(int32_t timeout = -1);
 	
 private:
 	void* m_handle;

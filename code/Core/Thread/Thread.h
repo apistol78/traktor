@@ -2,7 +2,7 @@
 #define traktor_Thread_H
 
 #include <string>
-#include "Core/Config.h"
+#include "Core/Thread/IWaitable.h"
 #include "Core/Heap/Ref.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ class Functor;
 /*! \brief OS thread class.
  * \ingroup Core
  */
-class T_DLLCLASS Thread
+class T_DLLCLASS Thread : public IWaitable
 {
 public:
 	enum Priority
@@ -32,8 +32,6 @@ public:
 	};
 
 	bool start(Priority priority = Normal);
-
-	bool wait(int timeout = -1);
 
 	bool stop(int timeout = -1);
 
@@ -50,6 +48,8 @@ public:
 	bool stopped() const;
 
 	bool finished() const;
+
+	virtual bool wait(int32_t timeout = -1);
 
 private:
 	friend class ThreadManager;

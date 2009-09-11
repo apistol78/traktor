@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Thread;
+class IWaitable;
 
 	namespace ui
 	{
@@ -46,12 +46,12 @@ public:
 
 	bool create(Widget* parent, const std::wstring& title, const std::wstring& message, int style = WsDefaultFixed);
 
-	bool execute(Thread* thread, BackgroundWorkerStatus* status);
+	bool execute(IWaitable* waitable, BackgroundWorkerStatus* status);
 
-	bool execute(const std::vector< Thread* >& thread, BackgroundWorkerStatus* status);
+	bool execute(const std::vector< IWaitable* >& waitables, BackgroundWorkerStatus* status);
 
 private:
-	std::vector< Thread* > m_threads;
+	std::vector< IWaitable* > m_waitables;
 	Ref< BackgroundWorkerStatus > m_status;
 	Ref< Static > m_labelMessage;
 	Ref< Static > m_labelStatus;

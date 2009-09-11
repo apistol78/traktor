@@ -5,7 +5,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Static.h"
 #include "Ui/Button.h"
-#include "Core/Thread/Thread.h"
+#include "Core/Thread/IWaitable.h"
 
 namespace traktor
 {
@@ -49,38 +49,39 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 	return true;
 }
 
-bool BackgroundWorkerDialog::execute(Thread* thread, BackgroundWorkerStatus* status)
+bool BackgroundWorkerDialog::execute(IWaitable* waitable, BackgroundWorkerStatus* status)
 {
 	m_status = status;
 
 	if (m_status)
 		m_progressBar->setRange(0, m_status->getSteps());
+	else
+		m_progressBar->setRange(0, 0);
 
-	m_threads.push_back(thread);
-	m_threads.front()->start();
+	m_waitables.push_back(waitable);
 
 	showModal();
 	
 	m_status = 0;
-	m_threads.resize(0);
+	m_waitables.resize(0);
 	return true;
 }
 
-bool BackgroundWorkerDialog::execute(const std::vector< Thread* >& threads, BackgroundWorkerStatus* status)
+bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables, BackgroundWorkerStatus* status)
 {
 	m_status = status;
 
 	if (m_status)
 		m_progressBar->setRange(0, m_status->getSteps());
+	else
+		m_progressBar->setRange(0, 0);
 
-	m_threads = threads;
-	for (std::vector< Thread* >::const_iterator i = m_threads.begin(); i != m_threads.end(); ++i)
-		(*i)->start();
+	m_waitables = waitables;
 
 	showModal();
 
 	m_status = 0;
-	m_threads.resize(0);
+	m_waitables.resize(0);
 	return true;
 }
 
@@ -88,18 +89,17 @@ void BackgroundWorkerDialog::eventAbortClick(Event* event)
 {
 	m_buttonAbort->setEnable(false);
 	
-	// Stop all threads; assume timer polls until threads actually are finished.
-	for (std::vector< Thread* >::const_iterator i = m_threads.begin(); i != m_threads.end(); ++i)
-		(*i)->stop(0);
+	stopTimer();
+	endModal(DrCancel);
 }
 
 void BackgroundWorkerDialog::eventTimer(Event* event)
 {
-	// Check if job threads are finished.
+	// Check if we're are finished.
 	bool finished = true;
-	for (std::vector< Thread* >::const_iterator i = m_threads.begin(); i != m_threads.end(); ++i)
+	for (std::vector< IWaitable* >::const_iterator i = m_waitables.begin(); i != m_waitables.end(); ++i)
 	{
-		if (!(*i)->finished())
+		if (!(*i)->wait(0))
 		{
 			finished = false;
 			break;
@@ -126,7 +126,7 @@ void BackgroundWorkerDialog::eventTimer(Event* event)
 
 	// End dialog if all job threads are finished.
 	if (finished)
-		endModal(0);
+		endModal(DrOk);
 }
 
 		}

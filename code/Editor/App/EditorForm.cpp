@@ -48,6 +48,7 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Xtrme/WidgetXtrme.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
@@ -1659,6 +1660,8 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		std::wstring command = externalToolGroup->getProperty< PropertyString >(L"Command");
 		std::wstring arguments = externalToolGroup->getProperty< PropertyString >(L"Arguments");
 		std::wstring directory = externalToolGroup->getProperty< PropertyString >(L"Directory");
+		std::wstring message = externalToolGroup->getProperty< PropertyString >(L"Message");
+		bool mute = externalToolGroup->getProperty< PropertyBoolean >(L"Mute", true);
 
 		// @hack
 		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
@@ -1669,8 +1672,15 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				arguments = replaceAll< std::wstring >(arguments, L"$(ACTIVE_INSTANCE_PATH)", instance->getPath());
 		}
 		
-		Ref< Process > process = OS::getInstance().execute(command, arguments, directory);
-		if (!process)
+		Ref< Process > process = OS::getInstance().execute(command, arguments, directory, mute);
+		if (process)
+		{
+			ui::custom::BackgroundWorkerDialog dialogWaitProcess;
+			dialogWaitProcess.create(this, i18n::Text(L"EXECUTE_TOOL_TITLE"), message);
+			dialogWaitProcess.execute(process, 0);
+			dialogWaitProcess.destroy();
+		}
+		else
 		{
 			ui::MessageBox::show(
 				this,

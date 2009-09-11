@@ -1,7 +1,7 @@
 #ifndef traktor_Event_H
 #define traktor_Event_H
 
-#include "Core/Config.h"
+#include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +17,7 @@ namespace traktor
 /*! \brief Thread signal event.
  * \ingroup Core
  */
-class T_DLLCLASS Event
+class T_DLLCLASS Event : public IWaitable
 {
 public:
 	Event();
@@ -30,7 +30,7 @@ public:
 
 	void reset();
 
-	bool wait(int timeout = -1);
+	virtual bool wait(int32_t timeout = -1);
 	
 private:
 	void* m_handle;

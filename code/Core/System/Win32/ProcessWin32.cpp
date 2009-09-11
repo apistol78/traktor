@@ -16,9 +16,9 @@ ProcessWin32::~ProcessWin32()
 	CloseHandle(m_pi.hProcess);
 }
 
-bool ProcessWin32::wait(uint32_t timeout)
+bool ProcessWin32::wait(int32_t timeout)
 {
-	return WaitForSingleObject(m_pi.hProcess, timeout ? timeout : INFINITE) == WAIT_OBJECT_0;
+	return WaitForSingleObject(m_pi.hProcess, timeout >= 0 ? timeout : INFINITE) == WAIT_OBJECT_0;
 }
 
 int32_t ProcessWin32::exitCode() const
