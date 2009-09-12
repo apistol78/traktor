@@ -16,47 +16,9 @@ bool getDDPixelFormat(PixelFormatEnum pixelFormat, DDPIXELFORMAT& ddpf)
 	ddpf.dwSize = sizeof(ddpf);
 	ddpf.dwFlags = DDPF_RGB;
 	ddpf.dwRGBBitCount = getColorBits(pixelFormat);
-
-	switch (pixelFormat)
-	{
-	case PfeR5G5B5:
-		ddpf.dwRBitMask = 0x00007C00;
-		ddpf.dwGBitMask = 0x000003E0;
-		ddpf.dwBBitMask = 0x0000001F;
-		break;
-
-	case PfeA1R5G5B5:
-		ddpf.dwFlags |= DDPF_ALPHAPIXELS;
-		ddpf.dwRBitMask = 0x00007C00;
-		ddpf.dwGBitMask = 0x000003E0;
-		ddpf.dwBBitMask = 0x0000001F;
-		ddpf.dwRGBAlphaBitMask = 0x00008000;
-		break;
-
-	case PfeR5G6B5:
-		ddpf.dwRBitMask = 0x0000F800;
-		ddpf.dwGBitMask = 0x000007E0;
-		ddpf.dwBBitMask = 0x0000001F;
-		break;
-
-	case PfeR8G8B8:
-		ddpf.dwRBitMask = 0x00FF0000;
-		ddpf.dwGBitMask = 0x0000FF00;
-		ddpf.dwBBitMask = 0x000000FF;
-		break;
-
-	case PfeA8R8G8B8:
-		ddpf.dwFlags |= DDPF_ALPHAPIXELS;
-		ddpf.dwRBitMask = 0x00FF0000;
-		ddpf.dwGBitMask = 0x0000FF00;
-		ddpf.dwBBitMask = 0x000000FF;
-		ddpf.dwRGBAlphaBitMask = 0xFF000000;
-		break;
-
-	default:
-		return false;
-	}
-
+	ddpf.dwRBitMask = getRedMask(pixelFormat);
+	ddpf.dwGBitMask = getGreenMask(pixelFormat);
+	ddpf.dwBBitMask = getBlueMask(pixelFormat);
 	return true;
 }
 
@@ -107,7 +69,7 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 
 		DDSURFACEDESC2 ddsd;
 
-		memset(&ddsd, 0, sizeof(ddsd));
+		std::memset(&ddsd, 0, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE | DDSCAPS_FLIP | DDSCAPS_COMPLEX;
@@ -122,7 +84,7 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 
 		DDSCAPS2 ddscaps;
 
-		memset(&ddscaps, 0, sizeof(ddscaps));
+		std::memset(&ddscaps, 0, sizeof(ddscaps));
 		ddscaps.dwCaps = DDSCAPS_BACKBUFFER;
 
 		m_ddsPrimary->GetAttachedSurface(&ddscaps, &m_ddsSecondary.getAssign());
@@ -145,7 +107,7 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 
 		DDSURFACEDESC2 ddsd;
 
-		memset(&ddsd, 0, sizeof(ddsd));
+		std::memset(&ddsd, 0, sizeof(ddsd));
 		ddsd.dwSize = sizeof(ddsd);
 		ddsd.dwFlags = DDSD_CAPS;
 		ddsd.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
@@ -157,10 +119,15 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 			return false;
 		}
 
-		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
-		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+		ddsd.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT | DDSD_PIXELFORMAT;
 		ddsd.dwWidth = createDesc.displayMode.width;
 		ddsd.dwHeight = createDesc.displayMode.height;
+		ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
+		if (!getDDPixelFormat(createDesc.pixelFormat, ddsd.ddpfPixelFormat))
+		{
+			log::error << L"Create graphics failed, unable to determine format of secondary surface" << Endl;
+			return false;
+		}
 
 		hr = m_dd->CreateSurface(&ddsd, &m_ddsSecondary.getAssign(), NULL);
 		if (FAILED(hr))
@@ -251,7 +218,6 @@ Surface* GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surfaceDes
 	ddsd.dwWidth = surfaceDesc.width;
 	ddsd.dwHeight = surfaceDesc.height;
 	ddsd.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN;
-
 	if (!getDDPixelFormat(surfaceDesc.pixelFormat, ddsd.ddpfPixelFormat))
 		return 0;
 

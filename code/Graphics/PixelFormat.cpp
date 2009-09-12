@@ -23,6 +23,48 @@ int getAlphaBits(PixelFormatEnum pixelFormat)
 	return c_alphaBits[int(pixelFormat)];
 }
 
+uint32_t getRedMask(PixelFormatEnum pixelFormat)
+{
+	uint32_t c_redMasks[] =
+	{
+		0x00000000,
+		0x00007C00,		// PfeR5G5B5
+		0x00007C00,		// PfeA1R5G5B5
+		0x0000F800,		// PfeR5G6B5
+		0x00FF0000,		// PfeR8G8B8
+		0x00FF0000		// PfeA8R8G8B8
+	};
+	return c_redMasks[int(pixelFormat)];
+}
+
+uint32_t getGreenMask(PixelFormatEnum pixelFormat)
+{
+	uint32_t c_greenMasks[] =
+	{
+		0x00000000,
+		0x000003E0,
+		0x000003E0,
+		0x000007E0,
+		0x0000FF00,
+		0x0000FF00
+	};
+	return c_greenMasks[int(pixelFormat)];
+}
+
+uint32_t getBlueMask(PixelFormatEnum pixelFormat)
+{
+	uint32_t c_blueMasks[] =
+	{
+		0x00000000,
+		0x0000001F,
+		0x0000001F,
+		0x0000001F,
+		0x000000FF,
+		0x000000FF
+	};
+	return c_blueMasks[int(pixelFormat)];
+}
+
 bool hasAlpha(PixelFormatEnum pixelFormat)
 {
 	const bool c_hasAlpha[] = { false, false, true, false, false, true };

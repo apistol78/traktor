@@ -16,8 +16,6 @@
 #include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
 
-//#define T_RENDER_PERFORMANCE_BARS
-
 #if defined(max)
 #	undef max
 #endif
@@ -37,6 +35,24 @@ const int32_t c_targetScale = 1;
 inline float clamp(float v, float mn, float mx)
 {
 	return min(max(v, mn), mx);
+}
+
+inline uint16_t to565(float r, float g, float b)
+{
+	return
+		(int32_t(r * ((1 << 5) - 1)) << 11) |
+		(int32_t(g * ((1 << 6) - 1)) << 5) |
+		(int32_t(b * ((1 << 5) - 1)));
+}
+
+inline uint16_t to565(const Vector4& rgb)
+{
+	return to565(rgb.x(), rgb.y(), rgb.z());
+}
+
+inline uint16_t toDepth(float v)
+{
+	return uint16_t(v * 65535.0f);
 }
 
 struct AxisX { static float get(const Vector2& v) { return v.x; } };
@@ -83,16 +99,17 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSyste
 ,	m_processor(processor)
 ,	m_depthBuffer(0)
 ,	m_viewPort(0, 0, 0, 0, 0, 0)
-,	m_primitiveTime(0.0)
-,	m_vertexProgramTime(0.0)
-,	m_pixelProgramTime(0.0)
 {
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer = new float [(m_frameBufferSurfaceDesc.pitch >> 2) * m_frameBufferSurfaceDesc.height];
-
+	m_depthBuffer = new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height];
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
+
+	m_dirty[0] = 0;
+	m_dirty[1] = 0;
+	m_dirty[2] = m_frameBufferSurfaceDesc.width;
+	m_dirty[3] = m_frameBufferSurfaceDesc.height;
 }
 
 RenderViewSw::~RenderViewSw()
@@ -118,10 +135,14 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer = new float [(m_frameBufferSurfaceDesc.pitch >> 2) * m_frameBufferSurfaceDesc.height];
-
+	m_depthBuffer = new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height];
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
+
+	m_dirty[0] = 0;
+	m_dirty[1] = 0;
+	m_dirty[2] = m_frameBufferSurfaceDesc.width;
+	m_dirty[3] = m_frameBufferSurfaceDesc.height;
 }
 
 void RenderViewSw::setViewport(const Viewport& viewport)
@@ -143,72 +164,83 @@ bool RenderViewSw::begin()
 {
 	T_ASSERT (m_renderStateStack.empty());
 
-	uint32_t* frameBuffer = static_cast< uint32_t* >(m_frameBufferSurface->lock(m_frameBufferSurfaceDesc));
+	uint16_t* frameBuffer = static_cast< uint16_t* >(m_frameBufferSurface->lock(m_frameBufferSurfaceDesc));
 
 	RenderState rs =
 	{
 		m_viewPort,
-		frameBuffer,
-		m_depthBuffer.ptr(),
+		m_frameBufferSurfaceDesc.width,
 		m_frameBufferSurfaceDesc.height,
-		m_frameBufferSurfaceDesc.pitch >> 2
+		frameBuffer,
+		m_frameBufferSurfaceDesc.pitch,
+		m_depthBuffer.ptr(),
+		m_frameBufferSurfaceDesc.width * sizeof(uint16_t)
 	};
 
 	m_renderStateStack.push_back(rs);
-
-	m_primitiveTime = 0.0;
-	m_vertexProgramTime = 0.0;
-	m_pixelProgramTime = 0.0;
-
 	return true;
 }
 
 bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	//T_ASSERT (!m_renderStateStack.empty());
 
-	RenderTargetSetSw* rts = checked_type_cast< RenderTargetSetSw* >(renderTargetSet);
-	RenderTargetSw* rt = checked_type_cast< RenderTargetSw* >(rts->getColorTexture(renderTarget));
+	//RenderTargetSetSw* rts = checked_type_cast< RenderTargetSetSw* >(renderTargetSet);
+	//RenderTargetSw* rt = checked_type_cast< RenderTargetSw* >(rts->getColorTexture(renderTarget));
 
-	RenderState rs =
-	{
-		Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
-		rt->getColorSurface(),
-		rts->getDepthSurface(),
-		rts->getHeight(),
-		rts->getWidth()
-	};
+	//RenderState rs =
+	//{
+	//	Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
+	//	rt->getColorSurface(),
+	//	rts->getDepthSurface(),
+	//	rts->getHeight(),
+	//	rts->getWidth()
+	//};
 
-	m_renderStateStack.push_back(rs);
+	//m_renderStateStack.push_back(rs);
 
-	rts->setContentValid(true);
-	return true;
+	//rts->setContentValid(true);
+	//return true;
+
+	return false;
 }
 
 void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
 	RenderState& rs = m_renderStateStack.back();
-	uint32_t count = rs.targetHeight * rs.targetPitch;
 
-	uint32_t* colorTarget = rs.colorTarget;
+	uint16_t* colorTarget = rs.colorTarget;
 	if (colorTarget)
 	{
-		uint32_t clear =
-			(uint32_t(color[0] * 255.0f) << 16) |
-			(uint32_t(color[1] * 255.0f) << 8) |
-			(uint32_t(color[2] * 255.0f));
+		uint16_t clearColor = to565(color[0], color[1], color[2]);
 
-		for (uint32_t i = 0; i < count; ++i)
-			colorTarget[i] = clear;
+		colorTarget += m_dirty[1] * rs.colorTargetPitch / sizeof(uint16_t);
+		for (int32_t y = m_dirty[1]; y < m_dirty[3]; ++y)
+		{
+			for (int32_t x = m_dirty[0]; x < m_dirty[2]; ++x)
+				colorTarget[x] = clearColor;
+			colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
+		}
 	}
 
-	float* depthTarget = rs.depthTarget;
+	uint16_t* depthTarget = rs.depthTarget;
 	if (depthTarget)
 	{
-		float iw = 1.0f - depth;
-		for (uint32_t i = 0; i < count; ++i)
-			depthTarget[i] = iw;
+		uint16_t clearDepth = toDepth(1.0f - depth);
+
+		depthTarget += m_dirty[1] * rs.depthTargetPitch / sizeof(uint16_t);
+		for (int32_t y = m_dirty[1]; y < m_dirty[3]; ++y)
+		{
+			for (int32_t x = m_dirty[0]; x < m_dirty[2]; ++x)
+				depthTarget[x] = clearDepth;
+			depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
+		}
 	}
+
+	m_dirty[0] = m_frameBufferSurfaceDesc.width;
+	m_dirty[1] = m_frameBufferSurfaceDesc.height;
+	m_dirty[2] = 0;
+	m_dirty[3] = 0;
 }
 
 void RenderViewSw::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -238,32 +270,9 @@ void RenderViewSw::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
-#if defined(T_RENDER_PERFORMANCE_BARS)
-	uint32_t* colorTarget = m_renderStateStack.back().colorTarget;
-#endif
-
 	m_renderStateStack.pop_back();
 	if (m_renderStateStack.empty())
-	{
-#if defined(T_RENDER_PERFORMANCE_BARS)
-		// Render performance bars.
-		if (m_frameBufferSurfaceDesc.width > 100)
-		{
-			uint32_t vertexPerc = min(uint32_t(m_vertexProgramTime * 100.0 / m_primitiveTime), 100U);
-			uint32_t pixelPerc = min(uint32_t(m_pixelProgramTime * 100.0 / m_primitiveTime), 100U);
-
-			for (uint32_t x = 0; x < vertexPerc; ++x)
-				colorTarget[x] = 0x0000ff00;
-
-			for (uint32_t x = vertexPerc; x < vertexPerc + pixelPerc; ++x)
-				colorTarget[x] = 0x00ff0000;
-
-			for (uint32_t x = vertexPerc + pixelPerc; x < 100; ++x)
-				colorTarget[x] = 0x00ffffff;
-		}
-#endif
 		m_frameBufferSurface->unlock();
-	}
 	else
 		m_viewPort = m_renderStateStack.back().viewPort;
 }
@@ -294,11 +303,6 @@ void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying)
 
 void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, varying_data_t& outInterpolatorVarying) /*const*/
 {
-#if defined(T_RENDER_PERFORMANCE_BARS)
-	Timer timerVertexProgram;
-	timerVertexProgram.start();
-#endif
-
 	checkVaryings(vertexVarying);
 
 	m_processor->execute(
@@ -310,10 +314,6 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 	);
 
 	checkVaryings(outInterpolatorVarying);
-
-#if defined(T_RENDER_PERFORMANCE_BARS)
-	m_vertexProgramTime += timerVertexProgram.getElapsedTime();
-#endif
 }
 
 void RenderViewSw::clipPlanes(FragmentContext& context, uint32_t vertexCount) const
@@ -425,6 +425,15 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 
 					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
 						context.clippedVaryings[j][k] *= traktor::Scalar(iw);
+
+					// Update dirty rectangle.
+					//if (m_renderStateStack.size() <= 1)
+					{
+						m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
+						m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
+						m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
+						m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
+					}
 				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
@@ -522,8 +531,6 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 		}
 		break;
 	}
-
-	m_primitiveTime += primitiveTimer.getElapsedTime();
 }
 
 void RenderViewSw::drawNonIndexed(const Primitives& primitives)
@@ -621,6 +628,15 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 
 					for (uint32_t k = 1; k < sizeof(varying_data_t) / sizeof(Vector4); ++k)
 						context.clippedVaryings[j][k] *= traktor::Scalar(iw);
+
+					// Update dirty rectangle.
+					//if (m_renderStateStack.size() <= 1)
+					{
+						m_dirty[0] = std::min< int32_t >(m_dirty[0], floorf(context.screen[j].x));
+						m_dirty[1] = std::min< int32_t >(m_dirty[1], floorf(context.screen[j].y));
+						m_dirty[2] = std::max< int32_t >(m_dirty[2], ceilf(context.screen[j].x));
+						m_dirty[3] = std::max< int32_t >(m_dirty[3], ceilf(context.screen[j].y));
+					}
 				}
 
 				// Check culling, rewind vertices if needed as triangle rasterizer
@@ -715,61 +731,50 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 		}
 		break;
 	}
-
-	m_primitiveTime += primitiveTimer.getElapsedTime();
 }
 
 void RenderViewSw::lineShade(const FragmentContext& context, int x, int y, float d)
 {
-	RenderState& rs = m_renderStateStack.back();
-
-	Processor::image_t pixelProgram = m_currentProgram->getPixelProgram();
-	const Vector4* parameters = m_currentProgram->getParameters();
-	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
-
-	uint32_t offset = x + y * rs.targetPitch;
-
-	varying_data_t pixelVaryings;
-	varying_data_t fragmentVaryings;
-
-	for (size_t i = 0; i < sizeof(varying_data_t) / sizeof(Vector4); ++i)
-		pixelVaryings[i] = context.interpolatorVaryings[0][i] + (context.interpolatorVaryings[1][i] - context.interpolatorVaryings[0][i]) * traktor::Scalar(d);
-
-#if defined(T_RENDER_PERFORMANCE_BARS)
-	Timer timerPixelProgram;
-	timerPixelProgram.start();
-#endif
-
-	m_processor->execute(
-		pixelProgram,
-		parameters,
-		pixelVaryings,
-		samplers,
-		fragmentVaryings
-	);
-
-#if defined(T_RENDER_PERFORMANCE_BARS)
-	m_pixelProgramTime += timerPixelProgram.getElapsedTime();
-#endif
-
-	Vector4& color = fragmentVaryings[0];
-
-	color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-	color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-	color *= traktor::Scalar(255.0f);
-
-	uint32_t target = 
-		(uint32_t(color.x()) << 16) |
-		(uint32_t(color.y()) << 8) |
-		(uint32_t(color.z()));
-
-	//uint16_t iw = (uint16_t)(iz1 + (iz2 - iz1) * t);
-	//if (/*!depthEnable || */iw <= rs.depthTarget[offset])
-	{
-		rs.colorTarget[offset] = target;
-		//if (depthWriteEnable)
-		//	rs.depthTarget[offset] = iw;
-	}
+//	RenderState& rs = m_renderStateStack.back();
+//
+//	Processor::image_t pixelProgram = m_currentProgram->getPixelProgram();
+//	const Vector4* parameters = m_currentProgram->getParameters();
+//	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
+//
+//	uint32_t offset = x + y * rs.targetPitch;
+//
+//	varying_data_t pixelVaryings;
+//	varying_data_t fragmentVaryings;
+//
+//	for (size_t i = 0; i < sizeof(varying_data_t) / sizeof(Vector4); ++i)
+//		pixelVaryings[i] = context.interpolatorVaryings[0][i] + (context.interpolatorVaryings[1][i] - context.interpolatorVaryings[0][i]) * traktor::Scalar(d);
+//
+//	m_processor->execute(
+//		pixelProgram,
+//		parameters,
+//		pixelVaryings,
+//		samplers,
+//		fragmentVaryings
+//	);
+//
+//	Vector4& color = fragmentVaryings[0];
+//
+//	color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+//	color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+//	color *= traktor::Scalar(255.0f);
+//
+//	uint32_t target = 
+//		(uint32_t(color.x()) << 16) |
+//		(uint32_t(color.y()) << 8) |
+//		(uint32_t(color.z()));
+//
+//	//uint16_t iw = (uint16_t)(iz1 + (iz2 - iz1) * t);
+//	//if (/*!depthEnable || */iw <= rs.depthTarget[offset])
+//	{
+//		rs.colorTarget[offset] = target;
+//		//if (depthWriteEnable)
+//		//	rs.depthTarget[offset] = iw;
+//	}
 }
 
 void RenderViewSw::triangleShade(const FragmentContext& context, int x1, int x2, int y)
@@ -788,7 +793,9 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	const Vector4* parameters = m_currentProgram->getParameters();
 	const Ref< AbstractSampler >* samplers = m_currentProgram->getSamplers();
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
-	uint32_t offset = x1 + y * rs.targetPitch;
+
+	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
+	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint16_t);
 
 	// Calculate barycentric coordinates.
 	const Vector2* T = context.triangle;
@@ -826,14 +833,15 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 		surfaceInterpolators[1][i] = (surfaceInterpolators[1][i] - surfaceInterpolators[0][i]) * ix;
 	}
 
-	uint32_t fragmentColor = 0;
+	uint16_t fragmentColor = 0;
 
-	for (int x = 0; x < x2 - x1; ++x, ++offset)
+	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
 		traktor::Scalar t = traktor::Scalar(x) * ix;
 		traktor::Scalar iw = iw1 + (iw2 - iw1) * traktor::Scalar(t);
+		uint16_t fragmentDepth = toDepth(iw);
 
-		if (!context.depthEnable || iw > rs.depthTarget[offset])
+		if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
 		{
 			for (uint32_t i = 6; i < 6 + icount; ++i)
 			{
@@ -860,18 +868,13 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 				Vector4& color = fragmentVaryings[0];
 				color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
 				color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-				color *= traktor::Scalar(255.0f);
-
-				fragmentColor = 
-					(uint32_t(color.x()) << 16) |
-					(uint32_t(color.y()) << 8) |
-					(uint32_t(color.z()));
+				fragmentColor = to565(color);
 			}
 
-			rs.colorTarget[offset] = fragmentColor;
+			rs.colorTarget[colorTargetOffset] = fragmentColor;
 
 			if (context.depthWriteEnable)
-				rs.depthTarget[offset] = iw;
+				rs.depthTarget[depthTargetOffset] = fragmentDepth;
 		}
 	}
 }
@@ -937,11 +940,6 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 //			}
 //
 //		// Execute pixel program.
-//#if defined(T_RENDER_PERFORMANCE_BARS)
-//			Timer timerPixelProgram;
-//			timerPixelProgram.start();
-//#endif
-//
 //			m_processor->execute(
 //				pixelProgram,
 //				parameters,
@@ -949,10 +947,6 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 //				samplers,
 //				fragmentVaryings
 //			);
-//
-//#if defined(T_RENDER_PERFORMANCE_BARS)
-//			m_pixelProgramTime += timerPixelProgram.getElapsedTime();
-//#endif
 //
 //			// Write color to current target.
 //			Vector4& color = fragmentVaryings[0];

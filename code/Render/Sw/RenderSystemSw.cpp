@@ -181,7 +181,7 @@ IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, co
 	graphicsDesc.displayMode.width = displayMode->getWidth();
 	graphicsDesc.displayMode.height = displayMode->getHeight();
 	graphicsDesc.displayMode.bits = displayMode->getColorBits();
-	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
+	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
 
 	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
@@ -198,8 +198,8 @@ IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderVi
 	graphicsDesc.fullScreen = false;
 	graphicsDesc.displayMode.width = 16;
 	graphicsDesc.displayMode.height = 16;
-	graphicsDesc.displayMode.bits = 32;
-	graphicsDesc.pixelFormat = graphics::PfeA8R8G8B8;
+	graphicsDesc.displayMode.bits = 16;
+	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
