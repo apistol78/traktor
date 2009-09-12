@@ -215,13 +215,20 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
 #endif
 
+	DWORD dwCreationFlags;
+#if !defined(WINCE)
+	dwCreationFlags = mute ? CREATE_NO_WINDOW : CREATE_NEW_CONSOLE;
+#else
+	dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
+#endif
+
 	BOOL result = CreateProcess(
 		NULL,
 		cmd,
 		NULL,
 		NULL,
 		TRUE,
-		mute ? CREATE_NO_WINDOW : CREATE_NEW_CONSOLE,
+		dwCreationFlags,
 		NULL,
 		(cwd[0] != L'\0' ? cwd : NULL),
 		&si,

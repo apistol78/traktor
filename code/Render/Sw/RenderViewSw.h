@@ -77,10 +77,12 @@ private:
 	struct RenderState
 	{
 		Viewport viewPort;
-		uint32_t* colorTarget;
-		float* depthTarget;
-		uint32_t targetHeight;
-		uint32_t targetPitch;
+		uint32_t width;
+		uint32_t height;
+		uint16_t* colorTarget;
+		uint32_t colorTargetPitch;	//< Color target pitch in bytes.
+		uint16_t* depthTarget;
+		uint32_t depthTargetPitch;	//< Depth target pitch in bytes.
 	};
 
 	struct FragmentContext
@@ -119,7 +121,7 @@ private:
 	//@{
 	Ref< graphics::Surface > m_frameBufferSurface;
 	graphics::SurfaceDesc m_frameBufferSurfaceDesc;
-	AutoArrayPtr< float > m_depthBuffer;
+	AutoArrayPtr< uint16_t > m_depthBuffer;
 	//@}
 
 	std::list< RenderState > m_renderStateStack;
@@ -127,13 +129,7 @@ private:
 	Ref< IndexBufferSw > m_currentIndexBuffer;
 	Ref< ProgramSw > m_currentProgram;
 	Viewport m_viewPort;
-
-	/*! \name Profiling. */
-	//@{
-	mutable double m_primitiveTime;
-	mutable double m_vertexProgramTime;
-	mutable double m_pixelProgramTime;
-	//@}
+	int32_t m_dirty[4];
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 

@@ -32,6 +32,12 @@ int T_DLLCLASS getColorBits(PixelFormatEnum pixelFormat);
 
 int T_DLLCLASS getAlphaBits(PixelFormatEnum pixelFormat);
 
+uint32_t T_DLLCLASS getRedMask(PixelFormatEnum pixelFormat);
+
+uint32_t T_DLLCLASS getGreenMask(PixelFormatEnum pixelFormat);
+
+uint32_t T_DLLCLASS getBlueMask(PixelFormatEnum pixelFormat);
+
 bool T_DLLCLASS hasAlpha(PixelFormatEnum pixelFormat);
 
 void T_DLLCLASS convertPixel(
