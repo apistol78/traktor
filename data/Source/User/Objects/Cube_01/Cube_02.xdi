@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.mesh.MeshAsset" version="1">
+	<fileName>$(TRAKTOR_HOME)\data\Assets\User\Objects\Cube_01\Cube_01.lwo</fileName>
+	<meshType>MtInstance</meshType>
+	<materialShaders/>
+</object>
