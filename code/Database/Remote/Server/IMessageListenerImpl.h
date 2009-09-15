@@ -3,7 +3,9 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/GcNew.h"
 #include "Database/Remote/Server/IMessageListener.h"
+#include "Database/Remote/IMessage.h"
 
 namespace traktor
 {
@@ -19,7 +21,7 @@ class IMessageListenerImpl : public IMessageListener
 public:
 	virtual bool notify(const IMessage* message)
 	{
-		std::map< const Type*, Ref< IMethod > >::iterator i = m_listenerMethods.find(&type_of(message));
+		typename std::map< const Type*, Ref< IMethod > >::iterator i = m_listenerMethods.find(&type_of(message));
 		return i != m_listenerMethods.end() ? i->second->invoke(reinterpret_cast< MessageListenerType* >(this), message) : false;
 	}
 

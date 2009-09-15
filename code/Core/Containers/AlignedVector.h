@@ -100,10 +100,14 @@ public:
 			return const_iterator(m_ptr++);
 		}
 
-		const_iterator& operator -- ()
+		const_iterator operator -- ()
 		{
-			--m_ptr;
-			return *this;
+			return const_iterator(--m_ptr);
+		}
+
+		const_iterator operator -- (int)
+		{
+			return const_iterator(m_ptr--);
 		}
 
 		bool operator == (const const_iterator& r) const
@@ -124,6 +128,11 @@ public:
 		difference_type operator - (const const_iterator& r) const
 		{
 			return difference_type(m_ptr - r.m_ptr);
+		}
+
+		const pointer _const_ptr() const
+		{
+			return m_ptr;
 		}
 
 	protected:
@@ -176,10 +185,14 @@ public:
 			return iterator(_O::m_ptr++);
 		}
 
-		iterator& operator -- ()
+		iterator operator -- ()
 		{
-			--_O::m_ptr;
-			return *this;
+			return iterator(--_O::m_ptr);
+		}
+
+		iterator operator -- (int)
+		{
+			return iterator(_O::m_ptr--);
 		}
 
 		bool operator == (const iterator& r) const
@@ -199,7 +212,7 @@ public:
 
 		difference_type operator - (const const_iterator& r) const
 		{
-			return difference_type(_O::m_ptr - r.m_ptr);
+			return difference_type(_O::m_ptr - r._const_ptr());
 		}
 
 	protected:
