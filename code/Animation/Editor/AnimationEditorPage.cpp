@@ -299,9 +299,15 @@ void AnimationEditorPage::deactivate()
 
 bool AnimationEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	m_animationInstance = instance;
 	m_animation = checked_type_cast< Animation* >(data);
 	updateSequencer();
 	return true;
+}
+
+db::Instance* AnimationEditorPage::getDataInstance()
+{
+	return m_animationInstance;
 }
 
 Object* AnimationEditorPage::getDataObject()

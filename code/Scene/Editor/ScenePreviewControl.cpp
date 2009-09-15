@@ -3,6 +3,7 @@
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
 #include "Scene/Editor/Modifiers/RotateModifier.h"
@@ -116,10 +117,10 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), ui::Command(L"Scene.Editor.DoubleView"), 14));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_QUADRUPLE_VIEW"), ui::Command(L"Scene.Editor.QuadrupleView"), 15));
 
-	// Let profiles create additional toolbar items.
-	const RefArray< ISceneEditorProfile >& profiles = context->getEditorProfiles();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
-		(*i)->createToolBarItems(m_toolBarActions);
+	// Let plugins create additional toolbar items.
+	const RefArray< ISceneEditorPlugin >& editorPlugins = context->getEditorPlugins();
+	for (RefArray< ISceneEditorPlugin >::const_iterator i = editorPlugins.begin(); i != editorPlugins.end(); ++i)
+		(*i)->create(this, m_toolBarActions);
 
 	m_modifierTranslate = gc_new< TranslateModifier >();
 	m_modifierRotate = gc_new< RotateModifier >();
@@ -233,6 +234,15 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	else
 	{
 		result = false;
+
+		// Propagate command to plug-ins.
+		const RefArray< ISceneEditorPlugin >& editorPlugins = m_context->getEditorPlugins();
+		for (RefArray< ISceneEditorPlugin >::const_iterator i = editorPlugins.begin(); i != editorPlugins.end(); ++i)
+		{
+			result = (*i)->handleCommand(command);
+			if (result)
+				break;
+		}
 
 		// Propagate command to active render control.
 		for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)

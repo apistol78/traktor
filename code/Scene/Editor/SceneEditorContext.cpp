@@ -118,6 +118,16 @@ void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
 	m_editorProfiles.push_back(editorProfile);
 }
 
+void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
+{
+	m_editorPlugins.push_back(editorPlugin);
+}
+
+void SceneEditorContext::setInstance(db::Instance* instance)
+{
+	m_instance = instance;
+}
+
 void SceneEditorContext::setModifier(IModifier* modifier)
 {
 	m_modifier = modifier;

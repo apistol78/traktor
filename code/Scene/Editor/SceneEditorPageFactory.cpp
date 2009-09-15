@@ -2,6 +2,7 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/SceneAsset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
@@ -73,7 +74,7 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		physicsManager
 	);
 
-	// Create profiles, resource factories and entity editors.
+	// Create profiles, plugins, resource factories and entity editors.
 	std::vector< const Type* > profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
 	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
@@ -82,12 +83,18 @@ editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* e
 		if (!profile)
 			continue;
 
+		context->addEditorProfile(profile);
+
+		RefArray< ISceneEditorPlugin > editorPlugins;
+		profile->createEditorPlugins(context, editorPlugins);
+		for (RefArray< ISceneEditorPlugin >::iterator j = editorPlugins.begin(); j != editorPlugins.end(); ++j)
+			context->addEditorPlugin(*j);
+
 		RefArray< resource::IResourceFactory > resourceFactories;
 		profile->createResourceFactories(context, resourceFactories);
 		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
 			resourceManager->addFactory(*j);
 
-		context->addEditorProfile(profile);
 	}
 
 	// Create editor page.

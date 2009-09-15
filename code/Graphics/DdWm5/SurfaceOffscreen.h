@@ -6,7 +6,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_GRAPHICS_GAPI_EXPORT)
+#if defined(T_GRAPHICS_DDWM5_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT

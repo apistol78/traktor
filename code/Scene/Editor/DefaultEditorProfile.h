@@ -18,8 +18,9 @@ public:
 		std::list< ui::Command >& outCommands
 	) const;
 
-	virtual void createToolBarItems(
-		ui::custom::ToolBar* toolBar
+	virtual void createEditorPlugins(
+		SceneEditorContext* context,
+		RefArray< ISceneEditorPlugin >& outEditorPlugins
 	) const;
 
 	virtual void createResourceFactories(

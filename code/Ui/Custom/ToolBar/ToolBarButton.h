@@ -54,7 +54,7 @@ protected:
 
 	virtual Size getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const;
 
-	virtual void paint(ToolBar* toolBar, Canvas& canvas, const ui::Point& at, ui::Bitmap* images, int imageWidth, int imageHeight);
+	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight);
 
 	virtual void mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent);
 

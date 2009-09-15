@@ -66,6 +66,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
+	virtual db::Instance* getDataInstance();
+
 	virtual Object* getDataObject();
 
 	virtual void propertiesChanged();
@@ -79,6 +81,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
+	Ref< db::Instance > m_effectInstance;
 	Ref< Effect > m_effect;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;

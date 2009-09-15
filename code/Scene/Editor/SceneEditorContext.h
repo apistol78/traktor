@@ -26,6 +26,7 @@ class IEditor;
 	{
 
 class Database;
+class Instance;
 
 	}
 
@@ -65,6 +66,7 @@ class Entity;
 	{
 
 class ISceneEditorProfile;
+class ISceneEditorPlugin;
 class IModifier;
 class EntityAdapter;
 class Scene;
@@ -105,7 +107,11 @@ public:
 	);
 
 	void addEditorProfile(ISceneEditorProfile* editorProfile);
-	
+
+	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
+
+	void setInstance(db::Instance* instance);
+
 	/*! \name State management. */
 	//@{
 
@@ -198,6 +204,8 @@ public:
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
 
+	db::Instance* getInstance() { return m_instance; }
+
 	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
 
 	render::IRenderSystem* getRenderSystem() { return m_renderSystem; }
@@ -205,6 +213,8 @@ public:
 	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
 
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
+
+	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
 
 	Ref< SceneAsset >& getSceneAsset() { return m_sceneAsset; }
 
@@ -256,7 +266,9 @@ private:
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::ITexture > m_debugTexture;
 	Ref< physics::PhysicsManager > m_physicsManager;
+	Ref< db::Instance > m_instance;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
+	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;

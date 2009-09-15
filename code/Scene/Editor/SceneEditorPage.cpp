@@ -190,6 +190,10 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 		makeFunctor< ScenePreviewControl, bool >(m_editControl, &ScenePreviewControl::setVisible, true)
 	);
 
+	m_dataInstance = instance;
+
+	m_context->setInstance(instance);
+
 	Ref< SceneAsset > sceneAsset = dynamic_type_cast< SceneAsset* >(data);
 	if (sceneAsset)
 	{
@@ -220,6 +224,11 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 	updatePropertyObject();
 
 	return true;
+}
+
+db::Instance* SceneEditorPage::getDataInstance()
+{
+	return m_dataInstance;
 }
 
 Object* SceneEditorPage::getDataObject()
@@ -446,11 +455,11 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = updateCameraLook();
 	else
 	{
+		result = false;
+
 		// Propagate command to controller editor.
-		if (m_controllerEditor)
+		if (!result && m_controllerEditor)
 			result = m_controllerEditor->handleCommand(command);
-		else
-			result = false;
 
 		// Propagate command to editor control.
 		if (!result)

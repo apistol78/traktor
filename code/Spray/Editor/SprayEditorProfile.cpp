@@ -20,8 +20,9 @@ void SprayEditorProfile::getCommands(
 {
 }
 
-void SprayEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void SprayEditorProfile::createEditorPlugins(
+	scene::SceneEditorContext* context,
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }

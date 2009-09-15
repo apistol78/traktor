@@ -88,6 +88,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
+	virtual db::Instance* getDataInstance();
+
 	virtual Object* getDataObject();
 
 	virtual void propertiesChanged();
@@ -101,6 +103,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
+	Ref< db::Instance > m_animationInstance;
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];

@@ -124,6 +124,7 @@ void EffectEditorPage::deactivate()
 
 bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	m_effectInstance = instance;
 	m_effect = dynamic_type_cast< Effect* >(data);
 	if (!m_effect)
 		return false;
@@ -133,6 +134,11 @@ bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	updateSequencer();
 	return true;
+}
+
+db::Instance* EffectEditorPage::getDataInstance()
+{
+	return m_effectInstance;
 }
 
 Object* EffectEditorPage::getDataObject()

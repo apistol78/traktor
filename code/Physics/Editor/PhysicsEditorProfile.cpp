@@ -23,8 +23,9 @@ void PhysicsEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Physics.ToggleMeshTriangles"));
 }
 
-void PhysicsEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void PhysicsEditorProfile::createEditorPlugins(
+	scene::SceneEditorContext* context,
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }

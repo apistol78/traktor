@@ -56,6 +56,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
+	virtual db::Instance* getDataInstance();
+
 	virtual Object* getDataObject();
 
 	virtual void propertiesChanged();
@@ -69,6 +71,7 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::custom::GridView > m_gridDictionary;
+	Ref< db::Instance > m_dictionaryInstance;
 	Ref< Dictionary > m_dictionary;
 
 	void eventGridDoubleClick(ui::Event* event);

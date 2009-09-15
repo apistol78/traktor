@@ -20,8 +20,9 @@ void TheaterEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Theater.GotoNextKey"));
 }
 
-void TheaterEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void TheaterEditorProfile::createEditorPlugins(
+	scene::SceneEditorContext* context,
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }

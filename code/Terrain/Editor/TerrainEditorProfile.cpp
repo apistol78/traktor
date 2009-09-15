@@ -25,8 +25,9 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
 }
 
-void TerrainEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void TerrainEditorProfile::createEditorPlugins(
+	scene::SceneEditorContext* context,
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }
