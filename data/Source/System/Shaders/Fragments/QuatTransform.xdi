@@ -12,8 +12,8 @@
 		<item type="traktor.render.InputPort">
 			<comment>As quaternion</comment>
 			<position>
-				<first>-19</first>
-				<second>443</second>
+				<first>13</first>
+				<second>419</second>
 			</position>
 			<name>Rotation</name>
 		</item>
@@ -28,8 +28,8 @@
 		<item type="traktor.render.External">
 			<comment></comment>
 			<position>
-				<first>107</first>
-				<second>370</second>
+				<first>247</first>
+				<second>427</second>
 			</position>
 			<fragmentGuid>{3894D81A-6A40-494C-961B-C0B28F38CCA1}</fragmentGuid>
 			<inputPins>
@@ -70,8 +70,8 @@
 		<item type="traktor.render.External">
 			<comment></comment>
 			<position>
-				<first>314</first>
-				<second>343</second>
+				<first>309</first>
+				<second>309</second>
 			</position>
 			<fragmentGuid>{3920BAE9-35F9-084B-ABA0-3AFA8A74AACA}</fragmentGuid>
 			<inputPins>
@@ -160,26 +160,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Output</name>
 			</source>
@@ -216,6 +196,26 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>
