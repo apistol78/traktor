@@ -57,6 +57,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data) = 0;
 
+	virtual db::Instance* getDataInstance() = 0;
+
 	virtual Object* getDataObject() = 0;
 
 	virtual void propertiesChanged() = 0;

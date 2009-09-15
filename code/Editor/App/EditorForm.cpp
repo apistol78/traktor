@@ -17,6 +17,8 @@
 #include "Editor/IEditorPage.h"
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IObjectEditor.h"
+#include "Editor/IEditorPluginFactory.h"
+#include "Editor/IEditorPlugin.h"
 #include "Editor/IEditorTool.h"
 #include "Editor/PipelineManager.h"
 #include "Editor/PipelineHash.h"
@@ -48,7 +50,6 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
-#include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Xtrme/WidgetXtrme.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
@@ -230,31 +231,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
 	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), ui::Command(L"Editor.CancelBuild"), 10));
-
-	// Add external tools.
-	{
-		Ref< PropertyGroup > externalToolsGroup = dynamic_type_cast< PropertyGroup* >(m_settings->getProperty(L"Editor.ExternalTools"));
-		if (externalToolsGroup)
-		{
-			m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-
-			const std::map< std::wstring, Ref< PropertyValue > >& values = PropertyGroup::get(externalToolsGroup);
-			for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = values.begin(); i != values.end(); ++i)
-			{
-				Ref< PropertyGroup > externalToolGroup = dynamic_type_cast< PropertyGroup* >(i->second);
-				T_ASSERT_M(externalToolGroup, L"Malformed setting; must be a property group");
-
-				Ref< ui::custom::ToolBarButton > toolButton = gc_new< ui::custom::ToolBarButton >(
-					i18n::Text(i->first),
-					ui::Command(L"Editor.ExternalTool", externalToolGroup),
-					11,
-					ui::custom::ToolBarButton::BsIcon | ui::custom::ToolBarButton::BsText
-				);
-				m_toolBar->addItem(toolButton);
-			}
-		}
-	}
-
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
@@ -346,7 +322,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create editor page factories.
 	std::vector< const Type* > editorPageFactoryTypes;
-	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes);
+	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
 	if (!editorPageFactoryTypes.empty())
 	{
 		for (std::vector< const Type* >::iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
@@ -359,7 +335,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create object editor factories.
 	std::vector< const Type* > objectEditorFactoryTypes;
-	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes);
+	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes, false);
 	if (!objectEditorFactoryTypes.empty())
 	{
 		for (std::vector< const Type* >::iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
@@ -368,6 +344,27 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			if (objectEditorFactory)
 				m_objectEditorFactories.push_back(objectEditorFactory);
 		}
+	}
+
+	// Create editor plugin factories.
+	std::vector< const Type* > editorPluginFactoryTypes;
+	type_of< IEditorPluginFactory >().findAllOf(editorPluginFactoryTypes, false);
+	if (!editorPluginFactoryTypes.empty())
+	{
+		for (std::vector< const Type* >::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
+		{
+			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >((*i)->newInstance());
+			if (editorPluginFactory)
+				m_editorPluginFactories.push_back(editorPluginFactory);
+		}
+	}
+
+	// Create editor plugins.
+	for (RefArray< IEditorPluginFactory >::iterator i = m_editorPluginFactories.begin(); i != m_editorPluginFactories.end(); ++i)
+	{
+		Ref< IEditorPlugin > editorPlugin = (*i)->createEditorPlugin(this);
+		if (editorPlugin && editorPlugin->create(this, m_toolBar))
+			m_editorPlugins.push_back(editorPlugin);
 	}
 
 	// Load tools and populate tool menu.
@@ -423,9 +420,16 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
-		std::list< ui::Command > editorShortcutCommands;
-		(*i)->getCommands(editorShortcutCommands);
-		m_shortcutCommands.insert(m_shortcutCommands.end(), editorShortcutCommands.begin(), editorShortcutCommands.end());
+		std::list< ui::Command > editorPageCommands;
+		(*i)->getCommands(editorPageCommands);
+		m_shortcutCommands.insert(m_shortcutCommands.end(), editorPageCommands.begin(), editorPageCommands.end());
+	}
+
+	for (RefArray< IEditorPluginFactory >::iterator i = m_editorPluginFactories.begin(); i != m_editorPluginFactories.end(); ++i)
+	{
+		std::list< ui::Command > editorPluginCommands;
+		(*i)->getCommands(editorPluginCommands);
+		m_shortcutCommands.insert(m_shortcutCommands.end(), editorPluginCommands.begin(), editorPluginCommands.end());
 	}
 
 	// Build shortcut accelerator table.
@@ -504,6 +508,11 @@ void EditorForm::destroy()
 
 	// Close opened project.
 	closeProject();
+
+	// Destroy all plugins.
+	for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+		(*i)->destroy();
+	m_editorPlugins.resize(0);
 
 	// Destroy shortcut table.
 	m_shortcutTable->destroy();
@@ -1086,6 +1095,10 @@ void EditorForm::openProject(const Path& path)
 		m_projectPath = path;
 		m_project = project;
 
+		// Notify plugins about new project opened.
+		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+			(*i)->handleEditorEvent(IEditorPlugin::EeProjectOpened);
+
 		m_mru->usedFile(path);
 	}
 
@@ -1132,6 +1145,10 @@ bool EditorForm::closeProject()
 		m_project->close();
 		m_project = 0;
 		m_projectPath = L"";
+
+		// Notify plugins about project closed.
+		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+			(*i)->handleEditorEvent(IEditorPlugin::EeProjectClosed);
 	}
 
 	updateProjectViews();
@@ -1653,43 +1670,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.Exit")
 		ui::Application::getInstance().exit(0);
-	else if (command == L"Editor.ExternalTool")
-	{
-		Ref< const PropertyGroup > externalToolGroup = checked_type_cast< const PropertyGroup*, false >(command.getData());
-		
-		std::wstring command = externalToolGroup->getProperty< PropertyString >(L"Command");
-		std::wstring arguments = externalToolGroup->getProperty< PropertyString >(L"Arguments");
-		std::wstring directory = externalToolGroup->getProperty< PropertyString >(L"Directory");
-		std::wstring message = externalToolGroup->getProperty< PropertyString >(L"Message");
-		bool mute = externalToolGroup->getProperty< PropertyBoolean >(L"Mute", true);
-
-		// @hack
-		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-		if (tabPage)
-		{
-			Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
-			if (instance)
-				arguments = replaceAll< std::wstring >(arguments, L"$(ACTIVE_INSTANCE_PATH)", instance->getPath());
-		}
-		
-		Ref< Process > process = OS::getInstance().execute(command, arguments, directory, mute);
-		if (process)
-		{
-			ui::custom::BackgroundWorkerDialog dialogWaitProcess;
-			dialogWaitProcess.create(this, i18n::Text(L"EXECUTE_TOOL_TITLE"), message);
-			dialogWaitProcess.execute(process, 0);
-			dialogWaitProcess.destroy();
-		}
-		else
-		{
-			ui::MessageBox::show(
-				this,
-				i18n::Text(L"ERROR_MESSAGE_UNABLE_TO_START_EXTERNAL_TOOL"),
-				i18n::Text(L"ERROR_TITLE_UNABLE_TO_START_EXTERNAL_TOOL"),
-				ui::MbIconError | ui::MbOk
-			);
-		}
-	}
 	else if ((command.getFlags() & ui::Command::CfId) == ui::Command::CfId)
 	{
 		Ref< IEditorTool > tool = m_editorTools[command.getId()];
@@ -1702,30 +1682,43 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else
 	{
-		bool activeEditorFocus = false;
+		result = false;
 
-		Ref< ui::TabPage > tabPage = m_tab->getActivePage();
-		if (tabPage && tabPage->containFocus())
-			activeEditorFocus = true;
-
-		if (!activeEditorFocus && m_activeEditorPageSite)
+		// Propagate command to plugins.
+		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
 		{
-			const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
-			for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
-			{
-				if (i->first && i->first->containFocus())
-				{
-					activeEditorFocus = true;
-					break;
-				}
-			}
+			result = (*i)->handleCommand(command);
+			if (result)
+				break;
 		}
 
-		result = false;
-		if (activeEditorFocus)		
+		// Propagate command to active editor; if it contains focus.
+		if (!result)
 		{
-			if (m_activeEditorPage)
-				result = m_activeEditorPage->handleCommand(command);
+			bool activeEditorFocus = false;
+
+			Ref< ui::TabPage > tabPage = m_tab->getActivePage();
+			if (tabPage && tabPage->containFocus())
+				activeEditorFocus = true;
+
+			if (!activeEditorFocus && m_activeEditorPageSite)
+			{
+				const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
+				for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
+				{
+					if (i->first && i->first->containFocus())
+					{
+						activeEditorFocus = true;
+						break;
+					}
+				}
+			}
+
+			if (activeEditorFocus)		
+			{
+				if (m_activeEditorPage)
+					result = m_activeEditorPage->handleCommand(command);
+			}
 		}
 	}
 
@@ -1988,6 +1981,13 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 				for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
 					editorPage->handleDatabaseEvent(*j);
 			}
+		}
+
+		// Propagate database event to editor plugins.
+		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+		{
+			for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
+				(*i)->handleDatabaseEvent(*j);
 		}
 
 		log::debug << L"Database change(s) notified" << Endl;

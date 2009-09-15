@@ -44,8 +44,9 @@ void DefaultEditorProfile::getCommands(
 {
 }
 
-void DefaultEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void DefaultEditorProfile::createEditorPlugins(
+	SceneEditorContext* context,
+	RefArray< ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }

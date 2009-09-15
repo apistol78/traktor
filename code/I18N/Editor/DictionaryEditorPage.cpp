@@ -46,6 +46,8 @@ void DictionaryEditorPage::deactivate()
 
 bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	m_dictionaryInstance = instance;
+
 	if (!(m_dictionary = dynamic_type_cast< Dictionary* >(data)))
 		return false;
 
@@ -60,6 +62,11 @@ bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_gridDictionary->update();
 
 	return true;
+}
+
+db::Instance* DictionaryEditorPage::getDataInstance()
+{
+	return m_dictionaryInstance;
 }
 
 Object* DictionaryEditorPage::getDataObject()

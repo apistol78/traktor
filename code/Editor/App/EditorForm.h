@@ -56,6 +56,8 @@ class IEditorPageFactory;
 class IEditorPage;
 class IObjectEditorFactory;
 class IObjectEditor;
+class IEditorPluginFactory;
+class IEditorPlugin;
 class IEditorTool;
 class EditorPageSite;
 class PipelineHash;
@@ -109,6 +111,8 @@ private:
 
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
+	RefArray< IEditorPluginFactory > m_editorPluginFactories;
+	RefArray< IEditorPlugin > m_editorPlugins;
 	RefArray< IEditorTool > m_editorTools;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;

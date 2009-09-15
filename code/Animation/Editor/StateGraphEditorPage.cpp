@@ -94,8 +94,9 @@ void StateGraphEditorPage::deactivate()
 {
 }
 
-bool StateGraphEditorPage::setDataObject(db::Instance* /*instance*/, Object* data)
+bool StateGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	m_stateGraphInstance = instance;
 	m_stateGraph = dynamic_type_cast< StateGraph* >(data);
 	if (!m_stateGraph)
 		return false;
@@ -115,6 +116,11 @@ bool StateGraphEditorPage::setDataObject(db::Instance* /*instance*/, Object* dat
 	m_site->setPropertyObject(0);
 
 	return true;
+}
+
+db::Instance* StateGraphEditorPage::getDataInstance()
+{
+	return m_stateGraphInstance;
 }
 
 Object* StateGraphEditorPage::getDataObject()

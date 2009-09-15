@@ -3012,13 +3012,14 @@
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3026,13 +3027,14 @@
 				</item>
 				<item type="Configuration">
 					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
+						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -3075,6 +3077,15 @@
 					<items/>
 				</item>
 				<item type="Filter">
+					<name>Client</name>
+					<items>
+						<item type="File">
+							<fileName>Client/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
 					<name>Messages</name>
 					<items>
 						<item type="File">
@@ -3088,89 +3099,8 @@
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Database.Remote.Client</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Client</sourcePath>
-			<configurations>
-				<item type="Configuration">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_REMOTE_CLIENT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-				<item type="Configuration">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[11]/dependencies/item/project"/>
-				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[13]"/>
-				</item>
-				<item type="ProjectDependency">
-					<project ref="/object/projects/item[16]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project type="Project" version="1">
@@ -3527,7 +3457,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item[2]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project type="Project" version="1">
@@ -3774,11 +3704,11 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[19]"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[18]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.I18N</name>
@@ -4015,7 +3945,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[24]"/>
+					<project ref="/object/projects/item[23]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4117,7 +4047,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[11]/dependencies/item[4]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -4402,13 +4332,13 @@
 					<project ref="/object/projects/item[11]/dependencies/item[2]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[19]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[9]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[21]"/>
+					<project ref="/object/projects/item[20]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4659,7 +4589,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[36]"/>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[7]"/>
@@ -4887,7 +4817,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[38]"/>
+					<project ref="/object/projects/item[37]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5163,7 +5093,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[35]"/>
+					<project ref="/object/projects/item[34]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5283,7 +5213,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5562,7 +5492,7 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[43]"/>
+					<project ref="/object/projects/item[42]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project type="Project" version="1">
@@ -5659,13 +5589,13 @@
 								<project ref="/object/projects/item[11]/dependencies/item/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[43]"/>
+								<project ref="/object/projects/item[42]"/>
 							</item>
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item[11]/dependencies/item[2]/project/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency">
-								<project ref="/object/projects/item[18]"/>
+								<project ref="/object/projects/item[17]"/>
 							</item>
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item[13]/dependencies/item[1]/project"/>
@@ -5674,7 +5604,7 @@
 					</project>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -6055,17 +5985,17 @@
 					<project ref="/object/projects/item[11]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[18]"/>
+					<project ref="/object/projects/item[17]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[43]"/>
+					<project ref="/object/projects/item[42]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[44]/dependencies/item[2]/project"/>
+					<project ref="/object/projects/item[43]/dependencies/item[2]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[44]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[43]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Weather</name>
@@ -6259,7 +6189,10 @@
 					<project ref="/object/projects/item[11]/dependencies/item[2]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[33]"/>
+					<project ref="/object/projects/item[32]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[37]"/>
 				</item>
 			</dependencies>
 		</item>

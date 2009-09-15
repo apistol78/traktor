@@ -65,6 +65,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
+	virtual db::Instance* getDataInstance();
+
 	virtual Object* getDataObject();
 
 	virtual void propertiesChanged();
@@ -79,6 +81,7 @@ private:
 	editor::IEditor* m_editor;
 	Ref< editor::IEditorPageSite > m_site;
 	Ref< editor::UndoStack > m_undoStack;
+	Ref< db::Instance > m_shaderGraphInstance;
 	Ref< ShaderGraph > m_shaderGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;

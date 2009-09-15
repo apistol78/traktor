@@ -156,6 +156,7 @@ void SkeletonEditorPage::deactivate()
 
 bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	m_skeletonInstance = instance;
 	m_skeleton = checked_type_cast< Skeleton* >(data);
 	m_site->setPropertyObject(m_skeleton);
 
@@ -174,6 +175,11 @@ bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	createSkeletonTreeNodes();
 	return true;
+}
+
+db::Instance* SkeletonEditorPage::getDataInstance()
+{
+	return m_skeletonInstance;
 }
 
 Object* SkeletonEditorPage::getDataObject()

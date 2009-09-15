@@ -76,6 +76,8 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
+	virtual db::Instance* getDataInstance();
+
 	virtual Object* getDataObject();
 
 	virtual void propertiesChanged();
@@ -89,6 +91,7 @@ public:
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< editor::IEditorPageSite > m_site;
+	Ref< db::Instance > m_dataInstance;
 	Ref< Serializable > m_dataObject;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;

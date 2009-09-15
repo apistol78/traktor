@@ -228,6 +228,11 @@ bool ShaderGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
+db::Instance* ShaderGraphEditorPage::getDataInstance()
+{
+	return m_shaderGraphInstance;
+}
+
 Object* ShaderGraphEditorPage::getDataObject()
 {
 	return m_shaderGraph;

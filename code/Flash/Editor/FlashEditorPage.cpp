@@ -89,7 +89,9 @@ void FlashEditorPage::deactivate()
 
 bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
-	FlashMovieAsset* asset = checked_type_cast< FlashMovieAsset* >(data);
+	m_movieInstance = instance;
+
+	Ref< FlashMovieAsset > asset = checked_type_cast< FlashMovieAsset* >(data);
 
 	Ref< Stream > stream = FileSystem::getInstance().open(asset->getFileName(), File::FmRead);
 	if (!stream)
@@ -120,6 +122,11 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_previewContainer->update();
 
 	return true;
+}
+
+db::Instance* FlashEditorPage::getDataInstance()
+{
+	return m_movieInstance;
 }
 
 Object* FlashEditorPage::getDataObject()

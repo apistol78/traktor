@@ -26,8 +26,9 @@ void AnimationEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Animation.Editor.InsertKey"));
 }
 
-void AnimationEditorProfile::createToolBarItems(
-	ui::custom::ToolBar* toolBar
+void AnimationEditorProfile::createEditorPlugins(
+	scene::SceneEditorContext* context,
+	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
 }

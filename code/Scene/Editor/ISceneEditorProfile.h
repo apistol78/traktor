@@ -20,12 +20,6 @@ namespace traktor
 
 class Command;
 
-		namespace custom
-		{
-
-class ToolBar;
-
-		}
 	}
 
 	namespace render
@@ -56,6 +50,7 @@ class IEntityRenderer;
 	{
 
 class SceneEditorContext;
+class ISceneEditorPlugin;
 class ISceneControllerEditorFactory;
 class IEntityEditorFactory;
 
@@ -79,12 +74,14 @@ public:
 		std::list< ui::Command >& outCommands
 	) const = 0;
 
-	/*! \brief Create custom toolbar items.
+	/*! \brief Create plugins.
 	 *
-	 * \param toolBar ToolBar widget.
+	 * \param context Scene editor context.
+	 * \param outEditorPlugins Editor plugins.
 	 */
-	virtual void createToolBarItems(
-		ui::custom::ToolBar* toolBar
+	virtual void createEditorPlugins(
+		SceneEditorContext* context,
+		RefArray< ISceneEditorPlugin >& outEditorPlugins
 	) const = 0;
 
 	/*! \brief Create resource factories.

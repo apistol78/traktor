@@ -87,8 +87,9 @@ bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 	if (!(m_hWnd = (HWND)createDesc.windowHandle))
 		return false;
 
-	if (!createDesc.fullScreen)
-		return false;
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+	ShowWindow(m_hWnd, SW_MAXIMIZE);
+	UpdateWindow(m_hWnd);
 
 	hr = m_dd->SetCooperativeLevel(m_hWnd, DDSCL_FULLSCREEN);
 	if (FAILED(hr))

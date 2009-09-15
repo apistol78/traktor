@@ -1,8 +1,10 @@
-#ifndef traktor_ui_custom_ToolBarEmbed_H
-#define traktor_ui_custom_ToolBarEmbed_H
+#ifndef traktor_ui_custom_ToolBarDropDown_H
+#define traktor_ui_custom_ToolBarDropDown_H
 
 #include "Core/Heap/Ref.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
+#include "Ui/Command.h"
+#include "Ui/Point.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,21 +18,34 @@ namespace traktor
 {
 	namespace ui
 	{
-
-class Widget;
-
 		namespace custom
 		{
 
-/*! \brief Tool bar embedded widget.
+/*! \brief Tool bar dropdown.
  * \ingroup UIC
  */
-class T_DLLCLASS ToolBarEmbed : public ToolBarItem
+class T_DLLCLASS ToolBarDropDown : public ToolBarItem
 {
-	T_RTTI_CLASS(ToolBarEmbed)
+	T_RTTI_CLASS(ToolBarDropDown)
 
 public:
-	ToolBarEmbed(Widget* widget, int width);
+	ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip);
+
+	int32_t add(const std::wstring& item);
+
+	bool remove(int32_t index);
+
+	void removeAll();
+
+	int32_t count() const;
+
+	std::wstring get(int32_t index) const;
+
+	void select(int32_t index);
+
+	int32_t getSelected() const;
+
+	std::wstring getSelectedItem() const;
 
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const;
@@ -48,12 +63,18 @@ protected:
 	virtual void buttonUp(ToolBar* toolBar, MouseEvent* mouseEvent);
 
 private:
-	Ref< Widget > m_widget;
-	int m_width;
+	Command m_command;
+	int32_t m_width;
+	std::wstring m_toolTip;
+	std::vector< std::wstring > m_items;
+	int32_t m_selected;
+	bool m_hover;
+	int32_t m_dropPosition;
+	Point m_menuPosition;
 };
 
 		}
 	}
 }
 
-#endif	// traktor_ui_custom_ToolBarEmbed_H
+#endif	// traktor_ui_custom_ToolBarDropDown_H
