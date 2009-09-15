@@ -811,6 +811,9 @@ bool SolutionBuilderMake::scanDependencies(
 				resolvedDependencies
 			))
 				continue;
+#else
+			if (!FileSystem::getInstance().exist(dependencyName))
+				continue;
 #endif
 
 			Path relativeDependencyName;
