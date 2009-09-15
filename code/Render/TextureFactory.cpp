@@ -98,7 +98,7 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 		desc.immutable = true;
 
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
-		AutoArrayPtr< uint8_t > buffer = new uint8_t [textureDataSize];
+		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 		uint32_t blockSize = getTextureBlockSize(desc.format);
 		uint32_t blockDenom = getTextureBlockDenom(desc.format);

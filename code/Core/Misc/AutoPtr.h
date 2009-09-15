@@ -13,12 +13,12 @@ namespace traktor
 		{
 		}
 
-		AutoPtr(Type* ptr_)
+		explicit AutoPtr(Type* ptr_)
 		:	m_ptr(ptr_)
 		{
 		}
 
-		AutoPtr(AutoPtr< Type >& lh)
+		explicit AutoPtr(AutoPtr< Type >& lh)
 		{
 			m_ptr = lh.m_ptr;
 			lh.m_ptr = 0;
@@ -75,12 +75,12 @@ namespace traktor
 		{
 		}
 
-		AutoArrayPtr(Type* ptr_)
+		explicit AutoArrayPtr(Type* ptr_)
 		:	m_ptr(ptr_)
 		{
 		}
 
-		AutoArrayPtr(AutoArrayPtr< Type >& lh)
+		explicit AutoArrayPtr(AutoArrayPtr< Type >& lh)
 		{
 			m_ptr = lh.m_ptr;
 			lh.m_ptr = 0;

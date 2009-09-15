@@ -71,7 +71,7 @@ render::ITexture* createHeightTexture(render::IRenderSystem* renderSystem, const
 	dim /= c_skipHeightTexture;
 	T_ASSERT (dim > 0);
 
-	AutoArrayPtr< half_t > data = new half_t [dim * dim];
+	AutoArrayPtr< half_t > data(new half_t [dim * dim]);
 	T_ASSERT (data.ptr());
 
 	Job jobs[] =
@@ -145,7 +145,7 @@ render::ITexture* createNormalTexture(render::IRenderSystem* renderSystem, const
 	dim /= c_skipNormalTexture;
 	T_ASSERT (dim > 0);
 
-	AutoArrayPtr< uint8_t > data = new uint8_t [dim * dim * 4];
+	AutoArrayPtr< uint8_t > data(new uint8_t [dim * dim * 4]);
 	T_ASSERT (data.ptr());
 
 	Job jobs[] =

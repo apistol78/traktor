@@ -71,7 +71,7 @@ public:
 		if (length <= 0)
 			return L"";
 
-		AutoArrayPtr< TCHAR > buffer = new TCHAR [length + 1];
+		AutoArrayPtr< TCHAR > buffer(new TCHAR [length + 1]);
 		GetWindowText(m_hWnd, buffer.ptr(), length + 1);
 
 		return tstows(buffer.ptr());
