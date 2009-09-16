@@ -28,9 +28,9 @@ bool LocalDatabase::create(const Path& manifestPath)
 
 	Ref< LocalManifest > manifest = gc_new< LocalManifest >();
 
-	manifest->setRootGroupPath(rootGroupPath);
+	manifest->setRootGroupPath(L"");
 	manifest->setEventMonitorEnable(true);
-	manifest->setEventFile(rootGroupPath + L"/Events.xvs");
+	manifest->setEventFile(L"temp/Events.xvs");
 	manifest->setUseBinary(false);
 
 	Ref< Stream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmWrite);
@@ -56,7 +56,6 @@ bool LocalDatabase::create(const Path& manifestPath)
 		m_bus = gc_new< LocalBus >(manifest->getEventFile());
 
 	m_rootGroup = gc_new< LocalGroup >(m_context, rootGroupPath);
-
 	return true;
 }
 
@@ -79,11 +78,13 @@ bool LocalDatabase::open(const Path& manifestPath)
 		return false;
 	}
 
+	Path databasePath = FileSystem::getInstance().getAbsolutePath(manifestPath).getPathOnly();
+
 	m_context = gc_new< Context >(manifest->getUseBinary());
 
 	if (manifest->getEventMonitorEnable())
 	{
-		Path eventFile = manifest->getEventFile();
+		Path eventFile = FileSystem::getInstance().getAbsolutePath(databasePath, manifest->getEventFile());
 		if (!FileSystem::getInstance().makeAllDirectories(eventFile.getPathOnly()))
 		{
 			log::error << L"Unable to ensure event file directory exist" << Endl;
@@ -92,13 +93,14 @@ bool LocalDatabase::open(const Path& manifestPath)
 		m_bus = gc_new< LocalBus >(eventFile.getPathName());
 	}
 
-	if (!FileSystem::getInstance().makeAllDirectories(manifest->getRootGroupPath()))
+	Path rootPath = FileSystem::getInstance().getAbsolutePath(databasePath, manifest->getRootGroupPath());
+	if (!FileSystem::getInstance().makeAllDirectories(rootPath))
 	{
 		log::error << L"Unable to ensure root group directory exist" << Endl;
 		return false;
 	}
-	m_rootGroup = gc_new< LocalGroup >(m_context, manifest->getRootGroupPath());
 
+	m_rootGroup = gc_new< LocalGroup >(m_context, rootPath);
 	return true;
 }
 

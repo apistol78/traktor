@@ -36,9 +36,9 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 {
 	T_ASSERT (m_month >= 1 && m_month <= 12);
 	T_ASSERT (m_day >= 1 && m_day <= 31);
-	T_ASSERT (m_hour >= 0 && m_hour <= 23);
-	T_ASSERT (m_minute >= 0 && m_minute <= 59);
-	T_ASSERT (m_second >= 0 && m_second <= 59);
+	T_ASSERT (m_hour <= 23);
+	T_ASSERT (m_minute <= 59);
+	T_ASSERT (m_second <= 59);
 
 	for (int8_t i = 1; i < m_month; ++i)
 		m_day += c_monthDays[i - 1];
