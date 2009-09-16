@@ -155,7 +155,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 	getcwd(cwd, sizeof(cwd));
 
 	std::wstring workingDirectory = std::wstring(L"C:") + mbstows(cwd);
-	log::info << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
+	log::debug << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
 
 	Ref< Volume > volume = gc_new< NativeVolume >(workingDirectory);
 	fileSystem.mount(L"C", volume);

@@ -24,7 +24,7 @@
 
 #	define SOCKET int
 #	define INVALID_SOCKET -1
-#	define CLOSE_SOCKET(s) close(s)
+#	define CLOSE_SOCKET(s) ::close(s)
 
 #	if !defined(SOMAXCONN)
 #		define SOMAXCONN 4

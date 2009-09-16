@@ -109,7 +109,7 @@ void ImageCache::flush()
 		{
 			T_ASSERT (i->second.texture);
 			i->second.texture->destroy();
-			i = m_cache.erase(i);
+			m_cache.erase(i++);
 		}
 		else
 			++i;

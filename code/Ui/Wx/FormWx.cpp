@@ -118,7 +118,7 @@ void FormWx::setOutline(const Point* p, int np)
 {
 	if (p && np > 0)
 	{
-		AutoArrayPtr< wxPoint > points = new wxPoint [np];
+		AutoArrayPtr< wxPoint > points(new wxPoint [np]);
 		for (int i = 0; i < np; ++i)
 			points[i] = wxPoint(p[i].x, p[i].y);
 

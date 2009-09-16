@@ -279,9 +279,9 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 		// Add path to makefile in include search path; needed by resources.
 		if (m_platform == MpWin32)
-			s << L"/I" << makeFilePath << L" ";
+			s << L"/I" << makeFilePath << L"/" << configuration->getName() << L" ";
 		else if (m_platform == MpMacOSX || m_platform == MpLinux)
-			s << L"-I" << makeFilePath << L" ";
+			s << L"-I" << makeFilePath << L"/" << configuration->getName() << L" ";
 
 		std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 		for (std::vector< std::wstring >::iterator k = includePaths.begin(); k != includePaths.end(); ++k)
@@ -368,28 +368,17 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		s << Endl;
 
 		s << L".PHONY : " << configuration->getName() << Endl;
-		s << configuration->getName() << L" : \\" << Endl;
 
-		// Define target's object dependencies.
+		// Define target's dependencies.
 		bool firstTarget = true;
 		uint32_t targetCount = 0;
+		bool haveMisc = false;
 
+		s << configuration->getName() << L"_OBJECTS = \\" << Endl;
 		for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
 		{
 			std::wstring extension = toLower(k->getExtension());
-			if (extension == L"png")	// @fixme Custom build rules
-			{
-				std::wstring fileName = k->getFileName();
-				std::wstring fileNameNoExt = k->getFileNameNoExtension();
-
-				if (!firstTarget)
-					s << L" \\" << Endl;
-
-				s << L"\t" << project->getName() << L"/Resources/" << fileNameNoExt << L".h";
-			
-				firstTarget = false;
-			}
-			else if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"mm")
+			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"mm")
 			{
 				std::wstring fileName = k->getFileName();
 				std::wstring fileNameNoExt = k->getFileNameNoExtension();
@@ -405,8 +394,39 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 				firstTarget = false;
 				targetCount++;
 			}
+			else if (extension == L"png" || extension == L"xdi")
+				haveMisc = true;
 		}
 		s << Endl;
+
+		if (haveMisc)
+		{
+			firstTarget = true;
+
+			s << configuration->getName() << L"_MISC = \\" << Endl;
+			for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
+			{
+				std::wstring extension = toLower(k->getExtension());
+				if (extension == L"png" || extension == L"xdi")
+				{
+					std::wstring fileName = k->getFileName();
+					std::wstring fileNameNoExt = k->getFileNameNoExtension();
+
+					if (!firstTarget)
+						s << L" \\" << Endl;
+
+					s << L"\t" << project->getName() << L"/" << configuration->getName() << L"/Resources/" << fileNameNoExt << L".h";
+
+					firstTarget = false;
+				}
+			}
+			s << Endl;
+		}
+
+		s << configuration->getName() << L" : \\" << Endl;
+		if (haveMisc)
+			s << L"\t$(" << configuration->getName() << L"_MISC) \\" << Endl;
+		s << L"\t$(" << configuration->getName() << L"_OBJECTS)" << Endl;
 
 		std::wstring productSuffix = configuration->getTargetProfile() == Configuration::TpDebug ? L"_d" : L"";
 
@@ -414,11 +434,11 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		if (configuration->getTargetFormat() == Configuration::TfStaticLibrary)
 		{
 			if (m_platform == MpWin32)
-				s << L"\t$(AR) $** /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".lib" << Endl;
+				s << L"\t$(AR) $(" << configuration->getName() << L"_OBJECTS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".lib" << Endl;
 			else if (m_platform == MpMacOSX)
-				s << L"\t$(AR) -static -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $^" << Endl;
+				s << L"\t$(AR) -static -o " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 			else if (m_platform == MpLinux)
-				s << L"\t$(AR) rcs " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $^" << Endl;
+				s << L"\t$(AR) rcs " << toLower(configuration->getName()) << L"/lib" << project->getName() << productSuffix << L".a $(" << configuration->getName() << L"_OBJECTS)" << Endl;
 		}
 		else	// Shared or executable, perform actual linkage.
 		{
@@ -471,35 +491,35 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			if (m_platform == MpWin32)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
-					s << L"\t$(LINK) $** " << libs << L" /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".dll" << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /DLL /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".dll" << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $** " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $** " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) " << libs << L" /MACHINE:X86 /SUBSYSTEM:WINDOWS $(ADDITIONAL_LIBRARY_PATHS) /OUT:" << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << L".exe" << Endl;
 			}
 			else if (m_platform == MpMacOSX)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 				{
 					std::wstring productName = L"lib" + project->getName() + productSuffix + L".dylib";
-					s << L"\t$(LINK) $^ -dynamiclib -install_name @executable_path/" << productName << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << productName << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS) -dynamiclib -install_name @executable_path/" << productName << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << productName << Endl;
 				}
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $^" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $^" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 			}
 			else if (m_platform == MpLinux)
 			{
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 				{
 					std::wstring productName = L"lib" + project->getName() + productSuffix;
-					s << L"\t$(LINK) -shared -Wl,-soname," << productName << L".so -o " << toLower(configuration->getName()) << L"/" << productName << L".so $^" << libPaths << libs << Endl;
+					s << L"\t$(LINK) -shared -Wl,-soname," << productName << L".so -o " << toLower(configuration->getName()) << L"/" << productName << L".so $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << Endl;
 				}
 				else if (configuration->getTargetFormat() == Configuration::TfExecutable)
-					s << L"\t$(LINK) $^" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 				else if (configuration->getTargetFormat() == Configuration::TfExecutableConsole)
-					s << L"\t$(LINK) $^" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
+					s << L"\t$(LINK) $(" << configuration->getName() << L"_OBJECTS)" << libPaths << libs << L" -o " << toLower(configuration->getName()) << L"/" << project->getName() << productSuffix << Endl;
 			}
 		}
 		s << Endl;
@@ -508,11 +528,10 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			return false;
 
 		// Create custom build rules.
-		// @fixme Currently hardcoded for png resources with BinaryInclude tool.
 		for (std::set< ::Path >::iterator k = files.begin(); k != files.end(); ++k)
 		{
 			std::wstring extension = toLower(k->getExtension());
-			if (extension != L"png")
+			if (extension != L"png" && extension != L"xdi")
 				continue;
 
 			Path absoluteRootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
@@ -534,7 +553,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			std::wstring fileName = relativePath.getFileName();
 			std::wstring fileNameNoExt = relativePath.getFileNameNoExtension();
 
-			s << project->getName() << L"/Resources/" << fileNameNoExt << L".h : \\" << Endl;
+			s << project->getName() << L"/" << configuration->getName() << L"/Resources/" << fileNameNoExt << L".h : \\" << Endl;
 			s << L"\t" << relativePath.getPathName() << Endl;
 			s << L"\t$(BINARY_INCLUDE) " << relativePath.getPathName() << L" $@ c_Resource" << fileNameNoExt << Endl;
 			s << Endl;
