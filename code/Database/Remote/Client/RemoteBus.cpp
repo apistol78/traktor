@@ -1,5 +1,6 @@
 #include "Database/Remote/Client/RemoteBus.h"
 #include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmPutEvent.h"
 #include "Database/Remote/Messages/DbmGetEvent.h"
 #include "Database/Remote/Messages/MsgStatus.h"
@@ -16,6 +17,11 @@ RemoteBus::RemoteBus(Connection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 {
+}
+
+RemoteBus::~RemoteBus()
+{
+	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 bool RemoteBus::putEvent(ProviderEvent event, const Guid& eventId)

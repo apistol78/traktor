@@ -1,6 +1,7 @@
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/RemoteStream.h"
 #include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmGetInstancePrimaryType.h"
 #include "Database/Remote/Messages/DbmOpenTransaction.h"
 #include "Database/Remote/Messages/DbmCommitTransaction.h"
@@ -34,6 +35,11 @@ RemoteInstance::RemoteInstance(Connection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 {
+}
+
+RemoteInstance::~RemoteInstance()
+{
+	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 std::wstring RemoteInstance::getPrimaryTypeName() const

@@ -1,6 +1,7 @@
 #include "Database/Remote/Client/RemoteGroup.h"
 #include "Database/Remote/Client/RemoteInstance.h"
 #include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmGetGroupName.h"
 #include "Database/Remote/Messages/DbmRenameGroup.h"
 #include "Database/Remote/Messages/DbmRemoveGroup.h"
@@ -23,6 +24,11 @@ RemoteGroup::RemoteGroup(Connection* connection, uint32_t handle)
 :	m_connection(connection)
 ,	m_handle(handle)
 {
+}
+
+RemoteGroup::~RemoteGroup()
+{
+	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 std::wstring RemoteGroup::getName() const

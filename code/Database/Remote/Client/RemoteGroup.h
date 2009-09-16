@@ -21,6 +21,8 @@ class RemoteGroup : public IProviderGroup
 public:
 	RemoteGroup(Connection* connection, uint32_t handle);
 
+	virtual ~RemoteGroup();
+
 	virtual std::wstring getName() const;
 
 	virtual bool rename(const std::wstring& name);
