@@ -1,15 +1,14 @@
-#ifndef traktor_render_RenderViewOpenGL_H
-#define traktor_render_RenderViewOpenGL_H
+#ifndef traktor_render_RenderViewOpenGLES2_H
+#define traktor_render_RenderViewOpenGLES2_H
 
 #include <stack>
 #include "Core/Heap/Ref.h"
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ContextOpenGL.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
+#if defined(T_RENDER_OPENGL_ES2_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT
@@ -20,38 +19,22 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystemOpenGL;
-class VertexBufferOpenGL;
-class IndexBufferOpenGL;
-class ProgramOpenGL;
-class RenderTargetOpenGL;
+class VertexBufferOpenGLES2;
+class IndexBufferOpenGLES2;
+class ProgramOpenGLES2;
+class RenderTargetOpenGLES2;
 
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderViewOpenGL : public IRenderView
+class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewOpenGL)
+	T_RTTI_CLASS(RenderViewOpenGLES2)
 
 public:
-#if defined(_WIN32)
+	RenderViewOpenGLES2();
 
-	RenderViewOpenGL(
-		ContextOpenGL* context,
-		ContextOpenGL* globalContext,
-		HWND hWnd
-	);
-
-#else
-
-	RenderViewOpenGL(
-		ContextOpenGL* context,
-		ContextOpenGL* globalContext
-	);
-
-#endif
-
-	virtual ~RenderViewOpenGL();
+	virtual ~RenderViewOpenGLES2();
 
 	virtual void close();
 
@@ -80,17 +63,14 @@ public:
 	virtual void present();
 
 private:
-	Ref< RenderSystemOpenGL > m_renderSystem;
-	Ref< ContextOpenGL > m_context;
-	Ref< ContextOpenGL > m_globalContext;
-	std::stack< RenderTargetOpenGL* > m_renderTargetStack;
-	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
-	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
-	Ref< ProgramOpenGL > m_currentProgram;
+	std::stack< RenderTargetOpenGLES2* > m_renderTargetStack;
+	Ref< VertexBufferOpenGLES2 > m_currentVertexBuffer;
+	Ref< IndexBufferOpenGLES2 > m_currentIndexBuffer;
+	Ref< ProgramOpenGLES2 > m_currentProgram;
 	bool m_currentDirty;
 };
 
 	}
 }
 
-#endif	// traktor_render_RenderViewOpenGL_H
+#endif	// traktor_render_RenderViewOpenGLES2_H

@@ -1,11 +1,10 @@
-#include "Render/OpenGL/Extensions.h"
-#include "Render/OpenGL/RenderViewOpenGL.h"
-#include "Render/OpenGL/RenderSystemOpenGL.h"
-#include "Render/OpenGL/VertexBufferOpenGL.h"
-#include "Render/OpenGL/IndexBufferOpenGL.h"
-#include "Render/OpenGL/ProgramOpenGL.h"
-#include "Render/OpenGL/RenderTargetSetOpenGL.h"
-#include "Render/OpenGL/RenderTargetOpenGL.h"
+#include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
+#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
+#include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
+#include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -13,67 +12,28 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
-#if defined(_WIN32)
 
-RenderViewOpenGL::RenderViewOpenGL(
-	ContextOpenGL* context,
-	ContextOpenGL* globalContext,
-	HWND hWnd
-)
-:	m_context(context)
-,	m_globalContext(globalContext)
-,	m_currentDirty(true)
-{
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-
-	Viewport viewport;
-	viewport.left = 0;
-	viewport.top = 0;
-	viewport.width = rc.right - rc.left;
-	viewport.height = rc.bottom - rc.top;
-	viewport.nearZ = 0.0f;
-	viewport.farZ = 1.0f;
-
-	setViewport(viewport);
-}
-
-#else
-
-RenderViewOpenGL::RenderViewOpenGL(
-	ContextOpenGL* context,
-	ContextOpenGL* globalContext
-)
-:	m_context(context)
-,	m_globalContext(globalContext)
-,	m_currentDirty(true)
-{
-	memset(&m_viewPort, 0, sizeof(m_viewPort));
-}
-
-#endif
-
-RenderViewOpenGL::~RenderViewOpenGL()
+RenderViewOpenGLES2::RenderViewOpenGLES2()
+:	m_currentDirty(true)
 {
 }
 
-void RenderViewOpenGL::close()
+RenderViewOpenGLES2::~RenderViewOpenGLES2()
 {
-	m_context->destroy();
-	m_context = 0;
 }
 
-void RenderViewOpenGL::resize(int32_t width, int32_t height)
+void RenderViewOpenGLES2::close()
 {
-	m_context->update();
 }
 
-void RenderViewOpenGL::setViewport(const Viewport& viewport)
+void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
-	T_CONTEXT_SCOPE(m_context)
+}
 
+void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
+{
 	T_OGL_SAFE(glViewport(
 		viewport.left,
 		viewport.top,
@@ -81,16 +41,14 @@ void RenderViewOpenGL::setViewport(const Viewport& viewport)
 		viewport.height
 	));
 
-	T_OGL_SAFE(glDepthRange(
-		viewport.nearZ,
-		viewport.farZ
-	));
+	//T_OGL_SAFE(glDepthRange(
+	//	viewport.nearZ,
+	//	viewport.farZ
+	//));
 }
 
-Viewport RenderViewOpenGL::getViewport()
+Viewport RenderViewOpenGLES2::getViewport()
 {
-	T_CONTEXT_SCOPE(m_context)
-
 	GLint ext[4];
 	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));
 
@@ -108,11 +66,9 @@ Viewport RenderViewOpenGL::getViewport()
 	return viewport;
 }
 
-bool RenderViewOpenGL::begin()
+bool RenderViewOpenGLES2::begin()
 {
-	m_context->enter();
-
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
+	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 	T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
 
@@ -120,12 +76,12 @@ bool RenderViewOpenGL::begin()
 	return true;
 }
 
-bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
+	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 
-	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
+	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
+	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(rts->getColorTexture(renderTarget));
 	
 	rt->bind();
 	rt->enter();
@@ -138,7 +94,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget,
 	return true;
 }
 
-void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
 	const GLuint c_clearMask[] =
 	{
@@ -164,7 +120,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 
 	if (clearMask & CfDepth)
 	{
-		T_OGL_SAFE(glClearDepth(depth));
+		//T_OGL_SAFE(glClearDepth(depth));
 		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
@@ -174,25 +130,25 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	T_OGL_SAFE(glClear(c_clearMask[clearMask]));
 }
 
-void RenderViewOpenGL::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
 {
-	m_currentVertexBuffer = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
+	m_currentVertexBuffer = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
 	m_currentDirty = true;
 }
 
-void RenderViewOpenGL::setIndexBuffer(IndexBuffer* indexBuffer)
+void RenderViewOpenGLES2::setIndexBuffer(IndexBuffer* indexBuffer)
 {
-	m_currentIndexBuffer = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
+	m_currentIndexBuffer = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
 	m_currentDirty = true;
 }
 
-void RenderViewOpenGL::setProgram(IProgram* program)
+void RenderViewOpenGLES2::setProgram(IProgram* program)
 {
-	m_currentProgram = checked_type_cast< ProgramOpenGL * >(program);
+	m_currentProgram = checked_type_cast< ProgramOpenGLES2 * >(program);
 	m_currentDirty = true;
 }
 
-void RenderViewOpenGL::draw(const Primitives& primitives)
+void RenderViewOpenGLES2::draw(const Primitives& primitives)
 {
 	if (m_currentDirty)
 	{
@@ -283,7 +239,7 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 	}
 }
 
-void RenderViewOpenGL::end()
+void RenderViewOpenGLES2::end()
 {
 	if (!m_renderTargetStack.empty())
 	{
@@ -292,21 +248,14 @@ void RenderViewOpenGL::end()
 		if (!m_renderTargetStack.empty())
 			m_renderTargetStack.top()->bind();
 		else
-			T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+			T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 
-	T_OGL_SAFE(glPopAttrib());
+	//T_OGL_SAFE(glPopAttrib());
 }
 
-void RenderViewOpenGL::present()
+void RenderViewOpenGLES2::present()
 {
-	m_context->swapBuffers();
-	m_context->leave();
-
-	// Finished using view's context; restore global context and delete resources.
-	m_globalContext->enter();
-	m_globalContext->deleteResources();
-	m_globalContext->leave();
 }
 
 	}

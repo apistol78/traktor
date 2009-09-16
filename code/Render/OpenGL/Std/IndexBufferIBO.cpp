@@ -1,6 +1,6 @@
-#include "Render/OpenGL/IndexBufferIBO.h"
-#include "Render/OpenGL/ContextOpenGL.h"
-#include "Render/OpenGL/Extensions.h"
+#include "Render/OpenGL/Std/IndexBufferIBO.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/Extensions.h"
 
 namespace traktor
 {

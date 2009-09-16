@@ -1,14 +1,13 @@
-#ifndef traktor_render_RenderSystemOpenGL_H
-#define traktor_render_RenderSystemOpenGL_H
+#ifndef traktor_render_RenderSystemOpenGLES2_H
+#define traktor_render_RenderSystemOpenGLES2_H
 
 #include "Core/Heap/Ref.h"
 #include "Render/IRenderSystem.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ContextOpenGL.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
+#if defined(T_RENDER_OPENGL_ES2_EXPORT)
 #define T_DLLCLASS T_DLLEXPORT
 #else
 #define T_DLLCLASS T_DLLIMPORT
@@ -19,17 +18,17 @@ namespace traktor
 	namespace render
 	{
 
-/*! \brief OpenGL render system.
+/*! \brief OpenGL ES 2.0 render system.
  * \ingroup OGL
  *
  * OpenGL render system implementation.
  */
-class T_DLLCLASS RenderSystemOpenGL : public IRenderSystem
+class T_DLLCLASS RenderSystemOpenGLES2 : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemOpenGL)
+	T_RTTI_CLASS(RenderSystemOpenGLES2)
 
 public:
-	RenderSystemOpenGL();
+	RenderSystemOpenGLES2();
 
 	virtual bool create();
 
@@ -62,23 +61,9 @@ public:
 	virtual ProgramResource* compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
 
 	virtual IProgram* createProgram(const ProgramResource* programResource);
-
-private:
-	friend class RenderViewOpenGL;
-
-#if defined(_WIN32)
-
-	HWND m_hWndShared;
-	HWND m_hWnd;
-
-	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
-#endif
-
-	Ref< ContextOpenGL > m_globalContext;
 };
 
 	}
 }
 
-#endif	// traktor_render_RenderSystemOpenGL_H
+#endif	// traktor_render_RenderSystemOpenGLES2_H

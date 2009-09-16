@@ -1,6 +1,6 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/VolumeTextureOpenGL.h"
-#include "Render/OpenGL/ContextOpenGL.h"
+#include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 
 namespace traktor
 {

@@ -574,8 +574,13 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		GL_FUNC_ADD,
 		GL_FUNC_SUBTRACT,
 		GL_FUNC_REVERSE_SUBTRACT,
+#if defined(T_OPENGL_STD)
 		GL_MIN,
 		GL_MAX
+#elif defined(T_OPENGL_ES2)
+		GL_FUNC_ADD,
+		GL_FUNC_ADD
+#endif
 	};
 
 	const GLenum c_oglBlendFunction[] =
@@ -706,8 +711,13 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	{
 		GL_REPEAT,
 		GL_REPEAT,	// AdMirror
+#if defined(T_OPENGL_STD)
 		GL_CLAMP,
 		GL_CLAMP	// AdBorder
+#elif defined(T_OPENGL_ES2)
+		GL_CLAMP_TO_EDGE,
+		GL_CLAMP_TO_EDGE
+#endif
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1039,7 +1049,7 @@ void emitTransform(GlslContext& cx, Transform* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* transform = cx.emitInput(node, L"Transform");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << in->cast(GtFloat4) << L" * " << transform->getName() << L";" << Endl;
+	assign(f, out) << transform->getName() << L" * " << in->cast(GtFloat4) << L";" << Endl;
 }
 
 void emitTranspose(GlslContext& cx, Transpose* node)
