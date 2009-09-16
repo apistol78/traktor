@@ -1,7 +1,7 @@
-#include <unistd.h>#include <sys/param.h>#include <pwd.h>#include "Core/System/OS.h"#include "Core/Misc/TString.h"
+#include <unistd.h>#include <sys/param.h>#include <pwd.h>#include "Core/System/OS.h"#include "Core/Heap/Heap.h"#include "Core/Singleton/SingletonManager.h"#include "Core/Misc/TString.h"
 namespace traktor{
-T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Object)
-OS& OS::getInstance(){	static OS instance;	return instance;}
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Singleton)
+OS& OS::getInstance(){	static OS* s_instance = 0;	if (!s_instance)	{		s_instance = new OS();		SingletonManager::getInstance().addBefore(s_instance, &Heap::getInstance());	}	return *s_instance;}
 uint32_t OS::getCPUCoreCount() const
 {
 	return 2;

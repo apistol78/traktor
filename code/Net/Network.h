@@ -3,7 +3,7 @@
 
 #include "Core/Config.h"
 
-#if defined(__GNUC__) || defined(_PS3)
+#if defined(__GNUC__) || defined(_PS3) || defined(__APPLE__)
 #	include <sys/time.h>
 #	include <sys/types.h>
 #	include <sys/socket.h>
