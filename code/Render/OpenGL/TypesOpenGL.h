@@ -22,8 +22,13 @@ struct SamplerState
 	SamplerState()
 	:	minFilter(GL_NEAREST)
 	,	magFilter(GL_NEAREST)
+#if defined(T_OPENGL_STD)
 	,	wrapS(GL_CLAMP)
 	,	wrapT(GL_CLAMP)
+#elif defined(T_OPENGL_ES2)
+	,	wrapS(GL_CLAMP_TO_EDGE)
+	,	wrapT(GL_CLAMP_TO_EDGE)
+#endif
 	{
 	}
 };

@@ -1,12 +1,13 @@
-#include "Render/OpenGL/Extensions.h"
-#include "Render/OpenGL/ProgramOpenGL.h"
-#include "Render/OpenGL/ContextOpenGL.h"
+#include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
-#include "Render/OpenGL/SimpleTextureOpenGL.h"
-#include "Render/OpenGL/CubeTextureOpenGL.h"
-#include "Render/OpenGL/VolumeTextureOpenGL.h"
-#include "Render/OpenGL/RenderTargetOpenGL.h"
 #include "Render/OpenGL/GlslProgram.h"
+#include "Render/OpenGL/Std/Extensions.h"
+#include "Render/OpenGL/Std/ProgramOpenGL.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
+#include "Render/OpenGL/Std/CubeTextureOpenGL.h"
+#include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
+#include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -425,7 +426,7 @@ bool ProgramOpenGL::activate()
 				break;
 
 			case GL_FLOAT_MAT4_ARB:
-				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_TRUE, uniformData));
+				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
 				break;
 
 			default:
@@ -454,7 +455,7 @@ bool ProgramOpenGL::activate()
 					break;
 
 				case GL_FLOAT_MAT4_ARB:
-					T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_TRUE, uniformData));
+					T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
 					break;
 					
 				default:

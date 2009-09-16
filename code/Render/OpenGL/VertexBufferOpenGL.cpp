@@ -1,4 +1,4 @@
-#include "Render/OpenGL/Extensions.h"
+#include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
 namespace traktor

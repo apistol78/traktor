@@ -2,27 +2,32 @@
 #define traktor_render_Platform_H
 
 #include <string>
-#if defined(_WIN32)
-#define _WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <tchar.h>
-#include <gl/gl.h>
-#include <gl/glu.h>
-#include <gl/glext.h>
-#elif defined(__APPLE__)
-#include <Carbon/Carbon.h>
-#include <AGL/agl.h>
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#else	// LINUX
-#if !defined(GLX_GLXEXT_LEGACY)
-#define GLX_GLXEXT_LEGACY
-#endif
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#include <GL/glx.h>
+#if defined(T_OPENGL_STD)
+#	if defined(_WIN32)
+#		define _WIN32_LEAN_AND_MEAN
+#		include <windows.h>
+#		include <tchar.h>
+#		include <gl/gl.h>
+#		include <gl/glu.h>
+#		include <gl/glext.h>
+#	elif defined(__APPLE__)
+#		include <Carbon/Carbon.h>
+#		include <AGL/agl.h>
+#		include <OpenGL/gl.h>
+#		include <OpenGL/glu.h>
+#		include <OpenGL/glext.h>
+#	else	// LINUX
+#		if !defined(GLX_GLXEXT_LEGACY)
+#			define GLX_GLXEXT_LEGACY
+#		endif
+#		include <GL/gl.h>
+#		include <GL/glu.h>
+#		include <GL/glext.h>
+#		include <GL/glx.h>
+#	endif
+#elif defined(T_OPENGL_ES2)
+#	include <EGL/egl.h>
+#	include <GLES2/gl2.h>
 #endif
 
 /*! \ingroup OGL */
@@ -44,9 +49,9 @@ std::wstring getOpenGLErrorString(GLenum glError);
 }
 
 #if defined(_DEBUG)
-#include "Core/Assert.h"
-#include "Core/Io/StringOutputStream.h"
-#define T_OGL_SAFE(CALL) \
+#	include "Core/Assert.h"
+#	include "Core/Io/StringOutputStream.h"
+#	define T_OGL_SAFE(CALL) \
 	{ \
 		(CALL); \
 		GLenum glError = glGetError(); \
@@ -58,7 +63,7 @@ std::wstring getOpenGLErrorString(GLenum glError);
 		} \
 	}
 #else
-#define T_OGL_SAFE(CALL) { (CALL); }
+#	define T_OGL_SAFE(CALL) { (CALL); }
 #endif
 
 //@}

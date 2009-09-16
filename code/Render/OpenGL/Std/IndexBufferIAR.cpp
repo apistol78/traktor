@@ -1,5 +1,5 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IndexBufferIAR.h"
+#include "Render/OpenGL/Std/IndexBufferIAR.h"
 
 namespace traktor
 {

@@ -11361,6 +11361,7 @@
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>T_OPENGL_STD</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11380,6 +11381,7 @@
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>T_OPENGL_STD</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11399,6 +11401,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>T_OPENGL_STD</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11418,6 +11421,7 @@
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>T_OPENGL_STD</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11427,6 +11431,133 @@
 				</item>
 			</configurations>
 			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Std</name>
+					<items>
+						<item type="File">
+							<fileName>Std/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.OpenGL.ES2</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/OpenGL</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>_DEBUG</item>
+						<item>T_OPENGL_ES2</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libEGL.lib</item>
+						<item>libGLESv2.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
+						<item>NDEBUG</item>
+						<item>T_OPENGL_ES2</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libEGL.lib</item>
+						<item>libGLESv2.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>T_OPENGL_ES2</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libEGL.lib</item>
+						<item>libGLESv2.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>T_OPENGL_ES2</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/OpenGL ES 2.0 Emulator v1.4/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libEGL.lib</item>
+						<item>libGLESv2.lib</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>ES2</name>
+					<items>
+						<item type="File">
+							<fileName>ES2/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
@@ -11941,7 +12072,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[64]"/>
+					<project ref="/object/projects/item[65]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
@@ -12035,7 +12166,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[64]"/>
+					<project ref="/object/projects/item[65]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12120,7 +12251,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[64]"/>
+					<project ref="/object/projects/item[65]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[9]"/>
@@ -12347,7 +12478,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[68]"/>
+					<project ref="/object/projects/item[69]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12431,7 +12562,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[68]"/>
+					<project ref="/object/projects/item[69]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -12526,7 +12657,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[68]"/>
+					<project ref="/object/projects/item[69]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12607,7 +12738,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[68]"/>
+					<project ref="/object/projects/item[69]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12825,7 +12956,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[73]"/>
+					<project ref="/object/projects/item[74]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
@@ -13014,7 +13145,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[75]"/>
+					<project ref="/object/projects/item[76]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -13206,7 +13337,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[77]"/>
+					<project ref="/object/projects/item[78]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -13532,10 +13663,10 @@
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[59]"/>
+					<project ref="/object/projects/item[60]"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[68]"/>
+					<project ref="/object/projects/item[69]"/>
 				</item>
 			</dependencies>
 		</item>

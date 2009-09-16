@@ -1,5 +1,5 @@
-#include "Render/OpenGL/Extensions.h"
-#include "Render/OpenGL/VertexBufferVAR.h"
+#include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
 
@@ -8,20 +8,18 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVAR", VertexBufferVAR, VertexBufferOpenGL)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferOpenGLES2", VertexBufferOpenGLES2, VertexBufferOpenGL)
 
-VertexBufferVAR::VertexBufferVAR(ContextOpenGL* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferOpenGLES2::VertexBufferOpenGLES2(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
-,	m_context(context)
-,	m_dynamic(dynamic)
-,	m_data(0)
 {
 	m_vertexStride = getVertexSize(vertexElements);
+	T_ASSERT (m_vertexStride > 0);
 
-	m_data = new GLubyte [bufferSize];
-	T_ASSERT (m_data);
+	T_OGL_SAFE(glGenBuffers(1, &m_name));
+	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_name));
+	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 
-	std::memset(m_data, 0, bufferSize);
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
 	for (size_t i = 0; i < vertexElements.size(); ++i)
@@ -31,7 +29,7 @@ VertexBufferVAR::VertexBufferVAR(ContextOpenGL* context, const std::vector< Vert
 			log::warning << L"Index out of bounds on vertex element " << uint32_t(i) << Endl;
 			continue;
 		}
-	
+
 		int usageIndex = T_OGL_USAGE_INDEX(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
 		switch (vertexElements[i].getDataType())
 		{
@@ -101,7 +99,7 @@ VertexBufferVAR::VertexBufferVAR(ContextOpenGL* context, const std::vector< Vert
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
-			
+
 		case DtHalf4:
 			m_attributeDesc[usageIndex].size = 4;
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
@@ -117,47 +115,50 @@ VertexBufferVAR::VertexBufferVAR(ContextOpenGL* context, const std::vector< Vert
 	}
 }
 
-VertexBufferVAR::~VertexBufferVAR()
+VertexBufferOpenGLES2::~VertexBufferOpenGLES2()
 {
 	destroy();
 }
 
-void VertexBufferVAR::destroy()
+void VertexBufferOpenGLES2::destroy()
 {
-	delete[] m_data;
-	m_data = 0;
+	if (m_name)
+	{
+		T_OGL_SAFE(glDeleteBuffers(1, &m_name));
+		m_name = 0;
+	}
 }
 
-void* VertexBufferVAR::lock()
+void* VertexBufferOpenGLES2::lock()
 {
-	return m_data;
+	return 0;
 }
 
-void* VertexBufferVAR::lock(uint32_t vertexOffset, uint32_t vertexCount)
+void* VertexBufferOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	return m_data + vertexOffset * m_vertexStride;
+	return 0;
 }
 
-void VertexBufferVAR::unlock()
+void VertexBufferOpenGLES2::unlock()
 {
 }
 
-void VertexBufferVAR::activate(const GLint* attributeLocs)
+void VertexBufferOpenGLES2::activate(const GLint* attributeLocs)
 {
-	T_ASSERT (m_data);
+	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_name));
 	for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
 	{
 		if (attributeLocs[i] == -1 || m_attributeDesc[i].size == 0)
 			continue;
 
-		T_OGL_SAFE(glEnableVertexAttribArrayARB(attributeLocs[i]));
-		T_OGL_SAFE(glVertexAttribPointerARB(
+		T_OGL_SAFE(glEnableVertexAttribArray(attributeLocs[i]));
+		T_OGL_SAFE(glVertexAttribPointer(
 			attributeLocs[i],
 			m_attributeDesc[i].size,
 			m_attributeDesc[i].type,
 			m_attributeDesc[i].normalized,
 			m_vertexStride,
-			&m_data[m_attributeDesc[i].offset]
+			(GLvoid*)m_attributeDesc[i].offset
 		));
 	}
 }
