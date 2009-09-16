@@ -81,8 +81,10 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 #endif
 
 	signal(SIGTERM, signalAbortCallback);
-	signal(SIGBREAK, signalAbortCallback);
 	signal(SIGABRT, signalAbortCallback);
+#if defined(_WIN32)
+	signal(SIGBREAK, signalAbortCallback);
+#endif
 
 	traktor::log::info << L"Server started" << Endl;
 

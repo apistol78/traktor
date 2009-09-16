@@ -3752,14 +3752,28 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src/mac/carbon/morefilex</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>__WXCOCOA__</item>
+						<item>__WXMAC__</item>
 						<item>__WXDEBUG__</item>
+						<item>TARGET_CARBON=1</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>CoreFoundation.framework</item>
+						<item>ApplicationServices.framework</item>
+						<item>Carbon.framework</item>
+						<item>QuickTime.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+						<item>IOKit.framework</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseShared</name>
@@ -3769,13 +3783,27 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src/mac/carbon/morefilex</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>__WXCOCOA__</item>
+						<item>__WXMAC__</item>
+						<item>TARGET_CARBON=1</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>CoreFoundation.framework</item>
+						<item>ApplicationServices.framework</item>
+						<item>Carbon.framework</item>
+						<item>QuickTime.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+						<item>IOKit.framework</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>DebugStatic</name>
@@ -3785,14 +3813,28 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src/mac/carbon/morefilex</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
-						<item>__WXCOCOA__</item>
+						<item>__WXMAC__</item>
 						<item>__WXDEBUG__</item>
+						<item>TARGET_CARBON=1</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>CoreFoundation.framework</item>
+						<item>ApplicationServices.framework</item>
+						<item>Carbon.framework</item>
+						<item>QuickTime.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+						<item>IOKit.framework</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseStatic</name>
@@ -3802,13 +3844,27 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src/mac/carbon/morefilex</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
-						<item>__WXCOCOA__</item>
+						<item>__WXMAC__</item>
+						<item>TARGET_CARBON=1</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>CoreFoundation.framework</item>
+						<item>ApplicationServices.framework</item>
+						<item>Carbon.framework</item>
+						<item>QuickTime.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+						<item>IOKit.framework</item>
+					</libraries>
 				</item>
 			</configurations>
 			<items>
@@ -4511,6 +4567,10 @@
 							<fileName>common/zstream.cpp</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>common/extended.c</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -4518,10 +4578,6 @@
 					<items>
 						<item type="File">
 							<fileName>generic/aboutdlgg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>generic/accel.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -4562,10 +4618,6 @@
 						</item>
 						<item type="File">
 							<fileName>generic/collpaneg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>generic/colour.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -4625,10 +4677,6 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>generic/graphicc.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>generic/grid.cpp</fileName>
 							<items/>
 						</item>
@@ -4653,14 +4701,6 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>generic/icon.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>generic/imaglist.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>generic/laywin.cpp</fileName>
 							<items/>
 						</item>
@@ -4682,10 +4722,6 @@
 						</item>
 						<item type="File">
 							<fileName>generic/mdig.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>generic/notebook.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -4749,10 +4785,6 @@
 							<items/>
 						</item>
 						<item type="File">
-							<fileName>generic/statline.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
 							<fileName>generic/statusbr.cpp</fileName>
 							<items/>
 						</item>
@@ -4762,10 +4794,6 @@
 						</item>
 						<item type="File">
 							<fileName>generic/textdlgg.cpp</fileName>
-							<items/>
-						</item>
-						<item type="File">
-							<fileName>generic/timer.cpp</fileName>
 							<items/>
 						</item>
 						<item type="File">
@@ -4806,325 +4834,481 @@
 					<name>mac</name>
 					<items>
 						<item type="Filter">
-							<name>cocoa</name>
+							<name>carbon</name>
 							<items>
 								<item type="File">
-									<fileName>cocoa/app.mm</fileName>
+									<fileName>mac/carbon/aboutdlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/bitmap.mm</fileName>
+									<fileName>mac/carbon/aga.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/bmpbuttn.mm</fileName>
+									<fileName>mac/carbon/app.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/brush.mm</fileName>
+									<fileName>mac/carbon/apprsrc.h</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/button.mm</fileName>
+									<fileName>mac/carbon/bitmap.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/checkbox.mm</fileName>
+									<fileName>mac/carbon/bmpbuttn.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/checklst.mm</fileName>
+									<fileName>mac/carbon/brush.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/choice.mm</fileName>
+									<fileName>mac/carbon/button.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/clipbrd.mm</fileName>
+									<fileName>mac/carbon/checkbox.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/colordlg.mm</fileName>
+									<fileName>mac/carbon/checklst.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/colour.mm</fileName>
+									<fileName>mac/carbon/choice.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/combobox.mm</fileName>
+									<fileName>mac/carbon/clipbrd.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/control.mm</fileName>
+									<fileName>mac/carbon/colordlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/cursor.mm</fileName>
+									<fileName>mac/carbon/colordlgosx.mm</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/data.cpp</fileName>
+									<fileName>mac/carbon/colour.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dataobj.mm</fileName>
+									<fileName>mac/carbon/combobox.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dc.mm</fileName>
+									<fileName>mac/carbon/control.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dcclient.mm</fileName>
+									<fileName>mac/carbon/cursor.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dcmemory.mm</fileName>
+									<fileName>mac/carbon/data.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dcscreen.cpp</fileName>
+									<fileName>mac/carbon/dataobj.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dialog.mm</fileName>
+									<fileName>mac/carbon/dc.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dirdlg.mm</fileName>
+									<fileName>mac/carbon/dccg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/display.mm</fileName>
+									<fileName>mac/carbon/dcclient.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/drawer.mm</fileName>
+									<fileName>mac/carbon/dcmemory.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/dummy.r</fileName>
+									<fileName>mac/carbon/dcprint.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/evtloop.mm</fileName>
+									<fileName>mac/carbon/dcscreen.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/filedlg.mm</fileName>
+									<fileName>mac/carbon/dialog.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/font.mm</fileName>
+									<fileName>mac/carbon/dirdlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/fontdlg.mm</fileName>
+									<fileName>mac/carbon/dirmac.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/fontenum.mm</fileName>
+									<fileName>mac/carbon/display.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/fontutil.cpp</fileName>
+									<fileName>mac/carbon/dnd.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/frame.mm</fileName>
+									<fileName>mac/carbon/drawer.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/gauge.mm</fileName>
+									<fileName>mac/carbon/evtloop.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/glcanvas.mm</fileName>
+									<fileName>mac/carbon/filedlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/icon.mm</fileName>
+									<fileName>mac/carbon/font.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/listbox.mm</fileName>
+									<fileName>mac/carbon/fontdlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/main.cpp</fileName>
+									<fileName>mac/carbon/fontdlgosx.mm</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/mbarman.mm</fileName>
+									<fileName>mac/carbon/fontenum.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/mdi.mm</fileName>
+									<fileName>mac/carbon/fontutil.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/mediactrl.mm</fileName>
+									<fileName>mac/carbon/frame.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/menu.mm</fileName>
+									<fileName>mac/carbon/gauge.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/menuitem.mm</fileName>
+									<fileName>mac/carbon/gdiobj.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/msgdlg.mm</fileName>
+									<fileName>mac/carbon/glcanvas.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/notebook.mm</fileName>
+									<fileName>mac/carbon/graphics.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSBox.mm</fileName>
+									<fileName>mac/carbon/gsocket.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSButton.mm</fileName>
+									<fileName>mac/carbon/icon.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSControl.mm</fileName>
+									<fileName>mac/carbon/imaglist.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSMenu.mm</fileName>
+									<fileName>mac/carbon/joystick.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSPanel.mm</fileName>
+									<fileName>mac/carbon/listbox.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSScroller.mm</fileName>
+									<fileName>mac/carbon/listctrl_mac.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSSlider.mm</fileName>
+									<fileName>mac/carbon/macnotfy.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSTableView.mm</fileName>
+									<fileName>mac/carbon/main.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSTabView.mm</fileName>
+									<fileName>mac/carbon/mdi.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSTextField.mm</fileName>
+									<fileName>mac/carbon/mediactrl.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSView.mm</fileName>
+									<fileName>mac/carbon/menu.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/NSWindow.mm</fileName>
+									<fileName>mac/carbon/menuitem.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/ObjcRef.mm</fileName>
+									<fileName>mac/carbon/metafile.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/pen.mm</fileName>
+									<fileName>mac/carbon/minifram.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/radiobox.mm</fileName>
+									<fileName>mac/carbon/msgdlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/radiobut.mm</fileName>
+									<fileName>mac/carbon/notebmac.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/region.mm</fileName>
+									<fileName>mac/carbon/overlay.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/scrolbar.mm</fileName>
+									<fileName>mac/carbon/palette.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/settings.mm</fileName>
+									<fileName>mac/carbon/pen.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/slider.mm</fileName>
+									<fileName>mac/carbon/popupwin.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/sound.mm</fileName>
+									<fileName>mac/carbon/printdlg.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/spinbutt.mm</fileName>
+									<fileName>mac/carbon/printmac.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/statbmp.mm</fileName>
+									<fileName>mac/carbon/radiobox.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/statbox.mm</fileName>
+									<fileName>mac/carbon/radiobut.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/statline2.mm</fileName>
+									<fileName>mac/carbon/region.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/stattext.mm</fileName>
+									<fileName>mac/carbon/renderer.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/taskbar.mm</fileName>
+									<fileName>mac/carbon/scrolbar.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/textctrl.mm</fileName>
+									<fileName>mac/carbon/settings.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/timer.mm</fileName>
+									<fileName>mac/carbon/slider.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/toolbar.mm</fileName>
+									<fileName>mac/carbon/sound.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/tooltip.mm</fileName>
+									<fileName>mac/carbon/spinbutt.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/toplevel.mm</fileName>
+									<fileName>mac/carbon/spinctrl.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/utils.mm</fileName>
+									<fileName>mac/carbon/srchctrl.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/utilsexc.mm</fileName>
+									<fileName>mac/carbon/statbmp.cpp</fileName>
 									<items/>
 								</item>
 								<item type="File">
-									<fileName>cocoa/window.mm</fileName>
+									<fileName>mac/carbon/statbox.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/statbrma.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/statline.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/statlmac.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/stattext.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/tabctrl.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/taskbar.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/textctrl.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/tglbtn.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/thread.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/timer.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/toolbar.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/tooltip.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/toplevel.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/uma.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/utils.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/utilscocoa.mm</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/utilsexc.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/window.cpp</fileName>
+									<items/>
+								</item>
+								<item type="Filter">
+									<name>morefilex</name>
+									<items>
+										<item type="File">
+											<fileName>mac/carbon/morefilex/MoreFilesX.c</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>mac/carbon/morefilex/MoreFilesX.cpp</fileName>
+											<items/>
+										</item>
+										<item type="File">
+											<fileName>mac/carbon/morefilex/MoreFilesX.h</fileName>
+											<items/>
+										</item>
+									</items>
+								</item>
+								<item type="File">
+									<fileName>mac/carbon/accel.cpp</fileName>
 									<items/>
 								</item>
 							</items>
+						</item>
+						<item type="Filter">
+							<name>common</name>
+							<items>
+								<item type="File">
+									<fileName>mac/common/glgrab.c</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="Filter">
+							<name>corefoundation</name>
+							<items>
+								<item type="File">
+									<fileName>mac/corefoundation/cfstring.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/gsockosx.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/hid.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/hidjoystick.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/stdpaths_cf.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/utilsexc_base.cpp</fileName>
+									<items/>
+								</item>
+								<item type="File">
+									<fileName>mac/corefoundation/utilsexc_cf.cpp</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>unix</name>
+					<items>
+						<item type="File">
+							<fileName>unix/utilsunx.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unix/baseunix.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unix/stdpaths.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>unix/dlunix.cpp</fileName>
+							<items/>
 						</item>
 					</items>
 				</item>
@@ -6544,7 +6728,24 @@
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
-					<items/>
+					<items>
+						<item type="File">
+							<fileName>../../../res/toolbar/Alignment.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Playback.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Skeleton.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/editor/Bones.png</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -6711,6 +6912,36 @@
 											<items>
 												<item type="File">
 													<fileName>Itf/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Resources</name>
+											<items>
+												<item type="File">
+													<fileName>../../res/DockBottom.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../res/DockLeft.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../res/DockRight.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../res/DockTop.png</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Events</name>
+											<items>
+												<item type="File">
+													<fileName>Events/*.*</fileName>
 													<items/>
 												</item>
 											</items>
@@ -7135,6 +7366,27 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Resources</name>
+								<items>
+									<item type="File">
+										<fileName>../../../res/toolbar/EntityEdit.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/Playback.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/SceneEdit.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/editor/EntityTypes.png</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
@@ -7418,6 +7670,105 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Resources</name>
+											<items>
+												<item type="File">
+													<fileName>../../../res/graph/Background.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Grid.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/InOut.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Input.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Ipol.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Node.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Output.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Pin.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/graph/Shadow.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/Checked.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/Collapse.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/Expand.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/LayerHidden.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/LayerVisible.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/Log.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/ProgressBar.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/SmallCross.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/SmallPen.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/Unchecked.png</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>StatusBar</name>
+											<items>
+												<item type="File">
+													<fileName>StatusBar/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>SyntaxRichEdit</name>
+											<items>
+												<item type="File">
+													<fileName>SyntaxRichEdit/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency">
@@ -7504,6 +7855,23 @@
 													<item type="File">
 														<fileName>*.*</fileName>
 														<items/>
+													</item>
+													<item type="Filter">
+														<name>Resources</name>
+														<items>
+															<item type="File">
+																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2d.xdi</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dFont.xdi</fileName>
+																<items/>
+															</item>
+															<item type="File">
+																<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dImage.xdi</fileName>
+																<items/>
+															</item>
+														</items>
 													</item>
 												</items>
 												<dependencies>
@@ -8247,7 +8615,56 @@
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
-					<items/>
+					<items>
+						<item type="File">
+							<fileName>../../../res/About.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/BigIcons.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Files.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LogFilter.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/New.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallIcons.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Splash.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/TraktorSmall.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/DatabaseView.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Standard16.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/editor/Types.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/icons/Save.png</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -8298,20 +8715,20 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WX_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>_UNICODE</item>
+									<item>__WXMAC__</item>
+									<item>__WXDEBUG__</item>
+									<item>HAVE_SSIZE_T</item>
+									<item>HAVE_LOCALTIME_R</item>
+									<item>HAVE_GMTIME_R</item>
+									<item>TARGET_CARBON=1</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>comctl32.lib</item>
-									<item>rpcrt4.lib</item>
-									<item>msimg32.lib</item>
-									<item>gdiplus.lib</item>
-								</libraries>
+								<libraries/>
 							</item>
 							<item type="Configuration">
 								<name>ReleaseShared</name>
@@ -8321,20 +8738,19 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
 								</includePaths>
 								<definitions>
 									<item>T_UI_WX_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>_UNICODE</item>
+									<item>__WXMAC__</item>
+									<item>HAVE_SSIZE_T</item>
+									<item>HAVE_LOCALTIME_R</item>
+									<item>HAVE_GMTIME_R</item>
+									<item>TARGET_CARBON=1</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>comctl32.lib</item>
-									<item>rpcrt4.lib</item>
-									<item>msimg32.lib</item>
-									<item>gdiplus.lib</item>
-								</libraries>
+								<libraries/>
 							</item>
 							<item type="Configuration">
 								<name>DebugStatic</name>
@@ -8344,20 +8760,20 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswud</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/debug</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>_UNICODE</item>
+									<item>__WXMAC__</item>
+									<item>__WXDEBUG__</item>
+									<item>TARGET_CARBON=1</item>
+									<item>HAVE_SSIZE_T</item>
+									<item>HAVE_LOCALTIME_R</item>
+									<item>HAVE_GMTIME_R</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>comctl32.lib</item>
-									<item>rpcrt4.lib</item>
-									<item>msimg32.lib</item>
-									<item>gdiplus.lib</item>
-								</libraries>
+								<libraries/>
 							</item>
 							<item type="Configuration">
 								<name>ReleaseStatic</name>
@@ -8367,39 +8783,25 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/vc_lib/mswu</item>
+									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/osx_lib/release</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>_UNICODE</item>
+									<item>__WXMAC__</item>
+									<item>TARGET_CARBON=1</item>
+									<item>HAVE_SSIZE_T</item>
+									<item>HAVE_LOCALTIME_R</item>
+									<item>HAVE_GMTIME_R</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries>
-									<item>comctl32.lib</item>
-									<item>rpcrt4.lib</item>
-									<item>msimg32.lib</item>
-									<item>gdiplus.lib</item>
-								</libraries>
+								<libraries/>
 							</item>
 						</configurations>
 						<items>
 							<item type="File">
 								<fileName>*.*</fileName>
 								<items/>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>$(TRAKTOR_HOME)/res/traktor.ui.rc</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>$(TRAKTOR_HOME)/res/traktor.ico</fileName>
-										<items/>
-									</item>
-								</items>
 							</item>
 						</items>
 						<dependencies>
@@ -8681,7 +9083,16 @@
 				</item>
 				<item type="Filter">
 					<name>Resources</name>
-					<items/>
+					<items>
+						<item type="File">
+							<fileName>../../../res/toolbar/Aspect.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Playback.png</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>
@@ -9286,6 +9697,19 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Resources</name>
+								<items>
+									<item type="File">
+										<fileName>../../../res/toolbar/Alignment.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency">
@@ -9719,6 +10143,277 @@
 		<item ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
+			<name>Traktor.Script</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Script</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Script.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Script/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[50]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Script.Lua</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Script/Lua</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_LUA_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_LUA_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[50]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[9]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
 			<name>Traktor.Sound</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Sound</sourcePath>
 			<configurations>
@@ -9928,7 +10623,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[50]"/>
+					<project ref="/object/projects/item[53]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -10117,6 +10812,23 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../res/toolbar/EffectEdit.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Playback.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/SceneEdit.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
@@ -10135,7 +10847,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[52]"/>
+					<project ref="/object/projects/item[55]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
@@ -10244,16 +10956,10 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
-		<item ref="/object/projects/item[28]/dependencies/item[11]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[12]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.World.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
+			<name>Traktor.Terrain.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Terrain/Editor</sourcePath>
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
@@ -10264,7 +10970,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_WORLD_EDITOR_EXPORT</item>
+						<item>T_TERRAIN_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -10279,7 +10985,7 @@
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
 					<definitions>
-						<item>T_WORLD_EDITOR_EXPORT</item>
+						<item>T_TERRAIN_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -10327,13 +11033,202 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[57]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Traktor.World.Editor</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
+						<configurations>
+							<item type="Configuration">
+								<name>DebugShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_WORLD_EDITOR_EXPORT</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_WORLD_EDITOR_EXPORT</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.*</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[16]/dependencies/item/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+							</item>
+						</dependencies>
+					</project>
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project"/>
+		<item ref="/object/projects/item[28]/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[9]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[12]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Weather.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Weather/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WEATHER_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_WEATHER_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[12]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[58]/dependencies/item[7]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[58]/dependencies/item[7]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
@@ -10419,6 +11314,9 @@
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[53]"/>
 				</item>
 			</dependencies>
 		</item>

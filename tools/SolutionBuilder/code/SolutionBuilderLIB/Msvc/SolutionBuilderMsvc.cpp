@@ -176,7 +176,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 				Ref< Project > dependencyProject = static_cast< ProjectDependency* >(*j)->getProject();
 				if (!dependencyProject->getEnable())
 				{
-					log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
+					traktor::log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;
 					continue;
 				}
 

@@ -14,7 +14,7 @@ SharedMemory* OS::createSharedMemory(const std::wstring& name, uint32_t size) co
 {
 	return 0;
 }
-
+OS::OS(){}
 OS::~OS()
 {
 }

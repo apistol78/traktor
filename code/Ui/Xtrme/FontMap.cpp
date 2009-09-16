@@ -217,7 +217,7 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 	desc.width =
 	desc.height = dim;
 	desc.mipCount = 1;
-	desc.format = render::TfA8R8G8B8;
+	desc.format = render::TfR8G8B8A8;
 	desc.immutable = false;
 
 	Ref< render::ISimpleTexture > texture = renderSystem->createSimpleTexture(desc);

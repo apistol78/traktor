@@ -14,6 +14,8 @@ struct InternalData
 
 	}
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Mutex", Mutex, Object)
+	
 Mutex::Mutex()
 :	m_existing(false)
 ,	m_handle(0)
