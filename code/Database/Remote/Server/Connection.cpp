@@ -1,5 +1,6 @@
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/BusMessageListener.h"
+#include "Database/Remote/Server/ConnectionMessageListener.h"
 #include "Database/Remote/Server/DatabaseMessageListener.h"
 #include "Database/Remote/Server/GroupMessageListener.h"
 #include "Database/Remote/Server/InstanceMessageListener.h"
@@ -26,6 +27,7 @@ Connection::Connection(const Configuration* configuration, net::TcpSocket* clien
 	m_messageTransport = gc_new< MessageTransport >(clientSocket);
 
 	m_messageListeners.push_back(gc_new< BusMessageListener >(this));
+	m_messageListeners.push_back(gc_new< ConnectionMessageListener >(this));
 	m_messageListeners.push_back(gc_new< DatabaseMessageListener >(m_configuration, this));
 	m_messageListeners.push_back(gc_new< GroupMessageListener >(this));
 	m_messageListeners.push_back(gc_new< InstanceMessageListener >(this));

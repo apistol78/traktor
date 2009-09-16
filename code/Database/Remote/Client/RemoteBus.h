@@ -21,6 +21,8 @@ class RemoteBus : public IProviderBus
 public:
 	RemoteBus(Connection* connection, uint32_t handle);
 
+	virtual ~RemoteBus();
+
 	virtual bool putEvent(ProviderEvent event, const Guid& eventId);
 
 	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote);

@@ -21,6 +21,8 @@ class RemoteInstance : public IProviderInstance
 public:
 	RemoteInstance(Connection* connection, uint32_t handle);
 
+	virtual ~RemoteInstance();
+
 	virtual std::wstring getPrimaryTypeName() const;
 
 	virtual bool openTransaction();
