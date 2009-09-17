@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <locale>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Glsl.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
@@ -13,6 +12,7 @@
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -23,16 +23,51 @@ namespace traktor
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemOpenGLES2", RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
+:	m_display(EGL_NO_DISPLAY)
+,	m_context(EGL_NO_CONTEXT)
+,	m_surface(EGL_NO_SURFACE)
+#if defined(_WIN32)
+,	m_hWnd(0)
+#endif
 {
 }
 
 bool RenderSystemOpenGLES2::create()
 {
+#if defined(_WIN32)
+	WNDCLASS wc;
+
+#	if defined(WINCE)
+	wc.style = 0;
+#	else
+	wc.style = CS_OWNDC;
+#	endif
+	wc.lpfnWndProc = (WNDPROC)wndProc;
+	wc.cbClsExtra = 0;
+	wc.cbWndExtra = 0;
+	wc.hInstance = (HINSTANCE)GetModuleHandle(NULL);
+	wc.hIcon = NULL;
+	wc.hCursor = LoadCursor(NULL, IDC_ARROW);
+	wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wc.lpszMenuName = NULL;
+	wc.lpszClassName = _T("RenderSystemOpenGLES2_FullScreen");
+
+	RegisterClass(&wc);
+#endif
 	return true;
 }
 
 void RenderSystemOpenGLES2::destroy()
 {
+	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
+	eglDestroyContext(m_display, m_context);
+	eglDestroySurface(m_display, m_surface);
+	eglTerminate(m_display);
+
+	m_display = EGL_NO_DISPLAY;
+	m_context = EGL_NO_CONTEXT;
+	m_surface = EGL_NO_SURFACE;
 }
 
 int RenderSystemOpenGLES2::getDisplayModeCount() const
@@ -52,17 +87,177 @@ DisplayMode* RenderSystemOpenGLES2::getCurrentDisplayMode()
 
 bool RenderSystemOpenGLES2::handleMessages()
 {
+#if defined(_WIN32)
+
+	bool going = true;
+	MSG msg;
+
+	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
+	{
+		int ret = GetMessage(&msg, NULL, 0, 0);
+		if (ret <= 0 || msg.message == WM_QUIT)
+			going = false;
+
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
+
+	return going;
+
+#endif
 	return true;
 }
 
 IRenderView* RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
+#if defined(_WIN32)
+	if (m_hWnd)
+		return 0;
+
+	m_hWnd = CreateWindow(
+		_T("RenderSystemOpenGLES2_FullScreen"),
+		_T("Traktor 2.0 OpenGL ES 2.0 Renderer"),
+		WS_POPUPWINDOW,
+		0,
+		0,
+		0,
+		0,
+		NULL,
+		NULL,
+		static_cast< HMODULE >(GetModuleHandle(NULL)),
+		this
+	);
+	if (!m_hWnd)
+		return 0;
+
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_NOMOVE);
+
+	return createRenderView(m_hWnd, desc);
+#else
 	return 0;
+#endif
 }
 
 IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
-	return 0;
+	const uint32_t c_maxConfigAttrSize = 32;
+	const uint32_t c_maxMatchConfigs = 64;
+
+	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)windowHandle;
+
+	m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+	if (m_display == EGL_NO_DISPLAY) 
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; unable to get EGL display (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	if (!eglInitialize(m_display, 0, 0)) 
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; unable to initialize EGL (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	EGLint configAttrs[c_maxConfigAttrSize];
+	EGLint i = 0;
+
+	configAttrs[i] = EGL_RENDERABLE_TYPE;
+	configAttrs[++i] = EGL_OPENGL_ES2_BIT;
+	//configAttrs[++i] = EGL_BUFFER_SIZE;
+	//configAttrs[++i] = 24;
+	//configAttrs[++i] = EGL_RED_SIZE;
+	//configAttrs[++i] = 8;
+	//configAttrs[++i] = EGL_GREEN_SIZE;
+	//configAttrs[++i] = 8;
+	//configAttrs[++i] = EGL_BLUE_SIZE;
+	//configAttrs[++i] = 8;
+	//configAttrs[++i] = EGL_ALPHA_SIZE;
+	//configAttrs[++i] = 0;
+	configAttrs[++i] = EGL_DEPTH_SIZE;
+	configAttrs[++i] = desc.depthBits;
+	configAttrs[++i] = EGL_STENCIL_SIZE;
+	configAttrs[++i] = desc.stencilBits;
+	configAttrs[++i] = EGL_NONE;
+
+	EGLConfig matchingConfigs[c_maxMatchConfigs];
+	EGLint numMatchingConfigs = 0;
+
+	EGLBoolean success = eglChooseConfig(m_display, configAttrs, matchingConfigs, c_maxMatchConfigs, &numMatchingConfigs);
+	if (!success)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; unable to create choose EGL config (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	if (numMatchingConfigs == 0)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; no matching configurations" << Endl;
+		return 0;
+	}
+
+	EGLConfig config;
+
+	//for (i = 0; i < numMatchingConfigs; i++)
+	//{
+	//	EGLConfig testConfig = matchingConfigs[i];
+
+	//	EGLint redSize, greenSize, blueSize, alphaSize, depthSize, stencilSize;
+	//	EGLBoolean ok = EGL_TRUE;
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_RED_SIZE, &redSize);
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_GREEN_SIZE, &greenSize);
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_BLUE_SIZE, &blueSize);
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_ALPHA_SIZE, &alphaSize);
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_DEPTH_SIZE, &depthSize);
+	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_STENCIL_SIZE, &stencilSize);
+	//	if (!ok)
+	//		break;
+
+	//	EGLBoolean depthMatches = (depthSize > 0);
+	//	EGLBoolean stencilMatches = (stencilSize == 0);
+
+	//	if (redSize >= 5 && greenSize >= 5 && blueSize >= 5 && depthMatches && stencilMatches)
+	//	{
+	//		config = testConfig;
+	//		break;
+	//	}
+	//}
+
+	//if (i >= numMatchingConfigs)
+		config = matchingConfigs[0];
+
+	m_surface = eglCreateWindowSurface(m_display, config, nativeWindow, 0);
+	if (m_surface == EGL_NO_SURFACE)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; unable to create EGL surface (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	EGLint contextAttrs[] = 
+	{
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+
+	m_context = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttrs);
+	if (m_context == EGL_NO_CONTEXT)
+	{
+		EGLint error = eglGetError();
+		log::error << L"Create render view failed; unable to create EGL context (" << getEGLErrorString(error) << L")" << Endl;
+		return 0;
+	}
+
+	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
+		return 0;
+
+	//if (!eglSwapInterval(m_display, 0)) 
+	//	return 0;
+
+	return gc_new< RenderViewOpenGLES2 >(m_display, m_context, m_surface);
 }
 
 VertexBuffer* RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
@@ -105,27 +300,70 @@ RenderTargetSet* RenderSystemOpenGLES2::createRenderTargetSet(const RenderTarget
 
 ProgramResource* RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
-	return gc_new< ProgramResourceOpenGL >(shaderGraph);
-}
-
-IProgram* RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
-{
-	Ref< const ProgramResourceOpenGL > resource = dynamic_type_cast< const ProgramResourceOpenGL* >(programResource);
-	if (!resource)
-		return 0;
-
-	const ShaderGraph* shaderGraph = resource->getShaderGraph();
-
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, glslProgram))
 		return 0;
 
-	Ref< ProgramOpenGLES2 > shader = gc_new< ProgramOpenGLES2 >();
-	if (!shader->create(glslProgram))
+	Ref< ProgramResource > resource = ProgramOpenGLES2::compile(glslProgram, optimize, validate);
+	if (!resource)
 		return 0;
 
-	return shader;
+	return resource;
 }
+
+IProgram* RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
+{
+	Ref< ProgramOpenGLES2 > program = gc_new< ProgramOpenGLES2 >();
+	if (!program->create(programResource))
+		return 0;
+
+	return program;
+}
+
+#if defined(_WIN32)
+
+LRESULT RenderSystemOpenGLES2::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	RenderSystemOpenGLES2* renderSystem = reinterpret_cast< RenderSystemOpenGLES2* >(GetWindowLongPtr(hWnd, 0));
+	LPCREATESTRUCT createStruct;
+	LRESULT result = TRUE;
+
+	switch (uMsg)
+	{
+	case WM_CREATE:
+		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
+		renderSystem = reinterpret_cast< RenderSystemOpenGLES2* >(createStruct->lpCreateParams);
+		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
+		break;
+
+	case WM_KEYDOWN:
+		if (wParam != VK_ESCAPE)
+			break;
+
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		break;
+
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+
+	case WM_ERASEBKGND:
+		break;
+
+	case WM_SETCURSOR:
+		SetCursor(NULL);
+		break;
+
+	default:
+		result = DefWindowProc(hWnd, uMsg, wParam, lParam);
+		break;
+	}
+
+	return result;
+}
+
+#endif
 
 	}
 }

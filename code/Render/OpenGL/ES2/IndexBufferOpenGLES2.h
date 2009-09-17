@@ -2,6 +2,7 @@
 #define traktor_render_IndexBufferOpenGLES2_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/IndexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -40,7 +41,9 @@ public:
 	virtual const GLvoid* getIndexData() const;
 
 private:
+	bool m_dynamic;
 	GLuint m_name;
+	AutoArrayPtr< uint8_t > m_buffer;
 };
 	
 	}

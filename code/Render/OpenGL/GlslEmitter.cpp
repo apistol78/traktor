@@ -41,7 +41,11 @@ std::wstring expandScalar(float v, GlslType type)
 
 StringOutputStream& assign(StringOutputStream& f, GlslVariable* out)
 {
+#if defined(T_OPENGL_STD)
 	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = ";
+#elif defined(T_OPENGL_ES2)
+	f << glsl_type_name(out->getType()) << L" " << out->getName() << L"; " << out->getName() << L" = ";
+#endif
 	return f;
 }
 
@@ -94,7 +98,7 @@ void emitColor(GlslContext& cx, Color* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 	traktor::Color color = node->getColor();
-	f << L"vec4 " << out->getName() << L" = vec4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+	f << L"const vec4 " << out->getName() << L" = vec4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
 }
 
 void emitConditional(GlslContext& cx, Conditional* node)
@@ -216,6 +220,7 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* input = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", input->getType());
+#if defined(T_OPENGL_STD)
 	switch (node->getAxis())
 	{
 	case Derivative::DaX:
@@ -225,6 +230,23 @@ void emitDerivative(GlslContext& cx, Derivative* node)
 		assign(f, out) << L"dFdy(" << input->getName() << L");" << Endl;
 		break;
 	}
+#elif defined(T_OPENGL_ES2)
+	switch (input->getType())
+	{
+	case GtFloat:
+		assign(f, out) << L"0.0;" << Endl;
+		break;
+	case GtFloat2:
+		assign(f, out) << L"vec2(0.0, 0.0);" << Endl;
+		break;
+	case GtFloat3:
+		assign(f, out) << L"vec3(0.0, 0.0, 0.0);" << Endl;
+		break;
+	case GtFloat4:
+		assign(f, out) << L"vec4(0.0, 0.0, 0.0, 0.0);" << Endl;
+		break;
+	}
+#endif
 }
 
 void emitDiv(GlslContext& cx, Div* node)
@@ -368,7 +390,7 @@ void emitIterate(GlslContext& cx, Iterate* node)
 		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L".0; " << N->getName() << L" <= " << node->getTo() << L".0; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -433,6 +455,7 @@ void emitMatrix(GlslContext& cx, Matrix* node)
 	GlslVariable* zaxis = cx.emitInput(node, L"ZAxis");
 	GlslVariable* translate = cx.emitInput(node, L"Translate");
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4x4);
+#if defined(T_OPENGL_STD)
 	assign(f, out) << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
@@ -442,6 +465,16 @@ void emitMatrix(GlslContext& cx, Matrix* node)
 	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
 	f << L"};" << Endl;
+#elif defined(T_OPENGL_ES2)
+	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
+	f << IncreaseIndent;
+	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
+	f << (yaxis     ? yaxis->cast(GtFloat4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
+	f << (zaxis     ? zaxis->cast(GtFloat4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
+	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
+	f << DecreaseIndent;
+	f << L");" << Endl;
+#endif
 }
 
 void emitMax(GlslContext& cx, Max* node)
@@ -822,7 +855,7 @@ void emitScalar(GlslContext& cx, Scalar* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
-	f << glsl_type_name(out->getType()) << L" " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
+	f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
 }
 
 void emitSin(GlslContext& cx, Sin* node)
@@ -882,7 +915,7 @@ void emitSum(GlslContext& cx, Sum* node)
 	assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
 
 	// Write outer for-loop statement.
-	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L".0; " << N->getName() << L" <= " << node->getTo() << L".0; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
@@ -1057,7 +1090,11 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+#if defined(T_OPENGL_STD)
 	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+#elif defined(T_OPENGL_ES2)
+	assign(f, out) << in->getName() << L";" << Endl;
+#endif
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)

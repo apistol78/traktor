@@ -93,7 +93,7 @@ private:
 /*! \brief Character stream operator.
  * \ingroup Core
  */
-T_DLLCLASS OutputStream& operator >> (OutputStream& os, wchar_t ch);
+T_DLLCLASS OutputStream& operator << (OutputStream& os, wchar_t ch);
 
 /*! \brief Scoped indentation.
  * \ingroup Core
@@ -131,6 +131,11 @@ T_DLLCLASS OutputStream& IncreaseIndent(OutputStream& s);
  * \ingroup Core
  */
 T_DLLCLASS OutputStream& DecreaseIndent(OutputStream& s);
+
+/*! \brief Multiple lines with line numbers.
+ * \ingroup Core
+ */
+T_DLLCLASS OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str);
 
 }
 

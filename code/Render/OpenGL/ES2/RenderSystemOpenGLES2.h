@@ -61,6 +61,16 @@ public:
 	virtual ProgramResource* compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
 
 	virtual IProgram* createProgram(const ProgramResource* programResource);
+
+private:
+	EGLDisplay m_display;
+	EGLContext m_context;
+	EGLSurface m_surface;
+#if defined(_WIN32)
+	HWND m_hWnd;
+
+	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+#endif
 };
 
 	}

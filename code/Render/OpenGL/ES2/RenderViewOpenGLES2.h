@@ -32,7 +32,7 @@ class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 	T_RTTI_CLASS(RenderViewOpenGLES2)
 
 public:
-	RenderViewOpenGLES2();
+	RenderViewOpenGLES2(EGLDisplay display, EGLContext context, EGLSurface surface);
 
 	virtual ~RenderViewOpenGLES2();
 
@@ -63,6 +63,9 @@ public:
 	virtual void present();
 
 private:
+	EGLDisplay m_display;
+	EGLContext m_context;
+	EGLSurface m_surface;
 	std::stack< RenderTargetOpenGLES2* > m_renderTargetStack;
 	Ref< VertexBufferOpenGLES2 > m_currentVertexBuffer;
 	Ref< IndexBufferOpenGLES2 > m_currentIndexBuffer;

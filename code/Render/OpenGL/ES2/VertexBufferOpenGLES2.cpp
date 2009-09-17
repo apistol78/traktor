@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferOpenGLES2", VertexBufferOpen
 
 VertexBufferOpenGLES2::VertexBufferOpenGLES2(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
+,	m_dynamic(dynamic)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
@@ -93,19 +94,17 @@ VertexBufferOpenGLES2::VertexBufferOpenGLES2(const std::vector< VertexElement >&
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
-#if defined(GL_HALF_FLOAT_ARB)
 		case DtHalf2:
 			m_attributeDesc[usageIndex].size = 2;
-			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_OES;
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
 		case DtHalf4:
 			m_attributeDesc[usageIndex].size = 4;
-			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_OES;
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
-#endif
 
 		default:
 			log::warning << L"Unsupport vertex format" << Endl;
@@ -131,7 +130,13 @@ void VertexBufferOpenGLES2::destroy()
 
 void* VertexBufferOpenGLES2::lock()
 {
-	return 0;
+	if (m_buffer.ptr())
+		return 0;
+
+	int32_t bufferSize = getBufferSize();
+	m_buffer = AutoArrayPtr< uint8_t >(new uint8_t [bufferSize]);
+
+	return m_buffer.ptr();
 }
 
 void* VertexBufferOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCount)
@@ -141,6 +146,13 @@ void* VertexBufferOpenGLES2::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferOpenGLES2::unlock()
 {
+	if (m_buffer.ptr())
+	{
+		int32_t bufferSize = getBufferSize();
+		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_name));
+		T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, m_buffer.ptr(), m_dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
+		m_buffer.release();
+	}
 }
 
 void VertexBufferOpenGLES2::activate(const GLint* attributeLocs)

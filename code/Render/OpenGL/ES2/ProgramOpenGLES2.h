@@ -21,6 +21,7 @@ namespace traktor
 	{
 
 class GlslProgram;
+class ProgramResource;
 
 /*!
  * \ingroup OGL
@@ -34,7 +35,9 @@ public:
 
 	virtual ~ProgramOpenGLES2();
 
-	bool create(const GlslProgram& glslProgram);
+	static ProgramResource* compile(const GlslProgram& glslProgram, int optimize, bool validate);
+
+	bool create(const ProgramResource* resource);
 
 	virtual void destroy();
 
@@ -97,6 +100,10 @@ private:
 
 	static ProgramOpenGLES2* ms_activeProgram;
 	bool m_dirty;
+
+	bool createFromSource(const ProgramResource* resource);
+
+	bool createFromBinary(const ProgramResource* resource);
 };
 
 	}

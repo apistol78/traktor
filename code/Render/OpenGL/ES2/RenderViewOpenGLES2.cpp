@@ -15,8 +15,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
 
-RenderViewOpenGLES2::RenderViewOpenGLES2()
-:	m_currentDirty(true)
+RenderViewOpenGLES2::RenderViewOpenGLES2(EGLDisplay display, EGLContext context, EGLSurface surface)
+:	m_display(display)
+,	m_context(context)
+,	m_surface(surface)
+,	m_currentDirty(true)
 {
 }
 
@@ -41,10 +44,10 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 		viewport.height
 	));
 
-	//T_OGL_SAFE(glDepthRange(
-	//	viewport.nearZ,
-	//	viewport.farZ
-	//));
+	T_OGL_SAFE(glDepthRangef(
+		viewport.nearZ,
+		viewport.farZ
+	));
 }
 
 Viewport RenderViewOpenGLES2::getViewport()
@@ -120,7 +123,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 
 	if (clearMask & CfDepth)
 	{
-		//T_OGL_SAFE(glClearDepth(depth));
+		T_OGL_SAFE(glClearDepthf(depth));
 		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
@@ -256,6 +259,7 @@ void RenderViewOpenGLES2::end()
 
 void RenderViewOpenGLES2::present()
 {
+	eglSwapBuffers(m_display, m_surface);
 }
 
 	}

@@ -1,7 +1,7 @@
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
-#include "Render/ShaderGraph.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStl.h"
 
 namespace traktor
 {
@@ -10,17 +10,39 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceOpenGL", ProgramResourceOpenGL, ProgramResource)
 
-ProgramResourceOpenGL::ProgramResourceOpenGL(const ShaderGraph* shaderGraph)
-:	m_shaderGraph(const_cast< ShaderGraph* >(shaderGraph))
+ProgramResourceOpenGL::ProgramResourceOpenGL()
+{
+}
+
+ProgramResourceOpenGL::ProgramResourceOpenGL(
+	const std::wstring& vertexShader,
+	const std::wstring& fragmentShader,
+	const std::set< std::wstring >& vertexSamplers,
+	const std::set< std::wstring >& fragmentSamplers,
+	const RenderState& renderState
+)
+:	m_vertexShader(vertexShader)
+,	m_fragmentShader(fragmentShader)
+,	m_vertexSamplers(vertexSamplers)
+,	m_fragmentSamplers(fragmentSamplers)
+,	m_renderState(renderState)
 {
 }
 
 bool ProgramResourceOpenGL::serialize(Serializer& s)
 {
+	uint32_t renderStateSize = sizeof(m_renderState);
+
 	if (!ProgramResource::serialize(s))
 		return false;
 
-	return s >> MemberRef< ShaderGraph >(L"shaderGraph", m_shaderGraph);
+	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
+	s >> Member< std::wstring >(L"fragmentShader", m_fragmentShader);
+	s >> MemberStlSet< std::wstring >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberStlSet< std::wstring >(L"fragmentSamplers", m_fragmentSamplers);
+	s >> Member< void* >(L"renderState", &m_renderState, renderStateSize);
+
+	return true;
 }
 
 	}

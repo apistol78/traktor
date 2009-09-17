@@ -67,6 +67,9 @@ Mesh* MeshReader::read(Stream* stream) const
 	if (vertexBufferSize > 0)
 	{
 		uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
+		if (!vertex)
+			return 0;
+
 #if defined(T_LITTLE_ENDIAN)
 		reader.read(vertex, vertexBufferSize);
 #else
@@ -126,6 +129,9 @@ Mesh* MeshReader::read(Stream* stream) const
 	if (indexBufferSize > 0)
 	{
 		uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
+		if (!index)
+			return 0;
+
 #if defined(T_LITTLE_ENDIAN)
 		reader.read(index, indexBufferSize);
 #else

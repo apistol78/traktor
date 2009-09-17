@@ -1,6 +1,7 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
+#include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
@@ -8,6 +9,7 @@
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -70,16 +72,36 @@ ProgramOpenGL::~ProgramOpenGL()
 	destroy();
 }
 
-bool ProgramOpenGL::create(const GlslProgram& glslProgram)
+ProgramResource* ProgramOpenGL::compile(const GlslProgram& glslProgram, int optimize, bool validate)
 {
+	Ref< ProgramResource > resource;
+
+	resource = gc_new< ProgramResourceOpenGL >(
+		cref(glslProgram.getVertexShader()),
+		cref(glslProgram.getFragmentShader()),
+		cref(glslProgram.getVertexSamplers()),
+		cref(glslProgram.getFragmentSamplers()),
+		cref(glslProgram.getRenderState())
+	);
+
+	return resource;
+}
+
+bool ProgramOpenGL::create(const ProgramResource* resource)
+{
+	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
+
+	std::string vertexShader = wstombs(resourceOpenGL->getVertexShader());
+	const char* vertexShaderPtr = vertexShader.c_str();
+
+	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
+	const char* fragmentShaderPtr = fragmentShader.c_str();
+
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
 
 	GLhandleARB vertexObject = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-
-	std::string vertexShader = wstombs(glslProgram.getVertexShader());
-	const char* vertexShaderPtr = vertexShader.c_str();
 	T_OGL_SAFE(glShaderSourceARB(vertexObject, 1, &vertexShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShaderARB(vertexObject));
 	
@@ -92,15 +114,12 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 			log::error << L"GLSL vertex shader compile failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
 			log::error << Endl;
-			log::error << glslProgram.getVertexShader() << Endl;
+			log::error << resourceOpenGL->getVertexShader() << Endl;
 			return false;
 		}
 	}
 	
 	GLhandleARB fragmentObject = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-	std::string fragmentShader = wstombs(glslProgram.getFragmentShader());
-	const char* fragmentShaderPtr = fragmentShader.c_str();
 	T_OGL_SAFE(glShaderSourceARB(fragmentObject, 1, &fragmentShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShaderARB(fragmentObject));
 
@@ -113,7 +132,7 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 			log::error << L"GLSL fragment shader compile failed :" << Endl;
 			log::error << mbstows(errorBuf) << Endl;
 			log::error << Endl;
-			log::error << glslProgram.getFragmentShader() << Endl;
+			log::error << resourceOpenGL->getFragmentShader() << Endl;
 			return false;
 		}
 	}
@@ -142,8 +161,8 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 
 	// Merge samplers.
 	std::set< std::wstring > samplers;
-	samplers.insert(glslProgram.getVertexSamplers().begin(), glslProgram.getVertexSamplers().end());
-	samplers.insert(glslProgram.getFragmentSamplers().begin(), glslProgram.getFragmentSamplers().end());
+	samplers.insert(resourceOpenGL->getVertexSamplers().begin(), resourceOpenGL->getVertexSamplers().end());
+	samplers.insert(resourceOpenGL->getFragmentSamplers().begin(), resourceOpenGL->getFragmentSamplers().end());
 
 	for (GLint j = 0; j < uniformCount; ++j)
 	{
@@ -235,11 +254,10 @@ bool ProgramOpenGL::create(const GlslProgram& glslProgram)
 	}
 
 	// Create a display list from the render states.
-	const RenderState& renderState = glslProgram.getRenderState();
-
+	const RenderState& renderState = resourceOpenGL->getRenderState();
 	m_renderState = renderState;
-	m_state = glGenLists(1);
 
+	m_state = glGenLists(1);
 	glNewList(m_state, GL_COMPILE);
 
 	if (renderState.cullFaceEnable)
