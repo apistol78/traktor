@@ -5,51 +5,21 @@
 #include "Core/Object.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-#define T_CONTEXT_SCOPE(context) ContextOpenGL::Scope __scope__(context);
-
 /*! \brief OpenGL context.
  * \ingroup OGL
  */
-class ContextOpenGL : public Object
+class ContextOpenGL : public IContext
 {
+	T_RTTI_CLASS(ContextOpenGL)
+
 public:
-	/*! \brief Delete callback. 
-	 * \ingroup OGL
-	 *
-	 * These are enqueued in the context
-	 * and are invoked as soon as it's
-	 * safe to actually delete resources.
-	 */
-	struct DeleteCallback
-	{
-		virtual void deleteResource() = 0;
-	};
-
-	/*! \brief Scoped enter/leave helper.
-	 * \ingroup OGL
-	 */
-	struct Scope
-	{
-		ContextOpenGL* m_context;
-
-		Scope(ContextOpenGL* context)
-		:	m_context(context)
-		{
-			m_context->enter();
-		}
-
-		~Scope()
-		{
-			m_context->leave();
-		}
-	};
-
 #if defined(_WIN32)
 	ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 #elif defined(__APPLE__)
@@ -60,10 +30,6 @@ public:
 
 	virtual ~ContextOpenGL();
 
-	bool enter();
-
-	void leave();
-
 	void share(ContextOpenGL* context);
 
 	void update();
@@ -72,9 +38,13 @@ public:
 
 	void destroy();
 
-	void deleteResource(DeleteCallback* callback);
+	virtual bool enter();
 
-	void deleteResources();
+	virtual void leave();
+
+	virtual void deleteResource(IDeleteCallback* callback);
+
+	virtual void deleteResources();
 
 #if !defined(_WIN32) && !defined(__APPLE__)
 	inline GLXContext getGLXContext() { return m_context; }
@@ -98,7 +68,7 @@ private:
 #endif
 
 	static ThreadLocal ms_contextStack;
-	std::vector< DeleteCallback* > m_deleteResources;
+	std::vector< IDeleteCallback* > m_deleteResources;
 };
 
 	}

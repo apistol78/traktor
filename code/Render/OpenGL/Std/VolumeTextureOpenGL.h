@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 		
-class ContextOpenGL;
+class IContext;
 
 /*!
  * \ingroup OGL
@@ -28,7 +28,7 @@ class T_DLLCLASS VolumeTextureOpenGL : public IVolumeTexture
 	T_RTTI_CLASS(VolumeTextureOpenGL)
 	
 public:
-	VolumeTextureOpenGL(ContextOpenGL* context);
+	VolumeTextureOpenGL(IContext* context);
 
 	bool create(const VolumeTextureCreateDesc& desc);
 
@@ -43,7 +43,7 @@ public:
 	GLuint getTextureName() const { return m_textureName; }
 	
 private:
-	Ref< ContextOpenGL > m_context;
+	Ref< IContext > m_context;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;

@@ -1,6 +1,6 @@
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferVBO.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
 
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public ContextOpenGL::DeleteCallback
+struct DeleteBufferCallback : public IContext::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -31,7 +31,7 @@ struct DeleteBufferCallback : public ContextOpenGL::DeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferVBO", VertexBufferVBO, VertexBufferOpenGL)
 
-VertexBufferVBO::VertexBufferVBO(ContextOpenGL* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferVBO::VertexBufferVBO(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_context(context)
 ,	m_locked(false)

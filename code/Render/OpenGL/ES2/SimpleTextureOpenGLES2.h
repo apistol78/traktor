@@ -19,6 +19,8 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
+
 /*!
  * \ingroup OGL
  */
@@ -27,7 +29,7 @@ class T_DLLCLASS SimpleTextureOpenGLES2 : public ISimpleTexture
 	T_RTTI_CLASS(ISimpleTexture)
 
 public:
-	SimpleTextureOpenGLES2();
+	SimpleTextureOpenGLES2(IContext* context);
 
 	virtual ~SimpleTextureOpenGLES2();
 	
@@ -52,6 +54,7 @@ public:
 	uint32_t getMipCount() const { return m_mipCount; }
 
 private:
+	Ref< IContext > m_context;
 	GLuint m_textureName;
 	int m_width;
 	int m_height;

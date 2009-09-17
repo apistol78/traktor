@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIAR", IndexBufferIAR, IndexBufferOpenGL)
 
-IndexBufferIAR::IndexBufferIAR(ContextOpenGL* context, IndexType indexType, uint32_t bufferSize)
+IndexBufferIAR::IndexBufferIAR(IContext* context, IndexType indexType, uint32_t bufferSize)
 :	IndexBufferOpenGL(indexType, bufferSize)
 ,	m_context(context)
 ,	m_data(0)
@@ -16,7 +16,7 @@ IndexBufferIAR::IndexBufferIAR(ContextOpenGL* context, IndexType indexType, uint
 	m_data = new GLubyte [bufferSize + sizeof(GLuint)];
 	T_ASSERT (m_data);
 
-	memset(m_data, 0, bufferSize);
+	std::memset(m_data, 0, bufferSize);
 	*(GLuint*)&m_data[bufferSize] = 0xe1e1e1e1;
 }
 

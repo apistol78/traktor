@@ -20,6 +20,7 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
 class GlslProgram;
 class ProgramResource;
 
@@ -31,7 +32,7 @@ class T_DLLCLASS ProgramOpenGLES2 : public IProgram
 	T_RTTI_CLASS(ProgramOpenGLES2)
 
 public:
-	ProgramOpenGLES2();
+	ProgramOpenGLES2(IContext* context);
 
 	virtual ~ProgramOpenGLES2();
 
@@ -88,6 +89,7 @@ private:
 		uint32_t mipCount;
 	};
 
+	Ref< IContext > m_context;
 	GLuint m_program;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];
 	std::vector< Uniform > m_uniforms;
@@ -97,7 +99,6 @@ private:
 	AlignedVector< float > m_uniformData;
 	std::vector< bool > m_uniformDataDirty;
 	AlignedVector< SamplerTexture > m_samplerTextures;
-
 	static ProgramOpenGLES2* ms_activeProgram;
 	bool m_dirty;
 

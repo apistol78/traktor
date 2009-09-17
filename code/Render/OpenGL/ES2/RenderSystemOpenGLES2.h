@@ -18,6 +18,8 @@ namespace traktor
 	namespace render
 	{
 
+class ContextOpenGLES2;
+
 /*! \brief OpenGL ES 2.0 render system.
  * \ingroup OGL
  *
@@ -63,6 +65,7 @@ public:
 	virtual IProgram* createProgram(const ProgramResource* programResource);
 
 private:
+	Ref< ContextOpenGLES2 > m_globalContext;
 	EGLDisplay m_display;
 	EGLContext m_context;
 	EGLSurface m_surface;

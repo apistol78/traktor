@@ -1,6 +1,6 @@
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
+struct DeleteTextureCallback : public IContext::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -26,7 +26,7 @@ struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
 	}
 };
 
-struct DeleteFramebufferCallback : public ContextOpenGL::DeleteCallback
+struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 {
 	GLuint m_framebufferName;
 
@@ -46,7 +46,7 @@ struct DeleteFramebufferCallback : public ContextOpenGL::DeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ITexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(ContextOpenGL* context)
+RenderTargetOpenGL::RenderTargetOpenGL(IContext* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)

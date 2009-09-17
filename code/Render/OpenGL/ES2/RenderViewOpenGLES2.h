@@ -19,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
 class VertexBufferOpenGLES2;
 class IndexBufferOpenGLES2;
 class ProgramOpenGLES2;
@@ -32,7 +33,7 @@ class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 	T_RTTI_CLASS(RenderViewOpenGLES2)
 
 public:
-	RenderViewOpenGLES2(EGLDisplay display, EGLContext context, EGLSurface surface);
+	RenderViewOpenGLES2(IContext* globalContext, EGLDisplay display, EGLContext context, EGLSurface surface);
 
 	virtual ~RenderViewOpenGLES2();
 
@@ -63,6 +64,7 @@ public:
 	virtual void present();
 
 private:
+	Ref< IContext > m_globalContext;
 	EGLDisplay m_display;
 	EGLContext m_context;
 	EGLSurface m_surface;

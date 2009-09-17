@@ -1,3 +1,4 @@
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
@@ -15,8 +16,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
 
-RenderViewOpenGLES2::RenderViewOpenGLES2(EGLDisplay display, EGLContext context, EGLSurface surface)
-:	m_display(display)
+RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EGLDisplay display, EGLContext context, EGLSurface surface)
+:	m_globalContext(globalContext)
+,	m_display(display)
 ,	m_context(context)
 ,	m_surface(surface)
 ,	m_currentDirty(true)
@@ -260,6 +262,9 @@ void RenderViewOpenGLES2::end()
 void RenderViewOpenGLES2::present()
 {
 	eglSwapBuffers(m_display, m_surface);
+
+	if (m_globalContext)
+		m_globalContext->deleteResources();
 }
 
 	}

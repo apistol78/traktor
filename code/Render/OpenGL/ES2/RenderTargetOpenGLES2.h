@@ -19,6 +19,8 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
+
 /*!
  * \ingroup OGL
  */
@@ -27,7 +29,7 @@ class T_DLLCLASS RenderTargetOpenGLES2 : public ITexture
 	T_RTTI_CLASS(RenderTargetOpenGLES2)
 
 public:
-	RenderTargetOpenGLES2();
+	RenderTargetOpenGLES2(IContext* context);
 
 	virtual ~RenderTargetOpenGLES2();
 
@@ -52,6 +54,7 @@ public:
 	inline const Vector4& getTextureOriginAndScale() const { return m_originAndScale; }
 
 private:
+	Ref< IContext > m_context;
 	int m_width;
 	int m_height;
 	GLenum m_textureTarget;

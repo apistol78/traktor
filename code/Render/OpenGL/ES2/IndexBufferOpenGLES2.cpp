@@ -1,15 +1,37 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct DeleteBufferCallback : public IContext::IDeleteCallback
+{
+	GLuint m_bufferName;
+
+	DeleteBufferCallback(GLuint bufferName)
+	:	m_bufferName(bufferName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteBuffers(1, &m_bufferName));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferOpenGLES2", IndexBufferOpenGLES2, IndexBufferOpenGL)
 
-IndexBufferOpenGLES2::IndexBufferOpenGLES2(IndexType indexType, uint32_t bufferSize, bool dynamic)
+IndexBufferOpenGLES2::IndexBufferOpenGLES2(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
 :	IndexBufferOpenGL(indexType, bufferSize)
+,	m_context(context)
 ,	m_dynamic(dynamic)
 {
 	T_OGL_SAFE(glGenBuffers(1, &m_name));
@@ -26,7 +48,8 @@ void IndexBufferOpenGLES2::destroy()
 {
 	if (m_name)
 	{
-		T_OGL_SAFE(glDeleteBuffers(1, &m_name));
+		if (m_context)
+			m_context->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }

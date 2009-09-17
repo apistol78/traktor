@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Core/Log/Log.h"
 
@@ -6,11 +7,48 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct DeleteTextureCallback : public IContext::IDeleteCallback
+{
+	GLuint m_textureName;
+
+	DeleteTextureCallback(GLuint textureName)
+	:	m_textureName(textureName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
+		delete this;
+	}
+};
+
+struct DeleteFramebufferCallback : public IContext::IDeleteCallback
+{
+	GLuint m_framebufferName;
+
+	DeleteFramebufferCallback(GLuint framebufferName)
+	:	m_framebufferName(framebufferName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteFramebuffers(1, &m_framebufferName));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGLES2", RenderTargetOpenGLES2, ITexture)
 
-RenderTargetOpenGLES2::RenderTargetOpenGLES2()
-:	m_width(0)
+RenderTargetOpenGLES2::RenderTargetOpenGLES2(IContext* context)
+:	m_context(context)
+,	m_width(0)
 ,	m_height(0)
 ,	m_textureTarget(0)
 ,	m_frameBufferObject(0)
@@ -112,12 +150,14 @@ void RenderTargetOpenGLES2::destroy()
 {
 	if (m_colorTexture)
 	{
-		T_OGL_SAFE(glDeleteTextures(1, &m_colorTexture));
+		if (m_context)
+			m_context->deleteResource(new DeleteTextureCallback(m_colorTexture));
 		m_colorTexture = 0;
 	}
 	if (m_frameBufferObject)
 	{
-		T_OGL_SAFE(glDeleteFramebuffers(1, &m_frameBufferObject));
+		if (m_context)
+			m_context->deleteResource(new DeleteFramebufferCallback(m_frameBufferObject));
 		m_frameBufferObject = 0;
 	}
 }
