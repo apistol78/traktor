@@ -455,17 +455,6 @@ void emitMatrix(GlslContext& cx, Matrix* node)
 	GlslVariable* zaxis = cx.emitInput(node, L"ZAxis");
 	GlslVariable* translate = cx.emitInput(node, L"Translate");
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4x4);
-#if defined(T_OPENGL_STD)
-	assign(f, out) << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
-	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
-	f << (yaxis     ? yaxis->cast(GtFloat4)     : L"vec4(0.0, 1.0, 0.0, 0.0)") << L"," << Endl;
-	f << (zaxis     ? zaxis->cast(GtFloat4)     : L"vec4(0.0, 0.0, 1.0, 0.0)") << L"," << Endl;
-	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
-	f << DecreaseIndent;
-	f << L"};" << Endl;
-#elif defined(T_OPENGL_ES2)
 	f << L"mat4 " << out->getName() << L" = mat4(" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(GtFloat4)     : L"vec4(1.0, 0.0, 0.0, 0.0)") << L"," << Endl;
@@ -474,7 +463,6 @@ void emitMatrix(GlslContext& cx, Matrix* node)
 	f << (translate ? translate->cast(GtFloat4) : L"vec4(0.0, 0.0, 0.0, 1.0)") << Endl;
 	f << DecreaseIndent;
 	f << L");" << Endl;
-#endif
 }
 
 void emitMax(GlslContext& cx, Max* node)
@@ -1090,11 +1078,11 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-#if defined(T_OPENGL_STD)
-	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
-#elif defined(T_OPENGL_ES2)
+//#if defined(T_OPENGL_STD)
+//	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+//#elif defined(T_OPENGL_ES2)
 	assign(f, out) << in->getName() << L";" << Endl;
-#endif
+//#endif
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)

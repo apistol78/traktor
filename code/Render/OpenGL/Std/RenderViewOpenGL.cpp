@@ -41,6 +41,29 @@ RenderViewOpenGL::RenderViewOpenGL(
 	setViewport(viewport);
 }
 
+#elif defined(__APPLE__)
+
+RenderViewOpenGL::RenderViewOpenGL(
+	ContextOpenGL* context,
+	ContextOpenGL* globalContext,
+	int32_t width,
+	int32_t height
+)
+:	m_context(context)
+,	m_globalContext(globalContext)
+,	m_currentDirty(true)
+{
+	Viewport viewport;
+	viewport.left = 0;
+	viewport.top = 0;
+	viewport.width = width;
+	viewport.height = height;
+	viewport.nearZ = 0.0f;
+	viewport.farZ = 1.0f;
+
+	setViewport(viewport);
+}
+
 #else
 
 RenderViewOpenGL::RenderViewOpenGL(
@@ -51,7 +74,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_globalContext(globalContext)
 ,	m_currentDirty(true)
 {
-	memset(&m_viewPort, 0, sizeof(m_viewPort));
 }
 
 #endif

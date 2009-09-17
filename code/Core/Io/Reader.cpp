@@ -116,10 +116,10 @@ Reader& Reader::operator >> (std::wstring& s)
 	s.clear();
 	for (;;)
 	{
-		wchar_t ch;
+		uint16_t ch;
 		if (read(&ch, 1, sizeof(ch)) != sizeof(ch) || ch == '\0')
 			break;
-		s += ch;
+		s += wchar_t(ch);
 	}
 	return *this;
 }

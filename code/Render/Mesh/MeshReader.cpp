@@ -36,11 +36,11 @@ Mesh* MeshReader::read(Stream* stream) const
 
 	for (uint32_t i = 0; i < vertexElementCount; ++i)
 	{
-		DataUsage usage;
-		reader >> (uint32_t&)(usage);
+		uint32_t usage;
+		reader >> usage;
 
-		DataType type;
-		reader >> (uint32_t&)(type);
+		uint32_t type;
+		reader >> type;
 
 		uint32_t offset;
 		reader >> offset;
@@ -48,19 +48,24 @@ Mesh* MeshReader::read(Stream* stream) const
 		uint32_t index;
 		reader >> index;
 
-		vertexElements.push_back(VertexElement(usage, type, offset, index));
+		vertexElements.push_back(VertexElement(
+			DataUsage(usage),
+			DataType(type),
+			offset,
+			index
+		));
 	}
 
 	uint32_t vertexBufferSize;
 	reader >> vertexBufferSize;
 
-	IndexType indexType;
-	reader >> (uint32_t&)(indexType);
+	uint32_t indexType;
+	reader >> indexType;
 
 	uint32_t indexBufferSize;
 	reader >> indexBufferSize;
 
-	Ref< Mesh > mesh = m_meshFactory->createMesh(vertexElements, vertexBufferSize, indexType, indexBufferSize);
+	Ref< Mesh > mesh = m_meshFactory->createMesh(vertexElements, vertexBufferSize, IndexType(indexType), indexBufferSize);
 	if (!mesh)
 		return 0;
 
@@ -158,8 +163,10 @@ Mesh* MeshReader::read(Stream* stream) const
 
 	for (uint32_t i = 0; i < partCount; ++i)
 	{
+		int32_t primitiveType;
+
 		reader >> parts[i].name;
-		reader >> (int32_t&)(parts[i].primitives.type);
+		reader >> primitiveType; parts[i].primitives.type = PrimitiveType(primitiveType);
 		reader >> parts[i].primitives.indexed;
 		reader >> parts[i].primitives.offset;
 		reader >> parts[i].primitives.count;

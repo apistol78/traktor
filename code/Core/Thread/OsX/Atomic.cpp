@@ -17,7 +17,9 @@ int32_t Atomic::decrement(int32_t& value)
 
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
+	uint32_t old = s;
 	OSAtomicCompareAndSwap32(*(int32_t*)&s, *(int32_t*)&v, (int32_t*)&s);
+	return old;
 }
 
 uint64_t Atomic::exchange(uint64_t& s, uint64_t v)

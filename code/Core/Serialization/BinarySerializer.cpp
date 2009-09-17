@@ -121,6 +121,7 @@ bool write_block(const Ref< Stream >& stream, const void* block, int count, int 
 
 #endif
 
+template < >
 bool read_primitive(const Ref< Stream >& stream, bool& value)
 {
 	uint8_t tmp;
@@ -131,6 +132,7 @@ bool read_primitive(const Ref< Stream >& stream, bool& value)
 	return true;
 }
 
+template < >
 bool write_primitive(const Ref< Stream >& stream, bool v)
 {
 	uint8_t tmp = v ? 0xff : 0x00;
@@ -149,11 +151,15 @@ bool read_string(const Ref< Stream >& stream, StringType& outString)
 
 	if (length > 0)
 	{
-		std::vector< typename StringType::value_type > tmp(length);
-		if (!read_block(stream, &tmp[0], length, sizeof(typename StringType::value_type)))
+		std::vector< uint16_t > tmp(length);
+		if (!read_block(stream, &tmp[0], length, sizeof(uint16_t)))
 			return false;
 
-		outString = StringType(tmp.begin(), tmp.end());
+		std::vector< typename StringType::value_type > str(length);
+		for (size_t i = 0; i < length; ++i)
+			str[i] = (typename StringType::value_type)(tmp[i]);
+
+		outString = StringType(str.begin(), str.end());
 	}
 	else
 		outString.clear();
@@ -171,7 +177,13 @@ bool write_string(const Ref< Stream >& stream, const StringType& str)
 		return false;
 
 	if (length > 0)
-		return write_block(stream, str.c_str(), length, sizeof(typename StringType::value_type));
+	{
+		std::vector< uint16_t > tmp(length);
+		for (size_t i = 0; i < length; ++i)
+			tmp[i] = str[i];
+
+		return write_block(stream, &tmp[0], length, sizeof(uint16_t));
+	}
 	else
 		return true;
 }

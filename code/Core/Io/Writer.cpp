@@ -109,7 +109,13 @@ Writer& Writer::operator << (double f)
 
 Writer& Writer::operator << (const std::wstring& s)
 {
-	write(s.c_str(), int(s.length() + 1), sizeof(wchar_t));
+	size_t length = s.length();
+	for (size_t i = 0; i < length; ++i)
+	{
+		uint16_t ch = uint16_t(s[i]);
+		write_primitive< uint16_t >(m_stream, ch);
+	}
+	write_primitive< uint16_t >(m_stream, 0);
 	return *this;
 }
 

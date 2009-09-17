@@ -1,6 +1,7 @@
 #if defined(_WIN32)
 #include <windows.h>
 #endif
+#include "UnitTest/CaseAtomic.h"
 #include "UnitTest/CaseMeta.h"
 #include "UnitTest/CaseProcess.h"
 #include "UnitTest/CaseThread.h"
@@ -31,6 +32,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR, int)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 #endif
 {
+	log::info << L"Case atomic" << Endl;
+	traktor::CaseAtomic().run();
+
 	log::info << L"Case meta" << Endl;
 	traktor::CaseMeta().run();
 

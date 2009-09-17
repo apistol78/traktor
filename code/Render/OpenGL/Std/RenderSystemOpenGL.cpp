@@ -438,6 +438,9 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 		log::error << L"aglCreateContext failed" << Endl;
 		return 0;
 	}
+
+	GLint interval = 1;
+	aglSetInteger(ctx, AGL_SWAP_INTERVAL, &interval);
 		
 	aglEnable(ctx, AGL_BUFFER_RECT);
 		
@@ -454,9 +457,12 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 	aglSetDrawable(ctx, drawable);
 	
 	Ref< ContextOpenGL > context = gc_new< ContextOpenGL >(ownerWindow, (ControlRef)windowHandle, ctx);
-	m_globalContext->share(context);
+	context->update();
 
-	return gc_new< RenderViewOpenGL >(context, m_globalContext);
+	HIRect controlRect;
+	HIViewGetBounds((ControlRef)windowHandle, &controlRect);
+
+	return gc_new< RenderViewOpenGL >(context, m_globalContext, controlRect.size.width, controlRect.size.height);
 
 #else	// LINUX
 	
@@ -506,8 +512,12 @@ VertexBuffer* RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexEl
 	if (glGenBuffersARB)
 		return gc_new< VertexBufferVBO >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 	else
-#endif
 		return gc_new< VertexBufferVAR >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
+//#elif defined(__APPLE__)
+//	return gc_new< VertexBufferVBO >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
+#else
+	return gc_new< VertexBufferVAR >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
+#endif
 }
 
 IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
@@ -518,8 +528,12 @@ IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t
 	if (glGenBuffersARB)
 		return gc_new< IndexBufferIBO >(m_globalContext, indexType, bufferSize, dynamic);
 	else
-#endif
 		return gc_new< IndexBufferIAR >(m_globalContext, indexType, bufferSize);
+//#elif defined(__APPLE__)
+//	return gc_new< IndexBufferIBO >(m_globalContext, indexType, bufferSize, dynamic);
+#else
+	return gc_new< IndexBufferIAR >(m_globalContext, indexType, bufferSize);
+#endif
 }
 
 ISimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)

@@ -23,9 +23,6 @@ FileDialog::~FileDialog()
 
 bool FileDialog::create(Widget* parent, const std::wstring& title, const std::wstring& filters, bool save)
 {
-	if (!parent)
-		return false;
-
 	m_fileDialog = Application::getInstance().getWidgetFactory()->createFileDialog(this);
 	if (!m_fileDialog)
 	{
@@ -33,7 +30,7 @@ bool FileDialog::create(Widget* parent, const std::wstring& title, const std::ws
 		return false;
 	}
 
-	if (!m_fileDialog->create(parent->getIWidget(), title, filters, save))
+	if (!m_fileDialog->create(parent ? parent->getIWidget() : 0, title, filters, save))
 		return false;
 
 	return true;

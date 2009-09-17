@@ -57,8 +57,6 @@ void ContextOpenGL::share(ContextOpenGL* context)
 #if defined(_WIN32)
 	wglShareLists(context->m_hRC, m_hRC);
 	wglShareLists(m_hRC, context->m_hRC);
-#elif defined(__APPLE__)
-#else	// LINUX
 #endif
 }
 
@@ -122,25 +120,16 @@ bool ContextOpenGL::enter()
 	if (!wglMakeCurrent(m_hDC, m_hRC))
 		return false;
 
-	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
-	if (!stack)
-	{
-		stack = new context_stack_t();
-		ms_contextStack.set(stack);
-	}
-
-	stack->push_back(this);
-
 #elif defined(__APPLE__)
 
 	if (aglSetCurrentContext(m_context) != GL_TRUE)
 		return false;
-	
+
 	HIRect controlRect;
 	HIViewGetBounds(m_control, &controlRect);
-	
+
 	HIViewRef root = HIViewGetRoot(HIViewGetWindow(m_control));
-	
+
 	HIRect windowRect;
 	HIViewGetBounds(root, &windowRect);
 	HIViewConvertRect(&controlRect, m_control, root);
@@ -153,7 +142,7 @@ bool ContextOpenGL::enter()
 		params[2] = controlRect.size.width;
 		params[3] = controlRect.size.height;
 	}
-	
+
 	aglSetInteger(m_context, AGL_BUFFER_RECT, params);
 	aglEnable(m_context, AGL_BUFFER_RECT);
 
@@ -168,12 +157,20 @@ bool ContextOpenGL::enter()
 
 #endif
 
+	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
+	if (!stack)
+	{
+		stack = new context_stack_t();
+		ms_contextStack.set(stack);
+	}
+
+	stack->push_back(this);
+
 	return true;
 }
 
 void ContextOpenGL::leave()
 {
-#if defined(_WIN32)
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
 
 	T_ASSERT (stack);
@@ -181,6 +178,8 @@ void ContextOpenGL::leave()
 	T_ASSERT (stack->back() == this);
 
 	stack->pop_back();
+
+#if defined(_WIN32)
 
 	if (!stack->empty())
 	{
@@ -193,6 +192,12 @@ void ContextOpenGL::leave()
 		wglMakeCurrent(m_hDC, NULL);
 
 #elif defined(__APPLE__)
+
+	if (!stack->empty())
+		aglSetCurrentContext(stack->back()->m_context);
+	else
+		aglSetCurrentContext(NULL);
+
 #else	// LINUX
 #endif
 }

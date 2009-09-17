@@ -6,8 +6,15 @@
 namespace traktor
 {
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Library", Library, Object)
+	
 Library::~Library()
 {
+}
+
+bool Library::open(const Path& libraryName)
+{
+	return open(libraryName, std::vector< Path >(), true);
 }
 
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)

@@ -278,9 +278,8 @@ OutputStream& DecreaseIndent(OutputStream& s)
 
 OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str)
 {
-	size_t ln = 1;
 	size_t p0 = 0;
-	for (;; ++ln)
+	for (uint32_t ln = 1;; ++ln)
 	{
 		size_t p1 = str.find('\n', p0);
 		s << ln << L": " << str.substr(p0, p1 - p0 - 1) << Endl;
