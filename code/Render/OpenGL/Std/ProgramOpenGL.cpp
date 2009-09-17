@@ -1,10 +1,10 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
@@ -21,7 +21,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteObjectCallback : public ContextOpenGL::DeleteCallback
+struct DeleteObjectCallback : public IContext::IDeleteCallback
 {
 	GLhandleARB m_objectName;
 
@@ -37,7 +37,7 @@ struct DeleteObjectCallback : public ContextOpenGL::DeleteCallback
 	}
 };
 
-struct DeleteListCallback : public ContextOpenGL::DeleteCallback
+struct DeleteListCallback : public IContext::IDeleteCallback
 {
 	GLuint m_listName;
 
@@ -59,7 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* context)
+ProgramOpenGL::ProgramOpenGL(IContext* context)
 :	m_context(context)
 ,	m_program(0)
 ,	m_state(0)

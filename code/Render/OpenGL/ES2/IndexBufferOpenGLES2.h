@@ -18,6 +18,8 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
+
 /*!
  * \ingroup OGL
  */
@@ -26,7 +28,7 @@ class T_DLLCLASS IndexBufferOpenGLES2 : public IndexBufferOpenGL
 	T_RTTI_CLASS(IndexBufferOpenGLES2)
 
 public:
-	IndexBufferOpenGLES2(IndexType indexType, uint32_t bufferSize, bool dynamic);
+	IndexBufferOpenGLES2(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic);
 
 	virtual ~IndexBufferOpenGLES2();
 
@@ -41,6 +43,7 @@ public:
 	virtual const GLvoid* getIndexData() const;
 
 private:
+	Ref< IContext > m_context;
 	bool m_dynamic;
 	GLuint m_name;
 	AutoArrayPtr< uint8_t > m_buffer;

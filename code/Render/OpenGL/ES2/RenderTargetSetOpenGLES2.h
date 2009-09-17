@@ -19,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
 class RenderTargetOpenGLES2;
 
 /*!
@@ -29,7 +30,7 @@ class T_DLLCLASS RenderTargetSetOpenGLES2 : public RenderTargetSet
 	T_RTTI_CLASS(RenderTargetSetOpenGLES2)
 
 public:
-	RenderTargetSetOpenGLES2();
+	RenderTargetSetOpenGLES2(IContext* context);
 
 	virtual ~RenderTargetSetOpenGLES2();
 
@@ -44,6 +45,7 @@ public:
 	virtual ITexture* getColorTexture(int index) const;
 
 private:
+	Ref< IContext > m_context;
 	int m_width;
 	int m_height;
 	GLuint m_depthBuffer;

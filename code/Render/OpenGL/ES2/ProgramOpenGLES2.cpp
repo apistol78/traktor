@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
@@ -21,13 +22,34 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct DeleteProgramCallback : public IContext::IDeleteCallback
+{
+	GLuint m_program;
+
+	DeleteProgramCallback(GLuint program)
+	:	m_program(program)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteProgram(m_program));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGLES2", ProgramOpenGLES2, IProgram)
 
 ProgramOpenGLES2* ProgramOpenGLES2::ms_activeProgram = 0;
 
-ProgramOpenGLES2::ProgramOpenGLES2()
-:	m_program(0)
+ProgramOpenGLES2::ProgramOpenGLES2(IContext* context)
+:	m_context(context)
+,	m_program(0)
 ,	m_dirty(true)
 {
 }
@@ -105,7 +127,8 @@ void ProgramOpenGLES2::destroy()
 
 	if (m_program)
 	{
-		glDeleteProgram(m_program);
+		if (m_context)
+			m_context->deleteResource(new DeleteProgramCallback(m_program));
 		m_program = 0;
 	}
 }

@@ -10,8 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGLES2", RenderTargetSetOpenGLES2, RenderTargetSet)
 
-RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2()
-:	m_width(0)
+RenderTargetSetOpenGLES2::RenderTargetSetOpenGLES2(IContext* context)
+:	m_context(context)
+,	m_width(0)
 ,	m_height(0)
 ,	m_depthBuffer(0)
 {
@@ -37,7 +38,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = gc_new< RenderTargetOpenGLES2 >();
+		m_colorTextures[i] = gc_new< RenderTargetOpenGLES2 >(m_context);
 		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
 			return false;
 	}

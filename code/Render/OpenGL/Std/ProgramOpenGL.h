@@ -20,7 +20,7 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class IContext;
 class GlslProgram;
 class ProgramResource;
 
@@ -32,7 +32,7 @@ class T_DLLCLASS ProgramOpenGL : public IProgram
 	T_RTTI_CLASS(ProgramOpenGL)
 
 public:
-	ProgramOpenGL(ContextOpenGL* context);
+	ProgramOpenGL(IContext* context);
 
 	virtual ~ProgramOpenGL();
 
@@ -89,7 +89,7 @@ private:
 		uint32_t mipCount;
 	};
 
-	Ref< ContextOpenGL > m_context;
+	Ref< IContext > m_context;
 
 	GLhandleARB m_program;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];

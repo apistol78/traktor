@@ -18,6 +18,7 @@ namespace traktor
 	namespace render
 	{
 
+class IContext;
 class VertexElement;
 
 /*!
@@ -28,7 +29,7 @@ class T_DLLCLASS VertexBufferOpenGLES2 : public VertexBufferOpenGL
 	T_RTTI_CLASS(VertexBufferOpenGLES2)
 
 public:
-	VertexBufferOpenGLES2(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	VertexBufferOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
 	virtual ~VertexBufferOpenGLES2();
 
@@ -51,6 +52,7 @@ private:
 		GLuint offset;
 	};
 
+	Ref< IContext > m_context;
 	bool m_dynamic;
 	GLuint m_name;
 	GLuint m_vertexStride;

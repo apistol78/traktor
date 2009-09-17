@@ -10,6 +10,7 @@
 #include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
+#include "Render/OpenGL/ES2/ContextOpenGLES2.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
 #include "Core/Serialization/Serializable.h"
@@ -54,6 +55,8 @@ bool RenderSystemOpenGLES2::create()
 
 	RegisterClass(&wc);
 #endif
+
+	m_globalContext = gc_new< ContextOpenGLES2 >();
 	return true;
 }
 
@@ -165,16 +168,6 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 
 	configAttrs[i] = EGL_RENDERABLE_TYPE;
 	configAttrs[++i] = EGL_OPENGL_ES2_BIT;
-	//configAttrs[++i] = EGL_BUFFER_SIZE;
-	//configAttrs[++i] = 24;
-	//configAttrs[++i] = EGL_RED_SIZE;
-	//configAttrs[++i] = 8;
-	//configAttrs[++i] = EGL_GREEN_SIZE;
-	//configAttrs[++i] = 8;
-	//configAttrs[++i] = EGL_BLUE_SIZE;
-	//configAttrs[++i] = 8;
-	//configAttrs[++i] = EGL_ALPHA_SIZE;
-	//configAttrs[++i] = 0;
 	configAttrs[++i] = EGL_DEPTH_SIZE;
 	configAttrs[++i] = desc.depthBits;
 	configAttrs[++i] = EGL_STENCIL_SIZE;
@@ -199,35 +192,7 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 		return 0;
 	}
 
-	EGLConfig config;
-
-	//for (i = 0; i < numMatchingConfigs; i++)
-	//{
-	//	EGLConfig testConfig = matchingConfigs[i];
-
-	//	EGLint redSize, greenSize, blueSize, alphaSize, depthSize, stencilSize;
-	//	EGLBoolean ok = EGL_TRUE;
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_RED_SIZE, &redSize);
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_GREEN_SIZE, &greenSize);
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_BLUE_SIZE, &blueSize);
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_ALPHA_SIZE, &alphaSize);
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_DEPTH_SIZE, &depthSize);
-	//	ok &= eglGetConfigAttrib(m_display, testConfig, EGL_STENCIL_SIZE, &stencilSize);
-	//	if (!ok)
-	//		break;
-
-	//	EGLBoolean depthMatches = (depthSize > 0);
-	//	EGLBoolean stencilMatches = (stencilSize == 0);
-
-	//	if (redSize >= 5 && greenSize >= 5 && blueSize >= 5 && depthMatches && stencilMatches)
-	//	{
-	//		config = testConfig;
-	//		break;
-	//	}
-	//}
-
-	//if (i >= numMatchingConfigs)
-		config = matchingConfigs[0];
+	EGLConfig config = matchingConfigs[0];
 
 	m_surface = eglCreateWindowSurface(m_display, config, nativeWindow, 0);
 	if (m_surface == EGL_NO_SURFACE)
@@ -254,25 +219,22 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
 		return 0;
 
-	//if (!eglSwapInterval(m_display, 0)) 
-	//	return 0;
-
-	return gc_new< RenderViewOpenGLES2 >(m_display, m_context, m_surface);
+	return gc_new< RenderViewOpenGLES2 >(m_globalContext, m_display, m_context, m_surface);
 }
 
 VertexBuffer* RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< VertexBufferOpenGLES2 >(cref(vertexElements), bufferSize, dynamic);
+	return gc_new< VertexBufferOpenGLES2 >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 }
 
 IndexBuffer* RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< IndexBufferOpenGLES2 >(indexType, bufferSize, dynamic);
+	return gc_new< IndexBufferOpenGLES2 >(m_globalContext, indexType, bufferSize, dynamic);
 }
 
 ISimpleTexture* RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureOpenGLES2 > texture = gc_new< SimpleTextureOpenGLES2 >();
+	Ref< SimpleTextureOpenGLES2 > texture = gc_new< SimpleTextureOpenGLES2 >(m_globalContext);
 	if (texture->create(desc))
 		return texture;
 	else
@@ -291,7 +253,7 @@ IVolumeTexture* RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCr
 
 RenderTargetSet* RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = gc_new< RenderTargetSetOpenGLES2 >();
+	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = gc_new< RenderTargetSetOpenGLES2 >(m_globalContext);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
@@ -313,7 +275,7 @@ ProgramResource* RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shader
 
 IProgram* RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
-	Ref< ProgramOpenGLES2 > program = gc_new< ProgramOpenGLES2 >();
+	Ref< ProgramOpenGLES2 > program = gc_new< ProgramOpenGLES2 >(m_globalContext);
 	if (!program->create(programResource))
 		return 0;
 

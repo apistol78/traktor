@@ -1,6 +1,6 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -32,7 +32,7 @@ const GLenum c_cubeFaces[] =
 };
 #endif
 
-struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
+struct DeleteTextureCallback : public IContext::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -52,7 +52,7 @@ struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureOpenGL", CubeTextureOpenGL, ICubeTexture)
 
-CubeTextureOpenGL::CubeTextureOpenGL(ContextOpenGL* context)
+CubeTextureOpenGL::CubeTextureOpenGL(IContext* context)
 :	m_context(context)
 ,	m_textureName(0)
 ,	m_side(0)

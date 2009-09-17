@@ -1,6 +1,6 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Core/Log/Log.h"
@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
+struct DeleteTextureCallback : public IContext::IDeleteCallback
 {
 	GLuint m_textureName;
 
@@ -32,7 +32,7 @@ struct DeleteTextureCallback : public ContextOpenGL::DeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGL", SimpleTextureOpenGL, ISimpleTexture)
 
-SimpleTextureOpenGL::SimpleTextureOpenGL(ContextOpenGL* context)
+SimpleTextureOpenGL::SimpleTextureOpenGL(IContext* context)
 :	m_context(context)
 ,	m_textureName(0)
 ,	m_width(0)

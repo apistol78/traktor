@@ -19,7 +19,7 @@ namespace traktor
 	namespace render
 	{
 
-class ContextOpenGL;
+class IContext;
 class RenderTargetOpenGL;
 
 /*!
@@ -30,7 +30,7 @@ class T_DLLCLASS RenderTargetSetOpenGL : public RenderTargetSet
 	T_RTTI_CLASS(RenderTargetSetOpenGL)
 
 public:
-	RenderTargetSetOpenGL(ContextOpenGL* context);
+	RenderTargetSetOpenGL(IContext* context);
 
 	virtual ~RenderTargetSetOpenGL();
 
@@ -45,7 +45,7 @@ public:
 	virtual ITexture* getColorTexture(int index) const;
 
 private:
-	Ref< ContextOpenGL > m_context;
+	Ref< IContext > m_context;
 	int m_width;
 	int m_height;
 	GLuint m_depthBuffer;

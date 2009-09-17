@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
@@ -7,11 +8,32 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct DeleteBufferCallback : public IContext::IDeleteCallback
+{
+	GLuint m_bufferName;
+
+	DeleteBufferCallback(GLuint bufferName)
+	:	m_bufferName(bufferName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteBuffers(1, &m_bufferName));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferOpenGLES2", VertexBufferOpenGLES2, VertexBufferOpenGL)
 
-VertexBufferOpenGLES2::VertexBufferOpenGLES2(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+VertexBufferOpenGLES2::VertexBufferOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 :	VertexBufferOpenGL(bufferSize)
+,	m_context(context)
 ,	m_dynamic(dynamic)
 {
 	m_vertexStride = getVertexSize(vertexElements);
@@ -123,7 +145,8 @@ void VertexBufferOpenGLES2::destroy()
 {
 	if (m_name)
 	{
-		T_OGL_SAFE(glDeleteBuffers(1, &m_name));
+		if (m_context)
+			m_context->deleteResource(new DeleteBufferCallback(m_name));
 		m_name = 0;
 	}
 }

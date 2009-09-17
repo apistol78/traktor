@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Core/Log/Log.h"
 
@@ -8,6 +9,22 @@ namespace traktor
 	{
 		namespace
 		{
+
+struct DeleteTextureCallback : public IContext::IDeleteCallback
+{
+	GLuint m_textureName;
+
+	DeleteTextureCallback(GLuint textureName)
+	:	m_textureName(textureName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
+		delete this;
+	}
+};
 
 bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint& outComponents, GLenum& outFormat, GLenum& outType)
 {
@@ -76,8 +93,9 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureOpenGLES2", SimpleTextureOpenGLES2, ISimpleTexture)
 
-SimpleTextureOpenGLES2::SimpleTextureOpenGLES2()
-:	m_textureName(0)
+SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(IContext* context)
+:	m_context(context)
+,	m_textureName(0)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_pixelSize(0)
@@ -174,7 +192,8 @@ void SimpleTextureOpenGLES2::destroy()
 {
 	if (m_textureName)
 	{
-		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
+		if (m_context)
+			m_context->deleteResource(new DeleteTextureCallback(m_textureName));
 		m_textureName = 0;
 	}
 }

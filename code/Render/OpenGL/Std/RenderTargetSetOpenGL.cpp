@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
 
-RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* context)
+RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)

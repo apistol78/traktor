@@ -1,5 +1,5 @@
+#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
-#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteBufferCallback : public ContextOpenGL::DeleteCallback
+struct DeleteBufferCallback : public IContext::IDeleteCallback
 {
 	GLuint m_bufferName;
 
@@ -29,7 +29,7 @@ struct DeleteBufferCallback : public ContextOpenGL::DeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferIBO", IndexBufferIBO, IndexBufferOpenGL)
 
-IndexBufferIBO::IndexBufferIBO(ContextOpenGL* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
+IndexBufferIBO::IndexBufferIBO(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic)
 :	IndexBufferOpenGL(indexType, bufferSize)
 ,	m_context(context)
 ,	m_locked(false)
