@@ -23,7 +23,7 @@ FileDialogWx::~FileDialogWx()
 bool FileDialogWx::create(IWidget* parent, const std::wstring& title, const std::wstring& filters, bool save)
 {
 	m_fileDialog = new wxFileDialog(
-		static_cast< wxWindow* >(parent->getInternalHandle()),
+		parent ? static_cast< wxWindow* >(parent->getInternalHandle()) : 0,
 		wstots(title).c_str(),
 		_T(""),
 		_T(""),

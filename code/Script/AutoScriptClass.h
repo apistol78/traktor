@@ -434,7 +434,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 5 > : p
 			CastAny< arg1_t >::get(args[0]),
 			CastAny< arg2_t >::get(args[1]),
 			CastAny< arg3_t >::get(args[2]),
-			CastAny< arg4_t >::get(args[3]),
+			CastAny< arg4_t >::get(args[3])
 		);
 		return Any(returnValue);
 	}
@@ -495,7 +495,7 @@ public:
 	virtual ~AutoScriptClass()
 	{
 		T_EXCEPTION_GUARD_BEGIN
-		for (std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 			delete i->mptr;
 		T_EXCEPTION_GUARD_END
 	}

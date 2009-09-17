@@ -21,6 +21,8 @@ class T_DLLCLASS MeshPipeline : public editor::IPipeline
 	T_RTTI_CLASS(MeshPipeline)
 
 public:
+	MeshPipeline();
+
 	virtual bool create(const editor::Settings* settings);
 
 	virtual void destroy();
@@ -47,9 +49,7 @@ public:
 	) const;
 
 private:
-	std::wstring m_materialSourcePath;
-	std::wstring m_materialOutputPath;
-	Guid m_defaultMaterial;
+	bool m_promoteHalf;
 };
 
 	}

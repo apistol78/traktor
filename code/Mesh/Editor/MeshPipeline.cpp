@@ -69,11 +69,14 @@ Guid incrementGuid(const Guid& g)
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::IPipeline)
 
+MeshPipeline::MeshPipeline()
+:	m_promoteHalf(false)
+{
+}
+
 bool MeshPipeline::create(const editor::Settings* settings)
 {
-	m_materialSourcePath = settings->getProperty< editor::PropertyString >(L"MeshPipeline.MaterialSourcePath");
-	m_materialOutputPath = settings->getProperty< editor::PropertyString >(L"MeshPipeline.MaterialOutputPath");
-	m_defaultMaterial = settings->getProperty< editor::PropertyGuid >(L"MeshPipeline.DefaultMaterial");
+	m_promoteHalf = settings->getProperty< editor::PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	return true;
 }
 
@@ -269,6 +272,15 @@ bool MeshPipeline::buildOutput(
 		{
 			bool elementDeclared = false;
 
+			render::DataType elementDataType = (*j)->getDataType();
+			if (m_promoteHalf)
+			{
+				if (elementDataType == render::DtHalf2)
+					elementDataType = render::DtFloat2;
+				else if (elementDataType == render::DtHalf4)
+					elementDataType = render::DtFloat4;
+			}
+
 			// Is it already added to vertex declaration?
 			for (std::vector< render::VertexElement >::iterator k = vertexElements.begin(); k != vertexElements.end(); ++k)
 			{
@@ -277,8 +289,8 @@ bool MeshPipeline::buildOutput(
 					(*j)->getIndex() == k->getIndex()
 				)
 				{
-					if ((*j)->getDataType() != k->getDataType())
-						log::warning << L"Identical vertex input usage but different types (" << render::getDataTypeName((*j)->getDataType()) << L" and " << render::getDataTypeName(k->getDataType()) << L")" << Endl;
+					if (elementDataType != k->getDataType())
+						log::warning << L"Identical vertex input usage but different types (" << render::getDataTypeName(elementDataType) << L" and " << render::getDataTypeName(k->getDataType()) << L")" << Endl;
 					elementDeclared = true;
 					break;
 				}
@@ -288,7 +300,7 @@ bool MeshPipeline::buildOutput(
 			{
 				render::VertexElement element(
 					(*j)->getDataUsage(),
-					(*j)->getDataType(),
+					elementDataType,
 					vertexElementOffset,
 					(*j)->getIndex()
 				);

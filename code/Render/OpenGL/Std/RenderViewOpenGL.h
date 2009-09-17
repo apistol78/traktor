@@ -42,6 +42,15 @@ public:
 		HWND hWnd
 	);
 
+#elif defined(__APPLE__)
+
+	RenderViewOpenGL(
+		ContextOpenGL* context,
+		ContextOpenGL* globalContext,
+		int32_t width,
+		int32_t height
+	);
+
 #else
 
 	RenderViewOpenGL(

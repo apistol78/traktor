@@ -40,11 +40,11 @@ bool FileDialogWin32::create(IWidget* parent, const std::wstring& title, const s
 	
 	_tcscpy_s(m_title, sizeof_array(m_title), wstots(title).c_str());
 
-	memset(m_fileName, 0, sizeof(m_fileName));
+	std::memset(m_fileName, 0, sizeof(m_fileName));
 
-	memset(&m_ofn, 0, sizeof(m_ofn));
+	std::memset(&m_ofn, 0, sizeof(m_ofn));
 	m_ofn.lStructSize = sizeof(m_ofn);
-	m_ofn.hwndOwner = (HWND)parent->getInternalHandle();
+	m_ofn.hwndOwner = parent ? (HWND)parent->getInternalHandle() : NULL;
 	m_ofn.hInstance = g_hInstance;
 	m_ofn.lpstrFilter = m_filters;
 	m_ofn.lpstrCustomFilter = NULL;
