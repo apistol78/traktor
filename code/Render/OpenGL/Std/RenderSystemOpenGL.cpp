@@ -1,7 +1,6 @@
 #include <algorithm>
 #include <locale>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Render/OpenGL/Glsl.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/Std/Extensions.h"
@@ -18,6 +17,7 @@
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -568,40 +568,23 @@ RenderTargetSet* RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSet
 
 ProgramResource* RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
-	// @fixme Currently just embedding shader graph in resource.
-	return gc_new< ProgramResourceOpenGL >(shaderGraph);
-}
-
-IProgram* RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
-{
-	Ref< const ProgramResourceOpenGL > resource = dynamic_type_cast< const ProgramResourceOpenGL* >(programResource);
-	if (!resource)
-		return 0;
-
-	const ShaderGraph* shaderGraph = resource->getShaderGraph();
-
-	T_CONTEXT_SCOPE(m_globalContext)
-
-	// HACK: Workaround for stupid internal NVidia GLSL compiler.
-	// When set to Swedish the GLSL compiler uses , instead of . for float-point numbers.
-#if !defined(_WIN32)
-	try
-	{
-		std::locale english("en_US.utf8");
-		std::locale::global(english);
-	}
-	catch (std::exception e)
-	{
-		log::warning << L"Unable to ensure US locale when compiling GLSL shaders" << Endl;
-	}
-#endif
-
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, glslProgram))
 		return 0;
 
+	Ref< ProgramResource > resource = ProgramOpenGL::compile(glslProgram, optimize, validate);
+	if (!resource)
+		return 0;
+
+	return resource;
+}
+
+IProgram* RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
+{
+	T_CONTEXT_SCOPE(m_globalContext)
+
 	Ref< ProgramOpenGL > shader = gc_new< ProgramOpenGL >(m_globalContext);
-	if (!shader->create(glslProgram))
+	if (!shader->create(programResource))
 		return 0;
 
 	return shader;

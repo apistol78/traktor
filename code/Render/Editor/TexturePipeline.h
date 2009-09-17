@@ -49,7 +49,8 @@ public:
 	) const;
 
 private:
-	int m_skipMips;
+	int32_t m_skipMips;
+	bool m_allowCompression;
 };
 
 	}

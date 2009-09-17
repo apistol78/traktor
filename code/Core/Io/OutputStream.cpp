@@ -248,7 +248,7 @@ void OutputStream::decreaseIndent()
 	m_indent.pop_back();
 }
 
-OutputStream& operator >> (OutputStream& os, wchar_t ch)
+OutputStream& operator << (OutputStream& os, wchar_t ch)
 {
 	os.put(ch);
 	return os;
@@ -273,6 +273,22 @@ OutputStream& IncreaseIndent(OutputStream& s)
 OutputStream& DecreaseIndent(OutputStream& s)
 {
 	s.decreaseIndent();
+	return s;
+}
+
+OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring& str)
+{
+	size_t ln = 1;
+	size_t p0 = 0;
+	for (;; ++ln)
+	{
+		size_t p1 = str.find('\n', p0);
+		s << ln << L": " << str.substr(p0, p1 - p0 - 1) << Endl;
+		if (p1 != str.npos)
+			p0 = p1 + 1;
+		else
+			break;
+	}
 	return s;
 }
 

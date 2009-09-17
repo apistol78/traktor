@@ -26,8 +26,17 @@
 #		include <GL/glx.h>
 #	endif
 #elif defined(T_OPENGL_ES2)
+#	if defined(_WIN32)
+#		define _WIN32_LEAN_AND_MEAN
+#		include <windows.h>
+#		include <tchar.h>
+#	endif
 #	include <EGL/egl.h>
 #	include <GLES2/gl2.h>
+#	include <GLES2/gl2ext.h>
+#	if defined(_WIN32)
+#		include <GLES2/gl2amdext.h>
+#	endif
 #endif
 
 /*! \ingroup OGL */
@@ -44,6 +53,10 @@ namespace traktor
 	{
 
 std::wstring getOpenGLErrorString(GLenum glError);
+
+#if defined(T_OPENGL_ES2)
+std::wstring getEGLErrorString(EGLint error);
+#endif
 
 	}
 }

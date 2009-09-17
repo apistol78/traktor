@@ -22,6 +22,7 @@ namespace traktor
 
 class ContextOpenGL;
 class GlslProgram;
+class ProgramResource;
 
 /*!
  * \ingroup OGL
@@ -35,7 +36,9 @@ public:
 
 	virtual ~ProgramOpenGL();
 
-	bool create(const GlslProgram& glslProgram);
+	static ProgramResource* compile(const GlslProgram& glslProgram, int optimize, bool validate);
+
+	bool create(const ProgramResource* resource);
 
 	virtual void destroy();
 

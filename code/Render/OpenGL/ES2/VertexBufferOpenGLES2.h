@@ -2,6 +2,7 @@
 #define traktor_render_VertexBufferOpenGLES2_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -50,9 +51,11 @@ private:
 		GLuint offset;
 	};
 
+	bool m_dynamic;
 	GLuint m_name;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
+	AutoArrayPtr< uint8_t > m_buffer;
 };
 
 	}

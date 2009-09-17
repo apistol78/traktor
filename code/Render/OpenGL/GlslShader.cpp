@@ -139,6 +139,13 @@ std::wstring GlslShader::getGeneratedShader()
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
+
+#if defined(T_OPENGL_ES2)
+	if (m_shaderType == StFragment)
+		ss << L"precision mediump float;" << Endl;
+	ss << Endl;
+#endif
+
 	ss << getOutputStream(BtUniform).str();
 	ss << Endl;
 	ss <<getOutputStream(BtInput).str();

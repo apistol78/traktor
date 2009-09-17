@@ -1,8 +1,8 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/UtilitiesOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
+#include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

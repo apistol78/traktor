@@ -148,12 +148,14 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TexturePipeline", TexturePi
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
+,	m_allowCompression(true)
 {
 }
 
 bool TexturePipeline::create(const editor::Settings* settings)
 {
 	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);
+	m_allowCompression = settings->getProperty< editor::PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
 	return true;
 }
 
@@ -356,7 +358,7 @@ bool TexturePipeline::buildOutput(
 		T_ASSERT (mipCount >= 1);
 
 		// Determine texture compression format.
-		if (textureAsset->m_enableCompression && isLog2(width) && isLog2(height))
+		if (m_allowCompression && textureAsset->m_enableCompression && isLog2(width) && isLog2(height))
 		{
 			bool binaryAlpha = isBinaryAlpha(image);
 			if (hasAlpha && !binaryAlpha)

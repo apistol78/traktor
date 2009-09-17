@@ -31,7 +31,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	{
 		T_OGL_SAFE(glGenRenderbuffers(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer));
-		T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, m_width, m_height));
+		T_OGL_SAFE(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height));
 	}
 
 	m_colorTextures.resize(desc.count);

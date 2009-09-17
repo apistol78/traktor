@@ -1,7 +1,8 @@
-#ifndef traktor_render_ProgramResourceOpenGL_H
-#define traktor_render_ProgramResourceOpenGL_H
+#ifndef traktor_render_ProgramResourceOpenGLES2_H
+#define traktor_render_ProgramResourceOpenGLES2_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/ProgramResource.h"
 #include "Render/OpenGL/TypesOpenGL.h"
 
@@ -13,24 +14,24 @@ namespace traktor
 /*!
  * \ingroup OGL
  */
-class ProgramResourceOpenGL : public ProgramResource
+class ProgramResourceOpenGLES2 : public ProgramResource
 {
 	T_RTTI_CLASS(ProgramResourceOpenGL)
 
 public:
-	ProgramResourceOpenGL();
+	ProgramResourceOpenGLES2();
 
-	ProgramResourceOpenGL(
-		const std::wstring& vertexShader,
-		const std::wstring& fragmentShader,
+	ProgramResourceOpenGLES2(
+		const void* buffer,
+		uint32_t bufferSize,
 		const std::set< std::wstring >& vertexSamplers,
 		const std::set< std::wstring >& fragmentSamplers,
 		const RenderState& renderState
 	);
 
-	const std::wstring& getVertexShader() const { return m_vertexShader; }
+	uint32_t getBufferSize() const { return m_bufferSize; }
 
-	const std::wstring& getFragmentShader() const { return m_fragmentShader; }
+	const uint8_t* getBuffer() const { return m_buffer.c_ptr(); }
 
 	const std::set< std::wstring >& getVertexSamplers() const { return m_vertexSamplers; }
 
@@ -41,8 +42,8 @@ public:
 	virtual bool serialize(Serializer& s);
 
 private:
-	std::wstring m_vertexShader;
-	std::wstring m_fragmentShader;
+	uint32_t m_bufferSize;
+	AutoArrayPtr< uint8_t > m_buffer;
 	std::set< std::wstring > m_vertexSamplers;
 	std::set< std::wstring > m_fragmentSamplers;
 	RenderState m_renderState;
@@ -51,4 +52,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_ProgramResourceOpenGL_H
+#endif	// traktor_render_ProgramResourceOpenGLES2_H
