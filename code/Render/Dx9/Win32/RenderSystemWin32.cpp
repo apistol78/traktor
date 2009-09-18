@@ -39,6 +39,8 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, IRenderSystem)
 
+uint32_t RenderSystemWin32::ms_instances = 0;
+
 RenderSystemWin32::RenderSystemWin32()
 :	m_parameterCache(0)
 ,	m_vertexDeclCache(0)
@@ -171,12 +173,25 @@ bool RenderSystemWin32::create()
 	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
 
 	m_context = gc_new< ContextDx9 >();
+	ms_instances++;
 	return true;
 }
 
 void RenderSystemWin32::destroy()
 {
 	T_ASSERT (m_renderViews.empty());
+
+	// Ensure all DX9 objects are properly collected.
+	if (--ms_instances == 0)
+	{
+		Heap& heap = Heap::getInstance();
+		heap.collectAllOf(type_of< ProgramWin32 >());
+		heap.collectAllOf(type_of< VertexBufferDx9 >());
+		heap.collectAllOf(type_of< IndexBufferDx9 >());
+		heap.collectAllOf(type_of< SimpleTextureDx9 >());
+		heap.collectAllOf(type_of< CubeTextureDx9 >());
+		heap.collectAllOf(type_of< VolumeTextureDx9 >());
+	}
 
 	// In case there are any unmanaged resources still lingering we tell them to get lost.
 	for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)

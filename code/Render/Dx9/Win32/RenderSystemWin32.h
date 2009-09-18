@@ -106,6 +106,7 @@ public:
 	//@}
 
 private:
+	static uint32_t ms_instances;
 	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
