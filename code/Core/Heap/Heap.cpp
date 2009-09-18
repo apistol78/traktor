@@ -448,6 +448,7 @@ void Heap::collect()
 	}
 
 	// Destroy collectables.
+	if (!collectables.empty())
 	{
 #if defined(T_HEAP_CONCURRENT_COLLECT)
 		m_destructQueueLock.acquire();
