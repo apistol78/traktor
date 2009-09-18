@@ -1,244 +1,222 @@
-<?xml version="1.0"?>
-<object type="traktor.world.PostProcessSettings">
-  <definitions>
-    <!-- Luminance calculation targets -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>3</id>
-      <width>0</width>
-      <height>0</height>
-      <screenDenom>4</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <!-- Downsample, average, luminance targets -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>4</id>
-      <width>64</width>
-      <height>64</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>5</id>
-      <width>16</width>
-      <height>16</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>6</id>
-      <width>4</width>
-      <height>4</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>7</id>
-      <width>1</width>
-      <height>1</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <!-- Adapted luminance -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>8</id>
-      <width>1</width>
-      <height>1</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <!-- High pass target -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>9</id>
-      <width>256</width>
-      <height>256</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR8G8B8A8</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <!-- Blur -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>10</id>
-      <width>256</width>
-      <height>256</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR8G8B8A8</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-    <!-- Secondary adapted luminance -->
-    <item type="traktor.world.PostProcessDefineTarget">
-      <id>11</id>
-      <width>1</width>
-      <height>1</height>
-      <screenDenom>0</screenDenom>
-      <format>TfR16F</format>
-      <depthStencil>false</depthStencil>
-      <multiSample>0</multiSample>
-    </item>
-  </definitions>
-  <steps>
-    <!-- Sample luminance of source HDR image. -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>3</target>
-    </item>
-    <item type="traktor.world.PostProcessStepLuminance">
-      <shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
-      <source>1</source>
-    </item>
-    
-    <!-- Downsample 256x256 to 64x64 -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>4</target>
-    </item>
-    <item type="traktor.world.PostProcessStepLuminance">
-      <shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-      <source>3</source>
-    </item>
-    
-    <!-- Downsample 64x64 to 16x16 -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>5</target>
-    </item>
-    <item type="traktor.world.PostProcessStepLuminance">
-      <shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-      <source>4</source>
-    </item>
-
-    <!-- Downsample 16x16 to 4x4 -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>6</target>
-    </item>
-    <item type="traktor.world.PostProcessStepLuminance">
-      <shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
-      <source>5</source>
-    </item>
-
-    <!-- Downsample 4x4 to 1x1, output luminance -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>7</target>
-    </item>
-    <item type="traktor.world.PostProcessStepLuminance">
-      <shader>{018AB31F-8775-674D-A0A7-D13F4461E755}</shader>
-      <source>6</source>
-    </item>
-    
-    <!-- Luminance adaption -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>11</target>
-    </item>
-    <item type="traktor.world.PostProcessStepSimple">
-      <shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
-      <sources>
-        <item>
-          <param>AverageTexture</param>
-          <source>7</source>
-          <index>0</index>
-        </item>
-        <item>
-          <param>CurrentIllumTexture</param>
-          <source>8</source>
-          <index>0</index>
-        </item>
-      </sources>
-    </item>
-    <item type="traktor.world.PostProcessStepSwapTargets">
-      <destination>8</destination>
-      <source>11</source>
-    </item>
-    
-    <!-- High pass -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>9</target>
-    </item>
-    <item type="traktor.world.PostProcessStepSimple">
-      <shader>{123D8BD7-1A67-DE4D-AE6E-26D40B57C624}</shader>
-      <sources>
-        <item>
-          <param>IllumTexture</param>
-          <source>8</source>
-          <index>0</index>
-        </item>
-        <item>
-          <param>SourceTexture</param>
-          <source>1</source>
-          <index>0</index>
-        </item>
-      </sources>
-    </item>
-
-    <!-- Blur -->
-    <item type="traktor.world.PostProcessStepRepeat">
-      <count>1</count>
-      <step type="traktor.world.PostProcessStepChain">
-        <steps>
-          <item type="traktor.world.PostProcessStepSetTarget">
-            <target>10</target>
-          </item>
-          <item type="traktor.world.PostProcessStepBlur">
-            <shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
-            <sources>
-              <item>
-                <param>Source</param>
-                <source>9</source>
-                <index>0</index>
-              </item>
-            </sources>
-            <direction>2, 0, 0, 0</direction>
-          </item>
-          <item type="traktor.world.PostProcessStepSetTarget">
-            <target>9</target>
-          </item>
-          <item type="traktor.world.PostProcessStepBlur">
-            <shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
-            <sources>
-              <item>
-                <param>Source</param>
-                <source>10</source>
-                <index>0</index>
-              </item>
-            </sources>
-            <direction>0, 2, 0, 0</direction>
-          </item>
-        </steps>
-      </step>
-    </item>
-
-    <!-- Final combine -->
-    <item type="traktor.world.PostProcessStepSetTarget">
-      <target>0</target>
-    </item>
-    <item type="traktor.world.PostProcessStepSimple">
-      <shader>{F3963494-CF15-1441-AE32-11A71844B99B}</shader>
-      <sources>
-        <item>
-          <param>IllumTexture</param>
-          <source>8</source>
-          <index>0</index>
-        </item>
-        <item>
-          <param>BlurredTexture</param>
-          <source>9</source>
-          <index>0</index>
-        </item>
-        <item>
-          <param>SourceTexture</param>
-          <source>1</source>
-          <index>0</index>
-        </item>
-      </sources>
-    </item>
-  </steps>
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>true</requireHighRange>
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>3</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>4</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>4</id>
+			<width>64</width>
+			<height>64</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>5</id>
+			<width>16</width>
+			<height>16</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>6</id>
+			<width>4</width>
+			<height>4</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>7</id>
+			<width>1</width>
+			<height>1</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>8</id>
+			<width>1</width>
+			<height>1</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>9</id>
+			<width>256</width>
+			<height>256</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>10</id>
+			<width>256</width>
+			<height>256</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>11</id>
+			<width>1</width>
+			<height>1</height>
+			<screenDenom>0</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+	</definitions>
+	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>3</target>
+		</item>
+		<item type="traktor.world.PostProcessStepLuminance">
+			<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
+			<source>1</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>4</target>
+		</item>
+		<item type="traktor.world.PostProcessStepLuminance">
+			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+			<source>3</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>5</target>
+		</item>
+		<item type="traktor.world.PostProcessStepLuminance">
+			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+			<source>4</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>6</target>
+		</item>
+		<item type="traktor.world.PostProcessStepLuminance">
+			<shader>{38EF7615-7D9D-BE43-B302-3F213026EE14}</shader>
+			<source>5</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>7</target>
+		</item>
+		<item type="traktor.world.PostProcessStepLuminance">
+			<shader>{018AB31F-8775-674D-A0A7-D13F4461E755}</shader>
+			<source>6</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>11</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{E9D34A63-454C-6B4C-A508-009527334A5B}</shader>
+			<sources>
+				<item>
+					<param>AverageTexture</param>
+					<source>7</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>CurrentIllumTexture</param>
+					<source>8</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSwapTargets">
+			<destination>8</destination>
+			<source>11</source>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>9</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{123D8BD7-1A67-DE4D-AE6E-26D40B57C624}</shader>
+			<sources>
+				<item>
+					<param>IllumTexture</param>
+					<source>8</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>SourceTexture</param>
+					<source>1</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepRepeat">
+			<count>1</count>
+			<step type="traktor.world.PostProcessStepChain">
+				<steps>
+					<item type="traktor.world.PostProcessStepSetTarget">
+						<target>10</target>
+					</item>
+					<item type="traktor.world.PostProcessStepBlur">
+						<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
+						<sources>
+							<item>
+								<param>Source</param>
+								<source>9</source>
+								<index>0</index>
+							</item>
+						</sources>
+						<direction>2, 0, 0, 0</direction>
+					</item>
+					<item type="traktor.world.PostProcessStepSetTarget">
+						<target>9</target>
+					</item>
+					<item type="traktor.world.PostProcessStepBlur">
+						<shader>{E119187C-8BF9-6544-934B-44CC29C65A26}</shader>
+						<sources>
+							<item>
+								<param>Source</param>
+								<source>10</source>
+								<index>0</index>
+							</item>
+						</sources>
+						<direction>0, 2, 0, 0</direction>
+					</item>
+				</steps>
+			</step>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>0</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{F3963494-CF15-1441-AE32-11A71844B99B}</shader>
+			<sources>
+				<item>
+					<param>IllumTexture</param>
+					<source>8</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>BlurredTexture</param>
+					<source>9</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>SourceTexture</param>
+					<source>1</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
 </object>

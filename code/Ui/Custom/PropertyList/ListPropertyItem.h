@@ -1,6 +1,7 @@
 #ifndef traktor_ui_custom_ListPropertyItem_H
 #define traktor_ui_custom_ListPropertyItem_H
 
+#include <vector>
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 
 // import/export mechanism.
@@ -61,6 +62,8 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
 private:
+	std::vector< std::wstring > m_items;
+	int32_t m_selected;
 	Ref< MiniButton > m_buttonDrop;
 	Ref< ToolForm > m_listForm;
 	Ref< ListBox > m_listBox;

@@ -17,49 +17,79 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ListPropertyItem", ListPropertyItem, PropertyItem)
 
-ListPropertyItem::ListPropertyItem(const std::wstring& text) :
-	PropertyItem(text)
+ListPropertyItem::ListPropertyItem(const std::wstring& text)
+:	PropertyItem(text)
+,	m_selected(-1)
 {
 }
 
 int ListPropertyItem::add(const std::wstring& item)
 {
-	return m_listBox->add(item);
+	if (m_listBox)
+		m_listBox->add(item);
+
+	m_items.push_back(item);
+	return int(m_items.size());
 }
 
 bool ListPropertyItem::remove(int index)
 {
-	return m_listBox->remove(index);
+	if (index >= int32_t(m_items.size()))
+		return false;
+
+	if (m_listBox)
+		m_listBox->remove(index);
+
+	std::vector< std::wstring >::iterator i = m_items.begin() + index;
+	m_items.erase(i);
+
+	if (index >= m_selected)
+		m_selected = -1;
+
+	return true;
 }
 
 void ListPropertyItem::removeAll()
 {
-	m_listBox->removeAll();
+	if (m_listBox)
+		m_listBox->removeAll();
+
+	m_items.resize(0);
+	m_selected = -1;
 }
 
 int ListPropertyItem::count() const
 {
-	return m_listBox->count();
+	return int32_t(m_items.size());
 }
 
 std::wstring ListPropertyItem::get(int index) const
 {
-	return m_listBox->getItem(index);
+	return (index >= 0 && index < int32_t(m_items.size())) ? m_items[index] : L"";
 }
 
 void ListPropertyItem::select(int index)
 {
-	m_listBox->select(index);
+	if (m_listBox)
+		m_listBox->select(index);
+	else
+		m_selected = index;
 }
 
 int ListPropertyItem::getSelected() const
 {
-	return m_listBox->getSelected();
+	if (m_listBox)
+		return m_listBox->getSelected();
+	else
+		return m_selected;
 }
 
 std::wstring ListPropertyItem::getSelectedItem() const
 {
-	return m_listBox->getSelectedItem();
+	if (m_listBox)
+		return m_listBox->getSelectedItem();
+	else
+		return get(m_selected);
 }
 
 void ListPropertyItem::createInPlaceControls(Widget* parent)
@@ -79,6 +109,11 @@ void ListPropertyItem::createInPlaceControls(Widget* parent)
 	m_listBox->create(m_listForm);
 	m_listBox->addSelectEventHandler(createMethodHandler(this, &ListPropertyItem::eventSelect));
 	m_listBox->addFocusEventHandler(createMethodHandler(this, &ListPropertyItem::eventFocus));
+
+	for (std::vector< std::wstring >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
+		m_listBox->add(*i);
+
+	m_listBox->select(m_selected);
 }
 
 void ListPropertyItem::destroyInPlaceControls()
@@ -91,8 +126,15 @@ void ListPropertyItem::destroyInPlaceControls()
 
 	if (m_listBox)
 	{
+		m_selected = m_listBox->getSelected();
 		m_listBox->destroy();
 		m_listBox = 0;
+	}
+
+	if (m_listForm)
+	{
+		m_listForm->destroy();
+		m_listForm = 0;
 	}
 }
 

@@ -45,7 +45,7 @@ public:
 
 	void bind();
 
-	void enter();
+	void enter(bool keepDepthStencil);
 
 	inline GLenum getTextureTarget() const { return m_textureTarget; }
 

@@ -225,11 +225,11 @@ void RenderTargetOpenGL::bind()
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_frameBufferObject));
 }
 
-void RenderTargetOpenGL::enter()
+void RenderTargetOpenGL::enter(bool keepDepthStencil)
 {
 	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
 
-	if (m_haveDepth)
+	if (m_haveDepth || keepDepthStencil)
 	{
 		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
 		T_OGL_SAFE(glDepthFunc(GL_LEQUAL));

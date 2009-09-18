@@ -28,13 +28,20 @@ class T_DLLCLASS PostProcessSettings : public Serializable
 	T_RTTI_CLASS(PostProcessSettings)
 
 public:
+	PostProcessSettings();
+
+	bool requireHighRange() const;
+
 	const RefArray< PostProcessDefine >& getDefinitions() const;
 
 	const RefArray< PostProcessStep >& getSteps() const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 private:
+	bool m_requireHighRange;
 	RefArray< PostProcessDefine > m_definitions;
 	RefArray< PostProcessStep > m_steps;
 };

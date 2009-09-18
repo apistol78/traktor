@@ -2,6 +2,7 @@
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessStep.h"
+#include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/RenderTargetSet.h"
@@ -56,7 +57,7 @@ void PostProcess::destroy()
 	// Destroy user defined targets.
 	for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
-		if (i->second && i->first != 0 && i->first != 1)
+		if (i->second && i->first != 0 && i->first != 1 && i->first != 2)
 			i->second->destroy();
 	}
 	m_targets.clear();
@@ -153,6 +154,23 @@ Ref< render::RenderTargetSet >& PostProcess::getTargetRef(uint32_t id)
 const std::map< uint32_t, Ref< render::RenderTargetSet > >& PostProcess::getTargets() const
 {
 	return m_targets;
+}
+
+render::RenderTargetSet* PostProcess::createOutputTarget(
+	render::IRenderSystem* renderSystem,
+	int32_t width,
+	int32_t height,
+	int32_t multiSample
+)
+{
+	render::RenderTargetSetCreateDesc desc;
+	desc.count = 1;
+	desc.width = width;
+	desc.height = height;
+	desc.multiSample = multiSample;
+	desc.depthStencil = false;
+	desc.targets[0].format = m_settings->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
+	return renderSystem->createRenderTargetSet(desc);
 }
 
 	}

@@ -212,14 +212,12 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		// Create render target used for post processing.
 		if (m_context->getScene()->getPostProcess())
 		{
-			render::RenderTargetSetCreateDesc desc;
-			desc.count = 1;
-			desc.width = sz.cx;
-			desc.height = sz.cy;
-			desc.multiSample = 4;
-			desc.depthStencil = true;
-			desc.targets[0].format = render::TfR8G8B8A8;
-			m_renderTarget = m_context->getRenderSystem()->createRenderTargetSet(desc);
+			m_renderTarget = m_context->getScene()->getPostProcess()->createOutputTarget(
+				m_context->getRenderSystem(),
+				sz.cx,
+				sz.cy,
+				4
+			);
 		}
 
 		// Expose shadow map to debug view.

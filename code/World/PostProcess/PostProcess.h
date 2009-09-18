@@ -76,6 +76,13 @@ public:
 
 	const std::map< uint32_t, Ref< render::RenderTargetSet > >& getTargets() const;
 
+	render::RenderTargetSet* createOutputTarget(
+		render::IRenderSystem* renderSystem,
+		int32_t width,
+		int32_t height,
+		int32_t multiSample
+	);
+
 private:
 	Ref< PostProcessSettings > m_settings;
 	Ref< render::ScreenRenderer > m_screenRenderer;
