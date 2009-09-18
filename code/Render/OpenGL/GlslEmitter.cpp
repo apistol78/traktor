@@ -422,7 +422,7 @@ void emitLerp(GlslContext& cx, Lerp* node)
 	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
 	GlslVariable* blend = cx.emitInput(node, L"Blend");
 	T_ASSERT_M (blend->getType() == GtFloat, L"Incorrect type on Blend");
-	GlslVariable* out = cx.emitOutput(node, L"Output", in1->getType());
+	GlslVariable* out = cx.emitOutput(node, L"Output", type);
 	assign(f, out) << L"mix(" << in1->cast(type) << L", " << in2->cast(type) << L", " << blend->getName() << L");" << Endl;
 }
 
