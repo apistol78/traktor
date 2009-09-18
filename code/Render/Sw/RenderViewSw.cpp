@@ -209,15 +209,20 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 {
 	RenderState& rs = m_renderStateStack.back();
 
+	int32_t x1 = std::max< int32_t >(m_dirty[0], 0);
+	int32_t y1 = std::max< int32_t >(m_dirty[1], 0);
+	int32_t x2 = std::min< int32_t >(m_dirty[2], rs.width);
+	int32_t y2 = std::min< int32_t >(m_dirty[3], rs.height);
+
 	uint16_t* colorTarget = rs.colorTarget;
 	if (colorTarget)
 	{
 		uint16_t clearColor = to565(color[0], color[1], color[2]);
 
-		colorTarget += m_dirty[1] * rs.colorTargetPitch / sizeof(uint16_t);
-		for (int32_t y = m_dirty[1]; y < m_dirty[3]; ++y)
+		colorTarget += y1 * rs.colorTargetPitch / sizeof(uint16_t);
+		for (int32_t y = y1; y < y2; ++y)
 		{
-			for (int32_t x = m_dirty[0]; x < m_dirty[2]; ++x)
+			for (int32_t x = x1; x < x2; ++x)
 				colorTarget[x] = clearColor;
 			colorTarget += rs.colorTargetPitch / sizeof(uint16_t);
 		}
@@ -228,10 +233,10 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 	{
 		uint16_t clearDepth = toDepth(1.0f - depth);
 
-		depthTarget += m_dirty[1] * rs.depthTargetPitch / sizeof(uint16_t);
-		for (int32_t y = m_dirty[1]; y < m_dirty[3]; ++y)
+		depthTarget += y1 * rs.depthTargetPitch / sizeof(uint16_t);
+		for (int32_t y = y1; y < y2; ++y)
 		{
-			for (int32_t x = m_dirty[0]; x < m_dirty[2]; ++x)
+			for (int32_t x = x1; x < x2; ++x)
 				depthTarget[x] = clearDepth;
 			depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
 		}
@@ -841,14 +846,14 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 		traktor::Scalar iw = iw1 + (iw2 - iw1) * traktor::Scalar(t);
 		uint16_t fragmentDepth = toDepth(iw);
 
+		for (uint32_t i = 6; i < 6 + icount; ++i)
+		{
+			pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
+			surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
+		}
+
 		if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
 		{
-			for (uint32_t i = 6; i < 6 + icount; ++i)
-			{
-				pixelVaryings[i] = surfaceInterpolators[0][i] / iw;
-				surfaceInterpolators[0][i] += surfaceInterpolators[1][i];
-			}
-
 			// Execute fragment program every Nth pixel.
 #if defined(WINCE)
 			if ((x & 3) == 0)
