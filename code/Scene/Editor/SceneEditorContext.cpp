@@ -259,7 +259,12 @@ void SceneEditorContext::buildEntities()
 		// (Re-)build entities.
 		{
 			Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
-			m_scene = m_sceneAsset->createScene(entityBuilder, entityManager);
+			m_scene = m_sceneAsset->createScene(
+				m_resourceManager,
+				m_renderSystem,
+				entityBuilder,
+				entityManager
+			);
 
 			// Save new root entity adapter.
 			m_rootEntityAdapter = entityBuilder->getRootAdapter();

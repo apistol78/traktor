@@ -17,26 +17,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcess", PostProcess, Object)
 bool PostProcess::create(
 	PostProcessSettings* settings,
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	uint32_t screenWidth,
-	uint32_t screenHeight
+	render::IRenderSystem* renderSystem
 )
 {
 	m_settings = settings;
+	m_definedWidth = 0;
+	m_definedHeight = 0;
 	
 	m_screenRenderer = gc_new< render::ScreenRenderer >();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
-
-	const RefArray< PostProcessDefine >& definitions = m_settings->getDefinitions();
-	for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
-	{
-		if (!(*i)->define(this, renderSystem, screenWidth, screenHeight))
-		{
-			log::error << L"Unable to create post processing definition " << uint32_t(std::distance(definitions.begin(), i)) << Endl;
-			return false;
-		}
-	}
 
 	const RefArray< PostProcessStep >& steps = m_settings->getSteps();
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
@@ -81,6 +71,7 @@ void PostProcess::destroy()
 
 bool PostProcess::render(
 	const WorldRenderView& worldRenderView,
+	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
 	render::RenderTargetSet* frameBuffer,
 	render::RenderTargetSet* depthBuffer,
@@ -89,6 +80,33 @@ bool PostProcess::render(
 {
 	if (!m_settings)
 		return false;
+
+	int32_t width = renderView->getViewport().width;
+	int32_t height = renderView->getViewport().height;
+	if (width != m_definedWidth || height != m_definedHeight)
+	{
+		// Destroy user defined targets.
+		for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+		{
+			if (i->second && i->first != 0 && i->first != 1)
+				i->second->destroy();
+		}
+		m_targets.clear();
+
+		// Create new targets.
+		const RefArray< PostProcessDefine >& definitions = m_settings->getDefinitions();
+		for (RefArray< PostProcessDefine >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+		{
+			if (!(*i)->define(this, renderSystem, width, height))
+			{
+				log::error << L"Unable to create post processing definition " << uint32_t(std::distance(definitions.begin(), i)) << Endl;
+				return false;
+			}
+		}
+
+		m_definedWidth = width;
+		m_definedHeight = height;
+	}
 
 	m_targets[1] = frameBuffer;
 	m_targets[2] = depthBuffer;

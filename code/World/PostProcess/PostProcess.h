@@ -56,15 +56,14 @@ public:
 	bool create(
 		PostProcessSettings* settings,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		uint32_t screenWidth,
-		uint32_t screenHeight
+		render::IRenderSystem* renderSystem
 	);
 
 	void destroy();
 
 	bool render(
 		const WorldRenderView& worldRenderView,
+		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
 		render::RenderTargetSet* frameBuffer,
 		render::RenderTargetSet* depthBuffer,
@@ -82,6 +81,8 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::map< uint32_t, Ref< render::RenderTargetSet > > m_targets;
 	Ref< render::RenderTargetSet > m_currentTarget;
+	int32_t m_definedWidth;
+	int32_t m_definedHeight;
 };
 
 	}

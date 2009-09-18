@@ -23,6 +23,7 @@ class Event;
 	{
 
 class IRenderView;
+class RenderTargetSet;
 class PrimitiveRenderer;
 
 	}
@@ -63,6 +64,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderTargetSet > m_renderTarget;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
