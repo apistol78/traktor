@@ -4,8 +4,12 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
+#include "World/PostProcess/PostProcessSettings.h"
+#include "World/PostProcess/PostProcess.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -19,8 +23,25 @@ SceneAsset::SceneAsset()
 {
 }
 
-Scene* SceneAsset::createScene(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const
+Scene* SceneAsset::createScene(
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	world::IEntityBuilder* entityBuilder,
+	world::IEntityManager* entityManager
+) const
 {
+	Ref< world::PostProcess > postProcess;
+
+	if (!m_postProcessSettings.getGuid().isNull())
+	{
+		if (!resourceManager->bind(m_postProcessSettings))
+			return 0;
+
+		postProcess = gc_new< world::PostProcess >();
+		if (!postProcess->create(m_postProcessSettings, resourceManager, renderSystem))
+			return 0;
+	}
+
 	entityBuilder->begin(entityManager);
 
 	Ref< world::Entity > rootEntity = entityBuilder->build(m_instance);
@@ -39,7 +60,8 @@ Scene* SceneAsset::createScene(world::IEntityBuilder* entityBuilder, world::IEnt
 		controller,
 		entityManager,
 		rootEntity,
-		m_worldRenderSettings
+		m_worldRenderSettings,
+		postProcess
 	);
 }
 
@@ -51,6 +73,16 @@ void SceneAsset::setWorldRenderSettings(world::WorldRenderSettings* worldRenderS
 world::WorldRenderSettings* SceneAsset::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
+}
+
+void SceneAsset::setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcessSettings)
+{
+	m_postProcessSettings = postProcessSettings;
+}
+
+const resource::Proxy< world::PostProcessSettings >& SceneAsset::getPostProcessSettings() const
+{
+	return m_postProcessSettings;
 }
 
 void SceneAsset::setInstance(world::EntityInstance* instance)
@@ -75,12 +107,18 @@ ISceneControllerData* SceneAsset::getControllerData() const
 
 int SceneAsset::getVersion() const
 {
-	return 1;
+	return 2;
 }
 
 bool SceneAsset::serialize(Serializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
+
+	if (s.getVersion() >= 2)
+	{
+		s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
+	}
+
 	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
 
 	if (s.getVersion() >= 1)

@@ -21,6 +21,8 @@ class T_DLLCLASS ScenePipeline : public editor::IPipeline
 	T_RTTI_CLASS(ScenePipeline)
 
 public:
+	ScenePipeline();
+
 	virtual bool create(const editor::Settings* settings);
 
 	virtual void destroy();
@@ -45,6 +47,11 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const;
+
+private:
+	bool m_suppressDepthPass;
+	bool m_suppressShadows;
+	bool m_suppressPostProcess;
 };
 
 	}

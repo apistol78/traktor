@@ -3,6 +3,7 @@
 
 #include "Core/Heap/Ref.h"
 #include "Core/Serialization/Serializable.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,6 +15,20 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace world
 	{
 
@@ -21,6 +36,7 @@ class IEntityBuilder;
 class IEntityManager;
 class EntityInstance;
 class WorldRenderSettings;
+class PostProcessSettings;
 
 	}
 
@@ -37,11 +53,20 @@ class T_DLLCLASS SceneAsset : public Serializable
 public:
 	SceneAsset();
 
-	Scene* createScene(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
+	Scene* createScene(
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		world::IEntityBuilder* entityBuilder,
+		world::IEntityManager* entityManager
+	) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
+
+	void setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcess);
+
+	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
 
 	void setInstance(world::EntityInstance* instance);
 
@@ -57,6 +82,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
+	mutable resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
 	Ref< world::EntityInstance > m_instance;
 	Ref< ISceneControllerData > m_controllerData;
 };

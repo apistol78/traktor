@@ -11,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(db::Database* database, world::IEntityBuilder* entityBuilder)
+SceneFactory::SceneFactory(db::Database* database, render::IRenderSystem* renderSystem, world::IEntityBuilder* entityBuilder)
 :	m_database(database)
+,	m_renderSystem(renderSystem)
 ,	m_entityBuilder(entityBuilder)
 {
 }
@@ -36,7 +37,7 @@ Object* SceneFactory::create(resource::IResourceManager* resourceManager, const 
 		return 0;
 
 	Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
-	return asset->createScene(m_entityBuilder, entityManager);
+	return asset->createScene(resourceManager, m_renderSystem, m_entityBuilder, entityManager);
 }
 
 	}

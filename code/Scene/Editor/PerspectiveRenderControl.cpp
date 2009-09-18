@@ -8,6 +8,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/SelectEvent.h"
+#include "Scene/Scene.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
@@ -20,6 +21,7 @@
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
+#include "World/PostProcess/PostProcess.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
 #include "Ui/Events/SizeEvent.h"
@@ -175,6 +177,12 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		m_worldRenderer = 0;
 	}
 
+	if (m_renderTarget)
+	{
+		m_renderTarget->destroy();
+		m_renderTarget = 0;
+	}
+
 	ui::Size sz = m_renderWidget->getInnerRect().getSize();
 	if (sz.cx <= 0 || sz.cy <= 0)
 		return;
@@ -200,6 +208,19 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	))
 	{
 		updateWorldRenderView();
+
+		// Create render target used for post processing.
+		if (m_context->getScene()->getPostProcess())
+		{
+			render::RenderTargetSetCreateDesc desc;
+			desc.count = 1;
+			desc.width = sz.cx;
+			desc.height = sz.cy;
+			desc.multiSample = 4;
+			desc.depthStencil = true;
+			desc.targets[0].format = render::TfR8G8B8A8;
+			m_renderTarget = m_context->getRenderSystem()->createRenderTargetSet(desc);
+		}
 
 		// Expose shadow map to debug view.
 		Ref< render::RenderTargetSet > shadowTargetSet = m_worldRenderer->getShadowTargetSet();
@@ -602,7 +623,30 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		if (rootEntity)
 		{
 			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
+
+			if (m_renderTarget)
+				m_renderView->begin(m_renderTarget, 0, true);
+
+			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
+
+			if (m_renderTarget)
+			{
+				m_renderView->end();
+				
+				Ref< world::PostProcess > postProcess = m_context->getScene()->getPostProcess();
+				T_ASSERT (postProcess);
+
+				postProcess->render(
+					m_worldRenderView,
+					m_context->getRenderSystem(),
+					m_renderView,
+					m_renderTarget,
+					m_worldRenderer->getDepthTargetSet(),
+					deltaTime
+				);
+			}
+
 			m_worldRenderer->flush(0);
 		}
 
