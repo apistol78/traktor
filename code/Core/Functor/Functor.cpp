@@ -6,6 +6,7 @@
 #include "Core/Heap/BlockAllocator.h"
 #include "Core/Thread/CriticalSection.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {
@@ -35,7 +36,7 @@ public:
 		void* ptr = m_blockAllocator.alloc();
 		T_ASSERT_M (ptr, L"Out of memory");
 #if defined(_DEBUG)
-		++m_count;
+		Atomic::increment(m_count);
 #endif
 		return ptr;
 	}
@@ -49,7 +50,7 @@ public:
 		bool result = m_blockAllocator.free(ptr);
 		T_ASSERT_M (result, L"Invalid pointer");
 #if defined(_DEBUG)
-		--m_count;
+		Atomic::decrement(m_count);
 #endif
 	}
 
@@ -64,7 +65,7 @@ private:
 	BlockAllocator m_blockAllocator;
 	CriticalSection m_allocatorLock;
 #if defined(_DEBUG)
-	uint32_t m_count;
+	int32_t m_count;
 #endif
 
 	FunctorHeap()
