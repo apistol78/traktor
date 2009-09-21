@@ -106,6 +106,7 @@
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>1</screenDenom>
+      <format>TfR16G16B16A16F</format>
 			<depthStencil>false</depthStencil>
 			<multiSample>0</multiSample>
 		</item>
