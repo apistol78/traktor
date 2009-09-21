@@ -20,6 +20,7 @@
 #include "Render/External.h"
 #include "Render/Nodes.h"
 #include "Render/FragmentLinker.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -76,6 +77,7 @@ MeshPipeline::MeshPipeline()
 
 bool MeshPipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< editor::PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	return true;
 }
@@ -107,7 +109,7 @@ bool MeshPipeline::buildDependencies(
 	T_ASSERT (asset);
 
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
-	const Path& fileName = asset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 
 	pipelineManager->addDependency(fileName);
 

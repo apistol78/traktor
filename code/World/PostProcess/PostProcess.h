@@ -6,6 +6,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,6 +30,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class Shader;
 class RenderTargetSet;
 class ScreenRenderer;
 
@@ -76,6 +78,10 @@ public:
 
 	const std::map< uint32_t, Ref< render::RenderTargetSet > >& getTargets() const;
 
+	void setParameter(render::handle_t handle, const Vector4& value);
+
+	void prepareShader(render::Shader* shader) const;
+
 	render::RenderTargetSet* createOutputTarget(
 		render::IRenderSystem* renderSystem,
 		int32_t width,
@@ -87,6 +93,7 @@ private:
 	Ref< PostProcessSettings > m_settings;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::map< uint32_t, Ref< render::RenderTargetSet > > m_targets;
+	std::map< render::handle_t, Vector4 > m_parameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	int32_t m_definedWidth;
 	int32_t m_definedHeight;

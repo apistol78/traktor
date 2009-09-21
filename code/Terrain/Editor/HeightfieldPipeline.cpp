@@ -4,6 +4,7 @@
 #include "Terrain/HeightfieldResource.h"
 #include "Terrain/Heightfield.h"
 #include "Editor/IPipelineManager.h"
+#include "Editor/Settings.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
@@ -61,6 +62,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.HeightfieldPipeline", Heig
 
 bool HeightfieldPipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -88,7 +90,8 @@ bool HeightfieldPipeline::buildDependencies(
 ) const
 {
 	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
-	pipelineManager->addDependency(heightfieldAsset->getFileName());
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
+	pipelineManager->addDependency(fileName);
 	return true;
 }
 
@@ -103,7 +106,7 @@ bool HeightfieldPipeline::buildOutput(
 ) const
 {
 	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
-	Path fileName = heightfieldAsset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
 
 	Ref< drawing::Image > image;
 	if (fileName.getExtension() == L"raw")

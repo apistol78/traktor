@@ -41,6 +41,8 @@ void PostProcessStepSimple::render(
 	if (!m_shader.validate())
 		return;
 
+	postProcess->prepareShader(m_shader);
+
 	m_shader->setFloatParameter(L"Time", m_time);
 	m_shader->setFloatParameter(L"DeltaTime", deltaTime);
 

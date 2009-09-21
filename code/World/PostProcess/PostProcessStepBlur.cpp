@@ -61,6 +61,8 @@ void PostProcessStepBlur::render(
 	if (!m_shader.validate())
 		return;
 
+	postProcess->prepareShader(m_shader);
+
 	for (std::vector< Source >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);

@@ -3,6 +3,7 @@
 #include "Terrain/Editor/MaterialMaskAsset.h"
 #include "Terrain/MaterialMaskResource.h"
 #include "Editor/IPipelineManager.h"
+#include "Editor/Settings.h"
 #include "Drawing/Image.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
@@ -18,6 +19,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.MaterialMaskPipeline", Mat
 
 bool MaterialMaskPipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -45,7 +47,8 @@ bool MaterialMaskPipeline::buildDependencies(
 ) const
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
-	pipelineManager->addDependency(maskAsset->getFileName());
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
+	pipelineManager->addDependency(fileName);
 	return true;
 }
 
@@ -60,7 +63,7 @@ bool MaterialMaskPipeline::buildOutput(
 ) const
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
-	Path fileName = maskAsset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
 
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
 	if (!image)

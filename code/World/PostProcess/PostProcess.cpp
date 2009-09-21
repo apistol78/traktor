@@ -156,6 +156,17 @@ const std::map< uint32_t, Ref< render::RenderTargetSet > >& PostProcess::getTarg
 	return m_targets;
 }
 
+void PostProcess::setParameter(render::handle_t handle, const Vector4& value)
+{
+	m_parameters[handle] = value;
+}
+
+void PostProcess::prepareShader(render::Shader* shader) const
+{
+	for (std::map< render::handle_t, Vector4 >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
+		shader->setVectorParameter(i->first, i->second);
+}
+
 render::RenderTargetSet* PostProcess::createOutputTarget(
 	render::IRenderSystem* renderSystem,
 	int32_t width,

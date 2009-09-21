@@ -8,6 +8,7 @@
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Editor/IPipelineManager.h"
+#include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
@@ -36,6 +37,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundPipeline", SoundPipelin
 
 bool SoundPipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -63,7 +65,8 @@ bool SoundPipeline::buildDependencies(
 ) const
 {
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
-	pipelineManager->addDependency(soundAsset->getFileName());
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
+	pipelineManager->addDependency(fileName);
 	return true;
 }
 
@@ -78,7 +81,7 @@ bool SoundPipeline::buildOutput(
 ) const
 {
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
-	Path fileName = soundAsset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
 
 	Ref< IStreamDecoder > decoder;
 	if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)

@@ -45,6 +45,9 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const;
+
+private:
+	std::wstring m_assetPath;
 };
 
 	}

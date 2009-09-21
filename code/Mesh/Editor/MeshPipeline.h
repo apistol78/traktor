@@ -49,6 +49,7 @@ public:
 	) const;
 
 private:
+	std::wstring m_assetPath;
 	bool m_promoteHalf;
 };
 
