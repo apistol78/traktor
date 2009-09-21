@@ -269,7 +269,7 @@ bool TexturePipeline::buildOutput(
 				switch (majorAxis3(reflection))
 				{
 				case 0:
-					vsign = -sign(reflection.x());
+					vsign = -sign(float(reflection.x()));
 					offset = reflection.x() < 0.0f ? 0 : height;
 					reflection = reflection * (Scalar(1.0f) / -reflection.x());
 					slicex = int((reflection.z() * -0.5f + 0.5f) * (height - 1));
@@ -277,7 +277,7 @@ bool TexturePipeline::buildOutput(
 					break;
 
 				case 1:
-					vsign = sign(reflection.y());
+					vsign = sign(float(reflection.y()));
 					offset = reflection.y() < 0.0f ? height * 2 : height * 3;
 					reflection = reflection * (Scalar(1.0f) / -reflection.y());
 					slicex = int((reflection.x() * 0.5f * vsign + 0.5f) * (height - 1));
@@ -285,7 +285,7 @@ bool TexturePipeline::buildOutput(
 					break;
 
 				case 2:
-					vsign = -sign(reflection.z());
+					vsign = -sign(float(reflection.z()));
 					offset = reflection.z() > 0.0f ? height * 4 : height * 5;
 					reflection = reflection * (Scalar(1.0f) / -reflection.z());
 					slicex = int((reflection.x() * 0.5f + 0.5f) * (height - 1));
