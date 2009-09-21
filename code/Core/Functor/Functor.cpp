@@ -34,7 +34,8 @@ public:
 		T_ASSERT_M (size <= MaxFunctorSize, L"Allocation size too big");
 		Acquire< CriticalSection > __lock__(m_allocatorLock);
 		void* ptr = m_blockAllocator.alloc();
-		T_ASSERT_M (ptr, L"Out of memory");
+		if (!ptr)
+			T_FATAL_ERROR;
 #if defined(_DEBUG)
 		Atomic::increment(m_count);
 #endif
@@ -58,7 +59,11 @@ protected:
 	virtual void destroy() { delete this; }
 
 private:
+#if !defined(WINCE)
+	enum { MaxFunctorCount = 4096 };
+#else
 	enum { MaxFunctorCount = 1024 };
+#endif
 	enum { MaxFunctorSize = 64 };
 	
 	void* m_block;

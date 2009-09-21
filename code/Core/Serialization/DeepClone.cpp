@@ -21,7 +21,7 @@ DeepClone::DeepClone(const Serializable* source)
 	BinarySerializer(&stream).writeObject(sourceRef);
 }
 
-Serializable* DeepClone::create()
+Ref< Serializable > DeepClone::create()
 {
 	DynamicMemoryStream stream(m_copy, true, false);
 	return BinarySerializer(&stream).readObject();

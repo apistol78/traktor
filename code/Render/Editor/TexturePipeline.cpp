@@ -58,13 +58,14 @@ bool isBinaryAlpha(const drawing::Image* image)
 
 struct ScaleTextureTask
 {
-	const drawing::Image* image;
+	Ref< const drawing::Image > image;
 	Ref< drawing::ScaleFilter > filter;
 	Ref< drawing::Image > output;
 
 	void execute()
 	{
 		output = image->applyFilter(filter);
+		T_ASSERT (output);
 	}
 };
 
@@ -427,6 +428,7 @@ bool TexturePipeline::buildOutput(
 			{
 				jobs[i]->wait();
 				mipImages[i] = tasks[i]->output;
+				T_ASSERT (mipImages[i]);
 				delete tasks[i];
 			}
 
