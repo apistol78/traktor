@@ -75,7 +75,7 @@ void Connection::sendReply(const IMessage& message)
 {
 	if (!m_messageTransport->send(&message))
 	{
-		log::error << L"Unable to send reply; connection terminated" << Endl;
+		log::error << L"Unable to send reply (" << type_name(&message) << L"); connection terminated" << Endl;
 		destroy();
 	}
 }

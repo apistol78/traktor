@@ -13,6 +13,7 @@
 #include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/String.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -68,6 +69,7 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 		T_ASSERT (database);
 		m_connection->setDatabase(database);
 
+		log::info << L"Database \"" << message->getName() << L"\" opened successfully" << Endl;
 		m_connection->sendReply(MsgStatus(StSuccess));
 	}
 	else

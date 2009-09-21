@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/Configuration.h"
@@ -36,6 +37,7 @@ bool ConnectionManager::create(const Configuration* configuration)
 		return false;
 	}
 
+	log::info << L"Connection manager created" << Endl;
 	return true;
 }
 
@@ -51,6 +53,8 @@ void ConnectionManager::destroy()
 		m_serverSocket->close();
 		m_serverSocket = 0;
 	}
+
+	log::info << L"Connection manager destroyed" << Endl;
 }
 
 bool ConnectionManager::update(int32_t waitTimeout)
@@ -83,21 +87,25 @@ bool ConnectionManager::acceptConnections(int32_t waitTimeout)
 	return true;
 }
 
+namespace
+{
+
+	struct NotAlive
+	{
+		bool operator () (Connection* connection) const { return !connection->alive(); }
+	};
+
+}
+
 bool ConnectionManager::cleanupConnections()
 {
-	uint32_t count = 0;
-	for (RefArray< Connection >::iterator i = m_connections.begin(); i != m_connections.end(); )
-	{
-		if (!(*i)->alive())
-		{
-			i = m_connections.erase(i);
-			++count;
-		}
-		else
-			++i;
-	}
+	uint32_t count = uint32_t(m_connections.size());
+	std::remove_if(m_connections.begin(), m_connections.end(), NotAlive());
+	count -= uint32_t(m_connections.size());
+
 	if (count)
 		log::info << count << L" connection(s) removed" << Endl;
+
 	return true;
 }
 

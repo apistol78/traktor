@@ -35,7 +35,8 @@ RemoteStream::RemoteStream(Connection* connection, uint32_t handle)
 
 void RemoteStream::close()
 {
-	m_connection->sendMessage< MsgStatus >(StmClose(m_handle));
+	if (m_connection)
+		m_connection->sendMessage< MsgStatus >(StmClose(m_handle));
 }
 
 bool RemoteStream::canRead() const

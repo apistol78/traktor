@@ -39,7 +39,8 @@ RemoteInstance::RemoteInstance(Connection* connection, uint32_t handle)
 
 RemoteInstance::~RemoteInstance()
 {
-	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
+	if (m_connection)
+		m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 std::wstring RemoteInstance::getPrimaryTypeName() const

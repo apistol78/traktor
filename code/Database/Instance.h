@@ -4,6 +4,7 @@
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Thread/Mutex.h"
+#include "Database/Config.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -92,6 +93,18 @@ private:
 	Mutex m_lock;
 	bool m_renamed;
 	bool m_removed;
+#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
+	mutable uint32_t m_cache;
+#	if T_INSTANCE_CACHE_NAME
+	mutable std::wstring m_name;
+#	endif
+#	if T_INSTANCE_CACHE_GUID
+	mutable Guid m_guid;
+#	endif
+#	if T_INSTANCE_CACHE_PRIMARY_TYPE
+	mutable std::wstring m_primaryType;
+#	endif
+#endif
 };
 
 	}

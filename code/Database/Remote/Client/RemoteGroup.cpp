@@ -28,7 +28,8 @@ RemoteGroup::RemoteGroup(Connection* connection, uint32_t handle)
 
 RemoteGroup::~RemoteGroup()
 {
-	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
+	if (m_connection)
+		m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 std::wstring RemoteGroup::getName() const

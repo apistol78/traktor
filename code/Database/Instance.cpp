@@ -13,6 +13,17 @@ namespace traktor
 {
 	namespace db
 	{
+		namespace
+		{
+
+enum
+{
+	IchName = 1,
+	IchGuid = 2,
+	IchPrimaryType = 4
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
@@ -20,6 +31,9 @@ Instance::Instance(IProviderBus* providerBus)
 :	m_providerBus(providerBus)
 ,	m_renamed(false)
 ,	m_removed(false)
+#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
+,	m_cache(0)
+#endif
 {
 }
 
@@ -41,25 +55,52 @@ void Instance::internalDestroy()
 std::wstring Instance::getName() const
 {
 	T_ASSERT (m_providerInstance);
+#if T_INSTANCE_CACHE_NAME
+	if (!(m_cache & IchName))
+	{
+		m_name = m_providerInstance->getName();
+		m_cache |= IchName;
+	}
+	return m_name;
+#else
 	return m_providerInstance->getName();
+#endif
 }
 
 std::wstring Instance::getPath() const
 {
 	T_ASSERT (m_providerInstance);
-	return m_parent->getPath() + L"/" + m_providerInstance->getName();
+	return m_parent->getPath() + L"/" + getName();
 }
 
 Guid Instance::getGuid() const
 {
 	T_ASSERT (m_providerInstance);
+#if T_INSTANCE_CACHE_GUID
+	if (!(m_cache & IchGuid))
+	{
+		m_guid = m_providerInstance->getGuid();
+		m_cache |= IchGuid;
+	}
+	return m_guid;
+#else
 	return m_providerInstance->getGuid();
+#endif
 }
 
 std::wstring Instance::getPrimaryTypeName() const
 {
 	T_ASSERT (m_providerInstance);
+#if T_INSTANCE_CACHE_PRIMARY_TYPE
+	if (!(m_cache & IchPrimaryType))
+	{
+		m_primaryType = m_providerInstance->getPrimaryTypeName();
+		m_cache |= IchPrimaryType;
+	}
+	return m_primaryType;
+#else
 	return m_providerInstance->getPrimaryTypeName();
+#endif
 }
 
 const Type* Instance::getPrimaryType() const
