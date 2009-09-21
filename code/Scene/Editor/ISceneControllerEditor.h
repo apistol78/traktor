@@ -25,6 +25,7 @@ class Command;
 	{
 
 class SceneEditorContext;
+class EntityAdapter;
 
 /*! \brief
  */
@@ -36,6 +37,8 @@ public:
 	virtual bool create(SceneEditorContext* context, ui::Container* parent) = 0;
 
 	virtual void destroy() = 0;
+
+	virtual void entityRemoved(EntityAdapter* entityAdapter) = 0;
 
 	virtual void propertiesChanged() = 0;
 

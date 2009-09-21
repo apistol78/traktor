@@ -370,7 +370,12 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			{
 				Ref< EntityAdapter > parentGroup = (*i)->getParent();
 				if (parentGroup->isGroup())
+				{
 					parentGroup->removeChild((*i), true);
+
+					if (m_controllerEditor)
+						m_controllerEditor->entityRemoved(*i);
+				}
 			}
 		}
 
@@ -420,18 +425,21 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		m_undoStack->push(m_dataObject);
 
-		bool anyRemoved = false;
+		uint32_t removedCount = 0;
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
 			Ref< EntityAdapter > parentGroup = (*i)->getParent();
 			if (parentGroup->isGroup())
 			{
 				parentGroup->removeChild(*i, true);
-				anyRemoved = true;
+				removedCount++;
+
+				if (m_controllerEditor)
+					m_controllerEditor->entityRemoved(*i);
 			}
 		}
 
-		if (anyRemoved)
+		if (removedCount)
 		{
 			updateScene();
 			updateInstanceGrid();

@@ -45,6 +45,7 @@ const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
+const float c_clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 
 		}
 
@@ -534,10 +535,9 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	// Render world.
 	if (m_renderView->begin())
 	{
-		const float clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
-			clearColor,
+			c_clearColor,
 			1.0f,
 			128
 		);
@@ -624,7 +624,15 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
 
 			if (m_renderTarget)
+			{
 				m_renderView->begin(m_renderTarget, 0, true);
+				m_renderView->clear(
+					render::CfColor,
+					c_clearColor,
+					1.0f,
+					128
+				);
+			}
 
 			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
 
