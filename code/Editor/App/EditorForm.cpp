@@ -2001,25 +2001,30 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		RefArray< db::Instance > assetInstances;
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Asset >()), assetInstances);
 
-		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
+		if (!assetInstances.empty())
 		{
-			Ref< Asset > asset = (*i)->getObject< Asset >();
-			if (asset)
+			std::wstring assetPath = m_settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+
+			for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 			{
-				const Path& fileName = asset->getFileName();
-				Ref< File > file = FileSystem::getInstance().get(fileName);
-				if (file && (file->getFlags() & File::FfArchive) == File::FfArchive)
+				Ref< Asset > asset = (*i)->getObject< Asset >();
+				if (asset)
 				{
-					modifiedAssets.push_back((*i)->getGuid());
-					FileSystem::getInstance().modify(fileName, (file->getFlags() & ~File::FfArchive));
+					Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
+					Ref< File > file = FileSystem::getInstance().get(fileName);
+					if (file && (file->getFlags() & File::FfArchive) == File::FfArchive)
+					{
+						modifiedAssets.push_back((*i)->getGuid());
+						FileSystem::getInstance().modify(fileName, (file->getFlags() & ~File::FfArchive));
+					}
 				}
 			}
-		}
 
-		if (!modifiedAssets.empty())
-		{
-			log::debug << L"Modified source asset(s) detected; building asset(s)..." << Endl;
-			buildAssets(modifiedAssets, false);
+			if (!modifiedAssets.empty())
+			{
+				log::debug << L"Modified source asset(s) detected; building asset(s)..." << Endl;
+				buildAssets(modifiedAssets, false);
+			}
 		}
 	}
 

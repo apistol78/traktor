@@ -154,6 +154,7 @@ TexturePipeline::TexturePipeline()
 
 bool TexturePipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);
 	m_allowCompression = settings->getProperty< editor::PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
 	return true;
@@ -183,7 +184,8 @@ bool TexturePipeline::buildDependencies(
 ) const
 {
 	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
-	pipelineManager->addDependency(textureAsset->getFileName());
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
+	pipelineManager->addDependency(fileName);
 	return true;
 }
 
@@ -198,7 +200,7 @@ bool TexturePipeline::buildOutput(
 ) const
 {
 	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
-	Path fileName = textureAsset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
 
 	// Load source image.
 	Ref< drawing::Image > image = drawing::Image::load(fileName);

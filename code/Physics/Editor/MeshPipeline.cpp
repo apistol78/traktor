@@ -3,10 +3,12 @@
 #include "Physics/MeshResource.h"
 #include "Physics/Mesh.h"
 #include "Editor/IPipelineManager.h"
+#include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
 #include "Model/Utilities.h"
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
 #include "Core/Log/Log.h"
 
@@ -19,6 +21,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshPipeline", MeshPipelin
 
 bool MeshPipeline::create(const editor::Settings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -45,6 +48,9 @@ bool MeshPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
+	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
+	pipelineManager->addDependency(fileName);
 	return true;
 }
 
@@ -59,7 +65,7 @@ bool MeshPipeline::buildOutput(
 ) const
 {
 	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	Path fileName = meshAsset->getFileName();
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
 
 	// Import source model.
 	Ref< model::Model > model = model::ModelFormat::readAny(fileName);

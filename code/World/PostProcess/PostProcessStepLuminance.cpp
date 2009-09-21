@@ -57,6 +57,8 @@ void PostProcessStepLuminance::render(
 	if (!source)
 		return;
 
+	postProcess->prepareShader(m_shader);
+
 	Vector4 sampleOffsetScale(
 		1.0f / source->getWidth(),
 		1.0f / source->getHeight(),

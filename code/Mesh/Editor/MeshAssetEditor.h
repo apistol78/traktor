@@ -66,6 +66,7 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::ListView > m_materialList;
+	std::wstring m_assetPath;
 
 	void updateModel();
 

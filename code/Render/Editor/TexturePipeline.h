@@ -49,6 +49,7 @@ public:
 	) const;
 
 private:
+	std::wstring m_assetPath;
 	int32_t m_skipMips;
 	bool m_allowCompression;
 };

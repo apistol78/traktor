@@ -10,6 +10,7 @@
 #include "Core/Serialization/Serializer.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -32,7 +33,7 @@ bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceMa
 		m_offsets[i] = random.nextUnit() * Scalar(r);
 	}
 
-	uint8_t data[128 * 128 * 4];
+	AutoArrayPtr< uint8_t > data(new uint8_t [128 * 128 * 4]);
 	for (uint32_t y = 0; y < 128; ++y)
 	{
 		for (uint32_t x = 0; x < 128; ++x)
@@ -51,7 +52,7 @@ bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceMa
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
-	desc.initialData[0].data = data;
+	desc.initialData[0].data = data.ptr();
 	desc.initialData[0].pitch = 128 * 4;
 	desc.initialData[0].slicePitch = 0;
 
@@ -85,6 +86,8 @@ void PostProcessStepSsao::render(
 	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(1);
 	if (!source)
 		return;
+
+	postProcess->prepareShader(m_shader);
 
 	Vector4 sourceSize(
 		float(source->getWidth()),
