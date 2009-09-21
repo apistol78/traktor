@@ -258,6 +258,10 @@
       <second>Name</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_ASSET_PATH</first>
+      <second>Asset path</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
       <second>Build asset before editing</second>
     </item>
