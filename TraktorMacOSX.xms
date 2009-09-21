@@ -10091,6 +10091,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_ODE_EXPORT</item>
@@ -10107,6 +10108,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_ODE_EXPORT</item>
@@ -10123,6 +10125,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -10139,6 +10142,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
