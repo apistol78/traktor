@@ -35,6 +35,8 @@ public:
 
 	virtual ~Clipboard();
 
+	void destroy();
+
 	bool setObject(Serializable* object);
 
 	bool setText(const std::wstring& text);

@@ -15,8 +15,16 @@ Clipboard::Clipboard(IClipboard* clipboard)
 
 Clipboard::~Clipboard()
 {
-	T_ASSERT (m_clipboard);
-	m_clipboard->destroy();
+	destroy();
+}
+
+void Clipboard::destroy()
+{
+	if (m_clipboard)
+	{
+		m_clipboard->destroy();
+		m_clipboard = 0;
+	}
 }
 
 bool Clipboard::setObject(Serializable* object)
