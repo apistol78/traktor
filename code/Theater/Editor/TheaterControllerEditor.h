@@ -34,6 +34,8 @@ public:
 
 	virtual void destroy();
 
+	virtual void entityRemoved(scene::EntityAdapter* entityAdapter);
+
 	virtual void propertiesChanged();
 
 	virtual bool handleCommand(const ui::Command& command);

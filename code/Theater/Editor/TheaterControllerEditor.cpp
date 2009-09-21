@@ -95,6 +95,23 @@ void TheaterControllerEditor::destroy()
 	}
 }
 
+void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
+{
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+
+	RefArray< TrackData >& trackData = controllerData->getTrackData();
+	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); )
+	{
+		if ((*i)->getInstance() == entityAdapter->getInstance())
+			i = trackData.erase(i);
+		else
+			++i;
+	}
+
+	updateSequencer();
+}
+
 void TheaterControllerEditor::propertiesChanged()
 {
 	updateSequencer();
