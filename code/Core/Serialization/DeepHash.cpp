@@ -10,11 +10,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.DeepHash", DeepHash, Object)
 
 DeepHash::DeepHash(const Serializable* object)
 {
+	Ref< const Serializable > objectRef(object);
 	std::vector< uint8_t > copy;
 
 	// Create flat binary copy of object.
 	DynamicMemoryStream stream(copy, false, true);
-	BinarySerializer(&stream).writeObject(object);
+	BinarySerializer(&stream).writeObject(objectRef);
 
 	// Calculate checksum of binary object.
 	Adler32 cs;
