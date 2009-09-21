@@ -10090,7 +10090,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
@@ -10107,7 +10107,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
@@ -10124,7 +10124,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
@@ -10141,7 +10141,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/ode-0.8/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 					</includePaths>
 					<definitions>
