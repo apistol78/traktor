@@ -1,5 +1,6 @@
 #include "Input/Xi/InputDeviceXi.h"
 #include "Core/Misc/String.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -188,7 +189,27 @@ void InputDeviceXi::readState()
 {
 	if (!m_skip)
 	{
-		m_connected = bool(XInputGetState(m_controller, &m_state) == ERROR_SUCCESS);
+		bool connected = m_connected;
+
+#if !defined(_XBOX)
+		HWND hWndActive = GetActiveWindow();
+		DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
+		if (GetCurrentProcessId() != dwPID)
+		{
+			m_connected = false;
+			m_skip = c_skipReadStateNoConnect;
+		}
+		else
+#endif
+			m_connected = bool(XInputGetState(m_controller, &m_state) == ERROR_SUCCESS);
+
+#if defined(_DEBUG)
+		if (connected && !m_connected)
+			log::debug << L"Input device " << int32_t(m_controller) << L" disconnected" << Endl;
+		else if (!connected && m_connected)
+			log::debug << L"Input device " << int32_t(m_controller) << L" connected" << Endl;
+#endif
+
 		if (!m_connected)
 			m_skip = c_skipReadStateNoConnect;
 	}
