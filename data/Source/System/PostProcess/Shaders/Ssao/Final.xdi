@@ -72,7 +72,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 		</item>
-		<item type="traktor.render.PixelOutput" version="1">
+		<item type="traktor.render.PixelOutput" version="2">
 			<comment></comment>
 			<position>
 				<first>1120</first>
@@ -97,6 +97,13 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment></comment>
@@ -125,8 +132,8 @@
 		<item type="traktor.render.Mul">
 			<comment></comment>
 			<position>
-				<first>959</first>
-				<second>336</second>
+				<first>950</first>
+				<second>264</second>
 			</position>
 		</item>
 	</nodes>
@@ -223,22 +230,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

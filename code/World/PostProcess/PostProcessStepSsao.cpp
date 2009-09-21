@@ -83,15 +83,22 @@ void PostProcessStepSsao::render(
 	if (!m_shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(1);
-	if (!source)
+	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(1);
+	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(2);
+	if (!sourceColor || !sourceDepth)
 		return;
 
 	postProcess->prepareShader(m_shader);
 
-	Vector4 sourceSize(
-		float(source->getWidth()),
-		float(source->getHeight()),
+	Vector4 sourceColorSize(
+		float(sourceColor->getWidth()),
+		float(sourceColor->getHeight()),
+		0.0f,
+		0.0f
+	);
+	Vector4 sourceDepthSize(
+		float(sourceDepth->getWidth()),
+		float(sourceDepth->getHeight()),
 		0.0f,
 		0.0f
 	);
@@ -104,10 +111,10 @@ void PostProcessStepSsao::render(
 
 	const Matrix44& projection = worldRenderView.getProjection();
 
-	m_shader->setSamplerTexture(L"Frame", source->getColorTexture(0));
-	m_shader->setSamplerTexture(L"Depth", source->getColorTexture(1));
-	m_shader->setVectorParameter(L"Frame_Size", sourceSize);
-	m_shader->setVectorParameter(L"Depth_Size", sourceSize);
+	m_shader->setSamplerTexture(L"Frame", sourceColor->getColorTexture(0));
+	m_shader->setSamplerTexture(L"Depth", sourceDepth->getColorTexture(0));
+	m_shader->setVectorParameter(L"Frame_Size", sourceColorSize);
+	m_shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
 	m_shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
 	m_shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
 	m_shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
