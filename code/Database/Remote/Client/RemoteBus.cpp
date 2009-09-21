@@ -21,7 +21,8 @@ RemoteBus::RemoteBus(Connection* connection, uint32_t handle)
 
 RemoteBus::~RemoteBus()
 {
-	m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
+	if (m_connection)
+		m_connection->sendMessage< MsgStatus >(CnmReleaseObject(m_handle));
 }
 
 bool RemoteBus::putEvent(ProviderEvent event, const Guid& eventId)
