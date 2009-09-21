@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,11 +32,11 @@ public:
 	DeepClone(const Serializable* source);
 
 	/*! \brief Create new instance of source object. */
-	Serializable* create();
+	Ref< Serializable > create();
 
 	/*! \brief Create new instance of source object. */
 	template < typename T >
-	T* create()
+	Ref< T > create()
 	{
 		return dynamic_type_cast< T* >(create());
 	}

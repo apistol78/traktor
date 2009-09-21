@@ -168,8 +168,9 @@ void MeshAssetEditor::apply()
 
 void MeshAssetEditor::updateModel()
 {
+	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());
 	m_model = model::ModelFormat::readAny(
-		m_asset->getFileName(),
+		assetPath,
 		model::ModelFormat::IfMaterials
 	);
 }
