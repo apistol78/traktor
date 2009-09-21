@@ -57,6 +57,11 @@ bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactor
 
 void Application::finalize()
 {
+	Heap::getInstance().invalidateRefs(m_clipboard);
+	T_ASSERT (m_clipboard == 0);
+
+	m_widgetFactory = 0;
+	m_eventLoop = 0;
 }
 
 bool Application::process()
