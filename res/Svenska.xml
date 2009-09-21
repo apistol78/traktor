@@ -266,6 +266,10 @@
 			<second>Lägg till...</second>
 		</item>
     <item>
+      <first>EDITOR_SETTINGS_ASSET_PATH</first>
+      <second>Sökväg källmaterial</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
       <second>Bygg tillgångar innan redigering</second>
     </item>

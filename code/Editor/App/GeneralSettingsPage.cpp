@@ -24,7 +24,7 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 		return false;
 
 	Ref< ui::Container > containerInner = gc_new< ui::Container >();
-	if (!containerInner->create(container, ui::WsNone, gc_new< ui::TableLayout >(L"*,100%", L"*", 0, 0)))
+	if (!containerInner->create(container, ui::WsNone, gc_new< ui::TableLayout >(L"*,100%", L"*", 0, 4)))
 		return false;
 
 	Ref< ui::Static > staticRenderer = gc_new< ui::Static >();
@@ -46,6 +46,12 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 		if (name == renderSystemType)
 			m_dropRenderSystem->select(index);
 	}
+
+	Ref< ui::Static > staticAssetPath = gc_new< ui::Static >();
+	staticAssetPath->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_ASSET_PATH"));
+
+	m_editAssetPath = gc_new< ui::Edit >();
+	m_editAssetPath->create(containerInner, settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L""));
 
 	Ref< ui::Static > staticDictionary = gc_new< ui::Static >();
 	staticDictionary->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_DICTIONARY"));
@@ -77,6 +83,7 @@ bool GeneralSettingsPage::apply(Settings* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
+	settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());
 	settings->setProperty< PropertyBoolean >(L"Editor.OpenLastProject", m_checkOpenLastProject->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
