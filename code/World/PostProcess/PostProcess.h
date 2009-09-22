@@ -46,9 +46,10 @@ class WorldRenderView;
  * \ingroup World
  *
  * Predefined targets:
- * 0 - Frame buffer, write only.
- * 1 - Source color buffer, read only.
- * 2 - Source depth buffer, read only.
+ * 0  - Frame buffer, write only.
+ * -1 - Source color buffer, read only.
+ * -2 - Source depth buffer, read only.
+ * -3 - Source velocity buffer, read only.
  */
 class T_DLLCLASS PostProcess : public Object
 {
@@ -69,6 +70,7 @@ public:
 		render::IRenderView* renderView,
 		render::RenderTargetSet* frameBuffer,
 		render::RenderTargetSet* depthBuffer,
+		render::RenderTargetSet* velocityBuffer,
 		float deltaTime
 	);
 

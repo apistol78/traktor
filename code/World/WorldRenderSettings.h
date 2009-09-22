@@ -35,6 +35,7 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;
+	bool velocityPassEnable;
 	bool shadowsEnabled;
 	int32_t shadowCascadingSlices;
 	float shadowCascadingLambda;
@@ -43,6 +44,8 @@ public:
 	float shadowMapBias;
 
 	WorldRenderSettings();
+
+	virtual int getVersion() const;
 
 	virtual bool serialize(Serializer& s);
 };

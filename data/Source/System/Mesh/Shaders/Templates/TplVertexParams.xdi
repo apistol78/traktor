@@ -4,39 +4,39 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>567</second>
+				<first>898</first>
+				<second>573</second>
 			</position>
 			<name>T_Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>509</second>
+				<first>898</first>
+				<second>513</second>
 			</position>
 			<name>T_WorldEyeDirection</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>277</second>
+				<first>898</first>
+				<second>273</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>335</second>
+				<first>898</first>
+				<second>333</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
+				<first>898</first>
 				<second>393</second>
 			</position>
 			<name>T_WorldPosition</name>
@@ -44,48 +44,48 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>422</second>
+				<first>898</first>
+				<second>423</second>
 			</position>
 			<name>T_WorldNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>451</second>
+				<first>898</first>
+				<second>453</second>
 			</position>
 			<name>T_WorldTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>538</second>
+				<first>898</first>
+				<second>543</second>
 			</position>
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>480</second>
+				<first>898</first>
+				<second>483</second>
 			</position>
 			<name>T_WorldBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>306</second>
+				<first>898</first>
+				<second>303</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>899</first>
-				<second>364</second>
+				<first>898</first>
+				<second>363</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -96,6 +96,14 @@
 				<second>132</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>898</first>
+				<second>603</second>
+			</position>
+			<name>T_Velocity</name>
 		</item>
 	</nodes>
 	<edges>
@@ -206,6 +214,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Input</name>
 			</destination>
 		</item>

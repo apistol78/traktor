@@ -62,7 +62,12 @@ void SkinnedMesh::render(
 			parameterCallback->setParameters(renderBlock->shaderParams);
 		if (!boneTransforms.empty())
 			renderBlock->shaderParams->setMatrixArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
+		worldRenderView->setShaderParameters(
+			renderBlock->shaderParams,
+			worldTransform.toMatrix44(),
+			worldTransform.toMatrix44(),	// @fixme
+			getBoundingBox()
+		);
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;

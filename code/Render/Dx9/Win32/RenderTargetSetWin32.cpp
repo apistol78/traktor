@@ -75,6 +75,11 @@ ITexture* RenderTargetSetWin32::getColorTexture(int index) const
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
 
+void RenderTargetSetWin32::swap(int index1, int index2)
+{
+	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
+}
+
 HRESULT RenderTargetSetWin32::lostDevice()
 {
 	for (RefArray< RenderTargetWin32 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)

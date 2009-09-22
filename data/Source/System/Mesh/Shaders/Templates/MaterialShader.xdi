@@ -15,6 +15,9 @@
 				<item>
 					<name>T_ViewPosition</name>
 				</item>
+				<item>
+					<name>T_Velocity</name>
+				</item>
 			</inputPins>
 			<outputPins/>
 		</item>
@@ -179,6 +182,9 @@
 				</item>
 				<item>
 					<name>T_WorldTangent</name>
+				</item>
+				<item>
+					<name>T_Velocity</name>
 				</item>
 			</outputPins>
 		</item>
@@ -352,6 +358,16 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>T_WorldTangent</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>T_Velocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>T_Velocity</name>
 			</destination>
 		</item>
 	</edges>

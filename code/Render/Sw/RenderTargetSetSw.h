@@ -41,6 +41,8 @@ public:
 
 	virtual ITexture* getColorTexture(int index) const;
 
+	virtual void swap(int index1, int index2);
+
 	float* getDepthSurface();
 
 private:

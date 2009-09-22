@@ -82,7 +82,7 @@ PostProcessStepSimple::Source::Source()
 bool PostProcessStepSimple::Source::serialize(Serializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
-	s >> Member< uint32_t >(L"source", source);
+	s >> Member< int32_t >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
 	return true;
 }

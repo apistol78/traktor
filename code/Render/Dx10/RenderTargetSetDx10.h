@@ -44,6 +44,8 @@ public:
 
 	virtual ITexture* getColorTexture(int index) const;
 
+	virtual void swap(int index1, int index2);
+
 	inline ID3D10DepthStencilView* getD3D10DepthTextureView() const {
 		return m_d3dDepthTextureView;
 	}

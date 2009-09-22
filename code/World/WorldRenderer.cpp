@@ -169,6 +169,7 @@ render::handle_t WorldRenderer::ms_techniqueDefault = 0;
 render::handle_t WorldRenderer::ms_techniqueDepth = 0;
 render::handle_t WorldRenderer::ms_techniqueShadowMapOccluders = 0;
 render::handle_t WorldRenderer::ms_techniqueShadowMapSelfShadow = 0;
+render::handle_t WorldRenderer::ms_techniqueVelocity = 0;
 
 WorldRenderer::WorldRenderer()
 :	m_lightViewProjection(gc_new< DefaultLightViewProjection >())
@@ -179,6 +180,7 @@ WorldRenderer::WorldRenderer()
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
 	ms_techniqueShadowMapOccluders = render::getParameterHandle(L"ShadowMapOccluders");
 	ms_techniqueShadowMapSelfShadow = render::getParameterHandle(L"ShadowMapSelfShadow");
+	ms_techniqueVelocity = render::getParameterHandle(L"Velocity");
 }
 
 bool WorldRenderer::create(
@@ -215,6 +217,29 @@ bool WorldRenderer::create(
 		{
 			log::warning << L"Unable to create depth render target; depth disabled" << Endl;
 			m_settings.depthPassEnabled = false;
+		}
+	}
+
+	// Create "velocity map" target.
+	if (m_settings.velocityPassEnable)
+	{
+		render::Viewport viewPort = renderView->getViewport();
+
+		render::RenderTargetSetCreateDesc desc;
+
+		desc.count = 2;
+		desc.width = viewPort.width;
+		desc.height = viewPort.height;
+		desc.multiSample = multiSample;
+		desc.depthStencil = false;
+		desc.targets[0].format = render::TfR16G16B16A16F;
+		desc.targets[1].format = render::TfR16G16B16A16F;
+
+		m_velocityTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_velocityTargetSet)
+		{
+			log::warning << L"Unable to create velocity render target; velocity disabled" << Endl;
+			m_settings.velocityPassEnable = false;
 		}
 	}
 
@@ -266,7 +291,14 @@ bool WorldRenderer::create(
 			i->depth = gc_new< WorldContext >(this, entityRenderers, m_renderView);
 	}
 
-	// Allocate "visual" and s"hadow" contexts for each slice.
+	// Allocate "velocity" context.
+	if (m_settings.velocityPassEnable)
+	{
+		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+			i->velocity = gc_new< WorldContext >(this, entityRenderers, m_renderView);
+	}
+
+	// Allocate "visual" and "shadow" contexts for each slice.
 	if (m_settings.shadowsEnabled)
 	{
 		// Create render contexts; one for each frame.
@@ -324,6 +356,7 @@ void WorldRenderer::destroy()
 		i->occluders.resize(0);
 		i->selfShadow.resize(0);
 		i->visual.resize(0);
+		i->velocity = 0;
 		i->depth = 0;
 	}
 
@@ -340,6 +373,12 @@ void WorldRenderer::destroy()
 	{
 		m_shadowTargetSet->destroy();
 		m_shadowTargetSet = 0;
+	}
+
+	if (m_velocityTargetSet)
+	{
+		m_velocityTargetSet->destroy();
+		m_velocityTargetSet = 0;
 	}
 
 	if (m_depthTargetSet)
@@ -397,6 +436,19 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, float deltaTime, Ent
 	else
 		f.haveDepth = false;
 
+	if (m_settings.velocityPassEnable)
+	{
+		WorldRenderView velocityRenderView = worldRenderView;
+		velocityRenderView.setTechnique(ms_techniqueVelocity);
+
+		f.velocity->build(&velocityRenderView, entity);
+		f.velocity->flush(&velocityRenderView);
+
+		f.haveVelocity = true;
+	}
+	else
+		f.haveVelocity = false;
+
 	if (m_settings.shadowsEnabled)
 		buildShadows(worldRenderView, deltaTime, entity, frame);
 	else
@@ -414,14 +466,30 @@ void WorldRenderer::render(uint32_t flags, int frame)
 {
 	Frame& f = m_frames[frame];
 
+	const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
+
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
 		if (!m_renderView->begin(m_depthTargetSet, 0, true))
 			return;
 
 		const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
-		m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
+		m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
 		f.depth->getRenderContext()->render(render::RenderContext::RfOpaque);
+		m_renderView->end();
+	}
+
+	if ((flags & WrfVelocityMap) != 0 && f.haveVelocity)
+	{
+		m_velocityTargetSet->swap(0, 1);
+
+		if (!m_renderView->begin(m_velocityTargetSet, 0, true))
+			return;
+
+		const float velocityColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		m_renderView->clear(render::CfColor, velocityColor, 1.0f, 0);
+		f.velocity->getRenderContext()->render(render::RenderContext::RfOpaque);
 		m_renderView->end();
 	}
 
@@ -514,6 +582,9 @@ void WorldRenderer::flush(int frame)
 	if (f.haveDepth)
 		f.depth->getRenderContext()->flush();
 
+	if (f.haveVelocity)
+		f.velocity->getRenderContext()->flush();
+
 	if (f.haveShadows)
 	{
 		for (int slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
@@ -529,9 +600,7 @@ void WorldRenderer::flush(int frame)
 			f.visual[m_settings.shadowCascadingSlices]->getRenderContext()->flush();
 	}
 	else
-	{
 		f.visual[0]->getRenderContext()->flush();
-	}
 }
 
 void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)

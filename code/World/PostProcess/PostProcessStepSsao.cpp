@@ -83,8 +83,8 @@ void PostProcessStepSsao::render(
 	if (!m_shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(1);
-	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(2);
+	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(-1);
+	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(-2);
 	if (!sourceColor || !sourceDepth)
 		return;
 

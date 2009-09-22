@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort">
 			<comment></comment>
 			<position>
-				<first>553</first>
+				<first>554</first>
 				<second>307</second>
 			</position>
 			<name>T_FragmentColor</name>
@@ -12,10 +12,18 @@
 		<item type="traktor.render.InputPort">
 			<comment></comment>
 			<position>
-				<first>565</first>
+				<first>566</first>
 				<second>339</second>
 			</position>
 			<name>T_ViewPosition</name>
+		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>592</first>
+				<second>371</second>
+			</position>
+			<name>T_Velocity</name>
 		</item>
 	</nodes>
 	<edges/>

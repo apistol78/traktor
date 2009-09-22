@@ -42,7 +42,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 		return false;
 	}
 
-	T_ASSERT_M (m_id != 0 && m_id != 1 && m_id != 2, L"Invalid target ID, 0, 1 and 2 are predefined");
+	T_ASSERT_M (m_id != 0 && m_id != -1 && m_id != -2 && m_id != -3, L"Invalid target ID, 0, 1 and 2 are predefined");
 	postProcess->getTargetRef(m_id) = renderTargetSet;
 
 	return true;

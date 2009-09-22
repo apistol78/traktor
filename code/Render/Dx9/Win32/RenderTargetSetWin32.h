@@ -47,6 +47,8 @@ public:
 	
 	virtual ITexture* getColorTexture(int index) const;
 
+	virtual void swap(int index1, int index2);
+
 	virtual HRESULT lostDevice();
 
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);

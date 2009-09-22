@@ -2,5 +2,10 @@
 <object type="traktor.mesh.MeshAsset" version="1">
 	<fileName>User/Objects/Cube_01/Cube_01.lwo</fileName>
 	<meshType>MtStatic</meshType>
-	<materialShaders/>
+	<materialShaders>
+		<item>
+			<first>CubeBalls_01</first>
+			<second>{ACCEC085-BE0F-BA44-B18C-C3D0CF512B75}</second>
+		</item>
+	</materialShaders>
 </object>

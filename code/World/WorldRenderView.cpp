@@ -13,10 +13,12 @@ bool s_handlesInitialized = false;
 render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
+render::handle_t s_handleViewPrevious;
 render::handle_t s_handleViewToLightProjectionSpace;
 render::handle_t s_handleViewDistance;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
+render::handle_t s_handleWorldPrevious;
 render::handle_t s_handleEyePosition;
 render::handle_t s_handleLightEnableComplex;
 render::handle_t s_handleLightPositionAndType;
@@ -74,10 +76,12 @@ WorldRenderView::WorldRenderView()
 		s_handleDefaultTechnique = render::getParameterHandle(L"Default");
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
+		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
 		s_handleViewToLightProjectionSpace = render::getParameterHandle(L"ViewToLightProjectionSpace");
 		s_handleViewDistance = render::getParameterHandle(L"ViewDistance");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
+		s_handleWorldPrevious = render::getParameterHandle(L"WorldPrevious");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
 		s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
@@ -119,6 +123,7 @@ void WorldRenderView::setProjection(const Matrix44& projection)
 
 void WorldRenderView::setView(const Matrix44& view)
 {
+	m_viewPrevious = m_view;
 	m_view = view;
 }
 
@@ -176,15 +181,17 @@ void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* sha
 	shaderParams->setFloatParameter(s_handleTime, m_time);
 }
 
-void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world) const
+void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const
 {
 	float viewSizeInvX = m_viewSize.x != 0.0f ? 1.0f / m_viewSize.x : 0.0f;
 	float viewSizeInvY = m_viewSize.y != 0.0f ? 1.0f / m_viewSize.y : 0.0f;
 
 	shaderParams->setMatrixParameter(s_handleProjection, m_projection);
 	shaderParams->setMatrixParameter(s_handleView, m_view);
+	shaderParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
 	shaderParams->setMatrixParameter(s_handleViewToLightProjectionSpace, m_viewToLightSpace);
 	shaderParams->setMatrixParameter(s_handleWorld, world);
+	shaderParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
 	shaderParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
 	shaderParams->setVectorParameter(s_handleEyePosition, m_eyePosition);
 
@@ -361,7 +368,7 @@ void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shad
 void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	setTechniqueShaderParameters(shaderParams);
-	setWorldShaderParameters(shaderParams, Matrix44::identity());
+	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_handleDefaultTechnique)
@@ -372,10 +379,10 @@ void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams
 	}
 }
 
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const
+void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
 {
 	setTechniqueShaderParameters(shaderParams);
-	setWorldShaderParameters(shaderParams, world);
+	setWorldShaderParameters(shaderParams, world, worldPrevious);
 
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_handleDefaultTechnique)

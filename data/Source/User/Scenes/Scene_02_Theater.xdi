@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="1">	
-	<worldRenderSettings type="traktor.world.WorldRenderSettings">
+<object type="traktor.scene.SceneAsset" version="2">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="1">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
 		<depthPassEnabled>false</depthPassEnabled>
+		<velocityPassEnable>true</velocityPassEnable>
 		<shadowsEnabled>false</shadowsEnabled>
 		<shadowCascadingSlices>4</shadowCascadingSlices>
 		<shadowCascadingLambda>0.75</shadowCascadingLambda>
@@ -11,11 +12,12 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.001</shadowMapBias>
 	</worldRenderSettings>
-	<instance type="traktor.world.EntityInstance">
+	<postProcessSettings>{04C6D46A-74B8-A445-A906-4B0AC92A1A75}</postProcessSettings>
+	<instance type="traktor.world.EntityInstance" version="1">
 		<name>Root</name>
 		<entityData type="traktor.world.GroupEntityData">
 			<instances>
-				<item type="traktor.world.EntityInstance">
+				<item type="traktor.world.EntityInstance" version="1">
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
@@ -26,9 +28,10 @@
 						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 						<shadowColor>0, 0, 0, 0</shadowColor>
 					</entityData>
+					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance">
+				<item type="traktor.world.EntityInstance" version="1">
 					<name>Mesh</name>
 					<entityData type="traktor.mesh.StaticMeshEntityData">
 						<transform>
@@ -37,10 +40,12 @@
 						</transform>
 						<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 					</entityData>
+					<instanceData/>
 					<references/>
 				</item>
 			</instances>
 		</entityData>
+		<instanceData/>
 		<references/>
 	</instance>
 	<controllerData type="traktor.theater.TheaterControllerData">

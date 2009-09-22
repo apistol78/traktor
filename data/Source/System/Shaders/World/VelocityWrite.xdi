@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>522</first>
-				<second>428</second>
+				<first>-15</first>
+				<second>317</second>
 			</position>
-			<name>T_ViewPosition</name>
+			<parameterName>Projection</parameterName>
+			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.InputPort">
 			<comment></comment>
 			<position>
-				<first>510</first>
-				<second>396</second>
+				<first>-8</first>
+				<second>375</second>
 			</position>
-			<name>T_FragmentColor</name>
+			<name>Velocity</name>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment></comment>
 			<position>
-				<first>802</first>
-				<second>382</second>
+				<first>392</first>
+				<second>321</second>
 			</position>
-			<technique>Default</technique>
+			<technique>Velocity</technique>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
-			<blendOperation>BoAdd</blendOperation>
-			<blendSource>BfSourceAlpha</blendSource>
-			<blendDestination>BfOneMinusSourceAlpha</blendDestination>
+			<blendOperation>BoSubtract</blendOperation>
+			<blendSource>BfZero</blendSource>
+			<blendDestination>BfSourceColor</blendDestination>
 			<colorWriteMask>
 				<red>true</red>
 				<green>true</green>
@@ -39,51 +40,49 @@
 			<depthWriteEnable>true</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
 			<alphaTestEnable>false</alphaTestEnable>
-			<alphaTestFunction>CfLess</alphaTestFunction>
+			<alphaTestFunction>CfLessEqual</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
-			<stencilFail>SoKeep</stencilFail>
-			<stencilZFail>SoKeep</stencilZFail>
-			<stencilPass>SoKeep</stencilPass>
-			<stencilFunction>CfAlways</stencilFunction>
+			<stencilFail>SoZero</stencilFail>
+			<stencilZFail>SoZero</stencilZFail>
+			<stencilPass>SoZero</stencilPass>
+			<stencilFunction>CfNever</stencilFunction>
 			<stencilReference>0</stencilReference>
-			<stencilMask>4294967295</stencilMask>
+			<stencilMask>2147483648</stencilMask>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.VertexOutput" version="1">
 			<comment></comment>
 			<position>
-				<first>802</first>
-				<second>415</second>
+				<first>390</first>
+				<second>293</second>
 			</position>
-			<fragmentGuid>{D35BA267-70DF-B841-AC03-6D2E517F1103}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>ViewPosition</name>
-				</item>
-				<item>
-					<name>Velocity</name>
-				</item>
-			</inputPins>
-			<outputPins/>
+			<technique>Velocity</technique>
 		</item>
 		<item type="traktor.render.InputPort">
 			<comment></comment>
 			<position>
-				<first>548</first>
-				<second>460</second>
+				<first>-31</first>
+				<second>231</second>
 			</position>
-			<name>T_Velocity</name>
+			<name>ViewPosition</name>
+		</item>
+		<item type="traktor.render.Transform">
+			<comment></comment>
+			<position>
+				<first>200</first>
+				<second>251</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -93,18 +92,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>ViewPosition</name>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
-				<name>Velocity</name>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

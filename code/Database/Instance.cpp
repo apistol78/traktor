@@ -156,6 +156,14 @@ bool Instance::commit(uint32_t flags)
 		}
 	}
 
+#if T_INSTANCE_CACHE_NAME
+	if (m_renamed)
+	{
+		m_name = m_providerInstance->getName();
+		m_cache |= IchName;
+	}
+#endif
+
 	if (m_removed)
 	{
 		if (m_parent)
