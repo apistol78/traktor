@@ -70,26 +70,17 @@ std::wstring ListPropertyItem::get(int index) const
 
 void ListPropertyItem::select(int index)
 {
-	if (m_listBox)
-		m_listBox->select(index);
-	else
-		m_selected = index;
+	m_selected = index;
 }
 
 int ListPropertyItem::getSelected() const
 {
-	if (m_listBox)
-		return m_listBox->getSelected();
-	else
-		return m_selected;
+	return m_selected;
 }
 
 std::wstring ListPropertyItem::getSelectedItem() const
 {
-	if (m_listBox)
-		return m_listBox->getSelectedItem();
-	else
-		return get(m_selected);
+	return get(m_selected);
 }
 
 void ListPropertyItem::createInPlaceControls(Widget* parent)
@@ -161,12 +152,8 @@ void ListPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widget
 
 void ListPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
-	if (m_listBox)
-	{
-		int selected = m_listBox->getSelected();
-		std::wstring value = selected >= 0 ? m_listBox->getItem(selected) : L"";
-		canvas.drawText(rc.inflate(-2, -2), value, AnLeft, AnCenter);
-	}
+	std::wstring value = getSelectedItem();
+	canvas.drawText(rc.inflate(-2, -2), value, AnLeft, AnCenter);
 }
 
 void ListPropertyItem::eventDropClick(Event* event)
@@ -197,7 +184,10 @@ void ListPropertyItem::eventSelect(Event* event)
 void ListPropertyItem::eventFocus(Event* event)
 {
 	if (static_cast< FocusEvent* >(event)->lostFocus())
+	{
+		m_selected = m_listBox->getSelected();
 		m_listForm->setVisible(false);
+	}
 }
 
 		}
