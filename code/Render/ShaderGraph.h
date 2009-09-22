@@ -48,9 +48,6 @@ public:
 	 */
 	void removeNode(Node* node);
 
-	/*! \brief Remove all nodes from graph. */
-	void removeAllNodes();
-
 	/*! \brief Add edge to graph.
 	 *
 	 * \param edge Edge to add.
@@ -63,8 +60,8 @@ public:
 	 */
 	void removeEdge(Edge* edge);
 
-	/*! \brief Remove all edges from graph. */
-	void removeAllEdges();
+	/*! \brief Remove all nodes and edges from graph. */
+	void removeAll();
 
 	/*! \brief Get all nodes of a specific type.
 	 *

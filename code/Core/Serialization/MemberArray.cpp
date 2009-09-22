@@ -9,6 +9,10 @@ MemberArray::MemberArray(const std::wstring& name)
 {
 }
 
+MemberArray::~MemberArray()
+{
+}
+
 const std::wstring& MemberArray::getName() const
 {
 	return m_name;

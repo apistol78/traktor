@@ -87,9 +87,7 @@ ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
 		}
 	}
 
-	m_shaderGraph->removeAllNodes();
-	m_shaderGraph->removeAllEdges();
-
+	m_shaderGraph->removeAll();
 	for (RefArray< Node >::iterator i = usedNodes.begin(); i != usedNodes.end(); ++i)
 		m_shaderGraph->addNode(*i);
 	for (RefArray< Edge >::iterator i = usedEdges.begin(); i != usedEdges.end(); ++i)

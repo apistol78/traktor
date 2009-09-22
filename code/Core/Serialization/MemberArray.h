@@ -26,6 +26,12 @@ class T_DLLCLASS MemberArray
 public:
 	MemberArray(const std::wstring& name);
 
+	virtual ~MemberArray();
+
+	/*! \brief Get name of member.
+	 *
+	 * \return Member's name.
+	 */
 	const std::wstring& getName() const;
 
 	/*!

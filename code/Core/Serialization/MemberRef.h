@@ -20,6 +20,7 @@ public:
 	
 	MemberRef(const std::wstring& name, value_type& ref)
 	:	MemberComplex(name, false)
+	,	m_keep(ref)
 	,	m_ref(ref)
 	{
 	}
@@ -34,6 +35,7 @@ public:
 	}
 	
 private:
+	value_type m_keep;
 	value_type& m_ref;
 };
 
@@ -47,6 +49,12 @@ public:
 	:	MemberArray(name)
 	,	m_ref(ref)
 	{
+		m_ref.lock();
+	}
+
+	virtual ~MemberRefArray()
+	{
+		m_ref.unlock();
 	}
 
 	virtual const Type* getType() const
@@ -100,6 +108,12 @@ public:
 	:	MemberArray(name)
 	,	m_ref(ref)
 	{
+		m_ref.lock();
+	}
+
+	virtual ~MemberRefList()
+	{
+		m_ref.unlock();
 	}
 
 	virtual const Type* getType() const
