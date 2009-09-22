@@ -49,12 +49,6 @@ public:
 	:	MemberArray(name)
 	,	m_ref(ref)
 	{
-		m_ref.lock();
-	}
-
-	virtual ~MemberRefArray()
-	{
-		m_ref.unlock();
 	}
 
 	virtual const Type* getType() const
@@ -85,7 +79,10 @@ public:
 
 	virtual bool write(Serializer& s, size_t index) const
 	{
-		Ref< Class > object = m_ref[index];
+		Ref< Class > object;
+		m_ref.lock();
+		object = m_ref[index];
+		m_ref.unlock();
 		return s >> MemberType(L"item", object);
 	}
 
@@ -108,12 +105,6 @@ public:
 	:	MemberArray(name)
 	,	m_ref(ref)
 	{
-		m_ref.lock();
-	}
-
-	virtual ~MemberRefList()
-	{
-		m_ref.unlock();
 	}
 
 	virtual const Type* getType() const
@@ -143,8 +134,14 @@ public:
 
 	virtual bool write(Serializer& s, size_t index) const
 	{
-		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
-		Ref< Class > object = *i;
+		Ref< Class > object;
+		m_ref.lock();
+
+		typename value_type::iterator i = m_ref.begin();
+		std::advance(i, index);
+		object = *i;
+
+		m_ref.unlock();
 		return s >> MemberType(L"item", object);
 	}
 
