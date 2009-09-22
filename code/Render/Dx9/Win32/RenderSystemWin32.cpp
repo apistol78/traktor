@@ -288,7 +288,6 @@ IRenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode,
 	D3DFORMAT d3dDepthStencilFormat;
 
 	T_ASSERT (m_hWnd);
-	T_ASSERT (!m_d3dDevice);
 	T_ASSERT (m_renderViews.empty());
 	T_ASSERT (displayMode);
 
