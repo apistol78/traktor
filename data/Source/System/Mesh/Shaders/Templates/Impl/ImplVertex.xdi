@@ -46,95 +46,106 @@
 				<item>
 					<name>Color</name>
 				</item>
+				<item>
+					<name>Velocity</name>
+				</item>
 			</outputPins>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>352</second>
+				<first>956</first>
+				<second>359</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>381</second>
+				<first>956</first>
+				<second>388</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>410</second>
+				<first>956</first>
+				<second>417</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>439</second>
+				<first>956</first>
+				<second>446</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>468</second>
+				<first>956</first>
+				<second>475</second>
 			</position>
 			<name>T_WorldPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>497</second>
+				<first>956</first>
+				<second>504</second>
 			</position>
 			<name>T_WorldNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>526</second>
+				<first>956</first>
+				<second>533</second>
 			</position>
 			<name>T_WorldTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>555</second>
+				<first>956</first>
+				<second>562</second>
 			</position>
 			<name>T_WorldBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>584</second>
+				<first>956</first>
+				<second>591</second>
 			</position>
 			<name>T_WorldEyeDirection</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>613</second>
+				<first>956</first>
+				<second>620</second>
 			</position>
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>961</first>
-				<second>642</second>
+				<first>956</first>
+				<second>649</second>
 			</position>
 			<name>T_Color</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>956</first>
+				<second>678</second>
+			</position>
+			<name>T_Velocity</name>
 		</item>
 	</nodes>
 	<edges>
@@ -245,6 +256,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Velocity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
 				<name>Input</name>
 			</destination>
 		</item>

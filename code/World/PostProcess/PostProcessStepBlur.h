@@ -36,7 +36,7 @@ public:
 	struct Source
 	{
 		std::wstring param;	/*!< Shader parameter name. */
-		uint32_t source;	/*!< Render target set source. */
+		int32_t source;		/*!< Render target set source. */
 		uint32_t index;		/*!< Render target index. */
 
 		Source();

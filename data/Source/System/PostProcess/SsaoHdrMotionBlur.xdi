@@ -83,14 +83,112 @@
 			<depthStencil>false</depthStencil>
 			<multiSample>0</multiSample>
 		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>12</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>13</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR32F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>14</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR16G16B16A16F</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>15</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR8G8B8A8</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
 	</definitions>
 	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>12</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSsao">
+			<shader>{74942CA7-6F3E-814F-A219-57E60FFDC7F3}</shader>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>13</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur">
+			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>12</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>-2</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>1, 0, 0, 0</direction>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>12</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur">
+			<shader>{9165EBF1-FB28-584B-B259-0B580E2050D5}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>13</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>-2</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>0, 1, 0, 0</direction>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>14</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{366B6057-17AB-194C-9630-EDBE4C055C58}</shader>
+			<sources>
+				<item>
+					<param>Frame</param>
+					<source>-1</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Occlusion</param>
+					<source>12</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>3</target>
 		</item>
 		<item type="traktor.world.PostProcessStepLuminance">
 			<shader>{9B02255F-8C06-1540-AE46-C971346D5B35}</shader>
-			<source>-1</source>
+			<source>14</source>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>4</target>
@@ -155,7 +253,7 @@
 				</item>
 				<item>
 					<param>SourceTexture</param>
-					<source>-1</source>
+					<source>14</source>
 					<index>0</index>
 				</item>
 			</sources>
@@ -196,7 +294,7 @@
 			</step>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>0</target>
+			<target>15</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSimple">
 			<shader>{F3963494-CF15-1441-AE32-11A71844B99B}</shader>
@@ -213,8 +311,31 @@
 				</item>
 				<item>
 					<param>SourceTexture</param>
-					<source>-1</source>
+					<source>14</source>
 					<index>0</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>0</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{F1D03844-CC6D-0C41-A34D-7FE6F043DF8C}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>15</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Velocity</param>
+					<source>-3</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>VelocityPrevious</param>
+					<source>-3</source>
+					<index>1</index>
 				</item>
 			</sources>
 		</item>

@@ -44,6 +44,9 @@ public:
 	/*! \brief Get color target texture. */
 	virtual ITexture* getColorTexture(int index) const = 0;
 
+	/*! \brief Swap color targets. */
+	virtual void swap(int index1, int index2) = 0;
+
 	/*! \brief Set content valid flag. */
 	inline void setContentValid(bool contentValid) { m_contentValid = contentValid; }
 

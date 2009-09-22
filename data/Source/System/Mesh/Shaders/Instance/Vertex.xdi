@@ -115,8 +115,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>1937</first>
-				<second>332</second>
+				<first>1920</first>
+				<second>349</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -482,21 +482,37 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>1936</first>
-				<second>367</second>
+				<first>1920</first>
+				<second>384</second>
 			</position>
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>1703</first>
+				<first>1726</first>
 				<second>384</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
 			<type>DtByte4N</type>
 			<index>0</index>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>1920</first>
+				<second>423</second>
+			</position>
+			<name>Velocity</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment></comment>
+			<position>
+				<first>1787</first>
+				<second>423</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -1057,6 +1073,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[54]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Input</name>
 			</destination>
 		</item>

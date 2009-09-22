@@ -32,6 +32,7 @@ void StaticMesh::render(
 	render::RenderContext* renderContext,
 	const world::WorldRenderView* worldRenderView,
 	const Transform& worldTransform,
+	const Transform& worldTransformPrevious,
 	float distance,
 	float userParameter,
 	const IMeshParameterCallback* parameterCallback
@@ -43,6 +44,9 @@ void StaticMesh::render(
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		if (!m_parts[i].material.validate())
+			continue;
+
+		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
 			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
@@ -58,7 +62,12 @@ void StaticMesh::render(
 		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->shaderParams);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
+		worldRenderView->setShaderParameters(
+			renderBlock->shaderParams,
+			worldTransform.toMatrix44(),
+			worldTransformPrevious.toMatrix44(),
+			getBoundingBox()
+		);
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;

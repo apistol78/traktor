@@ -71,5 +71,10 @@ ITexture* RenderTargetSetOpenGL::getColorTexture(int index) const
 	return index < m_colorTextures.size() ? m_colorTextures[index] : 0;
 }
 
+void RenderTargetSetOpenGL::swap(int index1, int index2)
+{
+	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
+}
+
 	}
 }

@@ -76,6 +76,7 @@ bool PostProcess::render(
 	render::IRenderView* renderView,
 	render::RenderTargetSet* frameBuffer,
 	render::RenderTargetSet* depthBuffer,
+	render::RenderTargetSet* velocityBuffer,
 	float deltaTime
 )
 {
@@ -109,8 +110,9 @@ bool PostProcess::render(
 		m_definedHeight = height;
 	}
 
-	m_targets[1] = frameBuffer;
-	m_targets[2] = depthBuffer;
+	m_targets[-1] = frameBuffer;
+	m_targets[-2] = depthBuffer;
+	m_targets[-3] = velocityBuffer;
 	m_currentTarget = 0;
 
 	const RefArray< PostProcessStep >& steps = m_settings->getSteps();
@@ -131,8 +133,9 @@ bool PostProcess::render(
 
 void PostProcess::setTarget(render::IRenderView* renderView, uint32_t id)
 {
-	T_ASSERT_M(id != 1, L"Cannot bind source color buffer as output");
-	T_ASSERT_M(id != 2, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != -1, L"Cannot bind source color buffer as output");
+	T_ASSERT_M(id != -2, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != -3, L"Cannot bind source velocity buffer as output");
 
 	if (m_currentTarget)
 		renderView->end();

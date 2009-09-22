@@ -139,7 +139,12 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 
 	renderBlock->shaderParams->beginParameters(renderContext);
 	
-	worldRenderView->setShaderParameters(renderBlock->shaderParams, oceanWorld, Aabb());
+	worldRenderView->setShaderParameters(
+		renderBlock->shaderParams,
+		oceanWorld,
+		oceanWorld,	// @fixme
+		Aabb()
+	);
 
 	renderBlock->shaderParams->setFloatParameter(L"ViewPlane", worldRenderView->getViewFrustum().getNearZ());
 	renderBlock->shaderParams->setFloatParameter(L"OceanRadius", worldRenderView->getViewFrustum().getFarZ());

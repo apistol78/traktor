@@ -29,7 +29,7 @@ int ListPropertyItem::add(const std::wstring& item)
 		m_listBox->add(item);
 
 	m_items.push_back(item);
-	return int(m_items.size());
+	return int(m_items.size() - 1);
 }
 
 bool ListPropertyItem::remove(int index)

@@ -130,7 +130,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>-110</first>
+				<first>-104</first>
 				<second>858</second>
 			</position>
 			<name>TexCoord</name>
@@ -141,7 +141,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>115</first>
+				<first>87</first>
 				<second>858</second>
 			</position>
 			<name>TexCoord</name>
@@ -303,7 +303,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>115</first>
+				<first>87</first>
 				<second>904</second>
 			</position>
 			<name>UserParameter</name>
@@ -311,7 +311,7 @@
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>-111</first>
+				<first>-106</first>
 				<second>904</second>
 			</position>
 			<parameterName>UserParameter</parameterName>
@@ -444,8 +444,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>-106</first>
-				<second>968</second>
+				<first>-82</first>
+				<second>951</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -455,10 +455,26 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>127</first>
+				<first>87</first>
 				<second>951</second>
 			</position>
 			<name>Color</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>87</first>
+				<second>996</second>
+			</position>
+			<name>Velocity</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment></comment>
+			<position>
+				<first>-21</first>
+				<second>996</second>
+			</position>
+			<value>0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -969,6 +985,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input</name>
 			</destination>
 		</item>

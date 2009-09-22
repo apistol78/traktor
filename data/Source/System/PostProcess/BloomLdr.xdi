@@ -29,7 +29,7 @@
       <sources>
         <item>
           <param>Source</param>
-          <source>1</source>
+          <source>-1</source>
           <index>0</index>
         </item>
       </sources>
@@ -70,7 +70,7 @@
 			<sources>
 				<item>
 					<param>Frame</param>
-					<source>1</source>
+					<source>-1</source>
 					<index>0</index>
 				</item>
 				<item>

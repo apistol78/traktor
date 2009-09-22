@@ -65,6 +65,11 @@ ITexture* RenderTargetSetSw::getColorTexture(int index) const
 	return m_colorTargets[index];
 }
 
+void RenderTargetSetSw::swap(int index1, int index2)
+{
+	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
+}
+
 float* RenderTargetSetSw::getDepthSurface()
 {
 	return (!m_depthSurface.empty()) ? &m_depthSurface[0] : 0;

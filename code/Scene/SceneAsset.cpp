@@ -6,10 +6,11 @@
 #include "World/Entity/IEntityBuilder.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcess.h"
-#include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -34,12 +35,14 @@ Scene* SceneAsset::createScene(
 
 	if (!m_postProcessSettings.getGuid().isNull())
 	{
-		if (!resourceManager->bind(m_postProcessSettings))
-			return 0;
-
-		postProcess = gc_new< world::PostProcess >();
-		if (!postProcess->create(m_postProcessSettings, resourceManager, renderSystem))
-			return 0;
+		if (resourceManager->bind(m_postProcessSettings) && m_postProcessSettings.validate())
+		{
+			postProcess = gc_new< world::PostProcess >();
+			if (!postProcess->create(m_postProcessSettings, resourceManager, renderSystem))
+				return 0;
+		}
+		else
+			log::error << L"Unable to load post processing settings" << Endl;
 	}
 
 	entityBuilder->begin(entityManager);

@@ -44,6 +44,8 @@ public:
 
 	virtual ITexture* getColorTexture(int index) const;
 
+	virtual void swap(int index1, int index2);
+
 private:
 	Ref< IContext > m_context;
 	int m_width;

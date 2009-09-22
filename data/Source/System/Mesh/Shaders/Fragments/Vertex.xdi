@@ -4,15 +4,15 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>574</second>
+				<first>148</first>
+				<second>583</second>
 			</position>
 			<name>UserParameter</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
+				<first>148</first>
 				<second>280</second>
 			</position>
 			<name>ViewBinormal</name>
@@ -20,7 +20,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
+				<first>148</first>
 				<second>226</second>
 			</position>
 			<name>ViewNormal</name>
@@ -28,39 +28,39 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>429</second>
+				<first>148</first>
+				<second>435</second>
 			</position>
 			<name>WorldBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>544</second>
+				<first>148</first>
+				<second>553</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>403</second>
+				<first>148</first>
+				<second>407</second>
 			</position>
 			<name>WorldTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>377</second>
+				<first>148</first>
+				<second>379</second>
 			</position>
 			<name>WorldNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
+				<first>148</first>
 				<second>351</second>
 			</position>
 			<name>WorldPosition</name>
@@ -68,7 +68,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
+				<first>148</first>
 				<second>253</second>
 			</position>
 			<name>ViewTangent</name>
@@ -76,7 +76,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
+				<first>148</first>
 				<second>199</second>
 			</position>
 			<name>ViewPosition</name>
@@ -92,18 +92,26 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>487</second>
+				<first>148</first>
+				<second>510</second>
 			</position>
 			<name>WorldEyeDirection</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>150</first>
-				<second>620</second>
+				<first>148</first>
+				<second>631</second>
 			</position>
 			<name>Color</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>148</first>
+				<second>660</second>
+			</position>
+			<name>Velocity</name>
 		</item>
 	</nodes>
 	<edges>
@@ -224,6 +232,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Input</name>
 			</destination>
 		</item>

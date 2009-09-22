@@ -30,6 +30,8 @@
 #include "Ui/Itf/IWidget.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Math/Format.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -621,7 +623,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		if (rootEntity)
 		{
 			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
-			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap, 0);
+			m_worldRenderer->render(world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap, 0);
 
 			if (m_renderTarget)
 			{
@@ -649,6 +651,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 					m_renderView,
 					m_renderTarget,
 					m_worldRenderer->getDepthTargetSet(),
+					m_worldRenderer->getVelocityTargetSet(),
 					deltaTime
 				);
 			}

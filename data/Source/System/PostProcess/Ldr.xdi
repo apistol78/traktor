@@ -7,7 +7,7 @@
       <sources>
         <item>
           <param>SourceTexture</param>
-          <source>1</source>
+          <source>-1</source>
           <index>0</index>
         </item>
       </sources>

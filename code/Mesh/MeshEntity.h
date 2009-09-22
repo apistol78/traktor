@@ -44,7 +44,7 @@ public:
 	virtual void setTransform(const Transform& transform);
 
 	virtual bool getTransform(Transform& outTransform) const;
-	
+
 	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance) = 0;
 
 	inline void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
@@ -57,6 +57,7 @@ public:
 
 protected:
 	Transform m_transform;
+	Transform m_transformPrevious;
 	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
 };

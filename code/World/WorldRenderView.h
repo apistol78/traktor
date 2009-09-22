@@ -95,7 +95,7 @@ public:
 
 	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
 
-	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world) const;
+	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const;
 
 	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;
 
@@ -115,9 +115,10 @@ public:
 	 *
 	 * \param shaderParams Pointer to shader parameter container.
 	 * \param world Entity world transform.
+	 * \param worldPrevious Entity previous world transform.
 	 * \param bounds Entity bounds in object space.
 	 */
-	void setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+	void setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
 
 	inline render::handle_t getTechnique() const {
 		return m_technique;
@@ -137,6 +138,10 @@ public:
 
 	inline const Matrix44& getView() const {
 		return m_view;
+	}
+
+	inline const Matrix44& getViewPrevious() const {
+		return m_viewPrevious;
 	}
 
 	inline const Vector2& getViewSize() const {
@@ -183,6 +188,7 @@ private:
 	Frustum m_cullFrustum;
 	Matrix44 m_projection;
 	Matrix44 m_view;
+	Matrix44 m_viewPrevious;
 	Matrix44 m_viewToLightSpace;
 	Vector2 m_viewSize;
 	Vector4 m_eyePosition;

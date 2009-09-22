@@ -106,7 +106,12 @@ void IndoorMesh::render(
 			renderBlock->shaderParams->beginParameters(renderContext);
 			if (parameterCallback)
 				parameterCallback->setParameters(renderBlock->shaderParams);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams, worldTransform.toMatrix44(), getBoundingBox());
+			worldRenderView->setShaderParameters(
+				renderBlock->shaderParams,
+				worldTransform.toMatrix44(),
+				worldTransform.toMatrix44(),	// @fixme
+				getBoundingBox()
+			);
 			renderBlock->shaderParams->endParameters(renderContext);
 
 			renderContext->draw(renderBlock);

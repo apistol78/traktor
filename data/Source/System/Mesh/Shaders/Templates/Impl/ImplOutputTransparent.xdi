@@ -50,6 +50,14 @@
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
 		</item>
+		<item type="traktor.render.InputPort">
+			<comment></comment>
+			<position>
+				<first>548</first>
+				<second>460</second>
+			</position>
+			<name>T_Velocity</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

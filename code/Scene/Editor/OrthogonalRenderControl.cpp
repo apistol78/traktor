@@ -178,8 +178,9 @@ void OrthogonalRenderControl::updateWorldRenderer()
 			worldEntityRenderers->add(*j);
 	}
 
-	// Create a copy of the render settings; we don't want to enable shadows in this view.
+	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.
 	world::WorldRenderSettings worldRenderSettings = *m_worldRenderSettings;
+	worldRenderSettings.velocityPassEnable = false;
 	worldRenderSettings.shadowsEnabled = false;
 
 	m_worldRenderer = gc_new< world::WorldRenderer >();
