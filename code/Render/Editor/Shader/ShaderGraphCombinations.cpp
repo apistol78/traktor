@@ -5,7 +5,6 @@
 #include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
-#include "Core/Serialization/DeepClone.h"
 
 namespace traktor
 {
@@ -55,8 +54,11 @@ std::vector< std::wstring > ShaderGraphCombinations::getParameterCombination(uin
 
 ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 {
-	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
-	ShaderGraphAdjacency shaderGraphAdj(shaderGraph);
+	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
+	Ref< ShaderGraphAdjacency > shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
 
 	RefArray< Branch > branches;
 	shaderGraph->findNodesOf< Branch >(branches);
@@ -72,13 +74,13 @@ ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 		const OutputPin* outputPin = (*i)->getOutputPin(/* Output */ 0);
 		T_ASSERT (outputPin);
 
-		Ref< Edge > inputEdge = shaderGraphAdj.findEdge(inputPin);
+		Ref< Edge > inputEdge = shaderGraphAdj->findEdge(inputPin);
 		T_ASSERT (inputEdge);
 
 		shaderGraph->removeEdge(inputEdge);
 
 		RefArray< Edge > outputEdges;
-		shaderGraphAdj.findEdges(outputPin, outputEdges);
+		shaderGraphAdj->findEdges(outputPin, outputEdges);
 
 		for (RefArray< Edge >::iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
 		{
@@ -89,7 +91,7 @@ ShaderGraph* ShaderGraphCombinations::generate(uint32_t combination) const
 			shaderGraph->removeEdge(*j);
 		}
 
-		shaderGraphAdj = ShaderGraphAdjacency(shaderGraph);
+		shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
 	}
 
 	return shaderGraph;

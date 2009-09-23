@@ -6,7 +6,6 @@
 #include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Log/Log.h"
 
@@ -40,9 +39,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimi
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 :	m_insertedCount(0)
 {
-	m_shaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
-	T_ASSERT (m_shaderGraph);
-
+	m_shaderGraph = gc_new< ShaderGraph >(
+		shaderGraph->getNodes(),
+		shaderGraph->getEdges()
+	);
 	m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 }
 
