@@ -109,14 +109,6 @@ struct BuildCombinationTask
 		Ref< ShaderGraph > shaderGraphCombination = combinations->generate(combination);
 		T_ASSERT (shaderGraphCombination);
 
-#if defined(_DEBUG)
-		// Ensure shader graph is valid as a program.
-		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-		{
-			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-			return;
-		}
-#endif
 		// Merge identical branches.
 		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).mergeBranches();
 		if (!shaderGraphCombination)
@@ -125,14 +117,6 @@ struct BuildCombinationTask
 			return;
 		}
 
-#if defined(_DEBUG)
-		// Ensure shader graph is valid as a program.
-		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-		{
-			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-			return;
-		}
-#endif
 		// Insert interpolation nodes at optimal locations.
 		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
 		if (!shaderGraphCombination)
@@ -140,15 +124,6 @@ struct BuildCombinationTask
 			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
 			return;
 		}
-
-#if defined(_DEBUG)
-		// Ensure shader graph is valid as a program.
-		if (!ShaderGraphValidator(shaderGraphCombination).validate(ShaderGraphValidator::SgtProgram))
-		{
-			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-			return;
-		}
-#endif
 
 		if (renderSystem)
 		{
