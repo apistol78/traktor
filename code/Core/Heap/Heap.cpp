@@ -14,6 +14,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Log/Log.h"
 
@@ -80,7 +81,7 @@ const int32_t c_refsRemovedThreshold = 30000;		//!< Number of references removed
 const int32_t c_objectsThreshold = 100;				//!< Number of objects allocated before issuing GC.
 const int32_t c_refsRemovedThreshold = 3000;		//!< Number of references removed before issuing GC.
 #endif
-const int32_t c_promoteNonVisitedThreshold = 100;	//!< Milliseconds until objects get promoted from non-visited into collectable.
+const int32_t c_promoteNonVisitedThreshold = 10000;	//!< Milliseconds until objects get promoted from non-visited into collect-able.
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)
 {

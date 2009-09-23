@@ -67,13 +67,12 @@ const RefArray< Entity >& GroupEntity::getEntities() const
 	
 int GroupEntity::getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const
 {
-	outEntities.lock();
+	RefArray< Entity >::lock_wr_type(outEntities.lock());
 	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		if (is_type_of(entityType, (*i)->getType()))
 			outEntities.push_back_unsafe(*i);
 	}
-	outEntities.unlock();
 	return int(outEntities.size());
 }
 

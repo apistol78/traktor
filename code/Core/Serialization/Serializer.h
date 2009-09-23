@@ -149,7 +149,7 @@ protected:
 	bool serialize(Serializable* o, int version);
 
 private:
-	std::list< std::pair< Serializable*, int > > m_constructing;
+	std::list< std::pair< Ref< Serializable >, int > > m_constructing;
 };
 
 }

@@ -25,7 +25,8 @@ bool Serializer::writeObject(const Serializable* o)
 	if (getDirection() != SdWrite)
 		return false;
 
-	Serializable* mutableObject = const_cast< Serializable* >(o);
+	Ref< const Serializable > objectRef(o);
+	Serializable* mutableObject = const_cast< Serializable* >(objectRef.getPtr());
 
 	if (!(*this >> Member< Serializable* >(L"object", mutableObject)))
 		return false;

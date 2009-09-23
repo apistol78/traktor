@@ -52,8 +52,8 @@ public:
 	virtual const OutputPin* getOutputPin(int index) const;
 
 private:
-	std::vector< InputPin > m_inputPins;
-	std::vector< OutputPin > m_outputPins;
+	RefArray< InputPin > m_inputPins;
+	RefArray< OutputPin > m_outputPins;
 
 	ImmutableNode(const ImmutableNode&) { T_FATAL_ERROR; }
 

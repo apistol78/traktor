@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Singleton/SingletonManager.h"
 
 namespace traktor

@@ -20,6 +20,7 @@
 #include "Render/ShaderGraph.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
 #include "Core/Log/Log.h"

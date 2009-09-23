@@ -26,6 +26,7 @@
 #include "Physics/Heightfield.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Save.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

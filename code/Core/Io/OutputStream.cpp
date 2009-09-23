@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Core/Io/OutputStream.h"
 #include "Core/Io/OutputStreamBuffer.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {

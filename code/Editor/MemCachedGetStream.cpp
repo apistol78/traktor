@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Editor/MemCachedGetStream.h"
 #include "Editor/MemCachedProto.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
