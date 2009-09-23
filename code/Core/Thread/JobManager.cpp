@@ -2,6 +2,8 @@
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/System/OS.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Misc/String.h"

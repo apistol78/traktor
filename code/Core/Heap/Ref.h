@@ -287,6 +287,8 @@ public:
 	typedef typename container_type::iterator iterator;
 	typedef typename container_type::const_iterator const_iterator;
 	typedef Semaphore lock_type;
+	typedef Acquire< lock_type > lock_rd_type;
+	typedef Acquire< lock_type > lock_wr_type;
 
 	RefArray()
 	:	RefBase()
@@ -313,19 +315,9 @@ public:
 		Heap::getInstance().removeRef(this);
 	}
 
-	void lock()
-	{
-		m_lock.acquire();
-	}
-
-	void unlock()
-	{
-		m_lock.release();
-	}
-
 	void clear()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.clear();
 	}
 
@@ -371,7 +363,7 @@ public:
 
 	void push_back(Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.push_back(val);
 	}
 
@@ -382,7 +374,7 @@ public:
 
 	void pop_back()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.pop_back();
 	}
 
@@ -393,52 +385,62 @@ public:
 
 	void insert(iterator at, Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.insert(at, val);
 	}
 
 	void insert(iterator at, iterator first, iterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.insert(at, first, last);
 	}
 
 	iterator erase(iterator iter)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		return m_array.erase(iter);
 	}
 
 	iterator erase(iterator first, iterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		return m_array.erase(first, last);
+	}
+
+	void swap(RefArray< Class >& src)
+	{
+		lock_wr_type sc1(m_lock);
+		lock_wr_type sc2(src.m_lock);
+		m_array.swap(src.m_array);
 	}
 
 	bool empty() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_array.empty();
 	}
 
 	size_type size() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_array.size();
 	}
 
 	void resize(size_type size)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.resize(size);
 	}
 
 	size_type capacity() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_array.capacity();
 	}
 
 	void reserve(size_type size)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_array.reserve(size);
 	}
 
@@ -464,15 +466,21 @@ public:
 
 	RefArray< Class >& operator = (const RefArray< Class >& src)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc1(m_lock);
+		lock_rd_type sc2(src.m_lock);
 		m_array = src.m_array;
 		return *this;
+	}
+
+	lock_type& lock()
+	{
+		return m_lock;
 	}
 
 protected:
 	virtual void visit(Visitor& visitor)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if (*i)
@@ -482,14 +490,14 @@ protected:
 
 	virtual void invalidate()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 			*i = 0;
 	}
 
 	virtual void invalidate(Object* ptr)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if ((Object*)(*i) == ptr)
@@ -514,6 +522,8 @@ public:
 	typedef typename container_type::iterator iterator;
 	typedef typename container_type::const_iterator const_iterator;
 	typedef Semaphore lock_type;
+	typedef Acquire< lock_type > lock_rd_type;
+	typedef Acquire< lock_type > lock_wr_type;
 
 	RefList()
 	:	RefBase()
@@ -540,19 +550,9 @@ public:
 		Heap::getInstance().removeRef(this);
 	}
 
-	void lock()
-	{
-		m_lock.acquire();
-	}
-
-	void unlock()
-	{
-		m_lock.release();
-	}
-
 	void clear()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.clear();
 	}
 
@@ -598,109 +598,125 @@ public:
 
 	void push_back(Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.push_back(val);
 	}
 
 	void pop_back()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.pop_back();
 	}
 
 	void push_front(Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.push_front(val);
 	}
 
 	void pop_front()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.pop_front();
 	}
 
 	void insert(iterator at, Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.insert(at, val);
 	}
 
 	void insert(iterator at, iterator first, iterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.insert(at, first, last);
 	}
 
 	iterator erase(iterator iter)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		return m_list.erase(iter);
 	}
 
 	iterator erase(iterator first, iterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		return m_list.erase(first, last);
 	}
 
 	void remove(Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.remove(val);
+	}
+
+	void swap(RefList< Class >& src)
+	{
+		lock_wr_type sc1(m_lock);
+		lock_wr_type sc2(src.m_lock);
+		m_list.swap(src.m_list);
 	}
 
 	bool empty() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_list.empty();
 	}
 
 	size_type size() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_list.size();
 	}
 
 	void resize(size_type size)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.resize(size);
 	}
 
 	size_type capacity() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_list.capacity();
 	}
 
 	void reserve(size_type size)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.reserve(size);
 	}
 
 	void sort()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.sort();
 	}
 
 	template < class Traits >
 	void sort(Traits comp)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_list.sort< Traits >(comp);
 	}
 
 	RefList< Class >& operator = (const RefList< Class >& src)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc1(m_lock);
+		lock_rd_type sc2(src.m_lock);
 		m_list = src.m_list;
 		return *this;
+	}
+
+	lock_type& lock()
+	{
+		return m_lock;
 	}
 
 protected:
 	virtual void visit(Visitor& visitor)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if (*i)
@@ -710,14 +726,14 @@ protected:
 
 	virtual void invalidate()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 			*i = 0;
 	}
 
 	virtual void invalidate(Object* ptr)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if ((Object*)(*i) == ptr)
@@ -743,6 +759,8 @@ public:
 	typedef typename container_type::iterator iterator;
 	typedef typename container_type::const_iterator const_iterator;
 	typedef Semaphore lock_type;
+	typedef Acquire< lock_type > lock_rd_type;
+	typedef Acquire< lock_type > lock_wr_type;
 
 	RefSet()
 	:	RefBase()
@@ -762,30 +780,21 @@ public:
 		Heap::getInstance().removeRef(this);
 	}
 
-	void lock()
-	{
-		m_lock.acquire();
-	}
-
-	void unlock()
-	{
-		m_lock.release();
-	}
-
 	void clear()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_set.clear();
 	}
 
 	size_t count() const
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		return m_set.count();
 	}
 
 	bool empty() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_set.empty();
 	}
 
@@ -811,64 +820,70 @@ public:
 
 	void erase(iterator where)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_set.erase(where);
 	}
 
 	void erase(iterator first, iterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_set.erase(first, last);
 	}
 
 	size_type erase(const key_type& val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		return m_set.erase(val);
 	}
 
 	iterator find(const key_type& val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		return m_set.find(val);
 	}
 
 	const_iterator find(const key_type& val) const
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		return m_set.find(val);
 	}
 
 	void insert(Class* const val)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		m_set.insert(val);
 	}
 
 	template < typename InputIterator >
 	void insert(InputIterator first, InputIterator last)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (InputIterator i = first; i != last; ++i)
 			m_set.insert(*i);
 	}
 
 	size_type size() const
 	{
+		lock_rd_type sc(m_lock);
 		return m_set.size();
 	}
 
 	void swap(RefSet< Class >& right)
 	{
-		Acquire< lock_type > sc1(m_lock);
-		Acquire< lock_type > sc2(right.m_lock);
+		lock_wr_type sc1(m_lock);
+		lock_rd_type sc2(right.m_lock);
 		m_set.swap(right.m_set);
+	}
+
+	lock_type& lock()
+	{
+		return m_lock;
 	}
 
 protected:
 	virtual void visit(Visitor& visitor)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_rd_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if (*i)
@@ -878,14 +893,14 @@ protected:
 
 	virtual void invalidate()
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 			*i = 0;
 	}
 
 	virtual void invalidate(Object* ptr)
 	{
-		Acquire< lock_type > sc(m_lock);
+		lock_wr_type sc(m_lock);
 		for (iterator i = begin(); i != end(); ++i)
 		{
 			if ((Object*)(*i) == ptr)

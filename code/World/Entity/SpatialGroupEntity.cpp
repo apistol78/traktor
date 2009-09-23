@@ -67,13 +67,12 @@ const RefArray< SpatialEntity >& SpatialGroupEntity::getEntities() const
 	
 int SpatialGroupEntity::getEntitiesOf(const Type& entityType, RefArray< SpatialEntity >& entities) const
 {
-	entities.lock();
+	RefArray< SpatialEntity >::lock_wr_type(entities.lock());
 	for (RefArray< SpatialEntity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		if (is_type_of(entityType, (*i)->getType()))
 			entities.push_back_unsafe(*i);
 	}
-	entities.unlock();
 	return int(entities.size());
 }
 

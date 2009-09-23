@@ -138,8 +138,6 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 
 		index = fromIndex + cs.get() % (toIndex - fromIndex + 1);
 
-		log::debug << L"Pre-alloc \"" << uniform << L"\" index " << index << L" (" << elementCount << L")" << Endl;
-
 		for (;;)
 		{
 			bool occupied = false;
@@ -150,15 +148,12 @@ uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint
 					occupied = true;
 					break;
 				}
-
 			}
 			if (!occupied)
 				break;
 			if (++index >= toIndex)
 				fromIndex = 0;
 		}
-
-		log::debug << L"Final-alloc \"" << uniform << L"\" index " << index << Endl;
 
 		for (int32_t i = 0; i < elementCount; ++i)
 			m_uniformAllocated[index + i] = true;

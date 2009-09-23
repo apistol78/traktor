@@ -9,6 +9,7 @@
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/AsKey.h"
 #include "Flash/Action/Classes/AsMouse.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"

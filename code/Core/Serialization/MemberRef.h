@@ -20,7 +20,6 @@ public:
 	
 	MemberRef(const std::wstring& name, value_type& ref)
 	:	MemberComplex(name, false)
-	,	m_keep(ref)
 	,	m_ref(ref)
 	{
 	}
@@ -35,7 +34,6 @@ public:
 	}
 	
 private:
-	value_type m_keep;
 	value_type& m_ref;
 };
 
@@ -48,7 +46,15 @@ public:
 	MemberRefArray(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_value(ref)
+	,	m_modified(false)
 	{
+	}
+
+	virtual ~MemberRefArray()
+	{
+		if (m_modified)
+			m_ref.swap(m_value);
 	}
 
 	virtual const Type* getType() const
@@ -58,13 +64,14 @@ public:
 
 	virtual void reserve(size_t size) const
 	{
-		m_ref.resize(0);
-		m_ref.reserve(size);
+		m_value.resize(0);
+		m_value.reserve(size);
+		m_modified = true;
 	}
 
 	virtual size_t size() const
 	{
-		return m_ref.size();
+		return m_value.size();
 	}
 
 	virtual bool read(Serializer& s) const
@@ -73,16 +80,17 @@ public:
 		if (!(s >> MemberType(L"item", object)))
 			return false;
 
-		m_ref.push_back(object);
+		m_value.push_back(checked_type_cast< Class* >(object));
+		m_modified = true;
+
 		return true;
 	}
 
 	virtual bool write(Serializer& s, size_t index) const
 	{
-		Ref< Class > object;
-		m_ref.lock();
-		object = m_ref[index];
-		m_ref.unlock();
+		if (index >= m_value.size())
+			T_FATAL_ERROR;
+		Ref< Class > object = m_value[index];
 		return s >> MemberType(L"item", object);
 	}
 
@@ -93,6 +101,8 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable value_type m_value;
+	mutable bool m_modified;
 };
 
 template < typename Class, typename MemberType = MemberRef< Class > >
@@ -104,7 +114,15 @@ public:
 	MemberRefList(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
+	,	m_value(value)
+	,	m_modified(false)
 	{
+	}
+
+	virtual ~MemberRefList()
+	{
+		if (m_modified)
+			m_ref.swap(m_value);
 	}
 
 	virtual const Type* getType() const
@@ -114,12 +132,13 @@ public:
 
 	virtual void reserve(size_t size) const
 	{
-		m_ref.clear();
+		m_value.clear();
+		m_modified = true;
 	}
 
 	virtual size_t size() const
 	{
-		return m_ref.size();
+		return m_value.size();
 	}
 
 	virtual bool read(Serializer& s) const
@@ -128,20 +147,20 @@ public:
 		if (!(s >> MemberType(L"item", object)))
 			return false;
 
-		m_ref.push_back(object);
+		m_value.push_back(object);
+		m_modified = true;
+
 		return true;
 	}
 
 	virtual bool write(Serializer& s, size_t index) const
 	{
 		Ref< Class > object;
-		m_ref.lock();
 
-		typename value_type::iterator i = m_ref.begin();
+		typename value_type::iterator i = m_value.begin();
 		std::advance(i, index);
 		object = *i;
 
-		m_ref.unlock();
 		return s >> MemberType(L"item", object);
 	}
 
@@ -152,6 +171,8 @@ public:
 
 private:
 	value_type& m_ref;
+	mutable value_type m_value;
+	mutable bool m_modified;
 };
 
 //@}

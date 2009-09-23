@@ -1,6 +1,7 @@
 #include "Core/Io/AsyncStream.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
