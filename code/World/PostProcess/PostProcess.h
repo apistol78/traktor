@@ -56,6 +56,14 @@ class T_DLLCLASS PostProcess : public Object
 	T_RTTI_CLASS(PostProcess)
 
 public:
+	enum PredefinedTargets
+	{
+		PdtFrame = 0,
+		PdtSourceColor = -1,
+		PdtSourceDepth = -2,
+		PdtSourceVelocity = -3
+	};
+
 	bool create(
 		PostProcessSettings* settings,
 		resource::IResourceManager* resourceManager,
