@@ -57,7 +57,13 @@ void PostProcess::destroy()
 	// Destroy user defined targets.
 	for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
-		if (i->second && i->first != 0 && i->first != 1 && i->first != 2)
+		if (
+			i->second &&
+			i->first != PdtFrame &&
+			i->first != PdtSourceColor &&
+			i->first != PdtSourceDepth &&
+			i->first != PdtSourceVelocity
+		)
 			i->second->destroy();
 	}
 	m_targets.clear();
@@ -90,7 +96,13 @@ bool PostProcess::render(
 		// Destroy user defined targets.
 		for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 		{
-			if (i->second && i->first != 0 && i->first != 1)
+			if (
+				i->second &&
+				i->first != PdtFrame &&
+				i->first != PdtSourceColor &&
+				i->first != PdtSourceDepth &&
+				i->first != PdtSourceVelocity
+			)
 				i->second->destroy();
 		}
 		m_targets.clear();
@@ -110,9 +122,9 @@ bool PostProcess::render(
 		m_definedHeight = height;
 	}
 
-	m_targets[-1] = frameBuffer;
-	m_targets[-2] = depthBuffer;
-	m_targets[-3] = velocityBuffer;
+	m_targets[PdtSourceColor] = frameBuffer;
+	m_targets[PdtSourceDepth] = depthBuffer;
+	m_targets[PdtSourceVelocity] = velocityBuffer;
 	m_currentTarget = 0;
 
 	const RefArray< PostProcessStep >& steps = m_settings->getSteps();
@@ -133,14 +145,14 @@ bool PostProcess::render(
 
 void PostProcess::setTarget(render::IRenderView* renderView, uint32_t id)
 {
-	T_ASSERT_M(id != -1, L"Cannot bind source color buffer as output");
-	T_ASSERT_M(id != -2, L"Cannot bind source depth buffer as output");
-	T_ASSERT_M(id != -3, L"Cannot bind source velocity buffer as output");
+	T_ASSERT_M(id != PdtSourceColor, L"Cannot bind source color buffer as output");
+	T_ASSERT_M(id != PdtSourceDepth, L"Cannot bind source depth buffer as output");
+	T_ASSERT_M(id != PdtSourceVelocity, L"Cannot bind source velocity buffer as output");
 
 	if (m_currentTarget)
 		renderView->end();
 
-	if (id != 0)
+	if (id != PdtFrame)
 	{
 		m_currentTarget = m_targets[id];
 		renderView->begin(m_currentTarget, 0, false);
