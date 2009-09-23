@@ -50,7 +50,7 @@ Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
 			{
 				md->addPosition(Vector4(
-					values[0],
+					-values[0],
 					values[1],
 					values[2],
 					1.0f
@@ -74,7 +74,7 @@ Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 			if (Split< std::wstring, float >::any(str.substr(2), L" \t", values) >= 3)
 			{
 				md->addNormal(Vector4(
-					values[0],
+					-values[0],
 					values[1],
 					values[2],
 					0.0f
@@ -104,7 +104,6 @@ Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 					}
 				}
 
-				polygon.flipWinding();
 				md->addUniquePolygon(polygon);
 			}
 		}
