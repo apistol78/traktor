@@ -6,7 +6,8 @@ namespace traktor
 	namespace
 	{
 
-const size_t c_wallSize = 8;
+const size_t c_wallSize = 16;
+const size_t c_maxFreedBlocks = 1000;
 
 	}
 
@@ -17,7 +18,7 @@ DebugAllocator::DebugAllocator(Allocator* systemAllocator)
 
 DebugAllocator::~DebugAllocator()
 {
-	T_ASSERT (m_aliveBlocks.empty());
+	T_FATAL_ASSERT (m_aliveBlocks.empty());
 	
 	for (std::list< Block >::iterator i = m_freedBlocks.begin(); i != m_freedBlocks.end(); ++i)
 		m_systemAllocator->free(i->top);
@@ -71,7 +72,7 @@ void DebugAllocator::free(void* ptr)
 		}
 	}
 
-	T_ASSERT (0);
+	T_FATAL_ERROR;
 }
 
 void DebugAllocator::checkBlocks()
@@ -81,9 +82,9 @@ void DebugAllocator::checkBlocks()
 	{
 		uint8_t* ptr = static_cast< uint8_t* >(i->top);
 		for (size_t j = 0; j < c_wallSize; ++j)
-			T_ASSERT (ptr[j] == 0xaa);
+			T_FATAL_ASSERT (ptr[j] == 0xaa);
 		for (size_t j = i->size - c_wallSize; j < i->size; ++j)
-			T_ASSERT (ptr[j] == 0x55);
+			T_FATAL_ASSERT (ptr[j] == 0x55);
 	}
 
 	// Ensure freed blocks aren't modified after they have been released.
@@ -91,7 +92,14 @@ void DebugAllocator::checkBlocks()
 	{
 		uint8_t* ptr = static_cast< uint8_t* >(i->top);
 		for (size_t j = 0; j < i->size; ++j)
-			T_ASSERT (ptr[j] == 0xdd);
+			T_FATAL_ASSERT (ptr[j] == 0xdd);
+	}
+
+	// Reduce load; we cannot keep every released block forever.
+	while (m_freedBlocks.size() > c_maxFreedBlocks)
+	{
+		m_systemAllocator->free(m_freedBlocks.front().top);
+		m_freedBlocks.pop_front();
 	}
 }
 
