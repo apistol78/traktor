@@ -4,7 +4,6 @@
 #include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
-#include "Core/Serialization/DeepClone.h"
 
 namespace traktor
 {
@@ -38,8 +37,8 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 {
 	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >();
-	std::stack< Node* > nodeStack;
-	std::set< Node* > nodeVisited;
+	std::stack< Ref< Node > > nodeStack;
+	std::set< Ref< Node > > nodeVisited;
 
 	// Get initial nodes.
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
@@ -74,7 +73,7 @@ ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 		int inputPinCount = node->getInputPinCount();
 		for (int i = 0; i < inputPinCount; ++i)
 		{
-			const InputPin* inputPin = node->getInputPin(i);
+			Ref< const InputPin > inputPin = node->getInputPin(i);
 			T_ASSERT (inputPin);
 
 			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
@@ -86,9 +85,7 @@ ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
 		}
 	}
 
-	// Return a clone of combination graph as we don't want references between
-	// graph instances.
-	return DeepClone(shaderGraph).create< ShaderGraph >();
+	return shaderGraph;
 }
 
 	}

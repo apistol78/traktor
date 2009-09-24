@@ -272,15 +272,6 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
-#if defined(_DEBUG)
-	// Ensure shader graph is valid as a shader.
-	if (!ShaderGraphValidator(shaderGraph).validate(ShaderGraphValidator::SgtShader))
-	{
-		log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-		return false;
-	}
-#endif
-
 	RefArray< ShaderGraphCombinations > shaderGraphCombinations;
 	std::vector< ShaderResource::Technique* > shaderResourceTechniques;
 	std::vector< BuildCombinationTask* > tasks;
@@ -298,14 +289,6 @@ bool ShaderPipeline::buildOutput(
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
 		T_ASSERT (shaderGraphTechnique);
 
-#if defined(_DEBUG)
-		// Ensure shader graph is valid as a program.
-		if (!ShaderGraphValidator(shaderGraphTechnique).validate(ShaderGraphValidator::SgtShader))
-		{
-			log::error << L"ShaderPipeline failed; not a valid shader graph" << Endl;
-			return false;
-		}
-#endif
 		Ref< ShaderGraphCombinations > combinations = gc_new< ShaderGraphCombinations >(shaderGraphTechnique);
 		uint32_t combinationCount = combinations->getCombinationCount();
 		shaderGraphCombinations.push_back(combinations);
