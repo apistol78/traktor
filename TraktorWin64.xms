@@ -7398,6 +7398,14 @@
 										<fileName>../../../res/SmallPen.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/SmallDots.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/SmallPlus.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">

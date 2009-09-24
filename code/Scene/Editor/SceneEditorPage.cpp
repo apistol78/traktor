@@ -556,15 +556,26 @@ void SceneEditorPage::updateScene()
 {
 	m_context->buildEntities();
 
-	Ref< world::WorldRenderSettings > newSettings = m_context->getSceneAsset()->getWorldRenderSettings();
-	if (newSettings)
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	if (sceneAsset)
 	{
-		DeepHash hash(newSettings);
-		if (hash != m_currentSettingsHash)
+		bool needUpdate = false;
+
+		if (m_currentGuid != sceneAsset->getPostProcessSettings().getGuid())
 		{
-			m_editControl->setWorldRenderSettings(newSettings);
-			m_currentSettingsHash = hash.get();
+			needUpdate = true;
+			m_currentGuid = sceneAsset->getPostProcessSettings().getGuid();
 		}
+
+		DeepHash hash(sceneAsset->getWorldRenderSettings());
+		if (hash != m_currentHash)
+		{
+			needUpdate = true;
+			m_currentHash = hash.get();
+		}
+
+		if (needUpdate)
+			m_editControl->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	}
 }
 

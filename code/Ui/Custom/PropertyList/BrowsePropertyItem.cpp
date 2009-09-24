@@ -7,6 +7,8 @@
 
 // Resources
 #include "Resources/SmallPen.h"
+#include "Resources/SmallCross.h"
+#include "Resources/SmallDots.h"
 
 namespace traktor
 {
@@ -39,6 +41,12 @@ void BrowsePropertyItem::setValue(const Guid& value)
 	m_value = value;
 	if (m_buttonEdit)
 		m_buttonEdit->setEnable(!m_value.isNull());
+	if (m_buttonBrowse)
+		m_buttonBrowse->setImage(
+			m_value.isNull() ?
+				ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :
+				ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
+		);
 }
 
 const Guid& BrowsePropertyItem::getValue() const
@@ -56,7 +64,11 @@ void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 	
 	T_ASSERT (!m_buttonBrowse);
 	m_buttonBrowse = gc_new< MiniButton >();
-	m_buttonBrowse->create(parent, L"...");
+	m_buttonBrowse->create(parent,
+		m_value.isNull() ?
+			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :
+			ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
+	);
 	m_buttonBrowse->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventBrowseClick));
 }
 

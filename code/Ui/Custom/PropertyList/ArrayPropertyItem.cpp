@@ -2,9 +2,14 @@
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
 #include "Ui/Custom/MiniButton.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Core/Io/StringOutputStream.h"
+
+// Resources
+#include "Resources/SmallDots.h"
+#include "Resources/SmallPlus.h"
 
 namespace traktor
 {
@@ -35,7 +40,12 @@ void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
-	m_buttonEdit->create(parent, m_elementType ? L"..." : L"+");
+	m_buttonEdit->create(
+		parent,
+		m_elementType ? 
+			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") : 
+			ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
+	);
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
 }
 

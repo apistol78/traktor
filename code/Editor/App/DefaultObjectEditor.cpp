@@ -86,40 +86,46 @@ void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
 	if (browseItem)
 	{
-		Ref< db::Instance > instance;
-
-		if (browseItem->getFilterType())
+		if (browseItem->getValue().isNull())
 		{
-			const Type* filterType = browseItem->getFilterType();
-
-			// Check if filter type is actually a result of a asset; in such case we should
-			// browse for the asset and not the final result.
-			std::vector< const Type* > assetTypes;
-			type_of< Asset >().findAllOf(assetTypes);
-
-			for (std::vector< const Type* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
+			Ref< db::Instance > instance;
+			if (browseItem->getFilterType())
 			{
-				Ref< Asset > asset = dynamic_type_cast< Asset* >((*i)->newInstance());
-				if (asset && asset->getOutputType())
+				const Type* filterType = browseItem->getFilterType();
+
+				// Check if filter type is actually a result of a asset; in such case we should
+				// browse for the asset and not the final result.
+				std::vector< const Type* > assetTypes;
+				type_of< Asset >().findAllOf(assetTypes);
+
+				for (std::vector< const Type* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
 				{
-					if (is_type_of(*asset->getOutputType(), *filterType))
+					Ref< Asset > asset = dynamic_type_cast< Asset* >((*i)->newInstance());
+					if (asset && asset->getOutputType())
 					{
-						filterType = *i;
-						break;
+						if (is_type_of(*asset->getOutputType(), *filterType))
+						{
+							filterType = *i;
+							break;
+						}
 					}
 				}
-			}
 
-			editor::TypeBrowseFilter filter(*filterType);
-			instance = m_editor->browseInstance(&filter);
+				editor::TypeBrowseFilter filter(*filterType);
+				instance = m_editor->browseInstance(&filter);
+			}
+			else
+				instance = m_editor->browseInstance();
+
+			if (instance)
+			{
+				browseItem->setValue(instance->getGuid());
+				m_propertyList->apply();
+			}
 		}
 		else
-			instance = m_editor->browseInstance();
-
-		if (instance)
 		{
-			browseItem->setValue(instance->getGuid());
-
+			browseItem->setValue(Guid());
 			m_propertyList->apply();
 		}
 	}

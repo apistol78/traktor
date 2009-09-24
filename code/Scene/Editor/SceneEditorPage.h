@@ -105,7 +105,8 @@ private:
 	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Ref< editor::UndoStack > m_undoStack;
-	uint32_t m_currentSettingsHash;
+	Guid m_currentGuid;
+	uint32_t m_currentHash;
 
 	void createControllerEditor();
 
