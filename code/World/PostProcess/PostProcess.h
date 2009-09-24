@@ -86,8 +86,6 @@ public:
 
 	Ref< render::RenderTargetSet >& getTargetRef(uint32_t id);
 
-	const std::map< uint32_t, Ref< render::RenderTargetSet > >& getTargets() const;
-
 	void setParameter(render::handle_t handle, const Vector4& value);
 
 	void prepareShader(render::Shader* shader) const;
@@ -102,7 +100,7 @@ public:
 private:
 	Ref< PostProcessSettings > m_settings;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	std::map< uint32_t, Ref< render::RenderTargetSet > > m_targets;
+	std::map< int32_t, Ref< render::RenderTargetSet > > m_targets;
 	std::map< render::handle_t, Vector4 > m_parameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	int32_t m_definedWidth;

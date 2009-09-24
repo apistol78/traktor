@@ -55,7 +55,7 @@ void PostProcess::destroy()
 	}
 
 	// Destroy user defined targets.
-	for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	for (std::map< int32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
 		if (
 			i->second &&
@@ -94,7 +94,7 @@ bool PostProcess::render(
 	if (width != m_definedWidth || height != m_definedHeight)
 	{
 		// Destroy user defined targets.
-		for (std::map< uint32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+		for (std::map< int32_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 		{
 			if (
 				i->second &&
@@ -164,11 +164,6 @@ void PostProcess::setTarget(render::IRenderView* renderView, uint32_t id)
 Ref< render::RenderTargetSet >& PostProcess::getTargetRef(uint32_t id)
 {
 	return m_targets[id];
-}
-
-const std::map< uint32_t, Ref< render::RenderTargetSet > >& PostProcess::getTargets() const
-{
-	return m_targets;
 }
 
 void PostProcess::setParameter(render::handle_t handle, const Vector4& value)
