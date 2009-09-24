@@ -129,10 +129,10 @@ int main(int argc, const char** argv)
 
 	if (cmdLine.hasOption('h'))
 	{
-		log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
-		log::info << L"       -f    Force rebuild" << Endl;
-		log::info << L"       -s    Settings (default \"Traktor.Editor\")" << Endl;
-		log::info << L"       -h    Show this help" << Endl;
+		traktor::log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
+		traktor::log::info << L"       -f    Force rebuild" << Endl;
+		traktor::log::info << L"       -s    Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -h    Show this help" << Endl;
 		return 0;
 	}
 
@@ -143,32 +143,32 @@ int main(int argc, const char** argv)
 	Ref< editor::Settings > settings = loadSettings(settingsFile);
 	if (!settings)
 	{
-		log::error << L"Unable to load pipeline settings \"" << settingsFile << L"\"" << Endl;
+		traktor::log::error << L"Unable to load pipeline settings \"" << settingsFile << L"\"" << Endl;
 		return 0;
 	}
 
-	log::info << L"Loading pipeline modules..." << Endl;
-	log::info << IncreaseIndent;
+	traktor::log::info << L"Loading pipeline modules..." << Endl;
+	traktor::log::info << IncreaseIndent;
 
 	std::vector< std::wstring > modules = settings->getProperty< editor::PropertyStringArray >(L"Editor.Modules");
 	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		log::info << *i << L"..." << Endl;
+		traktor::log::info << *i << L"..." << Endl;
 		if (!Library().open(*i))
 		{
-			log::error << L"Unable to load pipeline module \"" << *i << L"\"" << Endl;
+			traktor::log::error << L"Unable to load pipeline module \"" << *i << L"\"" << Endl;
 			return 6;
 		}
 	}
 
-	log::info << DecreaseIndent;
+	traktor::log::info << DecreaseIndent;
 
 	std::wstring sourceManifest = settings->getProperty< editor::PropertyString >(L"Editor.SourceManifest");
 	
 	Ref< db::Database > sourceDatabase = openDatabase(sourceManifest, false);
 	if (!sourceDatabase)
 	{
-		log::error << L"Unable to open source database \"" << sourceManifest << L"\"" << Endl;
+		traktor::log::error << L"Unable to open source database \"" << sourceManifest << L"\"" << Endl;
 		return 1;
 	}
 
@@ -177,7 +177,7 @@ int main(int argc, const char** argv)
 	Ref< db::Database > outputDatabase = openDatabase(outputManifest, true);
 	if (!outputDatabase)
 	{
-		log::error << L"Unable to open or create output database \"" << outputManifest << L"\"" << Endl;
+		traktor::log::error << L"Unable to open or create output database \"" << outputManifest << L"\"" << Endl;
 		return 2;
 	}
 
@@ -209,7 +209,7 @@ int main(int argc, const char** argv)
 	Ref< editor::IPipelineCache > pipelineCache = gc_new< editor::MemCachedPipelineCache >();
 	if (!pipelineCache->create(settings))
 	{
-		log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
+		traktor::log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
 		pipelineCache = 0;
 	}
 
@@ -221,8 +221,8 @@ int main(int argc, const char** argv)
 		pipelineHash
 	);
 
-	log::info << L"Collecting dependencies..." << Endl;
-	log::info << IncreaseIndent;
+	traktor::log::info << L"Collecting dependencies..." << Endl;
+	traktor::log::info << IncreaseIndent;
 
 	if (cmdLine.getCount() > 0)
 	{
@@ -231,7 +231,7 @@ int main(int argc, const char** argv)
 			Guid assetGuid(cmdLine.getString(i));
 			if (assetGuid.isNull() || !assetGuid.isValid())
 			{
-				log::error << L"Invalid asset guid (" << i << L")" << Endl;
+				traktor::log::error << L"Invalid asset guid (" << i << L")" << Endl;
 				return 7;
 			}
 			pipelineManager.addDependency(assetGuid, true);
@@ -246,20 +246,20 @@ int main(int argc, const char** argv)
 			pipelineManager.addDependency(*i, true);
 	}
 
-	log::info << DecreaseIndent;
+	traktor::log::info << DecreaseIndent;
 
 	bool rebuild = cmdLine.hasOption('f');
 	if (!rebuild)
-		log::info << L"Building assets..." << Endl;
+		traktor::log::info << L"Building assets..." << Endl;
 	else
-		log::info << L"Rebuilding assets..." << Endl;
+		traktor::log::info << L"Rebuilding assets..." << Endl;
 
-	log::info << IncreaseIndent;
+	traktor::log::info << IncreaseIndent;
 
 	pipelineManager.build(rebuild);
 
-	log::info << DecreaseIndent;
-	log::info << L"Finished" << Endl;
+	traktor::log::info << DecreaseIndent;
+	traktor::log::info << L"Finished" << Endl;
 
 	if (!hashFile.empty())
 		savePipelineHash(hashFile, pipelineHash);

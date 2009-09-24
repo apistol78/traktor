@@ -10169,6 +10169,100 @@
 				</item>
 			</dependencies>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Pipeline.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[20]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[21]"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[22]"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[37]/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
@@ -10461,7 +10555,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[50]"/>
+					<project ref="/object/projects/item[51]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[6]/project"/>
@@ -10555,7 +10649,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[50]"/>
+					<project ref="/object/projects/item[51]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -10640,7 +10734,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[50]"/>
+					<project ref="/object/projects/item[51]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[9]"/>
@@ -10858,7 +10952,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[54]"/>
+					<project ref="/object/projects/item[55]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -11079,7 +11173,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[56]"/>
+					<project ref="/object/projects/item[57]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
@@ -11268,7 +11362,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[58]"/>
+					<project ref="/object/projects/item[59]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -11460,7 +11554,7 @@
 					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[60]"/>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
@@ -11654,7 +11748,7 @@
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency">
-					<project ref="/object/projects/item[54]"/>
+					<project ref="/object/projects/item[55]"/>
 				</item>
 			</dependencies>
 		</item>
