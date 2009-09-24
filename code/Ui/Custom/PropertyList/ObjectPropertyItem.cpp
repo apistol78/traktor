@@ -7,6 +7,7 @@
 #include "Core/Io/StringOutputStream.h"
 
 // Resources
+#include "Resources/SmallDots.h"
 #include "Resources/SmallCross.h"
 
 namespace traktor
@@ -44,7 +45,7 @@ void ObjectPropertyItem::setObject(Object* object)
 		if (m_object)
 			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png"));
 		else
-			m_buttonEdit->setImage(0);
+			m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
 
 		m_buttonEdit->update();
 	}
@@ -59,13 +60,13 @@ void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonEdit);
 	m_buttonEdit = gc_new< MiniButton >();
-	m_buttonEdit->create(parent, L"...");
+	m_buttonEdit->create(parent, L"");
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ObjectPropertyItem::eventClick));
 
 	if (m_object)
 		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png"));
 	else
-		m_buttonEdit->setImage(0);
+		m_buttonEdit->setImage(ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
 }
 
 void ObjectPropertyItem::destroyInPlaceControls()
