@@ -45,7 +45,7 @@ bool ActionRectangle::isEmpty() const
 {
 	double dx = right - left;
 	double dy = bottom - top;
-	return abs(dx * dy) < FUZZY_EPSILON;
+	return std::abs(dx * dy) < FUZZY_EPSILON;
 }
 
 void ActionRectangle::offset(double dx, double dy)

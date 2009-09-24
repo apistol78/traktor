@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Editor/SoundPipeline.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/StaticSoundResource.h"

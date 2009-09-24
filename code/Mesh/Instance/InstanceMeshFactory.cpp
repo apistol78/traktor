@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Mesh/Instance/InstanceMeshFactory.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
 #include "Mesh/Instance/InstanceMesh.h"

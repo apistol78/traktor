@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Editor/MemCachedProto.h"
 #include "Net/Socket.h"
 #include "Core/Log/Log.h"

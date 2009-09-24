@@ -1,7 +1,7 @@
 #include <limits>
-#include <cmath>
 #include "Render/IRenderSystem.h"
 #include "Render/DisplayMode.h"
+#include "Core/Math/MathUtils.h"
 
 namespace traktor
 {
@@ -21,11 +21,11 @@ DisplayMode* IRenderSystem::findDisplayMode(const DisplayMode* criteria)
 		Ref< DisplayMode > check = getDisplayMode(i);
 		if (check != 0)
 		{
-			int match =
-				std::abs(
-					(int)(check->getWidth() - criteria->getWidth()) +
-					(int)(check->getHeight() - criteria->getHeight()) +
-					(int)(check->getColorBits() - criteria->getColorBits()) * 10
+			int32_t match =
+				abs< int32_t >(
+					(int32_t)(check->getWidth() - criteria->getWidth()) +
+					(int32_t)(check->getHeight() - criteria->getHeight()) +
+					(int32_t)(check->getColorBits() - criteria->getColorBits()) * 10
 				);
 			if (match == 0)
 			{

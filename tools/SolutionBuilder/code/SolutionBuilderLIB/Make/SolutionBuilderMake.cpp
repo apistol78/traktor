@@ -289,7 +289,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 			std::wstring configurationIncludePath = *k;
 			if (configurationIncludePath.empty())
 				continue;
-			if (configurationIncludePath[0] != '`')
+			if (configurationIncludePath[0] != '`' && configurationIncludePath[0] != '\'')
 			{
 				Path includePath;
 				FileSystem::getInstance().getRelativePath(

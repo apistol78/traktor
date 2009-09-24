@@ -1,3 +1,4 @@
+#include <cstring>
 #include <sstream>
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/Stream.h"

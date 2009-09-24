@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Decoders/WavStreamDecoder.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Io/Stream.h"

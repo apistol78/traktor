@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Ui/Wx/BitmapWx.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"

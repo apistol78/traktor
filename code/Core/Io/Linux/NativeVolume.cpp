@@ -6,9 +6,9 @@
 #include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Io/Linux/NativeStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/StringUtils.h"
-#include "Core/Misc/WildCompare.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Misc/WildCompare.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -16,8 +16,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, Volume)
 
-NativeVolume::NativeVolume(const Path& currentDirectory) :
-	m_currentDirectory(currentDirectory)
+NativeVolume::NativeVolume(const Path& currentDirectory)
+:	m_currentDirectory(currentDirectory)
 {
 }
 
@@ -109,7 +109,7 @@ bool NativeVolume::remove(const Path& filename)
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
-	int status = mkdir(wstombs(directory).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	int status = mkdir(wstombs(directory.getPathName()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 	if (status != 0 && errno != EEXIST)
 		return false;
 	return true;
@@ -117,7 +117,7 @@ bool NativeVolume::makeDirectory(const Path& directory)
 
 bool NativeVolume::removeDirectory(const Path& directory)
 {
-	int status = rmdir(wstombs(directory).c_str());
+	int status = rmdir(wstombs(directory.getPathName()).c_str());
 	if (status != 0)
 		return false;
 	return true;

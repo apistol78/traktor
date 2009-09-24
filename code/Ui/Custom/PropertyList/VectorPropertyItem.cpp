@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include "Ui/Custom/PropertyList/VectorPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"

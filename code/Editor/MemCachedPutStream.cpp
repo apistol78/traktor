@@ -1,3 +1,4 @@
+#include <cstring>
 #include <sstream>
 #include "Editor/MemCachedPutStream.h"
 #include "Editor/MemCachedProto.h"

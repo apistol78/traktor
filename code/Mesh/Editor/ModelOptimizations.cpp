@@ -1,3 +1,4 @@
+#include <cstring>
 #include <algorithm>
 #include "Mesh/Editor/ModelOptimizations.h"
 #include "Model/Utilities.h"

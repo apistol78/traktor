@@ -1,3 +1,4 @@
+#include <cstring>
 #include <zlib.h>
 #include "Zip/InflateStream.h"
 #include "Core/Heap/GcNew.h"
@@ -16,7 +17,7 @@ public:
 	,	m_startPosition(stream->tell())
 	,	m_position(m_startPosition)
 	{
-		memset(&m_zstream, 0, sizeof(m_zstream));
+		std::memset(&m_zstream, 0, sizeof(m_zstream));
 		int rc = inflateInit(&m_zstream);
 		T_ASSERT (rc == Z_OK);
 	}

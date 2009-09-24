@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/AsyncStream.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
@@ -107,7 +108,7 @@ int AsyncStream::seek(SeekOriginType origin, int offset)
 					else
 					{
 						// Enough data in current chunk to complete seek.
-						memmove(front.second, &front.second[offset], front.first - offset);
+						std::memmove(front.second, &front.second[offset], front.first - offset);
 						front.first -= offset;
 						m_bytesInChunks -= offset;
 						break;
@@ -172,7 +173,7 @@ int AsyncStream::read(void* block, int nbytes)
 					m_chunksPopEvent.pulse();
 					
 					// Copy chunk data into output buffer.
-					memcpy(data, chunk.second, chunk.first);
+					std::memcpy(data, chunk.second, chunk.first);
 					delete[] chunk.second;
 					
 					// Update pointers and counters.
@@ -185,8 +186,8 @@ int AsyncStream::read(void* block, int nbytes)
 					Chunk& chunk = m_chunks.front();
 					
 					// Copy and move chunk data.
-					memcpy(data, chunk.second, nbytes);
-					memmove(chunk.second, &chunk.second[nbytes], chunk.first - nbytes);
+					std::memcpy(data, chunk.second, nbytes);
+					std::memmove(chunk.second, &chunk.second[nbytes], chunk.first - nbytes);
 					
 					// Update pointers and counters.
 					m_bytesInChunks -= nbytes;

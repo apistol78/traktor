@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"

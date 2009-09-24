@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Flash/Action/ActionDictionary.h"
 
 namespace traktor

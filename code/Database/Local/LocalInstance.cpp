@@ -1,3 +1,4 @@
+#include <cstring>
 #include <algorithm>
 #include "Database/Local/LocalInstance.h"
 #include "Database/Local/LocalInstanceMeta.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Mesh/Blend/BlendMesh.h"
 #include "Mesh/IMeshParameterCallback.h"
 #include "Render/IRenderSystem.h"

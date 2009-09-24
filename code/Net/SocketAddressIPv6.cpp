@@ -1,3 +1,4 @@
+#include <cstring>
 #include <sstream>
 #include "Net/SocketAddressIPv6.h"
 #include "Core/Misc/TString.h"

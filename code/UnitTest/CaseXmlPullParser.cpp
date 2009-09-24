@@ -1,3 +1,4 @@
+#include <cstring>
 #include "UnitTest/CaseXmlPullParser.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"

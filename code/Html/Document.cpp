@@ -1,3 +1,4 @@
+#include <cstring>
 #include <list>
 #include "Html/Document.h"
 #include "Html/Element.h"

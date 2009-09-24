@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionBoolean.h"
 #include "Flash/Action/ActionNumber.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Database/Remote/Messages/StmWrite.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"

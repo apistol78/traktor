@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Script/Any.h"
 #include "Core/Heap/Alloc.h"
 #include "Core/Misc/String.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <vorbis/codec.h>
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Core/Serialization/Serializable.h"

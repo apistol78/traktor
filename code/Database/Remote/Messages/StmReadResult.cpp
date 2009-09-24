@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Database/Remote/Messages/StmReadResult.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"

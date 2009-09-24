@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Net/SocketAddressIPv4.h"
 #include "Core/Misc/TString.h"
 

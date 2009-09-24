@@ -1,3 +1,4 @@
+#include <cstring>
 #include <mad.h>
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Core/Serialization/Serializable.h"

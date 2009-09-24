@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cmath>
 #include "Sound/SoundChannel.h"
 #include "Sound/IFilter.h"
@@ -21,7 +22,7 @@ SoundChannel::SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples)
 ,	m_repeat(0)
 ,	m_volume(1.0f)
 {
-	memset(m_outputSamples, 0, sizeof(m_outputSamples));
+	std::memset(m_outputSamples, 0, sizeof(m_outputSamples));
 	for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 		m_outputSamples[i] = static_cast< float* >(Alloc::acquireAlign(hwFrameSamples * sizeof(float), 16));
 }

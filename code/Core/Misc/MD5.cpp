@@ -1,3 +1,4 @@
+#include <cstring>
 #include <sstream>
 #include "Core/Misc/MD5.h"
 #include "Core/Serialization/Serializer.h"

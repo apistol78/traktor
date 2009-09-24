@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Database/Remote/Client/RemoteStream.h"
 #include "Database/Remote/Client/Connection.h"
 #include "Database/Remote/Messages/StmClose.h"

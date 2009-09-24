@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include <algorithm>
 #include "Editor/PipelineManager.h"
