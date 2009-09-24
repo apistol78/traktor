@@ -184,9 +184,8 @@ Heap::~Heap()
 	collectAll();
 
 #if defined(T_HEAP_CONCURRENT_COLLECT)
-	if (m_destructThread)
+	if (m_destructThread && m_destructThread->stop())
 	{
-		m_destructThread->stop(1000);
 		ThreadManager::getInstance().destroy(m_destructThread);
 		m_destructThread = 0;
 	}
@@ -678,9 +677,10 @@ void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
 void Heap::destructThread()
 {
 	T_ASSERT (m_destructThread);
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	Functor* task;
 
-	while (!m_destructThread->stopped())
+	while (!currentThread->stopped())
 	{
 		if (!m_destructQueueLock.acquire(100))
 			continue;
