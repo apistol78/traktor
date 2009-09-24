@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Filters/FFTFilter.h"
 #include "Core/Math/Hermite.h"
 #include "Core/Math/MathUtils.h"
@@ -237,9 +238,9 @@ void FFTFilter::apply(SoundBlock& outBlock)
 
 			fft(N, true, fr, fi, buf, dummy);
 
-			memmove(history, &history[n1], n2 * sizeof(float));
-			memcpy(&history[n2], &samples[j], n1 * sizeof(float));
-			memcpy(&samples[j], &buf[n2], n1 * sizeof(float));
+			std::memmove(history, &history[n1], n2 * sizeof(float));
+			std::memcpy(&history[n2], &samples[j], n1 * sizeof(float));
+			std::memcpy(&samples[j], &buf[n2], n1 * sizeof(float));
 		}
 	}
 }

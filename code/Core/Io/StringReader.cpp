@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/StringReader.h"
 #include "Core/Io/Stream.h"
 

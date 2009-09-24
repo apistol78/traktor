@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"

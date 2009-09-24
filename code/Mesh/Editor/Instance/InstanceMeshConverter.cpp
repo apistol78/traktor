@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"

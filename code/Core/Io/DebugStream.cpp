@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/DebugStream.h"
 #include "Core/Io/OutputStream.h"
 

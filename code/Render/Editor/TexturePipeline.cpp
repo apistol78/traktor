@@ -1,3 +1,4 @@
+#include <cstring>
 #include <squish.h>
 #include "Render/Editor/TexturePipeline.h"
 #include "Render/Editor/TextureAsset.h"

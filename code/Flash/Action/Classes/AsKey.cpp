@@ -1,3 +1,4 @@
+#include <cstring>
 #include <algorithm>
 #include "Flash/Action/Classes/AsKey.h"
 #include "Flash/Action/Classes/AsObject.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <cmath>
 #include "Flash/Action/ActionVM.h"
 #include "Flash/Action/ActionFrame.h"

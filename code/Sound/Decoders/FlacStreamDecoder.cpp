@@ -1,3 +1,4 @@
+#include <cstring>
 #include <FLAC/stream_decoder.h>
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Core/Serialization/Serializable.h"

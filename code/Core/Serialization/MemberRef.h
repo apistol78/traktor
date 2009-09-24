@@ -114,7 +114,7 @@ public:
 	MemberRefList(const std::wstring& name, value_type& ref)
 	:	MemberArray(name)
 	,	m_ref(ref)
-	,	m_value(value)
+	,	m_value(ref)
 	,	m_modified(false)
 	{
 	}

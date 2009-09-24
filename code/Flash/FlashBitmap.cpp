@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Flash/FlashBitmap.h"
 #include "Flash/Action/Classes/AsObject.h"
 #include "Drawing/Image.h"

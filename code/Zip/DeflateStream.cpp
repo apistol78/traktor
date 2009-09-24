@@ -1,3 +1,4 @@
+#include <cstring>
 #include <zlib.h>
 #include "Zip/DeflateStream.h"
 #include "Core/Heap/GcNew.h"

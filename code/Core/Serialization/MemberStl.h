@@ -1,6 +1,7 @@
 #ifndef traktor_MemberStl_H
 #define traktor_MemberStl_H
 
+#include <cstring>
 #include <vector>
 #include <list>
 #include <set>

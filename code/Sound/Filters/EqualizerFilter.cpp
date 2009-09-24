@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Filters/EqualizerFilter.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -12,8 +13,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EqualizerFilter", EqualizerFilter, IFilte
 EqualizerFilter::EqualizerFilter(float gain)
 :	m_gain(gain)
 {
-	memset(m_historySamples, 0, sizeof(m_historySamples));
-	memset(m_historyFiltered, 0, sizeof(m_historyFiltered));
+	std::memset(m_historySamples, 0, sizeof(m_historySamples));
+	std::memset(m_historyFiltered, 0, sizeof(m_historyFiltered));
 }
 
 void EqualizerFilter::apply(SoundBlock& outBlock)

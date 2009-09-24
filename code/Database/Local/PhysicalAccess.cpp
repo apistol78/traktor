@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Database/Local/PhysicalAccess.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"

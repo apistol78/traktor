@@ -1,3 +1,4 @@
+#include <cstring>
 #include <map>
 #include <limits>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"

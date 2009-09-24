@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include <algorithm>
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"

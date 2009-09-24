@@ -170,7 +170,7 @@ void AsMath::Math_random(CallArgs& ca)
 void AsMath::Math_round(CallArgs& ca)
 {
 	double x = ca.args[0].getNumberSafe();
-	double f = abs(x);
+	double f = std::abs(x);
 
 	if (f - int(f) >= 0.5)
 		f += 1.0;

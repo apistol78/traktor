@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/IndexBufferIAR.h"
 

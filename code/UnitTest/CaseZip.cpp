@@ -1,3 +1,4 @@
+#include <cstring>
 #include "UnitTest/CaseZip.h"
 #include "Zip/DeflateStream.h"
 #include "Zip/InflateStream.h"

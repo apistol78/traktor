@@ -1,4 +1,5 @@
 #include <cctype>
+#include <cstring>
 #include "Core/Platform.h"
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"

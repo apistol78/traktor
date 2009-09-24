@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Flash/FlashMovieFactoryTags.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashMovie.h"

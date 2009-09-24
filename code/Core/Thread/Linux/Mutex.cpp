@@ -1,3 +1,4 @@
+#include <cstring>
 #include <pthread.h>
 #include "Core/Thread/Mutex.h"
 #include "Core/Misc/TString.h"

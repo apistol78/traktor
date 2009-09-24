@@ -14,7 +14,7 @@
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF
 //#	define DRAWING_INCLUDE_EXR
-#else defined(__GNUC__)
+#elif defined(__GNUC__)
 #	define DRAWING_INCLUDE_PNG
 #	define DRAWING_INCLUDE_JPEG
 #	define DRAWING_INCLUDE_GIF

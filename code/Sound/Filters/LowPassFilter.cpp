@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Filters/LowPassFilter.h"
 
 namespace traktor
@@ -10,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.LowPassFilter", LowPassFilter, IFilter)
 LowPassFilter::LowPassFilter(float cutOff)
 :	m_cutOff(cutOff)
 {
-	memset(m_history, 0, sizeof(m_history));
+	std::memset(m_history, 0, sizeof(m_history));
 }
 
 void LowPassFilter::apply(SoundBlock& outBlock)

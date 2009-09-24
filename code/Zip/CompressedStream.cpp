@@ -1,3 +1,4 @@
+#include <cstring>
 #include <vector>
 #include <zlib.h>
 #include "Zip/CompressedStream.h"

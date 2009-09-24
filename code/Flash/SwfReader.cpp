@@ -1,4 +1,5 @@
 #include <cstdlib>
+#include <cstring>
 #include "Flash/SwfReader.h"
 #include "Core/Io/Stream.h"
 #include "Zip/InflateStream.h"

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/Filters/CombFilter.h"
 
 namespace traktor
@@ -14,8 +15,8 @@ CombFilter::CombFilter(uint32_t samplesLength, float feedback, float damp)
 	m_history[0].resize(samplesLength);
 	m_history[1].resize(samplesLength);
 
-	memset(&m_history[0][0], 0, samplesLength * sizeof(float));
-	memset(&m_history[1][0], 0, samplesLength * sizeof(float));
+	std::memset(&m_history[0][0], 0, samplesLength * sizeof(float));
+	std::memset(&m_history[1][0], 0, samplesLength * sizeof(float));
 
 	m_last[0] =
 	m_last[1] = 0.0f;

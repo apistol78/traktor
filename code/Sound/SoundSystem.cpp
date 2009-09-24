@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Sound/SoundSystem.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundChannel.h"
