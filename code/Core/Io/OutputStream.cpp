@@ -63,10 +63,19 @@ wchar_t* itoa__(T value, wchar_t* buf)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object)
 
-OutputStream::OutputStream(OutputStreamBuffer* buffer)
+OutputStream::OutputStream(OutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
+,	m_lineEnd(lineEnd)
 ,	m_pushIndent(false)
 {
+	if (m_lineEnd == LeAuto)
+	{
+#if defined(_WIN32)
+		m_lineEnd = LeWin;
+#else
+		m_lineEnd = LeUnix;
+#endif
+	}
 }
 
 OutputStream::~OutputStream()
@@ -86,6 +95,11 @@ void OutputStream::setBuffer(OutputStreamBuffer* buffer)
 OutputStreamBuffer* OutputStream::getBuffer() const
 {
 	return m_buffer;
+}
+
+OutputStream::LineEnd OutputStream::getLineEnd() const
+{
+	return m_lineEnd;
 }
 
 OutputStream& OutputStream::operator << (manipulator_t m)
@@ -198,10 +212,24 @@ void OutputStream::put(wchar_t ch)
 	}
 
 	m_internal.push_back(ch);
-	if (m_internal.size() >= c_flushInternalBufferSize || ch == L'\n')
+
+	bool eol = false;
+	switch (m_lineEnd)
+	{
+	case LeWin:
+	case LeUnix:
+		eol = bool(ch == L'\n');
+		break;
+
+	case LeMac:
+		eol = bool(ch == L'\r');
+		break;
+	}
+
+	if (m_internal.size() >= c_flushInternalBufferSize || eol)
 		flush();
 
-	if (ch == L'\n')
+	if (eol)
 		m_pushIndent = true;
 }
 
@@ -257,11 +285,20 @@ OutputStream& operator << (OutputStream& os, wchar_t ch)
 
 OutputStream& Endl(OutputStream& s)
 {
-#if defined(_WIN32) || defined(__APPLE__)
-	s.puts(L"\r\n");
-#else
-	s.put(L'\n');
-#endif
+	switch (s.getLineEnd())
+	{
+	case OutputStream::LeWin:
+		s.puts(L"\r\n");
+		break;
+
+	case OutputStream::LeMac:
+		s.put(L'\r');
+		break;
+
+	case OutputStream::LeUnix:
+		s.put(L'\n');
+		break;
+	}
 	return s;
 }
 

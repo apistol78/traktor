@@ -28,15 +28,25 @@ class T_DLLCLASS OutputStream : public Object
 	T_RTTI_CLASS(OutputStream)
 
 public:
+	enum LineEnd
+	{
+		LeAuto = 0,
+		LeWin = 1,
+		LeMac = 2,
+		LeUnix = 3
+	};
+
 	typedef OutputStream& (*manipulator_t)(OutputStream& s);
 
-	OutputStream(OutputStreamBuffer* buffer = 0);
+	OutputStream(OutputStreamBuffer* buffer = 0, LineEnd lineEnd = LeAuto);
 
 	virtual ~OutputStream();
 
 	void setBuffer(OutputStreamBuffer* buffer);
 
 	OutputStreamBuffer* getBuffer() const;
+
+	LineEnd getLineEnd() const;
 
 	OutputStream& operator << (manipulator_t m);
 
@@ -85,6 +95,7 @@ public:
 private:
 	Semaphore m_lock;
 	Ref< OutputStreamBuffer > m_buffer;
+	LineEnd m_lineEnd;
 	std::vector< wchar_t > m_indent;
 	bool m_pushIndent;
 	std::vector< wchar_t > m_internal;
