@@ -273,13 +273,13 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
 		createTreeConfigurationItem(treeConfigurations, project, *j);
 
-	RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::iterator j = items.begin(); j != items.end(); ++j)
+	const RefList< ProjectItem >& items = project->getItems();
+	for (RefList< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
 	{
 		if (is_a< Filter >(*j))
 			createTreeFilterItem(treeProject, project, static_cast< Filter* >(*j));
 	}
-	for (RefList< ProjectItem >::iterator j = items.begin(); j != items.end(); ++j)
+	for (RefList< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
 	{
 		if (is_a< ::File >(*j))
 			createTreeFileItem(treeProject, project, static_cast< ::File* >(*j));
@@ -304,13 +304,13 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 	treeFilter->setData(L"PROJECT", project);
 	treeFilter->setData(L"FILTER", filter);
 
-	RefList< ProjectItem >& items = filter->getItems();
-	for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+	const RefList< ProjectItem >& items = filter->getItems();
+	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (is_a< Filter >(*i))
 			createTreeFilterItem(treeFilter, project, static_cast< Filter* >(*i));
 	}
-	for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (is_a< ::File >(*i))
 			createTreeFileItem(treeFilter, project, static_cast< ::File* >(*i));

@@ -511,8 +511,8 @@ bool SolutionBuilderMsvc2005::generateProject(Solution* solution, Project* proje
 
 	s << L"\t<Files>" << Endl;
 
-	RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+	const RefList< ProjectItem >& items = project->getItems();
+	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 		addItem(s, solution, project, *i);
 
 	s << L"\t</Files>" << Endl;
@@ -538,8 +538,8 @@ void SolutionBuilderMsvc2005::addItem(
 		s << L"\t\t\tName=\"" << filter->getName() << L"\"" << Endl;
 		s << L"\t\t\t>" << Endl;
 
-		RefList< ProjectItem >& items = item->getItems();
-		for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+		const RefList< ProjectItem >& items = item->getItems();
+		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			addItem(s, solution, project, *i);
 
 		s << L"\t\t</Filter>" << Endl;
