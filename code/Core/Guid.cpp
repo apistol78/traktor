@@ -1,5 +1,9 @@
 #include <cctype>
 #include <cstring>
+#if defined(__APPLE__)
+#	include <mach/mach_time.h>
+#	include "Core/Math/Random.h"
+#endif
 #include "Core/Platform.h"
 #include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
@@ -87,6 +91,13 @@ Guid Guid::create()
 	
 	std::memcpy(guid.m_data, &tmp, 16);
 	guid.m_valid = true;
+#elif defined(__APPLE__)
+	uint64_t cputick = mach_absolute_time();
+	std::memcpy(guid.m_data, &cputick, sizeof(cputick));
+	
+	static Random s_rnd;
+	for (int i = 8; i < 16; ++i)
+		guid.m_data[i] = uint8_t(s_rnd.nextDouble() * 255);
 #endif
 
 	return guid;

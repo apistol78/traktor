@@ -13,12 +13,14 @@ LogTargetConsole::LogTargetConsole(const std::wstring& prefix)
 
 void LogTargetConsole::log(const std::wstring& str)
 {
-	std::wstringstream ss; ss << m_prefix << str << std::endl;
-#if !defined(WINCE) && !defined(_XBOX)
-	std::wcout << ss.str() << std::flush;
-#endif
 #if defined(_WIN32)
+	std::wstringstream ss; ss << m_prefix << str << std::endl;
+#	if !defined(WINCE) && !defined(_XBOX)
+	std::wcout << ss.str() << std::flush;
+#	endif
 	OutputDebugString(wstots(ss.str()).c_str());
+#else
+	std::wcout << m_prefix << str << std::endl;
 #endif
 }
 
@@ -56,31 +58,21 @@ int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 	for (int i = 0; i < count; ++i)
 	{
 		wchar_t c = buffer[i];
-#if defined(_WIN32)
-		if (c == L'\r')
-			continue;
-#endif
-#if !defined(__APPLE__)
 		if (c == L'\n')
-#else
-		if (c == L'\r')
-#endif
 		{
 			if (m_target)
 				m_target->log(m_ss.str());
 			m_ss.str(L"");
 		}
-		else
-		{
+		else if (c != L'\r')
 			m_ss << c;
-		}
 	}
 	return count;
 }
 
 LogStream::LogStream(LogTarget* target)
 :	m_streamBuffer(target)
-,	OutputStream(&m_streamBuffer)
+,	OutputStream(&m_streamBuffer, LeUnix)
 {
 }
 
