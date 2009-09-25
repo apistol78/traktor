@@ -13,7 +13,7 @@ public:
 
 	void removeItem(ProjectItem* item);
 
-	traktor::RefList< ProjectItem >& getItems();
+	const traktor::RefList< ProjectItem >& getItems() const;
 
 	virtual bool serialize(traktor::Serializer& s);
 

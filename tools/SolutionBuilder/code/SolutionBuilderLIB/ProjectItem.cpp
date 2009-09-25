@@ -2,7 +2,9 @@
 #include <Core/Serialization/MemberRef.h>
 #include "ProjectItem.h"
 
-T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, traktor::Serializable)
+using namespace traktor;
+
+T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, Serializable)
 
 void ProjectItem::addItem(ProjectItem* item)
 {
@@ -14,12 +16,12 @@ void ProjectItem::removeItem(ProjectItem* item)
 	m_items.remove(item);
 }
 
-traktor::RefList< ProjectItem >& ProjectItem::getItems()
+const RefList< ProjectItem >& ProjectItem::getItems() const
 {
 	return m_items;
 }
 
-bool ProjectItem::serialize(traktor::Serializer& s)
+bool ProjectItem::serialize(Serializer& s)
 {
-	return s >> traktor::MemberRefList< ProjectItem >(L"items", m_items);
+	return s >> MemberRefList< ProjectItem >(L"items", m_items);
 }

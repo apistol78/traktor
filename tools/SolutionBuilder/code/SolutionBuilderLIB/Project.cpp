@@ -83,7 +83,7 @@ void Project::removeItem(ProjectItem* item)
 	m_items.remove(item);
 }
 
-RefList< ProjectItem >& Project::getItems()
+const RefList< ProjectItem >& Project::getItems() const
 {
 	return m_items;
 }

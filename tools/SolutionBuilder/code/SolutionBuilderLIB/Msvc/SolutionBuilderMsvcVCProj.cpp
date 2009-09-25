@@ -113,8 +113,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 	os << L"<Files>" << Endl;
 	os << IncreaseIndent;
 
-	RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+	const RefList< ProjectItem >& items = project->getItems();
+	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (!addItem(context, solution, project, *i, os))
 			return false;
@@ -171,8 +171,8 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 		os << L"Name=\"" << filter->getName() << L"\"" << Endl;
 		os << L">" << Endl;
 
-		RefList< ProjectItem >& items = item->getItems();
-		for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+		const RefList< ProjectItem >& items = item->getItems();
+		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			addItem(context, solution, project, *i, os);
 
 		os << DecreaseIndent;

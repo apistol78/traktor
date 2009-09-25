@@ -230,8 +230,8 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 	// Collect all files.
 	std::vector< Path > files;
-	RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+	const RefList< ProjectItem >& items = project->getItems();
+	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (!collectFiles(project, *i, files))
 			return false;
@@ -352,8 +352,8 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 	Ref< Filter > filter = dynamic_type_cast< Filter* >(item);
 	if (filter)
 	{
-		RefList< ProjectItem >& items = item->getItems();
-		for (RefList< ProjectItem >::iterator i = items.begin(); i != items.end(); ++i)
+		const RefList< ProjectItem >& items = item->getItems();
+		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			collectFiles(
 				project,
 				*i,

@@ -10,11 +10,12 @@
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilderLIB/Msvc2005/SolutionBuilderMsvc2005.h"
+#include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 #include "SolutionBuilderLIB/SolutionLoader.h"
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.54"
+#define TITLE L"SolutionBuilder v1.6"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -41,6 +42,8 @@ int main(int argc, const char** argv)
 			builder = gc_new< SolutionBuilderMsvc >();
 		else if (ide == L"msvc2k5")
 			builder = gc_new< SolutionBuilderMsvc2005 >();
+		else if (ide == L"xcode")
+			builder = gc_new< SolutionBuilderXcode >();
 		else
 		{
 			traktor::log::error << L"Unknown format \"" << ide << L"\"" << Endl;
@@ -53,7 +56,7 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h') || cmdLine.getCount() <= 0)
 	{
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f=[format]	[\"msvc\"*, \"msvc2k5\", \"make\"]" << Endl;
+		traktor::log::info << L"\t-f=[format]	[\"msvc\"*, \"msvc2k5\", \"make\", \"xcode\"]" << Endl;
 		if (builder)
 			builder->showOptions();
 		return 0;
