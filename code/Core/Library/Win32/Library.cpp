@@ -2,7 +2,7 @@
 #include "Core/Library/Library.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #include <string>
 #include "Net/Http/HttpResponse.h"
 #include "Core/Io/Stream.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

@@ -1,5 +1,5 @@
 #include "Render/Dx10/HlslVariable.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

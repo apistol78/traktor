@@ -12,7 +12,7 @@
 #include "Database/Provider/IProviderBus.h"
 #include "Database/Provider/IProviderGroup.h"
 #include "Core/Io/Path.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

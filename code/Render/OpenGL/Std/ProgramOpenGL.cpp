@@ -10,7 +10,7 @@
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 #include "Core/Heap/GcNew.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 

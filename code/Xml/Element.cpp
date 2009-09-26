@@ -4,7 +4,7 @@
 #include "Xml/Attribute.h"
 #include "Xml/Text.h"
 #include "Core/Heap/GcNew.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Io/StringOutputStream.h"
 
 namespace traktor

@@ -6,7 +6,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/System/OS.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

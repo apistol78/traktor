@@ -1,6 +1,6 @@
 #include "Core/Timer/Profiler.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

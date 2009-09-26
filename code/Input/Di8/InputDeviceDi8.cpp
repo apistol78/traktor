@@ -1,5 +1,5 @@
 #include "Input/Di8/InputDeviceDi8.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

@@ -7,7 +7,7 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseEvent.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

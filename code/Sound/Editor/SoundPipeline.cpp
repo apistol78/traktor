@@ -15,7 +15,7 @@
 #include "Core/Io/Stream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

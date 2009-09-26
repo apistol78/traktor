@@ -8,7 +8,7 @@
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Core/Heap/GcNew.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <string>
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/TString.h"
 
