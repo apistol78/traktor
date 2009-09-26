@@ -13,7 +13,7 @@ extern "C"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Io/Path.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

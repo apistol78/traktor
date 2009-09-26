@@ -39,7 +39,7 @@
 #include "World/Entity/EntityUpdate.h"
 #include "World/Entity/Entity.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 // Resources

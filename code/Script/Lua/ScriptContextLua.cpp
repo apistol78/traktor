@@ -3,7 +3,7 @@
 #include "Script/IScriptClass.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Split.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 extern "C"

@@ -1,6 +1,6 @@
 #include "Model/Formats/ModelFormat.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

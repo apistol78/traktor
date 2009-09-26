@@ -3,7 +3,7 @@
 #include "Flash/Action/Classes/AsObject.h"
 #include "Flash/Action/ActionNumber.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

@@ -2,7 +2,7 @@
 #include "Net/SocketAddressIPv6.h"
 #include "Net/TcpSocket.h"
 #include "Core/Misc/Split.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

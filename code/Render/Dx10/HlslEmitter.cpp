@@ -3,7 +3,7 @@
 #include "Render/Dx10/HlslContext.h"
 #include "Render/VertexElement.h"
 #include "Render/Nodes.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

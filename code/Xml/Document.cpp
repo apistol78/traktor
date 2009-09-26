@@ -7,7 +7,7 @@
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf8Encoding.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 
 namespace traktor
 {

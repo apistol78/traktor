@@ -43,7 +43,7 @@
 #include "I18N/Text.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Misc/String.h"
+#include "Core/Misc/StringUtilities.h"
 #include "Core/Log/Log.h"
 
 // Resources
