@@ -4,7 +4,7 @@
 #include "Database/Local/Context.h"
 #include "Database/Local/PhysicalAccess.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

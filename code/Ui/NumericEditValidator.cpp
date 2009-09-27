@@ -1,5 +1,5 @@
 #include "Ui/NumericEditValidator.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

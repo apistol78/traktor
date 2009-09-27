@@ -7,7 +7,7 @@
 #include "Core/Heap/Alloc.h"
 #include "Core/Heap/BlockAllocator.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

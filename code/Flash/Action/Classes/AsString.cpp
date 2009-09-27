@@ -5,7 +5,7 @@
 #include "Flash/Action/ActionArray.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 
 namespace traktor

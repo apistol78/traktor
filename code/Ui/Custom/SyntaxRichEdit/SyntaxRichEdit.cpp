@@ -1,7 +1,7 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxRichEdit.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguage.h"
 #include "Ui/MethodHandler.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

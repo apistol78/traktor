@@ -5,7 +5,7 @@
 #include "Ui/Custom/Graph/InputNodeShape.h"
 #include "Ui/Custom/Graph/OutputNodeShape.h"
 #include "I18N/Text.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

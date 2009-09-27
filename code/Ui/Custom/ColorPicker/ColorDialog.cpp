@@ -10,7 +10,7 @@
 #include "Ui/NumericEditValidator.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

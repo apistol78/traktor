@@ -6,7 +6,7 @@
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Misc/Split.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Log/Log.h"
 

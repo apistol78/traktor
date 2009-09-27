@@ -13,7 +13,7 @@
 #include "Net/SocketAddressIPv4.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Misc/WildCompare.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
