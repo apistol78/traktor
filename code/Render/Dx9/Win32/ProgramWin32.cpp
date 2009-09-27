@@ -11,7 +11,7 @@
 #include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/HlslProgram.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 

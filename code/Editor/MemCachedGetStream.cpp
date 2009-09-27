@@ -4,7 +4,7 @@
 #include "Editor/MemCachedProto.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 

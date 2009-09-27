@@ -4,7 +4,7 @@
 #include "Core/Io/Stream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 

@@ -8,7 +8,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
 

@@ -2,7 +2,7 @@
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Enums.h"
 #include "Core/Misc/Split.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 extern HINSTANCE g_hInstance;
 

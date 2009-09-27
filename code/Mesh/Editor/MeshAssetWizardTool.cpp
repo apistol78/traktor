@@ -8,7 +8,7 @@
 #include "Ui/FileDialog.h"
 #include "Ui/MessageBox.h"
 #include "I18N/Text.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

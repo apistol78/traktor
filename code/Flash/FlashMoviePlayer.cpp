@@ -12,7 +12,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Math/Const.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

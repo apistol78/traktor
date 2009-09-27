@@ -4,7 +4,7 @@
 #include "Render/Dx10/HlslContext.h"
 #include "Render/ShaderGraph.h"
 #include "Render/Nodes.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

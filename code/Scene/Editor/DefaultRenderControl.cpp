@@ -15,7 +15,7 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "I18N/Text.h"
 #include "Core/Heap/GcNew.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {

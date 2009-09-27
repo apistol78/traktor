@@ -1,5 +1,5 @@
-#ifndef traktor_StringUtilities_H
-#define traktor_StringUtilities_H
+#ifndef traktor_String_H
+#define traktor_String_H
 
 #include <cctype>
 #include <string>
@@ -192,4 +192,4 @@ inline ValueType parseString(const std::wstring& text)
 
 }
 
-#endif	// traktor_StringUtilities_H
+#endif	// traktor_String_H

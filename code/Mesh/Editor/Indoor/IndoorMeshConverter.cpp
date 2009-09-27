@@ -11,7 +11,7 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Half.h"

@@ -7,7 +7,7 @@
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
-#include "Core/Misc/StringUtilities.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
