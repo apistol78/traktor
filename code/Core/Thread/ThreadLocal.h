@@ -1,7 +1,7 @@
 #ifndef traktor_ThreadLocal_H
 #define traktor_ThreadLocal_H
 
-#include <Core/Object.h>
+#include "Core/Object.h"
 
 namespace traktor
 {
