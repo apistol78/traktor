@@ -362,7 +362,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
 
 			std::wstring extension = toLower(j->getExtension());
-			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
+			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm" || extension == L"png")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Sources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 			else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Headers */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
@@ -394,6 +394,23 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		}
 	}
 	s << L"/* End PBXBuildFile section */" << Endl;
+	s << Endl;
+
+	std::wstring binaryIncludeBuildRuleUid = createNewUid();
+
+	s << L"/* Begin PBXBuildRule section */" << Endl;
+	s << L"\t\t" << binaryIncludeBuildRuleUid << L" /* PBXBuildRule */ = {" << Endl;
+	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
+	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
+	s << L"\t\t\tfilePatterns = \"*.png\";" << Endl;
+	s << L"\t\t\tfileType = pattern.proxy;" << Endl;
+	s << L"\t\t\tisEditable = 1;" << Endl;
+	s << L"\t\t\toutputFiles = (" << Endl;
+	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
+	s << L"\t\t\t);" << Endl;
+	s << L"\t\t\tscript = \"~/private/traktor/bin/MacOSX/BinaryInclude ${INPUT_FILE_PATH} ${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t};" << Endl;
+	s << L"/* End PBXBuildRule section */" << Endl;
 	s << Endl;
 
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
@@ -620,6 +637,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
+		s << L"\t\t\t\t" << binaryIncludeBuildRuleUid << L" /* PBXBuildRule */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
@@ -751,7 +769,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 		{
 			std::wstring extension = toLower(j->getExtension());
-			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
+			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm" || extension == L"png")
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << j->getFileName() << L" */," << Endl;
 		}
 
@@ -835,11 +853,9 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 				if (!FileSystem::getInstance().getRelativePath(includePath, projectPath, relativeIncludePath))
 					relativeIncludePath = includePath;
 
-				if (j != includePaths.begin())
-					s << L" ";
-				s << relativeIncludePath.getPathName();
+				s << relativeIncludePath.getPathName() << L" ";
 			}
-			s << L"\";" << Endl;
+			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
 			s << L"\t\t\t\tPREBINDING = NO;" << Endl;
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
@@ -883,11 +899,9 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 				if (!FileSystem::getInstance().getRelativePath(includePath, projectPath, relativeIncludePath))
 					relativeIncludePath = includePath;
 
-				if (j != includePaths.begin())
-					s << L" ";
-				s << relativeIncludePath.getPathName();
+				s << relativeIncludePath.getPathName() << L" ";
 			}
-			s << L"\";" << Endl;
+			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
 			s << L"\t\t\t\tPREBINDING = NO;" << Endl;
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
