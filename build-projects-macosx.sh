@@ -1,5 +1,3 @@
 #!/bin/sh
 
-mkdir $TRAKTOR_HOME/build
-
-$TRAKTOR_HOME/bin/MacOSX/SolutionBuilder -f=make $TRAKTOR_HOME/TraktorMacOSX.xms -d=gnu -p=osx
+$TRAKTOR_HOME/bin/MacOSX/SolutionBuilder -f=xcode $TRAKTOR_HOME/TraktorMacOSX.xms -d=DebugStatic -r=ReleaseStatic
