@@ -13,7 +13,9 @@ bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
 	if (sampleCount > 0)
 	{
 		outSampleDesc.Count = 0;
-		for (uint32_t i = 1; i <= D3D10_MAX_MULTISAMPLE_SAMPLE_COUNT; ++i)
+		outSampleDesc.Quality = 0;
+
+		for (int32_t i = int32_t(sampleCount); i >= 1; --i)
 		{
 			UINT msQuality = 0;
 
@@ -26,9 +28,11 @@ bool setupSampleDesc(ID3D10Device* d3dDevice, uint32_t sampleCount, DXGI_FORMAT 
 			if (SUCCEEDED(hr) && msQuality > 0)
 			{
 				outSampleDesc.Count = i;
-				outSampleDesc.Quality = msQuality;
+				outSampleDesc.Quality = msQuality - 1;
+				break;
 			}
 		}
+
 		if (!outSampleDesc.Count)
 			return false;
 	}
