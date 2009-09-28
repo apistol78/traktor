@@ -143,7 +143,7 @@ namespace
 
 		std::wstring getProjectUid() const { return calculateUid(m_solution, -1); }
 
-		std::wstring getCustomBuildRuleUid() const { return calculateUid(m_solution, -2); }
+		std::wstring getCustomBuildRuleUid(int32_t index) const { return calculateUid(m_solution, index); }
 
 		std::wstring getBuildConfigurationListUid() const { return calculateUid(m_solution, -3); }
 
@@ -396,7 +396,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
 
 			std::wstring extension = toLower(j->getExtension());
-			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm" || extension == L"png")
+			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm" || extension == L"png" || extension == L"xdi")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Sources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 			else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Headers */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
@@ -425,6 +425,36 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 
 				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(externalDependency->getProject()) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
 			}
+
+			Ref< Configuration > configurations[2];
+			getConfigurations(*i, configurations);
+
+			std::set< std::wstring > externalFrameworks;
+			if (configurations[0])
+			{
+				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+				for (std::vector< std::wstring >::const_iterator k = libraries.begin(); k != libraries.end(); ++k)
+				{
+					if (endsWith(*k, L".framework"))
+						externalFrameworks.insert(*k);
+				}
+			}
+			if (configurations[1])
+			{
+				const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
+				for (std::vector< std::wstring >::const_iterator k = libraries.begin(); k != libraries.end(); ++k)
+				{
+					if (endsWith(*k, L".framework"))
+						externalFrameworks.insert(*k);
+				}
+			}
+			
+			for (std::set< std::wstring >::const_iterator k = externalFrameworks.begin(); k != externalFrameworks.end(); ++k)
+			{
+				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*k);
+				std::wstring fileUid = FileUids(*k).getFileUid();
+				s << L"\t\t" << buildFileUid << L" /* " << *k << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << *k << L" */; };" << Endl;
+			}
 		}
 	}
 	s << L"/* End PBXBuildFile section */" << Endl;
@@ -434,10 +464,21 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const Solution* solution) const
 {
 	s << L"/* Begin PBXBuildRule section */" << Endl;
-	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid() << L" /* PBXBuildRule */ = {" << Endl;
+	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
 	s << L"\t\t\tfilePatterns = \"*.png\";" << Endl;
+	s << L"\t\t\tfileType = pattern.proxy;" << Endl;
+	s << L"\t\t\tisEditable = 1;" << Endl;
+	s << L"\t\t\toutputFiles = (" << Endl;
+	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
+	s << L"\t\t\t);" << Endl;
+	s << L"\t\t\tscript = \"~/private/traktor/bin/MacOSX/BinaryInclude ${INPUT_FILE_PATH} ${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t};" << Endl;
+	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */ = {" << Endl;
+	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
+	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
+	s << L"\t\t\tfilePatterns = \"*.xdi\";" << Endl;
 	s << L"\t\t\tfileType = pattern.proxy;" << Endl;
 	s << L"\t\t\tisEditable = 1;" << Endl;
 	s << L"\t\t\toutputFiles = (" << Endl;
@@ -542,6 +583,39 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 			}
 		}
 	}
+	
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		Ref< Configuration > configurations[2];
+		getConfigurations(*i, configurations);
+
+		std::set< std::wstring > externalFrameworks;
+		if (configurations[0])
+		{
+			const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+			{
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
+			}
+		}
+		if (configurations[1])
+		{
+			const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+			{
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
+			}
+		}
+		
+		for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+		{
+			std::wstring fileUid = FileUids(*j).getFileUid();
+			s << L"\t\t" << fileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " << *j << L"; path = /System/Library/Frameworks/" << *j << L"; sourceTree = \"<absolute>\"; };" << Endl;
+		}
+	}
+	
 	s << L"/* End PBXFileReference section */" << Endl;
 	s << Endl;
 }
@@ -571,6 +645,35 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 					Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
 					s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(externalDependency->getProject()) << L" /* " << ProjectUids(externalDependency->getProject()).getProductName(targetFormat) << L" in Frameworks */," << Endl;
 				}
+			}
+			
+			Ref< Configuration > configurations[2];
+			getConfigurations(*i, configurations);
+
+			std::set< std::wstring > externalFrameworks;
+			if (configurations[0])
+			{
+				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+				for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+				{
+					if (endsWith(*j, L".framework"))
+						externalFrameworks.insert(*j);
+				}
+			}
+			if (configurations[1])
+			{
+				const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
+				for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+				{
+					if (endsWith(*j, L".framework"))
+						externalFrameworks.insert(*j);
+				}
+			}
+			
+			for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+			{
+				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
+				s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
 			}
 
 			s << L"\t\t\t);" << Endl;
@@ -684,7 +787,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
-		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid() << L" /* PBXBuildRule */," << Endl;
+		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
+		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
@@ -828,7 +932,13 @@ void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, 
 		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 		{
 			std::wstring extension = toLower(j->getExtension());
-			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm" || extension == L"png")
+			if (extension == L"png" || extension == L"xdi")
+				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << j->getFileName() << L" */," << Endl;
+		}
+		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
+		{
+			std::wstring extension = toLower(j->getExtension());
+			if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << j->getFileName() << L" */," << Endl;
 		}
 
