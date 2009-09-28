@@ -22,7 +22,7 @@ private:
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
 	
-	void getConfigurations(const Project* project, traktor::RefList< Configuration >& outConfigurations) const;
+	void getConfigurations(const Project* project, traktor::Ref< Configuration > outConfigurations[2]) const;
 	
 	Configuration::TargetFormat getTargetFormat(const Project* project) const;
 };
