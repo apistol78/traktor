@@ -1,10 +1,4 @@
 @echo off
-
-
 call %~dp0config.bat
+%TRAKTOR_HOME%\bin\solutionbuilder -f=xcode TraktorMacOSX.xms -d=DebugStatic -r=ReleaseStatic
 
-
-mkdir %TRAKTOR_HOME%\build
-
-
-%TRAKTOR_HOME%\bin\solutionbuilder -f=make TraktorMacOSX.xms -d=gnu -p=osx
