@@ -39,7 +39,7 @@ namespace
 	std::map< std::pair< const Object*, int32_t >, std::wstring > g_objectUids;
 	std::map< std::pair< std::wstring, int32_t >, std::wstring > g_fileUids;
 	std::map< std::pair< const Object*, std::wstring >, std::wstring > g_objectFileUids;
-	std::map< typename triplet< const Object*, const Object*, int32_t >::type_t, std::wstring > g_objectObjectUids;
+	std::map< triplet< const Object*, const Object*, int32_t >::type_t, std::wstring > g_objectObjectUids;
 
 	std::wstring createNewUid()
 	{
@@ -109,7 +109,7 @@ namespace
 
 	std::wstring calculateUid(const Object* object1, const Object* object2, int32_t index)
 	{
-		std::map< typename triplet< const Object*, const Object*, int32_t >::type_t, std::wstring >::const_iterator i = g_objectObjectUids.find(triplet< const Object*, const Object*, int32_t >::make_triplet(object1, object2, index));
+		std::map< triplet< const Object*, const Object*, int32_t >::type_t, std::wstring >::const_iterator i = g_objectObjectUids.find(triplet< const Object*, const Object*, int32_t >::make_triplet(object1, object2, index));
 		if (i != g_objectObjectUids.end())
 			return i->second;
 
