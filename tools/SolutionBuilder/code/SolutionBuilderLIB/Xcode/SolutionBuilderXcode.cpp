@@ -7,6 +7,7 @@
 #include <Core/Serialization/DeepHash.h>
 #include <Core/Misc/Adler32.h>
 #include <Core/Guid.h>
+#include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
@@ -148,31 +149,22 @@ namespace
 		s << L"\t\t};" << Endl;
 	}
 
-	void getConfigurations(const Project* projects, bool generateStatic, RefList< Configuration >& outConfigurations)
-	{
-		if (!generateStatic)
-		{
-			if (projects->getConfiguration(L"DebugShared"))
-				outConfigurations.push_back(projects->getConfiguration(L"DebugShared"));
-			if (projects->getConfiguration(L"ReleaseShared"))
-				outConfigurations.push_back(projects->getConfiguration(L"ReleaseShared"));
-		}
-		else
-		{
-			if (projects->getConfiguration(L"DebugStatic"))
-				outConfigurations.push_back(projects->getConfiguration(L"DebugStatic"));
-			if (projects->getConfiguration(L"ReleaseStatic"))
-				outConfigurations.push_back(projects->getConfiguration(L"ReleaseStatic"));
-		}
-	}
-
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode", SolutionBuilderXcode, SolutionBuilder)
 
 bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 {
-	m_generateStatic = cmdLine.hasOption('s');
+	if (cmdLine.hasOption('d'))
+		m_debugConfig = cmdLine.getOption('d').getString();
+	else
+		m_debugConfig = L"Debug";
+
+	if (cmdLine.hasOption('r'))
+		m_releaseConfig = cmdLine.getOption('r').getString();
+	else
+		m_releaseConfig = L"Release";
+		
 	return true;
 }
 
@@ -184,11 +176,6 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	std::set< Path > files;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectProjectFiles(*i, files);
-
-	// Collect all available configurations.
-	std::set< std::wstring > solutionConfigurations;
-	solutionConfigurations.insert(L"Debug");
-	solutionConfigurations.insert(L"Release");
 
 	// Global identifiers.
 	std::wstring solutionProjectUid = calculateUid(solution, -1);
@@ -230,25 +217,22 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 			collectProjectFiles(*i, projectFiles);
 
 			RefList< Configuration > configurations;
-			getConfigurations(*i, m_generateStatic, configurations);
+			getConfigurations(*i, configurations);
 			
-			for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+			for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 			{
-				for (std::set< Path >::const_iterator k = projectFiles.begin(); k != projectFiles.end(); ++k)
+				std::wstring extension = toLower(j->getExtension());
+				if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
 				{
-					std::wstring extension = toLower(k->getExtension());
-					if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
-					{
-						std::wstring fileUid = calculateUid(*k, -2);
-						std::wstring buildFileUid = calculateUid(*j, *k);
-						s << L"\t\t" << buildFileUid << L" /* " << k->getFileName() << L" in Source */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << k->getFileName() << L" */; };" << Endl;
-					}
-					else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
-					{
-						std::wstring fileUid = calculateUid(*k, -2);
-						std::wstring buildFileUid = calculateUid(*j, *k);
-						s << L"\t\t" << buildFileUid << L" /* " << k->getFileName() << L" in Header */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << k->getFileName() << L" */; };" << Endl;
-					}
+					std::wstring fileUid = calculateUid(*j, -1);
+					std::wstring buildFileUid = calculateUid(*j, -2);
+					s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Source */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
+				}
+				else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
+				{
+					std::wstring fileUid = calculateUid(*j, -1);
+					std::wstring buildFileUid = calculateUid(*j, -2);
+					s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Header */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 				}
 			}
 		}
@@ -262,7 +246,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		s << L"/* Begin PBXFileReference section */" << Endl;
 		for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
 		{
-			std::wstring fileUid = calculateUid(*i, -2);
+			std::wstring fileUid = calculateUid(*i, -1);
 
 			Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
 			Path filePath = FileSystem::getInstance().getAbsolutePath(*i);
@@ -276,38 +260,29 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 		for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
-			std::set< Configuration::TargetFormat > formats;
+			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
-			RefList< Configuration > configurations;
-			getConfigurations(*i, m_generateStatic, configurations);
+			std::wstring projectTargetListUid = calculateUid(*i, -2);
+			std::wstring projectTargetProductUid = calculateUid(*i, -3);
+			std::wstring projectTargetProductName;
 
-			for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
-				formats.insert((*j)->getTargetFormat());
-
-			for (std::set< Configuration::TargetFormat >::const_iterator j = formats.begin(); j != formats.end(); ++j)
+			switch (targetFormat)
 			{
-				std::wstring projectTargetListUid = calculateUid(*i, 2000 + int(*j));
-				std::wstring projectTargetProductUid = calculateUid(*i, 3000 + int(*j));
-				std::wstring projectTargetProductName;
-
-				switch (*j)
-				{
-				case Configuration::TfStaticLibrary:
-					projectTargetProductName = L"lib" + (*i)->getName() + L".a";
-					break;
-				case Configuration::TfSharedLibrary:
-					projectTargetProductName = L"lib" + (*i)->getName() + L".dylib";
-					break;
-				case Configuration::TfExecutable:
-					projectTargetProductName = (*i)->getName();
-					break;
-				case Configuration::TfExecutableConsole:
-					projectTargetProductName = (*i)->getName();
-					break;
-				}
-
-				s << L"\t\t" << projectTargetProductUid << L" /* " << projectTargetProductName << L" */ = { isa = PBXFileReference; includeInIndex = 0; path = " << projectTargetProductName << L"; sourceTree = BUILT_PRODUCTS_DIR; };" << Endl;
+			case Configuration::TfStaticLibrary:
+				projectTargetProductName = L"lib" + (*i)->getName() + L".a";
+				break;
+			case Configuration::TfSharedLibrary:
+				projectTargetProductName = L"lib" + (*i)->getName() + L".dylib";
+				break;
+			case Configuration::TfExecutable:
+				projectTargetProductName = (*i)->getName();
+				break;
+			case Configuration::TfExecutableConsole:
+				projectTargetProductName = (*i)->getName();
+				break;
 			}
+
+			s << L"\t\t" << projectTargetProductUid << L" /* " << projectTargetProductName << L" */ = { isa = PBXFileReference; includeInIndex = 0; path = " << projectTargetProductName << L"; sourceTree = BUILT_PRODUCTS_DIR; };" << Endl;
 		}
 		s << L"/* End PBXFileReference section */" << Endl;
 		s << Endl;
@@ -359,58 +334,52 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		s << L"/* Begin PBXNativeTarget section */" << Endl;
 		for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
-			RefList< Configuration > configurations;
-			getConfigurations(*i, m_generateStatic, configurations);
-
-			for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+			
+			std::wstring projectTargetUid = calculateUid(*i, -1);
+			std::wstring projectTargetListUid = calculateUid(*i, -2);
+			std::wstring projectTargetProductUid = calculateUid(*i, -3);
+			std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*i, -4);
+			std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*i, -5);
+			std::wstring projectTargetProductName;
+			std::wstring projectTargetProductType;
+			
+			switch (targetFormat)
 			{
-				Configuration::TargetFormat targetFormat = (*j)->getTargetFormat();
-
-				std::wstring projectTargetUid = calculateUid(*j, -1);
-				std::wstring projectTargetListUid = calculateUid(*j, -2);
-				std::wstring projectTargetProductUid = calculateUid(*i, 1000 + int(targetFormat));
-				std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*j, -3);
-				std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*j, -4);
-				std::wstring projectTargetProductName;
-				std::wstring projectTargetProductType;
-				
-				switch (targetFormat)
-				{
-				case Configuration::TfStaticLibrary:
-					projectTargetProductName = L"lib" + (*i)->getName() + L".a";
-					projectTargetProductType = L"com.apple.product-type.library.static";
-					break;
-				case Configuration::TfSharedLibrary:
-					projectTargetProductName = L"lib" + (*i)->getName() + L".dylib";
-					projectTargetProductType = L"com.apple.product-type.library.dynamic";
-					break;
-				case Configuration::TfExecutable:
-					projectTargetProductName = (*i)->getName();
-					projectTargetProductType = L"com.apple.product-type.application";
-					break;
-				case Configuration::TfExecutableConsole:
-					projectTargetProductName = (*i)->getName();
-					projectTargetProductType = L"com.apple.product-type.tool";
-					break;
-				}
-				
-				s << L"\t\t" << projectTargetUid << L" /* " << (*i)->getName() << L" */ = {" << Endl;
-				s << L"\t\t\tisa = PBXNativeTarget;" << Endl;
-				s << L"\t\t\tbuildConfigurationList = " << projectTargetListUid << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */;" << Endl;
-				s << L"\t\t\tbuildPhases = (" << Endl;
-				s << L"\t\t\t\t" << projectTargetHeadersBuildPhaseUid << L" /* Headers */," << Endl;
-				s << L"\t\t\t\t" << projectTargetSourcesBuildPhaseUid << L" /* Sources */," << Endl;
-				s << L"\t\t\t);" << Endl;
-				s << L"\t\t\tbuildRules = (" << Endl;
-				s << L"\t\t\t);" << Endl;
-				s << L"\t\t\tdependencies = (" << Endl;
-				s << L"\t\t\t);" << Endl;
-				s << L"\t\t\tname = " << (*i)->getName() << L";" << Endl;
-				s << L"\t\t\tproductName = " << (*i)->getName() << L";" << Endl;
-				s << L"\t\t\tproductReference = " << projectTargetProductUid << L" /* " << projectTargetProductName << L" */;" << Endl;
-				s << L"\t\t\tproductType = \"" << projectTargetProductType << L"\";" << Endl;
-				s << L"\t\t};" << Endl;
+			case Configuration::TfStaticLibrary:
+				projectTargetProductName = L"lib" + (*i)->getName() + L".a";
+				projectTargetProductType = L"com.apple.product-type.library.static";
+				break;
+			case Configuration::TfSharedLibrary:
+				projectTargetProductName = L"lib" + (*i)->getName() + L".dylib";
+				projectTargetProductType = L"com.apple.product-type.library.dynamic";
+				break;
+			case Configuration::TfExecutable:
+				projectTargetProductName = (*i)->getName();
+				projectTargetProductType = L"com.apple.product-type.application";
+				break;
+			case Configuration::TfExecutableConsole:
+				projectTargetProductName = (*i)->getName();
+				projectTargetProductType = L"com.apple.product-type.tool";
+				break;
 			}
+			
+			s << L"\t\t" << projectTargetUid << L" /* " << (*i)->getName() << L" */ = {" << Endl;
+			s << L"\t\t\tisa = PBXNativeTarget;" << Endl;
+			s << L"\t\t\tbuildConfigurationList = " << projectTargetListUid << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */;" << Endl;
+			s << L"\t\t\tbuildPhases = (" << Endl;
+			s << L"\t\t\t\t" << projectTargetHeadersBuildPhaseUid << L" /* Headers */," << Endl;
+			s << L"\t\t\t\t" << projectTargetSourcesBuildPhaseUid << L" /* Sources */," << Endl;
+			s << L"\t\t\t);" << Endl;
+			s << L"\t\t\tbuildRules = (" << Endl;
+			s << L"\t\t\t);" << Endl;
+			s << L"\t\t\tdependencies = (" << Endl;
+			s << L"\t\t\t);" << Endl;
+			s << L"\t\t\tname = " << (*i)->getName() << L";" << Endl;
+			s << L"\t\t\tproductName = " << (*i)->getName() << L";" << Endl;
+			s << L"\t\t\tproductReference = " << projectTargetProductUid << L" /* " << projectTargetProductName << L" */;" << Endl;
+			s << L"\t\t\tproductType = \"" << projectTargetProductType << L"\";" << Endl;
+			s << L"\t\t};" << Endl;
 		}
 		s << L"/* End PBXNativeTarget section */" << Endl;
 		s << Endl;
@@ -429,14 +398,8 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t\ttargets = (" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		RefList< Configuration > configurations;
-		getConfigurations(*i, m_generateStatic, configurations);
-
-		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
-		{
-			std::wstring projectTargetUid = calculateUid(*j, -1);
-			s << L"\t\t\t\t" << projectTargetUid << L" /* " << (*i)->getName() << L" */," << Endl;
-		}
+		std::wstring projectTargetUid = calculateUid(*i, -1);
+		s << L"\t\t\t\t" << projectTargetUid << L" /* " << (*i)->getName() << L" */," << Endl;
 	}
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t};" << Endl;
@@ -448,34 +411,36 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		s << L"/* Begin PBXHeadersBuildPhase section */" << Endl;
 		for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
-			RefList< Configuration > configurations;
-			getConfigurations(*i, m_generateStatic, configurations);
+			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+			
+			std::wstring projectTargetUid = calculateUid(*i, -1);
+			std::wstring projectTargetListUid = calculateUid(*i, -2);
+			std::wstring projectTargetProductUid = calculateUid(*i, -3);
+			std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*i, -4);
+			std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*i, -5);
+			std::wstring projectTargetProductName;
+			std::wstring projectTargetProductType;
 
-			for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+			s << L"\t\t" << projectTargetHeadersBuildPhaseUid << L" /* Headers */ = {" << Endl;
+			s << L"\t\t\tisa = PBXHeadersBuildPhase;" << Endl;
+			s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
+			s << L"\t\t\tfiles = (" << Endl;
+
+			std::set< Path > projectFiles;
+			collectProjectFiles(*i, projectFiles);
+			for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 			{
-				std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*j, -3);
-
-				s << L"\t\t" << projectTargetHeadersBuildPhaseUid << L" /* Headers */ = {" << Endl;
-				s << L"\t\t\tisa = PBXHeadersBuildPhase;" << Endl;
-				s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
-				s << L"\t\t\tfiles = (" << Endl;
-
-				std::set< Path > projectFiles;
-				collectProjectFiles(*i, projectFiles);
-				for (std::set< Path >::const_iterator k = projectFiles.begin(); k != projectFiles.end(); ++k)
+				std::wstring extension = toLower(j->getExtension());
+				if (extension == L"h" || extension == L"hh" || extension == L"hpp")
 				{
-					std::wstring extension = toLower(k->getExtension());
-					if (extension == L"h" || extension == L"hh" || extension == L"hpp")
-					{
-						std::wstring buildFileUid = calculateUid(*j, *k);
-						s << L"\t\t\t\t" << buildFileUid << L" /* " << k->getFileName() << L" */," << Endl;
-					}
+					std::wstring buildFileUid = calculateUid(*j, -2);
+					s << L"\t\t\t\t" << buildFileUid << L" /* " << j->getFileName() << L" */," << Endl;
 				}
-
-				s << L"\t\t\t);" << Endl;
-				s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
-				s << L"\t\t};" << Endl;
 			}
+
+			s << L"\t\t\t);" << Endl;
+			s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+			s << L"\t\t};" << Endl;
 		}
 		s << L"/* End PBXHeadersBuildPhase section */" << Endl;
 		s << Endl;
@@ -486,56 +451,63 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		s << L"/* Begin PBXSourcesBuildPhase section */" << Endl;
 		for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
-			RefList< Configuration > configurations;
-			getConfigurations(*i, m_generateStatic, configurations);
+			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+			
+			std::wstring projectTargetUid = calculateUid(*i, -1);
+			std::wstring projectTargetListUid = calculateUid(*i, -2);
+			std::wstring projectTargetProductUid = calculateUid(*i, -3);
+			std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*i, -4);
+			std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*i, -5);
+			std::wstring projectTargetProductName;
+			std::wstring projectTargetProductType;
 
-			for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+			s << L"\t\t" << projectTargetSourcesBuildPhaseUid << L" /* Sources */ = {" << Endl;
+			s << L"\t\t\tisa = PBXSourcesBuildPhase;" << Endl;
+			s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
+			s << L"\t\t\tfiles = (" << Endl;
+
+			std::set< Path > projectFiles;
+			collectProjectFiles(*i, projectFiles);
+			for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 			{
-				std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*j, -4);
-
-				s << L"\t\t" << projectTargetSourcesBuildPhaseUid << L" /* Sources */ = {" << Endl;
-				s << L"\t\t\tisa = PBXSourcesBuildPhase;" << Endl;
-				s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
-				s << L"\t\t\tfiles = (" << Endl;
-
-				std::set< Path > projectFiles;
-				collectProjectFiles(*i, projectFiles);
-				for (std::set< Path >::const_iterator k = projectFiles.begin(); k != projectFiles.end(); ++k)
+				std::wstring extension = toLower(j->getExtension());
+				if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
 				{
-					std::wstring extension = toLower(k->getExtension());
-					if (extension == L"c" || extension == L"cc" || extension == L"cpp" || extension == L"m" || extension == L"mm")
-					{
-						std::wstring buildFileUid = calculateUid(*j, *k);
-						s << L"\t\t\t\t" << buildFileUid << L" /* " << k->getFileName() << L" */," << Endl;
-					}
+					std::wstring buildFileUid = calculateUid(*j, -2);
+					s << L"\t\t\t\t" << buildFileUid << L" /* " << j->getFileName() << L" */," << Endl;
 				}
-
-				s << L"\t\t\t);" << Endl;
-				s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
-				s << L"\t\t};" << Endl;
 			}
+
+			s << L"\t\t\t);" << Endl;
+			s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+			s << L"\t\t};" << Endl;
 		}
 		s << L"/* End PBXSourcesBuildPhase section */" << Endl;
 		s << Endl;
 	}
 
 	s << L"/* Begin XCBuildConfiguration section */" << Endl;
-	uint32_t count = 0;
-	for (std::set< std::wstring >::const_iterator i = solutionConfigurations.begin(); i != solutionConfigurations.end(); ++i)
-	{
-		std::wstring solutionConfigurationUid = calculateUid(solution, count++);
-		s << L"\t\t" << solutionConfigurationUid << L" /* " << *i << L" */ = {" << Endl;
-		s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
-		s << L"\t\t\tbuildSettings = {" << Endl;
-		s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
-		s << L"\t\t\t};" << Endl;
-		s << L"\t\t\tname = " << *i << L";" << Endl;
-		s << L"\t\t};" << Endl;
-	}
+	std::wstring solutionConfigurationDebugUid = calculateUid(solution, 0);
+	std::wstring solutionConfigurationReleaseUid = calculateUid(solution, 1);
+	s << L"\t\t" << solutionConfigurationDebugUid << L" /* Debug */ = {" << Endl;
+	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
+	s << L"\t\t\tbuildSettings = {" << Endl;
+	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
+	s << L"\t\t\t};" << Endl;
+	s << L"\t\t\tname = Debug;" << Endl;
+	s << L"\t\t};" << Endl;
+	s << L"\t\t" << solutionConfigurationReleaseUid << L" /* Release */ = {" << Endl;
+	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
+	s << L"\t\t\tbuildSettings = {" << Endl;
+	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
+	s << L"\t\t\t};" << Endl;
+	s << L"\t\t\tname = Release;" << Endl;
+	s << L"\t\t};" << Endl;
+
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		RefList< Configuration > configurations;
-		getConfigurations(*i, m_generateStatic, configurations);
+		getConfigurations(*i, configurations);
 
 		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
@@ -573,6 +545,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 			s << L"\t\t\t\tPREBINDING = NO;" << Endl;
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 
 			s << L"\t\t\t};" << Endl;
 			s << L"\t\t\tname = " << (*j)->getName() << L";" << Endl;
@@ -586,43 +559,37 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t" << solutionConfigurationListUid << L" /* Build configuration list for PBXProject \"" << solution->getName() << L"\" */ = {" << Endl;
 	s << L"\t\t\tisa = XCConfigurationList;" << Endl;
 	s << L"\t\t\tbuildConfigurations = (" << Endl;
-	count = 0;
-	for (std::set< std::wstring >::const_iterator i = solutionConfigurations.begin(); i != solutionConfigurations.end(); ++i)
-	{
-		std::wstring solutionConfigurationUid = calculateUid(solution, count++);
-		s << L"\t\t\t\t" << solutionConfigurationUid << L" /* " << *i << L" */," << Endl;
-	}
+	s << L"\t\t\t\t" << solutionConfigurationDebugUid << L" /* Debug */," << Endl;
+	s << L"\t\t\t\t" << solutionConfigurationReleaseUid << L" /* Release */," << Endl;
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
-	s << L"\t\t\tdefaultConfigurationName = " << *solutionConfigurations.begin() << L";" << Endl;
+	s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
 	s << L"\t\t};" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		RefList< Configuration > configurations;
-		getConfigurations(*i, m_generateStatic, configurations);
+		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
+		std::wstring projectTargetUid = calculateUid(*i, -1);
+		std::wstring projectTargetListUid = calculateUid(*i, -2);
+		std::wstring projectTargetConfigurationUid = calculateUid(*i, -5);
+
+		s << L"\t\t" << projectTargetListUid << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
+		s << L"\t\t\tisa = XCConfigurationList;" << Endl;
+		s << L"\t\t\tbuildConfigurations = (" << Endl;
+		
+		RefList< Configuration > configurations;
+		getConfigurations(*i, configurations);
+		
 		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
-			Configuration::TargetFormat targetFormat = (*j)->getTargetFormat();
-
-			std::wstring projectTargetUid = calculateUid(*j, -1);
-			std::wstring projectTargetListUid = calculateUid(*j, -2);
 			std::wstring projectTargetConfigurationUid = calculateUid(*j, -5);
-			//std::wstring projectTargetProductUid = calculateUid(*i, 1000 + int(targetFormat));
-			//std::wstring projectTargetHeadersBuildPhaseUid = calculateUid(*j, -3);
-			//std::wstring projectTargetSourcesBuildPhaseUid = calculateUid(*j, -4);
-			//std::wstring projectTargetProductName;
-			//std::wstring projectTargetProductType;
-
-			s << L"\t\t" << projectTargetListUid << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
-			s << L"\t\t\tisa = XCConfigurationList;" << Endl;
-			s << L"\t\t\tbuildConfigurations = (" << Endl;
 			s << L"\t\t\t\t" << projectTargetConfigurationUid << L" /* " << (*j)->getName() << L" */," << Endl;
-			s << L"\t\t\t);" << Endl;
-			s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
-			s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
-			s << L"\t\t};" << Endl;
 		}
+		
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
+		s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
+		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End XCConfigurationList section */" << Endl;
 	s << L"\t};" << Endl;
@@ -637,4 +604,36 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 void SolutionBuilderXcode::showOptions() const
 {
+	log::info << L"-d = Debug configuration" << Endl;
+	log::info << L"-r = Release configuration" << Endl;
+}
+
+void SolutionBuilderXcode::getConfigurations(const Project* project, RefList< Configuration >& outConfigurations) const
+{
+	if (project->getConfiguration(m_debugConfig))
+		outConfigurations.push_back(project->getConfiguration(m_debugConfig));
+	else
+		log::warning << L"Project \"" << project->getName() << L"\" doesn't have debug configuration" << Endl;
+		
+	if (project->getConfiguration(m_releaseConfig))
+		outConfigurations.push_back(project->getConfiguration(m_releaseConfig));
+	else
+		log::warning << L"Project \"" << project->getName() << L"\" doesn't have release configuration" << Endl;
+}
+
+Configuration::TargetFormat SolutionBuilderXcode::getTargetFormat(const Project* project) const
+{
+	/*
+	 Hack #2, get target format from first configuration but it must be the same in all configurations.
+	 */
+	RefList< Configuration > configurations;
+	getConfigurations(project, configurations);
+	
+	T_ASSERT (!configurations.empty());
+	
+	Configuration::TargetFormat targetFormat = configurations.front()->getTargetFormat();
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+		T_ASSERT ((*i)->getTargetFormat() == targetFormat);
+	
+	return targetFormat;
 }
