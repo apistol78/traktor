@@ -143,15 +143,17 @@ namespace
 
 		std::wstring getProjectUid() const { return calculateUid(m_solution, -1); }
 
-		std::wstring getBuildConfigurationListUid() const { return calculateUid(m_solution, -2); }
+		std::wstring getCustomBuildRuleUid() const { return calculateUid(m_solution, -2); }
 
-		std::wstring getBuildConfigurationDebugUid() const { return calculateUid(m_solution, -3); }
+		std::wstring getBuildConfigurationListUid() const { return calculateUid(m_solution, -3); }
+
+		std::wstring getBuildConfigurationDebugUid() const { return calculateUid(m_solution, -4); }
 		
-		std::wstring getBuildConfigurationReleaseUid() const { return calculateUid(m_solution, -4); }
+		std::wstring getBuildConfigurationReleaseUid() const { return calculateUid(m_solution, -5); }
 
-		std::wstring getGroupUid() const { return calculateUid(m_solution, -5); }
+		std::wstring getGroupUid() const { return calculateUid(m_solution, -6); }
 
-		std::wstring getProductsGroupUid() const { return calculateUid(m_solution, -6); }
+		std::wstring getProductsGroupUid() const { return calculateUid(m_solution, -7); }
 
 	private:
 		Ref< const Solution > m_solution;
@@ -347,9 +349,41 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t};" << Endl;
 	s << L"\tobjectVersion = 45;" << Endl;
 	s << L"\tobjects = {" << Endl;
-
 	s << Endl;
 
+	generatePBXBuildFileSection(s, projects);
+	generatePBXBuildRuleSection(s, solution);
+	generatePBXContainerItemProxySection(s, solution, projects);
+	generatePBXFileReferenceSection(s, solution, projects, files);
+	generatePBXFrameworksBuildPhaseSection(s, projects);
+	generatePBXGroupSection(s, solution, projects);
+	generatePBXNativeTargetSection(s, solution, projects);
+	generatePBXProjectSection(s, solution, projects);
+	generatePBXReferenceProxySection(s, projects);
+	generatePBXHeadersBuildPhaseSection(s, projects);
+	generatePBXSourcesBuildPhaseSection(s, projects);
+	generatePBXTargetDependencySection(s, projects);
+	generateXCBuildConfigurationSection(s, solution, projects);
+	generateXCConfigurationListSection(s, solution, projects);
+
+	s << L"\t};" << Endl;
+
+	s << L"\trootObject = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
+	s << L"}" << Endl;
+
+	s.close();
+
+	return true;
+}
+
+void SolutionBuilderXcode::showOptions() const
+{
+	log::info << L"\t-d = Debug configuration" << Endl;
+	log::info << L"\t-r = Release configuration" << Endl;
+}
+
+void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXBuildFile section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -395,11 +429,12 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXBuildFile section */" << Endl;
 	s << Endl;
+}
 
-	std::wstring binaryIncludeBuildRuleUid = createNewUid();
-
+void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const Solution* solution) const
+{
 	s << L"/* Begin PBXBuildRule section */" << Endl;
-	s << L"\t\t" << binaryIncludeBuildRuleUid << L" /* PBXBuildRule */ = {" << Endl;
+	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid() << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
 	s << L"\t\t\tfilePatterns = \"*.png\";" << Endl;
@@ -412,7 +447,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t};" << Endl;
 	s << L"/* End PBXBuildRule section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -448,7 +486,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXContainerItemProxy section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects, const std::set< Path >& files) const
+{
 	s << L"/* Begin PBXFileReference section */" << Endl;
 	for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
 	{
@@ -503,7 +544,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXFileReference section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXFrameworksBuildPhase section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -536,7 +580,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXFrameworksBuildPhase section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXGroup section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getGroupUid() << L" = {" << Endl;
 	s << L"\t\t\tisa = PBXGroup;" << Endl;
@@ -570,55 +617,55 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
 	s << L"\t\t};" << Endl;
 
+	std::set< const Solution* > externalSolutions;
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		std::set< const Solution* > externalSolutions;
-
-		for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		const RefList< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			const RefList< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-			{
-				if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
-					externalSolutions.insert(externalDependency->getSolution());
-			}
+			if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+				externalSolutions.insert(externalDependency->getSolution());
 		}
+	}
 
-		for (std::set< const Solution* >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+	for (std::set< const Solution* >::const_iterator i = externalSolutions.begin(); i != externalSolutions.end(); ++i)
+	{
+		s << L"\t\t" << SolutionUids(*i).getProductsGroupUid() << L" = /* Products */ {" << Endl;
+		s << L"\t\t\tisa = PBXGroup;" << Endl;
+		s << L"\t\t\tchildren = (" << Endl;
+
+		for (RefList< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
 		{
-			s << L"\t\t" << SolutionUids(*i).getProductsGroupUid() << L" = /* Products */ {" << Endl;
-			s << L"\t\t\tisa = PBXGroup;" << Endl;
-			s << L"\t\t\tchildren = (" << Endl;
-
-			for (RefList< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
+			const RefList< Dependency >& dependencies = (*j)->getDependencies();
+			for (RefList< Dependency >::const_iterator k = dependencies.begin(); k != dependencies.end(); ++k)
 			{
-				const RefList< Dependency >& dependencies = (*j)->getDependencies();
-				for (RefList< Dependency >::const_iterator k = dependencies.begin(); k != dependencies.end(); ++k)
+				if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*k))
 				{
-					if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*k))
-					{
-						if (externalDependency->getSolution() != *i)
-							continue;
+					if (externalDependency->getSolution() != *i)
+						continue;
 
-						Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
+					Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
 
-						std::wstring productUid = ProjectUids(*j).getTargetDependencyUid(externalDependency->getProject());
-						std::wstring productName = ProjectUids(externalDependency->getProject()).getProductName(targetFormat);
+					std::wstring productUid = ProjectUids(*j).getTargetDependencyUid(externalDependency->getProject());
+					std::wstring productName = ProjectUids(externalDependency->getProject()).getProductName(targetFormat);
 
-						s << L"\t\t\t\t" << productUid << L" /* " << productName << L" */," << Endl;
-					}
+					s << L"\t\t\t\t" << productUid << L" /* " << productName << L" */," << Endl;
 				}
 			}
-
-			s << L"\t\t\t);" << Endl;
-			s << L"\t\t\tname = Products;" << Endl;
-			s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
-			s << L"\t\t};" << Endl;
 		}
+
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\tname = Products;" << Endl;
+		s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
+		s << L"\t\t};" << Endl;
 	}
 
 	s << L"/* End PBXGroup section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXNativeTarget section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -637,7 +684,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
-		s << L"\t\t\t\t" << binaryIncludeBuildRuleUid << L" /* PBXBuildRule */," << Endl;
+		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid() << L" /* PBXBuildRule */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
@@ -656,7 +703,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXNativeTarget section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXProject section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getProjectUid() << L" /* Project object */ = {" << Endl;
 	s << L"\t\t\tisa = PBXProject;" << Endl;
@@ -667,8 +717,8 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t\tproductRefGroup = " << SolutionUids(solution).getProductsGroupUid() << L" /* Products */;" << Endl;
 	s << L"\t\t\tprojectDirPath = \"\";" << Endl;
 	s << L"\t\t\tprojectReferences = (" << Endl;
-	
-	externalSolutionPaths.clear();
+
+	std::set< std::wstring > externalSolutionPaths;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		const RefList< Dependency >& dependencies = (*i)->getDependencies();
@@ -702,7 +752,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	s << L"\t\t};" << Endl;
 	s << L"/* End PBXProject section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXReferenceProxy section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -727,7 +780,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXReferenceProxy section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXHeadersBuildPhase section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -753,7 +809,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXHeadersBuildPhase section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXSourcesBuildPhase section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -779,7 +838,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXSourcesBuildPhase section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, const RefList< Project >& projects) const
+{
 	s << L"/* Begin PBXTargetDependency section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
@@ -798,7 +860,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End PBXTargetDependency section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin XCBuildConfiguration section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationDebugUid() << L" /* Debug */ = {" << Endl;
 	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
@@ -831,7 +896,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 			s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
 			s << L"\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;" << Endl;
 			s << L"\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;" << Endl;
-			
+
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
 			const std::vector< std::wstring >& definitions = configurations[0]->getDefinitions();
 			for (std::vector< std::wstring >::const_iterator j = definitions.begin(); j != definitions.end(); ++j)
@@ -914,7 +979,10 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	}
 	s << L"/* End XCBuildConfiguration section */" << Endl;
 	s << Endl;
+}
 
+void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+{
 	s << L"/* Begin XCConfigurationList section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationListUid() << L" /* Build configuration list for PBXProject \"" << solution->getName() << L"\" */ = {" << Endl;
 	s << L"\t\t\tisa = XCConfigurationList;" << Endl;
@@ -932,35 +1000,21 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 		s << L"\t\t" << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
 		s << L"\t\t\tisa = XCConfigurationList;" << Endl;
 		s << L"\t\t\tbuildConfigurations = (" << Endl;
-		
+
 		Ref< Configuration > configurations[2];
 		getConfigurations(*i, configurations);
-		
+
 		if (configurations[0])
 			s << L"\t\t\t\t" <<  ProjectUids(*i).getBuildConfigurationDebugUid() << L" /* Debug */," << Endl;
 		if (configurations[1])
 			s << L"\t\t\t\t" <<  ProjectUids(*i).getBuildConfigurationReleaseUid() << L" /* Release */," << Endl;
-		
+
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
 		s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
 		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End XCConfigurationList section */" << Endl;
-	s << L"\t};" << Endl;
-
-	s << L"\trootObject = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
-	s << L"}" << Endl;
-
-	s.close();
-
-	return true;
-}
-
-void SolutionBuilderXcode::showOptions() const
-{
-	log::info << L"-d = Debug configuration" << Endl;
-	log::info << L"-r = Release configuration" << Endl;
 }
 
 void SolutionBuilderXcode::getConfigurations(const Project* project, Ref< Configuration > outConfigurations[2]) const
