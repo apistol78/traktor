@@ -14,6 +14,8 @@ class SolutionBuilderXcode : public SolutionBuilder
 	T_RTTI_CLASS(SolutionBuilderXcode)
 
 public:
+	SolutionBuilderXcode();
+
 	virtual bool create(const traktor::CommandLine& cmdLine);
 
 	virtual bool generate(Solution* solution);
@@ -23,6 +25,7 @@ public:
 private:
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
+	bool m_iphone;
 
 	void generatePBXBuildFileSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
 

@@ -324,6 +324,11 @@ namespace
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderXcode", SolutionBuilderXcode, SolutionBuilder)
 
+SolutionBuilderXcode::SolutionBuilderXcode()
+:	m_iphone(false)
+{
+}
+
 bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 {
 	if (cmdLine.hasOption('d'))
@@ -335,6 +340,9 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 		m_releaseConfig = cmdLine.getOption('r').getString();
 	else
 		m_releaseConfig = L"Release";
+
+	if (cmdLine.hasOption('i'))
+		m_iphone = true;
 		
 	return true;
 }
@@ -989,17 +997,41 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
 {
 	s << L"/* Begin XCBuildConfiguration section */" << Endl;
+
+	// Global settings.
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationDebugUid() << L" /* Debug */ = {" << Endl;
 	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 	s << L"\t\t\tbuildSettings = {" << Endl;
 	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
+	if (m_iphone)
+	{
+		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
+		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"iPhone Developer\";" << Endl;
+		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
+		s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = DEBUG;" << Endl;
+		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
+		s << L"\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;" << Endl;
+		s << L"\t\t\t\tPREBINDING = NO;" << Endl;
+		s << L"\t\t\t\tSDKROOT = iphoneos3.1;" << Endl;
+	}
 	s << L"\t\t\t};" << Endl;
 	s << L"\t\t\tname = Debug;" << Endl;
 	s << L"\t\t};" << Endl;
+
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationReleaseUid() << L" /* Release */ = {" << Endl;
 	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 	s << L"\t\t\tbuildSettings = {" << Endl;
 	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
+	s << L"\t\t\t\tPREBINDING = NO;" << Endl;
+	if (m_iphone)
+	{
+		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
+		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"iPhone Developer\";" << Endl;
+		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
+		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
+		s << L"\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;" << Endl;
+		s << L"\t\t\t\tSDKROOT = iphoneos3.1;" << Endl;
+	}
 	s << L"\t\t\t};" << Endl;
 	s << L"\t\t\tname = Release;" << Endl;
 	s << L"\t\t};" << Endl;
@@ -1017,9 +1049,11 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"\t\t\tbuildSettings = {" << Endl;
 
 			s << L"\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;" << Endl;
-			s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
 			s << L"\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;" << Endl;
 			s << L"\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;" << Endl;
+
+			if (m_iphone)
+				s << L"\t\t\t\t\"GCC_THUMB_SUPPORT[arch=armv6]\" = \"\";" << Endl;
 
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
 			const std::vector< std::wstring >& definitions = configurations[0]->getDefinitions();
@@ -1046,7 +1080,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
-			s << L"\t\t\t\tPREBINDING = NO;" << Endl;
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 
@@ -1063,9 +1096,9 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"\t\t\tbuildSettings = {" << Endl;
 
 			s << L"\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;" << Endl;
-			s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
-			s << L"\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;" << Endl;
-			s << L"\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;" << Endl;
+
+			if (m_iphone)
+				s << L"\t\t\t\t\"GCC_THUMB_SUPPORT[arch=armv6]\" = \"\";" << Endl;
 
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
 			const std::vector< std::wstring >& definitions = configurations[1]->getDefinitions();
@@ -1092,7 +1125,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
-			s << L"\t\t\t\tPREBINDING = NO;" << Endl;
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 
