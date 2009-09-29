@@ -37,7 +37,7 @@ void Solution::removeProject(Project* project)
 	m_projects.remove(project);
 	for (traktor::RefList< Project >::iterator i = m_projects.begin(); i != m_projects.end(); ++i)
 	{
-		traktor::RefList< Dependency >& dependencies = (*i)->getDependencies();
+		traktor::RefList< Dependency > dependencies = (*i)->getDependencies();
 		for (traktor::RefList< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); )
 		{
 			if (!traktor::is_a< ProjectDependency >(*j))
@@ -51,6 +51,7 @@ void Solution::removeProject(Project* project)
 			else
 				j++;
 		}
+		(*i)->setDependencies(dependencies);
 	}
 }
 

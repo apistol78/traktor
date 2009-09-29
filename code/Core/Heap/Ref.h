@@ -894,18 +894,13 @@ protected:
 	virtual void invalidate()
 	{
 		lock_wr_type sc(m_lock);
-		for (iterator i = begin(); i != end(); ++i)
-			*i = 0;
+		m_set.clear();
 	}
 
 	virtual void invalidate(Object* ptr)
 	{
 		lock_wr_type sc(m_lock);
-		for (iterator i = begin(); i != end(); ++i)
-		{
-			if ((Object*)(*i) == ptr)
-				*i = 0;
-		}
+		m_set.erase((Class*)ptr);
 	}
 
 private:

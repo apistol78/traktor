@@ -67,8 +67,10 @@ public:
 	void addDependency(Dependency* dependency);
 
 	void removeDependency(Dependency* dependency);
+	
+	void setDependencies(const traktor::RefList< Dependency >& dependencies);
 
-	traktor::RefList< Dependency >& getDependencies();
+	const traktor::RefList< Dependency >& getDependencies() const;
 
 	//@}
 

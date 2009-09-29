@@ -166,8 +166,8 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 		configuration->getLibraryPaths().end()
 	);
 
-	RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefList< Dependency >& dependencies = project->getDependencies();
+	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Traverse all static library dependencies and at their "additional libraries" as well.
 		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))

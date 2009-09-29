@@ -43,10 +43,10 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 					RefList< Dependency > resolvedDependencies;
 
 					// Find local project for each dependency of the imported projects.
-					RefList< Dependency >& dependencies = (*i)->getDependencies();
-					for (RefList< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					const RefList< Dependency >& dependencies = (*i)->getDependencies();
+					for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 					{
-						if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*j))
+						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 						{
 							std::wstring projectName = projectDependency->getName();
 
@@ -69,7 +69,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 					}
 
 					// Replace dependencies.
-					(*i)->getDependencies() = resolvedDependencies;
+					(*i)->setDependencies(resolvedDependencies);
 
 					// Finally add project to solution.
 					solution->addProject(*i);

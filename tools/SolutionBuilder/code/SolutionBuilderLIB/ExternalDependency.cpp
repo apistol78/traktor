@@ -93,9 +93,8 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 	}
 
 	// Replace dependencies with resolved dependencies.
-	m_project->getDependencies().clear();
-	m_project->getDependencies().insert(m_project->getDependencies().begin(), resolvedDependencies.begin(), resolvedDependencies.end());
-	
+	m_project->setDependencies(resolvedDependencies);
+		
 	return true;
 }
 
