@@ -81,8 +81,8 @@ private:
 	);
 
 	void collectAdditionalLibraries(
-		Project* project,
-		Configuration* configuration,
+		const Project* project,
+		const Configuration* configuration,
 		std::set< std::wstring >& additionalLibraries,
 		std::set< std::wstring >& additionalLibraryPaths
 	);

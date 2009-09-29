@@ -236,12 +236,27 @@ namespace
 		}
 	}
 
+	void collectFrameworks(const Project* project, std::set< std::wstring >& outFrameworks)
+	{
+		const RefList< Configuration >& configurations = project->getConfigurations();
+		for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+		{
+			const std::vector< std::wstring >& libraries = (*i)->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+			{
+				if (endsWith(*j, L".framework"))
+					outFrameworks.insert(*j);
+			}
+		}
+	}
+
 	void createGroups(
 		const Project* project,
 		OutputStream& s,
 		const std::wstring& groupUid,
 		const std::wstring& groupName,
-		const RefList< ProjectItem >& items
+		const RefList< ProjectItem >& items,
+		bool addFrameworks
 	)
 	{
 		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
@@ -254,7 +269,8 @@ namespace
 					s,
 					childGroupUid,
 					filter->getName(),
-					filter->getItems()
+					filter->getItems(),
+					false
 				);
 			}
 		}
@@ -279,6 +295,18 @@ namespace
 					std::wstring childFileUid = FileUids(*j).getFileUid();
 					s << L"\t\t\t\t" << childFileUid << L" /* " << j->getFileName() << L" */," << Endl;
 				}
+			}
+		}
+
+		if (addFrameworks)
+		{
+			std::set< std::wstring > frameworks;
+			collectFrameworks(project, frameworks);
+
+			for (std::set< std::wstring >::const_iterator i = frameworks.begin(); i != frameworks.end(); ++i)
+			{
+				std::wstring childFileUid = FileUids(*i).getFileUid();
+				s << L"\t\t\t\t" << childFileUid << L" /* " << *i << L" */," << Endl;
 			}
 		}
 
@@ -579,33 +607,16 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		Ref< Configuration > configurations[2];
-		getConfigurations(*i, configurations);
-
-		std::set< std::wstring > externalFrameworks;
-		if (configurations[0])
-		{
-			const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-			{
-				if (endsWith(*j, L".framework"))
-					externalFrameworks.insert(*j);
-			}
-		}
-		if (configurations[1])
-		{
-			const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
-			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-			{
-				if (endsWith(*j, L".framework"))
-					externalFrameworks.insert(*j);
-			}
-		}
+		std::set< std::wstring > frameworks;
+		collectFrameworks(*i, frameworks);
 		
-		for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+		for (std::set< std::wstring >::const_iterator j = frameworks.begin(); j != frameworks.end(); ++j)
 		{
 			std::wstring fileUid = FileUids(*j).getFileUid();
-			s << L"\t\t" << fileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " << *j << L"; path = /System/Library/Frameworks/" << *j << L"; sourceTree = \"<absolute>\"; };" << Endl;
+			if (!m_iphone)
+				s << L"\t\t" << fileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " << *j << L"; path = /System/Library/Frameworks/" << *j << L"; sourceTree = \"<absolute>\"; };" << Endl;
+			else
+				s << L"\t\t" << fileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = " << *j << L"; path = System/Library/Frameworks/" << *j << L"; sourceTree = SDKROOT; };" << Endl;
 		}
 	}
 	
@@ -698,7 +709,8 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 			s,
 			ProjectUids(*i).getGroupUid(),
 			(*i)->getName(),
-			(*i)->getItems()
+			(*i)->getItems(),
+			true
 		);
 	}
 
@@ -770,11 +782,7 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\tbuildPhases = (" << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseHeadersUid() << L" /* Headers */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseSourcesUid() << L" /* Sources */," << Endl;
-
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		if (!dependencies.empty())
-			s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
-
+		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
 		s << L"\t\t\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */," << Endl;
@@ -782,6 +790,7 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
+		const RefList< Dependency >& dependencies = (*i)->getDependencies();
 		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))

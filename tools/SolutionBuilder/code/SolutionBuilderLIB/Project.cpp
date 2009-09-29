@@ -58,7 +58,7 @@ void Project::removeConfiguration(Configuration* configuration)
 	m_configurations.remove(configuration);
 }
 
-RefList< Configuration >& Project::getConfigurations()
+const RefList< Configuration >& Project::getConfigurations() const
 {
 	return m_configurations;
 }

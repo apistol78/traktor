@@ -156,10 +156,10 @@ bool SolutionBuilderMsvc2005::generate(Solution* solution)
 	{
 		Project* project = *i;
 
-		RefList< Configuration >& configurations = project->getConfigurations();
-		for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+		const RefList< Configuration >& configurations = project->getConfigurations();
+		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
-			Configuration* configuration = *j;
+			const Configuration* configuration = *j;
 
 			s << L"\t\t" << m_projectGuids[project] << L"." << configuration->getName() << L"|" << m_settings.platform << L".ActiveCfg = " << configuration->getName() << L"|" << m_settings.platform << Endl;
 			s << L"\t\t" << m_projectGuids[project] << L"." << configuration->getName() << L"|" << m_settings.platform << L".Build.0 = " << configuration->getName() << L"|" << m_settings.platform << Endl;
@@ -222,10 +222,10 @@ bool SolutionBuilderMsvc2005::generateProject(Solution* solution, Project* proje
 
 	s << L"\t<Configurations>" << Endl;
 
-	RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const RefList< Configuration >& configurations = project->getConfigurations();
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Configuration* configuration = *i;
+		const Configuration* configuration = *i;
 		const SettingsTarget& settingsTarget = m_settings.targets[int(configuration->getTargetFormat())];
 
 		s << L"\t\t<Configuration" << Endl;
@@ -570,8 +570,8 @@ void SolutionBuilderMsvc2005::addItem(
 }
 
 void SolutionBuilderMsvc2005::collectAdditionalLibraries(
-	Project* project,
-	Configuration* configuration,
+	const Project* project,
+	const Configuration* configuration,
 	std::set< std::wstring >& additionalLibraries,
 	std::set< std::wstring >& additionalLibraryPaths
 )
@@ -590,9 +590,9 @@ void SolutionBuilderMsvc2005::collectAdditionalLibraries(
 	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Traverse all static library dependencies and at their "additional libraries" as well.
-		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
 		{
-			Configuration* dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
+			Ref< const Configuration > dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
 			if (!dependentConfiguration)
 			{
 				traktor::log::warning << L"Unable to add dependency \"" << projectDependency->getProject()->getName() << L"\", no matching configuration found" << Endl;
@@ -611,9 +611,9 @@ void SolutionBuilderMsvc2005::collectAdditionalLibraries(
 		}
 
 		// Add products from external dependencies and their "additional libraries" as well.
-		if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
+		if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
 		{
-			Ref< Configuration > externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
+			Ref< const Configuration > externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
 			if (!externalConfiguration)
 			{
 				traktor::log::warning << L"Unable to add external dependency \"" << externalDependency->getProject()->getName() << L"\", no matching configuration found" << Endl;

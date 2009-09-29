@@ -50,13 +50,25 @@ public:
 
 	const std::wstring& getPrecompiledHeader() const;
 
-	std::vector< std::wstring >& getIncludePaths();
+	void addIncludePath(const std::wstring& includePath);
 
-	std::vector< std::wstring >& getDefinitions();
+	void setIncludePaths(const std::vector< std::wstring >& includePaths);
 
-	std::vector< std::wstring >& getLibraryPaths();
+	const std::vector< std::wstring >& getIncludePaths() const;
 
-	std::vector< std::wstring >& getLibraries();
+	void addDefinition(const std::wstring& definition);
+
+	void setDefinitions(const std::vector< std::wstring >& definitions);
+
+	const std::vector< std::wstring >& getDefinitions() const;
+
+	void setLibraryPaths(const std::vector< std::wstring >& libraryPaths);
+
+	const std::vector< std::wstring >& getLibraryPaths() const;
+
+	void setLibraries(const std::vector< std::wstring >& libraries);
+
+	const std::vector< std::wstring >& getLibraries() const;
 
 	virtual bool serialize(traktor::Serializer& s);
 

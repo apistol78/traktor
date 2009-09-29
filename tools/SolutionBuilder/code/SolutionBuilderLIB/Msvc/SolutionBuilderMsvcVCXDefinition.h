@@ -15,9 +15,9 @@ class SolutionBuilderMsvcVCXDefinition : public traktor::Serializable
 public:
 	bool generate(
 		GeneratorContext& context,
-		Solution* solution,
-		Project* project,
-		Configuration* configuration,
+		const Solution* solution,
+		const Project* project,
+		const Configuration* configuration,
 		traktor::OutputStream& os
 	) const;
 
@@ -37,8 +37,8 @@ private:
 	std::vector< Option > m_options;
 
 	void collectAdditionalLibraries(
-		Project* project,
-		Configuration* configuration,
+		const Project* project,
+		const Configuration* configuration,
 		std::set< std::wstring >& outAdditionalLibraries,
 		std::set< std::wstring >& outAdditionalLibraryPaths
 	) const;

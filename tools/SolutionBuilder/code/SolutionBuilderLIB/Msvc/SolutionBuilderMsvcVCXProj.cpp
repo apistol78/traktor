@@ -89,10 +89,10 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<ItemGroup Label=\"ProjectConfigurations\">" << Endl;
 	os << IncreaseIndent;
 
-	RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const RefList< Configuration >& configurations = project->getConfigurations();
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Configuration* configuration = *i;
+		Ref< const Configuration > configuration = *i;
 
 		os << L"<ProjectConfiguration Include=\"" << configuration->getName() << L"|" << m_platform << L"\">" << Endl;
 		os << IncreaseIndent;
@@ -119,9 +119,9 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />" << Endl;
 
 	// Configurations
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Configuration* configuration = *i;
+		Ref< const Configuration > configuration = *i;
 
 		os << L"<PropertyGroup Label=\"Configuration\" Condition=\"'$(Configuration)|$(Platform)'=='" << configuration->getName() << L"|" << m_platform << L"'\">" << Endl;
 		os << IncreaseIndent;
@@ -159,9 +159,9 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<PropertyGroup>" << Endl;
 	os << IncreaseIndent;
 	os << L"<_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>" << Endl;
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Configuration* configuration = *i;
+		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
 
 		std::wstring projectName = project->getName();
@@ -202,9 +202,9 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"</PropertyGroup>" << Endl;
 
 	// Build definitions.
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
-		Configuration* configuration = *i;
+		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
 
 		os << L"<ItemDefinitionGroup Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << Endl;

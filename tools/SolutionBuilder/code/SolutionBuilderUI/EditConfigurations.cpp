@@ -65,19 +65,19 @@ bool EditConfigurations::execute(traktor::ui::Widget* parent, Solution* solution
 						configuration->setTargetFormat(templateConfiguration->getTargetFormat());
 						configuration->setTargetProfile(templateConfiguration->getTargetProfile());
 						configuration->setPrecompiledHeader(templateConfiguration->getPrecompiledHeader());
-						configuration->getIncludePaths() = templateConfiguration->getIncludePaths();
-						configuration->getDefinitions() = templateConfiguration->getDefinitions();
-						configuration->getLibraryPaths() = templateConfiguration->getLibraryPaths();
-						configuration->getLibraries() = templateConfiguration->getLibraries();
+						configuration->setIncludePaths(templateConfiguration->getIncludePaths());
+						configuration->setDefinitions(templateConfiguration->getDefinitions());
+						configuration->setLibraryPaths(templateConfiguration->getLibraryPaths());
+						configuration->setLibraries(templateConfiguration->getLibraries());
 					}
 					else
 					{
 						// No template configuration, set default values.
 						configuration->setTargetFormat(Configuration::TfSharedLibrary);
 						configuration->setTargetProfile(Configuration::TpRelease);
-						configuration->getIncludePaths().push_back(L"$(TRAKTOR_HOME)/code");
-						configuration->getDefinitions().push_back(buildExportDefinition((*j)->getName()));
-						configuration->getDefinitions().push_back(L"NDEBUG");
+						configuration->addIncludePath(L"$(TRAKTOR_HOME)/code");
+						configuration->addDefinition(buildExportDefinition((*j)->getName()));
+						configuration->addDefinition(L"NDEBUG");
 					}
 					(*j)->addConfiguration(configuration);						
 				}
