@@ -58,6 +58,10 @@ private:
 	void getConfigurations(const Project* project, traktor::Ref< Configuration > outConfigurations[2]) const;
 	
 	Configuration::TargetFormat getTargetFormat(const Project* project) const;
+
+	std::wstring getProductType(Configuration::TargetFormat targetFormat) const;
+	
+	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
 };
 
 #endif	// SolutionBuilderXcode_H
