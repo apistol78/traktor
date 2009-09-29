@@ -37,7 +37,7 @@ int main(int argc, const char** argv)
 		log::error << L"Generation failed, unable to create file \"" << outputFile.getPathName() << L"\"" << Endl;
 		return 1;
 	}
-
+	
 	{
 		FileOutputStream s(output, gc_new< Utf8Encoding >());
 
@@ -86,4 +86,6 @@ int main(int argc, const char** argv)
 
 	output->close();
 	input->close();
+	
+	log::info << L"File \"" << outputFile.getPathName() << L"\" generated successfully" << Endl;
 }
