@@ -19,9 +19,9 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcVCXDefinition", Solutio
 
 bool SolutionBuilderMsvcVCXDefinition::generate(
 	GeneratorContext& context,
-	Solution* solution,
-	Project* project,
-	Configuration* configuration,
+	const Solution* solution,
+	const Project* project,
+	const Configuration* configuration,
 	OutputStream& os
 ) const
 {
@@ -78,8 +78,8 @@ bool SolutionBuilderMsvcVCXDefinition::Option::serialize(traktor::Serializer& s)
 }
 
 void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
-	Project* project,
-	Configuration* configuration,
+	const Project* project,
+	const Configuration* configuration,
 	std::set< std::wstring >& outAdditionalLibraries,
 	std::set< std::wstring >& outAdditionalLibraryPaths
 ) const

@@ -121,17 +121,21 @@ void ConfigurationPropertyPage::set(Configuration* configuration)
 	m_dropType->select(int(m_configuration->getTargetFormat()));
 	m_dropProfile->select(int(m_configuration->getTargetProfile()));
 
-	std::vector< std::wstring >& includePaths = m_configuration->getIncludePaths();
+	std::vector< std::wstring > includePaths = m_configuration->getIncludePaths();
 	std::remove_if(includePaths.begin(), includePaths.end(), EmptyString());
+	m_configuration->setIncludePaths(includePaths);
 
-	std::vector< std::wstring >& definitions = m_configuration->getDefinitions();
+	std::vector< std::wstring > definitions = m_configuration->getDefinitions();
 	std::remove_if(definitions.begin(), definitions.end(), EmptyString());
+	m_configuration->setDefinitions(definitions);
 
-	std::vector< std::wstring >& libraryPaths = m_configuration->getLibraryPaths();
+	std::vector< std::wstring > libraryPaths = m_configuration->getLibraryPaths();
 	std::remove_if(libraryPaths.begin(), libraryPaths.end(), EmptyString());
+	m_configuration->setLibraryPaths(libraryPaths);
 
-	std::vector< std::wstring >& libraries = m_configuration->getLibraries();
+	std::vector< std::wstring > libraries = m_configuration->getLibraries();
 	std::remove_if(libraries.begin(), libraries.end(), EmptyString());
+	m_configuration->setLibraries(libraries);
 
 	m_listIncludePaths->removeAll();
 	for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
@@ -164,7 +168,7 @@ void ConfigurationPropertyPage::eventSelectProfile(ui::Event* event)
 
 void ConfigurationPropertyPage::eventChangeIncludePath(ui::Event* event)
 {
-	std::vector< std::wstring >& includePaths = m_configuration->getIncludePaths();
+	std::vector< std::wstring > includePaths = m_configuration->getIncludePaths();
 	int editId = static_cast< ui::EditEvent* >(event)->getParam();
 	if (editId >= 0)
 	{
@@ -176,11 +180,12 @@ void ConfigurationPropertyPage::eventChangeIncludePath(ui::Event* event)
 	}
 	else
 		includePaths.push_back(static_cast< ui::EditEvent* >(event)->getText());
+	m_configuration->setIncludePaths(includePaths);
 }
 
 void ConfigurationPropertyPage::eventChangeDefinitions(ui::Event* event)
 {
-	std::vector< std::wstring >& definitions = m_configuration->getDefinitions();
+	std::vector< std::wstring > definitions = m_configuration->getDefinitions();
 	int editId = static_cast< ui::EditEvent* >(event)->getParam();
 	if (editId >= 0)
 	{
@@ -192,11 +197,12 @@ void ConfigurationPropertyPage::eventChangeDefinitions(ui::Event* event)
 	}
 	else
 		definitions.push_back(static_cast< ui::EditEvent* >(event)->getText());
+	m_configuration->setDefinitions(definitions);
 }
 
 void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::Event* event)
 {
-	std::vector< std::wstring >& libraryPaths = m_configuration->getLibraryPaths();
+	std::vector< std::wstring > libraryPaths = m_configuration->getLibraryPaths();
 	int editId = static_cast< ui::EditEvent* >(event)->getParam();
 	if (editId >= 0)
 	{
@@ -208,11 +214,12 @@ void ConfigurationPropertyPage::eventChangeLibraryPaths(ui::Event* event)
 	}
 	else
 		libraryPaths.push_back(static_cast< ui::EditEvent* >(event)->getText());
+	m_configuration->setLibraryPaths(libraryPaths);
 }
 
 void ConfigurationPropertyPage::eventChangeLibraries(ui::Event* event)
 {
-	std::vector< std::wstring >& libraries = m_configuration->getLibraries();
+	std::vector< std::wstring > libraries = m_configuration->getLibraries();
 	int editId = static_cast< ui::EditEvent* >(event)->getParam();
 	if (editId >= 0)
 	{
@@ -224,4 +231,5 @@ void ConfigurationPropertyPage::eventChangeLibraries(ui::Event* event)
 	}
 	else
 		libraries.push_back(static_cast< ui::EditEvent* >(event)->getText());
+	m_configuration->setLibraries(libraries);
 }

@@ -117,11 +117,19 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 				{
 					Ref< xml::Attribute > attribInclude = elementCompilerTool->getAttribute(L"AdditionalIncludeDirectories");
 					if (attribInclude)
-						Split< std::wstring >::any(attribInclude->getValue(), L";,", configuration->getIncludePaths());
+					{
+						std::vector< std::wstring > includePaths;
+						Split< std::wstring >::any(attribInclude->getValue(), L";,", includePaths);
+						configuration->setIncludePaths(includePaths);
+					}
 
 					Ref< xml::Attribute > attribPrep = elementCompilerTool->getAttribute(L"PreprocessorDefinitions");
 					if (attribPrep)
-						Split< std::wstring >::any(attribPrep->getValue(), L";,", configuration->getDefinitions());
+					{
+						std::vector< std::wstring > definitions;
+						Split< std::wstring >::any(attribPrep->getValue(), L";,", definitions);
+						configuration->setDefinitions(definitions);
+					}
 
 					Ref< xml::Attribute > attribOptimization = elementCompilerTool->getAttribute(L"Optimization");
 					if (attribOptimization)
@@ -133,11 +141,19 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 				{
 					Ref< xml::Attribute > attribLibraryPaths = elementLinkerTool->getAttribute(L"AdditionalLibraryDirectories");
 					if (attribLibraryPaths)
-						Split< std::wstring >::any(attribLibraryPaths->getValue(), L";,", configuration->getLibraryPaths());
+					{
+						std::vector< std::wstring > libraryPaths;
+						Split< std::wstring >::any(attribLibraryPaths->getValue(), L";,", libraryPaths);
+						configuration->setLibraryPaths(libraryPaths);
+					}
 
 					Ref< xml::Attribute > attribLibraries = elementLinkerTool->getAttribute(L"AdditionalDependencies");
 					if (attribLibraries)
-						Split< std::wstring >::any(attribLibraries->getValue(), L";,", configuration->getLibraries());
+					{
+						std::vector< std::wstring > libraries;
+						Split< std::wstring >::any(attribLibraries->getValue(), L";,", libraries);
+						configuration->setLibraries(libraries);
+					}
 
 					configuration->setTargetFormat(Configuration::TfSharedLibrary);
 				}

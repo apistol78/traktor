@@ -95,8 +95,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 	os << L"<Configurations>" << Endl;
 	os << IncreaseIndent;
 
-	RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const RefList< Configuration >& configurations = project->getConfigurations();
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		context.set(L"CONFIGURATION_NAME", (*i)->getName());
 
@@ -219,8 +219,8 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 				os << IncreaseIndent;
 
 				// Add custom configurations to this file.
-				RefList< Configuration >& configurations = project->getConfigurations();
-				for (RefList< Configuration >::iterator k = configurations.begin(); k != configurations.end(); ++k)
+				const RefList< Configuration >& configurations = project->getConfigurations();
+				for (RefList< Configuration >::const_iterator k = configurations.begin(); k != configurations.end(); ++k)
 				{
 					os << L"<FileConfiguration Name=\"" << (*k)->getName() << L"|" << m_platform << L"\">" << Endl;
 					os << IncreaseIndent;

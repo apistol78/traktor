@@ -269,8 +269,8 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 
 	Ref< ui::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 2, 3);
 
-	RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	const RefList< Configuration >& configurations = project->getConfigurations();
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		createTreeConfigurationItem(treeConfigurations, project, *j);
 
 	const RefList< ProjectItem >& items = project->getItems();

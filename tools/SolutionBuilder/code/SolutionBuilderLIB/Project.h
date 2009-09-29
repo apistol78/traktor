@@ -44,7 +44,7 @@ public:
 
 	void removeConfiguration(Configuration* configuration);
 
-	traktor::RefList< Configuration >& getConfigurations();
+	const traktor::RefList< Configuration >& getConfigurations() const;
 
 	Configuration* getConfiguration(const std::wstring& name) const;
 

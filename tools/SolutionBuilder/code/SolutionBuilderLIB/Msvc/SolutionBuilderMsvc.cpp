@@ -205,10 +205,10 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		RefList< Configuration >& configurations = project->getConfigurations();
-		for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+		const RefList< Configuration >& configurations = project->getConfigurations();
+		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
-			Ref< Configuration > configuration = *j;
+			Ref< const Configuration > configuration = *j;
 
 			os << IncreaseIndent;
 			os << projectGuids[project] << L"." << configuration->getName() << L"|" << platform << L".ActiveCfg = " << configuration->getName() << L"|" << platform << L"" << Endl;

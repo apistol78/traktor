@@ -52,22 +52,52 @@ const std::wstring& Configuration::getPrecompiledHeader() const
 	return m_precompiledHeader;
 }
 
-std::vector< std::wstring >& Configuration::getIncludePaths()
+void Configuration::addIncludePath(const std::wstring& includePath)
+{
+	m_includePaths.push_back(includePath);
+}
+
+void Configuration::setIncludePaths(const std::vector< std::wstring >& includePaths)
+{
+	m_includePaths = includePaths;
+}
+
+const std::vector< std::wstring >& Configuration::getIncludePaths() const
 {
 	return m_includePaths;
 }
 
-std::vector< std::wstring >& Configuration::getDefinitions()
+void Configuration::addDefinition(const std::wstring& definition)
+{
+	m_definitions.push_back(definition);
+}
+
+void Configuration::setDefinitions(const std::vector< std::wstring >& definitions)
+{
+	m_definitions = definitions;
+}
+
+const std::vector< std::wstring >& Configuration::getDefinitions() const
 {
 	return m_definitions;
 }
 
-std::vector< std::wstring >& Configuration::getLibraryPaths()
+void Configuration::setLibraryPaths(const std::vector< std::wstring >& libraryPaths)
+{
+	m_libraryPaths = libraryPaths;
+}
+
+const std::vector< std::wstring >& Configuration::getLibraryPaths() const
 {
 	return m_libraryPaths;
 }
 
-std::vector< std::wstring >& Configuration::getLibraries()
+void Configuration::setLibraries(const std::vector< std::wstring >& libraries)
+{
+	m_libraries = libraries;
+}
+
+const std::vector< std::wstring >& Configuration::getLibraries() const
 {
 	return m_libraries;
 }

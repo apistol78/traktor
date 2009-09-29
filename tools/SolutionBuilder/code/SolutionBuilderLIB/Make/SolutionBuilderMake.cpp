@@ -232,14 +232,14 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	std::set< ::Path > files;
 	collectFiles(project, project->getItems(), files);
 
-	RefList< Configuration >& configurations = project->getConfigurations();
+	const RefList< Configuration >& configurations = project->getConfigurations();
 
 	// Create directory for project.
 	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + project->getName()))
 		return false;
 	
 	// Create directory for each configuration.
-	for (RefList< Configuration >::iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Configuration* configuration = *i;
 		if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + toLower(configuration->getName())))
@@ -271,7 +271,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	Path rootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
 
 	// Build include strings for each configuration.
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		
@@ -283,8 +283,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		else if (m_platform == MpMacOSX || m_platform == MpLinux)
 			s << L"-I" << makeFilePath << L"/" << configuration->getName() << L" ";
 
-		std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
-		for (std::vector< std::wstring >::iterator k = includePaths.begin(); k != includePaths.end(); ++k)
+		const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
+		for (std::vector< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
 		{
 			std::wstring configurationIncludePath = *k;
 			if (configurationIncludePath.empty())
@@ -314,14 +314,14 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	s << Endl;
 
 	// Build macro strings for each configuration.
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		
 		s << toUpper(configuration->getName()) + L"_DEFINES=";
 
-		std::vector< std::wstring >& definitions = configuration->getDefinitions();
-		for (std::vector< std::wstring >::iterator k = definitions.begin(); k != definitions.end(); ++k)
+		const std::vector< std::wstring >& definitions = configuration->getDefinitions();
+		for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
 		{
 			if (k != definitions.begin())
 				s << L" ";
@@ -338,7 +338,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	// Define the "All" target.
 	s << L".PHONY : All" << Endl;
 	s << L"All : \\" << Endl;
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		s << L"\t" << configuration->getName() << (*j != configurations.back() ? L" \\" : L"") << Endl;
@@ -349,7 +349,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	// Define the "Clean" target.
 	s << L".PHONY : Clean" << Endl;
 	s << L"Clean :" << Endl;
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		if (m_platform == MpWin32)
@@ -360,7 +360,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	s << Endl;
 
 	// Define build rules for each target.
-	for (RefList< Configuration >::iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 
@@ -816,8 +816,8 @@ bool SolutionBuilderMake::scanDependencies(
 
 		visitedDependencies.insert(dep);
 
-		std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
-		for (std::vector< std::wstring >::iterator i = includePaths.begin(); i != includePaths.end(); ++i)
+		const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
+		for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
 		{
 			std::wstring dependencyName = (*i) + L"/" + dep;
 
