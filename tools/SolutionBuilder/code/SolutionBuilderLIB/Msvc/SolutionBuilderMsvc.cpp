@@ -163,17 +163,17 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << projectGuids[project] << L"\"" << Endl;
 
 		// Add local dependencies.
-		RefList< Dependency >& dependencies = project->getDependencies();
+		const RefList< Dependency >& dependencies = project->getDependencies();
 		if (!dependencies.empty())
 		{
 			os << IncreaseIndent;
 			os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
-			for (RefList< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (!is_a< ProjectDependency >(*j))
 					continue;
 
-				Ref< Project > dependencyProject = static_cast< ProjectDependency* >(*j)->getProject();
+				Ref< const Project > dependencyProject = static_cast< const ProjectDependency* >(*j)->getProject();
 				if (!dependencyProject->getEnable())
 				{
 					traktor::log::warning << L"Trying to add disabled dependency to project \"" << project->getName() << L"\"; dependency skipped" << Endl;

@@ -132,11 +132,11 @@ bool SolutionBuilderMsvc2005::generate(Solution* solution)
 		s << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L".vcproj\", \"" << m_projectGuids[project] << L"\"" << Endl;
 
 		// Add local dependencies.
-		RefList< Dependency >& dependencies = project->getDependencies();
+		const RefList< Dependency >& dependencies = project->getDependencies();
 		if (!dependencies.empty())
 		{
 			s << L"\tProjectSection(ProjectDependencies) = postProject" << Endl;
-			for (RefList< Dependency >::iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (!is_a< ProjectDependency >(*j))
 					continue;
@@ -586,8 +586,8 @@ void SolutionBuilderMsvc2005::collectAdditionalLibraries(
 		configuration->getLibraryPaths().end()
 	);
 
-	RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefList< Dependency >& dependencies = project->getDependencies();
+	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Traverse all static library dependencies and at their "additional libraries" as well.
 		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))

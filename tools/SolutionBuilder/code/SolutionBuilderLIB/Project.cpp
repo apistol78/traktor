@@ -98,7 +98,12 @@ void Project::removeDependency(Dependency* dependency)
 	m_dependencies.remove(dependency);
 }
 
-RefList< Dependency >& Project::getDependencies()
+void Project::setDependencies(const RefList< Dependency >& dependencies)
+{
+	m_dependencies = dependencies;
+}
+	
+const RefList< Dependency >& Project::getDependencies() const
 {
 	return m_dependencies;
 }

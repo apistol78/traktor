@@ -233,11 +233,13 @@ void ProjectPropertyPage::eventClickRemove(ui::Event* event)
 	Ref< Dependency > selectedDependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
 	T_ASSERT (selectedDependency);
 
-	RefList< Dependency >& dependencies = m_project->getDependencies();
+	RefList< Dependency > dependencies = m_project->getDependencies();
 	RefList< Dependency >::iterator i = std::find(dependencies.begin(), dependencies.end(), selectedDependency);
 	T_ASSERT (i != dependencies.end());
 
 	dependencies.erase(i);
+	m_project->setDependencies(dependencies);
+	
 	updateDependencyList();
 }
 

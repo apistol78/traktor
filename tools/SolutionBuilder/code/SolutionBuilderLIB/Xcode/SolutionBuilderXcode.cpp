@@ -464,6 +464,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const Solution* solution) const
 {
 	s << L"/* Begin PBXBuildRule section */" << Endl;
+	
 	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(0) << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
@@ -473,8 +474,9 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\toutputFiles = (" << Endl;
 	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
 	s << L"\t\t\t);" << Endl;
-	s << L"\t\t\tscript = \"~/private/traktor/bin/MacOSX/BinaryInclude ${INPUT_FILE_PATH} ${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t\tscript = \"BinaryInclude ${INPUT_FILE_PATH} '$(DERIVED_FILES_DIR)/Resources/$(INPUT_FILE_BASE).h' c_Resource${INPUT_FILE_BASE}\";" << Endl;
 	s << L"\t\t};" << Endl;
+	
 	s << L"\t\t" << SolutionUids(solution).getCustomBuildRuleUid(1) << L" /* PBXBuildRule */ = {" << Endl;
 	s << L"\t\t\tisa = PBXBuildRule;" << Endl;
 	s << L"\t\t\tcompilerSpec = com.apple.compilers.proxy.script;" << Endl;
@@ -484,8 +486,9 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << L"\t\t\toutputFiles = (" << Endl;
 	s << L"\t\t\t\t\"${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h\"," << Endl;
 	s << L"\t\t\t);" << Endl;
-	s << L"\t\t\tscript = \"~/private/traktor/bin/MacOSX/BinaryInclude ${INPUT_FILE_PATH} ${DERIVED_FILES_DIR}/Resources/${INPUT_FILE_BASE}.h c_Resource${INPUT_FILE_BASE}\";" << Endl;
+	s << L"\t\t\tscript = \"BinaryInclude ${INPUT_FILE_PATH} '$(DERIVED_FILES_DIR)/Resources/$(INPUT_FILE_BASE).h' c_Resource${INPUT_FILE_BASE}\";" << Endl;
 	s << L"\t\t};" << Endl;
+	
 	s << L"/* End PBXBuildRule section */" << Endl;
 	s << Endl;
 }
@@ -620,66 +623,81 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	s << Endl;
 }
 
+void collectDependencies(const Project* project, RefSet< const Project >& outDependencies)
+{
+	const RefList< Dependency >& dependencies = project->getDependencies();
+	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		Ref< const Project > dependencyProject;
+		
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+			dependencyProject = projectDependency->getProject();
+		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+			dependencyProject = externalDependency->getProject();
+			
+		if (dependencyProject && outDependencies.find(dependencyProject) != outDependencies.end())
+		{
+			outDependencies.insert(dependencyProject);
+			collectDependencies(dependencyProject, outDependencies);
+		}
+	}
+}
+
 void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
 {
 	s << L"/* Begin PBXFrameworksBuildPhase section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		if (!dependencies.empty())
+		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+		if (targetFormat != Configuration::TfExecutable && targetFormat != Configuration::TfExecutableConsole)
+			continue;
+			
+		RefSet< const Project > dependencies;
+		collectDependencies(*i, dependencies);
+	
+		s << L"\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */ = {" << Endl;
+		s << L"\t\t\tisa = PBXFrameworksBuildPhase;" << Endl;
+		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
+		s << L"\t\t\tfiles = (" << Endl;
+
+		for (RefSet< const Project >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			s << L"\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */ = {" << Endl;
-			s << L"\t\t\tisa = PBXFrameworksBuildPhase;" << Endl;
-			s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
-			s << L"\t\t\tfiles = (" << Endl;
-
-			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-			{
-				if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
-				{
-					Configuration::TargetFormat targetFormat = getTargetFormat(projectDependency->getProject());
-					s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(projectDependency->getProject()) << L" /* " << ProjectUids(projectDependency->getProject()).getProductName(targetFormat) << L" in Frameworks */," << Endl;
-				}
-				else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
-				{
-					Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
-					s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(externalDependency->getProject()) << L" /* " << ProjectUids(externalDependency->getProject()).getProductName(targetFormat) << L" in Frameworks */," << Endl;
-				}
-			}
-			
-			Ref< Configuration > configurations[2];
-			getConfigurations(*i, configurations);
-
-			std::set< std::wstring > externalFrameworks;
-			if (configurations[0])
-			{
-				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-				for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-				{
-					if (endsWith(*j, L".framework"))
-						externalFrameworks.insert(*j);
-				}
-			}
-			if (configurations[1])
-			{
-				const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
-				for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-				{
-					if (endsWith(*j, L".framework"))
-						externalFrameworks.insert(*j);
-				}
-			}
-			
-			for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
-			{
-				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
-				s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
-			}
-
-			s << L"\t\t\t);" << Endl;
-			s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
-			s << L"\t\t};" << Endl;
+			Configuration::TargetFormat targetFormat = getTargetFormat(*j);
+			s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << ProjectUids(*j).getProductName(targetFormat) << L" in Frameworks */," << Endl;
 		}
+		
+		Ref< Configuration > configurations[2];
+		getConfigurations(*i, configurations);
+
+		std::set< std::wstring > externalFrameworks;
+		if (configurations[0])
+		{
+			const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+			{
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
+			}
+		}
+		if (configurations[1])
+		{
+			const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
+			{
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
+			}
+		}
+		
+		for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+		{
+			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
+			s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
+		}
+
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXFrameworksBuildPhase section */" << Endl;
 	s << Endl;
