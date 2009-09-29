@@ -248,6 +248,26 @@ namespace
 		collectProjectFiles(project, items, outFiles);
 	}
 
+	void collectDependencies(const Project* project, std::set< std::pair< Ref< const Project >, bool > >& outDependencies)
+	{
+		const RefList< Dependency >& dependencies = project->getDependencies();
+		for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		{
+			std::pair< Ref< const Project >, bool > dependencyProject(0, false);
+
+			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+				dependencyProject = std::make_pair(projectDependency->getProject(), false);
+			else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+				dependencyProject = std::make_pair(externalDependency->getProject(), true);
+
+			if (dependencyProject.first && outDependencies.find(dependencyProject) == outDependencies.end())
+			{
+				outDependencies.insert(dependencyProject);
+				collectDependencies(dependencyProject.first, outDependencies);
+			}
+		}
+	}
+
 	void createGroups(
 		const Project* project,
 		OutputStream& s,
@@ -404,57 +424,51 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 	}
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
 		{
-			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
+			std::set< std::pair< Ref< const Project >, bool > > dependencies;
+			collectDependencies(*i, dependencies);
+
+			for (std::set< std::pair< Ref< const Project >, bool > >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				Configuration::TargetFormat targetFormat = getTargetFormat(projectDependency->getProject());
+				Configuration::TargetFormat targetFormat = getTargetFormat(j->first);
 
-				std::wstring productUid = ProjectUids(projectDependency->getProject()).getProductUid();
-				std::wstring productName = ProjectUids(projectDependency->getProject()).getProductName(targetFormat);
+				std::wstring productUid = j->second ? ProjectUids(*i).getTargetDependencyUid(j->first) : ProjectUids(j->first).getProductUid();
+				std::wstring productName = ProjectUids(j->first).getProductName(targetFormat);
 
-				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(projectDependency->getProject()) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
+				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(j->first) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
 			}
-			else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+		}
+
+		Ref< Configuration > configurations[2];
+		getConfigurations(*i, configurations);
+
+		std::set< std::wstring > externalFrameworks;
+		if (configurations[0])
+		{
+			const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 			{
-				Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
-
-				std::wstring productUid = ProjectUids(*i).getTargetDependencyUid(externalDependency->getProject());
-				std::wstring productName = ProjectUids(externalDependency->getProject()).getProductName(targetFormat);
-
-				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(externalDependency->getProject()) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
 			}
-
-			Ref< Configuration > configurations[2];
-			getConfigurations(*i, configurations);
-
-			std::set< std::wstring > externalFrameworks;
-			if (configurations[0])
+		}
+		if (configurations[1])
+		{
+			const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
+			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
 			{
-				const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-				for (std::vector< std::wstring >::const_iterator k = libraries.begin(); k != libraries.end(); ++k)
-				{
-					if (endsWith(*k, L".framework"))
-						externalFrameworks.insert(*k);
-				}
+				if (endsWith(*j, L".framework"))
+					externalFrameworks.insert(*j);
 			}
-			if (configurations[1])
-			{
-				const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
-				for (std::vector< std::wstring >::const_iterator k = libraries.begin(); k != libraries.end(); ++k)
-				{
-					if (endsWith(*k, L".framework"))
-						externalFrameworks.insert(*k);
-				}
-			}
-			
-			for (std::set< std::wstring >::const_iterator k = externalFrameworks.begin(); k != externalFrameworks.end(); ++k)
-			{
-				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*k);
-				std::wstring fileUid = FileUids(*k).getFileUid();
-				s << L"\t\t" << buildFileUid << L" /* " << *k << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << *k << L" */; };" << Endl;
-			}
+		}
+		
+		for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+		{
+			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
+			std::wstring fileUid = FileUids(*j).getFileUid();
+			s << L"\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << *j << L" */; };" << Endl;
 		}
 	}
 	s << L"/* End PBXBuildFile section */" << Endl;
@@ -623,47 +637,29 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	s << Endl;
 }
 
-void collectDependencies(const Project* project, RefSet< const Project >& outDependencies)
-{
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-	{
-		Ref< const Project > dependencyProject;
-		
-		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
-			dependencyProject = projectDependency->getProject();
-		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
-			dependencyProject = externalDependency->getProject();
-			
-		if (dependencyProject && outDependencies.find(dependencyProject) != outDependencies.end())
-		{
-			outDependencies.insert(dependencyProject);
-			collectDependencies(dependencyProject, outDependencies);
-		}
-	}
-}
-
 void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
 {
 	s << L"/* Begin PBXFrameworksBuildPhase section */" << Endl;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
-		if (targetFormat != Configuration::TfExecutable && targetFormat != Configuration::TfExecutableConsole)
-			continue;
-			
-		RefSet< const Project > dependencies;
-		collectDependencies(*i, dependencies);
-	
 		s << L"\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */ = {" << Endl;
 		s << L"\t\t\tisa = PBXFrameworksBuildPhase;" << Endl;
 		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
 		s << L"\t\t\tfiles = (" << Endl;
 
-		for (RefSet< const Project >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
+		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
 		{
-			Configuration::TargetFormat targetFormat = getTargetFormat(*j);
-			s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << ProjectUids(*j).getProductName(targetFormat) << L" in Frameworks */," << Endl;
+			std::set< std::pair< Ref< const Project >, bool > > dependencies;
+			collectDependencies(*i, dependencies);
+		
+			for (std::set< std::pair< Ref< const Project >, bool > >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				Configuration::TargetFormat targetFormat = getTargetFormat(j->first);
+				std::wstring productName = ProjectUids(j->first).getProductName(targetFormat);
+
+				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->first) << L" /* " << productName << L" in Frameworks */," << Endl;
+			}
 		}
 		
 		Ref< Configuration > configurations[2];
