@@ -195,38 +195,6 @@ namespace
 
 		std::wstring getExternalProductGroupUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -4); }
 
-		std::wstring getProductName(Configuration::TargetFormat targetFormat) const
-		{
-			switch (targetFormat)
-			{
-			case Configuration::TfStaticLibrary:
-				return L"lib" + m_project->getName() + L".a";
-			case Configuration::TfSharedLibrary:
-				return L"lib" + m_project->getName() + L".dylib";
-			case Configuration::TfExecutable:
-				return m_project->getName();
-			case Configuration::TfExecutableConsole:
-				return m_project->getName();
-			}
-			return L"";
-		}
-
-		std::wstring getProductType(Configuration::TargetFormat targetFormat) const
-		{
-			switch (targetFormat)
-			{
-			case Configuration::TfStaticLibrary:
-				return L"com.apple.product-type.library.static";
-			case Configuration::TfSharedLibrary:
-				return L"com.apple.product-type.library.dynamic";
-			case Configuration::TfExecutable:
-				return L"com.apple.product-type.application";
-			case Configuration::TfExecutableConsole:
-				return L"com.apple.product-type.tool";
-			}
-			return L"";
-		}
-
 	private:
 		Ref< const Project > m_project;
 	};
@@ -443,7 +411,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Re
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->first);
 
 				std::wstring productUid = j->second ? ProjectUids(*i).getTargetDependencyUid(j->first) : ProjectUids(j->first).getProductUid();
-				std::wstring productName = ProjectUids(j->first).getProductName(targetFormat);
+				std::wstring productName = getProductName(j->first, targetFormat);
 
 				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(j->first) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
 			}
@@ -576,7 +544,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 		std::wstring productUid = ProjectUids(*i).getProductUid();
-		std::wstring productName = ProjectUids(*i).getProductName(targetFormat);
+		std::wstring productName = getProductName(*i, targetFormat);
 
 		s << L"\t\t" << productUid << L" /* " << productName << L" */ = { isa = PBXFileReference; includeInIndex = 0; path = " << productName << L"; sourceTree = BUILT_PRODUCTS_DIR; };" << Endl;
 	}
@@ -664,7 +632,7 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 			for (std::set< std::pair< Ref< const Project >, bool > >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->first);
-				std::wstring productName = ProjectUids(j->first).getProductName(targetFormat);
+				std::wstring productName = getProductName(j->first, targetFormat);
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->first) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
@@ -772,7 +740,7 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 					Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
 
 					std::wstring productUid = ProjectUids(*j).getTargetDependencyUid(externalDependency->getProject());
-					std::wstring productName = ProjectUids(externalDependency->getProject()).getProductName(targetFormat);
+					std::wstring productName = getProductName(externalDependency->getProject(), targetFormat);
 
 					s << L"\t\t\t\t" << productUid << L" /* " << productName << L" */," << Endl;
 				}
@@ -823,8 +791,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tname = " << (*i)->getName() << L";" << Endl;
 		s << L"\t\t\tproductName = " << (*i)->getName() << L";" << Endl;
-		s << L"\t\t\tproductReference = " << ProjectUids(*i).getProductUid() << L" /* " << ProjectUids(*i).getProductName(targetFormat) << L" */;" << Endl;
-		s << L"\t\t\tproductType = \"" << ProjectUids(*i).getProductType(targetFormat) << L"\";" << Endl;
+		s << L"\t\t\tproductReference = " << ProjectUids(*i).getProductUid() << L" /* " << getProductName(*i, targetFormat) << L" */;" << Endl;
+		s << L"\t\t\tproductType = \"" << getProductType(targetFormat) << L"\";" << Endl;
 		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXNativeTarget section */" << Endl;
@@ -892,7 +860,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			{
 				Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
 
-				std::wstring productName = ProjectUids(externalDependency->getProject()).getProductName(targetFormat);
+				std::wstring productName = getProductName(externalDependency->getProject(), targetFormat);
 
 				s << L"\t\t" << ProjectUids(*i).getTargetDependencyUid(externalDependency->getProject()) << L" /* " << productName << L" */ = {" << Endl;
 				s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
@@ -1200,4 +1168,39 @@ Configuration::TargetFormat SolutionBuilderXcode::getTargetFormat(const Project*
 		T_FATAL_ERROR;
 	
 	return targetFormat;
+}
+
+std::wstring SolutionBuilderXcode::getProductType(Configuration::TargetFormat targetFormat) const
+{
+	switch (targetFormat)
+	{
+	case Configuration::TfStaticLibrary:
+		return L"com.apple.product-type.library.static";
+	case Configuration::TfSharedLibrary:
+		return L"com.apple.product-type.library.dynamic";
+	case Configuration::TfExecutable:
+		return L"com.apple.product-type.application";
+	case Configuration::TfExecutableConsole:
+		if (!m_iphone)
+			return L"com.apple.product-type.tool";
+		else
+			return L"com.apple.product-type.application";
+	}
+	return L"";
+}
+
+std::wstring SolutionBuilderXcode::getProductName(const Project* project, Configuration::TargetFormat targetFormat) const
+{
+	switch (targetFormat)
+	{
+	case Configuration::TfStaticLibrary:
+		return L"lib" + project->getName() + L".a";
+	case Configuration::TfSharedLibrary:
+		return L"lib" + project->getName() + L".dylib";
+	case Configuration::TfExecutable:
+		return project->getName();
+	case Configuration::TfExecutableConsole:
+		return project->getName();
+	}
+	return L"";
 }
