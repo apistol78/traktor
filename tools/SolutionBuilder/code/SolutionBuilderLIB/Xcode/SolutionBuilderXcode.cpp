@@ -248,6 +248,18 @@ namespace
 					outFrameworks.insert(*j);
 			}
 		}
+
+		const RefList< Dependency >& dependencies = project->getDependencies();
+		for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		{
+			Ref< const Project > dependencyProject;
+			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+				dependencyProject = projectDependency->getProject();
+			else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+				dependencyProject = externalDependency->getProject();
+			if (dependencyProject)
+				collectFrameworks(dependencyProject, outFrameworks);
+		}
 	}
 
 	void createGroups(
@@ -536,11 +548,14 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 
 				Path externalXcodeProjectPath = externalSolution->getRootPath() + L"/" + externalSolution->getName() + L".xcodeproj";
 
+				Configuration::TargetFormat targetFormat = getTargetFormat(externalDependency->getProject());
+				std::wstring externalProductName = getProductName(externalDependency->getProject(), targetFormat);
+
 				s << L"\t\t" << ProjectUids(*i).getContainerItemProxy(externalDependency->getProject()) << L" /* PBXContainerItemProxy */ = {" << Endl;
 				s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 				s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
 				s << L"\t\t\tproxyType = 2;" << Endl;
-				s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(externalDependency->getProject()).getTargetUid() << L" /* " << externalDependency->getProject()->getName() << L" */;" << Endl;
+				s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(externalDependency->getProject()).getTargetUid() << L" /* " << externalProductName << L" */;" << Endl;
 				s << L"\t\t\tremoteInfo = " << externalDependency->getProject()->getName() << L";" << Endl;
 				s << L"\t\t};" << Endl;
 			}
@@ -598,7 +613,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 				if (!FileSystem::getInstance().getRelativePath(externalXcodeProjectPath, projectPath, relativeFilePath))
 					relativeFilePath = externalXcodeProjectPath;
 
-				s << L"\t\t" << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */ = { isa = PBXFileReference; lastKnownFileType = \"wrapper.pb-project\"; name = \"" << externalXcodeProjectPath.getFileName() << L"\"; path = \"" << relativeFilePath.getPathName() << L"\"; sourceTree = SOURCE_ROOT; };" << Endl;
+				s << L"\t\t" << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */ = { isa = PBXFileReference; lastKnownFileType = \"wrapper.pb-project\"; path = \"" << relativeFilePath.getPathName() << L"\"; sourceTree = \"<group>\"; };" << Endl;
 
 				externalSolutionPaths.insert(externalDependency->getSolutionFileName());
 			}
@@ -648,31 +663,11 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->first) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
 		}
-		
-		Ref< Configuration > configurations[2];
-		getConfigurations(*i, configurations);
 
-		std::set< std::wstring > externalFrameworks;
-		if (configurations[0])
-		{
-			const std::vector< std::wstring >& libraries = configurations[0]->getLibraries();
-			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-			{
-				if (endsWith(*j, L".framework"))
-					externalFrameworks.insert(*j);
-			}
-		}
-		if (configurations[1])
-		{
-			const std::vector< std::wstring >& libraries = configurations[1]->getLibraries();
-			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
-			{
-				if (endsWith(*j, L".framework"))
-					externalFrameworks.insert(*j);
-			}
-		}
+		std::set< std::wstring > frameworks;
+		collectFrameworks(*i, frameworks);
 		
-		for (std::set< std::wstring >::const_iterator j = externalFrameworks.begin(); j != externalFrameworks.end(); ++j)
+		for (std::set< std::wstring >::const_iterator j = frameworks.begin(); j != frameworks.end(); ++j)
 		{
 			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
 			s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
@@ -692,12 +687,43 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 	s << L"\t\t" << SolutionUids(solution).getGroupUid() << L" = {" << Endl;
 	s << L"\t\t\tisa = PBXGroup;" << Endl;
 	s << L"\t\t\tchildren = (" << Endl;
+
+	std::set< Path > externalSolutionPaths;
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		const RefList< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
+			{
+				if (externalSolutionPaths.find(externalDependency->getSolutionFileName()) != externalSolutionPaths.end())
+					continue;
+
+				Ref< const Solution > externalSolution = externalDependency->getSolution();
+				T_ASSERT (externalSolution);
+
+				Path externalXcodeProjectPath = FileSystem::getInstance().getAbsolutePath(externalSolution->getRootPath() + L"/" + externalSolution->getName() + L".xcodeproj");
+				Path projectPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
+
+				Path relativeFilePath;
+				if (!FileSystem::getInstance().getRelativePath(externalXcodeProjectPath, projectPath, relativeFilePath))
+					relativeFilePath = externalXcodeProjectPath;
+
+				s << L"\t\t\t\t" << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */," << Endl;
+
+				externalSolutionPaths.insert(externalDependency->getSolutionFileName());
+			}
+		}
+	}
+
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::wstring projectGroupUid = ProjectUids(*i).getGroupUid();
 		s << L"\t\t\t\t" << projectGroupUid << L" /* " << (*i)->getName() << L" */," << Endl;
 	}
+
 	s << L"\t\t\t\t" << SolutionUids(solution).getProductsGroupUid() << L" /* Products */," << Endl;
+
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
 	s << L"\t\t};" << Endl;
