@@ -69,7 +69,7 @@ bool FlashBitmap::create(uint16_t width, uint16_t height)
 {
 	m_width = width;
 	m_height = height;
-	m_bits = new SwfColor [width * height];
+	m_bits.reset(new SwfColor [width * height]);
 	return true;
 }
 

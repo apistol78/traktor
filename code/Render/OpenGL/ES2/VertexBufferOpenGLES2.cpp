@@ -116,6 +116,7 @@ VertexBufferOpenGLES2::VertexBufferOpenGLES2(IContext* context, const std::vecto
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
+#if defined(GL_OES_texture_half_float)
 		case DtHalf2:
 			m_attributeDesc[usageIndex].size = 2;
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_OES;
@@ -127,6 +128,7 @@ VertexBufferOpenGLES2::VertexBufferOpenGLES2(IContext* context, const std::vecto
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_OES;
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
+#endif
 
 		default:
 			log::warning << L"Unsupport vertex format" << Endl;
@@ -157,7 +159,7 @@ void* VertexBufferOpenGLES2::lock()
 		return 0;
 
 	int32_t bufferSize = getBufferSize();
-	m_buffer = AutoArrayPtr< uint8_t >(new uint8_t [bufferSize]);
+	m_buffer.reset(new uint8_t [bufferSize]);
 
 	return m_buffer.ptr();
 }

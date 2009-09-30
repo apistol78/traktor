@@ -27,7 +27,7 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
 	{
-		m_samples[i] = new int16_t [m_samplesCount];
+		m_samples[i].reset(new int16_t [m_samplesCount]);
 		if (!m_samples[i].ptr())
 			return false;
 	}

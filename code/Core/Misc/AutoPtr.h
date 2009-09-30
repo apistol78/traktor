@@ -43,18 +43,10 @@ namespace traktor
 			return m_ptr;
 		}
 
-		AutoPtr< Type >& operator = (Type* ptr_)
+		void reset(Type* ptr)
 		{
 			release();
-			m_ptr = ptr_;
-			return *this;
-		}
-
-		AutoPtr< Type >& operator = (AutoPtr< Type >& lh)
-		{
-			release();
-			m_ptr = lh.m_ptr; lh.m_ptr = 0;
-			return *this;
+			m_ptr = ptr;
 		}
 
 		Type* operator -> ()
@@ -64,6 +56,8 @@ namespace traktor
 
 	private:
 		Type* m_ptr;
+		
+		AutoPtr< Type >& operator = (const AutoPtr< Type >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
 	template < typename Type >
@@ -109,19 +103,11 @@ namespace traktor
 		{
 			return m_ptr;
 		}
-
-		AutoArrayPtr< Type >& operator = (Type* ptr_)
+		
+		void reset(Type* ptr)
 		{
 			release();
-			m_ptr = ptr_;
-			return *this;
-		}
-
-		AutoArrayPtr< Type >& operator = (AutoArrayPtr< Type >& lh)
-		{
-			release();
-			m_ptr = lh.m_ptr; lh.m_ptr = 0;
-			return *this;
+			m_ptr = ptr;
 		}
 
 		Type& operator [] (int index)
@@ -131,6 +117,8 @@ namespace traktor
 
 	private:
 		Type* m_ptr;
+		
+		AutoArrayPtr& operator = (const AutoArrayPtr< Type >& lh) { T_FATAL_ERROR; return *this; }
 	};
 
 }
