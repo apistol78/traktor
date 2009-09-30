@@ -27,7 +27,7 @@ private:
 	std::wstring m_releaseConfig;
 	bool m_iphone;
 
-	void generatePBXBuildFileSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
+	void generatePBXBuildFileSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
 	void generatePBXBuildRuleSection(traktor::OutputStream& s, const Solution* solution) const;
 
@@ -35,7 +35,7 @@ private:
 
 	void generatePBXFileReferenceSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects, const std::set< traktor::Path >& files) const;
 
-	void generatePBXFrameworksBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
+	void generatePBXFrameworksBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
 	void generatePBXGroupSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
@@ -43,7 +43,7 @@ private:
 
 	void generatePBXProjectSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
-	void generatePBXReferenceProxySection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
+	void generatePBXReferenceProxySection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
 	void generatePBXHeadersBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
 
