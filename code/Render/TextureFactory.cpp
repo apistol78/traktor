@@ -152,7 +152,7 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 		
 		for (int side = 0; side < 6; ++side)
 		{
-			buffer[side] = new uint8_t [textureDataSize];
+			buffer[side].reset(new uint8_t [textureDataSize]);
 
 			uint8_t* data = buffer[side].ptr();
 			for (int i = 0; i < mipCount; ++i)

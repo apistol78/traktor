@@ -1,6 +1,14 @@
 #ifndef traktor_render_Platform_H
 #define traktor_render_Platform_H
 
+#include "Core/Config.h"
+
+#if defined(TARGET_OS_IPHONE)
+#	if !defined(T_OPENGL_ES2)
+#		define T_OPENGL_ES2
+#	endif
+#endif
+
 #include <string>
 #if defined(T_OPENGL_STD)
 #	if defined(_WIN32)
@@ -26,16 +34,22 @@
 #		include <GL/glx.h>
 #	endif
 #elif defined(T_OPENGL_ES2)
-#	if defined(_WIN32)
-#		define _WIN32_LEAN_AND_MEAN
-#		include <windows.h>
-#		include <tchar.h>
-#	endif
-#	include <EGL/egl.h>
-#	include <GLES2/gl2.h>
-#	include <GLES2/gl2ext.h>
-#	if defined(_WIN32)
-#		include <GLES2/gl2amdext.h>
+#	if !defined(TARGET_OS_IPHONE)
+#		if defined(_WIN32)
+#			define _WIN32_LEAN_AND_MEAN
+#			include <windows.h>
+#			include <tchar.h>
+#		endif
+#		include <EGL/egl.h>
+#		include <GLES2/gl2.h>
+#		include <GLES2/gl2ext.h>
+#		if defined(_WIN32)
+#			include <GLES2/gl2amdext.h>
+#		endif
+#		define T_OPENGL_ES2_HAVE_EGL
+#	else
+#		include <OpenGLES/ES2/gl.h>
+#		include <OpenGLES/ES2/glext.h>
 #	endif
 #endif
 
@@ -54,7 +68,7 @@ namespace traktor
 
 std::wstring getOpenGLErrorString(GLenum glError);
 
-#if defined(T_OPENGL_ES2)
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 std::wstring getEGLErrorString(EGLint error);
 #endif
 

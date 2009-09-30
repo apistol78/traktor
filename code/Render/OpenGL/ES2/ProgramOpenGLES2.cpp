@@ -319,7 +319,7 @@ bool ProgramOpenGLES2::activate()
 			if (!st.target)
 				continue;
 
-			T_OGL_SAFE(glEnable(st.target));
+			//T_OGL_SAFE(glEnable(st.target));
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i->unit));
 			T_OGL_SAFE(glBindTexture(st.target, st.name));
 
@@ -342,7 +342,7 @@ bool ProgramOpenGLES2::activate()
 	}
 	else
 	{
-		T_OGL_SAFE(glDisable(GL_TEXTURE_2D));
+		//T_OGL_SAFE(glDisable(GL_TEXTURE_2D));
 	}
 
 	ms_activeProgram = this;
@@ -537,6 +537,7 @@ bool ProgramOpenGLES2::createFromBinary(const ProgramResource* resource)
 	GLuint fragmentObject = glCreateShader(GL_FRAGMENT_SHADER);
 
 	GLuint objects[] = { vertexObject, fragmentObject };
+#if defined(GL_Z400_BINARY_AMD)
 	T_OGL_SAFE(glShaderBinary(
 		2,
 		objects,
@@ -544,6 +545,9 @@ bool ProgramOpenGLES2::createFromBinary(const ProgramResource* resource)
 		resourceOpenGL->getBuffer(),
 		GLint(resourceOpenGL->getBufferSize())
 	));
+#else
+	T_FATAL_ERROR;
+#endif
 
 	m_program = glCreateProgram();
 

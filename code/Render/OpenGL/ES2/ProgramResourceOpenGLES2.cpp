@@ -24,7 +24,7 @@ public:
 	virtual bool serialize(Serializer& s) const
 	{
 		if (s.getDirection() == Serializer::SdRead)
-			m_buffer = AutoArrayPtr< uint8_t >(new uint8_t [m_bufferSize]);
+			m_buffer.reset(new uint8_t [m_bufferSize]);
 		return s >> Member< void* >(getName(), m_buffer.ptr(), m_bufferSize);
 	}
 
@@ -54,7 +54,7 @@ ProgramResourceOpenGLES2::ProgramResourceOpenGLES2(
 ,	m_fragmentSamplers(fragmentSamplers)
 ,	m_renderState(renderState)
 {
-	m_buffer = AutoArrayPtr< uint8_t >(new uint8_t [bufferSize]);
+	m_buffer.reset(new uint8_t [bufferSize]);
 	std::memcpy(m_buffer.ptr(), buffer, bufferSize);
 }
 

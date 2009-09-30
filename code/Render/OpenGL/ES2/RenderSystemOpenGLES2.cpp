@@ -11,6 +11,9 @@
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/ContextOpenGLES2.h"
+#if defined(TARGET_OS_IPHONE)
+#	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#endif
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
 #include "Core/Serialization/Serializable.h"
@@ -24,9 +27,11 @@ namespace traktor
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemOpenGLES2", RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 :	m_display(EGL_NO_DISPLAY)
 ,	m_context(EGL_NO_CONTEXT)
 ,	m_surface(EGL_NO_SURFACE)
+#endif
 #if defined(_WIN32)
 ,	m_hWnd(0)
 #endif
@@ -62,6 +67,7 @@ bool RenderSystemOpenGLES2::create()
 
 void RenderSystemOpenGLES2::destroy()
 {
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 	eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 
 	eglDestroyContext(m_display, m_context);
@@ -71,6 +77,7 @@ void RenderSystemOpenGLES2::destroy()
 	m_display = EGL_NO_DISPLAY;
 	m_context = EGL_NO_CONTEXT;
 	m_surface = EGL_NO_SURFACE;
+#endif
 }
 
 int RenderSystemOpenGLES2::getDisplayModeCount() const
@@ -143,6 +150,15 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayM
 
 IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
+#if defined(TARGET_OS_IPHONE)
+	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
+	if (!wrapper->create(windowHandle, desc.depthBits != 0))
+		return 0;
+		
+	return gc_new< RenderViewOpenGLES2 >(m_globalContext, wrapper);
+#endif
+
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 	const uint32_t c_maxConfigAttrSize = 32;
 	const uint32_t c_maxMatchConfigs = 64;
 
@@ -220,6 +236,9 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 		return 0;
 
 	return gc_new< RenderViewOpenGLES2 >(m_globalContext, m_display, m_context, m_surface);
+#else
+	return 0;
+#endif
 }
 
 VertexBuffer* RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
