@@ -191,9 +191,7 @@ namespace
 
 		std::wstring getProductUid() const { return calculateUid(m_project, -10); }
 		
-		std::wstring getExternalContainerItemProxy() const { return calculateUid(m_project, -11); }
-
-		std::wstring getContainerItemProxy(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -2); }
+		std::wstring getContainerItemProxy() const { return calculateUid(m_project, -11); }
 
 		std::wstring getTargetDependencyUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -3); }
 
@@ -537,6 +535,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
 	
 	// Local proxies.
+	RefSet< const Project > localProjects;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
@@ -544,16 +543,18 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			if (!j->external)
-			{
-				s << L"\t\t" << ProjectUids(*i).getContainerItemProxy(j->project) << L" /* PBXContainerItemProxy */ = {" << Endl;
-				s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
-				s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
-				s << L"\t\t\tproxyType = 1;" << Endl;
-				s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << j->project->getName() << L" */;" << Endl;
-				s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
-				s << L"\t\t};" << Endl;
-			}
+			if (j->external || localProjects.find(j->project) != localProjects.end())
+				continue;
+
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
+			s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
+			s << L"\t\t\tproxyType = 1;" << Endl;
+			s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << j->project->getName() << L" */;" << Endl;
+			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
+			s << L"\t\t};" << Endl;
+			
+			localProjects.insert(j->project);
 		}
 	}
 	
@@ -574,7 +575,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring externalProductName = getProductName(j->project, targetFormat);
 
-			s << L"\t\t" << ProjectUids(j->project).getExternalContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
 			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 			s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
 			s << L"\t\t\tproxyType = 2;" << Endl;
@@ -926,7 +927,7 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
 			s << L"\t\t\tfileType = archive.ar;" << Endl;
 			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
-			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getExternalContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
+			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
 			s << L"\t\t};" << Endl;
 			
@@ -1042,7 +1043,7 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 				s << L"\t\t" << ProjectUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */ = {" << Endl;
 				s << L"\t\t\tisa = PBXTargetDependency;" << Endl;
 				s << L"\t\t\ttarget = " << ProjectUids(projectDependency->getProject()).getTargetUid() << L" /* " << projectDependency->getProject()->getName() << L" */;" << Endl;
-				s << L"\t\t\ttargetProxy = " << ProjectUids(*i).getContainerItemProxy(projectDependency->getProject()) << L" /* PBXContainerItemProxy */;" << Endl;
+				s << L"\t\t\ttargetProxy = " << ProjectUids(projectDependency->getProject()).getContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
 				s << L"\t\t};" << Endl;
 			}
 		}
