@@ -81,7 +81,7 @@ bool RenderSystemDx10::create()
 	if (FAILED(hr))
 		return 0;
 
-	m_dxgiDisplayModes = new DXGI_MODE_DESC [count]; 
+	m_dxgiDisplayModes.reset(new DXGI_MODE_DESC [count]); 
 	hr = dxgiOutput->GetDisplayModeList(
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		0,

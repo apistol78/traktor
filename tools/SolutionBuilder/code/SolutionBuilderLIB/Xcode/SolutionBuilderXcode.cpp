@@ -177,17 +177,19 @@ namespace
 
 		std::wstring getBuildPhaseHeadersUid() const { return calculateUid(m_project, -5); }
 
-		std::wstring getBuildPhaseSourcesUid() const { return calculateUid(m_project, -6); }
+		std::wstring getBuildPhaseResourcesUid() const { return calculateUid(m_project, -6); }
 
-		std::wstring getBuildPhaseFrameworksUid() const {return calculateUid(m_project, -7); }
+		std::wstring getBuildPhaseSourcesUid() const { return calculateUid(m_project, -7); }
+
+		std::wstring getBuildPhaseFrameworksUid() const {return calculateUid(m_project, -8); }
 
 		std::wstring getBuildFileUid(const Path& file) const { return calculateUid(m_project, file); }
 
 		std::wstring getBuildFileUid(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -1); }
 
-		std::wstring getTargetUid() const { return calculateUid(m_project, -8); }
+		std::wstring getTargetUid() const { return calculateUid(m_project, -9); }
 
-		std::wstring getProductUid() const { return calculateUid(m_project, -9); }
+		std::wstring getProductUid() const { return calculateUid(m_project, -10); }
 
 		std::wstring getContainerItemProxy(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -2); }
 
@@ -419,6 +421,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	generatePBXProjectSection(s, solution, projects);
 	generatePBXReferenceProxySection(s, solution, projects);
 	generatePBXHeadersBuildPhaseSection(s, projects);
+	generatePBXResourcesBuildPhaseSection(s, projects);
 	generatePBXSourcesBuildPhaseSection(s, projects);
 	generatePBXTargetDependencySection(s, projects);
 	generateXCBuildConfigurationSection(s, solution, projects);
@@ -458,6 +461,8 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Sources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 			else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Headers */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
+			else if (extension == L"xib" || extension == L"plist")
+				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Resources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 		}
 	}
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -562,7 +567,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 				s << L"\t\t\tcontainerPortal = " << SolutionUids(solution).getProjectUid() << L" /* Project object */;" << Endl;
 				s << L"\t\t\tproxyType = 1;" << Endl;
 				s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << j->project->getName() << L" */;" << Endl;
-				s << L"\t\t\tremoteInfo = " << j->project->getName() << L";" << Endl;
+				s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
 				s << L"\t\t};" << Endl;
 			}
 			else
@@ -576,8 +581,8 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 				s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
 				s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
 				s << L"\t\t\tproxyType = 2;" << Endl;
-				s << L"\t\t\tremoteGlobalIDString = " << ProjectUids(j->project).getTargetUid() << L" /* " << externalProductName << L" */;" << Endl;
-				s << L"\t\t\tremoteInfo = " << j->project->getName() << L";" << Endl;
+				s << L"\t\t\tremoteGlobalIDString = " << createNewUid() << L";" << Endl;
+				s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
 				s << L"\t\t};" << Endl;
 			}
 		}
@@ -816,6 +821,7 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\tbuildPhases = (" << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseHeadersUid() << L" /* Headers */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseSourcesUid() << L" /* Sources */," << Endl;
+		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */," << Endl;
 		s << L"\t\t\t\t" << ProjectUids(*i).getBuildPhaseFrameworksUid() << L" /* Frameworks */," << Endl;
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tbuildRules = (" << Endl;
@@ -946,6 +952,33 @@ void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, 
 		s << L"\t\t};" << Endl;
 	}
 	s << L"/* End PBXHeadersBuildPhase section */" << Endl;
+	s << Endl;
+}
+
+void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const
+{
+	s << L"/* Begin PBXResourcesBuildPhase section */" << Endl;
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		s << L"\t\t" << ProjectUids(*i).getBuildPhaseResourcesUid() << L" /* Resources */ = {" << Endl;
+		s << L"\t\t\tisa = PBXResourcesBuildPhase;" << Endl;
+		s << L"\t\t\tbuildActionMask = 2147483647;" << Endl;
+		s << L"\t\t\tfiles = (" << Endl;
+
+		std::set< Path > projectFiles;
+		collectProjectFiles(*i, projectFiles);
+		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
+		{
+			std::wstring extension = toLower(j->getExtension());
+			if (extension == L"xib" || extension == L"plist")
+				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << j->getFileName() << L" in Resources */," << Endl;
+		}
+
+		s << L"\t\t\t);" << Endl;
+		s << L"\t\t\trunOnlyForDeploymentPostprocessing = 0;" << Endl;
+		s << L"\t\t};" << Endl;
+	}
+	s << L"/* End PBXResourcesBuildPhase section */" << Endl;
 	s << Endl;
 }
 
