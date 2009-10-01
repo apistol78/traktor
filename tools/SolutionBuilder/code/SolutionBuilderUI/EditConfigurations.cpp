@@ -45,8 +45,8 @@ bool EditConfigurations::execute(traktor::ui::Widget* parent, Solution* solution
 		const std::vector< ConfigurationsDialog::Action >& actions = configurationsDialog.getActions();
 		for (std::vector< ConfigurationsDialog::Action >::const_iterator i = actions.begin(); i != actions.end(); ++i)
 		{
-			RefList< Project >& projects = solution->getProjects();
-			for (RefList< Project >::iterator j = projects.begin(); j != projects.end(); ++j)
+			const RefList< Project >& projects = solution->getProjects();
+			for (RefList< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
 			{
 				if (i->type == ConfigurationsDialog::AtNew)
 				{
