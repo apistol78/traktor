@@ -103,7 +103,7 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSyste
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer = new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height];
+	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
 
 	m_dirty[0] = 0;
@@ -135,7 +135,7 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer = new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height];
+	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
 

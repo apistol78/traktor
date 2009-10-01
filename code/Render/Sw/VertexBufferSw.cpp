@@ -35,7 +35,7 @@ VertexBufferSw::VertexBufferSw(const std::vector< VertexElement >& vertexElement
 ,	m_lockCount(0)
 {
 	T_ASSERT (bufferSize % m_vertexStride == 0);
-	m_data = new vertex_tuple_t[m_vertexCount];
+	m_data.reset(new vertex_tuple_t[m_vertexCount]);
 }
 
 void VertexBufferSw::destroy()

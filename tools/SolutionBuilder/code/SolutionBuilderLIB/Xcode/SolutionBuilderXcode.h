@@ -47,6 +47,8 @@ private:
 
 	void generatePBXHeadersBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
 
+	void generatePBXResourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
+
 	void generatePBXSourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
 
 	void generatePBXTargetDependencySection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const;
