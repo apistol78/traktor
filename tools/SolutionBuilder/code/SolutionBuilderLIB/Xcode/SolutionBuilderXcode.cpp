@@ -190,6 +190,8 @@ namespace
 		std::wstring getTargetUid() const { return calculateUid(m_project, -9); }
 
 		std::wstring getProductUid() const { return calculateUid(m_project, -10); }
+		
+		std::wstring getExternalContainerItemProxy() const { return calculateUid(m_project, -11); }
 
 		std::wstring getContainerItemProxy(const Project* dependencyProject) const { return calculateUid(m_project, dependencyProject, -2); }
 
@@ -553,6 +555,8 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
 {
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
+	
+	// Local proxies.
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
@@ -570,23 +574,38 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 				s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
 				s << L"\t\t};" << Endl;
 			}
-			else
-			{
-				Path externalXcodeProjectPath = j->solution->getRootPath() + L"/" + j->solution->getName() + L".xcodeproj";
-
-				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
-				std::wstring externalProductName = getProductName(j->project, targetFormat);
-
-				s << L"\t\t" << ProjectUids(*i).getContainerItemProxy(j->project) << L" /* PBXContainerItemProxy */ = {" << Endl;
-				s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
-				s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
-				s << L"\t\t\tproxyType = 2;" << Endl;
-				s << L"\t\t\tremoteGlobalIDString = " << createNewUid() << L";" << Endl;
-				s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
-				s << L"\t\t};" << Endl;
-			}
 		}
 	}
+	
+	// External proxies.
+	RefSet< const Project > externalProjects;
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	{
+		std::set< ResolvedDependency > dependencies;
+		collectDependencies(solution, *i, dependencies);
+
+		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
+				continue;
+				
+			Path externalXcodeProjectPath = j->solution->getRootPath() + L"/" + j->solution->getName() + L".xcodeproj";
+
+			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+			std::wstring externalProductName = getProductName(j->project, targetFormat);
+
+			s << L"\t\t" << ProjectUids(j->project).getExternalContainerItemProxy() << L" /* PBXContainerItemProxy */ = {" << Endl;
+			s << L"\t\t\tisa = PBXContainerItemProxy;" << Endl;
+			s << L"\t\t\tcontainerPortal = " << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */;" << Endl;
+			s << L"\t\t\tproxyType = 2;" << Endl;
+			s << L"\t\t\tremoteGlobalIDString = " << createNewUid() << L";" << Endl;
+			s << L"\t\t\tremoteInfo = \"" << j->project->getName() << L"\";" << Endl;
+			s << L"\t\t};" << Endl;
+			
+			externalProjects.insert(j->project);
+		}
+	}
+	
 	s << L"/* End PBXContainerItemProxy section */" << Endl;
 	s << Endl;
 }
@@ -639,7 +658,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 				if (!FileSystem::getInstance().getRelativePath(externalXcodeProjectPath, projectPath, relativeFilePath))
 					relativeFilePath = externalXcodeProjectPath;
 
-				s << L"\t\t" << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */ = { isa = PBXFileReference; lastKnownFileType = \"wrapper.pb-project\"; path = \"" << relativeFilePath.getPathName() << L"\"; sourceTree = \"<group>\"; };" << Endl;
+				s << L"\t\t" << FileUids(externalXcodeProjectPath).getFileUid() << L" /* " << externalXcodeProjectPath.getFileName() << L" */ = { isa = PBXFileReference; lastKnownFileType = \"wrapper.pb-project\"; name = \"" << relativeFilePath.getFileName() << L"\"; path = \"" << relativeFilePath.getPathName() << L"\"; sourceTree = SOURCE_ROOT; };" << Endl;
 
 				externalSolutionPaths.insert(externalDependency->getSolutionFileName());
 			}
@@ -678,25 +697,43 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
 		{
+			// Add system frameworks.
+			std::set< std::wstring > frameworks;
+			collectFrameworks(*i, frameworks);
+			
+			for (std::set< std::wstring >::const_iterator j = frameworks.begin(); j != frameworks.end(); ++j)
+			{
+				std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
+				s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
+			}
+
+			// Add dependent libraries.
 			std::set< ResolvedDependency > dependencies;
 			collectDependencies(solution, *i, dependencies);
 		
+			// Add local dependencies first.
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
+				if (j->external)
+					continue;
+				
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				std::wstring productName = getProductName(j->project, targetFormat);
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
-		}
 
-		std::set< std::wstring > frameworks;
-		collectFrameworks(*i, frameworks);
-		
-		for (std::set< std::wstring >::const_iterator j = frameworks.begin(); j != frameworks.end(); ++j)
-		{
-			std::wstring buildFileUid = ProjectUids(*i).getBuildFileUid(*j);
-			s << L"\t\t\t\t" << buildFileUid << L" /* " << *j << L" in Frameworks */," << Endl;
+			// Then add external dependencies.
+			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				if (!j->external)
+					continue;
+
+				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
+				std::wstring productName = getProductName(j->project, targetFormat);
+
+				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
+			}
 		}
 
 		s << L"\t\t\t);" << Endl;
@@ -892,6 +929,8 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
 {
 	s << L"/* Begin PBXReferenceProxy section */" << Endl;
+	
+	RefSet< const Project > externalProjects;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
@@ -899,21 +938,24 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			if (!j->external)
+			if (!j->external || externalProjects.find(j->project) != externalProjects.end())
 				continue;
-
+				
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			std::wstring productName = getProductName(j->project, targetFormat);
 
-			s << L"\t\t" << ProjectUids(*i).getTargetDependencyUid(j->project) << L" /* " << productName << L" */ = {" << Endl;
+			s << L"\t\t" << ProjectUids(j->project).getProductUid() << L" /* " << productName << L" */ = {" << Endl;
 			s << L"\t\t\tisa = PBXReferenceProxy;" << Endl;
 			s << L"\t\t\tfileType = archive.ar;" << Endl;
 			s << L"\t\t\tpath = \"" << productName << L"\";" << Endl;
-			s << L"\t\t\tremoteRef = " << ProjectUids(*i).getContainerItemProxy(j->project) << L" /* PBXContainerItemProxy */;" << Endl;
+			s << L"\t\t\tremoteRef = " << ProjectUids(j->project).getExternalContainerItemProxy() << L" /* PBXContainerItemProxy */;" << Endl;
 			s << L"\t\t\tsourceTree = BUILT_PRODUCTS_DIR;" << Endl;
 			s << L"\t\t};" << Endl;
+			
+			externalProjects.insert(j->project);
 		}
 	}
+	
 	s << L"/* End PBXReferenceProxy section */" << Endl;
 	s << Endl;
 }
@@ -1073,6 +1115,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << L"\t\t\tname = Release;" << Endl;
 	s << L"\t\t};" << Endl;
 
+	// Project settings.
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Configuration > configurations[2];
@@ -1116,6 +1159,12 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
+			
+			s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = (" << Endl;
+			s << L"\t\t\t\t\t\"$(inherited)\"," << Endl;
+			if (m_iphone)
+				s << L"\t\t\t\t\t\"\\\"$(SRCROOT)/build/Debug-iphoneos\\\"\"," << Endl;			
+			s << L"\t\t\t\t);" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
@@ -1161,6 +1210,12 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
+			
+			s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = (" << Endl;
+			s << L"\t\t\t\t\t\"$(inherited)\"," << Endl;
+			if (m_iphone)
+				s << L"\t\t\t\t\t\"\\\"$(SRCROOT)/build/Debug-iphoneos\\\"\"," << Endl;			
+			s << L"\t\t\t\t);" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
