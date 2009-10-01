@@ -95,8 +95,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	// Generate projects.
 	std::map< const Project*, std::wstring > projectGuids;
 
-	RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefList< Project >& projects = solution->getProjects();
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 
@@ -140,7 +140,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
 	
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 
@@ -197,7 +197,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	std::wstring platform = m_settings->getProject()->getPlatform();
 
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 

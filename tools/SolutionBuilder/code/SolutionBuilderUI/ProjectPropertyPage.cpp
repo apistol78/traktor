@@ -209,8 +209,8 @@ void ProjectPropertyPage::eventClickAdd(ui::Event* event)
 	std::wstring dependencyName = m_dropAvailable->getSelectedItem();
 	if (!dependencyName.empty())
 	{
-		RefList< Project >& projects = m_solution->getProjects();
-		for(RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+		const RefList< Project >& projects = m_solution->getProjects();
+		for(RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
 			if ((*i)->getName() == dependencyName)
 			{

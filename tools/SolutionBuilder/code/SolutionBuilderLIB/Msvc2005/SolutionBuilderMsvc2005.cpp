@@ -111,8 +111,8 @@ bool SolutionBuilderMsvc2005::generate(Solution* solution)
 
 	std::wstring solutionGuid = generateGuidString(solutionFileName);
 
-	RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefList< Project >& projects = solution->getProjects();
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Project* project = *i;
 		if (!generateProject(solution, project))
@@ -125,7 +125,7 @@ bool SolutionBuilderMsvc2005::generate(Solution* solution)
 	s << L"Microsoft Visual Studio Solution File, Format Version 9.00" << Endl;
 	s << L"# Visual Studio 2005" << Endl;
 	
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Project* project = *i;
 
@@ -152,7 +152,7 @@ bool SolutionBuilderMsvc2005::generate(Solution* solution)
 	s << L"Global" << Endl;
 	s << L"\tGlobalSection(SolutionConfigurationPlatforms) = preSolution" << Endl;
 
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Project* project = *i;
 

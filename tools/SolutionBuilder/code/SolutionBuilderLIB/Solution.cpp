@@ -55,7 +55,7 @@ void Solution::removeProject(Project* project)
 	}
 }
 
-traktor::RefList< Project >& Solution::getProjects()
+const traktor::RefList< Project >& Solution::getProjects() const
 {
 	return m_projects;
 }

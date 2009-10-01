@@ -47,8 +47,8 @@ namespace
 
 bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 {
-	RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefList< Project >& projects = solution->getProjects();
+	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (!hasConfiguration(*i, L"DebugShared"))
 		{

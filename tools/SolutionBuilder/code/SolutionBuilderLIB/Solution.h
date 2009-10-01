@@ -25,7 +25,7 @@ public:
 
 	void removeProject(Project* project);
 
-	traktor::RefList< Project >& getProjects();
+	const traktor::RefList< Project >& getProjects() const;
 
 	virtual bool serialize(traktor::Serializer& s);
 

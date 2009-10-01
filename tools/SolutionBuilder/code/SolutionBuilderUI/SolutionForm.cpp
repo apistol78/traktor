@@ -231,7 +231,7 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setData(L"PRIMARY", m_solution);
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
-	RefList< Project >& projects = m_solution->getProjects();
+	RefList< Project > projects = m_solution->getProjects();
 	projects.sort(ProjectSortPredicate());
 
 	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)

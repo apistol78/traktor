@@ -477,7 +477,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 			{
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 
-				std::wstring productUid = j->external ? ProjectUids(*i).getTargetDependencyUid(j->project) : ProjectUids(j->project).getProductUid();
+				std::wstring productUid = ProjectUids(j->project).getProductUid();
 				std::wstring productName = getProductName(j->project, targetFormat);
 
 				s << L"\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */ = { isa = PBXBuildFile; fileRef = " << productUid << L" /* " << productName << L" */; };" << Endl;
@@ -779,23 +779,15 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		s << L"\t\t\tisa = PBXGroup;" << Endl;
 		s << L"\t\t\tchildren = (" << Endl;
 
-		for (RefList< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
+		const RefList< Project >& externalProjects = (*i)->getProjects();
+		for (RefList< Project >::const_iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
 		{
-			std::set< ResolvedDependency > dependencies;
-			collectDependencies(solution, *j, dependencies);
+			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
-			for (std::set< ResolvedDependency >::const_iterator k = dependencies.begin(); k != dependencies.end(); ++k)
-			{
-				if (!k->external || k->solution != *i)
-					continue;
+			std::wstring productUid = ProjectUids(*i).getProductUid();
+			std::wstring productName = getProductName(*i, targetFormat);
 
-				Configuration::TargetFormat targetFormat = getTargetFormat(k->project);
-
-				std::wstring productUid = ProjectUids(*j).getTargetDependencyUid(k->project);
-				std::wstring productName = getProductName(k->project, targetFormat);
-
-				s << L"\t\t\t\t" << productUid << L" /* " << productName << L" */," << Endl;
-			}
+			s << L"\t\t\t\t" << productUid << L" /* " << productName << L" */," << Endl;
 		}
 
 		s << L"\t\t\t);" << Endl;
