@@ -1064,7 +1064,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	if (m_iphone)
 	{
 		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
-		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"iPhone Developer\";" << Endl;
+		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphone*]\" = \"iPhone Developer\";" << Endl;
 		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
 		s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = DEBUG;" << Endl;
 		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
@@ -1084,7 +1084,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	if (m_iphone)
 	{
 		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
-		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphoneos*]\" = \"iPhone Developer\";" << Endl;
+		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphone*]\" = \"iPhone Developer\";" << Endl;
 		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
 		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
 		s << L"\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;" << Endl;
@@ -1138,12 +1138,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 				s << relativeIncludePath.getPathName() << L" ";
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
-			
-			s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = (" << Endl;
-			s << L"\t\t\t\t\t\"$(inherited)\"," << Endl;
-			if (m_iphone)
-				s << L"\t\t\t\t\t\"\\\"$(SRCROOT)/build/Debug-iphoneos\\\"\"," << Endl;			
-			s << L"\t\t\t\t);" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
@@ -1190,12 +1184,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			}
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 			
-			s << L"\t\t\t\tLIBRARY_SEARCH_PATHS = (" << Endl;
-			s << L"\t\t\t\t\t\"$(inherited)\"," << Endl;
-			if (m_iphone)
-				s << L"\t\t\t\t\t\"\\\"$(SRCROOT)/build/Debug-iphoneos\\\"\"," << Endl;			
-			s << L"\t\t\t\t);" << Endl;
-
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
 			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 
