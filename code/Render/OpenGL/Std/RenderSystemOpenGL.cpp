@@ -461,8 +461,16 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 
 	HIRect controlRect;
 	HIViewGetBounds((ControlRef)windowHandle, &controlRect);
+	
+	int32_t width = controlRect.size.width;
+	if (width <= 0)
+		width = 16;
+		
+	int32_t height = controlRect.size.height;
+	if (height <= 0)
+		height = 16;
 
-	return gc_new< RenderViewOpenGL >(context, m_globalContext, controlRect.size.width, controlRect.size.height);
+	return gc_new< RenderViewOpenGL >(context, m_globalContext, width, height);
 
 #else	// LINUX
 	

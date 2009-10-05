@@ -14,7 +14,7 @@ ToolFormWx::ToolFormWx(EventSubject* owner)
 
 bool ToolFormWx::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
-	int wxStyle = wxCLIP_CHILDREN;
+	int wxStyle = wxCLIP_CHILDREN | wxFRAME_SHAPED;
 	if (style & WsBorder)
 		wxStyle |= wxSIMPLE_BORDER;
 	if (style & WsClientBorder)

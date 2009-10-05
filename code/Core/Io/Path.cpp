@@ -242,6 +242,8 @@ void Path::resolve()
 		m_relative = false;
 		tmp = tmp.substr(1);
 	}
+	else if (tmp[0] == L'~')
+		m_relative = false;
 	else
 		m_relative = true;
 	
@@ -256,9 +258,7 @@ void Path::resolve()
 	
 	std::wstring::size_type ext = tmp.find_last_of(L'.');
 	if (ext != std::wstring::npos)
-	{
 		m_ext = toLower(tmp.substr(ext + 1));
-	}
 }
 
 }

@@ -104,13 +104,13 @@ bool NativeVolume::exist(const Path& filename)
 
 bool NativeVolume::remove(const Path& filename)
 {
-	return false;
+	return ::remove(wstombs(getSystemPath(filename)).c_str()) == 0;
 }
 
 bool NativeVolume::makeDirectory(const Path& directory)
 {
 	int status = mkdir(
-		wstombs(directory.getPathName()).c_str(),
+		wstombs(getSystemPath(directory)).c_str(),
 		S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH
 	);
 	if (status != 0 && errno != EEXIST)

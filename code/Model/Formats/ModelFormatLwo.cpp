@@ -338,7 +338,11 @@ bool ModelFormatLwo::supportFormat(const Path& filePath) const
 
 Model* ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
 {
+#if defined(_WIN32)
 	std::string fileNameTmp = wstombs(filePath.getPathName());
+#else
+	std::string fileNameTmp = wstombs(filePath.getPathNameNoVolume());
+#endif
 
 	lwObject* lwo = lwGetObject(const_cast< char* >(fileNameTmp.c_str()), 0, 0);
 	if (!lwo)
