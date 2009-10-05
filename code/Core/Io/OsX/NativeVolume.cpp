@@ -1,11 +1,14 @@
 #include <sstream>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <dirent.h>
 #include <errno.h>
 #include "Core/Io/OsX/NativeVolume.h"
 #include "Core/Io/OsX/NativeStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Io/File.h"
+#include "Core/Date/DateTime.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/TString.h"
@@ -13,6 +16,25 @@
 
 namespace traktor
 {
+	namespace
+	{
+	
+DateTime fromUnixTime(const time_t& t)
+{
+	struct tm* tmp = ::localtime(&t);
+	T_ASSERT (tmp);
+
+	return DateTime(
+		tmp->tm_year + 1900,
+		tmp->tm_mon + 1,
+		tmp->tm_mday + 1,
+		tmp->tm_hour,
+		tmp->tm_min,
+		tmp->tm_sec
+	);
+}
+	
+	}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, Volume)
 
@@ -28,7 +50,25 @@ std::wstring NativeVolume::getDescription() const
 
 File* NativeVolume::get(const Path& path)
 {
-	return 0;
+	struct stat sb;
+	if (stat(wstombs(getSystemPath(path)).c_str(), &sb) != 0)
+		return 0;
+		
+	uint32_t flags = 0;
+	/*
+	if (sb.st_mode & S_ISREG)
+		flags |= File::FfNormal;
+	if (sb.st_mode & S_ISDIR)
+		flags |= File::FfDirectory;
+	*/
+	return gc_new< File >(
+		path,
+		sb.st_size,
+		flags,
+		fromUnixTime(sb.st_mtime),
+		fromUnixTime(sb.st_atime),
+		fromUnixTime(sb.st_mtime)
+	);
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
