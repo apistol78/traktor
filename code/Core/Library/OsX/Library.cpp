@@ -20,12 +20,7 @@ bool Library::open(const Path& libraryName)
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
 	std::wstring resolved = libraryName.getPathName();
-
-#if !defined(_DEBUG)
-	std::wstring library = L"@executable_path/lib" + resolved + L".dylib";
-#else
-	std::wstring library = L"@executable_path/lib" + resolved + L"_d.dylib";
-#endif
+	std::wstring library = L"@executable_path/" + resolved + L".dylib";
 
 	std::string tmp1 = wstombs(library);
 	m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);

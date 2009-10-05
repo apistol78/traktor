@@ -225,9 +225,11 @@ Path FileSystem::getAbsolutePath(const Path& relativePath) const
 
 Path FileSystem::getAbsolutePath(const Path& basePath, const Path& relativePath) const
 {
+	Path absoluteBasePath = basePath.isRelative() ? getAbsolutePath(basePath) : basePath;
+
 	Path absolutePath = relativePath.isRelative() ?
-		Path(basePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) :
-		Path(basePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
+		Path(absoluteBasePath.getPathName() + L"/" + relativePath.getPathNameNoVolume()) :
+		Path(absoluteBasePath.getVolume() + L":" + relativePath.getPathNameNoVolume());
 
 	return absolutePath;
 }

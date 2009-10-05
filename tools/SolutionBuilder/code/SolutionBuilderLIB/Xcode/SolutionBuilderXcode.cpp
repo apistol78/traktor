@@ -381,8 +381,36 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 
 bool SolutionBuilderXcode::generate(Solution* solution)
 {
-	const RefList< Project >& projects = solution->getProjects();
+	// Sort projects by their dependencies.
+	RefList< Project > unsorted = solution->getProjects();
+	RefList< Project > projects;
+	while (!unsorted.empty())
+	{
+		RefList< Project >::iterator i = unsorted.begin();
+		while (i != unsorted.end())
+		{
+			bool satisfied = true;
+			const RefList< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			{
+				if (!is_a< ProjectDependency >(*j))
+					continue;
 
+				Project* dependencyProject = static_cast< ProjectDependency* >(*j)->getProject();
+				if (std::find(projects.begin(), projects.end(), dependencyProject) == projects.end())
+				{
+					satisfied = false;
+					break;
+				}
+			}
+			if (satisfied)
+				break;
+			++i;
+		}
+		projects.push_back(*i);
+		unsorted.erase(i);
+	}
+	
 	// Collect all files references from solution.
 	std::set< Path > files;
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
@@ -468,7 +496,11 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
-		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
+		if (
+			targetFormat == Configuration::TfSharedLibrary ||
+			targetFormat == Configuration::TfExecutable ||
+			targetFormat == Configuration::TfExecutableConsole
+		)
 		{
 			std::set< ResolvedDependency > dependencies;
 			collectDependencies(solution, *i, dependencies);
@@ -674,7 +706,11 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 		s << L"\t\t\tfiles = (" << Endl;
 
 		Configuration::TargetFormat targetFormat = getTargetFormat(*i);
-		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
+		if (
+			targetFormat == Configuration::TfSharedLibrary ||
+			targetFormat == Configuration::TfExecutable ||
+			targetFormat == Configuration::TfExecutableConsole
+		)
 		{
 			// Add system frameworks.
 			std::set< std::wstring > frameworks;
@@ -689,6 +725,8 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 			// Add dependent libraries.
 			std::set< ResolvedDependency > dependencies;
 			collectDependencies(solution, *i, dependencies);
+			
+			log::info << (*i)->getName() << L"..." << Endl;
 		
 			// Add local dependencies first.
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
@@ -698,6 +736,8 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 				
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				std::wstring productName = getProductName(j->project, targetFormat);
+				
+				log::info << L"\t+ " << productName << Endl;
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
@@ -710,6 +750,8 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				std::wstring productName = getProductName(j->project, targetFormat);
+
+				log::info << "\t* " << productName << Endl;
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
