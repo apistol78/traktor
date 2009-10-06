@@ -65,14 +65,23 @@ public:
 	const GLint* getAttributeLocs() const;
 
 private:
+	struct Parameter
+	{
+		uint32_t offset;
+		uint32_t length;
+	};
+
 	struct Uniform
 	{
+#if defined(_DEBUG)
+		std::string name;
+#endif
 		GLint location;
 		GLenum type;
 		uint32_t offset;
 		uint32_t length;
 	};
-
+	
 	struct Sampler
 	{
 		GLint location;
@@ -97,7 +106,7 @@ private:
 	std::vector< Sampler > m_samplers;
 	RenderState m_renderState;
 	GLuint m_state;
-	std::map< handle_t, uint32_t > m_parameterMap;
+	std::map< handle_t, Parameter > m_parameterMap;
 	AlignedVector< float > m_uniformData;
 	AlignedVector< SamplerTexture > m_samplerTextures;
 

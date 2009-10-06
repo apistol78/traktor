@@ -613,8 +613,8 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	Vector4 lightDirection = worldRenderView.getLightDirection(0);
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Frustum cullFrustum = worldRenderView.getCullFrustum();
-
-	const Vector4& eyePosition = viewInverse.translation();
+	
+	Vector4 eyePosition = viewInverse.translation();
 
 	Matrix44 shadowLightView;
 	Matrix44 shadowLightProjectionOccluders, shadowLightProjectionSelfShadow;
@@ -749,7 +749,7 @@ void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, float delta
 	Frame& f = m_frames[frame];
 
 	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
-	const Vector4& eyePosition = viewInverse.translation();
+	Vector4 eyePosition = viewInverse.translation();
 
 	worldRenderView.resetLights();
 	worldRenderView.setEyePosition(eyePosition);

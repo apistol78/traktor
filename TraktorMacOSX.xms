@@ -7214,6 +7214,9 @@
 										<item type="ProjectDependency">
 											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[5]/project"/>
 										</item>
+										<item type="ProjectDependency">
+											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
@@ -7314,6 +7317,9 @@
 										</item>
 									</dependencies>
 								</project>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[1]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -9328,6 +9334,9 @@
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[12]/project"/>
 							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -10581,6 +10590,9 @@
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[12]/project"/>
 							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[1]/project"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -10874,6 +10886,9 @@
 							</item>
 							<item type="ProjectDependency">
 								<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[12]/project"/>
+							</item>
+							<item type="ProjectDependency">
+								<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[3]/project"/>
 							</item>
 						</dependencies>
 					</project>

@@ -22,6 +22,8 @@
 #		define T_DLLEXPORT
 #		define T_DLLLOCAL __attribute__((visibility("hidden")))
 #	endif
+#	define T_FORCE_INLINE inline
+#	define T_ALIGN16 __attribute__((aligned(16)))
 #endif
 
 #if !defined(T_DLLIMPORT)

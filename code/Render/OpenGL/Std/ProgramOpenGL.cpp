@@ -188,7 +188,8 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{
 				uint32_t texture = uint32_t(m_samplerTextures.size());
-				m_parameterMap[handle] = texture;
+				m_parameterMap[handle].offset = texture;
+				m_parameterMap[handle].length = 0;
 
 				SamplerTexture st = { 0, 0, Vector4(0.0f, 0.0f, 1.0f, 1.0f) };
 				m_samplerTextures.push_back(st);
@@ -197,7 +198,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			m_samplers.push_back(Sampler());
 			m_samplers.back().location = glGetUniformLocationARB(m_program, uniformName);
 			m_samplers.back().locationOriginScale = glGetUniformLocationARB(m_program, ("_sampler_" + std::string(uniformName) + "_OriginScale").c_str());
-			m_samplers.back().texture = m_parameterMap[handle];
+			m_samplers.back().texture = m_parameterMap[handle].offset;
 			m_samplers.back().unit = unit;
 		}
 		else
@@ -230,16 +231,20 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 				}
 
 				uint32_t offset = uint32_t(m_uniformData.size());
-				m_parameterMap[handle] = offset;
+				m_parameterMap[handle].offset = offset;
+				m_parameterMap[handle].length = uniformSize;
 
 				m_uniformData.resize(offset + allocSize, 0.0f);
 			}
-
+			
 			m_uniforms.push_back(Uniform());
+#if defined(_DEBUG)
+			m_uniforms.back().name = uniformName;
+#endif
 			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
 			m_uniforms.back().type = uniformType;
-			m_uniforms.back().offset = m_parameterMap[handle];
-			m_uniforms.back().length = uniformSize;
+			m_uniforms.back().offset = m_parameterMap[handle].offset;
+			m_uniforms.back().length = m_parameterMap[handle].length;
 		}
 	}
 
@@ -339,95 +344,101 @@ void ProgramOpenGL::setFloatParameter(handle_t handle, float param)
 
 void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
+		
+	length = min< int >(i->second.length, length);
 
-	std::memcpy(&m_uniformData[i->second], param, length * sizeof(float));
+	std::memcpy(&m_uniformData[i->second.offset], param, length * sizeof(float));
 	m_dirty = true;
 }
 
 void ProgramOpenGL::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
-	param.store(&m_uniformData[i->second]);
+	param.store(&m_uniformData[i->second.offset]);
 	m_dirty = true;
 }
 
 void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-
+		
+	length = min< int >(i->second.length, length);
+		
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_uniformData[i->second + j * 4]);
+		param[j].store(&m_uniformData[i->second.offset + j * 4]);
 
 	m_dirty = true;
 }
 
 void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
-	param.store(&m_uniformData[i->second]);
+	param.store(&m_uniformData[i->second.offset]);
 	m_dirty = true;
 }
 
 void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
+		
+	length = min< int >(i->second.length, length);
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_uniformData[i->second + j * 16]);
+		param[j].store(&m_uniformData[i->second.offset + j * 16]);
 
 	m_dirty = true;
 }
 
 void ProgramOpenGL::setSamplerTexture(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
 	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second].target = GL_TEXTURE_2D;
-		m_samplerTextures[i->second].name = st->getTextureName();
-		m_samplerTextures[i->second].originScale = st->getTextureOriginAndScale();
-		m_samplerTextures[i->second].mipCount = st->getMipCount();
+		m_samplerTextures[i->second.offset].target = GL_TEXTURE_2D;
+		m_samplerTextures[i->second.offset].name = st->getTextureName();
+		m_samplerTextures[i->second.offset].originScale = st->getTextureOriginAndScale();
+		m_samplerTextures[i->second.offset].mipCount = st->getMipCount();
 	}
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
 	{
 #if !defined(__APPLE__)
-		m_samplerTextures[i->second].target = GL_TEXTURE_CUBE_MAP_EXT;
+		m_samplerTextures[i->second.offset].target = GL_TEXTURE_CUBE_MAP_EXT;
 #else
-		m_samplerTextures[i->second].target = GL_TEXTURE_CUBE_MAP_ARB;
+		m_samplerTextures[i->second.offset].target = GL_TEXTURE_CUBE_MAP_ARB;
 #endif
-		m_samplerTextures[i->second].name = ct->getTextureName();
-		m_samplerTextures[i->second].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-		m_samplerTextures[i->second].mipCount = 1;
+		m_samplerTextures[i->second.offset].name = ct->getTextureName();
+		m_samplerTextures[i->second.offset].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		m_samplerTextures[i->second.offset].mipCount = 1;
 	}
 	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second].target = GL_TEXTURE_3D;
-		m_samplerTextures[i->second].name = vt->getTextureName();
-		m_samplerTextures[i->second].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-		m_samplerTextures[i->second].mipCount = 1;
+		m_samplerTextures[i->second.offset].target = GL_TEXTURE_3D;
+		m_samplerTextures[i->second.offset].name = vt->getTextureName();
+		m_samplerTextures[i->second.offset].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
+		m_samplerTextures[i->second.offset].mipCount = 1;
 	}
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second].target = rt->getTextureTarget();
-		m_samplerTextures[i->second].name = rt->getTextureName();
-		m_samplerTextures[i->second].originScale = rt->getTextureOriginAndScale();
-		m_samplerTextures[i->second].mipCount = 1;
+		m_samplerTextures[i->second.offset].target = rt->getTextureTarget();
+		m_samplerTextures[i->second.offset].name = rt->getTextureName();
+		m_samplerTextures[i->second.offset].originScale = rt->getTextureOriginAndScale();
+		m_samplerTextures[i->second.offset].mipCount = 1;
 	}
 
 	m_dirty = true;
