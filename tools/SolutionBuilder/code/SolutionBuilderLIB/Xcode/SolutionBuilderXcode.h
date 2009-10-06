@@ -7,6 +7,7 @@
 #include "SolutionBuilderLIB/SolutionBuilder.h"
 #include "SolutionBuilderLIB/Configuration.h"
 
+class Solution;
 class Project;
 
 class SolutionBuilderXcode : public SolutionBuilder
@@ -23,6 +24,18 @@ public:
 	virtual void showOptions() const;
 
 private:
+	struct ResolvedDependency
+	{
+		traktor::Ref< const Solution > solution;
+		traktor::Ref< const Project > project;
+		bool external;
+
+		bool operator < (const ResolvedDependency& rh) const
+		{
+			return solution < rh.solution || project < rh.project;
+		}
+	};
+
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
 	bool m_iphone;
@@ -64,6 +77,8 @@ private:
 	std::wstring getProductType(Configuration::TargetFormat targetFormat) const;
 	
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
+	
+	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies) const;
 };
 
 #endif	// SolutionBuilderXcode_H

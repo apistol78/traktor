@@ -218,48 +218,6 @@ namespace
 		collectProjectFiles(project, items, outFiles);
 	}
 
-	struct ResolvedDependency
-	{
-		Ref< const Solution > solution;
-		Ref< const Project > project;
-		bool external;
-
-		bool operator < (const ResolvedDependency& rh) const
-		{
-			return solution < rh.solution || project < rh.project;
-		}
-	};
-
-	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies)
-	{
-		const RefList< Dependency >& dependencies = project->getDependencies();
-		for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		{
-			ResolvedDependency dependency;
-
-			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
-			{
-				dependency.solution = solution;
-				dependency.project = projectDependency->getProject();
-				dependency.external = false;
-			}
-			else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
-			{
-				dependency.solution = externalDependency->getSolution();
-				dependency.project = externalDependency->getProject();
-				dependency.external = true;
-			}
-			else
-				continue;
-
-			if (outDependencies.find(dependency) == outDependencies.end())
-			{
-				outDependencies.insert(dependency);
-				collectDependencies(dependency.solution, dependency.project, outDependencies);
-			}
-		}
-	}
-
 	void collectFrameworks(const Project* project, std::set< std::wstring >& outFrameworks)
 	{
 		const RefList< Configuration >& configurations = project->getConfigurations();
@@ -751,7 +709,7 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				std::wstring productName = getProductName(j->project, targetFormat);
 
-				log::info << "\t* " << productName << Endl;
+				log::info << L"\t* " << productName << Endl;
 
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(j->project) << L" /* " << productName << L" in Frameworks */," << Endl;
 			}
@@ -1336,4 +1294,42 @@ std::wstring SolutionBuilderXcode::getProductName(const Project* project, Config
 		return project->getName();
 	}
 	return L"";
+}
+
+void SolutionBuilderXcode::collectDependencies(
+	const Solution* solution,
+	const Project* project,
+	std::set< ResolvedDependency >& outDependencies
+) const
+{
+	const RefList< Dependency >& dependencies = project->getDependencies();
+	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	{
+		ResolvedDependency dependency;
+
+		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
+		{
+			dependency.solution = solution;
+			dependency.project = projectDependency->getProject();
+			dependency.external = false;
+		}
+		else if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*i))
+		{
+			dependency.solution = externalDependency->getSolution();
+			dependency.project = externalDependency->getProject();
+			dependency.external = true;
+		}
+		else
+			continue;
+
+		if (outDependencies.find(dependency) == outDependencies.end())
+		{
+			outDependencies.insert(dependency);
+			
+			// Continue scan dependencies if dependency is a static library.
+			Configuration::TargetFormat targetFormat = getTargetFormat(project);
+			if (targetFormat == Configuration::TfStaticLibrary)
+				collectDependencies(dependency.solution, dependency.project, outDependencies);
+		}
+	}
 }
