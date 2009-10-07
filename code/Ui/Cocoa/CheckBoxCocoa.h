@@ -1,6 +1,8 @@
 #ifndef traktor_ui_CheckBoxCocoa_H
 #define traktor_ui_CheckBoxCocoa_H
 
+#import "Ui/Cocoa/NSTargetProxy.h"
+
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Itf/ICheckBox.h"
 
@@ -9,7 +11,9 @@ namespace traktor
 	namespace ui
 	{
 
-class CheckBoxCocoa : public WidgetCocoaImpl< ICheckBox, NSButton >
+class CheckBoxCocoa
+:	public WidgetCocoaImpl< ICheckBox, NSButton >
+,	public ITargetProxyCallback
 {
 public:
 	CheckBoxCocoa(EventSubject* owner);
@@ -22,9 +26,9 @@ public:
 
 	virtual bool isChecked() const;
 	
-	// IWidget
+	// ITargetProxyCallback
 	
-	virtual Size getPreferedSize() const;
+	virtual void targetProxy_Action();
 };
 
 	}

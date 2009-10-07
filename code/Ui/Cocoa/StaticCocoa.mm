@@ -27,10 +27,5 @@ bool StaticCocoa::create(IWidget* parent, const std::wstring& text)
 	return true;
 }
 
-Size StaticCocoa::getPreferedSize() const
-{
-	return Size(200, 16);
-}
-
 	}
 }

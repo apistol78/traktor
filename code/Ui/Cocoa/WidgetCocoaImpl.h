@@ -195,7 +195,8 @@ public:
 
 	virtual Size getPreferedSize() const
 	{
-		return Size(0, 0);
+		NSSize idealSize = [[m_control cell] cellSize];
+		return Size(idealSize.width, idealSize.height);
 	}
 
 	virtual Size getMaximumSize() const

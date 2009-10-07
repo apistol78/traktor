@@ -1,5 +1,7 @@
 #include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/EventSubject.h"
 
 namespace traktor
 {
@@ -13,10 +15,15 @@ CheckBoxCocoa::CheckBoxCocoa(EventSubject* owner)
 
 bool CheckBoxCocoa::create(IWidget* parent, const std::wstring& text, bool checked)
 {
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: this];
+
 	m_control = [[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setButtonType: NSSwitchButton];
 	[m_control setTitle: makeNSString(text)];
-	[m_control setTarget: NSApp];
+	[m_control setState: checked ? NSOnState : NSOffState];
+	[m_control setTarget: targetProxy];
+	[m_control setAction: @selector(dispatchActionCallback)];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -28,16 +35,18 @@ bool CheckBoxCocoa::create(IWidget* parent, const std::wstring& text, bool check
 
 void CheckBoxCocoa::setChecked(bool checked)
 {
+	[m_control setState: checked ? NSOnState : NSOffState];
 }
 
 bool CheckBoxCocoa::isChecked() const
 {
-	return false;
+	return [m_control state] == NSOnState;
 }
 
-Size CheckBoxCocoa::getPreferedSize() const
+void CheckBoxCocoa::targetProxy_Action()
 {
-	return Size(200, 32);
+	CommandEvent commandEvent(m_owner, 0);
+	m_owner->raiseEvent(EiClick, &commandEvent);
 }
 
 	}

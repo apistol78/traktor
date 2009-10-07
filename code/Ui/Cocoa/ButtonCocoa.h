@@ -1,6 +1,8 @@
 #ifndef traktor_ui_ButtonCocoa_H
 #define traktor_ui_ButtonCocoa_H
 
+#import "Ui/Cocoa/NSTargetProxy.h"
+
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Itf/IButton.h"
 
@@ -9,7 +11,9 @@ namespace traktor
 	namespace ui
 	{
 
-class ButtonCocoa : public WidgetCocoaImpl< IButton, NSButton >
+class ButtonCocoa
+:	public WidgetCocoaImpl< IButton, NSButton >
+,	public ITargetProxyCallback
 {
 public:
 	ButtonCocoa(EventSubject* owner);
@@ -22,9 +26,9 @@ public:
 
 	virtual bool getState() const;
 	
-	// IWidget
+	// ITargetProxyCallback
 	
-	virtual Size getPreferedSize() const;
+	virtual void targetProxy_Action();
 };
 
 	}
