@@ -11060,6 +11060,110 @@
 		<item ref="/object/projects/item/dependencies/item[59]/project"/>
 		<item ref="/object/projects/item/dependencies/item[60]/project"/>
 		<item ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Ui.Cocoa</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Cocoa</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_COCOA_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>CoreData.framework</item>
+						<item>Foundation.framework</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_COCOA_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>CoreData.framework</item>
+						<item>Foundation.framework</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>CoreData.framework</item>
+						<item>Foundation.framework</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>CoreData.framework</item>
+						<item>Foundation.framework</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item/dependencies/item[27]/project/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item/dependencies/item[16]/project/dependencies/item[7]/project/dependencies/item[6]/project/dependencies/item[3]/project"/>

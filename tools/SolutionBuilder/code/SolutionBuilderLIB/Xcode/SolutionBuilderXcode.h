@@ -46,6 +46,8 @@ private:
 
 	void generatePBXContainerItemProxySection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
+	void generatePBXCopyFilesBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
+
 	void generatePBXFileReferenceSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects, const std::set< traktor::Path >& files) const;
 
 	void generatePBXFrameworksBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
@@ -78,7 +80,7 @@ private:
 	
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
 	
-	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies) const;
+	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool copyFilesDependencies, bool parentExternal) const;
 };
 
 #endif	// SolutionBuilderXcode_H

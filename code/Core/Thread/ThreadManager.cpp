@@ -18,8 +18,7 @@ ThreadManager::~ThreadManager()
 {
 	T_EXCEPTION_GUARD_BEGIN
 
-	T_ASSERT(m_threads.empty());
-	delete m_threadBase;
+	delete m_threadBase, m_threadBase = 0;
 
 	T_EXCEPTION_GUARD_END
 }
