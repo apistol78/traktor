@@ -12,7 +12,7 @@ namespace traktor
 
 struct NSString* makeNSString(const std::wstring& str);
 
-struct NSColor* makeNSColor(const Color& color)
+struct NSColor* makeNSColor(const Color& color);
 
 NSPoint makeNSPoint(NSView* view, const Point& pt);
 
