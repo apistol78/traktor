@@ -1,8 +1,10 @@
 #include "Ui/Cocoa/WidgetFactoryCocoa.h"
 #include "Ui/Cocoa/ButtonCocoa.h"
+#include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
+#include "Ui/Cocoa/StaticCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 
 namespace traktor
@@ -17,7 +19,7 @@ IButton* WidgetFactoryCocoa::createButton(EventSubject* owner)
 
 ICheckBox* WidgetFactoryCocoa::createCheckBox(EventSubject* owner)
 {
-	return 0;
+	return new CheckBoxCocoa(owner);
 }
 
 IComboBox* WidgetFactoryCocoa::createComboBox(EventSubject* owner)
@@ -112,7 +114,7 @@ ISlider* WidgetFactoryCocoa::createSlider(EventSubject* owner)
 
 IStatic* WidgetFactoryCocoa::createStatic(EventSubject* owner)
 {
-	return 0;
+	return new StaticCocoa(owner);
 }
 
 IToolForm* WidgetFactoryCocoa::createToolForm(EventSubject* owner)
