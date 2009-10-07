@@ -1,5 +1,7 @@
 #include "Ui/Cocoa/ButtonCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/EventSubject.h"
 
 namespace traktor
 {
@@ -13,10 +15,14 @@ ButtonCocoa::ButtonCocoa(EventSubject* owner)
 
 bool ButtonCocoa::create(IWidget* parent, const std::wstring& text, int style)
 {
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: this];
+
 	m_control = [[NSButton alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setBezelStyle: NSRoundedBezelStyle];
 	[m_control setTitle: makeNSString(text)];
-	[m_control setTarget: NSApp];
+	[m_control setTarget: targetProxy];
+	[m_control setAction: @selector(dispatchActionCallback)];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -35,9 +41,10 @@ bool ButtonCocoa::getState() const
 	return false;
 }
 
-Size ButtonCocoa::getPreferedSize() const
+void ButtonCocoa::targetProxy_Action()
 {
-	return Size(200, 32);
+	CommandEvent commandEvent(m_owner, 0);
+	m_owner->raiseEvent(EiClick, &commandEvent);
 }
 
 	}

@@ -17,10 +17,6 @@ public:
 	// IStatic implementation
 
 	virtual bool create(IWidget* parent, const std::wstring& text);
-	
-	// IWidget implementation
-
-	virtual Size getPreferedSize() const;
 };
 
 	}

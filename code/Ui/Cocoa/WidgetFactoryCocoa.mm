@@ -4,6 +4,7 @@
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
+#include "Ui/Cocoa/MessageBoxCocoa.h"
 #include "Ui/Cocoa/StaticCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 
@@ -74,7 +75,7 @@ IMenuBar* WidgetFactoryCocoa::createMenuBar(EventSubject* owner)
 
 IMessageBox* WidgetFactoryCocoa::createMessageBox(EventSubject* owner)
 {
-	return 0;
+	return new MessageBoxCocoa(owner);
 }
 
 INotificationIcon* WidgetFactoryCocoa::createNotificationIcon(EventSubject* owner)
