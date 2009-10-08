@@ -18,6 +18,12 @@
 
 #include "expat.h"
 
+#define XML_STATIC
+#define XML_UNICODE
+#if defined(_WIN32)
+#	define XML_UNICODE_WCHAR_T
+#endif
+
 namespace traktor
 {
 	namespace xml
