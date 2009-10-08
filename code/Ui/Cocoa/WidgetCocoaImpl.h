@@ -119,7 +119,6 @@ public:
 
 	virtual void setRect(const Rect& rect)
 	{
-		log::info << L"setRect " << rect.left << L", " << rect.top << L", " << rect.right << L", " << rect.bottom << Endl;
 		[m_control setFrame: makeNSRect(m_control, rect)];
 	}
 
@@ -132,7 +131,6 @@ public:
 	virtual Rect getInnerRect() const
 	{
 		NSRect rc = [m_control frame];
-		NSRect inner = NSMakeRect(0, 0, rc.size.width, rc.size.height);
 		return fromNSRect(m_control, rc);
 	}
 

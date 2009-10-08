@@ -1,3 +1,5 @@
+#import "Ui/Cocoa/NSCustomControl.h"
+
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/MoveEvent.h"
@@ -31,6 +33,9 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 	[proxy setCallback: this];
 	
 	[m_window setDelegate: proxy];
+
+	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	[m_window setContentView: contentView];
 	
 	return true;
 }
@@ -170,9 +175,8 @@ Rect FormCocoa::getRect() const
 Rect FormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
-	NSRect contentBounds = [contentView bounds];
-	NSRect inner = NSMakeRect(0, 0, contentBounds.size.width, contentBounds.size.height);
-	return fromNSRect(contentView, inner);
+	NSRect contentFrame = [contentView frame];
+	return fromNSRect(contentView, contentFrame);
 }	
 
 Rect FormCocoa::getNormalRect() const
@@ -182,7 +186,7 @@ Rect FormCocoa::getNormalRect() const
 
 Size FormCocoa::getTextExtent(const std::wstring& text) const
 {
-	return Size(0, 0);
+	return Size(text.length() * 16, 16);
 }
 
 void FormCocoa::setFont(const Font& font)
@@ -261,7 +265,6 @@ void FormCocoa::event_windowDidMove()
 	Point pt = getRect().getTopLeft();
 	MoveEvent m(m_owner, 0, pt);
 	m_owner->raiseEvent(EiMove, &m);
-	log::info << L"FormCocoa::event_windowDidMove" << Endl;
 }
 
 void FormCocoa::event_windowDidResize()
@@ -269,7 +272,6 @@ void FormCocoa::event_windowDidResize()
 	Size sz = getRect().getSize();
 	SizeEvent s(m_owner, 0, sz);
 	m_owner->raiseEvent(EiSize, &s);
-	log::info << L"FormCocoa::event_windowDidResize" << Endl;
 }
 
 	}

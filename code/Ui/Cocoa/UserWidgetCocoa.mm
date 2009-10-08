@@ -1,5 +1,6 @@
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/CanvasCocoa.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/EventSubject.h"
@@ -36,10 +37,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 
 bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 {
-	Rect rc(
-		Point(rect.origin.x, rect.origin.y),
-		Size(rect.size.width, rect.size.height)
-	);
+	Rect rc = fromNSRect(m_control, rect);
 
 	CanvasCocoa canvasImpl(m_control);
 	Canvas canvas(&canvasImpl);
