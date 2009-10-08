@@ -149,8 +149,7 @@ Rect ToolFormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentBounds = [contentView bounds];
-	NSRect inner = NSMakeRect(0, 0, contentBounds.size.width, contentBounds.size.height);
-	return fromNSRect(contentView, inner);
+	return fromNSRect(contentView, contentBounds);
 }	
 
 Rect ToolFormCocoa::getNormalRect() const

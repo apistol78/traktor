@@ -1,4 +1,7 @@
 #include "Ui/Cocoa/BitmapCocoa.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Core/Heap/GcNew.h"
 #include "Core/Math/Color.h"
 
 namespace traktor
@@ -32,7 +35,12 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 
 drawing::Image* BitmapCocoa::getImage() const
 {
-	return 0;
+	Size size = getSize();
+	return gc_new< drawing::Image >(
+		drawing::PixelFormat::getR8G8B8(),
+		size.cx,
+		size.cy
+	);
 }
 
 Size BitmapCocoa::getSize() const

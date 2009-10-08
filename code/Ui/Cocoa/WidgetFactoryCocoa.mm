@@ -6,8 +6,10 @@
 #include "Ui/Cocoa/ListBoxCocoa.h"
 #include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/MessageBoxCocoa.h"
+#include "Ui/Cocoa/PopupMenuCocoa.h"
 #include "Ui/Cocoa/StaticCocoa.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
+#include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
 #include "Ui/Cocoa/BitmapCocoa.h"
 
@@ -93,7 +95,7 @@ IPanel* WidgetFactoryCocoa::createPanel(EventSubject* owner)
 
 IPopupMenu* WidgetFactoryCocoa::createPopupMenu(EventSubject* owner)
 {
-	return 0;
+	return new PopupMenuCocoa(owner);
 }
 
 IRadioButton* WidgetFactoryCocoa::createRadioButton(EventSubject* owner)
@@ -128,7 +130,7 @@ IToolForm* WidgetFactoryCocoa::createToolForm(EventSubject* owner)
 
 ITreeView* WidgetFactoryCocoa::createTreeView(EventSubject* owner)
 {
-	return 0;
+	return new TreeViewCocoa(owner);
 }
 
 IUserWidget* WidgetFactoryCocoa::createUserWidget(EventSubject* owner)
