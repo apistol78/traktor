@@ -4,9 +4,12 @@
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
+#include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/MessageBoxCocoa.h"
 #include "Ui/Cocoa/StaticCocoa.h"
+#include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/UserWidgetCocoa.h"
+#include "Ui/Cocoa/BitmapCocoa.h"
 
 namespace traktor
 {
@@ -70,7 +73,7 @@ IListView* WidgetFactoryCocoa::createListView(EventSubject* owner)
 
 IMenuBar* WidgetFactoryCocoa::createMenuBar(EventSubject* owner)
 {
-	return 0;
+	return new MenuBarCocoa(owner);
 }
 
 IMessageBox* WidgetFactoryCocoa::createMessageBox(EventSubject* owner)
@@ -120,7 +123,7 @@ IStatic* WidgetFactoryCocoa::createStatic(EventSubject* owner)
 
 IToolForm* WidgetFactoryCocoa::createToolForm(EventSubject* owner)
 {
-	return 0;
+	return new ToolFormCocoa(owner);
 }
 
 ITreeView* WidgetFactoryCocoa::createTreeView(EventSubject* owner)
@@ -140,7 +143,7 @@ INative* WidgetFactoryCocoa::createNative(EventSubject* owner)
 
 IBitmap* WidgetFactoryCocoa::createBitmap()
 {
-	return 0;
+	return new BitmapCocoa();
 }
 
 IClipboard* WidgetFactoryCocoa::createClipboard()
