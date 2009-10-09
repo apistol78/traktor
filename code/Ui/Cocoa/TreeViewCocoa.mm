@@ -8,12 +8,19 @@ namespace traktor
 	{
 	
 TreeViewCocoa::TreeViewCocoa(EventSubject* owner)
-:	WidgetCocoaImpl< ITreeView, NSControl >(owner)
+:	WidgetCocoaImpl< ITreeView, NSOutlineView >(owner)
 {
 }
 
 bool TreeViewCocoa::create(IWidget* parent, int style)
 {
+	m_control = [[NSOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	
+	NSView* contentView = (NSView*)parent->getInternalHandle();
+	T_ASSERT (contentView);
+	
+	[contentView addSubview: m_control];
+
 	return true;
 }
 

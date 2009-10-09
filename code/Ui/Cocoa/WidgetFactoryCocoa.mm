@@ -7,6 +7,7 @@
 #include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/MessageBoxCocoa.h"
 #include "Ui/Cocoa/PopupMenuCocoa.h"
+#include "Ui/Cocoa/ScrollBarCocoa.h"
 #include "Ui/Cocoa/StaticCocoa.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/TreeViewCocoa.h"
@@ -110,7 +111,7 @@ IRichEdit* WidgetFactoryCocoa::createRichEdit(EventSubject* owner)
 
 IScrollBar* WidgetFactoryCocoa::createScrollBar(EventSubject* owner)
 {
-	return 0;
+	return new ScrollBarCocoa(owner);
 }
 
 ISlider* WidgetFactoryCocoa::createSlider(EventSubject* owner)
