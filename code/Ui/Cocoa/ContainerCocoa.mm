@@ -1,6 +1,4 @@
 #include "Ui/Cocoa/ContainerCocoa.h"
-#include "Ui/Events/SizeEvent.h"
-#include "Ui/EventSubject.h"
 
 namespace traktor
 {
@@ -38,9 +36,7 @@ bool ContainerCocoa::event_drawRect(const NSRect& rect)
 
 bool ContainerCocoa::event_viewDidEndLiveResize()
 {
-	Size sz = getRect().getSize();
-	SizeEvent s(m_owner, 0, sz);
-	m_owner->raiseEvent(EiSize, &s);
+	raiseSizeEvent();
 	return true;
 }
 

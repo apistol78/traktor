@@ -19,23 +19,26 @@
 #	include "Core/Io/Utf8Encoding.h"
 #endif
 
-#define T_UI_IMPL_WX	1
-#define T_UI_IMPL_WIN32	2
-
-#if !defined(T_UI_IMPL)
-#	if defined(_WIN32)
-#		define T_UI_IMPL T_UI_IMPL_WIN32
-#	else
-#		define T_UI_IMPL T_UI_IMPL_WX
-#	endif
-#endif
-
-#if T_UI_IMPL == T_UI_IMPL_WX
-#	include "Ui/Wx/EventLoopWx.h"
-#	include "Ui/Wx/WidgetFactoryWx.h"
-#elif T_UI_IMPL == T_UI_IMPL_WIN32
-#	include "Ui/Win32/EventLoopWin32.h"
-#	include "Ui/Win32/WidgetFactoryWin32.h"
+#if defined(_WIN32)
+#	include <Ui/Win32/EventLoopWin32.h>
+#	include <Ui/Win32/WidgetFactoryWin32.h>
+typedef traktor::ui::EventLoopWin32 EventLoopImpl;
+typedef traktor::ui::WidgetFactoryWin32 WidgetFactoryImpl;
+#elif defined(__APPLE__)
+#	include <Ui/Cocoa/EventLoopCocoa.h>
+#	include <Ui/Cocoa/WidgetFactoryCocoa.h>
+typedef traktor::ui::EventLoopCocoa EventLoopImpl;
+typedef traktor::ui::WidgetFactoryCocoa WidgetFactoryImpl;
+#elif defined(__GNUC__)
+#	include <Ui/Gtk/EventLoopGtk.h>
+#	include <Ui/Gtk/WidgetFactoryGtk.h>
+typedef traktor::ui::EventLoopGtk EventLoopImpl;
+typedef traktor::ui::WidgetFactoryGtk WidgetFactoryImpl;
+#else
+#	include <Ui/Wx/EventLoopWx.h>
+#	include <Ui/Wx/WidgetFactoryWx.h>
+typedef traktor::ui::EventLoopWx EventLoopImpl;
+typedef traktor::ui::WidgetFactoryWx WidgetFactoryImpl;
 #endif
 
 using namespace traktor;
@@ -53,17 +56,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-#if T_UI_IMPL == T_UI_IMPL_WX
 	ui::Application::getInstance().initialize(
-		new ui::EventLoopWx(),
-		new ui::WidgetFactoryWx()
+		new EventLoopImpl(),
+		new WidgetFactoryImpl()
 	);
-#elif T_UI_IMPL == T_UI_IMPL_WIN32
-	ui::Application::getInstance().initialize(
-		new ui::EventLoopWin32(),
-		new ui::WidgetFactoryWin32()
-	);
-#endif
 
 	try
 	{
