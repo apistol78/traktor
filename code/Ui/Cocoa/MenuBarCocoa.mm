@@ -2,6 +2,7 @@
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/MenuItem.h"
 #include "Ui/Itf/IForm.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -10,27 +11,41 @@ namespace traktor
 		namespace
 		{
 		
-NSMenu* createNSMenu(MenuItem* item)
+NSMenu* createNSMenu(ITargetProxyCallback* targetProxyCallback, MenuItem* item)
 {
 	NSMenu* menu = [[NSMenu alloc] initWithTitle: makeNSString(item->getText())];
+	[menu setAutoenablesItems: NO];
 	
 	for (int i = 0; i < item->count(); ++i)
 	{
 		Ref< MenuItem > subItem = item->get(i);
 		
-		NSMenuItem* menuItem = [[NSMenuItem alloc]
-			initWithTitle: makeNSString(subItem->getText())
-			action: nil
-			keyEquivalent: @""
-		];
-		
-		if (subItem->count() > 0)
+		if (subItem->getText() != L"-")
 		{
-			NSMenu* subMenu = createNSMenu(subItem);
-			[menuItem setSubmenu: subMenu];
+			NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+			[targetProxy setCallback: targetProxyCallback];
+			
+			NSMenuItem* menuItem = [[NSMenuItem alloc]
+				initWithTitle: makeNSString(subItem->getText())
+				action: nil
+				keyEquivalent: @""
+			];
+			
+			[menuItem setTarget: targetProxy];
+			[menuItem setAction: @selector(dispatchActionCallback:)];
+			
+			if (subItem->count() > 0)
+			{
+				NSMenu* subMenu = createNSMenu(targetProxyCallback, subItem);
+				[menuItem setSubmenu: subMenu];
+			}
+			
+			[menu addItem: menuItem];
 		}
-		
-		[menu addItem: menuItem];
+		else
+		{
+			[menu addItem: [NSMenuItem separatorItem]];
+		}
 	}
 	
 	return menu;
@@ -46,6 +61,8 @@ MenuBarCocoa::MenuBarCocoa(EventSubject* owner)
 bool MenuBarCocoa::create(IForm* form)
 {
 	m_menu = [[NSMenu alloc] initWithTitle: @""];
+	[m_menu setAutoenablesItems: NO];
+	
 	[NSApp setMainMenu: m_menu];
 	
 	return true;
@@ -67,11 +84,16 @@ void MenuBarCocoa::add(MenuItem* item)
 	
 	if (item->count())
 	{
-		NSMenu* subMenu = createNSMenu(item);
+		NSMenu* subMenu = createNSMenu(this, item);
 		[menuItem setSubmenu: subMenu];
 	}
 	
 	[m_menu addItem: menuItem];
+}
+
+void MenuBarCocoa::targetProxy_Action()
+{
+	log::info << L"Menu item selected" << Endl;
 }
 	
 	}

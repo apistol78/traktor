@@ -21,6 +21,6 @@ struct ITargetProxyCallback
 
 - (void) setCallback: (traktor::ui::ITargetProxyCallback*)callback;
 
-- (void) dispatchActionCallback;
+- (void) dispatchActionCallback: (id)controlId;
 
 @end

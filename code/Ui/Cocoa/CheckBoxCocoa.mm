@@ -23,7 +23,7 @@ bool CheckBoxCocoa::create(IWidget* parent, const std::wstring& text, bool check
 	[m_control setTitle: makeNSString(text)];
 	[m_control setState: checked ? NSOnState : NSOffState];
 	[m_control setTarget: targetProxy];
-	[m_control setAction: @selector(dispatchActionCallback)];
+	[m_control setAction: @selector(dispatchActionCallback:)];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);

@@ -7,7 +7,7 @@
 	m_callback = callback;
 }
 
-- (void) dispatchActionCallback
+- (void) dispatchActionCallback: (id)controlId
 {
 	m_callback->targetProxy_Action();
 }
