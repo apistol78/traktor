@@ -2,6 +2,7 @@
 #define traktor_ui_MenuBarCocoa_H
 
 #import <Cocoa/Cocoa.h>
+#import "Ui/Cocoa/NSTargetProxy.h"
 
 #include "Core/Heap/Ref.h"
 #include "Ui/Itf/IMenuBar.h"
@@ -13,7 +14,9 @@ namespace traktor
 
 class EventSubject;
 
-class MenuBarCocoa : public IMenuBar
+class MenuBarCocoa
+:	public IMenuBar
+,	public ITargetProxyCallback
 {
 public:
 	MenuBarCocoa(EventSubject* owner);
@@ -25,6 +28,10 @@ public:
 	virtual void destroy();
 
 	virtual void add(MenuItem* item);
+	
+	// ITargetProxyCallback
+	
+	virtual void targetProxy_Action();
 	
 private:
 	NSMenu* m_menu;

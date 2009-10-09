@@ -1,4 +1,5 @@
 #include "Ui/Cocoa/ScrollBarCocoa.h"
+#include "Ui/ScrollBar.h"
 
 namespace traktor
 {
@@ -7,13 +8,20 @@ namespace traktor
 	
 ScrollBarCocoa::ScrollBarCocoa(EventSubject* owner)
 :	WidgetCocoaImpl< IScrollBar, NSScroller >(owner)
+,	m_vertical(false)
 ,	m_range(100)
+,	m_page(10)
 {
 }
 
 bool ScrollBarCocoa::create(IWidget* parent, int style)
 {
-	m_control = [[NSScroller alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	m_vertical = (style & ScrollBar::WsVertical) != 0;
+
+	m_control = [[NSScroller alloc]
+		initWithFrame: m_vertical ? NSMakeRect(0, 0, 10, 100) : NSMakeRect(0, 0, 100, 10)
+	];
+	[m_control setEnabled: YES];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -35,17 +43,18 @@ int ScrollBarCocoa::getRange() const
 
 void ScrollBarCocoa::setPage(int page)
 {
+	m_page = page;
 }
 
 int ScrollBarCocoa::getPage() const
 {
-	return 0;
+	return m_page;
 }
 
 void ScrollBarCocoa::setPosition(int position)
 {
 	float knobPosition = float(position) / m_range;
-	float knobProp = 0.1f;
+	float knobProp = float(m_page) / m_range;
 	[m_control setFloatValue: knobPosition knobProportion: knobProp];
 }
 
@@ -58,8 +67,12 @@ int ScrollBarCocoa::getPosition() const
 Size ScrollBarCocoa::getPreferedSize() const
 {
 	Size preferedSize = WidgetCocoaImpl< IScrollBar, NSScroller >::getPreferedSize();
-	preferedSize.cx = 200;
-	preferedSize.cy = 20;
+	
+	if (m_vertical)
+		preferedSize.cx = 20;
+	else
+		preferedSize.cy = 20;
+
 	return preferedSize;
 }
 	

@@ -1,3 +1,5 @@
+#import "Ui/Cocoa/NSListDataSource.h"
+
 #include "Ui/Cocoa/ListBoxCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 
@@ -13,8 +15,15 @@ ListBoxCocoa::ListBoxCocoa(EventSubject* owner)
 
 bool ListBoxCocoa::create(IWidget* parent, int style)
 {
+	NSListDataSource* dataSource = [[NSListDataSource alloc] init];
+
+	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
+
 	m_control = [[NSTableView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	[m_control setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
+	[m_control addTableColumn: column];
 	[m_control setTarget: NSApp];
+	[m_control setDataSource: dataSource];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -26,16 +35,19 @@ bool ListBoxCocoa::create(IWidget* parent, int style)
 
 int ListBoxCocoa::add(const std::wstring& item)
 {
+	[m_control reloadData];
 	return 0;
 }
 
 bool ListBoxCocoa::remove(int index)
 {
+	[m_control reloadData];
 	return true;
 }
 
 void ListBoxCocoa::removeAll()
 {
+	[m_control reloadData];
 }
 
 int ListBoxCocoa::count() const
@@ -45,6 +57,7 @@ int ListBoxCocoa::count() const
 
 void ListBoxCocoa::set(int index, const std::wstring& item)
 {
+	[m_control reloadData];
 }
 
 std::wstring ListBoxCocoa::get(int index) const

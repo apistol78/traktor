@@ -35,7 +35,9 @@ public:
 	virtual Size getPreferedSize() const;
 	
 private:
+	bool m_vertical;
 	int m_range;
+	int m_page;
 };
 
 	}
