@@ -156,7 +156,90 @@ IClipboard* WidgetFactoryCocoa::createClipboard()
 
 bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor)
 {
-	return false;
+	NSColor* color;
+	switch (systemColor)
+	{
+	case ScDesktopBackground:
+		color = [NSColor windowBackgroundColor];
+		break;
+	case ScActiveCaption:
+		{
+			outColor = Color(128, 140, 255);
+			return true;
+		}
+		break;
+	case ScInactiveCaption:
+		{
+			outColor = Color(80, 80, 128);
+			return true;
+		}
+		break;
+	case ScMenuBackground:
+		color = [NSColor textBackgroundColor];
+		break;
+	case ScWindowBackground:
+		{
+			outColor = Color(255, 255, 255);
+			return true;
+		}
+		break;
+	case ScWindowFrame:
+		color = [NSColor windowFrameColor];		
+		break;
+	case ScMenuText:
+		color = [NSColor textColor];
+		break;
+	case ScWindowText:
+		color = [NSColor textColor];
+		break;
+	case ScActiveCaptionText:
+		{
+			outColor = Color(255, 255, 255);
+			return true;
+		}
+		break;
+	case ScInactiveCaptionText:
+		{
+			outColor = Color(0, 0, 0);
+			return true;
+		}
+		break;
+	case ScActiveBorder:
+		color = [NSColor windowFrameColor];
+		break;
+	case ScInactiveBorder:
+		color = [NSColor windowFrameColor];
+		break;
+	case ScButtonFace:
+		{
+			outColor = Color(200, 200, 200);
+			return true;
+		}
+		break;
+	case ScButtonShadow:
+		color = [NSColor controlShadowColor];
+		break;
+	case ScDisabledText:
+		color = [NSColor disabledControlTextColor];
+		break;
+	default:
+		return false;
+	}
+	
+	// Ensure color is in RGB color space.
+	color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+	
+	// Extract color components.
+	float r = [color redComponent];
+	float g = [color greenComponent];
+	float b = [color blueComponent];
+	
+	outColor = Color(
+		uint8_t(r * 255),
+		uint8_t(g * 255),
+		uint8_t(b * 255)
+	);
+	return true;
 }
 
 	}

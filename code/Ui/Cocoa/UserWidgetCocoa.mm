@@ -22,6 +22,11 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 		initWithFrame: NSMakeRect(0, 0, 0, 0)
 	];
 	
+	if (style & WsClientBorder)
+	{
+		// @fixme
+	}
+	
 	NSControlDelegateProxy* proxy = [[NSControlDelegateProxy alloc] init];
 	[proxy setCallback: this];
 	
@@ -49,7 +54,8 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 
 bool UserWidgetCocoa::event_viewDidEndLiveResize()
 {
-	return false;
+	raiseSizeEvent();
+	return true;
 }
 
 bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent)

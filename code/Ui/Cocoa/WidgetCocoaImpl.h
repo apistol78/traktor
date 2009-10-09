@@ -5,6 +5,8 @@
 
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Events/SizeEvent.h"
+#include "Ui/EventSubject.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -120,6 +122,7 @@ public:
 	virtual void setRect(const Rect& rect)
 	{
 		[m_control setFrame: makeNSRect(m_control, rect)];
+		raiseSizeEvent();
 	}
 
 	virtual Rect getRect() const
@@ -131,6 +134,8 @@ public:
 	virtual Rect getInnerRect() const
 	{
 		NSRect rc = [m_control frame];
+		rc.origin.x =
+		rc.origin.y = 0;
 		return fromNSRect(m_control, rc);
 	}
 
@@ -220,6 +225,13 @@ public:
 protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
+	
+	void raiseSizeEvent()
+	{
+		Size sz = getRect().getSize();
+		SizeEvent s(m_owner, 0, sz);
+		m_owner->raiseEvent(EiSize, &s);
+	}
 };
 	
 	}
