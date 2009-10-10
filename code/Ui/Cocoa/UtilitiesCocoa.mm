@@ -45,6 +45,13 @@ NSString* makeNSString(const std::wstring& str)
 	return [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
 }
 
+std::wstring fromNSString(const NSString* str)
+{
+	char buffer[4096];
+	[str getCString: buffer maxLength: sizeof_array(buffer) encoding: NSUTF8StringEncoding];
+	return mbstows(buffer);
+}
+
 NSColor* makeNSColor(const Color& color)
 {
 	return [NSColor

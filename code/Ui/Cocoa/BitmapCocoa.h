@@ -33,6 +33,7 @@ public:
 	
 private:
 	NSImage* m_image;
+	NSBitmapImageRep* m_imageRep;
 };
 
 	}

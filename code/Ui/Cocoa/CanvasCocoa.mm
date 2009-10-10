@@ -1,4 +1,5 @@
 #include "Ui/Cocoa/CanvasCocoa.h"
+#include "Ui/Cocoa/BitmapCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 
 namespace traktor
@@ -123,10 +124,30 @@ void CanvasCocoa::fillPolygon(const Point* pnts, int count)
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode)
 {
+	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
+	T_ASSERT (bmc);
+	
+	NSImage* nsi = bmc->getNSImage();
+	T_ASSERT (nsi);
+	
+	NSPoint nat = makeNSPoint(m_view, dstAt);
+	NSRect nrc = makeNSRect(m_view, Rect(srcAt, size));
+	
+	[nsi drawAtPoint: nat fromRect: nrc operation: NSCompositeCopy fraction: 0.0f];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
 {
+	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
+	T_ASSERT (bmc);
+	
+	NSImage* nsi = bmc->getNSImage();
+	T_ASSERT (nsi);
+	
+	NSPoint nat = makeNSPoint(m_view, dstAt);
+	NSRect nrc = makeNSRect(m_view, Rect(srcAt, dstSize));
+	
+	[nsi drawAtPoint: nat fromRect: nrc operation: NSCompositeCopy fraction: 0.0f];
 }
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)

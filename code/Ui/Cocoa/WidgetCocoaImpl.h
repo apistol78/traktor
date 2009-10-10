@@ -28,7 +28,7 @@ public:
 	
 	virtual void destroy()
 	{
-		[m_control release];
+		[m_control release]; m_control = 0;
 	}
 
 	virtual void setParent(IWidget* parent)
@@ -37,11 +37,12 @@ public:
 
 	virtual void setText(const std::wstring& text)
 	{
+		[m_control setStringValue: makeNSString(text)];
 	}
 
 	virtual std::wstring getText() const
 	{
-		return L"";
+		return fromNSString([m_control stringValue]);
 	}
 
 	virtual void setToolTipText(const std::wstring& text)
@@ -59,11 +60,15 @@ public:
 
 	virtual void setVisible(bool visible)
 	{
+		[m_control setHidden: visible ? NO : YES];
 	}
 
 	virtual bool isVisible(bool includingParents) const
 	{
-		return true;
+		if (!includingParents)
+			return [m_control isHidden] == NO;
+		else
+			return [m_control isHiddenOrHasHiddenAncestor] == NO;
 	}
 
 	virtual void setActive()
@@ -82,16 +87,23 @@ public:
 
 	virtual bool hasFocus() const
 	{
-		return false;
+		NSWindow* window = [m_control window];
+		if (!window)
+			return false;
+			
+		return [window firstResponder] == m_control;
 	}
 
 	virtual bool containFocus() const
 	{
-		return false;
+		return hasFocus();
 	}
 
 	virtual void setFocus()
 	{
+		NSWindow* window = [m_control window];
+		if (window)
+			[window makeFirstResponder: m_control];
 	}
 
 	virtual bool hasCapture() const
