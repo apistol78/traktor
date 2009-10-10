@@ -90,8 +90,15 @@ void CanvasCocoa::fillRect(const Rect& rc)
 
 void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 {
-	[m_backgroundColor set];
-	[NSBezierPath fillRect: makeNSRect(m_view, rc)];
+	NSGradient* gradient = [[[NSGradient alloc]
+		initWithColorsAndLocations:
+			m_foregroundColor, (CGFloat)0.0f,
+			m_backgroundColor, (CGFloat)1.0f,
+			nil
+		]
+		autorelease];
+
+	[gradient drawInRect: makeNSRect(m_view, rc) angle: vertical ? 90.0f : 0.0f];
 }
 
 void CanvasCocoa::drawRect(const Rect& rc)
