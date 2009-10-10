@@ -2,8 +2,10 @@
 #include "Ui/Cocoa/ButtonCocoa.h"
 #include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
+#include "Ui/Cocoa/DialogCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
+#include "Ui/Cocoa/ListViewCocoa.h"
 #include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/MessageBoxCocoa.h"
 #include "Ui/Cocoa/PopupMenuCocoa.h"
@@ -41,7 +43,7 @@ IContainer* WidgetFactoryCocoa::createContainer(EventSubject* owner)
 
 IDialog* WidgetFactoryCocoa::createDialog(EventSubject* owner)
 {
-	return 0;
+	return new DialogCocoa(owner);
 }
 
 IDropDown* WidgetFactoryCocoa::createDropDown(EventSubject* owner)
@@ -71,7 +73,7 @@ IListBox* WidgetFactoryCocoa::createListBox(EventSubject* owner)
 
 IListView* WidgetFactoryCocoa::createListView(EventSubject* owner)
 {
-	return 0;
+	return new ListViewCocoa(owner);
 }
 
 IMenuBar* WidgetFactoryCocoa::createMenuBar(EventSubject* owner)
