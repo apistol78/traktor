@@ -9,7 +9,7 @@
 
 - (void) dispatchActionCallback: (id)controlId
 {
-	m_callback->targetProxy_Action();
+	m_callback->targetProxy_Action(controlId);
 }
 
 @end

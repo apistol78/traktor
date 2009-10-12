@@ -41,7 +41,7 @@ bool ButtonCocoa::getState() const
 	return false;
 }
 
-void ButtonCocoa::targetProxy_Action()
+void ButtonCocoa::targetProxy_Action(void* controlId)
 {
 	CommandEvent commandEvent(m_owner, 0);
 	m_owner->raiseEvent(EiClick, &commandEvent);

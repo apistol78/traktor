@@ -167,16 +167,15 @@ void FormCocoa::setRect(const Rect& rect)
 
 Rect FormCocoa::getRect() const
 {
-	NSView* contentView = [m_window contentView];
 	NSRect frame = [m_window frame];
-	return fromNSRect(contentView, frame);
+	return fromNSRect(frame);
 }
 
 Rect FormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
-	return fromNSRect(contentView, contentFrame);
+	return fromNSRect(contentFrame);
 }	
 
 Rect FormCocoa::getNormalRect() const

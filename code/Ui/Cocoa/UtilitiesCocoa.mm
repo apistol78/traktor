@@ -62,16 +62,13 @@ NSColor* makeNSColor(const Color& color)
 	];
 }
 
-NSPoint makeNSPoint(NSView* view, const Point& pt)
+NSPoint makeNSPoint(const Point& pt)
 {
-	NSRect bounds = [view bounds];
-	NSPoint npt = NSMakePoint(pt.x, pt.y);
-	return npt;
+	return NSMakePoint(pt.x, pt.y);
 }
 
-NSRect makeNSRect(NSView* view, const Rect& rc)
+NSRect makeNSRect(const Rect& rc)
 {
-	NSRect bounds = [view bounds];
 	NSRect nrc = NSMakeRect(
 		rc.left,
 		rc.top,
@@ -81,23 +78,21 @@ NSRect makeNSRect(NSView* view, const Rect& rc)
 	return nrc;
 }
 
-Point fromNSPoint(NSView* view, const NSPoint& pt)
+Point fromNSPoint(const NSPoint& pt)
 {
-	NSRect bounds = [view bounds];
 	Point tpt(
-		pt.x,
-		pt.y
+		int32_t(pt.x),
+		int32_t(pt.y)
 	);
 	return tpt;
 }
 
-Rect fromNSRect(NSView* view, const NSRect& rc)
+Rect fromNSRect(const NSRect& rc)
 {
-	NSRect bounds = [view bounds];
 	Rect trc(
 		Point(
-			rc.origin.x,
-			rc.origin.y
+			int32_t(rc.origin.x),
+			int32_t(rc.origin.y)
 		),
 		Size(
 			rc.size.width,

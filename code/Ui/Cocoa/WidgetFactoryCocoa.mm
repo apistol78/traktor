@@ -3,6 +3,7 @@
 #include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
+#include "Ui/Cocoa/FileDialogCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
 #include "Ui/Cocoa/ListViewCocoa.h"
@@ -58,7 +59,7 @@ IEdit* WidgetFactoryCocoa::createEdit(EventSubject* owner)
 
 IFileDialog* WidgetFactoryCocoa::createFileDialog(EventSubject* owner)
 {
-	return 0;
+	return new FileDialogCocoa(owner);
 }
 
 IForm* WidgetFactoryCocoa::createForm(EventSubject* owner)

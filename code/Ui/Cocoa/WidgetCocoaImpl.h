@@ -28,7 +28,11 @@ public:
 	
 	virtual void destroy()
 	{
-		[m_control release]; m_control = 0;
+		if (m_control)
+		{
+			[m_control autorelease];
+			m_control = 0;
+		}
 	}
 
 	virtual void setParent(IWidget* parent)
@@ -133,14 +137,14 @@ public:
 
 	virtual void setRect(const Rect& rect)
 	{
-		[m_control setFrame: makeNSRect(m_control, rect)];
+		[m_control setFrame: makeNSRect(rect)];
 		raiseSizeEvent();
 	}
 
 	virtual Rect getRect() const
 	{
 		NSRect rc = [m_control frame];
-		return fromNSRect(m_control, rc);
+		return fromNSRect(rc);
 	}
 
 	virtual Rect getInnerRect() const
@@ -148,7 +152,7 @@ public:
 		NSRect rc = [m_control frame];
 		rc.origin.x =
 		rc.origin.y = 0;
-		return fromNSRect(m_control, rc);
+		return fromNSRect(rc);
 	}
 
 	virtual Rect getNormalRect() const

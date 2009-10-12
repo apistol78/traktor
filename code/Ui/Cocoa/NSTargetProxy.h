@@ -8,7 +8,7 @@ namespace traktor
 	
 struct ITargetProxyCallback
 {
-	virtual void targetProxy_Action() = 0;
+	virtual void targetProxy_Action(void* controlId) = 0;
 };
 
 	}

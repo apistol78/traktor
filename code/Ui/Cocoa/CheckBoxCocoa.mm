@@ -43,7 +43,7 @@ bool CheckBoxCocoa::isChecked() const
 	return [m_control state] == NSOnState;
 }
 
-void CheckBoxCocoa::targetProxy_Action()
+void CheckBoxCocoa::targetProxy_Action(void* controlId)
 {
 	CommandEvent commandEvent(m_owner, 0);
 	m_owner->raiseEvent(EiClick, &commandEvent);

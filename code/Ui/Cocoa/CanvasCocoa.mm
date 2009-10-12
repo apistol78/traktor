@@ -56,8 +56,8 @@ void CanvasCocoa::drawLine(int x1, int y1, int x2, int y2)
 {
 	[m_foregroundColor set];
 	[NSBezierPath
-		strokeLineFromPoint:makeNSPoint(m_view, Point(x1, y1))
-		toPoint:makeNSPoint(m_view, Point(x2, y2))
+		strokeLineFromPoint:makeNSPoint(Point(x1, y1))
+		toPoint:makeNSPoint(Point(x2, y2))
 	];
 }
 
@@ -86,7 +86,7 @@ void CanvasCocoa::drawSpline(const Point* pnts, int npnts)
 void CanvasCocoa::fillRect(const Rect& rc)
 {
 	[m_backgroundColor set];
-	[NSBezierPath fillRect: makeNSRect(m_view, rc)];
+	[NSBezierPath fillRect: makeNSRect(rc)];
 }
 
 void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
@@ -99,19 +99,19 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 		]
 		autorelease];
 
-	[gradient drawInRect: makeNSRect(m_view, rc) angle: vertical ? 90.0f : 0.0f];
+	[gradient drawInRect: makeNSRect(rc) angle: vertical ? 90.0f : 0.0f];
 }
 
 void CanvasCocoa::drawRect(const Rect& rc)
 {
 	[m_foregroundColor set];
-	[NSBezierPath strokeRect: makeNSRect(m_view, rc)];
+	[NSBezierPath strokeRect: makeNSRect(rc)];
 }
 
 void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 {
 	[m_foregroundColor set];
-	[NSBezierPath strokeRect: makeNSRect(m_view, rc)];
+	[NSBezierPath strokeRect: makeNSRect(rc)];
 }
 
 void CanvasCocoa::drawPolygon(const Point* pnts, int count)
@@ -130,10 +130,10 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 	NSImage* nsi = bmc->getNSImage();
 	T_ASSERT (nsi);
 	
-	NSPoint nat = makeNSPoint(m_view, dstAt);
-	NSRect nrc = makeNSRect(m_view, Rect(srcAt, size));
+	NSRect dstRect = makeNSRect(Rect(dstAt, size));
+	NSRect srcRect = makeNSRect(Rect(srcAt, size));
 	
-	[nsi drawAtPoint: nat fromRect: nrc operation: NSCompositeCopy fraction: 0.0f];
+	[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
@@ -143,23 +143,23 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	
 	NSImage* nsi = bmc->getNSImage();
 	T_ASSERT (nsi);
+
+	NSRect dstRect = makeNSRect(Rect(dstAt, dstSize));
+	NSRect srcRect = makeNSRect(Rect(srcAt, srcSize));
 	
-	NSPoint nat = makeNSPoint(m_view, dstAt);
-	NSRect nrc = makeNSRect(m_view, Rect(srcAt, dstSize));
-	
-	[nsi drawAtPoint: nat fromRect: nrc operation: NSCompositeCopy fraction: 0.0f];
+	[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 }
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 {
 	NSString* str = makeNSString(text);
-	[str drawAtPoint: makeNSPoint(m_view, at) withAttributes: NULL];
+	[str drawAtPoint: makeNSPoint(at) withAttributes: NULL];
 }
 
 void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
 	NSString* str = makeNSString(text);
-	[str drawAtPoint: makeNSPoint(m_view, rc.getTopLeft()) withAttributes: NULL];
+	[str drawAtPoint: makeNSPoint(rc.getTopLeft()) withAttributes: NULL];
 }
 
 Size CanvasCocoa::getTextExtent(const std::wstring& text) const
