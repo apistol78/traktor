@@ -42,7 +42,7 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 
 bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 {
-	Rect rc = fromNSRect(m_control, rect);
+	Rect rc = fromNSRect(rect);
 
 	CanvasCocoa canvasImpl(m_control);
 	Canvas canvas(&canvasImpl);
@@ -73,7 +73,7 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent)
 		m_owner,
 		0,
 		button,
-		fromNSPoint(m_control, mousePosition)
+		fromNSPoint(mousePosition)
 	);
 	m_owner->raiseEvent(EiButtonDown, &mouseEvent);
 	
@@ -95,7 +95,7 @@ bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent)
 		m_owner,
 		0,
 		button,
-		fromNSPoint(m_control, mousePosition)
+		fromNSPoint(mousePosition)
 	);
 	m_owner->raiseEvent(EiButtonUp, &mouseEvent);
 	
@@ -117,7 +117,7 @@ bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent)
 		m_owner,
 		0,
 		button,
-		fromNSPoint(m_control, mousePosition)
+		fromNSPoint(mousePosition)
 	);
 	m_owner->raiseEvent(EiMouseMove, &mouseEvent);
 	

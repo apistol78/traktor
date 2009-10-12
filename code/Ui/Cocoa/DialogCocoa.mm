@@ -169,14 +169,14 @@ Rect DialogCocoa::getRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect frame = [m_window frame];
-	return fromNSRect(contentView, frame);
+	return fromNSRect(frame);
 }
 
 Rect DialogCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
-	return fromNSRect(contentView, contentFrame);
+	return fromNSRect(contentFrame);
 }	
 
 Rect DialogCocoa::getNormalRect() const

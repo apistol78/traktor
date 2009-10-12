@@ -1,6 +1,9 @@
 #ifndef traktor_ui_ListBoxCocoa_H
 #define traktor_ui_ListBoxCocoa_H
 
+#import "Ui/Cocoa/NSListDataSource.h"
+
+#include <vector>
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Itf/IListBox.h"
 
@@ -9,7 +12,9 @@ namespace traktor
 	namespace ui
 	{
 
-class ListBoxCocoa : public WidgetCocoaImpl< IListBox, NSTableView >
+class ListBoxCocoa
+:	public WidgetCocoaImpl< IListBox, NSTableView >
+,	public IListDataCallback
 {
 public:
 	ListBoxCocoa(EventSubject* owner);
@@ -35,6 +40,15 @@ public:
 	virtual bool selected(int index) const;
 
 	virtual Rect getItemRect(int index) const;
+	
+	// IListDataCallback
+	
+	virtual int listCount() const;
+	
+	virtual std::wstring listValue(int index) const;
+	
+private:
+	std::vector< std::wstring > m_items;
 };
 
 	}

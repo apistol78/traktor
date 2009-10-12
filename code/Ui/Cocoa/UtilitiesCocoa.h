@@ -16,13 +16,13 @@ std::wstring fromNSString(const NSString* str);
 
 struct NSColor* makeNSColor(const Color& color);
 
-NSPoint makeNSPoint(NSView* view, const Point& pt);
+NSPoint makeNSPoint(const Point& pt);
 
-NSRect makeNSRect(NSView* view, const Rect& rc);
+NSRect makeNSRect(const Rect& rc);
 
-Point fromNSPoint(NSView* view, const NSPoint& pt);
+Point fromNSPoint(const NSPoint& pt);
 
-Rect fromNSRect(NSView* view, const NSRect& rc);
+Rect fromNSRect(const NSRect& rc);
 
 	}
 }

@@ -1,15 +1,22 @@
 #import "Ui/Cocoa/NSListDataSource.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 
 @implementation NSListDataSource
 
+- (void) setCallback: (IListDataCallback*)callback
+{
+	m_callback = callback;
+}
+
 - (int) numberOfRowsInTableView: (NSTableView*)tableView
 {
-	return 2;
+	return m_callback->listCount();
 }
 
 - (id) tableView: (NSTableView*)tableView objectValueForTableColumn: (NSTableColumn*)tableColumn row: (int)row
 {
-	return @"Hello";
+	std::wstring str = m_callback->listValue(row);
+	return traktor::ui::makeNSString(str);
 }
 
 @end

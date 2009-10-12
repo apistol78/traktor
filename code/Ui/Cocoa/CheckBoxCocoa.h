@@ -28,7 +28,7 @@ public:
 	
 	// ITargetProxyCallback
 	
-	virtual void targetProxy_Action();
+	virtual void targetProxy_Action(void* controlId);
 };
 
 	}

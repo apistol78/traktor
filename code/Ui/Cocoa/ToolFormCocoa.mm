@@ -140,16 +140,15 @@ void ToolFormCocoa::setRect(const Rect& rect)
 
 Rect ToolFormCocoa::getRect() const
 {
-	NSView* contentView = [m_window contentView];
 	NSRect frame = [m_window frame];
-	return fromNSRect(contentView, frame);
+	return fromNSRect(frame);
 }
 
 Rect ToolFormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentBounds = [contentView bounds];
-	return fromNSRect(contentView, contentBounds);
+	return fromNSRect(contentBounds);
 }	
 
 Rect ToolFormCocoa::getNormalRect() const
