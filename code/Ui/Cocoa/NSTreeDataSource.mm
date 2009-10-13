@@ -15,7 +15,7 @@
 
 - (BOOL) outlineView:(NSOutlineView*)outlineView isItemExpandable:(id)item
 {
-	return m_callback->treeIsExpandable(item);
+	return m_callback->treeIsExpandable(item) ? YES : NO;
 }
 
 - (int) outlineView:(NSOutlineView*)outlineView numberOfChildrenOfItem:(id)item

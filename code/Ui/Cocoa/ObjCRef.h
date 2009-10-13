@@ -11,6 +11,8 @@
 
 - (id) initWithRef: (traktor::Object*)ptr;
 
+- (void) dealloc;
+
 - (void) set: (traktor::Object*)ptr;
 
 - (traktor::Object*) get;

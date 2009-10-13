@@ -1,6 +1,5 @@
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
-#include "Ui/Cocoa/ObjCRef.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
@@ -11,26 +10,36 @@ namespace traktor
 	
 TreeViewCocoa::TreeViewCocoa(EventSubject* owner)
 :	WidgetCocoaImpl< ITreeView, NSOutlineView >(owner)
+,	m_rootItemRef(0)
 {
 }
 
 bool TreeViewCocoa::create(IWidget* parent, int style)
 {
+	NSScrollView* scrollView = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[scrollView setHasVerticalScroller: YES];
+	[scrollView setHasHorizontalScroller: YES];
+
 	NSTreeDataSource* dataSource = [[[NSTreeDataSource alloc] init] autorelease];
 	[dataSource setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
+	[column setEditable: NO];
 
 	m_control = [[NSOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
-	[m_control setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
+	[m_control setAutoresizesOutlineColumn: NO];
 	[m_control addTableColumn: column];
+	[m_control setOutlineTableColumn: column];
 	[m_control setDataSource: dataSource];
+	
+	[scrollView setDocumentView: m_control];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	
-	[contentView addSubview: m_control];
-
+	[contentView addSubview: scrollView];
+	
 	return true;
 }
 
@@ -47,11 +56,16 @@ TreeViewItem* TreeViewCocoa::createItem(TreeViewItem* parent, const std::wstring
 	item->setText(text);
 	item->setImage(image);
 	item->setExpandedImage(expandedImage);
+	
+	ObjCRef* ref = [[ObjCRef alloc] initWithRef: item];
 
 	if (!realParent)
+	{
 		m_rootItem = item;
+		m_rootItemRef = ref;
+	}
 	else
-		realParent->addChild(item);
+		realParent->addChild(ref);
 
 	[m_control reloadData];
 	return item;
@@ -84,26 +98,25 @@ void* TreeViewCocoa::treeChildOfItem(int childIndex, void* item) const
 		if (childIndex != 0)
 			return 0;
 			
-		return [[ObjCRef alloc] initWithRef: m_rootItem];
+		return m_rootItemRef;
 	}
 
 	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
 	T_ASSERT (realItem);
 	
-	const RefArray< TreeViewItemCocoa >& realChildItems = realItem->getChildren();
-	if (childIndex >= int(realChildItems.size()))
+	const std::vector< ObjCRef* >& childItems = realItem->getChildren();
+	if (childIndex >= int(childItems.size()))
 		return 0;
 		
-	return [[ObjCRef alloc] initWithRef: realChildItems[childIndex]];
+	return childItems[childIndex];
 }
 
 bool TreeViewCocoa::treeIsExpandable(void* item) const
 {
 	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
 	T_ASSERT (realItem);
-
-	const RefArray< TreeViewItemCocoa >& realChildItems = realItem->getChildren();
-	return !realChildItems.empty();
+	
+	return realItem->hasChildren();
 }
 
 int TreeViewCocoa::treeNumberOfChildren(void* item) const
@@ -114,8 +127,8 @@ int TreeViewCocoa::treeNumberOfChildren(void* item) const
 	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
 	T_ASSERT (item);
 
-	const RefArray< TreeViewItemCocoa >& realChildItems = realItem->getChildren();
-	return int(realChildItems.size());
+	const std::vector< ObjCRef* >& childItems = realItem->getChildren();
+	return int(childItems.size());
 }
 
 std::wstring TreeViewCocoa::treeValue(void* item) const

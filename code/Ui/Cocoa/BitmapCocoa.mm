@@ -74,9 +74,9 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		rc.bottom = rc.top + height;
 
 	Ref< drawing::Image > sourceImage = image->clone();
-	sourceImage->convert(drawing::PixelFormat::getA8R8G8B8());
+	sourceImage->convert(drawing::PixelFormat::getA8B8G8R8());
 
-	const uint32_t* sourceBits = (const uint32_t*)(image->getData());
+	const uint32_t* sourceBits = (const uint32_t*)(sourceImage->getData());
 	uint32_t* destinationBits = (uint32_t*)[m_imageRep bitmapData];
 	
 	for (int y = rc.top; y < rc.bottom; ++y)
@@ -95,7 +95,7 @@ drawing::Image* BitmapCocoa::getImage() const
 	Size size = getSize();
 	
 	Ref< drawing::Image > image = gc_new< drawing::Image >(
-		drawing::PixelFormat::getB8G8R8A8(),
+		drawing::PixelFormat::getA8B8G8R8(),
 		size.cx,
 		size.cy
 	);

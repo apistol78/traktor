@@ -1,6 +1,8 @@
 #ifndef traktor_ui_TreeViewItemCocoa_H
 #define traktor_ui_TreeViewItemCocoa_H
 
+#import "Ui/Cocoa/ObjCRef.h"
+
 #include "Core/Heap/Ref.h"
 #include "Ui/TreeViewItem.h"
 
@@ -50,9 +52,9 @@ public:
 	
 	virtual int getChildren(RefArray< TreeViewItem >& outChildren) const;
 	
-	const RefArray< TreeViewItemCocoa >& getChildren() const { return m_children; }
+	const std::vector< ObjCRef* >& getChildren() const { return m_children; }
 
-	void addChild(TreeViewItemCocoa* childItem) { m_children.push_back(childItem); }
+	void addChild(ObjCRef* childItem) { m_children.push_back(childItem); }
 	
 private:
 	std::wstring m_text;
@@ -60,7 +62,7 @@ private:
 	int m_expandedImage;
 	bool m_expanded;
 	Ref< TreeViewItemCocoa > m_parent;
-	RefArray< TreeViewItemCocoa > m_children;
+	std::vector< ObjCRef* > m_children;
 };
 	
 	}

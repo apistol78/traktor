@@ -1,6 +1,8 @@
 #ifndef traktor_ui_TreeViewCocoa_H
 #define traktor_ui_TreeViewCocoa_H
 
+#import "Ui/Cocoa/ObjCRef.h"
+
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Cocoa/NSTreeDataSource.h"
 #include "Ui/Itf/ITreeView.h"
@@ -18,7 +20,7 @@ class TreeViewCocoa
 {
 public:
 	TreeViewCocoa(EventSubject* owner);
-	
+		
 	// ITreeView
 
 	virtual bool create(IWidget* parent, int style);
@@ -47,6 +49,7 @@ public:
 	
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;
+	ObjCRef* m_rootItemRef;
 	
 	TreeViewItemCocoa* getRealItem(void* item) const;
 };
