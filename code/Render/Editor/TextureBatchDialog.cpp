@@ -110,7 +110,7 @@ void TextureBatchDialog::addTexture()
 
 void TextureBatchDialog::removeTexture()
 {
-	m_texturePropertyList->bind(0);
+	m_texturePropertyList->bind(0, 0);
 	m_texturePropertyList->update();
 
 	for (int index = m_textureList->getSelected(); index >= 0; index = m_textureList->getSelected())
@@ -132,7 +132,7 @@ void TextureBatchDialog::eventTextureListSelect(ui::Event* event)
 {
 	Ref< TextureAsset > asset = checked_type_cast< TextureAsset* >(m_textureList->getSelectedData());
 	m_texturePropertyList->apply();
-	m_texturePropertyList->bind(asset);
+	m_texturePropertyList->bind(asset, 0);
 	m_texturePropertyList->update();
 }
 

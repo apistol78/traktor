@@ -632,7 +632,7 @@ ui::custom::Node* ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 			editorNode,
 			inputPin->getName(),
 			ui::custom::Pin::DrInput,
-			true
+			!inputPin->isOptional()
 		));
 	}
 
@@ -736,6 +736,23 @@ void ShaderGraphEditorPage::updateGraph()
 	m_editorGraph->update();
 }
 
+struct RemoveInputPortPred
+{
+	bool m_connectable;
+	bool m_optional;
+
+	RemoveInputPortPred(bool connectable, bool optional)
+	:	m_connectable(connectable)
+	,	m_optional(optional)
+	{
+	}
+
+	bool operator () (InputPort* ip) const
+	{
+		return ip->isConnectable() == m_connectable && ip->isOptional() == m_optional;
+	}
+};
+
 void ShaderGraphEditorPage::checkUpdatedFragments()
 {
 	bool firstMismatch = true;
@@ -755,11 +772,19 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 
 		RefArray< InputPort > fragmentInputs;
 		fragmentGraph->findNodesOf< InputPort >(fragmentInputs);
+
+		// Remove non-connect-ables.
+		RefArray< InputPort >::iterator
+			j = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, false)); fragmentInputs.erase(j, fragmentInputs.end());
+			j = std::remove_if(fragmentInputs.begin(), fragmentInputs.end(), RemoveInputPortPred(false, true));  fragmentInputs.erase(j, fragmentInputs.end());
+
 		RefArray< OutputPort > fragmentOutputs;
 		fragmentGraph->findNodesOf< OutputPort >(fragmentOutputs);
 
 		RefArray< InputPin > externalInputPins = (*i)->getInputPins();
 		RefArray< OutputPin > externalOutputPins = (*i)->getOutputPins();
+
+		bool unmatchingOptionals = false;
 
 		for (RefArray< InputPort >::iterator j = fragmentInputs.begin(); j != fragmentInputs.end(); )
 		{
@@ -835,7 +860,7 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 
 			// Add new pins.
 			for (RefArray< InputPort >::iterator j = fragmentInputs.begin(); j != fragmentInputs.end(); ++j)
-				(*i)->getInputPins().push_back(gc_new< InputPin >((*i), (*j)->getName(), false));
+				(*i)->getInputPins().push_back(gc_new< InputPin >((*i), (*j)->getName(), (*j)->isOptional()));
 			for (RefArray< OutputPort >::iterator j = fragmentOutputs.begin(); j != fragmentOutputs.end(); ++j)
 				(*i)->getOutputPins().push_back(gc_new< OutputPin >((*i), (*j)->getName()));
 		}

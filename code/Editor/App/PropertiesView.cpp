@@ -53,16 +53,16 @@ void PropertiesView::destroy()
 	ui::Container::destroy();
 }
 
-void PropertiesView::setPropertyObject(Object* propertyObject)
+void PropertiesView::setPropertyObject(Serializable* object, Serializable* outer)
 {
 	m_propertyList->hide();
-	m_propertyList->bind(dynamic_type_cast< Serializable* >(propertyObject));
+	m_propertyList->bind(object, outer);
 	m_propertyList->show();
 
-	m_propertyObject = propertyObject;
+	m_propertyObject = object;
 }
 
-Object* PropertiesView::getPropertyObject()
+Serializable* PropertiesView::getPropertyObject()
 {
 	return m_propertyObject;
 }

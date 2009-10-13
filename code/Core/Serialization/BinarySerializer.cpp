@@ -501,14 +501,14 @@ bool BinarySerializer::operator >> (const Member< Serializable >& m)
 		int32_t version;
 		if (!read_primitive< int32_t >(m_stream, version))
 			return false;
-		return serialize(o, version);
+		return serialize(o, version, 0);
 	}
 	else
 	{
 		int32_t version = o->getVersion();
 		if (!write_primitive< int32_t >(m_stream, version))
 			return false;
-		return serialize(o, version);
+		return serialize(o, version, 0);
 	}
 }
 
@@ -546,7 +546,7 @@ bool BinarySerializer::operator >> (const Member< Serializable* >& m)
 				if (!read_primitive< int32_t >(m_stream, version))
 					return false;
 
-				if (!serialize(o, version))
+				if (!serialize(o, version, 0))
 					return false;
 
 				m_readCache[hash] = o;
@@ -590,7 +590,7 @@ bool BinarySerializer::operator >> (const Member< Serializable* >& m)
 					return false;
 
 				m_writeCache[o] = hash;
-				if (!serialize(o, version))
+				if (!serialize(o, version, 0))
 					return false;
 			}
 		}

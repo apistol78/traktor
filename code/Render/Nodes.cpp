@@ -474,9 +474,12 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.InputPort", InputPort, Immu
 
 const ImmutableNode::OutputPinDesc c_InputPort_o[] = { L"Output", 0 };
 
-InputPort::InputPort(const std::wstring& name)
+InputPort::InputPort(const std::wstring& name, bool connectable, bool optional, float defaultValue)
 :	ImmutableNode(0, c_InputPort_o)
 ,	m_name(name)
+,	m_connectable(connectable)
+,	m_optional(optional)
+,	m_defaultValue(defaultValue)
 {
 }
 
@@ -490,9 +493,44 @@ const std::wstring& InputPort::getName() const
 	return m_name;
 }
 
+void InputPort::setConnectable(bool connectable)
+{
+	m_connectable = connectable;
+}
+
+bool InputPort::isConnectable() const
+{
+	return m_connectable;
+}
+
+void InputPort::setOptional(bool optional)
+{
+	m_optional = optional;
+}
+
+bool InputPort::isOptional() const
+{
+	return m_optional;
+}
+
+void InputPort::setDefaultValue(float defaultValue)
+{
+	m_defaultValue = defaultValue;
+}
+
+float InputPort::getDefaultValue() const
+{
+	return m_defaultValue;
+}
+
 std::wstring InputPort::getInformation() const
 {
 	return m_name;
+}
+
+int InputPort::getVersion() const
+{
+	return 1;
 }
 
 bool InputPort::serialize(Serializer& s)
@@ -501,6 +539,13 @@ bool InputPort::serialize(Serializer& s)
 		return false;
 
 	s >> Member< std::wstring >(L"name", m_name);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"connectable", m_connectable);
+		s >> Member< bool >(L"optional", m_optional);
+		s >> Member< float >(L"defaultValue", m_defaultValue);
+	}
 
 	return true;
 }

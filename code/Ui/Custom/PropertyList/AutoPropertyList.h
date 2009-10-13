@@ -27,7 +27,7 @@ class T_DLLCLASS AutoPropertyList : public PropertyList
 	T_RTTI_CLASS(AutoPropertyList)
 	
 public:
-	bool bind(Serializable* object);
+	bool bind(Serializable* object, Serializable* outer);
 
 	bool refresh();
 
@@ -43,6 +43,7 @@ public:
 	
 private:
 	Ref< Serializable > m_object;
+	Ref< Serializable > m_outer;
 };
 		
 		}

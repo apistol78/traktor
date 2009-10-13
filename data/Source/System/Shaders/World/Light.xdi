@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
 				<first>-178</first>
@@ -11,18 +11,23 @@
 			<inputPins>
 				<item>
 					<name>EyeDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>SpecularRoughness</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Position</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Normal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Shadow</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -30,8 +35,9 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
 				<first>-181</first>
@@ -41,15 +47,19 @@
 			<inputPins>
 				<item>
 					<name>Normal</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>SpecularRoughness</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>EyeDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Shadow</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -57,6 +67,7 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
@@ -66,37 +77,49 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>-432</first>
+				<first>-429</first>
 				<second>88</second>
 			</position>
 			<name>EyeDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>-409</first>
+				<first>-406</first>
 				<second>114</second>
 			</position>
 			<name>Position</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
 				<first>-466</first>
 				<second>166</second>
 			</position>
 			<name>SpecularRoughness</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0.8</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>-405</first>
+				<first>-403</first>
 				<second>140</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment></comment>
@@ -106,13 +129,16 @@
 			</position>
 			<parameterName>LightEnableComplex</parameterName>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>-410</first>
+				<first>-405</first>
 				<second>192</second>
 			</position>
 			<name>Shadow</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

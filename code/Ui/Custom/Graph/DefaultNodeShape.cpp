@@ -221,10 +221,15 @@ void DefaultNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 		const std::wstring& name = pin->getName();
 		Size extent = canvas->getTextExtent(name);
 
+		if (pin->isMandatory())
+			canvas->setFont(settings->getFontUnderline());
+
 		canvas->drawText(
 			Point(pos.x + c_pinNamePad, pos.y - extent.cy / 2),
 			name
 		);
+
+		canvas->setFont(settings->getFont());
 	}
 
 	for (int i = 0; i < int(outputPins.size()); ++i)

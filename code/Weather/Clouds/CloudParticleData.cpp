@@ -18,10 +18,6 @@ CloudParticleData::CloudParticleData()
 ,	m_octaves(8)
 ,	m_persistence(0.8f)
 ,	m_noiseScale(1.0f)
-,	m_sunLight(1.0f, 1.0f, 1.0f, 0.0f)
-,	m_baseLight(0.8f, 0.8f, 0.8f, 0.8f)
-,	m_shadowLight(0.4f, 0.4f, 0.4f, 0.0f)
-,	m_lightCoefficients(1.0f, 0.0f, 0.0f, 0.0f)
 {
 }
 
@@ -35,10 +31,6 @@ bool CloudParticleData::serialize(Serializer& s)
 	s >> Member< int32_t >(L"octaves", m_octaves);
 	s >> Member< float >(L"persistence", m_persistence);
 	s >> Member< float >(L"noiseScale", m_noiseScale);
-	s >> Member< Vector4 >(L"sunLight", m_sunLight);
-	s >> Member< Vector4 >(L"baseLight", m_baseLight);
-	s >> Member< Vector4 >(L"shadowLight", m_shadowLight);
-	s >> Member< Vector4 >(L"lightCoefficients", m_lightCoefficients);
 	return true;
 }
 

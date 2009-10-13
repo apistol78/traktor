@@ -34,7 +34,7 @@ public:
 	
 	const std::wstring& getName() const;
 
-	bool getOptional() const;
+	bool isOptional() const;
 
 private:
 	Node* m_node;

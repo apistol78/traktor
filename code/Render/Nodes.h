@@ -299,18 +299,35 @@ class T_DLLCLASS InputPort : public ImmutableNode
 	T_RTTI_CLASS(InputPort)
 
 public:
-	InputPort(const std::wstring& name = L"");
+	InputPort(const std::wstring& name = L"", bool connectable = true, bool optional = false, float defaultValue = 0.0f);
 
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
+	void setConnectable(bool connectable);
+
+	bool isConnectable() const;
+
+	void setOptional(bool optional);
+
+	bool isOptional() const;
+
+	void setDefaultValue(float defaultValue);
+
+	float getDefaultValue() const;
+
 	virtual std::wstring getInformation() const;
+
+	virtual int getVersion() const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
 	std::wstring m_name;
+	bool m_connectable;
+	bool m_optional;
+	float m_defaultValue;
 };
 
 /*! \brief Interpolator, pass value from vertex to pixel shader. */

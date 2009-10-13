@@ -328,7 +328,7 @@ bool XmlDeserializer::operator >> (const Member< Serializable >& m)
 	T_ASSERT_M (version <= o->getVersion(), L"Serialized data has a higher version number than supported by the code");
 	
 	rememberObject(o);
-	if (!serialize(o, version))
+	if (!serialize(o, version, 0))
 		return false;
 
 	if (!leaveElement(m.getName()))
@@ -381,7 +381,7 @@ bool XmlDeserializer::operator >> (const Member< Serializable* >& m)
 		}
 
 		rememberObject(o);
-		if (serialize(o, version))
+		if (serialize(o, version, 0))
 			m = o;
 		else
 		{

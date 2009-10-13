@@ -4,6 +4,7 @@
 #include "Render/OutputPin.h"
 #include "Render/ShaderGraph.h"
 #include "Render/Nodes.h"
+#include "Render/Edge.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberRef.h"
@@ -32,13 +33,28 @@ public:
 		if (s.getDirection() == Serializer::SdWrite)
 		{
 			std::wstring name = m_pin->getName();
+			bool optional = m_pin->isOptional();
+
 			s >> Member< std::wstring >(L"name", name);
+
+			if (s.getVersion() >= 1)
+				s >> Member< bool >(L"optional", optional);
 		}
 		else	// SdRead
 		{
-			std::wstring name;
+			std::wstring name = L"";
+			bool optional = false;
+
 			s >> Member< std::wstring >(L"name", name);
-			m_pin = gc_new< InputPin >(s.getCurrentObject< Node >(), name, false);
+
+			if (s.getVersion() >= 1)
+				s >> Member< bool >(L"optional", optional);
+
+			m_pin = gc_new< InputPin >(
+				s.getCurrentObject< Node >(),
+				name,
+				optional
+			);
 		}
 		return true;
 	}
@@ -98,24 +114,37 @@ External::External()
 External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 :	m_fragmentGuid(fragmentGuid)
 {
-	// Create pins for every port found in fragment.
 	const RefArray< Node >& fragmentNodes = fragmentGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = fragmentNodes.begin(); i != fragmentNodes.end(); ++i)
 	{
 		const Node* fragmentNode = *i;
-		if (is_a< InputPort >(fragmentNode))
+		if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >(fragmentNode))
 		{
-			std::wstring name = static_cast< const InputPort* >(fragmentNode)->getName();
-			m_inputPins.push_back(gc_new< InputPin >(this, name, false));
+			std::wstring name = inputPort->getName();
+
+			if (inputPort->isConnectable())
+			{
+				m_inputPins.push_back(gc_new< InputPin >(
+					this,
+					name,
+					inputPort->isOptional()
+				));
+			}
+
+			if (!inputPort->isConnectable() || inputPort->isOptional())
+				m_values[name] = inputPort->getDefaultValue();
 		}
-		else if (is_a< OutputPort >(fragmentNode))
+		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{
-			std::wstring name = static_cast< const OutputPort* >(fragmentNode)->getName();
-			m_outputPins.push_back(gc_new< OutputPin >(this, name));
+			std::wstring name = outputPort->getName();
+			m_outputPins.push_back(gc_new< OutputPin >(
+				this,
+				name
+			));
 		}
 	}
 
-	// Sort pins lexiographically.
+	// Sort pins lexicographically.
 	std::sort(m_inputPins.begin(), m_inputPins.end(), SortPinPredicate< InputPin >());
 	std::sort(m_outputPins.begin(), m_outputPins.end(), SortPinPredicate< OutputPin >());
 }
@@ -128,6 +157,17 @@ void External::setFragmentGuid(const Guid& fragmentGuid)
 const Guid& External::getFragmentGuid() const
 {
 	return m_fragmentGuid;
+}
+
+void External::setValue(const std::wstring& name, float value)
+{
+	m_values[name] = value;
+}
+
+float External::getValue(const std::wstring& name, float defaultValue) const
+{
+	std::map< std::wstring, float >::const_iterator i = m_values.find(name);
+	return i != m_values.end() ? i->second : defaultValue;
 }
 
 std::wstring External::getInformation() const
@@ -157,6 +197,11 @@ const OutputPin* External::getOutputPin(int index) const
 	return m_outputPins[index];
 }
 
+int External::getVersion() const
+{
+	return 1;
+}
+
 bool External::serialize(Serializer& s)
 {
 	if (!Node::serialize(s))
@@ -165,6 +210,33 @@ bool External::serialize(Serializer& s)
 	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, &type_of< ShaderGraph >());
 	s >> MemberRefArray< InputPin, MemberInputPinRef >(L"inputPins", m_inputPins);
 	s >> MemberRefArray< OutputPin, MemberOutputPinRef >(L"outputPins", m_outputPins);
+
+	if (s.getVersion() >= 1)
+		s >> MemberStlMap< std::wstring, float >(L"values", m_values);
+	
+	if (s.getDirection() == Serializer::SdRead)
+	{
+		// Update edges; we have created new pins but the shader graph might still
+		// have edges which reference our old pins.
+		Ref< ShaderGraph > shaderGraph = s.getOuterObject< ShaderGraph >();
+		T_ASSERT (shaderGraph);
+
+		const RefArray< Edge >& edges = shaderGraph->getEdges();
+		for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+		{
+			const OutputPin* sourcePin = (*i)->getSource();
+			const InputPin* destinationPin = (*i)->getDestination();
+
+			if (sourcePin->getNode() == this)
+				sourcePin = findOutputPin(sourcePin->getName());
+
+			if (destinationPin->getNode() == this)
+				destinationPin = findInputPin(destinationPin->getName());
+
+			(*i)->setSource(sourcePin);
+			(*i)->setDestination(destinationPin);
+		}
+	}
 
 	return true;
 }
