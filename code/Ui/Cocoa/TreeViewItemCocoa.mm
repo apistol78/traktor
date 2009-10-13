@@ -17,6 +17,10 @@ TreeViewItemCocoa::TreeViewItemCocoa(TreeViewItemCocoa* parent)
 
 TreeViewItemCocoa::~TreeViewItemCocoa()
 {
+	for (std::vector< ObjCRef* >::iterator i = m_children.begin(); i != m_children.end(); ++i)
+		[*i release];
+		
+	m_children.resize(0);
 }
 
 void TreeViewItemCocoa::setText(const std::wstring& text)
@@ -95,8 +99,8 @@ bool TreeViewItemCocoa::hasChildren() const
 
 int TreeViewItemCocoa::getChildren(RefArray< TreeViewItem >& outChildren) const
 {
-	for (RefArray< TreeViewItemCocoa >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
-		outChildren.push_back(*i);
+	for (std::vector< ObjCRef* >::const_iterator i = m_children.begin(); i != m_children.end(); ++i)
+		outChildren.push_back((TreeViewItem*)[*i get]);
 	return int(outChildren.size());
 }
 

@@ -4,8 +4,15 @@
 
 - (id) initWithRef: (traktor::Object*)ptr
 {
-	m_ref = new traktor::Ref< traktor::Object >(ptr);
+	if (self = [super init])
+		m_ref = new traktor::Ref< traktor::Object >(ptr);
 	return self;
+}
+
+- (void) dealloc
+{
+	delete m_ref;
+	[super dealloc];
 }
 
 - (void) set: (traktor::Object*)ptr
