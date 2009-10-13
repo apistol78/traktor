@@ -68,21 +68,18 @@ public:
 private:
 	resource::Proxy< render::Shader > m_particleShader;
 	resource::Proxy< render::Shader > m_impostorShader;
-	Ref< render::RenderTargetSet > m_impostorTargetDistance;
-	Ref< render::RenderTargetSet > m_impostorTargetForward;
+	Ref< render::RenderTargetSet > m_impostorTarget;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	render::Primitives m_primitives;
 	render::handle_t m_handleBillboardView;
-	render::handle_t m_handleImpostorTargetForward;
-	render::handle_t m_handleImpostorTargetDistance;
+	render::handle_t m_handleImpostorTarget;
 
 	CloudParticleCluster m_cluster;
 	CloudParticleData m_particleData;
 
 	Transform m_transform;
-	Vector4 m_lastLightDirection;
 	Vector4 m_lastEyePosition;
+	Vector4 m_lastEyeDirection;
 
 	void renderCluster(
 		render::RenderContext* renderContext,

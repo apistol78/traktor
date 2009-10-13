@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
@@ -52,7 +52,7 @@
 			</position>
 			<parameterName>InstanceData1</parameterName>
 			<type>PtVector</type>
-			<length>64</length>
+			<length>16</length>
 		</item>
 		<item type="traktor.render.IndexedUniform">
 			<comment></comment>
@@ -62,7 +62,7 @@
 			</position>
 			<parameterName>InstanceData2</parameterName>
 			<type>PtVector</type>
-			<length>64</length>
+			<length>16</length>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>

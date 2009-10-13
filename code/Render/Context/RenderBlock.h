@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class IRenderView;
+class RenderTargetSet;
 class Shader;
 class ShaderParameters;
 class IndexBuffer;
@@ -77,6 +78,28 @@ public:
 	virtual void render(IRenderView* renderView) const;
 };
 
+/*! \brief Non-indexed primitives render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS NonIndexedRenderBlock : public RenderBlock
+{
+public:
+	VertexBuffer* vertexBuffer;
+	PrimitiveType primitive;
+	uint32_t offset;
+	uint32_t count;
+
+	NonIndexedRenderBlock()
+	:	vertexBuffer(0)
+	,	primitive(PtPoints)
+	,	offset(0)
+	,	count(0)
+	{
+	}
+
+	virtual void render(IRenderView* renderView) const;
+};
+
 /*! \brief Indexed primitives render block.
  * \ingroup Render
  */
@@ -99,6 +122,59 @@ public:
 	,	count(0)
 	,	minIndex(0)
 	,	maxIndex(0)
+	{
+	}
+
+	virtual void render(IRenderView* renderView) const;
+};
+
+/*! \brief Alternative target render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS TargetRenderBlock : public RenderBlock
+{
+public:
+	RenderTargetSet* renderTargetSet;
+	int32_t renderTargetIndex;
+	bool keepDepthStencil;
+	uint32_t clearMask;
+	float clearColor[4];
+	float clearDepth;
+	uint8_t clearStencil;
+	RenderBlock* inner;
+
+	TargetRenderBlock()
+	:	RenderBlock()
+	,	renderTargetSet(0)
+	,	renderTargetIndex(0)
+	,	keepDepthStencil(false)
+	,	clearMask(0)
+	,	clearDepth(1.0f)
+	,	clearStencil(0)
+	,	inner(0)
+	{
+		clearColor[0] =
+		clearColor[1] =
+		clearColor[2] =
+		clearColor[3] = 0.0f;
+	}
+
+	virtual void render(IRenderView* renderView) const;
+};
+
+/*! \brief Chain render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS ChainRenderBlock : public RenderBlock
+{
+public:
+	RenderBlock* inner;
+	RenderBlock* next;
+
+	ChainRenderBlock()
+	:	RenderBlock()
+	,	inner(0)
+	,	next(0)
 	{
 	}
 

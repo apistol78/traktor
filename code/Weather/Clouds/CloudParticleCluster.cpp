@@ -85,9 +85,6 @@ bool CloudParticleCluster::create(const CloudParticleData& particleData)
 		m_boundingBox.contain(m_particles[i].position, Scalar(m_particles[i].radius));
 	}
 
-	for (uint32_t i = 0; i < particleData.getCount() / 10; ++i)
-		m_particles[i].position = Vector4(0.0f, float(i) / 4.0f, 0.0f, 0.0f);
-
 	return true;
 }
 
