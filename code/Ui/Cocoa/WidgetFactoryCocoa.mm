@@ -3,6 +3,7 @@
 #include "Ui/Cocoa/CheckBoxCocoa.h"
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
+#include "Ui/Cocoa/DropDownCocoa.h"
 #include "Ui/Cocoa/FileDialogCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
@@ -49,7 +50,7 @@ IDialog* WidgetFactoryCocoa::createDialog(EventSubject* owner)
 
 IDropDown* WidgetFactoryCocoa::createDropDown(EventSubject* owner)
 {
-	return 0;
+	return new DropDownCocoa(owner);
 }
 
 IEdit* WidgetFactoryCocoa::createEdit(EventSubject* owner)

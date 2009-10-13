@@ -1,3 +1,5 @@
+#import "Ui/Cocoa/ObjCRef.h"
+
 #include "Ui/Cocoa/MenuBarCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/MenuItem.h"
@@ -5,41 +7,6 @@
 #include "Ui/Itf/IForm.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Core/Log/Log.h"
-
-@interface ObjCRef : NSObject
-{
-	traktor::Ref< traktor::Object >* m_ref;
-}
-
-- (id) initWithRef: (traktor::Object*)ptr;
-
-- (void) set: (traktor::Object*)ptr;
-
-- (traktor::Object*) get;
-
-@end
-
-@implementation ObjCRef
-
-- (id) initWithRef: (traktor::Object*)ptr
-{
-	m_ref = new traktor::Ref< traktor::Object >(ptr);
-	return self;
-}
-
-- (void) set: (traktor::Object*)ptr
-{
-	delete m_ref;
-	m_ref = new traktor::Ref< traktor::Object >(ptr);
-}
-
-- (traktor::Object*) get
-{
-	return m_ref ? *m_ref : 0;
-}
-
-@end
-
 
 namespace traktor
 {
