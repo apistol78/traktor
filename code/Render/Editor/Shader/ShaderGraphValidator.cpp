@@ -134,7 +134,7 @@ public:
 			for (int j = 0; j < inputPinCount; ++j)
 			{
 				const InputPin* inputPin = (*i)->getInputPin(j);
-				if (!inputPin->getOptional() && !shaderGraphAdj.findSourcePin(inputPin))
+				if (!inputPin->isOptional() && !shaderGraphAdj.findSourcePin(inputPin))
 					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" not connected", *i);
 			}
 		}

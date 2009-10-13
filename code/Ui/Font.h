@@ -58,11 +58,16 @@ public:
 	bool operator < (const Font& r) const;
 
 private:
+	struct FontParameters
+	{
+		int size;
+		bool bold;
+		bool italic;
+		bool underline;
+	};
+
 	std::wstring m_face;
-	int m_size;
-	bool m_bold;
-	bool m_italic;
-	bool m_underline;
+	FontParameters m_params;
 };
 
 	}

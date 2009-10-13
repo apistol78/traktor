@@ -205,7 +205,7 @@ bool ApplyReflector::operator >> (const Member< Serializable* >& m)
 	if (object)
 	{
 		int version = object->getVersion();
-		if (!serialize(object, version))
+		if (!serialize(object, version, 0))
 			return false;
 	}
 	m = object;

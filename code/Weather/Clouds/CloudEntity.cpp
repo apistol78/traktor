@@ -286,7 +286,7 @@ void CloudEntity::renderCluster(
 	outerRenderBlock->inner = 0;
 	outerRenderBlock->next = 0;
 
-	//if ((m_lastEyePosition - eyePosition).length() > 0.1f || abs(dot3(m_lastEyeDirection, eyeDirection)) < 0.9f)
+	if ((m_lastEyePosition - eyePosition).length() > 0.1f || abs(dot3(m_lastEyeDirection, eyeDirection)) < 0.99f)
 	{
 		render::TargetRenderBlock* targetRenderBlock = renderContext->alloc< render::TargetRenderBlock >();
 		targetRenderBlock->renderTargetSet = m_impostorTarget;

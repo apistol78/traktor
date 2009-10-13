@@ -46,12 +46,12 @@ void CanvasXtrme::setBackground(const Color& background)
 
 void CanvasXtrme::setFont(const Font& font)
 {
-	std::map< Font, Ref< FontMap > >::iterator i = m_fontMaps.find(font);
+	std::map< const Font*, Ref< FontMap > >::iterator i = m_fontMaps.find(&font);
 	if (i == m_fontMaps.end())
 	{
 		m_currentFontMap = gc_new< FontMap >();
 		m_currentFontMap->create(m_renderSystem, font);
-		m_fontMaps[font] = m_currentFontMap;
+		m_fontMaps[&font] = m_currentFontMap;
 	}
 	else
 		m_currentFontMap = i->second;

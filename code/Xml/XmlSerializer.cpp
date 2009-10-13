@@ -231,7 +231,7 @@ bool XmlSerializer::operator >> (const Member< Serializable >& m)
 	enterElement(m.getName());
 
 	rememberObject(o);
-	result = serialize(o, version);
+	result = serialize(o, version, 0);
 
 	leaveElement();
 	
@@ -264,7 +264,7 @@ bool XmlSerializer::operator >> (const Member< Serializable* >& m)
 		enterElement(m.getName());
 
 		rememberObject(o);
-		result = serialize(o, version);
+		result = serialize(o, version, 0);
 
 		leaveElement();
 

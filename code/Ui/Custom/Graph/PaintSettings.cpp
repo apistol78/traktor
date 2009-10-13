@@ -10,8 +10,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PaintSettings", PaintSettings, Object)
 
 PaintSettings::PaintSettings(const ui::Font& font)
-:	m_font(font)
-,	m_fontBold(font.getFace(), font.getSize(), true, font.isItalic(), font.isUnderline())
+:	m_font(font.getFace(), font.getSize(), false, false, false)
+,	m_fontBold(font.getFace(), font.getSize(), true, false, false)
+,	m_fontUnderline(font.getFace(), font.getSize(), false, false, true)
 ,	m_smoothSpline(false)
 {
 	m_gridBackground = Color(220, 220, 220);
@@ -48,6 +49,16 @@ void PaintSettings::setFontBold(const ui::Font& fontBold)
 const ui::Font& PaintSettings::getFontBold() const
 {
 	return m_fontBold;
+}
+
+void PaintSettings::setFontUnderline(const ui::Font& fontUnderline)
+{
+	m_fontUnderline = fontUnderline;
+}
+
+const ui::Font& PaintSettings::getFontUnderline() const
+{
+	return m_fontUnderline;
 }
 
 void PaintSettings::setGridBackground(const Color& gridBackground)

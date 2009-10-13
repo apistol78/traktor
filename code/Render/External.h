@@ -1,6 +1,7 @@
 #ifndef traktor_render_External_H
 #define traktor_render_External_H
 
+#include <map>
 #include <string>
 #include "Render/Node.h"
 #include "Core/Heap/Ref.h"
@@ -42,6 +43,10 @@ public:
 
 	const Guid& getFragmentGuid() const;
 
+	void setValue(const std::wstring& name, float value);
+
+	float getValue(const std::wstring& name, float defaultValue) const;
+
 	virtual std::wstring getInformation() const;
 
 	virtual int getInputPinCount() const;
@@ -51,6 +56,8 @@ public:
 	virtual int getOutputPinCount() const;
 
 	virtual const OutputPin* getOutputPin(int index) const;	
+
+	virtual int getVersion() const;
 
 	virtual bool serialize(Serializer& s);
 
@@ -62,10 +69,13 @@ public:
 
 	inline RefArray< OutputPin >& getOutputPins() { return m_outputPins; }
 
+	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
+
 private:
 	Guid m_fragmentGuid;
 	RefArray< InputPin > m_inputPins;
 	RefArray< OutputPin > m_outputPins;
+	std::map< std::wstring, float > m_values;
 };
 
 	}

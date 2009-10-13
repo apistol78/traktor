@@ -297,7 +297,7 @@ bool InspectReflector::operator >> (const Member< Serializable* >& m)
 		m_propertyItemStack.push_back(propertyItem);
 
 		int version = object->getVersion();
-		if (!serialize(object, version))
+		if (!serialize(object, version, 0))
 			return false;
 
 		m_propertyItemStack.pop_back();

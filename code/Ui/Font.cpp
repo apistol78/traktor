@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Ui/Font.h"
 
 namespace traktor
@@ -8,29 +9,29 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Font", Font, Object)
 
 Font::Font()
-:	m_size(0)
-,	m_bold(false)
-,	m_italic(false)
-,	m_underline(false)
 {
+	m_params.size = 0;
+	m_params.bold = false;
+	m_params.italic = false;
+	m_params.underline = false;
 }
 
 Font::Font(const Font& font)
 :	m_face(font.m_face)
-,	m_size(font.m_size)
-,	m_bold(font.m_bold)
-,	m_italic(font.m_italic)
-,	m_underline(font.m_underline)
 {
+	m_params.size = font.m_params.size;
+	m_params.bold = font.m_params.bold;
+	m_params.italic = font.m_params.italic;
+	m_params.underline = font.m_params.underline;
 }
 
 Font::Font(const std::wstring& face, int size, bool bold, bool italic, bool underline)
 :	m_face(face)
-,	m_size(size)
-,	m_bold(bold)
-,	m_italic(italic)
-,	m_underline(underline)
 {
+	m_params.size = size;
+	m_params.bold = bold;
+	m_params.italic = italic;
+	m_params.underline = underline;
 }
 
 void Font::setFace(const std::wstring& face)
@@ -45,47 +46,50 @@ std::wstring Font::getFace() const
 
 void Font::setSize(int size)
 {
-	m_size = size;
+	m_params.size = size;
 }
 
 int Font::getSize() const
 {
-	return m_size;
+	return m_params.size;
 }
 
 void Font::setBold(bool bold)
 {
-	m_bold = bold;
+	m_params.bold = bold;
 }
 
 bool Font::isBold() const
 {
-	return m_bold;
+	return m_params.bold;
 }
 
 void Font::setItalic(bool italic)
 {
-	m_italic = italic;
+	m_params.italic = italic;
 }
 
 bool Font::isItalic() const
 {
-	return m_italic;
+	return m_params.italic;
 }
 
 void Font::setUnderline(bool underline)
 {
-	m_underline = underline;
+	m_params.underline = underline;
 }
 
 bool Font::isUnderline() const
 {
-	return m_underline;
+	return m_params.underline;
 }
 
 bool Font::operator == (const Font& r) const
 {
-	return bool(m_size == r.m_size && m_bold == r.m_bold && m_italic == r.m_italic && m_underline == r.m_underline && m_face == r.m_face);
+	if (m_face != r.m_face)
+		return false;
+
+	return std::memcmp(&m_params, &r.m_params, sizeof(m_params)) == 0;
 }
 
 bool Font::operator != (const Font& r) const
@@ -95,15 +99,10 @@ bool Font::operator != (const Font& r) const
 
 bool Font::operator < (const Font& r) const
 {
-	if (m_size < r.m_size)
-		return true;
-	if (m_bold < r.m_bold)
-		return true;
-	if (m_italic < r.m_italic)
-		return true;
-	if (m_underline < r.m_underline)
-		return true;
 	if (m_face < r.m_face)
+		return true;
+
+	if (std::memcmp(&m_params, &r.m_params, sizeof(m_params)) < 0)
 		return true;
 
 	return false;

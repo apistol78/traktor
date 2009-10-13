@@ -781,7 +781,16 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 
 void EditorForm::setPropertyObject(Object* properties)
 {
-	m_propertiesView->setPropertyObject(properties);
+	// Use active editor's data object as outer object in serialization;
+	// we do this as some objects rely on outer object being part of the data object
+	// with serialization; most probaly the shader graph as external nodes might reconstruct it's pins.
+	Ref< Object > outer = m_activeEditorPage ? m_activeEditorPage->getDataObject() : 0;
+
+	m_propertiesView->setPropertyObject(
+		dynamic_type_cast< Serializable* >(properties),
+		dynamic_type_cast< Serializable* >(outer)
+	);
+	
 	if (properties)
 	{
 		StringOutputStream ss;
@@ -790,6 +799,7 @@ void EditorForm::setPropertyObject(Object* properties)
 	}
 	else
 		m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
+
 	m_dock->update();
 }
 

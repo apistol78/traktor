@@ -25,7 +25,7 @@ const std::wstring& InputPin::getName() const
 	return m_name;
 }
 
-bool InputPin::getOptional() const
+bool InputPin::isOptional() const
 {
 	return m_optional;
 }

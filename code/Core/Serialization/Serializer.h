@@ -146,7 +146,7 @@ public:
 	}
 
 protected:
-	bool serialize(Serializable* o, int version);
+	bool serialize(Serializable* inner, int version, Serializable* outer);
 
 private:
 	std::list< std::pair< Ref< Serializable >, int > > m_constructing;

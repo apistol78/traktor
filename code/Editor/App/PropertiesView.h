@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class Serializable;
+
 	namespace editor
 	{
 
@@ -25,16 +28,16 @@ public:
 
 	void destroy();
 
-	void setPropertyObject(Object* propertyObject);
+	void setPropertyObject(Serializable* object, Serializable* outer);
 
-	Object* getPropertyObject();
+	Serializable* getPropertyObject();
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
 private:
 	IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
-	Ref< Object > m_propertyObject;
+	Ref< Serializable > m_propertyObject;
 
 	void eventPropertyCommand(ui::Event* event);
 

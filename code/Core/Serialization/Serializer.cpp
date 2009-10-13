@@ -54,14 +54,27 @@ bool Serializer::operator >> (const MemberEnumBase& m)
 	return this->operator >> (*(MemberComplex*)(&m));
 }
 
-bool Serializer::serialize(Serializable* o, int version)
+bool Serializer::serialize(Serializable* inner, int version, Serializable* outer)
 {
-	if (!o)
+	if (!inner)
 		return false;
 
-	m_constructing.push_back(std::make_pair(o, version));
-	bool result = o->serialize(*this);
+	if (outer)
+		m_constructing.push_back(std::make_pair(
+			outer,
+			outer->getVersion()
+		));
+
+	m_constructing.push_back(std::make_pair(
+		inner,
+		version
+	));
+
+	bool result = inner->serialize(*this);
+
 	m_constructing.pop_back();
+	if (outer)
+		m_constructing.pop_back();
 
 	return result;
 }

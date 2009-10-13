@@ -76,26 +76,61 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullRe
 						return 0;
 				}
 
-				std::map< std::wstring, EstPort* > inputEstPorts;
-				std::map< std::wstring, EstPort* > outputEstPorts;
+				std::map< std::wstring, Node* > inputEstablishedPorts;
+				std::map< std::wstring, Node* > outputEstablishedPorts;
 
-				for (int j = 0; j < externalNode->getInputPinCount(); ++j)
+				RefArray< InputPort > fragmentInputPorts;
+				fragmentShaderGraph->findNodesOf< InputPort >(fragmentInputPorts);
+
+				for (RefArray< InputPort >::const_iterator j = fragmentInputPorts.begin(); j != fragmentInputPorts.end(); ++j)
 				{
-					Ref< EstPort > inputEstPort = gc_new< EstPort >();
-					inputEstPorts[externalNode->getInputPin(j)->getName()] = inputEstPort;
-					resolvedNodes.push_back(inputEstPort);
+					std::wstring inputPortName = (*j)->getName();
+					bool replaceWithValue = false;
 
-					for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
+					if ((*j)->isConnectable())
 					{
-						if ((*k)->getDestination() == externalNode->getInputPin(j))
-							(*k)->setDestination(inputEstPort->getInputPin(0));
+						replaceWithValue = true;
+
+						// Find input pin by input port.
+						const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
+						T_ASSERT (externalInputPin);
+
+						// Create "established port" node and move all edges from input port to established port.
+						Ref< EstPort > inputEstPort = gc_new< EstPort >();
+						for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
+						{
+							if ((*k)->getDestination() == externalInputPin)
+							{
+								(*k)->setDestination(inputEstPort->getInputPin(0));
+								replaceWithValue = false;
+							}
+						}
+						if (!replaceWithValue)
+						{
+							inputEstablishedPorts[inputPortName] = inputEstPort;
+							resolvedNodes.push_back(inputEstPort);
+						}
+						else
+							T_ASSERT_M (externalInputPin->isOptional(), L"Non-optional pin unconnected");
+					}
+					else
+						replaceWithValue = true;
+
+					if (replaceWithValue)
+					{
+						// Non-connected or value-only input port; replace with scalar value node.
+						float value = externalNode->getValue(inputPortName, (*j)->getDefaultValue());
+						Ref< Scalar > valueNode = gc_new< Scalar >(value);
+
+						inputEstablishedPorts[inputPortName] = valueNode;
+						resolvedNodes.push_back(valueNode);
 					}
 				}
 
 				for (int j = 0; j < externalNode->getOutputPinCount(); ++j)
 				{
 					Ref< EstPort > outputEstPort = gc_new< EstPort >();
-					outputEstPorts[externalNode->getOutputPin(j)->getName()] = outputEstPort;
+					outputEstablishedPorts[externalNode->getOutputPin(j)->getName()] = outputEstPort;
 					resolvedNodes.push_back(outputEstPort);
 
 					for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
@@ -113,16 +148,16 @@ ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullRe
 
 					if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >((*j)->getSource()->getNode()))
 					{
-						std::map< std::wstring, EstPort* >::iterator it = inputEstPorts.find(inputPort->getName());
-						sourcePin = (it != inputEstPorts.end()) ? it->second->getOutputPin(0) : 0;
+						std::map< std::wstring, Node* >::iterator it = inputEstablishedPorts.find(inputPort->getName());
+						sourcePin = (it != inputEstablishedPorts.end()) ? it->second->getOutputPin(0) : 0;
 					}
 					else
 						sourcePin = (*j)->getSource();
 
 					if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >((*j)->getDestination()->getNode()))
 					{
-						std::map< std::wstring, EstPort* >::iterator it = outputEstPorts.find(outputPort->getName());
-						destinationPin = (it != outputEstPorts.end()) ? it->second->getInputPin(0) : 0;
+						std::map< std::wstring, Node* >::iterator it = outputEstablishedPorts.find(outputPort->getName());
+						destinationPin = (it != outputEstablishedPorts.end()) ? it->second->getInputPin(0) : 0;
 					}
 					else
 						destinationPin = (*j)->getDestination();

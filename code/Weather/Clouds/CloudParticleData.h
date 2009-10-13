@@ -42,14 +42,6 @@ public:
 
 	float getNoiseScale() const { return m_noiseScale; }
 
-	const Vector4& getSunLight() const { return m_sunLight; }
-
-	const Vector4& getBaseLight() const { return m_baseLight; }
-
-	const Vector4& getShadowLight() const { return m_shadowLight; }
-
-	const Vector4& getLightCoefficients() const { return m_lightCoefficients; }
-
 private:
 	uint32_t m_count;
 	float m_radiusMin;
@@ -59,10 +51,6 @@ private:
 	int32_t m_octaves;
 	float m_persistence;
 	float m_noiseScale;
-	Vector4 m_sunLight;
-	Vector4 m_baseLight;
-	Vector4 m_shadowLight;
-	Vector4 m_lightCoefficients;
 };
 
 	}

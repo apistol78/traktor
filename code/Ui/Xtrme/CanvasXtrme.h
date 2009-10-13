@@ -88,7 +88,7 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	BatchRenderer m_batchRenderer;
 	ImageCache m_imageCache;
-	std::map< Font, Ref< FontMap > > m_fontMaps;
+	std::map<  const Font*, Ref< FontMap > > m_fontMaps;
 	Ref< FontMap > m_currentFontMap;
 	Color m_backGround;
 	Color m_foreGround;
