@@ -14,7 +14,7 @@ class TreeViewItemCocoa : public TreeViewItem
 	T_RTTI_CLASS(TreeViewItemCocoa)
 	
 public:
-	TreeViewItemCocoa();
+	TreeViewItemCocoa(TreeViewItemCocoa* parent);
 	
 	virtual ~TreeViewItemCocoa();
 	
@@ -49,6 +49,18 @@ public:
 	virtual bool hasChildren() const;
 	
 	virtual int getChildren(RefArray< TreeViewItem >& outChildren) const;
+	
+	const RefArray< TreeViewItemCocoa >& getChildren() const { return m_children; }
+
+	void addChild(TreeViewItemCocoa* childItem) { m_children.push_back(childItem); }
+	
+private:
+	std::wstring m_text;
+	int m_image;
+	int m_expandedImage;
+	bool m_expanded;
+	Ref< TreeViewItemCocoa > m_parent;
+	RefArray< TreeViewItemCocoa > m_children;
 };
 	
 	}
