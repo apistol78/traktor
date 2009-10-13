@@ -1,5 +1,7 @@
 #include <algorithm>
+#include <limits>
 #include "Weather/Clouds/CloudEntity.h"
+#include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -43,7 +45,7 @@ struct Vertex
 	float index;
 };
 
-const uint32_t c_instanceCount = 64;
+const uint32_t c_instanceCount = 16;
 
 		}
 
@@ -51,8 +53,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudEntity", CloudEntity, world::Spati
 
 CloudEntity::CloudEntity()
 :	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))
-,	m_handleImpostorTargetForward(render::getParameterHandle(L"ImpostorTargetForward"))
-,	m_handleImpostorTargetDistance(render::getParameterHandle(L"ImpostorTargetDistance"))
+,	m_handleImpostorTarget(render::getParameterHandle(L"ImpostorTarget"))
 {
 }
 
@@ -109,25 +110,14 @@ bool CloudEntity::create(
 	render::RenderTargetSetCreateDesc targetDesc;
 
 	targetDesc.count = 1;
-	targetDesc.width = distanceTargetResolution;
-	targetDesc.height = distanceTargetResolution;
-	targetDesc.multiSample = 0;
-	targetDesc.depthStencil = true;
-	targetDesc.targets[0].format = render::TfR8G8B8A8;
-
-	m_impostorTargetDistance = renderSystem->createRenderTargetSet(targetDesc);
-	if (!m_impostorTargetDistance)
-		return false;
-
-	targetDesc.count = 1;
 	targetDesc.width = impostorTargetResolution;
 	targetDesc.height = impostorTargetResolution;
 	targetDesc.multiSample = 0;
 	targetDesc.depthStencil = false;
 	targetDesc.targets[0].format = render::TfR8G8B8A8;
 
-	m_impostorTargetForward = renderSystem->createRenderTargetSet(targetDesc);
-	if (!m_impostorTargetForward)
+	m_impostorTarget = renderSystem->createRenderTargetSet(targetDesc);
+	if (!m_impostorTarget)
 		return false;
 
 	m_particleShader = particleShader;
@@ -136,12 +126,9 @@ bool CloudEntity::create(
 	if (!m_cluster.create(particleData))
 		return false;
 
-	m_primitives.setNonIndexed(render::PtTriangleStrip, 0, 2);
-
 	m_particleData = particleData;
 
 	m_transform = Transform::identity();
-	m_lastLightDirection.set(0.0f, 0.0f, 0.0f, 0.0f);
 	m_lastEyePosition.set(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return true;
@@ -167,6 +154,9 @@ void CloudEntity::renderCluster(
 	const CloudParticleCluster& cluster
 )
 {
+	if (worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueDefault())
+		return;
+
 	render::IRenderView* renderView = renderContext->getRenderView();
 	T_ASSERT (renderView);
 
@@ -239,8 +229,8 @@ void CloudEntity::renderCluster(
 	}
 
 	Matrix44 billboardViewTransform =
-		scale((maxX - minX) / 2.0f, (maxY - minY) / 2.0f, 1.0f) *
-		translate((maxX + minX) / 2.0f, (maxY + minY) / 2.0f, maxZ);
+		translate((maxX + minX) / 2.0f, (maxY + minY) / 2.0f, maxZ) *
+		scale((maxX - minX) / 2.0f, (maxY - minY) / 2.0f, 1.0f);
 
 	//// Render billboard debug outline.
 	//if (primitiveRenderer)
@@ -258,7 +248,7 @@ void CloudEntity::renderCluster(
 	//			Vector4( 1.0f - k, -1.0f + k, 0.0f, 1.0f),
 	//			Vector4( 1.0f - k,  1.0f - k, 0.0f, 1.0f),
 	//			Vector4(-1.0f + k,  1.0f - k, 0.0f, 1.0f),
-	//			color | (color << 8)
+	//			Color(255, 0, 0, 255)
 	//		);
 	//	}
 
@@ -277,197 +267,127 @@ void CloudEntity::renderCluster(
 	float offsetY = (maxY + minY) / (2.0f * maxZ);
 
 	clusterProjection =
-		clusterProjection *
+		scale(scaleX, scaleY, 1.0f) *
 		translate(-offsetX, -offsetY, 0.0f) *
-		scale(scaleX, scaleY, 1.0f);
+		clusterProjection;
 
 	const Vector4& clusterExtent = clusterBoundingBox.getExtent();
 	Scalar clusterMaxExtent = clusterExtent[majorAxis3(clusterExtent)];
-
-	Vector4 clusterLightDirection = m_transform.inverse() * lightDirection;
-	Matrix44 clusterDistanceProjection = orthoLh(clusterMaxExtent * 2.75f, clusterMaxExtent * 2.75f, 0.0f, clusterMaxExtent * 2.0f);
-	Matrix44 clusterDistanceView = lookAt(clusterLightDirection * clusterMaxExtent, Vector4(0.0f, 0.0f, 0.0f, 1.0f));
-	Matrix44 clusterDistanceWorld = Matrix44::identity();
+	Vector4 clusterCenter = clusterBoundingBox.getCenter();
+	Vector4 clusterCameraDirection = clusterWorld.inverse() * clusterView.inverse().axisZ();
+	Vector4 eyePosition = view.inverse().translation();
+	Vector4 eyeDirection = view.inverse().axisZ();
 
 	// Render particle cloud onto impostor.
 	static Vector4 instanceData1[c_instanceCount], instanceData2[c_instanceCount];
 
-	renderView->setVertexBuffer(m_vertexBuffer);
-	renderView->setIndexBuffer(m_indexBuffer);
+	// Render particles into impostor.
+	render::ChainRenderBlock* outerRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
+	outerRenderBlock->inner = 0;
+	outerRenderBlock->next = 0;
 
-	m_particleShader->setVectorParameter(L"LightDirection", lightDirection);
-	m_particleShader->setVectorParameter(L"Eye", view.inverse().translation());
-	m_particleShader->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
-	m_particleShader->setVectorParameter(L"SunLight", m_particleData.getSunLight());
-	m_particleShader->setVectorParameter(L"BaseLight", m_particleData.getBaseLight());
-	m_particleShader->setVectorParameter(L"ShadowLight", m_particleData.getShadowLight());
-	m_particleShader->setVectorParameter(L"LightCoefficients", m_particleData.getLightCoefficients());
-
-	// Render distance from light.
-	//if (dot3(m_lastLightDirection, lightDirection) < 0.999f)
+	//if ((m_lastEyePosition - eyePosition).length() > 0.1f || abs(dot3(m_lastEyeDirection, eyeDirection)) < 0.9f)
 	{
-		renderView->begin(m_impostorTargetDistance, 0, false);
+		render::TargetRenderBlock* targetRenderBlock = renderContext->alloc< render::TargetRenderBlock >();
+		targetRenderBlock->renderTargetSet = m_impostorTarget;
+		targetRenderBlock->renderTargetIndex = 0;
+		targetRenderBlock->keepDepthStencil = false;
+		targetRenderBlock->clearMask = render::CfColor;
+		targetRenderBlock->inner = 0;
 
-		const float clearColor[] = { 0.5f, 0.5f, 0.5f, 0.5f };
-		renderView->clear(render::CfColor | render::CfDepth, clearColor, 1.0f, 0);
+		AlignedVector< CloudParticle > particles = cluster.getParticles();
+		std::sort(particles.begin(), particles.end(), ParticlePredicate< std::less< float > >(-clusterCameraDirection));
 
+		render::ChainRenderBlock* chainRenderBlockTail = 0;
+
+		uint32_t particleCount = uint32_t(particles.size());
+		for (uint32_t i = 0; i < particleCount; )
 		{
-			const AlignedVector< CloudParticle >& particles = cluster.getParticles();
+			uint32_t instanceCount = std::min(particleCount - i, c_instanceCount);
 
-			m_particleShader->setMatrixParameter(L"Projection", clusterDistanceProjection);
-			m_particleShader->setMatrixParameter(L"View", clusterDistanceView);
-			m_particleShader->setMatrixParameter(L"World", clusterDistanceWorld);
-
-			uint32_t particleCount = uint32_t(particles.size());
-
-			m_particleShader->setTechnique(L"Distance");
-			for (uint32_t i = 0; i < particleCount; )
+			for (uint32_t j = 0; j < instanceCount; ++j)
 			{
-				uint32_t instanceCount = std::min(particleCount - i, c_instanceCount);
-
-				for (uint32_t j = 0; j < instanceCount; ++j)
-				{
-					instanceData1[j] = particles[i + j].position;
-					instanceData2[j] = Vector4(
-						particles[i + j].radius,
-						particles[i + j].rotation,
-						(particles[i + j].sprite & 3) / 4.0f,
-						(particles[i + j].sprite >> 2) / 4.0f
-					);
-				}
-
-				m_particleShader->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-				m_particleShader->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-
-				render::Primitives primitives(render::PtTriangles, 0, instanceCount * 2, 0, c_instanceCount * 4);
-				m_particleShader->draw(renderView, primitives);
-
-				i += instanceCount;
+				instanceData1[j] = particles[i + j].position;
+				instanceData2[j] = Vector4(
+					particles[i + j].radius,
+					particles[i + j].rotation,
+					(particles[i + j].sprite & 3) / 4.0f,
+					(particles[i + j].sprite >> 2) / 4.0f
+				);
 			}
+
+			render::IndexedRenderBlock* particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+			particleRenderBlock->type = render::RbtAlphaBlend;
+			particleRenderBlock->distance = 0.0f;
+			particleRenderBlock->shader = m_particleShader;
+			particleRenderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+			particleRenderBlock->indexBuffer = m_indexBuffer;
+			particleRenderBlock->vertexBuffer = m_vertexBuffer;
+			particleRenderBlock->primitive = render::PtTriangles;
+			particleRenderBlock->offset = 0;
+			particleRenderBlock->count = instanceCount * 2;
+			particleRenderBlock->minIndex = 0;
+			particleRenderBlock->maxIndex = c_instanceCount * 4;
+
+			particleRenderBlock->shaderParams->beginParameters(renderContext);
+			worldRenderView->setShaderParameters(particleRenderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+			particleRenderBlock->shaderParams->setVectorParameter(L"LightDirection", lightDirection);
+			particleRenderBlock->shaderParams->setVectorParameter(L"Eye", eyePosition);
+			particleRenderBlock->shaderParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
+			particleRenderBlock->shaderParams->setMatrixParameter(L"ClusterProjection", clusterProjection);
+			particleRenderBlock->shaderParams->setMatrixParameter(L"ClusterView", clusterView);
+			particleRenderBlock->shaderParams->setMatrixParameter(L"ClusterWorld", clusterWorld);
+			particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
+			particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
+			particleRenderBlock->shaderParams->endParameters(renderContext);
+
+			render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
+			chainRenderBlock->inner = particleRenderBlock;
+			chainRenderBlock->next = 0;
+
+			if (chainRenderBlockTail)
+			{
+				chainRenderBlockTail->next = chainRenderBlock;
+				chainRenderBlockTail = chainRenderBlock;
+			}
+			else
+			{
+				targetRenderBlock->inner = chainRenderBlock;
+				chainRenderBlockTail = chainRenderBlock;
+			}
+
+			i += instanceCount;
 		}
-		renderView->end();
-		m_lastLightDirection = lightDirection;
-		//m_lastEyePosition.set(0.0f, 0.0f, 0.0f, 0.0f);
-	}
 
-	// Render particles.
-	//if (dot3((m_lastEyePosition - clusterCenter).normalized(), (eye - clusterCenter).normalized()) < 0.995f)
-	{
-		renderView->begin(m_impostorTargetForward, 0, false);
+		outerRenderBlock->inner = targetRenderBlock;
 
-		const float clearColor[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-		renderView->clear(render::CfColor, clearColor, 1.0f, 0);
-
-		{
-			Vector4 clusterCameraDirection = clusterWorld.inverse() * clusterView.inverse().axisZ();
-
-			AlignedVector< CloudParticle > particles = cluster.getParticles();
-			std::sort(particles.begin(), particles.end(), ParticlePredicate< std::less< float > >(-clusterCameraDirection));		// Back to front
-
-			m_particleShader->setMatrixParameter(L"Projection", clusterProjection);
-			m_particleShader->setMatrixParameter(L"View", clusterView);
-			m_particleShader->setMatrixParameter(L"World", clusterWorld);
-			m_particleShader->setSamplerTexture(L"DistanceTarget", m_impostorTargetDistance->getColorTexture(0));
-			m_particleShader->setMatrixParameter(L"DistanceTransform", clusterView.inverse() * clusterWorld.inverse() * clusterDistanceView * clusterDistanceProjection);
-
-			uint32_t particleCount = uint32_t(particles.size());
-
-			// Cloud multiple scattering.
-			m_particleShader->setTechnique(L"Multiple");
-			for (uint32_t i = 0; i < particleCount; )
-			{
-				uint32_t instanceCount = std::min(particleCount - i, c_instanceCount);
-
-				for (uint32_t j = 0; j < instanceCount; ++j)
-				{
-					instanceData1[j] = particles[i + j].position;
-					instanceData2[j] = Vector4(
-						particles[i + j].radius,
-						particles[i + j].rotation,
-						(particles[i + j].sprite & 3) / 4.0f,
-						(particles[i + j].sprite >> 2) / 4.0f
-					);
-				}
-
-				m_particleShader->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-				m_particleShader->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-
-				render::Primitives primitives(render::PtTriangles, 0, instanceCount * 2, 0, c_instanceCount * 4);
-				m_particleShader->draw(renderView, primitives);
-
-				i += instanceCount;
-			}
-
-			// Cloud forward scattering.
-			m_particleShader->setTechnique(L"Forward");
-			for (uint32_t i = 0; i < particleCount; )
-			{
-				uint32_t instanceCount = std::min(particleCount - i, c_instanceCount);
-
-				for (uint32_t j = 0; j < instanceCount; ++j)
-				{
-					instanceData1[j] = particles[i + j].position;
-					instanceData2[j] = Vector4(
-						particles[i + j].radius,
-						particles[i + j].rotation,
-						(particles[i + j].sprite & 3) / 4.0f,
-						(particles[i + j].sprite >> 2) / 4.0f
-					);
-				}
-
-				m_particleShader->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-				m_particleShader->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-
-				render::Primitives primitives(render::PtTriangles, 0, instanceCount * 2, 0, c_instanceCount * 4);
-				m_particleShader->draw(renderView, primitives);
-
-				i += instanceCount;
-			}
-
-			// Total cloud density into alpha channel.
-			m_particleShader->setTechnique(L"Density");
-			for (uint32_t i = 0; i < particleCount; )
-			{
-				uint32_t instanceCount = std::min(particleCount - i, c_instanceCount);
-
-				for (uint32_t j = 0; j < instanceCount; ++j)
-				{
-					instanceData1[j] = particles[i + j].position;
-					instanceData2[j] = Vector4(
-						particles[i + j].radius,
-						particles[i + j].rotation,
-						(particles[i + j].sprite & 3) / 4.0f,
-						(particles[i + j].sprite >> 2) / 4.0f
-					);
-				}
-
-				m_particleShader->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-				m_particleShader->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-
-				render::Primitives primitives(render::PtTriangles, 0, instanceCount * 2, 0, c_instanceCount * 4);
-				m_particleShader->draw(renderView, primitives);
-
-				i += instanceCount;
-			}
-		}
-		renderView->end();
-		//m_lastEyePosition = eye;
+		m_lastEyePosition = eyePosition;
+		m_lastEyeDirection = eyeDirection;
 	}
 
 	// Render impostor.
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+
 	renderBlock->type = render::RbtAlphaBlend;
-	renderBlock->distance = minZ;
+	renderBlock->distance = 0.0f;
 	renderBlock->shader = m_impostorShader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-	renderBlock->shaderParams->setMatrixParameter(m_handleBillboardView, billboardViewTransform);
-	renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTargetForward, m_impostorTargetForward->getColorTexture(0));
-	renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTargetDistance, m_impostorTargetDistance->getColorTexture(0));
-	renderBlock->indexBuffer = 0;
 	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = &m_primitives;
+	renderBlock->primitive = render::PtTriangleStrip;
+	renderBlock->offset = 0;
+	renderBlock->count = 2;
+
+	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->shaderParams->setMatrixParameter(m_handleBillboardView, billboardViewTransform);
+	renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTarget, m_impostorTarget->getColorTexture(0));
 	worldRenderView->setShaderParameters(renderBlock->shaderParams);
-	renderContext->draw(renderBlock);
+	renderBlock->shaderParams->endParameters(renderContext);
+
+	// Enqueue blocks.
+	outerRenderBlock->type = render::RbtAlphaBlend;
+	outerRenderBlock->distance = -std::numeric_limits< float >::max();	// Ensure block is rendered last of everything else.
+	outerRenderBlock->next = renderBlock;
+	renderContext->draw(outerRenderBlock);
 }
 
 void CloudEntity::setTransform(const Transform& transform)

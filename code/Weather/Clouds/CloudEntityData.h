@@ -46,6 +46,10 @@ public:
 
 	virtual bool serialize(Serializer& s);
 
+	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }
+
+	inline const resource::Proxy< render::Shader >& getImpostorShader() const { return m_impostorShader; }
+
 private:
 	mutable resource::Proxy< render::Shader > m_particleShader;
 	mutable resource::Proxy< render::Shader > m_impostorShader;
