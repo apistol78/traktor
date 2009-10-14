@@ -51,7 +51,8 @@ public:
 		const resource::Proxy< render::Shader >& particleShader,
 		const resource::Proxy< render::Shader >& impostorShader,
 		uint32_t impostorTargetResolution,
-		uint32_t distanceTargetResolution,
+		uint32_t impostorSliceCount,
+		float impostorSliceOffset,
 		const CloudParticleData& particleData
 	);
 
@@ -68,18 +69,24 @@ public:
 private:
 	resource::Proxy< render::Shader > m_particleShader;
 	resource::Proxy< render::Shader > m_impostorShader;
-	Ref< render::RenderTargetSet > m_impostorTarget;
+	RefArray< render::RenderTargetSet > m_impostorTargets;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::handle_t m_handleBillboardView;
 	render::handle_t m_handleImpostorTarget;
 
+	uint32_t m_impostorSliceCount;
+	float m_impostorSliceOffset;
+
 	CloudParticleCluster m_cluster;
 	CloudParticleData m_particleData;
 
 	Transform m_transform;
-	Vector4 m_lastEyePosition;
-	Vector4 m_lastEyeDirection;
+	Vector4 m_lastCameraPosition;
+	Vector4 m_lastCameraDirection;
+
+	float m_timeUntilUpdate;
+	uint32_t m_updateCount;
 
 	void renderCluster(
 		render::RenderContext* renderContext,

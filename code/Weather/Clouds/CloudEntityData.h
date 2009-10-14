@@ -54,7 +54,8 @@ private:
 	mutable resource::Proxy< render::Shader > m_particleShader;
 	mutable resource::Proxy< render::Shader > m_impostorShader;
 	uint32_t m_impostorTargetResolution;
-	uint32_t m_distanceTargetResolution;
+	uint32_t m_impostorSliceCount;
+	float m_impostorSliceOffset;
 	CloudParticleData m_particleData;
 };
 

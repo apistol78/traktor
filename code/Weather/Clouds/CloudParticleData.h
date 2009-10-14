@@ -3,6 +3,7 @@
 
 #include "Core/Serialization/Serializable.h"
 #include "Core/Math/Vector4.h"
+#include "Core/Math/Color.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,6 +35,14 @@ public:
 
 	float getDensity() const { return m_density; }
 
+	const Color& getHaloColor() const { return m_haloColor; }
+
+	const Color& getSkyColor() const { return m_skyColor; }
+
+	const Color& getGroundColor() const { return m_groundColor; }
+
+	float getSunInfluence() const { return m_sunInfluence; }
+
 	const Vector4& getSize() const { return m_size; }
 
 	int getOctaves() const { return m_octaves; }
@@ -47,6 +56,10 @@ private:
 	float m_radiusMin;
 	float m_radiusRange;
 	float m_density;
+	Color m_haloColor;
+	Color m_skyColor;
+	Color m_groundColor;
+	float m_sunInfluence;
 	Vector4 m_size;
 	int32_t m_octaves;
 	float m_persistence;
