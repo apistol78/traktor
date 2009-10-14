@@ -219,22 +219,23 @@ bool External::serialize(Serializer& s)
 		// Update edges; we have created new pins but the shader graph might still
 		// have edges which reference our old pins.
 		Ref< ShaderGraph > shaderGraph = s.getOuterObject< ShaderGraph >();
-		T_ASSERT (shaderGraph);
-
-		const RefArray< Edge >& edges = shaderGraph->getEdges();
-		for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+		if (shaderGraph)
 		{
-			const OutputPin* sourcePin = (*i)->getSource();
-			const InputPin* destinationPin = (*i)->getDestination();
+			const RefArray< Edge >& edges = shaderGraph->getEdges();
+			for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+			{
+				const OutputPin* sourcePin = (*i)->getSource();
+				const InputPin* destinationPin = (*i)->getDestination();
 
-			if (sourcePin->getNode() == this)
-				sourcePin = findOutputPin(sourcePin->getName());
+				if (sourcePin->getNode() == this)
+					sourcePin = findOutputPin(sourcePin->getName());
 
-			if (destinationPin->getNode() == this)
-				destinationPin = findInputPin(destinationPin->getName());
+				if (destinationPin->getNode() == this)
+					destinationPin = findInputPin(destinationPin->getName());
 
-			(*i)->setSource(sourcePin);
-			(*i)->setDestination(destinationPin);
+				(*i)->setSource(sourcePin);
+				(*i)->setDestination(destinationPin);
+			}
 		}
 	}
 

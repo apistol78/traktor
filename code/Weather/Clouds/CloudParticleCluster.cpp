@@ -78,14 +78,28 @@ bool CloudParticleCluster::create(const CloudParticleData& particleData)
 		}
 
 		m_particles[i].position = (Vector4(x, y, z, 0.0f) * particleData.getSize()).xyz1();
+		m_particles[i].positionVelocity = float(random.nextDouble() * 0.4f) + 0.1f;
 		m_particles[i].radius = float(particleData.getRadiusMin() + particleData.getRadiusRange() * random.nextDouble());
 		m_particles[i].rotation = float(random.nextDouble() * 2.0 - 1.0) * PI;
+		m_particles[i].rotationVelocity = float(random.nextDouble() * 2.0 - 1.0) * 0.4f;
 		m_particles[i].sprite = 4 + int(random.nextDouble() * 6.0);
 
 		m_boundingBox.contain(m_particles[i].position, Scalar(m_particles[i].radius));
 	}
 
 	return true;
+}
+
+void CloudParticleCluster::update(const CloudParticleData& particleData, float deltaTime)
+{
+	for (AlignedVector< CloudParticle >::iterator i = m_particles.begin(); i != m_particles.end(); ++i)
+	{
+		i->position += Vector4(1.0f, 0.0f, 0.0f, 0.0f) * Scalar(deltaTime * i->positionVelocity);
+		if (i->position.x() >= particleData.getSize().x())
+			i->position.set(0, -particleData.getSize().x());
+
+		i->rotation += i->rotationVelocity * deltaTime;
+	}
 }
 
 const Aabb& CloudParticleCluster::getBoundingBox() const

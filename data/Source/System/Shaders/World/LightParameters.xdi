@@ -83,13 +83,16 @@
 			<type>PtVector</type>
 			<length>4</length>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
 				<first>305</first>
 				<second>270</second>
 			</position>
 			<name>Index</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>

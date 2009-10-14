@@ -11,8 +11,10 @@ namespace traktor
 struct CloudParticle
 {
 	Vector4 position;
+	float positionVelocity;
 	float radius;
 	float rotation;
+	float rotationVelocity;
 	int sprite;
 };
 

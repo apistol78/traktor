@@ -17,7 +17,8 @@ T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.CloudEntityData", CloudEntityD
 
 CloudEntityData::CloudEntityData()
 :	m_impostorTargetResolution(256)
-,	m_distanceTargetResolution(128)
+,	m_impostorSliceCount(1)
+,	m_impostorSliceOffset(0.0f)
 {
 }
 
@@ -29,7 +30,15 @@ CloudEntity* CloudEntityData::createEntity(resource::IResourceManager* resourceM
 		return 0;
 
 	Ref< CloudEntity > cloudEntity = gc_new< CloudEntity >();
-	if (cloudEntity->create(renderSystem, m_particleShader, m_impostorShader, m_impostorTargetResolution, m_distanceTargetResolution, m_particleData))
+	if (cloudEntity->create(
+		renderSystem,
+		m_particleShader,
+		m_impostorShader,
+		m_impostorTargetResolution,
+		m_impostorSliceCount,
+		m_impostorSliceOffset,
+		m_particleData
+	))
 	{
 		cloudEntity->setTransform(getTransform());
 		return cloudEntity;
@@ -46,7 +55,8 @@ bool CloudEntityData::serialize(Serializer& s)
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"particleShader", m_particleShader);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"impostorShader", m_impostorShader);
 	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution);
-	s >> Member< uint32_t >(L"distanceTargetResolution", m_distanceTargetResolution);
+	s >> Member< uint32_t >(L"impostorSliceCount", m_impostorSliceCount);
+	s >> Member< float >(L"impostorSliceOffset", m_impostorSliceOffset, 0.0f, 1.0f);
 	s >> MemberComposite< CloudParticleData >(L"particleData", m_particleData);
 
 	return true;
