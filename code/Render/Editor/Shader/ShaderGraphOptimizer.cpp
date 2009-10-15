@@ -7,6 +7,8 @@
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
 #include "Core/Serialization/DeepHash.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -16,8 +18,15 @@ namespace traktor
 		namespace
 		{
 
+Semaphore s_calculateNodeHashLock;
+
 uint32_t calculateNodeHash(Node* node)
 {
+	// Need to make sure only one thread at a time modifies the
+	// node; we can possible let the DeepHash run concurrently but
+	// we choose not to at the moment.
+	Acquire< Semaphore > scope(s_calculateNodeHashLock);
+
 	std::pair< int, int > position = node->getPosition();
 	std::wstring comment = node->getComment();
 
