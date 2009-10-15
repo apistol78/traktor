@@ -47,5 +47,9 @@ void ButtonCocoa::targetProxy_Action(void* controlId)
 	m_owner->raiseEvent(EiClick, &commandEvent);
 }
 
+void ButtonCocoa::targetProxy_doubleAction(void* controlId)
+{
+}
+
 	}
 }

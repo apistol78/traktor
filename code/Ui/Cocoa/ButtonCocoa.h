@@ -29,6 +29,8 @@ public:
 	// ITargetProxyCallback
 	
 	virtual void targetProxy_Action(void* controlId);
+	
+	virtual void targetProxy_doubleAction(void* controlId);
 };
 
 	}

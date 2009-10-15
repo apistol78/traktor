@@ -1,5 +1,7 @@
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/EventSubject.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
@@ -16,6 +18,9 @@ TreeViewCocoa::TreeViewCocoa(EventSubject* owner)
 
 bool TreeViewCocoa::create(IWidget* parent, int style)
 {
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: this];
+
 	NSScrollView* scrollView = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
 	[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[scrollView setHasVerticalScroller: YES];
@@ -32,6 +37,10 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	[m_control addTableColumn: column];
 	[m_control setOutlineTableColumn: column];
 	[m_control setDataSource: dataSource];
+	
+	[m_control setTarget: targetProxy];
+	[m_control setAction: @selector(dispatchActionCallback:)];
+	[m_control setDoubleAction: @selector(dispatchDoubleActionCallback:)];
 	
 	[scrollView setDocumentView: m_control];
 	
@@ -137,6 +146,24 @@ std::wstring TreeViewCocoa::treeValue(void* item) const
 	T_ASSERT (realItem);
 
 	return realItem->getText();
+}
+
+void TreeViewCocoa::targetProxy_Action(void* controlId)
+{
+}
+	
+void TreeViewCocoa::targetProxy_doubleAction(void* controlId)
+{
+	int row = [m_control clickedRow];
+	
+	void* item = [m_control itemAtRow: row];
+	T_ASSERT (item);
+	
+	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
+	T_ASSERT (realItem);
+	
+	CommandEvent commandEvent(m_owner, realItem);
+	m_owner->raiseEvent(EiActivate, &commandEvent);
 }
 
 TreeViewItemCocoa* TreeViewCocoa::getRealItem(void* item) const

@@ -111,6 +111,10 @@ void MenuBarCocoa::targetProxy_Action(void* controlId)
 		}
 	}
 }
+
+void MenuBarCocoa::targetProxy_doubleAction(void* controlId)
+{
+}
 	
 	}
 }
