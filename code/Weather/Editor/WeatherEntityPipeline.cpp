@@ -30,6 +30,7 @@ bool WeatherEntityPipeline::buildDependencies(
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(sourceAsset))
 	{
 		pipelineManager->addDependency(cloudEntityData->getParticleShader().getGuid(), true);
+		pipelineManager->addDependency(cloudEntityData->getParticleTexture().getGuid(), true);
 		pipelineManager->addDependency(cloudEntityData->getImpostorShader().getGuid(), true);
 	}
 	return true;

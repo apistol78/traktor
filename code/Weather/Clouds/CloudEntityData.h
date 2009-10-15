@@ -26,6 +26,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ITexture;
 class Shader;
 
 	}
@@ -48,14 +49,19 @@ public:
 
 	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }
 
+	inline const resource::Proxy< render::ITexture >& getParticleTexture() const { return m_particleTexture; }
+
 	inline const resource::Proxy< render::Shader >& getImpostorShader() const { return m_impostorShader; }
 
 private:
 	mutable resource::Proxy< render::Shader > m_particleShader;
+	mutable resource::Proxy< render::ITexture > m_particleTexture;
 	mutable resource::Proxy< render::Shader > m_impostorShader;
 	uint32_t m_impostorTargetResolution;
 	uint32_t m_impostorSliceCount;
-	float m_impostorSliceOffset;
+	uint32_t m_updateFrequency;
+	float m_updatePositionThreshold;
+	float m_updateDirectionThreshold;
 	CloudParticleData m_particleData;
 };
 
