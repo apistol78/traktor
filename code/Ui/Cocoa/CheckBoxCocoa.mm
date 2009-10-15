@@ -49,5 +49,9 @@ void CheckBoxCocoa::targetProxy_Action(void* controlId)
 	m_owner->raiseEvent(EiClick, &commandEvent);
 }
 
+void CheckBoxCocoa::targetProxy_doubleAction(void* controlId)
+{
+}
+
 	}
 }

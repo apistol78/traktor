@@ -33,6 +33,8 @@ public:
 	
 	virtual void targetProxy_Action(void* controlId);
 	
+	virtual void targetProxy_doubleAction(void* controlId);
+
 private:
 	EventSubject* m_owner;
 	NSMenu* m_menu;

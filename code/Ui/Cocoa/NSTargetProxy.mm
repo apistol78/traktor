@@ -12,4 +12,9 @@
 	m_callback->targetProxy_Action(controlId);
 }
 
+- (void) dispatchDoubleActionCallback: (id)controlId
+{
+	m_callback->targetProxy_doubleAction(controlId);
+}
+
 @end
