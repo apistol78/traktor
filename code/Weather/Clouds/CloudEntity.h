@@ -21,6 +21,7 @@ namespace traktor
 	{
 
 class IRenderSystem;
+class ITexture;
 class RenderContext;
 class PrimitiveRenderer;
 class RenderTargetSet;
@@ -49,10 +50,13 @@ public:
 	bool create(
 		render::IRenderSystem* renderSystem,
 		const resource::Proxy< render::Shader >& particleShader,
+		const resource::Proxy< render::ITexture >& particleTexture,
 		const resource::Proxy< render::Shader >& impostorShader,
 		uint32_t impostorTargetResolution,
 		uint32_t impostorSliceCount,
-		float impostorSliceOffset,
+		uint32_t updateFrequency,
+		float updatePositionThreshold,
+		float updateDirectionThreshold,
 		const CloudParticleData& particleData
 	);
 
@@ -68,23 +72,22 @@ public:
 
 private:
 	resource::Proxy< render::Shader > m_particleShader;
+	resource::Proxy< render::ITexture > m_particleTexture;
 	resource::Proxy< render::Shader > m_impostorShader;
 	RefArray< render::RenderTargetSet > m_impostorTargets;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	render::handle_t m_handleBillboardView;
 	render::handle_t m_handleImpostorTarget;
-
 	uint32_t m_impostorSliceCount;
-	float m_impostorSliceOffset;
-
+	uint32_t m_updateFrequency;
+	float m_updatePositionThreshold;
+	float m_updateDirectionThreshold;
 	CloudParticleCluster m_cluster;
 	CloudParticleData m_particleData;
-
 	Transform m_transform;
 	Vector4 m_lastCameraPosition;
 	Vector4 m_lastCameraDirection;
-
 	float m_timeUntilUpdate;
 	uint32_t m_updateCount;
 

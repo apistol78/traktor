@@ -48,7 +48,6 @@ struct Vertex
 };
 
 const uint32_t c_instanceCount = 16;
-const float c_updateInterval = 1.0f / 30.0f;
 
 void calculateVSQuad(
 	const Vector4 viewExtents[8],
@@ -161,10 +160,13 @@ CloudEntity::CloudEntity()
 bool CloudEntity::create(
 	render::IRenderSystem* renderSystem,
 	const resource::Proxy< render::Shader >& particleShader,
+	const resource::Proxy< render::ITexture >& particleTexture,
 	const resource::Proxy< render::Shader >& impostorShader,
 	uint32_t impostorTargetResolution,
 	uint32_t impostorSliceCount,
-	float impostorSliceOffset,
+	uint32_t updateFrequency,
+	float updatePositionThreshold,
+	float updateDirectionThreshold,
 	const CloudParticleData& particleData
 )
 {
@@ -227,9 +229,11 @@ bool CloudEntity::create(
 	}
 
 	m_impostorSliceCount = impostorSliceCount;
-	m_impostorSliceOffset = impostorSliceOffset;
-
+	m_updateFrequency = updateFrequency;
+	m_updatePositionThreshold = updatePositionThreshold;
+	m_updateDirectionThreshold = updateDirectionThreshold;
 	m_particleShader = particleShader;
+	m_particleTexture = particleTexture;
 	m_impostorShader = impostorShader;
 
 	if (!m_cluster.create(particleData))
@@ -246,7 +250,7 @@ bool CloudEntity::create(
 void CloudEntity::render(render::RenderContext* renderContext, const world::WorldRenderView* worldRenderView, render::PrimitiveRenderer* primitiveRenderer)
 {
 	// Ensure all proxies are validated.
-	if (!m_particleShader.validate() || !m_impostorShader.validate())
+	if (!m_particleShader.validate() || !m_particleTexture.validate() || !m_impostorShader.validate())
 		return;
 
 	renderCluster(renderContext, worldRenderView, primitiveRenderer, m_cluster);
@@ -280,6 +284,7 @@ void CloudEntity::renderCluster(
 	Vector4 cameraPosition = worldView.inverse().translation();
 
 	float nearZ = cullFrustum.getNearZ();
+	float farZ = cullFrustum.getFarZ();
 
 	// Cluster extents in view space.
 	const Aabb& clusterBoundingBox = cluster.getBoundingBox();
@@ -306,10 +311,12 @@ void CloudEntity::renderCluster(
 	static Vector4 instanceData1[c_instanceCount], instanceData2[c_instanceCount];
 
 	// Render impostors.
+	float cameraPositionDelta = (m_lastCameraPosition - cameraPosition).length();
+	float cameraDirectionDelta = rad2deg(acosf(dot3(m_lastCameraDirection, cameraDirection)));
 	if (
 		m_timeUntilUpdate <= 0.0f ||
-		(m_lastCameraPosition - cameraPosition).length() > 0.05f ||
-		(m_lastCameraDirection - cameraDirection).length() > 0.0025f
+		cameraPositionDelta > m_updatePositionThreshold ||
+		abs(cameraDirectionDelta) >= m_updateDirectionThreshold
 	)
 	{
 		// Sort all cloud particles back to front.
@@ -317,21 +324,19 @@ void CloudEntity::renderCluster(
 		std::sort(particles.begin(), particles.end(), ParticlePredicate< std::greater< float > >(cameraPosition));
 
 		// Update slices with different frequency.
-		uint32_t lastUpdateSlice;
-		switch (m_updateCount % 3)
+		uint32_t lastUpdateSlice = m_impostorSliceCount;
+		if (m_timeUntilUpdate <= 0.0f)
 		{
-		case 0:
-			lastUpdateSlice = m_impostorSliceCount;
-			break;
-		case 1:
-			lastUpdateSlice = (m_impostorSliceCount + 1) / 2;
-			break;
-		case 2:
-			lastUpdateSlice = (m_impostorSliceCount + 3) / 4;
-			break;
+			switch (m_updateCount++ % 3)
+			{
+			case 1:
+				lastUpdateSlice = (m_impostorSliceCount + 1) / 2;
+				break;
+			case 2:
+				lastUpdateSlice = (m_impostorSliceCount + 3) / 4;
+				break;
+			}
 		}
-
-		log::debug << lastUpdateSlice << L" ("  << m_impostorSliceCount << L")" << Endl;
 
 		for (uint32_t slice = 0; slice < lastUpdateSlice; ++slice)
 		{
@@ -392,8 +397,8 @@ void CloudEntity::renderCluster(
 					instanceData2[j] = Vector4(
 						sliceParticles[i + j]->radius,
 						sliceParticles[i + j]->rotation,
-						(sliceParticles[i + j]->sprite & 3) / 4.0f,
-						(sliceParticles[i + j]->sprite >> 2) / 4.0f
+						(sliceParticles[i + j]->sprite & 1) / 2.0f,
+						(sliceParticles[i + j]->sprite >> 1) / 2.0f
 					);
 				}
 
@@ -423,6 +428,7 @@ void CloudEntity::renderCluster(
 					particleRenderBlock->shaderParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
 					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
 					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
+					particleRenderBlock->shaderParams->setSamplerTexture(L"ParticleTexture", m_particleTexture);
 					particleRenderBlock->shaderParams->endParameters(renderContext);
 
 					render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
@@ -450,8 +456,7 @@ void CloudEntity::renderCluster(
 		m_lastCameraPosition = cameraPosition;
 		m_lastCameraDirection = cameraDirection;
 
-		m_timeUntilUpdate = c_updateInterval;
-		m_updateCount++;
+		m_timeUntilUpdate = 1.0f / m_updateFrequency;
 	}
 
 	// Render impostors.
@@ -462,16 +467,6 @@ void CloudEntity::renderCluster(
 
 		if (sliceFarZ < nearZ)
 			continue;
-
-		if (sliceNearZ < nearZ)
-			sliceNearZ = nearZ;
-
-		float minXY[2], maxXY[2];
-		calculateVSQuad(extents, cullFrustum, sliceNearZ, minXY, maxXY);
-
-		Matrix44 billboardView =
-			translate((maxXY[0] + minXY[0]) / 2.0f, (maxXY[1] + minXY[1]) / 2.0f, sliceNearZ) *
-			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 
@@ -484,8 +479,19 @@ void CloudEntity::renderCluster(
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
 
+		// Clamp slice distance; otherwise it will be clipped.
+		if (sliceNearZ < nearZ + FUZZY_EPSILON)
+			sliceNearZ = nearZ + FUZZY_EPSILON;
+
+		float minXY[2], maxXY[2];
+		calculateVSQuad(extents, cullFrustum, sliceNearZ, minXY, maxXY);
+
+		Matrix44 billboardView =
+			translate((maxXY[0] + minXY[0]) / 2.0f, (maxXY[1] + minXY[1]) / 2.0f, sliceNearZ) *
+			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
+
 		renderBlock->shaderParams->beginParameters(renderContext);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+		worldRenderView->setShaderParameters(renderBlock->shaderParams, Matrix44::identity()/*m_transform.toMatrix44()*/, Matrix44::identity(), clusterBoundingBox);
 		renderBlock->shaderParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->shaderParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
