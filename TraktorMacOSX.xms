@@ -9548,9 +9548,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>Carbon.framework</item>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
 									<item>OpenGL.framework</item>
-									<item>AGL.framework</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9569,9 +9569,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>Carbon.framework</item>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
 									<item>OpenGL.framework</item>
-									<item>AGL.framework</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9590,9 +9590,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>Carbon.framework</item>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
 									<item>OpenGL.framework</item>
-									<item>AGL.framework</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9611,9 +9611,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>Carbon.framework</item>
+									<item>Cocoa.framework</item>
+									<item>AppKit.framework</item>
 									<item>OpenGL.framework</item>
-									<item>AGL.framework</item>
 								</libraries>
 							</item>
 						</configurations>
@@ -9628,6 +9628,15 @@
 									<item type="File">
 										<fileName>Std/*.*</fileName>
 										<items/>
+									</item>
+									<item type="Filter">
+										<name>OsX</name>
+										<items>
+											<item type="File">
+												<fileName>Std/OsX/*.*</fileName>
+												<items/>
+											</item>
+										</items>
 									</item>
 								</items>
 							</item>
