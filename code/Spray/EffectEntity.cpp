@@ -67,11 +67,14 @@ void EffectEntity::update(const world::EntityUpdate* update)
 {
 	if (!m_effect.valid() || !m_effectInstance)
 	{
-		if (!m_resourceManager->bind(m_effect))
-			return;
+		if (!m_effect.valid())
+		{
+			if (!m_resourceManager->bind(m_effect))
+				return;
 
-		if (!m_effect.validate())
-			return;
+			if (!m_effect.validate())
+				return;
+		}
 
 		m_effectInstance = m_effect->createInstance(m_resourceManager);
 	}
