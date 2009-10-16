@@ -57,7 +57,7 @@ void calculateVSQuad(
 	float outMax[2]
 )
 {
-	Scalar c_nearZ = frustum.getNearZ();
+	Scalar nearZ = frustum.getNearZ();
 
 	const Vector4& c1 = frustum.corners[4];
 	float d1 = distance / c1.z();
@@ -69,10 +69,15 @@ void calculateVSQuad(
 	float clipMaxX = c2.x() * d2;
 	float clipMinY = c2.y() * d2;
 
+	if (clipMinX > clipMaxX)
+		std::swap(clipMinX, clipMaxX);
+	if (clipMinY > clipMaxY)
+		std::swap(clipMinY, clipMaxY);
+
 	outMin[0] = 1e9f; outMax[0] = -1e9f;
 	outMin[1] = 1e9f; outMax[1] = -1e9f;
 
-	if (distance <= FUZZY_EPSILON)
+	if (distance <= nearZ)
 	{
 		outMin[0] = clipMinX;
 		outMin[1] = clipMinY;
@@ -84,7 +89,7 @@ void calculateVSQuad(
 		// Determine if any extent is behind view plane.
 		bool infront[8];
 		for (int i = 0; i < 8; ++i)
-			infront[i] = viewExtents[i].z() >= c_nearZ;
+			infront[i] = viewExtents[i].z() >= nearZ;
 
 		// Clip edges with view plane.
 		const int* edges = Aabb::getEdges();
@@ -98,7 +103,7 @@ void calculateVSQuad(
 				const Vector4& e1 = viewExtents[i1];
 				const Vector4& e2 = viewExtents[i2];
 
-				Vector4 clip = e1 + (e2 - e1) * (c_nearZ - e1.z()) / (e2.z() - e1.z());
+				Vector4 clip = e1 + (e2 - e1) * (nearZ - e1.z()) / (e2.z() - e1.z());
 
 				float d = distance / clip.z();
 				float x = clip.x() * d;
@@ -275,16 +280,16 @@ void CloudEntity::renderCluster(
 	render::IRenderView* renderView = renderContext->getRenderView();
 	T_ASSERT (renderView);
 
-	const Frustum& cullFrustum = worldRenderView->getCullFrustum();
+	const Frustum& viewFrustum = worldRenderView->getViewFrustum();
 	const Matrix44& projection = worldRenderView->getProjection();
 	const Matrix44& view = worldRenderView->getView();
 
-	Matrix44 worldView = m_transform.toMatrix44() * view;
+	Matrix44 worldView = view * m_transform.toMatrix44();
 	Vector4 cameraDirection = worldView.inverse().axisZ();
 	Vector4 cameraPosition = worldView.inverse().translation();
 
-	float nearZ = cullFrustum.getNearZ();
-	float farZ = cullFrustum.getFarZ();
+	float nearZ = viewFrustum.getNearZ();
+	float farZ = viewFrustum.getFarZ();
 
 	// Cluster extents in view space.
 	const Aabb& clusterBoundingBox = cluster.getBoundingBox();
@@ -344,7 +349,7 @@ void CloudEntity::renderCluster(
 			float sliceFarZ = minZ + sliceDistance * (slice + 1.0f);
 
 			float minXY[2], maxXY[2];
-			calculateVSQuad(extents, cullFrustum, sliceFarZ, minXY, maxXY);
+			calculateVSQuad(extents, viewFrustum, sliceFarZ, minXY, maxXY);
 
 			// Calculate cluster to impostor transform.
 			Matrix44 clusterProjection = perspectiveLh(PI / 2.0f, 1.0f, 1.0f, 1000.0f);
@@ -364,7 +369,7 @@ void CloudEntity::renderCluster(
 			std::vector< const CloudParticle* > sliceParticles;
 			for (AlignedVector< CloudParticle >::const_iterator i = particles.begin(); i != particles.end(); ++i)
 			{
-				const float c_threshold = 1.0f;
+				const float c_threshold = 0.1f;
 				float z = (worldView * i->position).z();
 				if (z >= sliceNearZ - c_threshold && z < sliceFarZ + c_threshold)
 					sliceParticles.push_back(&(*i));
@@ -468,6 +473,10 @@ void CloudEntity::renderCluster(
 		if (sliceFarZ < nearZ)
 			continue;
 
+		// Clamp slice distance; otherwise it will be clipped.
+		if (sliceNearZ < nearZ + FUZZY_EPSILON)
+			sliceNearZ = nearZ + FUZZY_EPSILON;
+
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 
 		renderBlock->type = render::RbtAlphaBlend;
@@ -479,19 +488,15 @@ void CloudEntity::renderCluster(
 		renderBlock->offset = 0;
 		renderBlock->count = 2;
 
-		// Clamp slice distance; otherwise it will be clipped.
-		if (sliceNearZ < nearZ + FUZZY_EPSILON)
-			sliceNearZ = nearZ + FUZZY_EPSILON;
-
 		float minXY[2], maxXY[2];
-		calculateVSQuad(extents, cullFrustum, sliceNearZ, minXY, maxXY);
+		calculateVSQuad(extents, viewFrustum, sliceNearZ, minXY, maxXY);
 
 		Matrix44 billboardView =
 			translate((maxXY[0] + minXY[0]) / 2.0f, (maxXY[1] + minXY[1]) / 2.0f, sliceNearZ) *
 			scale((maxXY[0] - minXY[0]) / 2.0f, (maxXY[1] - minXY[1]) / 2.0f, 1.0f);
 
 		renderBlock->shaderParams->beginParameters(renderContext);
-		worldRenderView->setShaderParameters(renderBlock->shaderParams, Matrix44::identity()/*m_transform.toMatrix44()*/, Matrix44::identity(), clusterBoundingBox);
+		worldRenderView->setShaderParameters(renderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
 		renderBlock->shaderParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->shaderParams->setFloatParameter(L"SliceDistance", sliceDistance);
 		renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
