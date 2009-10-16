@@ -4,9 +4,8 @@
 #include "Core/Singleton/Singleton.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Event.h"
-#include "Core/Thread/Signal.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Containers/ThreadsafeFifo.h"
 
 namespace traktor
 {
@@ -16,7 +15,9 @@ namespace traktor
  *
  * Each job is maintained by this class.
  */
-class T_DLLCLASS Job : public Object
+class T_DLLCLASS Job
+:	public Object
+,	public IWaitable
 {
 	T_RTTI_CLASS(Job)
 
@@ -25,28 +26,23 @@ public:
 
 	virtual ~Job();
 
-	/*! \brief Wait until finished.
-	 *
-	 * Block caller thread until job is finished.
-	 */
-	void wait();
+	/*! \brief Prepare job for execution. */
+	void begin(Event& finishedEvent);
 
 	/*! \brief Execute job in caller thread. */
 	void execute();
 
-	Job& operator = (Functor* functor);
+	/*! \brief Wait until finished. */
+	virtual bool wait(int32_t timeout = -1);
 
-	/*! \brief Return true if job has been enqueued in the job manager. */
-	inline bool enqueued() const
-	{
-		return bool(m_signalFinished != 0);
-	}
+	Job& operator = (Functor* functor);
 
 private:
 	friend class JobManager;
 
 	Functor* m_functor;
-	Signal* m_signalFinished;
+	Event* m_finishedEvent;
+	bool m_finished;
 };
 
 /*! \brief Job manager.
@@ -89,21 +85,10 @@ protected:
 	virtual void destroy();
 
 private:
-	enum { MaxQueuedJobs = 256 };
-
-	struct Slot
-	{
-		Job* job;
-		Signal* signal;
-	};
-
-	std::vector< Thread* > m_threadWorkers;
-	Job* m_queue[MaxQueuedJobs];
-	uint32_t m_write;
-	uint32_t m_read;
-	Event m_eventJobQueued;
-	Signal m_signalBuffer[MaxQueuedJobs];
-	Semaphore m_queueLock;
+	std::vector< Thread* > m_workerThreads;
+	ThreadsafeFifo< Job* > m_jobQueue;
+	Event m_jobQueueEvent;
+	Event m_jobFinishedEvent;
 
 	void threadWorker(int id);
 

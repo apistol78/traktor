@@ -1,6 +1,7 @@
 #include <cmath>
 #include "UnitTest/CaseJob.h"
 #include "Core/Thread/JobManager.h"
+#include "Core/Thread/Atomic.h"
 #include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
 
@@ -9,21 +10,21 @@ namespace traktor
 	namespace
 	{
 
-uint32_t g_job;
+int32_t g_job;
 
 void job_1()
 {
-	g_job++;
+	Atomic::increment(g_job);
 }
 
 void job_2()
 {
-	g_job++;
+	Atomic::increment(g_job);
 }
 
 void job_3()
 {
-	g_job++;
+	Atomic::increment(g_job);
 }
 
 volatile float g_dummy[800000];

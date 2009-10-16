@@ -1,9 +1,6 @@
 #include "Core/Platform.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Atomic.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/System/OS.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Misc/String.h"
@@ -15,7 +12,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Job", Job, Singleton)
 
 Job::Job(Functor* functor)
 :	m_functor(functor)
-,	m_signalFinished(0)
+,	m_finishedEvent(0)
+,	m_finished(false)
 {
 }
 
@@ -24,21 +22,34 @@ Job::~Job()
 	delete m_functor;
 }
 
-void Job::wait()
+void Job::begin(Event& finishedEvent)
 {
-	Signal* signalFinished = m_signalFinished;
-	if (signalFinished)
-		signalFinished->wait();
+	T_ASSERT (!m_finishedEvent);
+	m_finishedEvent = &finishedEvent;
 }
 
 void Job::execute()
 {
-	T_ASSERT (m_functor);
-	(*m_functor)();
+	T_ASSERT (m_finishedEvent);
 
-	Signal* signalFinished = Atomic::exchange< Signal* >(m_signalFinished, 0);
-	if (signalFinished)
-		signalFinished->set();
+	if (m_functor)
+		(*m_functor)();
+
+	m_finished = true;
+	m_finishedEvent->broadcast();
+}
+
+bool Job::wait(int32_t timeout)
+{
+	T_ASSERT (m_finishedEvent);
+
+	while (!m_finished)
+	{
+		if (!m_finishedEvent->wait(timeout))
+			return false;
+	}
+
+	return true;
 }
 
 Job& Job::operator = (Functor* functor)
@@ -50,7 +61,8 @@ Job& Job::operator = (Functor* functor)
 	}
 
 	m_functor = functor;
-	m_signalFinished = 0;
+	m_finished = false;
+	m_finishedEvent = 0;
 
 	return *this;
 }
@@ -70,54 +82,25 @@ JobManager& JobManager::getInstance()
 
 void JobManager::add(Job& job)
 {
-	Acquire< Semaphore > __lock__(m_queueLock);
-
-	uint32_t index = m_write++ & (MaxQueuedJobs - 1);
-	
-	// Spin lock until slot is empty.
-	if (m_queue[index])
-	{
-		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-		do
-		{
-			Release< Semaphore > __unlock__(m_queueLock);
-			currentThread->sleep(0);
-		}
-		while (m_queue[index]);
-	}
-
-	// Grab signal from buffer.
-	job.m_signalFinished = &m_signalBuffer[index];
-	job.m_signalFinished->reset();
-
-	m_queue[index] = &job;
-
-	m_eventJobQueued.pulse();
+	job.begin(m_jobFinishedEvent);
+	m_jobQueue.put(&job);
+	m_jobQueueEvent.pulse();
 }
 
 void JobManager::fork(Job* jobs, int count)
 {
 	if (count > 1)
 	{
-		Acquire< Semaphore > __lock__(m_queueLock);
-
 		for (int i = 1; i < count; ++i)
 		{
-			uint32_t index = m_write++ & (MaxQueuedJobs - 1);
-			T_ASSERT (!m_queue[index]);
-
-			// Grab signal from buffer.
-			jobs[i].m_signalFinished = &m_signalBuffer[index];
-			jobs[i].m_signalFinished->reset();
-
-			m_queue[index] = &jobs[i];
+			jobs[i].begin(m_jobFinishedEvent);
+			m_jobQueue.put(&jobs[i]);
 		}
 
-		// Launch jobs.
-		m_eventJobQueued.pulse(count - 1);
+		m_jobQueueEvent.pulse(count - 1);
 	}
 
-	// Execute first job in caller thread.
+	jobs[0].begin(m_jobFinishedEvent);
 	jobs[0].execute();
 
 	for (int i = 1; i < count; ++i)
@@ -126,55 +109,46 @@ void JobManager::fork(Job* jobs, int count)
 
 void JobManager::threadWorker(int id)
 {
-	Thread* thread = ThreadManager::getInstance().getCurrentThread();
-	uint32_t index;
+	Thread* thread = m_workerThreads[id];
 	Job* job;
 
 	while (!thread->stopped())
 	{
-		if (!m_eventJobQueued.wait(300))
-			continue;
-		
-		{
-			Acquire< Semaphore > __lock__(m_queueLock);
-			index = m_read++ & (MaxQueuedJobs - 1);
-			job = m_queue[index];
-		}
-
-		if (job)
+		while (m_jobQueue.get(job))
 			job->execute();
 
-		{
-			Acquire< Semaphore > __lock__(m_queueLock);
-			m_queue[index] = 0;
-		}
+		if (!m_jobQueueEvent.wait(100))
+			continue;
 	}
 }
 
 JobManager::JobManager()
-:	m_write(0)
-,	m_read(0)
 {
-	for (uint32_t i = 0; i < MaxQueuedJobs; ++i)
-		m_queue[i] = 0;
-
 	uint32_t cores = OS::getInstance().getCPUCoreCount();
 	T_ASSERT (cores > 0);
 
-	m_threadWorkers.resize(cores);
-	for (uint32_t i = 0; i < uint32_t(m_threadWorkers.size()); ++i)
+	m_workerThreads.resize(cores);
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
-		m_threadWorkers[i] = ThreadManager::getInstance().create(makeFunctor< JobManager >(this, &JobManager::threadWorker, int(i)), L"Job worker thread " + toString(i), i + 1);
-		m_threadWorkers[i]->start(Thread::Above);
+		m_workerThreads[i] = ThreadManager::getInstance().create(
+			makeFunctor< JobManager >(
+				this,
+				&JobManager::threadWorker,
+				int(i)
+			),
+			L"Job worker thread " + toString(i),
+			i + 1
+		);
+		m_workerThreads[i]->start();
 	}
 }
 
 JobManager::~JobManager()
 {
-	for (uint32_t i = 0; i < uint32_t(m_threadWorkers.size()); ++i)
+	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
 	{
-		m_threadWorkers[i]->stop();
-		ThreadManager::getInstance().destroy(m_threadWorkers[i]);
+		m_workerThreads[i]->stop();
+		ThreadManager::getInstance().destroy(m_workerThreads[i]);
 	}
 }
 
