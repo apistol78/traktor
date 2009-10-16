@@ -28,6 +28,7 @@ namespace
 
 	const int c_columnsHeight = 25;
 	const int c_propertyItemHeight = 20;
+	const int c_wheelRotationFactor = 2;
 
 }
 
@@ -59,6 +60,7 @@ bool PropertyList::create(Widget* parent, int style, IPropertyGuidResolver* guid
 	addButtonUpEventHandler(createMethodHandler(this, &PropertyList::eventButtonUp));
 	addDoubleClickEventHandler(createMethodHandler(this, &PropertyList::eventDoubleClick));
 	addMouseMoveEventHandler(createMethodHandler(this, &PropertyList::eventMouseMove));
+	addMouseWheelEventHandler(createMethodHandler(this, &PropertyList::eventMouseWheel));
 	addSizeEventHandler(createMethodHandler(this, &PropertyList::eventSize));
 	addPaintEventHandler(createMethodHandler(this, &PropertyList::eventPaint));
 
@@ -441,6 +443,18 @@ void PropertyList::eventMouseMove(Event* event)
 			m_mousePropertyItem->mouseMove(mouseEvent);
 		}
 	}
+}
+
+void PropertyList::eventMouseWheel(Event* event)
+{
+	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
+
+	int position = m_scrollBar->getPosition();
+	position -= mouseEvent->getWheelRotation() * c_wheelRotationFactor;
+	m_scrollBar->setPosition(position);
+
+	placeItems();
+	update();
 }
 
 void PropertyList::eventSize(Event* event)
