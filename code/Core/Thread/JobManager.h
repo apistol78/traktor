@@ -27,7 +27,7 @@ public:
 	virtual ~Job();
 
 	/*! \brief Prepare job for execution. */
-	void begin(Event& finishedEvent);
+	void begin();
 
 	/*! \brief Execute job in caller thread. */
 	void execute();
@@ -41,8 +41,7 @@ private:
 	friend class JobManager;
 
 	Functor* m_functor;
-	Event* m_finishedEvent;
-	bool m_finished;
+	int32_t m_finished;
 };
 
 /*! \brief Job manager.

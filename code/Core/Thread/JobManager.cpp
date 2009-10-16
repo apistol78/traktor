@@ -1,6 +1,7 @@
 #include "Core/Platform.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Atomic.h"
 #include "Core/System/OS.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Misc/String.h"
@@ -12,8 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Job", Job, Singleton)
 
 Job::Job(Functor* functor)
 :	m_functor(functor)
-,	m_finishedEvent(0)
-,	m_finished(false)
+,	m_finished(1)
 {
 }
 
@@ -22,33 +22,26 @@ Job::~Job()
 	delete m_functor;
 }
 
-void Job::begin(Event& finishedEvent)
+void Job::begin()
 {
-	T_ASSERT (!m_finishedEvent);
-	m_finishedEvent = &finishedEvent;
+	m_finished = 0;
 }
 
 void Job::execute()
 {
-	T_ASSERT (m_finishedEvent);
-
+	T_ASSERT (!m_finished);
 	if (m_functor)
+	{
 		(*m_functor)();
-
-	m_finished = true;
-	m_finishedEvent->broadcast();
+		Atomic::exchange(m_finished, 1);
+	}
 }
 
 bool Job::wait(int32_t timeout)
 {
-	T_ASSERT (m_finishedEvent);
-
-	while (!m_finished)
-	{
-		if (!m_finishedEvent->wait(timeout))
-			return false;
-	}
-
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
+	while (Atomic::exchange(m_finished, m_finished) == 0)
+		thread->yield();
 	return true;
 }
 
@@ -61,8 +54,7 @@ Job& Job::operator = (Functor* functor)
 	}
 
 	m_functor = functor;
-	m_finished = false;
-	m_finishedEvent = 0;
+	m_finished = 1;
 
 	return *this;
 }
@@ -82,7 +74,7 @@ JobManager& JobManager::getInstance()
 
 void JobManager::add(Job& job)
 {
-	job.begin(m_jobFinishedEvent);
+	job.begin();
 	m_jobQueue.put(&job);
 	m_jobQueueEvent.pulse();
 }
@@ -93,14 +85,14 @@ void JobManager::fork(Job* jobs, int count)
 	{
 		for (int i = 1; i < count; ++i)
 		{
-			jobs[i].begin(m_jobFinishedEvent);
+			jobs[i].begin();
 			m_jobQueue.put(&jobs[i]);
 		}
 
 		m_jobQueueEvent.pulse(count - 1);
 	}
 
-	jobs[0].begin(m_jobFinishedEvent);
+	jobs[0].begin();
 	jobs[0].execute();
 
 	for (int i = 1; i < count; ++i)
