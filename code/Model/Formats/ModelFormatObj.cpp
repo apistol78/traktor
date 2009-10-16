@@ -32,7 +32,8 @@ Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 	if (!stream)
 		return 0;
 
-	StringReader sr(stream, gc_new< AnsiEncoding >());
+	BufferedStream bs(stream);
+	StringReader sr(&bs, gc_new< AnsiEncoding >());
 	std::wstring str;
 
 	Ref< Model > md = gc_new< Model >();
