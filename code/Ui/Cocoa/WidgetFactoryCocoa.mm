@@ -4,6 +4,7 @@
 #include "Ui/Cocoa/ContainerCocoa.h"
 #include "Ui/Cocoa/DialogCocoa.h"
 #include "Ui/Cocoa/DropDownCocoa.h"
+#include "Ui/Cocoa/EditCocoa.h"
 #include "Ui/Cocoa/FileDialogCocoa.h"
 #include "Ui/Cocoa/FormCocoa.h"
 #include "Ui/Cocoa/ListBoxCocoa.h"
@@ -12,6 +13,7 @@
 #include "Ui/Cocoa/MessageBoxCocoa.h"
 #include "Ui/Cocoa/PopupMenuCocoa.h"
 #include "Ui/Cocoa/ScrollBarCocoa.h"
+#include "Ui/Cocoa/SliderCocoa.h"
 #include "Ui/Cocoa/StaticCocoa.h"
 #include "Ui/Cocoa/ToolFormCocoa.h"
 #include "Ui/Cocoa/TreeViewCocoa.h"
@@ -55,7 +57,7 @@ IDropDown* WidgetFactoryCocoa::createDropDown(EventSubject* owner)
 
 IEdit* WidgetFactoryCocoa::createEdit(EventSubject* owner)
 {
-	return 0;
+	return new EditCocoa(owner);
 }
 
 IFileDialog* WidgetFactoryCocoa::createFileDialog(EventSubject* owner)
@@ -120,7 +122,7 @@ IScrollBar* WidgetFactoryCocoa::createScrollBar(EventSubject* owner)
 
 ISlider* WidgetFactoryCocoa::createSlider(EventSubject* owner)
 {
-	return 0;
+	return new SliderCocoa(owner);
 }
 
 IStatic* WidgetFactoryCocoa::createStatic(EventSubject* owner)

@@ -24,7 +24,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 		initWithContentRect: NSMakeRect(50, 50, width, height)
 		styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
 		backing: NSBackingStoreBuffered
-		defer: TRUE
+		defer: YES
 	];
 
 	[m_window setTitle:makeNSString(text)];
