@@ -3,6 +3,7 @@
 #include "Render/Nodes.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
+#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -13,6 +14,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "I18N/Text.h"
+#include "Core/Io/FileSystem.h"
 
 namespace traktor
 {
@@ -61,7 +63,10 @@ ui::custom::Node* SamplerNodeFacade::createEditorNode(
 		Ref< TextureAsset > textureAsset = project->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
 		{
-			Ref< drawing::Image > textureImage = drawing::Image::load(textureAsset->getFileName());
+			std::wstring assetPath = editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+			Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
+
+			Ref< drawing::Image > textureImage = drawing::Image::load(fileName);
 			if (textureImage)
 			{
 				drawing::ScaleFilter scale(
