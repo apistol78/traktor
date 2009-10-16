@@ -20,6 +20,10 @@
 #include "Core/Serialization/Serializable.h"
 #include "Core/Log/Log.h"
 
+#if defined(__APPLE__)
+#	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -130,16 +134,8 @@ bool RenderSystemOpenGL::create()
 
 #elif defined(__APPLE__)
 
-	GLint attributes[] = { AGL_RGBA, AGL_DOUBLEBUFFER, AGL_DEPTH_SIZE, 16, AGL_NONE };
-	AGLPixelFormat pf;
-	
-	pf = aglChoosePixelFormat(NULL, 0, attributes);
-	T_ASSERT (pf);
-		
-	AGLContext globalContext = aglCreateContext(pf, NULL);
-	T_ASSERT (globalContext);
-
-	m_globalContext = gc_new< ContextOpenGL >((OpaqueWindowPtr*)0, (OpaqueControlRef*)0, globalContext);
+	void* globalContext = cglwCreateContext(0, 0);
+	m_globalContext = gc_new< ContextOpenGL >(globalContext);
 
 #else	// LINUX
 
@@ -421,56 +417,13 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 
 #elif defined(__APPLE__)
 
-	GLint attributes[] = { AGL_RGBA, AGL_DOUBLEBUFFER, AGL_DEPTH_SIZE, 16, AGL_NONE };
-	AGLPixelFormat pf;
-	AGLContext ctx;
-	
-	pf = aglChoosePixelFormat(NULL, 0, attributes);
-	if (!pf)
-	{
-		log::error << L"aglChoosePixelFormat failed" << Endl;
-		return 0;
-	}
-
-	ctx = aglCreateContext(pf, m_globalContext->getAGLContext());
-	if (!ctx)
-	{
-		log::error << L"aglCreateContext failed" << Endl;
-		return 0;
-	}
-
-	GLint interval = 1;
-	aglSetInteger(ctx, AGL_SWAP_INTERVAL, &interval);
-		
-	aglEnable(ctx, AGL_BUFFER_RECT);
-		
-	aglDestroyPixelFormat(pf);
-	
-	WindowRef ownerWindow = GetControlOwner((ControlRef)windowHandle);
-	if (!ownerWindow)
-		return 0;
-	
-	AGLDrawable drawable = GetWindowPort(ownerWindow);
-	if (!drawable)
+	void* glcontext = cglwCreateContext(windowHandle, m_globalContext->getGLContext());
+	if (!glcontext)
 		return 0;
 		
-	aglSetDrawable(ctx, drawable);
-	
-	Ref< ContextOpenGL > context = gc_new< ContextOpenGL >(ownerWindow, (ControlRef)windowHandle, ctx);
-	context->update();
+	Ref< ContextOpenGL > context = gc_new< ContextOpenGL >(glcontext);
 
-	HIRect controlRect;
-	HIViewGetBounds((ControlRef)windowHandle, &controlRect);
-	
-	int32_t width = controlRect.size.width;
-	if (width <= 0)
-		width = 16;
-		
-	int32_t height = controlRect.size.height;
-	if (height <= 0)
-		height = 16;
-
-	return gc_new< RenderViewOpenGL >(context, m_globalContext, width, height);
+	return gc_new< RenderViewOpenGL >(context, m_globalContext);
 
 #else	// LINUX
 	

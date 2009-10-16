@@ -45,23 +45,12 @@ RenderViewOpenGL::RenderViewOpenGL(
 
 RenderViewOpenGL::RenderViewOpenGL(
 	ContextOpenGL* context,
-	ContextOpenGL* globalContext,
-	int32_t width,
-	int32_t height
+	ContextOpenGL* globalContext
 )
 :	m_context(context)
 ,	m_globalContext(globalContext)
 ,	m_currentDirty(true)
 {
-	Viewport viewport;
-	viewport.left = 0;
-	viewport.top = 0;
-	viewport.width = width;
-	viewport.height = height;
-	viewport.nearZ = 0.0f;
-	viewport.farZ = 1.0f;
-
-	setViewport(viewport);
 }
 
 #else

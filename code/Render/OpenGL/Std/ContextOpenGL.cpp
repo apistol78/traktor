@@ -1,6 +1,10 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Core/Log/Log.h"
 
+#if defined(__APPLE__)
+#	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -25,10 +29,8 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 
 #elif defined(__APPLE__)
 
-ContextOpenGL::ContextOpenGL(WindowRef window, ControlRef control, AGLContext context)
-:	m_window(window)
-,	m_control(control)
-,	m_context(context)
+ContextOpenGL::ContextOpenGL(void* context)
+:	m_context(context)
 
 #else	// LINUX
 
@@ -63,7 +65,7 @@ void ContextOpenGL::share(ContextOpenGL* context)
 void ContextOpenGL::update()
 {
 #if defined(__APPLE__)
-	aglUpdateContext(m_context);
+	cglwUpdate(m_context);
 #endif
 }
 
@@ -72,7 +74,7 @@ void ContextOpenGL::swapBuffers()
 #if defined(_WIN32)
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
-	aglSwapBuffers(m_context);
+	cglwSwapBuffers(m_context);
 #else	// LINUX
 	glXSwapBuffers(m_display, m_window);
 #endif
@@ -97,10 +99,7 @@ void ContextOpenGL::destroy()
 #elif defined(__APPLE__)
 
 	if (m_context)
-	{
-		aglDestroyContext(m_context);
 		m_context = 0;
-	}
 
 #else	// LINUX
 
@@ -122,29 +121,8 @@ bool ContextOpenGL::enter()
 
 #elif defined(__APPLE__)
 
-	if (aglSetCurrentContext(m_context) != GL_TRUE)
+	if (!cglwMakeCurrent(m_context))
 		return false;
-
-	HIRect controlRect;
-	HIViewGetBounds(m_control, &controlRect);
-
-	HIViewRef root = HIViewGetRoot(HIViewGetWindow(m_control));
-
-	HIRect windowRect;
-	HIViewGetBounds(root, &windowRect);
-	HIViewConvertRect(&controlRect, m_control, root);
-
-	GLint params[4] = { 0, 0, 0, 0 };
-	if (HIViewIsVisible(m_control))
-	{
-		params[0] = controlRect.origin.x;
-		params[1] = windowRect.size.height - (controlRect.origin.y + controlRect.size.height);
-		params[2] = controlRect.size.width;
-		params[3] = controlRect.size.height;
-	}
-
-	aglSetInteger(m_context, AGL_BUFFER_RECT, params);
-	aglEnable(m_context, AGL_BUFFER_RECT);
 
 #else	// LINUX
 
@@ -194,9 +172,9 @@ void ContextOpenGL::leave()
 #elif defined(__APPLE__)
 
 	if (!stack->empty())
-		aglSetCurrentContext(stack->back()->m_context);
+		cglwMakeCurrent(stack->back()->m_context);
 	else
-		aglSetCurrentContext(NULL);
+		cglwMakeCurrent(0);
 
 #else	// LINUX
 #endif

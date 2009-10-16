@@ -19,8 +19,6 @@
 #		include <gl/glu.h>
 #		include <gl/glext.h>
 #	elif defined(__APPLE__)
-#		include <Carbon/Carbon.h>
-#		include <AGL/agl.h>
 #		include <OpenGL/gl.h>
 #		include <OpenGL/glu.h>
 #		include <OpenGL/glext.h>

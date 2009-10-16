@@ -46,9 +46,7 @@ public:
 
 	RenderViewOpenGL(
 		ContextOpenGL* context,
-		ContextOpenGL* globalContext,
-		int32_t width,
-		int32_t height
+		ContextOpenGL* globalContext
 	);
 
 #else
