@@ -50,7 +50,7 @@ class PerspectiveRenderControl : public ISceneRenderControl
 public:
 	PerspectiveRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context);
+	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t index);
 
 	virtual void destroy();
 

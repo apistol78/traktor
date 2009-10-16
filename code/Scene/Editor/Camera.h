@@ -25,6 +25,10 @@ class T_DLLCLASS Camera : public Object
 public:
 	Camera(const Matrix44& transform);
 
+	void setEnable(bool enable);
+
+	bool isEnable() const;
+
 	void enterFreeLook();
 
 	void enterLookAt(const Vector4& lookAtPosition);
@@ -38,6 +42,10 @@ public:
 	void setTargetView(const Matrix44& transform);
 
 	void update(float deltaTime);
+
+	Matrix44 getCurrentWorld() const;
+
+	Matrix44 getTargetWorld() const;
 
 	Matrix44 getCurrentView() const;
 
@@ -72,9 +80,9 @@ private:
 		Quaternion orientation;
 	};
 
+	bool m_enable;
 	Frame m_current;
 	Frame m_target;
-
 	LookMode m_lookMode;
 	Vector4 m_lookAtPosition;
 	Scalar m_lookAtDistance;

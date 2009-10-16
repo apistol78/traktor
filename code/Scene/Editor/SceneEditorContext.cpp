@@ -7,6 +7,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/Camera.h"
 #include "Scene/SceneAsset.h"
 #include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
@@ -111,6 +112,13 @@ SceneEditorContext::SceneEditorContext(
 ,	m_timeScale(1.0f)
 ,	m_time(0.0f)
 {
+	for (int i = 0; i < sizeof_array(m_cameras); ++i)
+		m_cameras[i] = gc_new< Camera >(cref(
+			lookAt(
+				Vector4(-4.0f, 4.0f, -4.0f, 1.0f),
+				Vector4(0.0f, 0.0f, 0.0f, 1.0f)
+			)
+		));
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
@@ -196,6 +204,11 @@ void SceneEditorContext::setAddReferenceMode(bool referenceMode)
 bool SceneEditorContext::inAddReferenceMode() const
 {
 	return m_referenceMode;
+}
+
+Camera* SceneEditorContext::getCamera(int index) const
+{
+	return m_cameras[index];
 }
 
 void SceneEditorContext::setPlaying(bool playing)

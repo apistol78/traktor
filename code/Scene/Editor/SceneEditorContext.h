@@ -71,6 +71,7 @@ class IModifier;
 class EntityAdapter;
 class Scene;
 class SceneAsset;
+class Camera;
 
 /*! \brief Scene editor context.
  *
@@ -142,6 +143,18 @@ public:
 	void setAddReferenceMode(bool referenceMode);
 
 	bool inAddReferenceMode() const;
+
+	//@}
+
+	/*! \name Camera control. */
+	//@{
+
+	/*! \brief Get camera by index.
+	 *
+	 * \param index Camera index, 0 to 3.
+	 * \return Camera.
+	 */
+	Camera* getCamera(int index) const;
 
 	//@}
 
@@ -279,6 +292,7 @@ private:
 	bool m_playing;
 	float m_timeScale;
 	float m_time;
+	Ref< Camera > m_cameras[4];
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< Scene > m_scene;
 	Ref< EntityAdapter > m_rootEntityAdapter;

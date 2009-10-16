@@ -22,9 +22,20 @@ inline void decompose(const Matrix44& transform, Vector4& outPosition, Quaternio
 
 Camera::Camera(const Matrix44& transform)
 :	m_lookMode(LmFree)
+,	m_enable(false)
 {
 	decompose(transform.inverse(), m_target.position, m_target.orientation);
 	m_current = m_target;
+}
+
+void Camera::setEnable(bool enable)
+{
+	m_enable = enable;
+}
+
+bool Camera::isEnable() const
+{
+	return m_enable;
 }
 
 void Camera::enterFreeLook()
@@ -96,14 +107,24 @@ void Camera::update(float deltaTime)
 	}
 }
 
+Matrix44 Camera::getCurrentWorld() const
+{
+	return translate(m_current.position) * m_current.orientation.inverse().toMatrix44();
+}
+
+Matrix44 Camera::getTargetWorld() const
+{
+	return translate(m_target.position) * m_target.orientation.inverse().toMatrix44();
+}
+
 Matrix44 Camera::getCurrentView() const
 {
-	return m_current.orientation.toMatrix44() * translate(-m_current.position);
+	return getCurrentWorld().inverse();
 }
 
 Matrix44 Camera::getTargetView() const
 {
-	return m_target.orientation.toMatrix44() * translate(-m_target.position);
+	return getTargetWorld().inverse();
 }
 
 	}
