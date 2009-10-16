@@ -33,7 +33,7 @@ bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor,
 	{
 		for (RefArray< TextureAsset >::iterator i = textureAssets.begin(); i != textureAssets.end(); ++i)
 		{
-			std::wstring instanceName = Path((*i)->getFileName()).getFileName();
+			std::wstring instanceName = Path((*i)->getFileName()).getFileNameNoExtension();
 			Ref< db::Instance > textureAssetInstance = group->createInstance(instanceName);
 			if (textureAssetInstance)
 			{
