@@ -105,7 +105,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 0:
 		{
 			Ref< PerspectiveRenderControl > renderControl = gc_new< PerspectiveRenderControl >();
-			if (renderControl->create(m_container, m_context))
+			if (renderControl->create(m_container, m_context, m_index))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
 				m_renderControl = renderControl;

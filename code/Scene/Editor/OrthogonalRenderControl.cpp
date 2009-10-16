@@ -3,8 +3,10 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/Camera.h"
+#include "Scene/Editor/CameraMesh.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
@@ -604,6 +606,41 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			// Draw entity guides.
 			m_context->drawGuide(m_primitiveRenderer, *i);
+		}
+
+		// Draw cameras.
+		for (int i = 0; i < 4; ++i)
+		{
+			const Camera* camera = m_context->getCamera(i);
+			if (!camera || !camera->isEnable())
+				continue;
+
+			m_primitiveRenderer->pushView(view);
+			m_primitiveRenderer->pushWorld(camera->getCurrentWorld());
+
+			m_primitiveRenderer->drawWireAabb(
+				Vector4::origo(),
+				Vector4(0.1f, 0.1f, 0.1f, 0.0f),
+				Color(255, 255, 0, 255)
+			);
+
+			for (int j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
+			{
+				int32_t i1 = c_cameraMeshIndices[j + 0] - 1;
+				int32_t i2 = c_cameraMeshIndices[j + 1] - 1;
+
+				const float* v1 = &c_cameraMeshVertices[i1 * 3];
+				const float* v2 = &c_cameraMeshVertices[i2 * 3];
+
+				m_primitiveRenderer->drawLine(
+					Vector4(v1[0], v1[1], v1[2], 1.0f),
+					Vector4(v2[0], v2[1], v2[2], 1.0f),
+					Color(255, 255, 0, 200)
+				);
+			}
+
+			m_primitiveRenderer->popWorld();
+			m_primitiveRenderer->popView();
 		}
 
 		// Render entities.

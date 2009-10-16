@@ -64,7 +64,7 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 {
 }
 
-bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
+bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t index)
 {
 	m_context = context;
 	T_ASSERT (m_context);
@@ -100,9 +100,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	updateWorldRenderer();
 
-	m_camera = gc_new< Camera >(cref(
-		lookAt(Vector4(-4.0f, 4.0f, -4.0f, 1.0f), Vector4(0.0f, 0.0f, 0.0f, 1.0f))
-	));
+	m_camera = m_context->getCamera(index);
+	m_camera->setEnable(true);
 	m_timer.start();
 
 	return true;
@@ -110,6 +109,12 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 void PerspectiveRenderControl::destroy()
 {
+	if (m_camera)
+	{
+		m_camera->setEnable(false);
+		m_camera = 0;
+	}
+
 	if (m_worldRenderer)
 	{
 		m_worldRenderer->destroy();
