@@ -118,6 +118,8 @@ private:
 
 	void eventMouseMove(Event* event);
 
+	void eventMouseWheel(Event* event);
+
 	void eventSize(Event* event);
 
 	void eventPaint(Event* event);
