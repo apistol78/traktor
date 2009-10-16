@@ -55,13 +55,16 @@ Image* ImageFormatTga::read(Stream* stream)
 	reader >> header.bits;
 	reader >> header.descriptor;
 
-	if (header.imagetype != 2)
+	if (header.imagetype != 2 && header.imagetype != 3)
 		return 0;
 
 	stream->seek(Stream::SeekCurrent, header.identsize);
 
 	switch (header.bits)
 	{
+	case 8:
+		pf = gc_new< PixelFormat >(8, 0xff, 0xff, 0xff, 0xff, false, false);
+		break;
 	case 15:
 		pf = PixelFormat::getR5G5B5();
 		break;
