@@ -23,7 +23,7 @@ public:
 #if defined(_WIN32)
 	ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC);
 #elif defined(__APPLE__)
-	ContextOpenGL(WindowRef window, ControlRef control, AGLContext context);
+	ContextOpenGL(void* context);
 #else	// LINUX
 	ContextOpenGL(Display* display, Window window, GLXContext context);
 #endif
@@ -49,7 +49,7 @@ public:
 #if !defined(_WIN32) && !defined(__APPLE__)
 	inline GLXContext getGLXContext() { return m_context; }
 #elif defined(__APPLE__)
-	inline AGLContext getAGLContext() { return m_context; }
+	inline void* getGLContext() { return m_context; }
 #endif
 
 private:
@@ -58,9 +58,7 @@ private:
 	HDC m_hDC;
 	HGLRC m_hRC;
 #elif defined(__APPLE__)
-	WindowRef m_window;
-	ControlRef m_control;
-	AGLContext m_context;
+	void* m_context;
 #else	// LINUX
 	Display* m_display;
 	Window m_window;
