@@ -134,7 +134,7 @@ bool RenderSystemOpenGL::create()
 
 #elif defined(__APPLE__)
 
-	void* globalContext = cglwCreateContext(0, 0);
+	void* globalContext = cglwCreateContext(0, 0, 0, 0, 0);
 	m_globalContext = gc_new< ContextOpenGL >(globalContext);
 
 #else	// LINUX
@@ -417,7 +417,13 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 
 #elif defined(__APPLE__)
 
-	void* glcontext = cglwCreateContext(windowHandle, m_globalContext->getGLContext());
+	void* glcontext = cglwCreateContext(
+		windowHandle,
+		m_globalContext->getGLContext(),
+		desc.depthBits,
+		desc.stencilBits,
+		desc.multiSample
+	);
 	if (!glcontext)
 		return 0;
 		

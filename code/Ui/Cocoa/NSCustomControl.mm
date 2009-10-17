@@ -18,8 +18,8 @@
 {
 	if ([m_delegate respondsToSelector:@selector(drawRect:)])
 		[m_delegate drawRect: rect];
-	else
-		[super drawRect: rect];
+
+	[super drawRect: rect];
 }
 
 - (void) viewDidEndLiveResize

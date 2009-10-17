@@ -17,13 +17,17 @@ struct WrContext
 		
 		}
 
-void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext)
+void* cglwCreateContext(void* nativeWindowHandle, void* sharedContext, int depthBits, int stencilBits, int multisample)
 {	
 	NSOpenGLPixelFormatAttribute attribs[] =
 	{
 		NSOpenGLPFADoubleBuffer,
 		NSOpenGLPFAAccelerated,
 		NSOpenGLPFAWindow,
+		NSOpenGLPFADepthSize, depthBits,
+		NSOpenGLPFAStencilSize, stencilBits,
+		NSOpenGLPFASampleBuffers, multisample > 0 ? 1 : 0,
+		NSOpenGLPFASamples, multisample,
 		nil
 	};
 	
