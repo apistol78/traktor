@@ -27,6 +27,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 		defer: YES
 	];
 
+	[m_window setAcceptsMouseMovedEvents: YES];
 	[m_window setTitle:makeNSString(text)];
 	
 	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];

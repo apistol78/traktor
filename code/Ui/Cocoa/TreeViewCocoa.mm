@@ -36,8 +36,8 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	[m_control setAutoresizesOutlineColumn: NO];
 	[m_control addTableColumn: column];
 	[m_control setOutlineTableColumn: column];
+	[m_control setHeaderView: nil];
 	[m_control setDataSource: dataSource];
-	
 	[m_control setTarget: targetProxy];
 	[m_control setAction: @selector(dispatchActionCallback:)];
 	[m_control setDoubleAction: @selector(dispatchDoubleActionCallback:)];
