@@ -12,6 +12,8 @@ namespace traktor
 BitmapCocoa::BitmapCocoa()
 :	m_image(0)
 ,	m_imageRep(0)
+,	m_imagePreAlpha(0)
+,	m_imageRepPreAlpha(0)
 {
 }
 
@@ -31,8 +33,21 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 		colorSpaceName: NSCalibratedRGBColorSpace
 		bytesPerRow: NULL
 		bitsPerPixel: NULL];
-		
 	[m_image addRepresentation: m_imageRep];
+
+	m_imagePreAlpha = [[NSImage alloc] initWithSize: NSMakeSize(width, height)];
+	m_imageRepPreAlpha = [[NSBitmapImageRep alloc]
+		initWithBitmapDataPlanes: NULL
+		pixelsWide: width
+		pixelsHigh: height
+		bitsPerSample: 8
+		samplesPerPixel: 4
+		hasAlpha: YES
+		isPlanar: NO
+		colorSpaceName: NSCalibratedRGBColorSpace
+		bytesPerRow: NULL
+		bitsPerPixel: NULL];
+	[m_imagePreAlpha addRepresentation: m_imageRepPreAlpha];
 
 	return true;
 }
@@ -41,6 +56,9 @@ void BitmapCocoa::destroy()
 {
 	[m_image release]; m_image = 0;
 	[m_imageRep release]; m_imageRep = 0;
+
+	[m_imagePreAlpha release]; m_imagePreAlpha = 0;
+	[m_imageRepPreAlpha release]; m_imageRepPreAlpha = 0;
 }
 
 void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos)
@@ -78,6 +96,7 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 
 	const uint32_t* sourceBits = (const uint32_t*)(sourceImage->getData());
 	uint32_t* destinationBits = (uint32_t*)[m_imageRep bitmapData];
+	uint32_t* destinationPreAlphaBits = (uint32_t*)[m_imageRepPreAlpha bitmapData];
 	
 	for (int y = rc.top; y < rc.bottom; ++y)
 	{
@@ -85,7 +104,18 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		{
 			uint32_t dstOffset = destPos.x + (x - rc.left) + (size.cy - (destPos.y + (y - rc.top)) - 1) * size.cx;
 			uint32_t c = sourceBits[x + y * size.cx];
+			
+			uint32_t pa = (c & 0xff000000) >> 24;
+			uint32_t pr = (c & 0x000000ff);
+			uint32_t pg = (c & 0x0000ff00) >> 8;
+			uint32_t pb = (c & 0x00ff0000) >> 16;
+			
+			pr = (pr * pa) >> 8;
+			pg = (pg * pa) >> 8;
+			pb = (pb * pa) >> 8;
+			
 			destinationBits[dstOffset] = c;
+			destinationPreAlphaBits[dstOffset] = (pa << 24) | (pb << 16) | (pg << 8) | pr;
 		}
 	}
 }

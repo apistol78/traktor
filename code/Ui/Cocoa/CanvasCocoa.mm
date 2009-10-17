@@ -127,16 +127,13 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Point& srcAt, const Size&
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);
 	
-	NSImage* nsi = bmc->getNSImage();
-	T_ASSERT (nsi);
-	
 	NSRect dstRect = makeNSRect(Rect(dstAt, size));
 	NSRect srcRect = makeNSRect(Rect(srcAt, size));
 	
 	if (blendMode == BmNone)
-		[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
+		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 	else if (blendMode == BmAlpha)
-		[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
+		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 
 void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
@@ -144,16 +141,13 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	BitmapCocoa* bmc = static_cast< BitmapCocoa* >(bitmap);
 	T_ASSERT (bmc);
 	
-	NSImage* nsi = bmc->getNSImage();
-	T_ASSERT (nsi);
-
 	NSRect dstRect = makeNSRect(Rect(dstAt, dstSize));
 	NSRect srcRect = makeNSRect(Rect(srcAt, srcSize));
 	
 	if (blendMode == BmNone)
-		[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
+		[bmc->getNSImage() drawInRect: dstRect fromRect: srcRect operation: NSCompositeCopy fraction: 1.0f];
 	else if (blendMode == BmAlpha)
-		[nsi drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
+		[bmc->getNSImagePreAlpha() drawInRect: dstRect fromRect: srcRect operation: NSCompositeSourceOver fraction: 1.0f];
 }
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)

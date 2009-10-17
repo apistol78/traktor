@@ -31,9 +31,13 @@ public:
 	
 	inline NSImage* getNSImage() const { return m_image; }
 	
+	inline NSImage* getNSImagePreAlpha() const { return m_imagePreAlpha; }
+	
 private:
 	NSImage* m_image;
 	NSBitmapImageRep* m_imageRep;
+	NSImage* m_imagePreAlpha;
+	NSBitmapImageRep* m_imageRepPreAlpha;
 };
 
 	}
