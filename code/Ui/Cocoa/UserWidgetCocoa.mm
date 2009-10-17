@@ -24,7 +24,8 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 	
 	if (style & WsClientBorder)
 	{
-		// @fixme
+		NSCell* cell = [m_control cell];
+		[cell setBordered: YES];
 	}
 	
 	NSControlDelegateProxy* proxy = [[NSControlDelegateProxy alloc] init];
@@ -49,7 +50,7 @@ bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 	PaintEvent paintEvent(m_owner, (Object*)0, canvas, rc);
 	m_owner->raiseEvent(EiPaint, &paintEvent);
 
-	return true;
+	return paintEvent.consumed();
 }
 
 bool UserWidgetCocoa::event_viewDidEndLiveResize()

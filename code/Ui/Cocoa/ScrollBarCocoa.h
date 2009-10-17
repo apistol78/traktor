@@ -38,6 +38,8 @@ private:
 	bool m_vertical;
 	int m_range;
 	int m_page;
+	
+	void callbackAction(void* controldId);
 };
 
 	}

@@ -103,7 +103,7 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		for (int x = rc.left; x < rc.right; ++x)
 		{
 			uint32_t dstOffset = destPos.x + (x - rc.left) + (size.cy - (destPos.y + (y - rc.top)) - 1) * size.cx;
-			uint32_t c = sourceBits[x + y * size.cx];
+			uint32_t c = sourceBits[x + y * image->getWidth()];
 			
 			uint32_t pa = (c & 0xff000000) >> 24;
 			uint32_t pr = (c & 0x000000ff);
@@ -133,8 +133,14 @@ drawing::Image* BitmapCocoa::getImage() const
 	const uint32_t* sourceBits = (const uint32_t*)[m_imageRep bitmapData];
 	uint32_t* destinationBits = (uint32_t*)(image->getData());
 	
-	std::memcpy(destinationBits, sourceBits, size.cx * size.cy * sizeof(uint32_t));
-
+	for (int y = 0; y < size.cy; ++y)
+	{
+		const uint32_t* sp = &sourceBits[(size.cy - y - 1) * size.cx];
+		uint32_t* dp = &destinationBits[y * size.cx];
+		for (int x = 0; x < size.cx; ++x)
+			*dp++ = *sp++;
+	}
+	
 	return image;
 }
 
