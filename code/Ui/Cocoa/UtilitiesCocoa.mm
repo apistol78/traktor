@@ -62,6 +62,11 @@ NSColor* makeNSColor(const Color& color)
 	];
 }
 
+NSSize makeNSSize(const Size& sz)
+{
+	return NSMakeSize(sz.cx, sz.cy);
+}
+
 NSPoint makeNSPoint(const Point& pt)
 {
 	return NSMakePoint(pt.x, pt.y);
@@ -76,6 +81,14 @@ NSRect makeNSRect(const Rect& rc)
 		rc.getSize().cy
 	);
 	return nrc;
+}
+
+Size fromNSSize(const NSSize& sz)
+{
+	return Size(
+		int32_t(sz.width),
+		int32_t(sz.height)
+	);
 }
 
 Point fromNSPoint(const NSPoint& pt)

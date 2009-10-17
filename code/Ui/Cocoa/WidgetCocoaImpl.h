@@ -3,8 +3,11 @@
 
 #import <Cocoa/Cocoa.h>
 
+#include <map>
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Itf/IWidget.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/EventSubject.h"
 #include "Core/Log/Log.h"
@@ -20,9 +23,12 @@ template < typename ControlType, typename NSControlType >
 class WidgetCocoaImpl : public ControlType
 {
 public:
+	typedef WidgetCocoaImpl< ControlType, NSControlType > class_t;
+
 	WidgetCocoaImpl(EventSubject* owner)
 	:	m_owner(owner)
 	,	m_control(0)
+	,	m_tracking(false)
 	{
 	}
 	
@@ -112,23 +118,63 @@ public:
 
 	virtual bool hasCapture() const
 	{
-		return false;
+		return m_tracking;
 	}
 
 	virtual void setCapture()
 	{
+		T_ASSERT (!m_tracking);
+		
+		NSCell* cell = [m_control cell];
+		if (cell)
+		{
+			NSRect bounds = [m_control bounds];
+			[cell trackMouse: nil inRect: bounds ofView: m_control untilMouseUp: NO];
+			m_tracking = true;
+		}
 	}
 
 	virtual void releaseCapture()
 	{
+		NSCell* cell = [m_control cell];
+		if (cell && m_tracking)
+		{
+			NSPoint pt = NSMakePoint(0, 0);
+			[cell stopTracking: pt at: pt inView: m_control mouseIsUp: NO];
+			m_tracking = false;
+		}
 	}
 
 	virtual void startTimer(int interval, int id)
 	{
+		ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< class_t >(
+			this,
+			&class_t::callbackTimer,
+			0
+		);
+	
+		NSTargetProxy* targetProxy = [[[NSTargetProxy alloc] init] autorelease];
+		[targetProxy setCallback: targetCallback];
+			
+		NSTimer* timer = [
+			NSTimer scheduledTimerWithTimeInterval: (double)interval / 1000.0
+			target: targetProxy
+			selector: @selector(dispatchActionCallback:)
+			userInfo: nil
+			repeats: YES
+		];
+		
+		m_timers[id] = timer;
 	}
-
+	
 	virtual void stopTimer(int id)
 	{
+		std::map< int, NSTimer* >::iterator i = m_timers.find(id);
+		if (i != m_timers.end())
+		{
+			[i->second release];
+			m_timers.erase(i);
+		}
 	}
 
 	virtual void setOutline(const Point* p, int np)
@@ -162,7 +208,9 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
-		return Size(text.length() * 16, 16);
+		NSString* str = makeNSString(text);
+		NSSize sz = [str sizeWithAttributes: NULL];
+		return fromNSSize(sz);
 	}
 
 	virtual void setFont(const Font& font)
@@ -241,12 +289,20 @@ public:
 protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
+	std::map< int, NSTimer* > m_timers;
+	bool m_tracking;
 	
 	void raiseSizeEvent()
 	{
 		Size sz = getRect().getSize();
 		SizeEvent s(m_owner, 0, sz);
 		m_owner->raiseEvent(EiSize, &s);
+	}
+	
+	void callbackTimer(void* controlId)
+	{
+		CommandEvent commandEvent(m_owner, 0);
+		m_owner->raiseEvent(EiTimer, &commandEvent);
 	}
 };
 	
