@@ -16,9 +16,13 @@ std::wstring fromNSString(const NSString* str);
 
 struct NSColor* makeNSColor(const Color& color);
 
+NSSize makeNSSize(const Size& sz);
+
 NSPoint makeNSPoint(const Point& pt);
 
 NSRect makeNSRect(const Rect& rc);
+
+Size fromNSSize(const NSSize& sz);
 
 Point fromNSPoint(const NSPoint& pt);
 

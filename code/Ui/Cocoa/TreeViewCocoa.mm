@@ -31,6 +31,9 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
 	[column setEditable: NO];
+	
+	NSCell* dataCell = [column dataCell];
+	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
 
 	m_control = [[NSOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setAutoresizesOutlineColumn: NO];
