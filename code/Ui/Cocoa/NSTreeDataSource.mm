@@ -28,9 +28,10 @@
 	return traktor::ui::makeNSString(m_callback->treeValue(item));
 }
 
-- (BOOL) outlineView:(NSOutlineView*)outlineView shouldEditTableColumn:(NSTableColumn*)tableColumn item:(id)item
+- (void) outlineView:(NSOutlineView*)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn*)tableColumn byItem:(id)item
 {
-	return NO;
+	NSString* str = (NSString*)object;
+	m_callback->treeSetValue(item, traktor::ui::fromNSString(str));
 }
 
 @end
