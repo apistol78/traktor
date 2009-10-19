@@ -13,6 +13,8 @@ struct ITreeDataCallback
 	virtual int treeNumberOfChildren(void* item) const = 0;
 	
 	virtual std::wstring treeValue(void* item) const = 0;
+	
+	virtual void treeSetValue(void* item, const std::wstring& value) = 0;
 };
 
 @interface NSTreeDataSource : NSObject
@@ -30,7 +32,7 @@ struct ITreeDataCallback
 
 - (id) outlineView:(NSOutlineView*)outlineView objectValueForTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
 
-- (BOOL) outlineView:(NSOutlineView*)outlineView shouldEditTableColumn:(NSTableColumn*)tableColumn item:(id)item;
+- (void) outlineView:(NSOutlineView*)outlineView setObjectValue:(id)object forTableColumn:(NSTableColumn*)tableColumn byItem:(id)item;
 
 @end
 

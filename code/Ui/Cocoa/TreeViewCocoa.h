@@ -51,6 +51,8 @@ public:
 	
 	virtual std::wstring treeValue(void* item) const;
 	
+	virtual void treeSetValue(void* item, const std::wstring& value);
+	
 	// ITargetProxyCallback
 	
 	virtual void targetProxy_Action(void* controlId);

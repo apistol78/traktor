@@ -2,6 +2,7 @@
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/EventSubject.h"
+#include "Ui/TreeView.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
@@ -33,7 +34,10 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	[delegateProxy setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
-	[column setEditable: NO];
+	if (style & TreeView::WsAutoEdit)
+		[column setEditable: YES];
+	else
+		[column setEditable: NO];
 	
 	NSCell* dataCell = [column dataCell];
 	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
@@ -159,6 +163,17 @@ std::wstring TreeViewCocoa::treeValue(void* item) const
 	T_ASSERT (realItem);
 
 	return realItem->getText();
+}
+
+void TreeViewCocoa::treeSetValue(void* item, const std::wstring& value)
+{
+	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
+	T_ASSERT (realItem);
+	
+	realItem->setText(value);
+	
+	CommandEvent commandEvent(m_owner, realItem);
+	m_owner->raiseEvent(EiContentChange, &commandEvent);
 }
 
 void TreeViewCocoa::targetProxy_Action(void* controlId)
