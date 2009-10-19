@@ -2,6 +2,7 @@
 #define traktor_ui_TreeViewCocoa_H
 
 #import "Ui/Cocoa/ObjCRef.h"
+#import "Ui/Cocoa/NSCustomOutlineView.h"
 
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Cocoa/NSTreeDataSource.h"
@@ -17,7 +18,7 @@ namespace traktor
 class TreeViewItemCocoa;
 
 class TreeViewCocoa
-:	public WidgetCocoaImpl< ITreeView, NSOutlineView, NSScrollView >
+:	public WidgetCocoaImpl< ITreeView, NSCustomOutlineView, NSScrollView >
 ,	public ITreeDataCallback
 ,	public ITargetProxyCallback
 ,	public INSOutlineViewEventsCallback
@@ -62,6 +63,8 @@ public:
 	// INSOutlineViewEventsCallback
 	
 	virtual void event_selectionDidChange();
+	
+	virtual void event_rightMouseDown(NSEvent* event);
 	
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;

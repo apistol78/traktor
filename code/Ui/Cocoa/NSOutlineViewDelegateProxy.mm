@@ -12,4 +12,9 @@
 	m_eventsCallback->event_selectionDidChange();
 }
 
+- (void) outlineViewRightMouseDown: (NSEvent*)event
+{
+	m_eventsCallback->event_rightMouseDown(event);
+}
+
 @end

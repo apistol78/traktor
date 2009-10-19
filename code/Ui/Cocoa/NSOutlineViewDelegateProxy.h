@@ -11,6 +11,8 @@ namespace traktor
 struct INSOutlineViewEventsCallback
 {
 	virtual void event_selectionDidChange() = 0;
+	
+	virtual void event_rightMouseDown(NSEvent* event) = 0;
 };
 	
 	}
@@ -24,6 +26,8 @@ struct INSOutlineViewEventsCallback
 - (void) setCallback: (traktor::ui::INSOutlineViewEventsCallback*)eventsCallback;
 
 - (void) outlineViewSelectionDidChange: (NSNotification*)notification;
+
+- (void) outlineViewRightMouseDown: (NSEvent*)event;
 
 @end
 

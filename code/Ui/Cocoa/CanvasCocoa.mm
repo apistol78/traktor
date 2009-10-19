@@ -11,10 +11,17 @@ CanvasCocoa::CanvasCocoa(NSView* view)
 :	m_view(view)
 ,	m_foregroundColor(0)
 ,	m_backgroundColor(0)
+,	m_clipStack(0)
 {
 	m_foregroundColor = [NSColor controlTextColor];
 	m_backgroundColor = [NSColor controlBackgroundColor];
 	[NSBezierPath setDefaultLineWidth: 1];
+}
+
+CanvasCocoa::~CanvasCocoa()
+{
+	while (m_clipStack > 0)
+		resetClipRect();
 }
 
 void CanvasCocoa::setForeground(const Color& foreground)
@@ -42,10 +49,22 @@ void CanvasCocoa::setPenThickness(int thickness)
 
 void CanvasCocoa::setClipRect(const Rect& rc)
 {
+	if (m_clipStack++ == 0)
+	{
+		NSGraphicsContext* context = [NSGraphicsContext currentContext];
+		[context saveGraphicsState];
+	}
+	
+	NSRectClip(makeNSRect(rc));
 }
 
 void CanvasCocoa::resetClipRect()
 {
+	if (--m_clipStack == 0)
+	{
+		NSGraphicsContext* context = [NSGraphicsContext currentContext];
+		[context restoreGraphicsState];
+	}
 }
 
 void CanvasCocoa::drawPixel(int x, int y, const Color& c)

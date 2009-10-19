@@ -15,6 +15,8 @@ class CanvasCocoa : public ICanvas
 public:
 	CanvasCocoa(NSView* view);
 	
+	virtual ~CanvasCocoa();
+	
 	virtual void setForeground(const Color& foreground);
 
 	virtual void setBackground(const Color& background);
@@ -69,6 +71,7 @@ private:
 	NSView* m_view;
 	NSColor* m_foregroundColor;
 	NSColor* m_backgroundColor;
+	int32_t m_clipStack;
 };
 	
 	}

@@ -1,6 +1,7 @@
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/MouseEvent.h"
 #include "Ui/EventSubject.h"
 #include "Ui/TreeView.h"
 #include "Core/Heap/GcNew.h"
@@ -12,7 +13,7 @@ namespace traktor
 	{
 	
 TreeViewCocoa::TreeViewCocoa(EventSubject* owner)
-:	WidgetCocoaImpl< ITreeView, NSOutlineView, NSScrollView >(owner)
+:	WidgetCocoaImpl< ITreeView, NSCustomOutlineView, NSScrollView >(owner)
 ,	m_rootItemRef(0)
 {
 }
@@ -42,7 +43,7 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	NSCell* dataCell = [column dataCell];
 	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
 
-	m_control = [[NSOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	m_control = [[NSCustomOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setAutoresizesOutlineColumn: NO];
 	[m_control addTableColumn: column];
 	[m_control setOutlineTableColumn: column];
@@ -198,6 +199,20 @@ void TreeViewCocoa::event_selectionDidChange()
 {	
 	CommandEvent commandEvent(m_owner, getSelectedItem());
 	m_owner->raiseEvent(EiSelectionChange, &commandEvent);
+}
+
+void TreeViewCocoa::event_rightMouseDown(NSEvent* event)
+{
+	NSPoint mousePosition = [event locationInWindow];
+	mousePosition = [m_control convertPointFromBase: mousePosition];
+
+	MouseEvent mouseEvent(
+		m_owner,
+		0,
+		MouseEvent::BtRight,
+		fromNSPoint(mousePosition)
+	);
+	m_owner->raiseEvent(EiButtonDown, &mouseEvent);
 }
 
 TreeViewItemCocoa* TreeViewCocoa::getRealItem(void* item) const
