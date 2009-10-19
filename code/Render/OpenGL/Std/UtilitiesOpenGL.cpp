@@ -34,14 +34,12 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_FLOAT;
 		break;
 
-#if !defined(__APPLE__)
 	case TfR16F:
 		outPixelSize = 2;
 		outComponents = 1;
 		outFormat = GL_RED;
 		outType = GL_HALF_FLOAT_ARB;
 		break;
-#endif
 
 	case TfR32F:
 		outPixelSize = 4;
