@@ -19,15 +19,16 @@ namespace traktor
 	
 class EventSubject;
 
-template < typename ControlType, typename NSControlType >	
+template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >	
 class WidgetCocoaImpl : public ControlType
 {
 public:
-	typedef WidgetCocoaImpl< ControlType, NSControlType > class_t;
+	typedef WidgetCocoaImpl< ControlType, NSControlType, NSViewType > class_t;
 
 	WidgetCocoaImpl(EventSubject* owner)
 	:	m_owner(owner)
 	,	m_control(0)
+	,	m_view(0)
 	,	m_tracking(false)
 	{
 	}
@@ -36,18 +37,31 @@ public:
 	{
 		if (m_control)
 		{
-			[m_control autorelease];
+			[m_control release];
 			m_control = 0;
+		}
+		if (m_view)
+		{
+			[m_view release];
+			m_view = 0;
 		}
 	}
 
 	virtual void setParent(IWidget* parent)
 	{
+		NSView* view = getView();
+		
+		[view removeFromSuperview];
+	
+		NSView* contentView = (NSView*)parent->getInternalHandle();
+		T_ASSERT (contentView);
+		
+		[contentView addSubview: view];
 	}
 
 	virtual void setText(const std::wstring& text)
 	{
-		[m_control setStringValue: makeNSString(text)];
+		[getControl() setStringValue: makeNSString(text)];
 	}
 
 	virtual std::wstring getText() const
@@ -70,15 +84,15 @@ public:
 
 	virtual void setVisible(bool visible)
 	{
-		[m_control setHidden: visible ? NO : YES];
+		[getView() setHidden: visible ? NO : YES];
 	}
 
 	virtual bool isVisible(bool includingParents) const
 	{
 		if (!includingParents)
-			return [m_control isHidden] == NO;
+			return [getView() isHidden] == NO;
 		else
-			return [m_control isHiddenOrHasHiddenAncestor] == NO;
+			return [getView() isHiddenOrHasHiddenAncestor] == NO;
 	}
 
 	virtual void setActive()
@@ -87,17 +101,17 @@ public:
 
 	virtual void setEnable(bool enable)
 	{
-		[m_control setEnabled: enable ? YES : NO];
+		[getControl() setEnabled: enable ? YES : NO];
 	}
 
 	virtual bool isEnable() const
 	{
-		return [m_control isEnabled] == YES;
+		return [getControl() isEnabled] == YES;
 	}
 
 	virtual bool hasFocus() const
 	{
-		NSWindow* window = [m_control window];
+		NSWindow* window = [getControl() window];
 		if (!window)
 			return false;
 			
@@ -111,7 +125,7 @@ public:
 
 	virtual void setFocus()
 	{
-		NSWindow* window = [m_control window];
+		NSWindow* window = [getControl() window];
 		if (window)
 			[window makeFirstResponder: m_control];
 	}
@@ -123,26 +137,12 @@ public:
 
 	virtual void setCapture()
 	{
-		T_ASSERT (!m_tracking);
-		
-		NSCell* cell = [m_control cell];
-		if (cell)
-		{
-			NSRect bounds = [m_control bounds];
-			[cell trackMouse: nil inRect: bounds ofView: m_control untilMouseUp: NO];
-			m_tracking = true;
-		}
+		m_tracking = true;
 	}
 
 	virtual void releaseCapture()
 	{
-		NSCell* cell = [m_control cell];
-		if (cell && m_tracking)
-		{
-			NSPoint pt = NSMakePoint(0, 0);
-			[cell stopTracking: pt at: pt inView: m_control mouseIsUp: NO];
-			m_tracking = false;
-		}
+		m_tracking = false;
 	}
 
 	virtual void startTimer(int interval, int id)
@@ -183,19 +183,19 @@ public:
 
 	virtual void setRect(const Rect& rect)
 	{
-		[m_control setFrame: makeNSRect(rect)];
+		[getView() setFrame: makeNSRect(rect)];
 		raiseSizeEvent();
 	}
 
 	virtual Rect getRect() const
 	{
-		NSRect rc = [m_control frame];
+		NSRect rc = [getView() frame];
 		return fromNSRect(rc);
 	}
 
 	virtual Rect getInnerRect() const
 	{
-		NSRect rc = [m_control frame];
+		NSRect rc = [getView() frame];
 		rc.origin.x =
 		rc.origin.y = 0;
 		return fromNSRect(rc);
@@ -262,7 +262,7 @@ public:
 
 	virtual Size getPreferedSize() const
 	{
-		NSSize idealSize = [[m_control cell] cellSize];
+		NSSize idealSize = [[getControl() cell] cellSize];
 		return Size(idealSize.width, idealSize.height);
 	}
 
@@ -273,7 +273,10 @@ public:
 
 	virtual void update(const Rect* rc, bool immediate)
 	{
-		[m_control display];
+		if (immediate)
+			[getView() display];
+		else
+			[getView() setNeedsDisplay: YES];
 	}
 
 	virtual void* getInternalHandle()
@@ -289,8 +292,19 @@ public:
 protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
+	NSViewType* m_view;
 	std::map< int, NSTimer* > m_timers;
 	bool m_tracking;
+	
+	NSControl* getControl() const
+	{
+		return m_control;
+	}
+	
+	NSView* getView() const
+	{
+		return m_view != 0 ? m_view : (NSView*)m_control;
+	}
 	
 	void raiseSizeEvent()
 	{

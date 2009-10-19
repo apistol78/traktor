@@ -30,7 +30,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/QuadSplitter.h"
@@ -104,14 +103,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_REWIND"), ui::Command(L"Scene.Editor.Rewind"), 16));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_PLAY"), ui::Command(L"Scene.Editor.Play"), 17));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_STOP"), ui::Command(L"Scene.Editor.Stop"), 18));
-
-	m_sliderTimeScale = gc_new< ui::Slider >();
-	m_sliderTimeScale->create(m_toolBarActions);
-	m_sliderTimeScale->setRange(0, 100);
-	m_sliderTimeScale->setValue(100);
-	m_sliderTimeScale->addChangeEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventTimeScaleChanged));
-	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarEmbed >(m_sliderTimeScale, 100));
-
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarSeparator >());
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_SINGLE_VIEW"), ui::Command(L"Scene.Editor.SingleView"), 13));
 	m_toolBarActions->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCENE_EDITOR_DOUBLE_VIEW"), ui::Command(L"Scene.Editor.DoubleView"), 14));
@@ -353,12 +344,6 @@ void ScenePreviewControl::eventToolBarActionClicked(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
 	handleCommand(command);
-}
-
-void ScenePreviewControl::eventTimeScaleChanged(ui::Event* event)
-{
-	float timeScale = m_sliderTimeScale->getValue() / 100.0f;
-	m_context->setTimeScale(timeScale);
 }
 
 void ScenePreviewControl::eventIdle(ui::Event* event)

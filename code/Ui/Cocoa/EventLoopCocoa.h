@@ -35,6 +35,8 @@ public:
 	
 private:
 	struct NSAutoreleasePool* m_pool;
+	int m_exitCode;
+	bool m_terminated;
 };
 
 	}

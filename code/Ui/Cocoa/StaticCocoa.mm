@@ -16,6 +16,7 @@ bool StaticCocoa::create(IWidget* parent, const std::wstring& text)
 	m_control = [[NSTextField alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setEditable: NO];
 	[m_control setBordered: NO];
+	[m_control setBezeled: NO];
 	[m_control setDrawsBackground: NO];
 	[m_control setStringValue: makeNSString(text)];
 	

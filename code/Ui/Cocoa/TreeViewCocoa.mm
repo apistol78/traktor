@@ -11,7 +11,7 @@ namespace traktor
 	{
 	
 TreeViewCocoa::TreeViewCocoa(EventSubject* owner)
-:	WidgetCocoaImpl< ITreeView, NSOutlineView >(owner)
+:	WidgetCocoaImpl< ITreeView, NSOutlineView, NSScrollView >(owner)
 ,	m_rootItemRef(0)
 {
 }
@@ -21,13 +21,16 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: this];
 
-	NSScrollView* scrollView = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
-	[scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-	[scrollView setHasVerticalScroller: YES];
-	[scrollView setHasHorizontalScroller: YES];
+	m_view = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[m_view setHasVerticalScroller: YES];
+	[m_view setHasHorizontalScroller: YES];
 
 	NSTreeDataSource* dataSource = [[[NSTreeDataSource alloc] init] autorelease];
 	[dataSource setCallback: this];
+
+	NSOutlineViewDelegateProxy* delegateProxy = [[[NSOutlineViewDelegateProxy alloc] init] autorelease];
+	[delegateProxy setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
 	[column setEditable: NO];
@@ -44,13 +47,14 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	[m_control setTarget: targetProxy];
 	[m_control setAction: @selector(dispatchActionCallback:)];
 	[m_control setDoubleAction: @selector(dispatchDoubleActionCallback:)];
+	[m_control setDelegate: delegateProxy];
 	
-	[scrollView setDocumentView: m_control];
+	[m_view setDocumentView: m_control];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	
-	[contentView addSubview: scrollView];
+	[contentView addSubview: m_view];
 	
 	return true;
 }
@@ -100,7 +104,13 @@ TreeViewItem* TreeViewCocoa::getRootItem() const
 
 TreeViewItem* TreeViewCocoa::getSelectedItem() const
 {
-	return 0;
+	int row = [m_control selectedRow];
+	
+	void* item = [m_control itemAtRow: row];
+	if (!item)
+		return 0;
+	
+	return getRealItem(item);
 }
 
 void* TreeViewCocoa::treeChildOfItem(int childIndex, void* item) const
@@ -167,6 +177,12 @@ void TreeViewCocoa::targetProxy_doubleAction(void* controlId)
 	
 	CommandEvent commandEvent(m_owner, realItem);
 	m_owner->raiseEvent(EiActivate, &commandEvent);
+}
+
+void TreeViewCocoa::event_selectionDidChange()
+{	
+	CommandEvent commandEvent(m_owner, getSelectedItem());
+	m_owner->raiseEvent(EiSelectionChange, &commandEvent);
 }
 
 TreeViewItemCocoa* TreeViewCocoa::getRealItem(void* item) const

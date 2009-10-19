@@ -83,9 +83,9 @@ Size ScrollBarCocoa::getPreferedSize() const
 	Size preferedSize = WidgetCocoaImpl< IScrollBar, NSScroller >::getPreferedSize();
 	
 	if (m_vertical)
-		preferedSize.cx = 24;
+		preferedSize.cx = 15;
 	else
-		preferedSize.cy = 24;
+		preferedSize.cy = 15;
 
 	return preferedSize;
 }

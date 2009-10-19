@@ -1,12 +1,42 @@
+#ifndef traktor_ui_NSCustomControl_H
+#define traktor_ui_NSCustomControl_H
 
 #import <Cocoa/Cocoa.h>
 
-@interface NSCustomControl : NSControl
+namespace traktor
 {
-	id m_delegate;
+	namespace ui
+	{
+	
+struct INSControlEventsCallback
+{
+	virtual bool event_drawRect(const NSRect& rect) = 0;
+
+	virtual bool event_viewDidEndLiveResize() = 0;
+	
+	virtual bool event_mouseDown(NSEvent* theEvent, int button) = 0;
+	
+	virtual bool event_mouseUp(NSEvent* theEvent, int button) = 0;
+		
+	virtual bool event_mouseMoved(NSEvent* theEvent, int button) = 0;
+};
+
+	}
 }
 
-- (void) setDelegate: (id)delegate;
+@interface NSCustomControl : NSControl
+{
+	traktor::ui::INSControlEventsCallback* m_eventsCallback;
+	NSString* m_string;
+}
+
+- (id) initWithFrame: (NSRect)frameRect;
+
+- (void) setCallback: (traktor::ui::INSControlEventsCallback*)eventsCallback;
+
+- (void) setStringValue: (NSString*)aString;
+
+- (NSString*) stringValue;
 
 - (BOOL) isFlipped;
 
@@ -18,6 +48,16 @@
 
 - (void) mouseUp: (NSEvent*)theEvent;
 
+- (void) rightMouseDown: (NSEvent*)theEvent;
+
+- (void) rightMouseUp: (NSEvent*)theEvent;
+
 - (void) mouseMoved: (NSEvent*)theEvent;
 
+- (void) mouseDragged: (NSEvent*)theEvent;
+
+- (void) rightMouseDragged: (NSEvent*)theEvent;
+
 @end
+
+#endif	// traktor_ui_NSCustomControl_H

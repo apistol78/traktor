@@ -13,17 +13,17 @@
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #if T_USE_ACCELERATED_RENDERER
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/ScreenRenderer.h"
-#include "Render/Shader.h"
-#include "Render/RenderTargetSet.h"
+#	include "Render/IRenderSystem.h"
+#	include "Render/IRenderView.h"
+#	include "Render/ScreenRenderer.h"
+#	include "Render/Shader.h"
+#	include "Render/RenderTargetSet.h"
 #else
-#include "Graphics/GraphicsSystem.h"
-#if defined(_WIN32)
-#include "Graphics/Dd7/GraphicsSystemDd7.h"
-#endif
-#include "Graphics/Surface.h"
+#	include "Graphics/GraphicsSystem.h"
+#	if defined(_WIN32)
+#		include "Graphics/Dd7/GraphicsSystemDd7.h"
+#	endif
+#	include "Graphics/Surface.h"
 #endif
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
@@ -229,6 +229,13 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 
 	if (m_renderView->begin())
 	{
+		const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0 };
+		m_renderView->clear(
+			render::CfColor | render::CfDepth | render::CfStencil,
+			clearColor,
+			1.0f,
+			0
+		);
 		if (m_movie)
 			m_moviePlayer->renderFrame();
 		m_renderView->end();

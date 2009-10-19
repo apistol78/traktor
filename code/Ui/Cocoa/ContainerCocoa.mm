@@ -10,16 +10,20 @@ ContainerCocoa::ContainerCocoa(EventSubject* owner)
 {
 }
 
+void ContainerCocoa::destroy()
+{
+	if (m_control)
+		[m_control setCallback: nil];
+
+	WidgetCocoaImpl< IContainer, NSCustomControl >::destroy();
+}
+
 bool ContainerCocoa::create(IWidget* parent, int style)
 {
 	m_control = [[NSCustomControl alloc]
 		initWithFrame: NSMakeRect(0, 0, 0, 0)
-	];
-	
-	NSControlDelegateProxy* proxy = [[NSControlDelegateProxy alloc] init];
-	[proxy setCallback: this];
-	
-	[m_control setDelegate: proxy];
+	];	
+	[m_control setCallback: this];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -40,19 +44,19 @@ bool ContainerCocoa::event_viewDidEndLiveResize()
 	return true;
 }
 
-bool ContainerCocoa::event_mouseDown(NSEvent* theEvent)
+bool ContainerCocoa::event_mouseDown(NSEvent* theEvent, int button)
 {
-	return true;
+	return false;
 }
 
-bool ContainerCocoa::event_mouseUp(NSEvent* theEvent)
+bool ContainerCocoa::event_mouseUp(NSEvent* theEvent, int button)
 {
-	return true;
+	return false;
 }
 	
-bool ContainerCocoa::event_mouseMoved(NSEvent* theEvent)
+bool ContainerCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 {
-	return true;
+	return false;
 }
 	
 	}

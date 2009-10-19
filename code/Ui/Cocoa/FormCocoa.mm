@@ -37,7 +37,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 
 	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_window setContentView: contentView];
-	
+		
 	return true;
 }
 
@@ -102,7 +102,10 @@ bool FormCocoa::isForeground() const
 void FormCocoa::setVisible(bool visible)
 {
 	if (visible)
+	{
 		[m_window makeKeyAndOrderFront: nil];
+		[m_window makeMainWindow];
+	}
 }
 
 bool FormCocoa::isVisible(bool includingParents) const

@@ -97,13 +97,14 @@ void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const
 	const uint32_t* sourceBits = (const uint32_t*)(sourceImage->getData());
 	uint32_t* destinationBits = (uint32_t*)[m_imageRep bitmapData];
 	uint32_t* destinationPreAlphaBits = (uint32_t*)[m_imageRepPreAlpha bitmapData];
+	uint32_t sourceWidth = sourceImage->getWidth();
 	
 	for (int y = rc.top; y < rc.bottom; ++y)
 	{
 		for (int x = rc.left; x < rc.right; ++x)
 		{
 			uint32_t dstOffset = destPos.x + (x - rc.left) + (size.cy - (destPos.y + (y - rc.top)) - 1) * size.cx;
-			uint32_t c = sourceBits[x + y * image->getWidth()];
+			uint32_t c = sourceBits[x + y * sourceWidth];
 			
 			uint32_t pa = (c & 0xff000000) >> 24;
 			uint32_t pr = (c & 0x000000ff);
@@ -156,7 +157,19 @@ void BitmapCocoa::setPixel(uint32_t x, uint32_t y, const Color& color)
 
 Color BitmapCocoa::getPixel(uint32_t x, uint32_t y) const
 {
-	return Color(0, 0, 0);
+	Size size = getSize();
+	
+	if (x >= size.cx || y >= size.cx)
+		return Color(0, 0, 0);
+
+	const uint32_t* sourceBits = (const uint32_t*)[m_imageRep bitmapData];
+	uint32_t c = sourceBits[x + (size.cy - y - 1) * size.cx];
+
+	uint32_t pr = (c & 0x000000ff);
+	uint32_t pg = (c & 0x0000ff00) >> 8;
+	uint32_t pb = (c & 0x00ff0000) >> 16;
+
+	return Color(pr, pg, pb);
 }
 
 	}
