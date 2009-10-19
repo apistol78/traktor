@@ -9,7 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
-class ListViewCocoa : public WidgetCocoaImpl< IListView, NSTableView >
+class ListViewCocoa : public WidgetCocoaImpl< IListView, NSTableView, NSScrollView >
 {
 public:
 	ListViewCocoa(EventSubject* owner);

@@ -6,6 +6,7 @@
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Cocoa/NSTreeDataSource.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
+#include "Ui/Cocoa/NSOutlineViewDelegateProxy.h"
 #include "Ui/Itf/ITreeView.h"
 
 namespace traktor
@@ -16,9 +17,10 @@ namespace traktor
 class TreeViewItemCocoa;
 
 class TreeViewCocoa
-:	public WidgetCocoaImpl< ITreeView, NSOutlineView >
+:	public WidgetCocoaImpl< ITreeView, NSOutlineView, NSScrollView >
 ,	public ITreeDataCallback
 ,	public ITargetProxyCallback
+,	public INSOutlineViewEventsCallback
 {
 public:
 	TreeViewCocoa(EventSubject* owner);
@@ -54,6 +56,10 @@ public:
 	virtual void targetProxy_Action(void* controlId);
 	
 	virtual void targetProxy_doubleAction(void* controlId);
+	
+	// INSOutlineViewEventsCallback
+	
+	virtual void event_selectionDidChange();
 	
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;

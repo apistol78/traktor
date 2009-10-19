@@ -54,10 +54,16 @@ void CanvasCocoa::drawPixel(int x, int y, const Color& c)
 
 void CanvasCocoa::drawLine(int x1, int y1, int x2, int y2)
 {
+	NSPoint p1 = makeNSPoint(Point(x1, y1));
+	NSPoint p2 = makeNSPoint(Point(x2, y2));
+	
+	p1.x += 0.5; p1.y += 0.5;
+	p2.x += 0.5; p2.y += 0.5;
+
 	[m_foregroundColor set];
 	[NSBezierPath
-		strokeLineFromPoint:makeNSPoint(Point(x1, y1))
-		toPoint:makeNSPoint(Point(x2, y2))
+		strokeLineFromPoint: p1
+		toPoint: p2
 	];
 }
 
@@ -85,12 +91,18 @@ void CanvasCocoa::drawSpline(const Point* pnts, int npnts)
 
 void CanvasCocoa::fillRect(const Rect& rc)
 {
+	NSRect nrc = makeNSRect(rc);
+	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
 	[m_backgroundColor set];
-	[NSBezierPath fillRect: makeNSRect(rc)];
+	[NSBezierPath fillRect: nrc];
 }
 
 void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 {
+	NSRect nrc = makeNSRect(rc);
+	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
 	NSGradient* gradient = [[[NSGradient alloc]
 		initWithColorsAndLocations:
 			m_foregroundColor, (CGFloat)0.0f,
@@ -99,19 +111,25 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 		]
 		autorelease];
 
-	[gradient drawInRect: makeNSRect(rc) angle: vertical ? 90.0f : 0.0f];
+	[gradient drawInRect: nrc angle: vertical ? 90.0f : 0.0f];
 }
 
 void CanvasCocoa::drawRect(const Rect& rc)
 {
+	NSRect nrc = makeNSRect(rc);
+	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
 	[m_foregroundColor set];
-	[NSBezierPath strokeRect: makeNSRect(rc)];
+	[NSBezierPath strokeRect: nrc];
 }
 
 void CanvasCocoa::drawRoundRect(const Rect& rc, int radius)
 {
+	NSRect nrc = makeNSRect(rc);
+	nrc = NSOffsetRect(nrc, 0.5, 0.5);
+
 	[m_foregroundColor set];
-	[NSBezierPath strokeRect: makeNSRect(rc)];
+	[NSBezierPath strokeRect: nrc];
 }
 
 void CanvasCocoa::drawPolygon(const Point* pnts, int count)
@@ -152,12 +170,22 @@ void CanvasCocoa::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 
 void CanvasCocoa::drawText(const Point& at, const std::wstring& text)
 {
+	NSFont* font = [NSFont controlContentFontOfSize: 11];
+	
+	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+	[attributes setObject: font forKey:NSFontAttributeName];
+
 	NSString* str = makeNSString(text);
-	[str drawAtPoint: makeNSPoint(at) withAttributes: NULL];
+	[str drawAtPoint: makeNSPoint(at) withAttributes: attributes];
 }
 
 void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
+	NSFont* font = [NSFont controlContentFontOfSize: 11];
+	
+	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+	[attributes setObject: font forKey:NSFontAttributeName];
+
 	NSString* str = makeNSString(text);
 	
 	NSRect nrc = makeNSRect(rc);
@@ -173,13 +201,19 @@ void CanvasCocoa::drawText(const Rect& rc, const std::wstring& text, Align halig
 	else if (valign == AnBottom)
 		nrc.origin.y = (nrc.origin.y + nrc.size.height) - nsz.height;
 
-	[str drawInRect: nrc withAttributes: NULL];
+	[str drawInRect: nrc withAttributes: attributes];
 }
 
 Size CanvasCocoa::getTextExtent(const std::wstring& text) const
 {
+	NSFont* font = [NSFont controlContentFontOfSize: 11];
+	
+	NSMutableDictionary* attributes = [NSMutableDictionary dictionary];
+	[attributes setObject: font forKey:NSFontAttributeName];
+
 	NSString* str = makeNSString(text);
-	NSSize size = [str sizeWithAttributes: NULL];
+	NSSize size = [str sizeWithAttributes: attributes];
+	
 	return fromNSSize(size);
 }
 	

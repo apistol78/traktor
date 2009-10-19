@@ -17,7 +17,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Slider;
 class Command;
 
 		namespace custom
@@ -76,7 +75,6 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
-	Ref< ui::Slider > m_sliderTimeScale;
 	SplitType m_splitType;
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;
@@ -94,8 +92,6 @@ private:
 	void updateEditState();
 
 	void eventToolBarActionClicked(ui::Event* event);
-
-	void eventTimeScaleChanged(ui::Event* event);
 
 	void eventIdle(ui::Event* event);
 };

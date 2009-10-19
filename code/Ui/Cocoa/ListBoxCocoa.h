@@ -13,7 +13,7 @@ namespace traktor
 	{
 
 class ListBoxCocoa
-:	public WidgetCocoaImpl< IListBox, NSTableView >
+:	public WidgetCocoaImpl< IListBox, NSTableView, NSScrollView >
 ,	public IListDataCallback
 {
 public:

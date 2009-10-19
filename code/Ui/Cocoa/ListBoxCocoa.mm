@@ -7,27 +7,39 @@ namespace traktor
 	{
 	
 ListBoxCocoa::ListBoxCocoa(EventSubject* owner)
-:	WidgetCocoaImpl< IListBox, NSTableView >(owner)
+:	WidgetCocoaImpl< IListBox, NSTableView, NSScrollView >(owner)
 {
 }
 
 bool ListBoxCocoa::create(IWidget* parent, int style)
 {
+	m_view = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[m_view setHasVerticalScroller: YES];
+	[m_view setHasHorizontalScroller: YES];
+	
 	NSListDataSource* dataSource = [[[NSListDataSource alloc] init] autorelease];
 	[dataSource setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
+	[column setEditable: NO];
+	
+	NSCell* dataCell = [column dataCell];
+	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
 
 	m_control = [[NSTableView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
 	[m_control addTableColumn: column];
 	[m_control setTarget: NSApp];
+	[m_control setHeaderView: nil];
 	[m_control setDataSource: dataSource];
+	
+	[m_view setDocumentView: m_control];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	
-	[contentView addSubview: m_control];
+	[contentView addSubview: m_view];
 	
 	return true;
 }
@@ -77,7 +89,8 @@ bool ListBoxCocoa::selected(int index) const
 
 Rect ListBoxCocoa::getItemRect(int index) const
 {
-	return Rect(0, 0, 0, 0);
+	NSRect rc = [m_control rectOfRow: index];
+	return fromNSRect(rc);
 }
 
 int ListBoxCocoa::listCount() const

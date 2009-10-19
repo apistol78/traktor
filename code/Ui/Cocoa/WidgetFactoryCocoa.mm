@@ -170,13 +170,13 @@ bool WidgetFactoryCocoa::getSystemColor(SystemColor systemColor, Color& outColor
 		break;
 	case ScActiveCaption:
 		{
-			outColor = Color(128, 140, 255);
+			outColor = Color(153, 180, 209);
 			return true;
 		}
 		break;
 	case ScInactiveCaption:
 		{
-			outColor = Color(80, 80, 128);
+			outColor = Color(163, 190, 219);
 			return true;
 		}
 		break;

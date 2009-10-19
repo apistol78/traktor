@@ -1,12 +1,36 @@
-#import "Ui/Cocoa/NSCustomControl.h"
-
+#include "Ui/Cocoa/NSCustomControl.h"
+#include "Ui/Cocoa/NSCustomCell.h"
 #include "Core/Log/Log.h"
 
 @implementation NSCustomControl
 
-- (void) setDelegate: (id)delegate
+- (id) initWithFrame: (NSRect)frameRect
 {
-	m_delegate = delegate;
+	self = [super initWithFrame: frameRect];
+	[self setCell: [[[NSCustomCell alloc] init] autorelease]];
+	m_string = 0;
+	return self;
+}
+
+- (void) setCallback: (traktor::ui::INSControlEventsCallback*)eventsCallback
+{
+	m_eventsCallback = eventsCallback;
+}
+
+- (void) setStringValue: (NSString*)aString
+{
+	if (m_string)
+		[m_string release];
+
+	m_string = aString;
+	
+	if (m_string)
+		[m_string retain];
+}
+
+- (NSString*) stringValue
+{
+	return m_string;
 }
 
 - (BOOL) isFlipped
@@ -16,42 +40,101 @@
 
 - (void) drawRect: (NSRect)rect
 {
-	if ([m_delegate respondsToSelector:@selector(drawRect:)])
-		[m_delegate drawRect: rect];
+	bool consumed = false;
 
-	[super drawRect: rect];
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_drawRect(rect);
+
+	if (!consumed)
+		[super drawRect: rect];
 }
 
 - (void) viewDidEndLiveResize
 {
-	if ([m_delegate respondsToSelector:@selector(viewDidEndLiveResize)])
-		[m_delegate viewDidEndLiveResize];
+	bool consumed = false;
+
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_viewDidEndLiveResize();
 		
-	[super viewDidEndLiveResize];
+	if (!consumed)
+		[super viewDidEndLiveResize];
 }
 
 - (void) mouseDown: (NSEvent*)theEvent
 {
-	if ([m_delegate respondsToSelector:@selector(mouseDown:)])
-		[m_delegate mouseDown: theEvent];
+	bool consumed = false;
 
-	[super mouseDown: theEvent];
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseDown(theEvent, 1);
+
+	if (!consumed)
+		[super mouseDown: theEvent];
 }
 
 - (void) mouseUp: (NSEvent*)theEvent
 {
-	if ([m_delegate respondsToSelector:@selector(mouseUp:)])
-		[m_delegate mouseUp: theEvent];
+	bool consumed = false;
 
-	[super mouseUp: theEvent];
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseUp(theEvent, 1);
+
+	if (!consumed)
+		[super mouseUp: theEvent];
+}
+
+- (void) rightMouseDown: (NSEvent*)theEvent
+{
+	bool consumed = false;
+
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseDown(theEvent, 2);
+
+	if (!consumed)
+		[super mouseDown: theEvent];
+}
+
+- (void) rightMouseUp: (NSEvent*)theEvent
+{
+	bool consumed = false;
+
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseUp(theEvent, 2);
+
+	if (!consumed)
+		[super mouseUp: theEvent];
 }
 
 - (void) mouseMoved: (NSEvent*)theEvent
 {
-	if ([m_delegate respondsToSelector:@selector(mouseMoved:)])
-		[m_delegate mouseMoved: theEvent];
+	bool consumed = false;
 
-	[super mouseMoved: theEvent];
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseMoved(theEvent, 0);
+
+	if (!consumed)
+		[super mouseMoved: theEvent];
+}
+
+- (void) mouseDragged: (NSEvent*)theEvent
+{
+	bool consumed = false;
+
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseMoved(theEvent, 1);
+
+	if (!consumed)
+		[super mouseMoved: theEvent];
+}
+
+- (void) rightMouseDragged: (NSEvent*)theEvent
+{
+	bool consumed = false;
+
+	if (m_eventsCallback)
+		consumed = m_eventsCallback->event_mouseMoved(theEvent, 2);
+
+	if (!consumed)
+		[super mouseMoved: theEvent];
 }
 
 @end

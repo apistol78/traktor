@@ -181,10 +181,6 @@
 				</item>
 				<item type="ExternalDependency">
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
-					<projectName>Traktor.Ui.Wx</projectName>
-				</item>
-				<item type="ExternalDependency">
-					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
 				<item type="ExternalDependency">
@@ -202,6 +198,10 @@
 				<item type="ExternalDependency">
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Xml</projectName>
+				</item>
+				<item type="ExternalDependency">
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
+					<projectName>Traktor.Ui.Cocoa</projectName>
 				</item>
 			</dependencies>
 		</item>

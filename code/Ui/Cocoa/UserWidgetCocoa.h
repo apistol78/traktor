@@ -1,10 +1,8 @@
 #ifndef traktor_ui_UserWidgetCocoa_H
 #define traktor_ui_UserWidgetCocoa_H
 
-#import "Ui/Cocoa/NSCustomControl.h"
-#import "Ui/Cocoa/NSControlDelegateProxy.h"
-
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
+#include "Ui/Cocoa/NSCustomControl.h"
 #include "Ui/Itf/IUserWidget.h"
 
 namespace traktor
@@ -18,8 +16,12 @@ class UserWidgetCocoa
 {
 public:
 	UserWidgetCocoa(EventSubject* owner);
+	
+	// IWidget
+	
+	virtual void destroy();
 
-	// IUserWidget implementation
+	// IUserWidget
 
 	virtual bool create(IWidget* parent, int style);
 	
@@ -29,11 +31,11 @@ public:
 	
 	virtual bool event_viewDidEndLiveResize();
 
-	virtual bool event_mouseDown(NSEvent* theEvent);
+	virtual bool event_mouseDown(NSEvent* theEvent, int button);
 	
-	virtual bool event_mouseUp(NSEvent* theEvent);
+	virtual bool event_mouseUp(NSEvent* theEvent, int button);
 		
-	virtual bool event_mouseMoved(NSEvent* theEvent);
+	virtual bool event_mouseMoved(NSEvent* theEvent, int button);
 };
 
 	}

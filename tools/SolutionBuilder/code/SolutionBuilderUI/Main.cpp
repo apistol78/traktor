@@ -5,6 +5,9 @@
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
 #	include <Ui/Win32/WidgetFactoryWin32.h>
+#elif defined(__APPLE__)
+#	include <Ui/Cocoa/EventLoopCocoa.h>
+#	include <Ui/Cocoa/WidgetFactoryCocoa.h>
 #else
 #	include <Ui/Wx/EventLoopWx.h>
 #	include <Ui/Wx/WidgetFactoryWx.h>
@@ -35,6 +38,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	ui::Application::getInstance().initialize(
 		new ui::EventLoopWin32(),
 		new ui::WidgetFactoryWin32()
+	);
+#elif defined(__APPLE__)
+	ui::Application::getInstance().initialize(
+		new ui::EventLoopCocoa(),
+		new ui::WidgetFactoryCocoa()
 	);
 #else
 	ui::Application::getInstance().initialize(

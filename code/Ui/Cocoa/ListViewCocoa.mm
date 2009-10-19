@@ -6,20 +6,26 @@ namespace traktor
 	{
 
 ListViewCocoa::ListViewCocoa(EventSubject* owner)
-:	WidgetCocoaImpl< IListView, NSTableView >(owner)
+:	WidgetCocoaImpl< IListView, NSTableView, NSScrollView >(owner)
 {
 }
 
 bool ListViewCocoa::create(IWidget* parent, int style)
 {
+	m_view = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+	[m_view setHasVerticalScroller: YES];
+	[m_view setHasHorizontalScroller: YES];
+
 	m_control = [[NSTableView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
-	[m_control setTarget: NSApp];
+	
+	[m_view setDocumentView: m_control];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	
-	[contentView addSubview: m_control];
+	[contentView addSubview: m_view];
 	
 	return true;
 }
@@ -49,6 +55,12 @@ int ListViewCocoa::getColumnCount() const
 int ListViewCocoa::addColumn(const std::wstring& columnHeader, int width)
 {
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: makeNSString(columnHeader)];
+	[column setEditable: NO];
+	[column setWidth: width];
+	
+	NSCell* dataCell = [column dataCell];
+	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
+	
 	[m_control addTableColumn: column];
 }
 

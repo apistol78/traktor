@@ -16,22 +16,20 @@ UserWidgetCocoa::UserWidgetCocoa(EventSubject* owner)
 {
 }
 
+void UserWidgetCocoa::destroy()
+{
+	if (m_control)
+		[m_control setCallback: nil];
+
+	WidgetCocoaImpl< IUserWidget, NSCustomControl >::destroy();
+}
+
 bool UserWidgetCocoa::create(IWidget* parent, int style)
 {
 	m_control = [[NSCustomControl alloc]
 		initWithFrame: NSMakeRect(0, 0, 0, 0)
 	];
-	
-	if (style & WsClientBorder)
-	{
-		NSCell* cell = [m_control cell];
-		[cell setBordered: YES];
-	}
-	
-	NSControlDelegateProxy* proxy = [[NSControlDelegateProxy alloc] init];
-	[proxy setCallback: this];
-	
-	[m_control setDelegate: proxy];
+	[m_control setCallback: this];
 	
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
@@ -43,6 +41,9 @@ bool UserWidgetCocoa::create(IWidget* parent, int style)
 
 bool UserWidgetCocoa::event_drawRect(const NSRect& rect)
 {
+	if (!m_owner->hasEventHandler(EiPaint))
+		return false;
+
 	Rect rc = fromNSRect(rect);
 
 	CanvasCocoa canvasImpl(m_control);
@@ -59,17 +60,19 @@ bool UserWidgetCocoa::event_viewDidEndLiveResize()
 	return true;
 }
 
-bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent)
+bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent, int button)
 {
+	if (!m_owner->hasEventHandler(EiButtonDown))
+		return false;
+
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 
-	int button = 0;
-	if (([theEvent buttonMask] & NSLeftMouseDownMask) != 0)
-		button |= MouseEvent::BtLeft;
-	if (([theEvent buttonMask] & NSRightMouseDownMask) != 0)
-		button |= MouseEvent::BtRight;
-	
+	if (button == 1)
+		button = MouseEvent::BtLeft;
+	else if (button == 2)
+		button = MouseEvent::BtRight;
+
 	MouseEvent mouseEvent(
 		m_owner,
 		0,
@@ -81,17 +84,19 @@ bool UserWidgetCocoa::event_mouseDown(NSEvent* theEvent)
 	return true;
 }
 
-bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent)
+bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent, int button)
 {
+	if (!m_owner->hasEventHandler(EiButtonUp))
+		return false;
+
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
 	
-	int button = 0;
-	if (([theEvent buttonMask] & NSLeftMouseDownMask) != 0)
-		button |= MouseEvent::BtLeft;
-	if (([theEvent buttonMask] & NSRightMouseDownMask) != 0)
-		button |= MouseEvent::BtRight;
-
+	if (button == 1)
+		button = MouseEvent::BtLeft;
+	else if (button == 2)
+		button = MouseEvent::BtRight;
+	
 	MouseEvent mouseEvent(
 		m_owner,
 		0,
@@ -103,17 +108,19 @@ bool UserWidgetCocoa::event_mouseUp(NSEvent* theEvent)
 	return true;
 }
 	
-bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent)
+bool UserWidgetCocoa::event_mouseMoved(NSEvent* theEvent, int button)
 {
+	if (!m_owner->hasEventHandler(EiMouseMove))
+		return false;
+
 	NSPoint mousePosition = [theEvent locationInWindow];
 	mousePosition = [m_control convertPointFromBase: mousePosition];
-	
-	int button = 0;
-	if (([theEvent buttonMask] & NSLeftMouseDownMask) != 0)
-		button |= MouseEvent::BtLeft;
-	if (([theEvent buttonMask] & NSRightMouseDownMask) != 0)
-		button |= MouseEvent::BtRight;
-	
+
+	if (button == 1)
+		button = MouseEvent::BtLeft;
+	else if (button == 2)
+		button = MouseEvent::BtRight;
+
 	MouseEvent mouseEvent(
 		m_owner,
 		0,
