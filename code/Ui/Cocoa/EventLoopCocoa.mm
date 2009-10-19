@@ -13,6 +13,7 @@ namespace traktor
 EventLoopCocoa::EventLoopCocoa()
 :	m_exitCode(0)
 ,	m_terminated(false)
+,	m_modifierFlags(0)
 {
 	m_pool = [[NSAutoreleasePool alloc] init];
 	[NSApplication sharedApplication];
@@ -31,7 +32,7 @@ bool EventLoopCocoa::process(EventSubject* owner)
 int EventLoopCocoa::execute(EventSubject* owner)
 {
 	const double c_shortInterval = 1.0 / 60.0;
-	const double c_longInterval = 1.0;
+	const double c_longInterval = 1.0 / 30.0;
 
 	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 	
@@ -49,6 +50,10 @@ int EventLoopCocoa::execute(EventSubject* owner)
 		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: untilDate inMode: NSDefaultRunLoopMode dequeue: YES];
 		if (event)
 		{
+			// Record modifier flags.
+			m_modifierFlags = [event modifierFlags];
+		
+			// Process event.
 			[NSApp sendEvent: event];
 			[NSApp updateWindows];
 			continue;
@@ -81,7 +86,16 @@ int EventLoopCocoa::getExitCode() const
 
 int EventLoopCocoa::getAsyncKeyState() const
 {
-	return KsNone;
+	int keyState = KsNone;
+	
+	if (m_modifierFlags & NSControlKeyMask)
+		keyState |= KsControl;
+	if (m_modifierFlags & NSAlternateKeyMask)
+		keyState |= KsMenu;
+	if (m_modifierFlags & NSShiftKeyMask)
+		keyState |= KsShift;
+
+	return keyState;
 }
 
 	}
