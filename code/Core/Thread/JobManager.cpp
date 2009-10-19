@@ -33,14 +33,14 @@ void Job::execute()
 	if (m_functor)
 	{
 		(*m_functor)();
-		Atomic::exchange(m_finished, 1);
+		m_finished = 1;
 	}
 }
 
 bool Job::wait(int32_t timeout)
 {
 	Thread* thread = ThreadManager::getInstance().getCurrentThread();
-	while (Atomic::exchange(m_finished, m_finished) == 0)
+	while (m_finished == 0)
 		thread->yield();
 	return true;
 }
