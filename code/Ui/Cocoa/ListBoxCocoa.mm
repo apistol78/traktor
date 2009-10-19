@@ -48,7 +48,7 @@ int ListBoxCocoa::add(const std::wstring& item)
 {
 	m_items.push_back(item);
 	[m_control reloadData];
-	return 0;
+	return int(m_items.size() - 1);
 }
 
 bool ListBoxCocoa::remove(int index)
