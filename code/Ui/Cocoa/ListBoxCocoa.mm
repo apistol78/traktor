@@ -1,5 +1,7 @@
 #include "Ui/Cocoa/ListBoxCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Ui/Events/MouseEvent.h"
+#include "Ui/EventSubject.h"
 
 namespace traktor
 {
@@ -13,6 +15,9 @@ ListBoxCocoa::ListBoxCocoa(EventSubject* owner)
 
 bool ListBoxCocoa::create(IWidget* parent, int style)
 {
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: this];
+
 	m_view = [[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[m_view setHasVerticalScroller: YES];
@@ -30,7 +35,9 @@ bool ListBoxCocoa::create(IWidget* parent, int style)
 	m_control = [[NSTableView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setColumnAutoresizingStyle: NSTableViewUniformColumnAutoresizingStyle];
 	[m_control addTableColumn: column];
-	[m_control setTarget: NSApp];
+	[m_control setTarget: targetProxy];
+	[m_control setAction: @selector(dispatchActionCallback:)];
+	[m_control setDoubleAction: @selector(dispatchDoubleActionCallback:)];
 	[m_control setHeaderView: nil];
 	[m_control setDataSource: dataSource];
 	
@@ -101,6 +108,25 @@ int ListBoxCocoa::listCount() const
 std::wstring ListBoxCocoa::listValue(NSTableColumn* tableColumn, int index) const
 {
 	return m_items[index];
+}
+
+void ListBoxCocoa::targetProxy_Action(void* controlId)
+{
+}
+
+void ListBoxCocoa::targetProxy_doubleAction(void* controlId)
+{
+	NSWindow* window = [m_control window];
+	NSPoint mousePosition = [window mouseLocationOutsideOfEventStream];
+	mousePosition = [m_control convertPointFromBase: mousePosition];
+
+	MouseEvent mouseEvent(
+		m_owner,
+		0,
+		MouseEvent::BtLeft,
+		fromNSPoint(mousePosition)
+	);
+	m_owner->raiseEvent(EiDoubleClick, &mouseEvent);
 }
 
 	}

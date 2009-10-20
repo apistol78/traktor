@@ -49,6 +49,7 @@ void CanvasCocoa::setPenThickness(int thickness)
 
 void CanvasCocoa::setClipRect(const Rect& rc)
 {
+/*
 	if (m_clipStack++ == 0)
 	{
 		NSGraphicsContext* context = [NSGraphicsContext currentContext];
@@ -56,15 +57,18 @@ void CanvasCocoa::setClipRect(const Rect& rc)
 	}
 	
 	NSRectClip(makeNSRect(rc));
+*/
 }
 
 void CanvasCocoa::resetClipRect()
 {
+/*
 	if (--m_clipStack == 0)
 	{
 		NSGraphicsContext* context = [NSGraphicsContext currentContext];
 		[context restoreGraphicsState];
 	}
+*/
 }
 
 void CanvasCocoa::drawPixel(int x, int y, const Color& c)
@@ -127,8 +131,7 @@ void CanvasCocoa::fillGradientRect(const Rect& rc, bool vertical)
 			m_foregroundColor, (CGFloat)0.0f,
 			m_backgroundColor, (CGFloat)1.0f,
 			nil
-		]
-		autorelease];
+		] autorelease];
 
 	[gradient drawInRect: nrc angle: vertical ? 90.0f : 0.0f];
 }

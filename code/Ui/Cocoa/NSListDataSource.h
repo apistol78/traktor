@@ -15,6 +15,8 @@ struct IListDataCallback
 	IListDataCallback* m_callback;
 }
 
+- (id) init;
+
 - (void) setCallback: (IListDataCallback*)callback;
 
 - (int) numberOfRowsInTableView: (NSTableView*)tableView;

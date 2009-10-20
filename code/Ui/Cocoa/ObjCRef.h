@@ -9,6 +9,8 @@
 	traktor::Ref< traktor::Object >* m_ref;
 }
 
+- (id) init;
+
 - (id) initWithRef: (traktor::Object*)ptr;
 
 - (void) dealloc;

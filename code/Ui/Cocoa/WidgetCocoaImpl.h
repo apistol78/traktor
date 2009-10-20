@@ -37,7 +37,7 @@ public:
 	{
 		// Release all timers.
 		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-			[i->second release];
+			[i->second autorelease];
 			
 		m_timers.clear();
 		
@@ -49,13 +49,13 @@ public:
 		// Release objects.
 		if (m_control)
 		{
-			[m_control release];
+			[m_control autorelease];
 			m_control = 0;
 		}
 		
 		if (m_view)
 		{
-			[m_view release];
+			[m_view autorelease];
 			m_view = 0;
 		}
 	}
@@ -177,8 +177,6 @@ public:
 			repeats: YES
 		];
 		
-		[targetProxy release];
-		
 		m_timers[id] = timer;
 	}
 	
@@ -187,7 +185,7 @@ public:
 		std::map< int, NSTimer* >::iterator i = m_timers.find(id);
 		if (i != m_timers.end())
 		{
-			[i->second release];
+			[i->second autorelease];
 			m_timers.erase(i);
 		}
 	}

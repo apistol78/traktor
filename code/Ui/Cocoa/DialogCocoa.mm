@@ -36,7 +36,7 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 	
 	[m_window setDelegate: proxy];
 
-	NSView* contentView = [[[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_window setContentView: contentView];
 	
 	return true;
@@ -71,8 +71,7 @@ void DialogCocoa::destroy()
 	if (m_window)
 	{
 		[m_window setDelegate: nil];
-		[m_window autorelease];
-		m_window = 0;
+		[m_window autorelease]; m_window = 0;
 	}
 }
 

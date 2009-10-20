@@ -54,6 +54,8 @@ private:
 	traktor::ui::ITargetProxyCallback* m_callback;
 }
 
+- (id) init;
+
 - (void) setCallback: (traktor::ui::ITargetProxyCallback*)callback;
 
 - (void) dispatchActionCallback: (id)controlId;

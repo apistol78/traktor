@@ -6,8 +6,11 @@
 
 - (id) initWithFrame: (NSRect)frameRect
 {
-	self = [super initWithFrame: frameRect];
-	m_string = 0;
+	if ((self = [super initWithFrame: frameRect]) != nil)
+	{
+		m_string = nil;
+		m_eventsCallback = 0;
+	}
 	return self;
 }
 
@@ -19,7 +22,7 @@
 - (void) setStringValue: (NSString*)aString
 {
 	if (m_string)
-		[m_string release];
+		[m_string autorelease];
 
 	m_string = aString;
 	

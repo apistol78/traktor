@@ -25,7 +25,7 @@ bool PopupMenuCocoa::create()
 
 void PopupMenuCocoa::destroy()
 {
-	[m_menu release]; m_menu = 0;
+	[m_menu autorelease]; m_menu = 0;
 }
 
 void PopupMenuCocoa::add(MenuItem* item)
@@ -35,11 +35,11 @@ void PopupMenuCocoa::add(MenuItem* item)
 		NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 		[targetProxy setCallback: this];
 	
-		NSMenuItem* menuItem = [[[NSMenuItem alloc]
+		NSMenuItem* menuItem = [[NSMenuItem alloc]
 			initWithTitle: makeNSString(item->getText())
 			action: nil
 			keyEquivalent: @""
-		] autorelease];
+		];
 		[menuItem setTarget: targetProxy];
 		[menuItem setAction: @selector(dispatchActionCallback:)];
 		[menuItem setRepresentedObject: [[ObjCRef alloc] initWithRef: item]];

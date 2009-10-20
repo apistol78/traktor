@@ -1,9 +1,11 @@
 #import <Cocoa/Cocoa.h>
 
 #include "Ui/Cocoa/EventLoopCocoa.h"
+#include "Ui/Cocoa/NSDebugAutoreleasePool.h"
 #include "Ui/Events/IdleEvent.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Enums.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -15,7 +17,7 @@ EventLoopCocoa::EventLoopCocoa()
 ,	m_terminated(false)
 ,	m_modifierFlags(0)
 {
-	m_pool = [[NSAutoreleasePool alloc] init];
+	m_pool = [[NSDebugAutoreleasePool alloc] init];
 	[NSApplication sharedApplication];
 }
 
@@ -31,23 +33,15 @@ bool EventLoopCocoa::process(EventSubject* owner)
 
 int EventLoopCocoa::execute(EventSubject* owner)
 {
-	const double c_shortInterval = 1.0 / 60.0;
-	const double c_longInterval = 1.0 / 30.0;
-
 	[NSApp finishLaunching];
-	
-	double interval = c_shortInterval;
+		
 	while (!m_terminated)
 	{
-		// Re-create pool; release pending objects.
-		[m_pool release];
-		m_pool = [[NSAutoreleasePool alloc] init];
-	
-		NSDate* untilDate = [[[NSDate alloc] initWithTimeIntervalSinceNow: interval] autorelease];
-	
+		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
+
 		// Get application events.
-		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: untilDate inMode: NSDefaultRunLoopMode dequeue: YES];
-		if (event)
+		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+		if (event != nil)
 		{
 			// Record modifier flags.
 			m_modifierFlags = [event modifierFlags];
@@ -61,13 +55,11 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			// No event queued; kick off idle.
 			IdleEvent idleEvent(owner);
 			owner->raiseEvent(EiIdle, &idleEvent);
-			if (idleEvent.requestedMore())
-				interval = c_shortInterval;
-			else
-				interval = c_longInterval;
 		}
+
+		[pool release];
 	}
-	
+
 	return m_exitCode;
 }
 

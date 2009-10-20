@@ -54,11 +54,22 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 
 void BitmapCocoa::destroy()
 {
-	[m_image release]; m_image = 0;
-	[m_imageRep release]; m_imageRep = 0;
-
-	[m_imagePreAlpha release]; m_imagePreAlpha = 0;
-	[m_imageRepPreAlpha release]; m_imageRepPreAlpha = 0;
+	if (m_image)
+		[m_image release];
+	
+	if (m_imageRep)
+		[m_imageRep release];
+		
+	if (m_imagePreAlpha)
+		[m_imagePreAlpha release];
+	
+	if (m_imageRepPreAlpha)
+		[m_imageRepPreAlpha release];
+		
+	m_image = 0;
+	m_imageRep = 0;
+	m_imagePreAlpha = 0;
+	m_imageRepPreAlpha = 0;
 }
 
 void BitmapCocoa::copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos)

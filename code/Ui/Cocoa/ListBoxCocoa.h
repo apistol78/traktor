@@ -15,6 +15,7 @@ namespace traktor
 class ListBoxCocoa
 :	public WidgetCocoaImpl< IListBox, NSTableView, NSScrollView >
 ,	public IListDataCallback
+,	public ITargetProxyCallback
 {
 public:
 	ListBoxCocoa(EventSubject* owner);
@@ -47,6 +48,12 @@ public:
 	
 	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const;
 	
+	// ITargetProxyCallback
+	
+	virtual void targetProxy_Action(void* controlId);
+	
+	virtual void targetProxy_doubleAction(void* controlId);
+		
 private:
 	std::vector< std::wstring > m_items;
 };
