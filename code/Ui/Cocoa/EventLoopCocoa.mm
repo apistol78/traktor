@@ -34,17 +34,16 @@ int EventLoopCocoa::execute(EventSubject* owner)
 	const double c_shortInterval = 1.0 / 60.0;
 	const double c_longInterval = 1.0 / 30.0;
 
-	NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
-	
 	[NSApp finishLaunching];
 	
 	double interval = c_shortInterval;
 	while (!m_terminated)
 	{
-		[pool release];
-		pool = [[NSAutoreleasePool alloc] init];
+		// Re-create pool; release pending objects.
+		[m_pool release];
+		m_pool = [[NSAutoreleasePool alloc] init];
 	
-		NSDate* untilDate = [[NSDate alloc] initWithTimeIntervalSinceNow: interval];
+		NSDate* untilDate = [[[NSDate alloc] initWithTimeIntervalSinceNow: interval] autorelease];
 	
 		// Get application events.
 		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: untilDate inMode: NSDefaultRunLoopMode dequeue: YES];
@@ -56,19 +55,18 @@ int EventLoopCocoa::execute(EventSubject* owner)
 			// Process event.
 			[NSApp sendEvent: event];
 			[NSApp updateWindows];
-			continue;
 		}
-		
-		// No event queued; kick off idle.
-		IdleEvent idleEvent(owner);
-		owner->raiseEvent(EiIdle, &idleEvent);
-		if (idleEvent.requestedMore())
-			interval = c_shortInterval;
 		else
-			interval = c_longInterval;
+		{
+			// No event queued; kick off idle.
+			IdleEvent idleEvent(owner);
+			owner->raiseEvent(EiIdle, &idleEvent);
+			if (idleEvent.requestedMore())
+				interval = c_shortInterval;
+			else
+				interval = c_longInterval;
+		}
 	}
-	
-	[pool release];
 	
 	return m_exitCode;
 }

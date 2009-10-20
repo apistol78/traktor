@@ -4,6 +4,7 @@
 #import <Cocoa/Cocoa.h>
 #import "Ui/Cocoa/NSWindowDelegateProxy.h"
 
+#include <map>
 #include "Ui/Itf/IForm.h"
 
 namespace traktor
@@ -126,7 +127,10 @@ public:
 
 private:
 	EventSubject* m_owner;
-	NSWindow* m_window;	
+	NSWindow* m_window;
+	std::map< int, NSTimer* > m_timers;
+	
+	void callbackTimer(void* controlId);
 };
 
 	}

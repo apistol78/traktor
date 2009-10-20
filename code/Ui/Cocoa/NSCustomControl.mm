@@ -7,7 +7,6 @@
 - (id) initWithFrame: (NSRect)frameRect
 {
 	self = [super initWithFrame: frameRect];
-	[self setCell: [[[NSCustomCell alloc] init] autorelease]];
 	m_string = 0;
 	return self;
 }

@@ -13,12 +13,12 @@ ListBoxCocoa::ListBoxCocoa(EventSubject* owner)
 
 bool ListBoxCocoa::create(IWidget* parent, int style)
 {
-	m_view = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	m_view = [[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[m_view setHasVerticalScroller: YES];
 	[m_view setHasHorizontalScroller: YES];
 	
-	NSListDataSource* dataSource = [[[NSListDataSource alloc] init] autorelease];
+	NSListDataSource* dataSource = [[NSListDataSource alloc] init];
 	[dataSource setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
@@ -98,7 +98,7 @@ int ListBoxCocoa::listCount() const
 	return int(m_items.size());
 }
 
-std::wstring ListBoxCocoa::listValue(int index) const
+std::wstring ListBoxCocoa::listValue(NSTableColumn* tableColumn, int index) const
 {
 	return m_items[index];
 }

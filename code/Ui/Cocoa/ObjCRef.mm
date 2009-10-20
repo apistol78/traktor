@@ -11,7 +11,7 @@
 
 - (void) dealloc
 {
-	delete m_ref;
+	delete m_ref; m_ref = 0;
 	[super dealloc];
 }
 

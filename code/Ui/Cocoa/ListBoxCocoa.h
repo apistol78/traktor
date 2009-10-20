@@ -45,7 +45,7 @@ public:
 	
 	virtual int listCount() const;
 	
-	virtual std::wstring listValue(int index) const;
+	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const;
 	
 private:
 	std::vector< std::wstring > m_items;

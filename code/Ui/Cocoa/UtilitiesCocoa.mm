@@ -42,7 +42,7 @@ OutputStream& operator << (OutputStream& os, const Rect& rc)
 NSString* makeNSString(const std::wstring& str)
 {
 	std::string mbs = wstombs(str);
-	return [[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding];
+	return [[[NSString alloc] initWithCString: mbs.c_str() encoding: NSUTF8StringEncoding] autorelease];
 }
 
 std::wstring fromNSString(const NSString* str)

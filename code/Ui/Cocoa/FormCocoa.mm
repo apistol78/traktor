@@ -1,9 +1,11 @@
 #import "Ui/Cocoa/NSCustomControl.h"
 
 #include "Ui/Cocoa/FormCocoa.h"
+#include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/EventSubject.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -35,7 +37,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 	
 	[m_window setDelegate: proxy];
 
-	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
+	NSView* contentView = [[[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
 	[m_window setContentView: contentView];
 		
 	return true;
@@ -71,6 +73,18 @@ bool FormCocoa::isMinimized() const
 
 void FormCocoa::destroy()
 {
+	// Release all timers.
+	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
+		[i->second release];
+		
+	m_timers.clear();
+
+	// Release objects.
+	if (m_window)
+	{
+		[m_window release];
+		m_window = 0;
+	}
 }
 
 void FormCocoa::setParent(IWidget* parent)
@@ -79,11 +93,12 @@ void FormCocoa::setParent(IWidget* parent)
 
 void FormCocoa::setText(const std::wstring& text)
 {
+	[m_window setTitle:makeNSString(text)];
 }
 
 std::wstring FormCocoa::getText() const
 {
-	return L"";
+	return fromNSString([m_window title]);
 }
 
 void FormCocoa::setToolTipText(const std::wstring& text)
@@ -155,10 +170,36 @@ void FormCocoa::releaseCapture()
 
 void FormCocoa::startTimer(int interval, int id)
 {
+	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< FormCocoa >(
+		this,
+		&FormCocoa::callbackTimer,
+		0
+	);
+
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: targetCallback];
+		
+	NSTimer* timer = [
+		NSTimer scheduledTimerWithTimeInterval: (double)interval / 1000.0
+		target: targetProxy
+		selector: @selector(dispatchActionCallback:)
+		userInfo: nil
+		repeats: YES
+	];
+	
+	[targetProxy release];
+	
+	m_timers[id] = timer;
 }
 
 void FormCocoa::stopTimer(int id)
 {
+	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
+	if (i != m_timers.end())
+	{
+		[i->second release];
+		m_timers.erase(i);
+	}
 }
 
 void FormCocoa::setOutline(const Point* p, int np)
@@ -275,6 +316,12 @@ void FormCocoa::event_windowDidResize()
 	Size sz = getRect().getSize();
 	SizeEvent s(m_owner, 0, sz);
 	m_owner->raiseEvent(EiSize, &s);
+}
+
+void FormCocoa::callbackTimer(void* controlId)
+{
+	CommandEvent commandEvent(m_owner, 0);
+	m_owner->raiseEvent(EiTimer, &commandEvent);
 }
 
 	}

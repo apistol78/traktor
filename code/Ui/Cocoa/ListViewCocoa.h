@@ -1,6 +1,8 @@
 #ifndef traktor_ui_ListViewCocoa_H
 #define traktor_ui_ListViewCocoa_H
 
+#import "Ui/Cocoa/NSListDataSource.h"
+
 #include "Ui/Cocoa/WidgetCocoaImpl.h"
 #include "Ui/Itf/IListView.h"
 
@@ -9,7 +11,9 @@ namespace traktor
 	namespace ui
 	{
 
-class ListViewCocoa : public WidgetCocoaImpl< IListView, NSTableView, NSScrollView >
+class ListViewCocoa
+:	public WidgetCocoaImpl< IListView, NSTableView, NSScrollView >
+,	public IListDataCallback
 {
 public:
 	ListViewCocoa(EventSubject* owner);
@@ -43,6 +47,15 @@ public:
 	virtual ListViewItems* getItems() const;
 	
 	virtual int getSelectedItems(std::vector< int >& items) const;
+	
+	// IListDataCallback
+	
+	virtual int listCount() const;
+	
+	virtual std::wstring listValue(NSTableColumn* tableColumn, int index) const;
+	
+private:
+	Ref< ListViewItems > m_items;
 };
 
 	}

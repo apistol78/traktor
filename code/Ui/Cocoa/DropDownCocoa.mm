@@ -12,7 +12,7 @@ DropDownCocoa::DropDownCocoa(EventSubject* owner)
 
 bool DropDownCocoa::create(IWidget* parent, const std::wstring& text, int style)
 {
-	NSComboBoxDataSource* dataSource = [[[NSComboBoxDataSource alloc] init] autorelease];
+	NSComboBoxDataSource* dataSource = [[NSComboBoxDataSource alloc] init];
 	[dataSource setCallback: this];
 
 	m_control = [[NSComboBox alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];

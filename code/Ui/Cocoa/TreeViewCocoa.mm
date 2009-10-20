@@ -23,15 +23,15 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 	[targetProxy setCallback: this];
 
-	m_view = [[[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	m_view = [[NSScrollView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 	[m_view setHasVerticalScroller: YES];
 	[m_view setHasHorizontalScroller: YES];
 
-	NSTreeDataSource* dataSource = [[[NSTreeDataSource alloc] init] autorelease];
+	NSTreeDataSource* dataSource = [[NSTreeDataSource alloc] init];
 	[dataSource setCallback: this];
 
-	NSOutlineViewDelegateProxy* delegateProxy = [[[NSOutlineViewDelegateProxy alloc] init] autorelease];
+	NSOutlineViewDelegateProxy* delegateProxy = [[NSOutlineViewDelegateProxy alloc] init];
 	[delegateProxy setCallback: this];
 
 	NSTableColumn* column = [[NSTableColumn alloc] initWithIdentifier: nil];
