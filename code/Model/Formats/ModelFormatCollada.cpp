@@ -28,6 +28,7 @@ struct Input
 	std::wstring semantic;
 	std::wstring source;
 	uint32_t offset;
+	uint32_t set;
 };
 
 struct PolygonData
@@ -97,11 +98,16 @@ void fetchPolygonData(PolygonData& polygonData, xml::Element* polyList, bool isT
 		polygonData.inputs[j].semantic = inputs[j]->getAttribute(L"semantic")->getValue();
 		polygonData.inputs[j].offset = parseString< uint32_t >(inputs[j]->getAttribute(L"offset")->getValue());
 		polygonData.inputs[j].source = inputs[j]->getAttribute(L"source")->getValue();
+		if (inputs[j]->getAttribute(L"set"))
+			polygonData.inputs[j].set = parseString< uint32_t >(inputs[j]->getAttribute(L"set")->getValue());
+		else
+			polygonData.inputs[j].set = 0;
 	}
 }
 
 source_data_info_t findSourceData(
 	const std::wstring& semantic, 
+	int set,
 	const PolygonData& polygonData, 
 	const std::vector< FloatData >& sourceData,
 	const std::pair< std::wstring, std::wstring >& vertexTranslation
@@ -112,7 +118,8 @@ source_data_info_t findSourceData(
 
 	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
 	{
-		if (semantic == polygonData.inputs[i].semantic)
+		if (semantic == polygonData.inputs[i].semantic && 
+			set == polygonData.inputs[i].set)
 		{
 			offset = polygonData.inputs[i].offset;
 			source = polygonData.inputs[i].source;
@@ -201,13 +208,17 @@ void createMesh(
 			}
 		}
 
-		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texcoordDataInfo = findSourceData(L"TEXCOORD", polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texcoord0DataInfo = findSourceData(L"TEXCOORD", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texcoord1DataInfo = findSourceData(L"TEXCOORD", 1, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t vcolorDataInfo = findSourceData(L"COLOR", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 
 		uint32_t vertexOffset = vertexDataInfo.second;
 		uint32_t normalOffset = normalDataInfo.second;
-		uint32_t texcoordOffset = texcoordDataInfo.second;
+		uint32_t texcoord0Offset = texcoord0DataInfo.second;
+		uint32_t texcoord1Offset = texcoord1DataInfo.second;
+		uint32_t vcolorOffset = vcolorDataInfo.second;
 		uint32_t indexOffset = 0;
 
 		uint32_t vertexIndexStride = 0;
@@ -215,7 +226,11 @@ void createMesh(
 			++vertexIndexStride;
 		if (normalDataInfo.first)
 			++vertexIndexStride;
-		if (texcoordDataInfo.first)
+		if (texcoord0DataInfo.first)
+			++vertexIndexStride;
+		if (texcoord1DataInfo.first)
+			++vertexIndexStride;
+		if (vcolorDataInfo.first)
 			++vertexIndexStride;
 
 		for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
@@ -251,14 +266,37 @@ void createMesh(
 					vertex.setNormal(outModel->addUniqueNormal(normal));
 				}
 
-				if (texcoordDataInfo.first)
+				if (texcoord0DataInfo.first)
 				{
-					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoordOffset];
+					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord0Offset];
 					Vector2 texCoord(
-						texcoordDataInfo.first->data[texCoordIndex * 2 + 0],
-						1.0f - texcoordDataInfo.first->data[texCoordIndex * 2 + 1]
+						texcoord0DataInfo.first->data[texCoordIndex * 2 + 0],
+						1.0f - texcoord0DataInfo.first->data[texCoordIndex * 2 + 1]
 					);
 					vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+				}
+				// Second uv set
+				if (texcoord1DataInfo.first)
+				{
+					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord1Offset];
+					Vector2 texCoord(
+						texcoord1DataInfo.first->data[texCoordIndex * 2 + 0],
+						1.0f - texcoord1DataInfo.first->data[texCoordIndex * 2 + 1]
+					);
+					// Unsupported!
+					//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+				}
+
+				if (vcolorDataInfo.first)
+				{
+					uint32_t vcolorIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vcolorOffset];
+					Vector4 vcolor(
+						vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
+						vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
+						vcolorDataInfo.first->data[vcolorIndex * 4 + 0],
+						vcolorDataInfo.first->data[vcolorIndex * 4 + 3]
+						);
+					vertex.setColor(outModel->addColor(vcolor));
 				}
 
 				polygon.addVertex(
