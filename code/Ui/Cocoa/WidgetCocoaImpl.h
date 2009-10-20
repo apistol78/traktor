@@ -35,11 +35,24 @@ public:
 	
 	virtual void destroy()
 	{
+		// Release all timers.
+		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
+			[i->second release];
+			
+		m_timers.clear();
+		
+		// Remove widget from parent.
+		NSView* view = getView();
+		if (view)
+			[view removeFromSuperview];
+		
+		// Release objects.
 		if (m_control)
 		{
 			[m_control release];
 			m_control = 0;
 		}
+		
 		if (m_view)
 		{
 			[m_view release];
@@ -153,7 +166,7 @@ public:
 			0
 		);
 	
-		NSTargetProxy* targetProxy = [[[NSTargetProxy alloc] init] autorelease];
+		NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
 		[targetProxy setCallback: targetCallback];
 			
 		NSTimer* timer = [
@@ -163,6 +176,8 @@ public:
 			userInfo: nil
 			repeats: YES
 		];
+		
+		[targetProxy release];
 		
 		m_timers[id] = timer;
 	}
@@ -219,7 +234,11 @@ public:
 
 	virtual Font getFont() const
 	{
-		return Font();
+		NSFont* font = [getControl() font];
+		return Font(
+			fromNSString([font fontName]),
+			[font pointSize]
+		);
 	}
 
 	virtual void setCursor(Cursor cursor)

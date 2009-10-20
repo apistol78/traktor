@@ -19,7 +19,10 @@ bool StaticCocoa::create(IWidget* parent, const std::wstring& text)
 	[m_control setBezeled: NO];
 	[m_control setDrawsBackground: NO];
 	[m_control setStringValue: makeNSString(text)];
-	
+
+	NSCell* cell = [m_control cell];
+	[cell setLineBreakMode: NSLineBreakByClipping];
+
 	NSView* contentView = (NSView*)parent->getInternalHandle();
 	T_ASSERT (contentView);
 	

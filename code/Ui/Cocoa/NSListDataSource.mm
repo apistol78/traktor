@@ -15,7 +15,7 @@
 
 - (id) tableView: (NSTableView*)tableView objectValueForTableColumn: (NSTableColumn*)tableColumn row: (int)row
 {
-	std::wstring str = m_callback->listValue(row);
+	std::wstring str = m_callback->listValue(tableColumn, row);
 	return traktor::ui::makeNSString(str);
 }
 

@@ -31,7 +31,7 @@ bool DialogCocoa::create(IWidget* parent, const std::wstring& text, int width, i
 
 	[m_window setTitle:makeNSString(text)];
 	
-	NSWindowDelegateProxy* proxy = [[[NSWindowDelegateProxy alloc] init] autorelease];
+	NSWindowDelegateProxy* proxy = [[NSWindowDelegateProxy alloc] init];
 	[proxy setCallback: this];
 	
 	[m_window setDelegate: proxy];
@@ -181,6 +181,8 @@ Rect DialogCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
 	NSRect contentFrame = [contentView frame];
+	contentFrame.size.width -= 1;
+	contentFrame.size.height -= 1;
 	return fromNSRect(contentFrame);
 }	
 
