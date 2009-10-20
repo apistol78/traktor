@@ -2,9 +2,16 @@
 
 @implementation ObjCRef
 
+- (id) init
+{
+	if ((self = [super init]) != nil)
+		m_ref = 0;
+	return self;
+}
+
 - (id) initWithRef: (traktor::Object*)ptr
 {
-	if (self = [super init])
+	if ((self = [super init]) != nil)
 		m_ref = new traktor::Ref< traktor::Object >(ptr);
 	return self;
 }

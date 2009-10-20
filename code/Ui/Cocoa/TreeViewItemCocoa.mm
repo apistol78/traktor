@@ -18,7 +18,7 @@ TreeViewItemCocoa::TreeViewItemCocoa(TreeViewItemCocoa* parent)
 TreeViewItemCocoa::~TreeViewItemCocoa()
 {
 	for (std::vector< ObjCRef* >::iterator i = m_children.begin(); i != m_children.end(); ++i)
-		[*i release];
+		[*i autorelease];
 		
 	m_children.resize(0);
 }

@@ -21,10 +21,12 @@ struct INSWindowEventsCallback
 	traktor::ui::INSWindowEventsCallback* m_eventsCallback;
 }
 
-- (void)setCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback;
+- (id) init;
 
-- (void)windowDidMove: (NSNotification*)notification;
+- (void) setCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback;
 
-- (void)windowDidResize: (NSNotification*)notification;
+- (void) windowDidMove: (NSNotification*)notification;
+
+- (void) windowDidResize: (NSNotification*)notification;
 
 @end

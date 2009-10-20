@@ -37,7 +37,7 @@ bool FormCocoa::create(IWidget* parent, const std::wstring& text, int width, int
 	
 	[m_window setDelegate: proxy];
 
-	NSView* contentView = [[[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)] autorelease];
+	NSView* contentView = [[NSCustomControl alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_window setContentView: contentView];
 		
 	return true;
@@ -75,15 +75,15 @@ void FormCocoa::destroy()
 {
 	// Release all timers.
 	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-		[i->second release];
+		[i->second autorelease];
 		
 	m_timers.clear();
 
 	// Release objects.
 	if (m_window)
 	{
-		[m_window release];
-		m_window = 0;
+		[m_window setDelegate: nil];
+		[m_window autorelease]; m_window = 0;
 	}
 }
 
@@ -187,8 +187,6 @@ void FormCocoa::startTimer(int interval, int id)
 		repeats: YES
 	];
 	
-	[targetProxy release];
-	
 	m_timers[id] = timer;
 }
 
@@ -197,7 +195,7 @@ void FormCocoa::stopTimer(int id)
 	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
 	if (i != m_timers.end())
 	{
-		[i->second release];
+		[i->second autorelease];
 		m_timers.erase(i);
 	}
 }

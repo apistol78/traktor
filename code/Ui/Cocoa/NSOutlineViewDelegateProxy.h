@@ -23,6 +23,8 @@ struct INSOutlineViewEventsCallback
 	traktor::ui::INSOutlineViewEventsCallback* m_eventsCallback;
 }
 
+- (id) init;
+
 - (void) setCallback: (traktor::ui::INSOutlineViewEventsCallback*)eventsCallback;
 
 - (void) outlineViewSelectionDidChange: (NSNotification*)notification;

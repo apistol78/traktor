@@ -17,6 +17,8 @@ struct IComboBoxDataCallback
 	IComboBoxDataCallback* m_callback;
 }
 
+- (id) init;
+
 - (void) setCallback: (IComboBoxDataCallback*)callback;
 
 - (NSUInteger)comboBox:(NSComboBox *)aComboBox indexOfItemWithStringValue:(NSString *)aString;

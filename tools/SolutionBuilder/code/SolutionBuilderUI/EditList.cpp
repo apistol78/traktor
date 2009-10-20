@@ -6,11 +6,6 @@
 #include "EditList.h"
 using namespace traktor;
 
-// It seems creating in-place edit control crashes in wxGTK.
-#if !defined(_WIN32)
-#	define T_NO_INPLACE_EDIT
-#endif
-
 bool EditList::create(ui::Widget* parent)
 {
 	if (!ListBox::create(parent))
@@ -23,7 +18,6 @@ bool EditList::create(ui::Widget* parent)
 		)
 	);
 
-#if !defined(T_NO_INPLACE_EDIT)
 	m_editItem = gc_new< ui::Edit >();
 	m_editItem->create(this, L"", ui::WsBorder);
 	m_editItem->hide();
@@ -33,7 +27,6 @@ bool EditList::create(ui::Widget* parent)
 			&EditList::eventEditFocus
 		)
 	);
-#endif
 
 	m_editId = -1;
 
@@ -49,7 +42,6 @@ void EditList::eventDoubleClick(ui::Event* event)
 {
 	ui::Point pt = static_cast< ui::MouseEvent* >(event)->getPosition();
 
-#if !defined(T_NO_INPLACE_EDIT)
 	if (m_editId != -1 || m_editItem->isVisible(false))
 		return;
 
@@ -82,14 +74,12 @@ void EditList::eventDoubleClick(ui::Event* event)
 
 		m_editId = -1;
 	}
-#endif
 
 	event->consume();
 }
 
 void EditList::eventEditFocus(ui::Event* event)
 {
-#if !defined(T_NO_INPLACE_EDIT)
 	if (m_editItem->isVisible(false) && static_cast< ui::FocusEvent* >(event)->lostFocus())
 	{
 		setFocus();
@@ -125,7 +115,6 @@ void EditList::eventEditFocus(ui::Event* event)
 
 		m_editId = -1;
 	}
-#endif
 	event->consume();
 }
 

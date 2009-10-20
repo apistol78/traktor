@@ -2,6 +2,13 @@
 
 @implementation NSTargetProxy
 
+- (id) init
+{
+	if ((self = [super init]) != nil)
+		m_callback = 0;
+	return self;
+}
+
 - (void) setCallback: (traktor::ui::ITargetProxyCallback*)callback
 {
 	m_callback = callback;

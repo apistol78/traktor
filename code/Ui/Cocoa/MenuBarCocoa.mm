@@ -17,7 +17,7 @@ namespace traktor
 		
 NSMenu* createNSMenu(ITargetProxyCallback* targetProxyCallback, MenuItem* item)
 {
-	NSMenu* menu = [[[NSMenu alloc] initWithTitle: makeNSString(item->getText())] autorelease];
+	NSMenu* menu = [[NSMenu alloc] initWithTitle: makeNSString(item->getText())];
 	[menu setAutoenablesItems: NO];
 	
 	for (int i = 0; i < item->count(); ++i)
@@ -77,16 +77,16 @@ bool MenuBarCocoa::create(IForm* form)
 void MenuBarCocoa::destroy()
 {
 	[NSApp setMainMenu: NULL];
-	[m_menu release];
+	[m_menu autorelease]; m_menu = 0;
 }
 
 void MenuBarCocoa::add(MenuItem* item)
 {	
-	NSMenuItem* menuItem = [[[NSMenuItem alloc]
+	NSMenuItem* menuItem = [[NSMenuItem alloc]
 		initWithTitle: makeNSString(item->getText())
 		action: nil
 		keyEquivalent: @""
-	] autorelease];
+	];
 	
 	if (item->count())
 	{

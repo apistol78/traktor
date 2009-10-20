@@ -23,6 +23,7 @@ bool EditCocoa::create(IWidget* parent, const std::wstring& text, int style)
 	
 	[contentView addSubview: m_control];
 
+	return true;
 }
 
 void EditCocoa::setSelection(int from, int to)

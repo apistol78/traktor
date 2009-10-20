@@ -2,6 +2,13 @@
 
 @implementation NSWindowDelegateProxy
 
+- (id) init
+{
+	if ((self = [super init]) != nil)
+		m_eventsCallback = 0;
+	return self;
+}
+
 - (void)setCallback: (traktor::ui::INSWindowEventsCallback*)eventsCallback
 {
 	m_eventsCallback = eventsCallback;
