@@ -13,7 +13,8 @@ namespace traktor
 	{
 
 EventLoopCocoa::EventLoopCocoa()
-:	m_exitCode(0)
+:	m_launching(true)
+,	m_exitCode(0)
 ,	m_terminated(false)
 ,	m_modifierFlags(0)
 {
@@ -28,12 +29,50 @@ EventLoopCocoa::~EventLoopCocoa()
 
 bool EventLoopCocoa::process(EventSubject* owner)
 {
-	return false;
+	if (m_launching)
+	{
+		[NSApp finishLaunching];
+		m_launching = false;
+	}
+
+	if (m_terminated)
+		return false;
+
+	// Process a single event.
+	{
+		NSDebugAutoreleasePool* pool = [[NSDebugAutoreleasePool alloc] init];
+
+		// Get application events.
+		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
+		if (event != nil)
+		{
+			// Record modifier flags.
+			m_modifierFlags = [event modifierFlags];
+		
+			// Process event.
+			[NSApp sendEvent: event];
+			[NSApp updateWindows];
+		}
+		else
+		{
+			// No event queued; kick off idle.
+			IdleEvent idleEvent(owner);
+			owner->raiseEvent(EiIdle, &idleEvent);
+		}
+
+		[pool release];
+	}
+	
+	return true;
 }
 
 int EventLoopCocoa::execute(EventSubject* owner)
 {
-	[NSApp finishLaunching];
+	if (m_launching)
+	{
+		[NSApp finishLaunching];
+		m_launching = false;
+	}
 		
 	while (!m_terminated)
 	{
