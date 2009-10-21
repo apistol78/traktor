@@ -480,8 +480,8 @@ VertexBuffer* RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexEl
 		return gc_new< VertexBufferVBO >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 	else
 		return gc_new< VertexBufferVAR >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
-//#elif defined(__APPLE__)
-//	return gc_new< VertexBufferVBO >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
+#elif defined(__APPLE__)
+	return gc_new< VertexBufferVBO >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 #else
 	return gc_new< VertexBufferVAR >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 #endif
@@ -496,8 +496,8 @@ IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t
 		return gc_new< IndexBufferIBO >(m_globalContext, indexType, bufferSize, dynamic);
 	else
 		return gc_new< IndexBufferIAR >(m_globalContext, indexType, bufferSize);
-//#elif defined(__APPLE__)
-//	return gc_new< IndexBufferIBO >(m_globalContext, indexType, bufferSize, dynamic);
+#elif defined(__APPLE__)
+	return gc_new< IndexBufferIBO >(m_globalContext, indexType, bufferSize, dynamic);
 #else
 	return gc_new< IndexBufferIAR >(m_globalContext, indexType, bufferSize);
 #endif

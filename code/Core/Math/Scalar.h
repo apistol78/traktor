@@ -18,7 +18,7 @@ namespace traktor
 /*! \brief Scalar.
  * \ingroup Core
  */
-T_MATH_ALIGN16 class T_DLLCLASS Scalar
+class T_MATH_ALIGN16 T_DLLCLASS Scalar
 {
 public:
 #if defined(T_MATH_USE_SSE2)

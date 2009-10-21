@@ -4843,6 +4843,15 @@
 													<fileName>Math/*.*</fileName>
 													<items/>
 												</item>
+												<item type="Filter">
+													<name>Sse2</name>
+													<items>
+														<item type="File">
+															<fileName>Math/Sse2/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
 											</items>
 										</item>
 										<item type="Filter">

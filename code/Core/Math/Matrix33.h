@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief 3x3 matrix.
  * \ingroup Core
  */
-T_MATH_ALIGN16 class T_DLLCLASS Matrix33
+class T_MATH_ALIGN16 T_DLLCLASS Matrix33
 {
 public:
 	union
