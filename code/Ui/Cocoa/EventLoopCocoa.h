@@ -35,6 +35,7 @@ public:
 	
 private:
 	struct NSAutoreleasePool* m_pool;
+	bool m_launching;
 	int m_exitCode;
 	bool m_terminated;
 	uint32_t m_modifierFlags;
