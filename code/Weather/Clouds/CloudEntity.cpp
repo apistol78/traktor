@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 #include "Weather/Clouds/CloudEntity.h"
+#include "Weather/Clouds/CloudMask.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "World/Entity/EntityUpdate.h"
@@ -167,6 +168,7 @@ bool CloudEntity::create(
 	const resource::Proxy< render::Shader >& particleShader,
 	const resource::Proxy< render::ITexture >& particleTexture,
 	const resource::Proxy< render::Shader >& impostorShader,
+	const resource::Proxy< CloudMask >& mask,
 	uint32_t impostorTargetResolution,
 	uint32_t impostorSliceCount,
 	uint32_t updateFrequency,
@@ -240,6 +242,7 @@ bool CloudEntity::create(
 	m_particleShader = particleShader;
 	m_particleTexture = particleTexture;
 	m_impostorShader = impostorShader;
+	m_mask = mask;
 
 	if (!m_cluster.create(particleData))
 		return false;
@@ -257,6 +260,9 @@ void CloudEntity::render(render::RenderContext* renderContext, const world::Worl
 	// Ensure all proxies are validated.
 	if (!m_particleShader.validate() || !m_particleTexture.validate() || !m_impostorShader.validate())
 		return;
+
+	// Validate optional mask.
+	m_mask.validate();
 
 	renderCluster(renderContext, worldRenderView, primitiveRenderer, m_cluster);
 }
@@ -328,6 +334,22 @@ void CloudEntity::renderCluster(
 		AlignedVector< CloudParticle > particles = cluster.getParticles();
 		std::sort(particles.begin(), particles.end(), ParticlePredicate< std::greater< float > >(cameraPosition));
 
+		// Sample opacity from mask.
+		if (m_mask.valid())
+		{
+			for (AlignedVector< CloudParticle >::iterator i = particles.begin(); i != particles.end(); ++i)
+			{
+				Vector4 position = i->position / m_particleData.getSize();
+
+				int32_t x = int32_t((position.x() * 0.5f + 0.5f) * m_mask->getSize());
+				int32_t z = int32_t((position.z() * 0.5f + 0.5f) * m_mask->getSize());
+
+				CloudMask::Sample sample = m_mask->getSample(x, z);
+				i->opacity = sample.opacity / 255.0f;
+				i->radius = i->maxRadius * sample.size / 255.0f;
+			}
+		}
+
 		// Update slices with different frequency.
 		uint32_t lastUpdateSlice = m_impostorSliceCount;
 		if (m_timeUntilUpdate <= 0.0f)
@@ -398,7 +420,7 @@ void CloudEntity::renderCluster(
 
 				for (uint32_t j = 0; j < instanceCount; ++j)
 				{
-					instanceData1[j] = sliceParticles[i + j]->position;
+					instanceData1[j] = sliceParticles[i + j]->position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, sliceParticles[i + j]->opacity);
 					instanceData2[j] = Vector4(
 						sliceParticles[i + j]->radius,
 						sliceParticles[i + j]->rotation,
