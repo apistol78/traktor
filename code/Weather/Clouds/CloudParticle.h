@@ -12,9 +12,11 @@ struct CloudParticle
 {
 	Vector4 position;
 	float positionVelocity;
+	float maxRadius;
 	float radius;
 	float rotation;
 	float rotationVelocity;
+	float opacity;
 	int sprite;
 };
 

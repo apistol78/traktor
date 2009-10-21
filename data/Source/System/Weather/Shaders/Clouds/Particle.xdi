@@ -148,6 +148,9 @@
 				<item>
 					<name>ParticleUV</name>
 				</item>
+				<item>
+					<name>ParticleOpacity</name>
+				</item>
 			</outputPins>
 			<values/>
 		</item>
@@ -570,6 +573,13 @@
 				<second>339</second>
 			</position>
 		</item>
+		<item type="traktor.render.Mul">
+			<comment></comment>
+			<position>
+				<first>71</first>
+				<second>191</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -640,16 +650,6 @@
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>ParticleRadius</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1190,6 +1190,36 @@
 			<destination>
 				<node ref="/object/nodes/item[19]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>ParticleRadius</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>ParticleOpacity</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
