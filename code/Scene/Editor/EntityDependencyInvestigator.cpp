@@ -16,7 +16,9 @@
 #include "I18N/Text.h"
 #include "I18N/Format.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/System/OS.h"
 #include "Core/Guid.h"
+#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/Types.h"
@@ -64,6 +66,8 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 		entityRootItem->expand();
 
 		std::map< const Type*, Ref< ui::TreeViewItem > > typeGroups;
+		std::set< Path > externalFiles;
+
 		for (RefArray< editor::PipelineDependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		{
 			const Type* assetType = &type_of((*i)->sourceAsset);
@@ -78,6 +82,18 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 
 			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, (*i)->name, 2);
 			dependencyItem->setData(L"DEPENDENCY", (*i));
+
+			externalFiles.insert((*i)->files.begin(), (*i)->files.end());
+		}
+
+		if (!externalFiles.empty())
+		{
+			Ref< ui::TreeViewItem > filesGroup = m_dependencyTree->createItem(entityRootItem, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
+			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
+			{
+				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
+				fileItem->setData(L"FILE", gc_new< Path >(*i));
+			}
 		}
 	}
 }
@@ -94,6 +110,13 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
 		Ref< db::Instance > instance = m_context->getEditor()->getProject()->getSourceDatabase()->getInstance(dependency->outputGuid);
 		if (instance)
 			m_context->getEditor()->openEditor(instance);
+	}
+
+	Ref< Path > file = item->getData< Path >(L"FILE");
+	if (file)
+	{
+		if (!OS::getInstance().editFile(*file))
+			log::error << L"Unable to edit file \"" << file->getFileName() << L"\"" << Endl;
 	}
 }
 

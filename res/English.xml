@@ -930,6 +930,10 @@
       <second>Dependency investigator</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_DEPENDENCY_FILES</first>
+      <second>External file(s)</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
       <second>Group "{0}"</second>
     </item>
