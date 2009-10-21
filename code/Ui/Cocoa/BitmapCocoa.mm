@@ -31,7 +31,7 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 		hasAlpha: YES
 		isPlanar: NO
 		colorSpaceName: NSCalibratedRGBColorSpace
-		bytesPerRow: NULL
+		bytesPerRow: width * 4
 		bitsPerPixel: NULL];
 	[m_image addRepresentation: m_imageRep];
 
@@ -45,7 +45,7 @@ bool BitmapCocoa::create(uint32_t width, uint32_t height)
 		hasAlpha: YES
 		isPlanar: NO
 		colorSpaceName: NSCalibratedRGBColorSpace
-		bytesPerRow: NULL
+		bytesPerRow: width * 4
 		bitsPerPixel: NULL];
 	[m_imagePreAlpha addRepresentation: m_imageRepPreAlpha];
 
