@@ -115,6 +115,11 @@ namespace traktor
 			return m_ptr[index];
 		}
 
+		const Type& operator [] (int index) const
+		{
+			return m_ptr[index];
+		}
+
 	private:
 		Type* m_ptr;
 		

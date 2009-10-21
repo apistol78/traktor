@@ -35,6 +35,7 @@ class Shader;
 	{
 
 class CloudEntity;
+class CloudMask;
 
 class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
 {
@@ -45,6 +46,8 @@ public:
 
 	CloudEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }
@@ -53,10 +56,13 @@ public:
 
 	inline const resource::Proxy< render::Shader >& getImpostorShader() const { return m_impostorShader; }
 
+	inline const resource::Proxy< CloudMask >& getMask() const { return m_mask; }
+
 private:
 	mutable resource::Proxy< render::Shader > m_particleShader;
 	mutable resource::Proxy< render::ITexture > m_particleTexture;
 	mutable resource::Proxy< render::Shader > m_impostorShader;
+	mutable resource::Proxy< CloudMask > m_mask;
 	uint32_t m_impostorTargetResolution;
 	uint32_t m_impostorSliceCount;
 	uint32_t m_updateFrequency;

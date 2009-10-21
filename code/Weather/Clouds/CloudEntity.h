@@ -40,6 +40,8 @@ class WorldRenderView;
 	namespace weather
 	{
 
+class CloudMask;
+
 class T_DLLCLASS CloudEntity : public world::SpatialEntity
 {
 	T_RTTI_CLASS(CloudEntity)
@@ -52,6 +54,7 @@ public:
 		const resource::Proxy< render::Shader >& particleShader,
 		const resource::Proxy< render::ITexture >& particleTexture,
 		const resource::Proxy< render::Shader >& impostorShader,
+		const resource::Proxy< CloudMask >& mask,
 		uint32_t impostorTargetResolution,
 		uint32_t impostorSliceCount,
 		uint32_t updateFrequency,
@@ -74,6 +77,7 @@ private:
 	resource::Proxy< render::Shader > m_particleShader;
 	resource::Proxy< render::ITexture > m_particleTexture;
 	resource::Proxy< render::Shader > m_impostorShader;
+	resource::Proxy< CloudMask > m_mask;
 	RefArray< render::RenderTargetSet > m_impostorTargets;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;

@@ -13,13 +13,14 @@
 #include "Mesh/Indoor/IndoorMeshFactory.h"
 #include "Mesh/Instance/InstanceMeshFactory.h"
 #include "Mesh/Blend/BlendMeshFactory.h"
+#include "Weather/Clouds/CloudMaskFactory.h"
 
 // Entity factories
 #include "World/Entity/LightEntityFactory.h"
 #include "World/Entity/ExternalEntityFactory.h"
 #include "World/Entity/GroupEntityFactory.h"
-#include "Weather/WeatherEntityFactory.h"
 #include "Mesh/MeshEntityFactory.h"
+#include "Weather/WeatherEntityFactory.h"
 
 // Entity renderers
 #include "World/Entity/LightEntityRenderer.h"
@@ -64,6 +65,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(gc_new< mesh::IndoorMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(gc_new< mesh::InstanceMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(gc_new< mesh::BlendMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(gc_new< weather::CloudMaskFactory >(context->getResourceDatabase()));
 }
 
 void DefaultEditorProfile::createEntityFactories(
@@ -74,8 +76,8 @@ void DefaultEditorProfile::createEntityFactories(
 	outEntityFactories.push_back(gc_new< world::LightEntityFactory >());
 	outEntityFactories.push_back(gc_new< world::ExternalEntityFactory >(context->getSourceDatabase()));
 	outEntityFactories.push_back(gc_new< world::GroupEntityFactory >());
-	outEntityFactories.push_back(gc_new< weather::WeatherEntityFactory >(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(gc_new< mesh::MeshEntityFactory >(context->getResourceManager()));
+	outEntityFactories.push_back(gc_new< weather::WeatherEntityFactory >(context->getResourceManager(), context->getRenderSystem()));
 }
 
 void DefaultEditorProfile::createEntityRenderers(

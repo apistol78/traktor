@@ -32,6 +32,7 @@ bool WeatherEntityPipeline::buildDependencies(
 		pipelineManager->addDependency(cloudEntityData->getParticleShader().getGuid(), true);
 		pipelineManager->addDependency(cloudEntityData->getParticleTexture().getGuid(), true);
 		pipelineManager->addDependency(cloudEntityData->getImpostorShader().getGuid(), true);
+		pipelineManager->addDependency(cloudEntityData->getMask().getGuid(), true);
 	}
 	return true;
 }
