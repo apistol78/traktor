@@ -954,6 +954,10 @@
       <second>Beroenden</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_DEPENDENCY_FILES</first>
+      <second>Filer</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
       <second>Grupp "{0}"</second>
     </item>
