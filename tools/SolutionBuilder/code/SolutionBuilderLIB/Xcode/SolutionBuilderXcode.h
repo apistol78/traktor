@@ -54,6 +54,8 @@ private:
 
 	void generatePBXGroupSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
+	void generatePBXAggregateTargetSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
+
 	void generatePBXNativeTargetSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
 	void generatePBXProjectSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
@@ -81,6 +83,8 @@ private:
 	std::wstring getProductName(const Project* project, Configuration::TargetFormat targetFormat) const;
 	
 	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool copyFilesDependencies, bool parentExternal) const;
+
+	bool isAggregate(const Project* project) const;
 };
 
 #endif	// SolutionBuilderXcode_H
