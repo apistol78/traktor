@@ -79,14 +79,16 @@ bool CloudParticleCluster::create(const CloudParticleData& particleData)
 
 		m_particles[i].position = (Vector4(x, y, z, 0.0f) * particleData.getSize()).xyz1();
 		m_particles[i].positionVelocity = float(random.nextDouble() * 0.2f) + 0.05f;
-		m_particles[i].radius = float(particleData.getRadiusMin() + particleData.getRadiusRange() * random.nextDouble());
+		m_particles[i].maxRadius = float(particleData.getRadiusMin() + particleData.getRadiusRange() * random.nextDouble());
+		m_particles[i].radius = m_particles[i].maxRadius;
 		m_particles[i].rotation = float(random.nextDouble() * 2.0 - 1.0) * PI;
 		m_particles[i].rotationVelocity = float(random.nextDouble() * 2.0 - 1.0) * 0.2f;
 		m_particles[i].sprite = int(random.nextDouble() * 4.0);
 	}
 
-	m_boundingBox.mn = -particleData.getSize().xyz0() * Scalar(0.5f) - Scalar(particleData.getRadiusMin() + particleData.getRadiusRange());
-	m_boundingBox.mx =  particleData.getSize().xyz0() * Scalar(0.5f) + Scalar(particleData.getRadiusMin() + particleData.getRadiusRange());
+	Scalar radiusExtent = Scalar(2.0f * (particleData.getRadiusMin() + particleData.getRadiusRange()));
+	m_boundingBox.mn = -particleData.getSize().xyz0() * Scalar(0.5f) - radiusExtent;
+	m_boundingBox.mx =  particleData.getSize().xyz0() * Scalar(0.5f) + radiusExtent;
 
 	return true;
 }

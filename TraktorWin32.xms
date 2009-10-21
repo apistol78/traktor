@@ -13573,6 +13573,15 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="Filter">
+					<name>Clouds</name>
+					<items>
+						<item type="File">
+							<fileName>Clouds/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency">
@@ -13583,6 +13592,12 @@
 				</item>
 				<item type="ProjectDependency">
 					<project ref="/object/projects/item[17]/dependencies/item[11]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency">
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
