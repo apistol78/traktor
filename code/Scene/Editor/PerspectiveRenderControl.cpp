@@ -303,7 +303,7 @@ void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 				m_context->selectAllEntities(false);
 
 			m_context->selectEntity(entityAdapter);
-			m_context->raiseSelect();
+			m_context->raiseSelect(this);
 		}
 
 		m_context->setPlaying(false);

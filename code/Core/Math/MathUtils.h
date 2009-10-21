@@ -83,6 +83,12 @@ inline float sign(float a)
 
 #endif
 
+template < typename Type >
+inline Type clamp(Type value, Type minLimit, Type maxLimit)
+{
+	return max(min(value, maxLimit), minLimit);
+}
+
 #if defined(_MSC_VER)
 
 inline float sinf(float rad)

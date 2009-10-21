@@ -1,6 +1,7 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ScenePreviewControl.h"
+#include "Scene/Editor/EntityDependencyInvestigator.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/ISceneControllerEditorFactory.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
@@ -122,7 +123,13 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_instanceGridFontBold = gc_new< ui::Font >(cref(m_instanceGrid->getFont()));
 	m_instanceGridFontBold->setBold(true);
 
-	m_site->createAdditionalPanel(m_entityPanel, 250, false);
+	m_site->createAdditionalPanel(m_entityPanel, 300, false);
+
+	// Create dependency panel.
+	m_entityDependencyPanel = gc_new< EntityDependencyInvestigator >(m_context);
+	m_entityDependencyPanel->create(parent);
+
+	m_site->createAdditionalPanel(m_entityDependencyPanel, 300, false);
 
 	// Create controller panel.
 	m_controllerPanel = gc_new< ui::Container >();
@@ -160,11 +167,13 @@ void SceneEditorPage::destroy()
 
 	// Destroy panels.
 	m_site->destroyAdditionalPanel(m_entityPanel);
+	m_site->destroyAdditionalPanel(m_entityDependencyPanel);
 	m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
 	m_entityMenu->destroy();
 	m_entityPanel->destroy();
+	m_entityDependencyPanel->destroy();
 	m_controllerPanel->destroy();
 	m_editPanel->destroy();
 
@@ -804,7 +813,8 @@ void SceneEditorPage::eventInstanceSelect(ui::Event* event)
 		m_context->selectEntity(entityAdapter);
 	}
 
-	updatePropertyObject();
+	// Raise context select event.
+	m_context->raiseSelect(this);
 }
 
 void SceneEditorPage::eventInstanceButtonDown(ui::Event* event)
@@ -858,7 +868,10 @@ void SceneEditorPage::eventContextPostBuild(ui::Event* event)
 
 void SceneEditorPage::eventContextSelect(ui::Event* event)
 {
-	updateInstanceGrid();
+	// Prevent updating instance grid if we're the one issued the selection event.
+	if (event->getItem() != this)
+		updateInstanceGrid();
+
 	updatePropertyObject();
 }
 

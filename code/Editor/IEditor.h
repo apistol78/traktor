@@ -2,13 +2,16 @@
 #define traktor_editor_IEditor_H
 
 #include <vector>
+#include <set>
 #include "Core/Config.h"
+#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
 
 class Type;
 class Guid;
+class Serializable;
 
 	namespace db
 	{
@@ -32,6 +35,7 @@ class Settings;
 class IProject;
 class IEditorPage;
 class IBrowseFilter;
+class PipelineDependency;
 
 /*! \brief Editor base interface.
  * \ingroup Editor
@@ -74,6 +78,15 @@ public:
 
 	/*! \brief Build assets. */
 	virtual void buildAssets(bool rebuild) = 0;
+
+	/*! \brief Build asset dependencies.
+	 *
+	 * \param asset Source asset.
+	 * \param recursionDepth Max dependency recursion depth.
+	 * \param outDependencies Set of dependency asset guid;s.
+	 * \return True if successful.
+	 */
+	virtual bool buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies) = 0;
 };
 
 	}

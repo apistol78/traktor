@@ -5,10 +5,8 @@
 #include "Editor/IProject.h"
 #include "Editor/IWizardTool.h"
 #include "Editor/Settings.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/Asset.h"
-#include "Editor/PipelineManager.h"
-#include "Editor/PipelineHash.h"
-#include "Editor/IPipeline.h"
 #include "Ui/Bitmap.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
@@ -326,47 +324,16 @@ void DatabaseView::filterType(db::Instance* instance)
 
 void DatabaseView::filterDependencies(db::Instance* instance)
 {
-	RefArray< IPipeline > pipelines;
-
-	std::vector< const Type* > pipelineTypes;
-	type_of< IPipeline >().findAllOf(pipelineTypes);
-
-	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	RefArray< PipelineDependency > dependencies;
+	if (instance && m_editor->buildAssetDependencies(instance->getObject(), ~0UL, dependencies))
 	{
-		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
-		if (pipeline)
-		{
-			if (!pipeline->create(m_editor->getSettings()))
-			{
-				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
-				continue;
-			}
-			pipelines.push_back(pipeline);
-		}
+		std::set< Guid > guidSet;
+		for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+			guidSet.insert((*i)->outputGuid);
+
+		m_filter = gc_new< GuidSetFilter >(cref(guidSet));
+		m_toolFilter->setToggled(true);
 	}
-
-	Ref< editor::IProject > project = m_editor->getProject();
-	T_ASSERT (project);
-
-	Ref< PipelineHash > pipelineHash = gc_new< PipelineHash >();
-	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
-		project->getSourceDatabase(),
-		project->getOutputDatabase(),
-		(IPipelineCache*)0,
-		pipelines,
-		pipelineHash
-	);
-
-	pipelineManager->addDependency(instance, false);
-
-	std::set< Guid > guidSet;
-
-	const RefArray< PipelineManager::Dependency >& dependencies = pipelineManager->getDependencies();
-	for (RefArray< PipelineManager::Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		guidSet.insert((*i)->outputGuid);
-
-	m_filter = gc_new< GuidSetFilter >(cref(guidSet));
-	m_toolFilter->setToggled(true);
 	updateView();
 }
 

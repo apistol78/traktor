@@ -54,8 +54,9 @@ class EntityData;
 	{
 
 class ISceneControllerEditor;
-class ScenePreviewControl;
 class SceneEditorContext;
+class ScenePreviewControl;
+class EntityDependencyInvestigator;
 class EntityAdapter;
 class SceneAsset;
 
@@ -96,6 +97,7 @@ private:
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::Container > m_entityPanel;
+	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ISceneControllerEditor > m_controllerEditor;

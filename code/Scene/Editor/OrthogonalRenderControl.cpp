@@ -35,7 +35,7 @@ const float c_minMagnification = 0.01f;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, Object)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
 :	m_mousePosition(0, 0)
@@ -280,7 +280,7 @@ void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 				m_context->selectAllEntities(false);
 
 			m_context->selectEntity(entityAdapter);
-			m_context->raiseSelect();
+			m_context->raiseSelect(this);
 		}
 
 		m_context->setPlaying(false);

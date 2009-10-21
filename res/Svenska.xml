@@ -950,6 +950,14 @@
 			<second>Delta {0}</second>
 		</item>
     <item>
+      <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
+      <second>Beroenden</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
+      <second>Grupp "{0}"</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_EDIT_SPACE_OBJECT</first>
       <second>Objektrymd</second>
     </item>
