@@ -22,7 +22,7 @@ namespace traktor
  * Elements are stored column major
  * in order to efficiently transform vectors.
  */
-T_MATH_ALIGN16 class T_DLLCLASS Matrix44
+class T_MATH_ALIGN16 T_DLLCLASS Matrix44
 {
 public:
 	T_MATH_INLINE Matrix44();

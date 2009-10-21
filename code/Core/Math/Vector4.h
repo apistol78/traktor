@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief 4d vector.
  * \ingroup Core
  */
-T_MATH_ALIGN16 class T_DLLCLASS Vector4
+class T_MATH_ALIGN16 T_DLLCLASS Vector4
 {
 public:
 #if defined(T_MATH_USE_SSE2)
@@ -64,7 +64,16 @@ public:
 	T_MATH_INLINE Vector4 xyz1() const;
 
 	template < int iX, int iY, int iZ, int iW >
-	T_MATH_INLINE Vector4 shuffle() const;
+	T_MATH_INLINE Vector4 shuffle() const
+	{
+#if defined(T_MATH_USE_SSE2)
+		const int mask = iX | (iY << 2) | (iZ << 4) | (iW << 6);
+		Vector4 tmp; tmp.m_data = _mm_shuffle_ps(m_data, m_data, mask);
+		return tmp;
+#else
+		return Vector4(_e[iX], _e[iY], _e[iZ], _e[iW]);
+#endif
+	}
 
 	T_MATH_INLINE Scalar length() const;
 
@@ -130,25 +139,6 @@ public:
 
 	friend T_MATH_INLINE T_DLLCLASS Vector4 operator / (const Vector4& l, const Vector4& r);
 };
-
-#if defined(T_MATH_USE_SSE2)
-
-template < int iX, int iY, int iZ, int iW >
-T_MATH_INLINE Vector4 Vector4::shuffle() const
-{
-	const int mask = iX | (iY << 2) | (iZ << 4) | (iW << 6);
-	return Vector4(_mm_shuffle_ps(m_data, m_data, mask));
-}
-
-#else
-
-template < int iX, int iY, int iZ, int iW >
-T_MATH_INLINE Vector4 Vector4::shuffle() const
-{
-	return Vector4(_e[iX], _e[iY], _e[iZ], _e[iW]);
-}
-
-#endif
 
 T_MATH_INLINE T_DLLCLASS Scalar dot3(const Vector4& l, const Vector4& r);
 

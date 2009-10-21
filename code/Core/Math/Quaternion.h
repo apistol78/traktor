@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Quaternion
  * \ingroup Core
  */
-T_MATH_ALIGN16 class T_DLLCLASS Quaternion
+class T_MATH_ALIGN16 T_DLLCLASS Quaternion
 {
 public:
 	union

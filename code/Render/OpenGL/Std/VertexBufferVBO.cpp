@@ -116,7 +116,7 @@ VertexBufferVBO::VertexBufferVBO(IContext* context, const std::vector< VertexEle
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
-#if defined(GL_HALF_FLOAT_ARB)
+#if defined(GL_ARB_half_float_pixel)
 		case DtHalf2:
 			m_attributeDesc[usageIndex].size = 2;
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;

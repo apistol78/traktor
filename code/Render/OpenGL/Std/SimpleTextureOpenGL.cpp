@@ -106,7 +106,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc)
 
 		if (desc.mipCount > 1 && ((m_width >> desc.mipCount) == 1 || (m_height >> desc.mipCount) == 1))
 		{
-			T_ASSERT (desc.format < TfDXT1 || desc.format > TfDXT5);
 			log::warning << L"Creating last missing mipmap, re-import texture" << Endl;
 
 			uint8_t dummy[32];
