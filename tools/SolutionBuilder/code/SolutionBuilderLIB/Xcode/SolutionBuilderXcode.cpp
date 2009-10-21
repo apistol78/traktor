@@ -894,6 +894,9 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		const RefList< Project >& externalProjects = (*i)->getProjects();
 		for (RefList< Project >::const_iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
 		{
+			if (isAggregate(*i))
+				continue;
+
 			Configuration::TargetFormat targetFormat = getTargetFormat(*i);
 
 			std::wstring productUid = ProjectUids(*i).getProductUid();
