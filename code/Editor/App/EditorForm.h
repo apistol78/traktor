@@ -104,6 +104,8 @@ public:
 
 	virtual void buildAssets(bool rebuild);
 
+	virtual bool buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
+
 	//@}
 
 private:

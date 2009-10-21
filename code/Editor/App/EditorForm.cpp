@@ -21,6 +21,7 @@
 #include "Editor/IEditorPlugin.h"
 #include "Editor/IEditorTool.h"
 #include "Editor/PipelineManager.h"
+#include "Editor/PipelineDependency.H"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Editor/MemCachedPipelineCache.h"
@@ -124,7 +125,7 @@ const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
 const uint32_t c_offsetFinished = 100;
 
-struct StatusListener : public PipelineManager::Listener
+struct StatusListener : public PipelineManager::IListener
 {
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 
@@ -1020,6 +1021,41 @@ void EditorForm::buildAssets(bool rebuild)
 	log::info << DecreaseIndent;
 
 	buildAssets(assetGuids, rebuild);
+}
+
+bool EditorForm::buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
+{
+	if (!m_project)
+		return false;
+
+	RefArray< IPipeline > pipelines;
+
+	std::vector< const Type* > pipelineTypes;
+	type_of< IPipeline >().findAllOf(pipelineTypes, false);
+
+	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	{
+		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
+		if (pipeline && pipeline->create(m_settings))
+			pipelines.push_back(pipeline);
+		else
+			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
+	}
+
+	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
+		m_project->getSourceDatabase(),
+		m_project->getOutputDatabase(),
+		(IPipelineCache*)0,
+		pipelines,
+		(PipelineHash*)0,
+		(PipelineManager::IListener*)0,
+		recursionDepth
+	);
+
+	pipelineManager->addDependency(asset);
+	pipelineManager->getDependencies(outDependencies);
+
+	return true;
 }
 
 void EditorForm::updateTitle()

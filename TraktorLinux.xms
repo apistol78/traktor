@@ -7032,6 +7032,10 @@
 										<fileName>../../../res/editor/EntityTypes.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/editor/Types.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 						</items>

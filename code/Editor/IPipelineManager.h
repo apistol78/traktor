@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,6 +32,7 @@ class Instance;
 
 class IPipeline;
 class IPipelineCache;
+class PipelineDependency;
 
 class T_DLLCLASS IPipelineManager : public Object
 {
@@ -64,6 +66,8 @@ public:
 	virtual void addDependency(
 		const Path& fileName
 	) = 0;
+
+	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
 	virtual bool build(bool rebuild) = 0;
 

@@ -926,6 +926,14 @@
       <second>Delta {0}</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
+      <second>Dependency investigator</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_DEPENDENCY_GROUP</first>
+      <second>Group "{0}"</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_EDIT_SPACE_OBJECT</first>
       <second>Edit object space</second>
     </item>

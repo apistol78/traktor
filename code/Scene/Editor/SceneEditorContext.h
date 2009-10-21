@@ -257,7 +257,7 @@ public:
 
 	void raisePostBuild();
 
-	void raiseSelect();
+	void raiseSelect(Object* item);
 
 	void addPreModifyEventHandler(ui::EventHandler* eventHandler);
 

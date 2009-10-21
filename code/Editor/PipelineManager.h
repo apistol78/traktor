@@ -22,6 +22,7 @@ class Thread;
 	namespace editor
 	{
 
+class PipelineDependency;
 class PipelineHash;
 
 /*! \brief Pipeline manager.
@@ -32,9 +33,9 @@ class T_DLLCLASS PipelineManager : public IPipelineManager
 	T_RTTI_CLASS(PipelineManager)
 
 public:
-	struct Listener
+	struct IListener
 	{
-		virtual ~Listener() {}
+		virtual ~IListener() {}
 
 		/*! \brief Called when an asset is about to be built.
 		 *
@@ -49,30 +50,14 @@ public:
 		) const = 0;
 	};
 
-	struct Dependency : public Object
-	{
-		std::wstring name;
-		Ref< IPipeline > pipeline;
-		Ref< const Serializable > sourceAsset;
-		std::wstring outputPath;
-		Guid outputGuid;
-		Ref< const Object > buildParams;
-		RefArray< Dependency > dependencies;
-		std::set< Path > files;
-		uint32_t checksum;
-		bool build;
-		uint32_t reason;
-
-		bool needBuild();
-	};
-
 	PipelineManager(
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
 		const RefArray< IPipeline >& pipelines,
 		PipelineHash* hash,
-		Listener* listener = 0
+		IListener* listener = 0,
+		uint32_t recursionDepth = ~0UL
 	);
 
 	virtual IPipeline* findPipeline(const Type& sourceType) const;
@@ -103,6 +88,8 @@ public:
 		const Path& fileName
 	);
 
+	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;
+
 	virtual bool build(bool rebuild);
 
 	virtual db::Database* getSourceDatabase() const;
@@ -115,23 +102,18 @@ public:
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 
-	const RefArray< Dependency >& getDependencies() const { return m_dependencies; }
-
 private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
 	Ref< PipelineHash > m_hash;
-	Listener* m_listener;
+	IListener* m_listener;
+	uint32_t m_maxRecursionDepth;
+	uint32_t m_currentRecursionDepth;
 	RefArray< IPipeline > m_pipelines;
-	RefArray< Dependency > m_dependencies;
-	Ref< Dependency > m_currentDependency;
+	RefArray< PipelineDependency > m_dependencies;
+	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< Serializable > > m_readCache;
-	Thread* m_buildThreads[4];
-	Semaphore m_buildQueueLock;
-	RefList< Dependency > m_buildQueue;
-	Event m_buildQueueWr;
-	Event m_buildQueueRd;
 	int32_t m_succeeded;
 	int32_t m_failed;
 
@@ -140,12 +122,12 @@ private:
 	 * \param guid Output guid.
 	 * \return Pointer to added dependency, null if dependency not added.
 	 */
-	Dependency* findDependency(const Guid& guid) const;
+	PipelineDependency* findDependency(const Guid& guid) const;
 
 	/*! \brief Add dependency.
 	 * Add dependency without checking if it's already added.
 	 *
-	 * \param sourceInstance Source asset datbase instance; null if not originate from database.
+	 * \param sourceInstance Source asset database instance; null if not originate from database.
 	 * \param sourceAsset Pointer to source asset object.
 	 * \param name Name of source asset.
 	 * \param outputPath Output path of target instance.
@@ -161,8 +143,8 @@ private:
 		bool build
 	);
 
-	/*! \brief Build thread method. */
-	void buildThread();
+	/*! \brief Check if dependency needs to be built. */
+	bool needBuild(PipelineDependency* dependency) const;
 };
 
 	}

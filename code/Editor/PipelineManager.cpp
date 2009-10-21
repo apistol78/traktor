@@ -2,6 +2,7 @@
 #include <limits>
 #include <algorithm>
 #include "Editor/PipelineManager.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Database/Database.h"
@@ -13,8 +14,6 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
-
-#define USE_BUILD_THREADS	0
 
 namespace traktor
 {
@@ -29,7 +28,8 @@ PipelineManager::PipelineManager(
 	IPipelineCache* cache,
 	const RefArray< IPipeline >& pipelines,
 	PipelineHash* hash,
-	Listener* listener
+	IListener* listener,
+	uint32_t recursionDepth
 )
 :	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
@@ -37,10 +37,11 @@ PipelineManager::PipelineManager(
 ,	m_pipelines(pipelines)
 ,	m_hash(hash)
 ,	m_listener(listener)
+,	m_maxRecursionDepth(recursionDepth)
+,	m_currentRecursionDepth(0)
 ,	m_succeeded(0)
 ,	m_failed(0)
 {
-	std::memset(m_buildThreads, 0, sizeof(m_buildThreads));
 }
 
 IPipeline* PipelineManager::findPipeline(const Type& sourceType) const
@@ -109,11 +110,11 @@ void PipelineManager::addDependency(const Serializable* sourceAsset, const std::
 		return;
 
 	// Don't add dependency multiple times.
-	if (Dependency* dependency = findDependency(outputGuid))
+	if (PipelineDependency* dependency = findDependency(outputGuid))
 	{
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
-			m_currentDependency->dependencies.push_back(dependency);
+			m_currentDependency->children.push_back(dependency);
 		return;
 	}
 
@@ -137,11 +138,11 @@ void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool buil
 		return;
 
 	// Don't add dependency multiple times.
-	if (Dependency* dependency = findDependency(sourceAssetInstance->getGuid()))
+	if (PipelineDependency* dependency = findDependency(sourceAssetInstance->getGuid()))
 	{
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
-			m_currentDependency->dependencies.push_back(dependency);
+			m_currentDependency->children.push_back(dependency);
 		return;
 	}
 
@@ -173,11 +174,11 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 		return;
 
 	// Don't add dependency multiple times.
-	if (Dependency* dependency = findDependency(sourceAssetGuid))
+	if (PipelineDependency* dependency = findDependency(sourceAssetGuid))
 	{
 		// Still need to add to current dependency so one asset can be dependent upon from several others.
 		if (m_currentDependency)
-			m_currentDependency->dependencies.push_back(dependency);
+			m_currentDependency->children.push_back(dependency);
 		return;
 	}
 
@@ -215,12 +216,17 @@ void PipelineManager::addDependency(
 	m_currentDependency->files.insert(fileName);
 }
 
+void PipelineManager::getDependencies(RefArray< PipelineDependency >& outDependencies) const
+{
+	outDependencies = m_dependencies;
+}
+
 bool PipelineManager::build(bool rebuild)
 {
 	PipelineHash::Hash hash;
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
-	for (RefArray< Dependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
+	for (RefArray< PipelineDependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
 		(*i)->checksum = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
 
@@ -271,25 +277,11 @@ bool PipelineManager::build(bool rebuild)
 			(*i)->reason |= IPipeline::BrForced;
 	}
 
-#if USE_BUILD_THREADS
-
-	// Create build threads.
-	for (uint32_t i = 0; i < sizeof_array(m_buildThreads); ++i)
-	{
-		m_buildThreads[i] = ThreadManager::getInstance().create(makeFunctor(
-			this,
-			&PipelineManager::buildThread
-		));
-		m_buildThreads[i]->start();
-	}
-
-#endif
-
 	// Build assets which are dirty or have dirty dependency assets.
 	m_succeeded = 0;
 	m_failed = 0;
 
-	for (RefArray< Dependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
+	for (RefArray< PipelineDependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
 		// Abort if current thread has been stopped; thread are stopped by worker dialog.
 		if (ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -317,7 +309,7 @@ bool PipelineManager::build(bool rebuild)
 		}
 
 		// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-		if ((*i)->needBuild())
+		if (needBuild(*i))
 		{
 			ScopeIndent scopeIndent(log::info);
 
@@ -331,16 +323,6 @@ bool PipelineManager::build(bool rebuild)
 					uint32_t(std::distance(m_dependencies.begin(), i)),
 					uint32_t(m_dependencies.size())
 				);
-
-#if USE_BUILD_THREADS
-
-			m_buildQueueLock.acquire();
-			m_buildQueue.push_back(*i);
-			m_buildQueueLock.release();
-			m_buildQueueWr.pulse();
-			m_buildQueueRd.wait();
-
-#else
 
 			bool result = (*i)->pipeline->buildOutput(
 				this,
@@ -362,18 +344,8 @@ bool PipelineManager::build(bool rebuild)
 
 			log::info << DecreaseIndent;
 			log::info << (result ? L"Build successful" : L"Build failed") << Endl;
-
-#endif
 		}
 	}
-
-#if USE_BUILD_THREADS
-
-	// Destroy builder threads.
-	for (uint32_t i = 0; i < sizeof_array(m_buildThreads); ++i)
-		ThreadManager::getInstance().destroy(m_buildThreads[i]);
-
-#endif
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -425,9 +397,9 @@ const Serializable* PipelineManager::getObjectReadOnly(const Guid& instanceGuid)
 	return object;
 }
 
-PipelineManager::Dependency* PipelineManager::findDependency(const Guid& guid) const
+PipelineDependency* PipelineManager::findDependency(const Guid& guid) const
 {
-	for (RefArray< Dependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
+	for (RefArray< PipelineDependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
 		if ((*i)->outputGuid == guid)
 			return *i;
@@ -453,7 +425,7 @@ void PipelineManager::addUniqueDependency(
 	}
 
 	// Register dependency, add to "parent" dependency as well.
-	Ref< Dependency > dependency = gc_new< Dependency >();
+	Ref< PipelineDependency > dependency = gc_new< PipelineDependency >();
 	dependency->name = name;
 	dependency->pipeline = pipeline;
 	dependency->sourceAsset = sourceAsset;
@@ -461,16 +433,20 @@ void PipelineManager::addUniqueDependency(
 	dependency->outputGuid = outputGuid;
 	dependency->build = build;
 	dependency->reason = IPipeline::BrNone;
-
+	dependency->parent = m_currentDependency;
 	if (m_currentDependency)
-		m_currentDependency->dependencies.push_back(dependency);
+		m_currentDependency->children.push_back(dependency);
 
 	uint32_t dependencyIndex = uint32_t(m_dependencies.size());
 	m_dependencies.push_back(dependency);
 
-	bool result;
+	bool result = true;
+
+	if (m_currentRecursionDepth < m_maxRecursionDepth)
 	{
-		Save< Ref< Dependency > > save(m_currentDependency, dependency);
+		Save< uint32_t > saveDepth(m_currentRecursionDepth, m_currentRecursionDepth + 1);
+		Save< Ref< PipelineDependency > > saveDependency(m_currentDependency, dependency);
+
 		result = pipeline->buildDependencies(
 			this,
 			sourceInstance,
@@ -487,59 +463,16 @@ void PipelineManager::addUniqueDependency(
 	}
 }
 
-void PipelineManager::buildThread()
+bool PipelineManager::needBuild(PipelineDependency* dependency) const
 {
-#if USE_BUILD_THREADS
-
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (!currentThread->stopped())
-	{
-		if (!m_buildQueueWr.wait(100))
-			continue;
-
-		m_buildQueueLock.acquire();
-
-		T_ASSERT (!m_buildQueue.empty());
-		Ref< Dependency > dependency = m_buildQueue.front();
-		m_buildQueue.pop_front();
-
-		m_buildQueueLock.release();
-		m_buildQueueRd.pulse();
-
-		bool result = dependency->pipeline->buildOutput(
-			this,
-			dependency->sourceAsset,
-			dependency->buildParams,
-			dependency->outputPath,
-			dependency->outputGuid,
-			dependency->reason
-		);
-
-		if (result)
-		{
-			PipelineHash::Hash hash;
-			hash.checksum = dependency->checksum;
-			hash.pipelineVersion = dependency->pipeline->getVersion();
-			m_hash->set(dependency->outputGuid, hash);
-			Atomic::increment(m_succeeded);
-		}
-		else
-			Atomic::increment(m_failed);
-	}
-
-#endif
-}
-
-bool PipelineManager::Dependency::needBuild()
-{
-	if (reason != IPipeline::BrNone)
+	if (dependency->reason != IPipeline::BrNone)
 		return true;
 
-	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
-		if ((*i)->needBuild())
+		if (needBuild(*i))
 		{
-			reason |= IPipeline::BrDependencyModified;
+			dependency->reason |= IPipeline::BrDependencyModified;
 			return true;
 		}
 	}

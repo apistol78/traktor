@@ -1,0 +1,47 @@
+#ifndef traktor_scene_EntityDependencyInvestigator_H
+#define traktor_scene_EntityDependencyInvestigator_H
+
+#include "Ui/Container.h"
+#include "Core/Heap/Ref.h"
+
+namespace traktor
+{
+	namespace ui
+	{
+
+class TreeView;
+
+	}
+
+	namespace scene
+	{
+
+class SceneEditorContext;
+class EntityAdapter;
+
+/*! \brief Entity asset dependency investigator. */
+class EntityDependencyInvestigator : public ui::Container
+{
+	T_RTTI_CLASS(EntityDependencyInvestigator)
+
+public:
+	EntityDependencyInvestigator(SceneEditorContext* context);
+
+	bool create(ui::Widget* parent);
+
+	void setEntityAdapter(EntityAdapter* entityAdapter);
+
+private:
+	Ref< SceneEditorContext > m_context;
+	Ref< ui::TreeView > m_dependencyTree;
+	Ref< EntityAdapter > m_currentEntityAdapter;
+
+	void eventDependencyActivate(ui::Event* event);
+
+	void eventContextSelect(ui::Event* event);
+};
+
+	}
+}
+
+#endif	// traktor_scene_EntityDependencyInvestigator_H

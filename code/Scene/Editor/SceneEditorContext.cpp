@@ -13,6 +13,7 @@
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityInstance.h"
+#include "Ui/Event.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
@@ -442,7 +443,7 @@ void SceneEditorContext::cloneSelected()
 	}
 
 	buildEntities();
-	raiseSelect();
+	raiseSelect(this);
 }
 
 void SceneEditorContext::setDebugTexture(render::ITexture* debugTexture)
@@ -475,9 +476,10 @@ void SceneEditorContext::raisePostBuild()
 	raiseEvent(EiPostBuild, 0);
 }
 
-void SceneEditorContext::raiseSelect()
+void SceneEditorContext::raiseSelect(Object* item)
 {
-	raiseEvent(EiSelect, 0);
+	ui::Event event(this, item);
+	raiseEvent(EiSelect, &event);
 }
 
 void SceneEditorContext::addPreModifyEventHandler(ui::EventHandler* eventHandler)

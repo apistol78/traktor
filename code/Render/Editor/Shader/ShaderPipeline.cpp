@@ -201,7 +201,7 @@ bool ShaderPipeline::create(const editor::Settings* settings)
 	m_debugCompleteGraphs = settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.DebugCompleteGraphs", false);
 	m_debugPath = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.DebugPath", L"");
 
-	log::info << L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation") << Endl;
+	log::debug << L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation") << Endl;
 	return true;
 }
 
