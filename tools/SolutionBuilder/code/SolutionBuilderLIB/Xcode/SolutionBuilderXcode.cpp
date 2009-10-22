@@ -1497,6 +1497,9 @@ void SolutionBuilderXcode::collectDependencies(
 	const RefList< Dependency >& dependencies = project->getDependencies();
 	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
+		if (!copyFilesDependencies && !(*i)->shouldLinkWithProduct())
+			continue;
+
 		ResolvedDependency dependency;
 
 		if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))

@@ -98,9 +98,21 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 	return true;
 }
 
+int ExternalDependency::getVersion() const
+{
+	return 1;
+}
+
 bool ExternalDependency::serialize(traktor::Serializer& s)
 {
+	if (s.getVersion() >= 1)
+	{
+		if (!Dependency::serialize(s))
+			return false;
+	}
+
 	s >> traktor::Member< std::wstring >(L"solutionFileName", m_solutionFileName);
 	s >> traktor::Member< std::wstring >(L"projectName", m_projectName);
+
 	return true;
 }

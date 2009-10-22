@@ -39,7 +39,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.99.8"
+#define TITLE L"SolutionBuilder v1.99.9"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 

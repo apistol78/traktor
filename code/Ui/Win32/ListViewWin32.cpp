@@ -44,7 +44,7 @@ bool ListViewWin32::create(IWidget* parent, int style)
 		WC_LISTVIEW,
 		_T(""),
 		WS_VISIBLE | WS_CHILD | WS_TABSTOP | LVS_SHOWSELALWAYS | nativeStyle,
-		nativeStyleEx,
+		0,
 		0,
 		0,
 		0,
@@ -53,6 +53,8 @@ bool ListViewWin32::create(IWidget* parent, int style)
 		true
 	))
 		return false;
+
+	ListView_SetExtendedListViewStyle(m_hWnd, nativeStyleEx);
 
 	if (!WidgetWin32Impl::create(style))
 		return false;
@@ -171,10 +173,18 @@ int ListViewWin32::getColumnWidth(int columnIndex) const
 
 void ListViewWin32::setItems(ListViewItems* items)
 {
-	ListView_DeleteAllItems(m_hWnd);
-	if ((m_items = items) != 0)
+	if (items)
 	{
-		for (int i = 0; i < items->count(); ++i)
+		int32_t currentCount = m_items ? m_items->count() : 0;
+		int32_t nextCount = items->count();
+
+		// Remove trailing rows if too many.
+		while (nextCount < currentCount)
+			ListView_DeleteItem(m_hWnd, --currentCount);
+
+		// Modify existing items.
+		T_ASSERT (currentCount <= nextCount);
+		for (int32_t i = 0; i < currentCount; ++i)
 		{
 			Ref< ListViewItem > item = items->get(i);
 			for (int j = 0; j < item->getColumnCount(); ++j)
@@ -183,7 +193,28 @@ void ListViewWin32::setItems(ListViewItems* items)
 
 				LV_ITEM lvi;
 
-				memset(&lvi, 0, sizeof(lvi));
+				std::memset(&lvi, 0, sizeof(lvi));
+				lvi.mask = LVIF_TEXT | LVIF_IMAGE;
+				lvi.pszText = const_cast< LPTSTR >(tmp.c_str());
+				lvi.iImage = item->getImage(j);
+				lvi.iItem = i;
+				lvi.iSubItem = j;
+
+				ListView_SetItem(m_hWnd, &lvi);
+			}
+		}
+
+		// Add trailing rows if we got more than before.
+		for (int32_t i = currentCount; i < nextCount; ++i)
+		{
+			Ref< ListViewItem > item = items->get(i);
+			for (int j = 0; j < item->getColumnCount(); ++j)
+			{
+				tstring tmp = wstots(item->getText(j));
+
+				LV_ITEM lvi;
+
+				std::memset(&lvi, 0, sizeof(lvi));
 				lvi.mask = LVIF_TEXT | LVIF_IMAGE;
 				lvi.pszText = const_cast< LPTSTR >(tmp.c_str());
 				lvi.iImage = item->getImage(j);
@@ -197,6 +228,10 @@ void ListViewWin32::setItems(ListViewItems* items)
 			}
 		}
 	}
+	else
+		ListView_DeleteAllItems(m_hWnd);
+
+	m_items = items;
 }
 
 ListViewItems* ListViewWin32::getItems() const
