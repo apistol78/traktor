@@ -507,7 +507,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 			}
 		}
 		
-		if (targetFormat == Configuration::TfExecutable || targetFormat == Configuration::TfExecutableConsole)
+		if (targetFormat == Configuration::TfExecutable)
 		{
 			std::set< ResolvedDependency > dependencies;
 			collectDependencies(solution, *i, dependencies, true, false);
@@ -626,7 +626,8 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 {
 	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		if (isAggregate(*i) || (getTargetFormat(*i) != Configuration::TfExecutable && getTargetFormat(*i) != Configuration::TfExecutableConsole))
+		// Only executable (not console though) projects gets files copied as they are "bundles".
+		if (isAggregate(*i) || getTargetFormat(*i) != Configuration::TfExecutable)
 			continue;
 			
 		log::info << (*i)->getName() << L"..." << Endl;
