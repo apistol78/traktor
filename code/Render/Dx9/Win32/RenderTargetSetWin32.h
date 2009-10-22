@@ -49,6 +49,8 @@ public:
 
 	virtual void swap(int index1, int index2);
 
+	virtual bool read(int index, void* buffer) const;
+
 	virtual HRESULT lostDevice();
 
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);

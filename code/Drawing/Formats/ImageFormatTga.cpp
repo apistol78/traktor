@@ -108,21 +108,19 @@ Image* ImageFormatTga::read(Stream* stream)
 
 bool ImageFormatTga::write(Stream* stream, Image* image)
 {
-	TGAHEADER header =
-	{
-		0,
-		0,
-		2,
-		0,
-		0,
-		0,
-		0,
-		0,
-		image->getWidth(),
-		image->getHeight(),
-		image->getPixelFormat()->getColorBits(),
-		image->getPixelFormat()->getAlphaBits()
-	};
+	TGAHEADER header;
+	header.identsize = 0;
+	header.colourmaptype = 0;
+	header.imagetype = 2;
+	header.colourmapstart = 0;
+	header.colourmaplength = 0;
+	header.colourmapbits = 0;
+	header.xstart = 0;
+	header.ystart = 0;
+	header.width = image->getWidth();
+	header.height = image->getHeight();
+	header.bits = image->getPixelFormat()->getColorBits();
+	header.descriptor = 0x20 | image->getPixelFormat()->getAlphaBits();
 
 	Ref< Image > clone = image->clone();
 	if (!clone)

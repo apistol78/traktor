@@ -43,7 +43,7 @@ inline bool isMeshVisible(
 		return false;
 
 	// Early out of bounding sphere is outside of frustum.
-	Vector4 center = worldView * meshBoundingBox.getCenter();
+	Vector4 center = worldView * meshBoundingBox.getCenter().xyz1();
 	Scalar radius = meshBoundingBox.getExtent().length();
 
 	if (!frustum.inside(center, radius))

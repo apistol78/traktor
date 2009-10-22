@@ -87,6 +87,10 @@
 #include "Resources/Standard16.h"
 #include "Resources/Types.h"
 
+#if defined(_DEBUG)
+#	include "Render/Capture/RenderSystemCapture.h"
+#endif
+
 #if defined(MessageBox)
 #	undef MessageBox
 #endif
@@ -452,6 +456,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	{
 		m_renderSystem = dynamic_type_cast< render::IRenderSystem* >(renderSystemType->newInstance());
 		T_ASSERT (m_renderSystem);
+
+#if defined(_DEBUG)
+		// Wrap render system in capture system.
+		m_renderSystem = gc_new< render::RenderSystemCapture >(m_renderSystem);
+#endif
 
 		if (!m_renderSystem->create())
 		{
