@@ -514,9 +514,6 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 
 			for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
-				if (!j->external)
-					continue;
-					
 				Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 				if (targetFormat != Configuration::TfSharedLibrary)
 					continue;
@@ -648,9 +645,6 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 
 		for (std::set< ResolvedDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
-			if (!j->external)
-				continue;
-				
 			Configuration::TargetFormat targetFormat = getTargetFormat(j->project);
 			if (targetFormat != Configuration::TfSharedLibrary)
 				continue;
