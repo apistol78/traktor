@@ -161,6 +161,11 @@ render::ISimpleTexture* createRandomRotationTexture(render::IRenderSystem* rende
 	return renderSystem->createSimpleTexture(desc);
 }
 
+float calculateViewZ(float nearZ, float farZ, float z)
+{
+	return ((farZ + nearZ) / (farZ - nearZ) + (1.0f / z) * ((-2.0f * farZ * nearZ) / (farZ - nearZ))) * 0.5f + 0.5f;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderer", WorldRenderer, Object)
@@ -495,10 +500,6 @@ void WorldRenderer::render(uint32_t flags, int frame)
 
 	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 	{
-		float sliceDenom = float(m_settings.shadowCascadingSlices);
-		if (m_settings.shadowFarZ < m_settings.viewFarZ)
-			++sliceDenom;
-
 		const float shadowClear[] = { m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ };
 		for (int slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 		{
@@ -520,17 +521,16 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		render::Viewport viewport = m_renderView->getViewport();
 		render::Viewport sliceViewport = viewport;
 
-		float sliceDenom = float(m_settings.shadowCascadingSlices);
-		if (m_settings.shadowFarZ < m_settings.viewFarZ)
-			++sliceDenom;
-
 		// Render opaque visuals.
 		if (flags & WrfVisualOpaque)
 		{
 			for (int slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
 			{
-				sliceViewport.nearZ = viewport.nearZ + float(slice * (viewport.farZ - viewport.nearZ)) / sliceDenom;
-				sliceViewport.farZ = viewport.nearZ + float((slice + 1) * (viewport.farZ - viewport.nearZ)) / sliceDenom;
+				float zn = max(m_splitPositions[slice], m_settings.viewNearZ);
+				float zf = min(m_splitPositions[slice + 1], m_settings.shadowFarZ);
+
+				sliceViewport.nearZ = calculateViewZ(m_settings.viewNearZ, m_settings.viewFarZ, zn);
+				sliceViewport.farZ = calculateViewZ(m_settings.viewNearZ, m_settings.viewFarZ, zf);
 
 				m_renderView->setViewport(sliceViewport);
 				f.visual[slice]->getRenderContext()->render(render::RenderContext::RfOpaque);
@@ -540,8 +540,8 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		// Render non shadow slice.
 		if (m_settings.shadowFarZ < m_settings.viewFarZ)
 		{
-			sliceViewport.nearZ = viewport.nearZ + float(m_settings.shadowCascadingSlices * (viewport.farZ - viewport.nearZ)) / sliceDenom;
-			sliceViewport.farZ = viewport.nearZ + float((m_settings.shadowCascadingSlices + 1) * (viewport.farZ - viewport.nearZ)) / sliceDenom;
+			sliceViewport.nearZ = calculateViewZ(m_settings.viewNearZ, m_settings.viewFarZ, m_settings.shadowFarZ);
+			sliceViewport.farZ = 1.0f;
 
 			m_renderView->setViewport(sliceViewport);
 			f.visual[m_settings.shadowCascadingSlices]->getRenderContext()->render(render::RenderContext::RfOpaque | render::RenderContext::RfAlphaBlend);
@@ -552,8 +552,11 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			for (int slice = m_settings.shadowCascadingSlices - 1; slice >= 0; --slice)
 			{
-				sliceViewport.nearZ = viewport.nearZ + float(slice * (viewport.farZ - viewport.nearZ)) / sliceDenom;
-				sliceViewport.farZ = viewport.nearZ + float((slice + 1) * (viewport.farZ - viewport.nearZ)) / sliceDenom;
+				float zn = max(m_splitPositions[slice], m_settings.viewNearZ);
+				float zf = min(m_splitPositions[slice + 1], m_settings.shadowFarZ);
+
+				sliceViewport.nearZ = calculateViewZ(m_settings.viewNearZ, m_settings.viewFarZ, zn);
+				sliceViewport.farZ = calculateViewZ(m_settings.viewNearZ, m_settings.viewFarZ, zf);
 
 				m_renderView->setViewport(sliceViewport);
 				f.visual[slice]->getRenderContext()->render(render::RenderContext::RfAlphaBlend);

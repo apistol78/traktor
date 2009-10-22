@@ -123,5 +123,10 @@ void RenderTargetSetDx10::swap(int index1, int index2)
 	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
 }
 
+bool RenderTargetSetDx10::read(int index, void* buffer) const
+{
+	return false;
+}
+
 	}
 }

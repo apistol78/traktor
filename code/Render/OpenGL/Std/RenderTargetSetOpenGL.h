@@ -46,6 +46,8 @@ public:
 
 	virtual void swap(int index1, int index2);
 
+	virtual bool read(int index, void* buffer) const;
+
 private:
 	Ref< IContext > m_context;
 	int m_width;

@@ -47,6 +47,20 @@ public:
 	/*! \brief Swap color targets. */
 	virtual void swap(int index1, int index2) = 0;
 
+	/*! \brief Read back color target into system memory.
+	 *
+	 * \note
+	 * This is a very slow operation and is only
+	 * designed to be for screen shots etc.
+	 *
+	 * \param index Color target index.
+	 * \param buffer System memory buffer; target is copied into
+	 *               this buffer so it's up to the caller to ensure
+	 *               it large enough.
+	 * \return True if successfully copied.
+	 */
+	virtual bool read(int index, void* buffer) const = 0;
+
 	/*! \brief Set content valid flag. */
 	inline void setContentValid(bool contentValid) { m_contentValid = contentValid; }
 

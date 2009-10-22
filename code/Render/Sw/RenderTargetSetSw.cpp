@@ -70,6 +70,11 @@ void RenderTargetSetSw::swap(int index1, int index2)
 	std::swap(m_colorTargets[index1], m_colorTargets[index2]);
 }
 
+bool RenderTargetSetSw::read(int index, void* buffer) const
+{
+	return false;
+}
+
 float* RenderTargetSetSw::getDepthSurface()
 {
 	return (!m_depthSurface.empty()) ? &m_depthSurface[0] : 0;

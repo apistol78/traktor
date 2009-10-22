@@ -80,6 +80,62 @@ void RenderTargetSetWin32::swap(int index1, int index2)
 	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
 }
 
+bool RenderTargetSetWin32::read(int index, void* buffer) const
+{
+	ComRef< IDirect3DSurface9 > d3dMemorySurface;
+	D3DLOCKED_RECT rc;
+	HRESULT hr;
+
+	IDirect3DSurface9* d3dRenderTargetSurface = m_colorTextures[index]->getD3DColorSurface();
+	if (!d3dRenderTargetSurface)
+		return false;
+
+	// Ensure all commands has been executed before we read from surface.
+	ComRef< IDirect3DQuery9 > d3dQuery;
+	m_d3dDevice->CreateQuery(D3DQUERYTYPE_EVENT, &d3dQuery.getAssign());
+	if (d3dQuery)
+	{
+		d3dQuery->Issue(D3DISSUE_END);
+		while (d3dQuery->GetData(NULL, 0, D3DGETDATA_FLUSH) == S_FALSE);
+		d3dQuery.release();
+	}
+
+	// Create off-screen surface.
+	hr = m_d3dDevice->CreateOffscreenPlainSurface(
+		m_desc.width,
+		m_desc.height,
+		D3DFMT_A8R8G8B8,
+		D3DPOOL_SYSTEMMEM,
+		&d3dMemorySurface.getAssign(),
+		NULL
+	);
+	if (FAILED(hr))
+		return false;
+
+	// Copy render target into memory surface.
+	hr = m_d3dDevice->GetRenderTargetData(d3dRenderTargetSurface, d3dMemorySurface);
+	if (FAILED(hr))
+		return false;
+
+	// Copy system memory surface into buffer.
+	hr = d3dMemorySurface->LockRect(&rc, NULL, 0);
+	if (FAILED(hr))
+		return false;
+
+	const uint8_t* sourcePtr = static_cast< const uint8_t* >(rc.pBits);
+	uint8_t* destinationPtr = static_cast< uint8_t* >(buffer);
+
+	for (int32_t y = 0; y < m_desc.height; ++y)
+	{
+		std::memcpy(destinationPtr, sourcePtr, m_desc.width * 4);
+		destinationPtr += m_desc.width * 4;
+		sourcePtr += rc.Pitch;
+	}
+
+	d3dMemorySurface->UnlockRect();
+	return true;
+}
+
 HRESULT RenderTargetSetWin32::lostDevice()
 {
 	for (RefArray< RenderTargetWin32 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
