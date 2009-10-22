@@ -41,7 +41,18 @@ bool ProjectDependency::resolve(SolutionLoader* solutionLoader)
 	return true;
 }
 
+int ProjectDependency::getVersion() const
+{
+	return 1;
+}
+
 bool ProjectDependency::serialize(traktor::Serializer& s)
 {
+	if (s.getVersion() >= 1)
+	{
+		if (!Dependency::serialize(s))
+			return false;
+	}
+
 	return s >> traktor::MemberRef< Project >(L"project", m_project);
 }

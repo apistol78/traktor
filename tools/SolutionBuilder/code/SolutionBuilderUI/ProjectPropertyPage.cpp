@@ -7,6 +7,7 @@
 #include <Ui/Custom/InputDialog.h>
 #include <Ui/MethodHandler.h>
 #include <Ui/Events/FocusEvent.h>
+#include <Ui/Events/MouseEvent.h>
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -57,8 +58,9 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 
 	m_listDependencies = gc_new< ui::ListView >();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
-	m_listDependencies->addColumn(L"Dependency", 150);
-	m_listDependencies->addColumn(L"Location", 200);
+	m_listDependencies->addColumn(L"Dependency", 130);
+	m_listDependencies->addColumn(L"Location", 180);
+	m_listDependencies->addColumn(L"Link", 50);
 	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventDependencyDoubleClick));
 
 	Ref< ui::Static > staticAvailable = gc_new< ui::Static >();
@@ -122,6 +124,7 @@ void ProjectPropertyPage::updateDependencyList()
 		Ref< ui::ListViewItem > dependencyItem = gc_new< ui::ListViewItem >();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
+		dependencyItem->setText(2, (*i)->shouldLinkWithProduct() ? L"Yes" : L"No");
 		dependencyItem->setData(L"DEPENDENCY", *i);
 		dependencyItems->add(dependencyItem);
 	}
@@ -175,33 +178,49 @@ void ProjectPropertyPage::eventFocusSource(ui::Event* event)
 
 void ProjectPropertyPage::eventDependencyDoubleClick(ui::Event* event)
 {
+	ui::Point mousePosition = checked_type_cast< const ui::MouseEvent* >(event)->getPosition();
+
 	Ref< ui::ListViewItem > selectedItem = m_listDependencies->getSelectedItem();
 	if (!selectedItem)
 		return;
 
-	Ref< ExternalDependency > selectedDependency = selectedItem->getData< ExternalDependency >(L"DEPENDENCY");
-	if (!selectedDependency)
+	Ref< Dependency > dependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
+	if (!dependency)
 		return;
 
-	ui::custom::InputDialog::Field inputFields[] =
+	// Check if user double clicked on "link" column.
+	int32_t left = m_listDependencies->getColumnWidth(0) + m_listDependencies->getColumnWidth(1);
+	if (mousePosition.x < left)
 	{
-		{ L"Location", selectedDependency->getSolutionFileName(), 0 }
-	};
+		Ref< ExternalDependency > selectedDependency = dynamic_type_cast< ExternalDependency* >(dependency);
+		if (!selectedDependency)
+			return;
 
-	ui::custom::InputDialog inputDialog;
-	inputDialog.create(
-		this,
-		L"External dependency",
-		L"Change location",
-		inputFields,
-		sizeof_array(inputFields)
-	);
-	if (inputDialog.showModal() == ui::DrOk)
+		ui::custom::InputDialog::Field inputFields[] =
+		{
+			{ L"Location", selectedDependency->getSolutionFileName(), 0 }
+		};
+
+		ui::custom::InputDialog inputDialog;
+		inputDialog.create(
+			this,
+			L"External dependency",
+			L"Change location",
+			inputFields,
+			sizeof_array(inputFields)
+		);
+		if (inputDialog.showModal() == ui::DrOk)
+		{
+			selectedDependency->setSolutionFileName(inputFields[0].value);
+			updateDependencyList();
+		}
+		inputDialog.destroy();
+	}
+	else
 	{
-		selectedDependency->setSolutionFileName(inputFields[0].value);
+		dependency->setLinkWithProduct(!dependency->shouldLinkWithProduct());
 		updateDependencyList();
 	}
-	inputDialog.destroy();
 }
 
 void ProjectPropertyPage::eventClickAdd(ui::Event* event)

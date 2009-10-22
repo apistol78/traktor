@@ -22,6 +22,8 @@ public:
 
 	virtual bool resolve(SolutionLoader* solutionLoader);
 
+	virtual int getVersion() const;
+
 	virtual bool serialize(traktor::Serializer& s);
 
 private:
