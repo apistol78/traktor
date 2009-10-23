@@ -119,15 +119,12 @@ Matrix44 Camera::getTargetWorld() const
 
 Matrix44 Camera::getCurrentView() const
 {
-	Matrix44 v1 = getCurrentWorld().inverseOrtho();
-	Matrix44 v2 = getCurrentWorld().inverse();
-
-	return getCurrentWorld().inverseOrtho();
+	return getCurrentWorld().inverse();
 }
 
 Matrix44 Camera::getTargetView() const
 {
-	return getTargetWorld().inverseOrtho();
+	return getTargetWorld().inverse();
 }
 
 	}

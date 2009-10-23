@@ -14,8 +14,7 @@
 #		if !defined(WINCE)
 #			define T_MATH_USE_SSE2
 #		endif
-#	else	// !_DEBUG
-#		define T_MATH_INLINE
+#	else	// _DEBUG
 #		if !defined(WINCE)
 #			define T_MATH_USE_SSE2
 #		endif
@@ -33,8 +32,7 @@
 #		if defined(__APPLE__) && defined(TARGET_OS_MAC)
 #			define T_MATH_USE_SSE2
 #		endif
-#	else	// !_DEBUG
-#		define T_MATH_INLINE
+#	else	// _DEBUG
 #		if defined(__APPLE__) && defined(TARGET_OS_MAC)
 #			define T_MATH_USE_SSE2
 #		endif

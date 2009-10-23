@@ -175,7 +175,7 @@ T_MATH_INLINE Matrix44 Matrix44::inverse() const
 	Vector4 xxxx = c1_yzwx * (c2_zxxz * c3_wwyy - c2_wwyy * c3_zxxz) + c1_zwxy * (c2_wzyx * c3_yxwz - c2_yxwz * c3_wzyx) + c1_wxyz * (c2_ywwy * c3_zzxx - c2_zzxx * c3_ywwy);
 	Vector4 yyyy = c2_yzwx * (c0_zxxz * c3_wwyy - c0_wwyy * c3_zxxz) + c2_zwxy * (c0_wzyx * c3_yxwz - c0_yxwz * c3_wzyx) + c2_wxyz * (c0_ywwy * c3_zzxx - c0_zzxx * c3_ywwy);
 	Vector4 zzzz = c3_yzwx * (c0_zxxz * c1_wwyy - c0_wwyy * c1_zxxz) + c3_zwxy * (c0_wzyx * c1_yxwz - c0_yxwz * c1_wzyx) + c3_wxyz * (c0_ywwy * c1_zzxx - c0_zzxx * c1_ywwy);
-	Vector4 wwww = c0_yzwx * (c2_zxxz * c1_wwyy - c2_wwyy * c1_zxxz) + c0_zwxy * (c2_wxyz * c1_yxwz - c2_yxwz * c1_wzyx) + c0_wxyz * (c2_ywwy * c1_zzxx - c2_zzxx * c1_ywwy);
+	Vector4 wwww = c0_yzwx * (c1_wwyy * c2_zxxz - c1_zxxz * c2_wwyy) + c0_zwxy * (c1_yxwz * c2_wzyx - c1_wzyx * c2_yxwz) + c0_wxyz * (c1_zzxx * c2_ywwy - c1_ywwy * c2_zzxx);
 
 	xxxx *= s;
 	yyyy *= s;
