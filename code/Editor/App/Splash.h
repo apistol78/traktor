@@ -14,9 +14,6 @@ class Splash : public ui::ToolForm
 
 public:
 	bool create();
-
-private:
-	void eventTimer(ui::Event* event);
 };
 
 	}

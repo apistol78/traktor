@@ -77,6 +77,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		editor::EditorForm editorForm;
 		if (editorForm.create(cmdLine))
 		{
+#if !defined(_DEBUG)
+			splash.hide();
+#endif
+
 			ui::Application::getInstance().execute();
 			editorForm.destroy();
 		}
