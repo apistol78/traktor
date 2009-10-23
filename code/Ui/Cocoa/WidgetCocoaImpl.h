@@ -6,9 +6,11 @@
 #include <map>
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Cocoa/NSTargetProxy.h"
+#include "Ui/Cocoa/NSNotificationProxy.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/FocusEvent.h"
 #include "Ui/EventSubject.h"
 #include "Core/Log/Log.h"
 
@@ -20,7 +22,9 @@ namespace traktor
 class EventSubject;
 
 template < typename ControlType, typename NSControlType, typename NSViewType = NSControlType >	
-class WidgetCocoaImpl : public ControlType
+class WidgetCocoaImpl
+:	public ControlType
+,	public INotificationProxyCallback
 {
 public:
 	typedef WidgetCocoaImpl< ControlType, NSControlType, NSViewType > class_t;
@@ -29,12 +33,24 @@ public:
 	:	m_owner(owner)
 	,	m_control(0)
 	,	m_view(0)
+	,	m_notificationProxy(0)
+	,	m_haveFocus(false)
 	,	m_tracking(false)
 	{
 	}
-	
+		
 	virtual void destroy()
 	{
+		// Remove notification observer.
+		if (m_notificationProxy)
+		{
+			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+			[notificationCenter removeObserver: m_notificationProxy];
+			
+			delete m_notificationProxy;
+			m_notificationProxy = 0;
+		}
+
 		// Release all timers.
 		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
 			[i->second autorelease];
@@ -128,7 +144,13 @@ public:
 		if (!window)
 			return false;
 			
-		return [window firstResponder] == m_control;
+		for (NSResponder* responder = [window firstResponder]; responder; responder = [responder nextResponder])
+		{
+			if (responder == m_control)
+				return true;
+		}
+		
+		return false;
 	}
 
 	virtual bool containFocus() const
@@ -310,8 +332,26 @@ protected:
 	EventSubject* m_owner;
 	NSControlType* m_control;
 	NSViewType* m_view;
+	NSNotificationProxy* m_notificationProxy;
 	std::map< int, NSTimer* > m_timers;
+	bool m_haveFocus;
 	bool m_tracking;
+	
+	bool create()
+	{
+		m_notificationProxy = [[NSNotificationProxy alloc] init];
+		[m_notificationProxy setCallback: this];
+
+		NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
+		[notificationCenter
+			addObserver: m_notificationProxy
+			selector: @selector(dispatchNotificationCallback:)
+			name: NSWindowDidUpdateNotification
+			object: [m_control window]
+		];
+		
+		return true;
+	}
 	
 	NSControl* getControl() const
 	{
@@ -330,6 +370,17 @@ protected:
 		m_owner->raiseEvent(EiSize, &s);
 	}
 	
+	void notificationProxy_recv(NSNotification* notification)
+	{
+		bool haveFocus = hasFocus();
+		if (m_haveFocus != haveFocus)
+		{
+			FocusEvent focusEvent(m_owner, 0, haveFocus);
+			m_owner->raiseEvent(EiFocus, &focusEvent);
+			m_haveFocus = haveFocus;
+		}
+	}
+
 	void callbackTimer(void* controlId)
 	{
 		CommandEvent commandEvent(m_owner, 0);

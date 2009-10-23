@@ -1,5 +1,6 @@
 #include "Ui/Cocoa/EditCocoa.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -22,8 +23,8 @@ bool EditCocoa::create(IWidget* parent, const std::wstring& text, int style)
 	T_ASSERT (contentView);
 	
 	[contentView addSubview: m_control];
-
-	return true;
+	
+	return class_t::create();
 }
 
 void EditCocoa::setSelection(int from, int to)
@@ -48,6 +49,6 @@ std::wstring EditCocoa::getText() const
 	NSString* s = [m_control stringValue];
 	return fromNSString(s);
 }
-	
+
 	}
 }

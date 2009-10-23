@@ -237,7 +237,6 @@ void ToolFormCocoa::event_windowDidMove()
 	Point pt = getRect().getTopLeft();
 	MoveEvent m(m_owner, 0, pt);
 	m_owner->raiseEvent(EiMove, &m);
-	log::info << L"ToolFormCocoa::event_windowDidMove" << Endl;
 }
 
 void ToolFormCocoa::event_windowDidResize()
@@ -245,7 +244,6 @@ void ToolFormCocoa::event_windowDidResize()
 	Size sz = getRect().getSize();
 	SizeEvent s(m_owner, 0, sz);
 	m_owner->raiseEvent(EiSize, &s);
-	log::info << L"ToolFormCocoa::event_windowDidResize" << Endl;
 }
 
 	}
