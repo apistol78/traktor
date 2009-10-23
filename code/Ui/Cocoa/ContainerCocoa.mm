@@ -15,7 +15,7 @@ void ContainerCocoa::destroy()
 	if (m_control)
 		[m_control setCallback: nil];
 
-	WidgetCocoaImpl< IContainer, NSCustomControl >::destroy();
+	class_t::destroy();
 }
 
 bool ContainerCocoa::create(IWidget* parent, int style)
@@ -30,7 +30,7 @@ bool ContainerCocoa::create(IWidget* parent, int style)
 	
 	[contentView addSubview: m_control];
 
-	return true;
+	return class_t::create();
 }
 
 bool ContainerCocoa::event_drawRect(const NSRect& rect)
