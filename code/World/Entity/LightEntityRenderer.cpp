@@ -48,7 +48,7 @@ void LightEntityRenderer::render(
 		Transform transform;
 		pointLightEntity->getTransform(transform);
 
-		Vector4 center = worldRenderView->getView() * transform.translation();
+		Vector4 center = worldRenderView->getView() * transform.translation().xyz1();
 		if (!worldRenderView->getCullFrustum().inside(center, Scalar(pointLightEntity->getRange())))
 			return;
 
