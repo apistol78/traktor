@@ -207,31 +207,30 @@ void createMesh(
 				break;
 			}
 		}
-
 		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texcoord0DataInfo = findSourceData(L"TEXCOORD", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texcoord1DataInfo = findSourceData(L"TEXCOORD", 1, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t vcolorDataInfo = findSourceData(L"COLOR", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t biNormalDataInfo = findSourceData(L"TEXBINORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t tangentDataInfo = findSourceData(L"TEXTANGENT", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 
 		uint32_t vertexOffset = vertexDataInfo.second;
 		uint32_t normalOffset = normalDataInfo.second;
 		uint32_t texcoord0Offset = texcoord0DataInfo.second;
 		uint32_t texcoord1Offset = texcoord1DataInfo.second;
 		uint32_t vcolorOffset = vcolorDataInfo.second;
+		uint32_t biNormalOffset = biNormalDataInfo.second;
+		uint32_t tangentOffset = tangentDataInfo.second;
 		uint32_t indexOffset = 0;
 
-		uint32_t vertexIndexStride = 0;
-		if (vertexDataInfo.first)
-			++vertexIndexStride;
-		if (normalDataInfo.first)
-			++vertexIndexStride;
-		if (texcoord0DataInfo.first)
-			++vertexIndexStride;
-		if (texcoord1DataInfo.first)
-			++vertexIndexStride;
-		if (vcolorDataInfo.first)
-			++vertexIndexStride;
+		uint32_t vertexIndexStride = max(vertexOffset, normalOffset);
+		vertexIndexStride = max(vertexIndexStride, texcoord0Offset);
+		vertexIndexStride = max(vertexIndexStride, texcoord1Offset);
+		vertexIndexStride = max(vertexIndexStride, vcolorOffset);
+		vertexIndexStride = max(vertexIndexStride, biNormalOffset);
+		vertexIndexStride = max(vertexIndexStride, tangentOffset);
+		vertexIndexStride += 1;
 
 		for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
 		{
@@ -246,7 +245,7 @@ void createMesh(
 				{
 					uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
 					Vector4 position(
-						vertexDataInfo.first->data[positionIndex * 3 + 0],
+						-vertexDataInfo.first->data[positionIndex * 3 + 0],
 						vertexDataInfo.first->data[positionIndex * 3 + 1],
 						vertexDataInfo.first->data[positionIndex * 3 + 2],
 						1.0f
@@ -258,12 +257,36 @@ void createMesh(
 				{
 					uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
 					Vector4 normal(
-						normalDataInfo.first->data[normalIndex * 3 + 0],
+						-normalDataInfo.first->data[normalIndex * 3 + 0],
 						normalDataInfo.first->data[normalIndex * 3 + 1],
 						normalDataInfo.first->data[normalIndex * 3 + 2],
 						0.0f
 					);
 					vertex.setNormal(outModel->addUniqueNormal(normal));
+				}
+
+				if (biNormalDataInfo.first)
+				{
+					uint32_t binormalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + biNormalOffset];
+					Vector4 binormal(
+						-biNormalDataInfo.first->data[binormalIndex * 3 + 0],
+						biNormalDataInfo.first->data[binormalIndex * 3 + 1],
+						biNormalDataInfo.first->data[binormalIndex * 3 + 2],
+						0.0f
+						);
+					vertex.setBinormal(outModel->addUniqueNormal(binormal));
+				}
+
+				if (tangentDataInfo.first)
+				{
+					uint32_t tangentIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + tangentOffset];
+					Vector4 tangent(
+						-tangentDataInfo.first->data[tangentIndex * 3 + 0],
+						tangentDataInfo.first->data[tangentIndex * 3 + 1],
+						tangentDataInfo.first->data[tangentIndex * 3 + 2],
+						0.0f
+						);
+					vertex.setBinormal(outModel->addUniqueNormal(tangent));
 				}
 
 				if (texcoord0DataInfo.first)
@@ -304,7 +327,7 @@ void createMesh(
 				);
 			}
 
-			polygon.flipWinding();
+//			polygon.flipWinding();
 			outModel->addPolygon(polygon);
 
 			indexOffset += polygonData[j].vertexCounts[k];
