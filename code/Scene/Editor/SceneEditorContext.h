@@ -128,6 +128,10 @@ public:
 
 	uint32_t getAxisEnable() const;
 
+	void setGridEnable(bool gridEnable);
+
+	bool getGridEnable() const;
+
 	void setGuideEnable(bool guideEnable);
 
 	bool getGuideEnable() const;
@@ -285,6 +289,7 @@ private:
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;
+	bool m_gridEnable;
 	bool m_guideEnable;
 	bool m_snapEnable;
 	bool m_physicsEnable;
