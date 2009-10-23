@@ -2,7 +2,7 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Image.h"
-#include "Ui/MethodHandler.h"
+#include "Core/Heap/GcNew.h"
 
 // Resources
 #include "Resources/Splash.h"
@@ -19,8 +19,6 @@ bool Splash::create()
 	if (!ui::ToolForm::create(0, L"Splash", 0, 0, ui::WsTop, gc_new< ui::FloodLayout >()))
 		return false;
 
-	addTimerEventHandler(ui::createMethodHandler(this, &Splash::eventTimer));
-
 	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
 	T_ASSERT (splash);
 
@@ -34,14 +32,7 @@ bool Splash::create()
 	raise();
 	update(0, true);
 
-	startTimer(3000);
-
 	return true;
-}
-
-void Splash::eventTimer(ui::Event* event)
-{
-	hide();
 }
 
 	}

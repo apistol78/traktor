@@ -206,6 +206,7 @@ void FormCocoa::setOutline(const Point* p, int np)
 
 void FormCocoa::setRect(const Rect& rect)
 {
+	[m_window setFrame: makeNSRect(rect) display: YES];
 }
 
 Rect FormCocoa::getRect() const

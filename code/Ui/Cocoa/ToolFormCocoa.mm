@@ -1,7 +1,9 @@
 #include "Ui/Cocoa/ToolFormCocoa.h"
+#include "Ui/Cocoa/NSTargetProxy.h"
 #include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/MoveEvent.h"
 #include "Ui/Events/SizeEvent.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/EventSubject.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -18,11 +20,22 @@ ToolFormCocoa::ToolFormCocoa(EventSubject* owner)
 
 bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width, int height, int style)
 {
+	uint32_t styleMask = 0;
+	
+	if (style & WsCaption)
+		styleMask |= NSTitledWindowMask;
+	if (style & WsCloseBox)
+		styleMask |= NSClosableWindowMask;
+	if (style & WsResizable)
+		styleMask |= NSResizableWindowMask;
+	if (style & WsMinimizeBox)
+		styleMask |= NSMiniaturizableWindowMask;
+
 	m_window = [[NSWindow alloc]
 		initWithContentRect: NSMakeRect(50, 50, width, height)
-		styleMask: NSTitledWindowMask | NSClosableWindowMask
+		styleMask: styleMask
 		backing: NSBackingStoreBuffered
-		defer: TRUE
+		defer: YES
 	];
 
 	[m_window setTitle:makeNSString(text)];
@@ -37,12 +50,25 @@ bool ToolFormCocoa::create(IWidget* parent, const std::wstring& text, int width,
 
 void ToolFormCocoa::center()
 {
+	[m_window center];
 }
 
 // IWidget implementation
 
 void ToolFormCocoa::destroy()
 {
+	// Release all timers.
+	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
+		[i->second autorelease];
+		
+	m_timers.clear();
+
+	// Release objects.
+	if (m_window)
+	{
+		[m_window setDelegate: nil];
+		[m_window autorelease]; m_window = 0;
+	}
 }
 
 void ToolFormCocoa::setParent(IWidget* parent)
@@ -51,11 +77,12 @@ void ToolFormCocoa::setParent(IWidget* parent)
 
 void ToolFormCocoa::setText(const std::wstring& text)
 {
+	[m_window setTitle:makeNSString(text)];
 }
 
 std::wstring ToolFormCocoa::getText() const
 {
-	return L"";
+	return fromNSString([m_window title]);
 }
 
 void ToolFormCocoa::setToolTipText(const std::wstring& text)
@@ -75,6 +102,8 @@ void ToolFormCocoa::setVisible(bool visible)
 {
 	if (visible)
 		[m_window makeKeyAndOrderFront: nil];
+	else
+		[m_window orderOut: nil];
 }
 
 bool ToolFormCocoa::isVisible(bool includingParents) const
@@ -124,10 +153,34 @@ void ToolFormCocoa::releaseCapture()
 
 void ToolFormCocoa::startTimer(int interval, int id)
 {
+	ITargetProxyCallback* targetCallback = new TargetProxyCallbackImpl< ToolFormCocoa >(
+		this,
+		&ToolFormCocoa::callbackTimer,
+		0
+	);
+
+	NSTargetProxy* targetProxy = [[NSTargetProxy alloc] init];
+	[targetProxy setCallback: targetCallback];
+		
+	NSTimer* timer = [
+		NSTimer scheduledTimerWithTimeInterval: (double)interval / 1000.0
+		target: targetProxy
+		selector: @selector(dispatchActionCallback:)
+		userInfo: nil
+		repeats: YES
+	];
+	
+	m_timers[id] = timer;
 }
 
 void ToolFormCocoa::stopTimer(int id)
 {
+	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
+	if (i != m_timers.end())
+	{
+		[i->second autorelease];
+		m_timers.erase(i);
+	}
 }
 
 void ToolFormCocoa::setOutline(const Point* p, int np)
@@ -136,6 +189,7 @@ void ToolFormCocoa::setOutline(const Point* p, int np)
 
 void ToolFormCocoa::setRect(const Rect& rect)
 {
+	[m_window setFrame: makeNSRect(rect) display: YES];
 }
 
 Rect ToolFormCocoa::getRect() const
@@ -147,8 +201,8 @@ Rect ToolFormCocoa::getRect() const
 Rect ToolFormCocoa::getInnerRect() const
 {
 	NSView* contentView = [m_window contentView];
-	NSRect contentBounds = [contentView bounds];
-	return fromNSRect(contentBounds);
+	NSRect contentFrame = [contentView frame];
+	return fromNSRect(contentFrame);
 }	
 
 Rect ToolFormCocoa::getNormalRect() const
@@ -244,6 +298,12 @@ void ToolFormCocoa::event_windowDidResize()
 	Size sz = getRect().getSize();
 	SizeEvent s(m_owner, 0, sz);
 	m_owner->raiseEvent(EiSize, &s);
+}
+
+void ToolFormCocoa::callbackTimer(void* controlId)
+{
+	CommandEvent commandEvent(m_owner, 0);
+	m_owner->raiseEvent(EiTimer, &commandEvent);
 }
 
 	}
