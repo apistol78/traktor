@@ -211,15 +211,18 @@ void calculateModelTangents(Model& mdl, bool binormals)
 	}
 
 	// Update vertices.
-	mdl.clear(Model::CfNormals);
 	for (uint32_t i = 0; i < mdl.getVertexCount(); ++i)
 	{
 		const TangentBase& tb = vertexTangentBases[i];
 
 		Vertex vertex = mdl.getVertex(i);
-		vertex.setNormal(mdl.addUniqueNormal(tb.normal));
-		vertex.setTangent(mdl.addUniqueNormal(tb.tangent));
-		vertex.setBinormal(mdl.addUniqueNormal(tb.binormal));
+		if (vertex.getNormal() == c_InvalidIndex)
+			vertex.setNormal(mdl.addUniqueNormal(tb.normal));
+		if (vertex.getTangent() == c_InvalidIndex)
+			vertex.setTangent(mdl.addUniqueNormal(tb.tangent));
+		if (vertex.getBinormal() == c_InvalidIndex)
+			vertex.setBinormal(mdl.addUniqueNormal(tb.binormal));
+
 		mdl.setVertex(i, vertex);
 	}
 }
