@@ -557,27 +557,30 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushView(view);
 
 		// Render XZ grid.
-		const Color gridColor(0, 0, 0, 64);
-
-		Vector4 viewPosition = view.inverse().translation();
-		float vx = floorf(viewPosition.x());
-		float vz = floorf(viewPosition.z());
-
-		for (int x = -20; x <= 20; ++x)
+		if (m_context->getGridEnable())
 		{
-			float fx = float(x);
-			m_primitiveRenderer->drawLine(
-				Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
-				Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-				(int(fx + vx) == 0) ? 2.0f : 0.0f,
-				gridColor
-			);
-			m_primitiveRenderer->drawLine(
-				Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
-				Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-				(int(fx + vz) == 0) ? 2.0f : 0.0f,
-				gridColor
-			);
+			const Color gridColor(0, 0, 0, 64);
+
+			Vector4 viewPosition = view.inverse().translation();
+			float vx = floorf(viewPosition.x());
+			float vz = floorf(viewPosition.z());
+
+			for (int x = -20; x <= 20; ++x)
+			{
+				float fx = float(x);
+				m_primitiveRenderer->drawLine(
+					Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
+					Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
+					(int(fx + vx) == 0) ? 2.0f : 0.0f,
+					gridColor
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
+					Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
+					(int(fx + vz) == 0) ? 2.0f : 0.0f,
+					gridColor
+				);
+			}
 		}
 
 		// Draw selection marker(s).

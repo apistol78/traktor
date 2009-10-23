@@ -111,6 +111,7 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleX"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleY"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleZ"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleGrid"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleGuide"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleSnap"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleAddReference"));
