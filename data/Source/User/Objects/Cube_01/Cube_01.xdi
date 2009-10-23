@@ -4,8 +4,8 @@
 	<meshType>MtStatic</meshType>
 	<materialShaders>
 		<item>
-			<first>CubeBalls_01</first>
-			<second>{13166DEB-442B-C648-BE3F-10E5D1AEF07B}</second>
+			<first>CubeFlat_01</first>
+			<second>{D0270DFD-BAE7-3F45-9BD9-F9A2E428FE08}</second>
 		</item>
 	</materialShaders>
 </object>

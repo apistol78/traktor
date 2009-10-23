@@ -66,6 +66,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node)
 		is_a< Derivative >(node) ||
 		is_a< Exp >(node) ||
 		is_a< Fraction >(node) ||
+		is_a< Length >(node) ||
 		is_a< Log >(node) ||
 		is_a< Max >(node) ||
 		is_a< Min >(node) ||
