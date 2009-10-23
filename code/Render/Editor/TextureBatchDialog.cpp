@@ -1,5 +1,7 @@
 #include "Render/Editor/TextureBatchDialog.h"
 #include "Render/Editor/TextureAsset.h"
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
 #include "Ui/Bitmap.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -13,6 +15,7 @@
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "I18N/Text.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/Io/FileSystem.h"
 
 // Resources
 #include "Resources/PlusMinus.h"
@@ -23,6 +26,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureBatchDialog", TextureBatchDialog, ui::ConfigDialog)
+
+TextureBatchDialog::TextureBatchDialog(editor::IEditor* editor)
+:	m_editor(editor)
+{
+}
 
 bool TextureBatchDialog::create(ui::Widget* parent)
 {
@@ -96,10 +104,16 @@ void TextureBatchDialog::addTexture()
 	}
 	fileDialog.destroy();
 
+	Path assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+
 	for (std::vector< Path >::iterator i = fileNames.begin(); i != fileNames.end(); ++i)
 	{
+		Path texturePath;
+		if (!FileSystem::getInstance().getRelativePath(*i, assetPath, texturePath))
+			texturePath = *i;
+
 		Ref< TextureAsset > asset = gc_new< TextureAsset >();
-		asset->setFileName(*i);
+		asset->setFileName(texturePath);
 
 		m_textureList->add(
 			i->getFileName(),
