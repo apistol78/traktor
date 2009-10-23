@@ -23,7 +23,7 @@ std::wstring TextureBatchWizardTool::getDescription() const
 
 bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
 {
-	TextureBatchDialog textureDialog;
+	TextureBatchDialog textureDialog(editor);
 
 	if (!textureDialog.create(parent))
 		return false;

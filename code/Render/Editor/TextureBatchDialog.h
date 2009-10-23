@@ -5,6 +5,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace ui
 	{
 
@@ -28,6 +35,8 @@ class TextureBatchDialog : public ui::ConfigDialog
 	T_RTTI_CLASS(TextureBatchDialog)
 
 public:
+	TextureBatchDialog(editor::IEditor* editor);
+
 	bool create(ui::Widget* parent);
 
 	void destroy();
@@ -35,6 +44,7 @@ public:
 	bool showModal(RefArray< TextureAsset >& outAssets);
 
 private:
+	editor::IEditor* m_editor;
 	Ref< ui::ListBox > m_textureList;
 	Ref< ui::custom::AutoPropertyList > m_texturePropertyList;
 
