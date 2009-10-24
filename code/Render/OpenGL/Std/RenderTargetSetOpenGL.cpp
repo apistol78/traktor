@@ -78,7 +78,7 @@ void RenderTargetSetOpenGL::swap(int index1, int index2)
 
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const
 {
-	return false;
+	return m_colorTextures[index]->read(buffer);
 }
 
 	}

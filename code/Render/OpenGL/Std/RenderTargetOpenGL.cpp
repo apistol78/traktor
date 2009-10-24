@@ -162,7 +162,12 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 	if (depthBuffer)
 	{
-		T_OGL_SAFE(glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthBuffer));
+		T_OGL_SAFE(glFramebufferRenderbufferEXT(
+			GL_FRAMEBUFFER_EXT,
+			GL_DEPTH_ATTACHMENT_EXT,
+			GL_RENDERBUFFER_EXT,
+			depthBuffer
+		));
 		m_haveDepth = true;
 	}
 
@@ -179,9 +184,25 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
-	T_OGL_SAFE(glTexImage2D(m_textureTarget, 0, internalFormat, targetWidth, targetHeight, 0, format, type, NULL));
+	T_OGL_SAFE(glTexImage2D(
+		m_textureTarget,
+		0,
+		internalFormat,
+		targetWidth,
+		targetHeight,
+		0,
+		format,
+		type,
+		NULL
+	));
 
-	T_OGL_SAFE(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, m_textureTarget, m_colorTexture, 0));
+	T_OGL_SAFE(glFramebufferTexture2DEXT(
+		GL_FRAMEBUFFER_EXT,
+		GL_COLOR_ATTACHMENT0_EXT,
+		m_textureTarget,
+		m_colorTexture,
+		0
+	));
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
@@ -227,6 +248,9 @@ void RenderTargetOpenGL::bind()
 
 void RenderTargetOpenGL::enter(bool keepDepthStencil)
 {
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+
 	T_OGL_SAFE(glViewport(0, 0, m_width, m_height));
 
 	if (m_haveDepth || keepDepthStencil)
@@ -240,9 +264,19 @@ void RenderTargetOpenGL::enter(bool keepDepthStencil)
 		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
 		T_OGL_SAFE(glDepthMask(GL_FALSE));
 	}
+}
 
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
+bool RenderTargetOpenGL::read(void* buffer) const
+{
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
+	T_OGL_SAFE(glGetTexImage(
+		m_textureTarget,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		buffer
+	));
+	return true;
 }
 
 	}
