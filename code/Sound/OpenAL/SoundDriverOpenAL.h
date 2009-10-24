@@ -2,7 +2,9 @@
 #define traktor_sound_SoundDriverOpenAL_H
 
 #include <OpenAL/al.h>
+#include <OpenAL/alc.h>
 #include "Sound/ISoundDriver.h"
+#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,9 +38,14 @@ public:
 	virtual void submit(const SoundBlock& soundBlock);
 	
 private:
-	ALuint m_buffers[2];
+	ALCdevice* m_device;
+	ALCcontext* m_context;
+	SoundDriverCreateDesc m_desc;
+	ALuint m_format;
+	ALuint m_buffers[3];
 	ALuint m_source;
 	uint32_t m_submitted;
+	AutoArrayPtr< uint8_t > m_data;
 };
 	
 	}
