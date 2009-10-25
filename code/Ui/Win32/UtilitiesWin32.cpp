@@ -8,7 +8,7 @@ namespace traktor
 
 VirtualKey translateKeyCode(uint32_t keyCode)
 {
-	const struct { NSUInteger keyCode; VirtualKey vkey; } c_translateTable[] =
+	const struct { uint32_t keyCode; VirtualKey vkey; } c_translateTable[] =
 	{
 		{ VK_TAB, VkTab },
 		{ VK_CLEAR, VkClear },
