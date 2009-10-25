@@ -1,7 +1,8 @@
 #include "Ui/Win32/EventLoopWin32.h"
 #if defined(T_USE_GDI_PLUS)
-#include "Ui/Win32/CanvasGdiPlusWin32.h"
+#	include "Ui/Win32/CanvasGdiPlusWin32.h"
 #endif
+#include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/KeyEvent.h"
@@ -130,13 +131,13 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 	bool consumed = false;
 	if (msg.message == WM_KEYDOWN)
 	{
-		KeyEvent k(owner, 0, int(msg.wParam));
+		KeyEvent k(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
 		owner->raiseEvent(EiKeyDown, &k);
 		consumed = k.consumed();
 	}
 	else if (msg.message == WM_KEYUP)
 	{
-		KeyEvent k(owner, 0, int(msg.wParam));
+		KeyEvent k(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
 		owner->raiseEvent(EiKeyUp, &k);
 		consumed = k.consumed();
 	}
