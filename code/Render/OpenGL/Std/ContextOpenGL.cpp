@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 
 #if defined(__APPLE__)
@@ -26,11 +27,13 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 :	m_hWnd(hWnd)
 ,	m_hDC(hDC)
 ,	m_hRC(hRC)
+,	m_currentStateList(0)
 
 #elif defined(__APPLE__)
 
 ContextOpenGL::ContextOpenGL(void* context)
 :	m_context(context)
+,	m_currentStateList(0)
 
 #else	// LINUX
 
@@ -38,6 +41,7 @@ ContextOpenGL::ContextOpenGL(Display* display, Window window, GLXContext context
 :	m_display(display)
 ,	m_window(window)
 ,	m_context(context)
+,	m_currentStateList(0)
 
 #endif
 {
@@ -178,6 +182,98 @@ void ContextOpenGL::leave()
 
 #else	// LINUX
 #endif
+}
+
+void ContextOpenGL::enable(GLenum state)
+{
+	if (!m_enableStates[state])
+	{
+		T_OGL_SAFE(glEnable(state));
+		m_enableStates[state] = true;
+	}
+}
+
+void ContextOpenGL::disable(GLenum state)
+{
+	if (m_enableStates[state])
+	{
+		T_OGL_SAFE(glDisable(state));
+		m_enableStates[state] = false;
+	}
+}
+
+GLuint ContextOpenGL::createStateList(const RenderState& renderState)
+{
+	Adler32 adler;
+	
+	adler.begin();
+	adler.feed(&renderState, sizeof(renderState));
+	adler.end();
+	
+	uint32_t hash = adler.get();
+	
+	std::map< uint32_t, GLuint >::const_iterator i = m_stateLists.find(hash);
+	if (i != m_stateLists.end())
+		return i->second;
+		
+	GLuint stateList = glGenLists(1);
+	glNewList(stateList, GL_COMPILE);
+
+	if (renderState.cullFaceEnable)
+	{
+		T_OGL_SAFE(glEnable(GL_CULL_FACE));
+		T_OGL_SAFE(glCullFace(renderState.cullFace));
+	}
+	else
+		T_OGL_SAFE(glDisable(GL_CULL_FACE));
+
+	if (renderState.blendEnable)
+	{
+		T_OGL_SAFE(glEnable(GL_BLEND));
+		T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
+		T_OGL_SAFE(glBlendEquationEXT(renderState.blendEquation));
+	}
+	else
+		T_OGL_SAFE(glDisable(GL_BLEND));
+
+	if (renderState.depthTestEnable)
+	{
+		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
+		T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
+	}
+	else
+		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
+
+	T_OGL_SAFE(glColorMask(
+		(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
+		(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
+		(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
+		(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+	));
+
+	T_OGL_SAFE(glDepthMask(renderState.depthMask));
+
+	if (renderState.alphaTestEnable)
+	{
+		T_OGL_SAFE(glEnable(GL_ALPHA_TEST));
+		T_OGL_SAFE(glAlphaFunc(renderState.alphaFunc, renderState.alphaRef));
+	}
+	else
+		T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
+
+	glEndList();
+	
+	m_stateLists.insert(std::make_pair(hash, stateList));
+	return stateList;
+}
+
+void ContextOpenGL::callStateList(GLuint stateList)
+{
+	if (m_currentStateList != stateList)
+	{
+		T_OGL_SAFE(glCallList(stateList));
+		m_currentStateList = stateList;
+	}
 }
 
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)

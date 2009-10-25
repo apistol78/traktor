@@ -1,5 +1,4 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
@@ -9,6 +8,7 @@
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -59,7 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
 
 ProgramOpenGL* ProgramOpenGL::ms_activeProgram = 0;
 
-ProgramOpenGL::ProgramOpenGL(IContext* context)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* context)
 :	m_context(context)
 ,	m_program(0)
 ,	m_state(0)
@@ -264,53 +264,8 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	// Create a display list from the render states.
 	const RenderState& renderState = resourceOpenGL->getRenderState();
 	m_renderState = renderState;
+	m_state = m_context->createStateList(renderState);
 
-	m_state = glGenLists(1);
-	glNewList(m_state, GL_COMPILE);
-
-	if (renderState.cullFaceEnable)
-	{
-		T_OGL_SAFE(glEnable(GL_CULL_FACE));
-		T_OGL_SAFE(glCullFace(renderState.cullFace));
-	}
-	else
-		T_OGL_SAFE(glDisable(GL_CULL_FACE));
-
-	if (renderState.blendEnable)
-	{
-		T_OGL_SAFE(glEnable(GL_BLEND));
-		T_OGL_SAFE(glBlendFunc(renderState.blendFuncSrc, renderState.blendFuncDest));
-		T_OGL_SAFE(glBlendEquationEXT(renderState.blendEquation));
-	}
-	else
-		T_OGL_SAFE(glDisable(GL_BLEND));
-
-	if (renderState.depthTestEnable)
-	{
-		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthFunc(renderState.depthFunc));
-	}
-	else
-		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-
-	T_OGL_SAFE(glColorMask(
-		(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-		(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
-	));
-
-	T_OGL_SAFE(glDepthMask(renderState.depthMask));
-
-	if (renderState.alphaTestEnable)
-	{
-		T_OGL_SAFE(glEnable(GL_ALPHA_TEST));
-		T_OGL_SAFE(glAlphaFunc(renderState.alphaFunc, renderState.alphaRef));
-	}
-	else
-		T_OGL_SAFE(glDisable(GL_ALPHA_TEST));
-
-	glEndList();
 	return true;
 }
 
@@ -320,13 +275,6 @@ void ProgramOpenGL::destroy()
 	{
 		ms_activeProgram = 0;
 		m_dirty = true;
-	}
-
-	if (m_state)
-	{
-		if (m_context)
-			m_context->deleteResource(new DeleteListCallback(m_state));
-		m_state = 0;
 	}
 
 	if (m_program)
@@ -460,7 +408,7 @@ bool ProgramOpenGL::activate()
 
 	if (ms_activeProgram != this)
 	{
-		T_OGL_SAFE(glCallList(m_state));
+		m_context->callStateList(m_state);
 
 		T_ASSERT (m_program);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
@@ -521,8 +469,8 @@ bool ProgramOpenGL::activate()
 			const SamplerTexture& st = m_samplerTextures[i->texture];
 			if (!st.target)
 				continue;
-
-			T_OGL_SAFE(glEnable(st.target));
+				
+			m_context->enable(st.target);
 
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i->unit));
 			T_OGL_SAFE(glBindTexture(st.target, st.name));
@@ -546,11 +494,11 @@ bool ProgramOpenGL::activate()
 	}
 	else
 	{
-		T_OGL_SAFE(glDisable(GL_TEXTURE_2D));
+		m_context->disable(GL_TEXTURE_2D);
 #if !defined(__APPLE__)
-		T_OGL_SAFE(glDisable(GL_TEXTURE_CUBE_MAP_EXT));
+		m_context->disable(GL_TEXTURE_CUBE_MAP_EXT);
 #else
-		T_OGL_SAFE(glDisable(GL_TEXTURE_CUBE_MAP_ARB));
+		m_context->disable(GL_TEXTURE_CUBE_MAP_ARB);
 #endif
 	}
 

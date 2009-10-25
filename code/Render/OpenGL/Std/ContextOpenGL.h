@@ -6,6 +6,7 @@
 #include "Core/Thread/ThreadLocal.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/TypesOpenGL.h"
 
 namespace traktor
 {
@@ -37,6 +38,14 @@ public:
 	void swapBuffers();
 
 	void destroy();
+	
+	void enable(GLenum state);
+	
+	void disable(GLenum state);
+	
+	GLuint createStateList(const RenderState& renderState);
+	
+	void callStateList(GLuint stateList);
 
 	virtual bool enter();
 
@@ -66,6 +75,9 @@ private:
 #endif
 
 	static ThreadLocal ms_contextStack;
+	std::map< GLenum, bool > m_enableStates;
+	std::map< uint32_t, GLuint > m_stateLists;
+	GLuint m_currentStateList;
 	std::vector< IDeleteCallback* > m_deleteResources;
 };
 
