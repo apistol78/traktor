@@ -76,8 +76,8 @@ void Edit::eventKey(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
 
-	int key = keyEvent->getKeyCode();
-	if (!m_validator || (!iswgraph(key) && key != 8))
+	wchar_t ch = keyEvent->getCharacter();
+	if (!m_validator || (!iswgraph(ch) && ch != 8))
 		return;
 
 	std::wstring text = getText();
@@ -85,8 +85,8 @@ void Edit::eventKey(Event* event)
 	int from, to;
 	static_cast< IEdit* >(m_widget)->getSelection(from, to);
 
-	if (key != 8)
-		text = text.substr(0, from) + wchar_t(key) + text.substr(to);
+	if (ch != 8)
+		text = text.substr(0, from) + ch + text.substr(to);
 	else
 		text = text.substr(0, from - 1) + text.substr(to);
 

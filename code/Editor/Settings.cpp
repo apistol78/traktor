@@ -222,7 +222,7 @@ PropertyKey::PropertyKey(const value_type_t& value)
 
 PropertyKey::value_type_t PropertyKey::get(const PropertyValue* value)
 {
-	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, 0);
+	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
 }
 
 bool PropertyKey::serialize(Serializer& s)

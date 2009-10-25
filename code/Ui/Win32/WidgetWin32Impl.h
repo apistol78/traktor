@@ -8,6 +8,7 @@
 #include "Ui/Win32/CanvasGdiPlusWin32.h"
 #endif
 #include "Ui/Win32/SmartHandle.h"
+#include "Ui/Win32/UtilitiesWin32.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Events/ShowEvent.h"
@@ -537,7 +538,7 @@ protected:
 
 	LRESULT eventChar(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, int(wParam));
+		KeyEvent k(m_owner, 0, int(wParam), translateKeyCode(int(wParam), wchar_t(wParam));
 		m_owner->raiseEvent(EiKey, &k);
 		if (!k.consumed())
 			outPass = true;
@@ -546,7 +547,7 @@ protected:
 
 	LRESULT eventKeyDown(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, int(wParam));
+		KeyEvent k(m_owner, 0, int(wParam), translateKeyCode(int(wParam), '');
 		m_owner->raiseEvent(EiKeyDown, &k);
 		if (!k.consumed())
 			outPass = true;
@@ -555,7 +556,7 @@ protected:
 
 	LRESULT eventKeyUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 	{
-		KeyEvent k(m_owner, 0, int(wParam));
+		KeyEvent k(m_owner, 0, int(wParam), translateKeyCode(int(wParam), '');
 		m_owner->raiseEvent(EiKeyUp, &k);
 		if (!k.consumed())
 			outPass = true;

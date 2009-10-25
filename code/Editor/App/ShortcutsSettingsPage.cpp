@@ -34,7 +34,7 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, co
 	m_gridShortcuts->addSelectEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutSelect));
 
 	m_editShortcut = gc_new< ui::custom::ShortcutEdit >();
-	m_editShortcut->create(container, 0, 0, ui::WsClientBorder);
+	m_editShortcut->create(container, 0, ui::VkNull, ui::WsClientBorder);
 	m_editShortcut->addChangeEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutModified));
 
 	Ref< PropertyGroup > shortcutGroup = checked_type_cast< PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
@@ -109,8 +109,8 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 		Ref< PropertyKey > propertyKey = (*i)->getData< PropertyKey >(L"PROPERTYKEY");
 		T_ASSERT (propertyKey);
 
-		std::pair< int, int > key = PropertyKey::get(propertyKey);
-		if (key.first || key.second)
+		std::pair< int, ui::VirtualKey > key = PropertyKey::get(propertyKey);
+		if (key.first || key.second != ui::VkNull)
 		{
 			std::wstring keyDesc = L"";
 
@@ -142,17 +142,17 @@ void ShortcutsSettingsPage::eventShortcutSelect(ui::Event* event)
 		Ref< PropertyKey > propertyKey = selectedRows[0]->getData< PropertyKey >(L"PROPERTYKEY");
 		if (propertyKey)
 		{
-			std::pair< int, int > value = PropertyKey::get(propertyKey);
+			std::pair< int, ui::VirtualKey > value = PropertyKey::get(propertyKey);
 			m_editShortcut->set(value.first, value.second);
 		}
 		else
-			m_editShortcut->set(0, 0);
+			m_editShortcut->set(0, ui::VkNull);
 		m_editShortcut->setEnable(true);
 		m_editShortcut->setData(L"GRIDROW", selectedRows[0]);
 	}
 	else
 	{
-		m_editShortcut->set(0, 0);
+		m_editShortcut->set(0, ui::VkNull);
 		m_editShortcut->setEnable(false);
 		m_editShortcut->setData(L"GRIDROW", 0);
 	}
@@ -168,7 +168,7 @@ void ShortcutsSettingsPage::eventShortcutModified(ui::Event* event)
 	{
 		gridRow->setData(L"PROPERTYKEY", gc_new< PropertyKey >(cref(std::make_pair(
 			m_editShortcut->getKeyState(),
-			m_editShortcut->getKeyCode()
+			m_editShortcut->getVirtualKey()
 		))));
 		updateShortcutGrid();
 	}

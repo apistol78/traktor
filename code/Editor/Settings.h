@@ -9,6 +9,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Serialization/Serializable.h"
+#include "Ui/Enums.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -259,9 +260,9 @@ class T_DLLCLASS PropertyKey : public PropertyValue
 	T_RTTI_CLASS(PropertyKey)
 
 public:
-	typedef std::pair< int, int > value_type_t;
+	typedef std::pair< int, ui::VirtualKey > value_type_t;
 
-	PropertyKey(const value_type_t& value = value_type_t(0, 0));
+	PropertyKey(const value_type_t& value = value_type_t(0, ui::VkNull));
 
 	static value_type_t get(const PropertyValue* value);
 
