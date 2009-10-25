@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Ui/Rect.h"
+#include "Ui/Enums.h"
 #include "Core/Math/Color.h"
 
 namespace traktor
@@ -27,6 +28,8 @@ Size fromNSSize(const NSSize& sz);
 Point fromNSPoint(const NSPoint& pt);
 
 Rect fromNSRect(const NSRect& rc);
+
+VirtualKey translateKeyCode(NSUInteger keyCode);
 
 	}
 }

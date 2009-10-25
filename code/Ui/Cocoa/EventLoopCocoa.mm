@@ -2,7 +2,9 @@
 
 #include "Ui/Cocoa/EventLoopCocoa.h"
 #include "Ui/Cocoa/NSDebugAutoreleasePool.h"
+#include "Ui/Cocoa/UtilitiesCocoa.h"
 #include "Ui/Events/IdleEvent.h"
+#include "Ui/Events/KeyEvent.h"
 #include "Ui/EventSubject.h"
 #include "Ui/Enums.h"
 #include "Core/Log/Log.h"
@@ -46,12 +48,12 @@ bool EventLoopCocoa::process(EventSubject* owner)
 		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 		if (event != nil)
 		{
-			// Record modifier flags.
-			m_modifierFlags = [event modifierFlags];
-		
-			// Process event.
-			[NSApp sendEvent: event];
-			[NSApp updateWindows];
+			if (!handleGlobalEvents(owner, event))
+			{
+				// Process event.
+				[NSApp sendEvent: event];
+				[NSApp updateWindows];
+			}
 		}
 		else
 		{
@@ -82,12 +84,12 @@ int EventLoopCocoa::execute(EventSubject* owner)
 		NSEvent* event = [NSApp nextEventMatchingMask: NSAnyEventMask untilDate: nil inMode: NSDefaultRunLoopMode dequeue: YES];
 		if (event != nil)
 		{
-			// Record modifier flags.
-			m_modifierFlags = [event modifierFlags];
-		
-			// Process event.
-			[NSApp sendEvent: event];
-			[NSApp updateWindows];
+			if (!handleGlobalEvents(owner, event))
+			{
+				// Process event.
+				[NSApp sendEvent: event];
+				[NSApp updateWindows];
+			}
 		}
 		else
 		{
@@ -125,6 +127,37 @@ int EventLoopCocoa::getAsyncKeyState() const
 		keyState |= KsShift;
 
 	return keyState;
+}
+
+bool EventLoopCocoa::handleGlobalEvents(EventSubject* owner, NSEvent* event)
+{
+	// Record modifier flags.
+	m_modifierFlags = [event modifierFlags];
+	
+	// Process key events; if they are globally consumed we don't dispatch further.
+	NSEventType eventType = [event type];
+	if (eventType == NSKeyDown || eventType == NSKeyUp)
+	{
+		uint32_t systemKey = [event keyCode];
+		VirtualKey virtualKey = translateKeyCode(systemKey);
+		std::wstring chs = fromNSString([event characters]);
+		
+		KeyEvent keyEvent(
+			owner,
+			0,
+			virtualKey,
+			systemKey,
+			chs.empty() ? 0 : chs[0]
+		);
+		owner->raiseEvent(
+			eventType == NSKeyDown ? EiKeyDown : EiKeyUp,
+			&keyEvent
+		);
+		
+		return keyEvent.consumed();
+	}
+
+	return false;
 }
 
 	}

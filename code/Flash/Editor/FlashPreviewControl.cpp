@@ -299,14 +299,14 @@ void FlashPreviewControl::eventKeyDown(ui::Event* event)
 {
 	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
-		m_moviePlayer->postKeyDown(keyEvent->getKeyCode());
+		m_moviePlayer->postKeyDown((int32_t)keyEvent->getVirtualKey());
 }
 
 void FlashPreviewControl::eventKeyUp(ui::Event* event)
 {
 	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
-		m_moviePlayer->postKeyUp(keyEvent->getKeyCode());
+		m_moviePlayer->postKeyUp((int32_t)keyEvent->getVirtualKey());
 }
 
 void FlashPreviewControl::eventButtonDown(ui::Event* event)

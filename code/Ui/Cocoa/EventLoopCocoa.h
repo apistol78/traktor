@@ -39,6 +39,8 @@ private:
 	int m_exitCode;
 	bool m_terminated;
 	uint32_t m_modifierFlags;
+	
+	bool handleGlobalEvents(EventSubject* owner, struct NSEvent* event);
 };
 
 	}

@@ -11,9 +11,9 @@ namespace traktor
 		namespace
 		{
 
-uint32_t buildMapKey(int keyState, int keyCode)
+uint32_t buildMapKey(int keyState, VirtualKey keyCode)
 {
-	return uint32_t(((keyState << 16) & 0xffff0000) | (keyCode & 0x0000ffff));
+	return uint32_t(((keyState << 16) & 0xffff0000) | (uint32_t(keyCode) & 0x0000ffff));
 }
 
 		}
@@ -37,12 +37,12 @@ void ShortcutTable::destroy()
 	removeAllCommands();
 }
 
-void ShortcutTable::addCommand(int keyState, int keyCode, const Command& command)
+void ShortcutTable::addCommand(int keyState, VirtualKey keyCode, const Command& command)
 {
 	m_commands[buildMapKey(keyState, keyCode)].push_back(command);
 }
 
-void ShortcutTable::removeCommand(int keyState, int keyCode, const Command& command)
+void ShortcutTable::removeCommand(int keyState, VirtualKey keyCode, const Command& command)
 {
 	std::map< uint32_t, std::list< Command > >::iterator it = m_commands.find(buildMapKey(keyState, keyCode));
 	if (it != m_commands.end())
@@ -68,7 +68,7 @@ void ShortcutTable::eventKeyDown(Event* event)
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
 
 	int keyState = keyEvent->getKeyState();
-	int keyCode = keyEvent->getKeyCode();
+	VirtualKey keyCode = keyEvent->getVirtualKey();
 
 	std::map< uint32_t, std::list< Command > >::iterator it = m_commands.find(buildMapKey(keyState, keyCode));
 	if (it == m_commands.end())

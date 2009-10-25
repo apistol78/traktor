@@ -2,6 +2,7 @@
 #define traktor_ui_Application_H
 
 #include "Ui/EventSubject.h"
+#include "Ui/Enums.h"
 #include "Ui/Itf/IEventLoop.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
@@ -88,13 +89,13 @@ public:
 	 *
 	 * \note Key name is unlocalized, i.e. it's always in English.
 	 */
-	int translateVirtualKey(const std::wstring& keyName) const;
+	VirtualKey translateVirtualKey(const std::wstring& keyName) const;
 
 	/*! \brief Translate from key code to name.
 	 *
 	 * \note Key name is unlocalized, i.e. it's always in English.
 	 */
-	std::wstring translateVirtualKey(int keyCode) const;
+	std::wstring translateVirtualKey(VirtualKey virtualKey) const;
 
 	//@}
 

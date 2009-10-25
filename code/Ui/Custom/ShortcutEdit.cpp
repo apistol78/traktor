@@ -22,17 +22,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ShortcutEdit", ShortcutEdit, Widget)
 
 ShortcutEdit::ShortcutEdit()
 :	m_keyState(0)
-,	m_keyCode(0)
+,	m_virtualKey(VkNull)
 {
 }
 
-bool ShortcutEdit::create(Widget* parent, int32_t keyState, int32_t keyCode, int style)
+bool ShortcutEdit::create(Widget* parent, int32_t keyState, VirtualKey virtualKey, int style)
 {
 	if (!Widget::create(parent, style))
 		return false;
 
 	m_keyState = keyState;
-	m_keyCode = keyCode;
+	m_virtualKey = virtualKey;
 
 	addKeyDownEventHandler(createMethodHandler(this, &ShortcutEdit::eventKeyDown));
 	addPaintEventHandler(createMethodHandler(this, &ShortcutEdit::eventPaint));
@@ -43,7 +43,7 @@ bool ShortcutEdit::create(Widget* parent, int32_t keyState, int32_t keyCode, int
 
 std::wstring ShortcutEdit::getText() const
 {
-	if (m_keyCode == 0)
+	if (m_virtualKey == VkNull)
 		return L"";
 
 	std::wstring keyDesc = L"";
@@ -55,7 +55,7 @@ std::wstring ShortcutEdit::getText() const
 	if (m_keyState & ui::KsShift)
 		keyDesc = keyDesc.empty() ? L"Shift" : keyDesc + L"+Shift";
 
-	std::wstring keyName = ui::Application::getInstance().translateVirtualKey(m_keyCode);
+	std::wstring keyName = ui::Application::getInstance().translateVirtualKey(m_virtualKey);
 	return keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 }
 
@@ -64,10 +64,10 @@ Size ShortcutEdit::getPreferedSize() const
 	return Size(c_preferedWidth, c_preferedHeight);
 }
 
-void ShortcutEdit::set(int32_t keyState, int32_t keyCode)
+void ShortcutEdit::set(int32_t keyState, VirtualKey virtualKey)
 {
 	m_keyState = keyState;
-	m_keyCode = keyCode;
+	m_virtualKey = virtualKey;
 }
 
 int32_t ShortcutEdit::getKeyState() const
@@ -75,9 +75,9 @@ int32_t ShortcutEdit::getKeyState() const
 	return m_keyState;
 }
 
-int32_t ShortcutEdit::getKeyCode() const
+VirtualKey ShortcutEdit::getVirtualKey() const
 {
-	return m_keyCode;
+	return m_virtualKey;
 }
 
 void ShortcutEdit::addChangeEventHandler(EventHandler* eventHandler)
@@ -89,15 +89,18 @@ void ShortcutEdit::eventKeyDown(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
 
-	int32_t keyCode = keyEvent->getKeyCode();
-	if (keyCode == 16 || keyCode == 17)
+	VirtualKey virtualKey = keyEvent->getVirtualKey();
+	
+	/*
+	if (virtualKey == 16 || virtualKey == 17)
 	{
 		keyEvent->consume();
 		return;
 	}
+	*/
 
 	m_keyState = keyEvent->getKeyState();
-	m_keyCode = keyEvent->getKeyCode();
+	m_virtualKey = virtualKey;
 
 	update();
 

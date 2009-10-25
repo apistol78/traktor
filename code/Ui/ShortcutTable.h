@@ -32,9 +32,9 @@ public:
 
 	void destroy();
 
-	void addCommand(int keyState, int keyCode, const Command& command);
+	void addCommand(int keyState, VirtualKey keyCode, const Command& command);
 
-	void removeCommand(int keyState, int keyCode, const Command& command);
+	void removeCommand(int keyState, VirtualKey keyCode, const Command& command);
 
 	void removeAllCommands();
 

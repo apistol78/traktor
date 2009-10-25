@@ -108,18 +108,18 @@ const wchar_t* c_title = L"Traktor Editor - Debug build";
 const wchar_t* c_title = L"Traktor Editor";
 #endif
 
-bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, int& outKeyCode)
+bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
 {
 	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (!shortcutGroup)
 		return false;
 
-	std::pair< int, int > key = shortcutGroup->getProperty< PropertyKey >(command);
-	if (!key.first && !key.second)
+	std::pair< int, ui::VirtualKey > key = shortcutGroup->getProperty< PropertyKey >(command);
+	if (!key.first && key.second == ui::VkNull)
 		return false;
 
 	outKeyState = key.first;
-	outKeyCode = key.second;
+	outVirtualKey = key.second;
 
 	return true;
 }
@@ -1108,8 +1108,10 @@ void EditorForm::updateShortcutTable()
 
 	for (std::list< ui::Command >::iterator i = m_shortcutCommands.begin(); i != m_shortcutCommands.end(); ++i)
 	{
-		int keyState, keyCode;
-		if (!findShortcutCommandMapping(m_settings, i->getName(), keyState, keyCode))
+		int keyState;
+		ui::VirtualKey virtualKey;
+		
+		if (!findShortcutCommandMapping(m_settings, i->getName(), keyState, virtualKey))
 		{
 #if defined(_DEBUG)
 			log::info << L"No shortcut mapping for \"" << i->getName() << L"\"" << Endl;
@@ -1117,7 +1119,7 @@ void EditorForm::updateShortcutTable()
 			continue;
 		}
 
-		m_shortcutTable->addCommand(keyState, keyCode, *i);
+		m_shortcutTable->addCommand(keyState, virtualKey, *i);
 	}
 }
 

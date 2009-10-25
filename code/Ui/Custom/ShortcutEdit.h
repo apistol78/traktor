@@ -29,23 +29,23 @@ class T_DLLCLASS ShortcutEdit : public Widget
 public:
 	ShortcutEdit();
 
-	bool create(Widget* parent, int32_t keyState, int32_t keyCode, int style = WsNone);
+	bool create(Widget* parent, int32_t keyState, VirtualKey virtualKey, int style = WsNone);
 
 	virtual std::wstring getText() const;
 
 	virtual Size getPreferedSize() const;
 
-	void set(int32_t keyState, int32_t keyCode);
+	void set(int32_t keyState, VirtualKey virtualKey);
 
 	int32_t getKeyState() const;
 
-	int32_t getKeyCode() const;
+	VirtualKey getVirtualKey() const;
 
 	void addChangeEventHandler(EventHandler* eventHandler);
 
 private:
 	int32_t m_keyState;
-	int32_t m_keyCode;
+	VirtualKey m_virtualKey;
 
 	void eventKeyDown(Event* event);
 

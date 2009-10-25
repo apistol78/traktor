@@ -3,6 +3,7 @@
 
 #include "Ui/Event.h"
 #include "Ui/Point.h"
+#include "Ui/Enums.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,12 +26,24 @@ class T_DLLCLASS KeyEvent : public Event
 	T_RTTI_CLASS(KeyEvent)
 	
 public:
-	KeyEvent(EventSubject* sender, Object* item, int keyCode);
+	KeyEvent(
+		EventSubject* sender,
+		Object* item,
+		VirtualKey virtualKey,
+		uint32_t systemKey,
+		wchar_t character
+	);
 	
-	int getKeyCode() const;
+	VirtualKey getVirtualKey() const;
+	
+	uint32_t getSystemKey() const;
+	
+	wchar_t getCharacter() const;
 	
 private:
-	int m_keyCode;
+	VirtualKey m_virtualKey;
+	uint32_t m_systemKey;
+	wchar_t m_character;
 };
 	
 	}
