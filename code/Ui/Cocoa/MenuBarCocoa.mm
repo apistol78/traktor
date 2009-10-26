@@ -77,7 +77,12 @@ bool MenuBarCocoa::create(IForm* form)
 void MenuBarCocoa::destroy()
 {
 	[NSApp setMainMenu: NULL];
-	[m_menu autorelease]; m_menu = 0;
+	
+	if (m_menu)
+	{
+		[m_menu autorelease];
+		m_menu = 0;
+	}
 }
 
 void MenuBarCocoa::add(MenuItem* item)
