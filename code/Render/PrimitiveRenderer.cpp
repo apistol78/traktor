@@ -556,6 +556,51 @@ void PrimitiveRenderer::drawWireCylinder(
 	}
 }
 
+void PrimitiveRenderer::drawSolidPoint(
+	const Vector4& center,
+	float size,
+	const Color& color
+)
+{
+	if (int(m_vertex - m_vertexStart + 6) >= c_bufferCount)
+		return;
+
+	Vector4 cv = m_worldView * center.xyz1();
+	Vector4 cc = m_projection.back() * cv;
+
+	Scalar dx = cc.w() * Scalar(size / m_viewWidth);
+	Scalar dy = cc.w() * Scalar(size / m_viewHeight);
+
+	uint8_t shaderId = m_depthEnable.back() ? SiSolidDepth : SiSolid;
+	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	{
+		Batch batch;
+		batch.shaderId = shaderId;
+		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
+		m_batches.push_back(batch);
+	}
+
+	m_vertex->set(cc + Vector4(-dx, -dy, 0.0f), color);
+	m_vertex++;
+
+	m_vertex->set(cc + Vector4( dx, -dy, 0.0f), color);
+	m_vertex++;
+
+	m_vertex->set(cc + Vector4(-dx,  dy, 0.0f), color);
+	m_vertex++;
+
+	m_vertex->set(cc + Vector4( dx, -dy, 0.0f), color);
+	m_vertex++;
+
+	m_vertex->set(cc + Vector4( dx,  dy, 0.0f), color);
+	m_vertex++;
+
+	m_vertex->set(cc + Vector4(-dx,  dy, 0.0f), color);
+	m_vertex++;
+
+	m_batches.back().primitives.count += 2;
+}
+
 void PrimitiveRenderer::drawSolidAabb(
 	const Vector4& center,
 	const Vector4& extent,

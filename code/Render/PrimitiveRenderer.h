@@ -158,6 +158,12 @@ public:
 		const Color& color
 	);
 
+	void drawSolidPoint(
+		const Vector4& center,
+		float size,
+		const Color& color
+	);
+
 	void drawSolidAabb(
 		const Vector4& center,
 		const Vector4& extent,

@@ -50,7 +50,7 @@ public:
 
 	EmitterInstance* createInstance(resource::IResourceManager* resourceManager);
 
-	inline Source* getSource() { return m_source; }
+	inline Source* getSource() const { return m_source; }
 
 	inline RefArray< Modifier >& getModifiers() { return m_modifiers; }
 

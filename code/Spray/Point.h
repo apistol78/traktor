@@ -18,6 +18,7 @@ struct Point
 	Vector4 velocity;
 	float orientation;
 	float angularVelocity;
+	Vector4 color;
 	float inverseMass;
 	float age;
 	float maxAge;

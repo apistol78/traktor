@@ -172,11 +172,7 @@ void PathEntityEditor::drawGuide(
 
 		// Draw cursor.
 		Vector4 cursor = path.evaluate(m_time).position;
-		primitiveRenderer->drawSolidAabb(
-			cursor,
-			Vector4(0.2f, 0.2f, 0.2f),
-			Color(255, 255, 255, 200)
-		);
+		primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color(255, 255, 255, 200));
 	}
 
 	// Draw attached entity's bounding box.

@@ -13339,10 +13339,6 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[17]/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[74]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
@@ -13368,6 +13364,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[17]/dependencies/item[11]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[41]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>

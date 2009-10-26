@@ -35,7 +35,7 @@ EmitterInstance::~EmitterInstance()
 	synchronize();
 }
 
-void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit)
+void EmitterInstance::update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot)
 {
 	// Warm up instance.
 	if (!m_warm)
@@ -47,11 +47,11 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 
 			float time = 0.0f;
 			for (; time < m_emitter->getWarmUp(); time += c_warmUpDeltaTime)
-				update(warmContext, transform, true);
+				update(warmContext, transform, true, false);
 
 			warmContext.deltaTime = m_emitter->getWarmUp() - time;
 			if (warmContext.deltaTime >= FUZZY_EPSILON)
-				update(warmContext, transform, true);
+				update(warmContext, transform, true, false);
 		}
 	}
 
@@ -66,18 +66,32 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			i = m_points.erase(i);
 	}
 
+	m_totalTime += context.deltaTime;
+
 	// Emit particles.
 	if (emit)
 	{
-		m_totalTime += context.deltaTime;
-
 		Source* source = m_emitter->getSource();
 		if (source)
 		{
-			uint32_t goal = uint32_t(m_totalTime * source->getRate());
-			uint32_t emitCount = std::min< uint32_t >(goal - m_emitted, c_maxEmitPerUpdate);
-			if (emitCount > 0)
-				source->emit(context, transform, emitCount, *this);
+			if (!singleShot)
+			{
+				// Emit in multiple frames; estimate number of particles to emit.
+				uint32_t goal = uint32_t(m_totalTime * source->getRate());
+				uint32_t emitCount = std::min< uint32_t >(goal - m_emitted, c_maxEmitPerUpdate);
+				if (emitCount > 0)
+					source->emit(context, transform, emitCount, *this);
+			}
+			else
+			{
+				// Single shot emit; emit all particles in one frame and then no more.
+				source->emit(
+					context,
+					transform,
+					uint32_t(source->getRate()),
+					*this
+				);
+			}
 		}
 	}
 
@@ -151,7 +165,10 @@ void EmitterInstance::updateTask(float deltaTime, const Transform& transform, si
 	Scalar deltaTimeScalar(deltaTime);
 	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
-		(*i)->update(deltaTimeScalar, transform, m_points, first, last);
+	{
+		if (*i)
+			(*i)->update(deltaTimeScalar, transform, m_points, first, last);
+	}
 }
 
 	}

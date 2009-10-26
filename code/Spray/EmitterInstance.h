@@ -41,7 +41,7 @@ public:
 
 	virtual ~EmitterInstance();
 
-	void update(EmitterUpdateContext& context, const Transform& transform, bool emit);
+	void update(EmitterUpdateContext& context, const Transform& transform, bool emit, bool singleShot);
 
 	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
 

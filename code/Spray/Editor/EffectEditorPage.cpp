@@ -2,6 +2,7 @@
 #include "Spray/Editor/EffectPreviewControl.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
+#include "Spray/EffectFactory.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
@@ -59,6 +60,9 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	);
 	m_resourceManager->addFactory(
 		gc_new< render::ShaderFactory >(database, renderSystem)
+	);
+	m_resourceManager->addFactory(
+		gc_new< EffectFactory >(database)
 	);
 
 	activate();

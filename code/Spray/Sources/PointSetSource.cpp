@@ -1,6 +1,9 @@
-#include "Spray/Sources/QuadSource.h"
+#include "Spray/Sources/PointSetSource.h"
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/EmitterInstance.h"
+#include "Spray/PointSet.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -10,13 +13,10 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.QuadSource", QuadSource, Source)
+T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.PointSetSource", PointSetSource, Source)
 
-QuadSource::QuadSource()
-:	m_center(0.0f, 0.0f, 0.0f, 1.0f)
-,	m_axis1(1.0f, 0.0f, 0.0f, 0.0f)
-,	m_axis2(0.0f, 0.0f, 1.0f, 0.0f)
-,	m_normal(0.0f, 1.0f, 0.0f, 0.0f)
+PointSetSource::PointSetSource()
+:	m_offset(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_velocity(0.0f, 0.0f)
 ,	m_orientation(0.0f, 2.0f * PI)
 ,	m_angularVelocity(0.0f, 0.0f)
@@ -26,35 +26,40 @@ QuadSource::QuadSource()
 {
 }
 
-bool QuadSource::create(resource::IResourceManager* resourceManager)
+bool PointSetSource::create(resource::IResourceManager* resourceManager)
 {
+	if (!resourceManager->bind(m_pointSet))
+		return false;
+
 	return true;
 }
 
-void QuadSource::emit(
+void PointSetSource::emit(
 	EmitterUpdateContext& context,
 	const Transform& transform,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance
 ) const
 {
-	Vector4 center = transform * m_center;
-	Vector4 axis1 = transform * m_axis1;
-	Vector4 axis2 = transform * m_axis2;
-	Vector4 normal = transform * m_normal;
+	if (!m_pointSet.validate())
+		return;
 
-	while (emitCount-- > 0)
+	const AlignedVector< PointSet::Point >& points = m_pointSet->getPoints();
+	if (points.empty())
+		return;
+
+	for (uint32_t i = 0; i < uint32_t(points.size()); ++i)
 	{
-		Scalar u = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
-		Scalar v = Scalar(float(context.random.nextDouble()) * 2.0f - 1.0f);
+		Vector4 position = transform * (points[i].position + m_offset).xyz1();
+		Vector4 normal = transform * points[i].normal.xyz0();
 
 		Point point;
 
-		point.position = center + u * axis1 + v * axis2;
+		point.position = position;
 		point.velocity = normal * Scalar(m_velocity.random(context.random));
 		point.orientation = m_orientation.random(context.random);
 		point.angularVelocity = m_angularVelocity.random(context.random);
-		point.color = Vector4::one();
+		point.color = points[i].color;
 		point.age = 0.0f;
 		point.maxAge = m_age.random(context.random);
 		point.inverseMass = 1.0f / (m_mass.random(context.random));
@@ -65,21 +70,19 @@ void QuadSource::emit(
 	}
 }
 
-bool QuadSource::serialize(Serializer& s)
+bool PointSetSource::serialize(Serializer& s)
 {
 	if (!Source::serialize(s))
 		return false;
 
-	s >> Member< Vector4 >(L"center", m_center);
-	s >> Member< Vector4 >(L"axis1", m_axis1);
-	s >> Member< Vector4 >(L"axis2", m_axis2);
-	s >> Member< Vector4 >(L"normal", m_normal);
+	s >> resource::Member< PointSet >(L"pointSet", m_pointSet);
 	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
 	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
 	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);
 	s >> MemberComposite< Range< float > >(L"age", m_age);
 	s >> MemberComposite< Range< float > >(L"mass", m_mass);
 	s >> MemberComposite< Range< float > >(L"size", m_size);
+	s >> Member< Vector4 >(L"offset", m_offset);
 
 	return true;
 }

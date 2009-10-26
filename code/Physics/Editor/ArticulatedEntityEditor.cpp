@@ -70,17 +70,9 @@ void ArticulatedEntityEditor::drawGuide(
 
 		if (const BallJointDesc* ballJointDesc = dynamic_type_cast< const BallJointDesc* >(constraint.jointDesc))
 		{
-			const Vector4 c_knobSize(0.1f, 0.1f, 0.1f, 0.0f);
-
 			Vector4 anchor = jointTransform * ballJointDesc->getAnchor().xyz1();
 
-			primitiveRenderer->drawSolidAabb(
-				Aabb(
-					anchor - c_knobSize,
-					anchor + c_knobSize
-				),
-				Color(255, 255, 255)
-			);
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				body1Center,
@@ -100,19 +92,12 @@ void ArticulatedEntityEditor::drawGuide(
 		}
 		else if (const ConeTwistJointDesc* coneTwistJointDesc = dynamic_type_cast< const ConeTwistJointDesc* >(constraint.jointDesc))
 		{
-			const Vector4 c_knobSize(0.1f, 0.1f, 0.1f, 0.0f);
 			const Scalar c_axisLength(5.0f);
 			const float c_limitLength = 2.0f;
 
 			Vector4 anchor = jointTransform * coneTwistJointDesc->getAnchor().xyz1();
 
-			primitiveRenderer->drawSolidAabb(
-				Aabb(
-					anchor - c_knobSize,
-					anchor + c_knobSize
-				),
-				Color(255, 255, 255)
-			);
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - coneTwistJointDesc->getTwistAxis() * c_axisLength,
@@ -176,7 +161,6 @@ void ArticulatedEntityEditor::drawGuide(
 		}
 		else if (const HingeJointDesc* hingeJointDesc = dynamic_type_cast< const HingeJointDesc* >(constraint.jointDesc))
 		{
-			const Vector4 c_knobSize(0.1f, 0.1f, 0.1f, 0.0f);
 			const Scalar c_axisLength(5.0f);
 			const float c_limitLength = 2.0f;
 			const float c_angleStep = 10.0f;
@@ -184,13 +168,7 @@ void ArticulatedEntityEditor::drawGuide(
 			Vector4 anchor = jointTransform * hingeJointDesc->getAnchor().xyz1();
 			Vector4 axis = jointTransform * hingeJointDesc->getAxis().xyz0();
 
-			primitiveRenderer->drawSolidAabb(
-				Aabb(
-					anchor - c_knobSize,
-					anchor + c_knobSize
-				),
-				Color(255, 255, 255)
-			);
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - axis * c_axisLength,
@@ -233,20 +211,13 @@ void ArticulatedEntityEditor::drawGuide(
 		}
 		else if (const Hinge2JointDesc* hinge2JointDesc = dynamic_type_cast< const Hinge2JointDesc* >(constraint.jointDesc))
 		{
-			const Vector4 c_knobSize(0.1f, 0.1f, 0.1f, 0.0f);
 			const Scalar c_axisLength(200.0f);
 
 			Vector4 anchor = jointTransform * hinge2JointDesc->getAnchor().xyz1();
 			Vector4 axis1 = jointTransform * hinge2JointDesc->getAxis1().xyz0();
 			Vector4 axis2 = jointTransform * hinge2JointDesc->getAxis2().xyz0();
 
-			primitiveRenderer->drawSolidAabb(
-				Aabb(
-					anchor - c_knobSize,
-					anchor + c_knobSize
-				),
-				Color(255, 255, 255)
-			);
+			primitiveRenderer->drawSolidPoint(anchor, 4.0f, Color(255, 255, 255));
 
 			primitiveRenderer->drawLine(
 				anchor - axis1 * c_axisLength,

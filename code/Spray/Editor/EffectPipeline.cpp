@@ -2,6 +2,7 @@
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
+#include "Spray/Sources/PointSetSource.h"
 #include "Editor/IPipelineManager.h"
 #include "Database/Instance.h"
 
@@ -47,7 +48,13 @@ bool EffectPipeline::buildDependencies(
 	{
 		const Emitter* emitter = (*i)->getEmitter();
 		if (emitter)
+		{
 			pipelineManager->addDependency(emitter->getShader().getGuid(), true);
+
+			const PointSetSource* pointSetSource = dynamic_type_cast< const PointSetSource* >(emitter->getSource());
+			if (pointSetSource)
+				pipelineManager->addDependency(pointSetSource->getPointSet().getGuid(), true);
+		}
 	}
 
 	return true;

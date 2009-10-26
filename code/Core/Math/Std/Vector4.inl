@@ -72,6 +72,12 @@ T_MATH_INLINE const Vector4& Vector4::zero()
 	return zero;
 }
 
+T_MATH_INLINE const Vector4& Vector4::one()
+{
+	static const Vector4 one(1.0f, 1.0f, 1.0f, 1.0f);
+	return one;
+}
+
 T_MATH_INLINE const Vector4& Vector4::origo()
 {
 	static const Vector4 origo(0.0f, 0.0f, 0.0f, 1.0f);

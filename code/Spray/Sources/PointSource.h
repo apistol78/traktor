@@ -28,6 +28,8 @@ class T_DLLCLASS PointSource : public Source
 public:
 	PointSource();
 
+	virtual bool create(resource::IResourceManager* resourceManager);
+
 	virtual void emit(
 		EmitterUpdateContext& context,
 		const Transform& transform,
