@@ -47,13 +47,13 @@ public:
 			NSNotificationCenter* notificationCenter = [NSNotificationCenter defaultCenter];
 			[notificationCenter removeObserver: m_notificationProxy];
 			
-			delete m_notificationProxy;
+			[m_notificationProxy autorelease];
 			m_notificationProxy = 0;
 		}
 
 		// Release all timers.
 		for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-			[i->second autorelease];
+			[i->second invalidate];
 			
 		m_timers.clear();
 		
@@ -63,6 +63,8 @@ public:
 			[view removeFromSuperview];
 		
 		// Release objects.
+		T_ASSERT (m_control != m_view);
+		
 		if (m_control)
 		{
 			[m_control autorelease];
@@ -207,7 +209,7 @@ public:
 		std::map< int, NSTimer* >::iterator i = m_timers.find(id);
 		if (i != m_timers.end())
 		{
-			[i->second autorelease];
+			[i->second invalidate];
 			m_timers.erase(i);
 		}
 	}

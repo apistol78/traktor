@@ -25,7 +25,11 @@ bool PopupMenuCocoa::create()
 
 void PopupMenuCocoa::destroy()
 {
-	[m_menu autorelease]; m_menu = 0;
+	if (m_menu)
+	{
+		[m_menu autorelease];
+		m_menu = 0;
+	}
 }
 
 void PopupMenuCocoa::add(MenuItem* item)

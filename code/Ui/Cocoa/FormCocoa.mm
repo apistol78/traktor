@@ -75,7 +75,7 @@ void FormCocoa::destroy()
 {
 	// Release all timers.
 	for (std::map< int, NSTimer* >::iterator i = m_timers.begin(); i != m_timers.end(); ++i)
-		[i->second autorelease];
+		[i->second invalidate];
 		
 	m_timers.clear();
 
@@ -195,7 +195,7 @@ void FormCocoa::stopTimer(int id)
 	std::map< int, NSTimer* >::iterator i = m_timers.find(id);
 	if (i != m_timers.end())
 	{
-		[i->second autorelease];
+		[i->second invalidate];
 		m_timers.erase(i);
 	}
 }
