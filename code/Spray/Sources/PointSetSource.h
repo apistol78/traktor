@@ -42,6 +42,8 @@ public:
 
 	inline const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }
 
+	inline const Vector4& getOffset() const { return m_offset; }
+
 private:
 	mutable resource::Proxy< PointSet > m_pointSet;
 	Vector4 m_offset;
