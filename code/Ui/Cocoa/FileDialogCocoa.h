@@ -30,6 +30,8 @@ public:
 private:
 	EventSubject* m_owner;
 	NSOpenPanel* m_openPanel;
+	NSSavePanel* m_savePanel;
+	NSMutableArray* m_types;
 };
 
 	}
