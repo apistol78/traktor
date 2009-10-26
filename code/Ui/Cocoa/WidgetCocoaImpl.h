@@ -257,6 +257,8 @@ public:
 	virtual Font getFont() const
 	{
 		NSFont* font = [getControl() font];
+		if (!font)
+			font = [NSFont controlContentFontOfSize: 11];
 		return Font(
 			fromNSString([font fontName]),
 			[font pointSize]
