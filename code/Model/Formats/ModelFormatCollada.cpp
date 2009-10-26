@@ -225,14 +225,14 @@ void createSkin(
 			if (floatArray)
 			{
 				floatData[floatArrayCount].id = sources[j]->getAttribute(L"id", L"")->getValue();
-				parseStringToArray(floatArray->getValue(), floatData[j].data);
+				parseStringToArray(floatArray->getValue(), floatData[floatArrayCount].data);
 				floatArrayCount++;
 			}
 			Ref< const xml::Element > nameArray = sources[j]->getSingle(L"Name_array");
 			if (nameArray)
 			{
 				nameData[nameArrayCount].id = sources[j]->getAttribute(L"id", L"")->getValue();
-				parseStringToArray(floatArray->getValue(), nameData[j].data);
+				parseStringToArray(nameArray->getValue(), nameData[nameArrayCount].data);
 				nameArrayCount++;
 			}
 		}
@@ -246,6 +246,7 @@ void createSkin(
 			for (uint32_t k = 0; k < inputs.size(); ++k)
 			{
 				jointInputs[k].read(inputs[k]);
+//				outModel->
 			}
 		}
 
@@ -366,86 +367,107 @@ void createMesh(
 				if (vertexDataInfo.first)
 				{
 					uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
-					T_ASSERT(positionIndex * 3 +2 < vertexDataInfo.first->data.size());
-					Vector4 position(
-						-vertexDataInfo.first->data[positionIndex * 3 + 0],
-						vertexDataInfo.first->data[positionIndex * 3 + 1],
-						vertexDataInfo.first->data[positionIndex * 3 + 2],
-						1.0f
-					);
-					vertex.setPosition(outModel->addUniquePosition(position));
+					if (positionIndex != -1)
+					{
+						T_ASSERT(positionIndex * 3 +2 < vertexDataInfo.first->data.size());
+						Vector4 position(
+							-vertexDataInfo.first->data[positionIndex * 3 + 0],
+							vertexDataInfo.first->data[positionIndex * 3 + 1],
+							vertexDataInfo.first->data[positionIndex * 3 + 2],
+							1.0f
+						);
+						vertex.setPosition(outModel->addUniquePosition(position));
+					}
 				}
 
 				if (normalDataInfo.first)
 				{
 					uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
-					T_ASSERT(normalIndex * 3 +2 < normalDataInfo.first->data.size());
-					Vector4 normal(
-						-normalDataInfo.first->data[normalIndex * 3 + 0],
-						normalDataInfo.first->data[normalIndex * 3 + 1],
-						normalDataInfo.first->data[normalIndex * 3 + 2],
-						0.0f
-					);
-					vertex.setNormal(outModel->addUniqueNormal(normal));
+					if (normalIndex != -1)
+					{
+						T_ASSERT(normalIndex * 3 +2 < normalDataInfo.first->data.size());
+						Vector4 normal(
+							-normalDataInfo.first->data[normalIndex * 3 + 0],
+							normalDataInfo.first->data[normalIndex * 3 + 1],
+							normalDataInfo.first->data[normalIndex * 3 + 2],
+							0.0f
+						);
+						vertex.setNormal(outModel->addUniqueNormal(normal));
+					}
 				}
 
 				if (biNormalDataInfo.first)
 				{
 					uint32_t binormalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + biNormalOffset];
-					Vector4 binormal(
-						-biNormalDataInfo.first->data[binormalIndex * 3 + 0],
-						biNormalDataInfo.first->data[binormalIndex * 3 + 1],
-						biNormalDataInfo.first->data[binormalIndex * 3 + 2],
-						0.0f
-						);
-					vertex.setBinormal(outModel->addUniqueNormal(binormal));
+					if (binormalIndex != -1)
+					{
+						Vector4 binormal(
+							-biNormalDataInfo.first->data[binormalIndex * 3 + 0],
+							biNormalDataInfo.first->data[binormalIndex * 3 + 1],
+							biNormalDataInfo.first->data[binormalIndex * 3 + 2],
+							0.0f
+							);
+						vertex.setBinormal(outModel->addUniqueNormal(binormal));
+					}
 				}
 
 				if (tangentDataInfo.first)
 				{
 					uint32_t tangentIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + tangentOffset];
-					Vector4 tangent(
-						-tangentDataInfo.first->data[tangentIndex * 3 + 0],
-						tangentDataInfo.first->data[tangentIndex * 3 + 1],
-						tangentDataInfo.first->data[tangentIndex * 3 + 2],
-						0.0f
-						);
-					vertex.setBinormal(outModel->addUniqueNormal(tangent));
+					if (tangentIndex!= -1)
+					{
+						Vector4 tangent(
+							-tangentDataInfo.first->data[tangentIndex * 3 + 0],
+							tangentDataInfo.first->data[tangentIndex * 3 + 1],
+							tangentDataInfo.first->data[tangentIndex * 3 + 2],
+							0.0f
+							);
+						vertex.setBinormal(outModel->addUniqueNormal(tangent));
+					}
 				}
 
 				if (texcoord0DataInfo.first)
 				{
 					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord0Offset];
-					T_ASSERT(texCoordIndex * 2 + 1 < texcoord0DataInfo.first->data.size());
-					Vector2 texCoord(
-						texcoord0DataInfo.first->data[texCoordIndex * 2 + 0],
-						1.0f - texcoord0DataInfo.first->data[texCoordIndex * 2 + 1]
-					);
-					vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+					if (texCoordIndex != -1)
+					{
+						T_ASSERT(texCoordIndex * 2 + 1 < texcoord0DataInfo.first->data.size());
+						Vector2 texCoord(
+							texcoord0DataInfo.first->data[texCoordIndex * 2 + 0],
+							1.0f - texcoord0DataInfo.first->data[texCoordIndex * 2 + 1]
+						);
+						vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+					}
 				}
 				// Second uv set
 				if (texcoord1DataInfo.first)
 				{
 					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord1Offset];
-					Vector2 texCoord(
-						texcoord1DataInfo.first->data[texCoordIndex * 2 + 0],
-						1.0f - texcoord1DataInfo.first->data[texCoordIndex * 2 + 1]
-					);
-					// Unsupported!
-					//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+					if (texCoordIndex != -1)
+					{
+						Vector2 texCoord(
+							texcoord1DataInfo.first->data[texCoordIndex * 2 + 0],
+							1.0f - texcoord1DataInfo.first->data[texCoordIndex * 2 + 1]
+						);
+						// Unsupported!
+						//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+					}
 				}
 
 				if (vcolorDataInfo.first)
 				{
 					uint32_t vcolorIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vcolorOffset];
-					T_ASSERT(vcolorIndex * 4 + 3 < vcolorDataInfo.first->data.size());
-					Vector4 vcolor(
-						vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
-						vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
-						vcolorDataInfo.first->data[vcolorIndex * 4 + 0],
-						vcolorDataInfo.first->data[vcolorIndex * 4 + 3]
-						);
-					vertex.setColor(outModel->addColor(vcolor));
+					if (vcolorIndex != -1)
+					{
+						T_ASSERT(vcolorIndex * 4 + 3 < vcolorDataInfo.first->data.size());
+						Vector4 vcolor(
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 0],
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 3]
+							);
+						vertex.setColor(outModel->addColor(vcolor));
+					}
 				}
 
 				polygon.addVertex(
@@ -526,6 +548,79 @@ bool ModelFormatCollada::supportFormat(const Path& filePath) const
 	return 
 		compareIgnoreCase(filePath.getExtension(), L"dae") == 0;
 }
+/*
+#include "Core/Math/Const.h"
+#include "Animation/Skeleton.h"
+#include "Animation/Bone.h"
+namespace {
+Transform parseTranslation(xml::Element* node)
+{
+	if (node)
+	{
+		std::vector< float > t;
+		parseStringToArray(node->getValue(), t);
+		return Transform(Vector4(t[0], t[1], t[2], 0));
+	}
+	else 
+		return Transform::identity();
+}
+
+Transform parseRotation(xml::Element* node)
+{
+	if (node)
+	{
+		std::vector< float > t;
+		parseStringToArray(node->getValue(), t);
+		float angle = deg2rad( t[3]);
+		return Transform(Quaternion(Vector4(t[0] * angle, t[1] * angle, t[2] * angle, 0)));
+	}
+	else 
+		return Transform::identity();
+}
+
+void parseJoint(xml::Element* node, animation::Skeleton& skeleton, int level)
+{
+	int parent = int(skeleton.getBoneCount()) - 1;
+	if (node->getAttribute(L"type")->getValue() == L"JOINT")
+	{
+		Transform t;
+		Ref<xml::Element> matrix = node->getSingle(L"matrix");
+		if (matrix)
+		{
+			Matrix44 m;
+			std::vector< float> ma;
+			parseStringToArray(matrix->getValue(),ma);
+			m = Matrix44(ma[0], ma[1], ma[2], ma[3], 
+						 ma[4], ma[5], ma[6], ma[7], 
+						 ma[8], ma[9], ma[10], ma[11], 
+						 ma[12], ma[13], ma[14], ma[15]);
+			t = Transform(m);
+		}
+		else
+		{
+			Transform transform = parseTranslation(node->getSingle(L"translate"));
+			RefArray< xml::Element > rotations;
+			node->get(L"rotate", rotations);
+			for (uint32_t i=0; i < rotations.size(); i++)
+			{
+				Transform rotation = parseRotation(rotations[i]);
+				t = t * rotation;
+			}
+		}
+		animation::Bone b;
+		if (level > 0)
+			b.setParent(level - 1);
+		b.setName(node->getAttribute(L"name")->getValue());
+		b.setOrientation(t.rotation());
+		level++;
+	}
+	else
+	{
+		return;
+	}
+}
+}
+*/
 
 Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
 {
@@ -589,6 +684,13 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 				if (!symbol.empty() && !target.empty())
 					materialRefs.push_back(material_ref_t(symbol, target));
 			}
+		}
+		if (node->getAttribute(L"type") && node->getAttribute(L"type")->getValue() == L"JOINT")
+		{
+/*
+			animation::Skeleton skeleton;
+			parseJoint(node, skeleton, 0);
+*/
 		}
 
 		node->get(L"node", nodes);
