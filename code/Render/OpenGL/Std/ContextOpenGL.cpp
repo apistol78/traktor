@@ -1,4 +1,5 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/Extensions.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 
