@@ -27,7 +27,6 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/IdleEvent.h"
-#include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -46,8 +45,9 @@ namespace traktor
 
 const uint32_t c_initialRandomSeed = 5489UL;
 const int c_updateInterval = 30;
-const float c_deltaScaleX = 0.015f;
-const float c_deltaScaleY = 0.025f;
+const float c_deltaScaleZ = 0.025f;
+const float c_deltaScaleHead = 0.015f;
+const float c_deltaScalePitch = 0.005f;
 
 		}
 
@@ -58,7 +58,7 @@ EffectPreviewControl::EffectPreviewControl()
 ,	m_context(0.0f, c_initialRandomSeed)
 ,	m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
 ,	m_angleHead(0.0f)
-,	m_colorBackground(0x40, 0x42, 0x45)
+,	m_anglePitch(0.0f)
 ,	m_timeScale(1.0f)
 ,	m_lastDeltaTime(1.0f / c_updateInterval)
 ,	m_guideVisible(true)
@@ -106,10 +106,6 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 
 	m_timer.start();
 
-	m_menuOptions = gc_new< ui::PopupMenu >();
-	m_menuOptions->create();
-	m_menuOptions->add(gc_new< ui::MenuItem >(ui::Command(L"Effect.Editor.ChangeBackgroundColor"), L"Change background color..."));
-
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &EffectPreviewControl::eventIdle);
 	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
@@ -123,12 +119,6 @@ void EffectPreviewControl::destroy()
 	{
 		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
 		m_idleHandler = 0;
-	}
-
-	if (m_menuOptions)
-	{
-		m_menuOptions->destroy();
-		m_menuOptions = 0;
 	}
 
 	if (m_primitiveRenderer)
@@ -205,26 +195,8 @@ void EffectPreviewControl::syncEffect()
 void EffectPreviewControl::eventButtonDown(ui::Event* event)
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
-	{
-		m_lastMousePosition = mouseEvent->getPosition();
-		setCapture();
-	}
-	else if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
-	{
-		Ref< ui::MenuItem > selected = m_menuOptions->show(this, mouseEvent->getPosition());
-		if (!selected)
-			return;
-
-		if (selected->getCommand() == L"Effect.Editor.ChangeBackgroundColor")
-		{
-			ui::custom::ColorDialog dialogColor;
-			dialogColor.create(this, i18n::Text(L"COLOR_DIALOG_TEXT"), ui::custom::ColorDialog::WsDefaultFixed, m_colorBackground);
-			if (dialogColor.showModal() == ui::DrOk)
-				m_colorBackground = dialogColor.getColor();
-			dialogColor.destroy();
-		}
-	}
+	m_lastMousePosition = mouseEvent->getPosition();
+	setCapture();
 }
 
 void EffectPreviewControl::eventButtonUp(ui::Event* event)
@@ -239,12 +211,16 @@ void EffectPreviewControl::eventMouseMove(ui::Event* event)
 
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	
-	if ((mouseEvent->getKeyState() & ui::KsControl) == ui::KsControl)
-		m_effectPosition += Vector4(0.0f, float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScaleY, 0.0f, 0.0f);
+	if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	{
+		m_effectPosition += Vector4(0.0f, 0.0f, -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScaleZ, 0.0f);
+		m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
+	}
 	else
-		m_effectPosition += Vector4(0.0f, 0.0f, -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScaleY, 0.0f);
-
-	m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleX;
+	{
+		m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
+		m_anglePitch += float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScalePitch;
+	}
 
 	m_lastMousePosition = mouseEvent->getPosition();
 
@@ -271,13 +247,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	if (!m_renderView->begin())
 		return;
 
-	const float clearColor[] =
-	{
-		m_colorBackground.r / 255.0f,
-		m_colorBackground.g / 255.0f,
-		m_colorBackground.b / 255.0f,
-		0.0f
-	};
+	const float clearColor[] = { 0.2f, 0.2f, 0.2f, 0.0f };
 	m_renderView->clear(
 		render::CfColor | render::CfDepth,
 		clearColor,
@@ -288,12 +258,12 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	render::Viewport viewport = m_renderView->getViewport();
 	float aspect = float(viewport.width) / viewport.height;
 
-	Matrix44 viewTransform = translate(m_effectPosition) * rotateY(m_angleHead);
+	Matrix44 viewTransform = translate(m_effectPosition) * rotateX(m_anglePitch) * rotateY(m_angleHead);
 	Matrix44 projectionTransform = perspectiveLh(
-		80.0f * PI / 180.0f,
+		65.0f * PI / 180.0f,
 		aspect,
-		0.1f,
-		2000.0f
+		0.01f,
+		1000.0f
 	);
 
 	Matrix44 viewInverse = viewTransform.inverseOrtho();
@@ -382,19 +352,6 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_renderContext->render(render::RenderContext::RfOpaque | render::RenderContext::RfAlphaBlend);
 		m_renderContext->flush();
-
-		//if (m_velocityVisible)
-		//{
-		//	const PointVector& points = m_effectInstance->getPoints();
-
-		//	m_primitiveRenderer->pushProjection(projectionTransform);
-		//	m_primitiveRenderer->pushView(viewTransform);
-
-		//	for (PointVector::const_iterator i = points.begin(); i != points.end(); ++i)
-		//		m_primitiveRenderer->drawLine(i->position, i->position + i->velocity / Scalar(10.0f), Color(255, 255, 128));
-		//	
-		//	m_primitiveRenderer->flush(m_renderView);
-		//}
 
 		m_lastDeltaTime = deltaTime;
 	}

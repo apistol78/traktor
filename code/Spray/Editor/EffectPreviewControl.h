@@ -18,13 +18,6 @@
 
 namespace traktor
 {
-	namespace ui
-	{
-
-class PopupMenu;
-
-	}
-
 	namespace resource
 	{
 
@@ -77,7 +70,6 @@ public:
 	void syncEffect();
 
 private:
-	Ref< ui::PopupMenu > m_menuOptions;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
@@ -92,7 +84,7 @@ private:
 	std::map< const Type*, Ref< SourceRenderer > > m_sourceRenderers;
 	Vector4 m_effectPosition;
 	float m_angleHead;
-	Color m_colorBackground;
+	float m_anglePitch;
 	ui::Point m_lastMousePosition;
 	float m_timeScale;
 	float m_lastDeltaTime;
