@@ -79,7 +79,7 @@ public:
 	 * \param arguments Call arguments.
 	 * \return Return value from function.
 	 */
-	virtual Any executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments) = 0;
+	virtual Any executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments = std::vector< Any >()) = 0;
 
 	/*! \brief Execute method.
 	*
@@ -88,7 +88,7 @@ public:
 	* \param arguments Call arguments.
 	* \return Return value from function.
 	*/
-	virtual Any executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments) = 0;
+	virtual Any executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments = std::vector< Any >()) = 0;
 };
 
 	}
