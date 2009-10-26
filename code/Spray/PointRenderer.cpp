@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_pointCount = 2000;
+const uint32_t c_pointCount = 10000;
 
 struct PredicateZ
 {
@@ -31,8 +31,20 @@ struct PredicateZ
 #pragma pack(1)
 struct Vertex
 {
-	float position[3];
-	float velocity[3];
+	struct PositionAndOrientation
+	{
+		float position[3];
+		float orientation;
+	}
+	positionAndOrientation;
+	
+	struct VelocityAndRandom
+	{
+		float velocity[3];
+		float random;
+	}
+	velocityAndRandom;
+
 	struct Attributes1
 	{
 		float extent[2];
@@ -40,11 +52,11 @@ struct Vertex
 		float size;
 	}
 	attrib1;
+
 	struct Attributes2
 	{
-		float orientation;
-		float random;
-		float dummy[2];
+		float color[3];
+		float dummy;
 	}
 	attrib2;
 };
@@ -59,8 +71,8 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float cullNear
 ,	m_vertexOffset(0)
 {
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat3, offsetof(Vertex, velocity), 0));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(Vertex, positionAndOrientation), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, velocityAndRandom), 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, attrib1), 1));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, attrib2), 2));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
@@ -150,18 +162,21 @@ void PointRenderer::render(
 
 			for (int j = 0; j < 4; ++j)
 			{
-				vertex->position[0] = point.position.x();
-				vertex->position[1] = point.position.y();
-				vertex->position[2] = point.position.z();
-				vertex->velocity[0] = point.velocity.x();
-				vertex->velocity[1] = point.velocity.y();
-				vertex->velocity[2] = point.velocity.z();
+				vertex->positionAndOrientation.position[0] = point.position.x();
+				vertex->positionAndOrientation.position[1] = point.position.y();
+				vertex->positionAndOrientation.position[2] = point.position.z();
+				vertex->positionAndOrientation.orientation = point.orientation;
+				vertex->velocityAndRandom.velocity[0] = point.velocity.x();
+				vertex->velocityAndRandom.velocity[1] = point.velocity.y();
+				vertex->velocityAndRandom.velocity[2] = point.velocity.z();
+				vertex->velocityAndRandom.random = point.random;
 				vertex->attrib1.extent[0] = c_extents[j][0];
 				vertex->attrib1.extent[1] = c_extents[j][1];
 				vertex->attrib1.alpha = alpha;
 				vertex->attrib1.size = point.size;
-				vertex->attrib2.orientation = point.orientation;
-				vertex->attrib2.random = point.random;
+				vertex->attrib2.color[0] = point.color.x();
+				vertex->attrib2.color[1] = point.color.y();
+				vertex->attrib2.color[2] = point.color.z();
 				vertex++;
 			}
 

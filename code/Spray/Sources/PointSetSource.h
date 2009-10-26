@@ -1,9 +1,10 @@
-#ifndef traktor_spray_ConeSource_H
-#define traktor_spray_ConeSource_H
+#ifndef traktor_spray_PointSetSource_H
+#define traktor_spray_PointSetSource_H
 
 #include "Spray/Source.h"
 #include "Spray/Range.h"
-#include "Core/Math/RandomGeometry.h"
+#include "Spray/PointSet.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,15 +19,15 @@ namespace traktor
 	namespace spray
 	{
 
-/*! \brief Cone particle source.
+/*! \brief Point set particle source.
  * \ingroup Spray
  */
-class T_DLLCLASS ConeSource : public Source
+class T_DLLCLASS PointSetSource : public Source
 {
-	T_RTTI_CLASS(ConeSource)
+	T_RTTI_CLASS(PointSetSource)
 
 public:
-	ConeSource();
+	PointSetSource();
 
 	virtual bool create(resource::IResourceManager* resourceManager);
 
@@ -39,19 +40,11 @@ public:
 
 	virtual bool serialize(Serializer& s);
 
-	inline const Vector4& getPosition() const { return m_position; }
-
-	inline const Vector4& getNormal() const { return m_normal; }
-
-	inline float getAngle1() const { return m_angle1; }
-
-	inline float getAngle2() const { return m_angle2; }
+	inline const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }
 
 private:
-	Vector4 m_position;
-	Vector4 m_normal;
-	float m_angle1;
-	float m_angle2;
+	mutable resource::Proxy< PointSet > m_pointSet;
+	Vector4 m_offset;
 	Range< float > m_velocity;
 	Range< float > m_orientation;
 	Range< float > m_angularVelocity;
@@ -63,4 +56,4 @@ private:
 	}
 }
 
-#endif	// traktor_spray_ConeSource_H
+#endif	// traktor_spray_PointSetSource_H

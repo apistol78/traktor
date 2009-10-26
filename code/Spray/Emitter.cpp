@@ -27,6 +27,9 @@ EmitterInstance* Emitter::createInstance(resource::IResourceManager* resourceMan
 	if (!resourceManager->bind(m_shader))
 		return 0;
 
+	if (m_source && !m_source->create(resourceManager))
+		return 0;
+
 	return gc_new< EmitterInstance >(this);
 }
 

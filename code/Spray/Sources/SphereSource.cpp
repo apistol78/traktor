@@ -24,6 +24,11 @@ SphereSource::SphereSource()
 {
 }
 
+bool SphereSource::create(resource::IResourceManager* resourceManager)
+{
+	return true;
+}
+
 void SphereSource::emit(
 	EmitterUpdateContext& context,
 	const Transform& transform,
@@ -43,6 +48,7 @@ void SphereSource::emit(
 		point.velocity = direction * Scalar(m_velocity.random(context.random));
 		point.orientation = m_orientation.random(context.random);
 		point.angularVelocity = m_angularVelocity.random(context.random);
+		point.color = Vector4::one();
 		point.age = 0.0f;
 		point.maxAge = m_age.random(context.random);
 		point.inverseMass = 1.0f / (m_mass.random(context.random));

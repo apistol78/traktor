@@ -45,6 +45,7 @@ private:
 	Ref< EmitterInstance > m_emitterInstance;
 	float m_start;
 	float m_end;
+	bool m_singleShotFired;
 };
 
 	}

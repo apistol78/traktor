@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -30,6 +37,8 @@ class T_DLLCLASS Source : public Serializable
 
 public:
 	Source();
+
+	virtual bool create(resource::IResourceManager* resourceManager) = 0;
 
 	virtual void emit(
 		EmitterUpdateContext& context,

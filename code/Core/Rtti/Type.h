@@ -142,10 +142,23 @@ inline const Type& type_of()
 	return T::getClassType();
 }
 
+/*! \brief Check if type is identical. */
+inline bool is_type_a(const Type& base, const Type& type)
+{
+	return &base == &type;
+}
+
+/*! \brief Check if type is identical. */
+template < typename T >
+inline bool is_type_a(const Type& type)
+{
+	return is_type_a(type_of< T >(), type);
+}
+
 /*! \brief Check if type is derived from a base type. */
 inline bool is_type_of(const Type& base, const Type& type)
 {
-	if (&base == &type)
+	if (is_type_a(base, type))
 		return true;
 
 	if (!type.getSuper())

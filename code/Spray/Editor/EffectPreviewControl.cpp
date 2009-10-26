@@ -3,6 +3,7 @@
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
 #include "Spray/Editor/PointSourceRenderer.h"
+#include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
 #include "Spray/Editor/SphereSourceRenderer.h"
 #include "Spray/Editor/SplineSourceRenderer.h"
@@ -14,6 +15,7 @@
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/DiscSource.h"
 #include "Spray/Sources/PointSource.h"
+#include "Spray/Sources/PointSetSource.h"
 #include "Spray/Sources/QuadSource.h"
 #include "Spray/Sources/SphereSource.h"
 #include "Spray/Sources/SplineSource.h"
@@ -65,6 +67,7 @@ EffectPreviewControl::EffectPreviewControl()
 	m_sourceRenderers[&type_of< ConeSource >()] = gc_new< ConeSourceRenderer >();
 	m_sourceRenderers[&type_of< DiscSource >()] = gc_new< DiscSourceRenderer >();
 	m_sourceRenderers[&type_of< PointSource >()] = gc_new< PointSourceRenderer >();
+	m_sourceRenderers[&type_of< PointSetSource >()] = gc_new< PointSetSourceRenderer >();
 	m_sourceRenderers[&type_of< QuadSource >()] = gc_new< QuadSourceRenderer >();
 	m_sourceRenderers[&type_of< SphereSource >()] = gc_new< SphereSourceRenderer >();
 	m_sourceRenderers[&type_of< SplineSource >()] = gc_new< SplineSourceRenderer >();

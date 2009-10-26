@@ -47,6 +47,8 @@ public:
 
 	static T_MATH_INLINE const Vector4& zero();
 
+	static T_MATH_INLINE const Vector4& one();
+
 	static T_MATH_INLINE const Vector4& origo();
 
 	T_MATH_INLINE void set(float x, float y, float z, float w = 0);
