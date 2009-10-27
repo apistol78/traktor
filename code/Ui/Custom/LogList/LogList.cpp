@@ -151,17 +151,17 @@ void LogList::eventPaint(Event* event)
 		case LvInfo:
 			canvas.setBackground(c_color[0]);
 			canvas.fillRect(rc);
-			canvas.drawBitmap(rc.getTopLeft(), Point(0, 0), iconSize, m_icons, BmNone);
+			canvas.drawBitmap(rc.getTopLeft(), Point(0, 0), iconSize, m_icons, BmAlpha);
 			break;
 		case LvWarning:
 			canvas.setBackground(c_color[1]);
 			canvas.fillRect(rc);
-			canvas.drawBitmap(rc.getTopLeft(), Point(iconSize.cx, 0), iconSize, m_icons, BmNone);
+			canvas.drawBitmap(rc.getTopLeft(), Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
 		case LvError:
 			canvas.setBackground(c_color[2]);
 			canvas.fillRect(rc);
-			canvas.drawBitmap(rc.getTopLeft(), Point(2 * iconSize.cx, 0), iconSize, m_icons, BmNone);
+			canvas.drawBitmap(rc.getTopLeft(), Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
 		default:
 			canvas.setBackground(c_color[0]);
