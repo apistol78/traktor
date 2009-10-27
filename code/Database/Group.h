@@ -61,13 +61,13 @@ public:
 
 	virtual Group* getParent();
 
-	virtual Group* getFirstChildGroup();
+	virtual RefArray< Group >::iterator getBeginChildGroup();
 
-	virtual Group* getNextChildGroup(Group* currentGroup);
+	virtual RefArray< Group >::iterator getEndChildGroup();
 
-	virtual Instance* getFirstChildInstance();
+	virtual RefArray< Instance >::iterator getBeginChildInstance();
 
-	virtual Instance* getNextChildInstance(Instance* currentInstance);
+	virtual RefArray< Instance >::iterator getEndChildInstance();
 
 	void removeChildInstance(Instance* childInstance);
 

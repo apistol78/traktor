@@ -12,10 +12,10 @@ namespace traktor
 template < typename GroupPredicate >
 Group* findChildGroup(Group* group, const GroupPredicate& pred)
 {
-	for (Ref< Group > childGroup = group->getFirstChildGroup(); childGroup; childGroup = group->getNextChildGroup(childGroup))
+	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 	{
-		if (pred(childGroup))
-			return childGroup;
+		if (pred(*i))
+			return *i;
 	}
 	return 0;
 }
@@ -23,10 +23,10 @@ Group* findChildGroup(Group* group, const GroupPredicate& pred)
 template < typename InstancePredicate >
 Instance* findChildInstance(Group* group, const InstancePredicate& pred)
 {
-	for (Ref< Instance > childInstance = group->getFirstChildInstance(); childInstance; childInstance = group->getNextChildInstance(childInstance))
+	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		if (pred(childInstance))
-			return childInstance;
+		if (pred(*i))
+			return *i;
 	}
 	return 0;
 }
@@ -34,10 +34,10 @@ Instance* findChildInstance(Group* group, const InstancePredicate& pred)
 template < typename InstancePredicate >
 void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
-	for (Ref< Instance > childInstance = group->getFirstChildInstance(); childInstance; childInstance = group->getNextChildInstance(childInstance))
+	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		if (pred(childInstance))
-			outInstances.push_back(childInstance);
+		if (pred(*i))
+			outInstances.push_back(*i);
 	}
 }
 
@@ -48,9 +48,9 @@ Group* recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 	if (childGroup)
 		return childGroup;
 
-	for (Ref< Group > childGroup = group->getFirstChildGroup(); childGroup; childGroup = group->getNextChildGroup(childGroup))
+	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 	{
-		Ref< Group > childGroup = recursiveFindChildGroup(childGroup, pred);
+		Ref< Group > childGroup = recursiveFindChildGroup(*i, pred);
 		if (childGroup)
 			return childGroup;
 	}
@@ -65,9 +65,9 @@ Instance* recursiveFindChildInstance(Group* group, const InstancePredicate& pred
 	if (childInstance)
 		return childInstance;
 
-	for (Ref< Group > childGroup = group->getFirstChildGroup(); childGroup; childGroup = group->getNextChildGroup(childGroup))
+	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 	{
-		Ref< Instance > instance = recursiveFindChildInstance(childGroup, pred);
+		Ref< Instance > instance = recursiveFindChildInstance(*i, pred);
 		if (instance)
 			return instance;
 	}
@@ -79,8 +79,8 @@ template < typename InstancePredicate >
 void recursiveFindChildInstances(Group* group, const InstancePredicate& pred, RefArray< Instance >& outInstances)
 {
 	findChildInstances(group, pred, outInstances);
-	for (Ref< Group > childGroup = group->getFirstChildGroup(); childGroup; childGroup = group->getNextChildGroup(childGroup))
-		recursiveFindChildInstances(childGroup, pred, outInstances);
+	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+		recursiveFindChildInstances(*i, pred, outInstances);
 }
 
 struct FindGroupByName

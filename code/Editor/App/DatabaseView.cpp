@@ -268,39 +268,38 @@ ui::TreeViewItem* DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeVi
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
 	groupItem->setData(L"GROUP", group);
 
-	for (Ref< db::Group > groupIter = group->getFirstChildGroup(); groupIter; groupIter = group->getNextChildGroup(groupIter))
-		buildTreeItem(treeView, groupItem, groupIter);
+	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+		buildTreeItem(treeView, groupItem, *i);
 
 	std::map< std::wstring, Ref< PropertyValue > > icons = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
-
-	for (Ref< db::Instance > instanceIter = group->getFirstChildInstance(); instanceIter; instanceIter = group->getNextChildInstance(instanceIter))
+	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		const Type* primaryType = instanceIter->getPrimaryType();
+		const Type* primaryType = (*i)->getPrimaryType();
 		if (!primaryType)
 			continue;
 
-		if (!m_filter->acceptInstance(instanceIter))
+		if (!m_filter->acceptInstance((*i)))
 			continue;
 
 		int iconIndex = 2;
-		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
+		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator j = icons.begin(); j != icons.end(); ++j)
 		{
-			const Type* iconType = Type::find(i->first);
+			const Type* iconType = Type::find(j->first);
 			if (iconType && is_type_of(*iconType, *primaryType))
 			{
-				iconIndex = PropertyInteger::get(i->second);
+				iconIndex = PropertyInteger::get(j->second);
 				break;
 			}
 		}
 
 		Ref< ui::TreeViewItem > instanceItem = treeView->createItem(
 			groupItem,
-			instanceIter->getName(),
+			(*i)->getName(),
 			iconIndex
 		);
 		
 		instanceItem->setData(L"GROUP", group);
-		instanceItem->setData(L"INSTANCE", instanceIter);
+		instanceItem->setData(L"INSTANCE", (*i));
 	}
 
 	// Remove group if it's empty.
