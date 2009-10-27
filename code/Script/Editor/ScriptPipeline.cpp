@@ -1,6 +1,7 @@
 #include "Script/Editor/ScriptPipeline.h"
 #include "Script/Script.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 
@@ -11,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-Script* resolveScript(editor::IPipelineManager* pipelineManager, const Script* unresolvedScript)
+Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* unresolvedScript)
 {
 	const std::vector< Guid >& dependencies = unresolvedScript->getDependencies();
 	if (dependencies.empty())
@@ -24,14 +25,14 @@ Script* resolveScript(editor::IPipelineManager* pipelineManager, const Script* u
 	StringOutputStream ss;
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		Ref< const Script > unresolvedDependency = pipelineManager->getObjectReadOnly< Script >(*i);
+		Ref< const Script > unresolvedDependency = pipelineBuilder->getObjectReadOnly< Script >(*i);
 		if (!unresolvedDependency)
 		{
 			log::error << L"Script pipeline failed; unable to resolve dependency" << Endl;
 			return 0;
 		}
 
-		Ref< Script > resolvedDependency = resolveScript(pipelineManager, unresolvedDependency);
+		Ref< Script > resolvedDependency = resolveScript(pipelineBuilder, unresolvedDependency);
 		if (!resolvedDependency)
 			return 0;
 
@@ -55,7 +56,7 @@ TypeSet ScriptPipeline::getAssetTypes() const
 }
 
 bool ScriptPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -65,13 +66,13 @@ bool ScriptPipeline::buildDependencies(
 
 	const std::vector< Guid >& dependencies = sourceScript->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		pipelineManager->addDependency(*i, false);
+		pipelineDepends->addDependency(*i, false);
 
 	return true;
 }
 
 bool ScriptPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -83,12 +84,12 @@ bool ScriptPipeline::buildOutput(
 	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
 
 	// Resolve script; ie. concate all dependent scripts.
-	Ref< Script > outputScript = resolveScript(pipelineManager, sourceScript);
+	Ref< Script > outputScript = resolveScript(pipelineBuilder, sourceScript);
 	if (!outputScript)
 		return false;
 
 	return DefaultPipeline::buildOutput(
-		pipelineManager,
+		pipelineBuilder,
 		outputScript,
 		sourceAssetHash,
 		buildParams,

@@ -3,7 +3,7 @@
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ TypeSet RigidEntityPipeline::getAssetTypes() const
 }
 
 bool RigidEntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -28,11 +28,11 @@ bool RigidEntityPipeline::buildDependencies(
 {
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(rigidEntityData->getBodyDesc());
+		pipelineDepends->addDependency(rigidEntityData->getBodyDesc());
 
 		const world::EntityInstance* instance = rigidEntityData->getInstance();
 		if (instance)
-			pipelineManager->addDependency(instance);
+			pipelineDepends->addDependency(instance);
 	}
 	return true;
 }

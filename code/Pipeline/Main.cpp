@@ -1,4 +1,5 @@
-#include "Editor/PipelineManager.h"
+#include "Editor/PipelineDependsIncremental.h"
+#include "Editor/PipelineBuilder.h"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Editor/MemCachedPipelineCache.h"
@@ -213,12 +214,9 @@ int main(int argc, const char** argv)
 		pipelineCache = 0;
 	}
 
-	editor::PipelineManager pipelineManager(
+	editor::PipelineDependsIncremental pipelineDepends(
 		sourceDatabase,
-		outputDatabase,
-		pipelineCache,
-		pipelines,
-		pipelineHash
+		pipelines
 	);
 
 	traktor::log::info << L"Collecting dependencies..." << Endl;
@@ -234,7 +232,7 @@ int main(int argc, const char** argv)
 				traktor::log::error << L"Invalid asset guid (" << i << L")" << Endl;
 				return 7;
 			}
-			pipelineManager.addDependency(assetGuid, true);
+			pipelineDepends.addDependency(assetGuid, true);
 		}
 	}
 	else
@@ -243,20 +241,29 @@ int main(int argc, const char** argv)
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
-			pipelineManager.addDependency(*i, true);
+			pipelineDepends.addDependency(*i, true);
 	}
 
 	traktor::log::info << DecreaseIndent;
 
+	RefArray< editor::PipelineDependency > dependencies;
+	pipelineDepends.getDependencies(dependencies);
+
+	editor::PipelineBuilder pipelineBuilder(
+		sourceDatabase,
+		outputDatabase,
+		pipelineHash
+	);
+
 	bool rebuild = cmdLine.hasOption('f');
-	if (!rebuild)
-		traktor::log::info << L"Building assets..." << Endl;
+	if (rebuild)
+		traktor::log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
 	else
-		traktor::log::info << L"Rebuilding assets..." << Endl;
+		traktor::log::info << L"Building " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
 
 	traktor::log::info << IncreaseIndent;
 
-	pipelineManager.build(rebuild);
+	pipelineBuilder.build(dependencies, rebuild);
 
 	traktor::log::info << DecreaseIndent;
 	traktor::log::info << L"Finished" << Endl;

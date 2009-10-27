@@ -1,17 +1,12 @@
-#include <cstring>
 #include <limits>
-#include <algorithm>
-#include "Editor/PipelineManager.h"
+#include "Editor/PipelineDependsIncremental.h"
 #include "Editor/PipelineDependency.h"
-#include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/Atomic.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Serialization/DeepHash.h"
+#include "Core/Serialization/Serializable.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
 
@@ -20,31 +15,21 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineManager", PipelineManager, IPipelineManager)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDependsIncremental, IPipelineDepends)
 
-PipelineManager::PipelineManager(
+PipelineDependsIncremental::PipelineDependsIncremental(
 	db::Database* sourceDatabase,
-	db::Database* outputDatabase,
-	IPipelineCache* cache,
 	const RefArray< IPipeline >& pipelines,
-	PipelineHash* hash,
-	IListener* listener,
 	uint32_t recursionDepth
 )
 :	m_sourceDatabase(sourceDatabase)
-,	m_outputDatabase(outputDatabase)
-,	m_cache(cache)
 ,	m_pipelines(pipelines)
-,	m_hash(hash)
-,	m_listener(listener)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
-,	m_succeeded(0)
-,	m_failed(0)
 {
 }
 
-IPipeline* PipelineManager::findPipeline(const Type& sourceType) const
+IPipeline* PipelineDependsIncremental::findPipeline(const Type& sourceType) const
 {
 	uint32_t best = std::numeric_limits< uint32_t >::max();
 	IPipeline* pipeline = 0;
@@ -80,7 +65,7 @@ IPipeline* PipelineManager::findPipeline(const Type& sourceType) const
 	return pipeline;
 }
 
-void PipelineManager::addDependency(const Serializable* sourceAsset)
+void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
 {
 	if (!sourceAsset)
 		return;
@@ -100,7 +85,7 @@ void PipelineManager::addDependency(const Serializable* sourceAsset)
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineManager::addDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	if (!sourceAsset)
 		return;
@@ -128,7 +113,7 @@ void PipelineManager::addDependency(const Serializable* sourceAsset, const std::
 	);
 }
 
-void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool build)
+void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance, bool build)
 {
 	if (!sourceAssetInstance)
 		return;
@@ -164,7 +149,7 @@ void PipelineManager::addDependency(db::Instance* sourceAssetInstance, bool buil
 	);
 }
 
-void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
+void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, bool build)
 {
 	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid())
 		return;
@@ -208,7 +193,7 @@ void PipelineManager::addDependency(const Guid& sourceAssetGuid, bool build)
 	);
 }
 
-void PipelineManager::addDependency(
+void PipelineDependsIncremental::addDependency(
 	const Path& fileName
 )
 {
@@ -216,172 +201,17 @@ void PipelineManager::addDependency(
 	m_currentDependency->files.insert(fileName);
 }
 
-void PipelineManager::getDependencies(RefArray< PipelineDependency >& outDependencies) const
+void PipelineDependsIncremental::getDependencies(RefArray< PipelineDependency >& outDependencies) const
 {
 	outDependencies = m_dependencies;
 }
 
-bool PipelineManager::build(bool rebuild)
-{
-	PipelineHash::Hash hash;
-
-	// Check which dependencies are dirty; ie. need to be rebuilt.
-	for (RefArray< PipelineDependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
-	{
-		(*i)->checksum = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
-
-		// Have source asset been modified?
-		if (!rebuild)
-		{
-			if (!m_hash->get((*i)->outputGuid, hash))
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
-			}
-			else if (hash.checksum != (*i)->checksum)
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
-			}
-			else if (hash.pipelineVersion != (*i)->pipeline->getVersion())
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
-			}
-			else
-			{
-				const std::set< Path >& files = (*i)->files;
-				for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-				{
-					std::map< Path, DateTime >::const_iterator timeStampIt = hash.timeStamps.find(*j);
-					if (timeStampIt != hash.timeStamps.end())
-					{
-						Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-						if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
-						{
-							log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
-							(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
-							break;
-						}
-					}
-					else
-					{
-						log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
-						(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
-						break;
-					}
-				}
-			}
-		}
-		else
-			(*i)->reason |= IPipeline::BrForced;
-	}
-
-	// Build assets which are dirty or have dirty dependency assets.
-	m_succeeded = 0;
-	m_failed = 0;
-
-	for (RefArray< PipelineDependency >::iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
-	{
-		// Abort if current thread has been stopped; thread are stopped by worker dialog.
-		if (ThreadManager::getInstance().getCurrentThread()->stopped())
-			break;
-
-		// Update hash entry; don't write it yet though.
-		hash.checksum = (*i)->checksum;
-		hash.pipelineVersion = (*i)->pipeline->getVersion();
-
-		const std::set< Path >& files = (*i)->files;
-		for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-		{
-			Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-			if (sourceFile)
-				hash.timeStamps[*j] = sourceFile->getLastWriteTime();
-			else
-				log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
-		}
-
-		// Skip building asset; just update hash.
-		if (!(*i)->build)
-		{
-			m_hash->set((*i)->outputGuid, hash);
-			continue;
-		}
-
-		// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-		if (needBuild(*i))
-		{
-			ScopeIndent scopeIndent(log::info);
-
-			log::info << L"Building asset \"" << (*i)->name << L"\" (" << type_name((*i)->pipeline) << L")..." << Endl;
-			log::info << IncreaseIndent;
-
-			// Notify listener about we're beginning to build the asset.
-			if (m_listener)
-				m_listener->begunBuildingAsset(
-					(*i)->name,
-					uint32_t(std::distance(m_dependencies.begin(), i)),
-					uint32_t(m_dependencies.size())
-				);
-
-			bool result = (*i)->pipeline->buildOutput(
-				this,
-				(*i)->sourceAsset,
-				(*i)->checksum,
-				(*i)->buildParams,
-				(*i)->outputPath,
-				(*i)->outputGuid,
-				(*i)->reason
-			);
-
-			if (result)
-			{
-				m_hash->set((*i)->outputGuid, hash);
-				m_succeeded++;
-			}
-			else
-				m_failed++;
-
-			log::info << DecreaseIndent;
-			log::info << (result ? L"Build successful" : L"Build failed") << Endl;
-		}
-	}
-
-	// Log results.
-	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
-	else
-		log::info << L"Build finished; aborted" << Endl;
-
-	m_dependencies.resize(0);
-	return true;
-}
-
-db::Database* PipelineManager::getSourceDatabase() const
+db::Database* PipelineDependsIncremental::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
 
-db::Database* PipelineManager::getOutputDatabase() const
-{
-	return m_outputDatabase;
-}
-
-IPipelineCache* PipelineManager::getCache() const
-{
-	return m_cache;
-}
-
-db::Instance* PipelineManager::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
-{
-	return m_outputDatabase->createInstance(
-		instancePath,
-		db::CifReplaceExisting,
-		&instanceGuid
-	);
-}
-
-const Serializable* PipelineManager::getObjectReadOnly(const Guid& instanceGuid)
+const Serializable* PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
 {
 	Ref< Serializable > object;
 
@@ -397,7 +227,7 @@ const Serializable* PipelineManager::getObjectReadOnly(const Guid& instanceGuid)
 	return object;
 }
 
-PipelineDependency* PipelineManager::findDependency(const Guid& guid) const
+PipelineDependency* PipelineDependsIncremental::findDependency(const Guid& guid) const
 {
 	for (RefArray< PipelineDependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{
@@ -407,7 +237,7 @@ PipelineDependency* PipelineManager::findDependency(const Guid& guid) const
 	return 0;
 }
 
-void PipelineManager::addUniqueDependency(
+void PipelineDependsIncremental::addUniqueDependency(
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	const std::wstring& name,
@@ -461,23 +291,6 @@ void PipelineManager::addUniqueDependency(
 		T_ASSERT (dependencyIndex < m_dependencies.size());
 		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
 	}
-}
-
-bool PipelineManager::needBuild(PipelineDependency* dependency) const
-{
-	if (dependency->reason != IPipeline::BrNone)
-		return true;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-	{
-		if (needBuild(*i))
-		{
-			dependency->reason |= IPipeline::BrDependencyModified;
-			return true;
-		}
-	}
-
-	return false;
 }
 
 	}

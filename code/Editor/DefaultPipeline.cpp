@@ -1,5 +1,5 @@
 #include "Editor/DefaultPipeline.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
 #include "Core/Serialization/Serializable.h"
 #include "Core/Log/Log.h"
@@ -33,7 +33,7 @@ TypeSet DefaultPipeline::getAssetTypes() const
 }
 
 bool DefaultPipeline::buildDependencies(
-	IPipelineManager* pipelineManager,
+	IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -43,7 +43,7 @@ bool DefaultPipeline::buildDependencies(
 }
 
 bool DefaultPipeline::buildOutput(
-	IPipelineManager* pipelineManager,
+	IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -52,7 +52,7 @@ bool DefaultPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid);
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"Unable to create output instance" << Endl;

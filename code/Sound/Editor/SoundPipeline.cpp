@@ -8,7 +8,8 @@
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
@@ -59,7 +60,7 @@ TypeSet SoundPipeline::getAssetTypes() const
 }
 
 bool SoundPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -67,12 +68,12 @@ bool SoundPipeline::buildDependencies(
 {
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool SoundPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -110,7 +111,7 @@ bool SoundPipeline::buildOutput(
 	{
 		Ref< StreamSoundResource > resource = gc_new< StreamSoundResource >(&decoder->getType());
 
-		Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
 			outputGuid
 		);
@@ -158,7 +159,7 @@ bool SoundPipeline::buildOutput(
 	{
 		Ref< StaticSoundResource > resource = gc_new< StaticSoundResource >();
 
-		Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
 			outputGuid
 		);

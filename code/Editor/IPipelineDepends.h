@@ -1,5 +1,5 @@
-#ifndef traktor_editor_IPipelineManager_H
-#define traktor_editor_IPipelineManager_H
+#ifndef traktor_editor_IPipelineDepends_H
+#define traktor_editor_IPipelineDepends_H
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
@@ -31,12 +31,11 @@ class Instance;
 	{
 
 class IPipeline;
-class IPipelineCache;
 class PipelineDependency;
 
-class T_DLLCLASS IPipelineManager : public Object
+class T_DLLCLASS IPipelineDepends : public Object
 {
-	T_RTTI_CLASS(IPipelineManager)
+	T_RTTI_CLASS(IPipelineDepends)
 
 public:
 	virtual IPipeline* findPipeline(const Type& sourceType) const = 0;
@@ -69,15 +68,7 @@ public:
 
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
-	virtual bool build(bool rebuild) = 0;
-
 	virtual db::Database* getSourceDatabase() const = 0;
-
-	virtual db::Database* getOutputDatabase() const = 0;
-
-	virtual IPipelineCache* getCache() const = 0;
-
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid) = 0;
 
@@ -91,4 +82,4 @@ public:
 	}
 }
 
-#endif	// traktor_editor_IPipelineManager_H
+#endif	// traktor_editor_IPipelineDepends_H

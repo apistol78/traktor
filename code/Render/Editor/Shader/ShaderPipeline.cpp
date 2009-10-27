@@ -10,7 +10,8 @@
 #include "Render/External.h"
 #include "Render/FragmentLinker.h"
 #include "Render/ProgramResource.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -31,58 +32,19 @@ namespace traktor
 class FragmentReaderAdapter : public FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineManager* pipelineManager)
-	:	m_pipelineManager(pipelineManager)
+	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
+	:	m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
 	virtual const ShaderGraph* read(const Guid& fragmentGuid)
 	{
-		return m_pipelineManager->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+		return m_pipelineBuilder->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 	}
 
 private:
-	Ref< editor::IPipelineManager > m_pipelineManager;
+	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
 };
-
-/*! \brief Traverse shader graphs to find all dependencies. */
-void traverseDependencies(editor::IPipelineManager* pipelineManager, const ShaderGraph* shaderGraph, std::set< Guid >& outDependencies)
-{
-	// Traverse fragment graphs.
-	RefArray< External > externalNodes;
-	shaderGraph->findNodesOf< External >(externalNodes);
-
-	for (RefArray< External >::const_iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
-	{
-		const Guid& fragmentGuid = (*i)->getFragmentGuid();
-
-		if (outDependencies.find(fragmentGuid) != outDependencies.end())
-			continue;
-
-		outDependencies.insert(fragmentGuid);
-
-		Ref< const ShaderGraph > fragmentGraph = pipelineManager->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-		if (fragmentGraph)
-		{
-			pipelineManager->addDependency(fragmentGuid, false);
-			traverseDependencies(pipelineManager, fragmentGraph, outDependencies);
-		}
-	}
-
-	// Add external textures.
-	RefArray< Sampler > samplerNodes;
-	shaderGraph->findNodesOf< Sampler >(samplerNodes);
-
-	for (RefArray< Sampler >::const_iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
-	{
-		const Guid& textureGuid = (*i)->getExternal();
-		if (textureGuid.isValid() && !textureGuid.isNull())
-		{
-			outDependencies.insert(textureGuid);
-			pipelineManager->addDependency(textureGuid, true);
-		}
-	}
-}
 
 struct BuildCombinationTask
 {
@@ -216,7 +178,7 @@ void ShaderPipeline::destroy()
 
 uint32_t ShaderPipeline::getVersion() const
 {
-	return 4;
+	return 5;
 }
 
 TypeSet ShaderPipeline::getAssetTypes() const
@@ -227,7 +189,7 @@ TypeSet ShaderPipeline::getAssetTypes() const
 }
 
 bool ShaderPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -235,14 +197,32 @@ bool ShaderPipeline::buildDependencies(
 {
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
 
-	std::set< Guid > dependencies;
-	traverseDependencies(pipelineManager, shaderGraph, dependencies);
+	// Add fragments.
+	RefArray< External > externalNodes;
+	shaderGraph->findNodesOf< External >(externalNodes);
+
+	for (RefArray< External >::const_iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
+	{
+		const Guid& fragmentGuid = (*i)->getFragmentGuid();
+		pipelineDepends->addDependency(fragmentGuid, false);
+	}
+
+	// Add external textures.
+	RefArray< Sampler > samplerNodes;
+	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+
+	for (RefArray< Sampler >::const_iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+	{
+		const Guid& textureGuid = (*i)->getExternal();
+		if (textureGuid.isValid() && !textureGuid.isNull())
+			pipelineDepends->addDependency(textureGuid, true);
+	}
 
 	return true;
 }
 
 bool ShaderPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -256,7 +236,7 @@ bool ShaderPipeline::buildOutput(
 	uint32_t parameterBit = 1;
 
 	// Link shader fragments.
-	FragmentReaderAdapter fragmentReader(pipelineManager);
+	FragmentReaderAdapter fragmentReader(pipelineBuilder);
 	shaderGraph = FragmentLinker(fragmentReader).resolve(shaderGraph, true);
 	if (!shaderGraph)
 	{
@@ -375,7 +355,7 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	// Create output instance.
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

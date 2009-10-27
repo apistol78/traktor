@@ -8,7 +8,8 @@
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/MeshResource.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -35,18 +36,18 @@ namespace traktor
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineManager* pipelineManager)
-	:	m_pipelineManager(pipelineManager)
+	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
+	:	m_pipelineBuilder(pipelineBuilder)
 	{
 	}
 
 	virtual const render::ShaderGraph* read(const Guid& fragmentGuid)
 	{
-		return m_pipelineManager->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
 
 private:
-	Ref< editor::IPipelineManager > m_pipelineManager;
+	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
 };
 
 Guid combineGuids(const Guid& g1, const Guid& g2)
@@ -99,7 +100,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 }
 
 bool MeshPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -111,7 +112,7 @@ bool MeshPipeline::buildDependencies(
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 
 	// Create parameter object.
 	Ref< MeshPipelineParams > params = gc_new< MeshPipelineParams >();
@@ -148,13 +149,13 @@ bool MeshPipeline::buildDependencies(
 		return false;
 	}
 
-	pipelineManager->addDependency(vertexShaderGuid, false);
+	pipelineDepends->addDependency(vertexShaderGuid, false);
 
 	// Create material asset dependencies.
 	Guid materialGuid = combineGuids(vertexShaderGuid, sourceInstance->getGuid());
 
 	MaterialShaderGenerator generator(
-		pipelineManager->getSourceDatabase(),
+		pipelineDepends->getSourceDatabase(),
 		params->m_model
 	);
 
@@ -168,7 +169,7 @@ bool MeshPipeline::buildDependencies(
 		if (it != materialShaders.end())
 		{
 			// We've an explicit guid for this material; must exist in database.
-			Ref< db::Instance > materialShaderInstance = pipelineManager->getSourceDatabase()->getInstance(it->second);
+			Ref< db::Instance > materialShaderInstance = pipelineDepends->getSourceDatabase()->getInstance(it->second);
 			if (!materialShaderInstance)
 			{
 				log::error << L"Mesh pipeline failed; unable to get material shader \"" << materialName << L"\"" << Endl;
@@ -176,7 +177,7 @@ bool MeshPipeline::buildDependencies(
 			}
 
 			// Add no-build dependencies to shader fragments.
-			pipelineManager->addDependency(materialShaderInstance->getGuid(), false);
+			pipelineDepends->addDependency(materialShaderInstance->getGuid(), false);
 
 			materialShaderGraph = materialShaderInstance->getObject< render::ShaderGraph >();
 			if (!materialShaderGraph)
@@ -209,7 +210,7 @@ bool MeshPipeline::buildDependencies(
 		// Increment guid for each material, quite hackish but won't guids still be universally unique?
 		materialGuid = incrementGuid(materialGuid);
 
-		pipelineManager->addDependency(
+		pipelineDepends->addDependency(
 			materialShaderGraph,
 			materialName,
 			sourceInstance->getParent()->getPath() + L"/Materials/" + materialGuid.format(),
@@ -233,7 +234,7 @@ bool MeshPipeline::buildDependencies(
 }
 
 bool MeshPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -246,7 +247,7 @@ bool MeshPipeline::buildOutput(
 	Ref< const MeshPipelineParams > params = checked_type_cast< const MeshPipelineParams* >(buildParams);
 
 	// Investigate which vertex elements are being used by material; need a fully qualitifed graph.
-	FragmentReaderAdapter fragmentReader(pipelineManager);
+	FragmentReaderAdapter fragmentReader(pipelineBuilder);
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
@@ -345,7 +346,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Create output instance.
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

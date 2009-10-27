@@ -2,7 +2,7 @@
 #include "Physics/BodyDesc.h"
 #include "Physics/MeshShapeDesc.h"
 #include "Physics/HeightfieldShapeDesc.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -33,7 +33,7 @@ TypeSet PhysicsPipeline::getAssetTypes() const
 }
 
 bool PhysicsPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -42,15 +42,15 @@ bool PhysicsPipeline::buildDependencies(
 	if (const BodyDesc* bodyDesc = dynamic_type_cast< const BodyDesc* >(sourceAsset))
 	{
 		if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(bodyDesc->getShape()))
-			pipelineManager->addDependency(meshShapeDesc->getMesh().getGuid(), true);
+			pipelineDepends->addDependency(meshShapeDesc->getMesh().getGuid(), true);
 		else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(bodyDesc->getShape()))
-			pipelineManager->addDependency(heightfieldShapeDesc->getHeightfield().getGuid(), true);
+			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield().getGuid(), true);
 	}
 	return true;
 }
 
 bool PhysicsPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,

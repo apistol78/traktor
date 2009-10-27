@@ -3,7 +3,7 @@
 #include "Terrain/TerrainSurface.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/UndergrowthEntityData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ TypeSet TerrainEntityPipeline::getAssetTypes() const
 }
 
 bool TerrainEntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -30,27 +30,27 @@ bool TerrainEntityPipeline::buildDependencies(
 {
 	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(terrainEntityData->getHeightfield().getGuid(), true);
-		pipelineManager->addDependency(terrainEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(terrainEntityData->getHeightfield().getGuid(), true);
+		pipelineDepends->addDependency(terrainEntityData->getShader().getGuid(), true);
 
 		const Ref< TerrainSurface >& surface = terrainEntityData->getSurface();
 		if (surface)
 		{
 			const std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
 			for (std::vector< resource::Proxy< render::Shader > >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-				pipelineManager->addDependency(i->getGuid(), true);
+				pipelineDepends->addDependency(i->getGuid(), true);
 		}
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(oceanEntityData->getHeightfield().getGuid(), true);
-		pipelineManager->addDependency(oceanEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(oceanEntityData->getHeightfield().getGuid(), true);
+		pipelineDepends->addDependency(oceanEntityData->getShader().getGuid(), true);
 	}
 	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(undergrowthEntityData->getHeightfield().getGuid(), true);
-		pipelineManager->addDependency(undergrowthEntityData->getMaterialMask().getGuid(), true);
-		pipelineManager->addDependency(undergrowthEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(undergrowthEntityData->getHeightfield().getGuid(), true);
+		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask().getGuid(), true);
+		pipelineDepends->addDependency(undergrowthEntityData->getShader().getGuid(), true);
 	}
 	return true;
 }

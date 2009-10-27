@@ -1,10 +1,8 @@
-#ifndef traktor_editor_PipelineManager_H
-#define traktor_editor_PipelineManager_H
+#ifndef traktor_editor_PipelineDependsIncremental_H
+#define traktor_editor_PipelineDependsIncremental_H
 
 #include <map>
-#include "Editor/IPipelineManager.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Thread/Event.h"
+#include "Editor/IPipelineDepends.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,47 +14,20 @@
 
 namespace traktor
 {
-
-class Thread;
-
 	namespace editor
 	{
 
-class PipelineDependency;
-class PipelineHash;
-
-/*! \brief Pipeline manager.
+/*! \brief Incremental pipeline dependency walker.
  * \ingroup Editor
  */
-class T_DLLCLASS PipelineManager : public IPipelineManager
+class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 {
-	T_RTTI_CLASS(PipelineManager)
+	T_RTTI_CLASS(PipelineDependsIncremental)
 
 public:
-	struct IListener
-	{
-		virtual ~IListener() {}
-
-		/*! \brief Called when an asset is about to be built.
-		 *
-		 * \param assetName Human readable name of asset.
-		 * \param index Index of asset.
-		 * \param count Number of assets to build.
-		 */
-		virtual void begunBuildingAsset(
-			const std::wstring& assetName,
-			uint32_t index,
-			uint32_t count
-		) const = 0;
-	};
-
-	PipelineManager(
+	PipelineDependsIncremental(
 		db::Database* sourceDatabase,
-		db::Database* outputDatabase,
-		IPipelineCache* cache,
 		const RefArray< IPipeline >& pipelines,
-		PipelineHash* hash,
-		IListener* listener = 0,
 		uint32_t recursionDepth = ~0UL
 	);
 
@@ -90,32 +61,18 @@ public:
 
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;
 
-	virtual bool build(bool rebuild);
-
 	virtual db::Database* getSourceDatabase() const;
-
-	virtual db::Database* getOutputDatabase() const;
-
-	virtual IPipelineCache* getCache() const;
-
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
 	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_sourceDatabase;
-	Ref< db::Database > m_outputDatabase;
-	Ref< IPipelineCache > m_cache;
-	Ref< PipelineHash > m_hash;
-	IListener* m_listener;
+	RefArray< IPipeline > m_pipelines;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
-	RefArray< IPipeline > m_pipelines;
 	RefArray< PipelineDependency > m_dependencies;
 	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< Serializable > > m_readCache;
-	int32_t m_succeeded;
-	int32_t m_failed;
 
 	/*! \brief Find already added dependency.
 	 *
@@ -142,12 +99,9 @@ private:
 		const Guid& outputGuid,
 		bool build
 	);
-
-	/*! \brief Check if dependency needs to be built. */
-	bool needBuild(PipelineDependency* dependency) const;
 };
 
 	}
 }
 
-#endif	// traktor_editor_PipelineManager_H
+#endif	// traktor_editor_PipelineDependsIncremental_H

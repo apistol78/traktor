@@ -3,7 +3,8 @@
 #include "Spray/PointSet.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
@@ -39,7 +40,7 @@ TypeSet PointSetPipeline::getAssetTypes() const
 }
 
 bool PointSetPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -47,12 +48,12 @@ bool PointSetPipeline::buildDependencies(
 {
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, pointSetAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool PointSetPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -137,7 +138,7 @@ bool PointSetPipeline::buildOutput(
 
 	Ref< PointSet > pointSet = gc_new< PointSet >(cref(points));
 
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

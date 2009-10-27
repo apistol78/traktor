@@ -2,7 +2,8 @@
 #include "Terrain/Editor/MaterialMaskPipeline.h"
 #include "Terrain/Editor/MaterialMaskAsset.h"
 #include "Terrain/MaterialMaskResource.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Drawing/Image.h"
 #include "Database/Instance.h"
@@ -40,7 +41,7 @@ TypeSet MaterialMaskPipeline::getAssetTypes() const
 }
 
 bool MaterialMaskPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -48,12 +49,12 @@ bool MaterialMaskPipeline::buildDependencies(
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool MaterialMaskPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -86,7 +87,7 @@ bool MaterialMaskPipeline::buildOutput(
 	Ref< MaterialMaskResource > resource = gc_new< MaterialMaskResource >(size);
 
 	// Create instance's name.
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);
