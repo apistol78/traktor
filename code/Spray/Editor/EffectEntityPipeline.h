@@ -24,7 +24,7 @@ public:
 	virtual TypeSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
-		editor::IPipelineManager* pipelineManager,
+		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams

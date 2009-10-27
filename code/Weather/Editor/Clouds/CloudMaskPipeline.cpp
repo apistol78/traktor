@@ -2,7 +2,8 @@
 #include "Weather/Editor/Clouds/CloudMaskPipeline.h"
 #include "Weather/Editor/Clouds/CloudMaskAsset.h"
 #include "Weather/Clouds/CloudMaskResource.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Drawing/Image.h"
 #include "Database/Instance.h"
@@ -40,7 +41,7 @@ TypeSet CloudMaskPipeline::getAssetTypes() const
 }
 
 bool CloudMaskPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -48,12 +49,12 @@ bool CloudMaskPipeline::buildDependencies(
 {
 	const CloudMaskAsset* maskAsset = checked_type_cast< const CloudMaskAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool CloudMaskPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -84,7 +85,7 @@ bool CloudMaskPipeline::buildOutput(
 	Ref< CloudMaskResource > resource = gc_new< CloudMaskResource >(size);
 
 	// Create instance's name.
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

@@ -4,7 +4,8 @@
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/SpatialGroupEntityData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
 
 namespace traktor
@@ -37,35 +38,35 @@ TypeSet EntityPipeline::getAssetTypes() const
 }
 
 bool EntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const EntityInstance* instance = dynamic_type_cast< const EntityInstance* >(sourceAsset))
-		pipelineManager->addDependency(instance->getEntityData());
+		pipelineDepends->addDependency(instance->getEntityData());
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
-		pipelineManager->addDependency(externalEntityData->getGuid(), true);
+		pipelineDepends->addDependency(externalEntityData->getGuid(), true);
 	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(sourceAsset))
-		pipelineManager->addDependency(externalSpatialEntityData->getGuid(), true);
+		pipelineDepends->addDependency(externalSpatialEntityData->getGuid(), true);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		const RefArray< EntityInstance >& instances = groupEntityData->getInstances();
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
-			pipelineManager->addDependency(*i);
+			pipelineDepends->addDependency(*i);
 	}
 	else if (const SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< const SpatialGroupEntityData* >(sourceAsset))
 	{
 		const RefArray< EntityInstance >& instances = spatialGroupEntityData->getInstances();
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
-			pipelineManager->addDependency(*i);
+			pipelineDepends->addDependency(*i);
 	}
 	return true;
 }
 
 bool EntityPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -77,7 +78,7 @@ bool EntityPipeline::buildOutput(
 	if ((reason & (BrSourceModified | BrForced)) == 0)
 		return true;
 
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid);
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 		return false;
 

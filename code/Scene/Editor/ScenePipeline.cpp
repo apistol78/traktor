@@ -2,7 +2,8 @@
 #include "Scene/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Core/Serialization/DeepClone.h"
@@ -47,20 +48,20 @@ TypeSet ScenePipeline::getAssetTypes() const
 }
 
 bool ScenePipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineManager->addDependency(sceneAsset->getPostProcessSettings().getGuid(), true);
-	pipelineManager->addDependency(sceneAsset->getInstance());
+	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings().getGuid(), true);
+	pipelineDepends->addDependency(sceneAsset->getInstance());
 	return true;
 }
 
 bool ScenePipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -87,7 +88,7 @@ bool ScenePipeline::buildOutput(
 		log::info << L"Post processing suppressed" << Endl;
 	}
 
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(outputPath, outputGuid);
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 	{
 		log::error << L"Unable to create output instance" << Endl;

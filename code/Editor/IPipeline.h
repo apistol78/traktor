@@ -29,7 +29,8 @@ class Instance;
 	{
 
 class Settings;
-class IPipelineManager;
+class IPipelineDepends;
+class IPipelineBuilder;
 
 /*! \brief Source asset pipeline.
  * \ingroup Editor
@@ -45,7 +46,7 @@ public:
 		BrDependencyModified = 1,	/*!< Dependent resource has been modified. */
 		BrSourceModified = 2,		/*!< Source has been modified. */
 		BrAssetModified = 4,		/*!< Asset has been modified; only valid for Asset classes and are always combined with BrSourceModified. */
-		BrForced = 4,				/*!< Forced build issued, must build even if output is up-to-date. */
+		BrForced = 8,				/*!< Forced build issued, must build even if output is up-to-date. */
 	};
 
 	/*! \brief Create pipeline.
@@ -66,14 +67,14 @@ public:
 
 	/*! \brief Build dependencies from source asset.
 	 *
-	 * \param pipelineManager Pipeline manager requesting dependencies.
+	 * \param pipelineDepends Pipeline dependency walker.
 	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
 	 * \param outBuildParams User defined parameter object; passed into buildOutput(...).
 	 * \param True if successful.
 	 */
 	virtual bool buildDependencies(
-		IPipelineManager* pipelineManager,
+		IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const Serializable* sourceAsset,
 		Ref< const Object >& outBuildParams
@@ -81,7 +82,7 @@ public:
 
 	/*! \brief Build output asset.
 	 *
-	 * \param pipelineManager Pipeline manager issuing build.
+	 * \param pipelineBuilder Pipeline builder.
 	 * \param sourceAsset Source asset object.
 	 * \param sourceAssetHash Source asset hash key.
 	 * \param buildParams User defined parameter object.
@@ -91,7 +92,7 @@ public:
 	 * \return True if successful.
 	 */
 	virtual bool buildOutput(
-		IPipelineManager* pipelineManager,
+		IPipelineBuilder* pipelineBuilder,
 		const Serializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,

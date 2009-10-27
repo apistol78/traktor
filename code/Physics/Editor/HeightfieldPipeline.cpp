@@ -2,7 +2,8 @@
 #include "Physics/Editor/HeightfieldAsset.h"
 #include "Physics/HeightfieldResource.h"
 #include "Physics/Heightfield.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -83,7 +84,7 @@ TypeSet HeightfieldPipeline::getAssetTypes() const
 }
 
 bool HeightfieldPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -91,12 +92,12 @@ bool HeightfieldPipeline::buildDependencies(
 {
 	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool HeightfieldPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -141,7 +142,7 @@ bool HeightfieldPipeline::buildOutput(
 	);
 
 	// Create instance's name.
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

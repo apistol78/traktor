@@ -2,7 +2,7 @@
 #include "Animation/Animation/State.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseControllerData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -21,22 +21,22 @@ TypeSet StatePipeline::getAssetTypes() const
 }
 
 bool StatePipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const State* state = dynamic_type_cast< const State* >(sourceAsset))
-		pipelineManager->addDependency(state->getAnimation().getGuid(), true);
+		pipelineDepends->addDependency(state->getAnimation().getGuid(), true);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
 		const RefArray< State >& states = stateGraph->getStates();
 		for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
-			pipelineManager->addDependency(*i);
+			pipelineDepends->addDependency(*i);
 	}
 	else if (const StatePoseControllerData* controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
-		pipelineManager->addDependency(controllerData->getStateGraph().getGuid(), true);
+		pipelineDepends->addDependency(controllerData->getStateGraph().getGuid(), true);
 
 	return true;
 }

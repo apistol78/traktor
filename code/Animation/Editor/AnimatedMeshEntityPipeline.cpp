@@ -1,7 +1,7 @@
 #include "Animation/Editor/AnimatedMeshEntityPipeline.h"
 #include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/IPoseControllerData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -18,7 +18,7 @@ TypeSet AnimatedMeshEntityPipeline::getAssetTypes() const
 }
 
 bool AnimatedMeshEntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -26,9 +26,9 @@ bool AnimatedMeshEntityPipeline::buildDependencies(
 {
 	if (const AnimatedMeshEntityData* meshEntityData = dynamic_type_cast< const AnimatedMeshEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(meshEntityData->getMesh().getGuid(), true);
-		pipelineManager->addDependency(meshEntityData->getSkeleton().getGuid(), true);
-		pipelineManager->addDependency(meshEntityData->getPoseControllerData());
+		pipelineDepends->addDependency(meshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(meshEntityData->getSkeleton().getGuid(), true);
+		pipelineDepends->addDependency(meshEntityData->getPoseControllerData());
 	}
 	return true;
 }

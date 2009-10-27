@@ -4,7 +4,8 @@
 #include "Render/Editor/TextureAsset.h"
 #include "Render/TextureResource.h"
 #include "Render/Types.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -179,7 +180,7 @@ TypeSet TexturePipeline::getAssetTypes() const
 }
 
 bool TexturePipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -187,12 +188,12 @@ bool TexturePipeline::buildDependencies(
 {
 	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool TexturePipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -336,7 +337,7 @@ bool TexturePipeline::buildOutput(
 
 	// Create output instance.
 	Ref< TextureResource > outputResource = gc_new< TextureResource >();
-	Ref< db::Instance > outputInstance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

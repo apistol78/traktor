@@ -2,7 +2,8 @@
 #include "Physics/Editor/MeshAsset.h"
 #include "Physics/MeshResource.h"
 #include "Physics/Mesh.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/Settings.h"
 #include "Database/Instance.h"
 #include "Model/Formats/ModelFormat.h"
@@ -42,7 +43,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 }
 
 bool MeshPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -50,12 +51,12 @@ bool MeshPipeline::buildDependencies(
 {
 	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
-	pipelineManager->addDependency(fileName);
+	pipelineDepends->addDependency(fileName);
 	return true;
 }
 
 bool MeshPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -112,7 +113,7 @@ bool MeshPipeline::buildOutput(
 	mesh.setShapeTriangles(outShapeTriangles);
 	mesh.setHullTriangles(outHullTriangles);
 
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid		
 	);

@@ -3,7 +3,8 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
 #include "Spray/Sources/PointSetSource.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
 
 namespace traktor
@@ -35,7 +36,7 @@ TypeSet EffectPipeline::getAssetTypes() const
 }
 
 bool EffectPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
@@ -49,11 +50,11 @@ bool EffectPipeline::buildDependencies(
 		const Emitter* emitter = (*i)->getEmitter();
 		if (emitter)
 		{
-			pipelineManager->addDependency(emitter->getShader().getGuid(), true);
+			pipelineDepends->addDependency(emitter->getShader().getGuid(), true);
 
 			const PointSetSource* pointSetSource = dynamic_type_cast< const PointSetSource* >(emitter->getSource());
 			if (pointSetSource)
-				pipelineManager->addDependency(pointSetSource->getPointSet().getGuid(), true);
+				pipelineDepends->addDependency(pointSetSource->getPointSet().getGuid(), true);
 		}
 	}
 
@@ -61,7 +62,7 @@ bool EffectPipeline::buildDependencies(
 }
 
 bool EffectPipeline::buildOutput(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineBuilder* pipelineBuilder,
 	const Serializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
@@ -70,7 +71,7 @@ bool EffectPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< db::Instance > instance = pipelineManager->createOutputInstance(
+	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
 	);

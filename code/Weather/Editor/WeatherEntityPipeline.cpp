@@ -1,7 +1,7 @@
 #include "Weather/Editor/WeatherEntityPipeline.h"
 #include "Weather/Sky/SkyEntityData.h"
 #include "Weather/Clouds/CloudEntityData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -19,20 +19,20 @@ TypeSet WeatherEntityPipeline::getAssetTypes() const
 }
 
 bool WeatherEntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(sourceAsset))
-		pipelineManager->addDependency(skyEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(skyEntityData->getShader().getGuid(), true);
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(sourceAsset))
 	{
-		pipelineManager->addDependency(cloudEntityData->getParticleShader().getGuid(), true);
-		pipelineManager->addDependency(cloudEntityData->getParticleTexture().getGuid(), true);
-		pipelineManager->addDependency(cloudEntityData->getImpostorShader().getGuid(), true);
-		pipelineManager->addDependency(cloudEntityData->getMask().getGuid(), true);
+		pipelineDepends->addDependency(cloudEntityData->getParticleShader().getGuid(), true);
+		pipelineDepends->addDependency(cloudEntityData->getParticleTexture().getGuid(), true);
+		pipelineDepends->addDependency(cloudEntityData->getImpostorShader().getGuid(), true);
+		pipelineDepends->addDependency(cloudEntityData->getMask().getGuid(), true);
 	}
 	return true;
 }

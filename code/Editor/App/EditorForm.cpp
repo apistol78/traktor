@@ -20,7 +20,8 @@
 #include "Editor/IEditorPluginFactory.h"
 #include "Editor/IEditorPlugin.h"
 #include "Editor/IEditorTool.h"
-#include "Editor/PipelineManager.h"
+#include "Editor/PipelineDependsIncremental.h"
+#include "Editor/PipelineBuilder.h"
 #include "Editor/PipelineDependency.H"
 #include "Editor/PipelineHash.h"
 #include "Editor/IPipeline.h"
@@ -129,7 +130,7 @@ const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
 const uint32_t c_offsetFinished = 100;
 
-struct StatusListener : public PipelineManager::IListener
+struct StatusListener : public PipelineBuilder::IListener
 {
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 
@@ -906,21 +907,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
-	Ref< IPipelineCache > pipelineCache = gc_new< MemCachedPipelineCache >();
-	if (!pipelineCache->create(m_settings))
-	{
-		log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
-		pipelineCache = 0;
-	}
-
-	StatusListener listener(m_buildProgress);
-	PipelineManager pipelineManager(
+	PipelineDependsIncremental pipelineDepends(
 		m_project->getSourceDatabase(),
-		m_project->getOutputDatabase(),
-		pipelineCache,
-		pipelines,
-		pipelineHash,
-		&listener
+		pipelines
 	);
 
 	log::info << L"Collecting dependencies..." << Endl;
@@ -929,17 +918,29 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
-		pipelineManager.addDependency(*i, true);
+		pipelineDepends.addDependency(*i, true);
 
 	log::info << DecreaseIndent;
 
+	RefArray< PipelineDependency > dependencies;
+	pipelineDepends.getDependencies(dependencies);
+
+	StatusListener listener(m_buildProgress);
+	PipelineBuilder pipelineBuilder(
+		m_project->getSourceDatabase(),
+		m_project->getOutputDatabase(),
+		pipelineHash,
+		&listener
+	);
+
 	if (rebuild)
-		log::info << L"Rebuilding assets..." << Endl;
+		log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
 	else
-		log::info << L"Building assets..." << Endl;
+		log::info << L"Building " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
+
 	log::info << IncreaseIndent;
 
-	pipelineManager.build(rebuild);
+	pipelineBuilder.build(dependencies, rebuild);
 
 	log::info << DecreaseIndent;
 	log::info << L"Finished" << Endl;
@@ -1051,18 +1052,14 @@ bool EditorForm::buildAssetDependencies(const Serializable* asset, uint32_t recu
 			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
 	}
 
-	Ref< PipelineManager > pipelineManager = gc_new< PipelineManager >(
+	PipelineDependsIncremental pipelineDepends(
 		m_project->getSourceDatabase(),
-		m_project->getOutputDatabase(),
-		(IPipelineCache*)0,
 		pipelines,
-		(PipelineHash*)0,
-		(PipelineManager::IListener*)0,
 		recursionDepth
 	);
 
-	pipelineManager->addDependency(asset);
-	pipelineManager->getDependencies(outDependencies);
+	pipelineDepends.addDependency(asset);
+	pipelineDepends.getDependencies(outDependencies);
 
 	return true;
 }

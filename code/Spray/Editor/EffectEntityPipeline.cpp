@@ -1,6 +1,6 @@
 #include "Spray/Editor/EffectEntityPipeline.h"
 #include "Spray/EffectEntityData.h"
-#include "Editor/IPipelineManager.h"
+#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -17,16 +17,16 @@ TypeSet EffectEntityPipeline::getAssetTypes() const
 }
 
 bool EffectEntityPipeline::buildDependencies(
-	editor::IPipelineManager* pipelineManager,
+	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const Serializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
-	pipelineManager->addDependency(effectEntityData->getEffect().getGuid(), true);
+	pipelineDepends->addDependency(effectEntityData->getEffect().getGuid(), true);
 
-	return world::EntityPipeline::buildDependencies(pipelineManager, sourceInstance, sourceAsset, outBuildParams);
+	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outBuildParams);
 }
 
 	}
