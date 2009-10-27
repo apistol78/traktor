@@ -115,16 +115,16 @@ namespace
 	bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
 	{
 		// Does this group contain a valid instance?
-		for (Ref< db::Instance > instanceIter = group->getFirstChildInstance(); instanceIter; instanceIter = group->getNextChildInstance(instanceIter))
+		for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 		{
-			if (filter->acceptable(instanceIter))
+			if (filter->acceptable(*i))
 				return true;
 		}
 
 		// No instances at this level, check if any child group contains valid instances.
-		for (Ref< db::Group > groupIter = group->getFirstChildGroup(); groupIter; groupIter = group->getNextChildGroup(groupIter))
+		for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		{
-			if (recursiveIncludeGroup(groupIter, filter))
+			if (recursiveIncludeGroup(*i, filter))
 				return true;
 		}
 
@@ -140,18 +140,18 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 		return;
 
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parent, group->getName(), 2, 3);
-	for (Ref< db::Group > groupIter = group->getFirstChildGroup(); groupIter; groupIter = group->getNextChildGroup(groupIter))
-		buildGroupItems(treeView, groupItem, groupIter, filter);
+	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
+		buildGroupItems(treeView, groupItem, *i, filter);
 
 	Ref< ui::ListViewItems > instanceItems = gc_new< ui::ListViewItems >();
-	for (Ref< db::Instance > instanceIter = group->getFirstChildInstance(); instanceIter; instanceIter = group->getNextChildInstance(instanceIter))
+	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		if (!filter || filter->acceptable(instanceIter))
+		if (!filter || filter->acceptable(*i))
 		{
 			Ref< ui::ListViewItem > instanceItem = gc_new< ui::ListViewItem >();
 			instanceItem->setImage(0, 0);
-			instanceItem->setText(0, instanceIter->getName());
-			instanceItem->setData(L"INSTANCE", instanceIter);
+			instanceItem->setText(0, (*i)->getName());
+			instanceItem->setData(L"INSTANCE", (*i));
 			instanceItems->add(instanceItem);
 		}
 	}

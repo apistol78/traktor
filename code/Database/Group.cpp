@@ -221,34 +221,24 @@ Group* Group::getParent()
 	return m_parent;
 }
 
-Group* Group::getFirstChildGroup()
+RefArray< Group >::iterator Group::getBeginChildGroup()
 {
-	T_ASSERT (m_providerGroup);
-	return !m_childGroups.empty() ? m_childGroups[0] : 0;
+	return m_childGroups.begin();
 }
 
-Group* Group::getNextChildGroup(Group* currentGroup)
+RefArray< Group >::iterator Group::getEndChildGroup()
 {
-	T_ASSERT (m_providerGroup);
-	RefArray< Group >::iterator i = std::find(m_childGroups.begin(), m_childGroups.end(), currentGroup);
-	if (i == m_childGroups.end() || ++i == m_childGroups.end())
-		return 0;
-	return *i;
+	return m_childGroups.end();
 }
 
-Instance* Group::getFirstChildInstance()
+RefArray< Instance >::iterator Group::getBeginChildInstance()
 {
-	T_ASSERT (m_providerGroup);
-	return !m_childInstances.empty() ? m_childInstances[0] : 0;
+	return m_childInstances.begin();
 }
 
-Instance* Group::getNextChildInstance(Instance* currentInstance)
+RefArray< Instance >::iterator Group::getEndChildInstance()
 {
-	T_ASSERT (m_providerGroup);
-	RefArray< Instance >::iterator i = std::find(m_childInstances.begin(), m_childInstances.end(), currentInstance);
-	if (i == m_childInstances.end() || ++i == m_childInstances.end())
-		return 0;
-	return *i;
+	return m_childInstances.end();
 }
 
 void Group::removeChildInstance(Instance* childInstance)

@@ -26,8 +26,11 @@ namespace traktor
 
 void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, ui::custom::BackgroundWorkerStatus& status)
 {
-	for (Ref< db::Instance > sourceInstance = sourceGroup->getFirstChildInstance(); sourceInstance; sourceInstance = sourceGroup->getNextChildInstance(sourceInstance))
+	for (RefArray< db::Instance >::iterator i = sourceGroup->getBeginChildInstance(); i != sourceGroup->getEndChildInstance(); ++i)
 	{
+		Ref< db::Instance > sourceInstance = *i;
+		T_ASSERT (sourceInstance);
+
 		log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
 		status.notify(0, sourceInstance->getName());
 
@@ -51,18 +54,18 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 		std::vector< std::wstring > dataNames;
 		sourceInstance->getDataNames(dataNames);
 
-		for (std::vector< std::wstring >::iterator i = dataNames.begin(); i != dataNames.end(); ++i)
+		for (std::vector< std::wstring >::iterator j = dataNames.begin(); j != dataNames.end(); ++j)
 		{
-			log::info << L"\t\"" << *i << L"\"..." << Endl;
+			log::info << L"\t\"" << *j << L"\"..." << Endl;
 
-			Ref< Stream > sourceStream = sourceInstance->readData(*i);
+			Ref< Stream > sourceStream = sourceInstance->readData(*j);
 			if (!sourceStream)
 			{
 				log::error << L"Failed, unable to open source stream" << Endl;
 				continue;
 			}
 
-			Ref< Stream > targetStream = targetInstance->writeData(*i);
+			Ref< Stream > targetStream = targetInstance->writeData(*j);
 			if (!targetStream)
 			{
 				log::error << L"Failed, unable to open target stream" << Endl;
@@ -83,8 +86,11 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 		}
 	}
 
-	for (Ref< db::Group > sourceChildGroup = sourceGroup->getFirstChildGroup(); sourceChildGroup; sourceChildGroup = sourceGroup->getNextChildGroup(sourceChildGroup))
+	for (RefArray< db::Group >::iterator i = sourceGroup->getBeginChildGroup(); i != sourceGroup->getEndChildGroup(); ++i)
 	{
+		Ref< db::Group > sourceChildGroup = *i;
+		T_ASSERT (sourceChildGroup);
+
 		log::info << L"Creating group \"" << sourceChildGroup->getName() << L"\"..." << Endl;
 		status.notify(0, sourceChildGroup->getName());
 
