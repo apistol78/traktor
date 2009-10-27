@@ -36,6 +36,7 @@ XmlDeserializer::XmlDeserializer(Stream* stream)
 :	m_xpp(stream)
 {
 	T_ASSERT_M (stream->canRead(), L"Incorrect direction on input stream");
+	m_values.reserve(16);
 }
 
 Serializer::Direction XmlDeserializer::getDirection()
@@ -205,14 +206,14 @@ bool XmlDeserializer::operator >> (const Member< Color >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 4)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
 		return false;
 
-	m->r = uint8_t(v[0]);
-	m->g = uint8_t(v[1]);
-	m->b = uint8_t(v[2]);
-	m->a = uint8_t(v[3]);
+	m->r = uint8_t(m_values[0]);
+	m->g = uint8_t(m_values[1]);
+	m->b = uint8_t(m_values[2]);
+	m->a = uint8_t(m_values[3]);
 
 	return true;
 }
@@ -233,12 +234,12 @@ bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 	
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 2)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 2)
 		return false;
 		
-	m->x = v[0];
-	m->y = v[1];
+	m->x = m_values[0];
+	m->y = m_values[1];
 	
 	return true;
 }
@@ -249,11 +250,17 @@ bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 4)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
 		return false;
 		
-	m->set(v[0], v[1], v[2], v[3]);
+	m->set(
+		m_values[0],
+		m_values[1],
+		m_values[2],
+		m_values[3]
+	);
+
 	return true;
 }
 
@@ -263,15 +270,15 @@ bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 		
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 3 * 3)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 3 * 3)
 		return false;
 
 	for (int r = 0; r < 3; ++r)
 	{
 		for (int c = 0; c < 3; ++c)
 		{
-			m->e[r][c] = v[r * 3 + c];
+			m->e[r][c] = m_values[r * 3 + c];
 		}
 	}
 
@@ -284,14 +291,14 @@ bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 4 * 4)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 4 * 4)
 		return false;
 
 	for (int r = 0; r < 4; ++r)
 	{
 		for (int c = 0; c < 4; ++c)
-			(*m).set(r, c, Scalar(v[c + r * 4]));
+			(*m).set(r, c, Scalar(m_values[c + r * 4]));
 	}
 
 	return true;
@@ -303,14 +310,14 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	std::vector< float > v;
-	if (Split< std::wstring, float >::any(value, L",", v) != 4)
+	m_values.resize(0);
+	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
 		return false;
 		
-	m->x = v[0];
-	m->y = v[1];
-	m->z = v[2];
-	m->w = v[3];
+	m->x = m_values[0];
+	m->y = m_values[1];
+	m->z = m_values[2];
+	m->w = m_values[3];
 
 	return true;
 }
