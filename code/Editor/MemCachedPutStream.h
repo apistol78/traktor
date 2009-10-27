@@ -18,7 +18,7 @@ class MemCachedPutStream : public Stream
 public:
 	enum { MaxBlockSize = 65536 };
 
-	MemCachedPutStream(MemCachedProto* proto, const std::string& key, Stream* source);
+	MemCachedPutStream(MemCachedProto* proto, const std::string& key);
 
 	virtual void close();
 
@@ -43,7 +43,6 @@ public:
 private:
 	Ref< MemCachedProto > m_proto;
 	std::string m_key;
-	Ref< Stream > m_source;
 	uint8_t m_block[MaxBlockSize + 2];
 	uint32_t m_inblock;
 	uint32_t m_index;

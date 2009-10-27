@@ -38,18 +38,18 @@ class T_DLLCLASS PipelineDependency : public Object
 public:
 	PipelineDependency();
 
-	std::wstring name;
-	Ref< IPipeline > pipeline;
-	Ref< const Serializable > sourceAsset;
-	std::wstring outputPath;
-	Guid outputGuid;
-	Ref< const Object > buildParams;
-	std::set< Path > files;
-	uint32_t checksum;
-	bool build;
-	uint32_t reason;
-	Ref< PipelineDependency > parent;
-	RefArray< PipelineDependency > children;
+	std::wstring name;							/*!< Name of output dependency. */
+	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
+	Ref< const Serializable > sourceAsset;		/*!< Source asset. */
+	uint32_t sourceAssetChecksum;				/*!< Checksum of source asset. */
+	std::wstring outputPath;					/*!< Database output path. */
+	Guid outputGuid;							/*!< Database output guid. */
+	Ref< const Object > buildParams;			/*!< Build parameters, passed from dependency phase. */
+	std::set< Path > files;						/*!< External file dependencies. */
+	bool build;									/*!< If dependency is required to build. */
+	uint32_t reason;							/*!< Build reason, updated prior to being built. */
+	Ref< PipelineDependency > parent;			/*!< Parent dependency. */
+	RefArray< PipelineDependency > children;	/*!< Child dependencies. */
 };
 
 	}

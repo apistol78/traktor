@@ -1,6 +1,7 @@
 #ifndef traktor_StreamCopy_H
 #define traktor_StreamCopy_H
 
+#include <limits>
 #include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
@@ -30,7 +31,7 @@ class T_DLLCLASS StreamCopy : public Object
 public:
 	StreamCopy(Stream* target, Stream* source);
 
-	bool execute();
+	bool execute(int32_t copyBytes = std::numeric_limits< int32_t >::max());
 
 private:
 	Ref< Stream > m_target;

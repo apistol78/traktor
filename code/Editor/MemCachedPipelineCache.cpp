@@ -36,6 +36,7 @@ MemCachedPipelineCache::MemCachedPipelineCache()
 
 MemCachedPipelineCache::~MemCachedPipelineCache()
 {
+	destroy();
 	net::Network::finalize();
 }
 
@@ -52,15 +53,26 @@ bool MemCachedPipelineCache::create(const Settings* settings)
 	return true;
 }
 
-Stream* MemCachedPipelineCache::get(const Guid& guid, uint32_t hash) const
+void MemCachedPipelineCache::destroy()
+{
+	if (m_socket)
+	{
+		m_socket->close();
+		m_socket = 0;
+	}
+
+	m_proto = 0;
+}
+
+Stream* MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
 {
 	Ref< MemCachedGetStream > stream = gc_new< MemCachedGetStream >(m_proto, generateKey(guid, hash));
 	return stream->requestNextBlock() ? stream : 0;
 }
 
-Stream* MemCachedPipelineCache::put(const Guid& guid, uint32_t hash, Stream* source)
+Stream* MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
 {
-	return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash), source);
+	return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash));
 }
 
 	}

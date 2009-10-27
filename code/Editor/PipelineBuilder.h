@@ -19,9 +19,17 @@ namespace traktor
 
 class Thread;
 
+	namespace db
+	{
+
+class Group;
+
+	}
+
 	namespace editor
 	{
 
+class IPipelineCache;
 class PipelineDependency;
 class PipelineHash;
 
@@ -53,6 +61,7 @@ public:
 	PipelineBuilder(
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
+		IPipelineCache* cache,
 		PipelineHash* hash,
 		IListener* listener = 0
 	);
@@ -70,14 +79,22 @@ public:
 private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
+	Ref< IPipelineCache > m_cache;
 	Ref< PipelineHash > m_hash;
 	IListener* m_listener;
 	std::map< Guid, Ref< Serializable > > m_readCache;
+	RefArray< db::Instance > m_builtInstances;
 	int32_t m_succeeded;
 	int32_t m_failed;
 
 	/*! \brief Check if dependency needs to be built. */
 	bool needBuild(PipelineDependency* dependency) const;
+
+	/*! \brief Isolate instance in cache. */
+	bool putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, const RefArray< db::Instance >& instances);
+
+	/*! \brief Get isolated instance from cache. */
+	bool getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2);
 };
 
 	}

@@ -207,11 +207,16 @@ int main(int argc, const char** argv)
 		pipelines.push_back(pipeline);
 	}
 
-	Ref< editor::IPipelineCache > pipelineCache = gc_new< editor::MemCachedPipelineCache >();
-	if (!pipelineCache->create(settings))
+	// Create cache if enabled.
+	Ref< editor::IPipelineCache > pipelineCache;
+	if (settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached", false))
 	{
-		traktor::log::error << L"Unable to create pipeline cache; cache disabled" << Endl;
-		pipelineCache = 0;
+		pipelineCache = gc_new< editor::MemCachedPipelineCache >();
+		if (!pipelineCache->create(settings))
+		{
+			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
+			pipelineCache = 0;
+		}
 	}
 
 	editor::PipelineDependsIncremental pipelineDepends(
@@ -252,6 +257,7 @@ int main(int argc, const char** argv)
 	editor::PipelineBuilder pipelineBuilder(
 		sourceDatabase,
 		outputDatabase,
+		pipelineCache,
 		pipelineHash
 	);
 

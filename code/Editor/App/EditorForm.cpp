@@ -907,6 +907,18 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
+	// Create cache if enabled.
+	Ref< editor::IPipelineCache > pipelineCache;
+	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
+	{
+		pipelineCache = gc_new< editor::MemCachedPipelineCache >();
+		if (!pipelineCache->create(m_settings))
+		{
+			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
+			pipelineCache = 0;
+		}
+	}
+
 	PipelineDependsIncremental pipelineDepends(
 		m_project->getSourceDatabase(),
 		pipelines
@@ -929,6 +941,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	PipelineBuilder pipelineBuilder(
 		m_project->getSourceDatabase(),
 		m_project->getOutputDatabase(),
+		pipelineCache,
 		pipelineHash,
 		&listener
 	);
@@ -944,6 +957,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	log::info << DecreaseIndent;
 	log::info << L"Finished" << Endl;
+
+	if (pipelineCache)
+		pipelineCache->destroy();
 
 	for (RefArray< IPipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
 		(*i)->destroy();

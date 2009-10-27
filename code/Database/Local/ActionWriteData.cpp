@@ -47,16 +47,19 @@ bool ActionWriteData::execute(Context* context)
 	}
 
 	// Write blob content.
-	Ref< Stream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
-	if (!writeStream)
-		return false;
-
 	int dataBufferSize = int(m_dataBuffer.size());
-	if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
-		return false;
+	if (dataBufferSize > 0)
+	{
+		Ref< Stream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
+		if (!writeStream)
+			return false;
 
-	writeStream->close();
-	writeStream = 0;
+		if (writeStream->write(&m_dataBuffer[0], dataBufferSize) != dataBufferSize)
+			return false;
+
+		writeStream->close();
+		writeStream = 0;
+	}
 
 	// New blob; add to meta data.
 	if (!m_existingBlob)

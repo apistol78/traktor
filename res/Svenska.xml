@@ -289,7 +289,15 @@
       <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
       <second>Öppna senaste projektet vid uppstart</second>
     </item>
-		<item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE</first>
+      <second>Pipeline</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
+      <second>Använd memcached</second>
+    </item>
+    <item>
 			<first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
 			<second>Moduler</second>
 		</item>
