@@ -461,9 +461,9 @@ void createMesh(
 					{
 						T_ASSERT(vcolorIndex * 4 + 3 < vcolorDataInfo.first->data.size());
 						Vector4 vcolor(
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
 							vcolorDataInfo.first->data[vcolorIndex * 4 + 0],
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
+							vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
 							vcolorDataInfo.first->data[vcolorIndex * 4 + 3]
 							);
 						vertex.setColor(outModel->addColor(vcolor));
