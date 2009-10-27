@@ -61,13 +61,17 @@ bool MemCachedProto::readReply(std::string& outReply)
 
 bool MemCachedProto::readData(uint8_t* data, uint32_t dataLength)
 {
-	if (m_socket->recv(data, dataLength) != dataLength)
-		return false;
+	int32_t dataReceived = 0;
+	while (dataReceived < dataLength + 2)
+	{
+		int32_t nbytes = dataLength + 2 - dataReceived;
+		int32_t result = m_socket->recv(&data[dataReceived], nbytes);
+		if (result < 0)
+			return false;
+		dataReceived += result;
+	}
 
-	char eod[2];
-	if (m_socket->recv(eod, sizeof(eod)) != sizeof(eod))
-		return false;
-
+	const uint8_t* eod = &data[dataLength];
 	return eod[0] == '\r' && eod[1] == '\n';
 }
 

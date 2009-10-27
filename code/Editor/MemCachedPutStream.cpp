@@ -13,25 +13,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPutStream", MemCachedPutStream, Stream)
 
-MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string& key, Stream* source)
+MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string& key)
 :	m_proto(proto)
 ,	m_key(key)
-,	m_source(source)
 ,	m_inblock(0)
 ,	m_index(0)
 {
-	T_ASSERT (source);
-	T_ASSERT (source->canWrite());
 }
 
 void MemCachedPutStream::close()
 {
 	flush();
-	if (m_source)
-	{
-		m_source->close();
-		m_source = 0;
-	}
+	m_proto = 0;
 }
 
 bool MemCachedPutStream::canRead() const
@@ -71,20 +64,13 @@ int MemCachedPutStream::read(void* block, int nbytes)
 
 int MemCachedPutStream::write(const void* block, int nbytes)
 {
-	if (!m_source)
-		return -1;
-
-	int result = m_source->write(block, nbytes);
-	if (result != nbytes)
-		return result;
-
 	const uint8_t* blockPtr = static_cast< const uint8_t* >(block);
 	int written = 0;
 
 	while (written < nbytes)
 	{
 		int avail = MaxBlockSize - m_inblock;
-		int copy = std::min(nbytes, avail);
+		int copy = std::min(nbytes - written, avail);
 
 		std::memcpy(&m_block[m_inblock], blockPtr, copy);
 
@@ -94,7 +80,9 @@ int MemCachedPutStream::write(const void* block, int nbytes)
 
 		if (m_inblock >= MaxBlockSize)
 		{
-			if (!uploadBlock())
+			if (uploadBlock())
+				m_inblock = 0;
+			else
 				break;
 		}
 	}

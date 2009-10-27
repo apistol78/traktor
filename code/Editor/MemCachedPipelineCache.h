@@ -37,9 +37,11 @@ public:
 
 	virtual bool create(const Settings* settings);
 
-	virtual Stream* get(const Guid& guid, uint32_t hash) const;
+	virtual void destroy();
 
-	virtual Stream* put(const Guid& guid, uint32_t hash, Stream* source);
+	virtual Stream* get(const Guid& guid, uint32_t hash);
+
+	virtual Stream* put(const Guid& guid, uint32_t hash);
 
 private:
 	Ref< net::TcpSocket > m_socket;

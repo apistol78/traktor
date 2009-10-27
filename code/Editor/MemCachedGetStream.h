@@ -47,7 +47,7 @@ private:
 	std::string m_key;
 	uint32_t m_index;
 	int32_t m_inblock;
-	uint8_t m_block[MaxBlockSize];
+	uint8_t m_block[MaxBlockSize + 2];
 };
 
 

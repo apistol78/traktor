@@ -282,6 +282,14 @@
       <second>Open last project at startup</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE</first>
+      <second>Pipeline</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
+      <second>Use memcached</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Shortcut</second>
     </item>

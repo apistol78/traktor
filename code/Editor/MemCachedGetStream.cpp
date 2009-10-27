@@ -104,6 +104,7 @@ bool MemCachedGetStream::requestNextBlock()
 
 void MemCachedGetStream::close()
 {
+	m_proto = 0;
 }
 
 bool MemCachedGetStream::canRead() const
@@ -138,28 +139,21 @@ int MemCachedGetStream::seek(SeekOriginType origin, int offset)
 
 int MemCachedGetStream::read(void* block, int nbytes)
 {
-	int32_t nread = 0;
 	uint8_t* writePtr = static_cast< uint8_t* >(block);
+	int32_t navail = nbytes;
 
-	while (nread < nbytes)
+	while (navail > 0)
 	{
 		if (m_inblock)
 		{
-			if (nbytes < m_inblock)
-			{
-				std::memcpy(writePtr, m_block, nbytes);
-				std::memmove(m_block, &m_block[nbytes], m_inblock - nbytes);
-				writePtr += nbytes;
-				nread += nbytes;
-				m_inblock -= nbytes;
-			}
-			else
-			{
-				std::memcpy(writePtr, m_block, m_inblock);
-				writePtr += m_inblock;
-				nread += m_inblock;
-				m_inblock = 0;
-			}
+			int32_t nget = std::min< int32_t >(navail, m_inblock);
+
+			std::memcpy(writePtr, m_block, nget);
+			std::memmove(m_block, &m_block[nget], m_inblock - nget);
+
+			m_inblock -= nget;
+			navail -= nget;
+			writePtr += nget;
 		}
 		else
 		{
@@ -168,7 +162,7 @@ int MemCachedGetStream::read(void* block, int nbytes)
 		}
 	}
 
-	return nread;
+	return nbytes - navail;
 }
 
 int MemCachedGetStream::write(const void* block, int nbytes)

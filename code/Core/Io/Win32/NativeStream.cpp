@@ -80,6 +80,7 @@ int NativeStream::read(void* block, int nbytes)
 		NULL
 	);
 
+	T_ASSERT (nread <= nbytes);
 	return int(nread);
 }
 
