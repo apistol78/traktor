@@ -393,6 +393,14 @@
 				<second>742</second>
 			</position>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>79</first>
+				<second>882</second>
+			</position>
+			<name>Normal</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -893,6 +901,16 @@
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
