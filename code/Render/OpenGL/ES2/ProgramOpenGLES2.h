@@ -60,7 +60,7 @@ public:
 
 	virtual bool isOpaque() const;
 
-	bool activate();
+	bool activate(bool landspace);
 
 	const GLint* getAttributeLocs() const;
 
@@ -91,6 +91,7 @@ private:
 
 	Ref< IContext > m_context;
 	GLuint m_program;
+	GLint m_postOrientationCoeffs;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];
 	std::vector< Uniform > m_uniforms;
 	std::vector< Sampler > m_samplers;

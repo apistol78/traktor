@@ -50,6 +50,7 @@ ProgramOpenGLES2* ProgramOpenGLES2::ms_activeProgram = 0;
 ProgramOpenGLES2::ProgramOpenGLES2(IContext* context)
 :	m_context(context)
 ,	m_program(0)
+,	m_postOrientationCoeffs(0)
 ,	m_dirty(true)
 {
 }
@@ -207,7 +208,7 @@ bool ProgramOpenGLES2::isOpaque() const
 	return true;
 }
 
-bool ProgramOpenGLES2::activate()
+bool ProgramOpenGLES2::activate(bool landspace)
 {
 	if (ms_activeProgram == this && !m_dirty)
 		return true;
@@ -258,6 +259,12 @@ bool ProgramOpenGLES2::activate()
 
 		T_ASSERT (m_program);
 		T_OGL_SAFE(glUseProgram(m_program));
+
+		// Update post orientation coefficients.
+		if (!landspace)
+			glUniform4f(m_postOrientationCoeffs, 1.0f, 0.0f, 0.0f, 1.0f);
+		else
+			glUniform4f(m_postOrientationCoeffs, 0.0f, -1.0f, 1.0f, 0.0f);
 
 		for (std::vector< Uniform >::iterator i = m_uniforms.begin(); i != m_uniforms.end(); ++i)
 		{
@@ -428,6 +435,9 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 		}
 	}
 
+	// Get post orientation uniform.
+	m_postOrientationCoeffs = glGetUniformLocation(m_program, "t_internal_postOrientationCoeffs");
+
 	GLint uniformCount;
 	T_OGL_SAFE(glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniformCount));
 
@@ -463,15 +473,15 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 
 			m_samplers.push_back(Sampler());
 			m_samplers.back().location = glGetUniformLocation(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("_sampler_" + std::string(uniformName) + "_OriginScale").c_str());
+			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
 			m_samplers.back().texture = m_parameterMap[handle];
 			m_samplers.back().unit = unit;
 		}
 		else
 		{
-			// Skip private uniform of format "_sampler_XXX_OriginScale".
+			// Skip private uniforms of format "t_internal_*".
 			std::wstring uniforNameW = mbstows(uniformName);
-			if (startsWith(uniforNameW, L"_sampler_") && endsWith(uniforNameW, L"_OriginScale"))
+			if (startsWith(uniforNameW, L"t_internal_"))
 				continue;
 
 			handle_t handle = getParameterHandle(uniforNameW);
