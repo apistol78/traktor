@@ -17,6 +17,7 @@ EAGLContextWrapper::EAGLContextWrapper()
 ,	m_wantDepthBuffer(false)
 ,	m_width(0)
 ,	m_height(0)
+,	m_landscape(false)
 {
 }
 
@@ -41,6 +42,7 @@ bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
 	CGRect bounds = [layer bounds];
 	m_width = bounds.size.width;
 	m_height = bounds.size.height;
+	m_landscape = true;	// @fixme Get from view and reset view transforms.
 
 	setCurrent();
 	createFrameBuffer();
