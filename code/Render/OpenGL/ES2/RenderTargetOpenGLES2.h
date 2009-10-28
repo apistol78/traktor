@@ -19,6 +19,8 @@ namespace traktor
 	namespace render
 	{
 
+#if !defined(T_OFFLINE_ONLY)
+
 class IContext;
 
 /*!
@@ -63,6 +65,8 @@ private:
 	Vector4 m_originAndScale;
 	bool m_haveDepth;
 };
+
+#endif
 
 	}
 }

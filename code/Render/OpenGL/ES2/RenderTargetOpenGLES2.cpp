@@ -3,6 +3,8 @@
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Core/Log/Log.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -204,3 +206,5 @@ void RenderTargetOpenGLES2::enter()
 
 	}
 }
+
+#endif

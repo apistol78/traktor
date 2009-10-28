@@ -18,6 +18,8 @@ namespace traktor
 {
 	namespace render
 	{
+	
+#if !defined(T_OFFLINE_ONLY)
 
 class IContext;
 class RenderTargetOpenGLES2;
@@ -55,6 +57,8 @@ private:
 	GLuint m_depthBuffer;
 	RefArray< RenderTargetOpenGLES2 > m_colorTextures;
 };
+
+#endif
 
 	}
 }

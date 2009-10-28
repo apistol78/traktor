@@ -150,15 +150,14 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayM
 
 IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
-#if defined(TARGET_OS_IPHONE)
+#if !defined(T_OFFLINE_ONLY)
+#	if defined(TARGET_OS_IPHONE)
 	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
 	if (!wrapper->create(windowHandle, desc.depthBits != 0))
 		return 0;
 		
 	return gc_new< RenderViewOpenGLES2 >(m_globalContext, wrapper);
-#endif
-
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#	elif defined(T_OPENGL_ES2_HAVE_EGL)
 	const uint32_t c_maxConfigAttrSize = 32;
 	const uint32_t c_maxMatchConfigs = 64;
 
@@ -236,6 +235,9 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 		return 0;
 
 	return gc_new< RenderViewOpenGLES2 >(m_globalContext, m_display, m_context, m_surface);
+#	else
+	return 0;
+#	endif
 #else
 	return 0;
 #endif
@@ -272,11 +274,15 @@ IVolumeTexture* RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCr
 
 RenderTargetSet* RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
+#if !defined(T_OFFLINE_ONLY)
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = gc_new< RenderTargetSetOpenGLES2 >(m_globalContext);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
 		return 0;
+#else
+	return 0;
+#endif
 }
 
 ProgramResource* RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
