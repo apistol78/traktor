@@ -7,7 +7,7 @@
 #	if !defined(T_OPENGL_ES2)
 #		define T_OPENGL_ES2
 #	endif
-#elif TARGET_OS_MAC
+#elif TARGET_OS_MAC && !defined(T_OPENGL_ES2)
 #	if !defined(T_OPENGL_STD)
 #		define T_OPENGL_STD
 #	endif

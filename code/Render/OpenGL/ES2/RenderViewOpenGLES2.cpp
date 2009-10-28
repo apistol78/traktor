@@ -67,18 +67,42 @@ void RenderViewOpenGLES2::close()
 void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
 #	if TARGET_OS_IPHONE
-	m_wrapper->resize(width, height);
+	if (!m_wrapper->landscape())
+		m_wrapper->resize(width, height);
+	else
+		m_wrapper->resize(height, width);
 #	endif
 }
 
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
+#	if TARGET_OS_IPHONE
+	if (!m_wrapper->landscape())
+	{
+		T_OGL_SAFE(glViewport(
+			viewport.top,
+			viewport.left,
+			viewport.height,
+			viewport.width
+		));
+	}
+	else
+	{
+		T_OGL_SAFE(glViewport(
+			viewport.left,
+			viewport.top,
+			viewport.width,
+			viewport.height
+		));
+	}
+#	else
 	T_OGL_SAFE(glViewport(
 		viewport.left,
 		viewport.top,
 		viewport.width,
 		viewport.height
 	));
+#	endif
 
 	T_OGL_SAFE(glDepthRangef(
 		viewport.nearZ,
@@ -93,6 +117,14 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 	GLfloat range[2];
 	T_OGL_SAFE(glGetFloatv(GL_DEPTH_RANGE, range));
+
+#	if TARGET_OS_IPHONE
+	if (m_wrapper->landscape())
+	{
+		std::swap(ext[0], ext[1]);
+		std::swap(ext[2], ext[3]);
+	}
+#	endif
 
 	Viewport viewport;
 	viewport.left = ext[0];
@@ -206,8 +238,13 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
+#	if TARGET_OS_IPHONE
+		if (!m_currentProgram->activate(m_wrapper->landscape()))
+			return;
+#	else
 		if (!m_currentProgram->activate(false))
 			return;
+#	endif
 
 		m_currentVertexBuffer->activate(
 			m_currentProgram->getAttributeLocs()

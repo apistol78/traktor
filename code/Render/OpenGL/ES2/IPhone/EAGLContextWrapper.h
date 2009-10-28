@@ -27,6 +27,8 @@ public:
 	
 	GLint getHeight() const { return m_height; }
 	
+	bool landscape() const { return m_landscape; }
+	
 private:
 	void* m_layer;
 	void* m_context;
@@ -36,6 +38,7 @@ private:
 	bool m_wantDepthBuffer;
 	GLint m_width;
 	GLint m_height;
+	bool m_landscape;
 	
 	void createFrameBuffer();
 	
