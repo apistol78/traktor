@@ -746,7 +746,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 
 	// Transform texture coordinate by "origin & scale" uniform.
-	std::wstring originScale = L"_sampler_" + node->getParameterName() + L"_OriginScale";
+	std::wstring originScale = L"t_internal_" + node->getParameterName() + L"_OriginScale";
 	std::wstring samplerTexCoord = out->getName() + L"_texCoord";
 	f << L"vec2 " << samplerTexCoord << L" = " << texCoord->cast(GtFloat2) << L" * " << originScale << L".zw + " << originScale << L".xy;" << Endl;
 
@@ -1219,6 +1219,26 @@ void emitVertexOutput(GlslContext& cx, VertexOutput* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 
 	StringOutputStream& fb = cx.getVertexShader().getOutputStream(GlslShader::BtBody);
+#if defined(T_OPENGL_ES2)
+	switch (in->getType())
+	{
+	case GtFloat:
+		fb << L"gl_Position = PV(vec4(" << in->getName() << L", 0.0, 0.0, 1.0));" << Endl;
+		break;
+
+	case GtFloat2:
+		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xy, 0.0, 1.0));" << Endl;
+		break;
+
+	case GtFloat3:
+		fb << L"gl_Position = PV(vec4(" << in->getName() << L".xyz, 1.0));" << Endl;
+		break;
+
+	case GtFloat4:
+		fb << L"gl_Position = PV(" << in->getName() << L");" << Endl;
+		break;
+	}
+#else
 	switch (in->getType())
 	{
 	case GtFloat:
@@ -1237,6 +1257,7 @@ void emitVertexOutput(GlslContext& cx, VertexOutput* node)
 		fb << L"gl_Position = " << in->getName() << L";" << Endl;
 		break;
 	}
+#endif
 }
 
 		}

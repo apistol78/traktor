@@ -206,7 +206,7 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		if (!m_currentProgram || !m_currentVertexBuffer)
 			return;
 
-		if (!m_currentProgram->activate())
+		if (!m_currentProgram->activate(false))
 			return;
 
 		m_currentVertexBuffer->activate(

@@ -197,14 +197,15 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 
 			m_samplers.push_back(Sampler());
 			m_samplers.back().location = glGetUniformLocationARB(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocationARB(m_program, ("_sampler_" + std::string(uniformName) + "_OriginScale").c_str());
+			m_samplers.back().locationOriginScale = glGetUniformLocationARB(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
 			m_samplers.back().texture = m_parameterMap[handle].offset;
 			m_samplers.back().unit = unit;
 		}
 		else
 		{
-			// Skip private uniform of format "_sampler_XXX_OriginScale".
-			if (startsWith(uniformNameW, L"_sampler_") && endsWith(uniformNameW, L"_OriginScale"))
+			// Skip private uniforms of format "t_internal_*".
+			std::wstring uniforNameW = mbstows(uniformName);
+			if (startsWith(uniforNameW, L"t_internal_"))
 				continue;
 
 			handle_t handle = getParameterHandle(uniformNameW);
