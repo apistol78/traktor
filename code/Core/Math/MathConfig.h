@@ -29,11 +29,11 @@
 #	if !defined(_DEBUG)
 #		define T_MATH_USE_INLINE
 #		define T_MATH_INLINE inline
-#		if defined(__APPLE__) && defined(TARGET_OS_MAC)
+#		if defined(__APPLE__) && TARGET_OS_MAC && !TARGET_OS_IPHONE
 #			define T_MATH_USE_SSE2
 #		endif
 #	else	// _DEBUG
-#		if defined(__APPLE__) && defined(TARGET_OS_MAC)
+#		if defined(__APPLE__) && TARGET_OS_MAC && !TARGET_OS_IPHONE
 #			define T_MATH_USE_SSE2
 #		endif
 #	endif
