@@ -482,7 +482,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Sources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 			else if (extension == L"h" || extension == L"hh" || extension == L"hpp")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Headers */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
-			else if (extension == L"xib" || extension == L"plist")
+			else if (extension == L"xib")
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Resources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 		}
 	}
@@ -1139,7 +1139,7 @@ void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::Output
 		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
 		{
 			std::wstring extension = toLower(j->getExtension());
-			if (extension == L"xib" || extension == L"plist")
+			if (extension == L"xib")
 				s << L"\t\t\t\t" << ProjectUids(*i).getBuildFileUid(*j) << L" /* " << j->getFileName() << L" in Resources */," << Endl;
 		}
 
@@ -1266,6 +1266,25 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 
 		Ref< Configuration > configurations[2];
 		getConfigurations(*i, configurations);
+		
+		// Get project plist file.
+		std::wstring plistFile;
+		
+		std::set< Path > projectFiles;
+		collectProjectFiles(*i, projectFiles);
+
+		for (std::set< Path >::const_iterator j = projectFiles.begin(); j != projectFiles.end(); ++j)
+		{
+			std::wstring extension = toLower(j->getExtension());
+			if (extension == L"plist")
+			{
+				plistFile = j->getPathName();
+				break;
+			}
+		}
+
+		if (!plistFile.empty())
+			traktor::log::info << L"Using plist file \"" << plistFile << L"\"" << Endl;
 
 		// Debug configuration
 		if (configurations[0])
@@ -1302,6 +1321,8 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+			if (!plistFile.empty())
+				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 			
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
@@ -1346,6 +1367,8 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 			
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
+			if (!plistFile.empty())
+				s << L"\t\t\t\tINFOPLIST_FILE = \"" << plistFile << L"\";" << Endl;
 
 			if (configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
