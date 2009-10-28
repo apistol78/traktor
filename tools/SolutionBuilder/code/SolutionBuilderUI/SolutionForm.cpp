@@ -74,11 +74,11 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 
 	m_shortcutTable = gc_new< ui::ShortcutTable >();
 	m_shortcutTable->create();
-	m_shortcutTable->addCommand(ui::KsControl, 'N', ui::Command(L"File.New"));
-	m_shortcutTable->addCommand(ui::KsControl, 'O', ui::Command(L"File.Open"));
-	m_shortcutTable->addCommand(ui::KsControl, 'S', ui::Command(L"File.Save"));
-	m_shortcutTable->addCommand(ui::KsControl | ui::KsShift, 'S', ui::Command(L"File.SaveAs"));
-	m_shortcutTable->addCommand(ui::KsControl, 'X', ui::Command(L"File.Exit"));
+	m_shortcutTable->addCommand(ui::KsControl, ui::VkN, ui::Command(L"File.New"));
+	m_shortcutTable->addCommand(ui::KsControl, ui::VkO, ui::Command(L"File.Open"));
+	m_shortcutTable->addCommand(ui::KsControl, ui::VkS, ui::Command(L"File.Save"));
+	m_shortcutTable->addCommand(ui::KsControl | ui::KsShift, ui::VkS, ui::Command(L"File.SaveAs"));
+	m_shortcutTable->addCommand(ui::KsControl, ui::VkX, ui::Command(L"File.Exit"));
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &SolutionForm::eventShortcut));
 
 	m_menuBar = gc_new< ui::MenuBar >();
