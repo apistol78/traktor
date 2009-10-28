@@ -39,6 +39,10 @@ private:
 	std::wstring m_debugConfig;
 	std::wstring m_releaseConfig;
 	bool m_iphone;
+	std::wstring m_projectConfigurationFileDebug;
+	std::wstring m_projectConfigurationFileRelease;
+	std::wstring m_targetConfigurationFileDebug;
+	std::wstring m_targetConfigurationFileRelease;
 
 	void generatePBXBuildFileSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const;
 
@@ -85,6 +89,8 @@ private:
 	void collectDependencies(const Solution* solution, const Project* project, std::set< ResolvedDependency >& outDependencies, bool copyFilesDependencies, bool parentExternal) const;
 
 	bool isAggregate(const Project* project) const;
+
+	bool includeFile(traktor::OutputStream& s, const traktor::Path& fileName, int32_t indent) const;
 };
 
 #endif	// SolutionBuilderXcode_H

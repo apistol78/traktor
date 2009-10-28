@@ -1,6 +1,7 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/StringOutputStream.h>
+#include <Core/Io/StringReader.h>
 #include <Core/Io/Stream.h>
 #include <Core/Io/Path.h>
 #include <Core/Io/Utf8Encoding.h>
@@ -338,7 +339,21 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 		m_releaseConfig = L"Release";
 
 	if (cmdLine.hasOption('i'))
+	{
 		m_iphone = true;
+		m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-iphone.inc";
+		m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-iphone.inc";
+		m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-iphone.inc";
+		m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-iphone.inc";
+	}
+	else
+	{
+		m_iphone = false;
+		m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-osx.inc";
+		m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-osx.inc";
+		m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-osx.inc";
+		m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-osx.inc";
+	}
 		
 	return true;
 }
@@ -1204,18 +1219,9 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationDebugUid() << L" /* Debug */ = {" << Endl;
 	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 	s << L"\t\t\tbuildSettings = {" << Endl;
-	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
-	if (m_iphone)
-	{
-		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
-		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphone*]\" = \"iPhone Developer\";" << Endl;
-		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
-		s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = DEBUG;" << Endl;
-		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
-		s << L"\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;" << Endl;
-		s << L"\t\t\t\tPREBINDING = NO;" << Endl;
-		s << L"\t\t\t\tSDKROOT = iphoneos3.1;" << Endl;
-	}
+
+	includeFile(s, m_projectConfigurationFileDebug, 4);
+
 	s << L"\t\t\t};" << Endl;
 	s << L"\t\t\tname = Debug;" << Endl;
 	s << L"\t\t};" << Endl;
@@ -1223,17 +1229,9 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationReleaseUid() << L" /* Release */ = {" << Endl;
 	s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 	s << L"\t\t\tbuildSettings = {" << Endl;
-	s << L"\t\t\t\tCOPY_PHASE_STRIP = NO;" << Endl;
-	s << L"\t\t\t\tPREBINDING = NO;" << Endl;
-	if (m_iphone)
-	{
-		s << L"\t\t\t\tARCHS = \"$(ARCHS_STANDARD_32_BIT)\";" << Endl;
-		s << L"\t\t\t\t\"CODE_SIGN_IDENTITY[sdk=iphone*]\" = \"iPhone Developer\";" << Endl;
-		s << L"\t\t\t\tGCC_C_LANGUAGE_STANDARD = c99;" << Endl;
-		s << L"\t\t\t\tGCC_WARN_ABOUT_RETURN_TYPE = YES;" << Endl;
-		s << L"\t\t\t\tGCC_WARN_UNUSED_VARIABLE = YES;" << Endl;
-		s << L"\t\t\t\tSDKROOT = iphoneos3.1;" << Endl;
-	}
+
+	includeFile(s, m_projectConfigurationFileRelease, 4);
+
 	s << L"\t\t\t};" << Endl;
 	s << L"\t\t\tname = Release;" << Endl;
 	s << L"\t\t};" << Endl;
@@ -1276,12 +1274,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 			s << L"\t\t\tbuildSettings = {" << Endl;
 
-			s << L"\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;" << Endl;
-			s << L"\t\t\t\tGCC_DYNAMIC_NO_PIC = NO;" << Endl;
-			s << L"\t\t\t\tGCC_OPTIMIZATION_LEVEL = 0;" << Endl;
-
-			if (m_iphone)
-				s << L"\t\t\t\t\"GCC_THUMB_SUPPORT[arch=armv6]\" = \"\";" << Endl;
+			includeFile(s, m_targetConfigurationFileDebug, 4);
 
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
 			const std::vector< std::wstring >& definitions = configurations[0]->getDefinitions();
@@ -1309,7 +1302,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
-			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 			
 			if (configurations[0]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
@@ -1326,10 +1318,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"\t\t\tisa = XCBuildConfiguration;" << Endl;
 			s << L"\t\t\tbuildSettings = {" << Endl;
 
-			s << L"\t\t\t\tALWAYS_SEARCH_USER_PATHS = YES;" << Endl;
-
-			if (m_iphone)
-				s << L"\t\t\t\t\"GCC_THUMB_SUPPORT[arch=armv6]\" = \"\";" << Endl;
+			includeFile(s, m_targetConfigurationFileRelease, 4);
 
 			s << L"\t\t\t\tGCC_PREPROCESSOR_DEFINITIONS = \"";
 			const std::vector< std::wstring >& definitions = configurations[1]->getDefinitions();
@@ -1357,7 +1346,6 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 			s << L"${DERIVED_FILES_DIR)\";" << Endl;
 			
 			s << L"\t\t\t\tPRODUCT_NAME = " << (*i)->getName() << L";" << Endl;
-			s << L"\t\t\t\tUSE_HEADERMAP = NO;" << Endl;
 
 			if (configurations[1]->getTargetFormat() == Configuration::TfSharedLibrary)
 				s << L"\t\t\t\tINSTALL_PATH = \"@executable_path\";" << Endl;
@@ -1531,4 +1519,27 @@ bool SolutionBuilderXcode::isAggregate(const Project* project) const
 {
 	// If the project doesn't have any configurations we assume it's an aggregate target.
 	return project->getConfigurations().empty();
+}
+
+bool SolutionBuilderXcode::includeFile(traktor::OutputStream& s, const traktor::Path& fileName, int32_t indent) const
+{
+	ScopeIndent scopeIndent(s);
+	s.setIndent(s.getIndent() + indent);
+
+	Ref< Stream > stream = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	if (!stream)
+		return false;
+
+	StringReader sr(stream, gc_new< Utf8Encoding >());
+	std::wstring line;
+
+	while (sr.readLine(line) >= 0)
+	{
+		line = trim(line);
+		if (!line.empty())
+			s << line << Endl;
+	}
+
+	stream->close();
+	return true;
 }
