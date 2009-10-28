@@ -23,7 +23,11 @@ EAGLContextWrapper::EAGLContextWrapper()
 
 bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
 {
-	CAEAGLLayer* layer = (CAEAGLLayer*)nativeHandle;
+	// Native handle are pointer to UIView object;
+	// these UIViews must have CAEAGLLayer as layerClass.
+	
+	UIView* view = (UIView*)nativeHandle;
+	CAEAGLLayer* layer = (CAEAGLLayer*)[view layer];
 
 	layer.opaque = YES;
 	layer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
