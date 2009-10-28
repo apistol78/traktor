@@ -3,6 +3,8 @@
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 #include "Core/Heap/GcNew.h"
 
+#if !defined(T_OFFLINE_ONLY)
+
 namespace traktor
 {
 	namespace render
@@ -83,3 +85,5 @@ bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const
 
 	}
 }
+
+#endif

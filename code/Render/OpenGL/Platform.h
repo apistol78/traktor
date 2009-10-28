@@ -3,9 +3,13 @@
 
 #include "Core/Config.h"
 
-#if defined(TARGET_OS_IPHONE)
+#if TARGET_OS_IPHONE
 #	if !defined(T_OPENGL_ES2)
 #		define T_OPENGL_ES2
+#	endif
+#elif TARGET_OS_MAC
+#	if !defined(T_OPENGL_STD)
+#		define T_OPENGL_STD
 #	endif
 #endif
 
@@ -32,7 +36,15 @@
 #		include <GL/glx.h>
 #	endif
 #elif defined(T_OPENGL_ES2)
-#	if !defined(TARGET_OS_IPHONE)
+#	if TARGET_OS_IPHONE
+#		include <OpenGLES/ES2/gl.h>
+#		include <OpenGLES/ES2/glext.h>
+#	elif TARGET_OS_MAC
+		// OSX target doesn't have a ES implementation,
+		// we just include vanilla GL.
+#		include <OpenGL/gl.h>
+#		define T_OFFLINE_ONLY
+#	else
 #		if defined(_WIN32)
 #			define _WIN32_LEAN_AND_MEAN
 #			include <windows.h>
@@ -45,9 +57,6 @@
 #			include <GLES2/gl2amdext.h>
 #		endif
 #		define T_OPENGL_ES2_HAVE_EGL
-#	else
-#		include <OpenGLES/ES2/gl.h>
-#		include <OpenGLES/ES2/glext.h>
 #	endif
 #endif
 

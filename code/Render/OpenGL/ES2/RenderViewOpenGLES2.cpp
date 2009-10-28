@@ -1,15 +1,18 @@
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
-#include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
-#include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
-#include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
-#include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
-#include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
-#include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#if defined(TARGET_OS_IPHONE)
-#	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
-#endif
-#include "Core/Log/Log.h"
+
+#if !defined(T_OFFLINE_ONLY)
+
+#	include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
+#	include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
+#	include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
+#	include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
+#	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
+#	include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
+#	if TARGET_OS_IPHONE
+#		include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#	endif
+#	include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -18,7 +21,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGLES2", RenderViewOpenGLES2, IRenderView)
 
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#	if defined(T_OPENGL_ES2_HAVE_EGL)
 RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EGLDisplay display, EGLContext context, EGLSurface surface)
 :	m_globalContext(globalContext)
 ,	m_display(display)
@@ -27,7 +30,7 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EGLDisplay dis
 ,	m_currentDirty(true)
 {
 }
-#elif defined(TARGET_OS_IPHONE)
+#	elif TARGET_OS_IPHONE
 RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EAGLContextWrapper* wrapper)
 :	m_globalContext(globalContext)
 ,	m_wrapper(wrapper)
@@ -39,12 +42,12 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext, EAGLContextWra
 		wrapper->getHeight()
 	));
 }
-#else
+#	else
 RenderViewOpenGLES2::RenderViewOpenGLES2(IContext* globalContext)
 :	m_globalContext(globalContext)
 {
 }
-#endif
+#	endif
 
 RenderViewOpenGLES2::~RenderViewOpenGLES2()
 {
@@ -52,20 +55,20 @@ RenderViewOpenGLES2::~RenderViewOpenGLES2()
 
 void RenderViewOpenGLES2::close()
 {
-#if defined(TARGET_OS_IPHONE)
+#	if TARGET_OS_IPHONE
 	if (m_wrapper)
 	{
 		m_wrapper->destroy();
 		delete m_wrapper, m_wrapper = 0;
 	}
-#endif
+#	endif
 }
 
 void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 {
-#if defined(TARGET_OS_IPHONE)
+#	if TARGET_OS_IPHONE
 	m_wrapper->resize(width, height);
-#endif
+#	endif
 }
 
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
@@ -104,7 +107,7 @@ Viewport RenderViewOpenGLES2::getViewport()
 
 bool RenderViewOpenGLES2::begin()
 {
-#if defined(TARGET_OS_IPHONE)
+#	if TARGET_OS_IPHONE
 	m_wrapper->setCurrent();
 	
 	glViewport(
@@ -114,7 +117,7 @@ bool RenderViewOpenGLES2::begin()
 		m_wrapper->getHeight()
 	);
 
-#endif
+#	endif
 
 	//T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
 	T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
@@ -304,11 +307,11 @@ void RenderViewOpenGLES2::end()
 
 void RenderViewOpenGLES2::present()
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#	if defined(T_OPENGL_ES2_HAVE_EGL)
 	eglSwapBuffers(m_display, m_surface);
-#elif defined(TARGET_OS_IPHONE)
+#	elif TARGET_OS_IPHONE
 	m_wrapper->swapBuffers();
-#endif
+#	endif
 
 	if (m_globalContext)
 		m_globalContext->deleteResources();
@@ -316,3 +319,5 @@ void RenderViewOpenGLES2::present()
 
 	}
 }
+
+#endif

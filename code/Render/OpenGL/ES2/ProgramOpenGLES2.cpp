@@ -176,6 +176,8 @@ void ProgramOpenGLES2::setSamplerTexture(handle_t handle, ITexture* texture)
 	if (i == m_parameterMap.end())
 		return;
 
+#if !defined(T_OFFLINE_ONLY)
+
 	if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(texture))
 	{
 		m_samplerTextures[i->second].target = GL_TEXTURE_2D;
@@ -190,6 +192,8 @@ void ProgramOpenGLES2::setSamplerTexture(handle_t handle, ITexture* texture)
 		m_samplerTextures[i->second].originScale = rt->getTextureOriginAndScale();
 		m_samplerTextures[i->second].mipCount = 1;
 	}
+
+#endif
 
 	m_dirty = true;
 }

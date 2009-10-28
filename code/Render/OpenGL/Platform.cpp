@@ -24,7 +24,7 @@ std::wstring getOpenGLErrorString(GLenum glError)
 		return L"GL_STACK_UNDERFLOW";
 	case GL_INVALID_FRAMEBUFFER_OPERATION_EXT:
 		return L"GL_INVALID_FRAMEBUFFER_OPERATION";
-#elif defined(T_OPENGL_ES2)
+#elif defined(T_OPENGL_ES2) && !defined(T_OFFLINE_ONLY)
 	case GL_INVALID_FRAMEBUFFER_OPERATION:
 		return L"GL_INVALID_FRAMEBUFFER_OPERATION";
 #endif
