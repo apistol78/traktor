@@ -56,9 +56,25 @@ public:
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event);
 
 private:
-	float m_leftAxisX;
-	float m_leftAxisY;
-	CGPoint m_firstLocation;
+	struct Pad
+	{
+		float axisX;
+		float axisY;
+		CGPoint origin;
+		UITouch* touch;
+		
+		Pad()
+		:	axisX(0.0f)
+		,	axisY(0.0f)
+		,	touch(0)
+		{
+		}
+	};
+	
+	bool m_landscape;
+	CGFloat m_center;	
+	Pad m_leftPad;
+	Pad m_rightPad;
 };
 	
 	}
