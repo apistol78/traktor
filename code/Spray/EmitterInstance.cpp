@@ -6,7 +6,9 @@
 #include "Spray/EmitterUpdateContext.h"
 #include "Render/Shader.h"
 
-#define T_USE_UPDATE_JOBS
+#if !TARGET_OS_IPHONE && !defined(_WINCE)
+#	define T_USE_UPDATE_JOBS
+#endif
 
 namespace traktor
 {
