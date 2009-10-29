@@ -3,6 +3,7 @@
 
 #import "Input/iPhone/UITouchView.h"
 
+#include <map>
 #include "Input/IInputDevice.h"
 
 namespace traktor
@@ -56,25 +57,58 @@ public:
 	virtual void touchesCancelled(NSSet* touches, UIEvent* event);
 
 private:
-	struct Pad
+	struct IControl
+	{
+		virtual void begin(UITouch* touch) = 0;
+		
+		virtual void end(UITouch* touch) = 0;
+		
+		virtual void move(InputDeviceTouch* device, UITouch* touch) = 0;
+	};
+	
+	struct Pad : public IControl
 	{
 		float axisX;
 		float axisY;
 		CGPoint origin;
-		UITouch* touch;
-		
+				
 		Pad()
 		:	axisX(0.0f)
 		,	axisY(0.0f)
-		,	touch(0)
 		{
 		}
+
+		virtual void begin(UITouch* touch);
+		
+		virtual void end(UITouch* touch);
+		
+		virtual void move(InputDeviceTouch* device, UITouch* touch);
+	};
+	
+	struct Button : public IControl
+	{
+		float value;
+		
+		Button()
+		:	value(0.0f)
+		{
+		}
+
+		virtual void begin(UITouch* touch);
+		
+		virtual void end(UITouch* touch);
+		
+		virtual void move(InputDeviceTouch* device, UITouch* touch);
 	};
 	
 	bool m_landscape;
-	CGFloat m_center;	
+	CGPoint m_pivots[3];
 	Pad m_leftPad;
 	Pad m_rightPad;
+	Button m_leftButton;
+	Button m_rightButton;
+	IControl* m_controls[4];
+	std::map< UITouch*, IControl* > m_track;
 };
 	
 	}
