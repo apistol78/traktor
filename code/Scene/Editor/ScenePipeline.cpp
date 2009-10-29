@@ -18,6 +18,7 @@ T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.ScenePipeline", ScenePipelin
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
+,	m_suppressVelocity(false)
 ,	m_suppressShadows(false)
 ,	m_suppressPostProcess(false)
 {
@@ -26,6 +27,7 @@ ScenePipeline::ScenePipeline()
 bool ScenePipeline::create(const editor::Settings* settings)
 {
 	m_suppressDepthPass = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
+	m_suppressVelocity = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");
 	m_suppressShadows = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressPostProcess = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
 	return true;
@@ -37,7 +39,7 @@ void ScenePipeline::destroy()
 
 uint32_t ScenePipeline::getVersion() const
 {
-	return 3;
+	return 4;
 }
 
 TypeSet ScenePipeline::getAssetTypes() const
@@ -76,6 +78,11 @@ bool ScenePipeline::buildOutput(
 	{
 		sceneAsset->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
+	}
+	if (m_suppressVelocity && sceneAsset->getWorldRenderSettings()->velocityPassEnable)
+	{
+		sceneAsset->getWorldRenderSettings()->velocityPassEnable = false;
+		log::info << L"Velocity pass suppressed" << Endl;
 	}
 	if (m_suppressShadows && sceneAsset->getWorldRenderSettings()->shadowsEnabled)
 	{

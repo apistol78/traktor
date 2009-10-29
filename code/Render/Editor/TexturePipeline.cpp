@@ -169,7 +169,7 @@ void TexturePipeline::destroy()
 
 uint32_t TexturePipeline::getVersion() const
 {
-	return 5;
+	return 6;
 }
 
 TypeSet TexturePipeline::getAssetTypes() const
@@ -359,7 +359,7 @@ bool TexturePipeline::buildOutput(
 
 	if (!textureAsset->m_isCubeMap || textureAsset->m_generateSphereMap)
 	{
-		int mipCount = textureAsset->m_generateMips ? log2(std::min(width, height)) + 1 : 1;
+		int mipCount = textureAsset->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
 		T_ASSERT (mipCount >= 1);
 
 		// Determine texture compression format.
@@ -404,14 +404,17 @@ bool TexturePipeline::buildOutput(
 
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				log::info << L"Executing mip generation task " << i << L" (" << (width >> i) << L"*" << (height >> i) << L")..." << Endl;
+				int32_t mipWidth = std::max(width >> i, 1);
+				int32_t mipHeight = std::max(height >> i, 1);
+
+				log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
 				ScaleTextureTask* task = new ScaleTextureTask();
 
 				task->image = image;
 				task->filter = gc_new< drawing::ScaleFilter >(
-						width >> i,
-						height >> i,
+						mipWidth,
+						mipHeight,
 						drawing::ScaleFilter::MnAverage,
 						drawing::ScaleFilter::MgLinear,
 						textureAsset->m_keepZeroAlpha
