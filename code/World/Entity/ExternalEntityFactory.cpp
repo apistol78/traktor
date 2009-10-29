@@ -3,6 +3,7 @@
 #include "World/Entity/ExternalSpatialEntityData.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "Database/Database.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -27,14 +28,17 @@ const TypeSet ExternalEntityFactory::getEntityTypes() const
 Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
 {
 	Ref< EntityData > realEntityData;
+	Guid entityGuid;
 
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{
-		realEntityData = m_database->getObjectReadOnly< EntityData >(externalEntityData->getGuid());
+		entityGuid = externalEntityData->getGuid();
+		realEntityData = m_database->getObjectReadOnly< EntityData >(entityGuid);
 	}
 	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(&entityData))
 	{
-		Ref< SpatialEntityData > realSpatialEntityData = m_database->getObjectReadOnly< SpatialEntityData >(externalSpatialEntityData->getGuid());
+		entityGuid = externalSpatialEntityData->getGuid();
+		Ref< SpatialEntityData > realSpatialEntityData = m_database->getObjectReadOnly< SpatialEntityData >(entityGuid);
 		if (realSpatialEntityData)
 		{
 			realSpatialEntityData->setTransform(externalSpatialEntityData->getTransform());
@@ -43,7 +47,10 @@ Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::
 	}
 
 	if (!realEntityData)
+	{
+		log::error << L"Unable to resolve external entity from \"" << entityGuid.format() << L"\" (" << name << L")" << Endl;
 		return 0;
+	}
 
 	return builder->create(name, realEntityData, instanceData);
 }
