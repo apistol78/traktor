@@ -114,7 +114,10 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 	m_height = desc.height;
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+	{
+		log::error << L"Unable to convert texture format" << Endl;
 		return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
@@ -129,8 +132,8 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
-			uint32_t width = m_width >> i;
-			uint32_t height = m_height >> i;
+			uint32_t width = std::max(m_width >> i, 1);
+			uint32_t height = std::max(m_height >> i, 1);
 
 			if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
 			{
@@ -161,26 +164,6 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 					desc.initialData[i].data
 				));
 			}
-		}
-
-		if (desc.mipCount > 1 && ((m_width >> desc.mipCount) == 1 || (m_height >> desc.mipCount) == 1))
-		{
-			T_ASSERT (desc.format < TfDXT1 || desc.format > TfDXT5);
-			log::warning << L"Creating last missing mipmap, re-import texture" << Endl;
-
-			uint8_t dummy[32];
-
-			T_OGL_SAFE(glTexImage2D(
-				GL_TEXTURE_2D,
-				desc.mipCount,
-				m_components,
-				1,
-				1,
-				0,
-				m_format,
-				m_type,
-				dummy
-			));
 		}
 	}
 
@@ -218,7 +201,7 @@ bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 	if (m_data.empty())
 		return false;
 
-	lock.pitch = (m_width >> level) * m_pixelSize;
+	lock.pitch = std::max(m_width >> level, 1) * m_pixelSize;
 	lock.bits = &m_data[0];
 	return true;
 }
@@ -231,8 +214,8 @@ void SimpleTextureOpenGLES2::unlock(int level)
 		GL_TEXTURE_2D,
 		0,
 		m_components,
-		m_width >> level,
-		m_height >> level,
+		std::max(m_width >> level, 1),
+		std::max(m_height >> level, 1),
 		0,
 		m_format,
 		m_type,

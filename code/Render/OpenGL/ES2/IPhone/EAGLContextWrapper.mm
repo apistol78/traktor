@@ -31,9 +31,10 @@ bool EAGLContextWrapper::create(void* nativeHandle, bool wantDepthBuffer)
 
 	layer.opaque = YES;
 	layer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
-		[NSNumber numberWithBool:NO],
-		kEAGLDrawablePropertyRetainedBacking,
-		kEAGLColorFormatRGBA8,
+//		[NSNumber numberWithBool:NO],
+//		kEAGLDrawablePropertyRetainedBacking,
+//		kEAGLColorFormatRGBA8,
+		kEAGLColorFormatRGB565,
 		kEAGLDrawablePropertyColorFormat,
 		nil];
 		

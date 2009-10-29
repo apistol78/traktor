@@ -99,9 +99,9 @@ float InputDeviceTouch::getControlValue(int control)
 	else if (control == -6)
 		return m_rightButton.value;
 	else if (control == -7)
-		return m_leftPad.axisY < -0.5f ? 1.0f : 0.0f;
-	else if (control == -8)
 		return m_leftPad.axisY > 0.5f ? 1.0f : 0.0f;
+	else if (control == -8)
+		return m_leftPad.axisY < -0.5f ? 1.0f : 0.0f;
 	else
 		return 0.0f;
 }
