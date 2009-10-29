@@ -1190,7 +1190,19 @@ bool PixelOutput::serialize(Serializer& s)
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Platform", Platform, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Platform_i[] = { { L"DX9", true }, { L"DX10", true }, { L"OpenGL", true }, { L"GCM", true }, { L"Other", false }, 0 };
+const ImmutableNode::InputPinDesc c_Platform_i[] =
+{
+	{ L"DX9", true },
+	{ L"DX9 Xbox360", true },
+	{ L"DX10", true },
+	{ L"DX11", true },
+	{ L"OpenGL", true },
+	{ L"OpenGL ES2", true },
+	{ L"GCM", true },
+	{ L"Software", true },
+	{ L"Other", false },
+	0
+};
 const ImmutableNode::OutputPinDesc c_Platform_o[] = { L"Output", 0 };
 
 Platform::Platform()

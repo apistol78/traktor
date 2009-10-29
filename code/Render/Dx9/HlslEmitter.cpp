@@ -868,7 +868,11 @@ bool emitPlatform(HlslContext& cx, Platform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
+#if defined(T_USE_XDK) || defined(_XBOX)
+	HlslVariable* input = cx.emitInput(node, L"DX9 Xbox360");
+#else
 	HlslVariable* input = cx.emitInput(node, L"DX9");
+#endif
 	if (!input)
 	{
 		input = cx.emitInput(node, L"Other");
