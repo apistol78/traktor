@@ -3,18 +3,46 @@
 #include "Flash/Action/Classes/AsObject.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ScaleFilter.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+uint32_t nearestLog2(uint32_t num)
+{
+    uint32_t n = num > 0 ? num - 1 : 0;
+
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+
+    return n;
+}
+
+uint32_t previousLog2(uint32_t num)
+{
+	uint32_t lg2 = nearestLog2(num);
+	return lg2 > 1 ? (lg2 >> 1) : 1;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashBitmap", FlashBitmap, ActionObject)
 
 FlashBitmap::FlashBitmap()
 :	ActionObject(AsObject::getInstance())
-,	m_width(0)
-,	m_height(0)
+,	m_originalWidth(0)
+,	m_originalHeight(0)
+,	m_bitsWidth(0)
+,	m_bitsHeight(0)
 ,	m_bits(0)
 {
 }
@@ -26,9 +54,6 @@ FlashBitmap::~FlashBitmap()
 
 bool FlashBitmap::create(drawing::Image* image)
 {
-	if (!create(image->getWidth(), image->getHeight()))
-		return false;
-
 	bool hasAlpha = image->getPixelFormat()->getAlphaBits() > 0;
 
 	// Ensure pixel format match Flash bits.
@@ -49,16 +74,48 @@ bool FlashBitmap::create(drawing::Image* image)
 		clone->convert(drawing::PixelFormat::getR8G8B8X8());
 #endif
 	}
+	
+#if TARGET_OS_IPHONE
+	// Ensure bitmap is a power-of-2.
+	uint32_t log2Width = previousLog2(clone->getWidth());
+	uint32_t log2Height = previousLog2(clone->getHeight());
+	
+	// Clamp size; we cannot afford too big bitmaps.
+	if (log2Width > 512)
+		log2Width = 512;
+	if (log2Height > 512)
+		log2Height = 512;
+	
+	if (log2Width != clone->getWidth() || log2Height != clone->getHeight())
+	{
+		log::warning << L"Flash bitmap resized to power-of-2 " << log2Width << L"*" << log2Height << Endl;
+		
+		drawing::ScaleFilter scaleFilter(
+			log2Width,
+			log2Height,
+			drawing::ScaleFilter::MnAverage,
+			drawing::ScaleFilter::MgLinear
+		);
+		
+		clone = clone->applyFilter(&scaleFilter);
+	}
+#endif
+
+	m_originalWidth = image->getWidth();
+	m_originalHeight = image->getHeight();
+	m_bitsWidth = clone->getWidth();
+	m_bitsHeight = clone->getHeight();
+	m_bits.reset(new SwfColor [m_bitsWidth * m_bitsHeight]);
 
 	std::memcpy(
 		m_bits.ptr(),
 		clone->getData(),
-		image->getWidth() * image->getHeight() * sizeof(SwfColor)
+		clone->getWidth() * clone->getHeight() * sizeof(SwfColor)
 	);
 
 	if (!hasAlpha)
 	{
-		for (int32_t i = 0; i < image->getWidth() * image->getHeight(); ++i)
+		for (int32_t i = 0; i < clone->getWidth() * clone->getHeight(); ++i)
 			m_bits[i].alpha = 255;
 	}
 
@@ -67,20 +124,37 @@ bool FlashBitmap::create(drawing::Image* image)
 
 bool FlashBitmap::create(uint16_t width, uint16_t height)
 {
-	m_width = width;
-	m_height = height;
-	m_bits.reset(new SwfColor [width * height]);
+	m_originalWidth = width;
+	m_originalHeight = height;
+#if TARGET_OS_IPHONE
+	m_bitsWidth = previousLog2(width);
+	m_bitsHeight = previousLog2(height);
+#else
+	m_bitsWidth = width;
+	m_bitsHeight = height;
+#endif
+	m_bits.reset(new SwfColor [m_bitsWidth * m_bitsHeight]);
 	return true;
 }
 
-uint16_t FlashBitmap::getWidth() const
+uint16_t FlashBitmap::getOriginalWidth() const
 {
-	return m_width;
+	return m_originalWidth;
 }
 
-uint16_t FlashBitmap::getHeight() const
+uint16_t FlashBitmap::getOriginalHeight() const
 {
-	return m_height;
+	return m_originalHeight;
+}
+
+uint16_t FlashBitmap::getBitsWidth() const
+{
+	return m_bitsWidth;
+}
+
+uint16_t FlashBitmap::getBitsHeight() const
+{
+	return m_bitsHeight;
 }
 
 const SwfColor* FlashBitmap::getBits() const
@@ -90,8 +164,11 @@ const SwfColor* FlashBitmap::getBits() const
 
 void FlashBitmap::setPixel(uint16_t x, uint16_t y, const SwfColor& color)
 {
-	if (m_bits.ptr())
-		m_bits[x + y * m_width] = color;
+	uint32_t xx = uint32_t(x * m_bitsWidth) / m_originalWidth;
+	uint32_t yy = uint32_t(y * m_bitsHeight) / m_originalHeight;
+	
+	if (xx < m_bitsWidth && yy < m_bitsHeight)
+		m_bits[xx + yy * m_bitsWidth] = color;
 }
 
 	}

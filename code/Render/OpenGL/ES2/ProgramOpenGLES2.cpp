@@ -343,7 +343,16 @@ bool ProgramOpenGLES2::activate(bool landspace)
 				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 			}
 
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MAG_FILTER, m_renderState.samplerStates[i->unit].magFilter));
+			T_OGL_SAFE(glTexParameteri(
+				st.target,
+				GL_TEXTURE_MIN_FILTER,
+				m_renderState.samplerStates[i->unit].magFilter
+			));
+			T_OGL_SAFE(glTexParameteri(
+				st.target,
+				GL_TEXTURE_MAG_FILTER,
+				m_renderState.samplerStates[i->unit].magFilter
+			));
 			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_S, m_renderState.samplerStates[i->unit].wrapS));
 			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_T, m_renderState.samplerStates[i->unit].wrapT));
 
@@ -480,11 +489,15 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 		else
 		{
 			// Skip private uniforms of format "t_internal_*".
-			std::wstring uniforNameW = mbstows(uniformName);
-			if (startsWith(uniforNameW, L"t_internal_"))
+			std::wstring uniformNameW = mbstows(uniformName);
+			if (startsWith(uniformNameW, L"t_internal_"))
 				continue;
 
-			handle_t handle = getParameterHandle(uniforNameW);
+			size_t p = uniformNameW.find('[');
+			if (p != uniformNameW.npos)
+				uniformNameW = uniformNameW.substr(0, p);
+
+			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{
 				uint32_t allocSize = 0;
@@ -617,18 +630,22 @@ bool ProgramOpenGLES2::createFromBinary(const ProgramResource* resource)
 
 			m_samplers.push_back(Sampler());
 			m_samplers.back().location = glGetUniformLocation(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("_sampler_" + std::string(uniformName) + "_OriginScale").c_str());
+			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
 			m_samplers.back().texture = m_parameterMap[handle];
 			m_samplers.back().unit = unit;
 		}
 		else
 		{
-			// Skip private uniform of format "_sampler_XXX_OriginScale".
-			std::wstring uniforNameW = mbstows(uniformName);
-			if (startsWith(uniforNameW, L"_sampler_") && endsWith(uniforNameW, L"_OriginScale"))
+			// Skip private uniform of format "t_internal_*".
+			std::wstring uniformNameW = mbstows(uniformName);
+			if (startsWith(uniformNameW, L"t_internal_"))
 				continue;
+				
+			size_t p = uniformNameW.find('[');
+			if (p != uniformNameW.npos)
+				uniformNameW = uniformNameW.substr(0, p);				
 
-			handle_t handle = getParameterHandle(uniforNameW);
+			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{
 				uint32_t allocSize = 0;

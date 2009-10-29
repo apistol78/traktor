@@ -163,13 +163,13 @@ render::ITexture* AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 
 	render::SimpleTextureCreateDesc desc;
 
-	desc.width = bitmap.getWidth();
-	desc.height = bitmap.getHeight();
+	desc.width = bitmap.getBitsWidth();
+	desc.height = bitmap.getBitsHeight();
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
 	desc.initialData[0].data = bitmap.getBits();
-	desc.initialData[0].pitch = bitmap.getWidth() * 4;
+	desc.initialData[0].pitch = bitmap.getBitsWidth() * 4;
 
 	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
 	T_ASSERT (texture);

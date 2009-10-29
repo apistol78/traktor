@@ -53,17 +53,23 @@ public:
 	 */
 	bool create(uint16_t width, uint16_t height);
 
-	uint16_t getWidth() const;
+	uint16_t getOriginalWidth() const;
 
-	uint16_t getHeight() const;
+	uint16_t getOriginalHeight() const;
+	
+	uint16_t getBitsWidth() const;
+	
+	uint16_t getBitsHeight() const;
 
 	const SwfColor* getBits() const;
 
 	void setPixel(uint16_t x, uint16_t y, const SwfColor& color);
 
 private:
-	uint16_t m_width;
-	uint16_t m_height;
+	uint16_t m_originalWidth;
+	uint16_t m_originalHeight;
+	uint16_t m_bitsWidth;
+	uint16_t m_bitsHeight;
 	AutoArrayPtr< SwfColor > m_bits;
 };
 

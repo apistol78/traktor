@@ -2,6 +2,7 @@
 #include "Flash/AccTextureCache.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
+#include "Flash/FlashBitmap.h"
 #include "Flash/PathTesselator.h"
 #include "Flash/Triangulator.h"
 #include "Resource/IResourceManager.h"
@@ -170,7 +171,11 @@ bool AccShape::create(
 				{
 					T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");
 					texture = textureCache.getBitmapTexture(*bitmap);
-					textureMatrix = scale(1.0f / texture->getWidth(), 1.0f / texture->getHeight()) * style.getFillBitmapMatrix().inverse();
+					textureMatrix = scale(
+						1.0f / bitmap->getOriginalWidth(),
+						1.0f / bitmap->getOriginalHeight()
+					) *
+					style.getFillBitmapMatrix().inverse();
 				}
 			}
 

@@ -20,17 +20,28 @@ bool Library::open(const Path& libraryName)
 bool Library::open(const Path& libraryName, const std::vector< Path >& searchPaths, bool includeDefaultPaths)
 {
 	std::wstring resolved = libraryName.getPathName();
-	std::wstring library = L"@executable_path/" + resolved + L".dylib";
-
-	std::string tmp1 = wstombs(library);
-	m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
-	if (!m_handle)
+	
+	m_handle = 0;
+	
+	// Use executable path first.
 	{
-		log::error << L"Unable to open library, " << mbstows(dlerror()) << Endl;
-		return false;
+		std::wstring library = L"@executable_path/" + resolved + L".dylib";
+		std::string tmp1 = wstombs(library);
+		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		if (m_handle)
+			return true;
+	}
+	// Try default paths second.
+	{
+		std::wstring library = resolved + L".dylib";
+		std::string tmp1 = wstombs(library);
+		m_handle = dlopen(tmp1.c_str(), RTLD_LAZY | RTLD_GLOBAL);
+		if (m_handle)
+			return true;
 	}
 	
-	return true;
+	log::error << L"Unable to open library, " << mbstows(dlerror()) << Endl;
+	return false;
 }
 
 void Library::close()
