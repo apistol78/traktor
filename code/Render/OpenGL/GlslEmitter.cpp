@@ -663,7 +663,11 @@ void emitPlatform(GlslContext& cx, Platform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
+#if defined(T_OPENGL_STD)
 	GlslVariable* input = cx.emitInput(node, L"OpenGL");
+#elif defined(T_RENDER_OPENGL_ES2_EXPORT)
+	GlslVariable* input = cx.emitInput(node, L"OpenGL ES2");
+#endif
 	if (!input)
 		input = cx.emitInput(node, L"Other");
 

@@ -507,7 +507,9 @@ void emitNormalize(EmitterContext& cx, Normalize* node)
 
 void emitPlatform(EmitterContext& cx, Platform* node)
 {
-	Variable* in = cx.emitInput(node, L"Other");
+	Variable* in = cx.emitInput(node, L"Software");
+	if (!in)
+		in = cx.emitInput(node, L"Other");
 	T_ASSERT (in);
 
 	Variable* out = cx.emitOutput(node, L"Output", in->type);
