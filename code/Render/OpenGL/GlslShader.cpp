@@ -141,11 +141,11 @@ std::wstring GlslShader::getGeneratedShader()
 	ss << Endl;
 
 #if defined(T_OPENGL_ES2)
+	ss << L"precision mediump float;" << Endl;
+	ss << Endl;
+
 	if (m_shaderType == StVertex)
 	{
-		// Orientation coefficients
-		// xc | xs | ys | yc
-
 		// Add post-orientation transform function.
 		ss << L"uniform vec4 t_internal_postOrientationCoeffs;" << Endl;
 		ss << Endl;
@@ -158,10 +158,8 @@ std::wstring GlslShader::getGeneratedShader()
 		ss << L"\t\tcp0.w" << Endl;
 		ss << L"\t);" << Endl;
 		ss << L"}" << Endl;
+		ss << Endl;
 	}
-	else if (m_shaderType == StFragment)
-		ss << L"precision mediump float;" << Endl;
-	ss << Endl;
 #endif
 
 	ss << getOutputStream(BtUniform).str();
