@@ -3972,7 +3972,9 @@
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
-											<libraries/>
+											<libraries>
+												<item>Foundation.framework</item>
+											</libraries>
 										</item>
 										<item type="Configuration">
 											<name>ReleaseShared</name>
@@ -3987,7 +3989,9 @@
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
-											<libraries/>
+											<libraries>
+												<item>Foundation.framework</item>
+											</libraries>
 										</item>
 										<item type="Configuration">
 											<name>DebugStatic</name>
@@ -4002,7 +4006,9 @@
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
-											<libraries/>
+											<libraries>
+												<item>Foundation.framework</item>
+											</libraries>
 										</item>
 										<item type="Configuration">
 											<name>ReleaseStatic</name>
@@ -4017,7 +4023,9 @@
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
-											<libraries/>
+											<libraries>
+												<item>Foundation.framework</item>
+											</libraries>
 										</item>
 									</configurations>
 									<items>
@@ -4047,10 +4055,10 @@
 											<name>Io</name>
 											<items>
 												<item type="Filter">
-													<name>OsX</name>
+													<name>iPhone</name>
 													<items>
 														<item type="File">
-															<fileName>Io/OsX/*.*</fileName>
+															<fileName>Io/iPhone/*.*</fileName>
 															<items/>
 														</item>
 													</items>
