@@ -14,7 +14,7 @@ SocketAddressIPv4::SocketAddressIPv4()
 	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
 	m_sockaddr.sin_family = AF_INET;
 	m_sockaddr.sin_port = 0;
-	m_sockaddr.sin_addr.s_addr = INADDR_ANY;
+	m_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
 SocketAddressIPv4::SocketAddressIPv4(const sockaddr_in& sockaddr)
@@ -27,7 +27,7 @@ SocketAddressIPv4::SocketAddressIPv4(uint16_t port)
 	std::memset(&m_sockaddr, 0, sizeof(m_sockaddr));
 	m_sockaddr.sin_family = AF_INET;
 	m_sockaddr.sin_port = htons(port);
-	m_sockaddr.sin_addr.s_addr = INADDR_ANY;
+	m_sockaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 }
 
 SocketAddressIPv4::SocketAddressIPv4(const uint8_t ip[4], uint16_t port)
