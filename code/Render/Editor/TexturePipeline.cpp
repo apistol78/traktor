@@ -39,6 +39,27 @@ bool isLog2(int v)
 	return (1 << log2(v)) == v;
 }
 
+
+uint32_t nearestLog2(uint32_t num)
+{
+    uint32_t n = num > 0 ? num - 1 : 0;
+
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n++;
+
+    return n;
+}
+
+uint32_t previousLog2(uint32_t num)
+{
+	uint32_t lg2 = nearestLog2(num);
+	return lg2 > 1 ? (lg2 >> 1) : 1;
+}
+
 bool isBinaryAlpha(const drawing::Image* image)
 {
 	std::set< uint8_t > alphas;
@@ -169,7 +190,7 @@ void TexturePipeline::destroy()
 
 uint32_t TexturePipeline::getVersion() const
 {
-	return 6;
+	return 7;
 }
 
 TypeSet TexturePipeline::getAssetTypes() const
@@ -332,8 +353,16 @@ bool TexturePipeline::buildOutput(
 	}
 
 	// Skip mips.
-	width >>= m_skipMips;
-	height >>= m_skipMips;
+	width = std::max(1, width >> m_skipMips);
+	height = std::max(1, height >> m_skipMips);
+	
+	// Ensure power-of-2 textures.
+	if (!isLog2(width) || !isLog2(height))
+	{
+		log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
+		width = nearestLog2(width);
+		height = nearestLog2(height);
+	}
 
 	// Create output instance.
 	Ref< TextureResource > outputResource = gc_new< TextureResource >();
