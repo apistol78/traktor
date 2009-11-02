@@ -51,7 +51,11 @@ class T_DLLCLASS InstanceMesh : public Object
 	T_RTTI_CLASS(InstanceMesh)
 
 public:
+#if TARGET_OS_IPHONE
+	enum { MaxInstanceCount = 10 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
+#else
 	enum { MaxInstanceCount = 60 };
+#endif
 
 	struct Part
 	{
