@@ -186,7 +186,12 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 					externalFilesHash
 				);
 				if (result)
+				{
 					log::info << L"Cached instance(s) used" << Endl;
+
+					m_hash->set((*i)->outputGuid, hash);
+					m_succeeded++;
+				}
 			}
 			else
 				result = false;
