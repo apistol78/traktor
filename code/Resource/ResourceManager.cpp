@@ -3,6 +3,8 @@
 #include "Resource/ResourceHandle.h"
 #include "Resource/IResourceFactory.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Log/Log.h"
 
@@ -52,7 +54,6 @@ void ResourceManager::removeAllFactories()
 
 IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
 {
-	Acquire< Semaphore > scope(m_lock);
 	Ref< ResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
@@ -68,6 +69,7 @@ IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
 		handle = gc_new< ResourceHandle >(cref(type));
 	else
 	{
+		Acquire< Semaphore > scope(m_lock);
 		handle = m_cache[guid];
 		if (!handle)
 		{
@@ -145,8 +147,13 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, Resource
 	if (object)
 	{
 		T_ASSERT_M (is_type_of(resourceType, object->getType()), L"Incorrect type of created resource");
-		handle->replace(object);
+		
 		log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
+		handle->replace(object);
+
+		// Yield current thread; we want other threads to get some periodic CPU time to
+		// render loading screens etc.
+		ThreadManager::getInstance().getCurrentThread()->yield();
 	}
 	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
