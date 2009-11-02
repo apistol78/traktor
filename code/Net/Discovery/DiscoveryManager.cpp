@@ -1,6 +1,7 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/DmFindServices.h"
 #include "Net/Discovery/DmServiceInfo.h"
+#include "Net/Discovery/IService.h"
 #include "Net/UdpSocket.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
@@ -110,10 +111,8 @@ bool DiscoveryManager::findServices(const Type& serviceType, RefArray< IService 
 		if (!message)
 			break;
 
-		if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
-		{
-			log::info << L"Got service info" << Endl;
-		}
+		if (IService* service = dynamic_type_cast< IService* >(message))
+			outServices.push_back(service);
 	}
 
 	return true;
@@ -134,9 +133,8 @@ void DiscoveryManager::threadMulticastListener()
 			{
 				for (RefArray< IService >::const_iterator i = m_services.begin(); i != m_services.end(); ++i)
 				{
-					//DmServiceInfo serviceInfo(L"My service");
-					//if (!sendMessage(m_multicastSocket, fromAddress, &serviceInfo))
-					//	log::error << L"Unable to reply service to requesting manager" << Endl;
+					if (!sendMessage(m_multicastSocket, fromAddress, *i))
+						log::error << L"Unable to reply service to requesting manager" << Endl;
 				}
 			}
 		}

@@ -29,6 +29,11 @@ bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 	if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) < 0)
 		return false;
 
+#if defined(SO_REUSEPORT)
+	if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEPORT, (const char*)&opt, sizeof(opt)) < 0)
+		return false;
+#endif
+
 	if (::bind(m_socket, (sockaddr *)&local, sizeof(local)) < 0)
 		return false;
 

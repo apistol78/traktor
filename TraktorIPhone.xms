@@ -3617,113 +3617,8 @@
 										<items/>
 									</item>
 									<item type="Filter">
-										<name>ia32</name>
-										<items>
-											<item type="File">
-												<fileName>ia32/assembler-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/assembler-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/assembler-ia32-inl.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/builtins-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/codegen-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/codegen-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/codegen-ia32-inl.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/cpu-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/debug-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/disasm-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/frames-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/frames-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/ic-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/jump-target-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/macro-assembler-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/macro-assembler-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/regexp-macro-assembler-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/regexp-macro-assembler-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/register-allocator-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/register-allocator-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/register-allocator-ia32-inl.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/simulator-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/simulator-ia32.h</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/stub-cache-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/virtual-frame-ia32.cc</fileName>
-												<items/>
-											</item>
-											<item type="File">
-												<fileName>ia32/virtual-frame-ia32.h</fileName>
-												<items/>
-											</item>
-										</items>
+										<name>arm</name>
+										<items/>
 									</item>
 									<item type="Filter">
 										<name>derived</name>
@@ -5595,6 +5490,15 @@
 											<items>
 												<item type="File">
 													<fileName>File/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Discovery</name>
+											<items>
+												<item type="File">
+													<fileName>Discovery/*.*</fileName>
 													<items/>
 												</item>
 											</items>
