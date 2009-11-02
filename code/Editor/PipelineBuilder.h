@@ -91,10 +91,10 @@ private:
 	bool needBuild(PipelineDependency* dependency) const;
 
 	/*! \brief Isolate instance in cache. */
-	bool putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3, const RefArray< db::Instance >& instances);
 
 	/*! \brief Get isolated instance from cache. */
-	bool getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2);
+	bool getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3);
 };
 
 	}

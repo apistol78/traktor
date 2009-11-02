@@ -10,7 +10,7 @@
 #include "Sound/Decoders/OggStreamDecoder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Stream.h"
@@ -37,7 +37,7 @@ inline int16_t quantify(float sample)
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::IPipeline)
 
-bool SoundPipeline::create(const editor::Settings* settings)
+bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;

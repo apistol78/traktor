@@ -190,23 +190,6 @@ int main(int argc, const char** argv)
 	if (!pipelineHash)
 		pipelineHash = gc_new< editor::PipelineHash >();
 
-	RefArray< editor::IPipeline > pipelines;
-
-	std::vector< const Type* > pipelineTypes;
-	type_of< editor::IPipeline >().findAllOf(pipelineTypes);
-
-	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
-	{
-		Ref< editor::IPipeline > pipeline = dynamic_type_cast< editor::IPipeline* >((*i)->newInstance());
-		if (!pipeline)
-			continue;
-
-		if (!pipeline->create(settings))
-			continue;
-
-		pipelines.push_back(pipeline);
-	}
-
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
 	if (settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached", false))
@@ -220,8 +203,8 @@ int main(int argc, const char** argv)
 	}
 
 	editor::PipelineDependsIncremental pipelineDepends(
-		sourceDatabase,
-		pipelines
+		settings,
+		sourceDatabase
 	);
 
 	traktor::log::info << L"Collecting dependencies..." << Endl;
@@ -279,9 +262,6 @@ int main(int argc, const char** argv)
 
 	outputDatabase->close();
 	sourceDatabase->close();
-
-	for (RefArray< editor::IPipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
-		(*i)->destroy();
 
 	return 0;
 }

@@ -4,7 +4,7 @@
 #include "Physics/Mesh.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Instance.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
@@ -20,7 +20,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::IPipeline)
 
-bool MeshPipeline::create(const editor::Settings* settings)
+bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;

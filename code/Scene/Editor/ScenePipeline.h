@@ -23,7 +23,7 @@ class T_DLLCLASS ScenePipeline : public editor::IPipeline
 public:
 	ScenePipeline();
 
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

@@ -24,7 +24,7 @@ class T_DLLCLASS AssetsPipeline : public IPipeline
 	T_RTTI_CLASS(AssetsPipeline)
 
 public:
-	virtual bool create(const Settings* settings);
+	virtual bool create(const IPipelineSettings* settings);
 
 	virtual void destroy();
 

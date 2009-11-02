@@ -30,7 +30,7 @@ class T_DLLCLASS DefaultPipeline : public IPipeline
 	T_RTTI_CLASS(DefaultPipeline)
 
 public:
-	virtual bool create(const Settings* settings);
+	virtual bool create(const IPipelineSettings* settings);
 
 	virtual void destroy();
 

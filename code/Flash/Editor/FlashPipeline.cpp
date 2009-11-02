@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::IPipeline)
 
-bool FlashPipeline::create(const editor::Settings* settings)
+bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }

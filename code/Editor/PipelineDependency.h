@@ -40,8 +40,9 @@ public:
 
 	std::wstring name;							/*!< Name of output dependency. */
 	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
+	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
 	Ref< const Serializable > sourceAsset;		/*!< Source asset. */
-	uint32_t sourceAssetChecksum;				/*!< Checksum of source asset. */
+	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
 	Ref< const Object > buildParams;			/*!< Build parameters, passed from dependency phase. */

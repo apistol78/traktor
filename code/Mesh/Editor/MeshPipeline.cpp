@@ -10,7 +10,7 @@
 #include "Mesh/MeshResource.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -76,7 +76,7 @@ MeshPipeline::MeshPipeline()
 {
 }
 
-bool MeshPipeline::create(const editor::Settings* settings)
+bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< editor::PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);

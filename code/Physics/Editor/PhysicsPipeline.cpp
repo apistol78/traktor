@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::IPipeline)
 
-bool PhysicsPipeline::create(const editor::Settings* settings)
+bool PhysicsPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }

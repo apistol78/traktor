@@ -23,7 +23,7 @@ class T_DLLCLASS TexturePipeline : public editor::IPipeline
 public:
 	TexturePipeline();
 
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

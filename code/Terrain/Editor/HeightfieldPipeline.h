@@ -21,7 +21,7 @@ class T_DLLCLASS HeightfieldPipeline : public editor::IPipeline
 	T_RTTI_CLASS(HeightfieldPipeline)
 
 public:
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

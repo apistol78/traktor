@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.AssetsPipeline", AssetsPipeline, IPipeline)
 
-bool AssetsPipeline::create(const Settings* settings)
+bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
 	return true;
 }

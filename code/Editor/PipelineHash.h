@@ -35,8 +35,9 @@ class T_DLLCLASS PipelineHash : public Serializable
 public:
 	struct Hash
 	{
-		uint32_t checksum;
 		uint32_t pipelineVersion;
+		uint32_t pipelineHash;
+		uint32_t sourceAssetHash;
 		std::map< Path, DateTime > timeStamps;
 
 		Hash();

@@ -28,7 +28,7 @@ class Instance;
 	namespace editor
 	{
 
-class Settings;
+class IPipelineSettings;
 class IPipelineDepends;
 class IPipelineBuilder;
 
@@ -54,7 +54,7 @@ public:
 	 * \param settings Pipeline settings.
 	 * \return True if pipeline created successfully.
 	 */
-	virtual bool create(const Settings* settings) = 0;
+	virtual bool create(const IPipelineSettings* settings) = 0;
 
 	/*! \brief Destroy pipeline. */
 	virtual void destroy() = 0;

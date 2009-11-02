@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.EntityPipeline", EntityPipeline, editor::IPipeline)
 
-bool EntityPipeline::create(const editor::Settings* settings)
+bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }

@@ -14,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::IPipeline)
 
-bool EffectPipeline::create(const editor::Settings* settings)
+bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }
