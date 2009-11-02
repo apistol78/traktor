@@ -298,6 +298,14 @@
       <second>Använd memcached</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_READ</first>
+      <second>Läs tillåtet</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_WRITE</first>
+      <second>Skriv tillåtet</second>
+    </item>
+    <item>
 			<first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
 			<second>Moduler</second>
 		</item>

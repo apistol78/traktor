@@ -38,6 +38,14 @@ bool PipelineSettingsPage::create(ui::Container* parent, editor::Settings* setti
 	m_editMemCachedPort->create(container, toString(settings->getProperty< editor::PropertyInteger >(L"Pipeline.MemCached.Port")), ui::WsClientBorder, gc_new< ui::NumericEditValidator >(false, 0, 65535));
 	m_editMemCachedPort->setEnable(memCachedEnable);
 
+	m_checkMemCachedRead = gc_new< ui::CheckBox >();
+	m_checkMemCachedRead->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_MEMCACHED_READ"));
+	m_checkMemCachedRead->setChecked(settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached.Read", true));
+
+	m_checkMemCachedWrite = gc_new< ui::CheckBox >();
+	m_checkMemCachedWrite->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_MEMCACHED_WRITE"));
+	m_checkMemCachedWrite->setChecked(settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached.Write", true));
+
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_PIPELINE"));
 	return true;
 }
@@ -51,6 +59,8 @@ bool PipelineSettingsPage::apply(editor::Settings* settings)
 	settings->setProperty< editor::PropertyBoolean >(L"Pipeline.MemCached", m_checkUseMemCached->isChecked());
 	settings->setProperty< editor::PropertyString >(L"Pipeline.MemCached.Host", m_editMemCachedHost->getText());
 	settings->setProperty< editor::PropertyInteger >(L"Pipeline.MemCached.Port", parseString< int32_t >(m_editMemCachedPort->getText()));
+	settings->setProperty< editor::PropertyBoolean >(L"Pipeline.MemCached.Read", m_checkMemCachedRead->isChecked());
+	settings->setProperty< editor::PropertyBoolean >(L"Pipeline.MemCached.Write", m_checkMemCachedWrite->isChecked());
 	return true;
 }
 
@@ -59,6 +69,8 @@ void PipelineSettingsPage::eventUseMemCachedClick(ui::Event* event)
 	bool memCachedEnable = m_checkUseMemCached->isChecked();
 	m_editMemCachedHost->setEnable(memCachedEnable);
 	m_editMemCachedPort->setEnable(memCachedEnable);
+	m_checkMemCachedRead->setEnable(memCachedEnable);
+	m_checkMemCachedWrite->setEnable(memCachedEnable);
 }
 
 	}

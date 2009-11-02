@@ -30,6 +30,8 @@ std::string generateKey(const Guid& guid, uint32_t hash)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPipelineCache", MemCachedPipelineCache, IPipelineCache)
 
 MemCachedPipelineCache::MemCachedPipelineCache()
+:	m_accessRead(true)
+,	m_accessWrite(true)
 {
 	net::Network::initialize();
 }
@@ -49,7 +51,10 @@ bool MemCachedPipelineCache::create(const Settings* settings)
 	if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
 		return false;
 
+	m_accessRead = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
+	m_accessWrite = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
 	m_proto = gc_new< MemCachedProto >(m_socket);
+
 	return true;
 }
 
@@ -66,13 +71,21 @@ void MemCachedPipelineCache::destroy()
 
 Stream* MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
 {
-	Ref< MemCachedGetStream > stream = gc_new< MemCachedGetStream >(m_proto, generateKey(guid, hash));
-	return stream->requestNextBlock() ? stream : 0;
+	if (m_accessRead)
+	{
+		Ref< MemCachedGetStream > stream = gc_new< MemCachedGetStream >(m_proto, generateKey(guid, hash));
+		return stream->requestNextBlock() ? stream : 0;
+	}
+	else
+		return 0;
 }
 
 Stream* MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
 {
-	return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash));
+	if (m_accessWrite)
+		return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash));
+	else
+		return 0;
 }
 
 	}
