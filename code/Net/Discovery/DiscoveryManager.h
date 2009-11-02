@@ -46,12 +46,13 @@ public:
 	bool findServices(const Type& serviceType, RefArray< IService >& outServices, uint32_t timeout);
 
 private:
-	Ref< UdpSocket > m_sendSocket;
-	Ref< MulticastUdpSocket > m_multicastSocket;
+	Ref< UdpSocket > m_multicastSendSocket;
+	Ref< MulticastUdpSocket > m_multicastRecvSocket;
 	Thread* m_threadMulticastListener;
 	Guid m_sessionGuid;
 	bool m_verbose;
 	RefArray< IService > m_services;
+	RefArray< IService > m_foundServices;
 
 	void threadMulticastListener();
 

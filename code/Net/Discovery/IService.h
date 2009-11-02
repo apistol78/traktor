@@ -1,7 +1,7 @@
 #ifndef traktor_net_IService_H
 #define traktor_net_IService_H
 
-#include "Net/Discovery/IDiscoveryMessage.h"
+#include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +16,7 @@ namespace traktor
 	namespace net
 	{
 
-class T_DLLCLASS IService : public IDiscoveryMessage
+class T_DLLCLASS IService : public Serializable
 {
 	T_RTTI_CLASS(IService)
 	
