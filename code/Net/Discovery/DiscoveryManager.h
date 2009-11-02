@@ -44,6 +44,17 @@ public:
 	void removeService(IService* service);
 
 	bool findServices(const Type& serviceType, RefArray< IService >& outServices, uint32_t timeout);
+	
+	template < typename ServiceType >
+	bool findServices(RefArray< ServiceType >& outServices, uint32_t timeout)
+	{
+		RefArray< IService > services;
+		if (!findServices(type_of< ServiceType >(), services, timeout))
+			return false;
+		for (RefArray< IService >::const_iterator i = services.begin(); i != services.end(); ++i)
+			outServices.push_back(checked_type_cast< ServiceType* >(*i));
+		return true;
+	}
 
 private:
 	Ref< UdpSocket > m_multicastSendSocket;
