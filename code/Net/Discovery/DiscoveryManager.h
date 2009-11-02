@@ -35,7 +35,7 @@ class T_DLLCLASS DiscoveryManager : public Object
 public:
 	DiscoveryManager();
 
-	bool create();
+	bool create(bool verbose);
 
 	void destroy();
 
@@ -50,6 +50,7 @@ private:
 	Ref< MulticastUdpSocket > m_multicastSocket;
 	Thread* m_threadMulticastListener;
 	Guid m_sessionGuid;
+	bool m_verbose;
 	RefArray< IService > m_services;
 
 	void threadMulticastListener();
