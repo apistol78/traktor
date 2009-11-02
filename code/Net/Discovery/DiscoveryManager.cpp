@@ -52,6 +52,9 @@ bool DiscoveryManager::create()
 		return false;
 	}
 
+	if (!m_multicastSocket->setTTL(1))
+		log::warning << L"Unable to set multicast time-to-live option" << Endl;
+
 	m_threadMulticastListener = ThreadManager::getInstance().create(makeFunctor(this, &DiscoveryManager::threadMulticastListener), L"Discovery listener");
 	if (!m_threadMulticastListener)
 	{
@@ -131,11 +134,20 @@ void DiscoveryManager::threadMulticastListener()
 		{
 			if (findServices->getSessionGuid() != m_sessionGuid)
 			{
-				for (RefArray< IService >::const_iterator i = m_services.begin(); i != m_services.end(); ++i)
+				const Type* serviceType = findServices->getServiceType();
+				if (serviceType)
 				{
-					if (!sendMessage(m_multicastSocket, fromAddress, *i))
-						log::error << L"Unable to reply service to requesting manager" << Endl;
+					for (RefArray< IService >::const_iterator i = m_services.begin(); i != m_services.end(); ++i)
+					{
+						if (is_type_of(*serviceType, type_of(*i)))
+						{
+							if (!sendMessage(m_multicastSocket, fromAddress, *i))
+								log::error << L"Unable to reply service to requesting manager" << Endl;
+						}
+					}
 				}
+				else
+					log::error << L"Got find services message with invalid service type" << Endl;
 			}
 		}
 		else
