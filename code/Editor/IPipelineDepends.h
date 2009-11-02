@@ -38,8 +38,6 @@ class T_DLLCLASS IPipelineDepends : public Object
 	T_RTTI_CLASS(IPipelineDepends)
 
 public:
-	virtual IPipeline* findPipeline(const Type& sourceType) const = 0;
-
 	virtual void addDependency(
 		const Serializable* sourceAsset
 	) = 0;

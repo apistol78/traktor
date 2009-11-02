@@ -888,25 +888,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
-	RefArray< IPipeline > pipelines;
-
-	std::vector< const Type* > pipelineTypes;
-	type_of< IPipeline >().findAllOf(pipelineTypes);
-
-	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
-	{
-		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
-		if (pipeline)
-		{
-			if (!pipeline->create(m_settings))
-			{
-				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
-				continue;
-			}
-			pipelines.push_back(pipeline);
-		}
-	}
-
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
 	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
@@ -920,8 +901,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	}
 
 	PipelineDependsIncremental pipelineDepends(
-		m_project->getSourceDatabase(),
-		pipelines
+		m_settings,
+		m_project->getSourceDatabase()
 	);
 
 	log::info << L"Collecting dependencies..." << Endl;
@@ -960,11 +941,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	if (pipelineCache)
 		pipelineCache->destroy();
-
-	for (RefArray< IPipeline >::iterator i = pipelines.begin(); i != pipelines.end(); ++i)
-		(*i)->destroy();
-
-	pipelines.resize(0);
 
 	savePipelineHash(pipelineHash);
 }
@@ -1054,23 +1030,9 @@ bool EditorForm::buildAssetDependencies(const Serializable* asset, uint32_t recu
 	if (!m_project)
 		return false;
 
-	RefArray< IPipeline > pipelines;
-
-	std::vector< const Type* > pipelineTypes;
-	type_of< IPipeline >().findAllOf(pipelineTypes, false);
-
-	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
-	{
-		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
-		if (pipeline && pipeline->create(m_settings))
-			pipelines.push_back(pipeline);
-		else
-			log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
-	}
-
 	PipelineDependsIncremental pipelineDepends(
+		m_settings,
 		m_project->getSourceDatabase(),
-		pipelines,
 		recursionDepth
 	);
 

@@ -4,7 +4,7 @@
 #include "Terrain/MaterialMaskResource.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Drawing/Image.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.MaterialMaskPipeline", MaterialMaskPipeline, editor::IPipeline)
 
-bool MaterialMaskPipeline::create(const editor::Settings* settings)
+bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;

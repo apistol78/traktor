@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.DefaultPipeline", DefaultPipeline, IPipeline)
 
-bool DefaultPipeline::create(const Settings* settings)
+bool DefaultPipeline::create(const IPipelineSettings* settings)
 {
 	return true;
 }

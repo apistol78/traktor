@@ -48,7 +48,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		(*i)->sourceAssetChecksum = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
+		(*i)->sourceAssetHash = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
 
 		// Have source asset been modified?
 		if (!rebuild)
@@ -58,14 +58,19 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
 				(*i)->reason |= IPipeline::BrSourceModified;
 			}
-			else if (hash.checksum != (*i)->sourceAssetChecksum)
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
-			}
 			else if (hash.pipelineVersion != (*i)->pipeline->getVersion())
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
+				(*i)->reason |= IPipeline::BrSourceModified;
+			}
+			else if (hash.pipelineHash != (*i)->pipelineHash)
+			{
+				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline settings differ" << Endl;
+				(*i)->reason |= IPipeline::BrSourceModified;
+			}
+			else if (hash.sourceAssetHash != (*i)->sourceAssetHash)
+			{
+				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
 				(*i)->reason |= IPipeline::BrSourceModified;
 			}
 			else
@@ -108,8 +113,9 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			break;
 
 		// Update hash entry; don't write it yet though.
-		hash.checksum = (*i)->sourceAssetChecksum;
 		hash.pipelineVersion = (*i)->pipeline->getVersion();
+		hash.pipelineHash = (*i)->pipelineHash;
+		hash.sourceAssetHash = (*i)->sourceAssetHash;
 
 		const std::set< Path >& files = (*i)->files;
 		for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
@@ -132,7 +138,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		if (needBuild(*i))
 		{
 			ScopeIndent scopeIndent(log::info);
-			uint32_t fileChecksum;
+			uint32_t externalFilesHash;
 			bool result;
 
 			log::info << L"Building asset \"" << (*i)->name << L"\" (" << type_name((*i)->pipeline) << L")..." << Endl;
@@ -170,13 +176,14 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						log::warning << L"Unable to open file \"" << j->getPathName() << L"\"; inconsistent checksum" << Endl;
 				}
 				adler.end();
-				fileChecksum = adler.get();
+				externalFilesHash = adler.get();
 
 				// Lets get instance from cache using guid and hashes.
 				result = getInstancesFromCache(
 					(*i)->outputGuid,
-					(*i)->sourceAssetChecksum,
-					fileChecksum
+					(*i)->pipelineHash,
+					(*i)->sourceAssetHash,
+					externalFilesHash
 				);
 				if (result)
 					log::info << L"Cached instance(s) used" << Endl;
@@ -193,7 +200,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				result = (*i)->pipeline->buildOutput(
 					this,
 					(*i)->sourceAsset,
-					(*i)->sourceAssetChecksum,
+					(*i)->sourceAssetHash,
 					(*i)->buildParams,
 					(*i)->outputPath,
 					(*i)->outputGuid,
@@ -213,8 +220,9 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						if (m_cache)
 							putInstancesInCache(
 								(*i)->outputGuid,
-								(*i)->sourceAssetChecksum,
-								fileChecksum,
+								(*i)->pipelineHash,
+								(*i)->sourceAssetHash,
+								externalFilesHash,
 								m_builtInstances
 							);
 
@@ -301,11 +309,11 @@ bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
 	return false;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3, const RefArray< db::Instance >& instances)
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->put(guid, hash1 + hash2);
+	Ref< Stream > stream = m_cache->put(guid, hash1 + hash2 + hash3);
 	if (stream)
 	{
 		Writer writer(stream);
@@ -327,11 +335,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash1, uint
 	return result;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2)
+bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3)
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->get(guid, hash1 + hash2);
+	Ref< Stream > stream = m_cache->get(guid, hash1 + hash2 + hash3);
 	if (stream)
 	{
 		Reader reader(stream);

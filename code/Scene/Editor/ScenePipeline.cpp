@@ -4,7 +4,7 @@
 #include "World/Entity/EntityInstance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Instance.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Log/Log.h"
@@ -24,7 +24,7 @@ ScenePipeline::ScenePipeline()
 {
 }
 
-bool ScenePipeline::create(const editor::Settings* settings)
+bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_suppressDepthPass = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
 	m_suppressVelocity = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");

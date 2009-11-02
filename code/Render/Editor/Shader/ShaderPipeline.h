@@ -26,7 +26,7 @@ class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 public:
 	ShaderPipeline();
 
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

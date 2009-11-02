@@ -6,7 +6,7 @@
 #include "Render/Types.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/GammaFilter.h"
@@ -176,7 +176,7 @@ TexturePipeline::TexturePipeline()
 {
 }
 
-bool TexturePipeline::create(const editor::Settings* settings)
+bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);

@@ -21,7 +21,7 @@ class T_DLLCLASS MeshPipeline : public editor::IPipeline
 	T_RTTI_CLASS(MeshPipeline)
 
 public:
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

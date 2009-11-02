@@ -1,5 +1,6 @@
 #include <limits>
 #include "Editor/PipelineDependsIncremental.h"
+#include "Editor/PipelineSettings.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/IPipeline.h"
 #include "Database/Database.h"
@@ -18,51 +19,38 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDependsIncremental, IPipelineDepends)
 
 PipelineDependsIncremental::PipelineDependsIncremental(
+	Settings* settings,
 	db::Database* sourceDatabase,
-	const RefArray< IPipeline >& pipelines,
 	uint32_t recursionDepth
 )
 :	m_sourceDatabase(sourceDatabase)
-,	m_pipelines(pipelines)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
 {
-}
+	std::vector< const Type* > pipelineTypes;
+	type_of< IPipeline >().findAllOf(pipelineTypes);
 
-IPipeline* PipelineDependsIncremental::findPipeline(const Type& sourceType) const
-{
-	uint32_t best = std::numeric_limits< uint32_t >::max();
-	IPipeline* pipeline = 0;
-
-	for (RefArray< IPipeline >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
-		TypeSet typeSet = (*i)->getAssetTypes();
-		for (TypeSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
+		if (pipeline)
 		{
-			uint32_t distance = 0;
-
-			// Calculate distance in type hierarchy.
-			const Type* type = &sourceType;
-			while (type)
-			{
-				if (type == *j)
-					break;
-
-				++distance;
-				type = type->getSuper();
-			}
-
-			// Keep closest matching type.
-			if (type && distance < best)
-			{
-				pipeline = *i;
-				if ((best = distance) == 0)
-					break;
-			}
+			PipelineSettings pipelineSettings(settings);
+			if (pipeline->create(&pipelineSettings))
+				m_pipelines.push_back(std::make_pair(
+					pipeline,
+					pipelineSettings.getHash()
+				));
+			else
+				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
 		}
 	}
+}
 
-	return pipeline;
+PipelineDependsIncremental::~PipelineDependsIncremental()
+{
+	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+		i->first->destroy();
 }
 
 void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
@@ -74,8 +62,10 @@ void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
-	Ref< IPipeline > pipeline = findPipeline(sourceAsset->getType());
-	if (pipeline)
+	Ref< IPipeline > pipeline;
+	uint32_t pipelineHash;
+
+	if (findPipeline(sourceAsset->getType(), pipeline, pipelineHash))
 	{
 		Ref< const Object > dummyBuildParams;
 		pipeline->buildDependencies(this, 0, sourceAsset, dummyBuildParams);
@@ -227,6 +217,40 @@ const Serializable* PipelineDependsIncremental::getObjectReadOnly(const Guid& in
 	return object;
 }
 
+bool PipelineDependsIncremental::findPipeline(const Type& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const
+{
+	uint32_t best = std::numeric_limits< uint32_t >::max();
+	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+	{
+		TypeSet typeSet = i->first->getAssetTypes();
+		for (TypeSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		{
+			uint32_t distance = 0;
+
+			// Calculate distance in type hierarchy.
+			const Type* type = &sourceType;
+			while (type)
+			{
+				if (type == *j)
+					break;
+
+				++distance;
+				type = type->getSuper();
+			}
+
+			// Keep closest matching type.
+			if (type && distance < best)
+			{
+				outPipeline = i->first;
+				outPipelineHash = i->second;
+				if ((best = distance) == 0)
+					break;
+			}
+		}
+	}
+	return bool(outPipeline != 0);
+}
+
 PipelineDependency* PipelineDependsIncremental::findDependency(const Guid& guid) const
 {
 	for (RefArray< PipelineDependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
@@ -246,9 +270,11 @@ void PipelineDependsIncremental::addUniqueDependency(
 	bool build
 )
 {
+	Ref< IPipeline > pipeline;
+	uint32_t pipelineHash;
+
 	// Find appropriate pipeline.
-	Ref< IPipeline > pipeline = findPipeline(sourceAsset->getType());
-	if (!pipeline)
+	if (!findPipeline(sourceAsset->getType(), pipeline, pipelineHash))
 	{
 		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
 		return;
@@ -258,6 +284,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 	Ref< PipelineDependency > dependency = gc_new< PipelineDependency >();
 	dependency->name = name;
 	dependency->pipeline = pipeline;
+	dependency->pipelineHash = pipelineHash;
 	dependency->sourceAsset = sourceAsset;
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;

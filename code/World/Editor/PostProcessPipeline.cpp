@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::IPipeline)
 
-bool PostProcessPipeline::create(const editor::Settings* settings)
+bool PostProcessPipeline::create(const editor::IPipelineSettings* settings)
 {
 	return true;
 }

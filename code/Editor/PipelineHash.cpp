@@ -36,12 +36,16 @@ bool PipelineHash::serialize(Serializer& s)
 
 PipelineHash::Hash::Hash()
 :	pipelineVersion(0)
+,	pipelineHash(0)
+,	sourceAssetHash(0)
 {
 }
 
 bool PipelineHash::Hash::serialize(Serializer& s)
 {
-	s >> Member< uint32_t >(L"checksum", checksum);
+	s >> Member< uint32_t >(L"pipelineVersion", pipelineVersion);
+	s >> Member< uint32_t >(L"pipelineHash", pipelineHash);
+	s >> Member< uint32_t >(L"sourceAssetHash", sourceAssetHash);
 	s >> MemberStlMap<
 		Path,
 		DateTime,
@@ -52,7 +56,6 @@ bool PipelineHash::Hash::serialize(Serializer& s)
 			MemberComposite< DateTime >
 		>
 	>(L"timeStamps", timeStamps);
-	s >> Member< uint32_t >(L"pipelineVersion", pipelineVersion);
 	return true;
 }
 

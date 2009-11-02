@@ -21,7 +21,7 @@ class T_DLLCLASS SoundPipeline : public editor::IPipeline
 	T_RTTI_CLASS(SoundPipeline)
 
 public:
-	virtual bool create(const editor::Settings* settings);
+	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual void destroy();
 

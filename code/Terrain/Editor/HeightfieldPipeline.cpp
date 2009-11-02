@@ -5,7 +5,7 @@
 #include "Terrain/Heightfield.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
@@ -61,7 +61,7 @@ drawing::Image* readRawTerrain(const Path& fileName)
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
 
-bool HeightfieldPipeline::create(const editor::Settings* settings)
+bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;

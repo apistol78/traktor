@@ -12,7 +12,7 @@
 #include "Render/ProgramResource.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
-#include "Editor/Settings.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Xml/XmlSerializer.h"
@@ -131,7 +131,7 @@ ShaderPipeline::ShaderPipeline()
 {
 }
 
-bool ShaderPipeline::create(const editor::Settings* settings)
+bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
 	if (settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.CompileShaders", false))
 	{
