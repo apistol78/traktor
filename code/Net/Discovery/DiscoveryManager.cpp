@@ -28,10 +28,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object
 
 DiscoveryManager::DiscoveryManager()
 :	m_threadMulticastListener(0)
+,	m_verbose(false)
 {
 }
 
-bool DiscoveryManager::create()
+bool DiscoveryManager::create(bool verbose)
 {
 	m_sendSocket = gc_new< UdpSocket >();
 	if (!m_sendSocket->bind(SocketAddressIPv4(c_discoveryPort)))
@@ -63,6 +64,7 @@ bool DiscoveryManager::create()
 	}
 
 	m_sessionGuid = Guid::create();
+	m_verbose = verbose;
 	m_threadMulticastListener->start();
 
 	return true;
@@ -91,6 +93,8 @@ void DiscoveryManager::destroy()
 void DiscoveryManager::addService(IService* service)
 {
 	m_services.push_back(service);
+	if (m_verbose)
+		log::info << L"Discovery manager: Service \"" << service->getDescription() << L" added" << Endl;
 }
 
 void DiscoveryManager::removeService(IService* service)
@@ -105,17 +109,37 @@ bool DiscoveryManager::findServices(const Type& serviceType, RefArray< IService 
 	// Request services from all listening discovery peers.
 	DmFindServices msgFindServices(m_sessionGuid, &serviceType);
 	if (!sendMessage(m_sendSocket, address, &msgFindServices))
+	{
+		if (m_verbose)
+			log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
 		return false;
+	}
+
+	if (m_verbose)
+		log::info << L"Discovery manager: \"Find services\" message sent, waiting for replies..." << Endl;
 
 	// Accept services.
 	for (;;)
 	{
 		Ref< IDiscoveryMessage > message = recvMessage(m_sendSocket, &fromAddress, timeout);
 		if (!message)
+		{
+			if (m_verbose)
+				log::info << L"Discovery manager: No message received" << Endl;
 			break;
+		}
 
 		if (IService* service = dynamic_type_cast< IService* >(message))
+		{
+			if (m_verbose)
+				log::info << L"Discovery manager: Got service \"" << service->getDescription() << L"\"" << Endl;
 			outServices.push_back(service);
+		}
+		else
+		{
+			if (m_verbose)
+				log::info << L"Discovery manager: Got unknown message" << Endl;
+		}
 	}
 
 	return true;
@@ -134,13 +158,22 @@ void DiscoveryManager::threadMulticastListener()
 		{
 			if (findServices->getSessionGuid() != m_sessionGuid)
 			{
+				if (m_verbose)
+					log::info << L"Discovery manager: Got \"find services\" request" << Endl;
+
 				const Type* serviceType = findServices->getServiceType();
 				if (serviceType)
 				{
+					if (m_verbose)
+						log::info << L"Discovery manager: Find services of \"" << serviceType->getName() << L"\" type" << Endl;
+
 					for (RefArray< IService >::const_iterator i = m_services.begin(); i != m_services.end(); ++i)
 					{
 						if (is_type_of(*serviceType, type_of(*i)))
 						{
+							if (m_verbose)
+								log::info << L"Discovery manager: Found registered local service of requested type" << Endl;
+
 							if (!sendMessage(m_multicastSocket, fromAddress, *i))
 								log::error << L"Unable to reply service to requesting manager" << Endl;
 						}

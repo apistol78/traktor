@@ -81,7 +81,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	
 	// Initialize network discovery.
 	Ref< net::DiscoveryManager > discoveryManager = gc_new< net::DiscoveryManager >();
-	if (discoveryManager->create())
+	if (discoveryManager->create(true))
 	{
 		Ref< db::RemoteDatabaseService > service = gc_new< db::RemoteDatabaseService >(
 			L"localhost",
