@@ -19,8 +19,13 @@ namespace traktor
 		namespace
 		{
 
-const wchar_t* c_discoveryGroup = L"225.0.0.37";
-const uint16_t c_discoveryPort = 12345;
+const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
+const uint16_t c_discoveryMulticastPort = 12345;
+
+OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
+{
+	return os << addr.getHostName() << L":" << addr.getPort();
+}
 
 		}
 
@@ -34,26 +39,27 @@ DiscoveryManager::DiscoveryManager()
 
 bool DiscoveryManager::create(bool verbose)
 {
-	m_sendSocket = gc_new< UdpSocket >();
-	if (!m_sendSocket->bind(SocketAddressIPv4(c_discoveryPort)))
+	m_multicastSendSocket = gc_new< UdpSocket >();
+	if (!m_multicastSendSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
 		log::error << L"Discovery setup failed; unable to bind send socket port" << Endl;
 		return false;
 	}
 
-	m_multicastSocket = gc_new< MulticastUdpSocket >();
-	if (!m_multicastSocket->bind(SocketAddressIPv4(c_discoveryPort)))
+	m_multicastRecvSocket = gc_new< MulticastUdpSocket >();
+	if (!m_multicastRecvSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
 		log::error << L"Discovery setup failed; unable to bind multicast socket port" << Endl;
 		return false;
 	}
-	if (!m_multicastSocket->joinGroup(SocketAddressIPv4(c_discoveryGroup, c_discoveryPort)))
+
+	if (!m_multicastRecvSocket->joinGroup(SocketAddressIPv4(c_discoveryMulticastGroup, c_discoveryMulticastPort)))
 	{
 		log::error << L"Discovery setup failed; unable to join multicast group" << Endl;
 		return false;
 	}
 
-	if (!m_multicastSocket->setTTL(1))
+	if (!m_multicastRecvSocket->setTTL(10))
 		log::warning << L"Unable to set multicast time-to-live option" << Endl;
 
 	m_threadMulticastListener = ThreadManager::getInstance().create(makeFunctor(this, &DiscoveryManager::threadMulticastListener), L"Discovery listener");
@@ -78,15 +84,17 @@ void DiscoveryManager::destroy()
 		ThreadManager::getInstance().destroy(m_threadMulticastListener);
 		m_threadMulticastListener = 0;
 	}
-	if (m_multicastSocket)
+
+	if (m_multicastRecvSocket)
 	{
-		m_multicastSocket->close();
-		m_multicastSocket = 0;
+		m_multicastRecvSocket->close();
+		m_multicastRecvSocket = 0;
 	}
-	if (m_sendSocket)
+
+	if (m_multicastSendSocket)
 	{
-		m_sendSocket->close();
-		m_sendSocket = 0;
+		m_multicastSendSocket->close();
+		m_multicastSendSocket = 0;
 	}
 }
 
@@ -103,12 +111,12 @@ void DiscoveryManager::removeService(IService* service)
 
 bool DiscoveryManager::findServices(const Type& serviceType, RefArray< IService >& outServices, uint32_t timeout)
 {
-	SocketAddressIPv4 address(c_discoveryGroup, c_discoveryPort);
+	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
 
-	// Request services from all listening discovery peers.
+	// Multicast services request.
 	DmFindServices msgFindServices(m_sessionGuid, &serviceType);
-	if (!sendMessage(m_sendSocket, address, &msgFindServices))
+	if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
 	{
 		if (m_verbose)
 			log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
@@ -116,50 +124,35 @@ bool DiscoveryManager::findServices(const Type& serviceType, RefArray< IService 
 	}
 
 	if (m_verbose)
-		log::info << L"Discovery manager: \"Find services\" message sent, waiting for replies..." << Endl;
+		log::info << L"Discovery manager: \"Find services\" message sent to " << address << L", waiting for replies..." << Endl;
 
-	// Accept services.
-	for (;;)
-	{
-		Ref< IDiscoveryMessage > message = recvMessage(m_sendSocket, &fromAddress, timeout);
-		if (!message)
-		{
-			if (m_verbose)
-				log::info << L"Discovery manager: No message received" << Endl;
-			break;
-		}
+	// Just wait; we receive from another thread.
+	ThreadManager::getInstance().getCurrentThread()->sleep(timeout);
 
-		if (IService* service = dynamic_type_cast< IService* >(message))
-		{
-			if (m_verbose)
-				log::info << L"Discovery manager: Got service \"" << service->getDescription() << L"\"" << Endl;
-			outServices.push_back(service);
-		}
-		else
-		{
-			if (m_verbose)
-				log::info << L"Discovery manager: Got unknown message" << Endl;
-		}
-	}
+	outServices = m_foundServices;
+	m_foundServices.resize(0);
 
 	return true;
 }
 
 void DiscoveryManager::threadMulticastListener()
 {
+	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
+
 	while (!m_threadMulticastListener->stopped())
 	{
-		Ref< IDiscoveryMessage > message = recvMessage(m_multicastSocket, &fromAddress, 100);
+		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 100);
 		if (!message)
 			continue;
 
 		if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
 		{
-			if (findServices->getSessionGuid() != m_sessionGuid)
+			Guid requestingSessionGuid = findServices->getSessionGuid();
+			if (requestingSessionGuid != m_sessionGuid)
 			{
 				if (m_verbose)
-					log::info << L"Discovery manager: Got \"find services\" request" << Endl;
+					log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
 
 				const Type* serviceType = findServices->getServiceType();
 				if (serviceType)
@@ -174,13 +167,26 @@ void DiscoveryManager::threadMulticastListener()
 							if (m_verbose)
 								log::info << L"Discovery manager: Found registered local service of requested type" << Endl;
 
-							if (!sendMessage(m_multicastSocket, fromAddress, *i))
+							DmServiceInfo serviceInfo(requestingSessionGuid, *i);
+							if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
 								log::error << L"Unable to reply service to requesting manager" << Endl;
+							else if (m_verbose)
+								log::info << L"Discovery manager: Reply sent to " << address << Endl;
 						}
 					}
 				}
 				else
 					log::error << L"Got find services message with invalid service type" << Endl;
+			}
+		}
+		else if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
+		{
+			if (serviceInfo->getSessionGuid() == m_sessionGuid)
+			{
+				if (m_verbose)
+					log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
+
+				m_foundServices.push_back(serviceInfo->getService());
 			}
 		}
 		else
