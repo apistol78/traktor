@@ -46,6 +46,8 @@ public:
 private:
 	Ref< net::TcpSocket > m_socket;
 	Ref< MemCachedProto > m_proto;
+	bool m_accessRead;
+	bool m_accessWrite;
 };
 
 	}

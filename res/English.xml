@@ -290,6 +290,14 @@
       <second>Use memcached</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_READ</first>
+      <second>Read access</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_MEMCACHED_WRITE</first>
+      <second>Write access</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Shortcut</second>
     </item>

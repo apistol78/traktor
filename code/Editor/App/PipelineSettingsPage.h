@@ -36,6 +36,8 @@ private:
 	Ref< ui::CheckBox > m_checkUseMemCached;
 	Ref< ui::Edit > m_editMemCachedHost;
 	Ref< ui::Edit > m_editMemCachedPort;
+	Ref< ui::CheckBox > m_checkMemCachedRead;
+	Ref< ui::CheckBox > m_checkMemCachedWrite;
 
 	void eventUseMemCachedClick(ui::Event* event);
 };
