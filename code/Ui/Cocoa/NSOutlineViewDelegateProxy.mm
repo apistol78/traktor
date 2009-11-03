@@ -24,4 +24,13 @@
 	m_eventsCallback->event_rightMouseDown(event);
 }
 
+- (void) outlineView: (NSOutlineView *)outlineView willDisplayCell: (id)cell forTableColumn: (NSTableColumn*)tableColumn item: (id)item
+{
+	m_eventsCallback->event_willDisplayCell(
+		(NSCell*)cell,
+		tableColumn,
+		(void*)item
+	);
+}
+
 @end

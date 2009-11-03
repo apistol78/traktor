@@ -16,6 +16,7 @@ namespace traktor
 	{
 	
 class TreeViewItemCocoa;
+class BitmapCocoa;
 
 class TreeViewCocoa
 :	public WidgetCocoaImpl< ITreeView, NSCustomOutlineView, NSScrollView >
@@ -66,9 +67,12 @@ public:
 	
 	virtual void event_rightMouseDown(NSEvent* event);
 	
+	virtual void event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item);
+
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;
 	ObjCRef* m_rootItemRef;
+	RefArray< BitmapCocoa > m_bitmaps;
 	
 	TreeViewItemCocoa* getRealItem(void* item) const;
 };
