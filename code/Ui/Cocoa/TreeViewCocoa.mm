@@ -1,9 +1,12 @@
 #include "Ui/Cocoa/TreeViewCocoa.h"
 #include "Ui/Cocoa/TreeViewItemCocoa.h"
+#include "Ui/Cocoa/BitmapCocoa.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/EventSubject.h"
 #include "Ui/TreeView.h"
+#include "Drawing/Image.h"
+#include "Drawing/Filters/MirrorFilter.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
@@ -40,8 +43,9 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 	else
 		[column setEditable: NO];
 	
-	NSCell* dataCell = [column dataCell];
-	[dataCell setFont: [NSFont controlContentFontOfSize: 11]];
+	NSBrowserCell* cell = [[NSBrowserCell alloc] init];
+	[cell setLeaf: YES];
+	[column setDataCell: cell];
 
 	m_control = [[NSCustomOutlineView alloc] initWithFrame: NSMakeRect(0, 0, 0, 0)];
 	[m_control setAutoresizesOutlineColumn: NO];
@@ -66,7 +70,31 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 
 int TreeViewCocoa::addImage(IBitmap* image, int imageCount)
 {
-	return 0;
+	Ref< drawing::Image > images = image->getImage();
+	if (!images)
+		return 0;
+		
+	drawing::MirrorFilter mirrorFilter(false, true);
+	images = images->applyFilter(&mirrorFilter);
+	
+	int32_t width = images->getWidth() / imageCount;
+	int32_t height = images->getHeight();
+	
+	int32_t base = int32_t(m_bitmaps.size());
+	
+	for (int32_t i = 0; i < imageCount; ++i)
+	{
+		BitmapCocoa* bm = new BitmapCocoa();
+		bm->create(width, height);
+		bm->copySubImage(
+			images,
+			Rect(Point(i * width, 0), Size(width, height)),
+			Point(0, 0)
+		);
+		m_bitmaps.push_back(bm);
+	}
+
+	return base;
 }
 
 TreeViewItem* TreeViewCocoa::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
@@ -213,6 +241,27 @@ void TreeViewCocoa::event_rightMouseDown(NSEvent* event)
 		fromNSPoint(mousePosition)
 	);
 	m_owner->raiseEvent(EiButtonDown, &mouseEvent);
+}
+
+void TreeViewCocoa::event_willDisplayCell(NSCell* cell, NSTableColumn* tableColumn, void* item)
+{
+	Ref< TreeViewItemCocoa > realItem = getRealItem(item);
+	T_ASSERT (realItem);
+	
+	if ([m_control outlineTableColumn] != tableColumn)
+		return;
+	
+	int32_t index = realItem->getImage();
+	if (index >= 0 && index < int32_t(m_bitmaps.size()))
+	{
+		Ref< BitmapCocoa > bitmap = m_bitmaps[index];
+		if (bitmap)
+			[cell setImage: bitmap->getNSImage()];
+		else
+			[cell setImage: nil];
+	}
+	else
+		[cell setImage: nil];
 }
 
 TreeViewItemCocoa* TreeViewCocoa::getRealItem(void* item) const

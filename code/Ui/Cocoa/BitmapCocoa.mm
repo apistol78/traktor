@@ -19,8 +19,6 @@ BitmapCocoa::BitmapCocoa()
 
 bool BitmapCocoa::create(uint32_t width, uint32_t height)
 {
-	T_ASSERT (!m_image);
-	
 	m_image = [[NSImage alloc] initWithSize: NSMakeSize(width, height)];
 	m_imageRep = [[NSBitmapImageRep alloc]
 		initWithBitmapDataPlanes: NULL
