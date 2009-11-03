@@ -160,7 +160,10 @@ bool NativeVolume::makeDirectory(const Path& directory)
 
 bool NativeVolume::removeDirectory(const Path& directory)
 {
-	return false;
+	int status = rmdir(
+		wstombs(getSystemPath(directory)).c_str()
+	);
+	return status == 0;
 }
 
 bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& newName)
