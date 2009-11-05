@@ -17,9 +17,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	depthPassEnabled(true)
 ,	velocityPassEnable(false)
 ,	shadowsEnabled(false)
-,	shadowCascadingSlices(4)
-,	shadowCascadingLambda(0.75f)
-,	shadowFarZ(50.0f)
+,	shadowFarZ(100.0f)
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
 {
@@ -27,7 +25,7 @@ WorldRenderSettings::WorldRenderSettings()
 
 int WorldRenderSettings::getVersion() const
 {
-	return 1;
+	return 2;
 }
 
 bool WorldRenderSettings::serialize(Serializer& s)
@@ -40,8 +38,14 @@ bool WorldRenderSettings::serialize(Serializer& s)
 		s >> Member< bool >(L"velocityPassEnable", velocityPassEnable);
 
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
-	s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices);
-	s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, 0.0f, 1.0f);
+
+	if (s.getVersion() <= 1)
+	{
+		int32_t shadowCascadingSlices; float shadowCascadingLambda;
+		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices);
+		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, 0.0f, 1.0f);
+	}
+
 	s >> Member< float >(L"shadowFarZ", shadowFarZ, 0.0f);
 	s >> Member< int32_t >(L"shadowMapResolution", shadowMapResolution);
 	s >> Member< float >(L"shadowMapBias", shadowMapBias);

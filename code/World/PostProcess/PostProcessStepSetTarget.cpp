@@ -9,29 +9,38 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSetTarget", PostProcessStepSetTarget, PostProcessStep)
 
-bool PostProcessStepSetTarget::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepSetTarget::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return true;
-}
-
-void PostProcessStepSetTarget::destroy(PostProcess* postProcess)
-{
-}
-
-void PostProcessStepSetTarget::render(
-	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
-	render::IRenderView* renderView,
-	render::ScreenRenderer* screenRenderer,
-	float deltaTime
-)
-{
-	postProcess->setTarget(renderView, m_target);
+	return gc_new< InstanceSetTarget >(m_target);
 }
 
 bool PostProcessStepSetTarget::serialize(Serializer& s)
 {
-	return s >> Member< uint32_t >(L"target", m_target);
+	return s >> Member< int32_t >(L"target", m_target);
+}
+
+// Instance
+
+PostProcessStepSetTarget::InstanceSetTarget::InstanceSetTarget(int32_t target)
+:	m_target(target)
+{
+}
+
+void PostProcessStepSetTarget::InstanceSetTarget::destroy()
+{
+}
+
+void PostProcessStepSetTarget::InstanceSetTarget::render(
+	PostProcess* postProcess,
+	render::IRenderView* renderView,
+	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
+	float deltaTime
+)
+{
+	postProcess->setTarget(renderView, m_target);
 }
 
 	}

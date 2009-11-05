@@ -17,53 +17,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
 
-bool PostProcessStepSimple::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepSimple::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	m_time = 0.0f;
-	return true;
-}
-
-void PostProcessStepSimple::destroy(PostProcess* postProcess)
-{
-}
-
-void PostProcessStepSimple::render(
-	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
-	render::IRenderView* renderView,
-	render::ScreenRenderer* screenRenderer,
-	float deltaTime
-)
-{
-	if (!m_shader.validate())
-		return;
-
-	postProcess->prepareShader(m_shader);
-
-	m_shader->setFloatParameter(L"Time", m_time);
-	m_shader->setFloatParameter(L"DeltaTime", deltaTime);
-
-	for (std::vector< Source >::iterator i = m_sources.begin(); i != m_sources.end(); ++i)
-	{
-		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
-		if (source)
-		{
-			m_shader->setSamplerTexture(i->param, source->getColorTexture(i->index));
-			m_shader->setVectorParameter(i->param + L"_Size", Vector4(
-				float(source->getWidth()),
-				float(source->getHeight()),
-				0.0f,
-				0.0f
-			));
-		}
-	}
-
-	screenRenderer->draw(renderView, m_shader);
-
-	m_time += deltaTime;
+	return gc_new< InstanceSimple >(this);
 }
 
 bool PostProcessStepSimple::serialize(Serializer& s)
@@ -85,6 +44,58 @@ bool PostProcessStepSimple::Source::serialize(Serializer& s)
 	s >> Member< int32_t >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
 	return true;
+}
+
+// Instance
+
+PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimple* step)
+:	m_step(step)
+,	m_time(0.0f)
+{
+}
+
+void PostProcessStepSimple::InstanceSimple::destroy()
+{
+}
+
+void PostProcessStepSimple::InstanceSimple::render(
+	PostProcess* postProcess,
+	render::IRenderView* renderView,
+	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
+	float deltaTime
+)
+{
+	resource::Proxy< render::Shader > shader = m_step->m_shader;
+	if (!shader.validate())
+		return;
+
+	postProcess->prepareShader(shader);
+
+	shader->setFloatParameter(L"Time", m_time);
+	shader->setFloatParameter(L"DeltaTime", deltaTime);
+
+	const std::vector< Source >& sources = m_step->m_sources;
+	for (std::vector< Source >::const_iterator i = sources.begin(); i != sources.end(); ++i)
+	{
+		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
+		if (source)
+		{
+			shader->setSamplerTexture(i->param, source->getColorTexture(i->index));
+			shader->setVectorParameter(i->param + L"_Size", Vector4(
+				float(source->getWidth()),
+				float(source->getHeight()),
+				0.0f,
+				0.0f
+			));
+		}
+	}
+
+	screenRenderer->draw(renderView, shader);
+
+	m_time += deltaTime;
 }
 
 	}

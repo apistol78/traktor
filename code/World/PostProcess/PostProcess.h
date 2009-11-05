@@ -7,6 +7,7 @@
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +41,6 @@ class ScreenRenderer;
 	{
 
 class PostProcessSettings;
-class WorldRenderView;
 
 /*! \brief Frame buffer post processing system.
  * \ingroup World
@@ -50,6 +50,7 @@ class WorldRenderView;
  * -1 - Source color buffer, read only.
  * -2 - Source depth buffer, read only.
  * -3 - Source velocity buffer, read only.
+ * -4 - Source shadow mask, read only.
  */
 class T_DLLCLASS PostProcess : public Object
 {
@@ -61,30 +62,37 @@ public:
 		PdtFrame = 0,
 		PdtSourceColor = -1,
 		PdtSourceDepth = -2,
-		PdtSourceVelocity = -3
+		PdtSourceVelocity = -3,
+		PdtSourceShadowMask = -4
 	};
 
+	PostProcess();
+
 	bool create(
-		PostProcessSettings* settings,
+		const PostProcessSettings* settings,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem
+		render::IRenderSystem* renderSystem,
+		uint32_t width,
+		uint32_t height
 	);
 
 	void destroy();
 
 	bool render(
-		const WorldRenderView& worldRenderView,
-		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		render::RenderTargetSet* frameBuffer,
+		render::RenderTargetSet* colorBuffer,
 		render::RenderTargetSet* depthBuffer,
 		render::RenderTargetSet* velocityBuffer,
+		render::RenderTargetSet* shadowMask,
+		const Frustum& viewFrustum,
+		const Matrix44& projection,
+		float shadowMapBias,
 		float deltaTime
 	);
 
-	void setTarget(render::IRenderView* renderView, uint32_t id);
+	void setTarget(render::IRenderView* renderView, int32_t id);
 
-	Ref< render::RenderTargetSet >& getTargetRef(uint32_t id);
+	Ref< render::RenderTargetSet >& getTargetRef(int32_t id);
 
 	void setParameter(render::handle_t handle, const Vector4& value);
 
@@ -98,13 +106,12 @@ public:
 	);
 
 private:
-	Ref< PostProcessSettings > m_settings;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::map< int32_t, Ref< render::RenderTargetSet > > m_targets;
+	RefArray< PostProcessStep::Instance > m_instances;
 	std::map< render::handle_t, Vector4 > m_parameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
-	int32_t m_definedWidth;
-	int32_t m_definedHeight;
+	bool m_requireHighRange;
 };
 
 	}

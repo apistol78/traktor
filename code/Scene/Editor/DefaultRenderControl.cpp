@@ -70,12 +70,10 @@ void DefaultRenderControl::destroy()
 	}
 }
 
-void DefaultRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void DefaultRenderControl::updateWorldRenderer()
 {
-	m_worldRenderSettings = worldRenderSettings;
-
 	if (m_renderControl)
-		m_renderControl->setWorldRenderSettings(worldRenderSettings);
+		m_renderControl->updateWorldRenderer();
 }
 
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
@@ -205,7 +203,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	T_ASSERT (m_renderControl);
 
 	m_container->update();
-	m_renderControl->setWorldRenderSettings(m_worldRenderSettings);
+	m_renderControl->updateWorldRenderer();
 
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);

@@ -40,7 +40,7 @@ public:
 
 	void destroy();
 
-	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	virtual void updateWorldRenderer();
 
 	virtual bool handleCommand(const ui::Command& command);
 

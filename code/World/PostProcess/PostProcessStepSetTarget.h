@@ -32,22 +32,33 @@ class T_DLLCLASS PostProcessStepSetTarget : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSetTarget)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceSetTarget : public Instance
+	{
+	public:
+		InstanceSetTarget(int32_t target);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		int32_t m_target;
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
-	uint32_t m_target;
+	int32_t m_target;
 };
 
 	}

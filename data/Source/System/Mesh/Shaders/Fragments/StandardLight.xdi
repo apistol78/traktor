@@ -21,7 +21,7 @@
 			<comment></comment>
 			<position>
 				<first>980</first>
-				<second>377</second>
+				<second>370</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -41,7 +41,7 @@
 				<first>504</first>
 				<second>541</second>
 			</position>
-			<min>0.6</min>
+			<min>0.2</min>
 			<max>1</max>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -59,7 +59,7 @@
 			<comment></comment>
 			<position>
 				<first>980</first>
-				<second>456</second>
+				<second>449</second>
 			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
@@ -197,6 +197,14 @@
 					<second>0.8</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>1126</first>
+				<second>507</second>
+			</position>
+			<name>Shadow</name>
 		</item>
 	</nodes>
 	<edges>
@@ -347,6 +355,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -28,13 +28,6 @@ class ToolBarButton;
 		}
 	}
 
-	namespace world
-	{
-
-class WorldRenderSettings;
-
-	}
-
 	namespace scene
 	{
 
@@ -53,7 +46,7 @@ public:
 
 	void destroy();
 
-	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	void updateWorldRenderer();
 
 	bool handleCommand(const ui::Command& command);
 
@@ -80,7 +73,6 @@ private:
 	Ref< ui::Widget > m_splitterRenderControls;
 	RefArray< ISceneRenderControl > m_renderControls;
 	Ref< ui::EventHandler > m_idleHandler;
-	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< IModifier > m_modifierTranslate;
 	Ref< IModifier > m_modifierRotate;
 	Ref< SceneEditorContext > m_context;

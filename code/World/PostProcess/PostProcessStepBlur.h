@@ -3,7 +3,6 @@
 
 #include "World/PostProcess/PostProcessStep.h"
 #include "Resource/Proxy.h"
-#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,27 +43,41 @@ public:
 		bool serialize(Serializer& s);
 	};
 
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceBlur : public Instance
+	{
+	public:
+		InstanceBlur(
+			const PostProcessStepBlur* step,
+			const Vector4 gaussianOffsetWeights[15]
+		);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		Ref< const PostProcessStepBlur > m_step;
+		Vector4 m_gaussianOffsetWeights[15];
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 	Vector4 m_direction;
-	Vector4 m_gaussianOffsetWeights[15];
 };
 
 	}

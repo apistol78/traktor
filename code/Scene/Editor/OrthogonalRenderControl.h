@@ -59,7 +59,7 @@ public:
 
 	void destroy();
 
-	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	virtual void updateWorldRenderer();
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -70,7 +70,6 @@ private:
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
 	Timer m_timer;
 	ui::Point m_mousePosition;
@@ -80,12 +79,11 @@ private:
 	bool m_modifyBegun;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ViewPlane m_viewPlane;
+	float m_viewFarZ;
 	float m_magnification;
 	float m_cameraX;
 	float m_cameraY;
 	ui::Size m_dirtySize;
-
-	void updateWorldRenderer();
 
 	Matrix44 getProjectionTransform() const;
 

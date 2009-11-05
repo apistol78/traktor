@@ -20,6 +20,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace render
 	{
 
@@ -73,37 +80,6 @@ struct WorldViewOrtho
 	}
 };
 
-/*! \brief Calculate light-view projection used by shadow mapping.
- * \ingroup World
- *
- * We provide a default implementation if none is given.
- * Default implementation tries to maximize view utilization
- * by projecting view frustum.
- */
-class T_DLLCLASS LightViewProjection : public Object
-{
-public:
-	enum ShadowPass
-	{
-		SpOccluders = 1,	//< Occluders pass; occluder geometry is flatten onto shadow map.
-		SpSelf = 2			//< Self shadowing pass.
-	};
-
-	virtual void calculateLightViewProjection(
-		const WorldRenderSettings& settings,
-		const Matrix44& viewInverse,
-		const Vector4& lightPosition,
-		const Vector4& lightDirection,
-		const Frustum& viewFrustum,
-		Matrix44& outLightView,
-		Matrix44& outLightProjectionOccluders,
-		Matrix44& outLightProjectionSelfShadow,
-		Frustum& outShadowFrustumOccluders,
-		Frustum& outShadowFrustumSelfShadow,
-		uint32_t& outShadowPasses
-	) const = 0;
-};
-
 /*! \brief World render flags.
  * \ingroup World
  */
@@ -134,8 +110,9 @@ public:
 	WorldRenderer();
 
 	bool create(
-		const WorldRenderSettings& settings,
+		const WorldRenderSettings* settings,
 		WorldEntityRenderers* entityRenderers,
+		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
 		int multiSample,
@@ -185,14 +162,6 @@ public:
 
 	//@}
 
-	inline void setLightViewProjection(LightViewProjection* lightViewProjection) {
-		m_lightViewProjection = lightViewProjection;
-	}
-
-	inline LightViewProjection* getLightViewProjection() const {
-		return m_lightViewProjection;
-	}
-
 	inline static render::handle_t getTechniqueDefault() {
 		return ms_techniqueDefault;
 	}
@@ -201,12 +170,12 @@ public:
 		return ms_techniqueDepth;
 	}
 
-	inline static render::handle_t getTechniqueShadowMapOccluders() {
-		return ms_techniqueShadowMapOccluders;
+	inline static render::handle_t getTechniqueVelocity() {
+		return ms_techniqueVelocity;
 	}
 
-	inline static render::handle_t getTechniqueShadowMapSelfShadow() {
-		return ms_techniqueShadowMapSelfShadow;
+	inline static render::handle_t getTechniqueShadow() {
+		return ms_techniqueShadow;
 	}
 
 	inline render::RenderTargetSet* getDepthTargetSet() const {
@@ -221,15 +190,19 @@ public:
 		return m_shadowTargetSet;
 	}
 
+	inline render::RenderTargetSet* getShadowMaskTargetSet() const {
+		return m_shadowMaskTargetSet;
+	}
+
 private:
 	struct Frame
 	{
-		RefArray< WorldContext > occluders;
-		RefArray< WorldContext > selfShadow;
-		RefArray< WorldContext > visual;
+		Ref< WorldContext > shadow;
+		Ref< WorldContext > visual;
 		Ref< WorldContext > velocity;
 		Ref< WorldContext > depth;
 		Frustum viewFrustum;
+		Matrix44 viewToLightSpace;
 		Matrix44 projection;
 		float deltaTime;
 		bool haveDepth;
@@ -248,17 +221,16 @@ private:
 	static render::handle_t ms_techniqueDefault;
 	static render::handle_t ms_techniqueDepth;
 	static render::handle_t ms_techniqueVelocity;
-	static render::handle_t ms_techniqueShadowMapOccluders;
-	static render::handle_t ms_techniqueShadowMapSelfShadow;
+	static render::handle_t ms_techniqueShadow;
 
-	Ref< LightViewProjection > m_lightViewProjection;
 	WorldRenderSettings m_settings;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_velocityTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
+	Ref< render::RenderTargetSet > m_shadowMaskTargetSet;
 	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
-	AlignedVector< float > m_splitPositions;
+	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;
 	float m_time;
 	uint32_t m_count;

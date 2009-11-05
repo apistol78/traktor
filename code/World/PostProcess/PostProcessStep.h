@@ -35,7 +35,6 @@ class ScreenRenderer;
 	{
 
 class PostProcess;
-class WorldRenderView;
 
 /*! \brief Post processing step.
  * \ingroup World
@@ -45,17 +44,24 @@ class T_DLLCLASS PostProcessStep : public Serializable
 	T_RTTI_CLASS(PostProcessStep)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) = 0;
+	/*! \brief Step instance. */
+	class T_DLLCLASS Instance : public Object
+	{
+	public:
+		virtual void destroy() = 0;
 
-	virtual void destroy(PostProcess* postProcess) = 0;
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		) = 0;
+	};
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	) = 0;
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
 };
 
 	}

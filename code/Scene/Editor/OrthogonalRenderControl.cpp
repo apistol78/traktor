@@ -7,6 +7,7 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
+#include "Scene/Scene.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
@@ -44,6 +45,7 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_modifyAlternative(false)
 ,	m_modifyBegun(false)
 ,	m_viewPlane(PositiveX)
+,	m_viewFarZ(0.0f)
 ,	m_magnification(10.0f)
 ,	m_cameraX(0.0f)
 ,	m_cameraY(0.0f)
@@ -121,10 +123,53 @@ void OrthogonalRenderControl::destroy()
 	}
 }
 
-void OrthogonalRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void OrthogonalRenderControl::updateWorldRenderer()
 {
-	m_worldRenderSettings = worldRenderSettings;
-	updateWorldRenderer();
+	if (m_worldRenderer)
+	{
+		m_worldRenderer->destroy();
+		m_worldRenderer = 0;
+	}
+
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance)
+		return;
+
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx <= 0 || sz.cy <= 0)
+		return;
+
+	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
+
+	// Create entity renderers.
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
+	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+			worldEntityRenderers->add(*j);
+	}
+
+	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.
+	world::WorldRenderSettings wrs = *worldRenderSettings;
+	wrs.depthPassEnabled = false;
+	wrs.velocityPassEnable = false;
+	wrs.shadowsEnabled = false;
+
+	m_worldRenderer = gc_new< world::WorldRenderer >();
+	if (!m_worldRenderer->create(
+		&wrs,
+		worldEntityRenderers,
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		m_renderView,
+		4,
+		1
+	))
+		m_worldRenderer = 0;
+
+	m_viewFarZ = wrs.viewFarZ;
 }
 
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
@@ -153,48 +198,6 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 void OrthogonalRenderControl::update()
 {
 	m_renderWidget->update();
-}
-
-void OrthogonalRenderControl::updateWorldRenderer()
-{
-	if (m_worldRenderer)
-	{
-		m_worldRenderer->destroy();
-		m_worldRenderer = 0;
-	}
-
-	if (!m_renderView || !m_worldRenderSettings)
-		return;
-
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
-		return;
-
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
-
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			worldEntityRenderers->add(*j);
-	}
-
-	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.
-	world::WorldRenderSettings worldRenderSettings = *m_worldRenderSettings;
-	worldRenderSettings.velocityPassEnable = false;
-	worldRenderSettings.shadowsEnabled = false;
-
-	m_worldRenderer = gc_new< world::WorldRenderer >();
-	if (!m_worldRenderer->create(
-		worldRenderSettings,
-		worldEntityRenderers,
-		m_context->getRenderSystem(),
-		m_renderView,
-		4,
-		1
-	))
-		m_worldRenderer = 0;
 }
 
 Matrix44 OrthogonalRenderControl::getProjectionTransform() const
@@ -247,7 +250,7 @@ EntityAdapter* OrthogonalRenderControl::pickEntity(const ui::Point& position) co
 	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
 
 	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
-	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_worldRenderSettings->viewFarZ - c_viewFarOffset));
+	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
 	Vector4 worldRayOrigin = viewInverse * viewPosition;
 	Vector4 worldRayDirection = viewInverse.axisZ();
 

@@ -115,7 +115,7 @@
 			<comment></comment>
 			<position>
 				<first>1567</first>
-				<second>344</second>
+				<second>347</second>
 			</position>
 			<name>Specular</name>
 		</item>
@@ -123,7 +123,7 @@
 			<comment></comment>
 			<position>
 				<first>1567</first>
-				<second>298</second>
+				<second>301</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
@@ -179,6 +179,9 @@
 				<item>
 					<name>Specular</name>
 				</item>
+				<item>
+					<name>Shadow</name>
+				</item>
 			</outputPins>
 			<values>
 				<item>
@@ -194,6 +197,14 @@
 					<second>1</second>
 				</item>
 			</values>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>1567</first>
+				<second>393</second>
+			</position>
+			<name>Shadow</name>
 		</item>
 	</nodes>
 	<edges>
@@ -344,6 +355,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Shadow</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Input</name>
 			</destination>
 		</item>

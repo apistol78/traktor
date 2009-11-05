@@ -5,7 +5,6 @@
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/PostProcess/PostProcessSettings.h"
-#include "World/PostProcess/PostProcess.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Core/Serialization/Serializer.h"
@@ -31,18 +30,12 @@ Scene* SceneAsset::createScene(
 	world::IEntityManager* entityManager
 ) const
 {
-	Ref< world::PostProcess > postProcess;
-
 	if (!m_postProcessSettings.getGuid().isNull())
 	{
-		if (resourceManager->bind(m_postProcessSettings) && m_postProcessSettings.validate())
-		{
-			postProcess = gc_new< world::PostProcess >();
-			if (!postProcess->create(m_postProcessSettings, resourceManager, renderSystem))
-				return 0;
-		}
-		else
-			log::error << L"Unable to load post processing settings" << Endl;
+		if (!resourceManager->bind(m_postProcessSettings))
+			log::error << L"Unable to bind post processing settings" << Endl;
+		if (!m_postProcessSettings.validate())
+			log::error << L"Unable to validate post processing settings" << Endl;
 	}
 
 	entityBuilder->begin(entityManager);
@@ -64,7 +57,7 @@ Scene* SceneAsset::createScene(
 		entityManager,
 		rootEntity,
 		m_worldRenderSettings,
-		postProcess
+		m_postProcessSettings
 	);
 }
 

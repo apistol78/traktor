@@ -58,7 +58,7 @@ void ReferencesRenderControl::destroy()
 	}
 }
 
-void ReferencesRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void ReferencesRenderControl::updateWorldRenderer()
 {
 }
 

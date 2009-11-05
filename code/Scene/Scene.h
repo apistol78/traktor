@@ -20,7 +20,7 @@ namespace traktor
 class IEntityManager;
 class Entity;
 class WorldRenderSettings;
-class PostProcess;
+class PostProcessSettings;
 
 	}
 
@@ -39,7 +39,7 @@ public:
 		world::IEntityManager* entityManager,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
-		world::PostProcess* postProcess
+		world::PostProcessSettings* postProcessSettings
 	);
 
 	virtual ~Scene();
@@ -54,14 +54,14 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	world::PostProcess* getPostProcess() const;
+	world::PostProcessSettings* getPostProcessSettings() const;
 
 private:
 	Ref< world::IEntityManager > m_entityManager;
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	Ref< world::PostProcess > m_postProcess;
+	Ref< world::PostProcessSettings > m_postProcessSettings;
 };
 
 	}

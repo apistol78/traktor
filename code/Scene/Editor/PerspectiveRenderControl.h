@@ -32,6 +32,7 @@ class PrimitiveRenderer;
 	{
 
 class WorldRenderer;
+class PostProcess;
 class Entity;
 
 	}
@@ -54,7 +55,7 @@ public:
 
 	virtual void destroy();
 
-	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	virtual void updateWorldRenderer();
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -66,8 +67,8 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_renderTarget;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
-	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	Ref< world::WorldRenderer > m_worldRenderer;
+	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
 	float m_fieldOfView;
 	Timer m_timer;
@@ -79,8 +80,6 @@ private:
 	Ref< Camera > m_camera;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;
-
-	void updateWorldRenderer();
 
 	void updateWorldRenderView();
 

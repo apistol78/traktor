@@ -6,6 +6,7 @@
 #include "World/PostProcess/PostProcessStepRepeat.h"
 #include "World/PostProcess/PostProcessStepSimple.h"
 #include "World/PostProcess/PostProcessStepSsao.h"
+#include "World/PostProcess/PostProcessStepSmProj.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
@@ -72,6 +73,8 @@ bool PostProcessPipeline::buildDependencies(
 			pipelineDepends->addDependency(stepSimple->getShader().getGuid(), true);
 		else if (const PostProcessStepSsao* stepSsao = dynamic_type_cast< const PostProcessStepSsao* >(step))
 			pipelineDepends->addDependency(stepSsao->getShader().getGuid(), true);
+		else if (const PostProcessStepSmProj* stepSmProj = dynamic_type_cast< const PostProcessStepSmProj* >(step))
+			pipelineDepends->addDependency(stepSmProj->getShader().getGuid(), true);
 	}
 
 	return true;

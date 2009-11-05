@@ -42,10 +42,15 @@ const char c_clearEffect[] =
 	"{													\r\n"
 	"	pass Clear										\r\n"
 	"	{												\r\n"
-	"		ColorWriteEnable = 0x0000000F;				\r\n"
+	"		AlphaBlendEnable = FALSE;					\r\n"
+	"		AlphaTestEnable = FALSE;					\r\n"
+	"		CullMode = NONE;							\r\n"
+	"		ColorWriteEnable = RED|GREEN|BLUE|ALPHA;	\r\n"
+	"		StencilEnable = FALSE;						\r\n"
 	"		ZEnable = FALSE;							\r\n"
-	"		ZWriteEnable = FALSE;						\r\n"
 	"		ZFunc = ALWAYS;								\r\n"
+	"		ZWriteEnable = FALSE;						\r\n"
+
 	"		VertexShader = compile vs_2_0 vs_main();	\r\n"
 	"		PixelShader = compile ps_2_0 ps_main();		\r\n"
 	"	}												\r\n"
@@ -142,6 +147,7 @@ bool RenderTargetWin32::create(
 		if (FAILED(hr))
 			return false;
 
+		T_ASSERT (m_d3dClearEffect);
 		m_d3dClearTechnique = m_d3dClearEffect->GetTechniqueByName("Clear");
 	}
 
@@ -198,17 +204,35 @@ void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const fl
 {
 	if (m_d3dClearEffect)
 	{
+		D3DVIEWPORT9 d3dvp0, d3dvp;
+		UINT passes;
+		HRESULT hr;
+
 		// Clear stencil and z using ordinary clear call.
-		if (flags & D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL)
+		if (flags & (D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL))
 			d3dDevice->Clear(0, NULL, flags, 0, z, stencil);
 
 		if (!(flags & D3DCLEAR_TARGET))
 			return;
 
-		m_d3dClearEffect->SetTechnique(m_d3dClearTechnique);
+		// Save current viewport.
+		hr = d3dDevice->GetViewport(&d3dvp0);
+		T_ASSERT (SUCCEEDED(hr));
 
-		UINT passes;
-		HRESULT hr = m_d3dClearEffect->Begin(&passes, 0);
+		d3dvp.X = 0;
+		d3dvp.Y = 0;
+		d3dvp.Width = m_width;
+		d3dvp.Height = m_height;
+		d3dvp.MinZ = 0.0f;
+		d3dvp.MaxZ = 1.0f;
+		hr = d3dDevice->SetViewport(&d3dvp);
+		T_ASSERT (SUCCEEDED(hr));
+
+		hr = m_d3dClearEffect->SetTechnique(m_d3dClearTechnique);
+		T_ASSERT (SUCCEEDED(hr));
+
+		hr = m_d3dClearEffect->Begin(&passes, 0);
+		T_ASSERT (SUCCEEDED(hr));
 		if (FAILED(hr))
 			return;
 
@@ -223,9 +247,12 @@ void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const fl
 			color[2],
 			color[3]
 		);
-		m_d3dClearEffect->SetVector(handle, &clearColor);
+		hr = m_d3dClearEffect->SetVector(handle, &clearColor);
+		T_ASSERT (SUCCEEDED(hr));
 
-		d3dDevice->SetFVF(D3DFVF_XYZ);
+		hr = d3dDevice->SetFVF(D3DFVF_XYZ);
+		T_ASSERT (SUCCEEDED(hr));
+
 		hr = d3dDevice->DrawPrimitiveUP(
 			D3DPT_TRIANGLELIST,
 			1,
@@ -234,8 +261,14 @@ void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const fl
 		);
 		T_ASSERT (SUCCEEDED(hr));
 
-		m_d3dClearEffect->EndPass();
-		m_d3dClearEffect->End();
+		hr = m_d3dClearEffect->EndPass();
+		T_ASSERT (SUCCEEDED(hr));
+
+		hr = m_d3dClearEffect->End();
+		T_ASSERT (SUCCEEDED(hr));
+
+		hr = d3dDevice->SetViewport(&d3dvp0);
+		T_ASSERT (SUCCEEDED(hr));
 
 		// Need to force to dirty as various states may have been trashed.
 		ProgramWin32::forceDirty();

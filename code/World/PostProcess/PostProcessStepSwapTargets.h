@@ -24,23 +24,35 @@ class T_DLLCLASS PostProcessStepSwapTargets : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSwapTargets)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceSwapTargets : public Instance
+	{
+	public:
+		InstanceSwapTargets(int32_t destination, int32_t source);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		int32_t m_destination;
+		int32_t m_source;
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 private:
-	uint32_t m_destination;
-	uint32_t m_source;
+	int32_t m_destination;
+	int32_t m_source;
 };
 
 	}

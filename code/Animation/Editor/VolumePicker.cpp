@@ -46,7 +46,7 @@ int VolumePicker::traceVolume(const Vector4& clipPosition) const
 		Vector4 localDirection = i->worldTransform.inverse() * direction;
 		Scalar distance;
 
-		if (i->volume.intersect(localOrigin, localDirection.normalized() * Scalar(1000.0f), distance))
+		if (i->volume.intersectSegment(localOrigin, localDirection.normalized() * Scalar(1000.0f), distance))
 		{
 			Scalar volumeDistance = (i->volume.getCenter() - localOrigin).length();
 			if (volumeDistance < distance)

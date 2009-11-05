@@ -568,6 +568,7 @@ void SceneEditorPage::updateScene()
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	if (sceneAsset)
 	{
+		// Check if any scene settings has changed.
 		bool needUpdate = false;
 
 		if (m_currentGuid != sceneAsset->getPostProcessSettings().getGuid())
@@ -583,8 +584,9 @@ void SceneEditorPage::updateScene()
 			m_currentHash = hash.get();
 		}
 
+		// Inform editor controls to update their world renderer.
 		if (needUpdate)
-			m_editControl->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
+			m_editControl->updateWorldRenderer();
 	}
 }
 
