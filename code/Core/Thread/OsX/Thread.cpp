@@ -1,5 +1,6 @@
 #include <pthread.h>
 #include <sched.h>
+#include <sys/time.h>
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
 
@@ -11,6 +12,8 @@ namespace traktor
 struct Internal
 {
 	pthread_t thread;
+	pthread_mutex_t mutex;
+	pthread_cond_t signal;
 	Functor* functor;
 	bool finished;
 };
@@ -22,6 +25,7 @@ void* trampoline(void* data)
 	(in->functor->operator())();
 	in->finished = true;
 
+	pthread_cond_signal(&in->signal);
 	pthread_exit(0);
 	return 0;
 }
@@ -50,6 +54,9 @@ bool Thread::start(Priority priority)
 
 	in->functor = m_functor;
 	in->finished = false;
+	
+	pthread_mutex_init(&in->mutex, NULL);
+	pthread_cond_init(&in->signal, NULL);
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
@@ -78,8 +85,30 @@ bool Thread::wait(int timeout)
 	int status;
 	int rc;
 	
-	if (timeout)
-		return false;
+	if (timeout >= 0)
+	{
+		pthread_mutex_lock(&in->mutex);
+		
+		timeval now;
+		timespec ts;
+	
+		gettimeofday(&now, 0);
+		ts.tv_sec = now.tv_sec + timeout / 1000;
+		ts.tv_nsec = (now.tv_usec + timeout % 1000) * 1000;					
+		
+		for (rc = 0; rc == 0 && !in->finished; )
+		{
+			rc = pthread_cond_timedwait(
+				&in->signal,
+				&in->mutex,
+				&ts
+			);
+		}
+		
+		pthread_mutex_unlock(&in->mutex);
+		if (!in->finished)
+			return false;
+	}
 	
 	rc = pthread_join(
 		in->thread,
