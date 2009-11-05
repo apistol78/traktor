@@ -5,6 +5,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Core/Heap/Ref.h"
 #include "Core/Thread/Event.h"
+#include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -83,6 +84,7 @@ private:
 	Ref< PipelineHash > m_hash;
 	IListener* m_listener;
 	std::map< Guid, Ref< Serializable > > m_readCache;
+	std::map< Path, uint32_t > m_externalFileHash;
 	RefArray< db::Instance > m_builtInstances;
 	int32_t m_succeeded;
 	int32_t m_failed;
@@ -91,10 +93,16 @@ private:
 	bool needBuild(PipelineDependency* dependency) const;
 
 	/*! \brief Isolate instance in cache. */
-	bool putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3, const RefArray< db::Instance >& instances);
+	bool putInstancesInCache(const Guid& guid, uint32_t hash, const RefArray< db::Instance >& instances);
 
 	/*! \brief Get isolated instance from cache. */
-	bool getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3);
+	bool getInstancesFromCache(const Guid& guid, uint32_t hash);
+
+	/*! \brief Calculate dependency cache hash. */
+	uint32_t dependencyCacheHash(const PipelineDependency* dependency);
+
+	/*! \brief Calculate external file hash. */
+	uint32_t externalFileHash(const Path& path);
 };
 
 	}
