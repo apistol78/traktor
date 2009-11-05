@@ -3,7 +3,9 @@
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/SpatialGroupEntityData.h"
 #include "World/Entity/SpatialGroupEntity.h"
+#include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -28,9 +30,12 @@ Entity* GroupEntityFactory::createEntity(IEntityBuilder* builder, const std::wst
 		Ref< GroupEntity > groupEntity = gc_new< GroupEntity >();
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 		{
+			T_FATAL_ASSERT(*i);
 			Ref< Entity > childEntity = builder->build(*i);
 			if (childEntity)
 				groupEntity->m_entities.push_back(childEntity);
+			else
+				log::error << L"Unable to create entity from instance \"" << (*i)->getName() << L"\"";
 		}
 		return groupEntity;
 	}
@@ -40,14 +45,20 @@ Entity* GroupEntityFactory::createEntity(IEntityBuilder* builder, const std::wst
 		Ref< SpatialGroupEntity > spatialGroupEntity = gc_new< SpatialGroupEntity >(cref(spatialGroupData->getTransform()));
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 		{
+			T_FATAL_ASSERT(*i);
 			Ref< SpatialEntity > childEntity = dynamic_type_cast< SpatialEntity* >(builder->build(*i));
 			if (childEntity)
 				spatialGroupEntity->m_entities.push_back(childEntity);
+			else
+				log::error << L"Unable to create spatial entity from instance \"" << (*i)->getName() << L"\"";
 		}
 		return spatialGroupEntity;
 	}
 	else
+	{
+		T_BREAKPOINT;
 		return 0;
+	}
 }
 	
 	}

@@ -24,8 +24,11 @@ Object* ResourceHandle::get()
 
 void ResourceHandle::flush()
 {
-	Heap::getInstance().invalidateRefs(m_object);
-	T_ASSERT (m_object == 0);
+	if (m_object)
+	{
+		Heap::getInstance().invalidateRefs(m_object);
+		T_FATAL_ASSERT (m_object == 0);
+	}
 }
 
 const Type& ResourceHandle::getResourceType() const

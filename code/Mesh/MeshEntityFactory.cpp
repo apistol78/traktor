@@ -23,7 +23,13 @@ const TypeSet MeshEntityFactory::getEntityTypes() const
 
 world::Entity* MeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
 {
-	return checked_type_cast< const MeshEntityData* >(&entityData)->createEntity(m_resourceManager, builder);
+	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(&entityData))
+		return meshEntityData->createEntity(m_resourceManager, builder);
+	else
+	{
+		T_BREAKPOINT;
+		return 0;
+	}
 }
 
 	}
