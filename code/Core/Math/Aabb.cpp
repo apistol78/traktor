@@ -60,7 +60,13 @@ bool Aabb::inside(const Vector4& pt) const
 		(pt.z() <= mx.z());
 }
 
-bool Aabb::intersect(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
+bool Aabb::intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const
+{
+	T_FATAL_ERROR;
+	return false;
+}
+
+bool Aabb::intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const
 {
 	Vector4 start = p1 - getCenter();
 	Vector4 end = p2 - getCenter();

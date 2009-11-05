@@ -14,7 +14,6 @@ render::handle_t s_handleDefaultTechnique;
 render::handle_t s_handleProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleViewPrevious;
-render::handle_t s_handleViewToLightProjectionSpace;
 render::handle_t s_handleViewDistance;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
@@ -27,24 +26,10 @@ render::handle_t s_handleLightSunColor;
 render::handle_t s_handleLightBaseColor;
 render::handle_t s_handleLightShadowColor;
 render::handle_t s_handleShadowEnable;
-render::handle_t s_handleShadowHighQuality;
-render::handle_t s_handleShadowMap;
-render::handle_t s_handleShadowMapDiscRotation;
-render::handle_t s_handleShadowMapSizeAndBias;
-render::handle_t s_handleShadowMapPoissonTaps;
+render::handle_t s_handleShadowMask;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
-
-const Vector4 c_poissonTaps[] =
-{
-	Vector4(-0.326212f, -0.40581f, 0.519456f, 0.767022f),
-	Vector4(-0.840144f, -0.07358f, 0.185461f, -0.893124f),
-	Vector4(-0.695914f, 0.457137f, 0.507431f, 0.064425f),
-	Vector4(-0.203345f, 0.620716f, 0.89642f, 0.412458f),
-	Vector4(0.96234f, -0.194983f, -0.32194f, -0.932615f),
-	Vector4(0.473434f, -0.480026f, -0.791559f, -0.59771f)
-};
 
 		}
 
@@ -55,12 +40,9 @@ WorldRenderView::WorldRenderView()
 ,	m_projection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewPrevious(Matrix44::identity())
-,	m_viewToLightSpace(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
-,	m_shadowMapBias(0.0f)
-,	m_shadowMapSlice(0)
 ,	m_time(0.0f)
 {
 	for (int i = 0; i < MaxLightCount; ++i)
@@ -80,7 +62,6 @@ WorldRenderView::WorldRenderView()
 		s_handleProjection = render::getParameterHandle(L"Projection");
 		s_handleView = render::getParameterHandle(L"View");
 		s_handleViewPrevious = render::getParameterHandle(L"ViewPrevious");
-		s_handleViewToLightProjectionSpace = render::getParameterHandle(L"ViewToLightProjectionSpace");
 		s_handleViewDistance = render::getParameterHandle(L"ViewDistance");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
@@ -93,11 +74,7 @@ WorldRenderView::WorldRenderView()
 		s_handleLightBaseColor = render::getParameterHandle(L"LightBaseColor");
 		s_handleLightShadowColor = render::getParameterHandle(L"LightShadowColor");
 		s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
-		s_handleShadowHighQuality = render::getParameterHandle(L"ShadowHighQuality");
-		s_handleShadowMap = render::getParameterHandle(L"ShadowMap");
-		s_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
-		s_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
-		s_handleShadowMapPoissonTaps = render::getParameterHandle(L"ShadowMapPoissonTaps");
+		s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
 		s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
 		s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 		s_handleTime = render::getParameterHandle(L"Time");
@@ -135,26 +112,14 @@ void WorldRenderView::setViewSize(const Vector2& viewSize)
 	m_viewSize = viewSize;
 }
 
-void WorldRenderView::setViewToLightSpace(const Matrix44& viewToLightSpace)
-{
-	m_viewToLightSpace = viewToLightSpace;
-}
-
 void WorldRenderView::setEyePosition(const Vector4& eyePosition)
 {
 	m_eyePosition = eyePosition;
 }
 
-void WorldRenderView::setShadowMap(render::ITexture* shadowMap, float shadowMapBias, int shadowMapSlice)
+void WorldRenderView::setShadowMask(render::ITexture* shadowMask)
 {
-	m_shadowMap = shadowMap;
-	m_shadowMapBias = shadowMapBias / 1000.0f;
-	m_shadowMapSlice = shadowMapSlice;
-}
-
-void WorldRenderView::setShadowMapDiscRotation(render::ITexture* shadowMapDiscRotation)
-{
-	m_shadowMapDiscRotation = shadowMapDiscRotation;
+	m_shadowMask = shadowMask;
 }
 
 void WorldRenderView::setDepthMap(render::ITexture* depthMap)
@@ -192,7 +157,6 @@ void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderP
 	shaderParams->setMatrixParameter(s_handleProjection, m_projection);
 	shaderParams->setMatrixParameter(s_handleView, m_view);
 	shaderParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
-	shaderParams->setMatrixParameter(s_handleViewToLightProjectionSpace, m_viewToLightSpace);
 	shaderParams->setMatrixParameter(s_handleWorld, world);
 	shaderParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
 	shaderParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
@@ -335,26 +299,13 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 
 void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const
 {
-	if (m_shadowMap)
+	if (m_shadowMask)
 	{
-		float shadowMode = (m_shadowMapSlice <= 0) ? 1.0f : 2.0f;
-		Vector4 shadowMapSizeAndBias(float(1.0f / m_shadowMap->getWidth()), m_shadowMapBias, shadowMode, float(m_shadowMapSlice));
-
 		shaderParams->setBooleanParameter(s_handleShadowEnable, true);
-		shaderParams->setBooleanParameter(s_handleShadowHighQuality, m_shadowMapSlice <= 0);
-		shaderParams->setSamplerTexture(s_handleShadowMap, m_shadowMap);
-		shaderParams->setSamplerTexture(s_handleShadowMapDiscRotation, m_shadowMapDiscRotation);
-		shaderParams->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
-
-		if (m_shadowMapSlice <= 0)
-			shaderParams->setVectorArrayParameter(s_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
+		shaderParams->setSamplerTexture(s_handleShadowMask, m_shadowMask);
 	}
 	else
-	{
-		const Vector4 shadowMapSizeAndBias(0.0f, 0.0f, 0.0f, 0.0f);
 		shaderParams->setBooleanParameter(s_handleShadowEnable, false);
-		shaderParams->setVectorParameter(s_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
-	}
 }
 
 void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const

@@ -34,26 +34,41 @@ class T_DLLCLASS PostProcessStepSsao : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepSsao)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceSsao : public Instance
+	{
+	public:
+		InstanceSsao(
+			const PostProcessStepSsao* step,
+			const Vector4 offsets[32],
+			render::ISimpleTexture* randomNormals
+		);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		Ref< const PostProcessStepSsao > m_step;
+		Vector4 m_offsets[32];
+		Ref< render::ISimpleTexture > m_randomNormals;
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
-	Vector4 m_offsets[32];
-	Ref< render::ISimpleTexture > m_randomNormals;
+	mutable resource::Proxy< render::Shader > m_shader;
 };
 
 	}

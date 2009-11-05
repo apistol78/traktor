@@ -168,12 +168,10 @@ void ScenePreviewControl::destroy()
 	Widget::destroy();
 }
 
-void ScenePreviewControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void ScenePreviewControl::updateWorldRenderer()
 {
-	m_worldRenderSettings = worldRenderSettings;
-
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)
-		(*i)->setWorldRenderSettings(worldRenderSettings);
+		(*i)->updateWorldRenderer();
 }
 
 bool ScenePreviewControl::handleCommand(const ui::Command& command)
@@ -353,7 +351,7 @@ void ScenePreviewControl::updateRenderControls()
 	}
 
 	update();
-	setWorldRenderSettings(m_worldRenderSettings);
+	updateWorldRenderer();
 }
 
 void ScenePreviewControl::updateEditState()

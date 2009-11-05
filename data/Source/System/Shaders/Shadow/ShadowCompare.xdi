@@ -4,8 +4,8 @@
 		<item type="traktor.render.Sampler">
 			<comment></comment>
 			<position>
-				<first>282</first>
-				<second>277</second>
+				<first>403</first>
+				<second>299</second>
 			</position>
 			<parameterName>ShadowMap</parameterName>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
@@ -20,26 +20,32 @@
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>472</first>
-				<second>328</second>
+				<first>573</first>
+				<second>335</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>85</first>
-				<second>330</second>
+				<first>197</first>
+				<second>335</second>
 			</position>
 			<name>ShadowMapUV</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
+		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>268</first>
-				<second>405</second>
+				<first>324</first>
+				<second>406</second>
 			</position>
 			<name>ReferenceZ</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
@@ -52,8 +58,8 @@
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>84</first>
-				<second>517</second>
+				<first>179</first>
+				<second>467</second>
 			</position>
 			<parameterName>ShadowMapSizeAndBias</parameterName>
 			<type>PtVector</type>
@@ -61,8 +67,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment>Constant bias</comment>
 			<position>
-				<first>352</first>
-				<second>479</second>
+				<first>419</first>
+				<second>467</second>
 			</position>
 			<swizzle>y</swizzle>
 		</item>
@@ -74,12 +80,13 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Conditional">
+		<item type="traktor.render.Conditional" version="1">
 			<comment></comment>
 			<position>
 				<first>786</first>
 				<second>417</second>
 			</position>
+			<branch>BrAuto</branch>
 			<operator>CoGreaterEqual</operator>
 		</item>
 		<item type="traktor.render.Scalar">
@@ -93,8 +100,8 @@
 		<item type="traktor.render.Sub">
 			<comment></comment>
 			<position>
-				<first>486</first>
-				<second>407</second>
+				<first>542</first>
+				<second>408</second>
 			</position>
 		</item>
 	</nodes>

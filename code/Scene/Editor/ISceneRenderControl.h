@@ -5,13 +5,6 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class WorldRenderSettings;
-
-	}
-
 	namespace ui
 	{
 
@@ -29,7 +22,7 @@ class ISceneRenderControl : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings) = 0;
+	virtual void updateWorldRenderer() = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 

@@ -44,26 +44,37 @@ public:
 		bool serialize(Serializer& s);
 	};
 
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceSimple : public Instance
+	{
+	public:
+		InstanceSimple(const PostProcessStepSimple* step);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		Ref< const PostProcessStepSimple > m_step;
+		float m_time;
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< render::Shader > m_shader;
 	std::vector< Source > m_sources;
-	float m_time;
 };
 
 	}

@@ -351,8 +351,8 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		return;
 
 	bool updateCache =
-		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueShadowMapOccluders()) &&
-		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueShadowMapSelfShadow()) &&
+		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueShadow()) &&
+		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueVelocity()) &&
 		bool(worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueDepth());
 
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();

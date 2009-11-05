@@ -36,7 +36,7 @@ public:
 
 	virtual void destroy();
 
-	virtual void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
+	virtual void updateWorldRenderer();
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -49,7 +49,6 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolButtonView;
 	Ref< ISceneRenderControl > m_renderControl;
-	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 
 	void createRenderControl(int32_t type);
 

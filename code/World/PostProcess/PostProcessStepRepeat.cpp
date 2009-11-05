@@ -10,34 +10,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepRepeat", PostProcessStepRepeat, PostProcessStep)
 
-bool PostProcessStepRepeat::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepRepeat::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return m_step->create(postProcess, resourceManager, renderSystem);
-}
+	Ref< Instance > instance = m_step->create(resourceManager, renderSystem);
+	if (!instance)
+		return 0;
 
-void PostProcessStepRepeat::destroy(PostProcess* postProcess)
-{
-	m_step->destroy(postProcess);
-}
-
-void PostProcessStepRepeat::render(
-	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
-	render::IRenderView* renderView,
-	render::ScreenRenderer* screenRenderer,
-	float deltaTime
-)
-{
-	for (uint32_t i = 0; i < m_count; ++i)
-	{
-		m_step->render(
-			postProcess,
-			worldRenderView,
-			renderView,
-			screenRenderer,
-			deltaTime
-		);
-	}
+	return gc_new< InstanceRepeat >(m_count, instance);
 }
 
 bool PostProcessStepRepeat::serialize(Serializer& s)
@@ -45,6 +24,43 @@ bool PostProcessStepRepeat::serialize(Serializer& s)
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> MemberRef< PostProcessStep >(L"step", m_step);
 	return true;
+}
+
+// Instance
+
+PostProcessStepRepeat::InstanceRepeat::InstanceRepeat(uint32_t count, Instance* instance)
+:	m_count(count)
+,	m_instance(instance)
+{
+}
+
+void PostProcessStepRepeat::InstanceRepeat::destroy()
+{
+	m_instance->destroy();
+}
+
+void PostProcessStepRepeat::InstanceRepeat::render(
+	PostProcess* postProcess,
+	render::IRenderView* renderView,
+	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
+	float deltaTime
+)
+{
+	for (uint32_t i = 0; i < m_count; ++i)
+	{
+		m_instance->render(
+			postProcess,
+			renderView,
+			screenRenderer,
+			viewFrustum,
+			projection,
+			shadowMapBias,
+			deltaTime
+		);
+	}
 }
 
 	}

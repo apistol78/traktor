@@ -75,7 +75,7 @@ void DebugRenderControl::destroy()
 	}
 }
 
-void DebugRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void DebugRenderControl::updateWorldRenderer()
 {
 }
 

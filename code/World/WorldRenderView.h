@@ -77,13 +77,9 @@ public:
 
 	void setViewSize(const Vector2& viewSize);
 
-	void setViewToLightSpace(const Matrix44& viewToLightSpace);
-
 	void setEyePosition(const Vector4& eyePosition);
 
-	void setShadowMap(render::ITexture* shadowMap, float shadowMapBias, int shadowMapSlice);
-
-	void setShadowMapDiscRotation(render::ITexture* shadowMapDiscRotation);
+	void setShadowMask(render::ITexture* shadowMask);
 
 	void setDepthMap(render::ITexture* depthMap);
 
@@ -148,10 +144,6 @@ public:
 		return m_viewSize;
 	}
 
-	inline const Matrix44& getViewToLightSpace() const {
-		return m_viewToLightSpace;
-	}
-
 	inline const Vector4& getEyePosition() const {
 		return m_eyePosition;
 	}
@@ -166,12 +158,8 @@ public:
 		return m_lights[index].direction;
 	}
 
-	inline render::ITexture* getShadowMap() const {
-		return m_shadowMap;
-	}
-
-	inline float getShadowMapBias() const {
-		return m_shadowMapBias;
+	inline render::ITexture* getShadowMask() const {
+		return m_shadowMask;
 	}
 
 	inline render::ITexture* getDepthMap() const {
@@ -189,13 +177,11 @@ private:
 	Matrix44 m_projection;
 	Matrix44 m_view;
 	Matrix44 m_viewPrevious;
-	Matrix44 m_viewToLightSpace;
 	Vector2 m_viewSize;
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
-	Ref< render::ITexture > m_shadowMap;
-	Ref< render::ITexture > m_shadowMapDiscRotation;
+	Ref< render::ITexture > m_shadowMask;
 	float m_shadowMapBias;
 	int m_shadowMapSlice;
 	Ref< render::ITexture > m_depthMap;

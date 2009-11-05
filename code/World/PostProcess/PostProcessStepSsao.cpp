@@ -21,16 +21,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSsao", PostProcessStepSsao, PostProcessStep)
 
-bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepSsao::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
 
 	RandomGeometry random;
-	for (int i = 0; i < sizeof_array(m_offsets); ++i)
+	Vector4 offsets[32];
+
+	for (int i = 0; i < sizeof_array(offsets); ++i)
 	{
 		float r = random.nextFloat() * (1.0f - 0.1f) + 0.1f;
-		m_offsets[i] = random.nextUnit() * Scalar(r);
+		offsets[i] = random.nextUnit() * Scalar(r);
 	}
 
 	AutoArrayPtr< uint8_t > data(new uint8_t [128 * 128 * 4]);
@@ -56,31 +58,49 @@ bool PostProcessStepSsao::create(PostProcess* postProcess, resource::IResourceMa
 	desc.initialData[0].pitch = 128 * 4;
 	desc.initialData[0].slicePitch = 0;
 
-	m_randomNormals = renderSystem->createSimpleTexture(desc);
-	if (!m_randomNormals)
-		return false;
+	Ref< render::ISimpleTexture > randomNormals = renderSystem->createSimpleTexture(desc);
+	if (!randomNormals)
+		return 0;
 
-	return true;
+	return gc_new< InstanceSsao >(this, cref(offsets), randomNormals);
 }
 
-void PostProcessStepSsao::destroy(PostProcess* postProcess)
+bool PostProcessStepSsao::serialize(Serializer& s)
 {
-	if (m_randomNormals)
-	{
-		m_randomNormals->destroy();
-		m_randomNormals = 0;
-	}
+	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }
 
-void PostProcessStepSsao::render(
+// Instance
+
+PostProcessStepSsao::InstanceSsao::InstanceSsao(
+	const PostProcessStepSsao* step,
+	const Vector4 offsets[32],
+	render::ISimpleTexture* randomNormals
+)
+:	m_step(step)
+,	m_randomNormals(randomNormals)
+{
+	for (int i = 0; i < sizeof_array(m_offsets); ++i)
+		m_offsets[i] = offsets[i];
+}
+
+void PostProcessStepSsao::InstanceSsao::destroy()
+{
+	m_randomNormals->destroy();
+}
+
+void PostProcessStepSsao::InstanceSsao::render(
 	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
 	float deltaTime
 )
 {
-	if (!m_shader.validate())
+	resource::Proxy< render::Shader > shader = m_step->m_shader;
+	if (!shader.validate())
 		return;
 
 	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(-1);
@@ -88,7 +108,7 @@ void PostProcessStepSsao::render(
 	if (!sourceColor || !sourceDepth)
 		return;
 
-	postProcess->prepareShader(m_shader);
+	postProcess->prepareShader(shader);
 
 	Vector4 sourceColorSize(
 		float(sourceColor->getWidth()),
@@ -103,33 +123,24 @@ void PostProcessStepSsao::render(
 		0.0f
 	);
 
-	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
 	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
 	Vector4 viewEdgeTopRight = viewFrustum.corners[5];
 	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
 
-	const Matrix44& projection = worldRenderView.getProjection();
+	shader->setSamplerTexture(L"Frame", sourceColor->getColorTexture(0));
+	shader->setSamplerTexture(L"Depth", sourceDepth->getColorTexture(0));
+	shader->setVectorParameter(L"Frame_Size", sourceColorSize);
+	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
+	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
+	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
+	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
+	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
+	shader->setMatrixParameter(L"Projection", projection);
+	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
+	shader->setSamplerTexture(L"RandomNormals", m_randomNormals);
 
-	m_shader->setSamplerTexture(L"Frame", sourceColor->getColorTexture(0));
-	m_shader->setSamplerTexture(L"Depth", sourceDepth->getColorTexture(0));
-	m_shader->setVectorParameter(L"Frame_Size", sourceColorSize);
-	m_shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
-	m_shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-	m_shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-	m_shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-	m_shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	m_shader->setMatrixParameter(L"Projection", projection);
-	m_shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
-	m_shader->setSamplerTexture(L"RandomNormals", m_randomNormals);
-
-	screenRenderer->draw(renderView, m_shader);
-}
-
-bool PostProcessStepSsao::serialize(Serializer& s)
-{
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
-	return true;
+	screenRenderer->draw(renderView, shader);
 }
 
 	}

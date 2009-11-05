@@ -33,26 +33,40 @@ class T_DLLCLASS PostProcessStepLuminance : public PostProcessStep
 	T_RTTI_CLASS(PostProcessStepLuminance)
 
 public:
-	virtual bool create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
+	class InstanceLuminance : public Instance
+	{
+	public:
+		InstanceLuminance(
+			const PostProcessStepLuminance* step,
+			const Vector4 sampleOffsets[16]
+		);
 
-	virtual void destroy(PostProcess* postProcess);
+		virtual void destroy();
 
-	virtual void render(
-		PostProcess* postProcess,
-		const WorldRenderView& worldRenderView,
-		render::IRenderView* renderView,
-		render::ScreenRenderer* screenRenderer,
-		float deltaTime
-	);
+		virtual void render(
+			PostProcess* postProcess,
+			render::IRenderView* renderView,
+			render::ScreenRenderer* screenRenderer,
+			const Frustum& viewFrustum,
+			const Matrix44& projection,
+			float shadowMapBias,
+			float deltaTime
+		);
+
+	private:
+		Ref< const PostProcessStepLuminance > m_step;
+		Vector4 m_sampleOffsets[16];
+	};
+
+	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	mutable resource::Proxy< render::Shader > m_shader;
 	uint32_t m_source;
-	Vector4 m_sampleOffsets[16];
 };
 
 	}

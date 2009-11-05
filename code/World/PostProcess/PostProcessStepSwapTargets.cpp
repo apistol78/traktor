@@ -10,20 +10,37 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSwapTargets", PostProcessStepSwapTargets, PostProcessStep)
 
-bool PostProcessStepSwapTargets::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepSwapTargets::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
+	return gc_new< InstanceSwapTargets >(m_destination, m_source);
+}
+
+bool PostProcessStepSwapTargets::serialize(Serializer& s)
+{
+	s >> Member< int32_t >(L"destination", m_destination);
+	s >> Member< int32_t >(L"source", m_source);
 	return true;
 }
 
-void PostProcessStepSwapTargets::destroy(PostProcess* postProcess)
+// Instance
+
+PostProcessStepSwapTargets::InstanceSwapTargets::InstanceSwapTargets(int32_t destination, int32_t source)
+:	m_destination(destination)
+,	m_source(source)
 {
 }
 
-void PostProcessStepSwapTargets::render(
+void PostProcessStepSwapTargets::InstanceSwapTargets::destroy()
+{
+}
+
+void PostProcessStepSwapTargets::InstanceSwapTargets::render(
 	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
 	float deltaTime
 )
 {
@@ -31,13 +48,6 @@ void PostProcessStepSwapTargets::render(
 		postProcess->getTargetRef(m_destination),
 		postProcess->getTargetRef(m_source)
 	);
-}
-
-bool PostProcessStepSwapTargets::serialize(Serializer& s)
-{
-	s >> Member< uint32_t >(L"destination", m_destination);
-	s >> Member< uint32_t >(L"source", m_source);
-	return true;
 }
 
 	}

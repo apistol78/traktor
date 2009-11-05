@@ -140,10 +140,95 @@ void PerspectiveRenderControl::destroy()
 	}
 }
 
-void PerspectiveRenderControl::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void PerspectiveRenderControl::updateWorldRenderer()
 {
-	m_worldRenderSettings = worldRenderSettings;
-	updateWorldRenderer();
+	if (m_worldRenderer)
+	{
+		m_worldRenderer->destroy();
+		m_worldRenderer = 0;
+	}
+
+	if (m_postProcess)
+	{
+		m_postProcess->destroy();
+		m_postProcess = 0;
+	}
+
+	if (m_renderTarget)
+	{
+		m_renderTarget->destroy();
+		m_renderTarget = 0;
+	}
+
+	Ref< scene::Scene > sceneInstance = m_context->getScene();
+	if (!sceneInstance)
+		return;
+
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+	if (sz.cx <= 0 || sz.cy <= 0)
+		return;
+
+	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
+	Ref< const world::PostProcessSettings > postProcessSettings = sceneInstance->getPostProcessSettings();
+
+	// Create post processing.
+	if (postProcessSettings)
+	{
+		m_postProcess = gc_new< world::PostProcess >();
+		if (!m_postProcess->create(
+			postProcessSettings,
+			m_context->getResourceManager(),
+			m_context->getRenderSystem(),
+			sz.cx,
+			sz.cy
+		))
+			m_postProcess = 0;
+	}
+
+	// Create entity renderers.
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
+	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
+	{
+		RefArray< world::IEntityRenderer > entityRenderers;
+		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
+		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
+			worldEntityRenderers->add(*j);
+	}
+
+	// Create world renderer.
+	m_worldRenderer = gc_new< world::WorldRenderer >();
+	if (m_worldRenderer->create(
+		worldRenderSettings,
+		worldEntityRenderers,
+		m_context->getResourceManager(),
+		m_context->getRenderSystem(),
+		m_renderView,
+		4,
+		1
+	))
+	{
+		updateWorldRenderView();
+
+		// Create render target used for post processing.
+		if (m_postProcess)
+		{
+			m_renderTarget = m_postProcess->createOutputTarget(
+				m_context->getRenderSystem(),
+				sz.cx,
+				sz.cy,
+				4
+			);
+		}
+
+		// Expose shadow mask to debug view.
+		Ref< render::RenderTargetSet > debugTarget = m_worldRenderer->getShadowMaskTargetSet();
+		if (debugTarget)
+			m_context->setDebugTexture(debugTarget->getColorTexture(0));
+		else
+			m_context->setDebugTexture(0);
+	}
+	else
+		m_worldRenderer = 0;
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
@@ -172,71 +257,6 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 void PerspectiveRenderControl::update()
 {
 	m_renderWidget->update();
-}
-
-void PerspectiveRenderControl::updateWorldRenderer()
-{
-	if (!m_worldRenderSettings)
-		return;
-
-	if (m_worldRenderer)
-	{
-		m_worldRenderer->destroy();
-		m_worldRenderer = 0;
-	}
-
-	if (m_renderTarget)
-	{
-		m_renderTarget->destroy();
-		m_renderTarget = 0;
-	}
-
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-	if (sz.cx <= 0 || sz.cy <= 0)
-		return;
-
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
-	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
-	{
-		RefArray< world::IEntityRenderer > entityRenderers;
-		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
-
-		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			worldEntityRenderers->add(*j);
-	}
-
-	m_worldRenderer = gc_new< world::WorldRenderer >();
-	if (m_worldRenderer->create(
-		*m_worldRenderSettings,
-		worldEntityRenderers,
-		m_context->getRenderSystem(),
-		m_renderView,
-		4,
-		1
-	))
-	{
-		updateWorldRenderView();
-
-		// Create render target used for post processing.
-		if (m_context->getScene()->getPostProcess())
-		{
-			m_renderTarget = m_context->getScene()->getPostProcess()->createOutputTarget(
-				m_context->getRenderSystem(),
-				sz.cx,
-				sz.cy,
-				4
-			);
-		}
-
-		// Expose shadow map to debug view.
-		Ref< render::RenderTargetSet > shadowTargetSet = m_worldRenderer->getShadowTargetSet();
-		if (shadowTargetSet)
-			m_context->setDebugTexture(shadowTargetSet->getColorTexture(0));
-		else
-			m_context->setDebugTexture(0);
-	}
-	else
-		m_worldRenderer = 0;
 }
 
 void PerspectiveRenderControl::updateWorldRenderView()
@@ -649,17 +669,15 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			if (m_renderTarget)
 			{
 				m_renderView->end();
-				
-				Ref< world::PostProcess > postProcess = m_context->getScene()->getPostProcess();
-				T_ASSERT (postProcess);
-
-				postProcess->render(
-					m_worldRenderView,
-					m_context->getRenderSystem(),
+				m_postProcess->render(
 					m_renderView,
 					m_renderTarget,
 					m_worldRenderer->getDepthTargetSet(),
 					m_worldRenderer->getVelocityTargetSet(),
+					m_worldRenderer->getShadowMaskTargetSet(),
+					m_worldRenderView.getViewFrustum(),
+					m_worldRenderView.getProjection(),
+					0.0f,
 					deltaTime
 				);
 			}

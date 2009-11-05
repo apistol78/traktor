@@ -422,7 +422,7 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 		// Trace bounding box to see if ray intersect.
 		Scalar distance;
-		if (boundingBox.intersect(objectRayOrigin, objectRayOrigin + objectRayDirection * (minDistance - Scalar(FUZZY_EPSILON)), distance))
+		if (boundingBox.intersectSegment(objectRayOrigin, objectRayOrigin + objectRayDirection * (minDistance - Scalar(FUZZY_EPSILON)), distance))
 		{
 			T_ASSERT (distance <= minDistance);
 			minEntityAdapter = *i;

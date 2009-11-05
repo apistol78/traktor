@@ -46,6 +46,15 @@ public:
 	 */
 	bool inside(const Vector4& pt) const;
 
+	/*! \brief Ray intersection query.
+	 *
+	 * \param p Start point.
+	 * \param d Ray direction.
+	 * \param outDistance Distance from start point to intersection.
+	 * \return True if intersection found.
+	 */
+	bool intersectRay(const Vector4& p, const Vector4& d, Scalar& outDistance) const;
+
 	/*! \brief Line segment intersection query.
 	 *
 	 * \param p1 Start point.
@@ -53,7 +62,7 @@ public:
 	 * \param outDistance Distance from start point to intersection.
 	 * \return True if intersection found.
 	 */
-	bool intersect(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const;
+	bool intersectSegment(const Vector4& p1, const Vector4& p2, Scalar& outDistance) const;
 
 	/*! \brief Transform bounding box.
 	 *

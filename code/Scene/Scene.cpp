@@ -1,7 +1,6 @@
 #include "Scene/Scene.h"
 #include "World/Entity/Entity.h"
 #include "World/WorldRenderSettings.h"
-#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -15,13 +14,13 @@ Scene::Scene(
 	world::IEntityManager* entityManager,
 	world::Entity* rootEntity,
 	world::WorldRenderSettings* worldRenderSettings,
-	world::PostProcess* postProcess
+	world::PostProcessSettings* postProcessSettings
 )
 :	m_controller(controller)
 ,	m_entityManager(entityManager)
 ,	m_rootEntity(rootEntity)
 ,	m_worldRenderSettings(worldRenderSettings)
-,	m_postProcess(postProcess)
+,	m_postProcessSettings(postProcessSettings)
 {
 }
 
@@ -32,12 +31,6 @@ Scene::~Scene()
 
 void Scene::destroy()
 {
-	if (m_postProcess)
-	{
-		m_postProcess->destroy();
-		m_postProcess = 0;
-	}
-
 	if (m_rootEntity)
 	{
 		m_rootEntity->destroy();
@@ -47,6 +40,7 @@ void Scene::destroy()
 	m_entityManager = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;
+	m_postProcessSettings = 0;
 }
 
 ISceneController* Scene::getController() const
@@ -69,9 +63,9 @@ world::WorldRenderSettings* Scene::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-world::PostProcess* Scene::getPostProcess() const
+world::PostProcessSettings* Scene::getPostProcessSettings() const
 {
-	return m_postProcess;
+	return m_postProcessSettings;
 }
 
 	}

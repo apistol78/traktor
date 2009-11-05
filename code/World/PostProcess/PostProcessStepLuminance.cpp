@@ -15,17 +15,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
 
-bool PostProcessStepLuminance::create(PostProcess* postProcess, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
+PostProcessStep::Instance* PostProcessStepLuminance::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
 
+	Vector4 sampleOffsets[16];
 	int index = 0;
+
 	for (int y = 0; y < 4; ++y)
 	{
 		for (int x = 0; x < 4; ++x)
 		{
-			m_sampleOffsets[index].set(
+			sampleOffsets[index].set(
 				float(x - 1.0f),
 				float(y - 1.0f),
 				0.0f,
@@ -35,29 +37,54 @@ bool PostProcessStepLuminance::create(PostProcess* postProcess, resource::IResou
 		}
 	}
 
+	return gc_new< InstanceLuminance >(
+		this,
+		cref(sampleOffsets)
+	);
+}
+
+bool PostProcessStepLuminance::serialize(Serializer& s)
+{
+	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> Member< uint32_t >(L"source", m_source);
 	return true;
 }
 
-void PostProcessStepLuminance::destroy(PostProcess* postProcess)
+// Instance
+
+PostProcessStepLuminance::InstanceLuminance::InstanceLuminance(
+	const PostProcessStepLuminance* step,
+	const Vector4 sampleOffsets[16]
+)
+:	m_step(step)
+{
+	for (int i = 0; i < sizeof_array(m_sampleOffsets); ++i)
+		m_sampleOffsets[i] = sampleOffsets[i];
+}
+
+void PostProcessStepLuminance::InstanceLuminance::destroy()
 {
 }
 
-void PostProcessStepLuminance::render(
+void PostProcessStepLuminance::InstanceLuminance::render(
 	PostProcess* postProcess,
-	const WorldRenderView& worldRenderView,
 	render::IRenderView* renderView,
 	render::ScreenRenderer* screenRenderer,
+	const Frustum& viewFrustum,
+	const Matrix44& projection,
+	float shadowMapBias,
 	float deltaTime
 )
 {
-	if (!m_shader.validate())
+	resource::Proxy< render::Shader > shader = m_step->m_shader;
+	if (!shader.validate())
 		return;
 
-	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_source);
+	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_step->m_source);
 	if (!source)
 		return;
 
-	postProcess->prepareShader(m_shader);
+	postProcess->prepareShader(shader);
 
 	Vector4 sampleOffsetScale(
 		1.0f / source->getWidth(),
@@ -66,18 +93,11 @@ void PostProcessStepLuminance::render(
 		0.5f / source->getHeight()
 	);
 
-	m_shader->setSamplerTexture(L"SourceTexture", source->getColorTexture(0));
-	m_shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
-	m_shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
+	shader->setSamplerTexture(L"SourceTexture", source->getColorTexture(0));
+	shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
+	shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
 
-	screenRenderer->draw(renderView, m_shader);
-}
-
-bool PostProcessStepLuminance::serialize(Serializer& s)
-{
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
-	s >> Member< uint32_t >(L"source", m_source);
-	return true;
+	screenRenderer->draw(renderView, shader);
 }
 
 	}
