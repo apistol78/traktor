@@ -138,7 +138,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		if (needBuild(*i))
 		{
 			ScopeIndent scopeIndent(log::info);
-			uint32_t externalFilesHash;
+			uint32_t cacheHash;
 			bool result;
 
 			log::info << L"Building asset \"" << (*i)->name << L"\" (" << type_name((*i)->pipeline) << L")..." << Endl;
@@ -155,36 +155,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			// Get output instances from cache.
 			if (m_cache)
 			{
-				Adler32 adler;
-
-				// Calculate checksum hash of entire dependency; including external files.
-				adler.begin();
-				for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-				{
-					Ref< Stream > stream = FileSystem::getInstance().open(*j, File::FmRead);
-					if (stream)
-					{
-						uint8_t buffer[4096];
-						int32_t nread;
-
-						while ((nread = stream->read(buffer, sizeof(buffer))) > 0)
-							adler.feed(buffer, nread);
-
-						stream->close();
-					}
-					else
-						log::warning << L"Unable to open file \"" << j->getPathName() << L"\"; inconsistent checksum" << Endl;
-				}
-				adler.end();
-				externalFilesHash = adler.get();
-
-				// Lets get instance from cache using guid and hashes.
-				result = getInstancesFromCache(
-					(*i)->outputGuid,
-					(*i)->pipelineHash,
-					(*i)->sourceAssetHash,
-					externalFilesHash
-				);
+				cacheHash = dependencyCacheHash(*i);
+				result = getInstancesFromCache((*i)->outputGuid, cacheHash);
 				if (result)
 				{
 					log::info << L"Cached instance(s) used" << Endl;
@@ -225,9 +197,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						if (m_cache)
 							putInstancesInCache(
 								(*i)->outputGuid,
-								(*i)->pipelineHash,
-								(*i)->sourceAssetHash,
-								externalFilesHash,
+								cacheHash,
 								m_builtInstances
 							);
 
@@ -314,11 +284,11 @@ bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
 	return false;
 }
 
-bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3, const RefArray< db::Instance >& instances)
+bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, const RefArray< db::Instance >& instances)
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->put(guid, hash1 + hash2 + hash3);
+	Ref< Stream > stream = m_cache->put(guid, hash);
 	if (stream)
 	{
 		Writer writer(stream);
@@ -340,11 +310,11 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash1, uint
 	return result;
 }
 
-bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash1, uint32_t hash2, uint32_t hash3)
+bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash)
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->get(guid, hash1 + hash2 + hash3);
+	Ref< Stream > stream = m_cache->get(guid, hash);
 	if (stream)
 	{
 		Reader reader(stream);
@@ -377,6 +347,52 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash1, ui
 	}
 
 	return result;
+}
+
+uint32_t PipelineBuilder::dependencyCacheHash(const PipelineDependency* dependency)
+{
+	uint32_t hash = 0UL;
+
+	const std::set< Path >& files = dependency->files;
+	for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
+		hash += externalFileHash(*i);
+
+	hash += dependency->pipelineHash;
+	hash += dependency->sourceAssetHash;
+
+	const RefArray< PipelineDependency >& children = dependency->children;
+	for (RefArray< PipelineDependency >::const_iterator i = children.begin(); i != children.end(); ++i)
+		hash += dependencyCacheHash(*i);
+
+	return hash;
+}
+
+uint32_t PipelineBuilder::externalFileHash(const Path& path)
+{
+	std::map< Path, uint32_t >::const_iterator i = m_externalFileHash.find(path);
+	if (i != m_externalFileHash.end())
+		return i->second;
+
+	Adler32 adler;
+	adler.begin();
+
+	Ref< Stream > stream = FileSystem::getInstance().open(path, File::FmRead);
+	if (stream)
+	{
+		uint8_t buffer[4096];
+		int32_t nread;
+		while ((nread = stream->read(buffer, sizeof(buffer))) > 0)
+			adler.feed(buffer, nread);
+		stream->close();
+	}
+	else
+		log::warning << L"Unable to open file \"" << path.getPathName() << L"\"; inconsistent hash" << Endl;
+
+	adler.end();
+	uint32_t hash = adler.get();
+
+	m_externalFileHash.insert(std::make_pair(path, hash));
+	return hash;
 }
 
 	}
