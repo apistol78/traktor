@@ -72,7 +72,7 @@ public:
 private:
 	Ref< TreeViewItemCocoa > m_rootItem;
 	ObjCRef* m_rootItemRef;
-	RefArray< BitmapCocoa > m_bitmaps;
+	std::vector< BitmapCocoa* > m_bitmaps;
 	
 	TreeViewItemCocoa* getRealItem(void* item) const;
 };
