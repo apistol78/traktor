@@ -89,7 +89,7 @@ void MeshPipeline::destroy()
 
 uint32_t MeshPipeline::getVersion() const
 {
-	return 4;
+	return 5;
 }
 
 TypeSet MeshPipeline::getAssetTypes() const
