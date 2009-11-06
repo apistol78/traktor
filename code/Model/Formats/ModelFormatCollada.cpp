@@ -258,7 +258,7 @@ void createSkin(
 
 void createMesh(
 	xml::Element* mesh,
-	const std::vector< material_ref_t >& materialRefs,
+	const std::map< std::wstring, uint32_t>& materialLookUp,
 	Model* outModel
 )
 {
@@ -316,14 +316,10 @@ void createMesh(
 	for (uint32_t j = 0; j < polygonData.size(); ++j)
 	{
 		uint32_t materialIndex = c_InvalidIndex;
-		for (uint32_t k = 0; k < materialRefs.size(); ++k)
-		{
-			if (polygonData[j].material == materialRefs[k].first)
-			{
-				materialIndex = k;
-				break;
-			}
-		}
+		std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(polygonData[j].material);
+		if (it != materialLookUp.end())
+			materialIndex = it->second;
+
 		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texcoord0DataInfo = findSourceData(L"TEXCOORD", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
@@ -488,7 +484,7 @@ void createMesh(
 	xml::Element* libraryControllers,
 	const RefArray< xml::Element >& instanceGeometries,
 	const RefArray< xml::Element >& instanceControllers,
-	const std::vector< material_ref_t >& materialRefs,
+	const std::map< std::wstring, uint32_t >& materialRefs,
 	Model* outModel
 )
 {
@@ -642,6 +638,7 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 
 	// Find references to materials and geometries.
 	std::vector< material_ref_t > materialRefs;
+	std::map< std::wstring, uint32_t> materialLookUp;
 	RefArray< xml::Element > instanceGeometries;
 	RefArray< xml::Element > instanceControllers;
 
@@ -699,15 +696,18 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 	// Create model
 	Ref< Model > outModel = gc_new< Model >();
 
-	if (importFlags & IfMaterials)
+	for (uint32_t i = 0; i < materialRefs.size(); ++i)
 	{
-		for (uint32_t i = 0; i < materialRefs.size(); ++i)
+		std::map<std::wstring, uint32_t>::iterator it = materialLookUp.find(materialRefs[i].first);
+		if (it == materialLookUp.end())
 		{
 			Material m;
-			m.setName(materialRefs[i].first);
+			//m.setName(materialRefs[i].second);		// material
+			m.setName(materialRefs[i].first);		// sg
 			m.setDoubleSided(false);
-			outModel->addMaterial(m);
-		}	
+			uint32_t materialIndex = outModel->addMaterial(m);
+			materialLookUp.insert(std::make_pair(materialRefs[i].first, materialIndex));
+		}
 	}
 
 	if (importFlags & IfMesh)
@@ -720,7 +720,7 @@ Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) cons
 			libraryControllers,
 			instanceGeometries,
 			instanceControllers,
-			materialRefs,
+			materialLookUp,
 			outModel
 		);
 	}
