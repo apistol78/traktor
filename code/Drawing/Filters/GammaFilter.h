@@ -29,7 +29,7 @@ public:
 	GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA = 1.0f);
 
 protected:
-	virtual Image* apply(const Image* image);
+	virtual Ref< Image > apply(const Image* image);
 
 private:
 	float m_gamma[4];

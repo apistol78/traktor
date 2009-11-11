@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetSetSw_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Render/RenderTargetSet.h"
 
 // import/export mechanism.
@@ -39,7 +39,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual ITexture* getColorTexture(int index) const;
+	virtual Ref< ITexture > getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 

@@ -79,7 +79,7 @@ public:
 	/*! \brief Flush blocks. */
 	void flush();
 
-	inline IRenderView* getRenderView() const { return m_renderView; }
+	inline Ref< IRenderView > getRenderView() const { return m_renderView; }
 
 	inline uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - &m_heap[0]); }
 

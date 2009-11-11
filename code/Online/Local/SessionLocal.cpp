@@ -22,7 +22,7 @@ bool SessionLocal::isConnected() const
 	return false;
 }
 
-IUser* SessionLocal::getUser()
+Ref< IUser > SessionLocal::getUser()
 {
 	return m_user;
 }
@@ -32,7 +32,7 @@ bool SessionLocal::getAvailableAchievements(RefArray< IAchievement >& outAchieve
 	return true;
 }
 
-ISaveGame* SessionLocal::createSaveGame(const std::wstring& name, Serializable* attachment)
+Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, Serializable* attachment)
 {
 	return 0;
 }

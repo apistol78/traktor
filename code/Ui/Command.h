@@ -51,7 +51,7 @@ public:
 
 	const std::wstring& getName() const;
 
-	Object* getData() const;
+	Ref< Object > getData() const;
 
 	bool operator == (const Command& command) const;
 

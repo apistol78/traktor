@@ -2,9 +2,9 @@
 #define traktor_Serializer_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Math/Color.h"
 #include "Core/Math/Matrix33.h"
@@ -42,13 +42,13 @@ public:
 		SdWrite
 	};
 
-	Serializable* readObject();
+	Ref< Serializable > readObject();
 
 	bool writeObject(const Serializable* o);
 
-	Serializable* getCurrentObject();
+	Ref< Serializable > getCurrentObject();
 
-	Serializable* getOuterObject();
+	Ref< Serializable > getOuterObject();
 
 	/*!
 	 * \name Bidirectional interface.
@@ -112,7 +112,7 @@ public:
 
 	virtual bool operator >> (const Member< Serializable >& m) = 0;
 
-	virtual bool operator >> (const Member< Serializable* >& m) = 0;
+	virtual bool operator >> (const Member< Ref< Serializable > >& m) = 0;
 
 	virtual bool operator >> (const Member< void* >& m) = 0;
 
@@ -125,21 +125,21 @@ public:
 	//@}
 
 	template < typename T >
-	T* readObject()
+	Ref< T > readObject()
 	{
 		Ref< Serializable > object = readObject();
 		return dynamic_type_cast< T* >(object);
 	}
 
 	template < typename T >
-	T* getCurrentObject()
+	Ref< T > getCurrentObject()
 	{
 		Ref< Serializable > object = getCurrentObject();
 		return dynamic_type_cast< T* >(object);
 	}
 
 	template < typename T >
-	T* getOuterObject()
+	Ref< T > getOuterObject()
 	{
 		Ref< Serializable > object = getOuterObject();
 		return dynamic_type_cast< T* >(object);

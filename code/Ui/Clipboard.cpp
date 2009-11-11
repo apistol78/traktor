@@ -45,7 +45,7 @@ ClipboardContentType Clipboard::getContentType() const
 	return m_clipboard->getContentType();
 }
 
-Serializable* Clipboard::getObject() const
+Ref< Serializable > Clipboard::getObject() const
 {
 	T_ASSERT (m_clipboard);
 	return m_clipboard->getObject();

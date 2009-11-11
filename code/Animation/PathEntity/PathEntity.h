@@ -74,7 +74,7 @@ public:
 
 	float getTime() const { return m_time; }
 
-	world::SpatialEntity* getEntity() { return m_entity; }
+	Ref< world::SpatialEntity > getEntity() { return m_entity; }
 
 private:
 	Transform m_transform;

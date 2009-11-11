@@ -78,7 +78,7 @@ int TreeViewWin32::addImage(IBitmap* image, int imageCount)
 	return 0;
 }
 
-TreeViewItem* TreeViewWin32::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
+Ref< TreeViewItem > TreeViewWin32::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
 {
 	if (expandedImage < 0)
 		expandedImage = image;
@@ -138,7 +138,7 @@ void TreeViewWin32::removeAllItems()
 	m_items.clear();
 }
 
-TreeViewItem* TreeViewWin32::getRootItem() const
+Ref< TreeViewItem > TreeViewWin32::getRootItem() const
 {
 	HTREEITEM hRootItem = TreeView_GetRoot(m_hWnd);
 	if (!hRootItem)
@@ -147,7 +147,7 @@ TreeViewItem* TreeViewWin32::getRootItem() const
 	return getFromHandle(hRootItem);
 }
 
-TreeViewItem* TreeViewWin32::getSelectedItem() const
+Ref< TreeViewItem > TreeViewWin32::getSelectedItem() const
 {
 	HTREEITEM hSelectedItem = (HTREEITEM)m_hWnd.sendMessage(TVM_GETNEXTITEM, TVGN_CARET, (LPARAM)TVI_ROOT);
 	if (!hSelectedItem)
@@ -156,7 +156,7 @@ TreeViewItem* TreeViewWin32::getSelectedItem() const
 	return getFromHandle(hSelectedItem);
 }
 
-TreeViewItemWin32* TreeViewWin32::getFromHandle(HTREEITEM hItem) const
+Ref< TreeViewItemWin32 > TreeViewWin32::getFromHandle(HTREEITEM hItem) const
 {
 	std::map< HTREEITEM, Ref< TreeViewItemWin32 > >::const_iterator i = m_items.find(hItem);
 	T_ASSERT_M (i != m_items.end(), L"No such item");

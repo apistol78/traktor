@@ -36,16 +36,16 @@ class T_DLLCLASS RigidEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(RigidEntityData)
 
 public:
-	RigidEntity* createEntity(
+	Ref< RigidEntity > createEntity(
 		world::IEntityBuilder* builder,
 		PhysicsManager* physicsManager
 	) const;
 
 	virtual bool serialize(Serializer& s);
 
-	inline const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
+	inline Ref< const BodyDesc > getBodyDesc() const { return m_bodyDesc; }
 
-	inline const world::EntityInstance* getInstance() const { return m_instance; }
+	inline Ref< const world::EntityInstance > getInstance() const { return m_instance; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;

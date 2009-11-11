@@ -235,12 +235,12 @@ bool SceneEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* SceneEditorPage::getDataInstance()
+Ref< db::Instance > SceneEditorPage::getDataInstance()
 {
 	return m_dataInstance;
 }
 
-Object* SceneEditorPage::getDataObject()
+Ref< Object > SceneEditorPage::getDataObject()
 {
 	return m_dataObject;
 }
@@ -544,7 +544,7 @@ void SceneEditorPage::createControllerEditor()
 	}
 }
 
-SceneAsset* SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
+Ref< SceneAsset > SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
 {
 	// Create temporary instance from entity data.
 	Ref< world::EntityInstance > instance = gc_new< world::EntityInstance >(L"Entity", entityData);
@@ -590,7 +590,7 @@ void SceneEditorPage::updateScene()
 	}
 }
 
-ui::custom::GridRow* SceneEditorPage::createEntityListRow(EntityAdapter* entityAdapter)
+Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* entityAdapter)
 {
 	Ref< ui::custom::GridRow > row = gc_new< ui::custom::GridRow >(0);
 	row->setData(L"ENTITY", entityAdapter);

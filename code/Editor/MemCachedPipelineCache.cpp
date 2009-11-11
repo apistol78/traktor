@@ -69,7 +69,7 @@ void MemCachedPipelineCache::destroy()
 	m_proto = 0;
 }
 
-Stream* MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
+Ref< Stream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
 {
 	if (m_accessRead)
 	{
@@ -80,7 +80,7 @@ Stream* MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
 		return 0;
 }
 
-Stream* MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
+Ref< Stream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
 {
 	if (m_accessWrite)
 		return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash));

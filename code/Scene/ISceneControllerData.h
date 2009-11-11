@@ -1,6 +1,7 @@
 #ifndef traktor_scene_ISceneControllerData_H
 #define traktor_scene_ISceneControllerData_H
 
+#include "Core/Heap/Ref.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -31,7 +32,7 @@ class T_DLLCLASS ISceneControllerData : public Serializable
 	T_RTTI_CLASS(ISceneControllerData)
 
 public:
-	virtual ISceneController* createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const = 0;
+	virtual Ref< ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const = 0;
 };
 
 	}

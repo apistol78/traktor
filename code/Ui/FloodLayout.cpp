@@ -21,7 +21,7 @@ FloodLayout::FloodLayout(const Size& margin)
 
 bool FloodLayout::fit(Widget* widget, const Size& bounds, Size& result)
 {
-	Widget* child = getFirstVisibleChild(widget);
+	Ref< Widget > child = getFirstVisibleChild(widget);
 	if (!child)
 		return false;
 
@@ -31,7 +31,7 @@ bool FloodLayout::fit(Widget* widget, const Size& bounds, Size& result)
 
 void FloodLayout::update(Widget* widget)
 {
-	Widget* child = getFirstVisibleChild(widget);
+	Ref< Widget > child = getFirstVisibleChild(widget);
 	if (!child)
 		return;
 
@@ -39,9 +39,9 @@ void FloodLayout::update(Widget* widget)
 	child->setRect(rc);
 }
 
-Widget* FloodLayout::getFirstVisibleChild(Widget* widget)
+Ref< Widget > FloodLayout::getFirstVisibleChild(Widget* widget)
 {
-	for (Widget* child = widget->getFirstChild(); child; child = child->getNextSibling())
+	for (Ref< Widget > child = widget->getFirstChild(); child; child = child->getNextSibling())
 	{
 		if (child->isVisible(false))
 			return child;

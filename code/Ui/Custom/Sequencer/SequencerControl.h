@@ -68,7 +68,7 @@ public:
 
 	void removeAllSequenceItems();
 
-	int getSequenceItems(RefList< SequenceItem >& sequenceItems, int flags);
+	int getSequenceItems(RefArray< SequenceItem >& sequenceItems, int flags);
 
 	void addSelectEventHandler(EventHandler* eventHandler);
 
@@ -85,7 +85,7 @@ private:
 
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
-	RefList< SequenceItem > m_sequenceItems;
+	RefArray< SequenceItem > m_sequenceItems;
 	MouseTrackItem m_mouseTrackItem;
 	int m_separator;
 	int m_length;

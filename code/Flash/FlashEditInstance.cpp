@@ -36,7 +36,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 		parseText(html);
 }
 
-const FlashEdit* FlashEditInstance::getEdit() const
+Ref< const FlashEdit > FlashEditInstance::getEdit() const
 {
 	return m_edit;
 }
@@ -57,7 +57,7 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 
 	m_text.clear();
 
-	const html::Element* element = document.getDocumentElement();
+	Ref< const html::Element > element = document.getDocumentElement();
 	for (element = element->getFirstElementChild(); element; element = element->getNextElementSibling())
 	{
 		StringOutputStream ss;

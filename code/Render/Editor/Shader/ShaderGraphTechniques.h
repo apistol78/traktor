@@ -32,7 +32,7 @@ public:
 
 	std::set< std::wstring > getNames() const;
 
-	ShaderGraph* generate(const std::wstring& name) const;
+	Ref< ShaderGraph > generate(const std::wstring& name) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;

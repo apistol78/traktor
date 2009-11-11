@@ -2,6 +2,7 @@
 #define traktor_ui_GridView_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.

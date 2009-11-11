@@ -35,7 +35,7 @@ std::wstring HttpRequest::getValue(const std::wstring& key) const
 	return i->second;
 }
 
-HttpRequest* HttpRequest::parse(const std::wstring& request)
+Ref< HttpRequest > HttpRequest::parse(const std::wstring& request)
 {
 	return 0;
 }

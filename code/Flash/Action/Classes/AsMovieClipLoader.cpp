@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, ActionClass)
 
-AsMovieClipLoader* AsMovieClipLoader::getInstance()
+Ref< AsMovieClipLoader > AsMovieClipLoader::getInstance()
 {
 	static AsMovieClipLoader* instance = 0;
 	if (!instance)

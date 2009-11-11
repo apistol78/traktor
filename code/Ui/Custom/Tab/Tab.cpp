@@ -67,7 +67,7 @@ int Tab::getPageCount() const
 	return int(m_pages.size());
 }
 
-TabPage* Tab::getPage(int index)
+Ref< TabPage > Tab::getPage(int index)
 {
 	if (index < 0 || index >= int(m_pages.size()))
 		return 0;
@@ -110,7 +110,7 @@ void Tab::setActivePage(TabPage* page)
 	update();
 }
 
-TabPage* Tab::getActivePage()
+Ref< TabPage > Tab::getActivePage()
 {
 	return m_selectedPage;
 }

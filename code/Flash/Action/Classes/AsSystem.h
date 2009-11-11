@@ -18,7 +18,7 @@ class AsSystem : public ActionClass
 	T_RTTI_CLASS(AsSystem)
 
 public:
-	static AsSystem* getInstance();
+	static Ref< AsSystem > getInstance();
 
 private:
 	AsSystem();

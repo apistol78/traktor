@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashEditInstance_H
 #define traktor_flash_FlashEditInstance_H
 
+#include <list>
 #include "Flash/FlashCharacterInstance.h"
 
 // import/export mechanism.
@@ -30,7 +31,7 @@ public:
 
 	FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html);
 
-	const FlashEdit* getEdit() const;
+	Ref< const FlashEdit > getEdit() const;
 
 	bool parseText(const std::wstring& text);
 

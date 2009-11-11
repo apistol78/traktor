@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,9 +28,9 @@ class T_DLLCLASS ISessionManager : public Object
 public:
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers) = 0;
 
-	virtual IUser* getCurrentUser() = 0;
+	virtual Ref< IUser > getCurrentUser() = 0;
 
-	virtual ISession* createSession(IUser* user) = 0;
+	virtual Ref< ISession > createSession(IUser* user) = 0;
 };
 
 	}

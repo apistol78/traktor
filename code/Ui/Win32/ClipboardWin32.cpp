@@ -92,7 +92,7 @@ ClipboardContentType ClipboardWin32::getContentType() const
 	return contentType;
 }
 
-Serializable* ClipboardWin32::getObject() const
+Ref< Serializable > ClipboardWin32::getObject() const
 {
 	if (!OpenClipboard(NULL))
 		return 0;

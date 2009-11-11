@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -63,7 +64,7 @@ public:
 	 * \param outCacheable If resource is cacheable (default set to true).
 	 * \return Resource instance.
 	 */
-	virtual Object* create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid) = 0;
+	virtual Ref< Object > create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid) = 0;
 };
 	
 	}

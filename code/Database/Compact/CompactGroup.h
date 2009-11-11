@@ -31,9 +31,9 @@ public:
 
 	virtual bool remove();
 
-	virtual IProviderGroup* createGroup(const std::wstring& groupName);
+	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName);
 
-	virtual IProviderInstance* createInstance(const std::wstring& instanceName, const Guid& instanceGuid);
+	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid);
 
 	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups);
 

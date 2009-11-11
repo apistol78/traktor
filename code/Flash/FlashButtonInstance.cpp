@@ -37,7 +37,7 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 	}
 }
 
-const FlashButton* FlashButtonInstance::getButton() const
+Ref< const FlashButton > FlashButtonInstance::getButton() const
 {
 	return m_button;
 }
@@ -47,10 +47,10 @@ uint8_t FlashButtonInstance::getState() const
 	return m_state;
 }
 
-FlashCharacterInstance* FlashButtonInstance::getCharacterInstance(uint16_t referenceId) const
+Ref< FlashCharacterInstance > FlashButtonInstance::getCharacterInstance(uint16_t referenceId) const
 {
 	std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.find(referenceId);
-	return i != m_characterInstances.end() ? i->second.getPtr() : 0;
+	return i != m_characterInstances.end() ? i->second.ptr() : 0;
 }
 
 void FlashButtonInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int button)

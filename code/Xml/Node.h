@@ -47,15 +47,15 @@ public:
 	
 	void insertAfter(Node* child, Node* node);
 
-	Node* getParent() const;
+	Ref< Node > getParent() const;
 	
-	Node* getPreviousSibling() const;
+	Ref< Node > getPreviousSibling() const;
 	
-	Node* getNextSibling() const;
+	Ref< Node > getNextSibling() const;
 	
-	Node* getFirstChild() const;
+	Ref< Node > getFirstChild() const;
 	
-	Node* getLastChild() const;
+	Ref< Node > getLastChild() const;
 
 private:
 	Ref< Node > m_parent;

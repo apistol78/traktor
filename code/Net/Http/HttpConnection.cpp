@@ -109,7 +109,7 @@ Url HttpConnection::getUrl() const
 	return m_url;
 }
 
-Stream* HttpConnection::getStream()
+Ref< Stream > HttpConnection::getStream()
 {
 	return m_stream;
 }

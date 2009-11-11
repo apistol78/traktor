@@ -1,7 +1,7 @@
 #ifndef traktor_world_PostProcessSettings_H
 #define traktor_world_PostProcessSettings_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.

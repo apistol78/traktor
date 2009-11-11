@@ -1,10 +1,11 @@
 #ifndef traktor_editor_IEditor_H
 #define traktor_editor_IEditor_H
 
-#include <vector>
 #include <set>
+#include <vector>
 #include "Core/Config.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 namespace traktor
 {
@@ -47,25 +48,25 @@ class T_NOVTABLE IEditor
 {
 public:
 	/*! \brief Get editor settings. */
-	virtual Settings* getSettings() = 0;
+	virtual Ref< Settings > getSettings() = 0;
 
 	/*! \brief Get project. */
-	virtual IProject* getProject() = 0;
+	virtual Ref< IProject > getProject() = 0;
 
 	/*! \brief Get editor render system. */
-	virtual render::IRenderSystem* getRenderSystem() = 0;
+	virtual Ref< render::IRenderSystem > getRenderSystem() = 0;
 
 	/*! \brief Browse for rtti type. */
 	virtual const Type* browseType(const Type* base = 0) = 0;
 
 	/*! \brief Browse database instance. */
-	virtual db::Instance* browseInstance(const IBrowseFilter* filter = 0) = 0;
+	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = 0) = 0;
 
 	/*! \brief Open instance in appropriate editor. */
 	virtual bool openEditor(db::Instance* instance) = 0;
 
 	/*! \brief Get active editor. */
-	virtual IEditorPage* getActiveEditorPage() = 0;
+	virtual Ref< IEditorPage > getActiveEditorPage() = 0;
 
 	/*! \brief Set active editor. */
 	virtual void setActiveEditorPage(IEditorPage* editorPage) = 0;

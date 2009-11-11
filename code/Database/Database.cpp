@@ -5,9 +5,9 @@
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
 #include "Core/Heap/GcNew.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -63,13 +63,13 @@ void Database::close()
 	}
 }
 
-Group* Database::getRootGroup()
+Ref< Group > Database::getRootGroup()
 {
 	T_ASSERT (m_providerDatabase);
 	return m_rootGroup;
 }
 
-Group* Database::getGroup(const std::wstring& groupPath)
+Ref< Group > Database::getGroup(const std::wstring& groupPath)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -87,7 +87,7 @@ Group* Database::getGroup(const std::wstring& groupPath)
 	return group;
 }
 
-Group* Database::createGroup(const std::wstring& groupPath)
+Ref< Group > Database::createGroup(const std::wstring& groupPath)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -114,7 +114,7 @@ Group* Database::createGroup(const std::wstring& groupPath)
 	return group;
 }
 
-Instance* Database::getInstance(const Guid& instanceGuid)
+Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 {
 	T_ASSERT (m_providerDatabase);
 
@@ -139,7 +139,7 @@ Instance* Database::getInstance(const Guid& instanceGuid)
 	return i->second;
 }
 
-Instance* Database::getInstance(const std::wstring& instancePath, const Type* primaryType)
+Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Type* primaryType)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -160,7 +160,7 @@ Instance* Database::getInstance(const std::wstring& instancePath, const Type* pr
 	return group->getInstance(instanceName, primaryType);
 }
 
-Instance* Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
+Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -191,7 +191,7 @@ Instance* Database::createInstance(const std::wstring& instancePath, uint32_t fl
 	return group->createInstance(instanceName, flags, guid);
 }
 
-Serializable* Database::getObjectReadOnly(const Guid& guid)
+Ref< Serializable > Database::getObjectReadOnly(const Guid& guid)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);

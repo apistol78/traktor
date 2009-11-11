@@ -1,11 +1,13 @@
 #ifndef traktor_mesh_BlendMesh_H
 #define traktor_mesh_BlendMesh_H
 
-#include "Resource/Proxy.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Transform.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,7 +63,7 @@ public:
 
 	uint32_t getBlendTargetCount() const;
 
-	Instance* createInstance() const;
+	Ref< Instance > createInstance() const;
 
 	void render(
 		render::RenderContext* renderContext,

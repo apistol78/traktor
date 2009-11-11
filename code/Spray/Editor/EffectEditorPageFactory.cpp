@@ -17,7 +17,7 @@ const TypeSet EffectEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* EffectEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > EffectEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< EffectEditorPage >(editor);
 }

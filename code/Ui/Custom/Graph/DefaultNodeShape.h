@@ -36,7 +36,7 @@ public:
 
 	virtual Point getPinPosition(const Node* node, const Pin* pin);
 
-	virtual Pin* getPinAt(const Node* node, const Point& pt);
+	virtual Ref< Pin > getPinAt(const Node* node, const Point& pt);
 
 	virtual void paint(const Node* node, const PaintSettings* settings, Canvas* canvas, const Size& offset);
 

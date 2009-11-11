@@ -24,7 +24,7 @@ class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 	T_RTTI_CLASS(RagDollPoseControllerData)
 
 public:
-	virtual IPoseController* createInstance(
+	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,

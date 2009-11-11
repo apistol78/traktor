@@ -35,7 +35,7 @@ struct TGAHEADER
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, ImageFormat)
 
-Image* ImageFormatTga::read(Stream* stream)
+Ref< Image > ImageFormatTga::read(Stream* stream)
 {
 	TGAHEADER header;
 	Ref< const PixelFormat > pf;

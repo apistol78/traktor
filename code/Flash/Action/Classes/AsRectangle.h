@@ -18,7 +18,7 @@ class AsRectangle : public ActionClass
 	T_RTTI_CLASS(AsRectangle)
 
 public:
-	static AsRectangle* getInstance();
+	static Ref< AsRectangle > getInstance();
 
 private:
 	AsRectangle();

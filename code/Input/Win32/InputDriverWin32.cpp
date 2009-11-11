@@ -21,7 +21,7 @@ int InputDriverWin32::getDeviceCount()
 	return 2;
 }
 
-IInputDevice* InputDriverWin32::getDevice(int index)
+Ref< IInputDevice > InputDriverWin32::getDevice(int index)
 {
 	if (index == 0)
 		return m_keyboardDevice;

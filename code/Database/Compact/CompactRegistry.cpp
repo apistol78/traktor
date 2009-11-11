@@ -1,10 +1,11 @@
 #include <algorithm>
-#include "Database/Compact/CompactRegistry.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAggregate.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Database/Compact/CompactRegistry.h"
 
 namespace traktor
 {
@@ -82,7 +83,7 @@ bool CompactRegistry::removeGroup(CompactGroupEntry* groupEntry)
 		return false;
 
 	m_groupEntries.erase(i);
-	Heap::getInstance().invalidateRefs(groupEntry);
+	//Heap::getInstance().invalidateRefs(groupEntry);
 
 	return true;
 }
@@ -94,7 +95,7 @@ bool CompactRegistry::removeInstance(CompactInstanceEntry* instanceEntry)
 		return false;
 
 	m_instanceEntries.erase(i);
-	Heap::getInstance().invalidateRefs(instanceEntry);
+	//Heap::getInstance().invalidateRefs(instanceEntry);
 
 	return true;
 }
@@ -106,7 +107,7 @@ bool CompactRegistry::removeBlock(CompactBlockEntry* blockEntry)
 		return false;
 
 	m_blockEntries.erase(i);
-	Heap::getInstance().invalidateRefs(blockEntry);
+	//Heap::getInstance().invalidateRefs(blockEntry);
 
 	return true;
 }

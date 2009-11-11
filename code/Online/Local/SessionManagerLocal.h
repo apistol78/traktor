@@ -27,9 +27,9 @@ public:
 
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers);
 
-	virtual IUser* getCurrentUser();
+	virtual Ref< IUser > getCurrentUser();
 
-	virtual ISession* createSession(IUser* user);
+	virtual Ref< ISession > createSession(IUser* user);
 
 private:
 	Ref< UserLocal > m_currentUser;

@@ -1582,7 +1582,7 @@ int Switch::getInputPinCount() const
 	return int(m_inputPins.size());
 }
 
-const InputPin* Switch::getInputPin(int index) const
+Ref< const InputPin > Switch::getInputPin(int index) const
 {
 	return m_inputPins[index];
 }
@@ -1592,9 +1592,9 @@ int Switch::getOutputPinCount() const
 	return 1;
 }
 
-const OutputPin* Switch::getOutputPin(int index) const
+Ref< const OutputPin > Switch::getOutputPin(int index) const
 {
-	return m_outputPin;
+	return m_outputPin.ptr();
 }
 
 int Switch::getVersion() const

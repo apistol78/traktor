@@ -64,7 +64,7 @@ const std::wstring& Command::getName() const
 	return m_name;
 }
 
-Object* Command::getData() const
+Ref< Object > Command::getData() const
 {
 	return m_data;
 }

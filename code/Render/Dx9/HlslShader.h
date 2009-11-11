@@ -1,15 +1,15 @@
 #ifndef traktor_render_HlslShader_H
 #define traktor_render_HlslShader_H
 
-#include <string>
+#include <list>
 #include <map>
 #include <set>
-#include <list>
-#include "Core/Heap/Ref.h"
+#include <string>
+#include "Core/Heap/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Dx9/HlslType.h"
 #include "Render/Dx9/HlslVariable.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -85,7 +85,7 @@ private:
 	std::set< std::wstring > m_uniforms;
 	std::vector< bool > m_uniformAllocated;
 	int32_t m_nextTemporaryVariable;
-	RefList< StringOutputStream > m_outputStreams[BtLast];
+	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 
 	}

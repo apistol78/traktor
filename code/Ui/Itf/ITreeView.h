@@ -21,15 +21,15 @@ public:
 
 	virtual int addImage(IBitmap* image, int imageCount) = 0;
 
-	virtual TreeViewItem* createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage) = 0;
+	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage) = 0;
 
 	virtual void removeItem(TreeViewItem* item) = 0;
 
 	virtual void removeAllItems() = 0;
 
-	virtual TreeViewItem* getRootItem() const = 0;
+	virtual Ref< TreeViewItem > getRootItem() const = 0;
 
-	virtual TreeViewItem* getSelectedItem() const = 0;
+	virtual Ref< TreeViewItem > getSelectedItem() const = 0;
 };
 
 	}

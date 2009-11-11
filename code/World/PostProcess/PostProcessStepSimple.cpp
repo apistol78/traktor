@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
 
-PostProcessStep::Instance* PostProcessStepSimple::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepSimple::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;

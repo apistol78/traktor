@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Associative.h"
 #include "Ui/Command.h"
 
@@ -46,7 +47,7 @@ public:
 
 	void setImage(Bitmap* image);
 
-	Bitmap* getImage() const;
+	Ref< Bitmap > getImage() const;
 
 	void setEnable(bool enable);
 
@@ -60,7 +61,7 @@ public:
 
 	int count() const;
 
-	MenuItem* get(int index);
+	Ref< MenuItem > get(int index);
 
 private:
 	Command m_command;

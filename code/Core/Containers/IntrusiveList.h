@@ -189,15 +189,21 @@ public:
 
 	bool empty() const
 	{
+		sanityCheck();
 		return m_front == 0;
 	}
 
 	void push_front(ItemType* item)
 	{
+		sanityCheck();
+
 		T_ASSERT (L(item).prev() == 0);
 		T_ASSERT (L(item).next() == 0);
+
 		if (m_front)
 		{
+			T_ASSERT (item != m_front);
+
 			L(item).prev() = 0;
 			L(item).next() = m_front;
 
@@ -205,11 +211,16 @@ public:
 			L(m_front).prev() = item;
 		}
 		m_front = item;
+
 		T_ASSERT (L(m_front).prev() == 0);
+
+		sanityCheck();
 	}
 
 	void pop_front()
 	{
+		sanityCheck();
+
 		T_ASSERT (m_front);
 
 		ItemType* front = L(m_front).next();
@@ -220,11 +231,12 @@ public:
 		L(m_front).next() = 0;
 
 		m_front = front;
+
+		sanityCheck();
 	}
 
 	ItemType* front()
 	{
-		T_ASSERT (m_front);
 		return m_front;
 	}
 
@@ -248,32 +260,72 @@ public:
 		return const_iterator(this, 0);
 	}
 
-	void erase(const iterator& it)
+	iterator erase(const iterator& it)
 	{
 		T_ASSERT (it.m_list == this);
+
+		sanityCheck();
+
+		iterator it2(this, L(it.m_current).next());
 		remove(it.m_current);
+
+		sanityCheck();
+
+		return it2;
 	}
 
 	void remove(ItemType* item)
 	{
-		if (L(item).prev())
-			L(L(item).prev()).next() = L(item).next();
+		sanityCheck();
+
+		ItemType* prev = L(item).prev();
+		ItemType* next = L(item).next();
+
+		if (prev)
+		{
+			T_ASSERT (L(prev).next() == item);
+			L(prev).next() = next;
+		}
 		else
 		{
 			T_ASSERT (item == m_front);
-			m_front = L(item).next();
+			m_front = next;
 			if (m_front)
 				L(m_front).prev() = 0;
 		}
-		if (L(item).next())
-			L(L(item).next()).prev() = L(item).prev();
+
+		if (next)
+			L(next).prev() = prev;
 
 		L(item).prev() =
 		L(item).next() = 0;
+
+		sanityCheck();
 	}
 
 private:
 	ItemType* m_front;
+
+	void sanityCheck() const
+	{
+#if defined(_DEBUG)
+		ItemType* prev = 0;
+		for (ItemType* item = m_front; item; )
+		{
+			ItemType* P = L(item).prev();
+			T_FATAL_ASSERT (P == prev);
+
+			ItemType* N = L(item).next();
+			T_FATAL_ASSERT (N != item);
+
+			if (N != 0 && prev != 0)
+				T_FATAL_ASSERT (N != prev);
+
+			prev = item;
+			item = N;
+		}
+#endif
+	}
 };
 
 }

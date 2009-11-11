@@ -18,7 +18,7 @@ class AsMovieClip : public ActionClass
 	T_RTTI_CLASS(AsMovieClip)
 
 public:
-	static AsMovieClip* getInstance();
+	static Ref< AsMovieClip > getInstance();
 
 private:
 	AsMovieClip();

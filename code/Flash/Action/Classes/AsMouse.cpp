@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 
-AsMouse* AsMouse::createInstance()
+Ref< AsMouse > AsMouse::createInstance()
 {
 	Ref< AsMouse > instance = gc_new< AsMouse >();
 	instance->createPrototype();

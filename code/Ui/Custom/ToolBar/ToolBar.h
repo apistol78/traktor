@@ -2,8 +2,9 @@
 #define traktor_ui_custom_ToolBar_H
 
 #include "Core/Heap/Ref.h"
-#include "Ui/Widget.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Command.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -49,9 +50,9 @@ public:
 
 	uint32_t addItem(ToolBarItem* item);
 
-	ToolBarItem* getItem(uint32_t id);
+	Ref< ToolBarItem > getItem(uint32_t id);
 
-	ToolBarItem* getItem(const Point& at);
+	Ref< ToolBarItem > getItem(const Point& at);
 
 	void addClickEventHandler(EventHandler* eventHandler);
 

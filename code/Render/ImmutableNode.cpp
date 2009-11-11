@@ -26,7 +26,7 @@ int ImmutableNode::getInputPinCount() const
 	return int(m_inputPins.size());
 }
 
-const InputPin* ImmutableNode::getInputPin(int index) const
+Ref< const InputPin > ImmutableNode::getInputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
@@ -37,7 +37,7 @@ int ImmutableNode::getOutputPinCount() const
 	return int(m_outputPins.size());
 }
 
-const OutputPin* ImmutableNode::getOutputPin(int index) const
+Ref< const OutputPin > ImmutableNode::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];

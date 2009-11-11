@@ -68,7 +68,7 @@ public:
 		Vector4 m_gaussianOffsetWeights[15];
 	};
 
-	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

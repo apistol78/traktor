@@ -27,12 +27,12 @@ class SwizzleNodeFacade : public NodeFacade
 public:
 	SwizzleNodeFacade(ui::custom::GraphControl* graphControl);
 
-	virtual Node* createShaderNode(
+	virtual Ref< Node > createShaderNode(
 		const Type* nodeType,
 		editor::IEditor* editor
 	);
 
-	virtual ui::custom::Node* createEditorNode(
+	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode

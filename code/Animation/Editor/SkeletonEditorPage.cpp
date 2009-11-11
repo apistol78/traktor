@@ -177,12 +177,12 @@ bool SkeletonEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* SkeletonEditorPage::getDataInstance()
+Ref< db::Instance > SkeletonEditorPage::getDataInstance()
 {
 	return m_skeletonInstance;
 }
 
-Object* SkeletonEditorPage::getDataObject()
+Ref< Object > SkeletonEditorPage::getDataObject()
 {
 	return m_skeleton;
 }

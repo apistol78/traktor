@@ -2,7 +2,7 @@
 #define traktor_flash_FlashSprite_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/SwfTypes.h"
 
@@ -48,7 +48,7 @@ public:
 
 	const RefArray< ActionScript >& getInitActionScripts() const;
 
-	virtual FlashCharacterInstance* createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
 
 private:
 	uint16_t m_frameRate;

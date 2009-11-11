@@ -48,7 +48,7 @@ int InputDriverDi8::getDeviceCount()
 	return int(m_devices.size());
 }
 
-IInputDevice* InputDriverDi8::getDevice(int index)
+Ref< IInputDevice > InputDriverDi8::getDevice(int index)
 {
 	return m_devices[index];
 }

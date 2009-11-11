@@ -77,9 +77,9 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
-	virtual db::Instance* getDataInstance();
+	virtual Ref< db::Instance > getDataInstance();
 
-	virtual Object* getDataObject();
+	virtual Ref< Object > getDataObject();
 
 	virtual void propertiesChanged();
 
@@ -112,11 +112,11 @@ private:
 
 	void createControllerEditor();
 
-	SceneAsset* createWhiteRoomSceneAsset(world::EntityData* entityData);
+	Ref< SceneAsset > createWhiteRoomSceneAsset(world::EntityData* entityData);
 
 	void updateScene();
 
-	ui::custom::GridRow* createEntityListRow(EntityAdapter* entityAdapter);
+	Ref< ui::custom::GridRow > createEntityListRow(EntityAdapter* entityAdapter);
 
 	void updateInstanceGrid();
 

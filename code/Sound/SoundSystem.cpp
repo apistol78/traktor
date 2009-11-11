@@ -130,13 +130,13 @@ void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCou
 	std::memcpy(m_desc.cm, cm, sizeof(cm));
 }
 
-SoundChannel* SoundSystem::getChannel(uint32_t channelId)
+Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
 {
 	T_ASSERT (channelId < m_channels.size());
 	return m_channels[channelId];
 }
 
-SoundChannel* SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repeat)
+Ref< SoundChannel > SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repeat)
 {
 	T_ASSERT (channelId < m_channels.size());
 	Acquire< Semaphore > lock(m_channelAttachLock);
@@ -144,7 +144,7 @@ SoundChannel* SoundSystem::play(uint32_t channelId, Sound* sound, uint32_t repea
 	return m_channels[channelId];
 }
 
-SoundChannel* SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
+Ref< SoundChannel > SoundSystem::play(Sound* sound, bool wait, uint32_t repeat)
 {
 	for (;;)
 	{

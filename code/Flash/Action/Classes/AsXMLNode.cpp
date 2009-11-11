@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXMLNode", AsXMLNode, ActionClass)
 
-AsXMLNode* AsXMLNode::getInstance()
+Ref< AsXMLNode > AsXMLNode::getInstance()
 {
 	static AsXMLNode* instance = 0;
 	if (!instance)

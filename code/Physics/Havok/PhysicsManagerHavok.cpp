@@ -221,7 +221,7 @@ void PhysicsManagerHavok::setGravity(const Vector4& gravity)
 	m_world->setGravity(toHkVector4(gravity));
 }
 
-Body* PhysicsManagerHavok::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 {
 	if (!desc)
 		return 0;
@@ -462,7 +462,7 @@ Body* PhysicsManagerHavok::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerHavok::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
+Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	T_ASSERT (desc);
 	T_ASSERT (body1);

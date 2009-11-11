@@ -1,6 +1,7 @@
 #ifndef traktor_ui_FloodLayout_H
 #define traktor_ui_FloodLayout_H
 
+#include "Core/Heap/Ref.h"
 #include "Ui/Layout.h"
 #include "Ui/Size.h"
 
@@ -36,7 +37,7 @@ public:
 private:
 	Size m_margin;
 
-	Widget* getFirstVisibleChild(Widget* widget);
+	Ref< Widget > getFirstVisibleChild(Widget* widget);
 };
 	
 	}

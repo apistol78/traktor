@@ -1,7 +1,7 @@
 #ifndef traktor_animation_RagDollPoseController_H
 #define traktor_animation_RagDollPoseController_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Animation/IPoseController.h"
 
 // import/export mechanism.

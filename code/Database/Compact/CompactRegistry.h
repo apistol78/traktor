@@ -1,11 +1,12 @@
 #ifndef traktor_db_CompactRegistry_H
 #define traktor_db_CompactRegistry_H
 
-#include <map>
 #include <list>
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include <map>
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Core/Serialization/Serializable.h"
 
 namespace traktor
 {

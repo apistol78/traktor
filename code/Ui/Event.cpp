@@ -18,12 +18,12 @@ Event::Event(EventSubject* sender, Object* item)
 	m_keyState = Application::getInstance().getEventLoop()->getAsyncKeyState();
 }
 
-EventSubject* Event::getSender() const
+Ref< EventSubject > Event::getSender() const
 {
 	return m_sender;
 }
 
-Object* Event::getItem() const
+Ref< Object > Event::getItem() const
 {
 	return m_item;
 }

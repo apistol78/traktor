@@ -3,6 +3,7 @@
 
 #include <list>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +38,7 @@ class T_DLLCLASS IEditorPageFactory : public Object
 public:
 	virtual const TypeSet getEditableTypes() const = 0;
 
-	virtual IEditorPage* createEditorPage(IEditor* editor) const = 0;
+	virtual Ref< IEditorPage > createEditorPage(IEditor* editor) const = 0;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
 };

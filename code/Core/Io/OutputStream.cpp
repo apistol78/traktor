@@ -92,7 +92,7 @@ void OutputStream::setBuffer(OutputStreamBuffer* buffer)
 	m_buffer = buffer;
 }
 
-OutputStreamBuffer* OutputStream::getBuffer() const
+Ref< OutputStreamBuffer > OutputStream::getBuffer() const
 {
 	return m_buffer;
 }

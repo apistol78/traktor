@@ -2,6 +2,7 @@
 #define traktor_editor_IProject_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,13 +35,13 @@ class T_DLLCLASS IProject : public Object
 
 public:
 	/*! \brief Get project settings. */
-	virtual Settings* getSettings() = 0;
+	virtual Ref< Settings > getSettings() = 0;
 
 	/*! \brief Get source asset database. */
-	virtual db::Database* getSourceDatabase() = 0;
+	virtual Ref< db::Database > getSourceDatabase() = 0;
 
 	/*! \brief Get output database. */
-	virtual db::Database* getOutputDatabase() = 0;
+	virtual Ref< db::Database > getOutputDatabase() = 0;
 };
 
 	}

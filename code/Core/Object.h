@@ -31,17 +31,6 @@ public:
 	Object();
 
 	virtual ~Object();
-
-	/*! \brief Check if object is managed by heap.
-	 *
-	 * \return True if object is managed by heap.
-	 */
-	inline bool isManaged() const { return m_managed; }
-
-private:
-	friend class Heap;
-
-	bool m_managed;
 };
 
 template < typename T >

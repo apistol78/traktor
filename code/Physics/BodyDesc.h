@@ -30,7 +30,7 @@ class T_DLLCLASS BodyDesc : public Serializable
 public:
 	void setShape(ShapeDesc* shape);
 
-	const ShapeDesc* getShape() const;
+	Ref< const ShapeDesc > getShape() const;
 
 	virtual bool serialize(Serializer& s);
 

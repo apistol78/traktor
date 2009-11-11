@@ -1,8 +1,9 @@
 #ifndef traktor_ui_custom_LogList_H
 #define traktor_ui_custom_LogList_H
 
-#include "Ui/Widget.h"
+#include <list>
 #include "Core/Thread/Semaphore.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

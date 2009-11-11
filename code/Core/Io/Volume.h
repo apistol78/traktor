@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Object.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/File.h"
@@ -46,7 +47,7 @@ public:
 	 * \param path Path to file.
 	 * \return File object.
 	 */
-	virtual File* get(const Path& path) = 0;
+	virtual Ref< File > get(const Path& path) = 0;
 
 	/*! \brief Find files from wild-card mask.
 	 *
@@ -70,7 +71,7 @@ public:
 	 * \param mode Read or write mode, binary or textual.
 	 * \return Stream object at beginning of resource.
 	 */
-	virtual Stream* open(const Path& fileName, uint32_t mode) = 0;
+	virtual Ref< Stream > open(const Path& fileName, uint32_t mode) = 0;
 	
 	/*! \brief Check if file or directory exists.
 	 *

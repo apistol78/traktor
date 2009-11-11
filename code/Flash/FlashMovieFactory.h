@@ -30,7 +30,7 @@ class T_DLLCLASS FlashMovieFactory : public Object
 public:
 	FlashMovieFactory();
 
-	FlashMovie* createMovie(SwfReader* swf);
+	Ref< FlashMovie > createMovie(SwfReader* swf);
 
 private:
 	std::map< uint16_t, Ref< FlashTag > > m_tagReaders;

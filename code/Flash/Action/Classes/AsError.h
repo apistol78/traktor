@@ -18,7 +18,7 @@ class AsError : public ActionClass
 	T_RTTI_CLASS(AsError)
 
 public:
-	static AsError* getInstance();
+	static Ref< AsError > getInstance();
 
 private:
 	AsError();

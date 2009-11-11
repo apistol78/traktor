@@ -43,11 +43,11 @@ public:
 
 	void removeCharacter(FlashCharacter* character);
 
-	const FlashFont* getFont(uint16_t fontId) const;
+	Ref< const FlashFont > getFont(uint16_t fontId) const;
 
-	const FlashBitmap* getBitmap(uint16_t bitmapId) const;
+	Ref< const FlashBitmap > getBitmap(uint16_t bitmapId) const;
 
-	const FlashCharacter* getCharacter(uint16_t characterId) const;
+	Ref< const FlashCharacter > getCharacter(uint16_t characterId) const;
 
 	void setExport(const std::wstring& name, uint16_t exportId);
 
@@ -57,9 +57,9 @@ public:
 
 	const SwfRect& getFrameBounds() const;
 
-	const FlashSprite* getMovieClip() const;
+	Ref< const FlashSprite > getMovieClip() const;
 
-	FlashSpriteInstance* createMovieClipInstance() const;
+	Ref< FlashSpriteInstance > createMovieClipInstance() const;
 
 	const std::map< uint16_t, Ref< FlashFont > >& getFonts() const { return m_fonts; }
 

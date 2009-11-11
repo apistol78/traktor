@@ -29,9 +29,9 @@ class Node;
 /*! \brief Graph node pin.
  * \ingroup UIC
  */
-class T_DLLCLASS Pin :
-	public Object,
-	public Associative
+class T_DLLCLASS Pin
+:	public Object
+,	public Associative
 {
 	T_RTTI_CLASS(Pin)
 
@@ -44,7 +44,7 @@ public:
 
 	Pin(Node* node, const std::wstring& name, Direction direction, bool mandatory);
 
-	Node* getNode();
+	Ref< Node > getNode();
 
 	const std::wstring& getName() const;
 

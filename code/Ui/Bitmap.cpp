@@ -114,7 +114,7 @@ void Bitmap::copySubImage(drawing::Image* image, const Rect& srcRect, const Poin
 		m_bitmap->copySubImage(image, srcRect, destPos);
 }
 
-drawing::Image* Bitmap::getImage() const
+Ref< drawing::Image > Bitmap::getImage() const
 {
 	if (!m_bitmap)
 		return 0;
@@ -159,7 +159,7 @@ IBitmap* Bitmap::getIBitmap() const
 	return m_bitmap;
 }
 
-Bitmap* Bitmap::load(const std::wstring& fileName)
+Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 {
 	Ref< drawing::Image > image = drawing::Image::load(fileName);
 	if (!image)
@@ -172,7 +172,7 @@ Bitmap* Bitmap::load(const std::wstring& fileName)
 	return bitmap;
 }
 
-Bitmap* Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension)
+Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstring& extension)
 {
 	Ref< drawing::Image > image = drawing::Image::load(resource, size, extension);
 	if (!image)

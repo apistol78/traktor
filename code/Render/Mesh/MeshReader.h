@@ -33,7 +33,7 @@ class T_DLLCLASS MeshReader : public Object
 public:
 	MeshReader(MeshFactory* meshFactory);
 
-	Mesh* read(Stream* stream) const;
+	Ref< Mesh > read(Stream* stream) const;
 
 private:
 	Ref< MeshFactory > m_meshFactory;

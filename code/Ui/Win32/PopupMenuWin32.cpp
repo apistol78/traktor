@@ -51,7 +51,7 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT(*i),
+				UINT((*i).ptr()),
 				(LPTSTR)tmp.c_str()
 			);
 		}
@@ -100,7 +100,7 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT(subItem.getPtr()),
+				UINT(subItem.ptr()),
 				(LPTSTR)tmp.c_str()
 			);
 		}

@@ -1,9 +1,10 @@
 #ifndef traktor_world_PostProcessStep_H
 #define traktor_world_PostProcessStep_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,7 +62,7 @@ public:
 		) = 0;
 	};
 
-	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
+	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const = 0;
 };
 
 	}

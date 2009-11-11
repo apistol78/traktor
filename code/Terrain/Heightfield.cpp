@@ -83,12 +83,12 @@ void Heightfield::setNormalTexture(render::ITexture* normalTexture)
 	m_normalTexture = normalTexture;
 }
 
-render::ITexture* Heightfield::getHeightTexture() const
+Ref< render::ITexture > Heightfield::getHeightTexture() const
 {
 	return m_heightTexture;
 }
 
-render::ITexture* Heightfield::getNormalTexture() const
+Ref< render::ITexture > Heightfield::getNormalTexture() const
 {
 	return m_normalTexture;
 }

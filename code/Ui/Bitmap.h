@@ -2,6 +2,7 @@
 #define traktor_ui_Bitmap_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -88,7 +89,7 @@ public:
 	void copySubImage(drawing::Image* image, const ui::Rect& srcRect, const ui::Point& destPos);
 
 	/*! \brief Get image from bitmap. */
-	drawing::Image* getImage() const;
+	Ref< drawing::Image > getImage() const;
 
 	/*! \brief Get size of bitmap in pixels. */
 	Size getSize() const;
@@ -103,10 +104,10 @@ public:
 	IBitmap* getIBitmap() const;
 
 	/*! \brief Load bitmap from file. */
-	static Bitmap* load(const std::wstring& fileName);
+	static Ref< Bitmap > load(const std::wstring& fileName);
 
 	/*! \brief Load bitmap from resource. */
-	static Bitmap* load(const void* resource, uint32_t size, const std::wstring& extension);
+	static Ref< Bitmap > load(const void* resource, uint32_t size, const std::wstring& extension);
 
 private:
 	IBitmap* m_bitmap;

@@ -2,6 +2,7 @@
 #define traktor_xml_Element_H
 
 #include <vector>
+#include "Core/Heap/RefArray.h"
 #include "Xml/Node.h"
 
 // import/export mechanism.
@@ -42,7 +43,7 @@ public:
 
 	int get(const std::wstring& path, RefArray< Element >& elements);
 	
-	Element* getSingle(const std::wstring& path);
+	Ref< Element > getSingle(const std::wstring& path);
 
 	std::wstring getPath() const;
 
@@ -52,11 +53,11 @@ public:
 	
 	void setAttribute(const std::wstring& name, const std::wstring& value);
 	
-	Attribute* getFirstAttribute() const;
+	Ref< Attribute > getFirstAttribute() const;
 	
-	Attribute* getLastAttribute() const;
+	Ref< Attribute > getLastAttribute() const;
 	
-	Attribute* getAttribute(const std::wstring& name) const;
+	Ref< Attribute > getAttribute(const std::wstring& name) const;
 
 	/*! \brief Get attribute by name, will always return an attribute.
 	 * This method will always return an attribute, if named attribute
@@ -70,9 +71,9 @@ public:
 	 * \param name Name of attribute.
 	 * \return Attribute object.
 	 */
-	Attribute* getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
+	Ref< Attribute > getAttribute(const std::wstring& name, const std::wstring& defaultValue) const;
 	
-	Element* getChildElementByName(const std::wstring& name);
+	Ref< Element > getChildElementByName(const std::wstring& name);
 
 private:
 	std::wstring m_name;

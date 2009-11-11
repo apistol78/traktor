@@ -51,7 +51,7 @@ void ObjectPropertyItem::setObject(Object* object)
 	}
 }
 
-Object* ObjectPropertyItem::getObject() const
+Ref< Object > ObjectPropertyItem::getObject() const
 {
 	return m_object;
 }

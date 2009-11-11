@@ -34,9 +34,9 @@ public:
 
 	const std::wstring& getValue() const;
 	
-	Attribute* getPrevious() const;
+	Ref< Attribute > getPrevious() const;
 	
-	Attribute* getNext() const;
+	Ref< Attribute > getNext() const;
 
 private:
 	friend class Element;

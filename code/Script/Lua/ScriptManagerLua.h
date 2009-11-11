@@ -1,7 +1,7 @@
 #ifndef traktor_script_ScriptManagerLua_H
 #define traktor_script_ScriptManagerLua_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Script/IScriptManager.h"
 
 // import/export mechanism.
@@ -27,9 +27,9 @@ class T_DLLCLASS ScriptManagerLua : public IScriptManager
 public:
 	virtual void registerClass(IScriptClass* scriptClass);
 
-	virtual IScriptClass* findScriptClass(const Type& type) const;
+	virtual Ref< IScriptClass > findScriptClass(const Type& type) const;
 
-	virtual IScriptContext* createContext();
+	virtual Ref< IScriptContext > createContext();
 
 private:
 	RefArray< IScriptClass > m_registeredClasses;

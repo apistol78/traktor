@@ -3,7 +3,6 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/ProfileControl.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -33,9 +32,7 @@ void HeapView::destroy()
 void HeapView::eventDoubleClick(ui::Event* event)
 {
 	if (checked_type_cast< ui::MouseEvent* >(event)->getButton() == ui::MouseEvent::BtLeft)
-		Heap::getInstance().collect();
-	else
-		Heap::getInstance().dump(log::info);
+		Heap::collect();
 }
 
 	}

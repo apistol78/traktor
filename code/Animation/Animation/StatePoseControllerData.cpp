@@ -14,12 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.StatePoseControllerData", StatePoseControllerData, IPoseControllerData)
 
-IPoseController* StatePoseControllerData::createInstance(
-	resource::IResourceManager* resourceManager,
-	physics::PhysicsManager* physicsManager,
-	const Skeleton* skeleton,
-	const Transform& worldTransform
-)
+Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform)
 {
 	if (!resourceManager->bind(m_stateGraph))
 		return 0;

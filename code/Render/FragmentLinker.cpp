@@ -54,7 +54,7 @@ FragmentLinker::FragmentLinker(FragmentReader& fragmentReader)
 {
 }
 
-ShaderGraph* FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve)
+Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool fullResolve)
 {
 	Ref< ShaderGraph > resolvedShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
 	RefArray< Node > originalNodes = resolvedShaderGraph->getNodes();

@@ -36,7 +36,7 @@ class T_DLLCLASS PathEntityData : public world::SpatialEntityData
 public:
 	PathEntityData();
 
-	PathEntity* createEntity(world::IEntityBuilder* builder) const;
+	Ref< PathEntity > createEntity(world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 

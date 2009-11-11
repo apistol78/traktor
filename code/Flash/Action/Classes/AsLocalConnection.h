@@ -18,7 +18,7 @@ class AsLocalConnection : public ActionClass
 	T_RTTI_CLASS(AsLocalConnection)
 
 public:
-	static AsLocalConnection* getInstance();
+	static Ref< AsLocalConnection > getInstance();
 
 private:
 	AsLocalConnection();

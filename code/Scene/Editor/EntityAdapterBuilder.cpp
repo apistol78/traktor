@@ -88,7 +88,7 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 	T_ASSERT (!m_rootAdapter);
 }
 
-world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData)
+Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData)
 {
 	if (!entityData)
 		return 0;
@@ -99,7 +99,7 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 
 	// Save "outer" entity data in current adapter; need this information in order to determine entity editor etc..
 	if (m_currentAdapter && !m_currentAdapter->getRealEntityData())
-		m_currentAdapter->setRealEntityData(const_cast< world::EntityData* >(realEntityData.getPtr()));
+		m_currentAdapter->setRealEntityData(const_cast< world::EntityData* >(realEntityData.ptr()));
 
 	// Find entity factory.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
@@ -143,7 +143,7 @@ world::Entity* EntityAdapterBuilder::create(const std::wstring& name, const worl
 	return entity;
 }
 
-world::Entity* EntityAdapterBuilder::build(const world::EntityInstance* instance)
+Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* instance)
 {
 	if (!instance)
 		return 0;
@@ -190,7 +190,7 @@ void EntityAdapterBuilder::end()
 	m_cachedInstances.clear();
 }
 
-EntityAdapter* EntityAdapterBuilder::getRootAdapter() const
+Ref< EntityAdapter > EntityAdapterBuilder::getRootAdapter() const
 {
 	return m_rootAdapter;
 }

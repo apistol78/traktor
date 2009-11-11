@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
@@ -28,7 +29,7 @@ class T_DLLCLASS MeshFactory : public Object
 	T_RTTI_CLASS(MeshFactory)
 
 public:
-	virtual Mesh* createMesh(
+	virtual Ref< Mesh > createMesh(
 		const std::vector< VertexElement >& vertexElements,
 		unsigned int vertexBufferSize,
 		IndexType indexType,

@@ -15,7 +15,7 @@ class DefaultObjectEditorFactory : public IObjectEditorFactory
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual IObjectEditor* createObjectEditor(IEditor* editor) const;
+	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const;
 };
 
 	}

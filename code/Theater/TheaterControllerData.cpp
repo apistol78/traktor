@@ -5,7 +5,7 @@
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/SpatialEntity.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ TheaterControllerData::TheaterControllerData()
 {
 }
 
-scene::ISceneController* TheaterControllerData::createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const
+Ref< scene::ISceneController > TheaterControllerData::createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const
 {
 	RefArray< Track > tracks(m_trackData.size());
 	for (size_t i = 0; i < m_trackData.size(); ++i)

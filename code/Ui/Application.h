@@ -80,7 +80,7 @@ public:
 	IWidgetFactory* getWidgetFactory();
 
 	/*! \brief Get clipboard. */
-	Clipboard* getClipboard();
+	Ref< Clipboard > getClipboard();
 
 	/*! \name Virtual key translation. */
 	//@{

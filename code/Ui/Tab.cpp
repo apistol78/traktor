@@ -112,14 +112,14 @@ int Tab::getPageCount() const
 	return int(m_pages.size());
 }
 
-TabPage* Tab::getPage(int index) const
+Ref< TabPage > Tab::getPage(int index) const
 {
 	if (index < 0 || index >= int(m_pages.size()))
 		return 0;
 	return m_pages[index].page;
 }
 
-TabPage* Tab::getPageAt(const Point& position) const
+Ref< TabPage > Tab::getPageAt(const Point& position) const
 {
 	if (position.y >= c_tabHeight)
 		return 0;
@@ -215,12 +215,12 @@ void Tab::setActivePage(TabPage* page)
 	}
 }
 
-TabPage* Tab::getActivePage()
+Ref< TabPage > Tab::getActivePage()
 {
 	return m_selectedPage;
 }
 
-TabPage* Tab::cycleActivePage(bool forward)
+Ref< TabPage > Tab::cycleActivePage(bool forward)
 {
 	if (m_pages.size() < 2)
 		return m_selectedPage;

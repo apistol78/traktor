@@ -36,7 +36,7 @@ bool TabPage::isActive() const
 	return bool(m_tab->getActivePage() == this);
 }
 
-Tab* TabPage::getTab()
+Ref< Tab > TabPage::getTab()
 {
 	return m_tab;
 }

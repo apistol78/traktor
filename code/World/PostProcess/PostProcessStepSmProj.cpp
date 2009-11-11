@@ -32,7 +32,7 @@ const Vector4 c_poissonTaps[] =
  * This texture is used to rotate the Poisson distribution
  * disc for each fragment in shadow mapping.
  */
-render::ISimpleTexture* createRandomRotationTexture(render::IRenderSystem* renderSystem)
+Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem* renderSystem)
 {
 	static Random random;
 
@@ -68,7 +68,7 @@ render::ISimpleTexture* createRandomRotationTexture(render::IRenderSystem* rende
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSmProj", PostProcessStepSmProj, PostProcessStep)
 
-PostProcessStep::Instance* PostProcessStepSmProj::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return 0;

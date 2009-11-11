@@ -30,7 +30,7 @@ public:
 
 	void setPropertyObject(Serializable* object, Serializable* outer);
 
-	Serializable* getPropertyObject();
+	Ref< Serializable > getPropertyObject();
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 

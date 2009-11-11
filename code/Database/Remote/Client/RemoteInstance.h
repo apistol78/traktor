@@ -41,15 +41,15 @@ public:
 
 	virtual bool remove();
 
-	virtual Stream* readObject(const Type*& outSerializerType);
+	virtual Ref< Stream > readObject(const Type*& outSerializerType);
 
-	virtual Stream* writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType);
+	virtual Ref< Stream > writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 
-	virtual Stream* readData(const std::wstring& dataName);
+	virtual Ref< Stream > readData(const std::wstring& dataName);
 
-	virtual Stream* writeData(const std::wstring& dataName);
+	virtual Ref< Stream > writeData(const std::wstring& dataName);
 
 private:
 	Ref< Connection > m_connection;

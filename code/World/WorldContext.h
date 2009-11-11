@@ -47,7 +47,7 @@ public:
 
 	void flush(WorldRenderView* worldRenderView);
 
-	inline render::RenderContext* getRenderContext() { return m_renderContext; }
+	inline Ref< render::RenderContext > getRenderContext() { return m_renderContext; }
 
 private:
 	Ref< WorldRenderer > m_worldRenderer;

@@ -1,10 +1,11 @@
 #ifndef traktor_render_RenderSystemDx10_H
 #define traktor_render_RenderSystemDx10_H
 
-#include "Render/Dx10/Platform.h"
-#include "Render/IRenderSystem.h"
-#include "Core/Misc/ComRef.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/ComRef.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Dx10/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,31 +38,31 @@ public:
 
 	virtual int getDisplayModeCount() const;
 	
-	virtual DisplayMode* getDisplayMode(int index);
+	virtual Ref< DisplayMode > getDisplayMode(int index);
 	
-	virtual DisplayMode* getCurrentDisplayMode();
+	virtual Ref< DisplayMode > getCurrentDisplayMode();
 
 	virtual bool handleMessages();
 
-	virtual IRenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
 
-	virtual IRenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
 
-	virtual VertexBuffer* createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
+	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
-	virtual IndexBuffer* createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic);
+	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic);
 
-	virtual ISimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc);
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc);
 
-	virtual ICubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc);
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc);
 	
-	virtual IVolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc);
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc);
 
-	virtual RenderTargetSet* createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual ProgramResource* compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
+	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
 
-	virtual IProgram* createProgram(const ProgramResource* programResource);
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
 
 private:
 	Ref< ContextDx10 > m_context;

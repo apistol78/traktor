@@ -64,7 +64,7 @@ private:
 
 	Ref< BspNode > m_root;
 
-	BspNode* recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes);
+	Ref< BspNode > recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes);
 
 	bool inside(const BspNode* node, const Vector4& pt) const;
 

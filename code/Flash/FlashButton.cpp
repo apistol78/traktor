@@ -34,7 +34,7 @@ const FlashButton::button_conditions_t& FlashButton::getButtonConditions() const
 	return m_conditions;
 }
 
-FlashCharacterInstance* FlashButton::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
+Ref< FlashCharacterInstance > FlashButton::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
 	return gc_new< FlashButtonInstance >(context, parent, this);
 }

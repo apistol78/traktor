@@ -25,12 +25,12 @@ EntityAdapter::EntityAdapter(world::EntityInstance* instance)
 {
 }
 
-world::EntityInstance* EntityAdapter::getInstance() const
+Ref< world::EntityInstance > EntityAdapter::getInstance() const
 {
 	return m_instance;
 }
 
-world::EntityData* EntityAdapter::getEntityData() const
+Ref< world::EntityData > EntityAdapter::getEntityData() const
 {
 	T_ASSERT (m_instance);
 	return m_instance->getEntityData();
@@ -41,7 +41,7 @@ void EntityAdapter::setRealEntityData(world::EntityData* entityData)
 	m_realEntityData = entityData;
 }
 
-world::EntityData* EntityAdapter::getRealEntityData() const
+Ref< world::EntityData > EntityAdapter::getRealEntityData() const
 {
 	return m_realEntityData;
 }
@@ -51,7 +51,7 @@ void EntityAdapter::setEntity(world::Entity* entity)
 	m_entity = entity;
 }
 
-world::Entity* EntityAdapter::getEntity() const
+Ref< world::Entity > EntityAdapter::getEntity() const
 {
 	return m_entity;
 }
@@ -165,12 +165,12 @@ bool EntityAdapter::isGroup() const
 		return false;
 }
 
-EntityAdapter* EntityAdapter::getParent() const
+Ref< EntityAdapter > EntityAdapter::getParent() const
 {
 	return m_parent;
 }
 
-EntityAdapter* EntityAdapter::getParentGroup()
+Ref< EntityAdapter > EntityAdapter::getParentGroup()
 {
 	Ref< EntityAdapter > entity = this;
 	for (; entity; entity = entity->getParent())
@@ -181,7 +181,7 @@ EntityAdapter* EntityAdapter::getParentGroup()
 	return entity;
 }
 
-EntityAdapter* EntityAdapter::getParentContainerGroup()
+Ref< EntityAdapter > EntityAdapter::getParentContainerGroup()
 {
 	Ref< EntityAdapter > entity = getParent();
 	for (; entity; entity = entity->getParent())
@@ -251,7 +251,7 @@ void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)
 	m_entityEditor = entityEditor;
 }
 
-IEntityEditor* EntityAdapter::getEntityEditor() const
+Ref< IEntityEditor > EntityAdapter::getEntityEditor() const
 {
 	return m_entityEditor;
 }

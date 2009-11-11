@@ -234,7 +234,7 @@ void ListViewWin32::setItems(ListViewItems* items)
 	m_items = items;
 }
 
-ListViewItems* ListViewWin32::getItems() const
+Ref< ListViewItems > ListViewWin32::getItems() const
 {
 	return m_items;
 }

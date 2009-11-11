@@ -1,8 +1,8 @@
 #ifndef traktor_ui_custom_EnvelopeControl_H
 #define traktor_ui_custom_EnvelopeControl_H
 
-#include <vector>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.

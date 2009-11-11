@@ -150,7 +150,7 @@ void BitReader::skip(uint32_t nbits)
 	}
 }
 
-Stream* BitReader::getStream()
+Ref< Stream > BitReader::getStream()
 {
 	return m_stream;
 }

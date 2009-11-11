@@ -72,7 +72,7 @@ ProgramOpenGL::~ProgramOpenGL()
 	destroy();
 }
 
-ProgramResource* ProgramOpenGL::compile(const GlslProgram& glslProgram, int optimize, bool validate)
+Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, int optimize, bool validate)
 {
 	Ref< ProgramResource > resource;
 

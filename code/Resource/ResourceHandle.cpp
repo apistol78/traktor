@@ -17,7 +17,7 @@ void ResourceHandle::replace(Object* object)
 	m_object = object;
 }
 
-Object* ResourceHandle::get()
+Ref< Object > ResourceHandle::get()
 {
 	return m_object;
 }
@@ -26,7 +26,7 @@ void ResourceHandle::flush()
 {
 	if (m_object)
 	{
-		Heap::getInstance().invalidateRefs(m_object);
+		//Heap::getInstance().invalidateRefs(m_object);
 		T_FATAL_ASSERT (m_object == 0);
 	}
 }

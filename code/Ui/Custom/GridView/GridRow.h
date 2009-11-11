@@ -1,8 +1,9 @@
 #ifndef traktor_ui_GridRow_H
 #define traktor_ui_GridRow_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -49,7 +50,7 @@ public:
 
 	void setFont(Font* font);
 
-	Font* getFont() const { return m_font; }
+	Ref< Font > getFont() const { return m_font; }
 
 	void addItem(GridItem* item);
 
@@ -65,7 +66,7 @@ public:
 
 	void removeAllChildren();
 
-	GridRow* getParent() { return m_parent; }
+	Ref< GridRow > getParent() { return m_parent; }
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 

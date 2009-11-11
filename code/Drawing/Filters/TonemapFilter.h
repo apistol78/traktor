@@ -27,7 +27,7 @@ class T_DLLCLASS TonemapFilter : public ImageFilter
 	T_RTTI_CLASS(TonemapFilter)
 
 protected:
-	virtual Image* apply(const Image* image);
+	virtual Ref< Image > apply(const Image* image);
 };
 	
 	}

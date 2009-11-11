@@ -34,13 +34,14 @@ public:
 	void setData(const std::wstring& key, Object* data);
 
 	/*! \brief Get named object. */
-	Object* getData(const std::wstring& key) const;
+	Ref< Object > getData(const std::wstring& key) const;
 
 	/*! \brief Get named object, ensure proper type. */
 	template < typename DataType >
-	DataType* getData(const std::wstring& key) const
+	Ref< DataType > getData(const std::wstring& key) const
 	{
-		return dynamic_type_cast< DataType* >(getData(key));
+		Ref< Object > data = getData(key);
+		return dynamic_type_cast< DataType* >(data);
 	}
 
 private:

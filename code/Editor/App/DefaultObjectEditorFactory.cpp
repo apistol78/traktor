@@ -15,7 +15,7 @@ const TypeSet DefaultObjectEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-IObjectEditor* DefaultObjectEditorFactory::createObjectEditor(IEditor* editor) const
+Ref< IObjectEditor > DefaultObjectEditorFactory::createObjectEditor(IEditor* editor) const
 {
 	return gc_new< DefaultObjectEditor >(editor);
 }

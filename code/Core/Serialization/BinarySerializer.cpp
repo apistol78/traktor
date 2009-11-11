@@ -512,7 +512,7 @@ bool BinarySerializer::operator >> (const Member< Serializable >& m)
 	}
 }
 
-bool BinarySerializer::operator >> (const Member< Serializable* >& m)
+bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
 {
 	if (m_direction == SdRead)
 	{

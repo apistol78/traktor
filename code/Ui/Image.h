@@ -41,7 +41,7 @@ public:
 
 	bool setImage(Bitmap* image, bool transparent = false);
 
-	Bitmap* getImage() const;
+	Ref< Bitmap > getImage() const;
 
 	bool isTransparent() const;
 

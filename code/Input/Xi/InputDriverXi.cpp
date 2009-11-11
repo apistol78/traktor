@@ -20,7 +20,7 @@ int InputDriverXi::getDeviceCount()
 	return int(m_devices.size());
 }
 
-IInputDevice* InputDriverXi::getDevice(int index)
+Ref< IInputDevice > InputDriverXi::getDevice(int index)
 {
 	return m_devices[index];
 }

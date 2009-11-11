@@ -15,13 +15,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilder", EntityBuilder, Object)
 
+EntityBuilder::EntityBuilder()
+:	m_inbuild(false)
+{
+}
+
 void EntityBuilder::addFactory(IEntityFactory* entityFactory)
 {
+	T_FATAL_ASSERT_M (!m_inbuild, L"Should not add entity factory when building");
 	m_entityFactories.push_back(entityFactory);
 }
 
 void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 {
+	T_FATAL_ASSERT_M (!m_inbuild, L"Should not remove entity factory when building");
 	RefArray< IEntityFactory >::iterator i = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
 	if (i != m_entityFactories.end())
 		m_entityFactories.erase(i);
@@ -29,12 +36,17 @@ void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 
 void EntityBuilder::begin(IEntityManager* entityManager)
 {
+	T_FATAL_ASSERT_M (!m_inbuild, L"EntityBuilder already begun");
 	m_entityManager = entityManager;
+	m_inbuild = true;
 }
 
-Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entityData, const Object* instanceData)
+Ref< Entity > EntityBuilder::create(const std::wstring& name, const EntityData* entityData, const Object* instanceData)
 {
-	if (!entityData)
+	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
+
+	Ref< const EntityData > entityDataRef(entityData);
+	if (!entityDataRef)
 		return 0;
 
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
@@ -45,9 +57,9 @@ Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entity
 		const TypeSet& typeSet = (*i)->getEntityTypes();
 		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
-			if (is_type_of(**j, entityData->getType()))
+			if (is_type_of(**j, type_of(entityDataRef)))
 			{
-				uint32_t classDifference = type_difference(**j, entityData->getType());
+				uint32_t classDifference = type_difference(**j, entityDataRef->getType());
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
@@ -59,14 +71,14 @@ Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entity
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to find entity factory for \"" << type_name(entityDataRef) << L"\"" << Endl;
 		return 0;
 	}
 
-	Ref< Entity > entity = entityFactory->createEntity(this, name, *entityData, instanceData);
+	Ref< Entity > entity = entityFactory->createEntity(this, name, *entityDataRef, instanceData);
 	if (!entity)
 	{
-		log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to create entity from \"" << type_name(entityDataRef) << L"\"" << Endl;
 		return 0;
 	}
 
@@ -77,34 +89,40 @@ Entity* EntityBuilder::create(const std::wstring& name, const EntityData* entity
 	return entity;
 }
 
-Entity* EntityBuilder::build(const EntityInstance* instance)
+Ref< Entity > EntityBuilder::build(const EntityInstance* instance)
 {
-	if (!instance)
+	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
+
+	Ref< const EntityInstance > instanceRef(instance);
+	if (!instanceRef)
 		return 0;
 
 	// If we've already created this instance then we return same entity.
-	std::map< const EntityInstance*, Ref< Entity > >::iterator i = m_instances.find(instance);
+	std::map< Ref< const EntityInstance >, Ref< Entity > >::iterator i = m_instances.find(instanceRef);
 	if (i != m_instances.end())
 		return i->second;
 
 	// Create entity from entity data.
-	Ref< const EntityData > entityData = instance->getEntityData();
-	Ref< Entity > entity = create(instance->getName(), entityData, instance->getInstanceData());
+	Ref< const EntityData > entityData = instanceRef->getEntityData();
+	Ref< Entity > entity = create(instanceRef->getName(), entityData, instanceRef->getInstanceData());
 	if (!entity)
 		return 0;
 
 	// Save to instances cache.
-	m_instances.insert(std::make_pair(instance, entity));
+	m_instances.insert(std::make_pair(
+		instanceRef,
+		entity
+	));
 
 	// Resolve references to this entity instance.
-	const RefArray< EntityInstance >& references = instance->getReferences();
+	const RefArray< EntityInstance >& references = instanceRef->getReferences();
 	for (RefArray< EntityInstance >::const_iterator i = references.begin(); i != references.end(); ++i)
 	{
 		Ref< Entity > reference = build(*i);
 		if (reference)
 		{
 			entity->addReference((*i)->getName(), reference);
-			reference->addReferee(instance->getName(), entity);
+			reference->addReferee(instanceRef->getName(), entity);
 		}
 		else
 			log::warning << L"Unable to get reference instance" << Endl;
@@ -115,7 +133,9 @@ Entity* EntityBuilder::build(const EntityInstance* instance)
 
 void EntityBuilder::end()
 {
+	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
 	m_instances.clear();
+	m_inbuild = false;
 }
 
 	}

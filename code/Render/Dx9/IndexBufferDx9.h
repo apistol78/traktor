@@ -37,7 +37,7 @@ public:
 
 	bool create(IDirect3DDevice9* d3dDevice, bool dynamic);
 
-	void activate(IDirect3DDevice9* d3dDevice);
+	static void activate(IDirect3DDevice9* d3dDevice, IndexBufferDx9* indexBuffer);
 
 	virtual void destroy();
 

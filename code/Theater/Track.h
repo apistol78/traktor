@@ -34,7 +34,7 @@ public:
 
 	void setEntity(world::SpatialEntity* entity);
 
-	world::SpatialEntity* getEntity() const;
+	Ref< world::SpatialEntity > getEntity() const;
 
 	const TransformPath& getPath() const;
 

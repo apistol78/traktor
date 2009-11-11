@@ -33,7 +33,7 @@ public:
 	 *
 	 * \return Pointer to button.
 	 */
-	const FlashButton* getButton() const;
+	Ref< const FlashButton > getButton() const;
 
 	/*! \brief Get button state.
 	 *
@@ -46,7 +46,7 @@ public:
 	 * \param referenceId Character identity.
 	 * \return Character instance.
 	 */
-	FlashCharacterInstance* getCharacterInstance(uint16_t referenceId) const;
+	Ref< FlashCharacterInstance > getCharacterInstance(uint16_t referenceId) const;
 
 	virtual void eventMouseDown(ActionVM* vm, int x, int y, int button);
 

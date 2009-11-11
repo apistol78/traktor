@@ -1,9 +1,11 @@
 #ifndef traktor_scene_ISceneEditorProfile_H
 #define traktor_scene_ISceneEditorProfile_H
 
+#include <list>
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

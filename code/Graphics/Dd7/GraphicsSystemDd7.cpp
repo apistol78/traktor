@@ -197,17 +197,17 @@ bool GraphicsSystemDd7::resize(int width, int height)
 	return true;
 }
 
-Surface* GraphicsSystemDd7::getPrimarySurface()
+Ref< Surface > GraphicsSystemDd7::getPrimarySurface()
 {
 	return m_primary;
 }
 
-Surface* GraphicsSystemDd7::getSecondarySurface()
+Ref< Surface > GraphicsSystemDd7::getSecondarySurface()
 {
 	return m_secondary;
 }
 
-Surface* GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
+Ref< Surface > GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
 {
 	DDSURFACEDESC2 ddsd;
 	HRESULT hr;

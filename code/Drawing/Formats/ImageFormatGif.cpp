@@ -145,7 +145,7 @@ void decodeLzw(const std::vector< unsigned char >& in, int initialCodeSize, std:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatGif", ImageFormatGif, ImageFormat)
 
-Image* ImageFormatGif::read(Stream* stream)
+Ref< Image > ImageFormatGif::read(Stream* stream)
 {
 	Ref< Image > image;
 	

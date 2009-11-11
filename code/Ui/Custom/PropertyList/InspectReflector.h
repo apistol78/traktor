@@ -2,6 +2,7 @@
 #define traktor_ui_custom_InspectReflector_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializer.h"
 
 // import/export mechanism.
@@ -80,7 +81,7 @@ public:
 	
 	virtual bool operator >> (const Member< Serializable >& m);
 
-	virtual bool operator >> (const Member< Serializable* >& m);
+	virtual bool operator >> (const Member< Ref< Serializable > >& m);
 
 	virtual bool operator >> (const Member< void* >& m);
 
@@ -94,7 +95,7 @@ private:
 	friend class AutoPropertyList;
 
 	Ref< AutoPropertyList > m_propertyList;
-	RefList< PropertyItem > m_propertyItemStack;
+	RefArray< PropertyItem > m_propertyItemStack;
 
 	void addPropertyItem(PropertyItem* propertyItem);
 };

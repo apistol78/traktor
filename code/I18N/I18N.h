@@ -29,7 +29,7 @@ public:
 
 	void appendDictionary(Dictionary* dictionary, bool overrideExisting = false);
 
-	Dictionary* getMasterDictionary();
+	Ref< Dictionary > getMasterDictionary();
 
 	std::wstring get(const std::wstring& id, const std::wstring& defaultText = L"") const;
 

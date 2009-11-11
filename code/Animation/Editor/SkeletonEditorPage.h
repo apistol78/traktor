@@ -85,9 +85,9 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
-	virtual db::Instance* getDataInstance();
+	virtual Ref< db::Instance > getDataInstance();
 
-	virtual Object* getDataObject();
+	virtual Ref< Object > getDataObject();
 
 	virtual void propertiesChanged();
 

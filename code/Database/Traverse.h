@@ -10,7 +10,7 @@ namespace traktor
 //@{
 
 template < typename GroupPredicate >
-Group* findChildGroup(Group* group, const GroupPredicate& pred)
+Ref< Group > findChildGroup(Group* group, const GroupPredicate& pred)
 {
 	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 	{
@@ -21,7 +21,7 @@ Group* findChildGroup(Group* group, const GroupPredicate& pred)
 }
 
 template < typename InstancePredicate >
-Instance* findChildInstance(Group* group, const InstancePredicate& pred)
+Ref< Instance > findChildInstance(Group* group, const InstancePredicate& pred)
 {
 	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
@@ -42,7 +42,7 @@ void findChildInstances(Group* group, const InstancePredicate& pred, RefArray< I
 }
 
 template < typename GroupPredicate >
-Group* recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
+Ref< Group > recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 {
 	Ref< Group > childGroup = findChildGroup(group, pred);
 	if (childGroup)
@@ -59,7 +59,7 @@ Group* recursiveFindChildGroup(Group* group, const GroupPredicate& pred)
 }
 
 template < typename InstancePredicate >
-Instance* recursiveFindChildInstance(Group* group, const InstancePredicate& pred)
+Ref< Instance > recursiveFindChildInstance(Group* group, const InstancePredicate& pred)
 {
 	Ref< Instance > childInstance = findChildInstance(group, pred);
 	if (childInstance)

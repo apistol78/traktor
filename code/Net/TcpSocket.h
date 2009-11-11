@@ -1,6 +1,7 @@
 #ifndef traktor_net_TcpSocket_H
 #define traktor_net_TcpSocket_H
 
+#include "Core/Heap/Ref.h"
 #include "Net/Socket.h"
 
 // import/export mechanism.
@@ -48,13 +49,13 @@ public:
 	bool listen();
 
 	/*! \brief Accept connection. */
-	TcpSocket* accept();
+	Ref< TcpSocket > accept();
 
 	/*! \brief Get local socket address. */
-	SocketAddress* getLocalAddress();
+	Ref< SocketAddress > getLocalAddress();
 
 	/*! \brief Get remote socket address. */
-	SocketAddress* getRemoteAddress();
+	Ref< SocketAddress > getRemoteAddress();
 };
 
 	}

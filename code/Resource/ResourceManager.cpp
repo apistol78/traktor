@@ -20,7 +20,7 @@ class NullResourceHandle : public IResourceHandle
 public:
 	virtual void replace(Object* object) { T_BREAKPOINT; }
 
-	virtual Object* get() { return 0; }
+	virtual Ref< Object > get() { return 0; }
 
 	virtual void flush() {}
 };
@@ -52,7 +52,7 @@ void ResourceManager::removeAllFactories()
 	m_factories.clear();
 }
 
-IResourceHandle* ResourceManager::bind(const Type& type, const Guid& guid)
+Ref< IResourceHandle > ResourceManager::bind(const Type& type, const Guid& guid)
 {
 	Ref< ResourceHandle > handle;
 
@@ -129,9 +129,9 @@ void ResourceManager::flush()
 		i->second->flush();
 }
 
-IResourceFactory* ResourceManager::findFactory(const Type& type)
+Ref< IResourceFactory > ResourceManager::findFactory(const Type& type)
 {
-	for (RefList< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
+	for (RefArray< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 	{
 		TypeSet typeSet = (*i)->getResourceTypes();
 		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())

@@ -32,7 +32,7 @@ int ListViewItems::count() const
 	return int(m_items.size());
 }
 
-ListViewItem* ListViewItems::get(int index) const
+Ref< ListViewItem > ListViewItems::get(int index) const
 {
 	if (index < 0 || index >= int(m_items.size()))
 		return 0;

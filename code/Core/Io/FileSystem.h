@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/Singleton/Singleton.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/File.h"
 
@@ -61,7 +62,7 @@ public:
 	 * \param index Index of mounted volume.
 	 * \return Volume instance.
 	 */
-	Volume* getVolume(int index) const;
+	Ref< Volume > getVolume(int index) const;
 
 	/*! \brief Get identifier of volume.
 	 *
@@ -80,14 +81,14 @@ public:
 	 *
 	 * \return Current volume.
 	 */
-	Volume* getCurrentVolume() const;
+	Ref< Volume > getCurrentVolume() const;
 	
 	/*! \brief Get file description.
 	 *
 	 * \param fileName Path to file to query.
 	 * \return File description.
 	 */
-	File* get(const Path& fileName);
+	Ref< File > get(const Path& fileName);
 
 	/*! \brief Find files.
 	 *
@@ -111,7 +112,7 @@ public:
 	 * \param mode Desired file mode.
 	 * \return Stream to file, null if unable to access file.
 	 */
-	Stream* open(const Path& fileName, uint32_t mode);
+	Ref< Stream > open(const Path& fileName, uint32_t mode);
 	
 	/*! \brief Return true if file exists.
 	 *
@@ -211,7 +212,7 @@ private:
 	std::map< std::wstring, Ref< Volume > > m_volumes;
 	Ref< Volume > m_currentVolume;
 
-	Volume* getVolume(const Path& path) const;
+	Ref< Volume > getVolume(const Path& path) const;
 };
 
 }

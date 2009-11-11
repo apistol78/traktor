@@ -1,7 +1,7 @@
 #ifndef traktor_theater_TheaterController_H
 #define traktor_theater_TheaterController_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Scene/ISceneController.h"
 
 // import/export mechanism.

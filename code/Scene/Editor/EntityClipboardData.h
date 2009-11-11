@@ -2,6 +2,7 @@
 #define traktor_scene_EntityClipboardData_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 namespace traktor

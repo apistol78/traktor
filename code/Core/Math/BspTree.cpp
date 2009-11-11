@@ -33,7 +33,7 @@ bool BspTree::inside(const Winding& w) const
 	return inside(m_root, w);
 }
 
-BspTree::BspNode* BspTree::recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes)
+Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes)
 {
 	Ref< BspNode > node = gc_new< BspNode >();
 	node->plane = planes[0];

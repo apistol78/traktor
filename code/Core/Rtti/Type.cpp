@@ -104,9 +104,12 @@ bool Type::isEditable() const
 	return m_factory && m_factory->isEditable();
 }
 
-Object* Type::newInstance() const
+Ref< Object > Type::newInstance() const
 {
-	return m_factory ? m_factory->newInstance() : 0;
+	if (m_factory)
+		return m_factory->newInstance();
+	else
+		return 0;
 }
 
 const Type* Type::find(const std::wstring& name)

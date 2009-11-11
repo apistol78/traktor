@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GrayScaleFilter", GrayscaleFilter, ImageFilter)
 
-Image* GrayscaleFilter::apply(const Image* image)
+Ref< Image > GrayscaleFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;

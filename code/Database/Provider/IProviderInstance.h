@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,15 +48,15 @@ public:
 
 	virtual bool remove() = 0;
 
-	virtual Stream* readObject(const Type*& outSerializerType) = 0;
+	virtual Ref< Stream > readObject(const Type*& outSerializerType) = 0;
 
-	virtual Stream* writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType) = 0;
+	virtual Ref< Stream > writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType) = 0;
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
 
-	virtual Stream* readData(const std::wstring& dataName) = 0;
+	virtual Ref< Stream > readData(const std::wstring& dataName) = 0;
 
-	virtual Stream* writeData(const std::wstring& dataName) = 0;
+	virtual Ref< Stream > writeData(const std::wstring& dataName) = 0;
 };
 
 	}

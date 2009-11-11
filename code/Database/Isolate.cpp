@@ -44,7 +44,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, Stream* stream)
 	return true;
 }
 
-Instance* Isolate::createInstanceFromIsolation(Group* group, Stream* stream)
+Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, Stream* stream)
 {
 	T_ASSERT (stream && stream->canRead());
 

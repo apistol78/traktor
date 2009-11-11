@@ -39,6 +39,7 @@ Instance::Instance(IProviderBus* providerBus)
 
 bool Instance::internalCreate(IProviderInstance* providerInstance, Group* parent)
 {
+	T_FATAL_ASSERT_M(providerInstance, L"No provider instance");
 	m_providerInstance = providerInstance;
 	m_parent = parent;
 	return true;
@@ -49,7 +50,11 @@ void Instance::internalDestroy()
 	m_providerBus = 0;
 	m_providerInstance = 0;
 	m_parent = 0;
-	Heap::getInstance().invalidateRefs(this);
+	m_renamed = false;
+	m_removed = false;
+#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
+	m_cache = 0;
+#endif
 }
 
 std::wstring Instance::getName() const
@@ -211,7 +216,7 @@ bool Instance::remove()
 	return true;
 }
 
-Serializable* Instance::getObject()
+Ref< Serializable > Instance::getObject()
 {
 	T_ASSERT (m_providerInstance);
 
@@ -236,6 +241,7 @@ Serializable* Instance::getObject()
 		return 0;
 	}
 
+	T_FATAL_ASSERT(serializer);
 	object = serializer->readObject();
 
 	stream->close();
@@ -282,19 +288,19 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 	return m_providerInstance->getDataNames(dataNames);
 }
 
-Stream* Instance::readData(const std::wstring& dataName)
+Ref< Stream > Instance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
 	return m_providerInstance->readData(dataName);
 }
 
-Stream* Instance::writeData(const std::wstring& dataName)
+Ref< Stream > Instance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
 	return m_providerInstance->writeData(dataName);
 }
 
-Group* Instance::getParent() const
+Ref< Group > Instance::getParent() const
 {
 	return m_parent;
 }

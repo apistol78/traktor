@@ -1,6 +1,7 @@
 #include <cstring>
-#include <map>
 #include <limits>
+#include <list>
+#include <map>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
@@ -510,7 +511,7 @@ void createSectors(
  * CONVERTER
  */
 
-MeshResource* IndoorMeshConverter::createResource() const
+Ref< MeshResource > IndoorMeshConverter::createResource() const
 {
 	return gc_new< IndoorMeshResource >();
 }

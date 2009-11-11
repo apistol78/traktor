@@ -2,6 +2,7 @@
 #define traktor_drawing_ImageFilter_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ class T_DLLCLASS ImageFilter : public Object
 protected:
 	friend class Image;
 
-	virtual Image* apply(const Image* image) = 0;
+	virtual Ref< Image > apply(const Image* image) = 0;
 };
 	
 	}

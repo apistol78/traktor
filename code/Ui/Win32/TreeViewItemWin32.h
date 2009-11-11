@@ -46,7 +46,7 @@ public:
 
 	virtual bool edit();
 
-	virtual TreeViewItem* getParent() const;
+	virtual Ref< TreeViewItem > getParent() const;
 
 	virtual bool hasChildren() const;
 

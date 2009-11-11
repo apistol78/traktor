@@ -17,7 +17,7 @@ const TypeSet TheaterControllerEditorFactory::getControllerDataTypes() const
 	return typeSet;
 }
 
-scene::ISceneControllerEditor* TheaterControllerEditorFactory::createControllerEditor(const Type& controllerDataType) const
+Ref< scene::ISceneControllerEditor > TheaterControllerEditorFactory::createControllerEditor(const Type& controllerDataType) const
 {
 	return gc_new< TheaterControllerEditor >();
 }

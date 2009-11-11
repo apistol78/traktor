@@ -2,10 +2,11 @@
 #define traktor_editor_PipelineDependency_H
 
 #include <set>
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/Path.h"
-#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

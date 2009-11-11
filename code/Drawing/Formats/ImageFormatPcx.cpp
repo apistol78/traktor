@@ -45,7 +45,7 @@ struct PCXHEADER
 
 #pragma pack()
 
-Image* ImageFormatPcx::read(Stream* stream)
+Ref< Image > ImageFormatPcx::read(Stream* stream)
 {
 	PCXHEADER hdr;
 	Reader reader(stream);

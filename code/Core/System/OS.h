@@ -2,6 +2,7 @@
 #define traktor_OS_H
 
 #include "Core/Singleton/Singleton.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -92,7 +93,7 @@ public:
 	 * \param size Size of shared memory.
 	 * \return Shared memory object.
 	 */
-	SharedMemory* createSharedMemory(const std::wstring& name, uint32_t size) const;
+	Ref< SharedMemory > createSharedMemory(const std::wstring& name, uint32_t size) const;
 
 protected:
 	OS();

@@ -25,7 +25,7 @@ class T_DLLCLASS SystemMeshFactory : public MeshFactory
 	T_RTTI_CLASS(SystemMeshFactory)
 
 public:
-	virtual Mesh* createMesh(
+	virtual Ref< Mesh > createMesh(
 		const std::vector< VertexElement >& vertexElements,
 		unsigned int vertexBufferSize,
 		IndexType indexType,

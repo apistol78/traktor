@@ -32,7 +32,7 @@ public:
 
 	virtual ~ImageCache();
 	
-	render::ITexture* getTexture(IBitmap* bitmap);
+	Ref< render::ITexture > getTexture(IBitmap* bitmap);
 
 	void flush();
 	

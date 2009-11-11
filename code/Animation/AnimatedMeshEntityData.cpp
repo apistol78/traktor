@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.AnimatedMeshEntityData", AnimatedMeshEntityData, world::SpatialEntityData)
 
-AnimatedMeshEntity* AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
+Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
 {
 	if (!resourceManager->bind(m_mesh) || !resourceManager->bind(m_skeleton))
 		return 0;

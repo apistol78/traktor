@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
 
@@ -38,7 +39,7 @@ public:
 
 	virtual void removeAllFactories();
 	
-	virtual IResourceHandle* bind(const Type& type, const Guid& guid);
+	virtual Ref< IResourceHandle > bind(const Type& type, const Guid& guid);
 
 	virtual void update(const Guid& guid, bool force);
 
@@ -47,12 +48,12 @@ public:
 	virtual void flush();
 
 private:
-	RefList< IResourceFactory > m_factories;
+	RefArray< IResourceFactory > m_factories;
 	Ref< IResourceHandle > m_nullHandle;
 	std::map< Guid, Ref< ResourceHandle > > m_cache;
 	Semaphore m_lock;
 
-	IResourceFactory* findFactory(const Type& type);
+	Ref< IResourceFactory > findFactory(const Type& type);
 
 	void load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle);
 };

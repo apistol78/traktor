@@ -27,7 +27,7 @@ class T_DLLCLASS StatePoseControllerData : public IPoseControllerData
 	T_RTTI_CLASS(StatePoseControllerData)
 
 public:
-	virtual IPoseController* createInstance(
+	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,

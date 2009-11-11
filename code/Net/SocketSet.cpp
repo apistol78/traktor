@@ -29,7 +29,7 @@ int SocketSet::count() const
 	return int(m_sockets.size());
 }
 
-Socket* SocketSet::get(int index) const
+Ref< Socket > SocketSet::get(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_sockets.size()));
 	return m_sockets[index];

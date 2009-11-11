@@ -211,7 +211,7 @@ int RenderSystemOpenGL::getDisplayModeCount() const
 #endif
 }
 
-DisplayMode* RenderSystemOpenGL::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemOpenGL::getDisplayMode(int index)
 {
 #if defined(_WIN32)
 
@@ -234,7 +234,7 @@ DisplayMode* RenderSystemOpenGL::getDisplayMode(int index)
 #endif
 }
 
-DisplayMode* RenderSystemOpenGL::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemOpenGL::getCurrentDisplayMode()
 {
 #if defined(_WIN32)
 
@@ -281,7 +281,7 @@ bool RenderSystemOpenGL::handleMessages()
 #endif
 }
 
-IRenderView* RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -362,7 +362,7 @@ IRenderView* RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode
 #endif
 }
 
-IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -471,7 +471,7 @@ IRenderView* RenderSystemOpenGL::createRenderView(void* windowHandle, const Rend
 #endif
 }
 
-VertexBuffer* RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -487,7 +487,7 @@ VertexBuffer* RenderSystemOpenGL::createVertexBuffer(const std::vector< VertexEl
 #endif
 }
 
-IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -503,7 +503,7 @@ IndexBuffer* RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t
 #endif
 }
 
-ISimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -514,7 +514,7 @@ ISimpleTexture* RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreat
 	return texture;
 }
 
-ICubeTexture* RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -525,7 +525,7 @@ ICubeTexture* RenderSystemOpenGL::createCubeTexture(const CubeTextureCreateDesc&
 	return texture;
 }
 
-IVolumeTexture* RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -536,7 +536,7 @@ IVolumeTexture* RenderSystemOpenGL::createVolumeTexture(const VolumeTextureCreat
 	return texture;
 }
 
-RenderTargetSet* RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 
@@ -547,7 +547,7 @@ RenderTargetSet* RenderSystemOpenGL::createRenderTargetSet(const RenderTargetSet
 	return renderTargetSet;
 }
 
-ProgramResource* RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, glslProgram))
@@ -560,7 +560,7 @@ ProgramResource* RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGra
 	return resource;
 }
 
-IProgram* RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
 

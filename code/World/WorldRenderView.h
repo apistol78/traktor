@@ -158,11 +158,11 @@ public:
 		return m_lights[index].direction;
 	}
 
-	inline render::ITexture* getShadowMask() const {
+	inline Ref< render::ITexture > getShadowMask() const {
 		return m_shadowMask;
 	}
 
-	inline render::ITexture* getDepthMap() const {
+	inline Ref< render::ITexture > getDepthMap() const {
 		return m_depthMap;
 	}
 

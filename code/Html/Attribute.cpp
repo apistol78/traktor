@@ -28,12 +28,12 @@ const std::wstring& Attribute::getValue() const
 	return m_value;
 }
 
-Attribute* Attribute::getPrevious() const
+Ref< Attribute > Attribute::getPrevious() const
 {
 	return m_previous;
 }
 
-Attribute* Attribute::getNext() const
+Ref< Attribute > Attribute::getNext() const
 {
 	return m_next;
 }

@@ -36,11 +36,11 @@ public:
 
 	virtual bool resize(int width, int height);
 
-	virtual Surface* getPrimarySurface();
+	virtual Ref< Surface > getPrimarySurface();
 
-	virtual Surface* getSecondarySurface();
+	virtual Ref< Surface > getSecondarySurface();
 
-	virtual Surface* createOffScreenSurface(const SurfaceDesc& surfaceDesc);
+	virtual Ref< Surface > createOffScreenSurface(const SurfaceDesc& surfaceDesc);
 
 	virtual void flip(bool waitVBlank);
 

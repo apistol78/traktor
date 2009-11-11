@@ -7,7 +7,7 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, Object)
 
-Serializable* Serializer::readObject()
+Ref< Serializable > Serializer::readObject()
 {
 	Ref< Serializable > object;
 
@@ -22,24 +22,23 @@ Serializable* Serializer::readObject()
 
 bool Serializer::writeObject(const Serializable* o)
 {
+	Ref< Serializable > mutableObject(const_cast< Serializable* >(o));
+
 	if (getDirection() != SdWrite)
 		return false;
 
-	Ref< const Serializable > objectRef(o);
-	Serializable* mutableObject = const_cast< Serializable* >(objectRef.getPtr());
-
-	if (!(*this >> Member< Serializable* >(L"object", mutableObject)))
+	if (!(*this >> MemberRef< Serializable >(L"object", mutableObject)))
 		return false;
 
 	return true;
 }
 
-Serializable* Serializer::getCurrentObject()
+Ref< Serializable > Serializer::getCurrentObject()
 {
 	return !m_constructing.empty() ? m_constructing.back().first : 0;
 }
 
-Serializable* Serializer::getOuterObject()
+Ref< Serializable > Serializer::getOuterObject()
 {
 	return !m_constructing.empty() ? m_constructing.front().first : 0;
 }

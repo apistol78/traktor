@@ -545,17 +545,17 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
-Settings* EditorForm::getSettings()
+Ref< Settings > EditorForm::getSettings()
 {
 	return m_settings;
 }
 
-IProject* EditorForm::getProject()
+Ref< IProject > EditorForm::getProject()
 {
 	return m_project;
 }
 
-render::IRenderSystem* EditorForm::getRenderSystem()
+Ref< render::IRenderSystem > EditorForm::getRenderSystem()
 {
 	return m_renderSystem;
 }
@@ -575,7 +575,7 @@ const Type* EditorForm::browseType(const Type* base)
 	return type;
 }
 
-db::Instance* EditorForm::browseInstance(const IBrowseFilter* filter)
+Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 {
 	Ref< db::Instance > instance;
 
@@ -747,7 +747,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 	return true;
 }
 
-IEditorPage* EditorForm::getActiveEditorPage()
+Ref< IEditorPage > EditorForm::getActiveEditorPage()
 {
 	return m_activeEditorPage;
 }
@@ -1452,7 +1452,7 @@ void EditorForm::activateNextEditor()
 	}
 }
 
-Settings* EditorForm::loadSettings(const std::wstring& settingsFile)
+Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 {
 	Ref< PropertyGroup > globalGroup, userGroup;
 	Ref< Stream > file;
@@ -1516,7 +1516,7 @@ void EditorForm::loadDictionary()
 		log::warning << L"Unable to load dictionary \"" << dictionaryFile << L"\"; possibly corrupted." << Endl;
 }
 
-PipelineHash* EditorForm::loadPipelineHash()
+Ref< PipelineHash > EditorForm::loadPipelineHash()
 {
 	T_ASSERT (m_project);
 
@@ -1879,7 +1879,7 @@ void EditorForm::eventTabClose(ui::Event* event)
 
 	setPropertyObject(0);
 
-	Heap::getInstance().collect();
+	//Heap::getInstance().collect();
 
 	tabPage = m_tab->getActivePage();
 	if (tabPage)

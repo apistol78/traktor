@@ -1,9 +1,10 @@
 #ifndef traktor_editor_IPipelineBuilder_H
 #define traktor_editor_IPipelineBuilder_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,16 +39,16 @@ class T_DLLCLASS IPipelineBuilder : public Object
 public:
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild) = 0;
 
-	virtual db::Database* getSourceDatabase() const = 0;
+	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
-	virtual db::Database* getOutputDatabase() const = 0;
+	virtual Ref< db::Database > getOutputDatabase() const = 0;
 
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
+	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
 
-	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid) = 0;
+	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	template < typename T >
-	const T* getObjectReadOnly(const Guid& guid)
+	Ref< const T > getObjectReadOnly(const Guid& guid)
 	{
 		return dynamic_type_cast< const T* >(getObjectReadOnly(guid));
 	}

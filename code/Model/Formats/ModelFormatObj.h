@@ -28,7 +28,7 @@ public:
 
 	virtual bool supportFormat(const Path& filePath) const;
 
-	virtual Model* read(const Path& filePath, uint32_t importFlags) const;
+	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags) const;
 
 	virtual bool write(const Path& filePath, const Model* model) const;
 };

@@ -35,9 +35,9 @@ public:
 
 	void clear();
 
-	render::ITexture* getGradientTexture(const FlashFillStyle& style);
+	Ref< render::ITexture > getGradientTexture(const FlashFillStyle& style);
 
-	render::ITexture* getBitmapTexture(const FlashBitmap& bitmap);
+	Ref< render::ITexture > getBitmapTexture(const FlashBitmap& bitmap);
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;

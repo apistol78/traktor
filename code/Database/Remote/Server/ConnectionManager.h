@@ -1,8 +1,9 @@
 #ifndef traktor_db_ConnectionManager_H
 #define traktor_db_ConnectionManager_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

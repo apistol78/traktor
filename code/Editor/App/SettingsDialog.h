@@ -1,6 +1,8 @@
 #ifndef traktor_editor_SettingsDialog_H
 #define traktor_editor_SettingsDialog_H
 
+#include <list>
+#include "Core/Heap/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor

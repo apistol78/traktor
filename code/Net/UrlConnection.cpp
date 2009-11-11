@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.UrlConnection", UrlConnection, Object)
 
-UrlConnection* UrlConnection::open(const Url& url)
+Ref< UrlConnection > UrlConnection::open(const Url& url)
 {
 	if (!url.valid())
 		return 0;

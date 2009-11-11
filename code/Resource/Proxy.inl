@@ -62,21 +62,23 @@ void Proxy< ResourceType >::replace(IResourceHandle* handle)
 template < typename ResourceType >
 bool Proxy< ResourceType >::valid() const
 {
-	return bool(Ref< ResourceType >::getPtr() != 0);
+	return bool(Ref< ResourceType >::ptr() != 0);
 }
 
 template < typename ResourceType >
 bool Proxy< ResourceType >::validate()
 {
 	T_ASSERT_M (m_handle, L"Trying to validate unbound proxy");
-	Ref< ResourceType >::setPtr(m_handle->get());
+	Ref< ResourceType >::replace(
+		(ResourceType*)m_handle->get().ptr()
+	);
 	return valid();
 }
 
 template < typename ResourceType >
 inline Proxy< ResourceType >::operator ResourceType* ()
 {
-	return Ref< ResourceType >::getPtr();
+	return Ref< ResourceType >::ptr();
 }
 
 template < typename ResourceType >
@@ -85,7 +87,7 @@ inline ResourceType& Proxy< ResourceType >::operator * ()
 	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
 	if (!valid())
 		T_FATAL_ERROR;
-	return *Ref< ResourceType >::getPtr();
+	return *Ref< ResourceType >::ptr();
 }
 
 template < typename ResourceType >
@@ -94,7 +96,7 @@ inline ResourceType* Proxy< ResourceType >::operator -> ()
 	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
 	if (!valid())
 		T_FATAL_ERROR;
-	return Ref< ResourceType >::getPtr();
+	return Ref< ResourceType >::ptr();
 }
 
 template < typename ResourceType >
@@ -103,7 +105,7 @@ inline const ResourceType* Proxy< ResourceType >::operator -> () const
 	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
 	if (!valid())
 		T_FATAL_ERROR;
-	return Ref< ResourceType >::getPtr();
+	return Ref< ResourceType >::ptr();
 }
 
 template < typename ResourceType >
@@ -111,9 +113,9 @@ inline Proxy< ResourceType >& Proxy< ResourceType >::operator = (const Guid& gui
 {
 	if (guid != m_guid)
 	{
+		Ref< ResourceType >::replace(0);
 		m_handle = 0;
 		m_guid = guid;
-		Ref< ResourceType >::setPtr(0);
 	}
 	return *this;
 }
@@ -121,25 +123,25 @@ inline Proxy< ResourceType >& Proxy< ResourceType >::operator = (const Guid& gui
 template < typename ResourceType >
 inline bool Proxy< ResourceType >::operator == (const ResourceType* resource)
 {
-	return bool(Ref< ResourceType >::getPtr() == resource);
+	return bool(Ref< ResourceType >::ptr() == resource);
 }
 
 template < typename ResourceType >
 inline bool Proxy< ResourceType >::operator != (const ResourceType* resource)
 {
-	return bool(Ref< ResourceType >::getPtr() != resource);
+	return bool(Ref< ResourceType >::ptr() != resource);
 }
 
 template < typename ResourceType >
 inline bool Proxy< ResourceType >::operator == (const Ref< ResourceType >& ref)
 {
-	return bool(Ref< ResourceType >::getPtr() == ref.getPtr());
+	return bool(Ref< ResourceType >::ptr() == ref.ptr());
 }
 
 template < typename ResourceType >
 inline bool Proxy< ResourceType >::operator != (const Ref< ResourceType >& ref)
 {
-	return bool(Ref< ResourceType >::getPtr() != ref.getPtr());
+	return bool(Ref< ResourceType >::ptr() != ref.ptr());
 }
 
 	}

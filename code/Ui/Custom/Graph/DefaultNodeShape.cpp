@@ -66,7 +66,7 @@ Point DefaultNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.left + x, rc.top + top);
 }
 
-Pin* DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
+Ref< Pin > DefaultNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 	if (!rc.inside(pt))

@@ -2,15 +2,16 @@
 #define traktor_render_ProgramWin32_H
 
 #include <map>
-#include <vector>
 #include <string>
+#include <vector>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/Dx9/StateBlockDx9.h"
 #include "Render/Dx9/ParameterMap.h"
-#include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -61,7 +62,7 @@ public:
 
 	virtual ~ProgramWin32();
 
-	static ProgramResourceDx9* compile(const HlslProgram& hlslProgram, int optimize, bool validate);
+	static Ref< ProgramResourceDx9 > compile(const HlslProgram& hlslProgram, int optimize, bool validate);
 
 	bool create(
 		IDirect3DDevice9* d3dDevice,

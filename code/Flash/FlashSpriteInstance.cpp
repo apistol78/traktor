@@ -142,7 +142,7 @@ void FlashSpriteInstance::updateDisplayList()
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		if (is_a< FlashSpriteInstance >(i->second.instance))
-			static_cast< FlashSpriteInstance* >(i->second.instance.getPtr())->updateDisplayList();
+			static_cast< FlashSpriteInstance* >(i->second.instance.ptr())->updateDisplayList();
 	}
 }
 

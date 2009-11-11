@@ -23,7 +23,7 @@ class T_DLLCLASS AnimationEditorPageFactory : public editor::IEditorPageFactory
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::IEditorPage* createEditorPage(editor::IEditor* editor) const;
+	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };

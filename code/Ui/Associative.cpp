@@ -22,10 +22,10 @@ void Associative::setData(const std::wstring& key, Object* data)
 	}
 }
 
-Object* Associative::getData(const std::wstring& key) const
+Ref< Object > Associative::getData(const std::wstring& key) const
 {
 	std::map< std::wstring, Ref< Object > >::const_iterator i = m_data.find(key);
-	return (i != m_data.end()) ? i->second.getPtr() : 0;
+	return (i != m_data.end()) ? i->second.ptr() : 0;
 }
 
 	}

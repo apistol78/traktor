@@ -1,8 +1,10 @@
 #ifndef traktor_sound_SoundSystem_H
 #define traktor_sound_SoundSystem_H
 
-#include "Core/Heap/Ref.h"
+#include <list>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Event.h"
@@ -56,7 +58,7 @@ public:
 	 * \param channelId Virtual channel identifier.
 	 * \return Virtual sound channel.
 	 */
-	SoundChannel* getChannel(uint32_t channelId);
+	Ref< SoundChannel > getChannel(uint32_t channelId);
 
 	/*! \brief Play sound, override playing sound if channel is already playing.
 	 *
@@ -64,7 +66,7 @@ public:
 	 * \param repeat Repeat sound.
 	 * \return Sound channel.
 	 */
-	SoundChannel* play(uint32_t channelId, Sound* sound, uint32_t repeat = 1);
+	Ref< SoundChannel > play(uint32_t channelId, Sound* sound, uint32_t repeat = 1);
 
 	/*! \brief Play sound on first non-playing virtual channel.
 	 *
@@ -73,7 +75,7 @@ public:
 	 * \param repeat Repeat sound.
 	 * \return Sound channel if sound was successfully attached to one.
 	 */
-	SoundChannel* play(Sound* sound, bool wait, uint32_t repeat = 1);
+	Ref< SoundChannel > play(Sound* sound, bool wait, uint32_t repeat = 1);
 
 	/*! \brief Stop virtual channel from playing.
 	 *

@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.TreeViewItem", TreeViewItem, Object)
 
-TreeViewItem* TreeViewItem::findChild(const std::wstring& childPath)
+Ref< TreeViewItem > TreeViewItem::findChild(const std::wstring& childPath)
 {
 	std::vector< std::wstring > childNames;
 	if (Split< std::wstring >::any(childPath, L"/", childNames) <= 0)

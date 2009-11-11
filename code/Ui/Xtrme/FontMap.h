@@ -46,7 +46,7 @@ public:
 		return m_glyphs[ch & 255];
 	}
 
-	inline render::ITexture* getTexture() const
+	inline Ref< render::ITexture > getTexture() const
 	{
 		return m_texture;
 	}

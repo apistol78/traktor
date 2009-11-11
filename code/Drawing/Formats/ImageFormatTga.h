@@ -24,7 +24,7 @@ class T_DLLCLASS ImageFormatTga : public ImageFormat
 	T_RTTI_CLASS(ImageFormatTga)
 
 public:
-	virtual Image* read(Stream* stream);
+	virtual Ref< Image > read(Stream* stream);
 
 	virtual bool write(Stream* stream, Image* image);
 };

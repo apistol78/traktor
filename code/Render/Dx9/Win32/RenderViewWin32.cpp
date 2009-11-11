@@ -327,14 +327,16 @@ void RenderViewWin32::draw(const Primitives& primitives)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 	T_ASSERT (m_ownerThread == GetCurrentThreadId());
+	T_ASSERT (m_currentProgram);
+	T_ASSERT (m_currentVertexBuffer);
 
 	const RenderState& rs = m_renderStateStack.back();
 
 	if (!m_currentProgram->activate())
 		return;
 
-	m_currentVertexBuffer->activate(m_d3dDevice);
-	m_currentIndexBuffer->activate(m_d3dDevice);
+	VertexBufferDx9::activate(m_d3dDevice, m_currentVertexBuffer);
+	IndexBufferDx9::activate(m_d3dDevice, m_currentIndexBuffer);
 
 	if (primitives.indexed)
 	{

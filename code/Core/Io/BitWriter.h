@@ -40,7 +40,7 @@ public:
 	uint32_t tell() const;
 
 	/*! \brief Get reference to underlying stream. */
-	Stream* getStream();
+	Ref< Stream > getStream();
 
 private:
 	Ref< Stream > m_stream;

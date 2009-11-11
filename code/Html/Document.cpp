@@ -1,16 +1,17 @@
 #include <cstring>
 #include <list>
-#include "Html/Document.h"
-#include "Html/Element.h"
-#include "Html/Text.h"
-#include "Html/Comment.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
-#include "Core/Log/Log.h"
+#include "Html/Document.h"
+#include "Html/Element.h"
+#include "Html/Text.h"
+#include "Html/Comment.h"
 
 namespace traktor
 {
@@ -83,7 +84,7 @@ bool Document::loadFromFile(const std::wstring& filename, const Encoding* encodi
 bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 {
 	CharacterReader reader(stream, encoding);
-	RefList< Element > elm;
+	RefArray< Element > elm;
 	std::wstring attr;
 	std::wstring buf;
 	int mode = 0;
@@ -144,7 +145,7 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 					{
 						buf = toLower(buf.substr(1));
 
-						RefList< Element >::iterator i;
+						RefArray< Element >::iterator i;
 						for (i = elm.begin(); i != elm.end(); ++i)
 						{
 							if (!compareIgnoreCase((*i)->getName(), buf))
@@ -155,10 +156,10 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 						{
 							Ref< Element > element = *i;
 
-							RefList< Element > tmp;
-							for (RefList< Element >::iterator j = elm.begin(); j != i; ++j)
+							RefArray< Element > tmp;
+							for (RefArray< Element >::iterator j = elm.begin(); j != i; ++j)
 								tmp.push_front(*j);
-							for (RefList< Element >::iterator j = tmp.begin(); j != tmp.end(); ++j)
+							for (RefArray< Element >::iterator j = tmp.begin(); j != tmp.end(); ++j)
 								element->addChild(*j);
 
 							elm.erase(elm.begin(), ++i);
@@ -326,7 +327,7 @@ void Document::setDocumentElement(Element* docElement)
 	m_docElement = docElement;
 }
 
-Element* Document::getDocumentElement() const
+Ref< Element > Document::getDocumentElement() const
 {
 	return m_docElement;
 }

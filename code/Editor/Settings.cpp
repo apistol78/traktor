@@ -313,21 +313,30 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, PropertyValue*
 		m_value.erase(propertyName);
 }
 
-PropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
+Ref< PropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName)
 {
 	std::map< std::wstring, Ref< PropertyValue > >::iterator it = m_value.find(propertyName);
-	return it != m_value.end() ? it->second.getPtr() : 0;
+	return it != m_value.end() ? it->second.ptr() : 0;
 }
 
-const PropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName) const
+Ref< const PropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
 	std::map< std::wstring, Ref< PropertyValue > >::const_iterator it = m_value.find(propertyName);
-	return it != m_value.end() ? it->second.getPtr() : 0;
+	return it != m_value.end() ? it->second.ptr() : 0;
 }
 
 bool PropertyGroup::serialize(Serializer& s)
 {
-	return s >> MemberStlMap< std::wstring, Ref< PropertyValue >, MemberStlPair< std::wstring, Ref< PropertyValue >, Member< std::wstring >, MemberRef< PropertyValue > > >(L"value", m_value);
+	return s >> MemberStlMap<
+		std::wstring,
+		Ref< PropertyValue >,
+		MemberStlPair<
+			std::wstring,
+			Ref< PropertyValue >,
+			Member< std::wstring >,
+			MemberRef< PropertyValue >
+		>
+	>(L"value", m_value);
 }
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertySerializable", PropertySerializable, PropertyValue)
@@ -339,7 +348,7 @@ PropertySerializable::PropertySerializable(const value_type_t& value)
 
 PropertySerializable::value_type_t PropertySerializable::get(const PropertyValue* value)
 {
-	return value ? checked_type_cast< const PropertySerializable* >(value)->m_value.getPtr() : 0;
+	return value ? checked_type_cast< const PropertySerializable* >(value)->m_value.ptr() : 0;
 }
 
 bool PropertySerializable::serialize(Serializer& s)
@@ -369,7 +378,7 @@ void Settings::setProperty(const std::wstring& propertyName, PropertyValue* valu
 	m_userGroup->setProperty(propertyName, value);
 }
 
-PropertyValue* Settings::getProperty(const std::wstring& propertyName)
+Ref< PropertyValue > Settings::getProperty(const std::wstring& propertyName)
 {
 	Ref< PropertyValue > value = m_userGroup->getProperty(propertyName);
 	if (!value)
@@ -377,7 +386,7 @@ PropertyValue* Settings::getProperty(const std::wstring& propertyName)
 	return value;
 }
 
-const PropertyValue* Settings::getProperty(const std::wstring& propertyName) const
+Ref< const PropertyValue > Settings::getProperty(const std::wstring& propertyName) const
 {
 	Ref< const PropertyValue > value = m_userGroup->getProperty(propertyName);
 	if (!value)

@@ -24,7 +24,7 @@ ShaderGraphAdjacency::ShaderGraphAdjacency(const ShaderGraph* shaderGraph)
 	}
 }
 
-Edge* ShaderGraphAdjacency::findEdge(const InputPin* inputPin) const
+Ref< Edge > ShaderGraphAdjacency::findEdge(const InputPin* inputPin) const
 {
 	std::map< const InputPin*, Ref< Edge > >::const_iterator i = m_inputPinEdge.find(inputPin);
 	return i != m_inputPinEdge.end() ? i->second : 0;
@@ -40,9 +40,9 @@ size_t ShaderGraphAdjacency::findEdges(const OutputPin* outputPin, RefArray< Edg
 	return outEdges.size();
 }
 
-const OutputPin* ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) const
+Ref< const OutputPin > ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) const
 {
-	Edge* edge = findEdge(inputPin);
+	Ref< Edge > edge = findEdge(inputPin);
 	return edge ? edge->getSource() : 0;
 }
 

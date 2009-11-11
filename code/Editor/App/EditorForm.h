@@ -1,6 +1,7 @@
 #ifndef traktor_editor_EditorForm_H
 #define traktor_editor_EditorForm_H
 
+#include <list>
 #include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Guid.h"
@@ -82,19 +83,19 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Settings* getSettings();
+	virtual Ref< Settings > getSettings();
 
-	virtual IProject* getProject();
+	virtual Ref< IProject > getProject();
 
-	virtual render::IRenderSystem* getRenderSystem();
+	virtual Ref< render::IRenderSystem > getRenderSystem();
 
 	virtual const Type* browseType(const Type* base);
 
-	virtual db::Instance* browseInstance(const IBrowseFilter* filter);
+	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);
 
 	virtual bool openEditor(db::Instance* instance);
 
-	virtual IEditorPage* getActiveEditorPage();
+	virtual Ref< IEditorPage > getActiveEditorPage();
 
 	virtual void setActiveEditorPage(IEditorPage* editorPage);
 
@@ -189,13 +190,13 @@ private:
 
 	void activateNextEditor();
 
-	Settings* loadSettings(const std::wstring& settingsFile);
+	Ref< Settings > loadSettings(const std::wstring& settingsFile);
 
 	void saveSettings(const std::wstring& settingsFile);
 
 	void loadDictionary();
 
-	PipelineHash* loadPipelineHash();
+	Ref< PipelineHash > loadPipelineHash();
 
 	void savePipelineHash(PipelineHash* pipelineHash);
 

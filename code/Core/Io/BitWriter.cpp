@@ -43,7 +43,7 @@ uint32_t BitWriter::tell() const
 	return (m_stream->tell() << 3) + m_cnt;
 }
 
-Stream* BitWriter::getStream()
+Ref< Stream > BitWriter::getStream()
 {
 	return m_stream;
 }

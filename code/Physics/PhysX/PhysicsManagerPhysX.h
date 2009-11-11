@@ -43,9 +43,9 @@ public:
 
 	virtual void setGravity(const Vector4& gravity);
 
-	virtual Body* createBody(const BodyDesc* desc);
+	virtual Ref< Body > createBody(const BodyDesc* desc);
 
-	virtual Joint* createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
+	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 
 	virtual void update();
 

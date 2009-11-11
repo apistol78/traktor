@@ -1,8 +1,8 @@
 #ifndef traktor_editor_IObjectEditorFactory_H
 #define traktor_editor_IObjectEditorFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +30,7 @@ class T_DLLCLASS IObjectEditorFactory : public Object
 public:
 	virtual const TypeSet getEditableTypes() const = 0;
 
-	virtual IObjectEditor* createObjectEditor(IEditor* editor) const = 0;
+	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const = 0;
 };
 
 	}

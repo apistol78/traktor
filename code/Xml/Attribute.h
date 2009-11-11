@@ -36,9 +36,9 @@ public:
 
 	virtual void setValue(const std::wstring& value);
 
-	Attribute* getPrevious() const;
+	Ref< Attribute > getPrevious() const;
 	
-	Attribute* getNext() const;
+	Ref< Attribute > getNext() const;
 
 private:
 	friend class Element;

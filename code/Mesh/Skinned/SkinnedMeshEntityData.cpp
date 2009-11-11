@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.SkinnedMeshEntityData", SkinnedMeshEntityData, MeshEntityData)
 
-MeshEntity* SkinnedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
+Ref< MeshEntity > SkinnedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
 	if (!resourceManager->bind(m_mesh))
 		return 0;

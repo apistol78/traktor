@@ -1,7 +1,7 @@
 #ifndef traktor_ui_PopupMenuWin32_H
 #define traktor_ui_PopupMenuWin32_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Itf/IPopupMenu.h"
 #include "Ui/Win32/Window.h"
 

@@ -48,9 +48,9 @@ public:
 	
 	int getPosition() const;
 	
-	Widget* getLeftWidget() const;
+	Ref< Widget > getLeftWidget() const;
 	
-	Widget* getRightWidget() const;
+	Ref< Widget > getRightWidget() const;
 	
 private:
 	bool m_vertical;

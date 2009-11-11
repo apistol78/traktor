@@ -35,7 +35,7 @@ public:
 
 	bool isActive() const;
 
-	Tab* getTab();
+	Ref< Tab > getTab();
 
 	int getImageIndex() const;
 

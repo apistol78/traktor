@@ -45,9 +45,9 @@ public:
 
 	void setNormalTexture(render::ITexture* normalTexture);
 
-	render::ITexture* getHeightTexture() const;
+	Ref< render::ITexture > getHeightTexture() const;
 
-	render::ITexture* getNormalTexture() const;
+	Ref< render::ITexture > getNormalTexture() const;
 
 	inline const HeightfieldResource& getResource() const { return m_resource; }
 

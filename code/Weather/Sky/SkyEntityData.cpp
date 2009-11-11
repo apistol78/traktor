@@ -34,7 +34,7 @@ SkyEntityData::SkyEntityData()
 {
 }
 
-SkyEntity* SkyEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return 0;

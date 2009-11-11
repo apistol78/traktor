@@ -15,13 +15,13 @@ struct T_DLLCLASS Atomic
 {
 	/*! \brief Increment variable.
 	 *
-	 * \return Previous value of variable.
+	 * \return Result value of variable.
 	 */
 	static int32_t increment(int32_t& value);
 
 	/*! \brief Decrement variable.
 	 *
-	 * \return Previous value of variable.
+	 * \return Result value of variable.
 	 */
 	static int32_t decrement(int32_t& value);
 

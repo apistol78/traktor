@@ -49,7 +49,7 @@ bool LayerItem::isSelected() const
 	return m_selected;
 }
 
-LayerItem* LayerItem::getParentLayer()
+Ref< LayerItem > LayerItem::getParentLayer()
 {
 	return m_parent;
 }

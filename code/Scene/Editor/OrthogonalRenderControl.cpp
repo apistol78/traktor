@@ -235,7 +235,7 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 	return Matrix44::identity();
 }
 
-EntityAdapter* OrthogonalRenderControl::pickEntity(const ui::Point& position) const
+Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& position) const
 {
 	const float c_viewFarOffset = 1.0f;
 	const ui::Rect innerRect = m_renderWidget->getInnerRect();

@@ -2,6 +2,7 @@
 #define traktor_ui_IBitmap_H
 
 #include "Core/Config.h"
+#include "Core/Heap/Ref.h"
 #include "Ui/Rect.h"
 
 namespace traktor
@@ -31,7 +32,7 @@ public:
 
 	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos) = 0;
 
-	virtual drawing::Image* getImage() const = 0;
+	virtual Ref< drawing::Image > getImage() const = 0;
 
 	virtual Size getSize() const = 0;
 

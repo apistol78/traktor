@@ -2,6 +2,8 @@
 #define traktor_scene_ScenePreviewControl_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Core/Timer/Timer.h"
 #include "Ui/Container.h"
 
 // import/export mechanism.

@@ -47,8 +47,8 @@ private:
 		std::wstring text;
 		int image;
 
-		ItemData() :
-			image(-1)
+		ItemData()
+		:	image(-1)
 		{
 		}
 	};

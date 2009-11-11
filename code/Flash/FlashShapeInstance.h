@@ -28,7 +28,7 @@ class T_DLLCLASS FlashShapeInstance : public FlashCharacterInstance
 public:
 	FlashShapeInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashShape* shape);
 
-	const FlashShape* getShape() const;
+	Ref< const FlashShape > getShape() const;
 
 	virtual SwfRect getBounds() const;
 

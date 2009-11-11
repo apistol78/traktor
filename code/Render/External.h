@@ -3,9 +3,10 @@
 
 #include <map>
 #include <string>
-#include "Render/Node.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Render/Node.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -51,11 +52,11 @@ public:
 
 	virtual int getInputPinCount() const;
 
-	virtual const InputPin* getInputPin(int index) const;
+	virtual Ref< const InputPin > getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual const OutputPin* getOutputPin(int index) const;	
+	virtual Ref< const OutputPin > getOutputPin(int index) const;	
 
 	virtual int getVersion() const;
 

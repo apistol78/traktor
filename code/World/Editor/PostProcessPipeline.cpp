@@ -1,3 +1,7 @@
+#include "Core/Heap/RefArray.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "World/Editor/PostProcessPipeline.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessStepBlur.h"
@@ -7,9 +11,6 @@
 #include "World/PostProcess/PostProcessStepSimple.h"
 #include "World/PostProcess/PostProcessStepSsao.h"
 #include "World/PostProcess/PostProcessStepSmProj.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -47,7 +48,7 @@ bool PostProcessPipeline::buildDependencies(
 ) const
 {
 	Ref< const PostProcessSettings > postProcessSettings = checked_type_cast< const PostProcessSettings* >(sourceAsset);
-	RefList< PostProcessStep > ss;
+	RefArray< PostProcessStep > ss;
 
 	const RefArray< PostProcessStep >& steps = postProcessSettings->getSteps();
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)

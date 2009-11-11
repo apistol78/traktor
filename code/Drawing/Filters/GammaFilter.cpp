@@ -33,7 +33,7 @@ GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
 	m_gamma[3] = gammaA;
 }
 
-Image* GammaFilter::apply(const Image* image)
+Ref< Image > GammaFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;

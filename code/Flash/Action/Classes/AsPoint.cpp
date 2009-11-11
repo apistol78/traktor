@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsPoint", AsPoint, ActionClass)
 
-AsPoint* AsPoint::getInstance()
+Ref< AsPoint > AsPoint::getInstance()
 {
 	static AsPoint* instance = 0;
 	if (!instance)

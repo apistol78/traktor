@@ -2,7 +2,7 @@
 #include "World/Entity/SpatialGroupEntityData.h"
 #include "World/Entity/EntityInstance.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {

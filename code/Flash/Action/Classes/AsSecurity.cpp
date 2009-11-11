@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSecurity", AsSecurity, ActionClass)
 
-AsSecurity* AsSecurity::getInstance()
+Ref< AsSecurity > AsSecurity::getInstance()
 {
 	static AsSecurity* instance = 0;
 	if (!instance)

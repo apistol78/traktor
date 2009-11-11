@@ -83,13 +83,12 @@ void EntityManager::removeEntity(Entity* entity)
 
 uint32_t EntityManager::getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const
 {
-	RefArray< Entity >::lock_wr_type(outEntities.lock());
 	for (std::map< const Type*, Range >::const_iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
 	{
 		if (is_type_of(entityType, *i->first))
 		{
 			for (uint32_t j = 0; j < i->second.count; ++j)
-				outEntities.push_back_unsafe(m_entities[i->second.start + j]);
+				outEntities.push_back(m_entities[i->second.start + j]);
 		}
 	}
 	return uint32_t(outEntities.size());
@@ -101,7 +100,7 @@ uint32_t EntityManager::getEntityCount(const Type& entityType) const
 	return i != m_typeRanges.end() ? i->second.count : 0UL;
 }
 
-Entity* EntityManager::getEntity(const Type& entityType, uint32_t index) const
+Ref< Entity > EntityManager::getEntity(const Type& entityType, uint32_t index) const
 {
 	std::map< const Type*, Range >::const_iterator i = m_typeRanges.find(&entityType);
 	if (i == m_typeRanges.end() || index >= i->second.count)

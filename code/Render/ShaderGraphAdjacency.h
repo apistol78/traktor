@@ -2,8 +2,9 @@
 #define traktor_render_ShaderGraphAdjacency_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,7 @@ public:
 	 * \param inputPin Input pin.
 	 * \return Connected edge.
 	 */
-	Edge* findEdge(const InputPin* inputPin) const;
+	Ref< Edge > findEdge(const InputPin* inputPin) const;
 
 	/*! \brief Find edges connected from output pin.
 	 *
@@ -54,7 +55,7 @@ public:
 	 * \param inputPin Input pin.
 	 * \return Connected output pin.
 	 */
-	const OutputPin* findSourcePin(const InputPin* inputPin) const;
+	Ref< const OutputPin > findSourcePin(const InputPin* inputPin) const;
 
 	/*! \brief Find all input pins which are connected to output pin.
 	 *

@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionClass)
 
-AsSystem* AsSystem::getInstance()
+Ref< AsSystem > AsSystem::getInstance()
 {
 	static AsSystem* instance = 0;
 	if (!instance)

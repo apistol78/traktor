@@ -2,6 +2,7 @@
 #define traktor_scene_ISceneControllerEditorFactory_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +37,7 @@ public:
 	 *
 	 * \param controllerDataType Controller data type.
 	 */
-	virtual ISceneControllerEditor* createControllerEditor(const Type& controllerDataType) const = 0;
+	virtual Ref< ISceneControllerEditor > createControllerEditor(const Type& controllerDataType) const = 0;
 };
 
 	}

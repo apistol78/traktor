@@ -91,12 +91,12 @@ int PropertyItem::getDepth() const
 	return depth;
 }
 
-PropertyItem* PropertyItem::getParentItem()
+Ref< PropertyItem > PropertyItem::getParentItem()
 {
 	return m_parent;
 }
 
-RefList< PropertyItem >& PropertyItem::getChildItems()
+RefArray< PropertyItem >& PropertyItem::getChildItems()
 {
 	return m_childItems;
 }
@@ -106,7 +106,7 @@ void PropertyItem::setPropertyList(PropertyList* propertyList)
 	m_propertyList = propertyList;
 }
 
-PropertyList* PropertyItem::getPropertyList() const
+Ref< PropertyList > PropertyItem::getPropertyList() const
 {
 	return m_propertyList;
 }
@@ -231,7 +231,7 @@ void PropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 void PropertyItem::updateChildrenInPlaceControls(bool create)
 {
-	for (RefList< PropertyItem >::iterator i = m_childItems.begin(); i != m_childItems.end(); ++i)
+	for (RefArray< PropertyItem >::iterator i = m_childItems.begin(); i != m_childItems.end(); ++i)
 	{
 		if ((*i)->isExpanded())
 			(*i)->updateChildrenInPlaceControls(create);

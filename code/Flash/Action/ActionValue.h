@@ -90,7 +90,7 @@ public:
 	std::wstring getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
 
 	/*! \brief Get object value. */
-	ActionObject* getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return *m_value.o; }
+	Ref< ActionObject > getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return *m_value.o; }
 
 	/*! \brief Get boolean value safe. */
 	bool getBooleanSafe() const;
@@ -102,12 +102,12 @@ public:
 	std::wstring getStringSafe() const;
 
 	/*! \brief Get object safe. */
-	ActionObject* getObjectSafe() const;
+	Ref< ActionObject > getObjectSafe() const;
 
 	ActionValue& operator = (const ActionValue& v);
 
 	template < typename ObjectType >
-	ObjectType* getObject() const
+	Ref< ObjectType > getObject() const
 	{
 		return dynamic_type_cast< ObjectType* >(getObject());
 	}

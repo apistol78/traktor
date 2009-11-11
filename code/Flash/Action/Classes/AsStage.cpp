@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 
-AsStage* AsStage::getInstance()
+Ref< AsStage > AsStage::getInstance()
 {
 	static AsStage* instance = 0;
 	if (!instance)

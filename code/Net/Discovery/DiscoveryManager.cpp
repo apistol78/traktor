@@ -204,7 +204,7 @@ bool DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& a
 	return socket->sendTo(address, &buffer[0], buffer.size()) == buffer.size();
 }
 
-IDiscoveryMessage* DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout)
+Ref< IDiscoveryMessage > DiscoveryManager::recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout)
 {
 	uint8_t buffer[1024];
 

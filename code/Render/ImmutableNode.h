@@ -1,6 +1,7 @@
 #ifndef traktor_render_ImmutableNode_H
 #define traktor_render_ImmutableNode_H
 
+#include "Core/Heap/RefArray.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -45,11 +46,11 @@ public:
 
 	virtual int getInputPinCount() const;
 
-	virtual const InputPin* getInputPin(int index) const;
+	virtual Ref< const InputPin > getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual const OutputPin* getOutputPin(int index) const;
+	virtual Ref< const OutputPin > getOutputPin(int index) const;
 
 private:
 	RefArray< InputPin > m_inputPins;

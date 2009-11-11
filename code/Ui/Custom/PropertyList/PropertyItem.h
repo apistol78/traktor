@@ -57,16 +57,16 @@ public:
 
 	int getDepth() const;
 
-	PropertyItem* getParentItem();
+	Ref< PropertyItem > getParentItem();
 
-	RefList< PropertyItem >& getChildItems();
+	RefArray< PropertyItem >& getChildItems();
 
 protected:
 	friend class PropertyList;
 
 	void setPropertyList(PropertyList* propertyList);
 
-	PropertyList* getPropertyList() const;
+	Ref< PropertyList > getPropertyList() const;
 
 	void notifyUpdate();
 
@@ -104,7 +104,7 @@ private:
 	bool m_expanded;
 	bool m_selected;
 	Ref< PropertyItem > m_parent;
-	RefList< PropertyItem > m_childItems;
+	RefArray< PropertyItem > m_childItems;
 
 	void updateChildrenInPlaceControls(bool create);
 };

@@ -32,7 +32,7 @@ class T_DLLCLASS TrackData : public Serializable
 public:
 	void setInstance(world::EntityInstance* instance);
 
-	world::EntityInstance* getInstance() const;
+	Ref< world::EntityInstance > getInstance() const;
 
 	const TransformPath& getPath() const;
 

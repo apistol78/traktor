@@ -1,11 +1,12 @@
 #ifndef traktor_spray_EffectInstance_H
 #define traktor_spray_EffectInstance_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Math/Transform.h"
-#include "Core/Math/Plane.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Aabb.h"
+#include "Core/Math/Plane.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

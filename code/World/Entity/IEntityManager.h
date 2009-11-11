@@ -1,8 +1,9 @@
 #ifndef traktor_world_IEntityManager_H
 #define traktor_world_IEntityManager_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -73,7 +74,7 @@ public:
 	 * \param index Index of entity of same type.
 	 * \return Found entity, null if no entity found.
 	 */
-	virtual Entity* getEntity(const Type& entityType, uint32_t index) const = 0;
+	virtual Ref< Entity > getEntity(const Type& entityType, uint32_t index) const = 0;
 
 	/*! \brief Get all entities.
 	 *
@@ -111,7 +112,7 @@ public:
 	 * \return Found entity, null if no entity found.
 	 */
 	template < typename EntityType >
-	EntityType* getEntity(uint32_t index) const
+	Ref< EntityType > getEntity(uint32_t index) const
 	{
 		return static_cast< EntityType* >(getEntity(EntityType::getClassType(), index));
 	}

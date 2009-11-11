@@ -40,12 +40,12 @@ public:
 		m_constraint = 0;
 	}
 
-	virtual Body* getBody1()
+	virtual Ref< Body > getBody1()
 	{
 		return m_body1;
 	}
 
-	virtual Body* getBody2()
+	virtual Ref< Body > getBody2()
 	{
 		return m_body2;
 	}

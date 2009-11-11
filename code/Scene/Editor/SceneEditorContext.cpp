@@ -26,7 +26,7 @@ namespace traktor
 		{
 
 // Find best matching entity editor.
-IEntityEditor* createEntityEditor(
+Ref< IEntityEditor > createEntityEditor(
 	SceneEditorContext* context,
 	const RefArray< IEntityEditorFactory >& entityEditorFactories,
 	const Type& entityDataType
@@ -143,7 +143,7 @@ void SceneEditorContext::setModifier(IModifier* modifier)
 	m_modifier = modifier;
 }
 
-IModifier* SceneEditorContext::getModifier() const
+Ref< IModifier > SceneEditorContext::getModifier() const
 {
 	return m_modifier;
 }
@@ -218,7 +218,7 @@ bool SceneEditorContext::inAddReferenceMode() const
 	return m_referenceMode;
 }
 
-Camera* SceneEditorContext::getCamera(int index) const
+Ref< Camera > SceneEditorContext::getCamera(int index) const
 {
 	return m_cameras[index];
 }
@@ -295,7 +295,7 @@ void SceneEditorContext::buildEntities()
 			m_rootEntityAdapter = entityBuilder->getRootAdapter();
 
 			// Ensure no references exist to our entity builder; not allowed to cache it.
-			Heap::getInstance().invalidateRefs(entityBuilder);
+			//Heap::getInstance().invalidateRefs(entityBuilder);
 		}
 
 		// Create entity editors.
@@ -314,7 +314,7 @@ void SceneEditorContext::buildEntities()
 	}
 
 	// Force a collect in order to as quickly as possible remove old, unused, entities.
-	Heap::getInstance().collect();
+	//Heap::getInstance().collect();
 
 	raisePostBuild();
 }
@@ -382,7 +382,7 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	return uint32_t(outEntityAdapters.size());
 }
 
-EntityAdapter* SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
+Ref< EntityAdapter > SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
 {
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
@@ -396,7 +396,7 @@ EntityAdapter* SceneEditorContext::findAdapterFromInstance(const world::EntityIn
 	return 0;
 }
 
-EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
+Ref< EntityAdapter > SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
 {
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
@@ -462,7 +462,7 @@ void SceneEditorContext::setDebugTexture(render::ITexture* debugTexture)
 	m_debugTexture = debugTexture;
 }
 
-render::ITexture* SceneEditorContext::getDebugTexture()
+Ref< render::ITexture > SceneEditorContext::getDebugTexture()
 {
 	return m_debugTexture;
 }

@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, IPoseControllerData)
 
-IPoseController* RagDollPoseControllerData::createInstance(
+Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,

@@ -18,7 +18,7 @@ class AsXML : public ActionClass
 	T_RTTI_CLASS(AsXML)
 
 public:
-	static AsXML* getInstance();
+	static Ref< AsXML > getInstance();
 
 private:
 	AsXML();

@@ -344,7 +344,7 @@ bool XmlDeserializer::operator >> (const Member< Serializable >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Serializable* >& m)
+bool XmlDeserializer::operator >> (const Member< Ref< Serializable > >& m)
 {
 	if (!enterElement(m.getName()))
 		return false;

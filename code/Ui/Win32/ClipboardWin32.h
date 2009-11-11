@@ -21,7 +21,7 @@ public:
 
 	virtual ClipboardContentType getContentType() const;
 
-	virtual Serializable* getObject() const;
+	virtual Ref< Serializable > getObject() const;
 
 	virtual std::wstring getText() const;
 

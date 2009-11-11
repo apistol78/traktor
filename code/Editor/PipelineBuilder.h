@@ -69,13 +69,13 @@ public:
 
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
 
-	virtual db::Database* getSourceDatabase() const;
+	virtual Ref< db::Database > getSourceDatabase() const;
 
-	virtual db::Database* getOutputDatabase() const;
+	virtual Ref< db::Database > getOutputDatabase() const;
 
-	virtual db::Instance* createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
+	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
-	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_sourceDatabase;

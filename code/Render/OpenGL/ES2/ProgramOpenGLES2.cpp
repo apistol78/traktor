@@ -60,7 +60,7 @@ ProgramOpenGLES2::~ProgramOpenGLES2()
 	destroy();
 }
 
-ProgramResource* ProgramOpenGLES2::compile(const GlslProgram& glslProgram, int optimize, bool validate)
+Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram, int optimize, bool validate)
 {
 	Ref< ProgramResource > resource;
 

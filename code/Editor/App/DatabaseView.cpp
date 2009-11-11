@@ -263,7 +263,7 @@ void DatabaseView::setEnable(bool enable)
 	ui::Container::setEnable(enable);
 }
 
-ui::TreeViewItem* DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
+Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group)
 {
 	Ref< ui::TreeViewItem > groupItem = treeView->createItem(parentItem, group->getName(), 0, 1);
 	groupItem->setData(L"GROUP", group);

@@ -30,7 +30,7 @@ bool SceneFactory::isCacheable() const
 	return true;
 }
 
-Object* SceneFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< SceneAsset > asset = m_database->getObjectReadOnly< SceneAsset >(guid);
 	if (!asset)

@@ -61,9 +61,9 @@ public:
 
 	void setItems(ListViewItems* items);
 
-	ListViewItems* getItems() const;
+	Ref< ListViewItems > getItems() const;
 	
-	ListViewItem* getSelectedItem() const;
+	Ref< ListViewItem > getSelectedItem() const;
 
 	int getSelectedItems(std::vector< int >& items) const;
 	

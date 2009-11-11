@@ -40,7 +40,7 @@ public:
 
 	void add(MenuItem* item);
 
-	MenuItem* show(Widget* parent, const Point& at);
+	Ref< MenuItem > show(Widget* parent, const Point& at);
 
 private:
 	IPopupMenu* m_popupMenu;

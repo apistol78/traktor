@@ -1,9 +1,10 @@
 #ifndef traktor_db_Transaction_H
 #define traktor_db_Transaction_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 namespace traktor
 {

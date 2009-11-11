@@ -105,7 +105,7 @@ bool TcpSocket::listen()
 	return ::listen(m_socket, SOMAXCONN) == 0;
 }
 
-TcpSocket* TcpSocket::accept()
+Ref< TcpSocket > TcpSocket::accept()
 {
 	struct sockaddr_in in;
 	SOCKET client;
@@ -117,12 +117,12 @@ TcpSocket* TcpSocket::accept()
 	return gc_new< TcpSocket >(client);
 }
 
-SocketAddress* TcpSocket::getLocalAddress()
+Ref< SocketAddress > TcpSocket::getLocalAddress()
 {
 	return 0;
 }
 
-SocketAddress* TcpSocket::getRemoteAddress()
+Ref< SocketAddress > TcpSocket::getRemoteAddress()
 {
 	struct sockaddr_in in;
 

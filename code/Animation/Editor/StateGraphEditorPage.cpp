@@ -118,12 +118,12 @@ bool StateGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* StateGraphEditorPage::getDataInstance()
+Ref< db::Instance > StateGraphEditorPage::getDataInstance()
 {
 	return m_stateGraphInstance;
 }
 
-Object* StateGraphEditorPage::getDataObject()
+Ref< Object > StateGraphEditorPage::getDataObject()
 {
 	return m_stateGraph;
 }
@@ -254,7 +254,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//		int centerLeft = (graphSize.cx - bounds.getWidth()) / 2 - m_editorGraph->getOffset().cx;
 	//		int centerTop = (graphSize.cy - bounds.getHeight()) / 2 - m_editorGraph->getOffset().cy;
 
-	//		for (RefList< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
+	//		for (RefArray< Node >::const_iterator i = data->getNodes().begin(); i != data->getNodes().end(); ++i)
 	//		{
 	//			std::pair< int, int > position = (*i)->getPosition();
 	//			position.first = (position.first - bounds.left) + centerLeft;
@@ -265,7 +265,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//			m_shaderGraph->addNode(*i);
 	//		}
 
-	//		for (RefList< Edge >::const_iterator i = data->getEdges().begin(); i != data->getEdges().end(); ++i)
+	//		for (RefArray< Edge >::const_iterator i = data->getEdges().begin(); i != data->getEdges().end(); ++i)
 	//			m_shaderGraph->addEdge(*i);
 
 	//		createEditorNodes(
@@ -464,7 +464,7 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, co
 	}
 }
 
-ui::custom::Node* StateGraphEditorPage::createEditorNode(State* state)
+Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 {
 	Ref< ui::custom::NodeShape > shape = gc_new< ui::custom::DefaultNodeShape >(m_editorGraph);
 

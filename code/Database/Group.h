@@ -1,8 +1,9 @@
 #ifndef traktor_db_Group_H
 #define traktor_db_Group_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -51,15 +52,15 @@ public:
 
 	virtual bool remove();
 
-	virtual Group* getGroup(const std::wstring& groupName);
+	virtual Ref< Group > getGroup(const std::wstring& groupName);
 
-	virtual Group* createGroup(const std::wstring& groupName);
+	virtual Ref< Group > createGroup(const std::wstring& groupName);
 
-	virtual Instance* getInstance(const std::wstring& instanceName, const Type* primaryType = 0);
+	virtual Ref< Instance > getInstance(const std::wstring& instanceName, const Type* primaryType = 0);
 
-	virtual Instance* createInstance(const std::wstring& instanceName, uint32_t flags = CifDefault, const Guid* guid = 0);
+	virtual Ref< Instance > createInstance(const std::wstring& instanceName, uint32_t flags = CifDefault, const Guid* guid = 0);
 
-	virtual Group* getParent();
+	virtual Ref< Group > getParent();
 
 	virtual RefArray< Group >::iterator getBeginChildGroup();
 

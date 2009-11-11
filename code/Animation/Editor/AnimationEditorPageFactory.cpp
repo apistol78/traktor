@@ -17,7 +17,7 @@ const TypeSet AnimationEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< AnimationEditorPage >(editor);
 }

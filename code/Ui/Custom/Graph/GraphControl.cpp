@@ -206,7 +206,7 @@ int GraphControl::getConnectedEdges(const RefArray< Node >& nodes, bool inclusiv
 	return int(outEdges.size());
 }
 
-Node* GraphControl::getNodeAt(const Point& p) const
+Ref< Node > GraphControl::getNodeAt(const Point& p) const
 {
 	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
@@ -216,7 +216,7 @@ Node* GraphControl::getNodeAt(const Point& p) const
 	return 0;
 }
 
-Edge* GraphControl::getEdgeAt(const Point& p) const
+Ref< Edge > GraphControl::getEdgeAt(const Point& p) const
 {
 	for (RefArray< Edge >::const_iterator i = m_edges.begin(); i != m_edges.end(); ++i)
 	{
@@ -231,7 +231,7 @@ void GraphControl::setPaintSettings(PaintSettings* paintSettings)
 	m_paintSettings = paintSettings;
 }
 
-PaintSettings* GraphControl::getPaintSettings() const
+Ref< PaintSettings > GraphControl::getPaintSettings() const
 {
 	return m_paintSettings;
 }

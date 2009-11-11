@@ -29,7 +29,7 @@ class T_DLLCLASS RenderMeshFactory : public MeshFactory
 public:
 	RenderMeshFactory(IRenderSystem* renderSystem);
 
-	virtual Mesh* createMesh(
+	virtual Ref< Mesh > createMesh(
 		const std::vector< VertexElement >& vertexElements,
 		unsigned int vertexBufferSize,
 		IndexType indexType,

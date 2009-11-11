@@ -15,7 +15,7 @@ QuantizeFilter::QuantizeFilter(int steps)
 {
 }
 
-Image* QuantizeFilter::apply(const Image* image)
+Ref< Image > QuantizeFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	

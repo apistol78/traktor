@@ -47,7 +47,7 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 		++m_day;
 }
 
-DateTime* DateTime::now()
+Ref< DateTime > DateTime::now()
 {
 #if !defined(WINCE)
 	// Get current time.

@@ -1,6 +1,7 @@
 #ifndef traktor_flash_AsKey_H
 #define traktor_flash_AsKey_H
 
+#include "Core/Heap/RefArray.h"
 #include "Flash/Action/ActionClass.h"
 
 namespace traktor
@@ -20,7 +21,7 @@ class AsKey : public ActionClass
 	T_RTTI_CLASS(AsKey)
 
 public:
-	static AsKey* createInstance();
+	static Ref< AsKey > createInstance();
 
 	AsKey();
 

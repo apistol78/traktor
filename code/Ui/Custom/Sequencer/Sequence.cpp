@@ -44,12 +44,12 @@ bool Sequence::containsKey(Key* key) const
 	return bool(std::find(m_keys.begin(), m_keys.end(), key) != m_keys.end());
 }
 
-const RefList< Key >& Sequence::getKeys() const
+const RefArray< Key >& Sequence::getKeys() const
 {
 	return m_keys;
 }
 
-Key* Sequence::getSelectedKey() const
+Ref< Key > Sequence::getSelectedKey() const
 {
 	return m_selectedKey;
 }
@@ -65,7 +65,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 		return;
 
 	m_selectedKey = 0;
-	for (RefList< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
+	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 	{
 		int left, right;
 		(*j)->getRange(this, left, right);
@@ -127,7 +127,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		rc.bottom
 	));
 
-	for (RefList< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
+	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 	{
 		Rect rcClient(
 			rc.left + separator,

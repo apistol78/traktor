@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsRectangle", AsRectangle, ActionClass)
 
-AsRectangle* AsRectangle::getInstance()
+Ref< AsRectangle > AsRectangle::getInstance()
 {
 	static AsRectangle* instance = 0;
 	if (!instance)

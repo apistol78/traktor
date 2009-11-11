@@ -41,7 +41,7 @@ public:
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	inline const Ref< TerrainSurface >& getSurface() const { return m_surface; }
+	inline Ref< TerrainSurface > getSurface() const { return m_surface; }
 
 private:
 	friend class TerrainEntity;

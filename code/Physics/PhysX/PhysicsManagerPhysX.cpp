@@ -115,7 +115,7 @@ void PhysicsManagerPhysX::setGravity(const Vector4& gravity)
 	m_scene->setGravity(toNxVec3(gravity));
 }
 
-Body* PhysicsManagerPhysX::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 {
 	if (!desc)
 		return 0;
@@ -363,7 +363,7 @@ Body* PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
+Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	NxActor* actor1 = 0;
 	NxActor* actor2 = 0;

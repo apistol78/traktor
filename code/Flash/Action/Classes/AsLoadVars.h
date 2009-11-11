@@ -18,7 +18,7 @@ class AsLoadVars : public ActionClass
 	T_RTTI_CLASS(AsLoadVars)
 
 public:
-	static AsLoadVars* getInstance();
+	static Ref< AsLoadVars > getInstance();
 
 private:
 	AsLoadVars();

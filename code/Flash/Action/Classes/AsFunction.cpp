@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsFunction", AsFunction, ActionClass)
 
-AsFunction* AsFunction::getInstance()
+Ref< AsFunction > AsFunction::getInstance()
 {
 	static AsFunction* instance = 0;
 	if (!instance)

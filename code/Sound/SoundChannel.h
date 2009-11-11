@@ -42,7 +42,7 @@ public:
 
 	void setFilter(IFilter* filter);
 
-	IFilter* getFilter() const;
+	Ref< IFilter > getFilter() const;
 
 	bool isPlaying() const;
 

@@ -22,7 +22,7 @@ void Mesh::setVertexBuffer(VertexBuffer* vertexBuffer)
 	m_vertexBuffer = vertexBuffer;
 }
 
-VertexBuffer* Mesh::getVertexBuffer() const
+Ref< VertexBuffer > Mesh::getVertexBuffer() const
 {
 	return m_vertexBuffer;
 }
@@ -32,7 +32,7 @@ void Mesh::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_indexBuffer = indexBuffer;
 }
 
-IndexBuffer* Mesh::getIndexBuffer() const
+Ref< IndexBuffer > Mesh::getIndexBuffer() const
 {
 	return m_indexBuffer;
 }

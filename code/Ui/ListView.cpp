@@ -103,13 +103,13 @@ void ListView::setItems(ListViewItems* items)
 	static_cast< IListView* >(m_widget)->setItems(items);
 }
 
-ListViewItems* ListView::getItems() const
+Ref< ListViewItems > ListView::getItems() const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IListView* >(m_widget)->getItems();
 }
 
-ListViewItem* ListView::getSelectedItem() const
+Ref< ListViewItem > ListView::getSelectedItem() const
 {
 	T_ASSERT (m_widget);
 	std::vector< int > selectedItems;

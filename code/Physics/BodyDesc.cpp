@@ -15,7 +15,7 @@ void BodyDesc::setShape(ShapeDesc* shape)
 	m_shape = shape;
 }
 
-const ShapeDesc* BodyDesc::getShape() const
+Ref< const ShapeDesc > BodyDesc::getShape() const
 {
 	return m_shape;
 }

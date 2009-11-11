@@ -20,7 +20,7 @@ class AsSound : public ActionClass
 	T_RTTI_CLASS(AsSound)
 
 public:
-	static AsSound* getInstance();
+	static Ref< AsSound > getInstance();
 
 private:
 	AsSound();

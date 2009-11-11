@@ -1,13 +1,15 @@
 #ifndef traktor_render_HlslShader_H
 #define traktor_render_HlslShader_H
 
-#include <string>
+#include <list>
 #include <map>
 #include <set>
+#include <string>
+#include "Core/Heap/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Dx10/HlslType.h"
 #include "Render/Dx10/HlslVariable.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -90,7 +92,7 @@ private:
 	std::map< std::wstring, D3D10_SAMPLER_DESC > m_samplers;
 	std::set< std::wstring > m_uniforms;
 	int32_t m_nextTemporaryVariable;
-	RefList< StringOutputStream > m_outputStreams[BtLast];
+	RefArray< StringOutputStream > m_outputStreams[BtLast];
 	bool m_needVPos;
 };
 

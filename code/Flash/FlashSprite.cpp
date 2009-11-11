@@ -59,7 +59,7 @@ const RefArray< ActionScript >& FlashSprite::getInitActionScripts() const
 	return m_initActionScripts;
 }
 
-FlashCharacterInstance* FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
+Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
 	Ref< ActionObject > global = context->getGlobal();
 

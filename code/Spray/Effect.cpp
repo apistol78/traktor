@@ -3,7 +3,7 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerInstance.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -19,7 +19,7 @@ Effect::Effect()
 {
 }
 
-EffectInstance* Effect::createInstance(resource::IResourceManager* resourceManager) const
+Ref< EffectInstance > Effect::createInstance(resource::IResourceManager* resourceManager) const
 {
 	Ref< EffectInstance > effectInstance = gc_new< EffectInstance >(this);
 	for (RefArray< EffectLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)

@@ -8,6 +8,7 @@
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -17,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.ArticulatedEntityData", ArticulatedEntityData, world::SpatialEntityData)
 
-ArticulatedEntity* ArticulatedEntityData::createEntity(
+Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	world::IEntityBuilder* builder,
 	PhysicsManager* physicsManager
 ) const

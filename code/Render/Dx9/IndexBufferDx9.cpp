@@ -66,17 +66,17 @@ bool IndexBufferDx9::create(IDirect3DDevice9* d3dDevice, bool dynamic)
 	return true;
 }
 
-void IndexBufferDx9::activate(IDirect3DDevice9* d3dDevice)
+void IndexBufferDx9::activate(IDirect3DDevice9* d3dDevice, IndexBufferDx9* indexBuffer)
 {
-	if (ms_activeIndexBuffer == this)
+	if (ms_activeIndexBuffer == indexBuffer)
 		return;
 
-	if (this)
-		d3dDevice->SetIndices(m_d3dIndexBuffer);
+	if (indexBuffer)
+		d3dDevice->SetIndices(indexBuffer->m_d3dIndexBuffer);
 	else
 		d3dDevice->SetIndices(NULL);
 
-	ms_activeIndexBuffer = this;
+	ms_activeIndexBuffer = indexBuffer;
 }
 
 void IndexBufferDx9::destroy()

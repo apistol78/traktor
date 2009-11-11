@@ -1,9 +1,10 @@
 #ifndef traktor_scene_EntityAdapter_H
 #define traktor_scene_EntityAdapter_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Containers/AlignedVector.h"
 
@@ -46,17 +47,17 @@ public:
 	/*! \name Accessors */
 	//@{
 
-	world::EntityInstance* getInstance() const;
+	Ref< world::EntityInstance > getInstance() const;
 
-	world::EntityData* getEntityData() const;
+	Ref< world::EntityData > getEntityData() const;
 
 	void setRealEntityData(world::EntityData* entityData);
 
-	world::EntityData* getRealEntityData() const;
+	Ref< world::EntityData > getRealEntityData() const;
 
 	void setEntity(world::Entity* entity);
 
-	world::Entity* getEntity() const;
+	Ref< world::Entity > getEntity() const;
 
 	//@}
 
@@ -107,11 +108,11 @@ public:
 
 	bool isGroup() const;
 
-	EntityAdapter* getParent() const;
+	Ref< EntityAdapter > getParent() const;
 
-	EntityAdapter* getParentGroup();
+	Ref< EntityAdapter > getParentGroup();
 
-	EntityAdapter* getParentContainerGroup();
+	Ref< EntityAdapter > getParentContainerGroup();
 
 	bool addChild(EntityAdapter* child, bool modifyEntityData);
 
@@ -128,7 +129,7 @@ public:
 
 	void setEntityEditor(IEntityEditor* entityEditor);
 
-	IEntityEditor* getEntityEditor() const;
+	Ref< IEntityEditor > getEntityEditor() const;
 
 	//@}
 

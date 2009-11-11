@@ -112,7 +112,7 @@ private:
 /*! \brief Create native function.
  * \ingroup Flash
  */
-inline ActionFunctionNative* createNativeFunction(FunctionFnc::F function)
+inline Ref< ActionFunctionNative > createNativeFunction(FunctionFnc::F function)
 {
 	return gc_new< ActionFunctionNative >(gc_new< FunctionFnc >(function));
 }

@@ -2,6 +2,7 @@
 #define traktor_physics_Joint_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,9 +29,9 @@ class T_DLLCLASS Joint : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual Body* getBody1() = 0;
+	virtual Ref< Body > getBody1() = 0;
 
-	virtual Body* getBody2() = 0;
+	virtual Ref< Body > getBody2() = 0;
 };
 
 	}

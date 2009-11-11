@@ -97,7 +97,7 @@ void Dock::destroy()
 	ui::Widget::destroy();
 }
 
-DockPane* Dock::getPane()
+Ref< DockPane > Dock::getPane()
 {
 	return m_pane;
 }

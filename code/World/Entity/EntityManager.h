@@ -40,7 +40,7 @@ public:
 
 	virtual uint32_t getEntityCount(const Type& entityType) const;
 
-	virtual Entity* getEntity(const Type& entityType, uint32_t index) const;
+	virtual Ref< Entity > getEntity(const Type& entityType, uint32_t index) const;
 
 	virtual const RefArray< Entity >& getEntities() const;
 

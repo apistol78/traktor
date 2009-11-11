@@ -162,8 +162,8 @@ bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 		>(
 			this,
 			&ConvertDatabaseTool::threadConvert,
-			sourceDb.getPtr(),
-			targetDb.getPtr(),
+			sourceDb.ptr(),
+			targetDb.ptr(),
 			status
 		),
 		L"Convert database thread"

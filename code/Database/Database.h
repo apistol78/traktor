@@ -45,28 +45,28 @@ public:
 	virtual void close();
 
 	/*! \brief Root group. */
-	virtual Group* getRootGroup();
+	virtual Ref< Group > getRootGroup();
 
 	/*! \brief Get group by path.
 	 *
 	 * \param groupPath Path to group.
 	 * \return Group.
 	 */
-	virtual Group* getGroup(const std::wstring& groupPath);
+	virtual Ref< Group > getGroup(const std::wstring& groupPath);
 
 	/*! \brief Create new group.
 	 *
 	 * \param groupPath Path to new group.
 	 * \return New group.
 	 */
-	virtual Group* createGroup(const std::wstring& groupPath);
+	virtual Ref< Group > createGroup(const std::wstring& groupPath);
 
 	/*! \brief Get instance by guid.
 	 *
 	 * \param instanceGuid Instance guid.
 	 * \return Instance; null if no instance with given guid exist.
 	 */
-	virtual Instance* getInstance(const Guid& instanceGuid);
+	virtual Ref< Instance > getInstance(const Guid& instanceGuid);
 
 	/*! \brief Get instance by path.
 	 *
@@ -74,7 +74,7 @@ public:
 	 * \param primaryType Optional primary type; if instance isn't of type then null is returned.
 	 * \return Instance.
 	 */
-	virtual Instance* getInstance(const std::wstring& instancePath, const Type* primaryType = 0);
+	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const Type* primaryType = 0);
 
 	/*! \brief Create new instance.
 	 *
@@ -83,19 +83,20 @@ public:
 	 * \param guid Instance guid; null then guid is automatically created.
 	 * \return New instance.
 	 */
-	virtual Instance* createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = 0);
+	virtual Ref< Instance > createInstance(const std::wstring& instancePath, uint32_t flags = CifDefault, const Guid* guid = 0);
 
 	/*! \brief Get instance object by guid.
 	 *
 	 * \param guid Instance guid.
 	 * \return Instance's object; null if no instance found.
 	 */
-	virtual Serializable* getObjectReadOnly(const Guid& guid);
+	virtual Ref< Serializable > getObjectReadOnly(const Guid& guid);
 
 	template < typename T >
-	T* getObjectReadOnly(const Guid& guid)
+	Ref< T > getObjectReadOnly(const Guid& guid)
 	{
-		return dynamic_type_cast< T* >(getObjectReadOnly(guid));
+		Ref< Serializable > object = getObjectReadOnly(guid);
+		return dynamic_type_cast< T* >(object);
 	}
 
 	/*! \brief Get event from bus.

@@ -93,7 +93,7 @@ bool FtpClient::getFileList(RefArray< File >& outFiles)
 	return false;
 }
 
-Stream* FtpClient::open(const std::wstring& fileName)
+Ref< Stream > FtpClient::open(const std::wstring& fileName)
 {
 	return 0;
 }

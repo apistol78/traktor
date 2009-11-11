@@ -14,8 +14,8 @@ namespace traktor
 
 void removeAllChildren(PropertyList* list, PropertyItem* item)
 {
-	RefList< PropertyItem > children = item->getChildItems();
-	for (RefList< PropertyItem >::iterator i = children.begin(); i != children.end(); ++i)
+	RefArray< PropertyItem > children = item->getChildItems();
+	for (RefArray< PropertyItem >::iterator i = children.begin(); i != children.end(); ++i)
 	{
 		removeAllChildren(list, *i);
 		list->removePropertyItem(item, *i);
@@ -93,7 +93,9 @@ bool AutoPropertyList::addObject(PropertyItem* parent, Serializable* object)
 	parent->collapse();
 
 	InspectReflector reflector(this, parent);
-	if (!(reflector >> Member< Serializable* >(L"item", object)))
+
+	Ref< Serializable > objectRef(object);
+	if (!(reflector >> Member< Ref< Serializable > >(L"item", objectRef)))
 		return false;
 
 	update();

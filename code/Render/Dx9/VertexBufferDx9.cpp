@@ -66,24 +66,21 @@ bool VertexBufferDx9::create(IDirect3DDevice9* d3dDevice, const std::vector< Ver
 	return true;
 }
 
-void VertexBufferDx9::activate(IDirect3DDevice9* d3dDevice)
+void VertexBufferDx9::activate(IDirect3DDevice9* d3dDevice, VertexBufferDx9* vertexBuffer)
 {
-	T_ASSERT (d3dDevice == m_d3dDevice);
-	T_ASSERT (!m_locked);
-
-	if (ms_activeVertexBuffer == this)
+	if (ms_activeVertexBuffer == vertexBuffer)
 		return;
 
-	m_vertexDeclCache->setDeclaration(m_d3dVertexDeclaration);
+	vertexBuffer->m_vertexDeclCache->setDeclaration(vertexBuffer->m_d3dVertexDeclaration);
 
-	m_d3dDevice->SetStreamSource(
+	d3dDevice->SetStreamSource(
 		0,
-		m_d3dVertexBuffer,
+		vertexBuffer->m_d3dVertexBuffer,
 		0,
-		m_d3dVertexStride
+		vertexBuffer->m_d3dVertexStride
 	);
 
-	ms_activeVertexBuffer = this;
+	ms_activeVertexBuffer = vertexBuffer;
 }
 
 void VertexBufferDx9::destroy()

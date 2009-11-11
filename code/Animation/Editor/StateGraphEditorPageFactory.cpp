@@ -17,7 +17,7 @@ const TypeSet StateGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< StateGraphEditorPage >(editor);
 }

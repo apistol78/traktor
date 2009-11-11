@@ -2,6 +2,7 @@
 #define traktor_editor_DatabaseView_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Container.h"
 
 namespace traktor
@@ -76,7 +77,7 @@ private:
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;
 
-	ui::TreeViewItem* buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
+	Ref< ui::TreeViewItem > buildTreeItem(ui::TreeView* treeView, ui::TreeViewItem* parentItem, db::Group* group);
 
 	void filterType(db::Instance* instance);
 

@@ -15,7 +15,7 @@ FlashTextInstance::FlashTextInstance(ActionContext* context, FlashCharacterInsta
 {
 }
 
-const FlashText* FlashTextInstance::getText() const
+Ref< const FlashText > FlashTextInstance::getText() const
 {
 	return m_text;
 }

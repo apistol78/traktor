@@ -1,8 +1,9 @@
 #ifndef traktor_net_FtpClient_H
 #define traktor_net_FtpClient_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,7 +47,7 @@ public:
 	
 	bool getFileList(RefArray< File >& outFiles);
 	
-	Stream* open(const std::wstring& fileName);
+	Ref< Stream > open(const std::wstring& fileName);
 
 private:
 	Ref< TcpSocket > m_socket;

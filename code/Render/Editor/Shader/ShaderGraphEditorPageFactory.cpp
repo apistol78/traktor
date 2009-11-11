@@ -17,7 +17,7 @@ const TypeSet ShaderGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< ShaderGraphEditorPage >(editor);
 }

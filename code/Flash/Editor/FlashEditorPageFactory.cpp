@@ -17,7 +17,7 @@ const TypeSet FlashEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* FlashEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< FlashEditorPage >(editor);
 }

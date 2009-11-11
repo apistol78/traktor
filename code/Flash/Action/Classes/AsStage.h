@@ -18,7 +18,7 @@ class AsStage : public ActionClass
 	T_RTTI_CLASS(AsStage)
 
 public:
-	static AsStage* getInstance();
+	static Ref< AsStage > getInstance();
 
 private:
 	AsStage();

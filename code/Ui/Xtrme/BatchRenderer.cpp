@@ -22,7 +22,7 @@ namespace traktor
 			namespace
 			{
 
-render::IProgram* createProgram(
+Ref< render::IProgram > createProgram(
 	render::IRenderSystem* renderSystem,
 	const uint8_t resource[],
 	const int resourceSize

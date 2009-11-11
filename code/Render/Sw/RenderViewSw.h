@@ -1,13 +1,14 @@
 #ifndef traktor_render_RenderViewSw_H
 #define traktor_render_RenderViewSw_H
 
-#include "Render/IRenderView.h"
-#include "Render/Sw/VaryingUtils.h"
-#include "Graphics/Surface.h"
+#include <list>
 #include "Core/Heap/Ref.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Graphics/Surface.h"
+#include "Render/IRenderView.h"
+#include "Render/Sw/VaryingUtils.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

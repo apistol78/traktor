@@ -2,6 +2,7 @@
 #define traktor_animation_StateGraph_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -42,7 +43,7 @@ public:
 
 	void setRootState(State* rootState);
 
-	State* getRootState() const;
+	Ref< State > getRootState() const;
 
 	virtual bool serialize(Serializer& s);
 

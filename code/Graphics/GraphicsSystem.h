@@ -2,6 +2,7 @@
 #define traktor_graphics_GraphicsSystem_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 #include "Graphics/PixelFormat.h"
 
 // import/export mechanism.
@@ -48,11 +49,11 @@ public:
 
 	virtual bool resize(int width, int height) = 0;
 
-	virtual Surface* getPrimarySurface() = 0;
+	virtual Ref< Surface > getPrimarySurface() = 0;
 
-	virtual Surface* getSecondarySurface() = 0;
+	virtual Ref< Surface > getSecondarySurface() = 0;
 
-	virtual Surface* createOffScreenSurface(const SurfaceDesc& surfaceDesc) = 0;
+	virtual Ref< Surface > createOffScreenSurface(const SurfaceDesc& surfaceDesc) = 0;
 
 	virtual void flip(bool waitVBlank) = 0;
 };

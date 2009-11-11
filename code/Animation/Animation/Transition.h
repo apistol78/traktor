@@ -37,9 +37,9 @@ public:
 
 	Transition(State* from, State* to);
 
-	State* from() const;
+	Ref< State > from() const;
 
-	State* to() const;
+	Ref< State > to() const;
 
 	Moment getMoment() const;
 

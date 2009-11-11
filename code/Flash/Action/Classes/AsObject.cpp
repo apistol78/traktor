@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsObject", AsObject, ActionClass)
 
-AsObject* AsObject::getInstance()
+Ref< AsObject > AsObject::getInstance()
 {
 	static AsObject* instance = 0;
 	if (!instance)

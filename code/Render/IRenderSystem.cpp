@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IRenderSystem", IRenderSystem, Object)
 
-DisplayMode* IRenderSystem::findDisplayMode(const DisplayMode* criteria)
+Ref< DisplayMode > IRenderSystem::findDisplayMode(const DisplayMode* criteria)
 {
 	int bestMatch = std::numeric_limits< int >::max();
 	Ref< DisplayMode > best;

@@ -2,6 +2,7 @@
 #define traktor_render_RenderTargetSet_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,7 +43,7 @@ public:
 	virtual int getHeight() const = 0;
 
 	/*! \brief Get color target texture. */
-	virtual ITexture* getColorTexture(int index) const = 0;
+	virtual Ref< ITexture > getColorTexture(int index) const = 0;
 
 	/*! \brief Swap color targets. */
 	virtual void swap(int index1, int index2) = 0;

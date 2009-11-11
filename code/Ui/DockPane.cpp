@@ -338,7 +338,7 @@ void DockPane::draw(Canvas& canvas)
 		m_child[1]->draw(canvas);
 }
 
-DockPane* DockPane::findWidgetPane(Widget* widget)
+Ref< DockPane > DockPane::findWidgetPane(Widget* widget)
 {
 	if (m_widget == widget)
 		return this;
@@ -356,7 +356,7 @@ DockPane* DockPane::findWidgetPane(Widget* widget)
 	return 0;
 }
 
-DockPane* DockPane::getFromPosition(const Point& position)
+Ref< DockPane > DockPane::getFromPosition(const Point& position)
 {
 	if (!m_rect.inside(position) || (m_widget && !m_widget->isVisible(false)))
 		return 0;

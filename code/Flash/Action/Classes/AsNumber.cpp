@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
 
-AsNumber* AsNumber::getInstance()
+Ref< AsNumber > AsNumber::getInstance()
 {
 	static AsNumber* instance = 0;
 	if (!instance)

@@ -27,7 +27,7 @@ public:
 
 	virtual Url getUrl() const;
 
-	virtual Stream* getStream();
+	virtual Ref< Stream > getStream();
 	
 private:
 	Ref< TcpSocket > m_socket;

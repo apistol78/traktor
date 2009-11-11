@@ -271,7 +271,7 @@ void PerspectiveRenderControl::updateWorldRenderView()
 	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
-EntityAdapter* PerspectiveRenderControl::pickEntity(const ui::Point& position) const
+Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& position) const
 {
 	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
 	ui::Rect innerRect = m_renderWidget->getInnerRect();

@@ -12,7 +12,7 @@ Sound::Sound(ISoundBuffer* soundBuffer)
 {
 }
 
-ISoundBuffer* Sound::getSoundBuffer()
+Ref< ISoundBuffer > Sound::getSoundBuffer()
 {
 	return m_soundBuffer;
 }

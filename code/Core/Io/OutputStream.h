@@ -44,7 +44,7 @@ public:
 
 	void setBuffer(OutputStreamBuffer* buffer);
 
-	OutputStreamBuffer* getBuffer() const;
+	Ref< OutputStreamBuffer > getBuffer() const;
 
 	LineEnd getLineEnd() const;
 

@@ -36,7 +36,7 @@ public:
 
 	virtual ~ProgramOpenGL();
 
-	static ProgramResource* compile(const GlslProgram& glslProgram, int optimize, bool validate);
+	static Ref< ProgramResource > compile(const GlslProgram& glslProgram, int optimize, bool validate);
 
 	bool create(const ProgramResource* resource);
 

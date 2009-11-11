@@ -71,7 +71,7 @@ Url FtpConnection::getUrl() const
 	return m_url;
 }
 
-Stream* FtpConnection::getStream()
+Ref< Stream > FtpConnection::getStream()
 {
 	return m_stream;
 }

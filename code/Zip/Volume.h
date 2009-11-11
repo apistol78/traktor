@@ -29,13 +29,13 @@ public:
 
 	virtual std::wstring getDescription() const;
 
-	virtual File* get(const Path& path);
+	virtual Ref< File > get(const Path& path);
 
 	virtual int find(const Path& mask, RefArray< File >& out);
 
 	virtual bool modify(const Path& fileName, uint32_t flags);
 	
-	virtual Stream* open(const Path& filename, File::Mode mode);
+	virtual Ref< Stream > open(const Path& filename, File::Mode mode);
 	
 	virtual bool exist(const Path& filename);
 	

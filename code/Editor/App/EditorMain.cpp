@@ -111,6 +111,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 #endif
 
-	Heap::getInstance().collectAll();
+	//Heap::getInstance().collectAll();
 	return 0;
 }

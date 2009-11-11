@@ -21,7 +21,7 @@ const TypeSet MeshEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-world::Entity* MeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > MeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
 {
 	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(&entityData))
 		return meshEntityData->createEntity(m_resourceManager, builder);

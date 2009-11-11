@@ -1,8 +1,9 @@
 #ifndef traktor_terrain_TerrainSurfaceCache_H
 #define traktor_terrain_TerrainSurfaceCache_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 
@@ -100,7 +101,7 @@ private:
 	render::handle_t m_handlePatchOrigin;
 	render::handle_t m_handlePatchExtent;
 
-	render::RenderTargetSet* allocateTarget(uint32_t lod);
+	Ref< render::RenderTargetSet > allocateTarget(uint32_t lod);
 };
 
 	}

@@ -156,13 +156,13 @@ int RenderSystemDx10::getDisplayModeCount() const
 	return int(m_displayModes.size());
 }
 
-DisplayMode* RenderSystemDx10::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemDx10::getDisplayMode(int index)
 {
 	T_ASSERT (index >= 0 && index < int(m_displayModes.size()));
 	return m_displayModes[index];
 }
 
-DisplayMode* RenderSystemDx10::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemDx10::getCurrentDisplayMode()
 {
 	return 0;
 }
@@ -185,7 +185,7 @@ bool RenderSystemDx10::handleMessages()
 	return going;
 }
 
-IRenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	DXGI_SWAP_CHAIN_DESC scd;
@@ -261,7 +261,7 @@ IRenderView* RenderSystemDx10::createRenderView(const DisplayMode* displayMode, 
 	);
 }
 
-IRenderView* RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	HRESULT hr;
@@ -314,7 +314,7 @@ IRenderView* RenderSystemDx10::createRenderView(void* windowHandle, const Render
 	);
 }
 
-VertexBuffer* RenderSystemDx10::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemDx10::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	ComRef< ID3D10Buffer > d3dBuffer;
 	D3D10_BUFFER_DESC dbd;
@@ -354,7 +354,7 @@ VertexBuffer* RenderSystemDx10::createVertexBuffer(const std::vector< VertexElem
 	);
 }
 
-IndexBuffer* RenderSystemDx10::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemDx10::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	ComRef< ID3D10Buffer > d3dBuffer;
 	D3D10_BUFFER_DESC dbd;
@@ -373,7 +373,7 @@ IndexBuffer* RenderSystemDx10::createIndexBuffer(IndexType indexType, uint32_t b
 	return gc_new< IndexBufferDx10 >(m_context, indexType, bufferSize, d3dBuffer);
 }
 
-ISimpleTexture* RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx10 > texture = gc_new< SimpleTextureDx10 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -381,7 +381,7 @@ ISimpleTexture* RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateD
 	return texture;
 }
 
-ICubeTexture* RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx10 > texture = gc_new< CubeTextureDx10 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -389,12 +389,12 @@ ICubeTexture* RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& d
 	return texture;
 }
 
-IVolumeTexture* RenderSystemDx10::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemDx10::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return gc_new< VolumeTextureDx10 >();
 }
 
-RenderTargetSet* RenderSystemDx10::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemDx10::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	Ref< RenderTargetSetDx10 > renderTargetSet = gc_new< RenderTargetSetDx10 >(m_context);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
@@ -402,7 +402,7 @@ RenderTargetSet* RenderSystemDx10::createRenderTargetSet(const RenderTargetSetCr
 	return renderTargetSet;
 }
 
-ProgramResource* RenderSystemDx10::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemDx10::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	HlslProgram hlslProgram;
 	if (!Hlsl().generate(shaderGraph, hlslProgram))
@@ -415,7 +415,7 @@ ProgramResource* RenderSystemDx10::compileProgram(const ShaderGraph* shaderGraph
 	return programResource;
 }
 
-IProgram* RenderSystemDx10::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceDx10 > resource = dynamic_type_cast< const ProgramResourceDx10* >(programResource);
 	if (!resource)

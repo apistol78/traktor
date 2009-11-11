@@ -1,7 +1,7 @@
 #ifndef traktor_theater_TheaterControllerData_H
 #define traktor_theater_TheaterControllerData_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Scene/ISceneControllerData.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 public:
 	TheaterControllerData();
 
-	virtual scene::ISceneController* createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
+	virtual Ref< scene::ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
 
 	virtual bool serialize(Serializer& s);
 

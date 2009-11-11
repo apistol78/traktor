@@ -29,11 +29,11 @@ public:
 
 	virtual bool isConnected() const;
 
-	virtual IUser* getUser();
+	virtual Ref< IUser > getUser();
 
 	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const;
 
-	virtual ISaveGame* createSaveGame(const std::wstring& name, Serializable* attachment);
+	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, Serializable* attachment);
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 

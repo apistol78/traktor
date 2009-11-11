@@ -15,7 +15,7 @@ I18N& I18N::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new I18N();
-		SingletonManager::getInstance().addBefore(s_instance, &Heap::getInstance());
+		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
 }
@@ -30,7 +30,7 @@ void I18N::appendDictionary(Dictionary* dictionary, bool overrideExisting)
 	}
 }
 
-Dictionary* I18N::getMasterDictionary()
+Ref< Dictionary > I18N::getMasterDictionary()
 {
 	return m_dictionary;
 }

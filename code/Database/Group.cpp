@@ -68,7 +68,7 @@ void Group::internalDestroy()
 
 	m_childInstances.resize(0);
 
-	Heap::getInstance().invalidateRefs(this);
+	//Heap::getInstance().invalidateRefs(this);
 }
 
 std::wstring Group::getName() const
@@ -133,13 +133,13 @@ bool Group::remove()
 	return true;
 }
 
-Group* Group::getGroup(const std::wstring& groupName)
+Ref< Group > Group::getGroup(const std::wstring& groupName)
 {
 	T_ASSERT (m_providerGroup);
 	return findChildGroup(this, FindGroupByName(groupName));
 }
 
-Group* Group::createGroup(const std::wstring& groupName)
+Ref< Group > Group::createGroup(const std::wstring& groupName)
 {
 	T_ASSERT (m_providerGroup);
 
@@ -159,7 +159,7 @@ Group* Group::createGroup(const std::wstring& groupName)
 	return group;
 }
 
-Instance* Group::getInstance(const std::wstring& instanceName, const Type* primaryType)
+Ref< Instance > Group::getInstance(const std::wstring& instanceName, const Type* primaryType)
 {
 	T_ASSERT (m_providerGroup);
 	if (!primaryType)
@@ -173,9 +173,10 @@ Instance* Group::getInstance(const std::wstring& instanceName, const Type* prima
 	}
 }
 
-Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)
+Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT (m_providerGroup);
+	Ref< Instance > instance;
 
 	// Create instance guid, use given if available.
 	Guid instanceGuid = guid ? *guid : Guid::create();
@@ -183,19 +184,19 @@ Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags
 	// Remove existing instance if we're about to replace it.
 	if (flags & CifReplaceExisting)
 	{
-		Ref< Instance > existingInstance = getInstance(instanceName);
-		if (existingInstance)
+		instance = getInstance(instanceName);
+		if (instance)
 		{
 			if (flags & CifKeepExistingGuid)
-				instanceGuid = existingInstance->getGuid();
+				instanceGuid = instance->getGuid();
 
-			if (!existingInstance->checkout())
+			if (!instance->checkout())
 				return 0;
 
-			if (!existingInstance->remove())
+			if (!instance->remove())
 				return 0;
 
-			if (!existingInstance->commit())
+			if (!instance->commit())
 				return 0;
 		}
 	}
@@ -206,7 +207,9 @@ Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags
 		return 0;
 
 	// Create instance object.
-	Ref< Instance > instance = gc_new< Instance >(m_providerBus);
+	if (!instance)
+		instance = gc_new< Instance >(m_providerBus);
+
 	if (!instance->internalCreate(providerInstance, this))
 		return 0;
 
@@ -215,7 +218,7 @@ Instance* Group::createInstance(const std::wstring& instanceName, uint32_t flags
 	return instance;
 }
 
-Group* Group::getParent()
+Ref< Group > Group::getParent()
 {
 	T_ASSERT (m_providerGroup);
 	return m_parent;

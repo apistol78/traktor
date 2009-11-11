@@ -1,13 +1,15 @@
 #ifndef traktor_render_GlslShader_H
 #define traktor_render_GlslShader_H
 
-#include <string>
+#include <list>
 #include <map>
 #include <set>
+#include <string>
+#include "Core/Heap/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslVariable.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -85,7 +87,7 @@ private:
 	std::set< std::wstring > m_samplers;
 	std::set< std::wstring > m_uniforms;
 	int32_t m_nextTemporaryVariable;
-	RefList< StringOutputStream > m_outputStreams[BtLast];
+	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 
 	}

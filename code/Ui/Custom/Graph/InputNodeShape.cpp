@@ -44,7 +44,7 @@ Point InputNodeShape::getPinPosition(const Node* node, const Pin* pin)
 	return Point(rc.right - 4, rc.top + 16);
 }
 
-Pin* InputNodeShape::getPinAt(const Node* node, const Point& pt)
+Ref< Pin > InputNodeShape::getPinAt(const Node* node, const Point& pt)
 {
 	Rect rc = node->calculateRect();
 

@@ -104,7 +104,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	return true;
 }
 
-db::Instance* BrowseInstanceDialog::getInstance()
+Ref< db::Instance > BrowseInstanceDialog::getInstance()
 {
 	return m_instance;
 }

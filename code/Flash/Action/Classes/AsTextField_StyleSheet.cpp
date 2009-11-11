@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_StyleSheet, ActionClass)
 
-AsTextField_StyleSheet* AsTextField_StyleSheet::getInstance()
+Ref< AsTextField_StyleSheet > AsTextField_StyleSheet::getInstance()
 {
 	static AsTextField_StyleSheet* instance = 0;
 	if (!instance)

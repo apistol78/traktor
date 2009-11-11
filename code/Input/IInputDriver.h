@@ -2,6 +2,7 @@
 #define traktor_input_IInputDriver_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +29,7 @@ class T_DLLCLASS IInputDriver : public Object
 public:
 	virtual int getDeviceCount() = 0;
 
-	virtual IInputDevice* getDevice(int index) = 0;
+	virtual Ref< IInputDevice > getDevice(int index) = 0;
 };
 
 	}

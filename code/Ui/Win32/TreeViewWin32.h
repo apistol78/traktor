@@ -22,15 +22,15 @@ public:
 
 	virtual int addImage(IBitmap* image, int imageCount);
 
-	virtual TreeViewItem* createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage);
+	virtual Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage);
 
 	virtual void removeItem(TreeViewItem* item);
 
 	virtual void removeAllItems();
 
-	virtual TreeViewItem* getRootItem() const;
+	virtual Ref< TreeViewItem > getRootItem() const;
 
-	virtual TreeViewItem* getSelectedItem() const;
+	virtual Ref< TreeViewItem > getSelectedItem() const;
 
 private:
 	friend class TreeViewItemWin32;
@@ -39,7 +39,7 @@ private:
 	std::map< HTREEITEM, Ref< TreeViewItemWin32 > > m_items;
 	Ref< TreeViewItemWin32 > m_dragItem;
 
-	TreeViewItemWin32* getFromHandle(HTREEITEM hItem) const;
+	Ref< TreeViewItemWin32 > getFromHandle(HTREEITEM hItem) const;
 
 	LRESULT eventButtonUp(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass);
 

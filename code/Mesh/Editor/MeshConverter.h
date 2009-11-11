@@ -2,8 +2,8 @@
 #define traktor_mesh_MeshConverter_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 #include "Render/VertexElement.h"
 #include "Mesh/Editor/MeshPipelineParams.h"
 
@@ -27,7 +27,7 @@ class MeshResource;
 class MeshConverter : public Object
 {
 public:
-	virtual MeshResource* createResource() const = 0;
+	virtual Ref< MeshResource > createResource() const = 0;
 
 	virtual bool convert(
 		const model::Model& model,

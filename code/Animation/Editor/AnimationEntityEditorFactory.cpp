@@ -19,7 +19,7 @@ const TypeSet AnimationEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-scene::IEntityEditor* AnimationEntityEditorFactory::createEntityEditor(
+Ref< scene::IEntityEditor > AnimationEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
 	const Type& entityDataType
 ) const

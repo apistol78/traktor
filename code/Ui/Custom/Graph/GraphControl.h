@@ -4,10 +4,12 @@
 #define T_GRAPH_USE_XTRME 1
 
 #include <list>
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #if T_GRAPH_USE_XTRME
-#include "Ui/Xtrme/WidgetXtrme.h"
+#	include "Ui/Xtrme/WidgetXtrme.h"
 #else
-#include "Ui/Widget.h"
+#	include "Ui/Widget.h"
 #endif
 #include "Ui/Point.h"
 
@@ -133,13 +135,13 @@ public:
 	 */
 	int getConnectedEdges(const RefArray< Node >& nodes, bool inclusive, RefArray< Edge >& outEdges) const;
 
-	Node* getNodeAt(const Point& p) const;
+	Ref< Node > getNodeAt(const Point& p) const;
 
-	Edge* getEdgeAt(const Point& p) const;
+	Ref< Edge > getEdgeAt(const Point& p) const;
 
 	void setPaintSettings(PaintSettings* paintSettings);
 
-	PaintSettings* getPaintSettings() const;
+	Ref< PaintSettings > getPaintSettings() const;
 
 	void center();
 

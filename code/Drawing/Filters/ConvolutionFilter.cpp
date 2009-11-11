@@ -14,7 +14,7 @@ ConvolutionFilter::ConvolutionFilter(const Matrix33& matrix)
 {
 }
 
-ConvolutionFilter* ConvolutionFilter::createGaussianBlur()
+Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur()
 {
 	return gc_new< ConvolutionFilter >(cref(Matrix33(
 		1, 2, 1,
@@ -23,7 +23,7 @@ ConvolutionFilter* ConvolutionFilter::createGaussianBlur()
 	)));
 }
 
-ConvolutionFilter* ConvolutionFilter::createEmboss()
+Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
 {
 	return gc_new< ConvolutionFilter >(cref(Matrix33(
 		2,  0,  0,
@@ -32,7 +32,7 @@ ConvolutionFilter* ConvolutionFilter::createEmboss()
 	)));
 }
 
-Image* ConvolutionFilter::apply(const Image* image)
+Ref< Image > ConvolutionFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;

@@ -64,7 +64,7 @@ void EventSubject::raiseEvent(int eventId, Event* event)
 	{
 		for (EventHandlers::iterator j = i->begin(); j != i->end(); )
 		{
-			EventHandler* eventHandler = *j++;
+			Ref< EventHandler > eventHandler = *j++;
 			if (!eventHandler)
 				continue;
 			

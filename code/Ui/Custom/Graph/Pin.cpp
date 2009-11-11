@@ -18,7 +18,7 @@ Pin::Pin(Node* node, const std::wstring& name, Direction direction, bool mandato
 {
 }
 
-Node* Pin::getNode()
+Ref< Node > Pin::getNode()
 {
 	return m_node;
 }

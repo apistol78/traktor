@@ -1,10 +1,11 @@
 #ifndef traktor_spray_Emitter_H
 #define traktor_spray_Emitter_H
 
-#include "Resource/Proxy.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Serialization/Serializable.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,9 +49,9 @@ class T_DLLCLASS Emitter : public Serializable
 public:
 	Emitter();
 
-	EmitterInstance* createInstance(resource::IResourceManager* resourceManager);
+	Ref< EmitterInstance > createInstance(resource::IResourceManager* resourceManager);
 
-	inline Source* getSource() const { return m_source; }
+	inline Ref< Source > getSource() const { return m_source; }
 
 	inline RefArray< Modifier >& getModifiers() { return m_modifiers; }
 

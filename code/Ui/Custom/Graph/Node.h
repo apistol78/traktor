@@ -1,11 +1,12 @@
 #ifndef traktor_ui_custom_Node_H
 #define traktor_ui_custom_Node_H
 
+#include <map>
 #include <string>
 #include <vector>
-#include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Color.h"
 #include "Ui/Associative.h"
 #include "Ui/Rect.h"
@@ -60,7 +61,7 @@ public:
 
 	void setImage(Bitmap* image);
 
-	Bitmap* getImage() const;
+	Ref< Bitmap > getImage() const;
 
 	void setColor(const Color& color);
 
@@ -78,19 +79,19 @@ public:
 
 	const RefArray< Pin >& getInputPins() const;
 
-	Pin* findInputPin(const std::wstring& name) const;
+	Ref< Pin > findInputPin(const std::wstring& name) const;
 
 	void addOutputPin(Pin* pin);
 
 	const RefArray< Pin >& getOutputPins() const;
 
-	Pin* findOutputPin(const std::wstring& name) const;
+	Ref< Pin > findOutputPin(const std::wstring& name) const;
 
 	bool hit(const Point& p) const;
 
 	Point getPinPosition(const Pin* pin) const;
 
-	Pin* getPinAt(const Point& p) const;
+	Ref< Pin > getPinAt(const Point& p) const;
 
 	void paint(PaintSettings* settings, Canvas* canvas, const Size& offset) const;
 

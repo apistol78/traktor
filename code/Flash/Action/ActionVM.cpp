@@ -837,7 +837,7 @@ void ActionVM::execute(ActionFrame* frame)
 
 					// Call constructor.
 					ActionValue object = classObject->call(this, frame, self);
-					stack.push(ActionValue::fromObject(object.isObject() ? object.getObject() : self.getPtr()));
+					stack.push(ActionValue::fromObject(object.isObject() ? object.getObject() : self.ptr()));
 				}
 				else
 				{

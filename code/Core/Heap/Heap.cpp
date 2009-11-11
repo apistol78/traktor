@@ -1,7 +1,9 @@
 #include <algorithm>
-#include <map>
-#include "Core/Heap/HeapConfig.h"
+#include <list>
+#include "Core/Containers/IntrusiveList.h"
 #include "Core/Heap/Heap.h"
+#include "Core/Heap/HeapConfig.h"
+#include "Core/Heap/HeapStats.h"
 #include "Core/Heap/StdAllocator.h"
 #if defined(T_HEAP_FAST_ALLOCATOR)
 #	include "Core/Heap/FastAllocator.h"
@@ -10,16 +12,16 @@
 #	include "Core/Heap/DebugAllocator.h"
 #endif
 #include "Core/Heap/Ref.h"
-#include "Core/Singleton/SingletonManager.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/ThreadLocal.h"
-#include "Core/Thread/Thread.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
-#include "Core/Log/Log.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ThreadLocal.h"
 
 namespace traktor
 {
+
+const uint32_t c_magic = 'TKTR';
+const int32_t c_eventsUntilCollect = 4000;
 
 #pragma pack(1)
 
@@ -32,225 +34,163 @@ namespace traktor
  * Size of this structure must be a multiple of
  * maximum alignment, i.e. 16 bytes.
  */
-struct ObjectInfo
+struct ObjectHeader
 {
+	uint32_t m_magic;					//!< Magic signature; used to indicate object is allocated through heap.
+	int32_t m_refCount;					//!< Object reference count.
+	IntrusiveList< RefBase > m_crefs;	//!< Child reference containers; used to determine cycles.
+
 	struct 
 	{
-		unsigned m_sizeOrTick : 29;	//!< Size of object during object creation. Clock tick after object was created.
-		unsigned m_keep : 1;		//!< Keep object flag; used by mark phase to mark objects to be kept.
-		unsigned m_visited : 1;		//!< Visited flag; used when traversing references to indicate if object has been already visited.
-		unsigned m_referenced : 1;	//!< Referenced flag; i.e. it's been visible through a reference in mark phase.
+		unsigned m_size : 24;
+		unsigned m_buffered : 1;
+		unsigned m_visited : 1;
+		unsigned m_pending : 1;
+		unsigned m_dead : 1;			//!< Object is dead; only valid if T_HEAP_DEBUG_KEEP_DEAD is defined.
+		unsigned m_unused : 4;
 	};
-	IntrusiveList< RefBase > m_crefs;
-	ObjectInfo* m_prev;
-	ObjectInfo* m_next;
-#if defined(_WIN64) || defined(_XBOX) || defined(_PS3)
-	uint8_t m_padding[4];
-#endif
 
-	ObjectInfo()
-	:	m_sizeOrTick(0)
-	,	m_keep(0)
+	ObjectHeader()
+	:	m_magic(c_magic)
+	,	m_refCount(0)
+	,	m_size(0)
+	,	m_buffered(0)
 	,	m_visited(0)
-	,	m_referenced(0)
-	,	m_prev(0)
-	,	m_next(0)
+	,	m_pending(0)
+	,	m_dead(0)
 	{
 	}
 };
 
 #pragma pack()
 
-	namespace
-	{
+	//namespace
+	//{
+
+typedef Semaphore lock_primitive_t;
+typedef std::list< ObjectHeader* > object_list_t;
+typedef std::list< ObjectHeader* > object_stack_t;
 
 #if defined(T_HEAP_THREAD_SAFE)
-#	define HEAP_LOCK Acquire< Heap::lock_primitive_t > __prvlock__(m_heapLock);
-#	define HEAP_LOCK_ACQUIRE m_heapLock.acquire();
-#	define HEAP_LOCK_RELEASE m_heapLock.release();
+#	define HEAP_LOCK Acquire< lock_primitive_t > __prvlock__(g_heapLock);
 #else
 #	define HEAP_LOCK
-#	define HEAP_LOCK_ACQUIRE
-#	define HEAP_LOCK_RELEASE
 #endif
 
-#if !defined(WINCE)
-const int32_t c_objectsThreshold = 1000;			//!< Number of objects allocated before issuing GC.
-const int32_t c_refsRemovedThreshold = 30000;		//!< Number of references removed before issuing GC.
+#if defined(T_HEAP_DEBUG_ALLOCATOR)
+StdAllocator g_stdAllocator;
+DebugAllocator g_allocator(&g_stdAllocator);
+#elif defined(T_HEAP_FAST_ALLOCATOR)
+StdAllocator g_stdAllocator;
+FastAllocator g_allocator(&g_stdAllocator);
 #else
-const int32_t c_objectsThreshold = 100;				//!< Number of objects allocated before issuing GC.
-const int32_t c_refsRemovedThreshold = 3000;		//!< Number of references removed before issuing GC.
+StdAllocator g_allocator;
 #endif
-const int32_t c_promoteNonVisitedThreshold = 10000;	//!< Milliseconds until objects get promoted from non-visited into collect-able.
+
+lock_primitive_t g_heapLock;
+lock_primitive_t g_destructQueueLock;
+ThreadLocal g_creatingObjectStack;
+IntrusiveList< RefBase > g_rootRefs;
+object_list_t g_cycleObjects;
+int32_t g_eventsUntilCollect = c_eventsUntilCollect;			//!< Number of events until cycle collect.
+HeapStats g_stats = { 0, 0, 0, 0 };
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)
 {
-	return objectSize + sizeof(ObjectInfo);
+	const size_t c_objectHeaderSize = sizeof(ObjectHeader);
+	return c_objectHeaderSize + objectSize;
 }
 
-T_FORCE_INLINE Object* getObject(ObjectInfo* info)
+T_FORCE_INLINE Object* getObject(ObjectHeader* header)
 {
-	return reinterpret_cast< Object* >(reinterpret_cast< uint8_t* >(info) + sizeof(ObjectInfo));
+	T_ASSERT (header->m_dead == 0);
+	return reinterpret_cast< Object* >(reinterpret_cast< uint8_t* >(header) + sizeof(ObjectHeader));
 }
 
-T_FORCE_INLINE ObjectInfo* getInfo(Object* object)
+T_FORCE_INLINE ObjectHeader* getObjectHeader(Object* object)
 {
-	return reinterpret_cast< ObjectInfo* >(reinterpret_cast< uint8_t* >(object) - sizeof(ObjectInfo));
-}
-
-T_FORCE_INLINE const Object* getObject(const ObjectInfo* info)
-{
-	return reinterpret_cast< const Object* >(reinterpret_cast< const uint8_t* >(info) + sizeof(ObjectInfo));
-}
-
-T_FORCE_INLINE const ObjectInfo* getInfo(const Object* object)
-{
-	return reinterpret_cast< const ObjectInfo* >(reinterpret_cast< const uint8_t* >(object) - sizeof(ObjectInfo));
-}
-
-T_FORCE_INLINE void visitRefs(IntrusiveList< RefBase >& refs, RefBase::Visitor& visitor)
-{
-	for (IntrusiveList< RefBase >::iterator i = refs.begin(); i != refs.end(); ++i)
-		i->visit(visitor);
-}
-
-struct MarkVisitor : public RefBase::Visitor
-{
-	virtual void operator () (Object* object)
+	if (object)
 	{
-		if (!object->isManaged())
-			return;
-
-		ObjectInfo* info = getInfo(object);
-		if (info->m_visited)
-			return;
-
-		info->m_keep = 1;
-		info->m_visited = 1;
-		info->m_referenced = 1;
-
-		visitRefs(info->m_crefs, *this);
-	}
-};
-
-struct CountRefVisitor : public RefBase::Visitor
-{
-	const Object* m_object;
-	uint32_t m_count;
-
-	CountRefVisitor(const Object* object)
-	:	m_object(object)
-	,	m_count(0)
-	{
-	}
-
-	virtual void operator () (Object* object)
-	{
-		if (object == m_object)
-			++m_count;
-
-		if (!object->isManaged())
-			return;
-
-		ObjectInfo* info = getInfo(object);
-		if (!info->m_visited)
+		ObjectHeader* header = reinterpret_cast< ObjectHeader* >(reinterpret_cast< uint8_t* >(object) - sizeof(ObjectHeader));
+		if (header->m_magic == c_magic)
 		{
-			info->m_visited = 1;
-			visitRefs(info->m_crefs, *this);
+			T_ASSERT (header->m_dead == 0);
+			return header;
 		}
 	}
-};
-
-	}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Heap", Heap, Singleton)
-
-Heap::Heap()
-:	m_allocator(0)
-,	m_creatingObjectStack(new ThreadLocal())
-,	m_destructThread(0)
-,	m_objectsSinceGC(0)
-,	m_refsRemovedSinceGC(0)
-,	m_objectCount(0)
-,	m_referenceCount(0)
-{
-	m_timer.start();
+	return 0;
 }
 
-Heap::~Heap()
+T_FORCE_INLINE const Object* getObject(const ObjectHeader* header)
 {
-	T_EXCEPTION_GUARD_BEGIN
+	T_ASSERT (header->m_dead == 0);
+	return reinterpret_cast< const Object* >(reinterpret_cast< const uint8_t* >(header) + sizeof(ObjectHeader));
+}
 
-	collectAll();
-
-#if defined(T_HEAP_CONCURRENT_COLLECT)
-	if (m_destructThread && m_destructThread->stop())
+T_FORCE_INLINE const ObjectHeader* getObjectHeader(const Object* object)
+{
+	if (object)
 	{
-		ThreadManager::getInstance().destroy(m_destructThread);
-		m_destructThread = 0;
+		const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(reinterpret_cast< const uint8_t* >(object) - sizeof(ObjectHeader));
+		if (header->m_magic == c_magic)
+		{
+			T_ASSERT (header->m_dead == 0);
+			return header;
+		}
 	}
+	return 0;
+}
+
+T_FORCE_INLINE void freeObject(ObjectHeader* header)
+{
+	T_ASSERT (header->m_dead == 0);
+	T_ASSERT (header->m_buffered == 0);
+
+	Object* object = getObject(header);
+	object->~Object();
+
+#if defined(T_HEAP_DEBUG_KEEP_DEAD)
+	std::memset(object, 0, header->m_size);
+	header->m_dead = 1;
+#else
+	g_allocator.free(header);
 #endif
 
-	delete m_allocator;
-	delete m_creatingObjectStack;
-
-	for (std::vector< IntrusiveList< ObjectInfo >* >::iterator i = m_creatingObjectStacks.begin(); i != m_creatingObjectStacks.end(); ++i)
-		delete *i;
-
-	m_creatingObjectStacks.resize(0);
-
-	T_EXCEPTION_GUARD_END
+	Atomic::decrement(g_stats.objects);
 }
 
-Heap& Heap::getInstance()
-{
-	static Heap* s_instance = 0;
-	if (!s_instance)
-	{
-		s_instance = new Heap();
-		SingletonManager::getInstance().add(s_instance);
+	//}
 
-		// Finally create the Heap; we need to do this after we've added
-		// the instance to the singleton manager as create will use
-		// other singletons.
-		s_instance->create();
-	}
-	return *s_instance;
-}
-
-void* Heap::enterNewObject(size_t size, size_t align)
+void* Heap::preConstructor(size_t size, size_t align)
 {
-	T_ASSERT_M (size > 0, L"Invalid size");
+	T_ASSERT_M (size > 0, L"Invalid size, zero");
+	T_ASSERT_M (size < (1 << 24), L"Invalid size, too great");
 	T_ASSERT_M (align <= 16, L"Alignment must be 16 or less");
 
-	if (m_objectsSinceGC >= c_objectsThreshold && m_refsRemovedSinceGC >= c_refsRemovedThreshold)
+	// Invoke cycle collector if we've reached thresholds.
+	if (--g_eventsUntilCollect <= 0)
 	{
-		m_objectsSinceGC = 0;
-		m_refsRemovedSinceGC = 0;
+		g_eventsUntilCollect = c_eventsUntilCollect;
 		collect();
 	}
 
-	// Allocate object, including object information.
-	void* ptr = m_allocator->alloc(getAllocSize(size), align);
-	if (!ptr)
-		T_FATAL_ERROR;
+	// Allocate object, including object header.
+	void* ptr = g_allocator.alloc(getAllocSize(size), align);
+	T_FATAL_ASSERT_M(ptr != 0, L"Out of memory");
 
-	ObjectInfo* creatingObject = new (ptr) ObjectInfo();
-	creatingObject->m_sizeOrTick = size;
+	// Initialize object header.
+	ObjectHeader* creatingObject = new (ptr) ObjectHeader();
+	creatingObject->m_size = unsigned(size);
 
 	// Push creating object onto thread local storage.
+	object_stack_t* creatingObjectStack = static_cast< object_stack_t* >(g_creatingObjectStack.get());
+	if (!creatingObjectStack)
 	{
-		HEAP_LOCK
-
-		IntrusiveList< ObjectInfo >* creatingObjectStack = static_cast< IntrusiveList< ObjectInfo >* >(m_creatingObjectStack->get());
-		if (!creatingObjectStack)
-		{
-			creatingObjectStack = new IntrusiveList< ObjectInfo >();
-			m_creatingObjectStack->set(creatingObjectStack);
-			m_creatingObjectStacks.push_back(creatingObjectStack);
-		}
-		creatingObjectStack->push_front(creatingObject);
+		creatingObjectStack = new object_stack_t();
+		g_creatingObjectStack.set(creatingObjectStack);
 	}
+
+	creatingObjectStack->push_front(creatingObject);
 
 	// Return pointer to uninitialized object memory.
 	void* object = getObject(creatingObject);
@@ -259,454 +199,301 @@ void* Heap::enterNewObject(size_t size, size_t align)
 	return object;
 }
 
-void Heap::leaveNewObject(void* ptr)
+void Heap::postConstructor(void* ptr)
 {
-	HEAP_LOCK
-
-	IntrusiveList< ObjectInfo >* creatingObjectStack = static_cast< IntrusiveList< ObjectInfo >* >(m_creatingObjectStack->get());
+	object_stack_t* creatingObjectStack = static_cast< object_stack_t* >(g_creatingObjectStack.get());
 	T_ASSERT (creatingObjectStack);
 	T_ASSERT (!creatingObjectStack->empty());
 
-	ObjectInfo* info = creatingObjectStack->front();
-	creatingObjectStack->pop_front();
+	Object* object = static_cast< Object* >(ptr);
+	ObjectHeader* header = creatingObjectStack->front(); creatingObjectStack->pop_front();
 
-	T_ASSERT (info == getInfo(static_cast< Object* >(ptr)));
-	getObject(info)->m_managed = true;
+	T_ASSERT (getObject(header) == object);
+	T_ASSERT (header == getObjectHeader(object));
 
-	info->m_sizeOrTick = uint32_t(m_timer.getElapsedTime() * 1000.0f);
-
-	m_objects.push_front(info);
-
-	Atomic::increment(m_objectsSinceGC);
-	Atomic::increment(m_objectCount);
+	Atomic::increment(g_stats.objects);
 }
 
-void Heap::addRef(RefBase* ref)
+void Heap::registerRef(RefBase* ref, void* ptr)
 {
 	T_ASSERT (ref->m_prev == 0);
 	T_ASSERT (ref->m_next == 0);
 	T_ASSERT (ref->m_owner == 0);
 
-	Atomic::increment(m_referenceCount);
+	Atomic::increment(g_stats.references);
 
-#if defined(T_DEBUG_REFERENCE_ADDRESS)
+	incrementRef(ptr);
 
-	// Get instantiation address from call stack.
-	uint32_t adress = 0UL;
-	__asm
-	{
-		mov eax, [ebp]
-		mov eax, [eax + 4]
-		mov adress, eax
-	}
-	ref->m_adress = adress;
-
-#endif
-
-	// Get object being created, thus register reference as member reference.
-	IntrusiveList< ObjectInfo >* creatingObjectStack = static_cast< IntrusiveList< ObjectInfo >* >(m_creatingObjectStack->get());
+	object_stack_t* creatingObjectStack = static_cast< object_stack_t* >(g_creatingObjectStack.get());
 	if (creatingObjectStack)
 	{
-		ObjectInfo* creatingObject = !creatingObjectStack->empty() ? creatingObjectStack->front() : 0;
+		ObjectHeader* creatingObject = !creatingObjectStack->empty() ? creatingObjectStack->front() : 0;
 		if (creatingObject)
 		{
 			uint8_t* objectTop = reinterpret_cast< uint8_t* >(getObject(creatingObject));
-			uint8_t* objectEnd = objectTop + creatingObject->m_sizeOrTick;
+			uint8_t* objectEnd = objectTop + creatingObject->m_size;
 
 			if ((uint8_t*)ref >= objectTop && (uint8_t*)ref < objectEnd)
 			{
-				ref->m_owner = getObject(creatingObject);
+				ref->m_owner = creatingObject;
 				creatingObject->m_crefs.push_front(ref);
 				return;
 			}
 		}
 	}
 
-	// Add reference to root references list.
 	{
-		HEAP_LOCK
-		m_rootRefs.push_front(ref);
+		HEAP_LOCK;
+		g_rootRefs.push_front(ref);
+		Atomic::increment(g_stats.rootReferences);
 	}
 }
 
-void Heap::removeRef(RefBase* ref)
+void Heap::unregisterRef(RefBase* ref, void* ptr)
 {
-	HEAP_LOCK
+	Atomic::decrement(g_stats.references);
 
-	T_ASSERT (m_referenceCount > 0);
-	
 	if (ref->m_owner)
 	{
-		ObjectInfo* owner = getInfo(ref->m_owner);
+		ObjectHeader* owner = static_cast< ObjectHeader* >(ref->m_owner);
+		T_ASSERT (owner->m_dead == 0);
 		owner->m_crefs.remove(ref);
 	}
 	else
 	{
-		m_rootRefs.remove(ref);
+		HEAP_LOCK;
+		g_rootRefs.remove(ref);
+		Atomic::decrement(g_stats.rootReferences);
 	}
 
-	Atomic::increment(m_refsRemovedSinceGC);
-	Atomic::decrement(m_referenceCount);
+	decrementRef(ptr);
+
+	--g_eventsUntilCollect;
 }
 
-void Heap::invalidateRefs(Object* obj)
+void Heap::incrementRef(void* ptr)
 {
-	HEAP_LOCK
-
-	for (IntrusiveList< RefBase >::iterator i = m_rootRefs.begin(); i != m_rootRefs.end(); ++i)
-		i->invalidate(obj);
-
-	for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+	if (ptr)
 	{
-		for (IntrusiveList< RefBase >::iterator j = i->m_crefs.begin(); j != i->m_crefs.end(); ++j)
-			j->invalidate(obj);
-	}
-
-	for (std::vector< IntrusiveList< ObjectInfo >* >::iterator i = m_creatingObjectStacks.begin(); i != m_creatingObjectStacks.end(); ++i)
-	{
-		IntrusiveList< ObjectInfo >& objects = *(*i);
-		for (IntrusiveList< ObjectInfo >::iterator j = objects.begin(); j != objects.end(); ++j)
+		Object* object = reinterpret_cast< Object* >(ptr);
+		ObjectHeader* header = getObjectHeader(object);
+		if (header)
 		{
-			for (IntrusiveList< RefBase >::iterator k = j->m_crefs.begin(); k != j->m_crefs.end(); ++k)
-				k->invalidate(obj);
+			Atomic::increment(header->m_refCount);
 		}
 	}
 }
 
-void Heap::invalidateAllRefs()
+void Heap::decrementRef(void* ptr)
 {
-	HEAP_LOCK
-	
-	for (IntrusiveList< RefBase >::iterator i = m_rootRefs.begin(); i != m_rootRefs.end(); ++i)
-		i->invalidate();
-
-	for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+	if (ptr)
 	{
-		for (IntrusiveList< RefBase >::iterator j = i->m_crefs.begin(); j != i->m_crefs.end(); ++j)
-			j->invalidate();
-	}
-
-	for (std::vector< IntrusiveList< ObjectInfo >* >::iterator i = m_creatingObjectStacks.begin(); i != m_creatingObjectStacks.end(); ++i)
-	{
-		IntrusiveList< ObjectInfo >& objects = *(*i);
-		for (IntrusiveList< ObjectInfo >::iterator j = objects.begin(); j != objects.end(); ++j)
+		Object* object = reinterpret_cast< Object* >(ptr);
+		ObjectHeader* header = getObjectHeader(object);
+		if (header)
 		{
-			for (IntrusiveList< RefBase >::iterator k = j->m_crefs.begin(); k != j->m_crefs.end(); ++k)
-				k->invalidate();
+			int32_t refCount = Atomic::decrement(header->m_refCount);
+			if (refCount > 0)
+			{
+				if (!header->m_crefs.empty() && !header->m_pending)
+				{
+					HEAP_LOCK;
+					if (!header->m_buffered)
+					{
+						header->m_buffered = 1;
+						g_cycleObjects.push_back(header);
+					}
+				}
+			}
+			else if (refCount <= 0)
+			{
+				HEAP_LOCK;
+				if (!header->m_crefs.empty())
+				{
+					if (header->m_buffered)
+					{
+						header->m_buffered = 0;
+						g_cycleObjects.remove(header);
+					}
+				}
+				freeObject(header);
+			}
 		}
 	}
+}
+
+namespace
+{
+
+	void Collect_visitRefs(IntrusiveList< RefBase >& refs, RefBase::IVisitor& visitor)
+	{
+		for (IntrusiveList< RefBase >::iterator i = refs.begin(); i != refs.end(); ++i)
+			(*i)->visit(visitor);
+	}
+
+	template< int Condition >
+	struct MarkVisitor : public RefBase::IVisitor
+	{
+		int32_t m_count;
+
+		MarkVisitor()
+		:	m_count(0)
+		{
+		}
+
+		virtual void operator () (void* object)
+		{
+			ObjectHeader* header = getObjectHeader((Object*)object);
+			if (header)
+			{
+				if (header->m_visited == Condition)
+				{
+					m_count++;
+					header->m_visited = !Condition;
+					Collect_visitRefs(header->m_crefs, *this);
+				}
+			}
+		}
+	};
+
+	struct IncludeExternalVisitor : public RefBase::IVisitor
+	{
+		object_list_t& m_externalObjects;
+
+		IncludeExternalVisitor(object_list_t& externalObjects)
+		:	m_externalObjects(externalObjects)
+		{
+		}
+
+		virtual void operator () (void* object)
+		{
+			ObjectHeader* header = getObjectHeader((Object*)object);
+			if (header)
+			{
+				if (!header->m_pending && !header->m_visited)
+				{
+					header->m_pending = 1;
+					m_externalObjects.push_back(header);
+					Collect_visitRefs(header->m_crefs, *this);
+				}
+			}
+		}
+	};
+
 }
 
 void Heap::collect()
 {
-	IntrusiveList< ObjectInfo > collectables;
-	MarkVisitor visitor;
+#if defined(T_HEAP_COLLECT_CYCLES)
+
+	object_list_t collectableObjects;
+	object_list_t collectableExternalObjects;
+	int32_t count1, count2;
 
 	{
-		HEAP_LOCK
+		HEAP_LOCK;
 
-		uint32_t promotionTick = uint32_t(m_timer.getElapsedTime() * 1000.0f);
-
-		// Mark reachable objects.
-		for (std::vector< IntrusiveList< ObjectInfo >* >::iterator i = m_creatingObjectStacks.begin(); i != m_creatingObjectStacks.end(); ++i)
+		if (!g_cycleObjects.empty())
 		{
-			for (IntrusiveList< ObjectInfo >::iterator j = (*i)->begin(); j != (*i)->end(); ++j)
+			// Ensure "cycle object" candidates are valid.
+#if defined(_DEBUG)
+			for (object_list_t::iterator i = g_cycleObjects.begin(); i != g_cycleObjects.end(); ++i)
 			{
-				T_ASSERT (j->m_visited == 0);
-				visitRefs(j->m_crefs, visitor);
+				ObjectHeader* header = *i;
+				T_ASSERT (header->m_dead == 0);
+				T_ASSERT (header->m_buffered == 1);
+				T_ASSERT (header->m_pending == 0);
 			}
-		}
-
-		for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-		{
-			if (!i->m_referenced && (promotionTick - i->m_sizeOrTick) < c_promoteNonVisitedThreshold)
-				visitRefs(i->m_crefs, visitor);
-		}
-
-		visitRefs(m_rootRefs, visitor);
-
-		// Gather collectables.
-		for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); !m_objects.empty() && i != m_objects.end(); )
-		{
-			i->m_visited = 0;
-
-			if (i->m_keep)
-			{
-				i->m_keep = 0;
-				i++;
-			}
-			else
-			{
-				ObjectInfo* collected = *i++;
-
-				m_objects.remove(collected);
-				collectables.push_front(collected);
-
-				Atomic::decrement(m_objectCount);
-			}
-		}
-	}
-
-	// Destroy collectables.
-	if (!collectables.empty())
-	{
-#if defined(T_HEAP_CONCURRENT_COLLECT)
-		m_destructQueueLock.acquire();
-		{
-			Functor* task = makeFunctor(this, &Heap::destruct, collectables);
-			if (task)
-			{
-				m_destructQueue.push_back(task);
-				m_destructQueueSignal.set();
-			}
-		}
-		m_destructQueueLock.release();
-#else
-		destruct(collectables);
 #endif
-	}
-}
 
-void Heap::collectAll()
-{
-	{
-		HEAP_LOCK
-
-		invalidateAllRefs();
-
-		while (!m_objects.empty())
-		{
-			ObjectInfo* info = m_objects.front();
-			m_objects.pop_front();
-
-			getObject(info)->~Object();
-			m_allocator->free(info);
-
-			Atomic::decrement(m_objectCount);
-		}
-
-		T_ASSERT (!m_objectCount);
-	}
-}
-
-void Heap::collectAllOf(const Type& type)
-{
-	{
-		HEAP_LOCK
-
-		for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); )
-		{
-			Object* object = getObject(*i);
-			if (is_type_of(type, object->getType()))
+			// Mark reachable objects.
 			{
-				ObjectInfo* info = *i;
-				m_objects.erase(i++);
-
-				invalidateRefs(object);
-
-				object->~Object();
-				m_allocator->free(info);
-
-				Atomic::decrement(m_objectCount);
+				MarkVisitor< 0 > visitor;
+				Collect_visitRefs(g_rootRefs, visitor);
+				count1 = visitor.m_count;
 			}
-			else
-				++i;
-		}
-	}
-}
 
-int32_t Heap::getObjectCount() const
-{
-	return m_objectCount;
-}
-
-int32_t Heap::getReferenceCount() const
-{
-	return m_referenceCount;
-}
-
-uint32_t Heap::getReferenceCount(const Object* obj)
-{
-	HEAP_LOCK
-
-	CountRefVisitor visitor(obj);
-
-	for (std::vector< IntrusiveList< ObjectInfo >* >::iterator i = m_creatingObjectStacks.begin(); i != m_creatingObjectStacks.end(); ++i)
-	{
-		for (IntrusiveList< ObjectInfo >::iterator j = (*i)->begin(); j != (*i)->end(); ++j)
-		{
-			T_ASSERT (j->m_visited == 0);
-			visitRefs(j->m_crefs, visitor);
-		}
-	}
-
-	for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-		visitRefs(i->m_crefs, visitor);
-
-	visitRefs(m_rootRefs, visitor);
-
-	for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-		i->m_visited = 0;
-
-	return visitor.m_count;
-}
-
-uint32_t Heap::getDestructionTaskCount() const
-{
-	Acquire< lock_primitive_t > lock(m_destructQueueLock);
-	return uint32_t(m_destructQueue.size());
-}
-
-void Heap::dump(OutputStream& os) const
-{
-	HEAP_LOCK
-
-	std::map< const Type*, uint32_t > objectCount;
-
-	for (IntrusiveList< ObjectInfo >::const_iterator i = m_objects.begin(); i != m_objects.end(); ++i)
-	{
-		const Object* o = getObject(*i);
-		objectCount[&o->getType()]++;
-	}
-
-	for (std::map< const Type*, uint32_t >::iterator i = objectCount.begin(); i != objectCount.end(); ++i)
-		os << i->first->getName() << L" : \t" << i->second << Endl;
-}
-
-void Heap::create()
-{
-	T_ASSERT_M((sizeof(ObjectInfo) & 15) == 0, L"Incorrect size of ObjectInfo structure");
-
-	m_allocator = new StdAllocator();
-
-	/*lint -e423*/
-#if defined(T_HEAP_FAST_ALLOCATOR)
-	m_allocator = new FastAllocator(m_allocator);
-#endif
-#if defined(T_HEAP_DEBUG_ALLOCATOR)
-	m_allocator = new DebugAllocator(m_allocator);
-#endif
-	/*lint -restore*/
-
-#if defined(T_HEAP_CONCURRENT_COLLECT)
-	m_destructThread = ThreadManager::getInstance().create(makeFunctor(this, &Heap::destructThread), L"Heap destruct thread");
-	T_ASSERT (m_destructThread);
-
-	m_destructThread->start(Thread::Above);
-#endif
-}
-
-void Heap::destroy()
-{
-	delete this;
-}
-
-void Heap::destruct(IntrusiveList< ObjectInfo > collectables)
-{
-	MarkVisitor visitor;
-
-	while (!collectables.empty())
-	{
-		{
-			HEAP_LOCK_ACQUIRE
-
-			// Keep objects which are members to objects being collected.
-			for (IntrusiveList< ObjectInfo >::iterator i = collectables.begin(); i != collectables.end(); ++i)
+			// Copy objects from cycle which hasn't been reached.
+			while (!g_cycleObjects.empty())
 			{
-				if (i->m_keep)
-					continue;
+				ObjectHeader* header = g_cycleObjects.front(); g_cycleObjects.pop_front();
+				T_ASSERT (header->m_dead == 0);
+				T_ASSERT (header->m_buffered == 1);
 
-				i->m_visited = 0;
-				visitRefs(i->m_crefs, visitor);
-
-				if (i->m_keep)
+				if (!header->m_visited)
 				{
-					// Ensure flags on living objects are reset before releasing lock.
-					for (IntrusiveList< ObjectInfo >::iterator j = m_objects.begin(); j != m_objects.end(); ++j)
-					{
-						j->m_visited = 0;
-						j->m_keep = 0;
-					}
-
-					HEAP_LOCK_RELEASE
-
-					// Circular reference; need to invalidate all references to this object.
-					// We do this without lock in order to reduce stalls from other threads making allocations.
-					for (IntrusiveList< ObjectInfo >::iterator j = collectables.begin(); j != collectables.end(); ++j)
-					{
-						for (IntrusiveList< RefBase >::iterator k = j->m_crefs.begin(); k != j->m_crefs.end(); ++k)
-							k->invalidate(getObject(*i));
-					}
-
-					HEAP_LOCK_ACQUIRE
+					header->m_pending = 1;
+					collectableObjects.push_back(header);
 				}
+
+				header->m_buffered = 0;
 			}
 
-			// Ensure flags on living objects are reset.
-			for (IntrusiveList< ObjectInfo >::iterator i = m_objects.begin(); i != m_objects.end(); ++i)
+			// Ensure unreachable objects referenced from collectable objects also are in collectable list.
+			for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
 			{
-				i->m_visited = 0;
-				i->m_keep = 0;
+				ObjectHeader* header = *i;
+				T_ASSERT (header->m_dead == 0);
+				T_ASSERT (header->m_buffered == 0);
+				T_ASSERT (header->m_pending == 1);
+
+				IncludeExternalVisitor visitor(collectableExternalObjects);
+				Collect_visitRefs(header->m_crefs, visitor);
 			}
 
-			HEAP_LOCK_RELEASE
+			// Reset reachable objects.
+			{
+				MarkVisitor< 1 > visitor;
+				Collect_visitRefs(g_rootRefs, visitor);
+				count2 = visitor.m_count;
+			}
+
+			T_ASSERT (count1 == count2);
 		}
 
-		// Collect objects which are still marked for collection.
-		for (IntrusiveList< ObjectInfo >::iterator i = collectables.begin(); i != collectables.end(); )
+		// Append external objects to collectable list.
+		collectableObjects.insert(
+			collectableObjects.end(),
+			collectableExternalObjects.begin(),
+			collectableExternalObjects.end()
+		);
+
+		// Break references between collectable objects.
+		for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
 		{
-			i->m_visited = 0;
+			ObjectHeader* header = *i;
+			T_ASSERT (header->m_dead == 0);
+			T_ASSERT (header->m_buffered == 0);
+			T_ASSERT (header->m_pending == 1);
 
-			if (i->m_keep)
+			for (IntrusiveList< RefBase >::iterator j = header->m_crefs.begin(); j != header->m_crefs.end(); ++j)
 			{
-				i->m_keep = 0;
-				i++;
+				for (object_list_t::iterator k = collectableObjects.begin(); k != collectableObjects.end(); ++k)
+					(*j)->invalidate(getObject(*k));
 			}
-			else
-			{
-				ObjectInfo* info = *i++;
-				collectables.remove(info);
+		}
 
-				getObject(info)->~Object();
-				m_allocator->free(info);
-			}
+		// Collect unreachable objects.
+		for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
+		{
+			ObjectHeader* header = *i;
+			T_ASSERT (header->m_dead == 0);
+			T_ASSERT (header->m_buffered == 0);
+			T_ASSERT (header->m_pending == 1);
+
+			freeObject(header);
 		}
 	}
+
+	Atomic::increment(g_stats.collects);
+
+#endif
 }
 
-void Heap::destructThread()
+void Heap::getStats(HeapStats& outStats)
 {
-	T_ASSERT (m_destructThread);
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	Functor* task;
-
-	while (!currentThread->stopped())
-	{
-		if (!m_destructQueueLock.acquire(100))
-			continue;
-
-		if (!m_destructQueue.empty())
-		{
-			task = m_destructQueue.front();
-			m_destructQueue.pop_front();
-			T_ASSERT (task);
-		}
-		else
-			task = 0;
-
-		m_destructQueueLock.release();
-
-		if (task)
-		{
-			(*task)();
-			delete task;
-		}
-		else
-		{
-			m_destructQueueSignal.reset();
-			m_destructQueueSignal.wait(100);
-		}
-	}
+	HEAP_LOCK;
+	outStats = g_stats;
 }
 
 }

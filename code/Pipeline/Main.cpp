@@ -23,7 +23,7 @@
 
 using namespace traktor;
 
-db::Database* openDatabase(const std::wstring& databaseName, bool create)
+Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 {
 	Ref< db::IProviderDatabase > providerDatabase;
 
@@ -53,10 +53,10 @@ db::Database* openDatabase(const std::wstring& databaseName, bool create)
 	T_ASSERT (providerDatabase);
 
 	Ref< db::Database > database = gc_new< db::Database >();
-	return database->create(providerDatabase) ? database.getPtr() : 0;
+	return database->create(providerDatabase) ? database.ptr() : 0;
 }
 
-editor::Settings* loadSettings(const std::wstring& settingsFile)
+Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
 {
 	Ref< editor::PropertyGroup > globalGroup, userGroup;
 	Ref< Stream > file;
@@ -86,7 +86,7 @@ editor::Settings* loadSettings(const std::wstring& settingsFile)
 	return gc_new< editor::Settings >(globalGroup, userGroup);
 }
 
-editor::PipelineHash* loadPipelineHash(const std::wstring& pipelineHashFile)
+Ref< editor::PipelineHash > loadPipelineHash(const std::wstring& pipelineHashFile)
 {
 	Ref< editor::PipelineHash > pipelineHash;
 	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);

@@ -41,9 +41,9 @@ public:
 
 	void freeBlockId(uint32_t blockId);
 
-	Stream* readBlock(uint32_t blockId);
+	Ref< Stream > readBlock(uint32_t blockId);
 
-	Stream* writeBlock(uint32_t blockId);
+	Ref< Stream > writeBlock(uint32_t blockId);
 
 	void flushTOC();
 

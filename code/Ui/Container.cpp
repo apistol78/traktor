@@ -44,10 +44,10 @@ void Container::fit()
 	if (m_layout)
 	{
 		// First fit child containers.
-		for (Widget* child = getFirstChild(); child; child = child->getNextSibling())
+		for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
 		{
 			if (is_a< Container >(child))
-				static_cast< Container* >(child)->fit();
+				static_cast< Container* >(child.ptr())->fit();
 		}
 	
 		// Use layout to calculate size of container.
@@ -80,7 +80,7 @@ Size Container::getPreferedSize() const
 {
 	if (m_layout)
 	{
-		// Calculate hint size, use largest child's prefered size as hint.
+		// Calculate hint size, use largest child's preferred size as hint.
 		Size inner = getInnerRect().getSize();
 		for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
 		{
@@ -102,7 +102,7 @@ Size Container::getMaximumSize() const
 	return Widget::getMaximumSize();
 }
 
-Layout* Container::getLayout() const
+Ref< Layout > Container::getLayout() const
 {
 	return m_layout;
 }

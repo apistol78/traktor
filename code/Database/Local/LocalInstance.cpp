@@ -150,7 +150,7 @@ bool LocalInstance::remove()
 	return true;
 }
 
-Stream* LocalInstance::readObject(const Type*& outSerializerType)
+Ref< Stream > LocalInstance::readObject(const Type*& outSerializerType)
 {
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 
@@ -175,7 +175,7 @@ Stream* LocalInstance::readObject(const Type*& outSerializerType)
 	return objectStream;
 }
 
-Stream* LocalInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< Stream > LocalInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
 {
 	if (!m_transaction)
 		return false;
@@ -208,13 +208,13 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 	return uint32_t(outDataNames.size());
 }
 
-Stream* LocalInstance::readData(const std::wstring& dataName)
+Ref< Stream > LocalInstance::readData(const std::wstring& dataName)
 {
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
 	return FileSystem::getInstance().open(instanceDataPath, File::FmRead);
 }
 
-Stream* LocalInstance::writeData(const std::wstring& dataName)
+Ref< Stream > LocalInstance::writeData(const std::wstring& dataName)
 {
 	if (!m_transaction)
 		return 0;

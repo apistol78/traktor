@@ -18,7 +18,7 @@ class AsArray : public ActionClass
 	T_RTTI_CLASS(AsArray)
 
 public:
-	static AsArray* getInstance();
+	static Ref< AsArray > getInstance();
 
 private:
 	AsArray();

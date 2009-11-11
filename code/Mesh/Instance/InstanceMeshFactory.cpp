@@ -43,7 +43,7 @@ bool InstanceMeshFactory::isCacheable() const
 	return true;
 }
 
-Object* InstanceMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	// Read single instance mesh.
 	render::SystemMeshFactory systemMeshFactory;

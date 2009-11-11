@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ArticulatedEntity_H
 #define traktor_physics_ArticulatedEntity_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/SpatialEntity.h"
 
 #undef T_DLLCLASS

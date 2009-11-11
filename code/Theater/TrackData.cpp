@@ -16,7 +16,7 @@ void TrackData::setInstance(world::EntityInstance* instance)
 	m_instance = instance;
 }
 
-world::EntityInstance* TrackData::getInstance() const
+Ref< world::EntityInstance > TrackData::getInstance() const
 {
 	return m_instance;
 }

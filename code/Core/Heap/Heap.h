@@ -1,13 +1,7 @@
 #ifndef traktor_Heap_H
 #define traktor_Heap_H
 
-#include <vector>
-#include <list>
-#include "Core/Containers/IntrusiveList.h"
-#include "Core/Singleton/Singleton.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Signal.h"
-#include "Core/Timer/Timer.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,171 +14,63 @@
 namespace traktor
 {
 
-class Thread;
-class ThreadLocal;
-class Allocator;
-class Object;
 class RefBase;
-class Type;
-class OutputStream;
-class Functor;
-
-struct ObjectInfo;
+struct HeapStats;
 
 /*! \brief Managed object heap.
  * \ingroup Core
- *
- * The Heap is responsible of allocating and freeing managed object.
- * A managed object is an object allocated through the gc_new<> function
- * and kept by the Ref<> containers.
- * The Heap will automatically reclaim memory for an object when it
- * detects that there are no references to that specific object alive.
- * But contrary to more conventional reference counted schemes the Heap
- * implements a mark'n'sweep based collector scheme which is more efficient
- * but has the down-side of being non-deterministic, ie. you cannot rely
- * on the destructor being called as soon as the last reference is removed.
- *
- * \note
- * In order for an object to be collectable must either be seen
- * by a reference container or alive for a certain time.
- * This time is measured since it was allocated.
  */
-class T_DLLCLASS Heap : public Singleton
+class T_DLLCLASS Heap
 {
-	T_RTTI_CLASS(Heap)
-
 public:
-	typedef Semaphore lock_primitive_t;
-
-	/*! \brief Get Heap singleton instance.
-	 *
-	 * \return Reference to single Heap instance.
-	 */
-	static Heap& getInstance();
-
 	/*! \brief Enter construction of new object.
 	 *
 	 * \param size Size of object in bytes.
 	 * \param align Alignment requirement.
 	 * \return Allocated memory for object.
 	 */
-	void* enterNewObject(size_t size, size_t align);
+	static void* preConstructor(size_t size, size_t align);
 
 	/*! \brief Leave construction of object.
 	 *
 	 * \param ptr Object memory pointer returned by enterNewObject.
 	 */
-	void leaveNewObject(void* ptr);
+	static void postConstructor(void* ptr);
 
 	/*! \brief Add reference container to heap.
 	 *
 	 * \param ref Reference container.
+	 * \param ptr Initial object; ref count will be incremented.
 	 */
-	void addRef(RefBase* ref);
+	static void registerRef(RefBase* ref, void* ptr);
 
 	/*! \brief Remove reference container from heap.
 	 *
 	 * \param ref Reference container.
+	 * \param ptr Existing object; ref count will be decremented.
 	 */
-	void removeRef(RefBase* ref);
+	static void unregisterRef(RefBase* ref, void* ptr);
 
-	/*! \brief Invalidate all reference containers which reference object.
+	/*! \brief Increment reference count on object.
 	 *
-	 * \param obj Object
+	 * \param ptr Object pointer.
 	 */
-	void invalidateRefs(Object* obj);
+	static void incrementRef(void* ptr);
 
-	/*! \brief Invalidate all reference containers.
+	/*! \brief Decrement reference count on object.
 	 *
-	 * \note
-	 * All reference containers are invalidated and should
-	 * therefor be used with extreme care.
+	 * \param ptr Object pointer.
 	 */
-	void invalidateAllRefs();
+	static void decrementRef(void* ptr);
 
 	/*! \brief Collect unused memory. */
-	void collect();
+	static void collect();
 
-	/*! \brief Collect all memory.
+	/*! \brief Get heap statistics.
 	 *
-	 * \note
-	 * Every managed object will be collected, alive or not,
-	 * and therefor this method should be used with extreme care.
+	 * \param outStats Heap statistics.
 	 */
-	void collectAll();
-
-	/*! \brief Collect all memory allocated by a certain type.
-	 *
-	 * \note
-	 * Every managed object will be collected, alive or not,
-	 * and therefor this method should be used with extreme care.
-	 */
-	void collectAllOf(const Type& type);
-
-	/*! \brief Get number of allocated objects.
-	 *
-	 * \return Number of allocated objects, alive or dead.
-	 */
-	int32_t getObjectCount() const;
-
-	/*! \brief Get number of registered reference containers.
-	 *
-	 * \return Number of reference containers.
-	 */
-	int32_t getReferenceCount() const;
-
-	/*! \brief Get number of reference containers referencing a given object.
-	 *
-	 * \note
-	 * This method is extremely slow and should only be used
-	 * as a debugging tool.
-	 *
-	 * \return Number of reference containers.
-	 */
-	uint32_t getReferenceCount(const Object* obj);
-
-	/*! \brief Get number of pending destruction tasks.
-	 *
-	 * \return Number of destruction tasks.
-	 */
-	uint32_t getDestructionTaskCount() const;
-
-	/*! \brief Dump information about allocated objects.
-	 *
-	 * \param os Target output stream.
-	 */
-	void dump(OutputStream& os) const;
-
-protected:
-	void create();
-
-	virtual void destroy();
-
-private:
-	mutable lock_primitive_t m_heapLock;
-	mutable lock_primitive_t m_destructQueueLock;
-
-	Allocator* m_allocator;
-	ThreadLocal* m_creatingObjectStack;
-	std::vector< IntrusiveList< ObjectInfo >* > m_creatingObjectStacks;
-	IntrusiveList< ObjectInfo > m_objects;
-	IntrusiveList< RefBase > m_rootRefs;
-	Signal m_destructQueueSignal;
-	std::list< Functor* > m_destructQueue;
-	Thread* m_destructThread;
-	int32_t m_objectsSinceGC;
-	int32_t m_refsRemovedSinceGC;
-	int32_t m_objectCount;
-	int32_t m_referenceCount;
-	Timer m_timer;
-
-	Heap();
-
-	~Heap();
-
-	void destruct(IntrusiveList< ObjectInfo > collectables);
-
-	void destructThread();
+	static void getStats(HeapStats& outStats);
 };
 
 }

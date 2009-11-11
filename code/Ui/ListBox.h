@@ -53,7 +53,7 @@ public:
 
 	std::wstring getItem(int index) const;
 
-	Object* getData(int index) const;
+	Ref< Object > getData(int index) const;
 
 	void select(int index);
 
@@ -65,7 +65,7 @@ public:
 
 	std::wstring getSelectedItem() const;
 
-	Object* getSelectedData() const;
+	Ref< Object > getSelectedData() const;
 
 	int getItemHeight() const;
 

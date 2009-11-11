@@ -1,10 +1,10 @@
 #ifndef traktor_render_RenderTargetSetOpenGLES2_H
 #define traktor_render_RenderTargetSetOpenGLES2_H
 
+#include "Core/Heap/RefArray.h"
+#include "Core/Math/Vector4.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -44,7 +44,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual ITexture* getColorTexture(int index) const;
+	virtual Ref< ITexture > getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 

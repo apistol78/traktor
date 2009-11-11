@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
-AsArray* AsArray::getInstance()
+Ref< AsArray > AsArray::getInstance()
 {
 	static AsArray* instance = 0;
 	if (!instance)

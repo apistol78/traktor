@@ -50,7 +50,7 @@ class T_DLLCLASS AnimatedMeshEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(AnimatedMeshEntityData)
 
 public:
-	AnimatedMeshEntity* createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
+	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
 
 	virtual bool serialize(Serializer& s);
 

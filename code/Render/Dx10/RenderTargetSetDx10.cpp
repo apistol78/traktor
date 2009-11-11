@@ -113,7 +113,7 @@ int RenderTargetSetDx10::getHeight() const
 	return m_height;
 }
 
-ITexture* RenderTargetSetDx10::getColorTexture(int index) const
+Ref< ITexture > RenderTargetSetDx10::getColorTexture(int index) const
 {
 	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }

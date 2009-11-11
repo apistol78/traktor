@@ -2,7 +2,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {

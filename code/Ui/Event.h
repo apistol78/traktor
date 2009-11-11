@@ -36,9 +36,9 @@ class T_DLLCLASS Event : public Object
 public:
 	Event(EventSubject* sender, Object* item);
 
-	EventSubject* getSender() const;
+	Ref< EventSubject > getSender() const;
 
-	Object* getItem() const;
+	Ref< Object > getItem() const;
 
 	int getKeyState() const;
 

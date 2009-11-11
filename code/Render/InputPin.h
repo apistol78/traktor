@@ -30,7 +30,7 @@ class T_DLLCLASS InputPin : public Object
 public:
 	InputPin(Node* node, const std::wstring& name, bool optional);
 	
-	Node* getNode() const;
+	Ref< Node > getNode() const;
 	
 	const std::wstring& getName() const;
 

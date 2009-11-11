@@ -16,7 +16,7 @@ const TypeSet DictionaryEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< DictionaryEditorPage >(editor);
 }

@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,7 @@ public:
 
 	std::wstring getValue(const std::wstring& key) const;
 
-	static HttpRequest* parse(const std::wstring& request);
+	static Ref< HttpRequest > parse(const std::wstring& request);
 
 private:
 	Method m_method;

@@ -23,7 +23,7 @@ ExternalNodeFacade::ExternalNodeFacade(ui::custom::GraphControl* graphControl)
 	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
 }
 
-Node* ExternalNodeFacade::createShaderNode(
+Ref< Node > ExternalNodeFacade::createShaderNode(
 	const Type* nodeType,
 	editor::IEditor* editor
 )
@@ -43,7 +43,7 @@ Node* ExternalNodeFacade::createShaderNode(
 	);
 }
 
-ui::custom::Node* ExternalNodeFacade::createEditorNode(
+Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode

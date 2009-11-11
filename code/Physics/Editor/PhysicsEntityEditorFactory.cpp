@@ -19,7 +19,7 @@ const TypeSet PhysicsEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-scene::IEntityEditor* PhysicsEntityEditorFactory::createEntityEditor(
+Ref< scene::IEntityEditor > PhysicsEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
 	const Type& entityDataType
 ) const

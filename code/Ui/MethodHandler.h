@@ -29,9 +29,9 @@ class MethodHandler : public EventHandler
 public:
 	typedef void (T::*M)(Event* event);
 
-	MethodHandler< T >(T* object, M method) :
-		m_object(object),
-		m_method(method)
+	MethodHandler< T >(T* object, M method)
+	:	m_object(object)
+	,	m_method(method)
 	{
 	}
 
@@ -49,7 +49,7 @@ private:
  * \ingroup UI
  */
 template < typename T >
-inline EventHandler* createMethodHandler(T* object, typename MethodHandler< T >::M method)
+inline Ref< EventHandler > createMethodHandler(T* object, typename MethodHandler< T >::M method)
 {
 	return gc_new< MethodHandler< T > >(object, method);
 }

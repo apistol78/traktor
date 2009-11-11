@@ -1,8 +1,8 @@
 #ifndef traktor_scene_Scene_H
 #define traktor_scene_Scene_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,15 +46,15 @@ public:
 
 	void destroy();
 
-	ISceneController* getController() const;
+	Ref< world::IEntityManager > getEntityManager() const;
 
-	world::IEntityManager* getEntityManager() const;
+	Ref< world::Entity > getRootEntity() const;
 
-	world::Entity* getRootEntity() const;
+	Ref< ISceneController > getController() const;
 
-	world::WorldRenderSettings* getWorldRenderSettings() const;
+	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	world::PostProcessSettings* getPostProcessSettings() const;
+	Ref< world::PostProcessSettings > getPostProcessSettings() const;
 
 private:
 	Ref< world::IEntityManager > m_entityManager;

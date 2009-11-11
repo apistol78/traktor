@@ -39,7 +39,7 @@ bool SequenceItem::isSelected() const
 	return m_selected;
 }
 
-SequenceItem* SequenceItem::getParentItem()
+Ref< SequenceItem > SequenceItem::getParentItem()
 {
 	return m_parent;
 }
@@ -58,7 +58,7 @@ void SequenceItem::removeChildItem(SequenceItem* childItem)
 	m_childItems.remove(childItem);
 }
 
-RefList< SequenceItem >& SequenceItem::getChildItems()
+RefArray< SequenceItem >& SequenceItem::getChildItems()
 {
 	return m_childItems;
 }

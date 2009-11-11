@@ -1,9 +1,10 @@
 #ifndef traktor_net_DiscoveryManager_H
 #define traktor_net_DiscoveryManager_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Object.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Thread/Thread.h"
 
 // import/export mechanism.
@@ -69,7 +70,7 @@ private:
 
 	bool sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message);
 
-	IDiscoveryMessage* recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout);
+	Ref< IDiscoveryMessage > recvMessage(UdpSocket* socket, SocketAddressIPv4* fromAddress, int32_t timeout);
 };
 
 	}

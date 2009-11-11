@@ -2,6 +2,7 @@
 #define traktor_ui_custom_Sequence_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Custom/Sequencer/SequenceItem.h"
 
 // import/export mechanism.
@@ -39,9 +40,9 @@ public:
 
 	bool containsKey(Key* key) const;
 
-	const RefList< Key >& getKeys() const;
+	const RefArray< Key >& getKeys() const;
 
-	Key* getSelectedKey() const;
+	Ref< Key > getSelectedKey() const;
 
 	int clientFromTime(int time) const;
 
@@ -52,7 +53,7 @@ public:
 	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset);
 
 private:
-	RefList< Key > m_keys;
+	RefArray< Key > m_keys;
 	Ref< Key > m_selectedKey;
 };
 

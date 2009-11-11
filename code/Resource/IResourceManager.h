@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -50,7 +51,7 @@ public:
 	 * \param guid Resource identifier.
 	 * \return Resource handle.
 	 */
-	virtual IResourceHandle* bind(const Type& type, const Guid& guid) = 0;
+	virtual Ref< IResourceHandle > bind(const Type& type, const Guid& guid) = 0;
 
 	/*! \brief Update all handles.
 	 *
@@ -69,7 +70,7 @@ public:
 	virtual void flush() = 0;
 
 	template < typename ResourceType >
-	IResourceHandle* bind(const Guid& guid)
+	Ref< IResourceHandle > bind(const Guid& guid)
 	{
 		return bind(type_of< ResourceType >(), guid);
 	}

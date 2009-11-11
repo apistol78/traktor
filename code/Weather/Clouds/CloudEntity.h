@@ -1,6 +1,7 @@
 #ifndef traktor_weather_CloudEntity_H
 #define traktor_weather_CloudEntity_H
 
+#include "Core/Heap/RefArray.h"
 #include "Resource/Proxy.h"
 #include "World/Entity/SpatialEntity.h"
 #include "Weather/Clouds/CloudParticleCluster.h"

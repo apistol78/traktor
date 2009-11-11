@@ -50,7 +50,7 @@ ImageCache::~ImageCache()
 	}
 }
 
-render::ITexture* ImageCache::getTexture(IBitmap* bitmap)
+Ref< render::ITexture > ImageCache::getTexture(IBitmap* bitmap)
 {
 	std::map< IBitmap*, CachedTexture >::iterator i = m_cache.find(bitmap);
 	if (i != m_cache.end())

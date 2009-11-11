@@ -147,7 +147,7 @@ ProgramWin32::~ProgramWin32()
 	destroy();
 }
 
-ProgramResourceDx9* ProgramWin32::compile(const HlslProgram& hlslProgram, int optimize, bool validate)
+Ref< ProgramResourceDx9 > ProgramWin32::compile(const HlslProgram& hlslProgram, int optimize, bool validate)
 {
 	const DWORD c_optimizationLevels[] =
 	{

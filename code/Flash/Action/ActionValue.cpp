@@ -7,6 +7,7 @@
 #include "Core/Heap/Alloc.h"
 #include "Core/Heap/BlockAllocator.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Singleton/Singleton.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -27,7 +28,7 @@ public:
 		if (!s_instance)
 		{
 			s_instance = new RefHeap();
-			SingletonManager::getInstance().addAfter(s_instance, &Heap::getInstance());
+			SingletonManager::getInstance().add(s_instance);
 		}
 		return *s_instance;
 	}
@@ -246,7 +247,7 @@ std::wstring ActionValue::getStringSafe() const
 	return L"undefined";
 }
 
-ActionObject* ActionValue::getObjectSafe() const
+Ref< ActionObject > ActionValue::getObjectSafe() const
 {
 	switch (m_type)
 	{

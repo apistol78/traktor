@@ -22,7 +22,7 @@ const TypeSet GroupEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* GroupEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
+Ref< Entity > GroupEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
 {
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{

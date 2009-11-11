@@ -2,7 +2,6 @@
 #define traktor_model_Model_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Vector2.h"

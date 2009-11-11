@@ -1,9 +1,9 @@
 #ifndef traktor_render_RenderTargetSetDx10_H
 #define traktor_render_RenderTargetSetDx10_H
 
-#include "Render/RenderTargetSet.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/RenderTargetSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,7 +42,7 @@ public:
 	
 	virtual int getHeight() const;
 
-	virtual ITexture* getColorTexture(int index) const;
+	virtual Ref< ITexture > getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 

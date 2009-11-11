@@ -30,7 +30,7 @@ class T_DLLCLASS Sound : public Object
 public:
 	Sound(ISoundBuffer* soundBuffer);
 
-	ISoundBuffer* getSoundBuffer();
+	Ref< ISoundBuffer > getSoundBuffer();
 
 private:
 	Ref< ISoundBuffer > m_soundBuffer;

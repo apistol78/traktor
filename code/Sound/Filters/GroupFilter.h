@@ -1,7 +1,7 @@
 #ifndef traktor_sound_GroupFilter_H
 #define traktor_sound_GroupFilter_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Sound/IFilter.h"
 
 // import/export mechanism.

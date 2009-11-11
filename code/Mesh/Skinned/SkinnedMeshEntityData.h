@@ -24,7 +24,7 @@ class T_DLLCLASS SkinnedMeshEntityData : public MeshEntityData
 	T_RTTI_CLASS(SkinnedMeshEntityData)
 
 public:
-	virtual MeshEntity* createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
+	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(Serializer& s);
 

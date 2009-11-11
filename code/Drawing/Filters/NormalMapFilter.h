@@ -30,7 +30,7 @@ public:
 	NormalMapFilter(float scale);
 
 protected:
-	virtual Image* apply(const Image* image);
+	virtual Ref< Image > apply(const Image* image);
 };
 	
 	}
