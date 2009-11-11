@@ -18,7 +18,7 @@ class AsTextField_StyleSheet : public ActionClass
 	T_RTTI_CLASS(AsTextField_StyleSheet)
 
 public:
-	static AsTextField_StyleSheet* getInstance();
+	static Ref< AsTextField_StyleSheet > getInstance();
 
 private:
 	AsTextField_StyleSheet();

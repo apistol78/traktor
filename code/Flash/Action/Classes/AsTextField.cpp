@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
-AsTextField* AsTextField::getInstance()
+Ref< AsTextField > AsTextField::getInstance()
 {
 	static AsTextField* instance = 0;
 	if (!instance)

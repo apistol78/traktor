@@ -25,12 +25,12 @@ Transition::Transition(State* from, State* to)
 {
 }
 
-State* Transition::from() const
+Ref< State > Transition::from() const
 {
 	return m_from;
 }
 
-State* Transition::to() const
+Ref< State > Transition::to() const
 {
 	return m_to;
 }

@@ -50,7 +50,7 @@ public:
 	 *
 	 * \param includeData Clone image pixels.
 	 */
-	Image* clone(bool includeData = true) const;
+	Ref< Image > clone(bool includeData = true) const;
 
 	/*! \brief Copy sub-rectangle of a source image into this image.
 	 *
@@ -72,22 +72,22 @@ public:
 	bool setPixel(int32_t x, int32_t y, const Color& color);
 	
 	/*! \brief Apply filter on entire image. */
-	Image* applyFilter(ImageFilter* imageFilter) const;
+	Ref< Image > applyFilter(ImageFilter* imageFilter) const;
 
 	/*! \brief Convert format of image. */
 	void convert(const PixelFormat* intoPixelFormat, Palette* intoPalette = 0);
 
 	/*! \brief Load image from file. */
-	static Image* load(const Path& fileName);
+	static Ref< Image > load(const Path& fileName);
 
 	/*! \brief Load image from resource. */
-	static Image* load(const void* resource, uint32_t size, const std::wstring& extension);
+	static Ref< Image > load(const void* resource, uint32_t size, const std::wstring& extension);
 
 	/*! \brief Save image. */
 	bool save(const Path& fileName);
 	
 	/*! \brief Get current image format. */
-	const PixelFormat* getPixelFormat() const;
+	Ref< const PixelFormat > getPixelFormat() const;
 	
 	/*! \brief Get width of image. */
 	const int32_t getWidth() const;
@@ -96,7 +96,7 @@ public:
 	const int32_t getHeight() const;
 
 	/*! \brief Get image palette. */
-	Palette* getPalette() const;
+	Ref< Palette > getPalette() const;
 
 	/*! \brief Get read-only pointer to image data. */
 	const void* getData() const;
@@ -111,7 +111,7 @@ public:
 	void setImageInfo(ImageInfo* imageInfo);
 
 	/*! \brief Get image meta data. */
-	ImageInfo* getImageInfo() const;
+	Ref< ImageInfo > getImageInfo() const;
 
 	/*! \brief Copy image. */
 	Image& operator = (const Image& src);

@@ -23,7 +23,7 @@ class T_DLLCLASS ScriptEditorFactory : public editor::IObjectEditorFactory
 public:
 	virtual const TypeSet getEditableTypes() const;
 
-	virtual editor::IObjectEditor* createObjectEditor(editor::IEditor* editor) const;
+	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
 };
 
 	}

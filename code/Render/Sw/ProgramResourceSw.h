@@ -21,7 +21,7 @@ class ProgramResourceSw : public ProgramResource
 public:
 	ProgramResourceSw(const ShaderGraph* shaderGraph = 0);
 
-	const ShaderGraph* getShaderGraph() const { return m_shaderGraph; }
+	Ref< const ShaderGraph > getShaderGraph() const { return m_shaderGraph; }
 
 	virtual bool serialize(Serializer& s);
 

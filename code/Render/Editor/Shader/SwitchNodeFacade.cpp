@@ -18,7 +18,7 @@ SwitchNodeFacade::SwitchNodeFacade(ui::custom::GraphControl* graphControl)
 	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
 }
 
-Node* SwitchNodeFacade::createShaderNode(
+Ref< Node > SwitchNodeFacade::createShaderNode(
 	const Type* nodeType,
 	editor::IEditor* editor
 )
@@ -26,7 +26,7 @@ Node* SwitchNodeFacade::createShaderNode(
 	return gc_new< Switch >();
 }
 
-ui::custom::Node* SwitchNodeFacade::createEditorNode(
+Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode

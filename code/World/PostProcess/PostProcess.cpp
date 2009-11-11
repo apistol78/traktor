@@ -157,7 +157,7 @@ void PostProcess::prepareShader(render::Shader* shader) const
 		shader->setVectorParameter(i->first, i->second);
 }
 
-render::RenderTargetSet* PostProcess::createOutputTarget(
+Ref< render::RenderTargetSet > PostProcess::createOutputTarget(
 	render::IRenderSystem* renderSystem,
 	int32_t width,
 	int32_t height,

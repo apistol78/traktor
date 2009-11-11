@@ -2,6 +2,7 @@
 #define traktor_resource_IResourceHandle_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,7 +35,7 @@ public:
 	 *
 	 * \return Resource object.
 	 */
-	virtual Object* get() = 0;
+	virtual Ref< Object > get() = 0;
 
 	/*! \brief Flush resource object. */
 	virtual void flush() = 0;

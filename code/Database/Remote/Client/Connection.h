@@ -33,7 +33,7 @@ public:
 	void destroy();
 
 	template < typename ReplyMessageType >
-	ReplyMessageType* sendMessage(const IMessage& message)
+	Ref< ReplyMessageType > sendMessage(const IMessage& message)
 	{
 		Ref< IMessage > reply = sendMessage(message);
 		return dynamic_type_cast< ReplyMessageType* >(reply);
@@ -44,7 +44,7 @@ private:
 	Ref< MessageTransport > m_messageTransport;
 	Semaphore m_messageLock;
 
-	IMessage* sendMessage(const IMessage& message);
+	Ref< IMessage > sendMessage(const IMessage& message);
 };
 
 	}

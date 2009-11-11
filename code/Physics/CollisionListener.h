@@ -4,6 +4,7 @@
 #include <vector>
 #include "Core/Object.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
 
@@ -70,7 +71,7 @@ private:
 };
 
 template < typename TargetType >
-inline CollisionListener* createCollisionListener(TargetType* object, typename MethodCollisionListener< TargetType >::TargetMethod method)
+inline Ref< CollisionListener > createCollisionListener(TargetType* object, typename MethodCollisionListener< TargetType >::TargetMethod method)
 {
 	return gc_new< MethodCollisionListener< TargetType > >(object, method);
 }

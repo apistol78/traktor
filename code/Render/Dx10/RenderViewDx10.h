@@ -1,11 +1,12 @@
 #ifndef traktor_render_RenderViewDx10_H
 #define traktor_render_RenderViewDx10_H
 
+#include <list>
 #include <stack>
 #include "Core/Heap/Ref.h"
-#include "Render/Dx10/Platform.h"
-#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/IRenderView.h"
+#include "Render/Dx10/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

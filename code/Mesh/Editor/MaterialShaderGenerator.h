@@ -38,7 +38,7 @@ class MaterialShaderGenerator : public Object
 public:
 	MaterialShaderGenerator(db::Database* database, const model::Model* model);
 
-	render::ShaderGraph* generate(const model::Material& material) const;
+	Ref< render::ShaderGraph > generate(const model::Material& material) const;
 
 private:
 	Ref< db::Database > m_database;

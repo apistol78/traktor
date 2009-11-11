@@ -1,11 +1,12 @@
 #ifndef traktor_render_RenderTargetSetWin32_H
 #define traktor_render_RenderTargetSetWin32_H
 
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Core/Misc/ComRef.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
 #include "Render/Dx9/Unmanaged.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,7 +46,7 @@ public:
 	
 	virtual int getHeight() const;
 	
-	virtual ITexture* getColorTexture(int index) const;
+	virtual Ref< ITexture > getColorTexture(int index) const;
 
 	virtual void swap(int index1, int index2);
 
@@ -55,7 +56,7 @@ public:
 
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
-	inline RenderTargetWin32* getRenderTarget(int renderTarget) const {
+	inline Ref< RenderTargetWin32 > getRenderTarget(int renderTarget) const {
 		return m_colorTextures[renderTarget];
 	}
 

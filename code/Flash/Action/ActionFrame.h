@@ -55,17 +55,17 @@ public:
 
 	void setDictionary(ActionDictionary* dictionary);
 
-	inline ActionContext* getContext() const { return m_context; }
+	inline Ref< ActionContext > getContext() const { return m_context; }
 
-	inline ActionObject* getSelf() const { return m_self; }
+	inline Ref< ActionObject > getSelf() const { return m_self; }
 
 	inline const uint8_t* getCode() const { return m_code; }
 
 	inline uint16_t getCodeSize() const { return m_codeSize; }
 
-	inline ActionDictionary* getDictionary() const { return m_dictionary; }
+	inline Ref< ActionDictionary > getDictionary() const { return m_dictionary; }
 
-	inline ActionFunction* getCallee() const { return m_callee; }
+	inline Ref< ActionFunction > getCallee() const { return m_callee; }
 
 	inline ActionValueStack& getStack() { return m_stack; }
 

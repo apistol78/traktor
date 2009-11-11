@@ -18,7 +18,7 @@ class AsSecurity : public ActionClass
 	T_RTTI_CLASS(AsSecurity)
 
 public:
-	static AsSecurity* getInstance();
+	static Ref< AsSecurity > getInstance();
 
 private:
 	AsSecurity();

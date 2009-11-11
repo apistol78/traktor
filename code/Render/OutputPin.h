@@ -32,7 +32,7 @@ public:
 
 	OutputPin(Node* node, const std::wstring& name);
 	
-	Node* getNode() const;
+	Ref< Node > getNode() const;
 	
 	const std::wstring& getName() const;
 

@@ -2,6 +2,7 @@
 #define traktor_scene_IEntityEditorFactory_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,7 +40,7 @@ public:
 	 * \param entityDataType Entity data type.
 	 * \return Entity editor instance.
 	 */
-	virtual IEntityEditor* createEntityEditor(SceneEditorContext* context, const Type& entityDataType) const = 0;
+	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, const Type& entityDataType) const = 0;
 };
 
 	}

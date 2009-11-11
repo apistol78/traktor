@@ -2,8 +2,9 @@
 #define traktor_render_ShaderGraph_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.

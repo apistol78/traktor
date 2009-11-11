@@ -18,7 +18,7 @@ class AsDate : public ActionClass
 	T_RTTI_CLASS(AsDate)
 
 public:
-	static AsDate* getInstance();
+	static Ref< AsDate > getInstance();
 
 private:
 	AsDate();

@@ -2,8 +2,9 @@
 #define traktor_world_PostProcess_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
@@ -98,7 +99,7 @@ public:
 
 	void prepareShader(render::Shader* shader) const;
 
-	render::RenderTargetSet* createOutputTarget(
+	Ref< render::RenderTargetSet > createOutputTarget(
 		render::IRenderSystem* renderSystem,
 		int32_t width,
 		int32_t height,

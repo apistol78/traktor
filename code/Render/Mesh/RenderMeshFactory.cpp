@@ -15,7 +15,7 @@ RenderMeshFactory::RenderMeshFactory(IRenderSystem* renderSystem)
 {
 }
 
-Mesh* RenderMeshFactory::createMesh(
+Ref< Mesh > RenderMeshFactory::createMesh(
 	const std::vector< VertexElement >& vertexElements,
 	unsigned int vertexBufferSize,
 	IndexType indexType,

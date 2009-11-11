@@ -118,7 +118,7 @@ bool TreeViewItemWin32::edit()
 	return TreeView_EditLabel(m_hWndTree, m_hItem) != NULL;
 }
 
-TreeViewItem* TreeViewItemWin32::getParent() const
+Ref< TreeViewItem > TreeViewItemWin32::getParent() const
 {
 	HTREEITEM hParentItem = TreeView_GetParent(m_hWndTree, m_hItem);
 	if (!hParentItem)

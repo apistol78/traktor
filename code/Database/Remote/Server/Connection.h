@@ -2,8 +2,9 @@
 #define traktor_db_Connection_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -54,7 +55,7 @@ public:
 
 	uint32_t putObject(Object* object);
 
-	Object* getObject(uint32_t handle);
+	Ref< Object > getObject(uint32_t handle);
 
 	void releaseObject(uint32_t handle);
 
@@ -63,7 +64,7 @@ public:
 	IProviderDatabase* getDatabase() const;
 
 	template < typename ObjectType >
-	ObjectType* getObject(uint32_t handle)
+	Ref< ObjectType > getObject(uint32_t handle)
 	{
 		return dynamic_type_cast< ObjectType* >(getObject(handle));
 	}

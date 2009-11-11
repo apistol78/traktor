@@ -18,7 +18,7 @@ class AsObject : public ActionClass
 	T_RTTI_CLASS(AsObject)
 
 public:
-	static AsObject* getInstance();
+	static Ref< AsObject > getInstance();
 
 private:
 	AsObject();

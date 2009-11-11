@@ -2,6 +2,7 @@
 #define traktor_ui_IClipboard_H
 
 #include "Core/Config.h"
+#include "Core/Heap/Ref.h"
 #include "Ui/Enums.h"
 
 namespace traktor
@@ -26,7 +27,7 @@ public:
 
 	virtual ClipboardContentType getContentType() const = 0;
 
-	virtual Serializable* getObject() const = 0;
+	virtual Ref< Serializable > getObject() const = 0;
 
 	virtual std::wstring getText() const = 0;
 };

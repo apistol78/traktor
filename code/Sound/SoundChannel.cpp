@@ -43,7 +43,7 @@ void SoundChannel::setFilter(IFilter* filter)
 	m_filter = filter;
 }
 
-IFilter* SoundChannel::getFilter() const
+Ref< IFilter > SoundChannel::getFilter() const
 {
 	return m_filter;
 }

@@ -26,9 +26,9 @@ class T_DLLCLASS ActionArray : public ActionObject
 public:
 	ActionArray();
 
-	ActionArray* concat() const;
+	Ref< ActionArray > concat() const;
 
-	ActionArray* concat(const std::vector< ActionValue >& values) const;
+	Ref< ActionArray > concat(const std::vector< ActionValue >& values) const;
 
 	std::wstring join(const std::wstring& delimiter) const;
 

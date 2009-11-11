@@ -49,9 +49,9 @@ public:
 
 	void detach();
 
-	DockPane* findWidgetPane(Widget* widget);
+	Ref< DockPane > findWidgetPane(Widget* widget);
 
-	DockPane* getFromPosition(const Point& position);
+	Ref< DockPane > getFromPosition(const Point& position);
 
 	bool hitGripper(const Point& position) const;
 

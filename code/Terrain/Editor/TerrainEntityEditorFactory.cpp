@@ -19,7 +19,7 @@ const TypeSet TerrainEntityEditorFactory::getEntityDataTypes() const
 	return typeSet;
 }
 
-scene::IEntityEditor* TerrainEntityEditorFactory::createEntityEditor(
+Ref< scene::IEntityEditor > TerrainEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
 	const Type& entityDataType
 ) const

@@ -212,15 +212,16 @@ int Splitter::getPosition() const
 	return m_position;
 }
 
-Widget* Splitter::getLeftWidget() const
+Ref< Widget > Splitter::getLeftWidget() const
 {
 	return getFirstChild();
 }
 
-Widget* Splitter::getRightWidget() const
+Ref< Widget > Splitter::getRightWidget() const
 {
-	Widget* child = getFirstChild();
-	if (child != 0) child = child->getNextSibling();
+	Ref< Widget > child = getFirstChild();
+	if (child != 0)
+		child = child->getNextSibling();
 	return child;
 }
 

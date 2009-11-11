@@ -33,7 +33,7 @@ public:
 
 	virtual Url getUrl() const;
 
-	virtual Stream* getStream();
+	virtual Ref< Stream > getStream();
 
 private:
 	Ref< FtpClient > m_client;

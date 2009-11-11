@@ -2,12 +2,12 @@
 #define traktor_input_InputDriverXi_H
 
 #if defined(_XBOX)
-#include <xtl.h>
+#	include <xtl.h>
 #else
-#include <windows.h>
-#include <xinput.h>
+#	include <windows.h>
+#	include <xinput.h>
 #endif
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
@@ -34,7 +34,7 @@ public:
 
 	virtual int getDeviceCount();
 
-	virtual IInputDevice* getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index);
 
 private:
 	RefArray< InputDeviceXi > m_devices;

@@ -1,7 +1,7 @@
 #ifndef traktor_render_ShaderGraphEditorClipboardData_H
 #define traktor_render_ShaderGraphEditorClipboardData_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 #include "Ui/Rect.h"
 

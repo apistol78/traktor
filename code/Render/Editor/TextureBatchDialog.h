@@ -1,6 +1,7 @@
 #ifndef traktor_render_TextureBatchDialog_H
 #define traktor_render_TextureBatchDialog_H
 
+#include "Core/Heap/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor

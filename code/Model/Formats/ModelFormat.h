@@ -2,6 +2,7 @@
 #define traktor_model_ModelFormat_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -60,7 +61,7 @@ public:
 	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	virtual Model* read(const Path& filePath, uint32_t importFlags = IfAll) const = 0;
+	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags = IfAll) const = 0;
 
 	/*! \brief Write model.
 	 *
@@ -76,7 +77,7 @@ public:
 	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	static Model* readAny(const Path& filePath, uint32_t importFlags = IfAll);
+	static Ref< Model > readAny(const Path& filePath, uint32_t importFlags = IfAll);
 
 	/*! \brief Automatically write model using format based on filename extension.
 	 *

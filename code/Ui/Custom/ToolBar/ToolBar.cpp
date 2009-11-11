@@ -111,13 +111,13 @@ uint32_t ToolBar::addItem(ToolBarItem* item)
 	return uint32_t(m_items.size() - 1);
 }
 
-ToolBarItem* ToolBar::getItem(uint32_t id)
+Ref< ToolBarItem > ToolBar::getItem(uint32_t id)
 {
 	T_ASSERT (id < m_items.size());
 	return m_items[id];
 }
 
-ToolBarItem* ToolBar::getItem(const Point& at)
+Ref< ToolBarItem > ToolBar::getItem(const Point& at)
 {
 	Rect rc = getInnerRect();
 

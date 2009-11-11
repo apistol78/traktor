@@ -29,7 +29,7 @@ public:
 
 	virtual int getDeviceCount();
 
-	virtual IInputDevice* getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index);
 
 private:
 	Ref< KeyboardDeviceWin32 > m_keyboardDevice;

@@ -305,12 +305,12 @@ bool AnimationEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* AnimationEditorPage::getDataInstance()
+Ref< db::Instance > AnimationEditorPage::getDataInstance()
 {
 	return m_animationInstance;
 }
 
-Object* AnimationEditorPage::getDataObject()
+Ref< Object > AnimationEditorPage::getDataObject()
 {
 	return m_animation;
 }
@@ -524,7 +524,7 @@ void AnimationEditorPage::setSkeleton(Skeleton* skeleton)
 
 bool AnimationEditorPage::getSelectedPoseId(int& outPoseId) const
 {
-	RefList< ui::custom::SequenceItem > selectedItems;
+	RefArray< ui::custom::SequenceItem > selectedItems;
 	m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly);
 	if (selectedItems.size() != 1)
 		return false;

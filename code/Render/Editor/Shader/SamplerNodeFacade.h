@@ -1,7 +1,6 @@
 #ifndef traktor_render_SamplerNodeFacade_H
 #define traktor_render_SamplerNodeFacade_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Editor/Shader/NodeFacade.h"
 
 namespace traktor
@@ -27,12 +26,12 @@ class SamplerNodeFacade : public NodeFacade
 public:
 	SamplerNodeFacade(ui::custom::GraphControl* graphControl);
 
-	virtual Node* createShaderNode(
+	virtual Ref< Node > createShaderNode(
 		const Type* nodeType,
 		editor::IEditor* editor
 	);
 
-	virtual ui::custom::Node* createEditorNode(
+	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode

@@ -114,7 +114,7 @@ std::wstring Volume::getDescription() const
 	return L"Zip archive (" + m_archive.getPathName() + L")";
 }
 
-File* Volume::get(const Path& path)
+Ref< File > Volume::get(const Path& path)
 {
 	return 0;
 }
@@ -206,9 +206,9 @@ bool Volume::modify(const Path& fileName, uint32_t flags)
 	return false;
 }
 
-Stream* Volume::open(const Path& filename, File::Mode mode)
+Ref< Stream > Volume::open(const Path& filename, File::Mode mode)
 {
-	Stream* stream = 0;
+	Ref< Stream > stream;
 	if (mode == File::FmRead)
 	{
 		if (!readArchive())

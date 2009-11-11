@@ -43,27 +43,27 @@ void Scene::destroy()
 	m_postProcessSettings = 0;
 }
 
-ISceneController* Scene::getController() const
-{
-	return m_controller;
-}
-
-world::IEntityManager* Scene::getEntityManager() const
+Ref< world::IEntityManager > Scene::getEntityManager() const
 {
 	return m_entityManager;
 }
 
-world::Entity* Scene::getRootEntity() const
+Ref< world::Entity > Scene::getRootEntity() const
 {
 	return m_rootEntity;
 }
 
-world::WorldRenderSettings* Scene::getWorldRenderSettings() const
+Ref< ISceneController > Scene::getController() const
+{
+	return m_controller;
+}
+
+Ref< world::WorldRenderSettings > Scene::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
 }
 
-world::PostProcessSettings* Scene::getPostProcessSettings() const
+Ref< world::PostProcessSettings > Scene::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
 }

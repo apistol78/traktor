@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsError", AsError, ActionClass)
 
-AsError* AsError::getInstance()
+Ref< AsError > AsError::getInstance()
 {
 	static AsError* instance = 0;
 	if (!instance)

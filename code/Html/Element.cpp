@@ -24,7 +24,7 @@ std::wstring Element::getName() const
 std::wstring Element::getValue() const
 {
 	std::wstringstream ss;
-	for (Node* child = getFirstChild(); child; child = child->getNextSibling())
+	for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
 		ss << child->getValue();
 	return ss.str();
 }
@@ -36,7 +36,7 @@ bool Element::hasAttribute(const std::wstring& name) const
 
 void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 {
-	Attribute* attr = getAttribute(name);
+	Ref< Attribute > attr = getAttribute(name);
 	if (attr == 0)
 	{
 		attr = gc_new< Attribute >(name);
@@ -51,19 +51,19 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	attr->setValue(value);
 }
 
-Attribute* Element::getFirstAttribute() const
+Ref< Attribute > Element::getFirstAttribute() const
 {
 	return m_firstAttribute;
 }
 
-Attribute* Element::getLastAttribute() const
+Ref< Attribute > Element::getLastAttribute() const
 {
 	return m_lastAttribute;
 }
 
-Attribute* Element::getAttribute(const std::wstring& name) const
+Ref< Attribute > Element::getAttribute(const std::wstring& name) const
 {
-	Attribute* attr;
+	Ref< Attribute > attr;
 	for (attr = m_firstAttribute; attr != 0; attr = attr->getNext())
 	{
 		if (attr->getName() == name)
@@ -72,52 +72,52 @@ Attribute* Element::getAttribute(const std::wstring& name) const
 	return attr;
 }
 
-Element* Element::getPreviousElementSibling() const
+Ref< Element > Element::getPreviousElementSibling() const
 {
-	Node* node = getPreviousSibling();
+	Ref< Node > node = getPreviousSibling();
 	while (node)
 	{
 		if (is_a< Element >(node))
 			break;
 		node = node->getPreviousSibling();
 	}
-	return static_cast< Element* >(node);
+	return static_cast< Element* >(node.ptr());
 }
 
-Element* Element::getNextElementSibling() const
+Ref< Element > Element::getNextElementSibling() const
 {
-	Node* node = getNextSibling();
+	Ref< Node > node = getNextSibling();
 	while (node)
 	{
 		if (is_a< Element >(node))
 			break;
 		node = node->getNextSibling();
 	}
-	return static_cast< Element* >(node);
+	return static_cast< Element* >(node.ptr());
 }
 
-Element* Element::getFirstElementChild() const
+Ref< Element > Element::getFirstElementChild() const
 {
-	Node* node = getFirstChild();
+	Ref< Node > node = getFirstChild();
 	while (node)
 	{
 		if (is_a< Element >(node))
 			break;
 		node = node->getNextSibling();
 	}
-	return static_cast< Element* >(node);
+	return static_cast< Element* >(node.ptr());
 }
 
-Element* Element::getLastElementChild() const
+Ref< Element > Element::getLastElementChild() const
 {
-	Node* node = getLastChild();
+	Ref< Node > node = getLastChild();
 	while (node)
 	{
 		if (is_a< Element >(node))
 			break;
 		node = node->getPreviousSibling();
 	}
-	return static_cast< Element* >(node);
+	return static_cast< Element* >(node.ptr());
 }
 
 void Element::writeHtml(Stream* stream)

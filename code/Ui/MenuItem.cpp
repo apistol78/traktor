@@ -48,7 +48,7 @@ void MenuItem::setImage(Bitmap* image)
 	m_image = image;
 }
 
-Bitmap* MenuItem::getImage() const
+Ref< Bitmap > MenuItem::getImage() const
 {
 	return m_image;
 }
@@ -84,7 +84,7 @@ int MenuItem::count() const
 	return int(m_items.size());
 }
 
-MenuItem* MenuItem::get(int index)
+Ref< MenuItem > MenuItem::get(int index)
 {
 	if (index < 0 || index >= int(m_items.size()))
 		return 0;

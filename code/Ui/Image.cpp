@@ -49,7 +49,7 @@ bool Image::setImage(Bitmap* image, bool transparent)
 	return true; 
 }
 
-Bitmap* Image::getImage() const
+Ref< Bitmap > Image::getImage() const
 {
 	return m_image;
 }

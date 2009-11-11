@@ -21,9 +21,9 @@ namespace traktor
 class IStreamWrapper : public Imf::IStream
 {
 public:
-	IStreamWrapper(Stream* stream) :
-		Imf::IStream("n/a"),
-		m_stream(stream)
+	IStreamWrapper(Stream* stream)
+	:	Imf::IStream("n/a")
+	,	m_stream(stream)
 	{
 	}
 
@@ -49,9 +49,9 @@ private:
 class OStreamWrapper : public Imf::OStream
 {
 public:
-	OStreamWrapper(Stream* stream) :
-		Imf::OStream("n/a"),
-		m_stream(stream)
+	OStreamWrapper(Stream* stream)
+	:	Imf::OStream("n/a")
+	,	m_stream(stream)
 	{
 	}
 
@@ -78,7 +78,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatExr", ImageFormatExr, ImageFormat)
 
-Image* ImageFormatExr::read(Stream* stream)
+Ref< Image > ImageFormatExr::read(Stream* stream)
 {
 	IStreamWrapper is(stream);
 	Imf::InputFile file(is);

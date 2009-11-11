@@ -48,6 +48,10 @@ bool Widget::create(Widget* parent, int style)
 
 void Widget::destroy()
 {
+	// Ensure this instance is alive as unlink might otherwise
+	// cause this instance to be collected as we will become "unreachable".
+	Ref< Widget > scopeRef(this);
+
 	removeAllEventHandlers();
 
 	while (m_firstChild)
@@ -374,27 +378,27 @@ void Widget::setParent(Widget* parent)
 		m_widget->setParent(0);
 }
 
-Widget* Widget::getParent() const
+Ref< Widget > Widget::getParent() const
 {
 	return m_parent;
 }
 
-Widget* Widget::getPreviousSibling() const
+Ref< Widget > Widget::getPreviousSibling() const
 {
 	return m_previousSibling;
 }
 
-Widget* Widget::getNextSibling() const
+Ref< Widget > Widget::getNextSibling() const
 {
 	return m_nextSibling;
 }
 
-Widget* Widget::getFirstChild() const
+Ref< Widget > Widget::getFirstChild() const
 {
 	return m_firstChild;
 }
 
-Widget* Widget::getLastChild() const
+Ref< Widget > Widget::getLastChild() const
 {
 	return m_lastChild;
 }

@@ -1,7 +1,8 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
-#include "Core/Misc/Adler32.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"

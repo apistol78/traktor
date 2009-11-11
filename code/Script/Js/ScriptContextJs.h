@@ -3,6 +3,7 @@
 
 #include <v8.h>
 #define T_HAVE_TYPES
+#include "Core/Heap/RefArray.h"
 #include "Script/IScriptContext.h"
 
 // import/export mechanism.

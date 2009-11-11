@@ -36,7 +36,7 @@ bool SoundFactory::isCacheable() const
 	return true;
 }
 
-Object* SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.spray.EffectEntityData", EffectEntityData, world::SpatialEntityData)
 
-EffectEntity* EffectEntityData::createEntity(resource::IResourceManager* resourceManager) const
+Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* resourceManager) const
 {
 	if (!resourceManager->bind(m_effect))
 		return 0;

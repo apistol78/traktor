@@ -2,6 +2,7 @@
 #include "Animation/Editor/LwsParser/LwsGroup.h"
 #include "Animation/Editor/LwsParser/LwsValue.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Misc/Split.h"
@@ -13,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsDocument", LwsDocument, Object)
 
-LwsDocument* LwsDocument::parse(Stream* stream)
+Ref< LwsDocument > LwsDocument::parse(Stream* stream)
 {
 	AnsiEncoding encoding;
 	StringReader reader(stream, &encoding);
@@ -64,7 +65,7 @@ LwsDocument* LwsDocument::parse(Stream* stream)
 	return document;
 }
 
-LwsGroup* LwsDocument::getRootGroup()
+Ref< LwsGroup > LwsDocument::getRootGroup()
 {
 	return m_rootGroup;
 }

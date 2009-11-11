@@ -103,7 +103,7 @@ bool CompactInstance::remove()
 	return true;
 }
 
-Stream* CompactInstance::readObject(const Type*& outSerializerType)
+Ref< Stream > CompactInstance::readObject(const Type*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -122,7 +122,7 @@ Stream* CompactInstance::readObject(const Type*& outSerializerType)
 	return objectStream;
 }
 
-Stream* CompactInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< Stream > CompactInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -161,7 +161,7 @@ uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames
 	return uint32_t(outDataNames.size());
 }
 
-Stream* CompactInstance::readData(const std::wstring& dataName)
+Ref< Stream > CompactInstance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -177,7 +177,7 @@ Stream* CompactInstance::readData(const std::wstring& dataName)
 	return blockFile->readBlock(i->second->getBlockId());
 }
 
-Stream* CompactInstance::writeData(const std::wstring& dataName)
+Ref< Stream > CompactInstance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT (m_instanceEntry);
 

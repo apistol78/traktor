@@ -73,20 +73,20 @@ public:
 	 *
 	 * Get information about display mode from index 0 - (getDisplayMode() - 1).
 	 */
-	virtual DisplayMode* getDisplayMode(int index) = 0;
+	virtual Ref< DisplayMode > getDisplayMode(int index) = 0;
 	
 	/*! \brief Get current display mode.
 	 *
 	 * Get information about currently set display mode.
 	 */
-	virtual DisplayMode* getCurrentDisplayMode() = 0;
+	virtual Ref< DisplayMode > getCurrentDisplayMode() = 0;
 	
 	/*! \brief Find supported display mode from criterion.
 	 *
 	 * Find best matching and supported display mode from a criterion.
 	 * Using a simple heuristics to find best matching mode, width + height + color depth * 10.
 	 */
-	virtual DisplayMode* findDisplayMode(const DisplayMode* criteria);
+	virtual Ref< DisplayMode > findDisplayMode(const DisplayMode* criteria);
 	
 	//@}
 
@@ -107,10 +107,10 @@ public:
 	//@{
 	
 	/*! \brief Create full screen render view. */
-	virtual IRenderView* createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc) = 0;
+	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc) = 0;
 
 	/*! \brief Create windowed render view. */
-	virtual IRenderView* createRenderView(void* windowHandle, const RenderViewCreateDesc& desc) = 0;
+	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc) = 0;
 	
 	//@}
 
@@ -123,7 +123,7 @@ public:
 	 * \param bufferSize Size of vertex buffer in bytes.
 	 * \param dynamic If vertex buffer is frequently updated.
 	 */
-	virtual VertexBuffer* createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! \brief Create index buffer.
 	 *
@@ -131,19 +131,19 @@ public:
 	 * \param bufferSize Size of index buffer in bytes.
 	 * \param dynamic If index buffer is frequently updated.
 	 */
-	virtual IndexBuffer* createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) = 0;
+	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic) = 0;
 
 	/*! \brief Create simple, 2d, texture. */
-	virtual ISimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc) = 0;
 
 	/*! \brief Create cube texture. */
-	virtual ICubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc) = 0;
 	
 	/*! \brief Create volume texture. */
-	virtual IVolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc) = 0;
 
 	/*! \brief Create render target set. */
-	virtual RenderTargetSet* createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
 
 	/*! \brief Compile "simple" shader graph into a render program resource.
 	 *
@@ -152,14 +152,14 @@ public:
 	 * \param validate Validate generated shader to known capabilities.
 	 * \return Compiled program resource.
 	 */
-	virtual ProgramResource* compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate) = 0;
+	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate) = 0;
 
 	/*! \brief Create shader from shader resource.
 	 *
 	 * \param shaderResource Compiled shader resource.
 	 * \return Shader suitable for rendering with this render system.
 	 */
-	virtual IProgram* createProgram(const ProgramResource* programResource) = 0;
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource) = 0;
 
 	//@}
 };

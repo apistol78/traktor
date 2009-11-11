@@ -28,7 +28,7 @@ class T_DLLCLASS FlashTextInstance : public FlashCharacterInstance
 public:
 	FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text);
 
-	const FlashText* getText() const;
+	Ref< const FlashText > getText() const;
 
 	virtual SwfRect getBounds() const;
 

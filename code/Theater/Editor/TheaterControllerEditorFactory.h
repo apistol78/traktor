@@ -17,7 +17,7 @@ class TheaterControllerEditorFactory : public scene::ISceneControllerEditorFacto
 public:
 	virtual const TypeSet getControllerDataTypes() const;
 
-	virtual scene::ISceneControllerEditor* createControllerEditor(const Type& controllerDataType) const;
+	virtual Ref< scene::ISceneControllerEditor > createControllerEditor(const Type& controllerDataType) const;
 };
 
 	}

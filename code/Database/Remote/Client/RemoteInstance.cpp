@@ -97,7 +97,7 @@ bool RemoteInstance::remove()
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-Stream* RemoteInstance::readObject(const Type*& outSerializerType)
+Ref< Stream > RemoteInstance::readObject(const Type*& outSerializerType)
 {
 	Ref< DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
 	if (!result)
@@ -111,7 +111,7 @@ Stream* RemoteInstance::readObject(const Type*& outSerializerType)
 	return gc_new< BufferedStream >(remoteStream);
 }
 
-Stream* RemoteInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< Stream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
 {
 	Ref< DbmWriteObjectResult > result = m_connection->sendMessage< DbmWriteObjectResult >(DbmWriteObject(m_handle, primaryTypeName));
 	if (!result)
@@ -135,7 +135,7 @@ uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames)
 	return uint32_t(outDataNames.size());
 }
 
-Stream* RemoteInstance::readData(const std::wstring& dataName)
+Ref< Stream > RemoteInstance::readData(const std::wstring& dataName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
 	if (!result)
@@ -145,7 +145,7 @@ Stream* RemoteInstance::readData(const std::wstring& dataName)
 	return gc_new< BufferedStream >(remoteStream);
 }
 
-Stream* RemoteInstance::writeData(const std::wstring& dataName)
+Ref< Stream > RemoteInstance::writeData(const std::wstring& dataName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
 	if (!result)

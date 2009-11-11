@@ -1,12 +1,12 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Singleton/Singleton.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Heap/Heap.h"
 #include "Core/Heap/Alloc.h"
 #include "Core/Heap/BlockAllocator.h"
-#include "Core/Thread/CriticalSection.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/CriticalSection.h"
+#include "Core/Thread/JobManager.h"
 
 namespace traktor
 {
@@ -24,7 +24,7 @@ public:
 		if (!s_instance)
 		{
 			s_instance = new FunctorHeap();
-			SingletonManager::getInstance().addAfter(s_instance, &Heap::getInstance());
+			SingletonManager::getInstance().addAfter(s_instance, &JobManager::getInstance());
 		}
 		return *s_instance;
 	}

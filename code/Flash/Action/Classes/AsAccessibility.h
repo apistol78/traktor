@@ -18,7 +18,7 @@ class AsAccessibility : public ActionClass
 	T_RTTI_CLASS(AsAccessibility)
 
 public:
-	static AsAccessibility* getInstance();
+	static Ref< AsAccessibility > getInstance();
 
 private:
 	AsAccessibility();

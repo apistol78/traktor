@@ -33,7 +33,7 @@ public:
 
 	virtual void destroy();
 
-	DockPane* getPane();
+	Ref< DockPane > getPane();
 
 	virtual void update(const Rect* rc = 0, bool immediate = false);
 

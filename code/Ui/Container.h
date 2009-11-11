@@ -39,7 +39,7 @@ public:
 	
 	virtual Size getMaximumSize() const;
 
-	Layout* getLayout() const;
+	Ref< Layout > getLayout() const;
 	
 	void setLayout(Layout* layout);
 	

@@ -36,19 +36,19 @@ public:
 	
 	void setAttribute(const std::wstring& name, const std::wstring& value);
 	
-	Attribute* getFirstAttribute() const;
+	Ref< Attribute > getFirstAttribute() const;
 	
-	Attribute* getLastAttribute() const;
+	Ref< Attribute > getLastAttribute() const;
 	
-	Attribute* getAttribute(const std::wstring& name) const;
+	Ref< Attribute > getAttribute(const std::wstring& name) const;
 
-	Element* getPreviousElementSibling() const;
+	Ref< Element > getPreviousElementSibling() const;
 	
-	Element* getNextElementSibling() const;
+	Ref< Element > getNextElementSibling() const;
 	
-	Element* getFirstElementChild() const;
+	Ref< Element > getFirstElementChild() const;
 	
-	Element* getLastElementChild() const;
+	Ref< Element > getLastElementChild() const;
 
 	virtual void writeHtml(Stream* stream);
 

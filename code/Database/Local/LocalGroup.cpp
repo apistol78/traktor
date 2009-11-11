@@ -38,7 +38,7 @@ bool LocalGroup::remove()
 	return FileSystem::getInstance().removeDirectory(m_groupPath);
 }
 
-IProviderGroup* LocalGroup::createGroup(const std::wstring& groupName)
+Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 {
 	Path newGroupPath = m_groupPath.getPathName() + L"/" + groupName;
 
@@ -51,7 +51,7 @@ IProviderGroup* LocalGroup::createGroup(const std::wstring& groupName)
 	return gc_new< LocalGroup >(m_context, newGroupPath);
 }
 
-IProviderInstance* LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
+Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
 	Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
 

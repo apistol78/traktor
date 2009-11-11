@@ -28,7 +28,7 @@ bool EffectFactory::isCacheable() const
 	return true;
 }
 
-Object* EffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	if (is_type_a< Effect >(resourceType))
 		return m_db->getObjectReadOnly< Effect >(guid);

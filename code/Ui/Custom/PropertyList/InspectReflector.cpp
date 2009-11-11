@@ -286,12 +286,17 @@ bool InspectReflector::operator >> (const Member< Serializable >& m)
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< Serializable* >& m)
+bool InspectReflector::operator >> (const Member< Ref< Serializable > >& m)
 {
-	Ref< ObjectPropertyItem > propertyItem = gc_new< ObjectPropertyItem >(stylizeMemberName(m.getName()), m.getType(), m);
+	Ref< Serializable > object = m;
+
+	Ref< ObjectPropertyItem > propertyItem = gc_new< ObjectPropertyItem >(
+		stylizeMemberName(m.getName()),
+		m.getType(),
+		object
+	);
 	addPropertyItem(propertyItem);
 
-	Ref< Serializable > object = static_cast< Serializable* >(m);
 	if (object)
 	{
 		m_propertyItemStack.push_back(propertyItem);

@@ -44,11 +44,11 @@ public:
 
 	void setVertexBuffer(VertexBuffer* vertexBuffer);
 
-	VertexBuffer* getVertexBuffer() const;
+	Ref< VertexBuffer > getVertexBuffer() const;
 
 	void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	IndexBuffer* getIndexBuffer() const;
+	Ref< IndexBuffer > getIndexBuffer() const;
 
 	void setParts(const std::vector< Part >& parts);
 

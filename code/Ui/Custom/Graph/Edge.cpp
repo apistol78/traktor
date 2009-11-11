@@ -110,7 +110,7 @@ void Edge::setSourcePin(Pin* source)
 	m_source = source;
 }
 
-Pin* Edge::getSourcePin() const
+Ref< Pin > Edge::getSourcePin() const
 {
 	return m_source;
 }
@@ -120,7 +120,7 @@ void Edge::setDestinationPin(Pin* destination)
 	m_destination = destination;
 }
 
-Pin* Edge::getDestinationPin() const
+Ref< Pin > Edge::getDestinationPin() const
 {
 	return m_destination;
 }

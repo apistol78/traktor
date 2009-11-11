@@ -21,7 +21,7 @@ public:
 
 	const Guid& getSessionGuid() const { return m_sessionGuid; }
 
-	IService* getService() const { return m_service; }
+	Ref< IService > getService() const { return m_service; }
 
 	virtual bool serialize(Serializer& s);
 

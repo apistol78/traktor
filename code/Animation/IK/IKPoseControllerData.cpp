@@ -15,7 +15,7 @@ IKPoseControllerData::IKPoseControllerData()
 {
 }
 
-IPoseController* IKPoseControllerData::createInstance(
+Ref< IPoseController > IKPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
 	physics::PhysicsManager* physicsManager,
 	const Skeleton* skeleton,

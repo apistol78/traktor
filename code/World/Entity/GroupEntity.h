@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntity_H
 #define traktor_world_GroupEntity_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/Entity.h"
 
 // import/export mechanism.
@@ -41,11 +41,11 @@ public:
 	
 	int getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const;
 	
-	Entity* getFirstEntityOf(const Type& entityType) const;
+	Ref< Entity > getFirstEntityOf(const Type& entityType) const;
 
 	int getEntitiesOfRecursive(const Type& entityType, RefArray< Entity >& outEntities) const;
 	
-	Entity* getFirstEntityOfRecursive(const Type& entityType) const;
+	Ref< Entity > getFirstEntityOfRecursive(const Type& entityType) const;
 
 	virtual void update(const EntityUpdate* update);	
 
@@ -59,7 +59,7 @@ public:
 	}
 
 	template < typename EntityType >
-	EntityType* getFirstEntityOf() const
+	Ref< EntityType > getFirstEntityOf() const
 	{
 		return static_cast< EntityType* >(getFirstEntityOf(EntityType::getClassType()));
 	}
@@ -71,7 +71,7 @@ public:
 	}
 
 	template < typename EntityType >
-	EntityType* getFirstEntityOfRecursive() const
+	Ref< EntityType > getFirstEntityOfRecursive() const
 	{
 		return static_cast< EntityType* >(getFirstEntityOfRecursive(EntityType::getClassType()));
 	}

@@ -62,7 +62,7 @@ void PropertiesView::setPropertyObject(Serializable* object, Serializable* outer
 	m_propertyObject = object;
 }
 
-Serializable* PropertiesView::getPropertyObject()
+Ref< Serializable > PropertiesView::getPropertyObject()
 {
 	return m_propertyObject;
 }

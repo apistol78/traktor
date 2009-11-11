@@ -43,7 +43,7 @@ int InputSystem::getDeviceCount() const
 	return int(m_devices.size());
 }
 
-IInputDevice* InputSystem::getDevice(int index)
+Ref< IInputDevice > InputSystem::getDevice(int index)
 {
 	T_ASSERT (index >= 0 && index < getDeviceCount());
 	return m_devices[index];
@@ -60,7 +60,7 @@ int InputSystem::getDeviceCount(InputCategory category) const
 	return deviceCount;
 }
 
-IInputDevice* InputSystem::getDevice(InputCategory category, int index, bool connected)
+Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int index, bool connected)
 {
 	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
 	{

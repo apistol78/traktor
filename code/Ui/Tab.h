@@ -46,9 +46,9 @@ public:
 
 	int getPageCount() const;
 
-	TabPage* getPage(int index) const;
+	Ref< TabPage > getPage(int index) const;
 
-	TabPage* getPageAt(const Point& position) const;
+	Ref< TabPage > getPageAt(const Point& position) const;
 
 	void removePage(TabPage* page);
 
@@ -56,9 +56,9 @@ public:
 
 	void setActivePage(TabPage* page);
 
-	TabPage* getActivePage();
+	Ref< TabPage > getActivePage();
 
-	TabPage* cycleActivePage(bool forward);
+	Ref< TabPage > cycleActivePage(bool forward);
 	
 	void addSelChangeEventHandler(EventHandler* eventHandler);
 

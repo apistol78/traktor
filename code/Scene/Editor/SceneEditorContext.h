@@ -2,6 +2,7 @@
 #define traktor_scene_SceneEditorContext_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Ui/EventSubject.h"
 
@@ -118,7 +119,7 @@ public:
 
 	void setModifier(IModifier* modifier);
 
-	IModifier* getModifier() const;
+	Ref< IModifier > getModifier() const;
 
 	void setPickEnable(bool pickEnable);
 
@@ -158,7 +159,7 @@ public:
 	 * \param index Camera index, 0 to 3.
 	 * \return Camera.
 	 */
-	Camera* getCamera(int index) const;
+	Ref< Camera > getCamera(int index) const;
 
 	//@}
 
@@ -197,9 +198,9 @@ public:
 	/*! \brief Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
 
-	EntityAdapter* findAdapterFromInstance(const world::EntityInstance* instance) const;
+	Ref< EntityAdapter > findAdapterFromInstance(const world::EntityInstance* instance) const;
 
-	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
+	Ref< EntityAdapter > queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const;
 
 	void cloneSelected();
 
@@ -208,7 +209,7 @@ public:
 
 	void setDebugTexture(render::ITexture* debugTexture);
 
-	render::ITexture* getDebugTexture();
+	Ref< render::ITexture > getDebugTexture();
 
 	//@}
 
@@ -217,27 +218,27 @@ public:
 
 	editor::IEditor* getEditor() { return m_editor; }
 
-	db::Database* getResourceDatabase() { return m_resourceDb; }
+	Ref< db::Database > getResourceDatabase() { return m_resourceDb; }
 
-	db::Database* getSourceDatabase() { return m_sourceDb; }
+	Ref< db::Database > getSourceDatabase() { return m_sourceDb; }
 
-	db::Instance* getInstance() { return m_instance; }
+	Ref< db::Instance > getInstance() { return m_instance; }
 
-	resource::IResourceManager* getResourceManager() { return m_resourceManager; }
+	Ref< resource::IResourceManager > getResourceManager() { return m_resourceManager; }
 
-	render::IRenderSystem* getRenderSystem() { return m_renderSystem; }
+	Ref< render::IRenderSystem > getRenderSystem() { return m_renderSystem; }
 
-	physics::PhysicsManager* getPhysicsManager() { return m_physicsManager; }
+	Ref< physics::PhysicsManager > getPhysicsManager() { return m_physicsManager; }
 
 	RefArray< ISceneEditorProfile >& getEditorProfiles() { return m_editorProfiles; }
 
 	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
 
-	Ref< SceneAsset >& getSceneAsset() { return m_sceneAsset; }
+	Ref< SceneAsset > getSceneAsset() { return m_sceneAsset; }
 
-	Ref< Scene >& getScene() { return m_scene; }
+	Ref< Scene > getScene() { return m_scene; }
 
-	Ref< EntityAdapter >& getRootEntityAdapter() { return m_rootEntityAdapter; }
+	Ref< EntityAdapter > getRootEntityAdapter() { return m_rootEntityAdapter; }
 
 	//@}
 

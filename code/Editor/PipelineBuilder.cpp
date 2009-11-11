@@ -225,17 +225,17 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	return true;
 }
 
-db::Database* PipelineBuilder::getSourceDatabase() const
+Ref< db::Database > PipelineBuilder::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
 
-db::Database* PipelineBuilder::getOutputDatabase() const
+Ref< db::Database > PipelineBuilder::getOutputDatabase() const
 {
 	return m_outputDatabase;
 }
 
-db::Instance* PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
+Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
 	Ref< db::Instance > instance = m_outputDatabase->createInstance(
 		instancePath,
@@ -251,7 +251,7 @@ db::Instance* PipelineBuilder::createOutputInstance(const std::wstring& instance
 		return 0;
 }
 
-const Serializable* PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
+Ref< const Serializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
 	Ref< Serializable > object;
 

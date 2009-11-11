@@ -40,7 +40,7 @@ public:
 
 	virtual const TypeSet getEntityTypes() const;
 
-	virtual world::Entity* createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
+	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 
 private:
 	Ref< resource::IResourceManager > m_resourceManager;

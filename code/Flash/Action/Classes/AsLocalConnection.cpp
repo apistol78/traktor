@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLocalConnection", AsLocalConnection, ActionClass)
 
-AsLocalConnection* AsLocalConnection::getInstance()
+Ref< AsLocalConnection > AsLocalConnection::getInstance()
 {
 	static AsLocalConnection* instance = 0;
 	if (!instance)

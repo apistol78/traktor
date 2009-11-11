@@ -140,12 +140,12 @@ bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* EffectEditorPage::getDataInstance()
+Ref< db::Instance > EffectEditorPage::getDataInstance()
 {
 	return m_effectInstance;
 }
 
-Object* EffectEditorPage::getDataObject()
+Ref< Object > EffectEditorPage::getDataObject()
 {
 	return m_effect;
 }
@@ -252,7 +252,7 @@ void EffectEditorPage::eventToolClick(ui::Event* event)
 
 void EffectEditorPage::eventLayerSelect(ui::Event* event)
 {
-	RefList< ui::custom::SequenceItem > selectedItems;
+	RefArray< ui::custom::SequenceItem > selectedItems;
 	if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) == 1)
 	{
 		Ref< EffectLayer > layer = selectedItems.front()->getData< EffectLayer >(L"LAYER");

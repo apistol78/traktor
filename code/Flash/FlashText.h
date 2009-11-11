@@ -46,7 +46,7 @@ public:
 
 	const AlignedVector< Character >& getCharacters() const;
 
-	virtual FlashCharacterInstance* createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
 
 	const SwfRect& getTextBounds() const;
 

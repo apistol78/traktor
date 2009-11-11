@@ -50,13 +50,13 @@ bool RemoteGroup::remove()
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-IProviderGroup* RemoteGroup::createGroup(const std::wstring& groupName)
+Ref< IProviderGroup > RemoteGroup::createGroup(const std::wstring& groupName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateGroup(m_handle, groupName));
 	return result ? gc_new< RemoteGroup >(m_connection, result->get()) : 0;
 }
 
-IProviderInstance* RemoteGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
+Ref< IProviderInstance > RemoteGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmCreateInstance(m_handle, instanceName, instanceGuid));
 	return result ? gc_new< RemoteInstance >(m_connection, result->get()) : 0;

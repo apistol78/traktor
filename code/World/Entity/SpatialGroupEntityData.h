@@ -1,7 +1,7 @@
 #ifndef traktor_world_SpatialGroupEntityData_H
 #define traktor_world_SpatialGroupEntityData_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/SpatialEntityData.h"
 
 // import/export mechanism.

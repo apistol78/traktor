@@ -3,7 +3,7 @@
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Input/IInputDriver.h"
 
@@ -37,7 +37,7 @@ public:
 
 	virtual int getDeviceCount();
 
-	virtual IInputDevice* getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index);
 
 private:
 	static BOOL CALLBACK enumDevicesCallback(const DIDEVICEINSTANCE* deviceInstance, VOID* context);

@@ -2,7 +2,7 @@
 #define traktor_online_IUser_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

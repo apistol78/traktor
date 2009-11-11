@@ -49,7 +49,7 @@ bool TextureFactory::isCacheable() const
 	return true;
 }
 
-Object* TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< ITexture > texture;
 
@@ -103,7 +103,11 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 		uint32_t blockSize = getTextureBlockSize(desc.format);
 		uint32_t blockDenom = getTextureBlockDenom(desc.format);
 
-		Reader readerData(isCompressed ? gc_new< zip::InflateStream >(stream) : stream);
+		Ref< Stream > readerStream = stream;
+		if (isCompressed)
+			readerStream = gc_new< zip::InflateStream >(stream);
+
+		Reader readerData(readerStream);
 
 		uint8_t* data = buffer.ptr();
 		for (int i = 0; i < mipCount; ++i)
@@ -148,7 +152,11 @@ Object* TextureFactory::create(resource::IResourceManager* resourceManager, cons
 
 		AutoArrayPtr< uint8_t > buffer[6];
 
-		Reader readerData(isCompressed ? gc_new< zip::InflateStream >(stream) : stream);
+		Ref< Stream > readerStream = stream;
+		if (isCompressed)
+			readerStream = gc_new< zip::InflateStream >(stream);
+
+		Reader readerData(readerStream);
 		
 		for (int side = 0; side < 6; ++side)
 		{

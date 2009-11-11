@@ -28,7 +28,7 @@ const TypeSet SceneEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	Ref< editor::IProject > project = editor->getProject();
 	T_ASSERT (project);

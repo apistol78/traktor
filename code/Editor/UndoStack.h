@@ -2,6 +2,7 @@
 #define traktor_UndoStack_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -35,17 +36,17 @@ class T_DLLCLASS UndoStack : public Object
 public:
 	bool push(Serializable* current);
 
-	Serializable* undo(Serializable* current);
+	Ref< Serializable > undo(Serializable* current);
 
-	Serializable* redo(Serializable* current);
+	Ref< Serializable > redo(Serializable* current);
 
 	bool canUndo() const;
 
 	bool canRedo() const;
 
 private:
-	RefList< Serializable > m_stack;
-	RefList< Serializable > m_undone;
+	RefArray< Serializable > m_stack;
+	RefArray< Serializable > m_undone;
 };
 
 	}

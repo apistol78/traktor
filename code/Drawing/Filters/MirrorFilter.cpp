@@ -16,7 +16,7 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 {
 }
 
-Image* MirrorFilter::apply(const Image* image)
+Ref< Image > MirrorFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;

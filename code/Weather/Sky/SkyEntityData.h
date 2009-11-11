@@ -41,7 +41,7 @@ class T_DLLCLASS SkyEntityData : public world::EntityData
 public:
 	SkyEntityData();
 
-	SkyEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< SkyEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

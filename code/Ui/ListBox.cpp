@@ -92,10 +92,10 @@ std::wstring ListBox::getItem(int index) const
 	return static_cast< IListBox* >(m_widget)->get(index);
 }
 
-Object* ListBox::getData(int index) const
+Ref< Object > ListBox::getData(int index) const
 {
 	std::map< int, Ref< Object > >::const_iterator i = m_data.find(index);
-	return (i != m_data.end()) ? i->second.getPtr() : 0;
+	return (i != m_data.end()) ? i->second.ptr() : 0;
 }
 
 void ListBox::select(int index)
@@ -142,7 +142,7 @@ std::wstring ListBox::getSelectedItem() const
 	return getItem(getSelected());
 }
 
-Object* ListBox::getSelectedData() const
+Ref< Object > ListBox::getSelectedData() const
 {
 	T_ASSERT (m_widget);
 	return getData(getSelected());

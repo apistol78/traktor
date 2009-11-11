@@ -1,6 +1,7 @@
 #ifndef traktor_drawing_ImageFormat_H
 #define traktor_drawing_ImageFormat_H
 
+#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Io/Stream.h"
 
@@ -27,11 +28,11 @@ class T_DLLCLASS ImageFormat : public Object
 	T_RTTI_CLASS(ImageFormat)
 
 public:
-	static ImageFormat* determineFormat(const std::wstring& extension);
+	static Ref< ImageFormat > determineFormat(const std::wstring& extension);
 
-	static ImageFormat* determineFormat(const Path& fileName);
+	static Ref< ImageFormat > determineFormat(const Path& fileName);
 
-	virtual Image* read(Stream* stream) = 0;
+	virtual Ref< Image > read(Stream* stream) = 0;
 
 	virtual bool write(Stream* stream, Image* image) = 0;
 };

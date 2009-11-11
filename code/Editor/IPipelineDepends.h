@@ -1,10 +1,11 @@
 #ifndef traktor_editor_IPipelineDepends_H
 #define traktor_editor_IPipelineDepends_H
 
-#include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Io/Path.h"
+#include "Core/Object.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
+#include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,12 +67,12 @@ public:
 
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
-	virtual db::Database* getSourceDatabase() const = 0;
+	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
-	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid) = 0;
+	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	template < typename T >
-	const T* getObjectReadOnly(const Guid& guid)
+	Ref< const T > getObjectReadOnly(const Guid& guid)
 	{
 		return dynamic_type_cast< const T* >(getObjectReadOnly(guid));
 	}

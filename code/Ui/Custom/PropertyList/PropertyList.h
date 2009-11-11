@@ -68,7 +68,7 @@ public:
 
 	void removeAllPropertyItems();
 
-	int getPropertyItems(RefList< PropertyItem >& propertyItems, int flags);
+	int getPropertyItems(RefArray< PropertyItem >& propertyItems, int flags);
 
 	void setSeparator(int separator);
 
@@ -76,7 +76,7 @@ public:
 
 	void setColumnName(int column, const std::wstring& name);
 
-	PropertyItem* getPropertyItemFromPosition(const Point& position);
+	Ref< PropertyItem > getPropertyItemFromPosition(const Point& position);
 
 	bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
@@ -97,7 +97,7 @@ private:
 
 	IPropertyGuidResolver* m_guidResolver;
 	Ref< ScrollBar > m_scrollBar;
-	RefList< PropertyItem > m_propertyItems;
+	RefArray< PropertyItem > m_propertyItems;
 	Ref< PropertyItem > m_mousePropertyItem;
 	int m_separator;
 	int m_mode;

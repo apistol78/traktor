@@ -38,7 +38,7 @@ void t_user_flush(png_structp png_ptr)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, ImageFormat)
 
-Image* ImageFormatPng::read(Stream* stream)
+Ref< Image > ImageFormatPng::read(Stream* stream)
 {
 	Ref< Image > image;
 	png_structp png_ptr;

@@ -100,7 +100,7 @@ int RenderSystemSw::getDisplayModeCount() const
 	return int(m_displayModes.size());
 }
 
-DisplayMode* RenderSystemSw::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemSw::getDisplayMode(int index)
 {
 	return gc_new< DisplayMode >(
 		index,
@@ -110,7 +110,7 @@ DisplayMode* RenderSystemSw::getDisplayMode(int index)
 	);
 }
 
-DisplayMode* RenderSystemSw::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemSw::getCurrentDisplayMode()
 {
 	return 0;
 }
@@ -139,7 +139,7 @@ bool RenderSystemSw::handleMessages()
 #endif
 }
 
-IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
@@ -189,7 +189,7 @@ IRenderView* RenderSystemSw::createRenderView(const DisplayMode* displayMode, co
 	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
 }
 
-IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	Ref< graphics::GraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
@@ -221,17 +221,17 @@ IRenderView* RenderSystemSw::createRenderView(void* windowHandle, const RenderVi
 	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
 }
 
-VertexBuffer* RenderSystemSw::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemSw::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	return gc_new< VertexBufferSw >(vertexElements, bufferSize);
 }
 
-IndexBuffer* RenderSystemSw::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemSw::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	return gc_new< IndexBufferSw >(indexType, bufferSize);
 }
 
-ISimpleTexture* RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureSw > texture = gc_new< SimpleTextureSw >();
 	if (!texture->create(desc))
@@ -239,17 +239,17 @@ ISimpleTexture* RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDes
 	return texture;
 }
 
-ICubeTexture* RenderSystemSw::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemSw::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-IVolumeTexture* RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-RenderTargetSet* RenderSystemSw::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	Ref< RenderTargetSetSw > renderTargetSet = gc_new< RenderTargetSetSw >();
 	if (!renderTargetSet->create(desc))
@@ -257,13 +257,13 @@ RenderTargetSet* RenderSystemSw::createRenderTargetSet(const RenderTargetSetCrea
 	return renderTargetSet;
 }
 
-ProgramResource* RenderSystemSw::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemSw::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	// @fixme Currently just embedding shader graph in resource.
 	return gc_new< ProgramResourceSw >(shaderGraph);
 }
 
-IProgram* RenderSystemSw::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceSw > resource = dynamic_type_cast< const ProgramResourceSw* >(programResource);
 	if (!resource)

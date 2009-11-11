@@ -19,9 +19,9 @@ class LwsDocument : public Object
 	T_RTTI_CLASS(LwsDocument)
 
 public:
-	static LwsDocument* parse(Stream* stream);
+	static Ref< LwsDocument > parse(Stream* stream);
 
-	LwsGroup* getRootGroup();
+	Ref< LwsGroup > getRootGroup();
 
 private:
 	Ref< LwsGroup > m_rootGroup;

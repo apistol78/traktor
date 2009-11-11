@@ -15,7 +15,7 @@ InputPin::InputPin(Node* node, const std::wstring& name, bool optional)
 {
 }
 
-Node* InputPin::getNode() const
+Ref< Node > InputPin::getNode() const
 {
 	return m_node;
 }

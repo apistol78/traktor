@@ -2,6 +2,7 @@
 #define traktor_world_EntityInstance_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -60,7 +61,7 @@ public:
 	 *
 	 * \return Instance entity data.
 	 */
-	virtual EntityData* getEntityData() const;
+	virtual Ref< EntityData > getEntityData() const;
 
 	/*! \brief Set per-instance custom data.
 	 *
@@ -72,7 +73,7 @@ public:
 	 *
 	 * \return Instance custom data.
 	 */
-	virtual Serializable* getInstanceData() const;
+	virtual Ref< Serializable > getInstanceData() const;
 
 	/*! \brief Add instance reference.
 	 *

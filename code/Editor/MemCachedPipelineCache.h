@@ -39,9 +39,9 @@ public:
 
 	virtual void destroy();
 
-	virtual Stream* get(const Guid& guid, uint32_t hash);
+	virtual Ref< Stream > get(const Guid& guid, uint32_t hash);
 
-	virtual Stream* put(const Guid& guid, uint32_t hash);
+	virtual Ref< Stream > put(const Guid& guid, uint32_t hash);
 
 private:
 	Ref< net::TcpSocket > m_socket;

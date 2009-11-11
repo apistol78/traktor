@@ -27,7 +27,7 @@ class T_DLLCLASS IKPoseControllerData : public IPoseControllerData
 public:
 	IKPoseControllerData();
 
-	virtual IPoseController* createInstance(
+	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,

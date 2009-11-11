@@ -18,7 +18,7 @@ PathEntityData::PathEntityData()
 {
 }
 
-PathEntity* PathEntityData::createEntity(world::IEntityBuilder* builder) const
+Ref< PathEntity > PathEntityData::createEntity(world::IEntityBuilder* builder) const
 {
 	Ref< world::SpatialEntity > entity = dynamic_type_cast< world::SpatialEntity* >(builder->build(m_instance));
 	return gc_new< PathEntity >(

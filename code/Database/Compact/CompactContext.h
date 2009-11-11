@@ -22,9 +22,9 @@ class CompactContext : public Object
 public:
 	CompactContext(BlockFile* blockFile, CompactRegistry* registry);
 
-	inline BlockFile* getBlockFile() { return m_blockFile; }
+	inline Ref< BlockFile > getBlockFile() { return m_blockFile; }
 
-	inline CompactRegistry* getRegistry() { return m_registry; }
+	inline Ref< CompactRegistry > getRegistry() { return m_registry; }
 
 private:
 	Ref< BlockFile > m_blockFile;

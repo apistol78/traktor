@@ -18,7 +18,7 @@ class AsButton : public ActionClass
 	T_RTTI_CLASS(AsButton)
 
 public:
-	static AsButton* getInstance();
+	static Ref< AsButton > getInstance();
 
 private:
 	AsButton();

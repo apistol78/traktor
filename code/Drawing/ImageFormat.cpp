@@ -26,7 +26,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormat", ImageFormat, Object)
 
-ImageFormat* ImageFormat::determineFormat(const std::wstring& extension)
+Ref< ImageFormat > ImageFormat::determineFormat(const std::wstring& extension)
 {
 	Ref< ImageFormat > imageFormat;
 
@@ -56,7 +56,7 @@ ImageFormat* ImageFormat::determineFormat(const std::wstring& extension)
 	return imageFormat;
 }
 
-ImageFormat* ImageFormat::determineFormat(const Path& fileName)
+Ref< ImageFormat > ImageFormat::determineFormat(const Path& fileName)
 {
 	return determineFormat(fileName.getExtension());
 }

@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -57,9 +58,9 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data) = 0;
 
-	virtual db::Instance* getDataInstance() = 0;
+	virtual Ref< db::Instance > getDataInstance() = 0;
 
-	virtual Object* getDataObject() = 0;
+	virtual Ref< Object > getDataObject() = 0;
 
 	virtual void propertiesChanged() = 0;
 

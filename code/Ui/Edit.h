@@ -30,7 +30,7 @@ public:
 	
 	bool setValidator(EditValidator* validator);
 
-	EditValidator* getValidator() const;
+	Ref< EditValidator > getValidator() const;
 
 	void setSelection(int from, int to);
 

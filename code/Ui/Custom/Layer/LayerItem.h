@@ -1,10 +1,11 @@
 #ifndef traktor_ui_custom_LayerItem_H
 #define traktor_ui_custom_LayerItem_H
 
-#include <string>
 #include <map>
-#include "Core/Heap/Ref.h"
+#include <string>
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -46,7 +47,7 @@ public:
 
 	bool isSelected() const;
 
-	LayerItem* getParentLayer();
+	Ref< LayerItem > getParentLayer();
 
 	void addChildLayer(LayerItem* childLayer);
 

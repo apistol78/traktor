@@ -51,7 +51,7 @@ HMENU buildMenu(MenuItem* item)
 			mii.dwTypeData = (LPTSTR)ts.c_str();
 			mii.cch = (UINT)ts.length();
 			mii.hSubMenu = buildMenu(child);
-			mii.dwItemData = (ULONG_PTR)child.getPtr();
+			mii.dwItemData = (ULONG_PTR)child.ptr();
 		}
 		else
 		{
@@ -212,7 +212,7 @@ LRESULT MenuBarWin32::eventInitMenuPopup(HWND hWnd, UINT message, WPARAM wParam,
 			mii.dwTypeData = (LPTSTR)ts.c_str();
 			mii.cch = (UINT)ts.length();
 			mii.hSubMenu = buildMenu(child);
-			mii.dwItemData = (ULONG_PTR)child.getPtr();
+			mii.dwItemData = (ULONG_PTR)child.ptr();
 		}
 		else
 		{

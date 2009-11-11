@@ -2,11 +2,11 @@
 #define traktor_render_Nodes_H
 
 #include <string>
-#include "Render/ImmutableNode.h"
-#include "Render/Types.h"
+#include "Core/Guid.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Color.h"
-#include "Core/Guid.h"
+#include "Render/ImmutableNode.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -917,11 +917,11 @@ public:
 
 	virtual int getInputPinCount() const;
 
-	virtual const InputPin* getInputPin(int index) const;
+	virtual Ref< const InputPin > getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual const OutputPin* getOutputPin(int index) const;
+	virtual Ref< const OutputPin > getOutputPin(int index) const;
 
 	virtual int getVersion() const;
 

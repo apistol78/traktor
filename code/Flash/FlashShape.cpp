@@ -216,7 +216,7 @@ bool FlashShape::create(const SwfShape* shape)
 	return true;
 }
 
-FlashCharacterInstance* FlashShape::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
+Ref< FlashCharacterInstance > FlashShape::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
 	return gc_new< FlashShapeInstance >(context, parent, this);
 }

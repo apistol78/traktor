@@ -35,7 +35,7 @@ class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
 	T_RTTI_CLASS(EffectEntityData)
 
 public:
-	EffectEntity* createEntity(resource::IResourceManager* resourceManager) const;
+	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(Serializer& s);
 

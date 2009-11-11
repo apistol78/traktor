@@ -62,7 +62,7 @@ bool CompactGroup::remove()
 	return true;
 }
 
-IProviderGroup* CompactGroup::createGroup(const std::wstring& groupName)
+Ref< IProviderGroup > CompactGroup::createGroup(const std::wstring& groupName)
 {
 	T_ASSERT (m_groupEntry);
 
@@ -82,7 +82,7 @@ IProviderGroup* CompactGroup::createGroup(const std::wstring& groupName)
 	return childGroup;
 }
 
-IProviderInstance* CompactGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
+Ref< IProviderInstance > CompactGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
 	T_ASSERT (m_groupEntry);
 

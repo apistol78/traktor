@@ -240,9 +240,9 @@ bool XmlSerializer::operator >> (const Member< Serializable >& m)
 	return result;
 }
 
-bool XmlSerializer::operator >> (const Member< Serializable* >& m)
+bool XmlSerializer::operator >> (const Member< Ref< Serializable > >& m)
 {
-	Ref< Serializable > o = (Serializable*)m;
+	Ref< Serializable > o = m;
 	bool result = true;
 
 	std::map< Object*, std::wstring >::iterator i = m_refs.find(o);

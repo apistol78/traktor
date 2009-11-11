@@ -122,7 +122,7 @@ public:
 		dWorldSetGravity(m_worldId, gravity.x(), gravity.y(), gravity.z());
 	}
 
-	Body* createBody(const BodyDesc* desc)
+	Ref< Body > createBody(const BodyDesc* desc)
 	{
 		if (!desc)
 			return 0;
@@ -218,7 +218,7 @@ public:
 
 			dGeomHeightfieldDataBuildCallback(
 				heightId,
-				heightfield.getPtr(),
+				heightfield.ptr(),
 				&PhysicsManagerOdeImpl::heightfieldCallback,
 				heightfield->getWorldExtent().x(),
 				heightfield->getWorldExtent().z(),
@@ -367,7 +367,7 @@ public:
 		return body;
 	}
 
-	Joint* createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
+	Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 	{
 		if (!desc)
 			return 0;
@@ -679,12 +679,12 @@ void PhysicsManagerOde::setGravity(const Vector4& gravity)
 	m_impl->setGravity(gravity);
 }
 
-Body* PhysicsManagerOde::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerOde::createBody(const BodyDesc* desc)
 {
 	return m_impl->createBody(desc);
 }
 
-Joint* PhysicsManagerOde::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
+Ref< Joint > PhysicsManagerOde::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	return m_impl->createJoint(desc, transform, body1, body2);
 }

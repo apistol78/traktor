@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsBoolean", AsBoolean, ActionClass)
 
-AsBoolean* AsBoolean::getInstance()
+Ref< AsBoolean > AsBoolean::getInstance()
 {
 	static AsBoolean* instance = 0;
 	if (!instance)

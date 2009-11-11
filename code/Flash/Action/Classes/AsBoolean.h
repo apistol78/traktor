@@ -18,7 +18,7 @@ class AsBoolean : public ActionClass
 	T_RTTI_CLASS(AsBoolean)
 
 public:
-	static AsBoolean* getInstance();
+	static Ref< AsBoolean > getInstance();
 
 private:
 	AsBoolean();

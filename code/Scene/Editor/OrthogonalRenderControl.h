@@ -1,10 +1,11 @@
 #ifndef traktor_scene_OrthogonalRenderControl_H
 #define traktor_scene_OrthogonalRenderControl_H
 
-#include "Scene/Editor/ISceneRenderControl.h"
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
+#include "Scene/Editor/ISceneRenderControl.h"
 #include "Ui/Point.h"
 
 namespace traktor
@@ -89,7 +90,7 @@ private:
 
 	Matrix44 getViewTransform() const;
 
-	EntityAdapter* pickEntity(const ui::Point& position) const;
+	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);
 

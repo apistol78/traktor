@@ -1,7 +1,7 @@
 #ifndef traktor_animation_Skeleton_H
 #define traktor_animation_Skeleton_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -37,7 +37,7 @@ public:
 
 	inline uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
 
-	inline Bone* getBone(uint32_t index) const { return m_bones[index]; }
+	inline Ref< Bone > getBone(uint32_t index) const { return m_bones[index]; }
 
 private:
 	RefArray< Bone > m_bones;

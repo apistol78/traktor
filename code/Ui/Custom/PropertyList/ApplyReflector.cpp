@@ -198,7 +198,7 @@ bool ApplyReflector::operator >> (const Member< Serializable >& m)
 	return m->serialize(*this);
 }
 
-bool ApplyReflector::operator >> (const Member< Serializable* >& m)
+bool ApplyReflector::operator >> (const Member< Ref< Serializable > >& m)
 {
 	ObjectPropertyItem* propertyItem = checked_type_cast< ObjectPropertyItem* >(*m_propertyItemIterator++);
 	Ref< Serializable > object = checked_type_cast< Serializable* >(propertyItem->getObject());

@@ -70,7 +70,7 @@ FlashMovieFactory::FlashMovieFactory()
 	m_tagReaders[TiDefineFontName] = gc_new< FlashTagUnsupported >(TiDefineFontName);
 }
 
-FlashMovie* FlashMovieFactory::createMovie(SwfReader* swf)
+Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 {
 	SwfHeader* header = swf->readHeader();
 	if (!header)

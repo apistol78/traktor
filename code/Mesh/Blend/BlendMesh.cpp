@@ -126,7 +126,7 @@ uint32_t BlendMesh::getBlendTargetCount() const
 	return uint32_t(m_meshes.size() - 1);
 }
 
-BlendMesh::Instance* BlendMesh::createInstance() const
+Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 {
 	T_ASSERT (m_meshes[0]->getIndexBuffer());
 

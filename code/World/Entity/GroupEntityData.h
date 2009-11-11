@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntityData_H
 #define traktor_world_GroupEntityData_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.

@@ -419,7 +419,7 @@ bool TexturePipeline::buildOutput(
 		writer << bool(false);
 		writer << bool(true);
 
-		Ref< Stream > streamData = true ? gc_new< zip::DeflateStream >(stream) : stream;
+		Ref< Stream > streamData = gc_new< zip::DeflateStream >(stream);
 		Writer writerData(streamData);
 
 		RefArray< drawing::Image > mipImages(mipCount);
@@ -538,7 +538,7 @@ bool TexturePipeline::buildOutput(
 		writer << bool(true);
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< Stream > streamData = true ? gc_new< zip::DeflateStream >(stream) : stream;
+		Ref< Stream > streamData = gc_new< zip::DeflateStream >(stream);
 		Writer writerData(streamData);
 
 		for (int side = 0; side < 6; ++side)

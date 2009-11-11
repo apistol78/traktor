@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 
-AsMath* AsMath::getInstance()
+Ref< AsMath > AsMath::getInstance()
 {
 	static AsMath* instance = 0;
 	if (!instance)

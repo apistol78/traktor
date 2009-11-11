@@ -73,19 +73,19 @@ void ConeTwistJointOde::update(float deltaTime)
 
 	if (is_a< DynamicBody >(m_body1))
 	{
-		invMass1 = static_cast< DynamicBody* >(m_body1.getPtr())->getInverseMass();
-		inertiaInv1 = static_cast< DynamicBody* >(m_body1.getPtr())->getInertiaTensorInverseWorld();
+		invMass1 = static_cast< DynamicBody* >(m_body1.ptr())->getInverseMass();
+		inertiaInv1 = static_cast< DynamicBody* >(m_body1.ptr())->getInertiaTensorInverseWorld();
 		inertiaInvDiag1 = inertiaInv1.diagonal();
-		velocity1 = static_cast< DynamicBody* >(m_body1.getPtr())->getVelocityAt(m_anchor1, true);
-		angularVelocity1 = static_cast< DynamicBody* >(m_body1.getPtr())->getAngularVelocity();
+		velocity1 = static_cast< DynamicBody* >(m_body1.ptr())->getVelocityAt(m_anchor1, true);
+		angularVelocity1 = static_cast< DynamicBody* >(m_body1.ptr())->getAngularVelocity();
 	}
 	if (is_a< DynamicBody >(m_body2))
 	{
-		invMass2 = static_cast< DynamicBody* >(m_body2.getPtr())->getInverseMass();
-		inertiaInv2 = static_cast< DynamicBody* >(m_body2.getPtr())->getInertiaTensorInverseWorld();
+		invMass2 = static_cast< DynamicBody* >(m_body2.ptr())->getInverseMass();
+		inertiaInv2 = static_cast< DynamicBody* >(m_body2.ptr())->getInertiaTensorInverseWorld();
 		inertiaInvDiag2 = inertiaInv2.diagonal();
-		velocity2 = static_cast< DynamicBody* >(m_body2.getPtr())->getVelocityAt(m_anchor2, true);
-		angularVelocity2 = static_cast< DynamicBody* >(m_body2.getPtr())->getAngularVelocity();
+		velocity2 = static_cast< DynamicBody* >(m_body2.ptr())->getVelocityAt(m_anchor2, true);
+		angularVelocity2 = static_cast< DynamicBody* >(m_body2.ptr())->getAngularVelocity();
 	}
 
 	// Solve point constraint.
@@ -119,9 +119,9 @@ void ConeTwistJointOde::update(float deltaTime)
 		Vector4 impulseVector = c_axis[i] * Scalar(impulse);
 
 		if (is_a< DynamicBody >(m_body1))
-			static_cast< DynamicBody* >(m_body1.getPtr())->addImpulse(anchor1, impulseVector, false);
+			static_cast< DynamicBody* >(m_body1.ptr())->addImpulse(anchor1, impulseVector, false);
 		if (is_a< DynamicBody >(m_body2))
-			static_cast< DynamicBody* >(m_body2.getPtr())->addImpulse(anchor2, -impulseVector, false);
+			static_cast< DynamicBody* >(m_body2.ptr())->addImpulse(anchor2, -impulseVector, false);
 	}
 
 	// Solve cone limit.
@@ -167,9 +167,9 @@ void ConeTwistJointOde::update(float deltaTime)
 
 		// Apply impulses.
 		if (is_a< DynamicBody >(m_body1))
-			static_cast< DynamicBody* >(m_body1.getPtr())->addAngularImpulse(impulseAxis * Scalar(impulse), false);
+			static_cast< DynamicBody* >(m_body1.ptr())->addAngularImpulse(impulseAxis * Scalar(impulse), false);
 		if (is_a< DynamicBody >(m_body2))
-			static_cast< DynamicBody* >(m_body2.getPtr())->addAngularImpulse(impulseAxis * Scalar(-impulse), false);
+			static_cast< DynamicBody* >(m_body2.ptr())->addAngularImpulse(impulseAxis * Scalar(-impulse), false);
 	}
 	while (false);
 #endif
@@ -206,9 +206,9 @@ void ConeTwistJointOde::update(float deltaTime)
 
 		// Apply impulses.
 		if (is_a< DynamicBody >(m_body1))
-			static_cast< DynamicBody* >(m_body1.getPtr())->addAngularImpulse(impulseAxis * Scalar(impulse), false);
+			static_cast< DynamicBody* >(m_body1.ptr())->addAngularImpulse(impulseAxis * Scalar(impulse), false);
 		if (is_a< DynamicBody >(m_body2))
-			static_cast< DynamicBody* >(m_body2.getPtr())->addAngularImpulse(impulseAxis * Scalar(-impulse), false);
+			static_cast< DynamicBody* >(m_body2.ptr())->addAngularImpulse(impulseAxis * Scalar(-impulse), false);
 	}
 	while (false);
 #endif

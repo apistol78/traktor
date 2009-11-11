@@ -18,7 +18,7 @@ class AsNumber : public ActionClass
 	T_RTTI_CLASS(AsNumber)
 
 public:
-	static AsNumber* getInstance();
+	static Ref< AsNumber > getInstance();
 
 private:
 	AsNumber();

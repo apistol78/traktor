@@ -21,7 +21,7 @@ DefaultNodeFacade::DefaultNodeFacade(ui::custom::GraphControl* graphControl)
 	m_nodeShapes[2] = gc_new< ui::custom::OutputNodeShape >(graphControl);
 }
 
-Node* DefaultNodeFacade::createShaderNode(
+Ref< Node > DefaultNodeFacade::createShaderNode(
 	const Type* nodeType,
 	editor::IEditor* editor
 )
@@ -29,7 +29,7 @@ Node* DefaultNodeFacade::createShaderNode(
 	return checked_type_cast< Node* >(nodeType->newInstance());
 }
 
-ui::custom::Node* DefaultNodeFacade::createEditorNode(
+Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode

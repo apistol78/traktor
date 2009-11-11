@@ -2,6 +2,7 @@
 #define traktor_world_IEntityBuilder_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,9 +37,9 @@ public:
 
 	virtual void begin(IEntityManager* entityManager) = 0;
 
-	virtual Entity* create(const std::wstring& name, const EntityData* entityData, const Object* instanceData) = 0;
+	virtual Ref< Entity > create(const std::wstring& name, const EntityData* entityData, const Object* instanceData) = 0;
 
-	virtual Entity* build(const EntityInstance* instance) = 0;
+	virtual Ref< Entity > build(const EntityInstance* instance) = 0;
 
 	virtual void end() = 0;
 };

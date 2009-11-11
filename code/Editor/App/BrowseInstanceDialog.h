@@ -44,7 +44,7 @@ public:
 
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
-	db::Instance* getInstance();
+	Ref< db::Instance > getInstance();
 
 private:
 	Ref< Settings > m_settings;

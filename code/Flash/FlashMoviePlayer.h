@@ -148,7 +148,7 @@ public:
 	 *
 	 * \return Root movie instance.
 	 */
-	FlashSpriteInstance* getMovieInstance() const;
+	Ref< FlashSpriteInstance > getMovieInstance() const;
 
 private:
 	struct Event

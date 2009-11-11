@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TonemapFilter", TonemapFilter, ImageFilter)
 
-Image* TonemapFilter::apply(const Image* image)
+Ref< Image > TonemapFilter::apply(const Image* image)
 {
 	Color in;
 

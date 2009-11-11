@@ -118,9 +118,9 @@ void SequencerControl::removeAllSequenceItems()
 	updateScrollBars();
 }
 
-int SequencerControl::getSequenceItems(RefList< SequenceItem >& sequenceItems, int flags)
+int SequencerControl::getSequenceItems(RefArray< SequenceItem >& sequenceItems, int flags)
 {
-	typedef std::pair< RefList< SequenceItem >::iterator, RefList< SequenceItem >::iterator > range_t;
+	typedef std::pair< RefArray< SequenceItem >::iterator, RefArray< SequenceItem >::iterator > range_t;
 
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_sequenceItems.begin(), m_sequenceItems.end()));
@@ -148,7 +148,7 @@ int SequencerControl::getSequenceItems(RefList< SequenceItem >& sequenceItems, i
 						continue;
 				}
 
-				RefList< SequenceItem >& childItems = item->getChildItems();
+				RefArray< SequenceItem >& childItems = item->getChildItems();
 				if (!childItems.empty())
 				{
 					stack.push(std::make_pair(
@@ -209,7 +209,7 @@ void SequencerControl::eventSize(Event* e)
 void SequencerControl::updateScrollBars()
 {
 	// Get all items, including descendants.
-	RefList< SequenceItem > sequenceItems;
+	RefArray< SequenceItem > sequenceItems;
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	Size sequences(
@@ -245,13 +245,13 @@ void SequencerControl::eventButtonDown(Event* e)
 	setFocus();
 
 	// Get all items, including descendants.
-	RefList< SequenceItem > sequenceItems;
+	RefArray< SequenceItem > sequenceItems;
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	// If not shift is down we de-select all items.
 	if (!(e->getKeyState() & KsShift))
 	{
-		for (RefList< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+		for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
 			selectionModified |= (*i)->setSelected(false);
 	}
 
@@ -261,7 +261,7 @@ void SequencerControl::eventButtonDown(Event* e)
 	int sequenceId = (position.y + m_scrollBarV->getPosition()) / c_sequenceHeight;
 	if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
 	{
-		RefList< SequenceItem >::iterator i = sequenceItems.begin();
+		RefArray< SequenceItem >::iterator i = sequenceItems.begin();
 		std::advance(i, sequenceId);
 
 		// Ensure sequence is selected.
@@ -364,7 +364,7 @@ void SequencerControl::eventPaint(Event* e)
 	Canvas& canvas = p->getCanvas();
 
 	// Get all items, including descendants.
-	RefList< SequenceItem > sequenceItems;
+	RefArray< SequenceItem > sequenceItems;
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	// Get component sizes.
@@ -394,7 +394,7 @@ void SequencerControl::eventPaint(Event* e)
 		rc.right - scrollWidth,
 		rc.top - scrollOffsetY + c_sequenceHeight
 	);
-	for (RefList< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
+	for (RefArray< SequenceItem >::iterator i = sequenceItems.begin(); i != sequenceItems.end(); ++i)
 	{
 		canvas.setClipRect(Rect(
 			rc.left,

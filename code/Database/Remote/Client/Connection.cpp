@@ -28,7 +28,7 @@ void Connection::destroy()
 	}
 }
 
-IMessage* Connection::sendMessage(const IMessage& message)
+Ref< IMessage > Connection::sendMessage(const IMessage& message)
 {
 	Acquire< Semaphore > scopeLock(m_messageLock);
 	Ref< IMessage > reply;

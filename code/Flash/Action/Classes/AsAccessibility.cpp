@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsAccessibility", AsAccessibility, ActionClass)
 
-AsAccessibility* AsAccessibility::getInstance()
+Ref< AsAccessibility > AsAccessibility::getInstance()
 {
 	static AsAccessibility* instance = 0;
 	if (!instance)

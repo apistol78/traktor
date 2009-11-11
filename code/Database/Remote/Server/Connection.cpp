@@ -87,7 +87,7 @@ uint32_t Connection::putObject(Object* object)
 	return handle;
 }
 
-Object* Connection::getObject(uint32_t handle)
+Ref< Object > Connection::getObject(uint32_t handle)
 {
 	std::map< uint32_t, Ref< Object > >::iterator i = m_objectStore.find(handle);
 	return i != m_objectStore.end() ? i->second : 0;

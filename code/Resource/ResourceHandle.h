@@ -21,7 +21,7 @@ public:
 
 	virtual void replace(Object* object);
 
-	virtual Object* get();
+	virtual Ref< Object > get();
 
 	virtual void flush();
 

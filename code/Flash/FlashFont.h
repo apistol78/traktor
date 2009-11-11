@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashFont_H
 #define traktor_flash_FlashFont_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"
 
@@ -50,7 +50,7 @@ public:
 		CoordinateType coordinateType
 	);
 
-	const FlashShape* getShape(uint16_t index) const;
+	Ref< const FlashShape > getShape(uint16_t index) const;
 
 	int16_t getAscent() const;
 

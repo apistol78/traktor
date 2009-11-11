@@ -55,15 +55,15 @@ ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 	m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 }
 
-ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
+Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches()
 {
-	std::stack< Node* > nodeStack;
+	RefArray< Node > nodeStack;
 
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i))
-			nodeStack.push(*i);
+			nodeStack.push_back(*i);
 	}
 
 	RefArray< Node > usedNodes;
@@ -71,8 +71,8 @@ ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
 
 	while (!nodeStack.empty())
 	{
-		Ref< Node > node = nodeStack.top();
-		nodeStack.pop();
+		Ref< Node > node = nodeStack.back();
+		nodeStack.pop_back();
 
 		if (std::find(usedNodes.begin(), usedNodes.end(), node) != usedNodes.end())
 			continue;
@@ -82,15 +82,15 @@ ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
 		int inputPinCount = node->getInputPinCount();
 		for (int i = 0; i < inputPinCount; ++i)
 		{
-			const InputPin* inputPin = node->getInputPin(i);
+			Ref< const InputPin > inputPin = node->getInputPin(i);
 			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 			if (edge)
 			{
-				const OutputPin* outputPin = edge->getSource();
+				Ref< const OutputPin > outputPin = edge->getSource();
 				if (outputPin)
 				{
 					usedEdges.push_back(edge);
-					nodeStack.push(outputPin->getNode());
+					nodeStack.push_back(outputPin->getNode());
 				}
 			}
 		}
@@ -105,7 +105,7 @@ ShaderGraph* ShaderGraphOptimizer::removeUnusedBranches()
 	return m_shaderGraph;
 }
 
-ShaderGraph* ShaderGraphOptimizer::mergeBranches()
+Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 {
 	uint32_t mergedNodes = 0;
 
@@ -146,11 +146,13 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 			{
 				for (RefArray< Edge >::iterator k = edges.begin(); k != edges.end(); ++k)
 				{
-					m_shaderGraph->removeEdge(*k);
-					m_shaderGraph->addEdge(gc_new< Edge >(
+					Ref< Edge > edge = gc_new< Edge >(
 						nodes[i]->getOutputPin(0),
 						(*k)->getDestination()
-					));
+					);
+
+					m_shaderGraph->removeEdge(*k);
+					m_shaderGraph->addEdge(edge);
 				}
 				m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
 			}
@@ -190,8 +192,8 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 				bool wiredIdentical = true;
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					const OutputPin* sourcePin1 = m_shaderGraphAdj->findSourcePin(nodes[i]->getInputPin(k));
-					const OutputPin* sourcePin2 = m_shaderGraphAdj->findSourcePin(nodes[j]->getInputPin(k));
+					Ref< const OutputPin > sourcePin1 = m_shaderGraphAdj->findSourcePin(nodes[i]->getInputPin(k));
+					Ref< const OutputPin > sourcePin2 = m_shaderGraphAdj->findSourcePin(nodes[j]->getInputPin(k));
 					if (sourcePin1 != sourcePin2)
 					{
 						wiredIdentical = false;
@@ -211,11 +213,12 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 					m_shaderGraphAdj->findEdges(nodes[j]->getOutputPin(k), edges);
 					for (RefArray< Edge >::iterator m = edges.begin(); m != edges.end(); ++m)
 					{
-						m_shaderGraph->removeEdge(*m);
-						m_shaderGraph->addEdge(gc_new< Edge >(
+						Ref< Edge > edge = gc_new< Edge >(
 							nodes[i]->getOutputPin(k),
 							(*m)->getDestination()
-						));
+						);
+						m_shaderGraph->removeEdge(*m);
+						m_shaderGraph->addEdge(edge);
 					}
 				}
 
@@ -247,7 +250,7 @@ ShaderGraph* ShaderGraphOptimizer::mergeBranches()
 	return m_shaderGraph;
 }
 
-ShaderGraph* ShaderGraphOptimizer::insertInterpolators()
+Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators()
 {
 	m_insertedCount = 0;
 	updateOrderComplexity();
@@ -278,10 +281,10 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
-		const InputPin* inputPin = node->getInputPin(i);
+		Ref< const InputPin > inputPin = node->getInputPin(i);
 		T_ASSERT (inputPin);
 
-		const OutputPin* sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
+		Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 		if (!sourceOutputPin)
 			continue;
 

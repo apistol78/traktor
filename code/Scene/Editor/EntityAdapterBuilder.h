@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
@@ -26,13 +27,13 @@ public:
 
 	virtual void begin(world::IEntityManager* entityManager);
 
-	virtual world::Entity* create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData);
+	virtual Ref< world::Entity > create(const std::wstring& name, const world::EntityData* entityData, const Object* instanceData);
 
-	virtual world::Entity* build(const world::EntityInstance* instance);
+	virtual Ref< world::Entity > build(const world::EntityInstance* instance);
 
 	virtual void end();
 
-	EntityAdapter* getRootAdapter() const;
+	Ref< EntityAdapter > getRootAdapter() const;
 
 private:
 	Ref< SceneEditorContext > m_context;

@@ -2,6 +2,7 @@
 #define traktor_world_IEntityFactory_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +31,7 @@ class T_DLLCLASS IEntityFactory : public Object
 public:
 	virtual const TypeSet getEntityTypes() const = 0;
 
-	virtual Entity* createEntity(
+	virtual Ref< Entity > createEntity(
 		IEntityBuilder* builder,
 		const std::wstring& name,
 		const EntityData& entityData,

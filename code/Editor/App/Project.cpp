@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-db::Database* openDatabase(const std::wstring& databaseName, bool create)
+Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 {
 	Ref< db::IProviderDatabase > providerDatabase;
 
@@ -54,7 +54,7 @@ db::Database* openDatabase(const std::wstring& databaseName, bool create)
 	T_ASSERT (providerDatabase);
 
 	Ref< db::Database > database = gc_new< db::Database >();
-	return database->create(providerDatabase) ? database.getPtr() : 0;
+	return database->create(providerDatabase) ? database.ptr() : 0;
 }
 
 		}
@@ -115,17 +115,17 @@ void Project::close()
 	}
 }
 
-Settings* Project::getSettings()
+Ref< Settings > Project::getSettings()
 {
 	return m_settings;
 }
 
-db::Database* Project::getSourceDatabase()
+Ref< db::Database > Project::getSourceDatabase()
 {
 	return m_sourceDatabase;
 }
 
-db::Database* Project::getOutputDatabase()
+Ref< db::Database > Project::getOutputDatabase()
 {
 	return m_outputDatabase;
 }

@@ -16,7 +16,7 @@ const TypeSet MeshAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IObjectEditor* MeshAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
+Ref< editor::IObjectEditor > MeshAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return gc_new< MeshAssetEditor >(editor);
 }

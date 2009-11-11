@@ -48,7 +48,7 @@ void WorldEntityRenderers::remove(IEntityRenderer* entityRenderer)
 	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
 }
 
-IEntityRenderer* WorldEntityRenderers::find(const Type& entityType) const
+Ref< IEntityRenderer > WorldEntityRenderers::find(const Type& entityType) const
 {
 	entity_renderer_map_t::const_iterator i = m_entityRendererMap.find(&entityType);
 	return i != m_entityRendererMap.end() ? i->second : 0;

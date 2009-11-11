@@ -18,7 +18,7 @@ class AsPoint : public ActionClass
 	T_RTTI_CLASS(AsPoint)
 
 public:
-	static AsPoint* getInstance();
+	static Ref< AsPoint > getInstance();
 
 private:
 	AsPoint();

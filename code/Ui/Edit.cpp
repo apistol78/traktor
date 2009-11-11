@@ -55,7 +55,7 @@ bool Edit::setValidator(EditValidator* validator)
 	return true;
 }
 
-EditValidator* Edit::getValidator() const
+Ref< EditValidator > Edit::getValidator() const
 {
 	return m_validator;
 }

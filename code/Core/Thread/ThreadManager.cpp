@@ -29,7 +29,7 @@ ThreadManager& ThreadManager::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new ThreadManager();
-		SingletonManager::getInstance().addAfter(s_instance, &Heap::getInstance());
+		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
 }

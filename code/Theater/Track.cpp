@@ -18,7 +18,7 @@ void Track::setEntity(world::SpatialEntity* entity)
 	m_entity = entity;
 }
 
-world::SpatialEntity* Track::getEntity() const
+Ref< world::SpatialEntity > Track::getEntity() const
 {
 	return m_entity;
 }

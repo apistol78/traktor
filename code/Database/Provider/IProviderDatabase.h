@@ -2,6 +2,7 @@
 #define traktor_db_IProviderDatabase_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,9 +30,9 @@ class T_DLLCLASS IProviderDatabase : public Object
 public:
 	virtual void close() = 0;
 
-	virtual IProviderBus* getBus() = 0;
+	virtual Ref< IProviderBus > getBus() = 0;
 
-	virtual IProviderGroup* getRootGroup() = 0;
+	virtual Ref< IProviderGroup > getRootGroup() = 0;
 };
 
 	}

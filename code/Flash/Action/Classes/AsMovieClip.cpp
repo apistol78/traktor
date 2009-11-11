@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 
-AsMovieClip* AsMovieClip::getInstance()
+Ref< AsMovieClip > AsMovieClip::getInstance()
 {
 	static AsMovieClip* instance = 0;
 	if (!instance)
@@ -185,7 +185,7 @@ void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance);
 
-	ca.ret = ActionValue::fromObject(attachClipInstance.getPtr());
+	ca.ret = ActionValue::fromObject(attachClipInstance.ptr());
 }
 
 void AsMovieClip::MovieClip_beginBitmapFill(CallArgs& ca)
@@ -234,7 +234,7 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
 	displayList.showObject(depth, emptyClipId, emptyClipInstance);
 
-	ca.ret = ActionValue::fromObject(emptyClipInstance.getPtr());
+	ca.ret = ActionValue::fromObject(emptyClipInstance.ptr());
 }
 
 void AsMovieClip::MovieClip_createTextField(CallArgs& ca)

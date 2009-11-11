@@ -85,12 +85,12 @@ int RenderSystemOpenGLES2::getDisplayModeCount() const
 	return 0;
 }
 
-DisplayMode* RenderSystemOpenGLES2::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemOpenGLES2::getDisplayMode(int index)
 {
 	return 0;
 }
 
-DisplayMode* RenderSystemOpenGLES2::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemOpenGLES2::getCurrentDisplayMode()
 {
 	return 0;
 }
@@ -118,7 +118,7 @@ bool RenderSystemOpenGLES2::handleMessages()
 	return true;
 }
 
-IRenderView* RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 #if defined(_WIN32)
 	if (m_hWnd)
@@ -148,7 +148,7 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayM
 #endif
 }
 
-IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
 #	if defined(TARGET_OS_IPHONE)
@@ -243,17 +243,17 @@ IRenderView* RenderSystemOpenGLES2::createRenderView(void* windowHandle, const R
 #endif
 }
 
-VertexBuffer* RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	return gc_new< VertexBufferOpenGLES2 >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
 }
 
-IndexBuffer* RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	return gc_new< IndexBufferOpenGLES2 >(m_globalContext, indexType, bufferSize, dynamic);
 }
 
-ISimpleTexture* RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureOpenGLES2 > texture = gc_new< SimpleTextureOpenGLES2 >(m_globalContext);
 	if (texture->create(desc))
@@ -262,17 +262,17 @@ ISimpleTexture* RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCr
 		return texture;
 }
 
-ICubeTexture* RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-IVolumeTexture* RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-RenderTargetSet* RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
 	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = gc_new< RenderTargetSetOpenGLES2 >(m_globalContext);
@@ -285,7 +285,7 @@ RenderTargetSet* RenderSystemOpenGLES2::createRenderTargetSet(const RenderTarget
 #endif
 }
 
-ProgramResource* RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, glslProgram))
@@ -298,7 +298,7 @@ ProgramResource* RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shader
 	return resource;
 }
 
-IProgram* RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
 	Ref< ProgramOpenGLES2 > program = gc_new< ProgramOpenGLES2 >(m_globalContext);
 	if (!program->create(programResource))

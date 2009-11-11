@@ -19,7 +19,7 @@ OutputPin::OutputPin(Node* node, const std::wstring& name)
 {
 }
 
-Node* OutputPin::getNode() const
+Ref< Node > OutputPin::getNode() const
 {
 	return m_node;
 }

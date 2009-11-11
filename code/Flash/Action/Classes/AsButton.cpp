@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsButton", AsButton, ActionClass)
 
-AsButton* AsButton::getInstance()
+Ref< AsButton > AsButton::getInstance()
 {
 	static AsButton* instance = 0;
 	if (!instance)

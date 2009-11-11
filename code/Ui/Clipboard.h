@@ -43,7 +43,7 @@ public:
 
 	ClipboardContentType getContentType() const;
 
-	Serializable* getObject() const;
+	Ref< Serializable > getObject() const;
 
 	std::wstring getText() const;
 

@@ -1,7 +1,7 @@
 #ifndef traktor_world_SpatialGroupEntity_H
 #define traktor_world_SpatialGroupEntity_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
@@ -41,7 +41,7 @@ public:
 	
 	int getEntitiesOf(const Type& entityType, RefArray< SpatialEntity >& outEntities) const;
 	
-	SpatialEntity* getFirstEntityOf(const Type& entityType) const;
+	Ref< SpatialEntity > getFirstEntityOf(const Type& entityType) const;
 	
 	virtual void update(const EntityUpdate* update);
 
@@ -58,7 +58,7 @@ public:
 	}
 
 	template < typename EntityType >
-	EntityType* getFirstEntityOf() const
+	Ref< EntityType > getFirstEntityOf() const
 	{
 		return static_cast< EntityType* >(getFirstEntityOf(EntityType::getClassType()));
 	}

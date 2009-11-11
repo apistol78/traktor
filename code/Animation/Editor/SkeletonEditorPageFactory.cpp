@@ -17,7 +17,7 @@ const TypeSet SkeletonEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IEditorPage* SkeletonEditorPageFactory::createEditorPage(editor::IEditor* editor) const
+Ref< editor::IEditorPage > SkeletonEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
 	return gc_new< SkeletonEditorPage >(editor);
 }

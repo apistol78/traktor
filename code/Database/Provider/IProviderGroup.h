@@ -1,9 +1,10 @@
 #ifndef traktor_db_IProviderGroup_H
 #define traktor_db_IProviderGroup_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,9 +35,9 @@ public:
 
 	virtual bool remove() = 0;
 
-	virtual IProviderGroup* createGroup(const std::wstring& groupName) = 0;
+	virtual Ref< IProviderGroup > createGroup(const std::wstring& groupName) = 0;
 
-	virtual IProviderInstance* createInstance(const std::wstring& instanceName, const Guid& instanceGuid) = 0;
+	virtual Ref< IProviderInstance > createInstance(const std::wstring& instanceName, const Guid& instanceGuid) = 0;
 
 	virtual bool getChildGroups(RefArray< IProviderGroup >& outChildGroups) = 0;
 

@@ -1,6 +1,6 @@
 #include "World/PostProcess/PostProcessStepChain.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepChain", PostProcessStepChain, PostProcessStep)
 
-PostProcessStep::Instance* PostProcessStepChain::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepChain::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	RefArray< Instance > instances;
 	for (RefArray< PostProcessStep >::const_iterator i = m_steps.begin(); i != m_steps.end(); ++i)

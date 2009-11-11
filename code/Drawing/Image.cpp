@@ -110,7 +110,7 @@ Image::~Image()
 	freeData(m_data, m_size);
 }
 
-Image* Image::clone(bool includeData) const
+Ref< Image > Image::clone(bool includeData) const
 {
 	Ref< Image > clone = gc_new< Image >(m_pixelFormat, m_width, m_height, m_palette);
 	if (includeData)
@@ -251,7 +251,7 @@ bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 	return true;
 }
 
-Image* Image::applyFilter(ImageFilter* imageFilter) const
+Ref< Image > Image::applyFilter(ImageFilter* imageFilter) const
 {
 	Ref< Image > image = imageFilter->apply(this);
 	checkData(m_data, m_size);
@@ -282,7 +282,7 @@ void Image::convert(const PixelFormat* intoPixelFormat, Palette* intoPalette)
 	checkData(m_data, m_size);
 }
 
-Image* Image::load(const Path& fileName)
+Ref< Image > Image::load(const Path& fileName)
 {
 	Ref< Image > image;
 
@@ -303,7 +303,7 @@ Image* Image::load(const Path& fileName)
 	return image;
 }
 
-Image* Image::load(const void* resource, uint32_t size, const std::wstring& extension)
+Ref< Image > Image::load(const void* resource, uint32_t size, const std::wstring& extension)
 {
 	Ref< Image > image;
 
@@ -340,7 +340,7 @@ bool Image::save(const Path& fileName)
 	return result;
 }
 
-const PixelFormat* Image::getPixelFormat() const
+Ref< const PixelFormat > Image::getPixelFormat() const
 {
 	return m_pixelFormat;
 }
@@ -355,7 +355,7 @@ const int32_t Image::getHeight() const
 	return m_height;
 }
 
-Palette* Image::getPalette() const
+Ref< Palette > Image::getPalette() const
 {
 	return m_palette;
 }
@@ -380,7 +380,7 @@ void Image::setImageInfo(ImageInfo* imageInfo)
 	m_imageInfo = imageInfo;
 }
 
-ImageInfo* Image::getImageInfo() const
+Ref< ImageInfo > Image::getImageInfo() const
 {
 	return m_imageInfo;
 }

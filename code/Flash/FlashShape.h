@@ -34,7 +34,7 @@ public:
 
 	bool create(const SwfShape* shape);
 
-	virtual FlashCharacterInstance* createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const;
 
 	const SwfRect& getShapeBounds() const { return m_shapeBounds; }
 

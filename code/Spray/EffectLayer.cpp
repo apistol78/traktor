@@ -18,7 +18,7 @@ EffectLayer::EffectLayer()
 {
 }
 
-EffectLayerInstance* EffectLayer::createInstance(resource::IResourceManager* resourceManager) const
+Ref< EffectLayerInstance > EffectLayer::createInstance(resource::IResourceManager* resourceManager) const
 {
 	if (!m_emitter)
 		return 0;

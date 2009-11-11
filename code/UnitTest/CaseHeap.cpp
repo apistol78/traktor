@@ -2,9 +2,10 @@
 #include "Core/Heap/Heap.h"
 #include "Core/Heap/GcNew.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -18,7 +19,7 @@ public:
 	LengthyCtorObject()
 	{
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
-		Heap::getInstance().collect();
+		Heap::collect();
 	}
 };
 
@@ -80,7 +81,7 @@ void threadStressCollect()
 {
 	while (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		Heap::getInstance().collect();
+		Heap::collect();
 		Atomic::increment(g_collectCount);
 		ThreadManager::getInstance().getCurrentThread()->sleep(10);
 	}
@@ -113,9 +114,9 @@ void CaseHeap::run()
 
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 
-		Heap::getInstance().collect();
-		Heap::getInstance().collect();
-		Heap::getInstance().collect();
+		Heap::collect();
+		Heap::collect();
+		Heap::collect();
 
 		log::info << HeapObject::ms_instanceCount << Endl;
 
@@ -126,9 +127,9 @@ void CaseHeap::run()
 
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 
-		Heap::getInstance().collect();
-		Heap::getInstance().collect();
-		Heap::getInstance().collect();
+		Heap::collect();
+		Heap::collect();
+		Heap::collect();
 
 		log::info << HeapObject::ms_instanceCount << Endl;
 
@@ -163,7 +164,7 @@ void CaseHeap::run()
 		ThreadManager::getInstance().getCurrentThread()->sleep(11000);
 
 		for (int i = 0; i < 10; ++i)
-			Heap::getInstance().collect();
+			Heap::collect();
 
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 
@@ -200,7 +201,7 @@ void CaseHeap::run()
 		ThreadManager::getInstance().getCurrentThread()->sleep(11000);
 
 		for (int i = 0; i < 10; ++i)
-			Heap::getInstance().collect();
+			Heap::collect();
 
 		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 

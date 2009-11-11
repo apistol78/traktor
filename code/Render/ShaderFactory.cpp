@@ -26,10 +26,16 @@ public:
 	{
 	}
 
-	virtual ITexture* read(const Guid& textureGuid)
+	virtual Ref< ITexture > read(const Guid& textureGuid)
 	{
 		Ref< resource::IResourceHandle > handle = m_resourceManager->bind< ITexture >(textureGuid);
-		return handle ? dynamic_type_cast< ITexture* >(handle->get()) : 0;
+		if (handle)
+		{
+			Ref< Object > texture = handle->get();
+			return dynamic_type_cast< ITexture* >(texture);
+		}
+		else
+			return 0;
 	}
 
 private:
@@ -61,7 +67,7 @@ bool ShaderFactory::isCacheable() const
 	return true;
 }
 
-Object* ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
 	if (!shaderResource)

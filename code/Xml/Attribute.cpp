@@ -33,12 +33,12 @@ void Attribute::setValue(const std::wstring& value)
 	m_value = value;
 }
 
-Attribute* Attribute::getPrevious() const
+Ref< Attribute > Attribute::getPrevious() const
 {
 	return m_previous;
 }
 
-Attribute* Attribute::getNext() const
+Ref< Attribute > Attribute::getNext() const
 {
 	return m_next;
 }

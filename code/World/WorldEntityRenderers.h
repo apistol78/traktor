@@ -2,8 +2,9 @@
 #define traktor_world_WorldEntityRenderers_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -34,7 +35,7 @@ public:
 
 	void remove(IEntityRenderer* entityRenderer);
 
-	IEntityRenderer* find(const Type& entityType) const;
+	Ref< IEntityRenderer > find(const Type& entityType) const;
 
 	const RefArray< IEntityRenderer >& get() const { return m_entityRenderers; }
 

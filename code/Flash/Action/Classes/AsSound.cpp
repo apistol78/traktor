@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
-AsSound* AsSound::getInstance()
+Ref< AsSound > AsSound::getInstance()
 {
 	static AsSound* instance = 0;
 	if (!instance)

@@ -28,7 +28,7 @@ SamplerNodeFacade::SamplerNodeFacade(ui::custom::GraphControl* graphControl)
 	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
 }
 
-Node* SamplerNodeFacade::createShaderNode(
+Ref< Node > SamplerNodeFacade::createShaderNode(
 	const Type* nodeType,
 	editor::IEditor* editor
 )
@@ -36,7 +36,7 @@ Node* SamplerNodeFacade::createShaderNode(
 	return gc_new< Sampler >();
 }
 
-ui::custom::Node* SamplerNodeFacade::createEditorNode(
+Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode

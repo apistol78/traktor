@@ -7,7 +7,7 @@
 #include "Render/Edge.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -180,7 +180,7 @@ int External::getInputPinCount() const
 	return int(m_inputPins.size());
 }
 
-const InputPin* External::getInputPin(int index) const
+Ref< const InputPin > External::getInputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
@@ -191,7 +191,7 @@ int External::getOutputPinCount() const
 	return int(m_outputPins.size());
 }
 
-const OutputPin* External::getOutputPin(int index) const
+Ref< const OutputPin > External::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];

@@ -22,7 +22,7 @@ const TypeSet AnimatedMeshEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-world::Entity* AnimatedMeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > AnimatedMeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
 {
 	return checked_type_cast< const AnimatedMeshEntityData* >(&entityData)->createEntity(m_resourceManager, m_physicsManager);
 }

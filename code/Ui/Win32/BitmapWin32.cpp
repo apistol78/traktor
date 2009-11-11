@@ -172,7 +172,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 #endif
 }
 
-drawing::Image* BitmapWin32::getImage() const
+Ref< drawing::Image > BitmapWin32::getImage() const
 {
 	Ref< drawing::Image > image = gc_new< drawing::Image >(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
 

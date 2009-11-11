@@ -1,6 +1,7 @@
 #ifndef traktor_scene_SelectEvent_H
 #define traktor_scene_SelectEvent_H
 
+#include "Core/Heap/RefArray.h"
 #include "Ui/Event.h"
 
 // import/export mechanism.

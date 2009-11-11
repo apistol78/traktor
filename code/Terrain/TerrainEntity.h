@@ -72,7 +72,7 @@ public:
 
 	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	inline TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
+	inline Ref< TerrainSurfaceCache > getSurfaceCache() const { return m_surfaceCache; }
 
 	virtual void update(const world::EntityUpdate* update);
 

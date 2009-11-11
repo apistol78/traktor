@@ -16,8 +16,8 @@ class FunctionHandler : public EventHandler
 public:
 	typedef void (*F)(Event* event);
 
-	FunctionHandler(F function) :
-		m_function(function)
+	FunctionHandler(F function)
+	:	m_function(function)
 	{
 	}
 
@@ -33,7 +33,7 @@ private:
 /*! \brief Create function event handler.
  * \ingroup UI
  */
-inline EventHandler* createFunctionHandler(FunctionHandler::F function)
+inline Ref< EventHandler > createFunctionHandler(FunctionHandler::F function)
 {
 	return gc_new< FunctionHandler >(function);
 }

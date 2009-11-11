@@ -3,6 +3,7 @@
 #include "Xml/Text.h"
 #include "Xml/XmlPullParser.h"
 #include "Core/Heap/GcNew.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/MemoryStream.h"
@@ -32,7 +33,7 @@ bool Document::loadFromFile(const Path& fileName)
 
 bool Document::loadFromStream(Stream* stream)
 {
-	RefList< Element > stack;
+	RefArray< Element > stack;
 	XmlPullParser xpp(stream);
 
 	for (;;)
@@ -136,7 +137,7 @@ int Document::get(const std::wstring& path, RefArray< Element >& elements)
 	return int(elements.size());
 }
 
-Element* Document::getSingle(const std::wstring& path)
+Ref< Element > Document::getSingle(const std::wstring& path)
 {
 	RefArray< Element > elements;
 	return (get(path, elements) > 0) ? elements.front() : 0;
@@ -147,7 +148,7 @@ void Document::setDocumentElement(Element* docElement)
 	m_docElement = docElement;
 }
 
-Element* Document::getDocumentElement() const
+Ref< Element > Document::getDocumentElement() const
 {
 	return m_docElement;
 }

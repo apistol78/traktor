@@ -2,6 +2,7 @@
 #define traktor_world_PostProcessStepChain_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -46,7 +47,7 @@ public:
 		RefArray< Instance > m_instances;
 	};
 
-	virtual Instance* create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual bool serialize(Serializer& s);
 

@@ -50,7 +50,7 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SystemMeshFactory", SystemMeshFactory, MeshFactory)
 
-Mesh* SystemMeshFactory::createMesh(
+Ref< Mesh > SystemMeshFactory::createMesh(
 	const std::vector< VertexElement >& vertexElements,
 	unsigned int vertexBufferSize,
 	IndexType indexType,

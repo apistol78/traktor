@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 
-AsLoadVars* AsLoadVars::getInstance()
+Ref< AsLoadVars > AsLoadVars::getInstance()
 {
 	static AsLoadVars* instance = 0;
 	if (!instance)

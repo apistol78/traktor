@@ -3,8 +3,9 @@
 
 #include <list>
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -56,13 +57,13 @@ public:
 
 	virtual bool edit() = 0;
 
-	virtual TreeViewItem* getParent() const = 0;
+	virtual Ref< TreeViewItem > getParent() const = 0;
 
 	virtual bool hasChildren() const = 0;
 
 	virtual int getChildren(RefArray< TreeViewItem >& outChildren) const = 0;
 
-	TreeViewItem* findChild(const std::wstring& childPath);
+	Ref< TreeViewItem > findChild(const std::wstring& childPath);
 
 	/*! \brief Get path to this item.
 	 *

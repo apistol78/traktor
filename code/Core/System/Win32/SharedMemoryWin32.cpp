@@ -146,7 +146,7 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 	return true;
 }
 
-Stream* SharedMemoryWin32::read(bool exclusive)
+Ref< Stream > SharedMemoryWin32::read(bool exclusive)
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
@@ -168,7 +168,7 @@ Stream* SharedMemoryWin32::read(bool exclusive)
 	return gc_new< SharedReaderStream >(header, header + 1, header->dataSize);
 }
 
-Stream* SharedMemoryWin32::write()
+Ref< Stream > SharedMemoryWin32::write()
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)

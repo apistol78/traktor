@@ -1,3 +1,4 @@
+#pragma once
 #ifndef traktor_Config_H
 #define traktor_Config_H
 
@@ -121,7 +122,7 @@ typedef unsigned short uint16_t;
 typedef int int32_t;
 typedef unsigned int uint32_t;
 
-#		if !defined(__APPLE__)
+#		if !defined(__APPLE__) && !defined(_PS3)
 
 typedef long int int64_t;
 typedef long unsigned int uint64_t;
@@ -159,15 +160,6 @@ size_t alignOf()
 #	endif
 #endif
 }
-
-// Debug settings.
-#if defined(_DEBUG)
-//#	define T_DEBUG_REFERENCES				//< Add some additional information to reference containers about object they are referencing.
-//#	define T_DEBUG_OBJECT_NOT_REFERENCED	//< Check object isn't referenced when destroyed.
-#	if defined(_MSC_VER) && !defined(_XBOX) && !defined(_WIN64) && !defined(WINCE)
-#		define T_DEBUG_REFERENCE_ADDRESS		//< Reference instantiation address; must be x86 32bit arch currently.
-#endif
-#endif
 
 // Include assert helper.
 #include "Core/Assert.h"

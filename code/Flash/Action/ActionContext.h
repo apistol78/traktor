@@ -30,9 +30,9 @@ class T_DLLCLASS ActionContext : public Object
 public:
 	ActionContext(const FlashMovie* movie, ActionObject* global);
 
-	inline const FlashMovie* getMovie() const { return m_movie; }
+	inline Ref< const FlashMovie > getMovie() const { return m_movie; }
 
-	inline ActionObject* getGlobal() const { return m_global; }
+	inline Ref< ActionObject > getGlobal() const { return m_global; }
 
 private:
 	Ref< const FlashMovie > m_movie;

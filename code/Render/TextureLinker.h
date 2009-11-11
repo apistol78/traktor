@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +32,7 @@ class T_DLLCLASS TextureLinker : public Object
 public:
 	struct TextureReader
 	{
-		virtual ITexture* read(const Guid& textureGuid) = 0;
+		virtual Ref< ITexture > read(const Guid& textureGuid) = 0;
 	};
 
 	TextureLinker(TextureReader& textureReader);

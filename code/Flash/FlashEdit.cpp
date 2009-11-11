@@ -34,7 +34,7 @@ FlashEdit::FlashEdit(
 {
 }
 
-FlashCharacterInstance* FlashEdit::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
+Ref< FlashCharacterInstance > FlashEdit::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
 	return gc_new< FlashEditInstance >(context, parent, this, cref(m_initialText));
 }

@@ -26,7 +26,7 @@ bool RumbleEffectFactory::isCacheable() const
 	return true;
 }
 
-Object* RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
 {
 	return m_db->getObjectReadOnly< RumbleEffect >(guid);
 }

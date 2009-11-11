@@ -318,7 +318,7 @@ void BlockFile::freeBlockId(uint32_t blockId)
 	}
 }
 
-Stream* BlockFile::readBlock(uint32_t blockId)
+Ref< Stream > BlockFile::readBlock(uint32_t blockId)
 {
 	for (std::vector< Block >::const_iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
 	{
@@ -328,7 +328,7 @@ Stream* BlockFile::readBlock(uint32_t blockId)
 	return 0;
 }
 
-Stream* BlockFile::writeBlock(uint32_t blockId)
+Ref< Stream > BlockFile::writeBlock(uint32_t blockId)
 {
 	for (std::vector< Block >::iterator i = m_blocks.begin(); i != m_blocks.end(); ++i)
 	{

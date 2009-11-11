@@ -43,9 +43,9 @@ public:
 
 	virtual Aabb getBoundingBox() const;
 
-	inline Body* getBody() const { return m_body; }
+	inline Ref< Body > getBody() const { return m_body; }
 
-	inline world::SpatialEntity* getEntity() const { return m_entity; }
+	inline Ref< world::SpatialEntity > getEntity() const { return m_entity; }
 
 private:
 	Ref< Body > m_body;

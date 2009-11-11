@@ -1,6 +1,8 @@
 #ifndef traktor_ui_custom_LayerControl_H
 #define traktor_ui_custom_LayerControl_H
 
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -51,7 +53,7 @@ public:
 
 	int getItems(RefArray< LayerItem >& outItems, int flags);
 
-	LayerItem* getLayerItem(int index, bool includeChildren = true);
+	Ref< LayerItem > getLayerItem(int index, bool includeChildren = true);
 
 	void addSelectEventHandler(EventHandler* eventHandler);
 

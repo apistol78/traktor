@@ -44,7 +44,7 @@ class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
 public:
 	CloudEntityData();
 
-	CloudEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
+	Ref< CloudEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
 	virtual int getVersion() const;
 

@@ -25,7 +25,7 @@ const TypeSet ExternalEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Entity* ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
+Ref< Entity > ExternalEntityFactory::createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const
 {
 	Ref< EntityData > realEntityData;
 	Guid entityGuid;

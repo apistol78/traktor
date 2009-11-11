@@ -2,6 +2,7 @@
 #define traktor_DateTime_H
 
 #include "Core/Serialization/Serializable.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +37,7 @@ public:
 	DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second);
 
 	/*! \brief Return current date. */
-	static DateTime* now();
+	static Ref< DateTime > now();
 
 	/*! \brief Return year. */
 	uint16_t getYear() const;

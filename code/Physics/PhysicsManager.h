@@ -1,8 +1,9 @@
 #ifndef traktor_physics_PhysicsManager_H
 #define traktor_physics_PhysicsManager_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Transform.h"
 
@@ -113,7 +114,7 @@ public:
 	 * \param desc Rigid body description.
 	 * \return Rigid body instance.
 	 */
-	virtual Body* createBody(const BodyDesc* desc) = 0;
+	virtual Ref< Body > createBody(const BodyDesc* desc) = 0;
 
 	/*! \brief Create joint between bodies.
 	 *
@@ -127,7 +128,7 @@ public:
 	 * \param body2 Second rigid body, can be null if joint is created with the world.
 	 * \return Joint instance.
 	 */
-	virtual Joint* createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) = 0;
+	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2) = 0;
 
 	/*! \brief Update simulation.
 	 *

@@ -2,6 +2,7 @@
 #define traktor_spray_Effect_H
 
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
@@ -37,7 +38,7 @@ class T_DLLCLASS Effect : public Serializable
 public:
 	Effect();
 
-	EffectInstance* createInstance(resource::IResourceManager* resourceManager) const;
+	Ref< EffectInstance > createInstance(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(Serializer& s);
 

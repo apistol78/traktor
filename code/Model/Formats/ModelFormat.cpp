@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
-Model* ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
+Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 {
-	Ref< model::Model > md;
+	Ref< Model > md;
 
 	std::vector< const Type* > formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);

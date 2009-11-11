@@ -42,7 +42,7 @@ public:
 	 * \param parent Parent instance.
 	 * \return Character instance.
 	 */
-	virtual FlashCharacterInstance* createInstance(ActionContext* context, FlashCharacterInstance* parent) const = 0;
+	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent) const = 0;
 
 private:
 	uint16_t m_id;

@@ -26,12 +26,12 @@ class InterpolatorNodeFacade : public NodeFacade
 public:
 	InterpolatorNodeFacade();
 
-	virtual Node* createShaderNode(
+	virtual Ref< Node > createShaderNode(
 		const Type* nodeType,
 		editor::IEditor* editor
 	);
 
-	virtual ui::custom::Node* createEditorNode(
+	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode

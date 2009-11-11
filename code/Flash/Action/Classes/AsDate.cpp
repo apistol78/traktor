@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsDate", AsDate, ActionClass)
 
-AsDate* AsDate::getInstance()
+Ref< AsDate > AsDate::getInstance()
 {
 	static AsDate* instance = 0;
 	if (!instance)

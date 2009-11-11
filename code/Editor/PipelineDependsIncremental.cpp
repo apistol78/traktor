@@ -196,12 +196,12 @@ void PipelineDependsIncremental::getDependencies(RefArray< PipelineDependency >&
 	outDependencies = m_dependencies;
 }
 
-db::Database* PipelineDependsIncremental::getSourceDatabase() const
+Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
 {
 	return m_sourceDatabase;
 }
 
-const Serializable* PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
+Ref< const Serializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
 {
 	Ref< Serializable > object;
 
@@ -251,7 +251,7 @@ bool PipelineDependsIncremental::findPipeline(const Type& sourceType, Ref< IPipe
 	return bool(outPipeline != 0);
 }
 
-PipelineDependency* PipelineDependsIncremental::findDependency(const Guid& guid) const
+Ref< PipelineDependency > PipelineDependsIncremental::findDependency(const Guid& guid) const
 {
 	for (RefArray< PipelineDependency >::const_iterator i = m_dependencies.begin(); i != m_dependencies.end(); ++i)
 	{

@@ -1,8 +1,9 @@
 #ifndef traktor_input_InputSystem_H
 #define traktor_input_InputSystem_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Input/InputTypes.h"
 
 // import/export mechanism.
@@ -39,11 +40,11 @@ public:
 
 	int getDeviceCount() const;
 
-	IInputDevice* getDevice(int index);
+	Ref< IInputDevice > getDevice(int index);
 
 	int getDeviceCount(InputCategory category) const;
 
-	IInputDevice* getDevice(InputCategory category, int index, bool connected);
+	Ref< IInputDevice > getDevice(InputCategory category, int index, bool connected);
 
 	bool update(float deltaTime);
 

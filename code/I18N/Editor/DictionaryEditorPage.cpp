@@ -64,12 +64,12 @@ bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* DictionaryEditorPage::getDataInstance()
+Ref< db::Instance > DictionaryEditorPage::getDataInstance()
 {
 	return m_dictionaryInstance;
 }
 
-Object* DictionaryEditorPage::getDataObject()
+Ref< Object > DictionaryEditorPage::getDataObject()
 {
 	return m_dictionary;
 }

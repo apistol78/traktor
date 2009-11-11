@@ -120,7 +120,7 @@ int LayerControl::getItems(RefArray< LayerItem >& outItems, int flags)
 	return int(outItems.size());
 }
 
-LayerItem* LayerControl::getLayerItem(int index, bool includeChildren)
+Ref< LayerItem > LayerControl::getLayerItem(int index, bool includeChildren)
 {
 	typedef std::pair< RefArray< LayerItem >::iterator, RefArray< LayerItem >::iterator > range_t;
 	

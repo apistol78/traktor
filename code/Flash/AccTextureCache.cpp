@@ -76,7 +76,7 @@ void AccTextureCache::clear()
 	m_cache.clear();
 }
 
-render::ITexture* AccTextureCache::getGradientTexture(const FlashFillStyle& style)
+Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle& style)
 {
 	Ref< render::ISimpleTexture > texture;
 
@@ -154,7 +154,7 @@ render::ITexture* AccTextureCache::getGradientTexture(const FlashFillStyle& styl
 	return texture;
 }
 
-render::ITexture* AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
+Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint32_t hash = reinterpret_cast< uint32_t >(&bitmap);
 	std::map< uint32_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);

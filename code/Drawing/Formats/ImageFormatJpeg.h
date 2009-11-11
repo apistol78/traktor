@@ -28,13 +28,13 @@ class T_DLLCLASS ImageFormatJpeg : public ImageFormat
 public:
 	ImageFormatJpeg();
 
-	virtual Image* read(Stream* stream);
+	virtual Ref< Image > read(Stream* stream);
 
 	virtual bool write(Stream* stream, Image* image);
 
 	bool readJpegHeader(Stream* stream);
 
-	Image* readJpegImage(Stream* stream);
+	Ref< Image > readJpegImage(Stream* stream);
 
 private:
 	ImageFormatJpegImpl* m_impl;

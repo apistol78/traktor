@@ -2,8 +2,9 @@
 #define traktor_net_SocketSet_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +32,7 @@ public:
 
 	int count() const;
 
-	Socket* get(int index) const;
+	Ref< Socket > get(int index) const;
 
 	int select(bool read, bool write, bool except, int timeout, SocketSet& outResultSet);
 

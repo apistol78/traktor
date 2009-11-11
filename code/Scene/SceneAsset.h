@@ -53,7 +53,7 @@ class T_DLLCLASS SceneAsset : public Serializable
 public:
 	SceneAsset();
 
-	Scene* createScene(
+	Ref< Scene > createScene(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
@@ -62,7 +62,7 @@ public:
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);
 
-	world::WorldRenderSettings* getWorldRenderSettings() const;
+	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
 	void setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcess);
 
@@ -70,11 +70,11 @@ public:
 
 	void setInstance(world::EntityInstance* instance);
 
-	world::EntityInstance* getInstance() const;
+	Ref< world::EntityInstance > getInstance() const;
 
 	void setControllerData(ISceneControllerData* controllerData);
 
-	ISceneControllerData* getControllerData() const;
+	Ref< ISceneControllerData > getControllerData() const;
 
 	virtual int getVersion() const;
 

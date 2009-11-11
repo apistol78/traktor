@@ -185,13 +185,12 @@ void RenderSystemWin32::destroy()
 	// Ensure all DX9 objects are properly collected.
 	if (--ms_instances == 0)
 	{
-		Heap& heap = Heap::getInstance();
-		heap.collectAllOf(type_of< ProgramWin32 >());
-		heap.collectAllOf(type_of< VertexBufferDx9 >());
-		heap.collectAllOf(type_of< IndexBufferDx9 >());
-		heap.collectAllOf(type_of< SimpleTextureDx9 >());
-		heap.collectAllOf(type_of< CubeTextureDx9 >());
-		heap.collectAllOf(type_of< VolumeTextureDx9 >());
+		//Heap::collectAllOf(type_of< ProgramWin32 >());
+		//Heap::collectAllOf(type_of< VertexBufferDx9 >());
+		//Heap::collectAllOf(type_of< IndexBufferDx9 >());
+		//Heap::collectAllOf(type_of< SimpleTextureDx9 >());
+		//Heap::collectAllOf(type_of< CubeTextureDx9 >());
+		//Heap::collectAllOf(type_of< VolumeTextureDx9 >());
 	}
 
 	// In case there are any unmanaged resources still lingering we tell them to get lost.
@@ -240,7 +239,7 @@ int RenderSystemWin32::getDisplayModeCount() const
 	return int(m_d3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format));
 }
 
-DisplayMode* RenderSystemWin32::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemWin32::getDisplayMode(int index)
 {
 	D3DDISPLAYMODE dm;
 	
@@ -255,7 +254,7 @@ DisplayMode* RenderSystemWin32::getDisplayMode(int index)
 	);
 }
 
-DisplayMode* RenderSystemWin32::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemWin32::getCurrentDisplayMode()
 {
 	return gc_new< DisplayMode >(
 		0,
@@ -283,7 +282,7 @@ bool RenderSystemWin32::handleMessages()
 	return going;
 }
 
-IRenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -325,7 +324,7 @@ IRenderView* RenderSystemWin32::createRenderView(const DisplayMode* displayMode,
 	);
 }
 
-IRenderView* RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -368,7 +367,7 @@ IRenderView* RenderSystemWin32::createRenderView(void* windowHandle, const Rende
 	);
 }
 
-VertexBuffer* RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	Ref< VertexBufferDx9 > vertexBuffer = gc_new< VertexBufferDx9 >(this, m_context, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
@@ -376,7 +375,7 @@ VertexBuffer* RenderSystemWin32::createVertexBuffer(const std::vector< VertexEle
 	return vertexBuffer;
 }
 
-IndexBuffer* RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	Ref< IndexBufferDx9 > indexBuffer = gc_new< IndexBufferDx9 >(this, m_context, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
@@ -384,7 +383,7 @@ IndexBuffer* RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t 
 	return indexBuffer;
 }
 
-ISimpleTexture* RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureDx9 > texture = gc_new< SimpleTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -392,7 +391,7 @@ ISimpleTexture* RenderSystemWin32::createSimpleTexture(const SimpleTextureCreate
 	return texture;
 }
 
-ICubeTexture* RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	Ref< CubeTextureDx9 > texture = gc_new< CubeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -400,7 +399,7 @@ ICubeTexture* RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& 
 	return texture;
 }
 
-IVolumeTexture* RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	Ref< VolumeTextureDx9 > texture = gc_new< VolumeTextureDx9 >(m_context);
 	if (!texture->create(m_d3dDevice, desc))
@@ -408,7 +407,7 @@ IVolumeTexture* RenderSystemWin32::createVolumeTexture(const VolumeTextureCreate
 	return texture;
 }
 
-RenderTargetSet* RenderSystemWin32::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	Ref< RenderTargetSetWin32 > renderTargetSet = gc_new< RenderTargetSetWin32 >(this, m_context);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
@@ -416,7 +415,7 @@ RenderTargetSet* RenderSystemWin32::createRenderTargetSet(const RenderTargetSetC
 	return renderTargetSet;
 }
 
-ProgramResource* RenderSystemWin32::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemWin32::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	HlslProgram program;
 	if (!Hlsl().generate(shaderGraph, program))
@@ -429,7 +428,7 @@ ProgramResource* RenderSystemWin32::compileProgram(const ShaderGraph* shaderGrap
 	return programResource;
 }
 
-IProgram* RenderSystemWin32::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_shaderCache);
 	T_ASSERT (m_parameterCache);
@@ -480,7 +479,7 @@ HRESULT RenderSystemWin32::resetDevice()
 	// Delete any pending resources.
 	m_context->deleteResources();
 
-	RefList< RenderViewWin32 >::iterator i = m_renderViews.begin();
+	RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin();
 	if (i == m_renderViews.end())
 		return S_OK;
 

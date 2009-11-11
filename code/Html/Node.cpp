@@ -41,27 +41,27 @@ void Node::insertAfter(Node* child, Node* node)
 	// TODO Implement and alter addChild.
 }
 
-Node* Node::getParent() const
+Ref< Node > Node::getParent() const
 {
 	return m_parent;
 }
 
-Node* Node::getPreviousSibling() const
+Ref< Node > Node::getPreviousSibling() const
 {
 	return m_previousSibling;
 }
 
-Node* Node::getNextSibling() const
+Ref< Node > Node::getNextSibling() const
 {
 	return m_nextSibling;
 }
 
-Node* Node::getFirstChild() const
+Ref< Node > Node::getFirstChild() const
 {
 	return m_firstChild;
 }
 
-Node* Node::getLastChild() const
+Ref< Node > Node::getLastChild() const
 {
 	return m_lastChild;
 }

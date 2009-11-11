@@ -6,7 +6,6 @@
 #include "Core/System/OS.h"
 #include "Core/System/Win32/ProcessWin32.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
-#include "Core/Heap/Heap.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
@@ -36,7 +35,7 @@ OS& OS::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new OS();
-		SingletonManager::getInstance().addBefore(s_instance, &Heap::getInstance());
+		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
 }
@@ -243,7 +242,7 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 	return gc_new< ProcessWin32 >(cref(pi));
 }
 
-SharedMemory* OS::createSharedMemory(const std::wstring& name, uint32_t size) const
+Ref< SharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
 	Ref< SharedMemoryWin32 > sharedMemory = gc_new< SharedMemoryWin32 >();
 	if (!sharedMemory->create(name, size))

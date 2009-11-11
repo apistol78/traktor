@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepRepeat", PostProcessStepRepeat, PostProcessStep)
 
-PostProcessStep::Instance* PostProcessStepRepeat::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
+Ref< PostProcessStep::Instance > PostProcessStepRepeat::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	Ref< Instance > instance = m_step->create(resourceManager, renderSystem);
 	if (!instance)

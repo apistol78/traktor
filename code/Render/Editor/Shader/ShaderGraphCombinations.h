@@ -34,7 +34,7 @@ public:
 
 	std::vector< std::wstring > getParameterCombination(uint32_t combination) const;
 
-	ShaderGraph* generate(uint32_t combination) const;
+	Ref< ShaderGraph > generate(uint32_t combination) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;

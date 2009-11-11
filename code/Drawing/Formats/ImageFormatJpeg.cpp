@@ -110,7 +110,7 @@ public:
 
 	bool readJpegHeader(Stream* stream);
 
-	Image* readJpegImage(Stream* stream);
+	Ref< Image > readJpegImage(Stream* stream);
 
 private:
 	struct jpeg_decompress_struct m_cinfo;
@@ -161,7 +161,7 @@ bool ImageFormatJpegImpl::readJpegHeader(Stream* stream)
 	return !s_errorOccured;
 }
 
-Image* ImageFormatJpegImpl::readJpegImage(Stream* stream)
+Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
 {
 	T_ASSERT (m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
@@ -231,7 +231,7 @@ ImageFormatJpeg::ImageFormatJpeg()
 {
 }
 
-Image* ImageFormatJpeg::read(Stream* stream)
+Ref< Image > ImageFormatJpeg::read(Stream* stream)
 {
 	return m_impl->readJpegImage(stream);
 }
@@ -246,7 +246,7 @@ bool ImageFormatJpeg::readJpegHeader(Stream* stream)
 	return m_impl->readJpegHeader(stream);
 }
 
-Image* ImageFormatJpeg::readJpegImage(Stream* stream)
+Ref< Image > ImageFormatJpeg::readJpegImage(Stream* stream)
 {
 	return m_impl->readJpegImage(stream);
 }

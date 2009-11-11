@@ -7,6 +7,7 @@
 #include "Resource/IResourceManager.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -22,7 +23,7 @@ Emitter::Emitter()
 {
 }
 
-EmitterInstance* Emitter::createInstance(resource::IResourceManager* resourceManager)
+Ref< EmitterInstance > Emitter::createInstance(resource::IResourceManager* resourceManager)
 {
 	if (!resourceManager->bind(m_shader))
 		return 0;

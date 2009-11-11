@@ -27,12 +27,12 @@ class T_DLLCLASS ConvolutionFilter : public ImageFilter
 public:
 	ConvolutionFilter(const Matrix33& matrix);
 
-	static ConvolutionFilter* createGaussianBlur();
+	static Ref< ConvolutionFilter > createGaussianBlur();
 
-	static ConvolutionFilter* createEmboss();
+	static Ref< ConvolutionFilter > createEmboss();
 
 protected:
-	virtual Image* apply(const Image* image);
+	virtual Ref< Image > apply(const Image* image);
 
 private:
 	Matrix33 m_matrix;

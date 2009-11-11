@@ -16,7 +16,7 @@ class AsFunction : public ActionClass
 	T_RTTI_CLASS(AsFunction)
 
 public:
-	static AsFunction* getInstance();
+	static Ref< AsFunction > getInstance();
 
 private:
 	AsFunction();

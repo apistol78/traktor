@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -63,9 +64,9 @@ public:
 
 	virtual	bool setDataObject(db::Instance* instance, Object* data);
 
-	virtual db::Instance* getDataInstance();
+	virtual Ref< db::Instance > getDataInstance();
 
-	virtual Object* getDataObject();
+	virtual Ref< Object > getDataObject();
 
 	virtual void propertiesChanged();
 
@@ -86,7 +87,7 @@ private:
 
 	void createEditorNodes(const RefArray< State >& states, const RefArray< Transition >& transitions);
 
-	ui::custom::Node* createEditorNode(State* state);
+	Ref< ui::custom::Node > createEditorNode(State* state);
 
 	void createState(const ui::Point& at);
 

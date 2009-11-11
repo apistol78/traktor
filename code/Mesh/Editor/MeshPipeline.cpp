@@ -41,7 +41,7 @@ public:
 	{
 	}
 
-	virtual const render::ShaderGraph* read(const Guid& fragmentGuid)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
 	{
 		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}

@@ -151,15 +151,15 @@ public:
 
 	void setParent(Widget* parent);
 	
-	Widget* getParent() const;
+	Ref< Widget > getParent() const;
 	
-	Widget* getPreviousSibling() const;
+	Ref< Widget > getPreviousSibling() const;
 	
-	Widget* getNextSibling() const;
+	Ref< Widget > getNextSibling() const;
 	
-	Widget* getFirstChild() const;
+	Ref< Widget > getFirstChild() const;
 	
-	Widget* getLastChild() const;
+	Ref< Widget > getLastChild() const;
 
 	/*! \brief Link/unlink child event.
 	 *

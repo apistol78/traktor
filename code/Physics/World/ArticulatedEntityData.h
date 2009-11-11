@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ArticulatedEntityData_H
 #define traktor_physics_ArticulatedEntityData_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Physics/World/RigidEntityData.h"
 
 #undef T_DLLCLASS
@@ -47,7 +47,7 @@ public:
 		bool serialize(Serializer& s);
 	};
 
-	ArticulatedEntity* createEntity(
+	Ref< ArticulatedEntity > createEntity(
 		world::IEntityBuilder* builder,
 		PhysicsManager* physicsManager
 	) const;

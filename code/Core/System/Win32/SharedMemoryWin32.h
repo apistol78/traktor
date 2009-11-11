@@ -28,9 +28,9 @@ public:
 
 	bool create(const std::wstring& name, uint32_t size);
 
-	virtual Stream* read(bool exclusive);
+	virtual Ref< Stream > read(bool exclusive);
 
-	virtual Stream* write();
+	virtual Ref< Stream > write();
 
 private:
 	HANDLE m_hMap;

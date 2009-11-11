@@ -160,7 +160,7 @@ void PhysicsManagerBullet::setGravity(const Vector4& gravity)
 	m_dynamicsWorld->setGravity(toBtVector3(gravity));
 }
 
-Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
+Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 {
 	Acquire< CriticalSection > __lock__(m_lock);
 
@@ -355,7 +355,7 @@ Body* PhysicsManagerBullet::createBody(const BodyDesc* desc)
 	return body;
 }
 
-Joint* PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
+Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
 	Acquire< CriticalSection > __lock__(m_lock);
 

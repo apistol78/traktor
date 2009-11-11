@@ -1,7 +1,7 @@
 #ifndef traktor_ui_custom_InputDialog_H
 #define traktor_ui_custom_InputDialog_H
 
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
 // import/export mechanism.

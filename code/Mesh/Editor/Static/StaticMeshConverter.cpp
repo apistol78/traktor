@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-MeshResource* StaticMeshConverter::createResource() const
+Ref< MeshResource > StaticMeshConverter::createResource() const
 {
 	return gc_new< StaticMeshResource >();
 }

@@ -124,12 +124,12 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 	return true;
 }
 
-db::Instance* FlashEditorPage::getDataInstance()
+Ref< db::Instance > FlashEditorPage::getDataInstance()
 {
 	return m_movieInstance;
 }
 
-Object* FlashEditorPage::getDataObject()
+Ref< Object > FlashEditorPage::getDataObject()
 {
 	return 0;
 }

@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.GridLayout", GridLayout, Layout)
 
-GridLayout::GridLayout(int columns, int rows) :
-	m_columns(columns),
-	m_rows(rows)
+GridLayout::GridLayout(int columns, int rows)
+:	m_columns(columns)
+,	m_rows(rows)
 {
 }
 
@@ -27,7 +27,7 @@ void GridLayout::update(Widget* widget)
 	Rect inner = widget->getInnerRect();
 	
 	int i = 0;
-	for (Widget* child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
+	for (Ref< Widget > child = widget->getFirstChild(); child != 0; child = child->getNextSibling())
 	{
 		int c = i % m_columns;
 		int r = i / m_columns;

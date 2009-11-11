@@ -2,6 +2,7 @@
 #define traktor_render_NodeFacade_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
@@ -33,12 +34,12 @@ class NodeFacade : public Object
 	T_RTTI_CLASS(NodeFacade)
 
 public:
-	virtual Node* createShaderNode(
+	virtual Ref< Node > createShaderNode(
 		const Type* nodeType,
 		editor::IEditor* editor
 	) = 0;
 
-	virtual ui::custom::Node* createEditorNode(
+	virtual Ref< ui::custom::Node > createEditorNode(
 		editor::IEditor* editor,
 		ui::custom::GraphControl* graphControl,
 		Node* shaderNode

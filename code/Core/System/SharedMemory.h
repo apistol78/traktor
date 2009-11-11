@@ -2,6 +2,7 @@
 #define traktor_SharedMemory_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,13 +32,13 @@ public:
 	 * \param exclusive If exclusive access to memory is required.
 	 * \return Stream to shared memory, null if failed to acquire access.
 	 */
-	virtual Stream* read(bool exclusive = false) = 0;
+	virtual Ref< Stream > read(bool exclusive = false) = 0;
 
 	/*! \brief Write data to shared memory.
 	 *
 	 * \return Stream to shared memory, null if failed to acquire access.
 	 */
-	virtual Stream* write() = 0;
+	virtual Ref< Stream > write() = 0;
 };
 
 }

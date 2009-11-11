@@ -42,7 +42,7 @@ public:
 
 	virtual bool isCacheable() const;
 
-	virtual Object* create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_database;

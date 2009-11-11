@@ -32,7 +32,7 @@ void Body::setUserObject(Object* userObject)
 	m_userObject = userObject;
 }
 
-Object* Body::getUserObject() const
+Ref< Object > Body::getUserObject() const
 {
 	return m_userObject;
 }

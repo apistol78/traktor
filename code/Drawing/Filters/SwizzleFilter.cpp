@@ -19,7 +19,7 @@ SwizzleFilter::SwizzleFilter(const std::wstring& swizzle)
 	m_swizzle[3] = swizzle[3];
 }
 
-Image* SwizzleFilter::apply(const Image* image)
+Ref< Image > SwizzleFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in, out;

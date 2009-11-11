@@ -14,7 +14,7 @@ NormalMapFilter::NormalMapFilter(float scale)
 {
 }
 
-Image* NormalMapFilter::apply(const Image* image)
+Ref< Image > NormalMapFilter::apply(const Image* image)
 {
 	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in[3];

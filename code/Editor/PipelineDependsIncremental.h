@@ -63,9 +63,9 @@ public:
 
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;
 
-	virtual db::Database* getSourceDatabase() const;
+	virtual Ref< db::Database > getSourceDatabase() const;
 
-	virtual const Serializable* getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_sourceDatabase;
@@ -90,7 +90,7 @@ private:
 	 * \param guid Output guid.
 	 * \return Pointer to added dependency, null if dependency not added.
 	 */
-	PipelineDependency* findDependency(const Guid& guid) const;
+	Ref< PipelineDependency > findDependency(const Guid& guid) const;
 
 	/*! \brief Add dependency.
 	 * Add dependency without checking if it's already added.

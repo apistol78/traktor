@@ -39,7 +39,7 @@ public:
 
 	void setObject(Object* object);
 
-	Object* getObject() const;
+	Ref< Object > getObject() const;
 
 protected:
 	virtual void createInPlaceControls(Widget* parent);

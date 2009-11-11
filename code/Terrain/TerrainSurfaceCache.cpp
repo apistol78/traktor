@@ -217,7 +217,7 @@ void TerrainSurfaceCache::get(
 	outTexture = renderTargetSet->getColorTexture(0);
 }
 
-render::RenderTargetSet* TerrainSurfaceCache::allocateTarget(uint32_t lod)
+Ref< render::RenderTargetSet > TerrainSurfaceCache::allocateTarget(uint32_t lod)
 {
 	render::RenderTargetSetCreateDesc desc;
 

@@ -32,7 +32,7 @@ struct InfluencePredicate
 
 		}
 
-MeshResource* SkinnedMeshConverter::createResource() const
+Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
 	return gc_new< SkinnedMeshResource >();
 }

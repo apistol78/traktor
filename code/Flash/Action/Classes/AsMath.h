@@ -19,7 +19,7 @@ class AsMath : public ActionClass
 	T_RTTI_CLASS(AsMath)
 
 public:
-	static AsMath* getInstance();
+	static Ref< AsMath > getInstance();
 
 private:
 	Random m_random;

@@ -1,13 +1,14 @@
 #ifndef traktor_scene_PerspectiveRenderControl_H
 #define traktor_scene_PerspectiveRenderControl_H
 
-#include "Scene/Editor/ISceneRenderControl.h"
 #include "Core/Heap/Ref.h"
-#include "Core/Timer/Timer.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
-#include "World/WorldRenderView.h"
+#include "Core/Timer/Timer.h"
+#include "Scene/Editor/ISceneRenderControl.h"
 #include "Ui/Point.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -83,7 +84,7 @@ private:
 
 	void updateWorldRenderView();
 
-	EntityAdapter* pickEntity(const ui::Point& position) const;
+	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);
 

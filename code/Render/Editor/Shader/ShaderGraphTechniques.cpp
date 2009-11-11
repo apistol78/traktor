@@ -34,7 +34,7 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 	return names;
 }
 
-ShaderGraph* ShaderGraphTechniques::generate(const std::wstring& name) const
+Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
 	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >();
 	std::stack< Ref< Node > > nodeStack;

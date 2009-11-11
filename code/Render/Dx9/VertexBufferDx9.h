@@ -40,7 +40,7 @@ public:
 
 	bool create(IDirect3DDevice9* d3dDevice, const std::vector< VertexElement >& vertexElements, bool dynamic);
 
-	void activate(IDirect3DDevice9* d3dDevice);
+	static void activate(IDirect3DDevice9* d3dDevice, VertexBufferDx9* vertexBuffer);
 
 	virtual void destroy();
 

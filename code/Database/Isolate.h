@@ -2,6 +2,7 @@
 #define traktor_db_Isolate_H
 
 #include "Core/Config.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +30,7 @@ struct T_DLLCLASS Isolate
 {
 	static bool createIsolatedInstance(Instance* instance, Stream* stream);
 
-	static Instance* createInstanceFromIsolation(Group* group, Stream* stream);
+	static Ref< Instance > createInstanceFromIsolation(Group* group, Stream* stream);
 };
 
 	}

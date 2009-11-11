@@ -26,12 +26,12 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, ActionObj
 	m_transform = Matrix33::identity();
 }
 
-ActionContext* FlashCharacterInstance::getContext() const
+Ref< ActionContext > FlashCharacterInstance::getContext() const
 {
 	return m_context;
 }
 
-FlashCharacterInstance* FlashCharacterInstance::getParent() const
+Ref< FlashCharacterInstance > FlashCharacterInstance::getParent() const
 {
 	return m_parent;
 }

@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include "Core/Config.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,7 +67,7 @@ struct T_DLLCLASS ObjectFactory
 {
 	virtual bool isEditable() const = 0;
 
-	virtual Object* newInstance() const = 0;
+	virtual Ref< Object > newInstance() const = 0;
 };
 
 /*! \brief RTTI type descriptor. */
@@ -111,7 +112,7 @@ public:
 	 *
 	 * \return New instance.
 	 */
-	Object* newInstance() const;
+	Ref< Object > newInstance() const;
 
 	/*! \brief Find type from string representation.
 	 *

@@ -68,20 +68,20 @@ public:
 
 	virtual bool remove();
 
-	virtual Serializable* getObject();
+	virtual Ref< Serializable > getObject();
 
 	virtual bool setObject(const Serializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
-	virtual Stream* readData(const std::wstring& dataName);
+	virtual Ref< Stream > readData(const std::wstring& dataName);
 
-	virtual Stream* writeData(const std::wstring& dataName);
+	virtual Ref< Stream > writeData(const std::wstring& dataName);
 
-	virtual Group* getParent() const;
+	virtual Ref< Group > getParent() const;
 
 	template < typename T >
-	T* getObject()
+	Ref< T > getObject()
 	{
 		return dynamic_type_cast< T* >(getObject());
 	}

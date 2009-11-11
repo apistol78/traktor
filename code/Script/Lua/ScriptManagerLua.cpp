@@ -16,7 +16,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	m_registeredClasses.push_back(scriptClass);
 }
 
-IScriptClass* ScriptManagerLua::findScriptClass(const Type& type) const
+Ref< IScriptClass > ScriptManagerLua::findScriptClass(const Type& type) const
 {
 	Ref< IScriptClass > minScriptClass;
 	uint32_t minScriptClassDiff = ~0UL;
@@ -34,7 +34,7 @@ IScriptClass* ScriptManagerLua::findScriptClass(const Type& type) const
 	return minScriptClass;
 }
 
-IScriptContext* ScriptManagerLua::createContext()
+Ref< IScriptContext > ScriptManagerLua::createContext()
 {
 	return gc_new< ScriptContextLua >(cref(m_registeredClasses));
 }

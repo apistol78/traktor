@@ -1,8 +1,9 @@
 #ifndef traktor_animation_IPoseControllerData_H
 #define traktor_animation_IPoseControllerData_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Heap/Ref.h"
 #include "Core/Math/Transform.h"
+#include "Core/Serialization/Serializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,7 +43,7 @@ class T_DLLCLASS IPoseControllerData : public Serializable
 	T_RTTI_CLASS(IPoseControllerData)
 
 public:
-	virtual IPoseController* createInstance(
+	virtual Ref< IPoseController > createInstance(
 		resource::IResourceManager* resourceManager,
 		physics::PhysicsManager* physicsManager,
 		const Skeleton* skeleton,

@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
 
-AsKey* AsKey::createInstance()
+Ref< AsKey > AsKey::createInstance()
 {
 	Ref< AsKey > instance = gc_new< AsKey >();
 	instance->createPrototype();

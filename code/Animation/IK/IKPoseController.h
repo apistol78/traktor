@@ -51,7 +51,7 @@ public:
 		AlignedVector< Velocity >& outVelocities
 	);
 
-	inline IPoseController* getNeutralPoseController() const { return m_poseController; }
+	inline Ref< IPoseController > getNeutralPoseController() const { return m_poseController; }
 
 private:
 	Ref< physics::PhysicsManager > m_physicsManager;

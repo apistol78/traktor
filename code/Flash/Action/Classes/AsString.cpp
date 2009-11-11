@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 
-AsString* AsString::getInstance()
+Ref< AsString > AsString::getInstance()
 {
 	static AsString* instance = 0;
 	if (!instance)

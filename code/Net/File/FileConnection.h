@@ -26,7 +26,7 @@ public:
 
 	virtual Url getUrl() const;
 
-	virtual Stream* getStream();
+	virtual Ref< Stream > getStream();
 	
 private:
 	Url m_url;

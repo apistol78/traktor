@@ -84,7 +84,7 @@ int TreeView::addImage(Bitmap* image, int imageCount)
 	return static_cast< ITreeView* >(m_widget)->addImage(image->getIBitmap(), imageCount);
 }
 
-TreeViewItem* TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int image, int selectedImage)
+Ref< TreeViewItem > TreeView::createItem(TreeViewItem* parent, const std::wstring& text, int image, int selectedImage)
 {
 	return static_cast< ITreeView* >(m_widget)->createItem(parent, text, image, selectedImage);
 }
@@ -100,17 +100,17 @@ void TreeView::removeAllItems()
 	static_cast< ITreeView* >(m_widget)->removeAllItems();
 }
 
-TreeViewItem* TreeView::getRootItem() const
+Ref< TreeViewItem > TreeView::getRootItem() const
 {
 	return static_cast< ITreeView* >(m_widget)->getRootItem();
 }
 
-TreeViewItem* TreeView::getSelectedItem() const
+Ref< TreeViewItem > TreeView::getSelectedItem() const
 {
 	return static_cast< ITreeView* >(m_widget)->getSelectedItem();
 }
 
-TreeViewState* TreeView::captureState() const
+Ref< TreeViewState > TreeView::captureState() const
 {
 	Ref< TreeViewState > state = gc_new< TreeViewState >();
 	recursiveCaptureState(getRootItem(), state);

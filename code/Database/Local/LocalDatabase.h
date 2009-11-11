@@ -38,9 +38,9 @@ public:
 
 	virtual void close();
 
-	virtual IProviderBus* getBus();
+	virtual Ref< IProviderBus > getBus();
 
-	virtual IProviderGroup* getRootGroup();
+	virtual Ref< IProviderGroup > getRootGroup();
 
 private:
 	Ref< Context > m_context;

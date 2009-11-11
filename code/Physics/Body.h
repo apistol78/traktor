@@ -1,8 +1,9 @@
 #ifndef traktor_physics_Body_H
 #define traktor_physics_Body_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Transform.h"
 
 // import/export mechanism.
@@ -102,7 +103,7 @@ public:
 	 *
 	 * \return User object.
 	 */
-	Object* getUserObject() const;
+	Ref< Object > getUserObject() const;
 
 private:
 	RefArray< CollisionListener > m_collisionListeners;

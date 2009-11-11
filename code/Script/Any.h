@@ -53,7 +53,7 @@ public:
 
 	std::wstring getString() const;
 
-	Object* getObject() const;
+	Ref< Object > getObject() const;
 
 	bool isVoid() const { return m_type == AtVoid; }
 

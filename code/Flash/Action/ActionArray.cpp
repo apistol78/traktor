@@ -17,7 +17,7 @@ ActionArray::ActionArray()
 {
 }
 
-ActionArray* ActionArray::concat() const
+Ref< ActionArray > ActionArray::concat() const
 {
 	Ref< ActionArray > out = gc_new< ActionArray >();
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
@@ -25,7 +25,7 @@ ActionArray* ActionArray::concat() const
 	return out;
 }
 
-ActionArray* ActionArray::concat(const std::vector< ActionValue >& values) const
+Ref< ActionArray > ActionArray::concat(const std::vector< ActionValue >& values) const
 {
 	Ref< ActionArray > out = gc_new< ActionArray >();
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());

@@ -13,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.StaticMeshEntityData", StaticMeshEntityData, MeshEntityData)
 
-MeshEntity* StaticMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
+Ref< MeshEntity > StaticMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
 	if (!resourceManager->bind(m_mesh))
 		return 0;

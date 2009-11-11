@@ -4,6 +4,7 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -41,7 +42,7 @@ public:
 		 * Read fragments from user defined source,
 		 * Will automatically be resolved.
 		 */
-		virtual const ShaderGraph* read(const Guid& fragmentGuid) = 0;
+		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid) = 0;
 	};
 
 	FragmentLinker();
@@ -57,14 +58,7 @@ public:
 	 * \param fullResolve Perform full resolve, child external references as well.
 	 * \return Resolved shader graph.
 	 */
-	ShaderGraph* resolve(const ShaderGraph* shaderGraph, bool fullResolve);
-
-	///*! \brief Merge shader graph fragments.
-	// *
-	// * Graphs are merged left->right, i.e. output ports from left graph
-	// * is connected to input ports in the right graph.
-	// */
-	//ShaderGraph* merge(const ShaderGraph* shaderGraphLeft, const ShaderGraph* shaderGraphRight);
+	Ref< ShaderGraph > resolve(const ShaderGraph* shaderGraph, bool fullResolve);
 
 private:
 	FragmentReader* m_fragmentReader;

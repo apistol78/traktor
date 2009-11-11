@@ -51,7 +51,7 @@ void PopupMenu::add(MenuItem* item)
 	m_popupMenu->add(item);
 }
 
-MenuItem* PopupMenu::show(Widget* parent, const Point& at)
+Ref< MenuItem > PopupMenu::show(Widget* parent, const Point& at)
 {
 	if (!parent)
 		return 0;

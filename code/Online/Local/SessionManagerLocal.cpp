@@ -21,12 +21,12 @@ bool SessionManagerLocal::getAvailableUsers(RefArray< IUser >& outUsers)
 	return true;
 }
 
-IUser* SessionManagerLocal::getCurrentUser()
+Ref< IUser > SessionManagerLocal::getCurrentUser()
 {
 	return m_currentUser;
 }
 
-ISession* SessionManagerLocal::createSession(IUser* user)
+Ref< ISession > SessionManagerLocal::createSession(IUser* user)
 {
 	T_ASSERT (user == m_currentUser);
 	return gc_new< SessionLocal >(checked_type_cast< UserLocal* >(user));

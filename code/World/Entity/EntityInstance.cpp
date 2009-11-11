@@ -3,6 +3,7 @@
 #include "World/Entity/EntityData.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -36,7 +37,7 @@ void EntityInstance::setEntityData(EntityData* entityData)
 	m_entityData = entityData;
 }
 
-EntityData* EntityInstance::getEntityData() const
+Ref< EntityData > EntityInstance::getEntityData() const
 {
 	return m_entityData;
 }
@@ -46,7 +47,7 @@ void EntityInstance::setInstanceData(Serializable* instanceData)
 	m_instanceData = instanceData;
 }
 
-Serializable* EntityInstance::getInstanceData() const
+Ref< Serializable > EntityInstance::getInstanceData() const
 {
 	return m_instanceData;
 }

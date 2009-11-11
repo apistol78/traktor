@@ -17,7 +17,7 @@ void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 	m_registeredClasses.push_back(scriptClass);
 }
 
-IScriptClass* ScriptManagerJs::findScriptClass(const Type& type) const
+Ref< IScriptClass > ScriptManagerJs::findScriptClass(const Type& type) const
 {
 	Ref< IScriptClass > minScriptClass;
 	uint32_t minScriptClassDiff = ~0UL;
@@ -35,7 +35,7 @@ IScriptClass* ScriptManagerJs::findScriptClass(const Type& type) const
 	return minScriptClass;
 }
 
-IScriptContext* ScriptManagerJs::createContext()
+Ref< IScriptContext > ScriptManagerJs::createContext()
 {
 	Ref< ScriptContextJs > scriptContext = gc_new< ScriptContextJs >();
 	if (!scriptContext->create(m_registeredClasses))

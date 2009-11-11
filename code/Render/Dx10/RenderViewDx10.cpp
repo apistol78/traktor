@@ -320,7 +320,7 @@ void RenderViewDx10::draw(const Primitives& primitives)
 	// Bind program with device, handle input mapping of vertex elements.
 	if (!m_currentProgram->bind(
 		m_d3dDevice,
-		size_t(m_currentVertexBuffer.getPtr()),
+		size_t(m_currentVertexBuffer.ptr()),
 		m_currentVertexBuffer->getD3D10InputElements()
 	))
 		return;

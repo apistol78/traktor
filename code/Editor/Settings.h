@@ -288,9 +288,9 @@ public:
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
 
-	PropertyValue* getProperty(const std::wstring& propertyName);
+	Ref< PropertyValue > getProperty(const std::wstring& propertyName);
 
-	const PropertyValue* getProperty(const std::wstring& propertyName) const;
+	Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
 	 *
@@ -299,7 +299,8 @@ public:
 	template < typename PropertyType >
 	void setProperty(const std::wstring& propertyName, typename PropertyType::value_type_t value)
 	{
-		setProperty(propertyName, gc_new< PropertyType >(value));
+		Ref< PropertyType > property = gc_new< PropertyType >(value);
+		setProperty(propertyName, property);
 	}
 
 	/*! \brief Get user property.
@@ -309,14 +310,14 @@ public:
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, typename PropertyType::value_type_t defaultValue) const
 	{
-		const PropertyValue* value = getProperty(propertyName);
+		Ref< const PropertyValue > value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
 	}
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
 	{
-		const PropertyValue* value = getProperty(propertyName);
+		Ref< const PropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
 
@@ -334,7 +335,7 @@ class T_DLLCLASS PropertySerializable : public PropertyValue
 	T_RTTI_CLASS(PropertyQuaternion)
 
 public:
-	typedef Serializable* value_type_t;
+	typedef Ref< Serializable > value_type_t;
 
 	PropertySerializable(const value_type_t& value = 0);
 
@@ -357,7 +358,7 @@ public:
 	/*! \brief Construct settings object.
 	 *
 	 * The settings concise of two "identical" groups but only
-	 * the user group is modifiable, ie. it's saved separatly from
+	 * the user group is modifiable, i.e. it's saved separately from
 	 * the global group with the current user suffixed to it's filename.
 	 *
 	 * \param globalGroup Global property group.
@@ -367,9 +368,9 @@ public:
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
 
-	PropertyValue* getProperty(const std::wstring& propertyName);
+	Ref< PropertyValue > getProperty(const std::wstring& propertyName);
 
-	const PropertyValue* getProperty(const std::wstring& propertyName) const;
+	Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
 	 *
@@ -378,7 +379,8 @@ public:
 	template < typename PropertyType >
 	void setProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& value)
 	{
-		setProperty(propertyName, gc_new< PropertyType >(cref(value)));
+		Ref< PropertyType > property = gc_new< PropertyType >(cref(value));
+		setProperty(propertyName, property);
 	}
 
 	/*! \brief Get user property.
@@ -388,20 +390,20 @@ public:
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& defaultValue) const
 	{
-		const PropertyValue* value = getProperty(propertyName);
+		Ref< const PropertyValue > value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
 	}
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
 	{
-		const PropertyValue* value = getProperty(propertyName);
+		Ref< const PropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
 
-	inline PropertyGroup* getGlobalGroup() { return m_globalGroup; }
+	inline Ref< PropertyGroup > getGlobalGroup() { return m_globalGroup; }
 
-	inline PropertyGroup* getUserGroup() { return m_userGroup; }
+	inline Ref< PropertyGroup > getUserGroup() { return m_userGroup; }
 
 private:
 	Ref< PropertyGroup > m_globalGroup;

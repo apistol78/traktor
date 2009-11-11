@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
 
-RigidEntity* RigidEntityData::createEntity(
+Ref< RigidEntity > RigidEntityData::createEntity(
 	world::IEntityBuilder* builder,
 	PhysicsManager* physicsManager
 ) const

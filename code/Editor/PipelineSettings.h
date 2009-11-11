@@ -15,7 +15,7 @@ class PipelineSettings : public IPipelineSettings
 public:
 	PipelineSettings(const Settings* settings);
 
-	virtual const PropertyValue* getProperty(const std::wstring& propertyName) const;
+	virtual Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	uint32_t getHash() const;
 

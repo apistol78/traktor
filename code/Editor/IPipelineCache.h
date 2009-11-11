@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,9 +32,9 @@ public:
 
 	virtual void destroy() = 0;
 
-	virtual Stream* get(const Guid& guid, uint32_t hash) = 0;
+	virtual Ref< Stream > get(const Guid& guid, uint32_t hash) = 0;
 
-	virtual Stream* put(const Guid& guid, uint32_t hash) = 0;
+	virtual Ref< Stream > put(const Guid& guid, uint32_t hash) = 0;
 };
 
 	}

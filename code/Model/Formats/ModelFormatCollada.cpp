@@ -618,7 +618,7 @@ void parseJoint(xml::Element* node, animation::Skeleton& skeleton, int level)
 }
 */
 
-Model* ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
 {
 	xml::Document doc;
 	

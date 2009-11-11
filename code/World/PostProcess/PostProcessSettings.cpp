@@ -2,7 +2,7 @@
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessStep.h"
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {

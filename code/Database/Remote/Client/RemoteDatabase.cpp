@@ -72,14 +72,14 @@ void RemoteDatabase::close()
 
 		m_connection->destroy();
 
-		Heap::getInstance().invalidateRefs(m_connection);
+		//Heap::getInstance().invalidateRefs(m_connection);
 		T_ASSERT (m_connection == 0);
 
 		net::Network::finalize();
 	}
 }
 
-IProviderBus* RemoteDatabase::getBus()
+Ref< IProviderBus > RemoteDatabase::getBus()
 {
 	if (!m_connection)
 		return 0;
@@ -88,7 +88,7 @@ IProviderBus* RemoteDatabase::getBus()
 	return result ? gc_new< RemoteBus >(m_connection, result->get()) : 0;
 }
 
-IProviderGroup* RemoteDatabase::getRootGroup()
+Ref< IProviderGroup > RemoteDatabase::getRootGroup()
 {
 	if (!m_connection)
 		return 0;

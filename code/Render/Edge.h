@@ -32,11 +32,11 @@ public:
 
 	void setSource(const OutputPin* source);
 
-	const OutputPin* getSource() const;
+	Ref< const OutputPin > getSource() const;
 
 	void setDestination(const InputPin* destination);
 
-	const InputPin* getDestination() const;
+	Ref< const InputPin > getDestination() const;
 
 	bool serialize(Serializer& s);
 

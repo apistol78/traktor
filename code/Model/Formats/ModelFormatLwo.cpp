@@ -348,7 +348,7 @@ bool ModelFormatLwo::supportFormat(const Path& filePath) const
 		compareIgnoreCase(filePath.getExtension(), L"lw") == 0;
 }
 
-Model* ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
 {
 #if defined(_WIN32)
 	std::string fileNameTmp = wstombs(filePath.getPathName());

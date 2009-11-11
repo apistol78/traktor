@@ -2,6 +2,7 @@
 #define traktor_online_ISaveGame_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +27,7 @@ class T_DLLCLASS ISaveGame : public Object
 public:
 	virtual std::wstring getName() const = 0;
 
-	virtual Serializable* getAttachment() const = 0;
+	virtual Ref< Serializable > getAttachment() const = 0;
 };
 
 	}

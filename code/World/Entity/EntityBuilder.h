@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -26,22 +27,25 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 	T_RTTI_CLASS(EntityBuilder)
 
 public:
+	EntityBuilder();
+
 	virtual void addFactory(IEntityFactory* entityFactory);
 
 	virtual void removeFactory(IEntityFactory* entityFactory);
 
 	virtual void begin(IEntityManager* entityManager);
 
-	virtual Entity* create(const std::wstring& name, const EntityData* entityData, const Object* instanceData);
+	virtual Ref< Entity > create(const std::wstring& name, const EntityData* entityData, const Object* instanceData);
 
-	virtual Entity* build(const EntityInstance* instance);
+	virtual Ref< Entity > build(const EntityInstance* instance);
 
 	virtual void end();
 
 private:
 	Ref< IEntityManager > m_entityManager;
 	RefArray< IEntityFactory > m_entityFactories;
-	std::map< const EntityInstance*, Ref< Entity > > m_instances;
+	std::map< Ref< const EntityInstance >, Ref< Entity > > m_instances;
+	bool m_inbuild;
 };
 
 	}

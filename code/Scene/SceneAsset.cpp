@@ -23,7 +23,7 @@ SceneAsset::SceneAsset()
 {
 }
 
-Scene* SceneAsset::createScene(
+Ref< Scene > SceneAsset::createScene(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
@@ -66,7 +66,7 @@ void SceneAsset::setWorldRenderSettings(world::WorldRenderSettings* worldRenderS
 	m_worldRenderSettings = worldRenderSettings;
 }
 
-world::WorldRenderSettings* SceneAsset::getWorldRenderSettings() const
+Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
 }
@@ -86,7 +86,7 @@ void SceneAsset::setInstance(world::EntityInstance* instance)
 	m_instance = instance;
 }
 
-world::EntityInstance* SceneAsset::getInstance() const
+Ref< world::EntityInstance > SceneAsset::getInstance() const
 {
 	return m_instance;
 }
@@ -96,7 +96,7 @@ void SceneAsset::setControllerData(ISceneControllerData* controllerData)
 	m_controllerData = controllerData;
 }
 
-ISceneControllerData* SceneAsset::getControllerData() const
+Ref< ISceneControllerData > SceneAsset::getControllerData() const
 {
 	return m_controllerData;
 }

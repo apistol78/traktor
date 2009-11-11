@@ -2,6 +2,7 @@
 #define traktor_net_UrlConnection_H
 
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
 #include "Net/Url.h"
 
 // import/export mechanism.
@@ -36,13 +37,13 @@ public:
 		ErFailed = -100
 	};
 
-	static UrlConnection* open(const Url& url);
+	static Ref< UrlConnection > open(const Url& url);
 
 	virtual EstablishResult establish(const Url& url, Url* outRedirectionUrl) = 0;
 
 	virtual Url getUrl() const = 0;
 
-	virtual Stream* getStream() = 0;
+	virtual Ref< Stream > getStream() = 0;
 };
 
 	}

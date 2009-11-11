@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -36,7 +37,7 @@ public:
 
 	int count() const;
 
-	ListViewItem* get(int index) const;
+	Ref< ListViewItem > get(int index) const;
 
 private:
 	RefArray< ListViewItem > m_items;

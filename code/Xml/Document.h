@@ -2,8 +2,9 @@
 #define traktor_xml_Document_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Io/Stream.h"
 #include "Core/Io/Path.h"
 
@@ -43,11 +44,11 @@ public:
 
 	int get(const std::wstring& path, RefArray< Element >& elements);
 	
-	Element* getSingle(const std::wstring& path);
+	Ref< Element > getSingle(const std::wstring& path);
 	
 	void setDocumentElement(Element* docElement);
 
-	Element* getDocumentElement() const;
+	Ref< Element > getDocumentElement() const;
 	
 private:
 	Ref< Element > m_docElement;

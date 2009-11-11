@@ -42,11 +42,11 @@ public:
 
 	void setSourcePin(Pin* source);
 
-	Pin* getSourcePin() const;
+	Ref< Pin > getSourcePin() const;
 
 	void setDestinationPin(Pin* destination);
 
-	Pin* getDestinationPin() const;
+	Ref< Pin > getDestinationPin() const;
 
 	void setText(const std::wstring& text);
 

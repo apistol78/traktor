@@ -110,23 +110,23 @@ void PropertyList::removeAllPropertyItems()
 	if (m_propertyItems.empty())
 		return;
 
-	RefList< PropertyItem > propertyItems;
+	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants);
 
 	// Remove all items prior to destroying in-place controls as UI may issue a redraw for each
 	// removed in-place control.
 	m_propertyItems.clear();
 
-	for (RefList< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		(*i)->destroyInPlaceControls();
 		(*i)->setPropertyList(0);
 	}
 }
 
-int PropertyList::getPropertyItems(RefList< PropertyItem >& propertyItems, int flags)
+int PropertyList::getPropertyItems(RefArray< PropertyItem >& propertyItems, int flags)
 {
-	typedef std::pair< RefList< PropertyItem >::iterator, RefList< PropertyItem >::iterator > range_t;
+	typedef std::pair< RefArray< PropertyItem >::iterator, RefArray< PropertyItem >::iterator > range_t;
 
 	std::stack< range_t > stack;
 	stack.push(std::make_pair(m_propertyItems.begin(), m_propertyItems.end()));
@@ -151,7 +151,7 @@ int PropertyList::getPropertyItems(RefList< PropertyItem >& propertyItems, int f
 				if ((flags & GfExpandedOnly) != 0 && item->isCollapsed())
 					continue;
 
-				RefList< PropertyItem >& childItems = item->getChildItems();
+				RefArray< PropertyItem >& childItems = item->getChildItems();
 				if (!childItems.empty())
 				{
 					stack.push(std::make_pair(
@@ -184,11 +184,11 @@ void PropertyList::setColumnName(int column, const std::wstring& name)
 	m_columnNames[column] = name;
 }
 
-PropertyItem* PropertyList::getPropertyItemFromPosition(const Point& position)
+Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& position)
 {
 	int scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
 
-	RefList< PropertyItem > propertyItems;
+	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
 	int y = position.y;
@@ -200,7 +200,7 @@ PropertyItem* PropertyList::getPropertyItemFromPosition(const Point& position)
 	}
 
 	int id = (y + scrollBarOffset) / c_propertyItemHeight;
-	for (RefList< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		if (id-- <= 0)
 			return *i;
@@ -254,7 +254,7 @@ void PropertyList::updateScrollBar()
 {
 	Rect rc = getInnerRect();
 
-	RefList< PropertyItem > propertyItems;
+	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
 	int height = rc.getHeight();
@@ -275,7 +275,7 @@ void PropertyList::placeItems()
 	int scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
 	int top = m_columnHeader ? c_columnsHeight : 0;
 
-	RefList< PropertyItem > propertyItems;
+	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
 	std::vector< WidgetRect > childRects;
@@ -286,7 +286,7 @@ void PropertyList::placeItems()
 		rcInner.left, -scrollBarOffset + top,
 		rcInner.right - scrollBarWidth, -scrollBarOffset + top + c_propertyItemHeight - 1
 	);
-	for (RefList< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		Rect rcValue (rcItem.left + m_separator + 1, rcItem.top, rcItem.right, rcItem.bottom);
 		(*i)->resizeInPlaceControls(rcValue, childRects);
@@ -331,11 +331,11 @@ void PropertyList::eventButtonDown(Event* event)
 				return;
 		}
 
-		RefList< PropertyItem > propertyItems;
+		RefArray< PropertyItem > propertyItems;
 		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
 		int id = (y + scrollBarOffset) / c_propertyItemHeight;
-		for (RefList< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
+		for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
 			{
@@ -529,7 +529,7 @@ void PropertyList::eventPaint(Event* event)
 	}
 
 	// Get visible items.
-	RefList< PropertyItem > propertyItems;
+	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
 	// Draw property items.
@@ -537,7 +537,7 @@ void PropertyList::eventPaint(Event* event)
 		rcInner.left, -scrollBarOffset + top,
 		rcInner.right - scrollBarWidth, -scrollBarOffset + top + c_propertyItemHeight - 1
 	);
-	RefList< PropertyItem >::iterator i = propertyItems.begin();
+	RefArray< PropertyItem >::iterator i = propertyItems.begin();
 	while (rcItem.bottom < top && i != propertyItems.end())
 	{
 		rcItem = rcItem.offset(0, c_propertyItemHeight);

@@ -21,7 +21,7 @@ const TypeSet EffectEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-world::Entity* EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
+Ref< world::Entity > EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
 {
 	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager);
 }

@@ -2,8 +2,8 @@
 #define traktor_ui_custom_EnvelopeEvaluator_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

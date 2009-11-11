@@ -16,7 +16,7 @@ const TypeSet ScriptEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
-editor::IObjectEditor* ScriptEditorFactory::createObjectEditor(editor::IEditor* editor) const
+Ref< editor::IObjectEditor > ScriptEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return gc_new< ScriptEditor >(editor);
 }

@@ -26,7 +26,7 @@ bool ModelFormatObj::supportFormat(const Path& filePath) const
 	return compareIgnoreCase(filePath.getExtension(), L"obj") == 0;
 }
 
-Model* ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 {
 	Ref< Stream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)

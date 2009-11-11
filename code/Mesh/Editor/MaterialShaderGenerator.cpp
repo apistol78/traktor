@@ -36,7 +36,7 @@ public:
 	{
 	}
 
-	virtual const render::ShaderGraph* read(const Guid& fragmentGuid)
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
 	{
 		return m_database->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
@@ -55,7 +55,7 @@ MaterialShaderGenerator::MaterialShaderGenerator(db::Database* database, const m
 {
 }
 
-render::ShaderGraph* MaterialShaderGenerator::generate(const model::Material& material) const
+Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Material& material) const
 {
 	Ref< render::ShaderGraph > materialShaderGraph = m_database->getObjectReadOnly< render::ShaderGraph >(c_materialShader);
 	T_ASSERT (materialShaderGraph);

@@ -2,7 +2,7 @@
 #define traktor_flash_FlashFrame_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"

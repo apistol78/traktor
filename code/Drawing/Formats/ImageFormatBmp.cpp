@@ -46,7 +46,7 @@ struct BITMAPINFOHEADER
 
 #pragma pack()
 
-Image* ImageFormatBmp::read(Stream* stream)
+Ref< Image > ImageFormatBmp::read(Stream* stream)
 {
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;

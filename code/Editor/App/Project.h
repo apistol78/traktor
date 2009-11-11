@@ -27,11 +27,11 @@ public:
 	/*! \name IProject implementation */
 	//@{
 
-	virtual Settings* getSettings();
+	virtual Ref< Settings > getSettings();
 
-	virtual db::Database* getSourceDatabase();
+	virtual Ref< db::Database > getSourceDatabase();
 
-	virtual db::Database* getOutputDatabase();
+	virtual Ref< db::Database > getOutputDatabase();
 
 	//@}
 

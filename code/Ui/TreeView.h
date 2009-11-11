@@ -45,17 +45,17 @@ public:
 
 	int addImage(Bitmap* image, int imageCount);
 
-	TreeViewItem* createItem(TreeViewItem* parent, const std::wstring& text, int image = -1, int expandedImage = -1);
+	Ref< TreeViewItem > createItem(TreeViewItem* parent, const std::wstring& text, int image = -1, int expandedImage = -1);
 
 	void removeItem(TreeViewItem* item);
 
 	void removeAllItems();
 
-	TreeViewItem* getRootItem() const;
+	Ref< TreeViewItem > getRootItem() const;
 
-	TreeViewItem* getSelectedItem() const;
+	Ref< TreeViewItem > getSelectedItem() const;
 
-	TreeViewState* captureState() const;
+	Ref< TreeViewState > captureState() const;
 
 	void applyState(const TreeViewState* state);
 	

@@ -65,10 +65,13 @@ std::wstring NativeVolume::getDescription() const
 #endif
 }
 
-File* NativeVolume::get(const Path& path)
+Ref< File > NativeVolume::get(const Path& path)
 {
 	RefArray< File > files;
-	return find(path, files) > 0 ? files[0] : 0;
+	if (find(path, files) > 0)
+		return files[0];
+	else
+		return 0;
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
@@ -132,7 +135,7 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 	return bool(result != FALSE);
 }
 
-Stream* NativeVolume::open(const Path& fileName, uint32_t mode)
+Ref< Stream > NativeVolume::open(const Path& fileName, uint32_t mode)
 {
 	DWORD desiredAccess = 0, creationDisposition = 0;
 

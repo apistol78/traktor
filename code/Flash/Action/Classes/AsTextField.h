@@ -18,7 +18,7 @@ class AsTextField : public ActionClass
 	T_RTTI_CLASS(AsTextField)
 
 public:
-	static AsTextField* getInstance();
+	static Ref< AsTextField > getInstance();
 
 private:
 	AsTextField();

@@ -60,9 +60,7 @@ void Application::finalize()
 	if (m_clipboard)
 	{
 		m_clipboard->destroy();
-
-		Heap::getInstance().invalidateRefs(m_clipboard);
-		T_ASSERT (m_clipboard == 0);
+		m_clipboard = 0;
 	}
 
 	m_widgetFactory = 0;
@@ -97,7 +95,7 @@ IWidgetFactory* Application::getWidgetFactory()
 	return m_widgetFactory;
 }
 
-Clipboard* Application::getClipboard()
+Ref< Clipboard > Application::getClipboard()
 {
 	return m_clipboard;
 }

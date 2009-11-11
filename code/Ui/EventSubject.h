@@ -3,8 +3,8 @@
 
 #include <map>
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.
@@ -42,7 +42,7 @@ public:
 	void raiseEvent(int eventId, Event* event);
 
 private:
-	typedef RefList< EventHandler > EventHandlers;
+	typedef RefArray< EventHandler > EventHandlers;
 	std::map< int, std::vector< EventHandlers > > m_eventHandlers;
 };
 

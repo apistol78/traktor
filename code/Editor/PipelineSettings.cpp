@@ -14,7 +14,7 @@ PipelineSettings::PipelineSettings(const Settings* settings)
 {
 }
 
-const PropertyValue* PipelineSettings::getProperty(const std::wstring& propertyName) const
+Ref< const PropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
 {
 	Ref< const PropertyValue > prop = m_settings->getProperty(propertyName);
 	if (prop)

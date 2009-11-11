@@ -39,13 +39,13 @@ public:
 	 *
 	 * \return Shader graph with removed unused branches.
 	 */
-	ShaderGraph* removeUnusedBranches();
+	Ref< ShaderGraph > removeUnusedBranches();
 
 	/*! \brief Merge duplicated branches.
 	 *
 	 * \return Shader graph with removed duplicated branches.
 	 */
-	ShaderGraph* mergeBranches();
+	Ref< ShaderGraph > mergeBranches();
 
 	/*! \brief Insert interpolator nodes where appropriate.
 	 *
@@ -57,7 +57,7 @@ public:
 	 * \param shaderGraph Source shader graph.
 	 * \return Shader graph with inserted interpolators.
 	 */
-	ShaderGraph* insertInterpolators();
+	Ref< ShaderGraph > insertInterpolators();
 
 private:
 	Ref< ShaderGraph > m_shaderGraph;

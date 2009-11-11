@@ -37,7 +37,7 @@ class T_DLLCLASS EffectLayer : public Serializable
 public:
 	EffectLayer();
 
-	EffectLayerInstance* createInstance(resource::IResourceManager* resourceManager) const;
+	Ref< EffectLayerInstance > createInstance(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(Serializer& s);
 

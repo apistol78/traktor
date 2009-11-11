@@ -31,7 +31,7 @@ bool UndoStack::push(Serializable* current)
 	return true;
 }
 
-Serializable* UndoStack::undo(Serializable* current)
+Ref< Serializable > UndoStack::undo(Serializable* current)
 {
 	if (m_stack.empty())
 		return 0;
@@ -45,7 +45,7 @@ Serializable* UndoStack::undo(Serializable* current)
 	return object;
 }
 
-Serializable* UndoStack::redo(Serializable* current)
+Ref< Serializable > UndoStack::redo(Serializable* current)
 {
 	if (m_undone.empty())
 		return 0;

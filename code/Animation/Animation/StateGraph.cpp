@@ -4,6 +4,7 @@
 #include "Animation/Animation/Transition.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -49,7 +50,7 @@ void StateGraph::setRootState(State* rootState)
 	m_rootState = rootState;
 }
 
-State* StateGraph::getRootState() const
+Ref< State > StateGraph::getRootState() const
 {
 	return m_rootState;
 }

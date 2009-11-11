@@ -18,7 +18,7 @@ class AsString : public ActionClass
 	T_RTTI_CLASS(AsString)
 
 public:
-	static AsString* getInstance();
+	static Ref< AsString > getInstance();
 
 private:
 	AsString();

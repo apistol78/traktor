@@ -3,8 +3,9 @@
 
 #include <string>
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
+#include "Core/Heap/Ref.h"
+#include "Core/Heap/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -49,13 +50,13 @@ public:
 
 	bool isSelected() const;
 
-	SequenceItem* getParentItem();
+	Ref< SequenceItem > getParentItem();
 
 	void addChildItem(SequenceItem* childItem);
 
 	void removeChildItem(SequenceItem* childItem);
 
-	RefList< SequenceItem >& getChildItems();
+	RefArray< SequenceItem >& getChildItems();
 
 	int getDepth();
 
@@ -69,7 +70,7 @@ private:
 	std::wstring m_name;
 	bool m_selected;
 	Ref< SequenceItem > m_parent;
-	RefList< SequenceItem > m_childItems;
+	RefArray< SequenceItem > m_childItems;
 };
 
 		}

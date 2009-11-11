@@ -18,7 +18,7 @@ ColorNodeFacade::ColorNodeFacade(ui::custom::GraphControl* graphControl)
 	m_nodeShape = gc_new< ui::custom::InputNodeShape >(graphControl);
 }
 
-Node* ColorNodeFacade::createShaderNode(
+Ref< Node > ColorNodeFacade::createShaderNode(
 	const Type* nodeType,
 	editor::IEditor* editor
 )
@@ -26,7 +26,7 @@ Node* ColorNodeFacade::createShaderNode(
 	return gc_new< Color >();
 }
 
-ui::custom::Node* ColorNodeFacade::createEditorNode(
+Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
