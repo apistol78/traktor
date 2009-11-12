@@ -88,11 +88,10 @@ StdAllocator g_allocator;
 #endif
 
 lock_primitive_t g_heapLock;
-lock_primitive_t g_destructQueueLock;
 ThreadLocal g_creatingObjectStack;
 IntrusiveList< RefBase > g_rootRefs;
 object_list_t g_cycleObjects;
-int32_t g_eventsUntilCollect = c_eventsUntilCollect;			//!< Number of events until cycle collect.
+int32_t g_eventsUntilCollect = c_eventsUntilCollect;	//!< Number of events until cycle collect.
 HeapStats g_stats = { 0, 0, 0, 0 };
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)
@@ -112,26 +111,6 @@ T_FORCE_INLINE ObjectHeader* getObjectHeader(Object* object)
 	if (object)
 	{
 		ObjectHeader* header = reinterpret_cast< ObjectHeader* >(reinterpret_cast< uint8_t* >(object) - sizeof(ObjectHeader));
-		if (header->m_magic == c_magic)
-		{
-			T_ASSERT (header->m_dead == 0);
-			return header;
-		}
-	}
-	return 0;
-}
-
-T_FORCE_INLINE const Object* getObject(const ObjectHeader* header)
-{
-	T_ASSERT (header->m_dead == 0);
-	return reinterpret_cast< const Object* >(reinterpret_cast< const uint8_t* >(header) + sizeof(ObjectHeader));
-}
-
-T_FORCE_INLINE const ObjectHeader* getObjectHeader(const Object* object)
-{
-	if (object)
-	{
-		const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(reinterpret_cast< const uint8_t* >(object) - sizeof(ObjectHeader));
 		if (header->m_magic == c_magic)
 		{
 			T_ASSERT (header->m_dead == 0);
@@ -273,15 +252,10 @@ void Heap::unregisterRef(RefBase* ref, void* ptr)
 
 void Heap::incrementRef(void* ptr)
 {
-	if (ptr)
-	{
-		Object* object = reinterpret_cast< Object* >(ptr);
-		ObjectHeader* header = getObjectHeader(object);
-		if (header)
-		{
-			Atomic::increment(header->m_refCount);
-		}
-	}
+	Object* object = reinterpret_cast< Object* >(ptr);
+	ObjectHeader* header = getObjectHeader(object);
+	if (header)
+		Atomic::increment(header->m_refCount);
 }
 
 void Heap::decrementRef(void* ptr)
