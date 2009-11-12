@@ -7,16 +7,6 @@
 namespace traktor
 {
 
-/*
- * Type used to return object from gc_new; by returning in
- * a Ref<> we ensure no objects are leaked but the following scenario
- * won't work:
- *   someFunction(Object* ptr) { ... }
- *   someFunction(gc_new< Object >());
- */
-//#define T_GC_NEW_TYPE(T) Ref< T >
-#define T_GC_NEW_TYPE(T) T*
-
 /*! \ingroup Core */
 //@{
 

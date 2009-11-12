@@ -50,6 +50,12 @@ public:
 		Heap::unregisterRef(this, (void*)m_ptr);
 	}
 	
+	void reset()
+	{
+		Heap::decrementRef((void*)m_ptr);
+		m_ptr = 0;
+	}
+
 	void replace(Class* ptr)
 	{
 		Heap::exchangeRef((void**)&m_ptr, (void*)ptr);

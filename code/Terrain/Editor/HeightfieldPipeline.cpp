@@ -32,7 +32,7 @@ int log2(int v)
 	return 0;
 }
 
-drawing::Image* readRawTerrain(const Path& fileName)
+Ref< drawing::Image > readRawTerrain(const Path& fileName)
 {
 	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
@@ -90,7 +90,7 @@ bool HeightfieldPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
+	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
 	return true;
@@ -106,7 +106,7 @@ bool HeightfieldPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const HeightfieldAsset* heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
+	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
 
 	Ref< drawing::Image > image;
@@ -145,7 +145,7 @@ bool HeightfieldPipeline::buildOutput(
 	image = image->applyFilter(&scaleFilter);
 	T_ASSERT (image);
 
-	// Create heightfield resource.
+	// Create height field resource.
 	Ref< HeightfieldResource > resource = gc_new< HeightfieldResource >();
 
 	// Create instance's name.

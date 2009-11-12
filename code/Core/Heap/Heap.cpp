@@ -24,7 +24,7 @@ namespace traktor
 {
 
 const uint32_t c_magic = 'TKTR';
-const int32_t c_eventsUntilCollect = 4000;
+const int32_t c_eventsUntilCollect = 10000;
 
 #pragma pack(1)
 
@@ -131,7 +131,6 @@ T_FORCE_INLINE ObjectHeader* getObjectHeader(Object* object)
 T_FORCE_INLINE void freeObject(ObjectHeader* header)
 {
 	T_ASSERT (header->m_dead == 0);
-	T_ASSERT (header->m_buffered == 0);
 
 	Object* object = getObject(header);
 	object->~Object();
@@ -158,10 +157,7 @@ void* Heap::preConstructor(size_t size, size_t align)
 
 	// Invoke cycle collector if we've reached thresholds.
 	if (--g_eventsUntilCollect <= 0)
-	{
-		g_eventsUntilCollect = c_eventsUntilCollect;
 		collect();
-	}
 
 	// Allocate object, including object header.
 	void* ptr = g_allocator.alloc(getAllocSize(size), align);
@@ -270,39 +266,40 @@ void Heap::incrementRef(void* ptr)
 
 void Heap::decrementRef(void* ptr)
 {
-	if (ptr)
+	Object* object = reinterpret_cast< Object* >(ptr);
+	ObjectHeader* header = getObjectHeader(object);
+	if (header)
 	{
-		Object* object = reinterpret_cast< Object* >(ptr);
-		ObjectHeader* header = getObjectHeader(object);
-		if (header)
+		int32_t refCount = Atomic::decrement(header->m_refCount);
+		if (refCount > 0)
 		{
-			int32_t refCount = Atomic::decrement(header->m_refCount);
-			if (refCount > 0)
-			{
-				if (!header->m_crefs.empty() && !header->m_pending)
-				{
-					HEAP_LOCK;
-					if (!header->m_buffered)
-					{
-						header->m_buffered = 1;
-						g_cycleObjects.push_back(header);
-					}
-				}
-			}
-			else if (refCount <= 0)
+			if (!header->m_crefs.empty() && !header->m_pending)
 			{
 				HEAP_LOCK;
-				if (!header->m_crefs.empty())
+				if (!header->m_buffered)
 				{
-					if (header->m_buffered)
-					{
-						header->m_buffered = 0;
-						g_cycleObjects.remove(header);
-					}
+					header->m_buffered = 1;
+					g_cycleObjects.push_back(header);
 				}
-				freeObject(header);
 			}
 		}
+		else if (refCount == 0)
+		{
+			if (!header->m_crefs.empty())
+			{
+				HEAP_LOCK;
+				if (header->m_buffered)
+					return;
+			}
+
+			// Lock this reference as we don't want to free object
+			// while collector is running.
+			lockRef();
+			freeObject(header);
+			unlockRef();
+		}
+		else
+			T_FATAL_ERROR;
 	}
 }
 
@@ -384,6 +381,7 @@ namespace
 				if (!header->m_pending && !header->m_visited)
 				{
 					header->m_pending = 1;
+					header->m_buffered = 1;
 					m_externalObjects.push_back(header);
 					Collect_visitRefs(header->m_crefs, *this);
 				}
@@ -397,12 +395,12 @@ void Heap::collect()
 {
 #if defined(T_HEAP_COLLECT_CYCLES)
 
-	if (g_lockRefCount != 0)
+	if (g_lockRefCount != 0 || g_collectRunning)
 		return;
 
-	T_ASSERT (!g_collectRunning);
+	T_FATAL_ASSERT (!g_collectRunning);
 	g_collectRunning = true;
-	T_ASSERT (g_lockRefCount == 0);
+	T_FATAL_ASSERT (g_lockRefCount == 0);
 
 	log::debug << L"Heap cycle collector; begin" << Endl;
 
@@ -436,7 +434,6 @@ void Heap::collect()
 				if (!header->m_visited)
 				{
 					header->m_pending = 1;
-					header->m_buffered = 0;
 					collectableObjects.push_back(header);
 					i = g_cycleObjects.erase(i);
 				}
@@ -451,7 +448,7 @@ void Heap::collect()
 			{
 				ObjectHeader* header = *i;
 				T_ASSERT (header->m_dead == 0);
-				T_ASSERT (header->m_buffered == 0);
+				T_ASSERT (header->m_buffered == 1);
 				T_ASSERT (header->m_pending == 1);
 
 				IncludeExternalVisitor visitor(collectableExternalObjects);
@@ -481,6 +478,10 @@ void Heap::collect()
 	// external objects.
 	//
 
+	// Lock reference as we don't want any other thread to initiate
+	// a collect until we're finished destroying the objects.
+	lockRef();
+
 	// Append external objects to collectable list.
 	collectableObjects.insert(
 		collectableObjects.end(),
@@ -495,7 +496,7 @@ void Heap::collect()
 	{
 		ObjectHeader* header = *i;
 		T_ASSERT (header->m_dead == 0);
-		T_ASSERT (header->m_buffered == 0);
+		T_ASSERT (header->m_buffered == 1);
 		T_ASSERT (header->m_pending == 1);
 
 		for (IntrusiveList< RefBase >::iterator j = header->m_crefs.begin(); j != header->m_crefs.end(); ++j)
@@ -512,7 +513,7 @@ void Heap::collect()
 	{
 		ObjectHeader* header = *i;
 		T_ASSERT (header->m_dead == 0);
-		T_ASSERT (header->m_buffered == 0);
+		T_ASSERT (header->m_buffered == 1);
 		T_ASSERT (header->m_pending == 1);
 
 		freeObject(header);
@@ -520,9 +521,13 @@ void Heap::collect()
 
 	log::debug << L"Heap cycle collector; finished" << Endl;
 
+	unlockRef();
+
 	Atomic::increment(g_stats.collects);
 	
 #endif
+
+	g_eventsUntilCollect = c_eventsUntilCollect;
 }
 
 void Heap::getStats(HeapStats& outStats)

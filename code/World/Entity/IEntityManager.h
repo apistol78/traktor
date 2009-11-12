@@ -91,7 +91,10 @@ public:
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOf(EntityType::getClassType(), *reinterpret_cast< RefArray< Entity >* >(&outEntities));
+		return getEntitiesOf(
+			type_of< EntityType >(),
+			*reinterpret_cast< RefArray< Entity >* >(&outEntities)
+		);
 	}
 
 	/*! \brief Get number of entities of certain type.
@@ -102,7 +105,7 @@ public:
 	template < typename EntityType >
 	uint32_t getEntityCount() const
 	{
-		return getEntityCount(EntityType::getClassType());
+		return getEntityCount(type_of< EntityType >());
 	}
 
 	/*! \brief Get first entity of a certain type.
@@ -114,7 +117,8 @@ public:
 	template < typename EntityType >
 	Ref< EntityType > getEntity(uint32_t index) const
 	{
-		return static_cast< EntityType* >(getEntity(EntityType::getClassType(), index));
+		Ref< Entity > entity = getEntity(type_of< EntityType >(), index);
+		return static_cast< EntityType* >(entity.ptr());
 	}
 };
 

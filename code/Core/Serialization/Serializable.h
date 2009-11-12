@@ -58,7 +58,7 @@ struct DefaultFactory : public ObjectFactory
 		return Editable;
 	}
 
-	virtual Ref< Object > newInstance() const {
+	virtual T_GC_NEW_TYPE(Object) newInstance() const {
 		return gc_new< ClassType >();
 	}
 };

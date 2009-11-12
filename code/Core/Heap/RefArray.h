@@ -295,7 +295,7 @@ public:
 		for (size_type i = 0; i < m_size; ++i)
 		{
 			m_items[i] = s.m_items[i];
-			Heap::incrementRef(m_items[i]);
+			Heap::incrementRef((void*)m_items[i]);
 		}
 	}
 
@@ -310,7 +310,7 @@ public:
 		T_ANONYMOUS_VAR(ScopeLockRef);
 
 		for (size_type i = 0; i < m_size; ++i)
-			Heap::decrementRef(m_items[i]);
+			Heap::decrementRef((void*)m_items[i]);
 
 		delete[] m_items, m_items = 0;
 		m_size = 0;
@@ -364,7 +364,7 @@ public:
 	void push_front(Class* const val)
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
-		Heap::incrementRef(val);
+		Heap::incrementRef((void*)val);
 		grow(1);
 		for (size_type i = m_size - 1; i > 0; --i)
 			m_items[i] = m_items[i - 1];
@@ -374,7 +374,7 @@ public:
 	void pop_front()
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
-		Heap::decrementRef(m_items[0]);
+		Heap::decrementRef((void*)m_items[0]);
 		for (size_type i = 0; i < m_size - 1; ++i)
 			m_items[i] = m_items[i + 1];
 		shrink(1);
@@ -383,7 +383,7 @@ public:
 	void push_back(Class* const val)
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
-		Heap::incrementRef(val);
+		Heap::incrementRef((void*)val);
 		grow(1);
 		m_items[m_size - 1] = val;
 	}
@@ -391,7 +391,7 @@ public:
 	void pop_back()
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
-		Heap::decrementRef(m_items[m_size - 1]);
+		Heap::decrementRef((void*)m_items[m_size - 1]);
 		shrink(1);
 	}
 
@@ -399,7 +399,7 @@ public:
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
 
-		Heap::incrementRef(val);
+		Heap::incrementRef((void*)val);
 
 		size_type size = m_size;
 		size_type offset = size_type(at.m_item - m_items);
@@ -428,7 +428,7 @@ public:
 
 		for (size_t i = 0; i < count; ++i)
 		{
-			Heap::incrementRef(first.m_item[i]);
+			Heap::incrementRef((void*)first.m_item[i]);
 			m_items[i + offset] = first.m_item[i];
 		}
 
@@ -439,7 +439,7 @@ public:
 	{
 		T_ANONYMOUS_VAR(ScopeLockRef);
 
-		Heap::decrementRef(iter.m_item);
+		Heap::decrementRef((void*)iter.m_item);
 
 		size_type offset = size_type(iter.m_item - m_items);
 		for (size_type i = offset; i < m_size; ++i)
@@ -468,7 +468,7 @@ public:
 
 		for (size_type i = offset; i < size; ++i)
 		{
-			Heap::decrementRef(m_items[i]);
+			Heap::decrementRef((void*)m_items[i]);
 			m_items[i] = m_items[i + count];
 		}
 
@@ -514,7 +514,7 @@ public:
 		else
 		{
 			for (size_t i = size; i < m_size; ++i)
-				Heap::decrementRef(m_items[i]);
+				Heap::decrementRef((void*)m_items[i]);
 		}
 
 		m_size = size;
@@ -570,7 +570,7 @@ public:
 
 		for (size_type i = 0; i < m_size; ++i)
 		{
-			Heap::decrementRef(m_items[i]);
+			Heap::decrementRef((void*)m_items[i]);
 			m_items[i] = 0;
 		}
 
@@ -579,7 +579,7 @@ public:
 		for (size_type i = 0; i < m_size; ++i)
 		{
 			m_items[i] = src.m_items[i];
-			Heap::incrementRef(m_items[i]);
+			Heap::incrementRef((void*)m_items[i]);
 		}
 
 		return *this;
