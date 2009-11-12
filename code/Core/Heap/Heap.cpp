@@ -12,10 +12,13 @@
 #	include "Core/Heap/DebugAllocator.h"
 #endif
 #include "Core/Heap/Ref.h"
+#include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadLocal.h"
+#include "Core/Thread/ThreadManager.h"
 
 namespace traktor
 {
@@ -64,8 +67,10 @@ struct ObjectHeader
 
 #pragma pack()
 
+#if !defined(_DEBUG)
 	namespace
 	{
+#endif
 
 typedef Semaphore lock_primitive_t;
 typedef std::list< ObjectHeader* > object_list_t;
@@ -92,6 +97,9 @@ ThreadLocal g_creatingObjectStack;
 IntrusiveList< RefBase > g_rootRefs;
 object_list_t g_cycleObjects;
 int32_t g_eventsUntilCollect = c_eventsUntilCollect;	//!< Number of events until cycle collect.
+int32_t g_lockRefCount = 0;								//!< Number of locked references; not permitted to run cycle collector if non zero.
+bool g_collectRunning = false;							//!< Flag indicate cycle collector running.
+Semaphore g_lockRef;
 HeapStats g_stats = { 0, 0, 0, 0 };
 
 T_FORCE_INLINE size_t getAllocSize(size_t objectSize)
@@ -138,7 +146,9 @@ T_FORCE_INLINE void freeObject(ObjectHeader* header)
 	Atomic::decrement(g_stats.objects);
 }
 
+#if !defined(_DEBUG)
 	}
+#endif
 
 void* Heap::preConstructor(size_t size, size_t align)
 {
@@ -306,6 +316,22 @@ void Heap::exchangeRef(void** ptr1, void* ptr2)
 	}
 }
 
+void Heap::lockRef()
+{
+	if (g_collectRunning)
+	{
+		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+		do { currentThread->yield(); } while (g_collectRunning);
+	}
+	Atomic::increment(g_lockRefCount);
+	T_ASSERT (!g_collectRunning);
+}
+
+void Heap::unlockRef()
+{
+	Atomic::decrement(g_lockRefCount);
+}
+
 namespace
 {
 
@@ -370,6 +396,15 @@ void Heap::collect()
 {
 #if defined(T_HEAP_COLLECT_CYCLES)
 
+	if (g_lockRefCount != 0)
+		return;
+
+	T_ASSERT (!g_collectRunning);
+	g_collectRunning = true;
+	T_ASSERT (g_lockRefCount == 0);
+
+	log::debug << L"Heap cycle collector; begin" << Endl;
+
 	object_list_t collectableObjects;
 	object_list_t collectableExternalObjects;
 	int32_t count1, count2;
@@ -385,6 +420,8 @@ void Heap::collect()
 				Collect_visitRefs(g_rootRefs, visitor);
 				count1 = visitor.m_count;
 			}
+
+			log::debug << L"Heap cycle collector; " << count1 << L" reachable object(s) visited" << Endl;
 
 			// Copy objects from cycle which hasn't been reached.
 			while (!g_cycleObjects.empty())
@@ -402,6 +439,8 @@ void Heap::collect()
 				header->m_buffered = 0;
 			}
 
+			log::debug << L"Heap cycle collector; " << collectableObjects.size() << L" candidates marked for collection" << Endl;
+
 			// Ensure unreachable objects referenced from collectable objects also are in collectable list.
 			for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
 			{
@@ -414,6 +453,8 @@ void Heap::collect()
 				Collect_visitRefs(header->m_crefs, visitor);
 			}
 
+			log::debug << L"Heap cycle collector; " << collectableExternalObjects.size() << L" external marked for collection" << Endl;
+
 			// Reset reachable objects.
 			{
 				MarkVisitor< 1 > visitor;
@@ -421,45 +462,61 @@ void Heap::collect()
 				count2 = visitor.m_count;
 			}
 
+			log::debug << L"Heap cycle collector; " << count1 << L" reachable object(s) restored" << Endl;
+
 			T_ASSERT (count1 == count2);
-		}
-
-		// Append external objects to collectable list.
-		collectableObjects.insert(
-			collectableObjects.end(),
-			collectableExternalObjects.begin(),
-			collectableExternalObjects.end()
-		);
-
-		// Break references between collectable objects.
-		for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
-		{
-			ObjectHeader* header = *i;
-			T_ASSERT (header->m_dead == 0);
-			T_ASSERT (header->m_buffered == 0);
-			T_ASSERT (header->m_pending == 1);
-
-			for (IntrusiveList< RefBase >::iterator j = header->m_crefs.begin(); j != header->m_crefs.end(); ++j)
-			{
-				for (object_list_t::iterator k = collectableObjects.begin(); k != collectableObjects.end(); ++k)
-					(*j)->invalidate(getObject(*k));
-			}
-		}
-
-		// Collect unreachable objects.
-		for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
-		{
-			ObjectHeader* header = *i;
-			T_ASSERT (header->m_dead == 0);
-			T_ASSERT (header->m_buffered == 0);
-			T_ASSERT (header->m_pending == 1);
-
-			freeObject(header);
 		}
 	}
 
-	Atomic::increment(g_stats.collects);
+	g_collectRunning = false;
 
+	//
+	// Destruction phase; threads are allowed to continue from
+	// here on as collectable objects should not be influencing
+	// external objects.
+	//
+
+	// Append external objects to collectable list.
+	collectableObjects.insert(
+		collectableObjects.end(),
+		collectableExternalObjects.begin(),
+		collectableExternalObjects.end()
+	);
+
+	log::debug << L"Heap cycle collector; breaking internal references" << Endl;
+
+	// Break references between collectable objects.
+	for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
+	{
+		ObjectHeader* header = *i;
+		T_ASSERT (header->m_dead == 0);
+		T_ASSERT (header->m_buffered == 0);
+		T_ASSERT (header->m_pending == 1);
+
+		for (IntrusiveList< RefBase >::iterator j = header->m_crefs.begin(); j != header->m_crefs.end(); ++j)
+		{
+			for (object_list_t::iterator k = collectableObjects.begin(); k != collectableObjects.end(); ++k)
+				(*j)->invalidate(getObject(*k));
+		}
+	}
+
+	log::debug << L"Heap cycle collector; freeing objects" << Endl;
+
+	// Collect unreachable objects.
+	for (object_list_t::iterator i = collectableObjects.begin(); i != collectableObjects.end(); ++i)
+	{
+		ObjectHeader* header = *i;
+		T_ASSERT (header->m_dead == 0);
+		T_ASSERT (header->m_buffered == 0);
+		T_ASSERT (header->m_pending == 1);
+
+		freeObject(header);
+	}
+
+	log::debug << L"Heap cycle collector; finished" << Endl;
+
+	Atomic::increment(g_stats.collects);
+	
 #endif
 }
 

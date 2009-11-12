@@ -26,6 +26,19 @@ class RefArray : public RefBase
 		ExpandSize = 32
 	};
 
+	struct ScopeLockRef
+	{
+		ScopeLockRef()
+		{
+			Heap::lockRef();
+		}
+
+		~ScopeLockRef()
+		{
+			Heap::unlockRef();
+		}
+	};
+
 public:
 	typedef Class* value_type;
 	typedef int32_t difference_type;
@@ -154,11 +167,18 @@ public:
 
 		iterator()
 		{
+			Heap::lockRef();
 		}
 
 		iterator(const iterator& it)
 		:	const_iterator(it.m_item)
 		{
+			Heap::lockRef();
+		}
+
+		virtual ~iterator()
+		{
+			Heap::unlockRef();
 		}
 
 		InplaceRef< Class > operator * ()
@@ -233,6 +253,7 @@ public:
 		explicit iterator(value_type* item)
 		:	const_iterator(item)
 		{
+			Heap::lockRef();
 		}
 	};
 
@@ -249,6 +270,8 @@ public:
 	,	m_size(0)
 	,	m_capacity(0)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		Heap::registerRef(this, 0);
 
 		m_items = new value_type [size];
@@ -261,6 +284,8 @@ public:
 
 	RefArray(const RefArray< Class >& s)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		Heap::registerRef(this, 0);
 
 		m_items = new value_type [s.m_size];
@@ -282,6 +307,8 @@ public:
 
 	void clear()
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		for (size_type i = 0; i < m_size; ++i)
 			Heap::decrementRef(m_items[i]);
 
@@ -336,6 +363,7 @@ public:
 
 	void push_front(Class* const val)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
 		Heap::incrementRef(val);
 		grow(1);
 		for (size_type i = m_size - 1; i > 0; --i)
@@ -345,6 +373,7 @@ public:
 
 	void pop_front()
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
 		Heap::decrementRef(m_items[0]);
 		for (size_type i = 0; i < m_size - 1; ++i)
 			m_items[i] = m_items[i + 1];
@@ -353,6 +382,7 @@ public:
 
 	void push_back(Class* const val)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
 		Heap::incrementRef(val);
 		grow(1);
 		m_items[m_size - 1] = val;
@@ -360,12 +390,15 @@ public:
 
 	void pop_back()
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
 		Heap::decrementRef(m_items[m_size - 1]);
 		shrink(1);
 	}
 
 	void insert(iterator at, Class* const val)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		Heap::incrementRef(val);
 
 		size_type size = m_size;
@@ -381,6 +414,8 @@ public:
 
 	void insert(iterator at, iterator first, iterator last)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		size_type size = m_size;
 		size_type offset = size_type(at.m_item - m_items);
 		size_type count = size_type(last.m_item - first.m_item);
@@ -402,6 +437,8 @@ public:
 
 	iterator erase(iterator iter)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		Heap::decrementRef(iter.m_item);
 
 		size_type offset = size_type(iter.m_item - m_items);
@@ -423,6 +460,8 @@ public:
 
 	void erase(iterator first, iterator last)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		size_type offset = size_type(first.m_item - m_items);
 		size_type count = size_type(last.m_item - first.m_item);
 		size_type size = m_size - count;
@@ -441,6 +480,7 @@ public:
 
 	void swap(RefArray< Class >& src)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
 		std::swap(m_items, src.m_items);
 		std::swap(m_size, src.m_size);
 		std::swap(m_capacity, src.m_capacity);
@@ -458,6 +498,8 @@ public:
 
 	void resize(size_type size)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		if (size > m_size)
 		{
 			if (size > m_capacity)
@@ -487,6 +529,8 @@ public:
 	{
 		if (size > m_capacity)
 		{
+			T_ANONYMOUS_VAR(ScopeLockRef);
+
 			value_type* items = new value_type [size];
 			T_FATAL_ASSERT (items);
 
@@ -522,6 +566,8 @@ public:
 
 	RefArray< Class >& operator = (const RefArray< Class >& src)
 	{
+		T_ANONYMOUS_VAR(ScopeLockRef);
+
 		for (size_type i = 0; i < m_size; ++i)
 		{
 			Heap::decrementRef(m_items[i]);
