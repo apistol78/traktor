@@ -329,7 +329,8 @@ void Heap::lockRef()
 
 void Heap::unlockRef()
 {
-	Atomic::decrement(g_lockRefCount);
+	int32_t lockRefCount = Atomic::decrement(g_lockRefCount);
+	T_FATAL_ASSERT_M (lockRefCount >= 0, L"Inconsistent lock/unlock");
 }
 
 namespace
@@ -414,6 +415,8 @@ void Heap::collect()
 
 		if (!g_cycleObjects.empty())
 		{
+			log::debug << L"Heap cycle collector; mark reachable objects" << Endl;
+
 			// Mark reachable objects.
 			{
 				MarkVisitor< 0 > visitor;
@@ -424,19 +427,21 @@ void Heap::collect()
 			log::debug << L"Heap cycle collector; " << count1 << L" reachable object(s) visited" << Endl;
 
 			// Copy objects from cycle which hasn't been reached.
-			while (!g_cycleObjects.empty())
+			for (object_list_t::iterator i = g_cycleObjects.begin(); i != g_cycleObjects.end(); )
 			{
-				ObjectHeader* header = g_cycleObjects.front(); g_cycleObjects.pop_front();
+				ObjectHeader* header = *i;
 				T_ASSERT (header->m_dead == 0);
 				T_ASSERT (header->m_buffered == 1);
 
 				if (!header->m_visited)
 				{
 					header->m_pending = 1;
+					header->m_buffered = 0;
 					collectableObjects.push_back(header);
+					i = g_cycleObjects.erase(i);
 				}
-
-				header->m_buffered = 0;
+				else
+					++i;
 			}
 
 			log::debug << L"Heap cycle collector; " << collectableObjects.size() << L" candidates marked for collection" << Endl;
