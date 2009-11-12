@@ -146,6 +146,13 @@ typedef long unsigned int uint64_t;
 #	define T_EXCEPTION_GUARD_END } catch (...) { T_BREAKPOINT; }
 #endif
 
+// Anonymous variable
+#if !defined(T_ANONYMOUS_VAR)
+#	define T_ANONYMOUS_VAR_2(x,y) x ## y
+#	define T_ANONYMOUS_VAR_1(x,y) T_ANONYMOUS_VAR_2(x,y)
+#	define T_ANONYMOUS_VAR(T) T T_ANONYMOUS_VAR_1(_anonymous, __LINE__)
+#endif
+
 template < typename T >
 size_t alignOf()
 {

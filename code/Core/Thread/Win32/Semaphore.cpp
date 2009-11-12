@@ -18,11 +18,17 @@ struct Internal
 
 Semaphore::Semaphore()
 {
+	HANDLE handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+	T_FATAL_ASSERT_M (handle != NULL, L"Unable to create event");
+
 	Internal* in = new Internal();
+	T_FATAL_ASSERT_M (in, L"Allocation failed");
+
 	in->owner = ~0;
 	in->count = 0;
 	in->value = 0;
-	in->handle = CreateEvent(NULL, FALSE, FALSE, NULL);
+	in->handle = handle;
+
 	m_handle = in;
 }
 

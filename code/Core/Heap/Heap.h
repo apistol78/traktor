@@ -70,6 +70,12 @@ public:
 	 */
 	static void exchangeRef(void** ptr1, void* ptr2);
 
+	/*! \brief Lock reference. */
+	static void lockRef();
+
+	/*! \brief Unlock reference. */
+	static void unlockRef();
+
 	/*! \brief Collect unused memory. */
 	static void collect();
 
