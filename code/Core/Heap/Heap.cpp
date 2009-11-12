@@ -64,8 +64,8 @@ struct ObjectHeader
 
 #pragma pack()
 
-	//namespace
-	//{
+	namespace
+	{
 
 typedef Semaphore lock_primitive_t;
 typedef std::list< ObjectHeader* > object_list_t;
@@ -138,7 +138,7 @@ T_FORCE_INLINE void freeObject(ObjectHeader* header)
 	Atomic::decrement(g_stats.objects);
 }
 
-	//}
+	}
 
 void* Heap::preConstructor(size_t size, size_t align)
 {
@@ -296,6 +296,16 @@ void Heap::decrementRef(void* ptr)
 	}
 }
 
+void Heap::exchangeRef(void** ptr1, void* ptr2)
+{
+	if (*ptr1 != ptr2)
+	{
+		Heap::incrementRef(ptr2);
+		Heap::decrementRef(*ptr1);
+		Atomic::exchange(*ptr1, ptr2);
+	}
+}
+
 namespace
 {
 
@@ -369,17 +379,6 @@ void Heap::collect()
 
 		if (!g_cycleObjects.empty())
 		{
-			// Ensure "cycle object" candidates are valid.
-#if defined(_DEBUG)
-			for (object_list_t::iterator i = g_cycleObjects.begin(); i != g_cycleObjects.end(); ++i)
-			{
-				ObjectHeader* header = *i;
-				T_ASSERT (header->m_dead == 0);
-				T_ASSERT (header->m_buffered == 1);
-				T_ASSERT (header->m_pending == 0);
-			}
-#endif
-
 			// Mark reachable objects.
 			{
 				MarkVisitor< 0 > visitor;

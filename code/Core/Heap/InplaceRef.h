@@ -28,12 +28,7 @@ public:
 
 	void replace(Class* ptr)
 	{
-		if (m_ref != ptr)
-		{
-			Heap::decrementRef((void*)m_ref);
-			m_ref = ptr;
-			Heap::incrementRef((void*)m_ref);
-		}
+		Heap::exchangeRef((void**)&m_ref, (void*)ptr);
 	}
 
 	Class* ptr() const

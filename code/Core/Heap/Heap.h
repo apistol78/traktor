@@ -63,6 +63,13 @@ public:
 	 */
 	static void decrementRef(void* ptr);
 
+	/*! \brief Exchange reference.
+	 *
+	 * \param ptr1 Current reference pointer.
+	 * \param ptr2 New reference pointer.
+	 */
+	static void exchangeRef(void** ptr1, void* ptr2);
+
 	/*! \brief Collect unused memory. */
 	static void collect();
 
