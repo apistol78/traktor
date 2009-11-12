@@ -55,25 +55,33 @@ public:
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOf(EntityType::getClassType(), *reinterpret_cast< RefArray< Entity >* >(&outEntities));
+		return getEntitiesOf(
+			type_of< EntityType >(),
+			*reinterpret_cast< RefArray< Entity >* >(&outEntities)
+		);
 	}
 
 	template < typename EntityType >
 	Ref< EntityType > getFirstEntityOf() const
 	{
-		return static_cast< EntityType* >(getFirstEntityOf(EntityType::getClassType()));
+		Ref< Entity > entity = getFirstEntityOf(type_of< EntityType >());
+		return static_cast< EntityType* >(entity.ptr());
 	}
 	
 	template < typename EntityType >
 	int getEntitiesOfRecursive(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOfRecursive(EntityType::getClassType(), *reinterpret_cast< RefArray< Entity >* >(&outEntities));
+		return getEntitiesOfRecursive(
+			type_of< EntityType >(),
+			*reinterpret_cast< RefArray< Entity >* >(&outEntities)
+		);
 	}
 
 	template < typename EntityType >
 	Ref< EntityType > getFirstEntityOfRecursive() const
 	{
-		return static_cast< EntityType* >(getFirstEntityOfRecursive(EntityType::getClassType()));
+		Ref< Entity > entity = getFirstEntityOfRecursive(type_of< EntityType >());
+		return static_cast< EntityType* >(entity.ptr());
 	}
 
 	//@}

@@ -104,7 +104,7 @@ bool Type::isEditable() const
 	return m_factory && m_factory->isEditable();
 }
 
-Ref< Object > Type::newInstance() const
+T_GC_NEW_TYPE(Object) Type::newInstance() const
 {
 	if (m_factory)
 		return m_factory->newInstance();

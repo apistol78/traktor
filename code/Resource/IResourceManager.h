@@ -89,7 +89,7 @@ public:
 	void flush(Proxy< ResourceType >& proxy)
 	{
 		flush(proxy.getGuid());
-		proxy.setPtr(0);
+		proxy.reset();
 	}
 };
 

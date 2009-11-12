@@ -67,7 +67,7 @@ struct T_DLLCLASS ObjectFactory
 {
 	virtual bool isEditable() const = 0;
 
-	virtual Ref< Object > newInstance() const = 0;
+	virtual T_GC_NEW_TYPE(Object) newInstance() const = 0;
 };
 
 /*! \brief RTTI type descriptor. */
@@ -112,7 +112,7 @@ public:
 	 *
 	 * \return New instance.
 	 */
-	Ref< Object > newInstance() const;
+	T_GC_NEW_TYPE(Object) newInstance() const;
 
 	/*! \brief Find type from string representation.
 	 *

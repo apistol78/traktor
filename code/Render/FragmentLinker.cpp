@@ -63,7 +63,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 	for (RefArray< Node >::iterator i = originalNodes.begin(); i != originalNodes.end(); ++i)
 	{
-		External* externalNode = dynamic_type_cast< External* >(*i);
+		Ref< External > externalNode = dynamic_type_cast< External* >(*i);
 		if (externalNode)
 		{
 			Ref< const ShaderGraph > fragmentShaderGraph = m_fragmentReader->read(externalNode->getFragmentGuid());
@@ -76,8 +76,8 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						return 0;
 				}
 
-				std::map< std::wstring, Node* > inputEstablishedPorts;
-				std::map< std::wstring, Node* > outputEstablishedPorts;
+				std::map< std::wstring, Ref< Node > > inputEstablishedPorts;
+				std::map< std::wstring, Ref< Node > > outputEstablishedPorts;
 
 				RefArray< InputPort > fragmentInputPorts;
 				fragmentShaderGraph->findNodesOf< InputPort >(fragmentInputPorts);
@@ -92,7 +92,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						replaceWithValue = true;
 
 						// Find input pin by input port.
-						const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
+						Ref< const InputPin > externalInputPin = externalNode->findInputPin(inputPortName);
 						T_ASSERT (externalInputPin);
 
 						// Create "established port" node and move all edges from input port to established port.
@@ -143,12 +143,12 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 				const RefArray< Edge >& fragmentEdges = fragmentShaderGraph->getEdges();
 				for (RefArray< Edge >::const_iterator j = fragmentEdges.begin(); j != fragmentEdges.end(); ++j)
 				{
-					const OutputPin* sourcePin;
-					const InputPin* destinationPin;
+					Ref< const OutputPin > sourcePin;
+					Ref< const InputPin > destinationPin;
 
 					if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >((*j)->getSource()->getNode()))
 					{
-						std::map< std::wstring, Node* >::iterator it = inputEstablishedPorts.find(inputPort->getName());
+						std::map< std::wstring, Ref< Node > >::iterator it = inputEstablishedPorts.find(inputPort->getName());
 						sourcePin = (it != inputEstablishedPorts.end()) ? it->second->getOutputPin(0) : 0;
 					}
 					else
@@ -156,14 +156,17 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 					if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >((*j)->getDestination()->getNode()))
 					{
-						std::map< std::wstring, Node* >::iterator it = outputEstablishedPorts.find(outputPort->getName());
+						std::map< std::wstring, Ref< Node > >::iterator it = outputEstablishedPorts.find(outputPort->getName());
 						destinationPin = (it != outputEstablishedPorts.end()) ? it->second->getInputPin(0) : 0;
 					}
 					else
 						destinationPin = (*j)->getDestination();
 
 					if (sourcePin && destinationPin)
-						resolvedEdges.push_back(gc_new< Edge >(sourcePin, destinationPin));
+						resolvedEdges.push_back(gc_new< Edge >(
+							sourcePin,
+							destinationPin
+						));
 				}
 
 				const RefArray< Node >& fragmentNodes = fragmentShaderGraph->getNodes();
@@ -184,8 +187,8 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 		if (i == resolvedNodes.end())
 			break;
 
-		const OutputPin* sourcePin = 0;
-		std::vector< const InputPin* > destinationPins;
+		Ref< const OutputPin > sourcePin = 0;
+		RefArray< const InputPin > destinationPins;
 
 		for (RefArray< Edge >::iterator j = resolvedEdges.begin(); j != resolvedEdges.end(); )
 		{
@@ -206,8 +209,11 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 		if (sourcePin)
 		{
-			for (std::vector< const InputPin* >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
-				resolvedEdges.push_back(gc_new< Edge >(sourcePin, *j));
+			for (RefArray< const InputPin >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
+				resolvedEdges.push_back(gc_new< Edge >(
+					sourcePin,
+					*j
+				));
 		}
 
 		resolvedNodes.erase(i);
