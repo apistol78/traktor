@@ -111,7 +111,9 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 				std::wstring text = trim(buf);
 				if (text.length() && !elm.empty())
 				{
-					elm.front()->addChild(gc_new< Text >(text));
+					elm.front()->addChild(
+						Ref< Text >(gc_new< Text >(text))
+					);
 				}
 
 				buf = L"";
@@ -272,7 +274,9 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 					std::wstring text = trim(buf.substr(0, buf.length() - 2));
 					if (text.length() && !elm.empty())
 					{
-						elm.front()->addChild(gc_new< Comment >(text));
+						elm.front()->addChild(
+							Ref< Comment >(gc_new< Comment >(text))
+						);
 					}
 				}
 				buf = L"";

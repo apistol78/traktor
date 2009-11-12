@@ -276,8 +276,8 @@ public:
 
 	virtual ~RefArray()
 	{
-		clear();
 		Heap::unregisterRef(this, 0);
+		clear();
 	}
 
 	void clear()
@@ -336,11 +336,11 @@ public:
 
 	void push_front(Class* const val)
 	{
+		Heap::incrementRef(val);
 		grow(1);
 		for (size_type i = m_size - 1; i > 0; --i)
 			m_items[i] = m_items[i - 1];
 		m_items[0] = val;
-		Heap::incrementRef(val);
 	}
 
 	void pop_front()
@@ -353,9 +353,9 @@ public:
 
 	void push_back(Class* const val)
 	{
+		Heap::incrementRef(val);
 		grow(1);
 		m_items[m_size - 1] = val;
-		Heap::incrementRef(val);
 	}
 
 	void pop_back()
@@ -366,6 +366,8 @@ public:
 
 	void insert(iterator at, Class* const val)
 	{
+		Heap::incrementRef(val);
+
 		size_type size = m_size;
 		size_type offset = size_type(at.m_item - m_items);
 
@@ -375,7 +377,6 @@ public:
 			m_items[i] = m_items[i - 1];
 
 		m_items[offset] = val;
-		Heap::incrementRef(val);
 	}
 
 	void insert(iterator at, iterator first, iterator last)
@@ -391,7 +392,10 @@ public:
 			m_items[i + count] = m_items[i];
 
 		for (size_t i = 0; i < count; ++i)
+		{
+			Heap::incrementRef(first.m_item[i]);
 			m_items[i + offset] = first.m_item[i];
+		}
 
 		return iterator(&m_items[offset]);
 	}

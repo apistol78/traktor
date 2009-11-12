@@ -2,7 +2,6 @@
 #define traktor_Ref_H
 
 #include "Core/Heap/RefBase.h"
-#include "Core/Thread/Atomic.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -53,12 +52,7 @@ public:
 	
 	void replace(Class* ptr)
 	{
-		if (m_ptr != ptr)
-		{
-			Heap::incrementRef((void*)ptr);
-			Heap::decrementRef((void*)m_ptr);
-			Atomic::exchange(m_ptr, ptr);
-		}
+		Heap::exchangeRef((void**)&m_ptr, (void*)ptr);
 	}
 
 	Class* ptr() const
