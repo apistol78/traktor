@@ -6,7 +6,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", FlashMovieAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", 0, FlashMovieAsset, editor::Asset)
 
 const TypeInfo* FlashMovieAsset::getOutputType() const
 {

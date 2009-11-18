@@ -13,7 +13,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", EntityPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipeline, editor::IPipeline)
 
 bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -22,11 +22,6 @@ bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 
 void EntityPipeline::destroy()
 {
-}
-
-uint32_t EntityPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet EntityPipeline::getAssetTypes() const

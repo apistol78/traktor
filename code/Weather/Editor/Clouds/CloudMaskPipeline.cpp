@@ -16,7 +16,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudMaskPipeline", CloudMaskPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudMaskPipeline", 1, CloudMaskPipeline, editor::IPipeline)
 
 bool CloudMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -26,11 +26,6 @@ bool CloudMaskPipeline::create(const editor::IPipelineSettings* settings)
 
 void CloudMaskPipeline::destroy()
 {
-}
-
-uint32_t CloudMaskPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet CloudMaskPipeline::getAssetTypes() const

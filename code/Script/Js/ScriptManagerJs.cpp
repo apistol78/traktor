@@ -10,7 +10,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerJs", ScriptManagerJs, IScriptManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerJs", 0, ScriptManagerJs, IScriptManager)
 
 void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 {

@@ -7,7 +7,7 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.i18n.Dictionary", Dictionary, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.i18n.Dictionary", 0, Dictionary, ISerializable)
 
 bool Dictionary::has(const std::wstring& id) const
 {

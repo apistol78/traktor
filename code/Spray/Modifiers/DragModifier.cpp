@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DragModifier", DragModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DragModifier", 0, DragModifier, Modifier)
 
 DragModifier::DragModifier()
 :	m_linearDrag(0.0f)

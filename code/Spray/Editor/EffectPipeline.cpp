@@ -12,7 +12,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 1, EffectPipeline, editor::IPipeline)
 
 bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -21,11 +21,6 @@ bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 
 void EffectPipeline::destroy()
 {
-}
-
-uint32_t EffectPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet EffectPipeline::getAssetTypes() const

@@ -18,7 +18,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 1, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -28,11 +28,6 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 
 void MeshPipeline::destroy()
 {
-}
-
-uint32_t MeshPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet MeshPipeline::getAssetTypes() const

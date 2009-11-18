@@ -43,8 +43,6 @@ public:
 
 	WorldRenderSettings();
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 };
 

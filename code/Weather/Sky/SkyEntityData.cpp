@@ -28,7 +28,7 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", SkyEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", 0, SkyEntityData, world::EntityData)
 
 SkyEntityData::SkyEntityData()
 {

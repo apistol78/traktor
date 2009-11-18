@@ -38,8 +38,6 @@ public:
 
 	bool isKinematic() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

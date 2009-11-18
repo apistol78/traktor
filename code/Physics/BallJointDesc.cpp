@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BallJointDesc", BallJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BallJointDesc", 0, BallJointDesc, JointDesc)
 
 BallJointDesc::BallJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)

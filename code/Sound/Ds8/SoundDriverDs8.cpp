@@ -47,7 +47,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverDs8", SoundDriverDs8, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverDs8", 0, SoundDriverDs8, ISoundDriver)
 
 bool SoundDriverDs8::create(const SoundDriverCreateDesc& desc)
 {

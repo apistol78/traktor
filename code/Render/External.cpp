@@ -105,7 +105,7 @@ struct SortPinPredicate
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", External, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", 1, External, Node)
 
 External::External()
 {
@@ -195,11 +195,6 @@ Ref< const OutputPin > External::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];
-}
-
-int External::getVersion() const
-{
-	return 1;
 }
 
 bool External::serialize(ISerializer& s)

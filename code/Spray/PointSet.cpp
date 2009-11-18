@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSet", PointSet, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSet", 0, PointSet, ISerializable)
 
 PointSet::PointSet()
 {

@@ -7,7 +7,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetEditorFactory", MeshAssetEditorFactory, editor::IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetEditorFactory", 0, MeshAssetEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet MeshAssetEditorFactory::getEditableTypes() const
 {

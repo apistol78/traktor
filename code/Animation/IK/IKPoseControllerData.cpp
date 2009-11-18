@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.IKPoseControllerData", IKPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.IKPoseControllerData", 0, IKPoseControllerData, IPoseControllerData)
 
 IKPoseControllerData::IKPoseControllerData()
 :	m_solverIterations(10)

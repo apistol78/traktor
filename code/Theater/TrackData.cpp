@@ -9,7 +9,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 0, TrackData, ISerializable)
 
 void TrackData::setInstance(world::EntityInstance* instance)
 {

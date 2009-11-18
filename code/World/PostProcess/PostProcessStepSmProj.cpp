@@ -66,7 +66,7 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSmProj", PostProcessStepSmProj, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSmProj", 0, PostProcessStepSmProj, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {

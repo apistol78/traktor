@@ -8,7 +8,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherEntityPipeline", WeatherEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherEntityPipeline", 0, WeatherEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet WeatherEntityPipeline::getAssetTypes() const
 {

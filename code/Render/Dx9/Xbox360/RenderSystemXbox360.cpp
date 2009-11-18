@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemXbox360", RenderSystemXbox360, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemXbox360", 0, RenderSystemXbox360, IRenderSystem)
 
 RenderSystemXbox360::RenderSystemXbox360()
 :	m_parameterCache(0)

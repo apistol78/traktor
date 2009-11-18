@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmSetInstanceName", DbmSetInstanceName, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmSetInstanceName", 0, DbmSetInstanceName, IMessage)
 
 DbmSetInstanceName::DbmSetInstanceName(uint32_t handle, const std::wstring& name)
 :	m_handle(handle)

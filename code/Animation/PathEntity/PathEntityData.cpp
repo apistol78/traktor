@@ -11,7 +11,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathEntityData", PathEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathEntityData", 0, PathEntityData, world::SpatialEntityData)
 
 PathEntityData::PathEntityData()
 :	m_timeMode(PathEntity::TmManual)

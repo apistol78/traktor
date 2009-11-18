@@ -39,8 +39,6 @@ public:
 
 	virtual const TypeInfo* getOutputType() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 };
 

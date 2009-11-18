@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgHandleResult", MsgHandleResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgHandleResult", 0, MsgHandleResult, IMessage)
 
 MsgHandleResult::MsgHandleResult(uint32_t handle)
 :	m_handle(handle)

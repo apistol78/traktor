@@ -135,7 +135,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerHavok", PhysicsManagerHavok, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerHavok", 0, PhysicsManagerHavok, PhysicsManager)
 
 PhysicsManagerHavok::PhysicsManagerHavok()
 :	m_simulationDeltaTime(0.0f)

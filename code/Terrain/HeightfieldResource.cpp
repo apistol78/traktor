@@ -7,7 +7,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldResource", HeightfieldResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldResource", 0, HeightfieldResource, ISerializable)
 
 HeightfieldResource::HeightfieldResource()
 :	m_size(0)

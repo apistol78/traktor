@@ -10,7 +10,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.RigidEntityPipeline", RigidEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.RigidEntityPipeline", 0, RigidEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet RigidEntityPipeline::getAssetTypes() const
 {

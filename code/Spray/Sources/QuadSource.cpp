@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.QuadSource", QuadSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.QuadSource", 0, QuadSource, Source)
 
 QuadSource::QuadSource()
 :	m_center(0.0f, 0.0f, 0.0f, 1.0f)

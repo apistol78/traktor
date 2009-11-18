@@ -7,7 +7,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CloudMaskResource", CloudMaskResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.CloudMaskResource", 0, CloudMaskResource, ISerializable)
 
 CloudMaskResource::CloudMaskResource(int32_t size)
 :	m_size(size)

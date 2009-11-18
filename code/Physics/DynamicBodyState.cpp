@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyState", DynamicBodyState, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyState", 0, DynamicBodyState, ISerializable)
 
 DynamicBodyState::DynamicBodyState()
 :	m_transform(Transform::identity())

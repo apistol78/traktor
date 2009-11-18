@@ -14,7 +14,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 4, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
@@ -35,11 +35,6 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 
 void ScenePipeline::destroy()
 {
-}
-
-uint32_t ScenePipeline::getVersion() const
-{
-	return 4;
 }
 
 TypeInfoSet ScenePipeline::getAssetTypes() const

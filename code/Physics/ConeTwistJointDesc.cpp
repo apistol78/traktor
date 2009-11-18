@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ConeTwistJointDesc", ConeTwistJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ConeTwistJointDesc", 0, ConeTwistJointDesc, JointDesc)
 
 ConeTwistJointDesc::ConeTwistJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)

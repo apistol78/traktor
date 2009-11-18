@@ -58,7 +58,7 @@ struct KeyPoseAccessor
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Animation", Animation, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Animation", 0, Animation, ISerializable)
 
 uint32_t Animation::addKeyPose(const KeyPose& pose)
 {

@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsPipeline", 1, PhysicsPipeline, editor::IPipeline)
 
 bool PhysicsPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -18,11 +18,6 @@ bool PhysicsPipeline::create(const editor::IPipelineSettings* settings)
 
 void PhysicsPipeline::destroy()
 {
-}
-
-uint32_t PhysicsPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet PhysicsPipeline::getAssetTypes() const

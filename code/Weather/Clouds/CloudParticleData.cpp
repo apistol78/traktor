@@ -7,7 +7,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudParticleData", CloudParticleData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudParticleData", 0, CloudParticleData, ISerializable)
 
 CloudParticleData::CloudParticleData()
 :	m_count(1000)

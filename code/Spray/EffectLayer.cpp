@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayer", EffectLayer, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayer", 0, EffectLayer, ISerializable)
 
 EffectLayer::EffectLayer()
 :	m_time(0.0f)

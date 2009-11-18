@@ -122,7 +122,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 5, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -174,11 +174,6 @@ void ShaderPipeline::destroy()
 		m_renderSystem->destroy();
 		m_renderSystem = 0;
 	}
-}
-
-uint32_t ShaderPipeline::getVersion() const
-{
-	return 5;
 }
 
 TypeInfoSet ShaderPipeline::getAssetTypes() const

@@ -8,7 +8,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", SyntaxLanguageJs, SyntaxLanguage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", 0, SyntaxLanguageJs, SyntaxLanguage)
 
 void SyntaxLanguageJs::begin()
 {

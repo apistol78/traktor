@@ -36,8 +36,6 @@ public:
 
 	const RefArray< PostProcessStep >& getSteps() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

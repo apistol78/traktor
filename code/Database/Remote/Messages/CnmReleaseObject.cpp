@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CnmReleaseObject", CnmReleaseObject, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CnmReleaseObject", 0, CnmReleaseObject, IMessage)
 
 CnmReleaseObject::CnmReleaseObject(uint32_t handle)
 :	m_handle(handle)

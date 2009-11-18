@@ -45,7 +45,7 @@ const TCHAR* c_windowClassName = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemSw", RenderSystemSw, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemSw", 0, RenderSystemSw, IRenderSystem)
 
 RenderSystemSw::RenderSystemSw()
 #if defined(_WIN32)

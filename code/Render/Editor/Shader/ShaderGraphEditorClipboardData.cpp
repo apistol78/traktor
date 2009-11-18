@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorClipboardData", ShaderGraphEditorClipboardData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorClipboardData", 0, ShaderGraphEditorClipboardData, ISerializable)
 
 void ShaderGraphEditorClipboardData::addNode(Node* node)
 {

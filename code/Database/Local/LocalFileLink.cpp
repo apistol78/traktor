@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalFileLink", LocalFileLink, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalFileLink", 0, LocalFileLink, ISerializable)
 
 bool LocalFileLink::serialize(ISerializer& s)
 {

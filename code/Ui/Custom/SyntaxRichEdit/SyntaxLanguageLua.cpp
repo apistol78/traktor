@@ -8,7 +8,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", SyntaxLanguageLua, SyntaxLanguage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", 0, SyntaxLanguageLua, SyntaxLanguage)
 
 void SyntaxLanguageLua::begin()
 {

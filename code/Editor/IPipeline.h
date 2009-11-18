@@ -58,9 +58,6 @@ public:
 	/*! \brief Destroy pipeline. */
 	virtual void destroy() = 0;
 
-	/*! \brief Get pipeline version. */
-	virtual uint32_t getVersion() const = 0;
-
 	/*! \brief Get pipeline asset types. */
 	virtual TypeInfoSet getAssetTypes() const = 0;
 

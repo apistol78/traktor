@@ -63,8 +63,6 @@ public:
 
 	inline float getWarmUp() const { return m_warmUp; }
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

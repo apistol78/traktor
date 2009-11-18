@@ -10,7 +10,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityInstance", EntityInstance, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityInstance", 1, EntityInstance, ISerializable)
 
 EntityInstance::EntityInstance()
 {
@@ -72,11 +72,6 @@ void EntityInstance::removeAllReferences()
 const RefArray< EntityInstance >& EntityInstance::getReferences() const
 {
 	return m_references;
-}
-
-int EntityInstance::getVersion() const
-{
-	return 1;
 }
 
 bool EntityInstance::serialize(ISerializer& s)

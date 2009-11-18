@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmOpen", DbmOpen, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmOpen", 0, DbmOpen, IMessage)
 
 DbmOpen::DbmOpen(const std::wstring& name)
 :	m_name(name)

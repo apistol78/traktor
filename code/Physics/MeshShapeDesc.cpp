@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshShapeDesc", MeshShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshShapeDesc", 0, MeshShapeDesc, ShapeDesc)
 
 void MeshShapeDesc::setMesh(const resource::Proxy< Mesh >& mesh)
 {

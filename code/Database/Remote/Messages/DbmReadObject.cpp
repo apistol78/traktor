@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmReadObject", DbmReadObject, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmReadObject", 0, DbmReadObject, IMessage)
 
 DbmReadObject::DbmReadObject(uint32_t handle)
 :	m_handle(handle)

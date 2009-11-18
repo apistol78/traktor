@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmWriteResult", StmWriteResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmWriteResult", 0, StmWriteResult, IMessage)
 
 StmWriteResult::StmWriteResult(int32_t result)
 :	m_result(result)

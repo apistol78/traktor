@@ -58,7 +58,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
 				(*i)->reason |= IPipeline::BrSourceModified;
 			}
-			else if (hash.pipelineVersion != (*i)->pipeline->getVersion())
+			else if (hash.pipelineVersion != type_of((*i)->pipeline).getVersion())
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
 				(*i)->reason |= IPipeline::BrSourceModified;
@@ -113,7 +113,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			break;
 
 		// Update hash entry; don't write it yet though.
-		hash.pipelineVersion = (*i)->pipeline->getVersion();
+		hash.pipelineVersion = type_of((*i)->pipeline).getVersion();
 		hash.pipelineHash = (*i)->pipelineHash;
 		hash.sourceAssetHash = (*i)->sourceAssetHash;
 

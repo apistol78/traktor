@@ -13,7 +13,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatObj", ModelFormatObj, ModelFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatObj", 0, ModelFormatObj, ModelFormat)
 
 void ModelFormatObj::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {

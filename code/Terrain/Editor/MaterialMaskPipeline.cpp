@@ -16,7 +16,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.MaterialMaskPipeline", MaterialMaskPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.MaterialMaskPipeline", 1, MaterialMaskPipeline, editor::IPipeline)
 
 bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -26,11 +26,6 @@ bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 
 void MaterialMaskPipeline::destroy()
 {
-}
-
-uint32_t MaterialMaskPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet MaterialMaskPipeline::getAssetTypes() const

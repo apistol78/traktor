@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ArticulatedEntityPipeline", ArticulatedEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ArticulatedEntityPipeline", 0, ArticulatedEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet ArticulatedEntityPipeline::getAssetTypes() const
 {

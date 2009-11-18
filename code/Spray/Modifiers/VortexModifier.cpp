@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.VortexModifier", VortexModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.VortexModifier", 0, VortexModifier, Modifier)
 
 VortexModifier::VortexModifier()
 :	m_axis(0.0f, 1.0f, 0.0f, 0.0f)

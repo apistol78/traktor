@@ -8,7 +8,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashEditorPageFactory", FlashEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashEditorPageFactory", 0, FlashEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet FlashEditorPageFactory::getEditableTypes() const
 {

@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstanceGuid", DbmGetInstanceGuid, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstanceGuid", 0, DbmGetInstanceGuid, IMessage)
 
 DbmGetInstanceGuid::DbmGetInstanceGuid(uint32_t handle)
 :	m_handle(handle)

@@ -6,7 +6,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultObjectEditorFactory", DefaultObjectEditorFactory, IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultObjectEditorFactory", 0, DefaultObjectEditorFactory, IObjectEditorFactory)
 
 const TypeInfoSet DefaultObjectEditorFactory::getEditableTypes() const
 {

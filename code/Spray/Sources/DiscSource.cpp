@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DiscSource", DiscSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DiscSource", 0, DiscSource, Source)
 
 DiscSource::DiscSource()
 :	m_position(0.0f, 0.0f, 0.0f, 1.0f)

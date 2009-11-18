@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmStatResult", StmStatResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmStatResult", 0, StmStatResult, IMessage)
 
 StmStatResult::StmStatResult(bool canRead, bool canWrite, bool canSeek, int32_t tell, int32_t available)
 :	m_canRead(canRead)

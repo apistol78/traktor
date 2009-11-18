@@ -7,7 +7,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorFactory", ScriptEditorFactory, editor::IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptEditorFactory", 0, ScriptEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet ScriptEditorFactory::getEditableTypes() const
 {

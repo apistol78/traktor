@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", ShaderGraphEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", 0, ShaderGraphEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 {

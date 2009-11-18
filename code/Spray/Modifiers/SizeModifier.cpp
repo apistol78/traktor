@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SizeModifier", SizeModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SizeModifier", 0, SizeModifier, Modifier)
 
 SizeModifier::SizeModifier()
 :	m_adjustRate(0.0f)

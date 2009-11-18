@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectEntityData", EffectEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectEntityData", 0, EffectEntityData, world::SpatialEntityData)
 
 Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* resourceManager) const
 {

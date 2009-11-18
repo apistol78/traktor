@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", StreamSoundResource, SoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 0, StreamSoundResource, SoundResource)
 
 StreamSoundResource::StreamSoundResource(const TypeInfo* decoderType)
 :	m_decoderType(decoderType)

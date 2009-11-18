@@ -29,7 +29,7 @@ public:
 	}
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.EstPort", EstPort, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.EstPort", 0, EstPort, ImmutableNode)
 
 template < typename NodeType >
 struct NodeTypePred

@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpatialGroupEntityData", SpatialGroupEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpatialGroupEntityData", 0, SpatialGroupEntityData, SpatialEntityData)
 
 void SpatialGroupEntityData::addInstance(EntityInstance* instance)
 {

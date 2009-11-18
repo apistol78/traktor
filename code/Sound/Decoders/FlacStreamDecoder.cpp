@@ -152,7 +152,7 @@ private:
 	}
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FlacStreamDecoder", FlacStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FlacStreamDecoder", 0, FlacStreamDecoder, IStreamDecoder)
 
 bool FlacStreamDecoder::create(IStream* stream)
 {

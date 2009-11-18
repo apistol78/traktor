@@ -57,8 +57,6 @@ public:
 
 	virtual Ref< const OutputPin > getOutputPin(int index) const;	
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 	inline void setInputPins(const RefArray< InputPin >& inputPins) { m_inputPins = inputPins; }

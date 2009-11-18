@@ -13,7 +13,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SplineSource", SplineSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SplineSource", 0, SplineSource, Source)
 
 SplineSource::SplineSource()
 :	m_mode(MdRandom)

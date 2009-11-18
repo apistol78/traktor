@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmClose", StmClose, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmClose", 0, StmClose, IMessage)
 
 StmClose::StmClose(uint32_t handle)
 :	m_handle(handle)

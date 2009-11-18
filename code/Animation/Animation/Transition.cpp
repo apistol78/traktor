@@ -9,7 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Transition", Transition, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Transition", 0, Transition, ISerializable)
 
 Transition::Transition()
 :	m_moment(TmImmediatly)

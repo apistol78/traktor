@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.Emitter", Emitter, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.Emitter", 1, Emitter, ISerializable)
 
 Emitter::Emitter()
 :	m_middleAge(0.2f)
@@ -32,11 +32,6 @@ Ref< EmitterInstance > Emitter::createInstance(resource::IResourceManager* resou
 		return 0;
 
 	return new EmitterInstance(this);
-}
-
-int Emitter::getVersion() const
-{
-	return 1;
 }
 
 bool Emitter::serialize(ISerializer& s)

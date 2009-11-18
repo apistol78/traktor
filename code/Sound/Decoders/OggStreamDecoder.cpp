@@ -238,7 +238,7 @@ private:
 	bool m_readPacket;
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.OggStreamDecoder", OggStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.OggStreamDecoder", 0, OggStreamDecoder, IStreamDecoder)
 
 bool OggStreamDecoder::create(IStream* stream)
 {

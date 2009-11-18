@@ -8,7 +8,7 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, IScriptManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
 void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 {

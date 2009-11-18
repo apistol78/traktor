@@ -29,7 +29,7 @@ struct IgnoreCasePredicate
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.MRU", MRU, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.MRU", 0, MRU, ISerializable)
 
 void MRU::usedFile(const Path& filePath)
 {

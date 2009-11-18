@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonEditorPageFactory", SkeletonEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonEditorPageFactory", 0, SkeletonEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet SkeletonEditorPageFactory::getEditableTypes() const
 {

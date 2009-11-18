@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstancePrimaryType", DbmGetInstancePrimaryType, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstancePrimaryType", 0, DbmGetInstancePrimaryType, IMessage)
 
 DbmGetInstancePrimaryType::DbmGetInstancePrimaryType(uint32_t handle)
 :	m_handle(handle)

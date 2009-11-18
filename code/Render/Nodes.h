@@ -167,8 +167,6 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -318,8 +316,6 @@ public:
 	float getDefaultValue() const;
 
 	virtual std::wstring getInformation() const;
-
-	virtual int getVersion() const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -681,8 +677,6 @@ public:
 	uint32_t getStencilMask() const;
 
 	virtual std::wstring getInformation() const;
-
-	virtual int getVersion() const;
 	
 	virtual bool serialize(ISerializer& s);
 
@@ -923,8 +917,6 @@ public:
 
 	virtual Ref< const OutputPin > getOutputPin(int index) const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -1075,8 +1067,6 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual int getVersion() const;
-	
 	virtual bool serialize(ISerializer& s);
 
 private:

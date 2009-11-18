@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshEntityPipeline", AnimatedMeshEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshEntityPipeline", 0, AnimatedMeshEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet AnimatedMeshEntityPipeline::getAssetTypes() const
 {

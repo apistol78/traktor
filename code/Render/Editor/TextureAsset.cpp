@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", TextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 1, TextureAsset, editor::Asset)
 
 TextureAsset::TextureAsset()
 :	m_generateNormalMap(false)
@@ -30,11 +30,6 @@ TextureAsset::TextureAsset()
 const TypeInfo* TextureAsset::getOutputType() const
 {
 	return &type_of< TextureResource >();
-}
-
-int TextureAsset::getVersion() const
-{
-	return 1;
 }
 
 bool TextureAsset::serialize(ISerializer& s)

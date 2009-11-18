@@ -13,7 +13,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepLuminance", 0, PostProcessStepLuminance, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {

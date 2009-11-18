@@ -210,7 +210,7 @@ uint8_t PADDING[64] =
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.MD5", MD5, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.MD5", 0, MD5, ISerializable)
 
 MD5::MD5()
 {

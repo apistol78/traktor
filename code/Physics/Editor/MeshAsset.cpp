@@ -6,7 +6,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 0, MeshAsset, editor::Asset)
 
 const TypeInfo* MeshAsset::getOutputType() const
 {

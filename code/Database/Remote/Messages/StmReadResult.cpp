@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmReadResult", StmReadResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmReadResult", 0, StmReadResult, IMessage)
 
 StmReadResult::StmReadResult(const void* block, int32_t blockSize)
 :	m_blockSize(blockSize)

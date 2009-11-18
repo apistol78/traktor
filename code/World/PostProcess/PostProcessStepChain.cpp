@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepChain", PostProcessStepChain, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepChain", 0, PostProcessStepChain, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepChain::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {

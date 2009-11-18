@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmRead", StmRead, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmRead", 0, StmRead, IMessage)
 
 StmRead::StmRead(uint32_t handle, int32_t blockSize)
 :	m_handle(handle)

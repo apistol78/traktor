@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SphereSource", SphereSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SphereSource", 0, SphereSource, Source)
 
 SphereSource::SphereSource()
 :	m_position(0.0f, 0.0f, 0.0f, 1.0f)

@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceSw", ProgramResourceSw, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceSw", 0, ProgramResourceSw, ProgramResource)
 
 ProgramResourceSw::ProgramResourceSw(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(const_cast< ShaderGraph* >(shaderGraph))

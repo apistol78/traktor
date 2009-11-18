@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldResource", HeightfieldResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldResource", 0, HeightfieldResource, ISerializable)
 
 HeightfieldResource::HeightfieldResource(uint32_t size, const Vector4& worldExtent)
 :	m_size(size)

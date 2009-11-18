@@ -10,7 +10,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainSurface", TerrainSurface, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainSurface", 0, TerrainSurface, ISerializable)
 
 bool TerrainSurface::serialize(ISerializer& s)
 {

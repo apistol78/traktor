@@ -46,8 +46,6 @@ public:
 
 	Ref< CloudEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }

@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalSpatialEntityData", ExternalSpatialEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalSpatialEntityData", 0, ExternalSpatialEntityData, SpatialEntityData)
 
 ExternalSpatialEntityData::ExternalSpatialEntityData()
 {
