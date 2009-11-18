@@ -46,7 +46,7 @@ Ref< drawing::Image > readRawTerrain(const Path& fileName)
 	uint32_t size = uint32_t(std::sqrt(float(heights)));
 
 	Ref< drawing::Image > image = new drawing::Image(
-		&s_pfRaw16,
+		s_pfRaw16,
 		size,
 		size
 	);
@@ -119,7 +119,7 @@ bool HeightfieldPipeline::buildOutput(
 	{
 		// Load source image.
 		image = drawing::Image::load(fileName);
-		image->convert(&s_pfRaw16);
+		image->convert(s_pfRaw16);
 
 		// Smooth image, hack to filter 8-bit heights into 16-bit.
 		image = image->applyFilter(drawing::ConvolutionFilter::createGaussianBlur());

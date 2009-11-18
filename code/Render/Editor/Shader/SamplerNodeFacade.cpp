@@ -78,7 +78,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 				textureImage = textureImage->applyFilter(&scale);
 
 				// Create alpha preview.
-				if (textureImage->getPixelFormat()->getAlphaBits() > 0 && textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false)
+				if (textureImage->getPixelFormat().getAlphaBits() > 0 && textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false)
 				{
 					for (int32_t y = 0; y < textureImage->getHeight(); ++y)
 					{

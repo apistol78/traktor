@@ -85,10 +85,10 @@ public:
 
 	virtual ~LogStream();
 
-	LogStreamBuffer& getBuffer();
+	Ref< LogStreamBuffer > getBuffer();
 
 private:
-	LogStreamBuffer m_streamBuffer;
+	Ref< LogStreamBuffer > m_streamBuffer;
 };
 	
 	namespace log

@@ -375,7 +375,7 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 			return false;
 		}
 
-		Ref< ISerializable > o = dynamic_type_cast< ISerializable* >(type->createInstance());
+		ISerializable* o = checked_type_cast< ISerializable* >(type->createInstance());
 		if (!o)
 		{
 			log::error << L"Unable to instanciate type \"" << typeName << L"\"" << Endl;

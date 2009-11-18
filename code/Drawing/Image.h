@@ -4,6 +4,7 @@
 #include "Core/Io/Path.h"
 #include "Drawing/Color.h"
 #include "Drawing/ImageInfo.h"
+#include "Drawing/PixelFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +19,6 @@ namespace traktor
 	namespace drawing
 	{
 	
-class PixelFormat;
 class Palette;
 class IImageFilter;
 
@@ -41,7 +41,7 @@ public:
 
 	Image(const Image& src);
 
-	Image(const PixelFormat* pixelFormat, uint32_t width, uint32_t height, Palette* palette = 0);
+	Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette = 0);
 	
 	virtual ~Image();
 	
@@ -74,7 +74,7 @@ public:
 	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
 
 	/*! \brief Convert format of image. */
-	void convert(const PixelFormat* intoPixelFormat, Palette* intoPalette = 0);
+	void convert(const PixelFormat& intoPixelFormat, Palette* intoPalette = 0);
 
 	/*! \brief Load image from file. */
 	static Ref< Image > load(const Path& fileName);
@@ -86,7 +86,7 @@ public:
 	bool save(const Path& fileName);
 	
 	/*! \brief Get current image format. */
-	Ref< const PixelFormat > getPixelFormat() const;
+	const PixelFormat& getPixelFormat() const;
 	
 	/*! \brief Get width of image. */
 	const int32_t getWidth() const;
@@ -116,7 +116,7 @@ public:
 	Image& operator = (const Image& src);
 	
 private:
-	Ref< const PixelFormat > m_pixelFormat;
+	PixelFormat m_pixelFormat;
 	int32_t m_width;
 	int32_t m_height;
 	Ref< Palette > m_palette;

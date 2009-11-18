@@ -100,26 +100,26 @@ bool LogView::create(ui::Widget* parent)
 	m_popup->add(new ui::MenuItem(L"-"));
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Clear"), i18n::Text(L"LOG_CLEAR_ALL")));
 
-	m_originalTargets[0] = log::info   .getBuffer().getTarget();
-	m_originalTargets[1] = log::warning.getBuffer().getTarget();
-	m_originalTargets[2] = log::error  .getBuffer().getTarget();
+	m_originalTargets[0] = log::info   .getBuffer()->getTarget();
+	m_originalTargets[1] = log::warning.getBuffer()->getTarget();
+	m_originalTargets[2] = log::error  .getBuffer()->getTarget();
 
 	m_newTargets[0] = new LogListTarget(m_log, ui::custom::LogList::LvInfo, m_originalTargets[0]);
 	m_newTargets[1] = new LogListTarget(m_log, ui::custom::LogList::LvWarning, m_originalTargets[1]);
 	m_newTargets[2] = new LogListTarget(m_log, ui::custom::LogList::LvError, m_originalTargets[2]);
 
-	log::info   .getBuffer().setTarget(m_newTargets[0]);
-	log::warning.getBuffer().setTarget(m_newTargets[1]);
-	log::error  .getBuffer().setTarget(m_newTargets[2]);
+	log::info   .getBuffer()->setTarget(m_newTargets[0]);
+	log::warning.getBuffer()->setTarget(m_newTargets[1]);
+	log::error  .getBuffer()->setTarget(m_newTargets[2]);
 
 	return true;
 }
 
 void LogView::destroy()
 {
-	log::error  .getBuffer().setTarget(m_originalTargets[2]);
-	log::warning.getBuffer().setTarget(m_originalTargets[1]);
-	log::info   .getBuffer().setTarget(m_originalTargets[0]);
+	log::error  .getBuffer()->setTarget(m_originalTargets[2]);
+	log::warning.getBuffer()->setTarget(m_originalTargets[1]);
+	log::info   .getBuffer()->setTarget(m_originalTargets[0]);
 
 	delete m_newTargets[2];
 	delete m_newTargets[1];

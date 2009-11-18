@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
 #include "Drawing/IImageFormat.h"
 #include "Drawing/IImageFilter.h"
@@ -80,15 +79,12 @@ Image::Image(const Image& src)
 ,	m_data(0)
 ,	m_imageInfo(src.m_imageInfo)
 {
-	if (m_pixelFormat)
-	{
-		m_size = src.m_size;
-		m_data = allocData(m_size);
-		std::memcpy(m_data, src.m_data, m_size);
-	}
+	m_size = src.m_size;
+	m_data = allocData(m_size);
+	std::memcpy(m_data, src.m_data, m_size);
 }
 
-Image::Image(const PixelFormat* pixelFormat, uint32_t width, uint32_t height, Palette* palette)
+Image::Image(const PixelFormat& pixelFormat, uint32_t width, uint32_t height, Palette* palette)
 :	m_pixelFormat(pixelFormat)
 ,	m_width(width)
 ,	m_height(height)
@@ -96,12 +92,9 @@ Image::Image(const PixelFormat* pixelFormat, uint32_t width, uint32_t height, Pa
 ,	m_size(0)
 ,	m_data(0)
 {
-	if (m_pixelFormat)
-	{
-		m_size = m_width * m_height * m_pixelFormat->getByteSize();
-		m_data = allocData(m_size);
-		std::memset(m_data, 0, m_size);
-	}
+	m_size = m_width * m_height * m_pixelFormat.getByteSize();
+	m_data = allocData(m_size);
+	std::memset(m_data, 0, m_size);
 }
 
 Image::~Image()
@@ -114,7 +107,7 @@ Ref< Image > Image::clone(bool includeData) const
 	Ref< Image > clone = new Image(m_pixelFormat, m_width, m_height, m_palette);
 	if (includeData)
 	{
-		std::memcpy(clone->m_data, m_data, m_width * m_height * m_pixelFormat->getByteSize());
+		std::memcpy(clone->m_data, m_data, m_width * m_height * m_pixelFormat.getByteSize());
 		checkData(clone->m_data, clone->m_size);
 	}
 	return clone;
@@ -155,16 +148,16 @@ void Image::copy(const Image* src, int32_t x, int32_t y, int32_t width, int32_t 
 	T_ASSERT (x >= 0 && y >= 0);
 	T_ASSERT (width >= 0 && height >= 0);
 
-	const PixelFormat* pf = src->m_pixelFormat;
+	const PixelFormat& pf = src->m_pixelFormat;
 
-	uint32_t srcPitch = pf->getByteSize() * src->m_width;
-	uint32_t dstPitch = m_pixelFormat->getByteSize() * m_width;
+	uint32_t srcPitch = pf.getByteSize() * src->m_width;
+	uint32_t dstPitch = m_pixelFormat.getByteSize() * m_width;
 
 	for (int32_t yy = 0; yy < height; ++yy)
 	{
-		const uint8_t* sd = &src->m_data[x * pf->getByteSize() + (y + yy) * srcPitch];
+		const uint8_t* sd = &src->m_data[x * pf.getByteSize() + (y + yy) * srcPitch];
 		uint8_t* dd = &m_data[yy * dstPitch];
-		pf->convert(0, sd, m_pixelFormat, 0, dd, width);
+		pf.convert(0, sd, m_pixelFormat, 0, dd, width);
 	}
 
 	checkData(m_data, m_size);
@@ -180,10 +173,10 @@ void Image::clear(const Color& color)
 		color.getAlpha()
 	};
 	
-	uint32_t byteSize = m_pixelFormat->getByteSize();
+	uint32_t byteSize = m_pixelFormat.getByteSize();
 	std::vector< uint8_t > c(byteSize);
 
-	PixelFormat::getRGBAF32()->convert(
+	PixelFormat::getRGBAF32().convert(
 		0,
 		tmp,
 		m_pixelFormat,
@@ -211,9 +204,9 @@ bool Image::getPixel(int32_t x, int32_t y, Color& color) const
 		0
 	};
 	
-	m_pixelFormat->convert(
+	m_pixelFormat.convert(
 		m_palette,
-		&m_data[(x + y * m_width) * m_pixelFormat->getByteSize()],
+		&m_data[(x + y * m_width) * m_pixelFormat.getByteSize()],
 		PixelFormat::getRGBAF32(),
 		0,
 		tmp,
@@ -237,12 +230,12 @@ bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 		color.getAlpha()
 	};
 	
-	PixelFormat::getRGBAF32()->convert(
+	PixelFormat::getRGBAF32().convert(
 		0,
 		tmp,
 		m_pixelFormat,
 		m_palette,
-		&m_data[(x + y * m_width) * m_pixelFormat->getByteSize()],
+		&m_data[(x + y * m_width) * m_pixelFormat.getByteSize()],
 		1
 	);
 	
@@ -258,12 +251,12 @@ Ref< Image > Image::applyFilter(IImageFilter* imageFilter) const
 	return image;
 }
 
-void Image::convert(const PixelFormat* intoPixelFormat, Palette* intoPalette)
+void Image::convert(const PixelFormat& intoPixelFormat, Palette* intoPalette)
 {
-	size_t size = m_width * m_height * intoPixelFormat->getByteSize();
+	size_t size = m_width * m_height * intoPixelFormat.getByteSize();
 	uint8_t* tmp = allocData(size);
 
-	m_pixelFormat->convert(
+	m_pixelFormat.convert(
 		m_palette,
 		m_data,
 		intoPixelFormat,
@@ -339,7 +332,7 @@ bool Image::save(const Path& fileName)
 	return result;
 }
 
-Ref< const PixelFormat > Image::getPixelFormat() const
+const PixelFormat& Image::getPixelFormat() const
 {
 	return m_pixelFormat;
 }
@@ -392,16 +385,11 @@ Image& Image::operator = (const Image& src)
 	m_width = src.m_width;
 	m_height = src.m_height;
 	m_palette = src.m_palette;
-	m_size = 0;
-	m_data = 0;
 	m_imageInfo = src.m_imageInfo;
 
-	if (m_pixelFormat)
-	{
-		m_size = src.m_size;
-		m_data = allocData(m_size);
-		memcpy(m_data, src.m_data, m_size);
-	}
+	m_size = src.m_size;
+	m_data = allocData(m_size);
+	std::memcpy(m_data, src.m_data, m_size);
 
 	checkData(m_data, m_size);
 	return *this;

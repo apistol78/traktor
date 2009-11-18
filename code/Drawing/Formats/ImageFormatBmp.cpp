@@ -84,7 +84,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 	}
 
 	// Get pixel format.
-	const PixelFormat* pf;
+	PixelFormat pf;
 	switch (bmih.biBitCount)
 	{
 	case 16:
@@ -108,7 +108,7 @@ Ref< Image > ImageFormatBmp::read(IStream* stream)
 
 	stream->seek(IStream::SeekSet, bmfh.bfOffBits);
 
-	int bs = pf->getByteSize();
+	int bs = pf.getByteSize();
 	int rowSize = int(bmih.biWidth * bs);
 
 	uint8_t* ptr = static_cast< uint8_t* >(image->getData());

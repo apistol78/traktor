@@ -236,10 +236,10 @@ bool TexturePipeline::buildOutput(
 
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
-	bool hasAlpha = image->getPixelFormat()->getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha;
+	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha;
 
 	// Determine pixel and texel formats.
-	Ref< const drawing::PixelFormat > pixelFormat;
+	drawing::PixelFormat pixelFormat;
 	TextureFormat textureFormat;
 
 	if (hasAlpha)

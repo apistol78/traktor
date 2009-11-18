@@ -18,7 +18,7 @@ CriticalSection::~CriticalSection()
 
 bool CriticalSection::wait(int32_t timeout)
 {
-	T_ASSERT_M (timeout != -1, L"Invalid timeout");
+	T_ASSERT_M (timeout == -1, L"Invalid timeout");
 	EnterCriticalSection((LPCRITICAL_SECTION)m_handle);
 	return true;
 }

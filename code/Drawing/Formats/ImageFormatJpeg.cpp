@@ -179,7 +179,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 	if (s_errorOccured)
 		return 0;
 
-	Ref< const PixelFormat > pixelFormat;
+	PixelFormat pixelFormat;
 	if (m_cinfo.output_components == 4)
 		pixelFormat = PixelFormat::getX8B8G8R8();
 	else if (m_cinfo.output_components == 3)
