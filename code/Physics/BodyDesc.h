@@ -2,8 +2,7 @@
 #define traktor_physics_BodyDesc_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,16 +22,16 @@ class ShapeDesc;
 /*! \brief Rigid body description.
  * \ingroup Physics
  */
-class T_DLLCLASS BodyDesc : public Serializable
+class T_DLLCLASS BodyDesc : public ISerializable
 {
-	T_RTTI_CLASS(BodyDesc)
+	T_RTTI_CLASS;
 
 public:
 	void setShape(ShapeDesc* shape);
 
 	Ref< const ShapeDesc > getShape() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< ShapeDesc > m_shape;

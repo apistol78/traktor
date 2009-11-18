@@ -46,7 +46,7 @@ void setActorGroup(NxActor *actor, NxCollisionGroup group)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsManagerPhysX", PhysicsManagerPhysX, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerPhysX", PhysicsManagerPhysX, PhysicsManager)
 
 PhysicsManagerPhysX::PhysicsManagerPhysX()
 :	m_simulationDeltaTime(0.0f)
@@ -321,7 +321,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 
 		setActorGroup(actor, c_defaultGroup);
 
-		Ref< StaticBodyPhysX > staticBody = gc_new< StaticBodyPhysX >(this, actor);
+		Ref< StaticBodyPhysX > staticBody = new StaticBodyPhysX(this, actor);
 		body = staticBody;
 
 		m_staticBodies.push_back(staticBody);
@@ -348,7 +348,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(const BodyDesc* desc)
 		if (!dynamicDesc->getInitiallyActive())
 			actor->putToSleep();
 
-		Ref< DynamicBodyPhysX > dynamicBody = gc_new< DynamicBodyPhysX >(this, actor);
+		Ref< DynamicBodyPhysX > dynamicBody = new DynamicBodyPhysX(this, actor);
 		body = dynamicBody;
 
 		m_dynamicBodies.push_back(dynamicBody);
@@ -391,7 +391,7 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 		if (!joint)
 			return 0;
 
-		outJoint = gc_new< BallJointPhysX >(this, joint, body1, body2);
+		outJoint = new BallJointPhysX(this, joint, body1, body2);
 	}
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
@@ -418,7 +418,7 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 		if (!joint)
 			return 0;
 
-		outJoint = gc_new< ConeTwistJointPhysX >(this, joint, body1, body2);
+		outJoint = new ConeTwistJointPhysX(this, joint, body1, body2);
 	}
 
 	return outJoint;

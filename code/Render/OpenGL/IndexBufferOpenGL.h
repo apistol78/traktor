@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS IndexBufferOpenGL : public IndexBuffer
 {
-	T_RTTI_CLASS(IndexBufferOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferOpenGL(IndexType indexType, uint32_t bufferSize);

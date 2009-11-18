@@ -1,7 +1,6 @@
 #include "Scene/Editor/DefaultEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Heap/GcNew.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Ui/Command.h"
 
 // Resource factories
@@ -37,7 +36,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.DefaultEditorProfile", DefaultEditorProfile, ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", DefaultEditorProfile, ISceneEditorProfile)
 
 void DefaultEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -57,15 +56,15 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(gc_new< render::TextureFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< render::ShaderFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< world::PostProcessFactory >(context->getResourceDatabase()));
-	outResourceFactories.push_back(gc_new< mesh::StaticMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< mesh::SkinnedMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< mesh::IndoorMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< mesh::InstanceMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< mesh::BlendMeshFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< weather::CloudMaskFactory >(context->getResourceDatabase()));
+	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new mesh::StaticMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::SkinnedMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::IndoorMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::InstanceMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::BlendMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
 }
 
 void DefaultEditorProfile::createEntityFactories(
@@ -73,11 +72,11 @@ void DefaultEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< world::LightEntityFactory >());
-	outEntityFactories.push_back(gc_new< world::ExternalEntityFactory >(context->getSourceDatabase()));
-	outEntityFactories.push_back(gc_new< world::GroupEntityFactory >());
-	outEntityFactories.push_back(gc_new< mesh::MeshEntityFactory >(context->getResourceManager()));
-	outEntityFactories.push_back(gc_new< weather::WeatherEntityFactory >(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new world::LightEntityFactory());
+	outEntityFactories.push_back(new world::ExternalEntityFactory(context->getSourceDatabase()));
+	outEntityFactories.push_back(new world::GroupEntityFactory());
+	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
+	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }
 
 void DefaultEditorProfile::createEntityRenderers(
@@ -87,11 +86,11 @@ void DefaultEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(gc_new< world::LightEntityRenderer >());
-	outEntityRenderers.push_back(gc_new< world::GroupEntityRenderer >());
-	outEntityRenderers.push_back(gc_new< weather::WeatherEntityRenderer >(primitiveRenderer));
-	outEntityRenderers.push_back(gc_new< mesh::MeshEntityRenderer >());
-	outEntityRenderers.push_back(gc_new< mesh::InstanceMeshEntityRenderer >());
+	outEntityRenderers.push_back(new world::LightEntityRenderer());
+	outEntityRenderers.push_back(new world::GroupEntityRenderer());
+	outEntityRenderers.push_back(new weather::WeatherEntityRenderer(primitiveRenderer));
+	outEntityRenderers.push_back(new mesh::MeshEntityRenderer());
+	outEntityRenderers.push_back(new mesh::InstanceMeshEntityRenderer());
 }
 
 void DefaultEditorProfile::createControllerEditorFactories(
@@ -106,7 +105,7 @@ void DefaultEditorProfile::createEntityEditorFactories(
 	RefArray< IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(gc_new< DefaultEntityEditorFactory >());
+	outEntityEditorFactories.push_back(new DefaultEntityEditorFactory());
 }
 
 	}

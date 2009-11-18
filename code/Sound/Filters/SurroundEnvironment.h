@@ -19,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS SurroundEnvironment : public Object
 {
-	T_RTTI_CLASS(SurroundEnvironment)
+	T_RTTI_CLASS;
 
 public:
 	SurroundEnvironment();

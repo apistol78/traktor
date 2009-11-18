@@ -2,8 +2,7 @@
 #define traktor_physics_Body_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Transform.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ struct CollisionInfo;
  */
 class T_DLLCLASS Body : public Object
 {
-	T_RTTI_CLASS(Body)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Destroy rigid body. */

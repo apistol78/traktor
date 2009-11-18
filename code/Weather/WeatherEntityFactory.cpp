@@ -17,9 +17,9 @@ WeatherEntityFactory::WeatherEntityFactory(resource::IResourceManager* resourceM
 {
 }
 
-const TypeSet WeatherEntityFactory::getEntityTypes() const
+const TypeInfoSet WeatherEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SkyEntityData >());
 	typeSet.insert(&type_of< CloudEntityData >());
 	return typeSet;

@@ -1,7 +1,7 @@
 #ifndef traktor_weather_CloudParticleData_H
 #define traktor_weather_CloudParticleData_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Color.h"
 
@@ -18,14 +18,14 @@ namespace traktor
 	namespace weather
 	{
 
-class T_DLLCLASS CloudParticleData : public Serializable
+class T_DLLCLASS CloudParticleData : public ISerializable
 {
-	T_RTTI_CLASS(CloudParticleData)
+	T_RTTI_CLASS;
 
 public:
 	CloudParticleData();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	uint32_t getCount() const { return m_count; }
 

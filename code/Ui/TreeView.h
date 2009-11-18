@@ -24,7 +24,7 @@ class TreeViewState;
  */
 class T_DLLCLASS TreeView : public Widget
 {
-	T_RTTI_CLASS(TreeView)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

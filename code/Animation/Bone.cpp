@@ -1,5 +1,5 @@
 #include "Animation/Bone.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.Bone", Bone, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Bone", Bone, ISerializable)
 
 Bone::Bone()
 :	m_parent(-1)
@@ -27,7 +27,7 @@ int Bone::getVersion() const
 	return 1;
 }
 
-bool Bone::serialize(Serializer& s)
+bool Bone::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< int32_t >(L"parent", m_parent);

@@ -39,7 +39,7 @@ class ToolBar;
  */
 class T_DLLCLASS IEditorPlugin : public Object
 {
-	T_RTTI_CLASS(IEditorPlugin)
+	T_RTTI_CLASS;
 
 public:
 	enum EditorEvent

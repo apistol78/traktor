@@ -1,7 +1,6 @@
 #ifndef traktor_weather_WeatherEntityRenderer_H
 #define traktor_weather_WeatherEntityRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -26,12 +25,12 @@ class PrimitiveRenderer;
 
 class T_DLLCLASS WeatherEntityRenderer : public world::IEntityRenderer
 {
-	T_RTTI_CLASS(WeatherEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
 	WeatherEntityRenderer(render::PrimitiveRenderer* primitiveRenderer = 0);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		world::WorldContext* worldContext,

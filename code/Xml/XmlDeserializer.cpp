@@ -1,14 +1,14 @@
 #include <cstring>
 #include <sstream>
-#include "Xml/XmlDeserializer.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Base64.h"
 #include "Core/Log/Log.h"
+#include "Xml/XmlDeserializer.h"
 
 namespace traktor
 {
@@ -32,7 +32,7 @@ XmlPullParser::Attributes::const_iterator findAttribute(const XmlPullParser::Att
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlDeserializer", XmlDeserializer, Serializer)
 
-XmlDeserializer::XmlDeserializer(Stream* stream)
+XmlDeserializer::XmlDeserializer(IStream* stream)
 :	m_xpp(stream)
 {
 	T_ASSERT_M (stream->canRead(), L"Incorrect direction on input stream");
@@ -322,17 +322,19 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Serializable >& m)
+bool XmlDeserializer::operator >> (const Member< ISerializable >& m)
 {
-	Serializable* o = &static_cast< Serializable& >(m);
+	ISerializable* o = &static_cast< ISerializable& >(m);
 
 	if (!enterElement(m.getName()))
 		return false;
 
 	const XmlPullParser::Attributes& attr = m_xpp.getEvent().attr;
 	XmlPullParser::Attributes::const_iterator a = findAttribute(attr, L"version");
-	int version = a != attr.end() ? parseString< int >(a->second) : 0;
-	T_ASSERT_M (version <= o->getVersion(), L"Serialized data has a higher version number than supported by the code");
+	int32_t version = a != attr.end() ? parseString< int >(a->second) : 0;
+
+	int32_t typeVersion = type_of(o).getVersion();
+	T_ASSERT_M (version <= typeVersion, L"Serialized data has a higher version number than supported by the code");
 	
 	rememberObject(o);
 	if (!serialize(o, version, 0))
@@ -344,7 +346,7 @@ bool XmlDeserializer::operator >> (const Member< Serializable >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Ref< Serializable > >& m)
+bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 {
 	if (!enterElement(m.getName()))
 		return false;
@@ -354,38 +356,38 @@ bool XmlDeserializer::operator >> (const Member< Ref< Serializable > >& m)
 
 	if ((a = findAttribute(attr, L"ref")) != attr.end())
 	{
-		std::map< std::wstring, Object* >::iterator i = m_refs.find(a->second);
+		std::map< std::wstring, ISerializable* >::iterator i = m_refs.find(a->second);
 		if (i == m_refs.end())
 		{
 			log::error << L"No such reference, \"" << a->second << L"\"" << Endl;
 			return 0;
 		}
-		m = static_cast< Serializable* >(m_refs[a->second]);
+		m = m_refs[a->second];
 	}
 	else if ((a = findAttribute(attr, L"type")) != attr.end())
 	{
 		std::wstring typeName = a->second;
 
-		const Type* type = Type::find(typeName);
+		const TypeInfo* type = TypeInfo::find(typeName);
 		if (!type)
 		{
 			log::error << L"No such type, \"" << typeName << L"\"" << Endl;
 			return false;
 		}
 
-		Ref< Serializable > o = dynamic_type_cast< Serializable* >(type->newInstance());
+		Ref< ISerializable > o = dynamic_type_cast< ISerializable* >(type->createInstance());
 		if (!o)
 		{
 			log::error << L"Unable to instanciate type \"" << typeName << L"\"" << Endl;
 			return false;
 		}
 
-		int version = 0;
+		int32_t version = 0;
 		if ((a = findAttribute(attr, L"version")) != attr.end())
-		{
 			version = parseString< int >(a->second);
-			T_ASSERT_M (version <= o->getVersion(), L"Serialized data has a higher version number than supported by the code");
-		}
+
+		int32_t typeVersion = type->getVersion();
+		T_ASSERT_M (version <= typeVersion, L"Serialized data has a higher version number than supported by the code");
 
 		rememberObject(o);
 		if (serialize(o, version, 0))
@@ -405,6 +407,15 @@ bool XmlDeserializer::operator >> (const Member< Ref< Serializable > >& m)
 	if (!leaveElement(m.getName()))
 		return false;
 
+	return true;
+}
+
+bool XmlDeserializer::operator >> (const Member< Ref< ISerializable > >& m)
+{
+	ISerializable* object = 0;
+	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
+		return false;
+	m = object;
 	return true;
 }
 
@@ -492,6 +503,11 @@ bool XmlDeserializer::operator >> (const MemberComplex& m)
 	return true;
 }
 
+bool XmlDeserializer::operator >> (const MemberEnumBase& m)
+{
+	return this->operator >> (*(MemberComplex*)(&m));
+}
+
 std::wstring XmlDeserializer::stackPath()
 {
 	std::wstringstream ss;
@@ -548,7 +564,7 @@ bool XmlDeserializer::leaveElement(const std::wstring& name)
 	return false;
 }
 
-void XmlDeserializer::rememberObject(Object* object)
+void XmlDeserializer::rememberObject(ISerializable* object)
 {
 	m_refs[stackPath()] = object;
 }

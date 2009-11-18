@@ -1,7 +1,7 @@
 #ifndef traktor_sound_SoundResource_H
 #define traktor_sound_SoundResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief Sound resource.
  * \ingroup Sound
  */
-class T_DLLCLASS SoundResource : public Serializable
+class T_DLLCLASS SoundResource : public ISerializable
 {
-	T_RTTI_CLASS(SoundResource)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

@@ -4,7 +4,6 @@
 #include <string>
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +29,7 @@ class External;
  */
 class T_DLLCLASS FragmentLinker : public Object
 {
-	T_RTTI_CLASS(FragmentLinker)
+	T_RTTI_CLASS;
 
 public:
 	struct FragmentReader

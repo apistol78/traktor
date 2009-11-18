@@ -1,5 +1,5 @@
 #include "Spray/PointSet.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.PointSet", PointSet, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSet", PointSet, ISerializable)
 
 PointSet::PointSet()
 {
@@ -19,12 +19,12 @@ PointSet::PointSet(const AlignedVector< Point >& points)
 {
 }
 
-bool PointSet::serialize(Serializer& s)
+bool PointSet::serialize(ISerializer& s)
 {
 	return s >> MemberAlignedVector< Point, MemberComposite< Point > >(L"points", m_points);
 }
 
-bool PointSet::Point::serialize(Serializer& s)
+bool PointSet::Point::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
 	s >> Member< Vector4 >(L"normal", normal);

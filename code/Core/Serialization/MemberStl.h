@@ -2,10 +2,10 @@
 #define traktor_MemberStl_H
 
 #include <cstring>
-#include <vector>
 #include <list>
-#include <set>
 #include <map>
+#include <set>
+#include <vector>
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 
@@ -39,7 +39,7 @@ public:
 		return m_ref.size();
 	}
 	
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		ValueType item;
 		if (!(s >> ValueMember(L"item", item)))
@@ -49,7 +49,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		return s >> ValueMember(L"item", m_ref[index]);
 	}
@@ -93,7 +93,7 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		ValueType item;
 		if (!(s >> ValueMember(L"item", item)))
@@ -103,7 +103,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
 		return s >> ValueMember(L"item", *i);
@@ -148,7 +148,7 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		ValueType item;
 		if (!(s >> ValueMember(L"item", item)))
@@ -158,7 +158,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
 		ValueType tmp = *i;
@@ -187,7 +187,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		if (!(s >> FirstMember(L"first", m_ref.first)))
 			return false;
@@ -223,7 +223,7 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		typename PairMember::value_type item;
 		if (!(s >> PairMember(L"item", item)))
@@ -232,7 +232,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		typename value_type::iterator i = m_ref.begin(); std::advance(i, index);
 		typename PairMember::value_type item = std::make_pair(i->first, i->second);

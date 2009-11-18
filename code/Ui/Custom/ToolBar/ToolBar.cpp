@@ -49,7 +49,7 @@ bool ToolBar::create(Widget* parent, int style)
 	addButtonUpEventHandler(createMethodHandler(this, &ToolBar::eventButtonUp));
 	addPaintEventHandler(createMethodHandler(this, &ToolBar::eventPaint));
 
-	m_toolTip = gc_new< ToolTip >();
+	m_toolTip = new ToolTip();
 	m_toolTip->create(this);
 	m_toolTip->addShowEventHandler(createMethodHandler(this, &ToolBar::eventShowTip));
 
@@ -74,7 +74,7 @@ uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
 		uint32_t width = m_imageEnabled->getSize().cx + source->getSize().cx;
 		uint32_t height = std::max(m_imageEnabled->getSize().cy, source->getSize().cy);
 
-		Ref< ui::Bitmap > newImage = gc_new< ui::Bitmap >(width, height);
+		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_imageEnabled->getImage());
 		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_imageEnabled->getSize().cx, 0));
 		m_imageEnabled = newImage;
@@ -99,7 +99,7 @@ uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
 		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.4f, 0.6f);
 		image = image->applyFilter(&brigtnessContrastFilter);
 
-		m_imageDisabled = gc_new< ui::Bitmap >(image);
+		m_imageDisabled = new ui::Bitmap(image);
 	}
 
 	return imageBase;

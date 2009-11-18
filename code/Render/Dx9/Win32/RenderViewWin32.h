@@ -3,7 +3,6 @@
 
 #include <map>
 #include <stack>
-#include "Core/Heap/Ref.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/IRenderView.h"
@@ -37,7 +36,7 @@ class T_DLLCLASS RenderViewWin32
 :	public IRenderView
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(RenderViewWin32)
+	T_RTTI_CLASS;
 
 public:
 	RenderViewWin32(

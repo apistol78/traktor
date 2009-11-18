@@ -2,7 +2,6 @@
 #include "Flash/FlashShape.h"
 #include "Flash/FlashShapeInstance.h"
 #include "Flash/Path.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -218,7 +217,7 @@ bool FlashShape::create(const SwfShape* shape)
 
 Ref< FlashCharacterInstance > FlashShape::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
-	return gc_new< FlashShapeInstance >(context, parent, this);
+	return new FlashShapeInstance(context, parent, this);
 }
 
 	}

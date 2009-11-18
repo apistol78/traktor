@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS TextureAsset : public editor::Asset
 {
-	T_RTTI_CLASS(TextureAsset)
+	T_RTTI_CLASS;
 
 public:
 	bool m_generateNormalMap;
@@ -37,11 +37,11 @@ public:
 
 	TextureAsset();
 
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

@@ -16,7 +16,7 @@ class Context;
  */
 class LocalGroup : public IProviderGroup
 {
-	T_RTTI_CLASS(LocalGroup)
+	T_RTTI_CLASS;
 
 public:
 	LocalGroup(Context* contex, const Path& groupPath);

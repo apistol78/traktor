@@ -2,7 +2,7 @@
 #define traktor_animation_Bone_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Quaternion.h"
@@ -23,9 +23,9 @@ namespace traktor
 /*! \brief Skeleton bone.
  * \ingroup Animation
  */
-class T_DLLCLASS Bone : public Serializable
+class T_DLLCLASS Bone : public ISerializable
 {
-	T_RTTI_CLASS(Bone)
+	T_RTTI_CLASS;
 
 public:
 	Bone();
@@ -68,7 +68,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;

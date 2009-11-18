@@ -34,7 +34,7 @@ AsString::AsString()
 
 void AsString::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"charAt", createNativeFunctionValue(this, &AsString::String_charAt));
@@ -60,9 +60,9 @@ void AsString::createPrototype()
 ActionValue AsString::construct(ActionContext* context, const args_t& args)
 {
 	if (args.size() > 0)
-		return ActionValue::fromObject(gc_new< ActionString >(args[0].getString()));
+		return ActionValue::fromObject(new ActionString(args[0].getString()));
 	else
-		return ActionValue::fromObject(gc_new< ActionString >());
+		return ActionValue::fromObject(new ActionString());
 }
 
 void AsString::String_charAt(CallArgs& ca)
@@ -73,9 +73,9 @@ void AsString::String_charAt(CallArgs& ca)
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
 
 	if (index < st.length())
-		ca.ret = ActionValue::fromObject(gc_new< ActionString >(st[index]));
+		ca.ret = ActionValue::fromObject(new ActionString(st[index]));
 	else
-		ca.ret = ActionValue::fromObject(gc_new< ActionString >());
+		ca.ret = ActionValue::fromObject(new ActionString());
 }
 
 void AsString::String_charCodeAt(CallArgs& ca)
@@ -107,7 +107,7 @@ void AsString::String_concat(CallArgs& ca)
 void AsString::String_fromCharCode(CallArgs& ca)
 {
 	wchar_t charCode = wchar_t(ca.args[0].getNumberSafe());
-	ca.ret = ActionValue::fromObject(gc_new< ActionString >(charCode));
+	ca.ret = ActionValue::fromObject(new ActionString(charCode));
 }
 
 void AsString::String_indexOf(CallArgs& ca)
@@ -154,7 +154,7 @@ void AsString::String_split(CallArgs& ca)
 		Split< std::wstring >::word(st, delim, words);
 	}
 
-	Ref< ActionArray > arr = gc_new< ActionArray >();
+	Ref< ActionArray > arr = new ActionArray();
 	for (std::vector< std::wstring >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
@@ -187,7 +187,7 @@ void AsString::String_toLowerCase(CallArgs& ca)
 {
 	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue::fromObject(gc_new< ActionString >(toLower(st)));
+	ca.ret = ActionValue::fromObject(new ActionString(toLower(st)));
 }
 
 void AsString::String_toString(CallArgs& ca)
@@ -199,7 +199,7 @@ void AsString::String_toUpperCase(CallArgs& ca)
 {
 	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue::fromObject(gc_new< ActionString >(toUpper(st)));
+	ca.ret = ActionValue::fromObject(new ActionString(toUpper(st)));
 }
 
 void AsString::String_valueOf(CallArgs& ca)

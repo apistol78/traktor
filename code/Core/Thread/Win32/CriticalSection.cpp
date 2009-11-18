@@ -16,8 +16,9 @@ CriticalSection::~CriticalSection()
 	delete static_cast< CRITICAL_SECTION* >(m_handle);
 }
 
-bool CriticalSection::acquire(int timeout)
+bool CriticalSection::wait(int32_t timeout)
 {
+	T_ASSERT_M (timeout != -1, L"Invalid timeout");
 	EnterCriticalSection((LPCRITICAL_SECTION)m_handle);
 	return true;
 }

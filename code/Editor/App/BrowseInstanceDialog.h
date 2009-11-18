@@ -37,7 +37,7 @@ class IBrowseFilter;
 
 class BrowseInstanceDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(BrowseInstanceDialog)
+	T_RTTI_CLASS;
 
 public:
 	BrowseInstanceDialog(Settings* settings);

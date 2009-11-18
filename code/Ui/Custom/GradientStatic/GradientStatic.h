@@ -26,7 +26,7 @@ class Bitmap;
  */
 class T_DLLCLASS GradientStatic : public Widget
 {
-	T_RTTI_CLASS(GradientStatic)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const Color& colorLeft, const Color& colorRight, const Color& colorText, const std::wstring& text, int style = WsNone);

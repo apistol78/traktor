@@ -13,7 +13,7 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ModelFormatObj", ModelFormatObj, ModelFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatObj", ModelFormatObj, ModelFormat)
 
 void ModelFormatObj::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
@@ -28,15 +28,15 @@ bool ModelFormatObj::supportFormat(const Path& filePath) const
 
 Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
 {
-	Ref< Stream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
 	if (!stream)
 		return 0;
 
 	BufferedStream bs(stream);
-	StringReader sr(&bs, gc_new< AnsiEncoding >());
+	StringReader sr(&bs, new AnsiEncoding());
 	std::wstring str;
 
-	Ref< Model > md = gc_new< Model >();
+	Ref< Model > md = new Model();
 	uint32_t materialId = c_InvalidIndex;
 
 	while (sr.readLine(str) >= 0)
@@ -138,12 +138,12 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 
 bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 {
-	Ref< Stream > file = FileSystem::getInstance().open(filePath, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmWrite);
 	if (!file)
 		return false;
 
 	BufferedStream bs(file, 512 * 1024);
-	FileOutputStream s(&bs, gc_new< AnsiEncoding >());
+	FileOutputStream s(&bs, new AnsiEncoding());
 
 	s << L"o " << filePath.getFileName() << Endl;
 	s << Endl;

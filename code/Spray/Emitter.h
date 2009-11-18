@@ -1,10 +1,10 @@
 #ifndef traktor_spray_Emitter_H
 #define traktor_spray_Emitter_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -42,9 +42,9 @@ class Modifier;
 /*! \brief Emitter
  * \ingroup Spray
  */
-class T_DLLCLASS Emitter : public Serializable
+class T_DLLCLASS Emitter : public ISerializable
 {
-	T_RTTI_CLASS(Emitter)
+	T_RTTI_CLASS;
 
 public:
 	Emitter();
@@ -65,7 +65,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< Source > m_source;

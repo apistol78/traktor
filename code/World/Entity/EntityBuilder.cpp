@@ -54,12 +54,12 @@ Ref< Entity > EntityBuilder::create(const std::wstring& name, const EntityData* 
 
 	for (RefArray< IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 	{
-		const TypeSet& typeSet = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
+		const TypeInfoSet& typeSet = (*i)->getEntityTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
 			if (is_type_of(**j, type_of(entityDataRef)))
 			{
-				uint32_t classDifference = type_difference(**j, entityDataRef->getType());
+				uint32_t classDifference = type_difference(**j, type_of(entityDataRef));
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;

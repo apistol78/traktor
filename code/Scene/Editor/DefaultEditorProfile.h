@@ -11,7 +11,7 @@ namespace traktor
 /*! \brief Default scene editor profile. */
 class DefaultEditorProfile : public ISceneEditorProfile
 {
-	T_RTTI_CLASS(DefaultEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(

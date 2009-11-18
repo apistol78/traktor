@@ -1,5 +1,5 @@
 #include "Physics/DynamicBodyState.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.DynamicBodyState", DynamicBodyState, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyState", DynamicBodyState, ISerializable)
 
 DynamicBodyState::DynamicBodyState()
 :	m_transform(Transform::identity())
@@ -55,7 +55,7 @@ DynamicBodyState DynamicBodyState::interpolate(const DynamicBodyState& stateTarg
 	return state;
 }
 
-bool DynamicBodyState::serialize(Serializer& s)
+bool DynamicBodyState::serialize(ISerializer& s)
 {
 	s >> MemberComposite< Transform >(L"transform", m_transform);
 	s >> Member< Vector4 >(L"linearVelocity", m_linearVelocity);

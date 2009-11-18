@@ -15,7 +15,7 @@ namespace traktor
  */
 class IContext : public Object
 {
-	T_RTTI_CLASS(IContext)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Scoped enter/leave helper.

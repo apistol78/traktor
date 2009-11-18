@@ -1,7 +1,7 @@
 #ifndef traktor_editor_Assets_H
 #define traktor_editor_Assets_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Guid.h"
 
 // import/export mechanism.
@@ -20,12 +20,12 @@ namespace traktor
 /*! \brief Root assets.
  * \ingroup Editor
  */
-class T_DLLCLASS Assets : public Serializable
+class T_DLLCLASS Assets : public ISerializable
 {
-	T_RTTI_CLASS(Assets)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class AssetsPipeline;

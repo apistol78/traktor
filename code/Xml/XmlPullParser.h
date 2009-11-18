@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace xml
 	{
@@ -27,7 +27,7 @@ class XmlPullParserImpl;
  */
 class T_DLLCLASS XmlPullParser : public Object
 {
-	T_RTTI_CLASS(XmlPullParser)
+	T_RTTI_CLASS;
 
 public:
 	enum EventType
@@ -55,7 +55,7 @@ public:
 		}
 	};
 
-	XmlPullParser(Stream* stream);
+	XmlPullParser(IStream* stream);
 
 	virtual ~XmlPullParser();
 

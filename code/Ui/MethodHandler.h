@@ -1,8 +1,6 @@
 #ifndef traktor_ui_MethodHandler_H
 #define traktor_ui_MethodHandler_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/GcNew.h"
 #include "Ui/EventHandler.h"
 
 // import/export mechanism.
@@ -51,7 +49,7 @@ private:
 template < typename T >
 inline Ref< EventHandler > createMethodHandler(T* object, typename MethodHandler< T >::M method)
 {
-	return gc_new< MethodHandler< T > >(object, method);
+	return new MethodHandler< T >(object, method);
 }
 
 	}

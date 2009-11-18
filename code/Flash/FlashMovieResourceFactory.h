@@ -1,7 +1,6 @@
 #ifndef traktor_flash_FlashMovieResourceFactory_H
 #define traktor_flash_FlashMovieResourceFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -29,16 +28,16 @@ class Database;
  */
 class T_DLLCLASS FlashMovieResourceFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(FlashMovieResourceFactory)
+	T_RTTI_CLASS;
 
 public:
 	FlashMovieResourceFactory(db::Database* db);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_db;

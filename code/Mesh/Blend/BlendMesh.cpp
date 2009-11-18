@@ -156,9 +156,9 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 	indexBuffer->unlock();
 
 	// Create instance.
-	Ref< BlendMesh::Instance > instance = gc_new< BlendMesh::Instance >();
+	Ref< BlendMesh::Instance > instance = new BlendMesh::Instance();
 
-	instance->mesh = gc_new< render::Mesh >();
+	instance->mesh = new render::Mesh();
 	instance->mesh->setVertexElements(m_meshes[0]->getVertexElements());
 	instance->mesh->setVertexBuffer(vertexBuffer);
 	instance->mesh->setIndexBuffer(indexBuffer);

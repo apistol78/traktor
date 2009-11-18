@@ -23,7 +23,7 @@ class ActionContext;
  */
 class T_DLLCLASS ActionClass : public ActionFunction
 {
-	T_RTTI_CLASS(ActionClass)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::vector< ActionValue > args_t;

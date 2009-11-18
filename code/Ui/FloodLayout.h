@@ -1,7 +1,6 @@
 #ifndef traktor_ui_FloodLayout_H
 #define traktor_ui_FloodLayout_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Layout.h"
 #include "Ui/Size.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS FloodLayout : public Layout
 {
-	T_RTTI_CLASS(FloodLayout)
+	T_RTTI_CLASS;
 
 public:
 	FloodLayout();

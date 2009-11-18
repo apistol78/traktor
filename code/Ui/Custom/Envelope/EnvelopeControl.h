@@ -1,8 +1,7 @@
 #ifndef traktor_ui_custom_EnvelopeControl_H
 #define traktor_ui_custom_EnvelopeControl_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class EnvelopeKey;
  */
 class T_DLLCLASS EnvelopeControl : public Widget
 {
-	T_RTTI_CLASS(EnvelopeControl)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, EnvelopeEvaluator* evaluator, float minValue = -1.0f, float maxValue = 1.0f, int style = WsNone);

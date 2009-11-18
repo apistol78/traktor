@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #if !defined(_XBOX) && !defined(WINCE)
-#include <direct.h>
+#	include <direct.h>
 #endif
 #include "Core/Platform.h"
 #include "Core/Io/Win32/NativeVolume.h"
@@ -32,7 +32,7 @@ DateTime createDateTime(const FILETIME& ft)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, Volume)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, IVolume)
 
 NativeVolume::NativeVolume(const Path& currentDirectory)
 :	m_currentDirectory(currentDirectory)
@@ -97,13 +97,13 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_ARCHIVE  ) == FILE_ATTRIBUTE_ARCHIVE  ) ? File::FfArchive   : 0) |
 				(((ffd.dwFileAttributes  & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) ? File::FfDirectory : 0);
 			
-			out.push_back(gc_new< File >(
-				cref(Path(path + tstows(ffd.cFileName))),
+			out.push_back(new File(
+				Path(path + tstows(ffd.cFileName)),
 				ffd.nFileSizeLow,
 				flags,
-				cref(createDateTime(ffd.ftCreationTime)),
-				cref(createDateTime(ffd.ftLastAccessTime)),
-				cref(createDateTime(ffd.ftLastWriteTime))
+				createDateTime(ffd.ftCreationTime),
+				createDateTime(ffd.ftLastAccessTime),
+				createDateTime(ffd.ftLastWriteTime)
 			));
 		}
 		while (FindNextFile(hfd, &ffd));
@@ -135,7 +135,7 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 	return bool(result != FALSE);
 }
 
-Ref< Stream > NativeVolume::open(const Path& fileName, uint32_t mode)
+Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 {
 	DWORD desiredAccess = 0, creationDisposition = 0;
 
@@ -162,7 +162,7 @@ Ref< Stream > NativeVolume::open(const Path& fileName, uint32_t mode)
 		NULL
 	);
 
-	return (hFile != INVALID_HANDLE_VALUE) ? gc_new< NativeStream >(hFile, mode) : 0;
+	return (hFile != INVALID_HANDLE_VALUE) ? new NativeStream(hFile, mode) : 0;
 }
 
 bool NativeVolume::exist(const Path& fileName)
@@ -252,7 +252,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 		mountPoint[0] =
 		driveFormat[0] = L'A' + drive;
 
-		Ref< Volume > volume = gc_new< NativeVolume >(driveFormat);
+		Ref< IVolume > volume = new NativeVolume(driveFormat);
 
 		fileSystem.mount(mountPoint, volume);
 		
@@ -265,7 +265,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 #elif defined(_XBOX)
 
-	Ref< Volume > volume = gc_new< NativeVolume >(L"D:");
+	Ref< IVolume > volume = new NativeVolume(L"D:");
 	fileSystem.mount(L"D", volume);
 	fileSystem.setCurrentVolume(volume);
 
@@ -277,7 +277,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 	Path originalDirectory(moduleName);
 	log::info << L"Using \"" << originalDirectory.getPathOnly() << L"\" as original directory" << Endl;
 
-	Ref< Volume > volume = gc_new< NativeVolume >(originalDirectory.getPathOnly());
+	Ref< IVolume > volume = new NativeVolume(originalDirectory.getPathOnly());
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
 

@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Hinge2JointOde : public JointOde< Hinge2Joint >
 {
-	T_RTTI_CLASS(Hinge2JointOde)
+	T_RTTI_CLASS;
 
 public:
 	Hinge2JointOde(DestroyCallback* callback, dJointID jointId, Body* body1, Body* body2);

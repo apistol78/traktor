@@ -35,7 +35,7 @@ private:
  */
 inline Ref< EventHandler > createFunctionHandler(FunctionHandler::F function)
 {
-	return gc_new< FunctionHandler >(function);
+	return new FunctionHandler(function);
 }
 
 	}

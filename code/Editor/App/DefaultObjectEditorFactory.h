@@ -10,10 +10,10 @@ namespace traktor
 
 class DefaultObjectEditorFactory : public IObjectEditorFactory
 {
-	T_RTTI_CLASS(DefaultObjectEditorFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const;
 };

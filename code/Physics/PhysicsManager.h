@@ -2,8 +2,7 @@
 #define traktor_physics_PhysicsManager_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Transform.h"
 
@@ -53,7 +52,7 @@ struct CollisionPair
  */
 class T_DLLCLASS PhysicsManager : public Object
 {
-	T_RTTI_CLASS(PhysicsManager)
+	T_RTTI_CLASS;
 
 public:
 	enum QueryType

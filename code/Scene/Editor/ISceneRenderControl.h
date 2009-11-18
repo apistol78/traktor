@@ -17,7 +17,7 @@ class Command;
 
 class ISceneRenderControl : public Object
 {
-	T_RTTI_CLASS(ISceneRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	virtual void destroy() = 0;

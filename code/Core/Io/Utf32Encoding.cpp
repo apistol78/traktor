@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Utf32Encoding", Utf32Encoding, Encoding)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Utf32Encoding", Utf32Encoding, IEncoding)
 
 int Utf32Encoding::translate(const wchar_t* chars, int count, uint8_t* out) const
 {

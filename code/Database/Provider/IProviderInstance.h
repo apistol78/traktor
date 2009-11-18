@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,8 +15,8 @@
 namespace traktor
 {
 
-class Serializable;
-class Stream;
+class ISerializable;
+class IStream;
 
 	namespace db
 	{
@@ -27,7 +26,7 @@ class Stream;
  */
 class T_DLLCLASS IProviderInstance : public Object
 {
-	T_RTTI_CLASS(IProviderInstance)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getPrimaryTypeName() const = 0;
@@ -48,15 +47,15 @@ public:
 
 	virtual bool remove() = 0;
 
-	virtual Ref< Stream > readObject(const Type*& outSerializerType) = 0;
+	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) = 0;
 
-	virtual Ref< Stream > writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType) = 0;
+	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType) = 0;
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const = 0;
 
-	virtual Ref< Stream > readData(const std::wstring& dataName) = 0;
+	virtual Ref< IStream > readData(const std::wstring& dataName) = 0;
 
-	virtual Ref< Stream > writeData(const std::wstring& dataName) = 0;
+	virtual Ref< IStream > writeData(const std::wstring& dataName) = 0;
 };
 
 	}

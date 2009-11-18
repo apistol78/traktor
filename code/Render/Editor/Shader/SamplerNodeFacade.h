@@ -21,13 +21,13 @@ class NodeShape;
 
 class SamplerNodeFacade : public NodeFacade
 {
-	T_RTTI_CLASS(SamplerNodeFacade)
+	T_RTTI_CLASS;
 
 public:
 	SamplerNodeFacade(ui::custom::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
-		const Type* nodeType,
+		const TypeInfo* nodeType,
 		editor::IEditor* editor
 	);
 

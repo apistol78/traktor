@@ -2,7 +2,7 @@
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.spray.Effect", Effect, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.Effect", Effect, ISerializable)
 
 Effect::Effect()
 :	m_duration(0.0f)
@@ -21,7 +21,7 @@ Effect::Effect()
 
 Ref< EffectInstance > Effect::createInstance(resource::IResourceManager* resourceManager) const
 {
-	Ref< EffectInstance > effectInstance = gc_new< EffectInstance >(this);
+	Ref< EffectInstance > effectInstance = new EffectInstance(this);
 	for (RefArray< EffectLayer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		Ref< EffectLayerInstance > layerInstance = (*i)->createInstance(resourceManager);
@@ -31,7 +31,7 @@ Ref< EffectInstance > Effect::createInstance(resource::IResourceManager* resourc
 	return effectInstance;
 }
 
-bool Effect::serialize(Serializer& s)
+bool Effect::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
 	s >> Member< float >(L"loopStart", m_loopStart);

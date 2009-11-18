@@ -21,7 +21,7 @@ namespace traktor
 
 class T_DLLCLASS InputDeviceDi8 : public IInputDevice
 {
-	T_RTTI_CLASS(InputDeviceDi8)
+	T_RTTI_CLASS;
 
 public:
 	InputDeviceDi8(IDirectInputDevice8* diDevice);

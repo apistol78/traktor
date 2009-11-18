@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS FlashEditorPageFactory : public editor::IEditorPageFactory
 {
-	T_RTTI_CLASS(FlashEditorPageFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor) const;
 

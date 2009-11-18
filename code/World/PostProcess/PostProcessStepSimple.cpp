@@ -4,7 +4,7 @@
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Resource/IResourceManager.h"
@@ -15,17 +15,17 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSimple", PostProcessStepSimple, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSimple::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	return gc_new< InstanceSimple >(this);
+	return new InstanceSimple(this);
 }
 
-bool PostProcessStepSimple::serialize(Serializer& s)
+bool PostProcessStepSimple::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
@@ -38,7 +38,7 @@ PostProcessStepSimple::Source::Source()
 {
 }
 
-bool PostProcessStepSimple::Source::serialize(Serializer& s)
+bool PostProcessStepSimple::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< int32_t >(L"source", source);

@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS IFilter : public Object
 {
-	T_RTTI_CLASS(IFilter)
+	T_RTTI_CLASS;
 
 public:
 	virtual void apply(SoundBlock& outBlock) = 0;

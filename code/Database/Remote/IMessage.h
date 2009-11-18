@@ -1,7 +1,7 @@
 #ifndef traktor_db_IMessage_H
 #define traktor_db_IMessage_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -11,9 +11,9 @@ namespace traktor
 /*! \brief Network message interface.
  * \ingroup Database
  */
-class IMessage : public Serializable
+class IMessage : public ISerializable
 {
-	T_RTTI_CLASS(IMessage)
+	T_RTTI_CLASS;
 };
 
 	}

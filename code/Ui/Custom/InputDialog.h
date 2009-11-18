@@ -1,7 +1,7 @@
 #ifndef traktor_ui_custom_InputDialog_H
 #define traktor_ui_custom_InputDialog_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class EditValidator;
  */
 class T_DLLCLASS InputDialog : public ConfigDialog
 {
-	T_RTTI_CLASS(InputDialog)
+	T_RTTI_CLASS;
 
 public:
 	struct Field

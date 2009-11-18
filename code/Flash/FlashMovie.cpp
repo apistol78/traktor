@@ -6,7 +6,6 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionGlobal.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -107,8 +106,8 @@ Ref< const FlashSprite > FlashMovie::getMovieClip() const
 
 Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance() const
 {
-	Ref< ActionGlobal > global = gc_new< ActionGlobal >();
-	Ref< ActionContext > context = gc_new< ActionContext >(this, global);
+	Ref< ActionGlobal > global = new ActionGlobal();
+	Ref< ActionContext > context = new ActionContext(this, global);
 	return checked_type_cast< FlashSpriteInstance* >(m_movieClip->createInstance(context, 0));
 }
 

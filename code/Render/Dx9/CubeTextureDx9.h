@@ -3,7 +3,6 @@
 
 #include "Render/ICubeTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class T_DLLCLASS CubeTextureDx9
 :	public ICubeTexture
 ,	public TextureBaseDx9
 {
-	T_RTTI_CLASS(CubeTextureDx9)
+	T_RTTI_CLASS;
 
 public:
 	CubeTextureDx9(ContextDx9* context);

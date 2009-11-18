@@ -2,7 +2,6 @@
 #define traktor_render_Shader_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
@@ -34,7 +33,7 @@ class IRenderView;
  */
 class T_DLLCLASS Shader : public Object
 {
-	T_RTTI_CLASS(Shader);
+	T_RTTI_CLASS;
 
 public:
 	Shader();

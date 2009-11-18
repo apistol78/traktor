@@ -1,7 +1,7 @@
 #ifndef traktor_animation_RagDollPoseController_H
 #define traktor_animation_RagDollPoseController_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Animation/IPoseController.h"
 
 // import/export mechanism.
@@ -31,7 +31,7 @@ class Joint;
  */
 class T_DLLCLASS RagDollPoseController : public IPoseController
 {
-	T_RTTI_CLASS(RagDollPoseController)
+	T_RTTI_CLASS;
 
 public:
 	virtual ~RagDollPoseController();

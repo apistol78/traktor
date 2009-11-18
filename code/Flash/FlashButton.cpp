@@ -1,6 +1,5 @@
 #include "Flash/FlashButton.h"
 #include "Flash/FlashButtonInstance.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -36,7 +35,7 @@ const FlashButton::button_conditions_t& FlashButton::getButtonConditions() const
 
 Ref< FlashCharacterInstance > FlashButton::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
-	return gc_new< FlashButtonInstance >(context, parent, this);
+	return new FlashButtonInstance(context, parent, this);
 }
 
 	}

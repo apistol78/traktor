@@ -23,7 +23,7 @@ class EditValidator;
  */
 class T_DLLCLASS Edit : public Widget
 {
-	T_RTTI_CLASS(Edit)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder, EditValidator* validator = 0);

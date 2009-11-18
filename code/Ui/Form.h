@@ -26,7 +26,7 @@ class Bitmap;
  */
 class T_DLLCLASS Form : public Container
 {
-	T_RTTI_CLASS(Form)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

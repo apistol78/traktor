@@ -23,7 +23,7 @@ class Button;
  */
 class T_DLLCLASS ConfigDialog : public Dialog
 {
-	T_RTTI_CLASS(ConfigDialog)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

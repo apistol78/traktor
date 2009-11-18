@@ -19,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS IPipelineSettings : public Object
 {
-	T_RTTI_CLASS(IPipelineSettings)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const = 0;

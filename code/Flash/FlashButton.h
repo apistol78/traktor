@@ -25,7 +25,7 @@ class ActionScript;
  */
 class T_DLLCLASS FlashButton : public FlashCharacter
 {
-	T_RTTI_CLASS(FlashButton)
+	T_RTTI_CLASS;
 
 public:
 	enum ConditionMasks

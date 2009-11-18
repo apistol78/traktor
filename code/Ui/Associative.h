@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.

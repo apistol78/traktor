@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS DropDown : public Widget
 {
-	T_RTTI_CLASS(DropDown)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsBorder);

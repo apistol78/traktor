@@ -1,9 +1,8 @@
 #ifndef traktor_animation_IPoseControllerData_H
 #define traktor_animation_IPoseControllerData_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Transform.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,9 +37,9 @@ class Skeleton;
 /*! \brief Pose evaluation controller data.
  * \ingroup Animation
  */
-class T_DLLCLASS IPoseControllerData : public Serializable
+class T_DLLCLASS IPoseControllerData : public ISerializable
 {
-	T_RTTI_CLASS(IPoseControllerData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< IPoseController > createInstance(

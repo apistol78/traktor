@@ -1,6 +1,6 @@
 #include <cstring>
 #include <list>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/Utf16Encoding.h"
@@ -23,7 +23,7 @@ namespace traktor
 class CharacterReader
 {
 public:
-	CharacterReader(Stream* stream, const Encoding* encoding)
+	CharacterReader(IStream* stream, const IEncoding* encoding)
 	:	m_stream(stream)
 	,	m_encoding(encoding)
 	,	m_count(0)
@@ -37,9 +37,9 @@ public:
 
 	bool read(wchar_t& outChar)
 	{
-		if (m_count < Encoding::MaxEncodingSize)
+		if (m_count < IEncoding::MaxEncodingSize)
 		{
-			int32_t nread = m_stream->read(&m_buffer[m_count], Encoding::MaxEncodingSize - m_count);
+			int32_t nread = m_stream->read(&m_buffer[m_count], IEncoding::MaxEncodingSize - m_count);
 			if (nread <= 0 && m_count <= 0)
 				return false;
 
@@ -54,9 +54,9 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
-	Ref< const Encoding > m_encoding;
-	uint8_t m_buffer[Encoding::MaxEncodingSize];
+	Ref< IStream > m_stream;
+	Ref< const IEncoding > m_encoding;
+	uint8_t m_buffer[IEncoding::MaxEncodingSize];
 	int32_t m_count;
 };
 
@@ -69,9 +69,9 @@ Document::Document(bool parseComments) :
 {
 }
 
-bool Document::loadFromFile(const std::wstring& filename, const Encoding* encoding)
+bool Document::loadFromFile(const std::wstring& filename, const IEncoding* encoding)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(filename, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(filename, File::FmRead);
 	if (!file)
 		return false;
 
@@ -81,7 +81,7 @@ bool Document::loadFromFile(const std::wstring& filename, const Encoding* encodi
 	return result;
 }
 
-bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
+bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 {
 	CharacterReader reader(stream, encoding);
 	RefArray< Element > elm;
@@ -92,7 +92,7 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 	wchar_t ch = 0;
 	Ref< Element > e;
 
-	m_docElement = gc_new< Element >(L"$document");
+	m_docElement = new Element(L"$document");
 	elm.push_front(m_docElement);
 	
 	while (reader.available())
@@ -112,7 +112,7 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 				if (text.length() && !elm.empty())
 				{
 					elm.front()->addChild(
-						Ref< Text >(gc_new< Text >(text))
+						Ref< Text >(new Text(text))
 					);
 				}
 
@@ -136,7 +136,7 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 						if (single)
 							buf = buf.substr(0, buf.length() - 1);
 
-						e = gc_new< Element >(toLower(buf));
+						e = new Element(toLower(buf));
 
 						if (single)
 							elm.front()->addChild(e);
@@ -275,7 +275,7 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 					if (text.length() && !elm.empty())
 					{
 						elm.front()->addChild(
-							Ref< Comment >(gc_new< Comment >(text))
+							Ref< Comment >(new Comment(text))
 						);
 					}
 				}
@@ -295,18 +295,18 @@ bool Document::loadFromStream(Stream* stream, const Encoding* encoding)
 
 bool Document::loadFromText(const std::wstring& text)
 {
-	Ref< MemoryStream > stream = gc_new< MemoryStream >((void*)text.c_str(), int(text.length() * sizeof(wchar_t)));
+	Ref< MemoryStream > stream = new MemoryStream((void*)text.c_str(), int(text.length() * sizeof(wchar_t)));
 #if defined(_WIN32)
-	Ref< Encoding > encoding = gc_new< Utf16Encoding >();
+	Ref< IEncoding > encoding = new Utf16Encoding();
 #else
-	Ref< Encoding > encoding = gc_new< Utf32Encoding >();
+	Ref< IEncoding > encoding = new Utf32Encoding();
 #endif
 	return loadFromStream(stream, encoding);
 }
 
 bool Document::saveAsFile(const std::wstring& filename)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(filename, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(filename, File::FmWrite);
 	if (!file)
 		return false;
 
@@ -316,7 +316,7 @@ bool Document::saveAsFile(const std::wstring& filename)
 	return result;
 }
 
-bool Document::saveIntoStream(Stream* stream)
+bool Document::saveIntoStream(IStream* stream)
 {
 	if (!m_docElement)
 		return false;

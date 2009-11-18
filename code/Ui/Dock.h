@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Dock_H
 #define traktor_ui_Dock_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class Image;
  */
 class T_DLLCLASS Dock : public Widget
 {
-	T_RTTI_CLASS(Dock)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent);

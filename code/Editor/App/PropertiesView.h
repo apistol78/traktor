@@ -1,14 +1,13 @@
 #ifndef traktor_editor_PropertiesView_H
 #define traktor_editor_PropertiesView_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Container.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace editor
 	{
@@ -19,7 +18,7 @@ class PropertiesView
 :	public ui::Container
 ,	public ui::custom::PropertyList::IPropertyGuidResolver
 {
-	T_RTTI_CLASS(PropertiesView)
+	T_RTTI_CLASS;
 
 public:
 	PropertiesView(IEditor* editor);
@@ -28,16 +27,16 @@ public:
 
 	void destroy();
 
-	void setPropertyObject(Serializable* object, Serializable* outer);
+	void setPropertyObject(ISerializable* object, ISerializable* outer);
 
-	Ref< Serializable > getPropertyObject();
+	Ref< ISerializable > getPropertyObject();
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
 private:
 	IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
-	Ref< Serializable > m_propertyObject;
+	Ref< ISerializable > m_propertyObject;
 
 	void eventPropertyCommand(ui::Event* event);
 

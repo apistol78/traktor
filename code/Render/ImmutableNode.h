@@ -1,7 +1,7 @@
 #ifndef traktor_render_ImmutableNode_H
 #define traktor_render_ImmutableNode_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -28,7 +28,7 @@ namespace traktor
  */
 class T_DLLCLASS ImmutableNode : public Node
 {
-	T_RTTI_CLASS(ImmutableNode)
+	T_RTTI_CLASS;
 
 public:
 	struct InputPinDesc

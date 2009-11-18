@@ -5,7 +5,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Modifier", Modifier, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Modifier", Modifier, ISerializable)
 
 	}
 }

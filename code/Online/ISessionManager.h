@@ -2,8 +2,7 @@
 #define traktor_online_ISessionManager_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +22,7 @@ class ISession;
 
 class T_DLLCLASS ISessionManager : public Object
 {
-	T_RTTI_CLASS(ISessionManager)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers) = 0;

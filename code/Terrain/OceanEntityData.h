@@ -31,7 +31,7 @@ class Heightfield;
 
 class T_DLLCLASS OceanEntityData : public world::EntityData
 {
-	T_RTTI_CLASS(OceanEntityData)
+	T_RTTI_CLASS;
 
 public:
 	enum { MaxWaves = 32 };
@@ -49,7 +49,7 @@ public:
 		{
 		}
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	OceanEntityData();
@@ -58,7 +58,7 @@ public:
 
 	const Wave& getWave(int index) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
 

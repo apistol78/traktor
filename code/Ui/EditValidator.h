@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS EditValidator : public Object
 {
-	T_RTTI_CLASS(EditValidator)
+	T_RTTI_CLASS;
 
 public:
 	enum Result

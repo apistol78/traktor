@@ -10,7 +10,7 @@ namespace traktor
 
 class SplineSourceRenderer : public SourceRenderer
 {
-	T_RTTI_CLASS(SplineSourceRenderer)
+	T_RTTI_CLASS;
 
 public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const;

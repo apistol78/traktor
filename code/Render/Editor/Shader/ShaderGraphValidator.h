@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +22,7 @@ class Node;
 
 class T_DLLCLASS ShaderGraphValidator : public Object
 {
-	T_RTTI_CLASS(ShaderGraphValidator)
+	T_RTTI_CLASS;
 
 public:
 	enum ShaderGraphType

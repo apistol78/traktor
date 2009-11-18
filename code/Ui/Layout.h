@@ -24,7 +24,7 @@ class Widget;
  */
 class T_DLLCLASS Layout : public Object
 {
-	T_RTTI_CLASS(Layout)
+	T_RTTI_CLASS;
 
 public:
 	/*!

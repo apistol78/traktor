@@ -1,0 +1,123 @@
+#ifndef traktor_ISerializer_H
+#define traktor_ISerializer_H
+
+#include "Core/Guid.h"
+#include "Core/Io/Path.h"
+#include "Core/Math/Color.h"
+#include "Core/Math/Matrix33.h"
+#include "Core/Math/Matrix44.h"
+#include "Core/Math/Quaternion.h"
+#include "Core/Object.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberArray.h"
+#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberEnum.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+
+/*! \brief Serializer interface.
+ * \ingroup Core
+ */
+class T_DLLCLASS ISerializer : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	enum Direction
+	{
+		SdRead,
+		SdWrite
+	};
+
+	virtual int getVersion() const = 0;
+
+	virtual Direction getDirection() = 0;
+
+	virtual ISerializable* getCurrentObject() = 0;
+
+	virtual ISerializable* getOuterObject() = 0;
+
+	virtual bool operator >> (const Member< bool >& m) = 0;
+
+	virtual bool operator >> (const Member< int8_t >& m) = 0;
+
+	virtual bool operator >> (const Member< uint8_t >& m) = 0;
+
+	virtual bool operator >> (const Member< int16_t >& m) = 0;
+
+	virtual bool operator >> (const Member< uint16_t >& m) = 0;
+
+	virtual bool operator >> (const Member< int32_t >& m) = 0;
+
+	virtual bool operator >> (const Member< uint32_t >& m) = 0;
+
+	virtual bool operator >> (const Member< int64_t >& m) = 0;
+
+	virtual bool operator >> (const Member< uint64_t >& m) = 0;
+
+	virtual bool operator >> (const Member< float >& m) = 0;
+
+	virtual bool operator >> (const Member< double >& m) = 0;
+
+	virtual bool operator >> (const Member< std::string >& m) = 0;
+
+	virtual bool operator >> (const Member< std::wstring >& m) = 0;
+
+	virtual bool operator >> (const Member< Guid >& m) = 0;
+
+	virtual bool operator >> (const Member< Path >& m) = 0;
+
+	virtual bool operator >> (const Member< Color >& m) = 0;
+
+	virtual bool operator >> (const Member< Scalar >& m) = 0;
+
+	virtual bool operator >> (const Member< Vector2 >& m) = 0;
+
+	virtual bool operator >> (const Member< Vector4 >& m) = 0;
+
+	virtual bool operator >> (const Member< Matrix33 >& m) = 0;
+
+	virtual bool operator >> (const Member< Matrix44 >& m) = 0;
+
+	virtual bool operator >> (const Member< Quaternion >& m) = 0;
+
+	virtual bool operator >> (const Member< ISerializable >& m) = 0;
+
+	virtual bool operator >> (const Member< ISerializable* >& m) = 0;
+
+	virtual bool operator >> (const Member< Ref< ISerializable > >& m) = 0;
+
+	virtual bool operator >> (const Member< void* >& m) = 0;
+
+	virtual bool operator >> (const MemberArray& m) = 0;
+
+	virtual bool operator >> (const MemberComplex& m) = 0;
+
+	virtual bool operator >> (const MemberEnumBase& m) = 0;
+
+	template < typename T >
+	T* getCurrentObject()
+	{
+		return dynamic_type_cast< T* >(getCurrentObject());
+	}
+
+	template < typename T >
+	T* getOuterObject()
+	{
+		return dynamic_type_cast< T* >(getOuterObject());
+	}
+};
+
+}
+
+#endif	// traktor_ISerializer_H

@@ -3,8 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Containers/AlignedVector.h"
 
@@ -39,7 +38,7 @@ class IEntityEditor;
  */
 class T_DLLCLASS EntityAdapter : public Object
 {
-	T_RTTI_CLASS(EntityAdapter)
+	T_RTTI_CLASS;
 
 public:
 	EntityAdapter(world::EntityInstance* instance);

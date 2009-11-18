@@ -1,16 +1,16 @@
 #ifndef traktor_ui_custom_InspectReflector_H
 #define traktor_ui_custom_InspectReflector_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/Serializer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,7 +28,7 @@ class PropertyItem;
  */
 class T_DLLCLASS InspectReflector : public Serializer
 {
-	T_RTTI_CLASS(InspectReflector)
+	T_RTTI_CLASS;
 	
 public:
 	InspectReflector(AutoPropertyList* propertyList, PropertyItem* parentPropertyItem = 0);
@@ -79,9 +79,11 @@ public:
 
 	virtual bool operator >> (const Member< Quaternion >& m);
 	
-	virtual bool operator >> (const Member< Serializable >& m);
+	virtual bool operator >> (const Member< ISerializable >& m);
 
-	virtual bool operator >> (const Member< Ref< Serializable > >& m);
+	virtual bool operator >> (const Member< ISerializable* >& m);
+
+	virtual bool operator >> (const Member< Ref< ISerializable > >& m);
 
 	virtual bool operator >> (const Member< void* >& m);
 

@@ -1,9 +1,8 @@
 #ifndef traktor_animation_StateGraph_H
 #define traktor_animation_StateGraph_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,9 +23,9 @@ class Transition;
 /*! \brief Animation state graph.
  * \ingroup Animation
  */
-class T_DLLCLASS StateGraph : public Serializable
+class T_DLLCLASS StateGraph : public ISerializable
 {
-	T_RTTI_CLASS(StateGraph)
+	T_RTTI_CLASS;
 
 public:
 	void addState(State* state);
@@ -45,7 +44,7 @@ public:
 
 	Ref< State > getRootState() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< State > m_states;

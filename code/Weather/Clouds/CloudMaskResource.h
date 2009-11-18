@@ -1,7 +1,7 @@
 #ifndef traktor_weather_CloudMaskResource_H
 #define traktor_weather_CloudMaskResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,16 +16,16 @@ namespace traktor
 	namespace weather
 	{
 
-class T_DLLCLASS CloudMaskResource : public Serializable
+class T_DLLCLASS CloudMaskResource : public ISerializable
 {
-	T_RTTI_CLASS(CloudMaskResource)
+	T_RTTI_CLASS;
 
 public:
 	CloudMaskResource(int32_t size = 0);
 
 	int32_t getSize() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_size;

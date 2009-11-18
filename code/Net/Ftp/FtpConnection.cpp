@@ -2,8 +2,7 @@
 #include "Net/Ftp/FtpClient.h"
 #include "Net/Url.h"
 #include "Net/SocketAddressIPv6.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -29,7 +28,7 @@ UrlConnection::EstablishResult FtpConnection::establish(const Url& url, Url* out
 	SocketAddressIPv6 address(url.getHost(), url.getPort());
 
 	// Connect to server.
-	m_client = gc_new< FtpClient >();
+	m_client = new FtpClient();
 	if (!m_client->connect(address))
 		return ErConnectFailed;
 
@@ -71,7 +70,7 @@ Url FtpConnection::getUrl() const
 	return m_url;
 }
 
-Ref< Stream > FtpConnection::getStream()
+Ref< IStream > FtpConnection::getStream()
 {
 	return m_stream;
 }

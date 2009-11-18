@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Triangulator : public Object
 {
-	T_RTTI_CLASS(Triangulator)
+	T_RTTI_CLASS;
 
 public:
 	void triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles);

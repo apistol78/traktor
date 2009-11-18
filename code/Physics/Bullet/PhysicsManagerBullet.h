@@ -1,7 +1,6 @@
 #ifndef traktor_physics_PhysicsManagerBullet_H
 #define traktor_physics_PhysicsManagerBullet_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"
 #include "Core/Thread/CriticalSection.h"
@@ -39,7 +38,7 @@ class T_DLLCLASS PhysicsManagerBullet
 :	public PhysicsManager
 ,	public DestroyCallback
 {
-	T_RTTI_CLASS(PhysicsManagerBullet)
+	T_RTTI_CLASS;
 
 public:
 	PhysicsManagerBullet();

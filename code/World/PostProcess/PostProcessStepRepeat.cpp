@@ -1,5 +1,5 @@
 #include "World/PostProcess/PostProcessStepRepeat.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepRepeat", PostProcessStepRepeat, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepRepeat", PostProcessStepRepeat, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepRepeat::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -16,10 +16,10 @@ Ref< PostProcessStep::Instance > PostProcessStepRepeat::create(resource::IResour
 	if (!instance)
 		return 0;
 
-	return gc_new< InstanceRepeat >(m_count, instance);
+	return new InstanceRepeat(m_count, instance);
 }
 
-bool PostProcessStepRepeat::serialize(Serializer& s)
+bool PostProcessStepRepeat::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> MemberRef< PostProcessStep >(L"step", m_step);

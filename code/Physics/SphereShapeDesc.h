@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS SphereShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(SphereShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	SphereShapeDesc();
@@ -30,7 +30,7 @@ public:
 
 	float getRadius() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_radius;

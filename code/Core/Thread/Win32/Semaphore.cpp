@@ -39,7 +39,7 @@ Semaphore::~Semaphore()
 	delete in;
 }
 
-bool Semaphore::acquire(int timeout)
+bool Semaphore::wait(int32_t timeout)
 {
 	Internal* in = reinterpret_cast< Internal* >(m_handle);
 

@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsTextField : public ActionClass
 {
-	T_RTTI_CLASS(AsTextField)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsTextField > getInstance();

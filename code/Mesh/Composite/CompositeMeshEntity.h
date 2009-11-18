@@ -2,7 +2,6 @@
 #define traktor_mesh_CompositeMeshEntity_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Mesh/MeshEntity.h"
 
 // import/export mechanism.
@@ -20,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS CompositeMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(CompositeMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	CompositeMeshEntity(const Transform& transform);

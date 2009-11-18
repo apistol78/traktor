@@ -16,7 +16,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.weather.CloudMaskPipeline", CloudMaskPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudMaskPipeline", CloudMaskPipeline, editor::IPipeline)
 
 bool CloudMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -33,9 +33,9 @@ uint32_t CloudMaskPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet CloudMaskPipeline::getAssetTypes() const
+TypeInfoSet CloudMaskPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< CloudMaskAsset >());
 	return typeSet;
 }
@@ -43,7 +43,7 @@ TypeSet CloudMaskPipeline::getAssetTypes() const
 bool CloudMaskPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -55,7 +55,7 @@ bool CloudMaskPipeline::buildDependencies(
 
 bool CloudMaskPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -82,7 +82,7 @@ bool CloudMaskPipeline::buildOutput(
 	uint32_t size = image->getWidth();
 
 	// Create mask resource.
-	Ref< CloudMaskResource > resource = gc_new< CloudMaskResource >(size);
+	Ref< CloudMaskResource > resource = new CloudMaskResource(size);
 
 	// Create instance's name.
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
@@ -97,7 +97,7 @@ bool CloudMaskPipeline::buildOutput(
 
 	instance->setObject(resource);
 
-	Ref< Stream > stream = instance->writeData(L"Data");
+	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Failed to build mask, unable to create data stream" << Endl;

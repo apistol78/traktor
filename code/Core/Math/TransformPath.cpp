@@ -1,7 +1,7 @@
 #include <limits>
-#include "Core/Math/TransformPath.h"
 #include "Core/Math/Hermite.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Math/TransformPath.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -39,7 +39,7 @@ struct FrameAccessor
 
 	}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.TransformPath", TransformPath, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", TransformPath, ISerializable)
 
 void TransformPath::insert(float at, const Frame& frame)
 {
@@ -161,19 +161,19 @@ TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
 	return closestKey ? &closestKey->value : 0;
 }
 
-bool TransformPath::serialize(Serializer& s)
+bool TransformPath::serialize(ISerializer& s)
 {
 	return s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-bool TransformPath::Key::serialize(Serializer& s)
+bool TransformPath::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T, 0.0f);
 	s >> MemberComposite< Frame >(L"value", value);
 	return true;
 }
 
-bool TransformPath::Frame::serialize(Serializer& s)
+bool TransformPath::Frame::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
 	s >> Member< Quaternion >(L"orientation", orientation);

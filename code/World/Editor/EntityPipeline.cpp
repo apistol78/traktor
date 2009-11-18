@@ -13,7 +13,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.EntityPipeline", EntityPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", EntityPipeline, editor::IPipeline)
 
 bool EntityPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -29,9 +29,9 @@ uint32_t EntityPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet EntityPipeline::getAssetTypes() const
+TypeInfoSet EntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EntityInstance >());
 	typeSet.insert(&type_of< EntityData >());
 	return typeSet;
@@ -40,7 +40,7 @@ TypeSet EntityPipeline::getAssetTypes() const
 bool EntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -67,7 +67,7 @@ bool EntityPipeline::buildDependencies(
 
 bool EntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

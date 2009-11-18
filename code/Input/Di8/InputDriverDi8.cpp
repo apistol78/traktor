@@ -1,6 +1,5 @@
 #include "Input/Di8/InputDriverDi8.h"
 #include "Input/Di8/InputDeviceDi8.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -73,7 +72,7 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	if (FAILED(hr)) 
 		return false;
 
-	m_devices.push_back(gc_new< input::InputDeviceDi8 >(device.get()));
+	m_devices.push_back(new input::InputDeviceDi8(device.get()));
 
 	return true;
 }

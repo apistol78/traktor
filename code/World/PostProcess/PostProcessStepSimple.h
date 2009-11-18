@@ -30,7 +30,7 @@ class Shader;
  */
 class T_DLLCLASS PostProcessStepSimple : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepSimple)
+	T_RTTI_CLASS;
 
 public:
 	struct Source
@@ -41,7 +41,7 @@ public:
 
 		Source();
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	class InstanceSimple : public Instance
@@ -68,7 +68,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 

@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS BoxShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(BoxShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	BoxShapeDesc();
@@ -31,7 +31,7 @@ public:
 
 	const Vector4& getExtent() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Vector4 m_extent;

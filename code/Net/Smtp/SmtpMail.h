@@ -19,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS SmtpMail : public Object
 {
-	T_RTTI_CLASS(SmtpMail)
+	T_RTTI_CLASS;
 
 public:
 	SmtpMail(const std::wstring& server, int port);

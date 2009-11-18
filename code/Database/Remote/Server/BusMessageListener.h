@@ -1,7 +1,6 @@
 #ifndef traktor_db_BusMessageListener_H
 #define traktor_db_BusMessageListener_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Remote/Server/IMessageListenerImpl.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class Connection;
  */
 class BusMessageListener : public IMessageListenerImpl< BusMessageListener >
 {
-	T_RTTI_CLASS(BusMessageListener)
+	T_RTTI_CLASS;
 
 public:
 	BusMessageListener(Connection* connection);

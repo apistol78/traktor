@@ -1,7 +1,6 @@
 #ifndef traktor_world_IEntityRenderer_H
 #define traktor_world_IEntityRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -31,10 +30,10 @@ class WorldRenderView;
  */
 class T_DLLCLASS IEntityRenderer : public Object
 {
-	T_RTTI_CLASS(IEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const = 0;
+	virtual const TypeInfoSet getEntityTypes() const = 0;
 
 	/*! \brief Render pass.
 	 *

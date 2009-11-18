@@ -54,11 +54,11 @@ std::vector< std::wstring > ShaderGraphCombinations::getParameterCombination(uin
 
 Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 {
-	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >(
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
-	Ref< ShaderGraphAdjacency > shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
+	Ref< ShaderGraphAdjacency > shaderGraphAdj = new ShaderGraphAdjacency(shaderGraph);
 
 	RefArray< Branch > branches;
 	shaderGraph->findNodesOf< Branch >(branches);
@@ -84,14 +84,14 @@ Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 
 		for (RefArray< Edge >::iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
 		{
-			shaderGraph->addEdge(gc_new< Edge >(
+			shaderGraph->addEdge(new Edge(
 				inputEdge->getSource(),
 				(*j)->getDestination()
 			));
 			shaderGraph->removeEdge(*j);
 		}
 
-		shaderGraphAdj = gc_new< ShaderGraphAdjacency >(shaderGraph);
+		shaderGraphAdj = new ShaderGraphAdjacency(shaderGraph);
 	}
 
 	return shaderGraph;

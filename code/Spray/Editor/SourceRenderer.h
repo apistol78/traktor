@@ -20,7 +20,7 @@ class Source;
 /*! \brief Emitter source renderer. */
 class SourceRenderer : public Object
 {
-	T_RTTI_CLASS(EmitterRenderer)
+	T_RTTI_CLASS;
 
 public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const = 0;

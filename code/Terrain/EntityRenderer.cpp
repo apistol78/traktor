@@ -12,9 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
-const TypeSet EntityRenderer::getEntityTypes() const
+const TypeInfoSet EntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntity >());
 	typeSet.insert(&type_of< OceanEntity >());
 	typeSet.insert(&type_of< UndergrowthEntity >());

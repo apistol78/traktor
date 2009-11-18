@@ -5,7 +5,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshResource", MeshResource, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshResource", MeshResource, ISerializable)
 
 	}
 }

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionBoolean : public ActionObject
 {
-	T_RTTI_CLASS(ActionBoolean)
+	T_RTTI_CLASS;
 
 public:
 	ActionBoolean(bool value);

@@ -1,7 +1,7 @@
 #ifndef traktor_world_WorldRenderSettings_H
 #define traktor_world_WorldRenderSettings_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Color.h"
 #include "Resource/Proxy.h"
@@ -27,9 +27,9 @@ namespace traktor
  * This class is designed to be used to store render
  * specific settings.
  */
-class T_DLLCLASS WorldRenderSettings : public Serializable
+class T_DLLCLASS WorldRenderSettings : public ISerializable
 {
-	T_RTTI_CLASS(WorldRenderSettings)
+	T_RTTI_CLASS;
 
 public:
 	float viewNearZ;
@@ -45,7 +45,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

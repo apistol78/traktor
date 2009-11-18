@@ -1,7 +1,7 @@
 #ifndef traktor_spray_PointSet_H
 #define traktor_spray_PointSet_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Point set
  * \ingroup Spray
  */
-class T_DLLCLASS PointSet : public Serializable
+class T_DLLCLASS PointSet : public ISerializable
 {
-	T_RTTI_CLASS(PointSet)
+	T_RTTI_CLASS;
 
 public:
 	struct Point
@@ -32,7 +32,7 @@ public:
 		Vector4 normal;
 		Vector4 color;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	PointSet();
@@ -41,7 +41,7 @@ public:
 
 	const AlignedVector< Point >& getPoints() const { return m_points; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	AlignedVector< Point > m_points;

@@ -1,8 +1,7 @@
 #ifndef traktor_zip_DeflateStream_H
 #define traktor_zip_DeflateStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +18,12 @@ namespace traktor
 
 class DeflateImpl;
 
-class T_DLLCLASS DeflateStream : public Stream
+class T_DLLCLASS DeflateStream : public IStream
 {
-	T_RTTI_CLASS(DeflateStream)
+	T_RTTI_CLASS;
 
 public:
-	DeflateStream(Stream* stream, uint32_t internalBufferSize = 4096);
+	DeflateStream(IStream* stream, uint32_t internalBufferSize = 4096);
 
 	virtual ~DeflateStream();
 

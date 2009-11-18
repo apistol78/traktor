@@ -20,7 +20,7 @@ namespace traktor
 
 class T_DLLCLASS Url : public Object
 {
-	T_RTTI_CLASS(Url)
+	T_RTTI_CLASS;
 
 public:
 	Url();

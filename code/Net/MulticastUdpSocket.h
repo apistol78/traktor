@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS MulticastUdpSocket : public UdpSocket
 {
-	T_RTTI_CLASS(MulticastUdpSocket)
+	T_RTTI_CLASS;
 
 public:
 	bool joinGroup(const SocketAddressIPv4& socketAddress);

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticBodyDesc : public BodyDesc
 {
-	T_RTTI_CLASS(StaticBodyDesc)
+	T_RTTI_CLASS;
 
 public:
 	StaticBodyDesc();
@@ -40,7 +40,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_initiallyEnabled;

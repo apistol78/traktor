@@ -68,11 +68,11 @@
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/System/OS.h"
-#include "Core/System/Process.h"
+#include "Core/System/IProcess.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepHash.h"
@@ -163,7 +163,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load dictionary.
 	loadDictionary();
 
-	if (!ui::Form::create(c_title, 800, 600, ui::Form::WsDefault, gc_new< ui::TableLayout >(L"100%", L"*,100%,*", 0, 0)))
+	if (!ui::Form::create(c_title, 800, 600, ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
 	setIcon(ui::Bitmap::load(c_ResourceTraktorSmall, sizeof(c_ResourceTraktorSmall), L"png"));
@@ -172,71 +172,71 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	addTimerEventHandler(ui::createMethodHandler(this, &EditorForm::eventTimer));
 
 	// Create shortcut table.
-	m_shortcutTable = gc_new< ui::ShortcutTable >();
+	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &EditorForm::eventShortcut));
 	
 	// Create menubar.
-	m_menuBar = gc_new< ui::MenuBar >();
+	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
-	m_menuItemMRU = gc_new< ui::MenuItem >(i18n::Text(L"MENU_FILE_OPEN_RECENT"));
+	m_menuItemMRU = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT"));
 
-	Ref< ui::MenuItem > menuFile = gc_new< ui::MenuItem >(i18n::Text(L"MENU_FILE"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.NewProject"), i18n::Text(L"MENU_FILE_NEW_PROJECT")));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.OpenProject"), i18n::Text(L"MENU_FILE_OPEN_PROJECT")));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseProject"), i18n::Text(L"MENU_FILE_CLOSE_PROJECT")));
+	Ref< ui::MenuItem > menuFile = new ui::MenuItem(i18n::Text(L"MENU_FILE"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewProject"), i18n::Text(L"MENU_FILE_NEW_PROJECT")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenProject"), i18n::Text(L"MENU_FILE_OPEN_PROJECT")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.CloseProject"), i18n::Text(L"MENU_FILE_CLOSE_PROJECT")));
 	menuFile->add(m_menuItemMRU);
-	menuFile->add(gc_new< ui::MenuItem >(L"-"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
-	menuFile->add(gc_new< ui::MenuItem >(L"-"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
+	menuFile->add(new ui::MenuItem(L"-"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
+	menuFile->add(new ui::MenuItem(L"-"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Exit"), i18n::Text(L"MENU_FILE_EXIT")));
 	m_menuBar->add(menuFile);
 
-	Ref< ui::MenuItem > menuEdit = gc_new< ui::MenuItem >(i18n::Text(L"MENU_EDIT"));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Undo"), i18n::Text(L"MENU_EDIT_UNDO")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Redo"), i18n::Text(L"MENU_EDIT_REDO")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Cut"), i18n::Text(L"MENU_EDIT_CUT")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Copy"), i18n::Text(L"MENU_EDIT_COPY")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Paste"), i18n::Text(L"MENU_EDIT_PASTE")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Delete"), i18n::Text(L"MENU_EDIT_DELETE")));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.SelectAll"), i18n::Text(L"MENU_EDIT_SELECT_ALL")));
-	menuEdit->add(gc_new< ui::MenuItem >(L"-"));
-	menuEdit->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
+	Ref< ui::MenuItem > menuEdit = new ui::MenuItem(i18n::Text(L"MENU_EDIT"));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Undo"), i18n::Text(L"MENU_EDIT_UNDO")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Redo"), i18n::Text(L"MENU_EDIT_REDO")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Cut"), i18n::Text(L"MENU_EDIT_CUT")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Copy"), i18n::Text(L"MENU_EDIT_COPY")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"MENU_EDIT_PASTE")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"MENU_EDIT_DELETE")));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.SelectAll"), i18n::Text(L"MENU_EDIT_SELECT_ALL")));
+	menuEdit->add(new ui::MenuItem(L"-"));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
 	m_menuBar->add(menuEdit);
 
-	Ref< ui::MenuItem > menuView = gc_new< ui::MenuItem >(i18n::Text(L"MENU_VIEW"));
-	menuView->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
-	menuView->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
-	menuView->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.ViewLog"), i18n::Text(L"MENU_VIEW_LOG")));
-	menuView->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.ViewHeap"), i18n::Text(L"MENU_VIEW_HEAP")));
-	menuView->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuItemOtherPanels = gc_new< ui::MenuItem >(i18n::Text(L"MENU_VIEW_OTHER"));
+	Ref< ui::MenuItem > menuView = new ui::MenuItem(i18n::Text(L"MENU_VIEW"));
+	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
+	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
+	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewLog"), i18n::Text(L"MENU_VIEW_LOG")));
+	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHeap"), i18n::Text(L"MENU_VIEW_HEAP")));
+	menuView->add(new ui::MenuItem(L"-"));
+	m_menuItemOtherPanels = new ui::MenuItem(i18n::Text(L"MENU_VIEW_OTHER"));
 	menuView->add(m_menuItemOtherPanels);
 	m_menuBar->add(menuView);
 
-	Ref< ui::MenuItem > menuBuild = gc_new< ui::MenuItem >(i18n::Text(L"MENU_BUILD"));
-	menuBuild->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
-	menuBuild->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
+	Ref< ui::MenuItem > menuBuild = new ui::MenuItem(i18n::Text(L"MENU_BUILD"));
+	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Build"), i18n::Text(L"MENU_BUILD_BUILD")));
+	menuBuild->add(new ui::MenuItem(ui::Command(L"Editor.Rebuild"), i18n::Text(L"MENU_BUILD_REBUILD")));
 	m_menuBar->add(menuBuild);
 
 	// Create toolbar.
-	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 12);
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_SAVE"), ui::Command(L"Editor.Save"), 2));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_CUT"), ui::Command(L"Editor.Cut"), 3));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Copy"), 4));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_PASTE"), ui::Command(L"Editor.Paste"), 5));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_UNDO"), ui::Command(L"Editor.Undo"), 6));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_REDO"), ui::Command(L"Editor.Redo"), 7));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), ui::Command(L"Editor.CancelBuild"), 10));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), ui::Command(L"Editor.Save"), 2));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), ui::Command(L"Editor.Cut"), 3));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Copy"), 4));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), ui::Command(L"Editor.Paste"), 5));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), ui::Command(L"Editor.Undo"), 6));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), ui::Command(L"Editor.Redo"), 7));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), ui::Command(L"Editor.CancelBuild"), 10));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
@@ -254,7 +254,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 #endif
 
-	m_dock = gc_new< ui::Dock >();
+	m_dock = new ui::Dock();
 	m_dock->create(this);
 
 	// Define docking panes.
@@ -269,7 +269,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->split(true, -200, paneCenter, m_paneAdditionalSouth);
 	
 	// Create panes.
-	m_dataBaseView = gc_new< DatabaseView >(this);
+	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
 	m_dataBaseView->setText(i18n::Text(L"TITLE_DATABASE"));
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
@@ -277,7 +277,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	paneWork->dock(m_dataBaseView, true);
 
-	m_propertiesView = gc_new< PropertiesView >(this);
+	m_propertiesView = new PropertiesView(this);
 	m_propertiesView->create(m_dock);
 	m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
@@ -285,7 +285,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	paneWork->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
 
-	m_heapView = gc_new< HeapView >();
+	m_heapView = new HeapView();
 	m_heapView->create(m_dock);
 	m_heapView->setText(i18n::Text(L"TITLE_HEAP"));
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.HeapVisible"))
@@ -293,7 +293,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	paneWork->dock(m_heapView, true, ui::DockPane::DrSouth, 200);
 
-	m_logView = gc_new< LogView >();
+	m_logView = new LogView();
 	m_logView->create(m_dock);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
@@ -301,7 +301,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	paneLog->dock(m_logView, true);
 
-	m_tab = gc_new< ui::Tab >();
+	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
 	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
 	m_tab->addButtonDownEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabButtonDown));
@@ -311,55 +311,55 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->dock(m_tab, false);
 
 	// Create tab pop up.
-	m_menuTab = gc_new< ui::PopupMenu >();
+	m_menuTab = new ui::PopupMenu();
 	if (!m_menuTab->create())
 		return false;
-	m_menuTab->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
-	m_menuTab->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
+	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseEditor"), i18n::Text(L"CLOSE")));
+	m_menuTab->add(new ui::MenuItem(ui::Command(L"Editor.CloseAllOtherEditors"), i18n::Text(L"CLOSE_ALL_BUT_THIS")));
 
 	// Create status bar.
-	m_statusBar = gc_new< ui::custom::StatusBar >();
+	m_statusBar = new ui::custom::StatusBar();
 	m_statusBar->create(this);
 	m_statusBar->setText(i18n::Text(L"STATUS_IDLE"));
 
-	m_buildProgress = gc_new< ui::custom::ProgressBar >();
+	m_buildProgress = new ui::custom::ProgressBar();
 	m_buildProgress->create(m_statusBar);
 	m_buildProgress->setVisible(false);
 
 	// Create editor page factories.
-	std::vector< const Type* > editorPageFactoryTypes;
+	std::vector< const TypeInfo* > editorPageFactoryTypes;
 	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
 	if (!editorPageFactoryTypes.empty())
 	{
-		for (std::vector< const Type* >::iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
+		for (std::vector< const TypeInfo* >::iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
 		{
-			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >((*i)->newInstance());
+			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >((*i)->createInstance());
 			if (editorPageFactory)
 				m_editorPageFactories.push_back(editorPageFactory);
 		}
 	}
 
 	// Create object editor factories.
-	std::vector< const Type* > objectEditorFactoryTypes;
+	std::vector< const TypeInfo* > objectEditorFactoryTypes;
 	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes, false);
 	if (!objectEditorFactoryTypes.empty())
 	{
-		for (std::vector< const Type* >::iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
+		for (std::vector< const TypeInfo* >::iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
 		{
-			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >((*i)->newInstance());
+			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >((*i)->createInstance());
 			if (objectEditorFactory)
 				m_objectEditorFactories.push_back(objectEditorFactory);
 		}
 	}
 
 	// Create editor plugin factories.
-	std::vector< const Type* > editorPluginFactoryTypes;
+	std::vector< const TypeInfo* > editorPluginFactoryTypes;
 	type_of< IEditorPluginFactory >().findAllOf(editorPluginFactoryTypes, false);
 	if (!editorPluginFactoryTypes.empty())
 	{
-		for (std::vector< const Type* >::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
+		for (std::vector< const TypeInfo* >::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
 		{
-			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >((*i)->newInstance());
+			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >((*i)->createInstance());
 			if (editorPluginFactory)
 				m_editorPluginFactories.push_back(editorPluginFactory);
 		}
@@ -374,23 +374,23 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Load tools and populate tool menu.
-	m_menuTools = gc_new< ui::MenuItem >(i18n::Text(L"MENU_TOOLS"));
+	m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
 
-	std::vector< const Type* > toolTypes;
+	std::vector< const TypeInfo* > toolTypes;
 	type_of< IEditorTool >().findAllOf(toolTypes);
 	if (!toolTypes.empty())
 	{
 		int toolId = 0;
-		for (std::vector< const Type* >::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
+		for (std::vector< const TypeInfo* >::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
-			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->newInstance());
+			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->createInstance());
 			if (!tool)
 				continue;
 
 			std::wstring desc = tool->getDescription();
 			T_ASSERT (!desc.empty());
 
-			m_menuTools->add(gc_new< ui::MenuItem >(ui::Command(toolId++), desc));
+			m_menuTools->add(new ui::MenuItem(ui::Command(toolId++), desc));
 			m_editorTools.push_back(tool);
 		}
 	}
@@ -398,8 +398,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuTools->setEnable(false);
 	m_menuBar->add(m_menuTools);
 
-	Ref< ui::MenuItem > menuHelp = gc_new< ui::MenuItem >(i18n::Text(L"MENU_HELP"));
-	menuHelp->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.About"), i18n::Text(L"MENU_HELP_ABOUT")));
+	Ref< ui::MenuItem > menuHelp = new ui::MenuItem(i18n::Text(L"MENU_HELP"));
+	menuHelp->add(new ui::MenuItem(ui::Command(L"Editor.About"), i18n::Text(L"MENU_HELP_ABOUT")));
 	m_menuBar->add(menuHelp);
 
 	// Collect all shortcut commands from all editors.
@@ -442,25 +442,25 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	updateShortcutTable();
 
 	// Load MRU registry.
-	Ref< Stream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", File::FmRead);
 	if (file)
 	{
 		m_mru = xml::XmlDeserializer(file).readObject< MRU >();
 		file->close();
 	}
 	if (!m_mru)
-		m_mru = gc_new< MRU >();
+		m_mru = new MRU();
 
 	// Create render system.
-	const Type* renderSystemType = Type::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
+	const TypeInfo* renderSystemType = TypeInfo::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
 	if (renderSystemType)
 	{
-		m_renderSystem = dynamic_type_cast< render::IRenderSystem* >(renderSystemType->newInstance());
+		m_renderSystem = dynamic_type_cast< render::IRenderSystem* >(renderSystemType->createInstance());
 		T_ASSERT (m_renderSystem);
 
 #if defined(_DEBUG)
 		// Wrap render system in capture system.
-		m_renderSystem = gc_new< render::RenderSystemCapture >(m_renderSystem);
+		m_renderSystem = new render::RenderSystemCapture(m_renderSystem);
 #endif
 
 		if (!m_renderSystem->create())
@@ -560,9 +560,9 @@ Ref< render::IRenderSystem > EditorForm::getRenderSystem()
 	return m_renderSystem;
 }
 
-const Type* EditorForm::browseType(const Type* base)
+const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 {
-	const Type* type = 0;
+	const TypeInfo* type = 0;
 
 	BrowseTypeDialog dlgBrowse(m_settings);
 	if (dlgBrowse.create(this, base))
@@ -624,7 +624,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		return false;
 	}
 
-	Ref< Serializable > object = instance->getObject();
+	Ref< ISerializable > object = instance->getObject();
 	if (!object)
 	{
 		log::error << L"Unable to get object \"" << instance->getName() << L"\"" << Endl;
@@ -639,12 +639,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{
-		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		const TypeInfoSet typeSet = (*i)->getEditableTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
 		{
-			if (is_type_of(**j, object->getType()))
+			if (is_type_of(**j, type_of(object)))
 			{
-				uint32_t classDifference = type_difference(**j, object->getType());
+				uint32_t classDifference = type_difference(**j, type_of(object));
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
@@ -656,12 +656,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 	for (RefArray< IObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
 	{
-		const TypeSet typeSet = (*i)->getEditableTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		const TypeInfoSet typeSet = (*i)->getEditableTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end(); ++j)
 		{
-			if (is_type_of(**j, object->getType()))
+			if (is_type_of(**j, type_of(object)))
 			{
-				uint32_t classDifference = type_difference(**j, object->getType());
+				uint32_t classDifference = type_difference(**j, type_of(object));
 				if (classDifference < minClassDifference)
 				{
 					minClassDifference = classDifference;
@@ -683,8 +683,8 @@ bool EditorForm::openEditor(db::Instance* instance)
 		std::map< std::wstring, Ref< PropertyValue > > icons = m_settings->getProperty< PropertyGroup >(L"Editor.Icons");
 		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
 		{
-			const Type* iconType = Type::find(i->first);
-			if (iconType && is_type_of(*iconType, object->getType()))
+			const TypeInfo* iconType = TypeInfo::find(i->first);
+			if (iconType && is_type_of(*iconType, type_of(object)))
 			{
 				iconIndex = PropertyInteger::get(i->second);
 				break;
@@ -692,11 +692,11 @@ bool EditorForm::openEditor(db::Instance* instance)
 		}
 
 		// Create tab page container.
-		Ref< ui::TabPage > tabPage = gc_new< ui::TabPage >();
-		tabPage->create(m_tab, instance->getName(), iconIndex, gc_new< ui::FloodLayout >());
+		Ref< ui::TabPage > tabPage = new ui::TabPage();
+		tabPage->create(m_tab, instance->getName(), iconIndex, new ui::FloodLayout());
 
 		// Create editor site for this page.
-		Ref< EditorPageSite > site = gc_new< EditorPageSite >(this, false);
+		Ref< EditorPageSite > site = new EditorPageSite(this, false);
 
 		// Create editor page.
 		if (!editorPage->create(tabPage, site))
@@ -720,7 +720,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 
 		// Finally provide data object to editor page.
 		editorPage->setDataObject(instance, object);
-		tabPage->setData(L"HASH", gc_new< DeepHash >(checked_type_cast< Serializable* >(editorPage->getDataObject())));
+		tabPage->setData(L"HASH", new DeepHash(checked_type_cast< ISerializable* >(editorPage->getDataObject())));
 	}
 	else if (objectEditorFactory)
 	{
@@ -728,7 +728,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (objectEditor);
 
 		// Create object editor dialog.
-		Ref< ObjectEditorDialog > objectEditorDialog = gc_new< ObjectEditorDialog >(m_settings, objectEditor);
+		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_settings, objectEditor);
 		if (!objectEditorDialog->create(this, instance, object))
 		{
 			log::error << L"Failed to create editor" << Endl;
@@ -798,8 +798,8 @@ void EditorForm::setPropertyObject(Object* properties)
 	Ref< Object > outer = m_activeEditorPage ? m_activeEditorPage->getDataObject() : 0;
 
 	m_propertiesView->setPropertyObject(
-		dynamic_type_cast< Serializable* >(properties),
-		dynamic_type_cast< Serializable* >(outer)
+		dynamic_type_cast< ISerializable* >(properties),
+		dynamic_type_cast< ISerializable* >(outer)
 	);
 	
 	if (properties)
@@ -871,7 +871,7 @@ void EditorForm::updateAdditionalPanelMenu()
 		const std::map< Ref< ui::Widget >, bool >& panelWidgets = m_activeEditorPageSite->getPanelWidgets();
 		for (std::map< Ref< ui::Widget >, bool >::const_iterator i = panelWidgets.begin(); i != panelWidgets.end(); ++i)
 		{
-			Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(
+			Ref< ui::MenuItem > menuItem = new ui::MenuItem(
 				ui::Command(L"Editor.ViewOther", i->first),
 				i->first->getText()
 			);
@@ -892,7 +892,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	Ref< editor::IPipelineCache > pipelineCache;
 	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
 	{
-		pipelineCache = gc_new< editor::MemCachedPipelineCache >();
+		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(m_settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;
@@ -1025,7 +1025,7 @@ void EditorForm::buildAssets(bool rebuild)
 	buildAssets(assetGuids, rebuild);
 }
 
-bool EditorForm::buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
+bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
 {
 	if (!m_project)
 		return false;
@@ -1071,8 +1071,8 @@ void EditorForm::updateMRU()
 
 	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
 	{
-		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"Editor.MRU"), i->getPathName());
-		menuItem->setData(L"PATH", gc_new< Path >(cref(*i)));
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.MRU"), i->getPathName());
+		menuItem->setData(L"PATH", new Path(*i));
 		m_menuItemMRU->add(menuItem);
 	}
 }
@@ -1118,7 +1118,7 @@ void EditorForm::openProject(const Path& path)
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
-	Ref< Project > project = gc_new< Project >();
+	Ref< Project > project = new Project();
 	if (project->open(path))
 	{
 		if (!closeProject())
@@ -1238,14 +1238,14 @@ void EditorForm::saveCurrentDocument()
 
 		bool result = false;
 
-		Ref< Serializable > object = checked_type_cast< Serializable* >(editorPage->getDataObject());
+		Ref< ISerializable > object = checked_type_cast< ISerializable* >(editorPage->getDataObject());
 		T_ASSERT (object);
 
 		if (instance->setObject(object))
 		{
 			if (instance->commit(db::CfKeepCheckedOut))
 			{
-				tabPage->setData(L"HASH", gc_new< DeepHash >(object));
+				tabPage->setData(L"HASH", new DeepHash(object));
 				result = true;
 			}
 		}
@@ -1290,14 +1290,14 @@ void EditorForm::saveAllDocuments()
 
 		bool result = false;
 
-		Ref< Serializable > object = checked_type_cast< Serializable* >(editorPage->getDataObject());
+		Ref< ISerializable > object = checked_type_cast< ISerializable* >(editorPage->getDataObject());
 		T_ASSERT (object);
 
 		if (instance->setObject(object))
 		{
 			if (instance->commit(db::CfKeepCheckedOut))
 			{
-				tabPage->setData(L"HASH", gc_new< DeepHash >(object));
+				tabPage->setData(L"HASH", new DeepHash(object));
 				result = true;
 			}
 		}
@@ -1455,7 +1455,7 @@ void EditorForm::activateNextEditor()
 Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 {
 	Ref< PropertyGroup > globalGroup, userGroup;
-	Ref< Stream > file;
+	Ref< IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
 
@@ -1466,7 +1466,7 @@ Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (!globalGroup)
-		globalGroup = gc_new< PropertyGroup >();
+		globalGroup = new PropertyGroup();
 
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
@@ -1477,16 +1477,16 @@ Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (!userGroup)
-		userGroup = gc_new< PropertyGroup >();
+		userGroup = new PropertyGroup();
 
-	return gc_new< Settings >(globalGroup, userGroup);
+	return new Settings(globalGroup, userGroup);
 }
 
 void EditorForm::saveSettings(const std::wstring& settingsFile)
 {
 	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
 
-	Ref< Stream > file = FileSystem::getInstance().open(userConfig, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(userConfig, File::FmWrite);
 	if (file)
 	{
 		xml::XmlSerializer(file).writeObject(m_settings->getUserGroup());
@@ -1500,7 +1500,7 @@ void EditorForm::loadDictionary()
 {
 	std::wstring dictionaryFile = m_settings->getProperty< PropertyString >(L"Editor.Dictionary");
 
-	Ref< Stream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
 	if (!file)
 	{
 		log::warning << L"Unable to open dictionary \"" << dictionaryFile << L"\"; file missing." << Endl;
@@ -1523,14 +1523,14 @@ Ref< PipelineHash > EditorForm::loadPipelineHash()
 	Ref< PipelineHash > pipelineHash;
 
 	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
-	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
 	if (file)
 	{
 		pipelineHash = BinarySerializer(file).readObject< PipelineHash >();
 		file->close();
 	}
 	if (!pipelineHash)
-		pipelineHash = gc_new< PipelineHash >();
+		pipelineHash = new PipelineHash();
 
 	return pipelineHash;
 }
@@ -1540,7 +1540,7 @@ void EditorForm::savePipelineHash(PipelineHash* pipelineHash)
 	T_ASSERT (m_project);
 
 	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
-	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
 	if (file)
 	{
 		BinarySerializer(file).writeObject(pipelineHash);
@@ -1572,7 +1572,7 @@ void EditorForm::checkModified()
 
 		// Add or remove asterix on tab.
 		std::wstring tabName = tabPage->getText();
-		if (*objectHash != checked_type_cast< Serializable* >(editorPage->getDataObject()))
+		if (*objectHash != checked_type_cast< ISerializable* >(editorPage->getDataObject()))
 		{
 			if (tabName[tabName.length() - 1] != L'*')
 			{
@@ -1764,7 +1764,7 @@ bool EditorForm::handleMRU(const ui::Command& command, const Path& path)
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
-	Ref< Project > project = gc_new< Project >();
+	Ref< Project > project = new Project();
 	if (project->open(path))
 	{
 		if (!closeProject())
@@ -1945,7 +1945,7 @@ void EditorForm::eventClose(ui::Event* event)
 	saveSettings(L"Traktor.Editor");
 
 	// Save MRU.
-	Ref< Stream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", traktor::File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", traktor::File::FmWrite);
 	if (file)
 	{
 		xml::XmlSerializer(file).writeObject(m_mru);

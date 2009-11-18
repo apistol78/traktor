@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS CloseEvent : public Event
 {
-	T_RTTI_CLASS(CloseEvent)
+	T_RTTI_CLASS;
 	
 public:
 	CloseEvent(EventSubject* sender, Object* item);

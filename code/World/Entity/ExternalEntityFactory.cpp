@@ -17,9 +17,9 @@ ExternalEntityFactory::ExternalEntityFactory(db::Database* database)
 {
 }
 
-const TypeSet ExternalEntityFactory::getEntityTypes() const
+const TypeInfoSet ExternalEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< ExternalSpatialEntityData >());
 	return typeSet;

@@ -1,7 +1,6 @@
 #ifndef traktor_physics_HingeJointHavok_H
 #define traktor_physics_HingeJointHavok_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/HingeJoint.h"
 #include "Physics/Havok/JointHavok.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS HingeJointHavok : public JointHavok< HingeJoint >
 {
-	T_RTTI_CLASS(HingeJointHavok)
+	T_RTTI_CLASS;
 
 public:
 	HingeJointHavok(DestroyCallbackHavok* callback, const HvkRef< hkpConstraintInstance >& constraint, Body* body1, Body* body2);

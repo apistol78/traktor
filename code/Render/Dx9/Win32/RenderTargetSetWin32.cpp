@@ -3,7 +3,6 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
 #include "Render/Dx9/ContextDx9.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -238,7 +237,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 	m_colorTextures.resize(m_desc.count);
 	for (int i = 0; i < m_desc.count; ++i)
 	{
-		m_colorTextures[i] = gc_new< RenderTargetWin32 >(m_context);
+		m_colorTextures[i] = new RenderTargetWin32(m_context);
 		if (!m_colorTextures[i]->create(m_d3dDevice, m_desc, m_desc.targets[i]))
 			return S_FALSE;
 	}

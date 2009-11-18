@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ArticulatedEntityData_H
 #define traktor_physics_ArticulatedEntityData_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Physics/World/RigidEntityData.h"
 
 #undef T_DLLCLASS
@@ -33,7 +33,7 @@ class ArticulatedEntity;
  */
 class T_DLLCLASS ArticulatedEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(ArticulatedEntityData)
+	T_RTTI_CLASS;
 
 public:
 	struct Constraint
@@ -44,7 +44,7 @@ public:
 
 		Constraint();
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	Ref< ArticulatedEntity > createEntity(
@@ -54,7 +54,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
 

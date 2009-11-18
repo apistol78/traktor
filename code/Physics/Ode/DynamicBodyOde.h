@@ -24,7 +24,7 @@ struct DestroyCallback;
  */
 class T_DLLCLASS DynamicBodyOde : public DynamicBody
 {
-	T_RTTI_CLASS(DynamicBodyOde)
+	T_RTTI_CLASS;
 
 public:
 	DynamicBodyOde(

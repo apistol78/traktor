@@ -27,7 +27,7 @@ class ActionScript;
  */
 class T_DLLCLASS FlashCharacterInstance : public ActionObject
 {
-	T_RTTI_CLASS(FlashCharacterInstance)
+	T_RTTI_CLASS;
 
 public:
 	FlashCharacterInstance(ActionContext* context, ActionObject* prototype, FlashCharacterInstance* parent);

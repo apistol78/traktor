@@ -22,7 +22,7 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 #define T_ENABLE_NVIDIA_PERHUD 1
@@ -38,7 +38,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, IRenderSystem)
 
 uint32_t RenderSystemWin32::ms_instances = 0;
 
@@ -165,7 +165,7 @@ bool RenderSystemWin32::create()
 		log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
 
 	T_ASSERT (!m_shaderCache);
-	m_shaderCache= gc_new< ShaderCache >();
+	m_shaderCache= new ShaderCache();
 
 	T_ASSERT (!m_parameterCache);
 	m_parameterCache = new ParameterCache(this, m_d3dDevice);
@@ -173,7 +173,7 @@ bool RenderSystemWin32::create()
 	T_ASSERT (!m_vertexDeclCache);
 	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
 
-	m_context = gc_new< ContextDx9 >();
+	m_context = new ContextDx9();
 	ms_instances++;
 	return true;
 }
@@ -246,7 +246,7 @@ Ref< DisplayMode > RenderSystemWin32::getDisplayMode(int index)
 	if (FAILED(m_d3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format, index, &dm)))
 		return 0;
 	
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		index,
 		dm.Width,
 		dm.Height,
@@ -256,7 +256,7 @@ Ref< DisplayMode > RenderSystemWin32::getDisplayMode(int index)
 
 Ref< DisplayMode > RenderSystemWin32::getCurrentDisplayMode()
 {
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		0,
 		m_d3dDefaultDisplayMode.Width,
 		m_d3dDefaultDisplayMode.Height,
@@ -315,9 +315,9 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	else
 		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
 
-	return gc_new< RenderViewWin32 >(
+	return new RenderViewWin32(
 		m_context,
-		cref(desc),
+		desc,
 		this,
 		d3dPresent,
 		d3dDepthStencilFormat
@@ -358,9 +358,9 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	else
 		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
 
-	return gc_new< RenderViewWin32 >(
+	return new RenderViewWin32(
 		m_context,
-		cref(desc),
+		desc,
 		this,
 		d3dPresent,
 		d3dDepthStencilFormat
@@ -369,7 +369,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 
 Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	Ref< VertexBufferDx9 > vertexBuffer = gc_new< VertexBufferDx9 >(this, m_context, bufferSize, m_vertexDeclCache);
+	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(this, m_context, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
 		return 0;
 	return vertexBuffer;
@@ -377,7 +377,7 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Ref< IndexBufferDx9 > indexBuffer = gc_new< IndexBufferDx9 >(this, m_context, indexType, bufferSize);
+	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(this, m_context, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
 	return indexBuffer;
@@ -385,7 +385,7 @@ Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uin
 
 Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureDx9 > texture = gc_new< SimpleTextureDx9 >(m_context);
+	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -393,7 +393,7 @@ Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTexture
 
 Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureDx9 > texture = gc_new< CubeTextureDx9 >(m_context);
+	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -401,7 +401,7 @@ Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreate
 
 Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	Ref< VolumeTextureDx9 > texture = gc_new< VolumeTextureDx9 >(m_context);
+	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -409,7 +409,7 @@ Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTexture
 
 Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetWin32 > renderTargetSet = gc_new< RenderTargetSetWin32 >(this, m_context);
+	Ref< RenderTargetSetWin32 > renderTargetSet = new RenderTargetSetWin32(this, m_context);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
 		return 0;
 	return renderTargetSet;
@@ -437,7 +437,7 @@ Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programR
 	if (!resource)
 		return 0;
 
-	Ref< ProgramWin32 > program = gc_new< ProgramWin32 >(this, m_context, m_shaderCache, m_parameterCache);
+	Ref< ProgramWin32 > program = new ProgramWin32(this, m_context, m_shaderCache, m_parameterCache);
 	if (!program->create(m_d3dDevice, resource))
 		return 0;
 

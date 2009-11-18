@@ -2,7 +2,6 @@
 #define traktor_mesh_MeshAssetEditor_H
 
 #include "Editor/IObjectEditor.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,12 +45,12 @@ class MeshAsset;
 
 class T_DLLCLASS MeshAssetEditor : public editor::IObjectEditor
 {
-	T_RTTI_CLASS(MeshAssetEditor)
+	T_RTTI_CLASS;
 
 public:
 	MeshAssetEditor(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
 	virtual void destroy();
 

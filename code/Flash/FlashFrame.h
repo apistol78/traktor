@@ -2,7 +2,7 @@
 #define traktor_flash_FlashFrame_H
 
 #include <map>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"
@@ -30,7 +30,7 @@ class ActionScript;
  */
 class T_DLLCLASS FlashFrame : public ActionObject
 {
-	T_RTTI_CLASS(FlashFrame)
+	T_RTTI_CLASS;
 
 public:
 	struct PlaceAction

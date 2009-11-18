@@ -2,7 +2,6 @@
 #define traktor_render_VertexBufferDx10_H
 
 #include "Render/VertexBuffer.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class ContextDx10;
  */
 class T_DLLCLASS VertexBufferDx10 : public VertexBuffer
 {
-	T_RTTI_CLASS(VertexBufferDx10)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferDx10(

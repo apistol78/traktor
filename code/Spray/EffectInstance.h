@@ -2,8 +2,7 @@
 #define traktor_spray_EffectInstance_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Transform.h"
@@ -31,7 +30,7 @@ class EffectLayerInstance;
  */
 class T_DLLCLASS EffectInstance : public Object
 {
-	T_RTTI_CLASS(EffectInstance)
+	T_RTTI_CLASS;
 
 public:
 	EffectInstance(const Effect* effect);

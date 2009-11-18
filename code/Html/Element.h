@@ -23,7 +23,7 @@ class Attribute;
  */
 class T_DLLCLASS Element : public Node
 {
-	T_RTTI_CLASS(Element)
+	T_RTTI_CLASS;
 
 public:
 	Element(const std::wstring& name);
@@ -50,7 +50,7 @@ public:
 	
 	Ref< Element > getLastElementChild() const;
 
-	virtual void writeHtml(Stream* stream);
+	virtual void writeHtml(IStream* stream);
 
 private:
 	std::wstring m_name;

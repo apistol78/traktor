@@ -1,7 +1,6 @@
 #ifndef traktor_sound_SoundChannel_H
 #define traktor_sound_SoundChannel_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Sound/Types.h"
 
@@ -31,7 +30,7 @@ class Sound;
  */
 class T_DLLCLASS SoundChannel : public Object
 {
-	T_RTTI_CLASS(SoundChannel)
+	T_RTTI_CLASS;
 
 public:
 	SoundChannel(uint32_t hwSampleRate, uint32_t hwFrameSamples);

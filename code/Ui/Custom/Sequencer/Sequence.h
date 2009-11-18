@@ -1,8 +1,7 @@
 #ifndef traktor_ui_custom_Sequence_H
 #define traktor_ui_custom_Sequence_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Custom/Sequencer/SequenceItem.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class Key;
  */
 class T_DLLCLASS Sequence : public SequenceItem
 {
-	T_RTTI_CLASS(Sequence)
+	T_RTTI_CLASS;
 
 public:
 	Sequence(const std::wstring& name);

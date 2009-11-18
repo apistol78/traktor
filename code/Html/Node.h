@@ -2,7 +2,6 @@
 #define traktor_html_Node_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -16,7 +15,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace html
 	{
@@ -26,7 +25,7 @@ class Stream;
  */
 class T_DLLCLASS Node : public Object
 {
-	T_RTTI_CLASS(Node)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const;
@@ -49,7 +48,7 @@ public:
 	
 	Ref< Node > getLastChild() const;
 
-	virtual void writeHtml(Stream* stream);
+	virtual void writeHtml(IStream* stream);
 
 private:
 	Ref< Node > m_parent;

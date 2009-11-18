@@ -1,44 +1,43 @@
 #include "Core/Serialization/Serializer.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/Member.h"
 
 namespace traktor
 {
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, ISerializer);
 
-Ref< Serializable > Serializer::readObject()
+Ref< ISerializable > Serializer::readObject()
 {
-	Ref< Serializable > object;
+	Ref< ISerializable > object;
 
 	if (getDirection() != SdRead)
 		return 0;
 
-	if (!(*this >> MemberRef< Serializable >(L"object", object)))
+	if (!(*this >> Member< Ref< ISerializable > >(L"object", object)))
 		return 0;
 
 	return object;
 }
 
-bool Serializer::writeObject(const Serializable* o)
+bool Serializer::writeObject(const ISerializable* o)
 {
-	Ref< Serializable > mutableObject(const_cast< Serializable* >(o));
+	Ref< ISerializable > mutableObject(const_cast< ISerializable* >(o));
 
 	if (getDirection() != SdWrite)
 		return false;
 
-	if (!(*this >> MemberRef< Serializable >(L"object", mutableObject)))
+	if (!(*this >> Member< Ref< ISerializable > >(L"object", mutableObject)))
 		return false;
 
 	return true;
 }
 
-Ref< Serializable > Serializer::getCurrentObject()
+ISerializable* Serializer::getCurrentObject()
 {
 	return !m_constructing.empty() ? m_constructing.back().first : 0;
 }
 
-Ref< Serializable > Serializer::getOuterObject()
+ISerializable* Serializer::getOuterObject()
 {
 	return !m_constructing.empty() ? m_constructing.front().first : 0;
 }
@@ -48,12 +47,7 @@ int Serializer::getVersion() const
 	return !m_constructing.empty() ? m_constructing.back().second : 0;
 }
 
-bool Serializer::operator >> (const MemberEnumBase& m)
-{
-	return this->operator >> (*(MemberComplex*)(&m));
-}
-
-bool Serializer::serialize(Serializable* inner, int version, Serializable* outer)
+bool Serializer::serialize(ISerializable* inner, int version, ISerializable* outer)
 {
 	if (!inner)
 		return false;
@@ -61,7 +55,7 @@ bool Serializer::serialize(Serializable* inner, int version, Serializable* outer
 	if (outer)
 		m_constructing.push_back(std::make_pair(
 			outer,
-			outer->getVersion()
+			type_of(outer).getVersion()
 		));
 
 	m_constructing.push_back(std::make_pair(

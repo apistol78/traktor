@@ -1,7 +1,6 @@
 #ifndef traktor_physics_BallJointPhysX_H
 #define traktor_physics_BallJointPhysX_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/BallJoint.h"
 #include "Physics/PhysX/JointPhysX.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS BallJointPhysX : public JointPhysX< BallJoint >
 {
-	T_RTTI_CLASS(BallJointPhysX)
+	T_RTTI_CLASS;
 
 public:
 	BallJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2);

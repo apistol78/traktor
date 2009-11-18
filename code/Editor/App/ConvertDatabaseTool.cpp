@@ -10,9 +10,9 @@
 #include "Ui/Custom/BackgroundWorkerDialog.h"
 #include "Ui/Custom/BackgroundWorkerStatus.h"
 #include "I18N/Text.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Log/Log.h"
@@ -34,7 +34,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 		log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
 		status.notify(0, sourceInstance->getName());
 
-		Ref< Serializable > sourceObject = sourceInstance->getObject();
+		Ref< ISerializable > sourceObject = sourceInstance->getObject();
 		if (!sourceObject)
 		{
 			log::error << L"Failed, unable to get source object" << Endl;
@@ -58,14 +58,14 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 		{
 			log::info << L"\t\"" << *j << L"\"..." << Endl;
 
-			Ref< Stream > sourceStream = sourceInstance->readData(*j);
+			Ref< IStream > sourceStream = sourceInstance->readData(*j);
 			if (!sourceStream)
 			{
 				log::error << L"Failed, unable to open source stream" << Endl;
 				continue;
 			}
 
-			Ref< Stream > targetStream = targetInstance->writeData(*j);
+			Ref< IStream > targetStream = targetInstance->writeData(*j);
 			if (!targetStream)
 			{
 				log::error << L"Failed, unable to open target stream" << Endl;
@@ -111,7 +111,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.ConvertDatabaseTool", ConvertDatabaseTool, IEditorTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ConvertDatabaseTool", ConvertDatabaseTool, IEditorTool)
 
 std::wstring ConvertDatabaseTool::getDescription() const
 {
@@ -141,13 +141,13 @@ bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 
 	if (targetDatabasePath.getExtension() == L"compact")
 	{
-		Ref< db::CompactDatabase > targetCompactProvider = gc_new< db::CompactDatabase >();
+		Ref< db::CompactDatabase > targetCompactProvider = new db::CompactDatabase();
 		if (!targetCompactProvider->create(targetDatabasePath))
 			return false;
 		targetProvider = targetCompactProvider;
 	}
 
-	Ref< db::Database > targetDb = gc_new< db::Database >();
+	Ref< db::Database > targetDb = new db::Database();
 	if (!targetDb->create(targetProvider))
 		return false;
 

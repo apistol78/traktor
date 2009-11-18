@@ -33,9 +33,9 @@ bool Dock::create(Widget* parent)
 	if (!ui::Widget::create(parent))
 		return false;
 
-	m_hint = gc_new< ToolForm >();
+	m_hint = new ToolForm();
 	m_hint->create(this, L"Hint", 0, 0, WsNone);
-	m_hint->addButtonUpEventHandler(gc_new< MethodHandler< Dock > >(this, &Dock::eventHintButtonUp));
+	m_hint->addButtonUpEventHandler(new MethodHandler< Dock >(this, &Dock::eventHintButtonUp));
 
 	const int xy[] = { 0, 32, 32 + 29, 32 + 29 + 32 };
 	Point p[] =
@@ -55,27 +55,27 @@ bool Dock::create(Widget* parent)
 	};
 	m_hint->setOutline(p, sizeof(p) / sizeof(Point));
 
-	m_hintLeft = gc_new< ui::Image >();
+	m_hintLeft = new ui::Image();
 	m_hintLeft->create(m_hint, Bitmap::load(c_ResourceDockLeft, sizeof(c_ResourceDockLeft), L"png"), false);
 	m_hintLeft->setRect(Rect(xy[0], xy[1], xy[0] + 32, xy[1] + 29));
 	m_hintLeft->addButtonUpEventHandler(createMethodHandler(this, &Dock::eventHintButtonUp));
 
-	m_hintRight = gc_new< ui::Image >();
+	m_hintRight = new ui::Image();
 	m_hintRight->create(m_hint, Bitmap::load(c_ResourceDockRight, sizeof(c_ResourceDockRight), L"png"), false);
 	m_hintRight->setRect(Rect(xy[2], xy[1], xy[2] + 32, xy[1] + 29));
 	m_hintRight->addButtonUpEventHandler(createMethodHandler(this, &Dock::eventHintButtonUp));
 
-	m_hintTop = gc_new< ui::Image >();
+	m_hintTop = new ui::Image();
 	m_hintTop->create(m_hint, Bitmap::load(c_ResourceDockTop, sizeof(c_ResourceDockTop), L"png"), false);
 	m_hintTop->setRect(Rect(xy[1], xy[0], xy[1] + 29, xy[0] + 32));
 	m_hintTop->addButtonUpEventHandler(createMethodHandler(this, &Dock::eventHintButtonUp));
 
-	m_hintBottom = gc_new< ui::Image >();
+	m_hintBottom = new ui::Image();
 	m_hintBottom->create(m_hint, Bitmap::load(c_ResourceDockBottom, sizeof(c_ResourceDockBottom), L"png"), false);
 	m_hintBottom->setRect(Rect(xy[1], xy[2], xy[1] + 29, xy[2] + 32));
 	m_hintBottom->addButtonUpEventHandler(createMethodHandler(this, &Dock::eventHintButtonUp));
 
-	m_pane = gc_new< DockPane >(this, (DockPane*)0);
+	m_pane = new DockPane(this, (DockPane*)0);
 
 	addSizeEventHandler(createMethodHandler(this, &Dock::eventSize));
 	addButtonDownEventHandler(createMethodHandler(this, &Dock::eventButtonDown));
@@ -193,7 +193,7 @@ void Dock::eventDoubleClick(Event* event)
 		// Create floating form.
 		Size preferedSize = widget->getPreferedSize();
 
-		Ref< ToolForm > form = gc_new< ToolForm >();
+		Ref< ToolForm > form = new ToolForm();
 
 		form->create(
 			this,
@@ -201,7 +201,7 @@ void Dock::eventDoubleClick(Event* event)
 			preferedSize.cx,
 			preferedSize.cy,
 			ToolForm::WsDefault,
-			gc_new< FloodLayout >()
+			new FloodLayout()
 		);
 
 		form->addMoveEventHandler(createMethodHandler(this, &Dock::eventFormMove));

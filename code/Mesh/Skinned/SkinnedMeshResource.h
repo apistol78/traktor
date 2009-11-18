@@ -20,7 +20,7 @@ namespace traktor
 
 class T_DLLCLASS SkinnedMeshResource : public MeshResource
 {
-	T_RTTI_CLASS(SkinnedMeshResource)
+	T_RTTI_CLASS;
 
 public:
 	struct Part
@@ -28,7 +28,7 @@ public:
 		std::wstring name;
 		Guid material;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	void setParts(const std::vector< Part >& parts);
@@ -39,7 +39,7 @@ public:
 
 	const std::map< std::wstring, int >& getBoneMap() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< Part > m_parts;

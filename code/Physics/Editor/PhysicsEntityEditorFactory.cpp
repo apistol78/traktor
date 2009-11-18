@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsEntityEditorFactory", PhysicsEntityEditorFactory, scene::IEntityEditorFactory)
 
-const TypeSet PhysicsEntityEditorFactory::getEntityDataTypes() const
+const TypeInfoSet PhysicsEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< RigidEntityData >());
 	typeSet.insert(&type_of< ArticulatedEntityData >());
 	return typeSet;
@@ -21,13 +21,13 @@ const TypeSet PhysicsEntityEditorFactory::getEntityDataTypes() const
 
 Ref< scene::IEntityEditor > PhysicsEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	const TypeInfo& entityDataType
 ) const
 {
 	if (is_type_of< RigidEntityData >(entityDataType))
-		return gc_new< RigidEntityEditor >();
+		return new RigidEntityEditor();
 	if (is_type_of< ArticulatedEntityEditor >(entityDataType))
-		return gc_new< ArticulatedEntityEditor >();
+		return new ArticulatedEntityEditor();
 	return 0;
 }
 

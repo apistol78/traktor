@@ -21,21 +21,21 @@ namespace traktor
  */
 class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
 {
-	T_RTTI_CLASS(DefaultPipeline)
+	T_RTTI_CLASS;
 
 public:
-	virtual TypeSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,

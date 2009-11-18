@@ -21,14 +21,14 @@ namespace traktor
  */
 class T_DLLCLASS IntegrateModifier : public Modifier
 {
-	T_RTTI_CLASS(IntegrateModifier)
+	T_RTTI_CLASS;
 
 public:
 	IntegrateModifier();
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Scalar m_timeScale;

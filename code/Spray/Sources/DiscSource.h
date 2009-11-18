@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS DiscSource : public Source
 {
-	T_RTTI_CLASS(DiscSource)
+	T_RTTI_CLASS;
 
 public:
 	DiscSource();
@@ -37,7 +37,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const Vector4& getPosition() const { return m_position; }
 

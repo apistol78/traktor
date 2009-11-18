@@ -1,7 +1,6 @@
 #ifndef traktor_net_FileConnection_H
 #define traktor_net_FileConnection_H
 
-#include "Core/Heap/Ref.h"
 #include "Net/UrlConnection.h"
 
 // import/export mechanism.
@@ -19,18 +18,18 @@ namespace traktor
 
 class T_DLLCLASS FileConnection : public UrlConnection
 {
-	T_RTTI_CLASS(FileConnection)
+	T_RTTI_CLASS;
 
 public:
 	virtual EstablishResult establish(const Url& url, Url* outRedirectionUrl);
 
 	virtual Url getUrl() const;
 
-	virtual Ref< Stream > getStream();
+	virtual Ref< IStream > getStream();
 	
 private:
 	Url m_url;
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 };
 
 	}

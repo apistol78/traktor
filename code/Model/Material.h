@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Color.h"
 
@@ -25,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS Material : public Object
 {
-	T_RTTI_CLASS(Material)
+	T_RTTI_CLASS;
 
 public:
 	enum BlendOperator

@@ -1,7 +1,7 @@
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/EmitterInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.ConeSource", ConeSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSource", ConeSource, Source)
 
 ConeSource::ConeSource()
 :	m_position(0.0f, 0.0f, 0.0f, 1.0f)
@@ -65,7 +65,7 @@ void ConeSource::emit(
 	}
 }
 
-bool ConeSource::serialize(Serializer& s)
+bool ConeSource::serialize(ISerializer& s)
 {
 	if (!Source::serialize(s))
 		return false;

@@ -1,14 +1,14 @@
 #include "Theater/Editor/TheaterEditorProfile.h"
 #include "Theater/Editor/TheaterControllerEditorFactory.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.theater.TheaterEditorProfile", TheaterEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEditorProfile", TheaterEditorProfile, scene::ISceneEditorProfile)
 
 void TheaterEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -55,7 +55,7 @@ void TheaterEditorProfile::createControllerEditorFactories(
 	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
-	outControllerEditorFactories.push_back(gc_new< TheaterControllerEditorFactory >());
+	outControllerEditorFactories.push_back(new TheaterControllerEditorFactory());
 }
 
 void TheaterEditorProfile::createEntityEditorFactories(

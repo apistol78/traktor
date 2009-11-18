@@ -19,19 +19,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ObjectPropertyItem", ObjectPropertyItem, PropertyItem)
 
-ObjectPropertyItem::ObjectPropertyItem(const std::wstring& text, const Type* objectType, Object* object)
+ObjectPropertyItem::ObjectPropertyItem(const std::wstring& text, const TypeInfo* objectType, Object* object)
 :	PropertyItem(text)
 ,	m_objectType(objectType)
 ,	m_object(object)
 {
 }
 
-void ObjectPropertyItem::setObjectType(const Type* objectType)
+void ObjectPropertyItem::setObjectType(const TypeInfo* objectType)
 {
 	m_objectType = objectType;
 }
 
-const Type* ObjectPropertyItem::getObjectType() const
+const TypeInfo* ObjectPropertyItem::getObjectType() const
 {
 	return m_objectType;
 }
@@ -59,7 +59,7 @@ Ref< Object > ObjectPropertyItem::getObject() const
 void ObjectPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonEdit);
-	m_buttonEdit = gc_new< MiniButton >();
+	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, L"");
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ObjectPropertyItem::eventClick));
 

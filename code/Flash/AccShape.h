@@ -1,7 +1,6 @@
 #ifndef traktor_flash_AccShape_H
 #define traktor_flash_AccShape_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"

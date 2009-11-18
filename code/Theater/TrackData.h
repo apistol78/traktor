@@ -1,8 +1,7 @@
 #ifndef traktor_theater_TrackData_H
 #define traktor_theater_TrackData_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/TransformPath.h"
 
 // import/export mechanism.
@@ -25,9 +24,9 @@ class EntityInstance;
 	namespace theater
 	{
 
-class T_DLLCLASS TrackData : public Serializable
+class T_DLLCLASS TrackData : public ISerializable
 {
-	T_RTTI_CLASS(TrackData)
+	T_RTTI_CLASS;
 
 public:
 	void setInstance(world::EntityInstance* instance);
@@ -38,7 +37,7 @@ public:
 
 	TransformPath& getPath();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< world::EntityInstance > m_instance;

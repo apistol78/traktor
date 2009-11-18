@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetSetDx10_H
 #define traktor_render_RenderTargetSetDx10_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/RenderTargetSet.h"
 
@@ -27,7 +27,7 @@ struct RenderTargetSetCreateDesc;
  */
 class T_DLLCLASS RenderTargetSetDx10 : public RenderTargetSet
 {
-	T_RTTI_CLASS(RenderTargetSetDx10)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSetDx10(ContextDx10* context);

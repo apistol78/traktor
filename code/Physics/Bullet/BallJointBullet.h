@@ -1,7 +1,6 @@
 #ifndef traktor_physics_BallJointBullet_H
 #define traktor_physics_BallJointBullet_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/BallJoint.h"
 #include "Physics/Bullet/JointBullet.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS BallJointBullet : public JointBullet< BallJoint, btPoint2PointConstraint >
 {
-	T_RTTI_CLASS(BallJointBullet)
+	T_RTTI_CLASS;
 
 public:
 	BallJointBullet(DestroyCallback* callback, btPoint2PointConstraint* constraint, Body* body1, Body* body2);

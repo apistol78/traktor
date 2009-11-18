@@ -28,7 +28,7 @@ class Image;
  */
 class T_DLLCLASS Dialog : public Container
 {
-	T_RTTI_CLASS(Dialog)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

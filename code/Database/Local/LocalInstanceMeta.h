@@ -1,9 +1,8 @@
 #ifndef traktor_db_LocalInstanceMeta_H
 #define traktor_db_LocalInstanceMeta_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -13,9 +12,9 @@ namespace traktor
 /*! \brief Local instance meta.
  * \ingroup Database
  */
-class LocalInstanceMeta : public Serializable
+class LocalInstanceMeta : public ISerializable
 {
-	T_RTTI_CLASS(LocalInstanceMeta)
+	T_RTTI_CLASS;
 
 public:
 	LocalInstanceMeta();
@@ -38,7 +37,7 @@ public:
 
 	const std::vector< std::wstring >& getBlobs() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_guid;

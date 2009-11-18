@@ -27,7 +27,7 @@ class EntityUpdate;
  */
 class T_DLLCLASS Entity : public Object
 {
-	T_RTTI_CLASS(Entity)
+	T_RTTI_CLASS;
 
 public:
 	virtual ~Entity();

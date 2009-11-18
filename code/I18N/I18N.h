@@ -1,8 +1,8 @@
 #ifndef traktor_i18n_I18N_H
 #define traktor_i18n_I18N_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Singleton/Singleton.h"
+#include "Core/Ref.h"
+#include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,10 +20,8 @@ namespace traktor
 class Dictionary;
 
 /*! \brief Internationalization manager. */
-class T_DLLCLASS I18N : public Singleton
+class T_DLLCLASS I18N : public ISingleton
 {
-	T_RTTI_CLASS(I18N)
-
 public:
 	static I18N& getInstance();
 

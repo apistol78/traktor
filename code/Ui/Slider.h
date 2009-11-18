@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Slider : public Widget
 {
-	T_RTTI_CLASS(Slider)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, int style = WsNone);

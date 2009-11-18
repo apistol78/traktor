@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS ArticulatedEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(ArticulatedEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	virtual void entitySelected(

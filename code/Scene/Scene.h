@@ -2,7 +2,6 @@
 #define traktor_scene_Scene_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +30,7 @@ class ISceneController;
 
 class T_DLLCLASS Scene : public Object
 {
-	T_RTTI_CLASS(Scene)
+	T_RTTI_CLASS;
 
 public:
 	Scene(

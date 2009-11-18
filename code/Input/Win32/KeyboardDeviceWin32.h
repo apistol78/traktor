@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS KeyboardDeviceWin32 : public IInputDevice
 {
-	T_RTTI_CLASS(KeyboardDeviceWin32)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const;

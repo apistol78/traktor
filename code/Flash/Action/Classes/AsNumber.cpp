@@ -31,7 +31,7 @@ AsNumber::AsNumber()
 
 void AsNumber::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< double >::max()));
@@ -50,9 +50,9 @@ void AsNumber::createPrototype()
 ActionValue AsNumber::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue::fromObject(gc_new< ActionNumber >(0.0));
+		return ActionValue::fromObject(new ActionNumber(0.0));
 	else
-		return ActionValue::fromObject(gc_new< ActionNumber >(args[0].getNumberSafe()));
+		return ActionValue::fromObject(new ActionNumber(args[0].getNumberSafe()));
 }
 
 void AsNumber::Number_toString(CallArgs& ca)

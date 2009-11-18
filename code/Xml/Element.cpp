@@ -3,7 +3,6 @@
 #include "Xml/Element.h"
 #include "Xml/Attribute.h"
 #include "Xml/Text.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 #include "Core/Io/StringOutputStream.h"
 
@@ -232,7 +231,7 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	Ref< Attribute > attr = getAttribute(name);
 	if (attr == 0)
 	{
-		attr = gc_new< Attribute >(name);
+		attr = new Attribute(name);
 		attr->m_previous = m_lastAttribute;
 		attr->m_next = 0;
 		
@@ -272,7 +271,7 @@ Ref< Attribute > Element::getAttribute(const std::wstring& name, const std::wstr
 {
 	Ref< Attribute > attr = getAttribute(name);
 	if (!attr)
-		attr = gc_new< Attribute >(name, defaultValue);
+		attr = new Attribute(name, defaultValue);
 	return attr;
 }
 

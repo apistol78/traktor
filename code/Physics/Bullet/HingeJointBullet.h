@@ -1,7 +1,6 @@
 #ifndef traktor_physics_HingeJointBullet_H
 #define traktor_physics_HingeJointBullet_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/HingeJoint.h"
 #include "Physics/Bullet/JointBullet.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS HingeJointBullet : public JointBullet< HingeJoint, btHingeConstraint >
 {
-	T_RTTI_CLASS(HingeJointBullet)
+	T_RTTI_CLASS;
 
 public:
 	HingeJointBullet(DestroyCallback* callback, btHingeConstraint* constraint, Body* body1, Body* body2);

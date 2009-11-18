@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS QuadSplitter : public Widget
 {
-	T_RTTI_CLASS(QuadSplitter)
+	T_RTTI_CLASS;
 
 public:
 	QuadSplitter();

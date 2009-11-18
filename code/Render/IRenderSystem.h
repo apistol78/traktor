@@ -2,7 +2,6 @@
 #define traktor_render_IRenderSystem_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
@@ -41,7 +40,7 @@ class IProgram;
  */
 class T_DLLCLASS IRenderSystem : public Object
 {
-	T_RTTI_CLASS(IRenderSystem)
+	T_RTTI_CLASS;
 
 public:
 	/*! \name Render system creation. */

@@ -30,7 +30,7 @@ AsSound::AsSound()
 
 void AsSound::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"attachSound", createNativeFunctionValue(this, &AsSound::Sound_attachSound));

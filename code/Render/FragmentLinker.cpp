@@ -20,7 +20,7 @@ const ImmutableNode::OutputPinDesc c_EstPort_o[] = { L"Output", 0 };
 
 class EstPort : public ImmutableNode
 {
-	T_RTTI_CLASS(EstPort)
+	T_RTTI_CLASS;
 
 public:
 	EstPort()
@@ -29,7 +29,7 @@ public:
 	}
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.FragmentLinker.EstPort", EstPort, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentLinker.EstPort", EstPort, ImmutableNode)
 
 template < typename NodeType >
 struct NodeTypePred
@@ -96,7 +96,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						T_ASSERT (externalInputPin);
 
 						// Create "established port" node and move all edges from input port to established port.
-						Ref< EstPort > inputEstPort = gc_new< EstPort >();
+						Ref< EstPort > inputEstPort = new EstPort();
 						for (RefArray< Edge >::iterator k = resolvedEdges.begin(); k != resolvedEdges.end(); ++k)
 						{
 							if ((*k)->getDestination() == externalInputPin)
@@ -120,7 +120,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 					{
 						// Non-connected or value-only input port; replace with scalar value node.
 						float value = externalNode->getValue(inputPortName, (*j)->getDefaultValue());
-						Ref< Scalar > valueNode = gc_new< Scalar >(value);
+						Ref< Scalar > valueNode = new Scalar(value);
 
 						inputEstablishedPorts[inputPortName] = valueNode;
 						resolvedNodes.push_back(valueNode);
@@ -129,7 +129,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 				for (int j = 0; j < externalNode->getOutputPinCount(); ++j)
 				{
-					Ref< EstPort > outputEstPort = gc_new< EstPort >();
+					Ref< EstPort > outputEstPort = new EstPort();
 					outputEstablishedPorts[externalNode->getOutputPin(j)->getName()] = outputEstPort;
 					resolvedNodes.push_back(outputEstPort);
 
@@ -163,7 +163,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						destinationPin = (*j)->getDestination();
 
 					if (sourcePin && destinationPin)
-						resolvedEdges.push_back(gc_new< Edge >(
+						resolvedEdges.push_back(new Edge(
 							sourcePin,
 							destinationPin
 						));
@@ -210,7 +210,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 		if (sourcePin)
 		{
 			for (RefArray< const InputPin >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
-				resolvedEdges.push_back(gc_new< Edge >(
+				resolvedEdges.push_back(new Edge(
 					sourcePin,
 					*j
 				));
@@ -219,7 +219,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 		resolvedNodes.erase(i);
 	}
 
-	return gc_new< ShaderGraph >(
+	return new ShaderGraph(
 		resolvedNodes,
 		resolvedEdges
 	);

@@ -1,5 +1,5 @@
 #include "Editor/Assets.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -7,9 +7,9 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.editor.Assets", Assets, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", Assets, ISerializable)
 
-bool Assets::serialize(Serializer& s)
+bool Assets::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< Guid >(L"dependencies", m_dependencies);
 }

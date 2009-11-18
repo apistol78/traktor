@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsAccessibility : public ActionClass
 {
-	T_RTTI_CLASS(AsAccessibility)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsAccessibility > getInstance();

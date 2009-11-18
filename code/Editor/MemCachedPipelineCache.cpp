@@ -7,7 +7,7 @@
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 
@@ -47,13 +47,13 @@ bool MemCachedPipelineCache::create(const Settings* settings)
 	std::wstring host = settings->getProperty< PropertyString >(L"Pipeline.MemCached.Host");
 	int32_t port = settings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port", 11211);
 
-	m_socket = gc_new< net::TcpSocket >();
+	m_socket = new net::TcpSocket();
 	if (!m_socket->connect(net::SocketAddressIPv4(host, port)))
 		return false;
 
 	m_accessRead = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Read", true);
 	m_accessWrite = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached.Write", true);
-	m_proto = gc_new< MemCachedProto >(m_socket);
+	m_proto = new MemCachedProto(m_socket);
 
 	return true;
 }
@@ -69,21 +69,21 @@ void MemCachedPipelineCache::destroy()
 	m_proto = 0;
 }
 
-Ref< Stream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
+Ref< IStream > MemCachedPipelineCache::get(const Guid& guid, uint32_t hash)
 {
 	if (m_accessRead)
 	{
-		Ref< MemCachedGetStream > stream = gc_new< MemCachedGetStream >(m_proto, generateKey(guid, hash));
+		Ref< MemCachedGetStream > stream = new MemCachedGetStream(m_proto, generateKey(guid, hash));
 		return stream->requestNextBlock() ? stream : 0;
 	}
 	else
 		return 0;
 }
 
-Ref< Stream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
+Ref< IStream > MemCachedPipelineCache::put(const Guid& guid, uint32_t hash)
 {
 	if (m_accessWrite)
-		return gc_new< MemCachedPutStream >(m_proto, generateKey(guid, hash));
+		return new MemCachedPutStream(m_proto, generateKey(guid, hash));
 	else
 		return 0;
 }

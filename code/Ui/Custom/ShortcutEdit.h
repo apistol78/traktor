@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ShortcutEdit_H
 #define traktor_ui_custom_ShortcutEdit_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ShortcutEdit : public Widget
 {
-	T_RTTI_CLASS(ShortcutEdit)
+	T_RTTI_CLASS;
 
 public:
 	ShortcutEdit();

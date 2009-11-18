@@ -1,8 +1,7 @@
 #ifndef traktor_animation_Transition_H
 #define traktor_animation_Transition_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,9 +21,9 @@ class State;
 /*! \brief Animation graph transition.
  * \ingroup Animation
  */
-class T_DLLCLASS Transition : public Serializable
+class T_DLLCLASS Transition : public ISerializable
 {
-	T_RTTI_CLASS(Transition)
+	T_RTTI_CLASS;
 
 public:
 	enum Moment
@@ -47,7 +46,7 @@ public:
 
 	const std::wstring& getCondition() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< State > m_from;

@@ -30,7 +30,7 @@ AsArray::AsArray()
 
 void AsArray::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"CASEINSENSITIVE", ActionValue(0.0));
@@ -60,7 +60,7 @@ void AsArray::createPrototype()
 
 ActionValue AsArray::construct(ActionContext* context, const args_t& args)
 {
-	Ref< ActionArray > object = gc_new< ActionArray >();
+	Ref< ActionArray > object = new ActionArray();
 	for (args_t::const_iterator i = args.begin(); i != args.end(); ++i)
 		object->push(*i);
 	return ActionValue::fromObject(object);

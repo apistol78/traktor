@@ -25,7 +25,7 @@ enum IoctlCommand
 
 class T_DLLCLASS Socket : public Object
 {
-	T_RTTI_CLASS(Socket)
+	T_RTTI_CLASS;
 
 public:
 	Socket();

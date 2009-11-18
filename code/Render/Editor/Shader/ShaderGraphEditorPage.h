@@ -2,8 +2,7 @@
 #define traktor_render_ShaderGraphEditorPage_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -51,7 +50,7 @@ class Edge;
 
 class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(ShaderGraphEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraphEditorPage(editor::IEditor* editor);
@@ -87,7 +86,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
-	std::map< const Type*, Ref< NodeFacade > > m_nodeFacades;
+	std::map< const TypeInfo*, Ref< NodeFacade > > m_nodeFacades;
 	Guid m_fragmentGuid;
 	bool m_lastValidationResult;
 
@@ -95,7 +94,7 @@ private:
 
 	ui::custom::Node* createEditorNode(Node* shaderNode);
 
-	void createNode(const Type* nodeType, const ui::Point& at);
+	void createNode(const TypeInfo* nodeType, const ui::Point& at);
 
 	void refreshGraph();
 

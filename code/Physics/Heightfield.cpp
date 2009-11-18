@@ -1,5 +1,5 @@
 #include "Physics/Heightfield.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Math/Float.h"
@@ -68,14 +68,14 @@ float Heightfield::getSampleTrilinear(float x, float z) const
 	return h * 0.25f;
 }
 
-bool Heightfield::read(Stream* stream)
+bool Heightfield::read(IStream* stream)
 {
 	Reader reader(stream);
 	reader.read(m_heights, m_size * m_size, sizeof(float));
 	return true;
 }
 
-bool Heightfield::write(Stream* stream)
+bool Heightfield::write(IStream* stream)
 {
 	Writer writer(stream);
 	writer.write(m_heights, m_size * m_size, sizeof(float));

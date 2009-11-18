@@ -97,32 +97,32 @@ bool RemoteInstance::remove()
 	return result ? result->getStatus() == StSuccess : false;
 }
 
-Ref< Stream > RemoteInstance::readObject(const Type*& outSerializerType)
+Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType)
 {
 	Ref< DbmReadObjectResult > result = m_connection->sendMessage< DbmReadObjectResult >(DbmReadObject(m_handle));
 	if (!result)
 		return 0;
 
-	outSerializerType = Type::find(result->getSerializerTypeName());
+	outSerializerType = TypeInfo::find(result->getSerializerTypeName());
 	if (!outSerializerType)
 		return 0;
 
-	Ref< RemoteStream > remoteStream = gc_new< RemoteStream >(m_connection, result->getHandle());
-	return gc_new< BufferedStream >(remoteStream);
+	Ref< RemoteStream > remoteStream = new RemoteStream(m_connection, result->getHandle());
+	return new BufferedStream(remoteStream);
 }
 
-Ref< Stream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
 	Ref< DbmWriteObjectResult > result = m_connection->sendMessage< DbmWriteObjectResult >(DbmWriteObject(m_handle, primaryTypeName));
 	if (!result)
 		return 0;
 
-	outSerializerType = Type::find(result->getSerializerTypeName());
+	outSerializerType = TypeInfo::find(result->getSerializerTypeName());
 	if (!outSerializerType)
 		return 0;
 
-	Ref< RemoteStream > remoteStream = gc_new< RemoteStream >(m_connection, result->getHandle());
-	return gc_new< BufferedStream >(remoteStream);
+	Ref< RemoteStream > remoteStream = new RemoteStream(m_connection, result->getHandle());
+	return new BufferedStream(remoteStream);
 }
 
 uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
@@ -135,24 +135,24 @@ uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames)
 	return uint32_t(outDataNames.size());
 }
 
-Ref< Stream > RemoteInstance::readData(const std::wstring& dataName)
+Ref< IStream > RemoteInstance::readData(const std::wstring& dataName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmReadData(m_handle, dataName));
 	if (!result)
 		return 0;
 
-	Ref< RemoteStream > remoteStream = gc_new< RemoteStream >(m_connection, result->get());
-	return gc_new< BufferedStream >(remoteStream);
+	Ref< RemoteStream > remoteStream = new RemoteStream(m_connection, result->get());
+	return new BufferedStream(remoteStream);
 }
 
-Ref< Stream > RemoteInstance::writeData(const std::wstring& dataName)
+Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 {
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmWriteData(m_handle, dataName));
 	if (!result)
 		return 0;
 
-	Ref< RemoteStream > remoteStream = gc_new< RemoteStream >(m_connection, result->get());
-	return gc_new< BufferedStream >(remoteStream);
+	Ref< RemoteStream > remoteStream = new RemoteStream(m_connection, result->get());
+	return new BufferedStream(remoteStream);
 }
 
 	}

@@ -1,5 +1,5 @@
 #include "Physics/CylinderShapeDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.CylinderShapeDesc", CylinderShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CylinderShapeDesc", CylinderShapeDesc, ShapeDesc)
 
 CylinderShapeDesc::CylinderShapeDesc()
 :	m_radius(0.0f)
@@ -35,7 +35,7 @@ float CylinderShapeDesc::getLength() const
 	return m_length;
 }
 
-bool CylinderShapeDesc::serialize(Serializer& s)
+bool CylinderShapeDesc::serialize(ISerializer& s)
 {
 	if (!ShapeDesc::serialize(s))
 		return false;

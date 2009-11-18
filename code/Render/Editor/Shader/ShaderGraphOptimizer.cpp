@@ -48,11 +48,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimi
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
 :	m_insertedCount(0)
 {
-	m_shaderGraph = gc_new< ShaderGraph >(
+	m_shaderGraph = new ShaderGraph(
 		shaderGraph->getNodes(),
 		shaderGraph->getEdges()
 	);
-	m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
+	m_shaderGraphAdj = new ShaderGraphAdjacency(m_shaderGraph);
 }
 
 Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches()
@@ -134,7 +134,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 				continue;
 			}
 
-			if (&nodes[i]->getType() != &nodes[j]->getType() || hash[nodes[i]] != hash[nodes[j]])
+			if (&type_of(nodes[i]) != &type_of(nodes[j]) || hash[nodes[i]] != hash[nodes[j]])
 			{
 				++j;
 				continue;
@@ -146,7 +146,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 			{
 				for (RefArray< Edge >::iterator k = edges.begin(); k != edges.end(); ++k)
 				{
-					Ref< Edge > edge = gc_new< Edge >(
+					Ref< Edge > edge = new Edge(
 						nodes[i]->getOutputPin(0),
 						(*k)->getDestination()
 					);
@@ -154,7 +154,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 					m_shaderGraph->removeEdge(*k);
 					m_shaderGraph->addEdge(edge);
 				}
-				m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
+				m_shaderGraphAdj = new ShaderGraphAdjacency(m_shaderGraph);
 			}
 
 			// Remove redundant node.
@@ -176,7 +176,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 		{
 			for (uint32_t j = i + 1; j < uint32_t(nodes.size()); )
 			{
-				if (&nodes[i]->getType() != &nodes[j]->getType() || hash[nodes[i]] != hash[nodes[j]])
+				if (&type_of(nodes[i]) != &type_of(nodes[j]) || hash[nodes[i]] != hash[nodes[j]])
 				{
 					++j;
 					continue;
@@ -213,7 +213,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 					m_shaderGraphAdj->findEdges(nodes[j]->getOutputPin(k), edges);
 					for (RefArray< Edge >::iterator m = edges.begin(); m != edges.end(); ++m)
 					{
-						Ref< Edge > edge = gc_new< Edge >(
+						Ref< Edge > edge = new Edge(
 							nodes[i]->getOutputPin(k),
 							(*m)->getDestination()
 						);
@@ -232,7 +232,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 
 				// Update adjacency.
 				if (outputPinCount > 0 || inputPinCount > 0)
-					m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
+					m_shaderGraphAdj = new ShaderGraphAdjacency(m_shaderGraph);
 
 				// Remove node; should be completely disconnected now.
 				m_shaderGraph->removeNode(nodes[j]);
@@ -312,7 +312,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 					Ref< Node > targetNode = (*i)->getDestination()->getNode();
 					if (is_a< Interpolator >(targetNode))
 					{
-						edge = gc_new< Edge >(targetNode->getOutputPin(0), inputPin);
+						edge = new Edge(targetNode->getOutputPin(0), inputPin);
 						break;
 					}
 				}
@@ -322,22 +322,22 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 				else
 				{
 					// Create new interpolator node.
-					Ref< Interpolator > interpolator = gc_new< Interpolator >();
+					Ref< Interpolator > interpolator = new Interpolator();
 					std::pair< int, int > position = sourceNode->getPosition(); position.first += 64;
 					interpolator->setPosition(position);
 					m_shaderGraph->addNode(interpolator);
 
 					// Create new edges.
-					edge = gc_new< Edge >(sourceOutputPin, interpolator->getInputPin(0));
+					edge = new Edge(sourceOutputPin, interpolator->getInputPin(0));
 					m_shaderGraph->addEdge(edge);
 
-					edge = gc_new< Edge >(interpolator->getOutputPin(0), inputPin);
+					edge = new Edge(interpolator->getOutputPin(0), inputPin);
 					m_shaderGraph->addEdge(edge);
 
 					m_insertedCount++;
 				}
 
-				m_shaderGraphAdj = gc_new< ShaderGraphAdjacency >(m_shaderGraph);
+				m_shaderGraphAdj = new ShaderGraphAdjacency(m_shaderGraph);
 				updateOrderComplexity();
 			}
 		}

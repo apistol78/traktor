@@ -1,6 +1,5 @@
 #include "Input/Xi/InputDriverXi.h"
 #include "Input/Xi/InputDeviceXi.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -12,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverXi", InputDriverXi, IInputDriv
 InputDriverXi::InputDriverXi(DWORD deviceCount)
 {
 	for (DWORD i = 0; i < deviceCount; ++i)
-		m_devices.push_back(gc_new< InputDeviceXi >(i));
+		m_devices.push_back(new InputDeviceXi(i));
 }
 
 int InputDriverXi::getDeviceCount()

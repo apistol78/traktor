@@ -3,9 +3,8 @@
 
 #include <string>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Io/Stream.h"
+#include "Core/RefArray.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -29,18 +28,18 @@ class Element;
  */
 class T_DLLCLASS Document : public Object
 {
-	T_RTTI_CLASS(Document)
+	T_RTTI_CLASS;
 
 public:
 	bool loadFromFile(const Path& fileName);
 	
-	bool loadFromStream(Stream* stream);
+	bool loadFromStream(IStream* stream);
 	
 	bool loadFromText(const std::wstring& text);
 	
 	bool saveAsFile(const Path& fileName);
 
-	bool saveIntoStream(Stream* stream);
+	bool saveIntoStream(IStream* stream);
 
 	int get(const std::wstring& path, RefArray< Element >& elements);
 	

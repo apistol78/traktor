@@ -1,6 +1,7 @@
 #ifndef traktor_Hermite_H
 #define traktor_Hermite_H
 
+#include "Core/Config.h"
 #include "Core/Math/Const.h"
 
 namespace traktor

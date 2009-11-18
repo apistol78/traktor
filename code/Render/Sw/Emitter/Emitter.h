@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Type;
+class TypeInfo;
 
 	namespace render
 	{
@@ -33,7 +33,7 @@ public:
 	void emit(EmitterContext& c, Node* node);
 
 private:
-	std::map< const Type*, EmitterImpl* > m_emitters;
+	std::map< const TypeInfo*, EmitterImpl* > m_emitters;
 };
 
 	}

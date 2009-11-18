@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SoundDriverDs8 : public ISoundDriver
 {
-	T_RTTI_CLASS(SoundDriverDs8)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(const SoundDriverCreateDesc& desc);

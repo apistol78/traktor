@@ -1,7 +1,6 @@
 #ifndef traktor_world_ExternalEntityFactory_H
 #define traktor_world_ExternalEntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -29,12 +28,12 @@ class Database;
  */
 class T_DLLCLASS ExternalEntityFactory : public IEntityFactory
 {
-	T_RTTI_CLASS(ExternalEntityFactory)
+	T_RTTI_CLASS;
 	
 public:
 	ExternalEntityFactory(db::Database* database);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const;
 

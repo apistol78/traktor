@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS MeshAssetWizardTool : public editor::IWizardTool
 {
-	T_RTTI_CLASS(MeshAssetWizardTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getDescription() const;

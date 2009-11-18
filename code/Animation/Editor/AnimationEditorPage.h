@@ -1,7 +1,6 @@
 #ifndef traktor_animation_AnimationEditorPage_H
 #define traktor_animation_AnimationEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Color.h"
 #include "Core/Math/Vector4.h"
 #include "Editor/IEditorPage.h"
@@ -73,7 +72,7 @@ class Pose;
 
 class T_DLLCLASS AnimationEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(AnimationEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	AnimationEditorPage(editor::IEditor* editor);

@@ -1,5 +1,5 @@
 #include "Spray/Modifiers/SizeModifier.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SizeModifier", SizeModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SizeModifier", SizeModifier, Modifier)
 
 SizeModifier::SizeModifier()
 :	m_adjustRate(0.0f)
@@ -20,7 +20,7 @@ void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, P
 		points[i].size += m_adjustRate * deltaTime;
 }
 
-bool SizeModifier::serialize(Serializer& s)
+bool SizeModifier::serialize(ISerializer& s)
 {
 	return s >> Member< float >(L"adjustRate", m_adjustRate);
 }

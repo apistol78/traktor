@@ -14,7 +14,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TextureBatchWizardTool", TextureBatchWizardTool, editor::IWizardTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureBatchWizardTool", TextureBatchWizardTool, editor::IWizardTool)
 
 std::wstring TextureBatchWizardTool::getDescription() const
 {

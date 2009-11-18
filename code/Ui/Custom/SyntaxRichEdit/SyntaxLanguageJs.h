@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SyntaxLanguageJs : public SyntaxLanguage
 {
-	T_RTTI_CLASS(SyntaxLanguageJs)
+	T_RTTI_CLASS;
 
 public:
 	virtual void begin();

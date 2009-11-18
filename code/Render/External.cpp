@@ -5,7 +5,7 @@
 #include "Render/ShaderGraph.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
@@ -28,9 +28,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == Serializer::SdWrite)
+		if (s.getDirection() == ISerializer::SdWrite)
 		{
 			std::wstring name = m_pin->getName();
 			bool optional = m_pin->isOptional();
@@ -50,7 +50,7 @@ public:
 			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 
-			m_pin = gc_new< InputPin >(
+			m_pin = new InputPin(
 				s.getCurrentObject< Node >(),
 				name,
 				optional
@@ -74,9 +74,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == Serializer::SdWrite)
+		if (s.getDirection() == ISerializer::SdWrite)
 		{
 			std::wstring name = m_pin->getName();
 			s >> Member< std::wstring >(L"name", name);
@@ -85,7 +85,7 @@ public:
 		{
 			std::wstring name;
 			s >> Member< std::wstring >(L"name", name);
-			m_pin = gc_new< OutputPin >(s.getCurrentObject< Node >(), name);
+			m_pin = new OutputPin(s.getCurrentObject< Node >(), name);
 		}
 		return true;
 	}
@@ -105,7 +105,7 @@ struct SortPinPredicate
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.External", External, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.External", External, Node)
 
 External::External()
 {
@@ -124,7 +124,7 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 
 			if (inputPort->isConnectable())
 			{
-				m_inputPins.push_back(gc_new< InputPin >(
+				m_inputPins.push_back(new InputPin(
 					this,
 					name,
 					inputPort->isOptional()
@@ -137,7 +137,7 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 		else if (const OutputPort* outputPort = dynamic_type_cast< const OutputPort* >(fragmentNode))
 		{
 			std::wstring name = outputPort->getName();
-			m_outputPins.push_back(gc_new< OutputPin >(
+			m_outputPins.push_back(new OutputPin(
 				this,
 				name
 			));
@@ -202,7 +202,7 @@ int External::getVersion() const
 	return 1;
 }
 
-bool External::serialize(Serializer& s)
+bool External::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -214,7 +214,7 @@ bool External::serialize(Serializer& s)
 	if (s.getVersion() >= 1)
 		s >> MemberStlMap< std::wstring, float >(L"values", m_values);
 	
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 	{
 		// Update edges; we have created new pins but the shader graph might still
 		// have edges which reference our old pins.

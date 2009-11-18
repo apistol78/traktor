@@ -19,7 +19,6 @@
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
 #include "I18N/Text.h"
-#include "Core/Heap/GcNew.h"
 
 // Resources
 #include "Resources/Theater.h"
@@ -54,21 +53,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterContro
 
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	if (!container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	Ref< ui::Container > container = new ui::Container();
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 4);
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), ui::Command(L"Theater.CaptureEntities"), 0));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), ui::Command(L"Theater.DeleteSelectedKey"), 1));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), ui::Command(L"Theater.GotoPreviousKey"), 2));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), ui::Command(L"Theater.GotoNextKey"), 3));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), ui::Command(L"Theater.CaptureEntities"), 0));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), ui::Command(L"Theater.DeleteSelectedKey"), 1));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_PREVIOUS_KEY"), ui::Command(L"Theater.GotoPreviousKey"), 2));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_GOTO_NEXT_KEY"), ui::Command(L"Theater.GotoNextKey"), 3));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventToolBarClick));
 
-	m_trackSequencer = gc_new< ui::custom::SequencerControl >();
+	m_trackSequencer = new ui::custom::SequencerControl();
 	if (!m_trackSequencer->create(container))
 		return false;
 
@@ -153,7 +152,7 @@ void TheaterControllerEditor::updateSequencer()
 	const RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
-		Ref< ui::custom::Sequence > trackSequence = gc_new< ui::custom::Sequence >((*i)->getInstance()->getName());
+		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getInstance()->getName());
 
 		const TransformPath& path = (*i)->getPath();
 		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
@@ -161,7 +160,7 @@ void TheaterControllerEditor::updateSequencer()
 		for (AlignedVector< TransformPath::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
 		{
 			int32_t tickTime = int32_t(j->T * 1000.0f);
-			trackSequence->addKey(gc_new< ui::custom::Tick >(tickTime));
+			trackSequence->addKey(new ui::custom::Tick(tickTime));
 		}
 
 		m_trackSequencer->addSequenceItem(trackSequence);
@@ -203,7 +202,7 @@ void TheaterControllerEditor::captureEntities()
 			instanceTrackData = *j;
 		else
 		{
-			instanceTrackData = gc_new< TrackData >();
+			instanceTrackData = new TrackData();
 			instanceTrackData->setInstance(instance);
 			trackData.push_back(instanceTrackData);
 		}

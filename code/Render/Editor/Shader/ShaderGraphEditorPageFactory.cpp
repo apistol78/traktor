@@ -8,18 +8,18 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", ShaderGraphEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorPageFactory", ShaderGraphEditorPageFactory, editor::IEditorPageFactory)
 
-const TypeSet ShaderGraphEditorPageFactory::getEditableTypes() const
+const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ShaderGraph >());
 	return typeSet;
 }
 
 Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
-	return gc_new< ShaderGraphEditorPage >(editor);
+	return new ShaderGraphEditorPage(editor);
 }
 
 void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

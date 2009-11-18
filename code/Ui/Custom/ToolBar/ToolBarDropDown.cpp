@@ -5,7 +5,6 @@
 #include "Ui/MenuItem.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/Events/CommandEvent.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -155,7 +154,7 @@ void ToolBarDropDown::buttonDown(ToolBar* toolBar, MouseEvent* mouseEvent)
 	if (menu.create())
 	{
 		for (size_t i = 0; i < m_items.size(); ++i)
-			menu.add(gc_new< MenuItem >(Command(i), m_items[i]));
+			menu.add(new MenuItem(Command(i), m_items[i]));
 		
 		Ref< MenuItem > selectedItem = menu.show(toolBar, m_menuPosition);
 		if (selectedItem)

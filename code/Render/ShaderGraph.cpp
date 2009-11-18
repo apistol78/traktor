@@ -4,7 +4,7 @@
 #include "Render/Edge.h"
 #include "Render/OutputPin.h"
 #include "Render/InputPin.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -40,7 +40,7 @@ void sanityCheck(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 
 		}
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.render.ShaderGraph", ShaderGraph, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderGraph", ShaderGraph, ISerializable)
 
 ShaderGraph::ShaderGraph()
 {
@@ -85,17 +85,17 @@ void ShaderGraph::removeAll()
 	m_nodes.resize(0);
 }
 
-size_t ShaderGraph::findNodesOf(const Type& nodeType, RefArray< Node >& outNodes) const
+size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const
 {
 	for (RefArray< Node >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
 	{
-		if (is_type_of(nodeType, (*i)->getType()))
+		if (is_type_of(nodeType, type_of(*i)))
 			outNodes.push_back(*i);
 	}
 	return outNodes.size();
 }
 
-bool ShaderGraph::serialize(Serializer& s)
+bool ShaderGraph::serialize(ISerializer& s)
 {
 	SANITY_CHECK();
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);

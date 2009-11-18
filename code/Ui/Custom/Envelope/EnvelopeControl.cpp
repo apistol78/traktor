@@ -87,7 +87,7 @@ void EnvelopeControl::eventButtonDown(Event* e)
 	}
 	else if (m->getButton() == MouseEvent::BtRight)
 	{
-		m_selectedKey = gc_new< EnvelopeKey >(
+		m_selectedKey = new EnvelopeKey(
 			float(pt.x - m_rcEnv.left) / m_rcEnv.getWidth(),
 			float(pt.y - m_rcEnv.top) * (m_minValue - m_maxValue) / m_rcEnv.getHeight() + m_maxValue
 		);

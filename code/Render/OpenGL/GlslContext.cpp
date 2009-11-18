@@ -6,7 +6,6 @@
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
@@ -15,7 +14,7 @@ namespace traktor
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
+,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)

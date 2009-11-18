@@ -20,7 +20,7 @@ class UserLocal;
 
 class T_DLLCLASS SessionManagerLocal : public ISessionManager
 {
-	T_RTTI_CLASS(SessionManagerLocal)
+	T_RTTI_CLASS;
 
 public:
 	SessionManagerLocal();

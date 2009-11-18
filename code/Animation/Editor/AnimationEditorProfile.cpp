@@ -6,14 +6,14 @@
 #include "Animation/Animation/AnimationFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::ISceneEditorProfile)
 
 void AnimationEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -38,7 +38,7 @@ void AnimationEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(gc_new< AnimationFactory >(context->getResourceDatabase()));
+	outResourceFactories.push_back(new AnimationFactory(context->getResourceDatabase()));
 }
 
 void AnimationEditorProfile::createEntityFactories(
@@ -46,8 +46,8 @@ void AnimationEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< AnimatedMeshEntityFactory >(context->getResourceManager(), context->getPhysicsManager()));
-	outEntityFactories.push_back(gc_new< PathEntityFactory >());
+	outEntityFactories.push_back(new AnimatedMeshEntityFactory(context->getResourceManager(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new PathEntityFactory());
 }
 
 void AnimationEditorProfile::createEntityRenderers(
@@ -57,7 +57,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(gc_new< PathEntityRenderer >());
+	outEntityRenderers.push_back(new PathEntityRenderer());
 }
 
 void AnimationEditorProfile::createControllerEditorFactories(
@@ -72,7 +72,7 @@ void AnimationEditorProfile::createEntityEditorFactories(
 	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(gc_new< AnimationEntityEditorFactory >());
+	outEntityEditorFactories.push_back(new AnimationEntityEditorFactory());
 }
 
 	}

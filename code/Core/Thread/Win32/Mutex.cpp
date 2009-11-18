@@ -5,8 +5,6 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Mutex", Mutex, Object)
-
 Mutex::Mutex()
 :	m_existing(false)
 {
@@ -30,7 +28,7 @@ Mutex::~Mutex()
 	CloseHandle(m_handle);
 }
 
-bool Mutex::acquire(int timeout)
+bool Mutex::wait(int32_t timeout)
 {
 	return bool(WaitForSingleObject(m_handle, (timeout < 0) ? INFINITE : timeout) == WAIT_OBJECT_0);
 }

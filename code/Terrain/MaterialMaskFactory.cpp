@@ -3,7 +3,7 @@
 #include "Terrain/MaterialMask.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 
 namespace traktor
@@ -18,9 +18,9 @@ MaterialMaskFactory::MaterialMaskFactory(db::Database* db)
 {
 }
 
-const TypeSet MaterialMaskFactory::getResourceTypes() const
+const TypeInfoSet MaterialMaskFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MaterialMask >());
 	return typeSet;
 }
@@ -30,7 +30,7 @@ bool MaterialMaskFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -40,12 +40,12 @@ Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceMa
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
 	uint32_t size = resource->getSize();
-	Ref< MaterialMask > mask = gc_new< MaterialMask >(size);
+	Ref< MaterialMask > mask = new MaterialMask(size);
 	Reader(stream).read(mask->m_data, size * size, sizeof(uint8_t));
 	stream->close();
 

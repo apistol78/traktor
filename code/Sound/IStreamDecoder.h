@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace sound
 	{
@@ -30,10 +30,10 @@ class Stream;
  */
 class T_DLLCLASS IStreamDecoder : public Object
 {
-	T_RTTI_CLASS(IStreamDecoder)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool create(Stream* stream) = 0;
+	virtual bool create(IStream* stream) = 0;
 
 	virtual void destroy() = 0;
 

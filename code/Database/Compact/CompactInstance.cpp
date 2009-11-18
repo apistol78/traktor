@@ -3,7 +3,7 @@
 #include "Database/Compact/CompactRegistry.h"
 #include "Database/Compact/BlockFile.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -103,7 +103,7 @@ bool CompactInstance::remove()
 	return true;
 }
 
-Ref< Stream > CompactInstance::readObject(const Type*& outSerializerType)
+Ref< IStream > CompactInstance::readObject(const TypeInfo*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -114,7 +114,7 @@ Ref< Stream > CompactInstance::readObject(const Type*& outSerializerType)
 	Ref< BlockFile > blockFile = m_context->getBlockFile();
 	T_ASSERT (blockFile);
 
-	Ref< Stream > objectStream = blockFile->readBlock(objectBlockEntry->getBlockId());
+	Ref< IStream > objectStream = blockFile->readBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
 		return 0;
 
@@ -122,7 +122,7 @@ Ref< Stream > CompactInstance::readObject(const Type*& outSerializerType)
 	return objectStream;
 }
 
-Ref< Stream > CompactInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< IStream > CompactInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -140,7 +140,7 @@ Ref< Stream > CompactInstance::writeObject(const std::wstring& primaryTypeName, 
 		m_instanceEntry->setObjectBlock(objectBlockEntry);
 	}
 
-	Ref< Stream > objectStream = blockFile->writeBlock(objectBlockEntry->getBlockId());
+	Ref< IStream > objectStream = blockFile->writeBlock(objectBlockEntry->getBlockId());
 	if (!objectStream)
 		return 0;
 
@@ -161,7 +161,7 @@ uint32_t CompactInstance::getDataNames(std::vector< std::wstring >& outDataNames
 	return uint32_t(outDataNames.size());
 }
 
-Ref< Stream > CompactInstance::readData(const std::wstring& dataName)
+Ref< IStream > CompactInstance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -177,7 +177,7 @@ Ref< Stream > CompactInstance::readData(const std::wstring& dataName)
 	return blockFile->readBlock(i->second->getBlockId());
 }
 
-Ref< Stream > CompactInstance::writeData(const std::wstring& dataName)
+Ref< IStream > CompactInstance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT (m_instanceEntry);
 
@@ -191,7 +191,7 @@ Ref< Stream > CompactInstance::writeData(const std::wstring& dataName)
 		dataBlocks[dataName]->setBlockId(blockFile->allocBlockId());
 	}
 
-	Ref< Stream > dataStream = blockFile->writeBlock(dataBlocks[dataName]->getBlockId());
+	Ref< IStream > dataStream = blockFile->writeBlock(dataBlocks[dataName]->getBlockId());
 	if (!dataStream)
 		return 0;
 

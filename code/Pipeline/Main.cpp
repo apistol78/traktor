@@ -14,7 +14,7 @@
 #include "Xml/XmlDeserializer.h"
 #include "Core/Library/Library.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/System/OS.h"
 #include "Core/Misc/CommandLine.h"
@@ -29,7 +29,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 
 	if (endsWith(toLower(databaseName), L".manifest"))
 	{
-		Ref< db::LocalDatabase > localDatabase = gc_new< db::LocalDatabase >();
+		Ref< db::LocalDatabase > localDatabase = new db::LocalDatabase();
 		if (!localDatabase->open(databaseName))
 		{
 			if (!create || !localDatabase->create(databaseName))
@@ -40,7 +40,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 	}
 	else if (endsWith(toLower(databaseName), L".compact"))
 	{
-		Ref< db::CompactDatabase > compactDatabase = gc_new< db::CompactDatabase >();
+		Ref< db::CompactDatabase > compactDatabase = new db::CompactDatabase();
 		if (!compactDatabase->open(databaseName))
 		{
 			if (!create || !compactDatabase->create(databaseName))
@@ -52,14 +52,14 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 
 	T_ASSERT (providerDatabase);
 
-	Ref< db::Database > database = gc_new< db::Database >();
+	Ref< db::Database > database = new db::Database();
 	return database->create(providerDatabase) ? database.ptr() : 0;
 }
 
 Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
 {
 	Ref< editor::PropertyGroup > globalGroup, userGroup;
-	Ref< Stream > file;
+	Ref< traktor::IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
 
@@ -81,15 +81,15 @@ Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
 	}
 
 	if (!userGroup)
-		userGroup = gc_new< editor::PropertyGroup >();
+		userGroup = new editor::PropertyGroup();
 
-	return gc_new< editor::Settings >(globalGroup, userGroup);
+	return new editor::Settings(globalGroup, userGroup);
 }
 
 Ref< editor::PipelineHash > loadPipelineHash(const std::wstring& pipelineHashFile)
 {
 	Ref< editor::PipelineHash > pipelineHash;
-	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
 	if (file)
 	{
 		pipelineHash = BinarySerializer(file).readObject< editor::PipelineHash >();
@@ -100,7 +100,7 @@ Ref< editor::PipelineHash > loadPipelineHash(const std::wstring& pipelineHashFil
 
 void savePipelineHash(const std::wstring& pipelineHashFile, editor::PipelineHash* pipelineHash)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
 	if (file)
 	{
 		BinarySerializer(file).writeObject(pipelineHash);
@@ -188,13 +188,13 @@ int main(int argc, const char** argv)
 	if (!hashFile.empty())
 		pipelineHash = loadPipelineHash(hashFile);
 	if (!pipelineHash)
-		pipelineHash = gc_new< editor::PipelineHash >();
+		pipelineHash = new editor::PipelineHash();
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
 	if (settings->getProperty< editor::PropertyBoolean >(L"Pipeline.MemCached", false))
 	{
-		pipelineCache = gc_new< editor::MemCachedPipelineCache >();
+		pipelineCache = new editor::MemCachedPipelineCache();
 		if (!pipelineCache->create(settings))
 		{
 			traktor::log::warning << L"Unable to create pipeline cache; cache disabled" << Endl;

@@ -1,7 +1,6 @@
 #ifndef traktor_scene_SceneEditorPage_H
 #define traktor_scene_SceneEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -15,7 +14,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace ui
 	{
@@ -62,7 +61,7 @@ class SceneAsset;
 
 class T_DLLCLASS SceneEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(SceneEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	SceneEditorPage(SceneEditorContext* context);
@@ -93,7 +92,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< editor::IEditorPageSite > m_site;
 	Ref< db::Instance > m_dataInstance;
-	Ref< Serializable > m_dataObject;
+	Ref< ISerializable > m_dataObject;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::Container > m_entityPanel;

@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS PhysicsEditorProfile : public scene::ISceneEditorProfile
 {
-	T_RTTI_CLASS(PhysicsEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(

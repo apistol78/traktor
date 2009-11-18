@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS QuadSource : public Source
 {
-	T_RTTI_CLASS(QuadSource)
+	T_RTTI_CLASS;
 
 public:
 	QuadSource();
@@ -37,7 +37,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const Vector4& getCenter() const { return m_center; }
 

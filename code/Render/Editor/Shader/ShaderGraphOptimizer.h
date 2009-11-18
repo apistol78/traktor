@@ -3,7 +3,6 @@
 
 #include <set>
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -30,7 +29,7 @@ class Node;
  */
 class T_DLLCLASS ShaderGraphOptimizer : public Object
 {
-	T_RTTI_CLASS(ShaderGraphOptimizer)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraphOptimizer(const ShaderGraph* shaderGraph);

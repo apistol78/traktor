@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS BallJoint : public Joint
 {
-	T_RTTI_CLASS(BallJoint)
+	T_RTTI_CLASS;
 
 public:
 	virtual void setAnchor(const Vector4& anchor) = 0;

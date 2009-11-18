@@ -272,7 +272,7 @@ public:
 
 		if (const StaticBodyDesc* staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 		{
-			Ref< StaticBodyOde > staticBody = gc_new< StaticBodyOde >(this, geomId);
+			Ref< StaticBodyOde > staticBody = new StaticBodyOde(this, geomId);
 			m_staticBodies.push_back(staticBody);
 			body = staticBody;
 		}
@@ -347,7 +347,7 @@ public:
 			if (dynamicDesc->getAutoDeactivate())
 				dBodySetAutoDisableFlag(bodyId, true);
 
-			Ref< DynamicBodyOde > dynamicBody = gc_new< DynamicBodyOde >(
+			Ref< DynamicBodyOde > dynamicBody = new DynamicBodyOde(
 				this,
 				m_worldId,
 				m_contactGroupId,
@@ -392,11 +392,11 @@ public:
 			Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
 			dJointSetBallAnchor(jointId, anchor.x(), anchor.y(), anchor.z());
 
-			joint = gc_new< BallJointOde >(this, jointId, body1, body2);
+			joint = new BallJointOde(this, jointId, body1, body2);
 		}
 		else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 		{
-			joint = gc_new< ConeTwistJointOde >(
+			joint = new ConeTwistJointOde(
 				this,
 				body1,
 				body2,
@@ -432,7 +432,7 @@ public:
 				dJointSetHingeParam(jointId, dParamHiStop, maxAngle);
 			}
 
-			joint = gc_new< HingeJointOde >(this, jointId, body1, body2);
+			joint = new HingeJointOde(this, jointId, body1, body2);
 		}
 		else if (const Hinge2JointDesc* hingeDesc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
 		{
@@ -461,7 +461,7 @@ public:
 			dJointSetHinge2Param(jointId, dParamSuspensionERP, hingeDesc->getSuspensionErp());
 			dJointSetHinge2Param(jointId, dParamSuspensionCFM, hingeDesc->getSuspensionCfm());
 
-			joint = gc_new< Hinge2JointOde >(this, jointId, body1, body2);
+			joint = new Hinge2JointOde(this, jointId, body1, body2);
 		}
 
 		if (!joint)
@@ -644,7 +644,7 @@ private:
 	}
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsManagerOde", PhysicsManagerOde, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerOde", PhysicsManagerOde, PhysicsManager)
 
 PhysicsManagerOde::PhysicsManagerOde()
 :	m_impl(0)

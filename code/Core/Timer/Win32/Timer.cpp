@@ -12,12 +12,12 @@ Timer::Timer()
 ,	m_last(0)
 ,	m_paused(true)
 {
-	QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&m_frequency));
+	QueryPerformanceFrequency(reinterpret_cast <LARGE_INTEGER* >(&m_frequency));
 }
 
 void Timer::start()
 {
-	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&m_first));
+	QueryPerformanceCounter(reinterpret_cast< LARGE_INTEGER* >(&m_first));
 	m_last = m_first;
 	m_paused = false;
 }
@@ -35,14 +35,14 @@ void Timer::stop()
 double Timer::getElapsedTime() const
 {
 	int64_t curr;
-	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&curr));
+	QueryPerformanceCounter(reinterpret_cast< LARGE_INTEGER* >(&curr));
 	return double(curr - m_first) / m_frequency;
 }
 
 double Timer::getDeltaTime()
 {
 	int64_t curr;
-	QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&curr));
+	QueryPerformanceCounter(reinterpret_cast< LARGE_INTEGER* >(&curr));
 	
 	double delta = double(curr - m_last) / m_frequency;
 	m_last = curr;

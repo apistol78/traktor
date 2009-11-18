@@ -3,7 +3,6 @@
 
 #include "Render/IVolumeTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class T_DLLCLASS VolumeTextureDx9
 :	public IVolumeTexture
 ,	public TextureBaseDx9
 {
-	T_RTTI_CLASS(VolumeTextureDx9)
+	T_RTTI_CLASS;
 	
 public:
 	VolumeTextureDx9(ContextDx9* context);

@@ -1,7 +1,6 @@
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketAddressIPv6.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -114,7 +113,7 @@ Ref< TcpSocket > TcpSocket::accept()
 	if ((client = ::accept(m_socket, (struct sockaddr *)&in, &len)) == INVALID_SOCKET)
 		return 0;
 
-	return gc_new< TcpSocket >(client);
+	return new TcpSocket(client);
 }
 
 Ref< SocketAddress > TcpSocket::getLocalAddress()
@@ -130,7 +129,7 @@ Ref< SocketAddress > TcpSocket::getRemoteAddress()
 	if (getpeername(m_socket, (struct sockaddr *)&in, &len) != 0)
 		return 0;
 
-	return gc_new< SocketAddressIPv4 >(in);
+	return new SocketAddressIPv4(in);
 }
 
 	}

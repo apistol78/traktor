@@ -2,7 +2,6 @@
 #define traktor_ui_custom_PropertyItem_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Widget.h"
 
@@ -34,7 +33,7 @@ class PropertyList;
  */
 class T_DLLCLASS PropertyItem : public Object
 {
-	T_RTTI_CLASS(PropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	PropertyItem(const std::wstring& text);

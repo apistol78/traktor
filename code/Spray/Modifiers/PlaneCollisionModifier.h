@@ -22,14 +22,14 @@ namespace traktor
  */
 class T_DLLCLASS PlaneCollisionModifier : public Modifier
 {
-	T_RTTI_CLASS(PlaneCollisionModifier)
+	T_RTTI_CLASS;
 
 public:
 	PlaneCollisionModifier();
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Plane m_plane;

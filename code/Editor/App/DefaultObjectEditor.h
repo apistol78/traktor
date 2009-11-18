@@ -1,7 +1,6 @@
 #ifndef traktor_editor_DefaultObjectEditor_H
 #define traktor_editor_DefaultObjectEditor_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IObjectEditor.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 
@@ -16,12 +15,12 @@ class DefaultObjectEditor
 :	public IObjectEditor
 ,	public ui::custom::PropertyList::IPropertyGuidResolver
 {
-	T_RTTI_CLASS(IObjectEditor)
+	T_RTTI_CLASS;
 
 public:
 	DefaultObjectEditor(IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
 	virtual void destroy();
 

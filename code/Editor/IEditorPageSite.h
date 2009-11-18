@@ -28,7 +28,7 @@ class Widget;
  */
 class T_DLLCLASS IEditorPageSite : public Object
 {
-	T_RTTI_CLASS(IEditorPageSite)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Attach object to property list. */

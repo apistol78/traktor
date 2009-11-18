@@ -18,7 +18,7 @@ public:
 		const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
 		MeshResource* meshResource,
-		Stream* meshResourceStream
+		IStream* meshResourceStream
 	) const;
 };
 

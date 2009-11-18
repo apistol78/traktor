@@ -26,7 +26,7 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_renderWidget = gc_new< ui::Widget >();
+	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))
 		return false;
 
@@ -41,7 +41,7 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_renderView)
 		return false;
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem()

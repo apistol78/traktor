@@ -1,7 +1,6 @@
 #ifndef traktor_editor_NewInstanceDialog_H
 #define traktor_editor_NewInstanceDialog_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor
@@ -28,7 +27,7 @@ class Settings;
 
 class NewInstanceDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(NewInstanceDialog)
+	T_RTTI_CLASS;
 
 public:
 	NewInstanceDialog(Settings* settings);

@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Type;
+class TypeInfo;
 
 	namespace render
 	{
@@ -33,7 +33,7 @@ public:
 	bool emit(HlslContext& c, Node* node);
 
 private:
-	std::map< const Type*, Emitter* > m_emitters;
+	std::map< const TypeInfo*, Emitter* > m_emitters;
 };
 
 	}

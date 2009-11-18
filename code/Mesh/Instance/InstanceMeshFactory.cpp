@@ -12,7 +12,7 @@
 #include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -28,12 +28,12 @@ InstanceMeshFactory::InstanceMeshFactory(db::Database* database, render::IRender
 ,	m_meshFactory(meshFactory)
 {
 	if (!m_meshFactory)
-		m_meshFactory = gc_new< render::RenderMeshFactory >(m_renderSystem);
+		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
 }
 
-const TypeSet InstanceMeshFactory::getResourceTypes() const
+const TypeInfoSet InstanceMeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< InstanceMesh >());
 	return typeSet;
 }
@@ -43,7 +43,7 @@ bool InstanceMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	// Read single instance mesh.
 	render::SystemMeshFactory systemMeshFactory;
@@ -62,7 +62,7 @@ Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceMa
 		return 0;
 	}
 
-	Ref< Stream > dataStream = instance->readData(L"Data");
+	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
 		log::error << L"Instance mesh factory failed; unable to open data stream" << Endl;
@@ -173,7 +173,7 @@ Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceMa
 		return 0;
 	}
 
-	Ref< InstanceMesh > instanceMesh = gc_new< InstanceMesh >();
+	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
 	instanceMesh->m_mesh = renderMesh;
 	instanceMesh->m_parts.resize(parts.size());
 

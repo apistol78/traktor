@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Palette : public Object
 {
-	T_RTTI_CLASS(Palette)
+	T_RTTI_CLASS;
 
 public:
 	Palette(int size = 256);

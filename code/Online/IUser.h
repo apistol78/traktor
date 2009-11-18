@@ -2,7 +2,7 @@
 #define traktor_online_IUser_H
 
 #include "Core/Object.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +21,7 @@ class IAchievement;
 
 class T_DLLCLASS IUser : public Object
 {
-	T_RTTI_CLASS(IUser)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const = 0;

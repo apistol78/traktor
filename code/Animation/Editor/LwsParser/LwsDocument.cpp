@@ -1,8 +1,7 @@
 #include "Animation/Editor/LwsParser/LwsDocument.h"
 #include "Animation/Editor/LwsParser/LwsGroup.h"
 #include "Animation/Editor/LwsParser/LwsValue.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/AnsiEncoding.h"
 #include "Core/Io/StringReader.h"
 #include "Core/Misc/Split.h"
@@ -14,7 +13,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsDocument", LwsDocument, Object)
 
-Ref< LwsDocument > LwsDocument::parse(Stream* stream)
+Ref< LwsDocument > LwsDocument::parse(IStream* stream)
 {
 	AnsiEncoding encoding;
 	StringReader reader(stream, &encoding);
@@ -26,7 +25,7 @@ Ref< LwsDocument > LwsDocument::parse(Stream* stream)
 		return 0;
 
 	RefArray< LwsGroup > groupStack;
-	groupStack.push_back(gc_new< LwsGroup >(L""));
+	groupStack.push_back(new LwsGroup(L""));
 
 	while (reader.readLine(line) >= 0)
 	{
@@ -39,7 +38,7 @@ Ref< LwsDocument > LwsDocument::parse(Stream* stream)
 
 		if (pieces[0] == L"{")
 		{
-			Ref< LwsGroup > group = gc_new< LwsGroup >(pieces[1]);
+			Ref< LwsGroup > group = new LwsGroup(pieces[1]);
 			groupStack.back()->add(group);
 			groupStack.push_back(group);
 		}
@@ -51,7 +50,7 @@ Ref< LwsDocument > LwsDocument::parse(Stream* stream)
 		}
 		else
 		{
-			Ref< LwsValue > value = gc_new< LwsValue >(pieces);
+			Ref< LwsValue > value = new LwsValue(pieces);
 			groupStack.back()->add(value);
 		}
 	}
@@ -59,7 +58,7 @@ Ref< LwsDocument > LwsDocument::parse(Stream* stream)
 	if (groupStack.size() != 1)
 		return 0;
 
-	Ref< LwsDocument > document = gc_new< LwsDocument >();
+	Ref< LwsDocument > document = new LwsDocument();
 	document->m_rootGroup = groupStack.back();
 
 	return document;

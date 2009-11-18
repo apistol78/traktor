@@ -2,11 +2,10 @@
 #define traktor_render_RenderViewSw_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/AutoPtr.h"
-#include "Graphics/Surface.h"
+#include "Graphics/ISurface.h"
 #include "Render/IRenderView.h"
 #include "Render/Sw/VaryingUtils.h"
 
@@ -23,7 +22,7 @@ namespace traktor
 	namespace graphics
 	{
 
-class GraphicsSystem;
+class IGraphicsSystem;
 
 	}
 
@@ -41,10 +40,10 @@ class Processor;
  */
 class T_DLLCLASS RenderViewSw : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewSw)
+	T_RTTI_CLASS;
 
 public:
-	RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSystem* graphicsSystem, Processor* processor);
+	RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSystem* graphicsSystem, Processor* processor);
 
 	virtual ~RenderViewSw();
 
@@ -115,12 +114,12 @@ private:
 	};
 
 	Ref< RenderSystemSw > m_renderSystem;
-	Ref< graphics::GraphicsSystem > m_graphicsSystem;
+	Ref< graphics::IGraphicsSystem > m_graphicsSystem;
 	Ref< Processor > m_processor;
 
 	/*! \name Primary render target surfaces. */
 	//@{
-	Ref< graphics::Surface > m_frameBufferSurface;
+	Ref< graphics::ISurface > m_frameBufferSurface;
 	graphics::SurfaceDesc m_frameBufferSurfaceDesc;
 	AutoArrayPtr< uint16_t > m_depthBuffer;
 	//@}

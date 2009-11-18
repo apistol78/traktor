@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ISimpleTexture : public ITexture
 {
-	T_RTTI_CLASS(ISimpleTexture)
+	T_RTTI_CLASS;
 	
 public:
 	virtual bool lock(int level, Lock& lock) = 0;

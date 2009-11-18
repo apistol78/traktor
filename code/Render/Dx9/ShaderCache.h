@@ -13,7 +13,7 @@ namespace traktor
 
 class ShaderCache : public Object
 {
-	T_RTTI_CLASS(ShaderCache)
+	T_RTTI_CLASS;
 
 public:
 	void releaseAll();

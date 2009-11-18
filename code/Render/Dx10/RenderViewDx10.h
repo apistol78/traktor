@@ -3,7 +3,6 @@
 
 #include <list>
 #include <stack>
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IRenderView.h"
 #include "Render/Dx10/Platform.h"
@@ -32,7 +31,7 @@ class RenderTargetSetDx10;
  */
 class T_DLLCLASS RenderViewDx10 : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewDx10)
+	T_RTTI_CLASS;
 
 public:
 	RenderViewDx10(

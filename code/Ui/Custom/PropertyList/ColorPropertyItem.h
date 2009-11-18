@@ -26,7 +26,7 @@ class Event;
  */
 class T_DLLCLASS ColorPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(ColorPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	ColorPropertyItem(const std::wstring& text, const Color& value);

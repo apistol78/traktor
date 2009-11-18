@@ -2,14 +2,14 @@
 #define traktor_drawing_ImageFormatPng_H
 
 #include "Drawing/Config.h"
-#include "Drawing/ImageFormat.h"
+#include "Drawing/IImageFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 #if defined(DRAWING_INCLUDE_PNG)
@@ -22,14 +22,14 @@ namespace traktor
 /*! \brief PNG format.
  * \ingroup Drawing
  */
-class T_DLLCLASS ImageFormatPng : public ImageFormat
+class T_DLLCLASS ImageFormatPng : public IImageFormat
 {
-	T_RTTI_CLASS(ImageFormatPng)
+	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Image > read(Stream* stream);
+	virtual Ref< Image > read(IStream* stream);
 
-	virtual bool write(Stream* stream, Image* image);
+	virtual bool write(IStream* stream, Image* image);
 };
 
 	}

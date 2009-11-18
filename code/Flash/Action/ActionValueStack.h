@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionValueStack : public Object
 {
-	T_RTTI_CLASS(ActionValueStack)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Push value onto stack.

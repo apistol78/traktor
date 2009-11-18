@@ -1,7 +1,6 @@
 #ifndef traktor_render_TextureFactory_H
 #define traktor_render_TextureFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -31,16 +30,16 @@ class IRenderSystem;
  */
 class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(TextureFactory)
+	T_RTTI_CLASS;
 
 public:
 	TextureFactory(db::Database* db, IRenderSystem* renderSystem);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_db;

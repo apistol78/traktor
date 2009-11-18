@@ -2,7 +2,6 @@
 #define traktor_resource_IResourceHandle_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS IResourceHandle : public Object
 {
-	T_RTTI_CLASS(IResourceHandle)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Replace resource object.

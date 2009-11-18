@@ -29,7 +29,7 @@ class Shader;
  */
 class T_DLLCLASS PostProcessStepSetTarget : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepSetTarget)
+	T_RTTI_CLASS;
 
 public:
 	class InstanceSetTarget : public Instance
@@ -55,7 +55,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_target;

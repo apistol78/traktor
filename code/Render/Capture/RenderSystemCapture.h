@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderSystemCapture_H
 #define traktor_render_RenderSystemCapture_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderSystem.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS RenderSystemCapture : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemCapture)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemCapture(IRenderSystem* renderSystem);

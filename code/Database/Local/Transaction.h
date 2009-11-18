@@ -3,8 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 namespace traktor
 {
@@ -22,7 +21,7 @@ class Context;
  */
 class Transaction : public Object
 {
-	T_RTTI_CLASS(Transaction)
+	T_RTTI_CLASS;
 
 public:
 	Transaction();

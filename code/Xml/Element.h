@@ -2,7 +2,7 @@
 #define traktor_xml_Element_H
 
 #include <vector>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Xml/Node.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class Attribute;
  */
 class T_DLLCLASS Element : public Node
 {
-	T_RTTI_CLASS(Element)
+	T_RTTI_CLASS;
 
 public:
 	Element(const std::wstring& name);

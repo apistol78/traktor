@@ -34,7 +34,7 @@ struct InfluencePredicate
 
 Ref< MeshResource > SkinnedMeshConverter::createResource() const
 {
-	return gc_new< SkinnedMeshResource >();
+	return new SkinnedMeshResource();
 }
 
 bool SkinnedMeshConverter::convert(
@@ -42,7 +42,7 @@ bool SkinnedMeshConverter::convert(
 	const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
-	Stream* meshResourceStream
+	IStream* meshResourceStream
 ) const
 {
 	// Create a copy of the source model and triangulate it.

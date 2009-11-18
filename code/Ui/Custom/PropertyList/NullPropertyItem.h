@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS NullPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(NullPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	NullPropertyItem();

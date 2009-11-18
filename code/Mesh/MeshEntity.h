@@ -36,7 +36,7 @@ class IMeshParameterCallback;
  */
 class T_DLLCLASS MeshEntity : public world::SpatialEntity
 {
-	T_RTTI_CLASS(MeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	MeshEntity(const Transform& transform);

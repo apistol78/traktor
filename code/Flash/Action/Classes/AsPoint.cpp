@@ -31,7 +31,7 @@ AsPoint::AsPoint()
 
 void AsPoint::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"add", createNativeFunctionValue(this, &AsPoint::Point_add));
@@ -56,7 +56,7 @@ void AsPoint::createPrototype()
 
 ActionValue AsPoint::construct(ActionContext* context, const args_t& args)
 {
-	Ref< ActionPoint > pt = gc_new< ActionPoint >();
+	Ref< ActionPoint > pt = new ActionPoint();
 
 	if (args.size() >= 2)
 	{
@@ -78,7 +78,7 @@ void AsPoint::Point_add(CallArgs& ca)
 void AsPoint::Point_clone(CallArgs& ca)
 {
 	Ref< ActionPoint > pt = checked_type_cast< ActionPoint* >(ca.self);
-	ca.ret = ActionValue::fromObject(gc_new< ActionPoint >(pt->x, pt->y));
+	ca.ret = ActionValue::fromObject(new ActionPoint(pt->x, pt->y));
 }
 
 void AsPoint::Point_distance(CallArgs& ca)
@@ -102,7 +102,7 @@ void AsPoint::Point_interpolate(CallArgs& ca)
 	Ref< ActionPoint > pt1 = ca.args[0].getObject< ActionPoint >();
 	Ref< ActionPoint > pt2 = ca.args[1].getObject< ActionPoint >();
 	double f = ca.args[2].getNumberSafe();
-	ca.ret = ActionValue::fromObject(gc_new< ActionPoint >(
+	ca.ret = ActionValue::fromObject(new ActionPoint(
 		pt1->x * (1.0f - f) + pt2->x * f,
 		pt1->y * (1.0f - f) + pt2->y * f
 	));
@@ -128,7 +128,7 @@ void AsPoint::Point_polar(CallArgs& ca)
 {
 	double length = ca.args[0].getNumberSafe();
 	double angle = ca.args[1].getNumberSafe();
-	ca.ret = ActionValue::fromObject(gc_new< ActionPoint >(
+	ca.ret = ActionValue::fromObject(new ActionPoint(
 		cos(angle) * length,
 		sin(angle) * length
 	));

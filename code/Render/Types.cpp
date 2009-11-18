@@ -1,7 +1,7 @@
 #include <map>
 #include "Render/Types.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Singleton/Singleton.h"
+#include "Core/Singleton/ISingleton.h"
 
 namespace traktor
 {
@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-class HandleRegistry : public Singleton
+class HandleRegistry : public ISingleton
 {
 public:
 	static HandleRegistry& getInstance()

@@ -16,7 +16,7 @@ struct CallArgs;
  */
 class AsMath : public ActionClass
 {
-	T_RTTI_CLASS(AsMath)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsMath > getInstance();

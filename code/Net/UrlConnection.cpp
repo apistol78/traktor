@@ -3,7 +3,6 @@
 #include "Net/Http/HttpConnection.h"
 #include "Net/Ftp/FtpConnection.h"
 #include "Net/File/FileConnection.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -20,11 +19,11 @@ Ref< UrlConnection > UrlConnection::open(const Url& url)
 	Ref< UrlConnection > connection;
 
 	if (url.getProtocol() == L"http")
-		connection = gc_new< HttpConnection >();
+		connection = new HttpConnection();
 	else if (url.getProtocol() == L"ftp")
-		connection = gc_new< FtpConnection >();
+		connection = new FtpConnection();
 	else if (url.getProtocol() == L"file")
-		connection = gc_new< FileConnection >();
+		connection = new FileConnection();
 
 	if (connection)
 	{

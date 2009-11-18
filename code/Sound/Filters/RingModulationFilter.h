@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS RingModulationFilter : public IFilter
 {
-	T_RTTI_CLASS(RingModulationFilter)
+	T_RTTI_CLASS;
 
 public:
 	RingModulationFilter(uint32_t sampleRate, uint32_t ringFrequency = 2500);

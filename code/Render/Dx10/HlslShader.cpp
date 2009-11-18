@@ -1,7 +1,6 @@
 #include <cassert>
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/HlslShader.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -16,10 +15,10 @@ HlslShader::HlslShader(ShaderType shaderType)
 ,	m_needVPos(false)
 {
 	pushScope();
-	pushOutputStream(BtUniform, gc_new< StringOutputStream >());
-	pushOutputStream(BtInput, gc_new< StringOutputStream >());
-	pushOutputStream(BtOutput, gc_new< StringOutputStream >());
-	pushOutputStream(BtBody, gc_new< StringOutputStream >());
+	pushOutputStream(BtUniform, new StringOutputStream());
+	pushOutputStream(BtInput, new StringOutputStream());
+	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()

@@ -1,6 +1,6 @@
 #include <limits>
 #include "Sound/WinMM/SoundDriverWinMM.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Log/Log.h"
 
@@ -47,7 +47,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverWinMM", SoundDriverWinMM, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverWinMM", SoundDriverWinMM, ISoundDriver)
 
 SoundDriverWinMM::SoundDriverWinMM()
 :	m_wo(NULL)

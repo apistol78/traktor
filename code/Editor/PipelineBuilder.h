@@ -3,7 +3,6 @@
 
 #include <map>
 #include "Editor/IPipelineBuilder.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Thread/Event.h"
 #include "Core/Io/Path.h"
 
@@ -39,7 +38,7 @@ class PipelineHash;
  */
 class T_DLLCLASS PipelineBuilder : public IPipelineBuilder
 {
-	T_RTTI_CLASS(PipelineBuilder)
+	T_RTTI_CLASS;
 
 public:
 	struct IListener
@@ -75,7 +74,7 @@ public:
 
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
-	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_sourceDatabase;
@@ -83,7 +82,7 @@ private:
 	Ref< IPipelineCache > m_cache;
 	Ref< PipelineHash > m_hash;
 	IListener* m_listener;
-	std::map< Guid, Ref< Serializable > > m_readCache;
+	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Path, uint32_t > m_externalFileHash;
 	RefArray< db::Instance > m_builtInstances;
 	int32_t m_succeeded;

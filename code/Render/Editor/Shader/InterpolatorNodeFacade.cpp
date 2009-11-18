@@ -12,15 +12,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.InterpolatorNodeFacade", InterpolatorNod
 
 InterpolatorNodeFacade::InterpolatorNodeFacade()
 {
-	m_nodeShape = gc_new< ui::custom::IpolNodeShape >();
+	m_nodeShape = new ui::custom::IpolNodeShape();
 }
 
 Ref< Node > InterpolatorNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return checked_type_cast< Node* >(nodeType->newInstance());
+	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
 Ref< ui::custom::Node > InterpolatorNodeFacade::createEditorNode(
@@ -29,7 +29,7 @@ Ref< ui::custom::Node > InterpolatorNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	return gc_new< ui::custom::Node >(
+	return new ui::custom::Node(
 		L"",
 		L"",
 		ui::Point(

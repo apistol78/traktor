@@ -2,7 +2,6 @@
 #define traktor_editor_IProject_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +30,7 @@ class Settings;
  */
 class T_DLLCLASS IProject : public Object
 {
-	T_RTTI_CLASS(IProject)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Get project settings. */

@@ -1,7 +1,6 @@
 #ifndef traktor_theater_Track_H
 #define traktor_theater_Track_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/TransformPath.h"
 
@@ -27,7 +26,7 @@ class SpatialEntity;
 
 class T_DLLCLASS Track : public Object
 {
-	T_RTTI_CLASS(Track)
+	T_RTTI_CLASS;
 
 public:
 	Track(world::SpatialEntity* entity, const TransformPath& path);

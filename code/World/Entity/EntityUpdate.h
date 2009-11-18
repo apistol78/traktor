@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS EntityUpdate : public Object
 {
-	T_RTTI_CLASS(EntityUpdate)
+	T_RTTI_CLASS;
 
 public:
 	EntityUpdate(float deltaTime = 0.0f);

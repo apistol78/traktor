@@ -1,16 +1,15 @@
 #ifndef traktor_DebugStream_H
 #define traktor_DebugStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Timer/Timer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,12 +24,12 @@ class OutputStream;
  * At any given time it's possible to request
  * a report by calling the "dump" method.
  */
-class T_DLLCLASS DebugStream : public Stream
+class T_DLLCLASS DebugStream : public IStream
 {
-	T_RTTI_CLASS(DebugStream)
+	T_RTTI_CLASS;
 
 public:
-	DebugStream(Stream* stream);
+	DebugStream(IStream* stream);
 
 	virtual ~DebugStream();
 
@@ -57,7 +56,7 @@ public:
 	void dump(OutputStream& os) const;
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	mutable uint32_t m_canReadCalls;
 	mutable uint32_t m_canWriteCalls;
 	mutable uint32_t m_canSeekCalls;

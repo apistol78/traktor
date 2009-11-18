@@ -20,18 +20,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.", ArrayPropertyItem, PropertyItem)
 
-ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const Type* elementType)
+ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType)
 :	PropertyItem(text)
 ,	m_elementType(elementType)
 {
 }
 
-void ArrayPropertyItem::setElementType(const Type* elementType)
+void ArrayPropertyItem::setElementType(const TypeInfo* elementType)
 {
 	m_elementType = elementType;
 }
 
-const Type* ArrayPropertyItem::getElementType() const
+const TypeInfo* ArrayPropertyItem::getElementType() const
 {
 	return m_elementType;
 }
@@ -39,7 +39,7 @@ const Type* ArrayPropertyItem::getElementType() const
 void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonEdit);
-	m_buttonEdit = gc_new< MiniButton >();
+	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(
 		parent,
 		m_elementType ? 
@@ -92,7 +92,7 @@ void ArrayPropertyItem::eventClick(Event* event)
 	{
 		// Add dummy item to indicate where we want to add new element;
 		// the ApplyReflector will detect this item and insert the new element.
-		addChildItem(gc_new< NullPropertyItem >());
+		addChildItem(new NullPropertyItem());
 		notifyCommand(Command(L"Property.Edit"));
 	}
 }

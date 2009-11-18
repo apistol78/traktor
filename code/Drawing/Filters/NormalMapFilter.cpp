@@ -1,6 +1,5 @@
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor
@@ -8,7 +7,7 @@ namespace traktor
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalMapFilter", NormalMapFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalMapFilter", NormalMapFilter, IImageFilter)
 
 NormalMapFilter::NormalMapFilter(float scale)
 {
@@ -16,7 +15,7 @@ NormalMapFilter::NormalMapFilter(float scale)
 
 Ref< Image > NormalMapFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in[3];
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)

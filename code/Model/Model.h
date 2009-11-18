@@ -30,7 +30,7 @@ namespace traktor
  */
 class T_DLLCLASS Model : public Object
 {
-	T_RTTI_CLASS(Model)
+	T_RTTI_CLASS;
 
 public:
 	enum ClearFlags

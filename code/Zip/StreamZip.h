@@ -2,7 +2,7 @@
 #define traktor_zip_StreamZip_H
 
 #include <zip.h>
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,9 +17,9 @@ namespace traktor
 	namespace zip
 	{
 	
-class T_DLLCLASS StreamZip : public Stream
+class T_DLLCLASS StreamZip : public IStream
 {
-	T_RTTI_CLASS(StreamZip)
+	T_RTTI_CLASS;
 	
 public:
 	StreamZip(zipFile file);

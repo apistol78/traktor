@@ -5,7 +5,6 @@
 #include "Render/Dx10/TypesDx10.h"
 #include "Render/Dx10/Utilities.h"
 #include "Render/Types.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -36,7 +35,7 @@ bool RenderTargetSetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetC
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = gc_new< RenderTargetDx10 >(m_context);
+		m_colorTextures[i] = new RenderTargetDx10(m_context);
 		if (!m_colorTextures[i]->create(d3dDevice, desc, desc.targets[i]))
 			return false;
 	}

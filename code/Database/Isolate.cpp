@@ -11,7 +11,7 @@ namespace traktor
 	namespace db
 	{
 
-bool Isolate::createIsolatedInstance(Instance* instance, Stream* stream)
+bool Isolate::createIsolatedInstance(Instance* instance, IStream* stream)
 {
 	T_ASSERT (stream && stream->canWrite());
 
@@ -23,7 +23,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, Stream* stream)
 	std::vector< std::wstring > dataNames;
 	writer << uint32_t(instance->getDataNames(dataNames));
 
-	Ref< Serializable > object = instance->getObject();
+	Ref< ISerializable > object = instance->getObject();
 	if (!BinarySerializer(stream).writeObject(object))
 		return false;
 
@@ -31,7 +31,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, Stream* stream)
 	{
 		writer << *i;
 
-		Ref< Stream > dataStream = instance->readData(*i);
+		Ref< IStream > dataStream = instance->readData(*i);
 		T_ASSERT (dataStream);
 
 		int32_t dataSize = dataStream->available(); 
@@ -44,7 +44,7 @@ bool Isolate::createIsolatedInstance(Instance* instance, Stream* stream)
 	return true;
 }
 
-Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, Stream* stream)
+Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, IStream* stream)
 {
 	T_ASSERT (stream && stream->canRead());
 
@@ -65,7 +65,7 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, Stream* strea
 	if (!instance)
 		return 0;
 
-	Ref< Serializable > object = BinarySerializer(stream).readObject();
+	Ref< ISerializable > object = BinarySerializer(stream).readObject();
 	if (!instance->setObject(object))
 		return 0;
 
@@ -77,7 +77,7 @@ Ref< Instance > Isolate::createInstanceFromIsolation(Group* group, Stream* strea
 		int32_t dataSize;
 		reader >> dataSize;
 
-		Ref< Stream > dataStream = instance->writeData(dataName);
+		Ref< IStream > dataStream = instance->writeData(dataName);
 		if (!dataStream)
 			return 0;
 

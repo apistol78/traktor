@@ -7,7 +7,7 @@
 #include "Render/TextureResource.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Resource/Member.h"
@@ -17,7 +17,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.CloudEntityData", CloudEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", CloudEntityData, world::SpatialEntityData)
 
 CloudEntityData::CloudEntityData()
 :	m_impostorTargetResolution(256)
@@ -39,7 +39,7 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 
 	resourceManager->bind(m_mask);
 
-	Ref< CloudEntity > cloudEntity = gc_new< CloudEntity >();
+	Ref< CloudEntity > cloudEntity = new CloudEntity();
 	if (cloudEntity->create(
 		renderSystem,
 		m_particleShader,
@@ -66,7 +66,7 @@ int CloudEntityData::getVersion() const
 	return 1;
 }
 
-bool CloudEntityData::serialize(Serializer& s)
+bool CloudEntityData::serialize(ISerializer& s)
 {
 	if (!world::SpatialEntityData::serialize(s))
 		return false;

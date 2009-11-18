@@ -2,7 +2,6 @@
 #define traktor_render_InputPin_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class Node;
  */
 class T_DLLCLASS InputPin : public Object
 {
-	T_RTTI_CLASS(InputPin)
+	T_RTTI_CLASS;
 
 public:
 	InputPin(Node* node, const std::wstring& name, bool optional);

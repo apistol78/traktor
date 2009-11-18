@@ -3,8 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +22,7 @@ class Socket;
 
 class T_DLLCLASS SocketSet : public Object
 {
-	T_RTTI_CLASS(SocketSet)
+	T_RTTI_CLASS;
 
 public:
 	void add(Socket* socket);

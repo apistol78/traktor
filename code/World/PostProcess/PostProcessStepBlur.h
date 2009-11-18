@@ -29,7 +29,7 @@ class Shader;
  */
 class T_DLLCLASS PostProcessStepBlur : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepBlur)
+	T_RTTI_CLASS;
 
 public:
 	struct Source
@@ -40,7 +40,7 @@ public:
 
 		Source();
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	class InstanceBlur : public Instance
@@ -70,7 +70,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 

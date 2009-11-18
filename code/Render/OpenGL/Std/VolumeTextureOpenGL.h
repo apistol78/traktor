@@ -1,7 +1,6 @@
 #ifndef traktor_render_VolumeTextureOpenGL_H
 #define traktor_render_VolumeTextureOpenGL_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
 
@@ -25,7 +24,7 @@ class IContext;
  */
 class T_DLLCLASS VolumeTextureOpenGL : public IVolumeTexture
 {
-	T_RTTI_CLASS(VolumeTextureOpenGL)
+	T_RTTI_CLASS;
 	
 public:
 	VolumeTextureOpenGL(IContext* context);

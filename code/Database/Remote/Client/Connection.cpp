@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Connection", Connection, Object)
 Connection::Connection(net::TcpSocket* socket)
 :	m_socket(socket)
 {
-	m_messageTransport = gc_new< MessageTransport >(m_socket);
+	m_messageTransport = new MessageTransport(m_socket);
 }
 
 void Connection::destroy()

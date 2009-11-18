@@ -43,13 +43,13 @@ bool SequencerControl::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_scrollBarV = gc_new< ScrollBar >();
+	m_scrollBarV = new ScrollBar();
 	if (!m_scrollBarV->create(this, ScrollBar::WsVertical))
 		return false;
 
 	m_scrollBarV->addScrollEventHandler(createMethodHandler(this, &SequencerControl::eventScroll));
 
-	m_scrollBarH = gc_new< ScrollBar >();
+	m_scrollBarH = new ScrollBar();
 	if (!m_scrollBarH->create(this, ScrollBar::WsHorizontal))
 		return false;
 

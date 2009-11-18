@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS SpatialEntityData : public EntityData
 {
-	T_RTTI_CLASS(SpatialEntityData)
+	T_RTTI_CLASS;
 	
 public:
 	SpatialEntityData();
@@ -31,7 +31,7 @@ public:
 	
 	virtual const Transform& getTransform() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 	
 private:
 	Transform m_transform;

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Native_H
 #define traktor_ui_Native_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class Layout;
  */
 class T_DLLCLASS Native : public Widget
 {
-	T_RTTI_CLASS(Native)
+	T_RTTI_CLASS;
 
 public:
 	bool create(void* nativeHandle, Layout* layout = 0);

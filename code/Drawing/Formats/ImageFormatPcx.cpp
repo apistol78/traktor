@@ -3,7 +3,6 @@
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -13,7 +12,7 @@ namespace traktor
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPcx", ImageFormatPcx, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPcx", ImageFormatPcx, IImageFormat)
 
 #pragma pack(1)
 
@@ -45,7 +44,7 @@ struct PCXHEADER
 
 #pragma pack()
 
-Ref< Image > ImageFormatPcx::read(Stream* stream)
+Ref< Image > ImageFormatPcx::read(IStream* stream)
 {
 	PCXHEADER hdr;
 	Reader reader(stream);
@@ -74,8 +73,8 @@ Ref< Image > ImageFormatPcx::read(Stream* stream)
 		return 0;
 	}
 
-	Ref< Palette > palette = gc_new< Palette >();
-	Ref< Image > image = gc_new< Image >(PixelFormat::getP8(), hdr.xmax - hdr.xmin, hdr.ymax - hdr.ymin, palette);
+	Ref< Palette > palette = new Palette();
+	Ref< Image > image = new Image(PixelFormat::getP8(), hdr.xmax - hdr.xmin, hdr.ymax - hdr.ymin, palette);
 
 	uint8_t T_UNALIGNED *bits = static_cast< uint8_t* >(image->getData());
 
@@ -135,7 +134,7 @@ Ref< Image > ImageFormatPcx::read(Stream* stream)
 		));
 	}
 
-	Ref< ImageInfo > imageInfo = gc_new< ImageInfo >();
+	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"PCX");
@@ -144,7 +143,7 @@ Ref< Image > ImageFormatPcx::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatPcx::write(Stream* stream, Image* image)
+bool ImageFormatPcx::write(IStream* stream, Image* image)
 {
 	PCXHEADER hdr;
 	Writer writer(stream);

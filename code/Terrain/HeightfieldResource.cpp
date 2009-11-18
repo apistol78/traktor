@@ -1,5 +1,5 @@
 #include "Terrain/HeightfieldResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.HeightfieldResource", HeightfieldResource, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldResource", HeightfieldResource, ISerializable)
 
 HeightfieldResource::HeightfieldResource()
 :	m_size(0)
@@ -17,7 +17,7 @@ HeightfieldResource::HeightfieldResource()
 {
 }
 
-bool HeightfieldResource::serialize(Serializer& s)
+bool HeightfieldResource::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"size", m_size);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent);

@@ -16,7 +16,7 @@ void EventSubject::addEventHandler(int eventId, EventHandler* eventHandler)
 	int depth = 0;
 	
 	// Use class hierarchy depth as handler priority.
-	for (const Type* type = getType().getSuper(); type; type = type->getSuper())
+	for (const TypeInfo* type = getTypeInfo().getSuper(); type; type = type->getSuper())
 		++depth;
 	
 	// Skip both Object and EventSubject bases as they will only take up space in the event vectors.

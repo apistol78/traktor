@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS RichEdit : public Widget
 {
-	T_RTTI_CLASS(RichEdit)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder);

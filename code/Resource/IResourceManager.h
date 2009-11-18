@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class IResourceHandle;
  */
 class T_DLLCLASS IResourceManager : public Object
 {
-	T_RTTI_CLASS(IResourceManager)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Add resource factory to manager.
@@ -51,7 +50,7 @@ public:
 	 * \param guid Resource identifier.
 	 * \return Resource handle.
 	 */
-	virtual Ref< IResourceHandle > bind(const Type& type, const Guid& guid) = 0;
+	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid) = 0;
 
 	/*! \brief Update all handles.
 	 *

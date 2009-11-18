@@ -2,7 +2,7 @@
 #define traktor_editor_PipelineHash_H
 
 #include <map>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Date/DateTime.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Io/Path.h"
@@ -28,9 +28,9 @@ namespace traktor
  * used by the pipeline to check if an asset
  * needs to be rebuilt.
  */
-class T_DLLCLASS PipelineHash : public Serializable
+class T_DLLCLASS PipelineHash : public ISerializable
 {
-	T_RTTI_CLASS(PipelineHash)
+	T_RTTI_CLASS;
 
 public:
 	struct Hash
@@ -42,14 +42,14 @@ public:
 
 		Hash();
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	void set(const Guid& guid, const Hash& hash);
 
 	bool get(const Guid& guid, Hash& outHash) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::map< Guid, Hash > m_hash;

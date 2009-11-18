@@ -1,7 +1,6 @@
 #ifndef traktor_db_RemoteDatabase_H
 #define traktor_db_RemoteDatabase_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Provider/IProviderDatabase.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class Connection;
  */
 class T_DLLCLASS RemoteDatabase : public IProviderDatabase
 {
-	T_RTTI_CLASS(CompactDatabase)
+	T_RTTI_CLASS;
 
 public:
 	bool open(const std::wstring& connectionString);

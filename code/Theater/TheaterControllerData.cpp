@@ -4,7 +4,7 @@
 #include "Theater/Track.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/SpatialEntity.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -12,7 +12,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.theater.TheaterControllerData", TheaterControllerData, scene::ISceneControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", TheaterControllerData, scene::ISceneControllerData)
 
 TheaterControllerData::TheaterControllerData()
 :	m_duration(0.0f)
@@ -28,15 +28,15 @@ Ref< scene::ISceneController > TheaterControllerData::createController(world::IE
 		if (!entity)
 			return 0;
 
-		tracks[i] = gc_new< Track >(
+		tracks[i] = new Track(
 			entity,
-			cref(m_trackData[i]->getPath())
+			m_trackData[i]->getPath()
 		);
 	}
-	return gc_new< TheaterController >(m_duration, cref(tracks));
+	return new TheaterController(m_duration, tracks);
 }
 
-bool TheaterControllerData::serialize(Serializer& s)
+bool TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
 	s >> MemberRefArray< TrackData >(L"trackData", m_trackData);

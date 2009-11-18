@@ -6,7 +6,6 @@
 #include "Flash/Action/ActionArray.h"
 #include "Flash/Action/Classes/AsFunction.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -77,7 +76,7 @@ ActionValue ActionFunction2::call(ActionVM* vm, ActionFrame* callerFrame, Action
 
 	if (m_flags & AffPreloadArguments || !(m_flags & AffSuppressArguments))
 	{
-		Ref< ActionArray > argumentArray = gc_new< ActionArray >();
+		Ref< ActionArray > argumentArray = new ActionArray();
 		for (std::vector< ActionValue >::iterator i = args.begin(); i != args.end(); ++i)
 			argumentArray->push(*i);
 		if (m_flags & AffPreloadArguments)
@@ -98,7 +97,7 @@ ActionValue ActionFunction2::call(ActionVM* vm, ActionFrame* callerFrame, Action
 
 	if ((m_flags & AffPreloadSuper) || (!(m_flags & AffSuppressSuper)))
 	{
-		Ref< ActionSuper > super = gc_new< ActionSuper >(self);
+		Ref< ActionSuper > super = new ActionSuper(self);
 		if (m_flags & AffPreloadSuper)
 		{
 #if defined(_DEBUG)

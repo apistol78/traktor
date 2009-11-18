@@ -18,9 +18,9 @@ SceneFactory::SceneFactory(db::Database* database, render::IRenderSystem* render
 {
 }
 
-const TypeSet SceneFactory::getResourceTypes() const
+const TypeInfoSet SceneFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Scene >());
 	return typeSet;
 }
@@ -30,13 +30,13 @@ bool SceneFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< SceneAsset > asset = m_database->getObjectReadOnly< SceneAsset >(guid);
 	if (!asset)
 		return 0;
 
-	Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
+	Ref< world::IEntityManager > entityManager = new world::EntityManager();
 	return asset->createScene(resourceManager, m_renderSystem, m_entityBuilder, entityManager);
 }
 

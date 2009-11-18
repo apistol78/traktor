@@ -10,7 +10,7 @@ namespace traktor
 
 class ConeSourceRenderer : public SourceRenderer
 {
-	T_RTTI_CLASS(ConeSourceRenderer)
+	T_RTTI_CLASS;
 
 public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const;

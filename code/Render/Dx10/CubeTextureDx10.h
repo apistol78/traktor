@@ -2,7 +2,6 @@
 #define traktor_render_CubeTextureDx10_H
 
 #include "Render/ICubeTexture.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ struct CubeTextureCreateDesc;
  */
 class T_DLLCLASS CubeTextureDx10 : public ICubeTexture
 {
-	T_RTTI_CLASS(CubeTextureDx10)
+	T_RTTI_CLASS;
 
 public:
 	CubeTextureDx10(ContextDx10* context);

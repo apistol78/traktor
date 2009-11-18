@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS IAchievement : public Object
 {
-	T_RTTI_CLASS(IAchievement)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const = 0;

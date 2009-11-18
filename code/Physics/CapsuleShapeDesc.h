@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS CapsuleShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(CapsuleShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	CapsuleShapeDesc();
@@ -34,7 +34,7 @@ public:
 
 	float getLength() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_radius;

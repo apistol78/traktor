@@ -30,7 +30,7 @@ class T_DLLCLASS PhysicsManagerPhysX
 :	public PhysicsManager
 ,	public DestroyCallbackPhysX
 {
-	T_RTTI_CLASS(PhysicsManagerPhysX)
+	T_RTTI_CLASS;
 
 public:
 	PhysicsManagerPhysX();

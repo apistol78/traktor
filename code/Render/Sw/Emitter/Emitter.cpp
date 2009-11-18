@@ -978,13 +978,13 @@ Emitter::Emitter()
 
 Emitter::~Emitter()
 {
-	for (std::map< const Type*, EmitterImpl* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
+	for (std::map< const TypeInfo*, EmitterImpl* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
 		delete i->second;
 }
 
 void Emitter::emit(EmitterContext& c, Node* node)
 {
-	std::map< const Type*, EmitterImpl* >::iterator i = m_emitters.find(&node->getType());
+	std::map< const TypeInfo*, EmitterImpl* >::iterator i = m_emitters.find(&type_of(node));
 	T_ASSERT_M (i != m_emitters.end(), L"No emitter for node");
 	T_ASSERT (i->second);
 	i->second->emit(c, node);

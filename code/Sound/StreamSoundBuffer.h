@@ -1,7 +1,6 @@
 #ifndef traktor_sound_StreamSoundBuffer_H
 #define traktor_sound_StreamSoundBuffer_H
 
-#include "Core/Heap/Ref.h"
 #include "Sound/ISoundBuffer.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class IStreamDecoder;
  */
 class T_DLLCLASS StreamSoundBuffer : public ISoundBuffer
 {
-	T_RTTI_CLASS(StreamSoundBuffer)
+	T_RTTI_CLASS;
 
 public:
 	StreamSoundBuffer();

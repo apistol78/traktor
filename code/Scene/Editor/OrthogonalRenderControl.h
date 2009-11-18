@@ -1,8 +1,7 @@
 #ifndef traktor_scene_OrthogonalRenderControl_H
 #define traktor_scene_OrthogonalRenderControl_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
@@ -41,7 +40,7 @@ class EntityAdapter;
 
 class OrthogonalRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(OrthogonalRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	enum ViewPlane

@@ -1,5 +1,5 @@
 #include "Core/Io/BitReader.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/Endian.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.BitReader", BitReader, Object)
 
-BitReader::BitReader(Stream* stream)
+BitReader::BitReader(IStream* stream)
 :	m_stream(stream)
 ,	m_data(0)
 ,	m_cnt(0)
@@ -142,7 +142,7 @@ void BitReader::skip(uint32_t nbits)
 	if (nbits > 0)
 	{
 		int nbytes = nbits >> 3;
-		m_stream->seek(Stream::SeekCurrent, nbytes);
+		m_stream->seek(IStream::SeekCurrent, nbytes);
 		
 		nbits &= 7;
 		while (nbits-- > 0)
@@ -150,7 +150,7 @@ void BitReader::skip(uint32_t nbits)
 	}
 }
 
-Ref< Stream > BitReader::getStream()
+Ref< IStream > BitReader::getStream()
 {
 	return m_stream;
 }

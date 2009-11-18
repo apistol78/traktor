@@ -1,5 +1,5 @@
 #include "Core/Io/FileSystem.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Misc/String.h"
@@ -29,7 +29,7 @@ struct IgnoreCasePredicate
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.MRU", MRU, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.MRU", MRU, ISerializable)
 
 void MRU::usedFile(const Path& filePath)
 {
@@ -65,7 +65,7 @@ bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
 	return true;
 }
 
-bool MRU::serialize(Serializer& s)
+bool MRU::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);
 }

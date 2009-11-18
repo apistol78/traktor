@@ -31,7 +31,7 @@ class Clipboard;
  */
 class T_DLLCLASS Application : public EventSubject
 {
-	T_RTTI_CLASS(Application)
+	T_RTTI_CLASS;
 
 public:
 	static Application& getInstance();

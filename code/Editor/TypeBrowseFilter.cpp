@@ -6,7 +6,7 @@ namespace traktor
 	namespace editor
 	{
 
-TypeBrowseFilter::TypeBrowseFilter(const Type& type)
+TypeBrowseFilter::TypeBrowseFilter(const TypeInfo& type)
 :	m_type(type)
 {
 }

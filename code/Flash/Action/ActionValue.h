@@ -1,7 +1,6 @@
 #ifndef traktor_flash_ActionValue_H
 #define traktor_flash_ActionValue_H
 
-#include "Core/Heap/Ref.h"
 #include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.

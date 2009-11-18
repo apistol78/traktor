@@ -48,12 +48,12 @@ void VectorPropertyItem::createInPlaceControls(Widget* parent)
 	for (int i = 0; i < m_dimension; ++i)
 	{
 		T_ASSERT (!m_editors[i]);
-		m_editors[i] = gc_new< Edit >();
+		m_editors[i] = new Edit();
 		m_editors[i]->create(
 			parent,
 			L"",
 			WsNone,
-			gc_new< NumericEditValidator >(
+			new NumericEditValidator(
 				true,
 				-std::numeric_limits< float >::max(),
 				std::numeric_limits< float >::max()

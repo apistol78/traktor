@@ -1,6 +1,6 @@
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/SoundResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -8,19 +8,19 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.sound.SoundAsset", SoundAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", SoundAsset, editor::Asset)
 
 SoundAsset::SoundAsset()
 :	m_stream(false)
 {
 }
 
-const Type* SoundAsset::getOutputType() const
+const TypeInfo* SoundAsset::getOutputType() const
 {
 	return &type_of< SoundResource >();
 }
 
-bool SoundAsset::serialize(Serializer& s)
+bool SoundAsset::serialize(ISerializer& s)
 {
 	if (!editor::Asset::serialize(s))
 		return false;

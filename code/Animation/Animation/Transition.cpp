@@ -1,6 +1,6 @@
 #include "Animation/Animation/Transition.h"
 #include "Animation/Animation/State.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberEnum.h"
 
@@ -9,7 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.Transition", Transition, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Transition", Transition, ISerializable)
 
 Transition::Transition()
 :	m_moment(TmImmediatly)
@@ -50,7 +50,7 @@ const std::wstring& Transition::getCondition() const
 	return m_condition;
 }
 
-bool Transition::serialize(Serializer& s)
+bool Transition::serialize(ISerializer& s)
 {
 	const MemberEnum< Moment >::Key c_Moment_Keys[] =
 	{

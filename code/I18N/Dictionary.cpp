@@ -1,5 +1,5 @@
 #include "I18N/Dictionary.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.i18n.Dictionary", Dictionary, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.i18n.Dictionary", Dictionary, ISerializable)
 
 bool Dictionary::has(const std::wstring& id) const
 {
@@ -34,7 +34,7 @@ const std::map< std::wstring, std::wstring >& Dictionary::get() const
 	return m_map;
 }
 
-bool Dictionary::serialize(Serializer& s)
+bool Dictionary::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< std::wstring, std::wstring >(L"map", m_map);
 }

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolForm : public Container
 {
-	T_RTTI_CLASS(ToolForm)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

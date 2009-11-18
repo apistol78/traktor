@@ -1,7 +1,6 @@
 #ifndef traktor_ui_MenuBar_H
 #define traktor_ui_MenuBar_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/EventSubject.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class IMenuBar;
  */
 class T_DLLCLASS MenuBar : public EventSubject
 {
-	T_RTTI_CLASS(MenuBar)
+	T_RTTI_CLASS;
 
 public:
 	MenuBar();

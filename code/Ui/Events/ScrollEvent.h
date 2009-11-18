@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ScrollEvent : public Event
 {
-	T_RTTI_CLASS(ScrollEvent)
+	T_RTTI_CLASS;
 	
 public:
 	ScrollEvent(EventSubject* sender, Object* item, int position);

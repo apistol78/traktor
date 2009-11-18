@@ -1,7 +1,6 @@
 #ifndef traktor_render_ProgramResourceSw_H
 #define traktor_render_ProgramResourceSw_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/ProgramResource.h"
 
 namespace traktor
@@ -16,14 +15,14 @@ class ShaderGraph;
  */
 class ProgramResourceSw : public ProgramResource
 {
-	T_RTTI_CLASS(ProgramResourceSw)
+	T_RTTI_CLASS;
 
 public:
 	ProgramResourceSw(const ShaderGraph* shaderGraph = 0);
 
 	Ref< const ShaderGraph > getShaderGraph() const { return m_shaderGraph; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< ShaderGraph > m_shaderGraph;

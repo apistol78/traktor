@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS FocusEvent : public Event
 {
-	T_RTTI_CLASS(FocusEvent)
+	T_RTTI_CLASS;
 
 public:
 	FocusEvent(EventSubject* sender, Object* item, bool gotFocus);

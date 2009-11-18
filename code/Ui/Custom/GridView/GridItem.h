@@ -26,7 +26,7 @@ class T_DLLCLASS GridItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(GridItem)
+	T_RTTI_CLASS;
 
 public:
 	GridItem();

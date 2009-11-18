@@ -1,7 +1,7 @@
 #ifndef traktor_world_EntityData_H
 #define traktor_world_EntityData_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,9 +24,9 @@ namespace traktor
  * save runtime memory as the data structure is
  * normally tossed away when the entity has been created.
  */
-class T_DLLCLASS EntityData : public Serializable
+class T_DLLCLASS EntityData : public ISerializable
 {
-	T_RTTI_CLASS(EntityData)
+	T_RTTI_CLASS;
 };
 
 	}

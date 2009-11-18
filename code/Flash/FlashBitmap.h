@@ -3,7 +3,6 @@
 
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class Image;
  */
 class T_DLLCLASS FlashBitmap : public ActionObject
 {
-	T_RTTI_CLASS(FlashBitmap)
+	T_RTTI_CLASS;
 
 public:
 	FlashBitmap();

@@ -1,7 +1,7 @@
 #ifndef traktor_physics_HeightfieldResource_H
 #define traktor_physics_HeightfieldResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Heightfield resource.
  * \ingroup Physics
  */
-class T_DLLCLASS HeightfieldResource : public Serializable
+class T_DLLCLASS HeightfieldResource : public ISerializable
 {
-	T_RTTI_CLASS(HeightfieldResource)
+	T_RTTI_CLASS;
 
 public:
 	HeightfieldResource(uint32_t size = 0, const Vector4& worldExtent = Vector4::zero());
@@ -31,7 +31,7 @@ public:
 
 	const Vector4& getWorldExtent() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_size;

@@ -2,14 +2,15 @@
 #define traktor_MD5_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Ref.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,9 +19,9 @@ namespace traktor
 /*! \brief MD5 checksum.
  * \ingroup Core
  */
-class T_DLLCLASS MD5 : public Serializable
+class T_DLLCLASS MD5 : public ISerializable
 {
-	T_RTTI_CLASS(MD5)
+	T_RTTI_CLASS;
 
 public:
 	MD5();
@@ -57,7 +58,7 @@ public:
 
 	bool operator < (const MD5& md5) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint8_t m_buffer[64];

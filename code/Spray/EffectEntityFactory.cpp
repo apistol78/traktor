@@ -14,9 +14,9 @@ EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceMan
 {
 }
 
-const TypeSet EffectEntityFactory::getEntityTypes() const
+const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EffectEntityData >());
 	return typeSet;
 }

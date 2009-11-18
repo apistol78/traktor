@@ -3,6 +3,7 @@
 
 #include <limits>
 #include <string>
+#include "Core/Config.h"
 
 namespace traktor
 {
@@ -10,7 +11,7 @@ namespace traktor
 /*! \ingroup Core */
 //@{
 
-class Type;
+class TypeInfo;
 
 /*! \brief Member serialization.
  * \ingroup Core
@@ -25,7 +26,7 @@ class Member
 public:
 	typedef T value_type;
 
-	Member< T >(const std::wstring& name, value_type& ref, const Type* type = 0)
+	Member< T >(const std::wstring& name, value_type& ref, const TypeInfo* type = 0)
 	:	m_name(name)
 	,	m_ref(ref)
 	,	m_type(type)
@@ -44,7 +45,7 @@ public:
 	 *
 	 * \return Member type.
 	 */
-	virtual const Type* getType() const { return m_type; }
+	virtual const TypeInfo* getType() const { return m_type; }
 	
 	/*! \brief Get member reference.
 	 *
@@ -73,7 +74,7 @@ public:
 private:
 	std::wstring m_name;
 	value_type& m_ref;
-	const Type* m_type;
+	const TypeInfo* m_type;
 };
 
 /*! \brief Float member serialization.

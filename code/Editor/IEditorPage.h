@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,7 +44,7 @@ class IEditorPageSite;
  */
 class T_DLLCLASS IEditorPage : public Object
 {
-	T_RTTI_CLASS(IEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Container* parent, IEditorPageSite* site) = 0;

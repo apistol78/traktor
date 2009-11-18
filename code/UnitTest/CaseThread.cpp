@@ -36,7 +36,7 @@ uint32_t g_error = 0;
 
 void shared_access()
 {
-	g_semaphore.acquire();
+	g_semaphore.wait();
 	for (int i = 0; i < 100; ++i)
 	{
 		g_count++;

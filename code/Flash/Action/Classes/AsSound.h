@@ -17,7 +17,7 @@ struct CallArgs;
  */
 class AsSound : public ActionClass
 {
-	T_RTTI_CLASS(AsSound)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsSound > getInstance();

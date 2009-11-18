@@ -31,7 +31,7 @@ class ISimpleTexture;
  */
 class T_DLLCLASS PostProcessStepSsao : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepSsao)
+	T_RTTI_CLASS;
 
 public:
 	class InstanceSsao : public Instance
@@ -63,7 +63,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 

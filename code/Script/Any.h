@@ -2,7 +2,6 @@
 #define traktor_script_Any_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS Any : public Object
 {
-	T_RTTI_CLASS(Any)
+	T_RTTI_CLASS;
 
 public:
 	Any();

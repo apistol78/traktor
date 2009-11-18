@@ -7,7 +7,7 @@
 #include "World/PostProcess/PostProcessSettings.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Log/Log.h"
 
@@ -16,10 +16,10 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.scene.SceneAsset", SceneAsset, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
-:	m_worldRenderSettings(gc_new< world::WorldRenderSettings >())
+:	m_worldRenderSettings(new world::WorldRenderSettings())
 {
 }
 
@@ -52,7 +52,7 @@ Ref< Scene > SceneAsset::createScene(
 
 	entityBuilder->end();
 
-	return gc_new< Scene >(
+	return new Scene(
 		controller,
 		entityManager,
 		rootEntity,
@@ -106,7 +106,7 @@ int SceneAsset::getVersion() const
 	return 2;
 }
 
-bool SceneAsset::serialize(Serializer& s)
+bool SceneAsset::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 

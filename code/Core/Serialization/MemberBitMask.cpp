@@ -1,6 +1,6 @@
-#include "Core/Serialization/MemberBitMask.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/MemberBitMask.h"
 
 namespace traktor
 {
@@ -12,9 +12,9 @@ MemberBitMask::MemberBitMask(const std::wstring& name, uint32_t& bm, const Bit* 
 {
 }
 
-bool MemberBitMask::serialize(Serializer& s) const
+bool MemberBitMask::serialize(ISerializer& s) const
 {
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 		m_bm = 0;
 	for (int i = 0; m_bits[i].id; ++i)
 	{

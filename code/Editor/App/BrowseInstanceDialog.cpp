@@ -46,53 +46,53 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		640,
 		500,
 		ui::ConfigDialog::WsDefaultResizable,
-		gc_new< ui::TableLayout >(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
 
-	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	if (!splitter->create(this, true, 200))
 		return false;
 
-	Ref< ui::Container > left = gc_new< ui::Container >();
-	if (!left->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+	Ref< ui::Container > left = new ui::Container();
+	if (!left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Static > treeLabel = gc_new< ui::Static >();
+	Ref< ui::Static > treeLabel = new ui::Static();
 	if (!treeLabel->create(left, i18n::Text(L"BROWSE_INSTANCE_GROUPS")))
 		return false;
 
-	m_treeDatabase = gc_new< ui::TreeView >();
+	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(left, ui::WsClientBorder | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_treeDatabase->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventTreeItemSelected));
 
-	Ref< ui::Container > right = gc_new< ui::Container >();
-	if (!right->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+	Ref< ui::Container > right = new ui::Container();
+	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Container > rightTop = gc_new< ui::Container >();
-	if (!rightTop->create(right, ui::WsNone, gc_new< ui::TableLayout >(L"100%,*,*", L"100%", 0, 0)))
+	Ref< ui::Container > rightTop = new ui::Container();
+	if (!rightTop->create(right, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"100%", 0, 0)))
 		return false;
 
-	Ref< ui::Static > listLabel = gc_new< ui::Static >();
+	Ref< ui::Static > listLabel = new ui::Static();
 	if (!listLabel->create(rightTop, i18n::Text(L"BROWSE_INSTANCE_INSTANCES")))
 		return false;
 
-	m_buttonIcon = gc_new< ui::custom::MiniButton >();
+	m_buttonIcon = new ui::custom::MiniButton();
 	if (!m_buttonIcon->create(rightTop, ui::Bitmap::load(c_ResourceBigIcons, sizeof(c_ResourceBigIcons), L"png")))
 		return false;
 	m_buttonIcon->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
 
-	m_buttonSmall = gc_new< ui::custom::MiniButton >();
+	m_buttonSmall = new ui::custom::MiniButton();
 	if (!m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png")))
 		return false;
 	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventButtonClick));
 
 	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.BrowseInstance.IconSize", 0);
 
-	m_listInstances = gc_new< ui::ListView >();
+	m_listInstances = new ui::ListView();
 	if (!m_listInstances->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList)))
 		return false;
 	m_listInstances->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
@@ -143,12 +143,12 @@ void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewI
 	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildGroupItems(treeView, groupItem, *i, filter);
 
-	Ref< ui::ListViewItems > instanceItems = gc_new< ui::ListViewItems >();
+	Ref< ui::ListViewItems > instanceItems = new ui::ListViewItems();
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
 		if (!filter || filter->acceptable(*i))
 		{
-			Ref< ui::ListViewItem > instanceItem = gc_new< ui::ListViewItem >();
+			Ref< ui::ListViewItem > instanceItem = new ui::ListViewItem();
 			instanceItem->setImage(0, 0);
 			instanceItem->setText(0, (*i)->getName());
 			instanceItem->setData(L"INSTANCE", (*i));

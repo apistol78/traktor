@@ -1,7 +1,6 @@
 #ifndef traktor_resource_ResourceHandle_H
 #define traktor_resource_ResourceHandle_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceHandle.h"
 
 namespace traktor
@@ -14,10 +13,10 @@ namespace traktor
  */
 class ResourceHandle : public IResourceHandle
 {
-	T_RTTI_CLASS(ResourceHandle)
+	T_RTTI_CLASS;
 
 public:
-	ResourceHandle(const Type& type);
+	ResourceHandle(const TypeInfo& type);
 
 	virtual void replace(Object* object);
 
@@ -25,10 +24,10 @@ public:
 
 	virtual void flush();
 
-	const Type& getResourceType() const;
+	const TypeInfo& getResourceType() const;
 
 private:
-	const Type& m_resourceType;
+	const TypeInfo& m_resourceType;
 	Ref< Object > m_object;
 };
 

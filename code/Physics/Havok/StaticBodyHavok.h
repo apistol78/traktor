@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticBodyHavok : public BodyHavok< StaticBody >
 {
-	T_RTTI_CLASS(StaticBodyHavok)
+	T_RTTI_CLASS;
 
 public:
 	StaticBodyHavok(DestroyCallbackHavok* callback, const HvkRef< hkpRigidBody >& rigidBody);

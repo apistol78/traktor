@@ -6,9 +6,9 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.CloudMaskAsset", CloudMaskAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudMaskAsset", CloudMaskAsset, editor::Asset)
 
-const Type* CloudMaskAsset::getOutputType() const
+const TypeInfo* CloudMaskAsset::getOutputType() const
 {
 	return &type_of< CloudMaskResource >();
 }

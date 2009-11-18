@@ -1,7 +1,7 @@
 #ifndef traktor_world_SpatialGroupEntityData_H
 #define traktor_world_SpatialGroupEntityData_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/SpatialEntityData.h"
 
 // import/export mechanism.
@@ -24,7 +24,7 @@ class EntityInstance;
  */
 class T_DLLCLASS SpatialGroupEntityData : public SpatialEntityData
 {
-	T_RTTI_CLASS(SpatialGroupEntityData)
+	T_RTTI_CLASS;
 
 public:
 	void addInstance(EntityInstance* instance);
@@ -39,7 +39,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 	
 private:
 	RefArray< EntityInstance > m_instances;

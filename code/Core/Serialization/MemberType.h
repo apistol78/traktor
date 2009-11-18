@@ -1,15 +1,15 @@
 #ifndef traktor_MemberType_H
 #define traktor_MemberType_H
 
+#include "Core/Rtti/TypeInfo.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Rtti/Type.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,12 +21,12 @@ namespace traktor
 class T_DLLCLASS MemberType : public MemberComplex
 {
 public:
-	MemberType(const std::wstring& name, const Type*& type);
+	MemberType(const std::wstring& name, const TypeInfo*& type);
 
-	virtual bool serialize(Serializer& s) const;
+	virtual bool serialize(ISerializer& s) const;
 
 private:
-	const Type*& m_type;
+	const TypeInfo*& m_type;
 };
 
 }

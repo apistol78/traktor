@@ -19,7 +19,7 @@ public:
 	T_FORCE_INLINE Acquire< T >(T& lock)
 	:	m_lock(lock)
 	{
-		m_lock.acquire();
+		m_lock.wait();
 	}
 	
 	T_FORCE_INLINE ~Acquire< T >()
@@ -49,7 +49,7 @@ public:
 	
 	T_FORCE_INLINE ~Release< T >()
 	{
-		m_lock.acquire();
+		m_lock.wait();
 	}
 
 private:

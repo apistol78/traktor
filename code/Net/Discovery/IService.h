@@ -1,7 +1,7 @@
 #ifndef traktor_net_IService_H
 #define traktor_net_IService_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,9 +16,9 @@ namespace traktor
 	namespace net
 	{
 
-class T_DLLCLASS IService : public Serializable
+class T_DLLCLASS IService : public ISerializable
 {
-	T_RTTI_CLASS(IService)
+	T_RTTI_CLASS;
 	
 public:
 	virtual std::wstring getDescription() const = 0;

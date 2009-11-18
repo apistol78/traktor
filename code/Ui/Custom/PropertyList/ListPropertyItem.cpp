@@ -90,17 +90,17 @@ std::wstring ListPropertyItem::getSelectedItem() const
 void ListPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonDrop);
-	m_buttonDrop = gc_new< MiniButton >();
+	m_buttonDrop = new MiniButton();
 	m_buttonDrop->create(parent, ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png"));
 	m_buttonDrop->addClickEventHandler(createMethodHandler(this, &ListPropertyItem::eventDropClick));
 
 	T_ASSERT (!m_listForm);
-	m_listForm = gc_new< ToolForm >();
-	m_listForm->create(parent, L"List", 0, 0, WsNone, gc_new< ui::FloodLayout >());
+	m_listForm = new ToolForm();
+	m_listForm->create(parent, L"List", 0, 0, WsNone, new ui::FloodLayout());
 	m_listForm->setVisible(false);
 
 	T_ASSERT (!m_listBox);
-	m_listBox = gc_new< ListBox >();
+	m_listBox = new ListBox();
 	m_listBox->create(m_listForm);
 	m_listBox->addSelectEventHandler(createMethodHandler(this, &ListPropertyItem::eventSelect));
 	m_listBox->addFocusEventHandler(createMethodHandler(this, &ListPropertyItem::eventFocus));

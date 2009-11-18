@@ -1,7 +1,6 @@
 #ifndef traktor_db_Instance_H
 #define traktor_db_Instance_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Thread/Mutex.h"
 #include "Database/Config.h"
@@ -18,8 +17,8 @@
 namespace traktor
 {
 
-class Serializable;
-class Stream;
+class ISerializable;
+class IStream;
 
 	namespace db
 	{
@@ -39,7 +38,7 @@ class Group;
  */
 class T_DLLCLASS Instance : public Object
 {
-	T_RTTI_CLASS(Instance)
+	T_RTTI_CLASS;
 
 public:
 	Instance(IProviderBus* providerBus);
@@ -56,7 +55,7 @@ public:
 
 	virtual std::wstring getPrimaryTypeName() const;
 
-	virtual const Type* getPrimaryType() const;
+	virtual const TypeInfo* getPrimaryType() const;
 
 	virtual bool checkout();
 
@@ -68,15 +67,15 @@ public:
 
 	virtual bool remove();
 
-	virtual Ref< Serializable > getObject();
+	virtual Ref< ISerializable > getObject();
 
-	virtual bool setObject(const Serializable* object);
+	virtual bool setObject(const ISerializable* object);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
-	virtual Ref< Stream > readData(const std::wstring& dataName);
+	virtual Ref< IStream > readData(const std::wstring& dataName);
 
-	virtual Ref< Stream > writeData(const std::wstring& dataName);
+	virtual Ref< IStream > writeData(const std::wstring& dataName);
 
 	virtual Ref< Group > getParent() const;
 

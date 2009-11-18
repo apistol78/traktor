@@ -7,16 +7,16 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Type;
-class Serializer;
+class TypeInfo;
+class ISerializer;
 
 /*! \brief Array member base.
  * \ingroup Core
@@ -37,7 +37,7 @@ public:
 	/*!
 	 * Return element type if available.
 	 */
-	virtual const Type* getType() const;
+	virtual const TypeInfo* getType() const;
 
 	/*!
 	 * Reserve size for X number of elements.
@@ -56,12 +56,12 @@ public:
 	 * Read element from serializer. Add to last position
 	 * in array.
 	 */
-	virtual bool read(Serializer& s) const = 0;
+	virtual bool read(ISerializer& s) const = 0;
 
 	/*!
 	 * Write element to serializer.
 	 */
-	virtual bool write(Serializer& s, size_t index) const = 0;
+	virtual bool write(ISerializer& s, size_t index) const = 0;
 
 	/*!
 	* Insert default element, used by property list
@@ -73,7 +73,7 @@ public:
 	 * Serialize method, just dispatches to read or write
 	 * depending on serializer.
 	 */
-	virtual bool serialize(Serializer& s, size_t index) const;
+	virtual bool serialize(ISerializer& s, size_t index) const;
 
 private:
 	std::wstring m_name;

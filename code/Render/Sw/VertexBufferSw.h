@@ -2,7 +2,6 @@
 #define traktor_render_VertexBufferSw_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/VertexBuffer.h"
@@ -27,7 +26,7 @@ class VertexElement;
  */
 class T_DLLCLASS VertexBufferSw : public VertexBuffer
 {
-	T_RTTI_CLASS(VertexBufferSw)
+	T_RTTI_CLASS;
 
 public:
 	typedef float vertex_tuple_t [4];

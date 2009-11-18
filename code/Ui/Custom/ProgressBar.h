@@ -27,7 +27,7 @@ class Bitmap;
  */
 class T_DLLCLASS ProgressBar : public Widget
 {
-	T_RTTI_CLASS(ProgressBar)
+	T_RTTI_CLASS;
 
 public:
 	ProgressBar();

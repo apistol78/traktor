@@ -4,7 +4,7 @@
 #include <vector>
 #include <map>
 #include "Render/Dx9/Platform.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -16,9 +16,9 @@ class ParameterCache;
 /*!
  * \ingroup DX9 Xbox360
  */
-class StateBlockDx9 : public Serializable
+class StateBlockDx9 : public ISerializable
 {
-	T_RTTI_CLASS(StateBlockDx9)
+	T_RTTI_CLASS;
 
 public:
 	StateBlockDx9();
@@ -35,7 +35,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline bool isOpaque() const { return m_opaque; }
 

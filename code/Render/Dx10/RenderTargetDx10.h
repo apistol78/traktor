@@ -2,7 +2,6 @@
 #define traktor_render_RenderTargetDx10_H
 
 #include "Render/ITexture.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ struct RenderTargetCreateDesc;
  */
 class T_DLLCLASS RenderTargetDx10 : public ITexture
 {
-	T_RTTI_CLASS(RenderTargetDx10)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetDx10(ContextDx10* context);

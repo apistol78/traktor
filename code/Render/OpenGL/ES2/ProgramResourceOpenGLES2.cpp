@@ -1,5 +1,5 @@
 #include "Render/OpenGL/ES2/ProgramResourceOpenGLES2.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberStl.h"
@@ -21,9 +21,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == Serializer::SdRead)
+		if (s.getDirection() == ISerializer::SdRead)
 			m_buffer.reset(new uint8_t [m_bufferSize]);
 		return s >> Member< void* >(getName(), m_buffer.ptr(), m_bufferSize);
 	}
@@ -35,7 +35,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceOpenGLES2", ProgramResourceOpenGLES2, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGLES2", ProgramResourceOpenGLES2, ProgramResource)
 
 ProgramResourceOpenGLES2::ProgramResourceOpenGLES2()
 :	m_bufferSize(0)
@@ -58,7 +58,7 @@ ProgramResourceOpenGLES2::ProgramResourceOpenGLES2(
 	std::memcpy(m_buffer.ptr(), buffer, bufferSize);
 }
 
-bool ProgramResourceOpenGLES2::serialize(Serializer& s)
+bool ProgramResourceOpenGLES2::serialize(ISerializer& s)
 {
 	uint32_t renderStateSize = sizeof(m_renderState);
 

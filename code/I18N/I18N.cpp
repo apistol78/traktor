@@ -7,8 +7,6 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.I18N", I18N, Singleton)
-
 I18N& I18N::getInstance()
 {
 	static I18N* s_instance = 0;
@@ -47,7 +45,7 @@ void I18N::destroy()
 }
 
 I18N::I18N()
-:	m_dictionary(gc_new< Dictionary >())
+:	m_dictionary(new Dictionary())
 {
 }
 

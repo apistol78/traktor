@@ -28,7 +28,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, IRenderSystem)
 
 bool RenderSystemDx10::create()
 {
@@ -93,7 +93,7 @@ bool RenderSystemDx10::create()
 
 	for (UINT j = 0; j < count; ++j)
 	{
-		m_displayModes.push_back(gc_new< DisplayMode >(
+		m_displayModes.push_back(new DisplayMode(
 			j,
 			m_dxgiDisplayModes[j].Width,
 			m_dxgiDisplayModes[j].Height,
@@ -129,7 +129,7 @@ bool RenderSystemDx10::create()
 	if (!m_hWnd)
 		return false;
 
-	m_context = gc_new< ContextDx10 >();
+	m_context = new ContextDx10();
 	return true;
 }
 
@@ -252,11 +252,11 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(const DisplayMode* display
 		return 0;
 	}
 
-	return gc_new< RenderViewDx10 >(
+	return new RenderViewDx10(
 		m_context,
 		m_d3dDevice,
 		d3dSwapChain,
-		cref(scd),
+		scd,
 		desc.waitVBlank
 	);
 }
@@ -305,11 +305,11 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(void* windowHandle, const 
 		return 0;
 	}
 
-	return gc_new< RenderViewDx10 >(
+	return new RenderViewDx10(
 		m_context,
 		m_d3dDevice,
 		d3dSwapChain,
-		cref(scd),
+		scd,
 		desc.waitVBlank
 	);
 }
@@ -345,12 +345,12 @@ Ref< VertexBuffer > RenderSystemDx10::createVertexBuffer(const std::vector< Vert
 		d3dInputElements[i].InstanceDataStepRate = 0;
 	}
 
-	return gc_new< VertexBufferDx10 >(
+	return new VertexBufferDx10(
 		m_context,
 		bufferSize,
 		d3dBuffer,
 		getVertexSize(vertexElements),
-		cref(d3dInputElements)
+		d3dInputElements
 	);
 }
 
@@ -370,12 +370,12 @@ Ref< IndexBuffer > RenderSystemDx10::createIndexBuffer(IndexType indexType, uint
 	if (FAILED(hr))
 		return 0;
 
-	return gc_new< IndexBufferDx10 >(m_context, indexType, bufferSize, d3dBuffer);
+	return new IndexBufferDx10(m_context, indexType, bufferSize, d3dBuffer);
 }
 
 Ref< ISimpleTexture > RenderSystemDx10::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureDx10 > texture = gc_new< SimpleTextureDx10 >(m_context);
+	Ref< SimpleTextureDx10 > texture = new SimpleTextureDx10(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -383,7 +383,7 @@ Ref< ISimpleTexture > RenderSystemDx10::createSimpleTexture(const SimpleTextureC
 
 Ref< ICubeTexture > RenderSystemDx10::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureDx10 > texture = gc_new< CubeTextureDx10 >(m_context);
+	Ref< CubeTextureDx10 > texture = new CubeTextureDx10(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -391,12 +391,12 @@ Ref< ICubeTexture > RenderSystemDx10::createCubeTexture(const CubeTextureCreateD
 
 Ref< IVolumeTexture > RenderSystemDx10::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	return gc_new< VolumeTextureDx10 >();
+	return new VolumeTextureDx10();
 }
 
 Ref< RenderTargetSet > RenderSystemDx10::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetDx10 > renderTargetSet = gc_new< RenderTargetSetDx10 >(m_context);
+	Ref< RenderTargetSetDx10 > renderTargetSet = new RenderTargetSetDx10(m_context);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
 		return 0;
 	return renderTargetSet;
@@ -421,7 +421,7 @@ Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programRe
 	if (!resource)
 		return 0;
 
-	Ref< ProgramDx10 > program = gc_new< ProgramDx10 >(m_context);
+	Ref< ProgramDx10 > program = new ProgramDx10(m_context);
 	if (!program->create(m_d3dDevice, resource))
 		return 0;
 

@@ -2,7 +2,6 @@
 #define traktor_drawing_ImageInfo_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS ImageInfo : public Object
 {
-	T_RTTI_CLASS(ImageInfo)
+	T_RTTI_CLASS;
 
 public:
 	void setAuthor(const std::wstring& author);

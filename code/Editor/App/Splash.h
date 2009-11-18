@@ -10,7 +10,7 @@ namespace traktor
 
 class Splash : public ui::ToolForm
 {
-	T_RTTI_CLASS(Splash)
+	T_RTTI_CLASS;
 
 public:
 	bool create();

@@ -1,6 +1,6 @@
 #include "Render/Sw/VertexBufferSw.h"
 #include "Render/VertexElement.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Math/Half.h"
 #include "Core/Math/Float.h"
 #include "Core/Log/Log.h"

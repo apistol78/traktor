@@ -11,7 +11,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPutStream", MemCachedPutStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.MemCachedPutStream", MemCachedPutStream, IStream)
 
 MemCachedPutStream::MemCachedPutStream(MemCachedProto* proto, const std::string& key)
 :	m_proto(proto)

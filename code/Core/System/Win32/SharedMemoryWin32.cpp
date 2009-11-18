@@ -1,6 +1,5 @@
 #include "Core/System/Win32/SharedMemoryWin32.h"
 #include "Core/Io/MemoryStream.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -74,7 +73,7 @@ private:
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryWin32", SharedMemoryWin32, SharedMemory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryWin32", SharedMemoryWin32, ISharedMemory)
 
 SharedMemoryWin32::SharedMemoryWin32()
 :	m_hMap(NULL)
@@ -146,7 +145,7 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 	return true;
 }
 
-Ref< Stream > SharedMemoryWin32::read(bool exclusive)
+Ref< IStream > SharedMemoryWin32::read(bool exclusive)
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
@@ -165,10 +164,10 @@ Ref< Stream > SharedMemoryWin32::read(bool exclusive)
 		InterlockedDecrement(&header->readerCount);
 	}
 
-	return gc_new< SharedReaderStream >(header, header + 1, header->dataSize);
+	return new SharedReaderStream(header, header + 1, header->dataSize);
 }
 
-Ref< Stream > SharedMemoryWin32::write()
+Ref< IStream > SharedMemoryWin32::write()
 {
 	Header* header = static_cast< Header* >(m_ptr);
 	if (!header)
@@ -184,7 +183,7 @@ Ref< Stream > SharedMemoryWin32::write()
 
 	header->dataSize = 0;
 
-	return gc_new< SharedWriterStream >(header, header + 1, m_size);
+	return new SharedWriterStream(header, header + 1, m_size);
 }
 
 }

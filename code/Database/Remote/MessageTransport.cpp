@@ -24,7 +24,7 @@ MessageTransport::MessageTransport(net::TcpSocket* socket)
 :	m_socket(socket)
 ,	m_buffer(c_averageMessageSize)
 {
-	m_socketStream = gc_new< net::SocketStream >(socket);
+	m_socketStream = new net::SocketStream(socket);
 }
 
 bool MessageTransport::send(const IMessage* message)

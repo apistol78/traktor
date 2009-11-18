@@ -23,7 +23,7 @@ class Bitmap;
  */
 class T_DLLCLASS Image : public Widget
 {
-	T_RTTI_CLASS(Image)
+	T_RTTI_CLASS;
 
 public:
 	enum Styles

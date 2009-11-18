@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ComboBox : public Widget
 {
-	T_RTTI_CLASS(ComboBox)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsBorder);

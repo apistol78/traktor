@@ -2,8 +2,7 @@
 #define traktor_scene_EntityAdapterBuilder_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class EntityAdapter;
 
 class EntityAdapterBuilder : public world::IEntityBuilder
 {
-	T_RTTI_CLASS(EntityAdapterBuilder)
+	T_RTTI_CLASS;
 
 public:
 	EntityAdapterBuilder(SceneEditorContext* context);

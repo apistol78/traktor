@@ -10,9 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
-const TypeSet EntityRenderer::getEntityTypes() const
+const TypeInfoSet EntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< RigidEntity >());
 	typeSet.insert(&type_of< ArticulatedEntity >());
 	return typeSet;

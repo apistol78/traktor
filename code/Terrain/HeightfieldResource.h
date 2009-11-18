@@ -2,7 +2,7 @@
 #define traktor_terrain_HeightfieldResource_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -18,14 +18,14 @@ namespace traktor
 	namespace terrain
 	{
 
-class T_DLLCLASS HeightfieldResource : public Serializable
+class T_DLLCLASS HeightfieldResource : public ISerializable
 {
-	T_RTTI_CLASS(HeightfieldResource)
+	T_RTTI_CLASS;
 
 public:
 	HeightfieldResource();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline uint32_t getSize() const { return m_size; }
 

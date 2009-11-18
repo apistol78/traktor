@@ -2,7 +2,6 @@
 #define traktor_render_ShaderGraphCombinations_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -23,7 +22,7 @@ class ShaderGraph;
 /*! \brief Shader graph combination generator. */
 class T_DLLCLASS ShaderGraphCombinations : public Object
 {
-	T_RTTI_CLASS(ShaderGraphCombinations)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraphCombinations(const ShaderGraph* shaderGraph);

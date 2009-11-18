@@ -1,7 +1,6 @@
 #ifndef traktor_render_ShaderFactory_H
 #define traktor_render_ShaderFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class IRenderSystem;
  */
 class T_DLLCLASS ShaderFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(ShaderFactory)
+	T_RTTI_CLASS;
 
 public:
 	ShaderFactory(
@@ -39,11 +38,11 @@ public:
 		IRenderSystem* renderSystem
 	);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_database;

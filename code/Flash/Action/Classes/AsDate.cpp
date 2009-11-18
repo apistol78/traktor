@@ -29,7 +29,7 @@ AsDate::AsDate()
 
 void AsDate::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"getDate", createNativeFunctionValue(this, &AsDate::Date_getDate));
@@ -79,7 +79,7 @@ void AsDate::createPrototype()
 
 ActionValue AsDate::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionDate >());
+	return ActionValue::fromObject(new ActionDate());
 }
 
 void AsDate::Date_getDate(CallArgs& ca)

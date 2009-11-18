@@ -34,7 +34,7 @@ class BackgroundWorkerStatus;
  */
 class T_DLLCLASS BackgroundWorkerDialog : public Dialog
 {
-	T_RTTI_CLASS(BackgroundWorkerDialog)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

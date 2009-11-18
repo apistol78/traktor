@@ -1,8 +1,7 @@
 #ifndef traktor_zip_CompressedStream_H
 #define traktor_zip_CompressedStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,12 +16,12 @@ namespace traktor
 	namespace zip
 	{
 
-class T_DLLCLASS CompressedStream : public Stream
+class T_DLLCLASS CompressedStream : public IStream
 {
-	T_RTTI_CLASS(CompressedStream)
+	T_RTTI_CLASS;
 
 public:
-	CompressedStream(Stream* stream);
+	CompressedStream(IStream* stream);
 
 	virtual void close();
 
@@ -46,7 +45,7 @@ public:
 
 private:
 	enum { CompressionBufferSize = 4096 };
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	mutable char m_buffer[CompressionBufferSize];
 	mutable char* m_bufferEnd;
 };

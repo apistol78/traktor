@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS CenterLayout : public Layout
 {
-	T_RTTI_CLASS(CenterLayout)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result);

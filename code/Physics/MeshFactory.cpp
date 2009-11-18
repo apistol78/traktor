@@ -3,7 +3,7 @@
 #include "Physics/Mesh.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -17,9 +17,9 @@ MeshFactory::MeshFactory(db::Database* db)
 {
 }
 
-const TypeSet MeshFactory::getResourceTypes() const
+const TypeInfoSet MeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Mesh >());
 	return typeSet;
 }
@@ -29,7 +29,7 @@ bool MeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -39,11 +39,11 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
-	Ref< Mesh > mesh = gc_new< Mesh >();
+	Ref< Mesh > mesh = new Mesh();
 	if (!mesh->read(stream))
 		mesh = 0;
 

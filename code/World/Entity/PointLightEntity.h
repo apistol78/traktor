@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS PointLightEntity : public SpatialEntity
 {
-	T_RTTI_CLASS(PointLightEntity)
+	T_RTTI_CLASS;
 
 public:
 	PointLightEntity(

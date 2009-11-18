@@ -1,7 +1,6 @@
 #ifndef traktor_render_IndexBufferOpenGLES2_H
 #define traktor_render_IndexBufferOpenGLES2_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/IndexBufferOpenGL.h"
 
@@ -25,7 +24,7 @@ class IContext;
  */
 class T_DLLCLASS IndexBufferOpenGLES2 : public IndexBufferOpenGL
 {
-	T_RTTI_CLASS(IndexBufferOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferOpenGLES2(IContext* context, IndexType indexType, uint32_t bufferSize, bool dynamic);

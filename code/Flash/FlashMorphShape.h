@@ -25,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS FlashMorphShape : public FlashCharacter
 {
-	T_RTTI_CLASS(FlashMorphShape)
+	T_RTTI_CLASS;
 
 public:
 	FlashMorphShape(uint16_t id);

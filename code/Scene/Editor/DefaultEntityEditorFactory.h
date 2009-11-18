@@ -12,12 +12,12 @@ namespace traktor
  */
 class DefaultEntityEditorFactory : public IEntityEditorFactory
 {
-	T_RTTI_CLASS(DefaultEntityEditorFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityDataTypes() const;
+	virtual const TypeInfoSet getEntityDataTypes() const;
 
-	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, const Type& entityDataType) const;
+	virtual Ref< IEntityEditor > createEntityEditor(SceneEditorContext* context, const TypeInfo& entityDataType) const;
 };
 
 	}

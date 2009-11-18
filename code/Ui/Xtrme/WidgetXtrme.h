@@ -30,7 +30,7 @@ class CanvasXtrme;
 
 class T_DLLCLASS WidgetXtrme : public Widget
 {
-	T_RTTI_CLASS(WidgetXtrme)
+	T_RTTI_CLASS;
 
 public:
 	enum EventId

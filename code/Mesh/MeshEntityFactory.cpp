@@ -14,9 +14,9 @@ MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager
 {
 }
 
-const TypeSet MeshEntityFactory::getEntityTypes() const
+const TypeInfoSet MeshEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshEntityData >());
 	return typeSet;
 }

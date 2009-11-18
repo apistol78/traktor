@@ -5,7 +5,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IPoseControllerData", IPoseControllerData, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.IPoseControllerData", IPoseControllerData, ISerializable)
 
 	}
 }

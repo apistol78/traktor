@@ -44,31 +44,31 @@ bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		gc_new< render::ShaderFactory >(database, renderSystem)
+		new render::ShaderFactory(database, renderSystem)
 	);
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolBarPlay = gc_new< ui::custom::ToolBar >();
+	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Layout Center", ui::Command(L"Flash.Editor.LayoutCenter"), 6));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(L"Layout Aspect", ui::Command(L"Flash.Editor.LayoutAspect"), 7));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Layout Center", ui::Command(L"Flash.Editor.LayoutCenter"), 6));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Layout Aspect", ui::Command(L"Flash.Editor.LayoutAspect"), 7));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
-	m_previewContainer = gc_new< ui::Container >();
-	m_previewContainer->create(container, ui::WsNone, gc_new< ui::custom::CenterLayout >());
+	m_previewContainer = new ui::Container();
+	m_previewContainer->create(container, ui::WsNone, new ui::custom::CenterLayout());
 
-	m_previewControl = gc_new< FlashPreviewControl >();
+	m_previewControl = new FlashPreviewControl();
 	m_previewControl->create(m_previewContainer, ui::WsNone, m_resourceManager, renderSystem);
 
 	return true;
@@ -93,7 +93,7 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	Ref< FlashMovieAsset > asset = checked_type_cast< FlashMovieAsset* >(data);
 
-	Ref< Stream > stream = FileSystem::getInstance().open(asset->getFileName(), File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(asset->getFileName(), File::FmRead);
 	if (!stream)
 		return false;
 
@@ -111,8 +111,8 @@ bool FlashEditorPage::setDataObject(db::Instance* instance, Object* data)
 
 	stream->close();
 
-	Ref< MemoryStream > memoryStream = gc_new< MemoryStream >(&assetBlob[0], int(assetSize), true, false);
-	Ref< SwfReader > swf = gc_new< SwfReader >(memoryStream);
+	Ref< MemoryStream > memoryStream = new MemoryStream(&assetBlob[0], int(assetSize), true, false);
+	Ref< SwfReader > swf = new SwfReader(memoryStream);
 
 	m_movie = flash::FlashMovieFactory().createMovie(swf);
 	if (!m_movie)
@@ -157,12 +157,12 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 		m_previewControl->forward();
 	else if (command == L"Flash.Editor.LayoutCenter")
 	{
-		m_previewContainer->setLayout(gc_new< ui::custom::CenterLayout >());
+		m_previewContainer->setLayout(new ui::custom::CenterLayout());
 		m_previewContainer->update();
 	}
 	else if (command == L"Flash.Editor.LayoutAspect")
 	{
-		m_previewContainer->setLayout(gc_new< ui::custom::AspectLayout >());
+		m_previewContainer->setLayout(new ui::custom::AspectLayout());
 		m_previewContainer->update();
 	}
 	else

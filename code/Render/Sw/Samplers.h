@@ -1,7 +1,6 @@
 #ifndef traktor_render_Samplers_H
 #define traktor_render_Samplers_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Float.h"
 #include "Render/Sw/Core/Sampler.h"
 

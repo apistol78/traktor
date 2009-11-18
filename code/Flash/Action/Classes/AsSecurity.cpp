@@ -30,7 +30,7 @@ AsSecurity::AsSecurity()
 
 void AsSecurity::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"allowDomain", createNativeFunctionValue(this, &AsSecurity::Security_allowDomain));

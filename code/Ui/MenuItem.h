@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Associative.h"
 #include "Ui/Command.h"
 
@@ -30,7 +29,7 @@ class T_DLLCLASS MenuItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(MenuItem)
+	T_RTTI_CLASS;
 
 public:
 	MenuItem(const Command& command, const std::wstring& text, Bitmap* image = 0);

@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS FrameEvent : public ui::Event
 {
-	T_RTTI_CLASS(FrameEvent)
+	T_RTTI_CLASS;
 
 public:
 	FrameEvent(ui::EventSubject* sender);

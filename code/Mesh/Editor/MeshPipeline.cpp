@@ -22,7 +22,7 @@
 #include "Render/Nodes.h"
 #include "Render/FragmentLinker.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
@@ -69,7 +69,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -92,9 +92,9 @@ uint32_t MeshPipeline::getVersion() const
 	return 5;
 }
 
-TypeSet MeshPipeline::getAssetTypes() const
+TypeInfoSet MeshPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshAsset >());
 	return typeSet;
 }
@@ -102,7 +102,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 bool MeshPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -115,7 +115,7 @@ bool MeshPipeline::buildDependencies(
 	pipelineDepends->addDependency(fileName);
 
 	// Create parameter object.
-	Ref< MeshPipelineParams > params = gc_new< MeshPipelineParams >();
+	Ref< MeshPipelineParams > params = new MeshPipelineParams();
 
 	// Import source model.
 	params->m_model = model::ModelFormat::readAny(fileName);
@@ -235,7 +235,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -318,19 +318,19 @@ bool MeshPipeline::buildOutput(
 	switch (asset->getMeshType())
 	{
 	case MeshAsset::MtBlend:
-		converter = gc_new< BlendMeshConverter >();
+		converter = new BlendMeshConverter();
 		break;
 	case MeshAsset::MtIndoor:
-		converter = gc_new< IndoorMeshConverter >();
+		converter = new IndoorMeshConverter();
 		break;
 	case MeshAsset::MtInstance:
-		converter = gc_new< InstanceMeshConverter >();
+		converter = new InstanceMeshConverter();
 		break;
 	case MeshAsset::MtSkinned:
-		converter = gc_new< SkinnedMeshConverter >();
+		converter = new SkinnedMeshConverter();
 		break;
 	case MeshAsset::MtStatic:
-		converter = gc_new< StaticMeshConverter >();
+		converter = new StaticMeshConverter();
 		break;
 	default:
 		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
@@ -357,7 +357,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Open asset data stream.
-	Ref< Stream > stream = outputInstance->writeData(L"Data");
+	Ref< IStream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Mesh pipeline failed; unable to create mesh data stream" << Endl;

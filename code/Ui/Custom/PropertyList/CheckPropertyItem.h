@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_CheckPropertyItem_H
 #define traktor_ui_custom_CheckPropertyItem_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/PropertyList/PropertyItem.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS CheckPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(CheckPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	CheckPropertyItem(const std::wstring& text, bool checked);

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS CombFilter : public IFilter
 {
-	T_RTTI_CLASS(CombFilter)
+	T_RTTI_CLASS;
 
 public:
 	CombFilter(uint32_t samplesLength, float feedback, float damp);

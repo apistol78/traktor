@@ -23,10 +23,10 @@ DictionaryEditorPage::DictionaryEditorPage(editor::IEditor* editor)
 
 bool DictionaryEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
-	m_gridDictionary = gc_new< ui::custom::GridView >();
+	m_gridDictionary = new ui::custom::GridView();
 	m_gridDictionary->create(parent, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridDictionary->addColumn(gc_new< ui::custom::GridColumn >(L"Id", 100));
-	m_gridDictionary->addColumn(gc_new< ui::custom::GridColumn >(L"Text", 400));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 100));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 400));
 	m_gridDictionary->addDoubleClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventGridDoubleClick));
 	return true;
 }
@@ -54,9 +54,9 @@ bool DictionaryEditorPage::setDataObject(db::Instance* instance, Object* data)
 	const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
 	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
 	{
-		Ref< ui::custom::GridRow > row = gc_new< ui::custom::GridRow >();
-		row->addItem(gc_new< ui::custom::GridItem >(i->first));
-		row->addItem(gc_new< ui::custom::GridItem >(i->second));
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->addItem(new ui::custom::GridItem(i->first));
+		row->addItem(new ui::custom::GridItem(i->second));
 		m_gridDictionary->addRow(row);
 	}
 	m_gridDictionary->update();
@@ -126,9 +126,9 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 		// Add new.
 		m_dictionary->set(L"", L"");
 
-		Ref< ui::custom::GridRow > row = gc_new< ui::custom::GridRow >();
-		row->addItem(gc_new< ui::custom::GridItem >(L""));
-		row->addItem(gc_new< ui::custom::GridItem >(L""));
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->addItem(new ui::custom::GridItem(L""));
+		row->addItem(new ui::custom::GridItem(L""));
 		m_gridDictionary->addRow(row);
 		m_gridDictionary->update();
 	}

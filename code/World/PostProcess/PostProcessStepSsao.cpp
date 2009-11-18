@@ -7,7 +7,7 @@
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ISimpleTexture.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Misc/AutoPtr.h"
@@ -19,7 +19,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSsao", PostProcessStepSsao, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSsao", PostProcessStepSsao, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -62,10 +62,10 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(resource::IResource
 	if (!randomNormals)
 		return 0;
 
-	return gc_new< InstanceSsao >(this, cref(offsets), randomNormals);
+	return new InstanceSsao(this, offsets, randomNormals);
 }
 
-bool PostProcessStepSsao::serialize(Serializer& s)
+bool PostProcessStepSsao::serialize(ISerializer& s)
 {
 	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }

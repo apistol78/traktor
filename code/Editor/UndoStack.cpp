@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.UndoStack", UndoStack, Object)
 
-bool UndoStack::push(Serializable* current)
+bool UndoStack::push(ISerializable* current)
 {
 	T_ASSERT_M (current, L"Cannot push null objects onto undo stack");
 
@@ -21,7 +21,7 @@ bool UndoStack::push(Serializable* current)
 			return true;
 	}
 
-	Ref< Serializable > clone = DeepClone(current).create();
+	Ref< ISerializable > clone = DeepClone(current).create();
 	if (!clone)
 		return false;
 
@@ -31,12 +31,12 @@ bool UndoStack::push(Serializable* current)
 	return true;
 }
 
-Ref< Serializable > UndoStack::undo(Serializable* current)
+Ref< ISerializable > UndoStack::undo(ISerializable* current)
 {
 	if (m_stack.empty())
 		return 0;
 
-	Ref< Serializable > object = m_stack.back();
+	Ref< ISerializable > object = m_stack.back();
 	m_stack.pop_back();
 
 	if (current)
@@ -45,12 +45,12 @@ Ref< Serializable > UndoStack::undo(Serializable* current)
 	return object;
 }
 
-Ref< Serializable > UndoStack::redo(Serializable* current)
+Ref< ISerializable > UndoStack::redo(ISerializable* current)
 {
 	if (m_undone.empty())
 		return 0;
 
-	Ref< Serializable > object = m_undone.back();
+	Ref< ISerializable > object = m_undone.back();
 	m_undone.pop_back();
 
 	if (current)

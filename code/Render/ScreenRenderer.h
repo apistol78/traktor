@@ -1,7 +1,6 @@
 #ifndef traktor_render_ScreenRenderer_H
 #define traktor_render_ScreenRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Render/Shader.h"
 
@@ -32,7 +31,7 @@ class VertexBuffer;
  */
 class T_DLLCLASS ScreenRenderer : public Object
 {
-	T_RTTI_CLASS(ScreenRenderer)
+	T_RTTI_CLASS;
 
 public:
 	ScreenRenderer();

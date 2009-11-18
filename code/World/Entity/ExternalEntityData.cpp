@@ -1,5 +1,5 @@
 #include "World/Entity/ExternalEntityData.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.ExternalEntityData", ExternalEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalEntityData", ExternalEntityData, EntityData)
 
 ExternalEntityData::ExternalEntityData()
 {
@@ -28,7 +28,7 @@ const Guid& ExternalEntityData::getGuid() const
 	return m_guid;
 }
 
-bool ExternalEntityData::serialize(Serializer& s)
+bool ExternalEntityData::serialize(ISerializer& s)
 {
 	return s >> Member< Guid >(L"guid", m_guid, &type_of< EntityData >());
 }

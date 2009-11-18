@@ -29,7 +29,7 @@ AsObject::AsObject()
 
 void AsObject::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"addProperty", createNativeFunctionValue(this, &AsObject::Object_addProperty));
 	prototype->setMember(L"hasOwnProperty", createNativeFunctionValue(this, &AsObject::Object_hasOwnProperty));
@@ -48,7 +48,7 @@ void AsObject::createPrototype()
 
 ActionValue AsObject::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionObject >(this));
+	return ActionValue::fromObject(new ActionObject(this));
 }
 
 void AsObject::Object_addProperty(CallArgs& ca)

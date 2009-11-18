@@ -1,3 +1,7 @@
+#include "Core/Misc/Split.h"
+#include "Core/Serialization/MemberArray.h"
+#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberEnum.h"
 #include "Ui/Custom/PropertyList/ApplyReflector.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Ui/Custom/PropertyList/StaticPropertyItem.h"
@@ -12,10 +16,6 @@
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
-#include "Core/Serialization/MemberArray.h"
-#include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/MemberEnum.h"
-#include "Core/Misc/Split.h"
 
 namespace traktor
 {
@@ -191,23 +191,32 @@ bool ApplyReflector::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Serializable >& m)
+bool ApplyReflector::operator >> (const Member< ISerializable >& m)
 {
 	T_ASSERT (is_a< ObjectPropertyItem >(*m_propertyItemIterator));
 	m_propertyItemIterator++;
 	return m->serialize(*this);
 }
 
-bool ApplyReflector::operator >> (const Member< Ref< Serializable > >& m)
+bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
 {
 	ObjectPropertyItem* propertyItem = checked_type_cast< ObjectPropertyItem* >(*m_propertyItemIterator++);
-	Ref< Serializable > object = checked_type_cast< Serializable* >(propertyItem->getObject());
+	ISerializable* object = checked_type_cast< ISerializable* >(propertyItem->getObject());
 	if (object)
 	{
-		int version = object->getVersion();
+		int version = type_of(object).getVersion();
 		if (!serialize(object, version, 0))
 			return false;
 	}
+	m = object;
+	return true;
+}
+
+bool ApplyReflector::operator >> (const Member< Ref< ISerializable > >& m)
+{
+	ISerializable* object = 0;
+	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
+		return false;
 	m = object;
 	return true;
 }

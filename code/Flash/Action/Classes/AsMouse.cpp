@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMouse", AsMouse, ActionClass)
 
 Ref< AsMouse > AsMouse::createInstance()
 {
-	Ref< AsMouse > instance = gc_new< AsMouse >();
+	Ref< AsMouse > instance = new AsMouse();
 	instance->createPrototype();
 	instance->setReadOnly();
 	return instance;
@@ -90,7 +90,7 @@ void AsMouse::eventMouseMove(ActionVM* actionVM, ActionContext* context, int x, 
 
 void AsMouse::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsMouse::Mouse_addListener));

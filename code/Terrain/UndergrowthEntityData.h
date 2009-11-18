@@ -38,12 +38,12 @@ class MaterialMask;
 
 class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 {
-	T_RTTI_CLASS(UndergrowthEntityData)
+	T_RTTI_CLASS;
 
 public:
 	UndergrowthEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
 

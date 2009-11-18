@@ -4,7 +4,6 @@
 #include "Ui/Win32/CanvasGdiPlusWin32.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Application.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Timer/Profiler.h"
 
 using namespace Gdiplus;

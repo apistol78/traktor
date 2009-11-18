@@ -4,7 +4,6 @@
 #include <map>
 #include "Render/IProgram.h"
 #include "Render/Types.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class HlslProgram;
  */
 class T_DLLCLASS ProgramDx10 : public IProgram
 {
-	T_RTTI_CLASS(ProgramDx10)
+	T_RTTI_CLASS;
 
 public:
 	ProgramDx10(ContextDx10* context);

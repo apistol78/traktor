@@ -6,7 +6,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -18,27 +17,30 @@ namespace
 
 void t_user_write(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	Stream* stream = reinterpret_cast<Stream*>(png_get_io_ptr(png_ptr));
-	if (stream != 0) stream->write(data, int(length));
+	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
+	if (stream != 0)
+		stream->write(data, int(length));
 }
 
 void t_user_read(png_structp png_ptr, png_bytep data, png_size_t length)
 {
-	Stream* stream = reinterpret_cast<Stream*>(png_get_io_ptr(png_ptr));
-	if (stream != 0) stream->read(data, int(length));
+	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
+	if (stream != 0)
+		stream->read(data, int(length));
 }
 
 void t_user_flush(png_structp png_ptr)
 {
-	Stream* stream = reinterpret_cast<Stream*>(png_get_io_ptr(png_ptr));
-	if (stream != 0) stream->flush();
+	IStream* stream = reinterpret_cast< IStream* >(png_get_io_ptr(png_ptr));
+	if (stream != 0)
+		stream->flush();
 }
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatPng", ImageFormatPng, IImageFormat)
 
-Ref< Image > ImageFormatPng::read(Stream* stream)
+Ref< Image > ImageFormatPng::read(IStream* stream)
 {
 	Ref< Image > image;
 	png_structp png_ptr;
@@ -91,14 +93,14 @@ Ref< Image > ImageFormatPng::read(Stream* stream)
 			pixelFormat = PixelFormat::getR8G8B8A8();
 #endif
 
-		image = gc_new< Image >(pixelFormat, width, height);
+		image = new Image(pixelFormat, width, height);
 
 		char* data = (char *)image->getData();
 		const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
 		for (uint32_t i = 0; i < height; ++i)
 		{
 			int rowsize = image->getPixelFormat()->getByteSize() * width;
-			memcpy(
+			std::memcpy(
 				data,
 				rows[i],
 				rowsize
@@ -106,7 +108,7 @@ Ref< Image > ImageFormatPng::read(Stream* stream)
 			data += rowsize;
 		}
 
-		Ref< ImageInfo > imageInfo = gc_new< ImageInfo >();
+		Ref< ImageInfo > imageInfo = new ImageInfo();
 		imageInfo->setAuthor(L"Unknown");
 		imageInfo->setCopyright(L"Unknown");
 		imageInfo->setFormat(L"PNG");
@@ -117,7 +119,7 @@ Ref< Image > ImageFormatPng::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatPng::write(Stream* stream, Image* image)
+bool ImageFormatPng::write(IStream* stream, Image* image)
 {
 	png_structp png_ptr;
 	png_infop info_ptr;

@@ -1,7 +1,6 @@
 #ifndef traktor_render_IndexBufferIAR_H
 #define traktor_render_IndexBufferIAR_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/OpenGL/IndexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class IContext;
  */
 class T_DLLCLASS IndexBufferIAR : public IndexBufferOpenGL
 {
-	T_RTTI_CLASS(IndexBufferIAR)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferIAR(IContext* context, IndexType indexType, uint32_t bufferSize);

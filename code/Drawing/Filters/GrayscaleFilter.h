@@ -1,14 +1,14 @@
 #ifndef traktor_drawing_GrayScaleFilter_H
 #define traktor_drawing_GrayScaleFilter_H
 
-#include "Drawing/ImageFilter.h"
+#include "Drawing/IImageFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Gray scale filter.
  * \ingroup Drawing
  */
-class T_DLLCLASS GrayscaleFilter : public ImageFilter
+class T_DLLCLASS GrayscaleFilter : public IImageFilter
 {
-	T_RTTI_CLASS(GrayscaleFilter)
+	T_RTTI_CLASS;
 
 protected:
 	virtual Ref< Image > apply(const Image* image);

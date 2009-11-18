@@ -22,7 +22,7 @@ class SkinnedMesh;
 
 class T_DLLCLASS SkinnedMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(SkinnedMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh);

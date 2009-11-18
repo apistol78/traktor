@@ -1,12 +1,12 @@
 #include "Core/Io/BitWriter.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.BitWriter", BitWriter, Object)
 
-BitWriter::BitWriter(Stream* stream)
+BitWriter::BitWriter(IStream* stream)
 :	m_stream(stream)
 ,	m_data(0)
 ,	m_cnt(0)
@@ -20,7 +20,7 @@ void BitWriter::writeBit(bool bit)
 		flush();
 }
 
-void BitWriter::writeUnsigned(int nbits, uint32_t value)
+void BitWriter::writeUnsigned(int32_t nbits, uint32_t value)
 {
 	for (int i = 0; i < nbits; ++i)
 	{
@@ -43,7 +43,7 @@ uint32_t BitWriter::tell() const
 	return (m_stream->tell() << 3) + m_cnt;
 }
 
-Ref< Stream > BitWriter::getStream()
+Ref< IStream > BitWriter::getStream()
 {
 	return m_stream;
 }

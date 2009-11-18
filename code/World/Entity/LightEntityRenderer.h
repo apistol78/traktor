@@ -21,10 +21,10 @@ namespace traktor
  */
 class T_DLLCLASS LightEntityRenderer : public IEntityRenderer
 {
-	T_RTTI_CLASS(LightEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		WorldContext* worldContext,

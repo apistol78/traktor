@@ -69,7 +69,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_renderWidget = gc_new< ui::Widget >();
+	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))
 		return false;
 
@@ -84,7 +84,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	if (!m_renderView)
 		return false;
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem()
@@ -174,7 +174,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	// Create post processing.
 	if (postProcessSettings)
 	{
-		m_postProcess = gc_new< world::PostProcess >();
+		m_postProcess = new world::PostProcess();
 		if (!m_postProcess->create(
 			postProcessSettings,
 			m_context->getResourceManager(),
@@ -186,7 +186,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create entity renderers.
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
@@ -196,7 +196,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create world renderer.
-	m_worldRenderer = gc_new< world::WorldRenderer >();
+	m_worldRenderer = new world::WorldRenderer();
 	if (m_worldRenderer->create(
 		worldRenderSettings,
 		worldEntityRenderers,

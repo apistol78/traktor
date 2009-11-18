@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticBody : public Body
 {
-	T_RTTI_CLASS(StaticBody)
+	T_RTTI_CLASS;
 };
 
 	}

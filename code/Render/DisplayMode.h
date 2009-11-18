@@ -29,7 +29,7 @@ namespace traktor
  */
 class T_DLLCLASS DisplayMode : public Object
 {
-	T_RTTI_CLASS(DisplayMode)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Initialize display mode.

@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS MiniButton : public Widget
 {
-	T_RTTI_CLASS(MiniButton)
+	T_RTTI_CLASS;
 	
 public:
 	bool create(Widget* parent, const std::wstring& text);

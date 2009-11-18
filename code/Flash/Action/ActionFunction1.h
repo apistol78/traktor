@@ -23,7 +23,7 @@ class ActionDictionary;
  */
 class T_DLLCLASS ActionFunction1 : public ActionFunction
 {
-	T_RTTI_CLASS(ActionFunction1)
+	T_RTTI_CLASS;
 
 public:
 	ActionFunction1(

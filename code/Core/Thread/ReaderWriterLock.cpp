@@ -15,7 +15,7 @@ bool ReaderWriterLock::acquireReader(int32_t timeout)
 	bool result = false;
 	for (;;)
 	{
-		if (!m_lock.acquire(timeout))
+		if (!m_lock.wait(timeout))
 			return false;
 
 		if (m_writer <= 0)
@@ -44,7 +44,7 @@ bool ReaderWriterLock::acquireWriter(int32_t timeout)
 	bool result = false;
 	for (;;)
 	{
-		if (!m_lock.acquire(timeout))
+		if (!m_lock.wait(timeout))
 			return false;
 
 		if (m_writer <= 0 && m_reader <= 0)

@@ -3,9 +3,8 @@
 
 #include <list>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,9 +27,9 @@ class InputPin;
 /*! \brief Shader graph.
  * \ingroup Render
  */
-class T_DLLCLASS ShaderGraph : public Serializable
+class T_DLLCLASS ShaderGraph : public ISerializable
 {
-	T_RTTI_CLASS(ShaderGraph)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraph();
@@ -70,7 +69,7 @@ public:
 	 * \param outNodes Nodes of given type.
 	 * \return Number of nodes.
 	 */
-	size_t findNodesOf(const Type& nodeType, RefArray< Node >& outNodes) const;
+	size_t findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const;
 
 	/*! \brief Get all nodes of a specific type.
 	 *
@@ -92,7 +91,7 @@ public:
 	}
 
 	/*! \brief Serialize graph. */
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	/*! \brief Get all nodes.
 	 *

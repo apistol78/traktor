@@ -7,18 +7,18 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshAssetEditorFactory", MeshAssetEditorFactory, editor::IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetEditorFactory", MeshAssetEditorFactory, editor::IObjectEditorFactory)
 
-const TypeSet MeshAssetEditorFactory::getEditableTypes() const
+const TypeInfoSet MeshAssetEditorFactory::getEditableTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshAsset >());
 	return typeSet;
 }
 
 Ref< editor::IObjectEditor > MeshAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
-	return gc_new< MeshAssetEditor >(editor);
+	return new MeshAssetEditor(editor);
 }
 
 	}

@@ -2,7 +2,6 @@
 #define traktor_ui_Widget_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Ui/EventSubject.h"
 #include "Ui/EventHandler.h"
 #include "Ui/Associative.h"
@@ -48,7 +47,7 @@ class T_DLLCLASS Widget
 :	public EventSubject
 ,	public Associative
 {
-	T_RTTI_CLASS(Widget)
+	T_RTTI_CLASS;
 
 public:
 	Widget();

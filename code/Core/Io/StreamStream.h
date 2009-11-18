@@ -1,15 +1,14 @@
 #ifndef traktor_StreamStream_H
 #define traktor_StreamStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,12 +17,12 @@ namespace traktor
 /*! \brief Stream in stream.
  * \ingroup Core
  */
-class T_DLLCLASS StreamStream : public Stream
+class T_DLLCLASS StreamStream : public IStream
 {
-	T_RTTI_CLASS(StreamStream)
+	T_RTTI_CLASS;
 
 public:
-	StreamStream(Stream* stream, int endOffset = -1);
+	StreamStream(IStream* stream, int endOffset = -1);
 
 	virtual void close();
 
@@ -46,7 +45,7 @@ public:
 	virtual void flush();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	int m_startOffset;
 	int m_endOffset;
 };

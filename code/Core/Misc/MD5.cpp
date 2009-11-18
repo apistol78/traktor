@@ -1,7 +1,7 @@
 #include <cstring>
 #include <sstream>
 #include "Core/Misc/MD5.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 
 #define MD5_INIT_STATE_0 0x67452301
@@ -210,7 +210,7 @@ uint8_t PADDING[64] =
 
 	}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.MD5", MD5, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.MD5", MD5, ISerializable)
 
 MD5::MD5()
 {
@@ -305,9 +305,9 @@ std::wstring MD5::format() const
 	return ss.str();    
 }
 
-bool MD5::serialize(Serializer& s)
+bool MD5::serialize(ISerializer& s)
 {
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 	{
 		std::wstring md5;
 		if (!(s >> Member< std::wstring >(L"md5", md5)))

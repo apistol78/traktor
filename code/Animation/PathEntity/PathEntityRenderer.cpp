@@ -8,9 +8,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityRenderer", PathEntityRenderer, world::IEntityRenderer)
 
-const TypeSet PathEntityRenderer::getEntityTypes() const
+const TypeInfoSet PathEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< PathEntity >());
 	return typeSet;
 }

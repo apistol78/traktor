@@ -112,7 +112,7 @@ Ref< TreeViewItem > TreeView::getSelectedItem() const
 
 Ref< TreeViewState > TreeView::captureState() const
 {
-	Ref< TreeViewState > state = gc_new< TreeViewState >();
+	Ref< TreeViewState > state = new TreeViewState();
 	recursiveCaptureState(getRootItem(), state);
 	return state;
 }

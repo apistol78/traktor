@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS FlashEdit : public FlashCharacter
 {
-	T_RTTI_CLASS(FlashEdit)
+	T_RTTI_CLASS;
 
 public:
 	enum Align

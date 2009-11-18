@@ -40,7 +40,7 @@ class IEditor;
  */
 class T_DLLCLASS IWizardTool : public Object
 {
-	T_RTTI_CLASS(IWizardTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getDescription() const = 0;

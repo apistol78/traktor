@@ -1,7 +1,6 @@
 #ifndef traktor_scene_ReferencesRenderControl_H
 #define traktor_scene_ReferencesRenderControl_H
 
-#include "Core/Heap/Ref.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 
 namespace traktor
@@ -27,7 +26,7 @@ class SceneEditorContext;
 
 class ReferencesRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(ReferencesRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	ReferencesRenderControl();

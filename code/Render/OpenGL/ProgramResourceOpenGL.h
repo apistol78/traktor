@@ -1,7 +1,6 @@
 #ifndef traktor_render_ProgramResourceOpenGL_H
 #define traktor_render_ProgramResourceOpenGL_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/ProgramResource.h"
 #include "Render/OpenGL/TypesOpenGL.h"
 
@@ -15,7 +14,7 @@ namespace traktor
  */
 class ProgramResourceOpenGL : public ProgramResource
 {
-	T_RTTI_CLASS(ProgramResourceOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	ProgramResourceOpenGL();
@@ -38,7 +37,7 @@ public:
 
 	const RenderState& getRenderState() const { return m_renderState; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_vertexShader;

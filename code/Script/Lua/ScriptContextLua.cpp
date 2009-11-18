@@ -217,7 +217,7 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 		lua_setfield(m_luaState, -2, wstombs(methodName).c_str());
 	}
 
-	const Type* superType = scriptClass->getExportType().getSuper();
+	const TypeInfo* superType = scriptClass->getExportType().getSuper();
 	T_ASSERT (superType);
 
 	bool exportedAsRoot = true;
@@ -263,7 +263,7 @@ void ScriptContextLua::pushAny(const Any& any)
 	{
 		if (any.getObject())
 		{
-			const Type* objectType = &any.getObject()->getType();
+			const TypeInfo* objectType = &type_of(any.getObject());
 			for (std::vector< RegisteredClass >::iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 			{
 				if (&i->scriptClass->getExportType() == objectType)

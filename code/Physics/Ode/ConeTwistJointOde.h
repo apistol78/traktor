@@ -2,7 +2,6 @@
 #define traktor_physics_ConeTwistJointOde_H
 
 #include <ode/ode.h>
-#include "Core/Heap/Ref.h"
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/Ode/JointOde.h"
 
@@ -26,7 +25,7 @@ class ConeTwistJointDesc;
  */
 class T_DLLCLASS ConeTwistJointOde : public JointOde< ConeTwistJoint >
 {
-	T_RTTI_CLASS(ConeTwistJointOde)
+	T_RTTI_CLASS;
 
 public:
 	ConeTwistJointOde(DestroyCallback* callback, Body* body1, Body* body2, const ConeTwistJointDesc* desc);

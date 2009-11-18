@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(StaticPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	StaticPropertyItem(const std::wstring& text, const std::wstring& value);

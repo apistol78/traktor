@@ -25,7 +25,7 @@ class TabPage;
  */
 class T_DLLCLASS Tab : public Widget
 {
-	T_RTTI_CLASS(Tab)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent);

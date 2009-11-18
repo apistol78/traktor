@@ -25,7 +25,7 @@ class GridRow;
  */
 class T_DLLCLASS GridDragEvent : public Event
 {
-	T_RTTI_CLASS(GridDragEvent)
+	T_RTTI_CLASS;
 	
 public:
 	GridDragEvent(EventSubject* sender, GridRow* dragItem, int dropRow);

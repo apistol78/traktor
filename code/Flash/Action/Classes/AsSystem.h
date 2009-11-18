@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsSystem : public ActionClass
 {
-	T_RTTI_CLASS(AsSystem)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsSystem > getInstance();

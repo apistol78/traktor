@@ -188,11 +188,11 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 
 	// @hack Assume fonts is available in windows directory.
 #if defined(_WIN32)
-	Ref< Stream > stream = FileSystem::getInstance().open(L"C:/Windows/Fonts/" + font.getFace() + L".ttf", File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(L"C:/Windows/Fonts/" + font.getFace() + L".ttf", File::FmRead);
 #elif defined(__APPLE__)
-	Ref< Stream > stream = FileSystem::getInstance().open(L"/Library/Fonts/ArialHB.ttf", File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(L"/Library/Fonts/ArialHB.ttf", File::FmRead);
 #else
-	Ref< Stream > stream = FileSystem::getInstance().open(L"/usr/share/fonts/truetype/DejaVuSans.ttf", File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(L"/usr/share/fonts/truetype/DejaVuSans.ttf", File::FmRead);
 #endif
 	T_ASSERT (stream);
 

@@ -21,12 +21,12 @@ class SkinnedMesh;
 
 class T_DLLCLASS SkinnedMeshEntityData : public MeshEntityData
 {
-	T_RTTI_CLASS(SkinnedMeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< SkinnedMesh >& getMesh() const { return m_mesh; }
 

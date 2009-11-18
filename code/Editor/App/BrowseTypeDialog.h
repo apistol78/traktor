@@ -27,14 +27,14 @@ class Settings;
 
 class BrowseTypeDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(BrowseTypeDialog)
+	T_RTTI_CLASS;
 
 public:
 	BrowseTypeDialog(Settings* settings);
 
-	bool create(ui::Widget* parent, const Type* base);
+	bool create(ui::Widget* parent, const TypeInfo* base);
 
-	const Type* getSelectedType() const;
+	const TypeInfo* getSelectedType() const;
 
 private:
 	Ref< Settings > m_settings;

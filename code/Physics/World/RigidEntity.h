@@ -1,7 +1,6 @@
 #ifndef traktor_physics_RigidEntity_H
 #define traktor_physics_RigidEntity_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/SpatialEntity.h"
 
 #undef T_DLLCLASS
@@ -23,7 +22,7 @@ class Body;
  */
 class T_DLLCLASS RigidEntity : public world::SpatialEntity
 {
-	T_RTTI_CLASS(RigidEntity)
+	T_RTTI_CLASS;
 
 public:
 	RigidEntity(

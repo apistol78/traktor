@@ -5,12 +5,11 @@
 #include "Database/Provider/IProviderBus.h"
 #include "Core/Guid.h"
 #include "Core/Thread/Mutex.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
 
-class SharedMemory;
+class ISharedMemory;
 
 	namespace db
 	{
@@ -23,7 +22,7 @@ class SharedMemory;
  */
 class LocalBus : public IProviderBus
 {
-	T_RTTI_CLASS(LocalBus)
+	T_RTTI_CLASS;
 
 public:
 	LocalBus(const std::wstring& eventFile);
@@ -46,7 +45,7 @@ private:
 
 	Guid m_localGuid;
 	Mutex m_globalLock;
-	Ref< SharedMemory > m_shm;
+	Ref< ISharedMemory > m_shm;
 	std::list< Event > m_pendingEvents;
 };
 

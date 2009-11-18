@@ -37,9 +37,9 @@ TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem)
 {
 }
 
-const TypeSet TextureFactory::getResourceTypes() const
+const TypeInfoSet TextureFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ITexture >());
 	return typeSet;
 }
@@ -49,7 +49,7 @@ bool TextureFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< ITexture > texture;
 
@@ -61,7 +61,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
@@ -103,9 +103,9 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		uint32_t blockSize = getTextureBlockSize(desc.format);
 		uint32_t blockDenom = getTextureBlockDenom(desc.format);
 
-		Ref< Stream > readerStream = stream;
+		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = gc_new< zip::InflateStream >(stream);
+			readerStream = new zip::InflateStream(stream);
 
 		Reader readerData(readerStream);
 
@@ -152,9 +152,9 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		AutoArrayPtr< uint8_t > buffer[6];
 
-		Ref< Stream > readerStream = stream;
+		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = gc_new< zip::InflateStream >(stream);
+			readerStream = new zip::InflateStream(stream);
 
 		Reader readerData(readerStream);
 		

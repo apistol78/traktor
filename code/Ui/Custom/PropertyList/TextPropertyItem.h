@@ -30,7 +30,7 @@ class MiniButton;
  */
 class T_DLLCLASS TextPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(TextPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	TextPropertyItem(const std::wstring& text, const std::wstring& value, bool multiLine);

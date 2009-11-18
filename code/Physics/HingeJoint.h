@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS HingeJoint : public Joint
 {
-	T_RTTI_CLASS(HingeJoint)
+	T_RTTI_CLASS;
 
 public:
 	virtual Vector4 getAnchor() const = 0;

@@ -29,7 +29,7 @@ AsLocalConnection::AsLocalConnection()
 
 void AsLocalConnection::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"close", createNativeFunctionValue(this, &AsLocalConnection::LocalConnection_close));
@@ -44,7 +44,7 @@ void AsLocalConnection::createPrototype()
 
 ActionValue AsLocalConnection::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionObject >(this));
+	return ActionValue::fromObject(new ActionObject(this));
 }
 
 void AsLocalConnection::LocalConnection_close(CallArgs& ca)

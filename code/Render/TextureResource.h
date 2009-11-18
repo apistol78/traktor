@@ -1,7 +1,7 @@
 #ifndef traktor_render_TextureResource_H
 #define traktor_render_TextureResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief Texture resource.
  * \ingroup Render
  */
-class T_DLLCLASS TextureResource : public Serializable
+class T_DLLCLASS TextureResource : public ISerializable
 {
-	T_RTTI_CLASS(TextureResource)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

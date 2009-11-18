@@ -1,5 +1,5 @@
-#include <sstream>
 #include <limits>
+#include <sstream>
 #include "Ui/Custom/PropertyList/InspectReflector.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Ui/Custom/PropertyList/StaticPropertyItem.h"
@@ -76,13 +76,13 @@ Serializer::Direction InspectReflector::getDirection()
 
 bool InspectReflector::operator >> (const Member< bool >& m)
 {
-	addPropertyItem(gc_new< CheckPropertyItem >(stylizeMemberName(m.getName()), m));
+	addPropertyItem(new CheckPropertyItem(stylizeMemberName(m.getName()), m));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< int8_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< int8_t >::min(),
@@ -94,7 +94,7 @@ bool InspectReflector::operator >> (const Member< int8_t >& m)
 
 bool InspectReflector::operator >> (const Member< uint8_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< uint8_t >::min(),
@@ -106,7 +106,7 @@ bool InspectReflector::operator >> (const Member< uint8_t >& m)
 
 bool InspectReflector::operator >> (const Member< int16_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< int16_t >::min(),
@@ -118,7 +118,7 @@ bool InspectReflector::operator >> (const Member< int16_t >& m)
 
 bool InspectReflector::operator >> (const Member< uint16_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< uint16_t >::min(),
@@ -130,7 +130,7 @@ bool InspectReflector::operator >> (const Member< uint16_t >& m)
 
 bool InspectReflector::operator >> (const Member< int32_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< int32_t >::min(),
@@ -142,7 +142,7 @@ bool InspectReflector::operator >> (const Member< int32_t >& m)
 
 bool InspectReflector::operator >> (const Member< uint32_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< uint32_t >::min(),
@@ -154,7 +154,7 @@ bool InspectReflector::operator >> (const Member< uint32_t >& m)
 
 bool InspectReflector::operator >> (const Member< int64_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< int64_t >::min(),
@@ -166,7 +166,7 @@ bool InspectReflector::operator >> (const Member< int64_t >& m)
 
 bool InspectReflector::operator >> (const Member< uint64_t >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		std::numeric_limits< uint64_t >::min(),
@@ -178,7 +178,7 @@ bool InspectReflector::operator >> (const Member< uint64_t >& m)
 
 bool InspectReflector::operator >> (const Member< float >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		m.getLimitMin(),
@@ -190,7 +190,7 @@ bool InspectReflector::operator >> (const Member< float >& m)
 
 bool InspectReflector::operator >> (const Member< double >& m)
 {
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		m,
 		-std::numeric_limits< double >::max(),
@@ -202,38 +202,38 @@ bool InspectReflector::operator >> (const Member< double >& m)
 
 bool InspectReflector::operator >> (const Member< std::string >& m)
 {
-	addPropertyItem(gc_new< TextPropertyItem >(stylizeMemberName(m.getName()), mbstows(m), false));
+	addPropertyItem(new TextPropertyItem(stylizeMemberName(m.getName()), mbstows(m), false));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< std::wstring >& m)
 {
-	addPropertyItem(gc_new< TextPropertyItem >(stylizeMemberName(m.getName()), m, m.isMultiLine()));
+	addPropertyItem(new TextPropertyItem(stylizeMemberName(m.getName()), m, m.isMultiLine()));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Guid >& m)
 {
-	addPropertyItem(gc_new< BrowsePropertyItem >(stylizeMemberName(m.getName()), m.getType(), m));
+	addPropertyItem(new BrowsePropertyItem(stylizeMemberName(m.getName()), m.getType(), m));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Path >& m)
 {
-	addPropertyItem(gc_new< FilePropertyItem >(stylizeMemberName(m.getName()), *m));
+	addPropertyItem(new FilePropertyItem(stylizeMemberName(m.getName()), *m));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Color >& m)
 {
-	addPropertyItem(gc_new< ColorPropertyItem >(stylizeMemberName(m.getName()), m));
+	addPropertyItem(new ColorPropertyItem(stylizeMemberName(m.getName()), m));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Scalar >& m)
 {
 	Scalar& v = m;
-	addPropertyItem(gc_new< NumericPropertyItem >(
+	addPropertyItem(new NumericPropertyItem(
 		stylizeMemberName(m.getName()),
 		float(v),
 		-std::numeric_limits< float >::max(),
@@ -246,14 +246,14 @@ bool InspectReflector::operator >> (const Member< Scalar >& m)
 bool InspectReflector::operator >> (const Member< Vector2 >& m)
 {
 	VectorPropertyItem::vector_t value = { m->x, m->y };
-	addPropertyItem(gc_new< VectorPropertyItem >(stylizeMemberName(m.getName()), cref(value), 2));
+	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 2));
 	return true;
 }
 
 bool InspectReflector::operator >> (const Member< Vector4 >& m)
 {
 	VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), m->w() };
-	addPropertyItem(gc_new< VectorPropertyItem >(stylizeMemberName(m.getName()), cref(value), 4));
+	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
 	return true;
 }
 
@@ -270,13 +270,17 @@ bool InspectReflector::operator >> (const Member< Matrix44 >& m)
 bool InspectReflector::operator >> (const Member< Quaternion >& m)
 {
 	VectorPropertyItem::vector_t value = { m->x, m->y, m->z, m->w };
-	addPropertyItem(gc_new< VectorPropertyItem >(stylizeMemberName(m.getName()), cref(value), 4));
+	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< Serializable >& m)
+bool InspectReflector::operator >> (const Member< ISerializable >& m)
 {
-	Ref< ObjectPropertyItem > propertyItem = gc_new< ObjectPropertyItem >(stylizeMemberName(m.getName()), m.getType(), &static_cast< Serializable& >(m));
+	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
+		stylizeMemberName(m.getName()),
+		m.getType(),
+		&(*m)
+	);
 	addPropertyItem(propertyItem);
 
 	m_propertyItemStack.push_back(propertyItem);
@@ -286,11 +290,11 @@ bool InspectReflector::operator >> (const Member< Serializable >& m)
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< Ref< Serializable > >& m)
+bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
-	Ref< Serializable > object = m;
+	ISerializable* object = m;
 
-	Ref< ObjectPropertyItem > propertyItem = gc_new< ObjectPropertyItem >(
+	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),
 		m.getType(),
 		object
@@ -301,7 +305,7 @@ bool InspectReflector::operator >> (const Member< Ref< Serializable > >& m)
 	{
 		m_propertyItemStack.push_back(propertyItem);
 
-		int version = object->getVersion();
+		int32_t version = type_of(object).getVersion();
 		if (!serialize(object, version, 0))
 			return false;
 
@@ -311,6 +315,12 @@ bool InspectReflector::operator >> (const Member< Ref< Serializable > >& m)
 	return true;
 }
 
+bool InspectReflector::operator >> (const Member< Ref< ISerializable > >& m)
+{
+	ISerializable* object = m->ptr();
+	return *this >> Member< ISerializable* >(m.getName(), object);
+}
+
 bool InspectReflector::operator >> (const Member< void* >& m)
 {
 	return false;
@@ -318,7 +328,7 @@ bool InspectReflector::operator >> (const Member< void* >& m)
 
 bool InspectReflector::operator >> (const MemberArray& m)
 {
-	Ref< ArrayPropertyItem > propertyItem = gc_new< ArrayPropertyItem >(stylizeMemberName(m.getName()), m.getType());
+	Ref< ArrayPropertyItem > propertyItem = new ArrayPropertyItem(stylizeMemberName(m.getName()), m.getType());
 	addPropertyItem(propertyItem);
 	
 	m_propertyItemStack.push_back(propertyItem);
@@ -333,7 +343,7 @@ bool InspectReflector::operator >> (const MemberComplex& m)
 {
 	if (m.getCompound())
 	{
-		Ref< PropertyItem > propertyItem = gc_new< PropertyItem >(stylizeMemberName(m.getName()));
+		Ref< PropertyItem > propertyItem = new PropertyItem(stylizeMemberName(m.getName()));
 		addPropertyItem(propertyItem);
 		m_propertyItemStack.push_back(propertyItem);
 	}
@@ -349,7 +359,7 @@ bool InspectReflector::operator >> (const MemberComplex& m)
 
 bool InspectReflector::operator >> (const MemberEnumBase& m)
 {
-	Ref< ListPropertyItem > propertyItem = gc_new< ListPropertyItem >(stylizeMemberName(m.getName()));
+	Ref< ListPropertyItem > propertyItem = new ListPropertyItem(stylizeMemberName(m.getName()));
 	addPropertyItem(propertyItem);
 
 	for (const MemberEnumBase::Key* key = m.keys(); key && key->id; ++key)

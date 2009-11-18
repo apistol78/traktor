@@ -2,7 +2,6 @@
 #define traktor_xml_Node_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class OutputStream;
  */
 class T_DLLCLASS Node : public Object
 {
-	T_RTTI_CLASS(Node)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const;

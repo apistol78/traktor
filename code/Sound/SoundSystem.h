@@ -3,8 +3,7 @@
 
 #include <list>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Event.h"
@@ -36,7 +35,7 @@ class Sound;
  */
 class T_DLLCLASS SoundSystem : public Object
 {
-	T_RTTI_CLASS(SoundSystem)
+	T_RTTI_CLASS;
 
 public:
 	SoundSystem(ISoundDriver* driver);

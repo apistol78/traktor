@@ -14,7 +14,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticSoundBuffer : public ISoundBuffer
 {
-	T_RTTI_CLASS(StaticSoundBuffer)
+	T_RTTI_CLASS;
 
 public:
 	StaticSoundBuffer();

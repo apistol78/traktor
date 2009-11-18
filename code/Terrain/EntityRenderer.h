@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 {
-	T_RTTI_CLASS(EntityRenderer)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		world::WorldContext* worldContext,

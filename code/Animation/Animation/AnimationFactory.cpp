@@ -17,9 +17,9 @@ AnimationFactory::AnimationFactory(db::Database* db)
 {
 }
 
-const TypeSet AnimationFactory::getResourceTypes() const
+const TypeInfoSet AnimationFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< StateGraph >());
 	typeSet.insert(&type_of< Animation >());
 	typeSet.insert(&type_of< Skeleton >());
@@ -32,7 +32,7 @@ bool AnimationFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	return m_db->getObjectReadOnly(guid);
 }

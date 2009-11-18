@@ -2,7 +2,6 @@
 #define traktor_xml_Attribute_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Attribute : public Object
 {
-	T_RTTI_CLASS(Attribute)
+	T_RTTI_CLASS;
 
 public:
 	Attribute(const std::wstring& name, const std::wstring& value = L"");

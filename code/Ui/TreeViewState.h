@@ -2,7 +2,7 @@
 #define traktor_ui_TreeViewState_H
 
 #include <map>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Tree view state.
  * \ingroup UI
  */
-class T_DLLCLASS TreeViewState : public Serializable
+class T_DLLCLASS TreeViewState : public ISerializable
 {
-	T_RTTI_CLASS(TreeViewState)
+	T_RTTI_CLASS;
 
 public:
 	void addState(const std::wstring& path, bool expanded, bool selected);
@@ -31,7 +31,7 @@ public:
 
 	bool getSelected(const std::wstring& path) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::map< std::wstring, std::pair< bool, bool > > m_states;

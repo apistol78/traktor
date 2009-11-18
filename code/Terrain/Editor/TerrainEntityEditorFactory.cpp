@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntityEditorFactory", TerrainEntityEditorFactory, scene::IEntityEditorFactory)
 
-const TypeSet TerrainEntityEditorFactory::getEntityDataTypes() const
+const TypeInfoSet TerrainEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
 	return typeSet;
@@ -21,13 +21,13 @@ const TypeSet TerrainEntityEditorFactory::getEntityDataTypes() const
 
 Ref< scene::IEntityEditor > TerrainEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	const TypeInfo& entityDataType
 ) const
 {
 	if (is_type_of< TerrainEntityData >(entityDataType))
-		return gc_new< TerrainEntityEditor >();
+		return new TerrainEntityEditor();
 	if (is_type_of< OceanEntityEditor >(entityDataType))
-		return gc_new< OceanEntityEditor >();
+		return new OceanEntityEditor();
 	return 0;
 }
 

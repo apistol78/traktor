@@ -3,9 +3,9 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.StreamStream", StreamStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.StreamStream", StreamStream, IStream);
 
-StreamStream::StreamStream(Stream* stream, int endOffset)
+StreamStream::StreamStream(IStream* stream, int endOffset)
 :	m_stream(stream)
 ,	m_startOffset(stream->tell())
 ,	m_endOffset(endOffset)

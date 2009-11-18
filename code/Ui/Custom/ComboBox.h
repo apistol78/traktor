@@ -2,7 +2,6 @@
 #define traktor_ui_custom_ComboBox_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class Event;
  */
 class T_DLLCLASS ComboBox : public Widget
 {
-	T_RTTI_CLASS(ComboBox)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text, int style = WsNone);

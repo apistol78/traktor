@@ -1,5 +1,5 @@
 #include "Spray/Modifiers/PlaneCollisionModifier.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.PlaneCollisionModifier", PlaneCollisionModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifier", PlaneCollisionModifier, Modifier)
 
 PlaneCollisionModifier::PlaneCollisionModifier()
 :	m_plane(Vector4(0.0f, 1.0f, 0.0f), Scalar(0.0f))
@@ -31,7 +31,7 @@ void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& tr
 	}
 }
 
-bool PlaneCollisionModifier::serialize(Serializer& s)
+bool PlaneCollisionModifier::serialize(ISerializer& s)
 {
 	// @fixme Plane
 	s >> Member< Scalar >(L"restitution", m_restitution);

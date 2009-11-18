@@ -27,7 +27,7 @@ namespace traktor
  */
 class T_DLLCLASS PaintSettings : public Object
 {
-	T_RTTI_CLASS(PaintSettings);
+	T_RTTI_CLASS;
 
 public:
 	PaintSettings(const ui::Font& font);

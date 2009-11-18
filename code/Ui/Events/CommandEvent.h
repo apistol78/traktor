@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS CommandEvent : public Event
 {
-	T_RTTI_CLASS(CommandEvent)
+	T_RTTI_CLASS;
 	
 public:
 	CommandEvent(EventSubject* sender, Object* item, const Command& command);

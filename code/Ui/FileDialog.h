@@ -26,7 +26,7 @@ class IFileDialog;
  */
 class T_DLLCLASS FileDialog : public EventSubject
 {
-	T_RTTI_CLASS(FileDialog)
+	T_RTTI_CLASS;
 
 public:
 	FileDialog();

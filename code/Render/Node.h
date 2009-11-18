@@ -3,8 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,9 +24,9 @@ class OutputPin;
 /*! \brief Shader graph node.
  * \ingroup Render
  */
-class T_DLLCLASS Node : public Serializable
+class T_DLLCLASS Node : public ISerializable
 {
-	T_RTTI_CLASS(Node)
+	T_RTTI_CLASS;
 
 public:
 	Node();
@@ -102,7 +101,7 @@ public:
 	 */
 	Ref< const OutputPin > findOutputPin(const std::wstring& name) const;
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_comment;

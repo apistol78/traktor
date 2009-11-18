@@ -3,8 +3,6 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
 
@@ -42,7 +40,7 @@ struct CollisionInfo
 
 class T_DLLCLASS CollisionListener : public Object
 {
-	T_RTTI_CLASS(CollisionListener)
+	T_RTTI_CLASS;
 
 public:
 	virtual void notify(const CollisionInfo& collisionInfo) = 0;
@@ -73,7 +71,7 @@ private:
 template < typename TargetType >
 inline Ref< CollisionListener > createCollisionListener(TargetType* object, typename MethodCollisionListener< TargetType >::TargetMethod method)
 {
-	return gc_new< MethodCollisionListener< TargetType > >(object, method);
+	return new MethodCollisionListener< TargetType >(object, method);
 }
 
 //@}

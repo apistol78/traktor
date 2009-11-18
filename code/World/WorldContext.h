@@ -1,7 +1,6 @@
 #ifndef traktor_world_WorldContext_H
 #define traktor_world_WorldContext_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Frustum.h"
@@ -38,7 +37,7 @@ class WorldRenderView;
  */
 class T_DLLCLASS WorldContext : public Object
 {
-	T_RTTI_CLASS(WorldContext)
+	T_RTTI_CLASS;
 
 public:
 	WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::IRenderView* renderView);
@@ -53,7 +52,7 @@ private:
 	Ref< WorldRenderer > m_worldRenderer;
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::RenderContext > m_renderContext;
-	const Type* m_lastEntityType;
+	const TypeInfo* m_lastEntityType;
 	Ref< IEntityRenderer > m_lastEntityRenderer;
 };
 

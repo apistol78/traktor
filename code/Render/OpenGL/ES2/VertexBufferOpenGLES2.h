@@ -1,7 +1,6 @@
 #ifndef traktor_render_VertexBufferOpenGLES2_H
 #define traktor_render_VertexBufferOpenGLES2_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
@@ -26,7 +25,7 @@ class VertexElement;
  */
 class T_DLLCLASS VertexBufferOpenGLES2 : public VertexBufferOpenGL
 {
-	T_RTTI_CLASS(VertexBufferOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferOpenGLES2(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);

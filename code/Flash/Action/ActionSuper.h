@@ -26,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionSuper : public ActionFunction
 {
-	T_RTTI_CLASS(ActionSuper)
+	T_RTTI_CLASS;
 
 public:
 	ActionSuper(ActionObject* object);

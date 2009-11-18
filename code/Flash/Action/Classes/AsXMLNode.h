@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsXMLNode : public ActionClass
 {
-	T_RTTI_CLASS(AsXMLNode)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsXMLNode > getInstance();

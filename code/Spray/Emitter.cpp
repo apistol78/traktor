@@ -5,7 +5,7 @@
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.Emitter", Emitter, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.Emitter", Emitter, ISerializable)
 
 Emitter::Emitter()
 :	m_middleAge(0.2f)
@@ -31,7 +31,7 @@ Ref< EmitterInstance > Emitter::createInstance(resource::IResourceManager* resou
 	if (m_source && !m_source->create(resourceManager))
 		return 0;
 
-	return gc_new< EmitterInstance >(this);
+	return new EmitterInstance(this);
 }
 
 int Emitter::getVersion() const
@@ -39,7 +39,7 @@ int Emitter::getVersion() const
 	return 1;
 }
 
-bool Emitter::serialize(Serializer& s)
+bool Emitter::serialize(ISerializer& s)
 {
 	s >> MemberRef< Source >(L"source", m_source);
 	s >> MemberRefArray< Modifier >(L"modifiers", m_modifiers);

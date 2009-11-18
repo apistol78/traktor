@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.AnsiEncoding", AnsiEncoding, Encoding)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.AnsiEncoding", AnsiEncoding, IEncoding)
 
 int AnsiEncoding::translate(const wchar_t* chars, int count, uint8_t* out) const
 {

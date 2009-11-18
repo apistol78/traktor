@@ -1,7 +1,7 @@
 #ifndef traktor_editor_TypeBrowseFilter_H
 #define traktor_editor_TypeBrowseFilter_H
 
-#include "Core/Rtti/Type.h"
+#include "Core/Rtti/TypeInfo.h"
 #include "Editor/IBrowseFilter.h"
 
 // import/export mechanism.
@@ -23,12 +23,12 @@ namespace traktor
 class T_DLLCLASS TypeBrowseFilter : public IBrowseFilter
 {
 public:
-	TypeBrowseFilter(const Type& type);
+	TypeBrowseFilter(const TypeInfo& type);
 
 	virtual bool acceptable(db::Instance* instance) const;
 
 private:
-	const Type& m_type;
+	const TypeInfo& m_type;
 };
 
 	}

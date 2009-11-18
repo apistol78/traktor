@@ -10,7 +10,7 @@
 #include "Render/Sw/Line.h"
 #include "Render/Sw/Triangle.h"
 #include "Render/VertexElement.h"
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/IGraphicsSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Timer/Timer.h"
@@ -93,7 +93,7 @@ inline int clip(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewSw", RenderViewSw, IRenderView)
 
-RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::GraphicsSystem* graphicsSystem, Processor* processor)
+RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSystem* graphicsSystem, Processor* processor)
 :	m_renderSystem(renderSystem)
 ,	m_graphicsSystem(graphicsSystem)
 ,	m_processor(processor)

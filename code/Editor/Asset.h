@@ -1,7 +1,7 @@
 #ifndef traktor_editor_Asset_H
 #define traktor_editor_Asset_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -23,9 +23,9 @@ namespace traktor
  * Derive from this class for assets which reference
  * source assets such as image files etc.
  */
-class T_DLLCLASS Asset : public Serializable
+class T_DLLCLASS Asset : public ISerializable
 {
-	T_RTTI_CLASS(Asset)
+	T_RTTI_CLASS;
 
 public:
 	Asset();
@@ -36,9 +36,9 @@ public:
 
 	const Path& getFileName() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
-	virtual const Type* getOutputType() const = 0;
+	virtual const TypeInfo* getOutputType() const = 0;
 
 private:
 	Path m_fileName;

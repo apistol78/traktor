@@ -4,7 +4,7 @@
 #include "Sound/IFilter.h"
 #include "Sound/Sound.h"
 #include "Sound/ISoundBuffer.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 

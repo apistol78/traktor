@@ -3,8 +3,7 @@
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/Sound.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
@@ -78,7 +77,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_channels.resize(desc.channels);
 	for (uint32_t i = 0; i < desc.channels; ++i)
 	{
-		m_channels[i] = gc_new< SoundChannel >(
+		m_channels[i] = new SoundChannel(
 			desc.driverDesc.sampleRate,
 			desc.driverDesc.frameSamples
 		);
@@ -215,7 +214,7 @@ void SoundSystem::threadMixer()
 		double startTime = timerMixer.getElapsedTime();
 
 		// Allocate new frame block.
-		m_samplesBlocksLock.acquire();
+		m_samplesBlocksLock.wait();
 		T_ASSERT_M(!m_samplesBlocks.empty(), L"Out of sample blocks");
 		float* samples = m_samplesBlocks.back();
 		m_samplesBlocks.pop_back();
@@ -237,7 +236,7 @@ void SoundSystem::threadMixer()
 			requestBlock.maxChannel = 0;
 
 			// Temporarily lock channels as we don't want user to attach new sounds just yet.
-			m_channelAttachLock.acquire();
+			m_channelAttachLock.wait();
 			bool got = m_channels[i]->getBlock(m_time, requestBlock);
 			m_channelAttachLock.release();
 			if (!got || !requestBlock.maxChannel)
@@ -265,7 +264,7 @@ void SoundSystem::threadMixer()
 		if (m_threadMixer->stopped())
 			break;
 
-		m_submitQueueLock.acquire();
+		m_submitQueueLock.wait();
 		m_submitQueue.push_back(frameBlock);
 		m_submitQueueLock.release();
 		m_submitQueueEvent.broadcast();
@@ -282,7 +281,7 @@ void SoundSystem::threadSubmit()
 
 	while (!m_threadSubmit->stopped())
 	{
-		m_submitQueueLock.acquire();
+		m_submitQueueLock.wait();
 		if (m_submitQueue.empty())
 		{
 			log::warning << L"Sound - submit thread starved, waiting for mixer to catch up" << Endl;
@@ -290,7 +289,7 @@ void SoundSystem::threadSubmit()
 			{
 				m_submitQueueLock.release();
 				m_submitQueueEvent.wait(100);
-				m_submitQueueLock.acquire();
+				m_submitQueueLock.wait();
 			}
 			if (m_threadSubmit->stopped())
 				break;
@@ -302,7 +301,7 @@ void SoundSystem::threadSubmit()
 		m_driver->submit(m_submitQueue.front());
 
 		// Move block back into heap.
-		m_samplesBlocksLock.acquire();
+		m_samplesBlocksLock.wait();
 		m_samplesBlocks.push_back(m_submitQueue.front().samples[0]);
 		m_samplesBlocksLock.release();
 		m_submitQueue.pop_front();

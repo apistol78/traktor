@@ -95,7 +95,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsManagerBullet", PhysicsManagerBullet, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", PhysicsManagerBullet, PhysicsManager)
 
 PhysicsManagerBullet* PhysicsManagerBullet::ms_this = 0;
 
@@ -297,7 +297,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< StaticBodyBullet > staticBody = gc_new< StaticBodyBullet >(this, m_dynamicsWorld, rigidBody, shape);
+		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(this, m_dynamicsWorld, rigidBody, shape);
 		m_staticBodies.push_back(staticBody);
 
 		rigidBody->setUserPointer(staticBody);
@@ -336,7 +336,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< DynamicBodyBullet > dynamicBody = gc_new< DynamicBodyBullet >(this, m_dynamicsWorld, rigidBody, shape);
+		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(this, m_dynamicsWorld, rigidBody, shape);
 		m_dynamicBodies.push_back(dynamicBody);
 
 		rigidBody->setUserPointer(dynamicBody);
@@ -414,7 +414,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		}
 
 		constraint = pointConstraint;
-		joint = gc_new< BallJointBullet >(this, pointConstraint, body1, body2);
+		joint = new BallJointBullet(this, pointConstraint, body1, body2);
 	}
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
@@ -422,7 +422,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		JointConstraint* jointConstraint = new JointConstraint(*b1, *b2);
 
-		Ref< ConeTwistJointBullet > coneTwistJoint = gc_new< ConeTwistJointBullet >(
+		Ref< ConeTwistJointBullet > coneTwistJoint = new ConeTwistJointBullet(
 			this,
 			jointConstraint,
 			body1,
@@ -479,7 +479,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			hingeConstraint->setLimit(minAngle, maxAngle);
 
 		constraint = hingeConstraint;
-		joint = gc_new< HingeJointBullet >(this, hingeConstraint, body1, body2);
+		joint = new HingeJointBullet(this, hingeConstraint, body1, body2);
 	}
 
 	if (!joint)

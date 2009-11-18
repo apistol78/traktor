@@ -21,12 +21,12 @@ class BlendMesh;
 
 class T_DLLCLASS BlendMeshEntityData : public MeshEntityData
 {
-	T_RTTI_CLASS(BlendMeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< BlendMesh >& getMesh() const { return m_mesh; }
 

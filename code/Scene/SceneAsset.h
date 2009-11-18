@@ -1,8 +1,7 @@
 #ifndef traktor_scene_SceneAsset_H
 #define traktor_scene_SceneAsset_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -46,9 +45,9 @@ class PostProcessSettings;
 class ISceneControllerData;
 class Scene;
 
-class T_DLLCLASS SceneAsset : public Serializable
+class T_DLLCLASS SceneAsset : public ISerializable
 {
-	T_RTTI_CLASS(SceneAsset)
+	T_RTTI_CLASS;
 
 public:
 	SceneAsset();
@@ -78,7 +77,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

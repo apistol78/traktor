@@ -1,7 +1,6 @@
 #ifndef traktor_flash_ActionContext_H
 #define traktor_flash_ActionContext_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/Action/ActionValue.h"
 
@@ -25,7 +24,7 @@ class FlashMovie;
  */
 class T_DLLCLASS ActionContext : public Object
 {
-	T_RTTI_CLASS(ActionContext)
+	T_RTTI_CLASS;
 
 public:
 	ActionContext(const FlashMovie* movie, ActionObject* global);

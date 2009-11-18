@@ -33,7 +33,7 @@ int getVariableTypeSize(VariableType variableType)
 
 EmitterContext::EmitterContext(const ShaderGraph* shaderGraph, Parameters& parameters)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
+,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_parameters(parameters)
 ,	m_currentState(0)
 ,	m_interpolatorCount(0)

@@ -1,8 +1,7 @@
 #ifndef traktor_ui_custom_LayerControl_H
 #define traktor_ui_custom_LayerControl_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class LayerItem;
  */
 class T_DLLCLASS LayerControl : public Widget
 {
-	T_RTTI_CLASS(LayerControl)
+	T_RTTI_CLASS;
 
 public:
 	enum GetSequenceFlags

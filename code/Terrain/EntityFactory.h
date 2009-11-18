@@ -1,7 +1,6 @@
 #ifndef traktor_terrain_EntityFactory_H
 #define traktor_terrain_EntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -33,12 +32,12 @@ class IRenderSystem;
 
 class T_DLLCLASS EntityFactory : public world::IEntityFactory
 {
-	T_RTTI_CLASS(EntityFactory)
+	T_RTTI_CLASS;
 
 public:
 	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 

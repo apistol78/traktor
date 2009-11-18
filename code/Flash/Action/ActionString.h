@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionString : public ActionObject
 {
-	T_RTTI_CLASS(ActionString)
+	T_RTTI_CLASS;
 
 public:
 	ActionString();

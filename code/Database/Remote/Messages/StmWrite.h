@@ -13,7 +13,7 @@ namespace traktor
  */
 class StmWrite : public IMessage
 {
-	T_RTTI_CLASS(StmWrite)
+	T_RTTI_CLASS;
 
 public:
 	enum { MaxBlockSize = 2048 };
@@ -26,7 +26,7 @@ public:
 
 	const void* getBlock() const { return m_block; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

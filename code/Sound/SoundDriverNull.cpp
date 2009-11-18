@@ -1,5 +1,5 @@
 #include "Sound/SoundDriverNull.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverNull", SoundDriverNull, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverNull", SoundDriverNull, ISoundDriver)
 
 bool SoundDriverNull::create(const SoundDriverCreateDesc& desc)
 {

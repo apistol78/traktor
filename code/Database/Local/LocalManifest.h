@@ -2,7 +2,7 @@
 #define traktor_db_LocalManifest_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -12,9 +12,9 @@ namespace traktor
 /*! \brief Local database manifest.
  * \ingroup Database
  */
-class LocalManifest : public Serializable
+class LocalManifest : public ISerializable
 {
-	T_RTTI_CLASS(LocalManifest)
+	T_RTTI_CLASS;
 
 public:
 	LocalManifest();
@@ -35,7 +35,7 @@ public:
 
 	bool getUseBinary() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_rootGroupPath;

@@ -20,7 +20,7 @@ namespace traktor
 
 class T_DLLCLASS BlendMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(BlendMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	BlendMeshEntity(const Transform& transform, const resource::Proxy< BlendMesh >& mesh);

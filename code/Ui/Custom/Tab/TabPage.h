@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_TabPage_H
 #define traktor_ui_custom_TabPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Container.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class Tab;
  */
 class T_DLLCLASS TabPage : public Container
 {
-	T_RTTI_CLASS(TabPage)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Tab* tab, const std::wstring& text, Layout* layout);

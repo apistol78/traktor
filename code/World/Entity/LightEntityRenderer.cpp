@@ -11,9 +11,9 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, IEntityRenderer)
 
-const TypeSet LightEntityRenderer::getEntityTypes() const
+const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntity >());
 	typeSet.insert(&type_of< PointLightEntity >());
 	return typeSet;

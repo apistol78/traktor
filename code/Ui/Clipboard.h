@@ -2,7 +2,6 @@
 #define traktor_ui_Clipboard_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.
@@ -16,7 +15,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace ui
 	{
@@ -28,7 +27,7 @@ class IClipboard;
  */
 class T_DLLCLASS Clipboard : public Object
 {
-	T_RTTI_CLASS(Clipboard)
+	T_RTTI_CLASS;
 
 public:
 	Clipboard(IClipboard* clipboard);
@@ -37,13 +36,13 @@ public:
 
 	void destroy();
 
-	bool setObject(Serializable* object);
+	bool setObject(ISerializable* object);
 
 	bool setText(const std::wstring& text);
 
 	ClipboardContentType getContentType() const;
 
-	Ref< Serializable > getObject() const;
+	Ref< ISerializable > getObject() const;
 
 	std::wstring getText() const;
 

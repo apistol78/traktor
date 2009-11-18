@@ -1,6 +1,6 @@
 #include "Render/SH/SHCoeffs.h"
 #include "Render/SH/SHMatrix.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -44,7 +44,7 @@ float SHCoeffs::operator * (const SHCoeffs& coeffs) const
 	return result;
 }
 
-bool SHCoeffs::serialize(Serializer& s)
+bool SHCoeffs::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< float >(L"coefficients", m_coefficients);
 }

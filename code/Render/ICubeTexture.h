@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ICubeTexture : public ITexture
 {
-	T_RTTI_CLASS(ICubeTexture)
+	T_RTTI_CLASS;
 	
 public:
 	enum Side

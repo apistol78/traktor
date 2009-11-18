@@ -2,7 +2,6 @@
 #define traktor_ui_ListBox_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ListBox : public Widget
 {
-	T_RTTI_CLASS(ListBox)
+	T_RTTI_CLASS;
 
 public:
 	enum Styles

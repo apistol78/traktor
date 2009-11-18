@@ -1,8 +1,8 @@
 #include <cstring>
 #include <FLAC/stream_decoder.h>
 #include "Sound/Decoders/FlacStreamDecoder.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Io/Stream.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 
@@ -26,7 +26,7 @@ public:
 		T_ASSERT (!m_decoder);
 	}
 
-	bool create(Stream* stream)
+	bool create(IStream* stream)
 	{
 		FLAC__StreamDecoderInitStatus status;
 
@@ -100,7 +100,7 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	FLAC__StreamDecoder* m_decoder;
 	float m_decoded[2][65535];
 	uint32_t m_decodedCount;
@@ -152,9 +152,9 @@ private:
 	}
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.FlacStreamDecoder", FlacStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FlacStreamDecoder", FlacStreamDecoder, IStreamDecoder)
 
-bool FlacStreamDecoder::create(Stream* stream)
+bool FlacStreamDecoder::create(IStream* stream)
 {
 	m_stream = stream;
 	rewind();
@@ -185,8 +185,8 @@ bool FlacStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 void FlacStreamDecoder::rewind()
 {
 	destroy();
-	m_stream->seek(Stream::SeekSet, 0);
-	m_decoderImpl = gc_new< FlacStreamDecoderImpl >();
+	m_stream->seek(IStream::SeekSet, 0);
+	m_decoderImpl = new FlacStreamDecoderImpl();
 	if (!m_decoderImpl->create(m_stream))
 		m_decoderImpl = 0;
 }

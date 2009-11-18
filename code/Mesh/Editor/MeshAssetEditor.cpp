@@ -27,7 +27,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/MiniButton.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/FileSystem.h"
 
 namespace traktor
@@ -62,7 +61,7 @@ MeshAssetEditor::MeshAssetEditor(editor::IEditor* editor)
 	m_assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 }
 
-bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
+bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
 	m_instance = instance;
 	if (!m_instance)
@@ -72,37 +71,37 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, Seriali
 	if (!m_asset)
 		return false;
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	if (!container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	Ref< ui::Container > container = new ui::Container();
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Container > containerFile = gc_new< ui::Container >();
-	if (!containerFile->create(container, ui::WsNone, gc_new< ui::TableLayout >(L"*,100%", L"*", 4, 4)))
+	Ref< ui::Container > containerFile = new ui::Container();
+	if (!containerFile->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 4, 4)))
 		return false;
 
-	Ref< ui::Static > staticFileName = gc_new< ui::Static >();
+	Ref< ui::Static > staticFileName = new ui::Static();
 	if (!staticFileName->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_FILENAME")))
 		return false;
 
-	Ref< ui::Container > containerFileName = gc_new< ui::Container >();
-	if (!containerFileName->create(containerFile, ui::WsNone, gc_new< ui::TableLayout >(L"100%,*", L"*", 0, 0)))
+	Ref< ui::Container > containerFileName = new ui::Container();
+	if (!containerFileName->create(containerFile, ui::WsNone, new ui::TableLayout(L"100%,*", L"*", 0, 0)))
 		return false;
 
-	m_editFileName = gc_new< ui::Edit >();
+	m_editFileName = new ui::Edit();
 	if (!m_editFileName->create(containerFileName, L""))
 		return false;
 
-	Ref< ui::custom::MiniButton > browseButton = gc_new< ui::custom::MiniButton >();
+	Ref< ui::custom::MiniButton > browseButton = new ui::custom::MiniButton();
 	if (!browseButton->create(containerFileName, L"..."))
 		return false;
 
 	browseButton->addClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventBrowseClick));
 
-	Ref< ui::Static > staticMeshType = gc_new< ui::Static >();
+	Ref< ui::Static > staticMeshType = new ui::Static();
 	if (!staticMeshType->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE")))
 		return false;
 
-	m_dropMeshType = gc_new< ui::DropDown >();
+	m_dropMeshType = new ui::DropDown();
 	if (!m_dropMeshType->create(containerFile))
 		return false;
 
@@ -112,20 +111,20 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, Seriali
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_SKINNED"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STATIC"));
 
-	m_containerMaterials = gc_new< ui::Container >();
-	if (!m_containerMaterials->create(container, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	m_containerMaterials = new ui::Container();
+	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	Ref< ui::custom::ToolBar > materialTools = gc_new< ui::custom::ToolBar >();
+	Ref< ui::custom::ToolBar > materialTools = new ui::custom::ToolBar();
 	if (!materialTools->create(m_containerMaterials))
 		return false;
 
-	materialTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"MESHASSET_EDITOR_CREATE_SHADER"), ui::Command(L"MeshAssetEditor.CreateShader"), 0, ui::custom::ToolBarButton::BsText));
-	materialTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"MESHASSET_EDITOR_BROWSE_SHADER"), ui::Command(L"MeshAssetEditor.BrowseShader"), 0, ui::custom::ToolBarButton::BsText));
-	materialTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"MESHASSET_EDITOR_REMOVE_SHADER"), ui::Command(L"MeshAssetEditor.RemoveShader"), 0, ui::custom::ToolBarButton::BsText));
+	materialTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_CREATE_SHADER"), ui::Command(L"MeshAssetEditor.CreateShader"), 0, ui::custom::ToolBarButton::BsText));
+	materialTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_BROWSE_SHADER"), ui::Command(L"MeshAssetEditor.BrowseShader"), 0, ui::custom::ToolBarButton::BsText));
+	materialTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"MESHASSET_EDITOR_REMOVE_SHADER"), ui::Command(L"MeshAssetEditor.RemoveShader"), 0, ui::custom::ToolBarButton::BsText));
 	materialTools->addClickEventHandler(ui::createMethodHandler(this, &MeshAssetEditor::eventMaterialToolClick));
 
-	m_materialList = gc_new< ui::ListView >();
+	m_materialList = new ui::ListView();
 	if (!m_materialList->create(m_containerMaterials, ui::ListView::WsReport))
 		return false;
 
@@ -195,7 +194,7 @@ void MeshAssetEditor::updateMaterialList()
 	{
 		const std::map< std::wstring, Guid >& materialShaders = m_asset->getMaterialShaders();
 
-		items = gc_new< ui::ListViewItems >();
+		items = new ui::ListViewItems();
 
 		const std::vector< model::Material >& materials = m_model->getMaterials();
 		for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
@@ -211,7 +210,7 @@ void MeshAssetEditor::updateMaterialList()
 					materialShader = materialShaderInstance->getName();
 			}
 
-			Ref< ui::ListViewItem > item = gc_new< ui::ListViewItem >();
+			Ref< ui::ListViewItem > item = new ui::ListViewItem();
 			item->setText(0, i->getName());
 			item->setText(1, materialShader);
 			item->setData(L"INSTANCE", materialShaderInstance);

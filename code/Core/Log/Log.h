@@ -4,15 +4,15 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
-#include "Core/Io/OutputStreamBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -21,18 +21,16 @@ namespace traktor
 /*! \brief Log target.
  * \ingroup Core
  */
-class T_DLLCLASS LogTarget
+class ILogTarget
 {
 public:
-	virtual ~LogTarget() {}
-
 	virtual void log(const std::wstring& str) = 0;
 };
 
 /*! \brief Console log target.
  * \ingroup Core
  */
-class T_DLLCLASS LogTargetConsole : public LogTarget
+class T_DLLCLASS LogTargetConsole : public ILogTarget
 {
 public:
 	LogTargetConsole(const std::wstring& prefix);
@@ -46,7 +44,7 @@ private:
 /*! \brief Debugger log target.
  * \ingroup Core
  */
-class T_DLLCLASS LogTargetDebug : public LogTarget
+class T_DLLCLASS LogTargetDebug : public ILogTarget
 {
 public:
 	LogTargetDebug(const std::wstring& prefix);
@@ -60,20 +58,20 @@ private:
 /*! \brief Log stream buffer.
  * \ingroup Core
  */
-class T_DLLCLASS LogStreamBuffer : public OutputStreamBuffer
+class T_DLLCLASS LogStreamBuffer : public IOutputStreamBuffer
 {
 public:
-	LogStreamBuffer(LogTarget* target = 0);
+	LogStreamBuffer(ILogTarget* target = 0);
 	
-	LogTarget* getTarget();
+	ILogTarget* getTarget();
 
-	void setTarget(LogTarget* target);
+	void setTarget(ILogTarget* target);
 	
 protected:
 	virtual int overflow(const wchar_t* buffer, int count);
 	
 private:
-	LogTarget* m_target;
+	ILogTarget* m_target;
 	std::wstringstream m_ss;
 };
 
@@ -83,7 +81,7 @@ private:
 class T_DLLCLASS LogStream : public OutputStream
 {
 public:
-	LogStream(LogTarget* target);
+	LogStream(ILogTarget* target);
 
 	virtual ~LogStream();
 

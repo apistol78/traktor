@@ -2,7 +2,7 @@
 #define traktor_db_Configuration_H
 
 #include <map>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,16 +20,16 @@ namespace traktor
 /*! \brief Server configuration.
  * \ingroup Database
  */
-class T_DLLCLASS Configuration : public Serializable
+class T_DLLCLASS Configuration : public ISerializable
 {
-	T_RTTI_CLASS(Configuration)
+	T_RTTI_CLASS;
 
 public:
 	uint16_t getListenPort() const;
 
 	std::wstring getDatabaseManifest(const std::wstring& name) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_listenPort;

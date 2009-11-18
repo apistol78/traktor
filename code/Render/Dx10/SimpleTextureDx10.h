@@ -2,7 +2,6 @@
 #define traktor_render_SimpleTextureDx10_H
 
 #include "Render/ISimpleTexture.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ struct SimpleTextureCreateDesc;
  */
 class T_DLLCLASS SimpleTextureDx10 : public ISimpleTexture
 {
-	T_RTTI_CLASS(ISimpleTexture)
+	T_RTTI_CLASS;
 
 public:
 	SimpleTextureDx10(ContextDx10* context);

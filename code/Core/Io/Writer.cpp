@@ -8,7 +8,7 @@ namespace traktor
 
 #if defined(T_LITTLE_ENDIAN)
 
-template <typename T> bool write_primitive(Stream* stream, T v)
+template <typename T> bool write_primitive(IStream* stream, T v)
 {
 	if (stream->write(&v, sizeof(T)) == sizeof(T))
 		return true;
@@ -17,7 +17,7 @@ template <typename T> bool write_primitive(Stream* stream, T v)
 
 #elif defined(T_BIG_ENDIAN)
 
-template <typename T> bool write_primitive(Stream* stream, T v)
+template <typename T> bool write_primitive(IStream* stream, T v)
 {
 	std::vector< char > tmp(sizeof(T));
 	memcpy(&tmp.front(), &v, sizeof(T));
@@ -33,7 +33,7 @@ template <typename T> bool write_primitive(Stream* stream, T v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Writer", Writer, Object)
 
-Writer::Writer(Stream* stream)
+Writer::Writer(IStream* stream)
 :	m_stream(stream)
 {
 	T_ASSERT (m_stream);

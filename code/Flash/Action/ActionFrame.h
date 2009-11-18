@@ -2,7 +2,6 @@
 #define traktor_flash_ActionFrame_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/Action/ActionValue.h"
 #include "Flash/Action/ActionValueStack.h"
@@ -30,7 +29,7 @@ class ActionFunction;
  */
 class T_DLLCLASS ActionFrame : public Object
 {
-	T_RTTI_CLASS(ActionFrame)
+	T_RTTI_CLASS;
 
 public:
 	ActionFrame(

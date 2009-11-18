@@ -1,8 +1,8 @@
 #include <cstring>
 #include <mad.h>
 #include "Sound/Decoders/Mp3StreamDecoder.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Io/Stream.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -30,7 +30,7 @@ public:
 	{
 	}
 
-	bool create(Stream* stream)
+	bool create(IStream* stream)
 	{
 		m_stream = stream;
 
@@ -138,7 +138,7 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	mad_stream m_mad_stream;
 	mad_frame m_mad_frame;
 	mad_synth m_mad_synth;
@@ -149,9 +149,9 @@ private:
 	uint32_t m_consumedCount;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.Mp3StreamDecoder", Mp3StreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", Mp3StreamDecoder, IStreamDecoder)
 
-bool Mp3StreamDecoder::create(Stream* stream)
+bool Mp3StreamDecoder::create(IStream* stream)
 {
 	m_stream = stream;
 	rewind();
@@ -182,8 +182,8 @@ bool Mp3StreamDecoder::getBlock(SoundBlock& outSoundBlock)
 void Mp3StreamDecoder::rewind()
 {
 	destroy();
-	m_stream->seek(Stream::SeekSet, 0);
-	m_decoderImpl = gc_new< Mp3StreamDecoderImpl >();
+	m_stream->seek(IStream::SeekSet, 0);
+	m_decoderImpl = new Mp3StreamDecoderImpl();
 	if (!m_decoderImpl->create(m_stream))
 		m_decoderImpl = 0;
 }

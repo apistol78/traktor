@@ -1,5 +1,5 @@
-#include <vector>
 #include <algorithm>
+#include <vector>
 #include "Core/Io/Reader.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 
 #if defined(T_LITTLE_ENDIAN)
 
-template <typename T> T read_primitive(Stream* stream)
+template <typename T> T read_primitive(IStream* stream)
 {
 	T tmp;
 	if (stream->read(&tmp, sizeof(T)) == sizeof(T))
@@ -19,7 +19,7 @@ template <typename T> T read_primitive(Stream* stream)
 
 #elif defined(T_BIG_ENDIAN)
 
-template <typename T> T read_primitive(Stream* stream)
+template <typename T> T read_primitive(IStream* stream)
 {
 	std::vector< char > tmp; tmp.resize(sizeof(T));
 	if (stream->read(&tmp[0], sizeof(T)) == sizeof(T))
@@ -36,7 +36,7 @@ template <typename T> T read_primitive(Stream* stream)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Reader", Reader, Object)
 
-Reader::Reader(Stream* stream)
+Reader::Reader(IStream* stream)
 :	m_stream(stream)
 {
 	T_ASSERT (m_stream);
@@ -155,7 +155,7 @@ int Reader::read(void* block, int count, int size)
 
 int Reader::skip(int nbytes)
 {
-	return m_stream->seek(Stream::SeekCurrent, nbytes);
+	return m_stream->seek(IStream::SeekCurrent, nbytes);
 }
 
 }

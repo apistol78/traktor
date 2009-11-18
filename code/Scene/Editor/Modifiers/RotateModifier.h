@@ -11,7 +11,7 @@ namespace traktor
 /*! \brief Rotation modifier. */
 class RotateModifier : public IModifier
 {
-	T_RTTI_CLASS(RotateModifier)
+	T_RTTI_CLASS;
 
 public:
 	virtual void draw(

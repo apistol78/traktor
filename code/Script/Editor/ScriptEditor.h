@@ -1,7 +1,6 @@
 #ifndef traktor_script_ScriptEditor_H
 #define traktor_script_ScriptEditor_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IObjectEditor.h"
 #include "Script/IScriptContext.h"
 
@@ -49,12 +48,12 @@ class T_DLLCLASS ScriptEditor
 :	public editor::IObjectEditor
 ,	public script::IErrorCallback
 {
-	T_RTTI_CLASS(ScriptEditor)
+	T_RTTI_CLASS;
 
 public:
 	ScriptEditor(editor::IEditor* editor);
 
-	virtual bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
+	virtual bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
 	virtual void destroy();
 

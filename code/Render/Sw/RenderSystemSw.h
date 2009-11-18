@@ -5,7 +5,7 @@
 #	define _WIN32_LEAN_AND_MEAN
 #	include <windows.h>
 #	include <tchar.h>
-#	include "Graphics/GraphicsSystem.h"
+#	include "Graphics/IGraphicsSystem.h"
 #endif
 #include "Render/IRenderSystem.h"
 
@@ -31,7 +31,7 @@ class Processor;
  */
 class T_DLLCLASS RenderSystemSw : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemSw)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemSw();

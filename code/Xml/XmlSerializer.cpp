@@ -1,10 +1,10 @@
 #include <sstream>
 #include "Xml/XmlSerializer.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Base64.h"
@@ -38,8 +38,8 @@ std::wstring characterEntity(const std::wstring& str)
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlSerializer", XmlSerializer, Serializer)
 
-XmlSerializer::XmlSerializer(Stream* stream)
-:	m_xml(stream, gc_new< Utf8Encoding >())
+XmlSerializer::XmlSerializer(IStream* stream)
+:	m_xml(stream, new Utf8Encoding())
 {
 	T_ASSERT_M (stream->canWrite(), L"Incorrect direction on output stream");
 	m_xml << m_indent << L"<?xml version=\"1.0\" encoding=\"utf-8\"?>" << Endl;
@@ -48,7 +48,7 @@ XmlSerializer::XmlSerializer(Stream* stream)
 
 Serializer::Direction XmlSerializer::getDirection()
 {
-	return Serializer::SdWrite;
+	return ISerializer::SdWrite;
 }
 
 bool XmlSerializer::operator >> (const Member< bool >& m)
@@ -217,12 +217,12 @@ bool XmlSerializer::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Serializable >& m)
+bool XmlSerializer::operator >> (const Member< ISerializable >& m)
 {
-	Serializable* o = &static_cast< Serializable& >(m);
+	ISerializable* o = &static_cast< ISerializable& >(m);
 	bool result;
 
-	int32_t version = o->getVersion();
+	int32_t version = type_of(o).getVersion();
 	if (version > 0)
 		m_xml << m_indent << L"<" << m.getName() << L" version=\"" << version << L"\">" << Endl;
 	else
@@ -240,12 +240,12 @@ bool XmlSerializer::operator >> (const Member< Serializable >& m)
 	return result;
 }
 
-bool XmlSerializer::operator >> (const Member< Ref< Serializable > >& m)
+bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 {
-	Ref< Serializable > o = m;
+	ISerializable* o = m;
 	bool result = true;
 
-	std::map< Object*, std::wstring >::iterator i = m_refs.find(o);
+	std::map< ISerializable*, std::wstring >::iterator i = m_refs.find(o);
 	if (i != m_refs.end())
 	{
 		m_xml << m_indent << L"<" << m.getName() << L" ref=\"" << i->second << L"\"/>" << Endl;
@@ -255,7 +255,7 @@ bool XmlSerializer::operator >> (const Member< Ref< Serializable > >& m)
 	}
 	else if (o)
 	{
-		int32_t version = o->getVersion();
+		int32_t version = type_of(o).getVersion();
 		if (version > 0)
 			m_xml << m_indent << L"<" << m.getName() << L" type=\"" << type_name(o) << L"\" version=\"" << version << L"\">" << Endl;
 		else
@@ -279,6 +279,12 @@ bool XmlSerializer::operator >> (const Member< Ref< Serializable > >& m)
 	}
 	
 	return result;
+}
+
+bool XmlSerializer::operator >> (const Member< Ref< ISerializable > >& m)
+{
+	ISerializable* object = m->ptr();
+	return *this >> Member< ISerializable* >(m.getName(), object);
 }
 
 bool XmlSerializer::operator >> (const Member< void* >& m)
@@ -355,6 +361,11 @@ bool XmlSerializer::operator >> (const MemberComplex& m)
 	return result;
 }
 
+bool XmlSerializer::operator >> (const MemberEnumBase& m)
+{
+	return this->operator >> (*(MemberComplex*)(&m));
+}
+
 std::wstring XmlSerializer::stackPath()
 {
 	std::wstringstream ss;
@@ -384,7 +395,7 @@ void XmlSerializer::leaveElement()
 	decrementIndent();
 }
 
-void XmlSerializer::rememberObject(Object* object)
+void XmlSerializer::rememberObject(ISerializable* object)
 {
 	m_refs[object] = stackPath();
 }

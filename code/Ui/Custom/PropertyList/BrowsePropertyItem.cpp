@@ -19,19 +19,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.BrowsePropertyItem", BrowsePropertyItem, PropertyItem)
 
-BrowsePropertyItem::BrowsePropertyItem(const std::wstring& text, const Type* filterType, const Guid& value)
+BrowsePropertyItem::BrowsePropertyItem(const std::wstring& text, const TypeInfo* filterType, const Guid& value)
 :	PropertyItem(text)
 ,	m_filterType(filterType)
 ,	m_value(value)
 {
 }
 
-void BrowsePropertyItem::setFilterType(const Type* filterType)
+void BrowsePropertyItem::setFilterType(const TypeInfo* filterType)
 {
 	m_filterType = filterType;
 }
 
-const Type* BrowsePropertyItem::getFilterType() const
+const TypeInfo* BrowsePropertyItem::getFilterType() const
 {
 	return m_filterType;
 }
@@ -57,13 +57,13 @@ const Guid& BrowsePropertyItem::getValue() const
 void BrowsePropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_buttonEdit);
-	m_buttonEdit = gc_new< MiniButton >();
+	m_buttonEdit = new MiniButton();
 	m_buttonEdit->create(parent, Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
 	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &BrowsePropertyItem::eventEditClick));
 	m_buttonEdit->setEnable(!m_value.isNull());
 	
 	T_ASSERT (!m_buttonBrowse);
-	m_buttonBrowse = gc_new< MiniButton >();
+	m_buttonBrowse = new MiniButton();
 	m_buttonBrowse->create(parent,
 		m_value.isNull() ?
 			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") :

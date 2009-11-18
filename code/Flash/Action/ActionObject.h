@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/Action/ActionValue.h"
 
@@ -28,7 +27,7 @@ class ActionValue;
  */
 class T_DLLCLASS ActionObject : public Object
 {
-	T_RTTI_CLASS(ActionObject)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::map< std::wstring, ActionValue > member_map_t;

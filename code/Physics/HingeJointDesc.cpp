@@ -1,5 +1,5 @@
 #include "Physics/HingeJointDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.HingeJointDesc", HingeJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", HingeJointDesc, JointDesc)
 
 HingeJointDesc::HingeJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -50,7 +50,7 @@ void HingeJointDesc::getAngles(float& outMinAngle, float& outMaxAngle) const
 	outMaxAngle = m_maxAngle;
 }
 
-bool HingeJointDesc::serialize(Serializer& s)
+bool HingeJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor);
 	s >> Member< Vector4 >(L"axis", m_axis);

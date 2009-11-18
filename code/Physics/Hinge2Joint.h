@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Hinge2Joint : public Joint
 {
-	T_RTTI_CLASS(Hinge2Joint)
+	T_RTTI_CLASS;
 
 public:
 	virtual void addTorques(float torqueAxis1, float torqueAxis2) = 0;

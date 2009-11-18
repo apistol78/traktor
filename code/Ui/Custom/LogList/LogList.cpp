@@ -40,7 +40,7 @@ bool LogList::create(Widget* parent, int style)
 	addMouseWheelEventHandler(createMethodHandler(this, &LogList::eventMouseWheel));
 	addTimerEventHandler(createMethodHandler(this, &LogList::eventTimer));
 
-	m_scrollBar = gc_new< ScrollBar >();
+	m_scrollBar = new ScrollBar();
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
 

@@ -14,7 +14,7 @@ namespace traktor
  */
 class ActionSetName : public Action
 {
-	T_RTTI_CLASS(Action)
+	T_RTTI_CLASS;
 
 public:
 	ActionSetName(const Path& instancePath, const std::wstring& newName);

@@ -20,42 +20,42 @@ namespace traktor
 			
 voidpf ZCALLBACK zlibOpenFile(voidpf opaque, const char* filename, int mode)
 {
-	Ref< Stream > s;
+	Ref< IStream > s;
 	
 	if ((mode & ZLIB_FILEFUNC_MODE_READWRITEFILTER) == ZLIB_FILEFUNC_MODE_READ)
 		s = FileSystem::getInstance().open(mbstows(filename), File::FmRead);
 	else if ((mode & ZLIB_FILEFUNC_MODE_CREATE) == ZLIB_FILEFUNC_MODE_CREATE)
 		s = FileSystem::getInstance().open(mbstows(filename), File::FmWrite);
 	
-	return (voidpf)(s ? new Ref< Stream >(s) : 0);	
+	return (voidpf)(s ? new Ref< IStream >(s) : 0);	
 }
 
 uLong ZCALLBACK zlibReadFile(voidpf opaque, voidpf stream, void* buf, uLong size)
 {
-	Ref< Stream >* s = reinterpret_cast< Ref< Stream >* >(stream);
+	Ref< IStream >* s = reinterpret_cast< Ref< IStream >* >(stream);
 	return (uLong)(*s != 0 ? (*s)->read(buf, int(size)) : 0);
 }
 
 uLong ZCALLBACK zlibWriteFile(voidpf opaque, voidpf stream, const void* buf, uLong size)
 {
-	Ref< Stream >* s = reinterpret_cast< Ref< Stream >* >(stream);
+	Ref< IStream >* s = reinterpret_cast< Ref< IStream >* >(stream);
 	return (uLong)(*s != 0 ? (*s)->write(buf, int(size)) : 0);
 }
 
 long ZCALLBACK zlibTellFile(voidpf opaque, voidpf stream)
 {
-	Ref< Stream >* s = reinterpret_cast< Ref< Stream >* >(stream);
+	Ref< IStream >* s = reinterpret_cast< Ref< IStream >* >(stream);
 	return (long)(*s != 0 ? (*s)->tell() : 0);
 }
 
 long ZCALLBACK zlibSeekFile(voidpf opaque, voidpf stream, uLong offset, int origin)
 {
-	Ref< Stream >* s = reinterpret_cast< Ref< Stream >* >(stream);
-	const Stream::SeekOriginType co[] =
+	Ref< IStream >* s = reinterpret_cast< Ref< IStream >* >(stream);
+	const IStream::SeekOriginType co[] =
 	{
-		Stream::SeekSet,
-		Stream::SeekCurrent,
-		Stream::SeekEnd
+		IStream::SeekSet,
+		IStream::SeekCurrent,
+		IStream::SeekEnd
 	};
 
 	if (*s == 0)
@@ -69,7 +69,7 @@ long ZCALLBACK zlibSeekFile(voidpf opaque, voidpf stream, uLong offset, int orig
 
 int ZCALLBACK zlibCloseFile(voidpf opaque, voidpf stream)
 {
-	Ref< Stream >* s = reinterpret_cast< Ref< Stream >* >(stream);
+	Ref< IStream >* s = reinterpret_cast< Ref< IStream >* >(stream);
 	if (s != 0 && *s != 0)
 	{
 		(*s)->close();
@@ -85,7 +85,7 @@ int ZCALLBACK zlibErrorFile(voidpf opaque, voidpf stream)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.Volume", Volume, traktor::Volume)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.Volume", Volume, IVolume)
 
 Volume::Volume(const Path& archive)
 :	m_archive(archive)
@@ -165,7 +165,7 @@ int Volume::find(const Path& mask, RefArray< File >& out)
 					if (!match)
 						continue;
 
-					out.push_back(gc_new< File >(
+					out.push_back(new File(
 						mask.getVolume() + L":" + path.substr(0, path.length() - 1),
 						info.uncompressed_size,
 						File::FfDirectory
@@ -187,7 +187,7 @@ int Volume::find(const Path& mask, RefArray< File >& out)
 					if (!match)
 						continue;
 
-					out.push_back(gc_new< File >(
+					out.push_back(new File(
 						mask.getVolume() + L":" + path,
 						info.uncompressed_size,
 						File::FfNormal
@@ -206,9 +206,9 @@ bool Volume::modify(const Path& fileName, uint32_t flags)
 	return false;
 }
 
-Ref< Stream > Volume::open(const Path& filename, File::Mode mode)
+Ref< IStream > Volume::open(const Path& filename, File::Mode mode)
 {
-	Ref< Stream > stream;
+	Ref< IStream > stream;
 	if (mode == File::FmRead)
 	{
 		if (!readArchive())
@@ -220,7 +220,7 @@ Ref< Stream > Volume::open(const Path& filename, File::Mode mode)
 		if (unzOpenCurrentFile(m_unzFile) != UNZ_OK)
 			return 0;
 
-		stream = gc_new< StreamUnzip >(m_unzFile);
+		stream = new StreamUnzip(m_unzFile);
 	}
 	else if (mode == File::FmWrite)
 	{
@@ -254,7 +254,7 @@ Ref< Stream > Volume::open(const Path& filename, File::Mode mode)
 		if (zipOpenNewFileInZip(m_zipFile, wstombs(filename.getPathName()).c_str(), &zfi, 0, 0, 0, 0, 0, Z_DEFLATED, Z_DEFAULT_COMPRESSION) != ZIP_OK)
 			return 0;
 	
-		stream = gc_new< StreamZip >(m_zipFile);
+		stream = new StreamZip(m_zipFile);
 	}
 	return stream;
 }

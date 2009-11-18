@@ -45,7 +45,7 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 		IScriptClass* scriptClass = *i;
 		T_ASSERT (scriptClass);
 
-		const Type& exportType = scriptClass->getExportType();
+		const TypeInfo& exportType = scriptClass->getExportType();
 
 		v8::Local< v8::FunctionTemplate > functionTemplate = v8::FunctionTemplate::New();
 
@@ -67,7 +67,7 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 			);
 		}
 
-		const Type* superType = scriptClass->getExportType().getSuper();
+		const TypeInfo* superType = scriptClass->getExportType().getSuper();
 		T_ASSERT (superType);
 
 		v8::Local< v8::Object > globalObject = m_context->Global();
@@ -285,7 +285,7 @@ v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
 {
 	if (object)
 	{
-		const Type* objectType = &object->getType();
+		const TypeInfo* objectType = &type_of(object);
 		for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 		{
 			if (&i->scriptClass->getExportType() == objectType)

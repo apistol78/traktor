@@ -24,7 +24,7 @@ class SocketAddressIPv6;
  */
 class T_DLLCLASS UdpSocket : public Socket
 {
-	T_RTTI_CLASS(UdpSocket)
+	T_RTTI_CLASS;
 
 public:
 	UdpSocket();

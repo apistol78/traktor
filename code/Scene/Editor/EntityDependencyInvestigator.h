@@ -2,7 +2,6 @@
 #define traktor_scene_EntityDependencyInvestigator_H
 
 #include "Ui/Container.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
@@ -22,7 +21,7 @@ class EntityAdapter;
 /*! \brief Entity asset dependency investigator. */
 class EntityDependencyInvestigator : public ui::Container
 {
-	T_RTTI_CLASS(EntityDependencyInvestigator)
+	T_RTTI_CLASS;
 
 public:
 	EntityDependencyInvestigator(SceneEditorContext* context);

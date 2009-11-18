@@ -28,7 +28,7 @@ class Event;
  */
 class T_DLLCLASS NumericPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(NumericPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	NumericPropertyItem(const std::wstring& text, double value, double limitMin, double limitMax, bool floatPoint = true, bool hex = false);

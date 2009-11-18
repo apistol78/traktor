@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationEntityEditorFactory", AnimationEntityEditorFactory, scene::IEntityEditorFactory)
 
-const TypeSet AnimationEntityEditorFactory::getEntityDataTypes() const
+const TypeInfoSet AnimationEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< AnimatedMeshEntityData >());
 	typeSet.insert(&type_of< PathEntityData >());
 	return typeSet;
@@ -21,13 +21,13 @@ const TypeSet AnimationEntityEditorFactory::getEntityDataTypes() const
 
 Ref< scene::IEntityEditor > AnimationEntityEditorFactory::createEntityEditor(
 	scene::SceneEditorContext* context,
-	const Type& entityDataType
+	const TypeInfo& entityDataType
 ) const
 {
 	if (is_type_of< AnimatedMeshEntityData >(entityDataType))
-		return gc_new< AnimatedMeshEntityEditor >();
+		return new AnimatedMeshEntityEditor();
 	if (is_type_of< PathEntityData >(entityDataType))
-		return gc_new< PathEntityEditor >();
+		return new PathEntityEditor();
 	return 0;
 }
 

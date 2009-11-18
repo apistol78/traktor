@@ -1,9 +1,8 @@
 #include <cstdlib>
 #include <cstring>
 #include "Flash/SwfReader.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Zip/InflateStream.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -19,9 +18,9 @@ const uint32_t c_allocSize = 1UL * 1024UL * 1024UL;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SwfReader", SwfReader, Object)
 
-SwfReader::SwfReader(Stream* stream)
+SwfReader::SwfReader(IStream* stream)
 :	m_stream(stream)
-,	m_bs(gc_new< BitReader >(stream))
+,	m_bs(new BitReader(stream))
 {
 	m_allocHead = static_cast< uint8_t* >(malloc(c_allocSize));
 	T_ASSERT (m_allocHead);
@@ -74,8 +73,8 @@ SwfHeader* SwfReader::readHeader()
 
 	if (header->signature[0] == 'C')
 	{
-		m_stream = gc_new< zip::InflateStream >(m_stream);
-		m_bs = gc_new< BitReader >(m_stream);
+		m_stream = new zip::InflateStream(m_stream);
+		m_bs = new BitReader(m_stream);
 	}
 
 	header->frameRect = readRect();

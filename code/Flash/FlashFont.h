@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashFont_H
 #define traktor_flash_FlashFont_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Flash/Action/ActionObject.h"
 #include "Flash/SwfTypes.h"
 
@@ -25,7 +25,7 @@ class FlashShape;
  */
 class T_DLLCLASS FlashFont : public ActionObject
 {
-	T_RTTI_CLASS(FlashFont)
+	T_RTTI_CLASS;
 
 public:
 	enum CoordinateType

@@ -1,13 +1,12 @@
 #ifndef traktor_animation_LwsDocument_H
 #define traktor_animation_LwsDocument_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace animation
 	{
@@ -16,10 +15,10 @@ class LwsGroup;
 
 class LwsDocument : public Object
 {
-	T_RTTI_CLASS(LwsDocument)
+	T_RTTI_CLASS;
 
 public:
-	static Ref< LwsDocument > parse(Stream* stream);
+	static Ref< LwsDocument > parse(IStream* stream);
 
 	Ref< LwsGroup > getRootGroup();
 

@@ -1,7 +1,6 @@
 #ifndef traktor_world_LightEntityFactory_H
 #define traktor_world_LightEntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -22,10 +21,10 @@ namespace traktor
  */
 class T_DLLCLASS LightEntityFactory : public IEntityFactory
 {
-	T_RTTI_CLASS(LightEntityFactory)
+	T_RTTI_CLASS;
 	
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const std::wstring& name, const EntityData& entityData, const Object* instanceData) const;
 };

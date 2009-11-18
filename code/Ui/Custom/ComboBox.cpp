@@ -20,13 +20,13 @@ bool ComboBox::create(Widget* parent, const std::wstring& text, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_buttonArrow = gc_new< Button >();
+	m_buttonArrow = new Button();
 	m_buttonArrow->create(this, L"...");
 
-	m_edit = gc_new< Edit >();
+	m_edit = new Edit();
 	m_edit->create(this, text, WsNone);
 
-	m_listBox = gc_new< ListBox >();
+	m_listBox = new ListBox();
 	m_listBox->create(this);
 	//m_listBox->setVisible(false);
 

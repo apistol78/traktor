@@ -73,7 +73,7 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 
-	m_screenRenderer = gc_new< render::ScreenRenderer >();
+	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 

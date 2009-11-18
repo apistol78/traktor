@@ -28,7 +28,7 @@ Ref< render::IProgram > createProgram(
 	const int resourceSize
 )
 {
-	Ref< MemoryStream > stream = gc_new< MemoryStream >((void*)resource, resourceSize, true, false);
+	Ref< MemoryStream > stream = new MemoryStream((void*)resource, resourceSize, true, false);
 	Ref< render::ShaderGraph > shaderGraph = xml::XmlDeserializer(stream).readObject< render::ShaderGraph >();
 
 	T_ASSERT_M (shaderGraph, L"Unable to read shader graph");

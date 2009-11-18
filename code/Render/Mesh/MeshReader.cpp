@@ -19,7 +19,7 @@ MeshReader::MeshReader(MeshFactory* meshFactory)
 {
 }
 
-Ref< Mesh > MeshReader::read(Stream* stream) const
+Ref< Mesh > MeshReader::read(IStream* stream) const
 {
 	Reader reader(stream);
 

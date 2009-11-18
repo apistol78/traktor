@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
@@ -33,7 +32,7 @@ class T_DLLCLASS Pin
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(Pin)
+	T_RTTI_CLASS;
 
 public:
 	enum Direction

@@ -1,7 +1,6 @@
 #ifndef traktor_input_InputDriverWin32_H
 #define traktor_input_InputDriverWin32_H
 
-#include "Core/Heap/Ref.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
@@ -22,7 +21,7 @@ class MouseDeviceWin32;
 
 class T_DLLCLASS InputDriverWin32 : public IInputDriver
 {
-	T_RTTI_CLASS(InputDriverWin32)
+	T_RTTI_CLASS;
 
 public:
 	InputDriverWin32();

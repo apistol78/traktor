@@ -2,6 +2,7 @@
 #define traktor_Split_H
 
 #include <vector>
+#include "Core/Config.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor

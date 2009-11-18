@@ -2,7 +2,7 @@
 #define traktor_render_ProgramResource_H
 
 #include <vector>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Guid.h"
 
 // import/export mechanism.
@@ -21,16 +21,16 @@ namespace traktor
 /*! \brief Program resource base class.
  * \ingroup Render
  */
-class T_DLLCLASS ProgramResource : public Serializable
+class T_DLLCLASS ProgramResource : public ISerializable
 {
-	T_RTTI_CLASS(ProgramResource)
+	T_RTTI_CLASS;
 
 public:
 	void addTexture(const std::wstring& parameterName, const Guid& guid);
 
 	const std::vector< std::pair< std::wstring, Guid > >& getTextures() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ShaderPipeline;

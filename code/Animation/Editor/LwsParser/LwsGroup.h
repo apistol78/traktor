@@ -2,8 +2,7 @@
 #define traktor_animation_LwsGroup_H
 
 #include "Animation/Editor/LwsParser/LwsNode.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 namespace traktor
 {
@@ -12,7 +11,7 @@ namespace traktor
 
 class LwsGroup : public LwsNode
 {
-	T_RTTI_CLASS(LwsGroup)
+	T_RTTI_CLASS;
 
 public:
 	LwsGroup(const std::wstring& name);

@@ -6,9 +6,9 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.MaterialMaskAsset", MaterialMaskAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.MaterialMaskAsset", MaterialMaskAsset, editor::Asset)
 
-const Type* MaterialMaskAsset::getOutputType() const
+const TypeInfo* MaterialMaskAsset::getOutputType() const
 {
 	return &type_of< MaterialMaskResource >();
 }

@@ -1,7 +1,7 @@
 #ifndef traktor_animation_State_H
 #define traktor_animation_State_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Resource/Proxy.h"
 #include "Animation/Pose.h"
 
@@ -24,9 +24,9 @@ class Animation;
 /*! \brief Animation state.
  * \ingroup Animation
  */
-class T_DLLCLASS State : public Serializable
+class T_DLLCLASS State : public ISerializable
 {
-	T_RTTI_CLASS(State)
+	T_RTTI_CLASS;
 
 public:
 	State();
@@ -46,7 +46,7 @@ public:
 		Pose& outPose
 	);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline resource::Proxy< Animation >& getAnimation() { return m_animation; }
 

@@ -7,7 +7,7 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 using namespace traktor;
@@ -49,7 +49,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	if (cmdLine.hasOption('s'))
 		configurationFile = cmdLine.getOption('c').getString();
 
-	Ref< Stream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
 	if (!file)
 	{
 		traktor::log::error << L"Unable to open configuration \"" << configurationFile << L"\"" << Endl;
@@ -72,7 +72,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	}
 
 	// Initialize database connection manager.
-	Ref< db::ConnectionManager > connectionManager = gc_new< db::ConnectionManager >();
+	Ref< db::ConnectionManager > connectionManager = new db::ConnectionManager();
 	if (!connectionManager->create(configuration))
 	{
 		traktor::log::error << "Unable to create connection manager" << Endl;
@@ -80,10 +80,10 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	}
 	
 	// Initialize network discovery.
-	Ref< net::DiscoveryManager > discoveryManager = gc_new< net::DiscoveryManager >();
+	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (discoveryManager->create(true))
 	{
-		Ref< db::RemoteDatabaseService > service = gc_new< db::RemoteDatabaseService >(
+		Ref< db::RemoteDatabaseService > service = new db::RemoteDatabaseService(
 			L"localhost",
 			configuration->getListenPort()
 		);

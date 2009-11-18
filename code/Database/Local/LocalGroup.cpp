@@ -48,14 +48,14 @@ Ref< IProviderGroup > LocalGroup::createGroup(const std::wstring& groupName)
 	if (!FileSystem::getInstance().makeDirectory(newGroupPath))
 		return false;
 
-	return gc_new< LocalGroup >(m_context, newGroupPath);
+	return new LocalGroup(m_context, newGroupPath);
 }
 
 Ref< IProviderInstance > LocalGroup::createInstance(const std::wstring& instanceName, const Guid& instanceGuid)
 {
 	Path instancePath = m_groupPath.getPathName() + L"/" + instanceName;
 
-	Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
+	Ref< LocalInstance > instance = new LocalInstance(m_context);
 	if (!instance->internalCreateNew(instancePath, instanceGuid))
 		return 0;
 
@@ -75,9 +75,9 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 		const Path& path = (*i)->getPath();
 		if ((*i)->isDirectory() && path.getFileName() != L"." && path.getFileName() != L"..")
 		{
-			outChildGroups.push_back(gc_new< LocalGroup >(
+			outChildGroups.push_back(new LocalGroup(
 				m_context,
-				cref(path)
+				path
 			));
 		}
 		else if (!(*i)->isDirectory() && compareIgnoreCase(path.getExtension(), L"xgl") == 0)
@@ -85,9 +85,9 @@ bool LocalGroup::getChildGroups(RefArray< IProviderGroup >& outChildGroups)
 			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
 			if (link)
 			{
-				outChildGroups.push_back(gc_new< LocalGroup >(
+				outChildGroups.push_back(new LocalGroup(
 					m_context,
-					cref(Path(link->getPath()))
+					Path(link->getPath())
 				));
 			}
 		}
@@ -109,7 +109,7 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 		const Path& path = (*i)->getPath();
 		if (compareIgnoreCase(path.getExtension(), L"xdm") == 0)
 		{
-			Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
+			Ref< LocalInstance > instance = new LocalInstance(m_context);
 			if (instance->internalCreate(path.getPathNameNoExtension()))
 				outChildInstances.push_back(instance);
 		}
@@ -118,7 +118,7 @@ bool LocalGroup::getChildInstances(RefArray< IProviderInstance >& outChildInstan
 			Ref< LocalFileLink > link = readPhysicalObject< LocalFileLink >(path);
 			if (link)
 			{
-				Ref< LocalInstance > instance = gc_new< LocalInstance >(m_context);
+				Ref< LocalInstance > instance = new LocalInstance(m_context);
 				if (instance->internalCreate(Path(link->getPath()).getPathNameNoExtension()))
 					outChildInstances.push_back(instance);
 			}

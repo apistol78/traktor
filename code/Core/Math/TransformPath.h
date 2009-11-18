@@ -1,17 +1,17 @@
 #ifndef traktor_TransformPath_H
 #define traktor_TransformPath_H
 
-#include "Core/Serialization/Serializable.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Transformation path.
  * \ingroup Core
  */
-class T_DLLCLASS TransformPath : public Serializable
+class T_DLLCLASS TransformPath : public ISerializable
 {
-	T_RTTI_CLASS(TransformPath)
+	T_RTTI_CLASS;
 
 public:
 	struct Frame
@@ -36,7 +36,7 @@ public:
 		{
 		}
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	struct Key
@@ -49,7 +49,7 @@ public:
 		{
 		}
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	void insert(float at, const Frame& frame);
@@ -64,7 +64,7 @@ public:
 
 	Frame* getClosestKeyFrame(float at);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 

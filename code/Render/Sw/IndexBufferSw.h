@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS IndexBufferSw : public IndexBuffer
 {
-	T_RTTI_CLASS(IndexBufferSw)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferSw(IndexType indexType, uint32_t bufferSize);

@@ -27,7 +27,7 @@ struct SubPathSegment;
  */
 class T_DLLCLASS PathTesselator : public Object
 {
-	T_RTTI_CLASS(PathTesselator)
+	T_RTTI_CLASS;
 
 public:
 	void tesselate(const Path& path, AlignedVector< Segment >& outSegments) const;

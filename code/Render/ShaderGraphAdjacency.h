@@ -3,8 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,7 +29,7 @@ class InputPin;
  */
 class T_DLLCLASS ShaderGraphAdjacency : public Object
 {
-	T_RTTI_CLASS(ShaderGraphAdjacency)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraphAdjacency(const ShaderGraph* shaderGraph);

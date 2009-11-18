@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_DefaultNodeShape_H
 #define traktor_ui_custom_DefaultNodeShape_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/Graph/NodeShape.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class GraphControl;
  */
 class T_DLLCLASS DefaultNodeShape : public NodeShape
 {
-	T_RTTI_CLASS(DefaultNodeShape)
+	T_RTTI_CLASS;
 
 public:
 	DefaultNodeShape(GraphControl* graphControl);

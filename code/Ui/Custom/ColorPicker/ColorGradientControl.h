@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ColorGradientControl_H
 #define traktor_ui_custom_ColorGradientControl_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ColorGradientControl : public Widget
 {
-	T_RTTI_CLASS(ColorGradientControl)
+	T_RTTI_CLASS;
 
 public:
 	enum Events

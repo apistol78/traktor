@@ -19,27 +19,27 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 {
 	Ref< ui::Container > container;
 
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 500, 400, ui::ConfigDialog::WsDefaultResizable, gc_new< ui::FloodLayout >()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 500, 400, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	addClickEventHandler(ui::createMethodHandler(this, &SettingsDialog::eventDialogClick));
 
 	// Create page container.
-	Ref< ui::Tab > tab = gc_new< ui::Tab >();
+	Ref< ui::Tab > tab = new ui::Tab();
 	tab->create(this, ui::WsBorder);
 
 	// Create setting pages.
-	std::vector< const Type* > settingPageTypes;
+	std::vector< const TypeInfo* > settingPageTypes;
 	type_of< ISettingsPage >().findAllOf(settingPageTypes, false);
 
-	for (std::vector< const Type* >::const_iterator i = settingPageTypes.begin(); i != settingPageTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::const_iterator i = settingPageTypes.begin(); i != settingPageTypes.end(); ++i)
 	{
-		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->newInstance());
+		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());
 		if (!settingsPage)
 			continue;
 
-		Ref< ui::TabPage > tabPage = gc_new< ui::TabPage >();
-		if (!tabPage->create(tab, L"", gc_new< ui::FloodLayout >(cref(ui::Size(4, 4)))))
+		Ref< ui::TabPage > tabPage = new ui::TabPage();
+		if (!tabPage->create(tab, L"", new ui::FloodLayout(ui::Size(4, 4))))
 			continue;
 
 		if (!settingsPage->create(tabPage, settings, shortcutCommands))

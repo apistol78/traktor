@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsBoolean : public ActionClass
 {
-	T_RTTI_CLASS(AsBoolean)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsBoolean > getInstance();

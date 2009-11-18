@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS FlashText : public FlashCharacter
 {
-	T_RTTI_CLASS(FlashText)
+	T_RTTI_CLASS;
 
 public:
 	struct Character

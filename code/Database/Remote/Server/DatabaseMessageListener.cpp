@@ -47,7 +47,7 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 
 		if (endsWith(toLower(manifest), L".manifest"))
 		{
-			Ref< LocalDatabase > localDatabase = gc_new< LocalDatabase >();
+			Ref< LocalDatabase > localDatabase = new LocalDatabase();
 			if (!localDatabase->open(manifest))
 			{
 				m_connection->sendReply(MsgStatus(StFailure));
@@ -57,7 +57,7 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 		}
 		else if (endsWith(toLower(manifest), L".compact"))
 		{
-			Ref< CompactDatabase > compactDatabase = gc_new< CompactDatabase >();
+			Ref< CompactDatabase > compactDatabase = new CompactDatabase();
 			if (!compactDatabase->open(manifest))
 			{
 				m_connection->sendReply(MsgStatus(StFailure));

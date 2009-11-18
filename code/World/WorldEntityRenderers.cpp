@@ -18,13 +18,13 @@ void updateEntityRendererMap(
 	outEntityRendererMap.clear();
 	for (RefArray< IEntityRenderer >::const_iterator i = entityRenderers.begin(); i != entityRenderers.end(); ++i)
 	{
-		TypeSet entityTypes = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
+		TypeInfoSet entityTypes = (*i)->getEntityTypes();
+		for (TypeInfoSet::const_iterator j = entityTypes.begin(); j != entityTypes.end(); ++j)
 		{
-			std::vector< const Type* > renderableTypes;
+			std::vector< const TypeInfo* > renderableTypes;
 			(*j)->findAllOf(renderableTypes);
 
-			for (std::vector< const Type* >::const_iterator k = renderableTypes.begin(); k != renderableTypes.end(); ++k)
+			for (std::vector< const TypeInfo* >::const_iterator k = renderableTypes.begin(); k != renderableTypes.end(); ++k)
 				outEntityRendererMap[*k] = *i;
 		}
 	}
@@ -48,7 +48,7 @@ void WorldEntityRenderers::remove(IEntityRenderer* entityRenderer)
 	updateEntityRendererMap(m_entityRenderers, m_entityRendererMap);
 }
 
-Ref< IEntityRenderer > WorldEntityRenderers::find(const Type& entityType) const
+Ref< IEntityRenderer > WorldEntityRenderers::find(const TypeInfo& entityType) const
 {
 	entity_renderer_map_t::const_iterator i = m_entityRendererMap.find(&entityType);
 	return i != m_entityRendererMap.end() ? i->second : 0;

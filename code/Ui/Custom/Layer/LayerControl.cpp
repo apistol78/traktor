@@ -35,7 +35,7 @@ bool LayerControl::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_scrollBar = gc_new< ScrollBar >();
+	m_scrollBar = new ScrollBar();
 	if (!m_scrollBar->create(this, ScrollBar::WsVertical))
 		return false;
 

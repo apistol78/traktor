@@ -1,8 +1,7 @@
 #ifndef traktor_editor_MemCachedGetStream_H
 #define traktor_editor_MemCachedGetStream_H
 
-#include "Core/Io/Stream.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -11,9 +10,9 @@ namespace traktor
 
 class MemCachedProto;
 
-class MemCachedGetStream : public Stream
+class MemCachedGetStream : public IStream
 {
-	T_RTTI_CLASS(MemCachedGetStream)
+	T_RTTI_CLASS;
 
 public:
 	enum { MaxBlockSize = 65536 };

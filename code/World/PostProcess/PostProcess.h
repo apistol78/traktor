@@ -3,8 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
@@ -55,7 +54,7 @@ class PostProcessSettings;
  */
 class T_DLLCLASS PostProcess : public Object
 {
-	T_RTTI_CLASS(PostProcess)
+	T_RTTI_CLASS;
 
 public:
 	enum PredefinedTargets

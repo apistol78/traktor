@@ -25,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS SocketAddressIPv6 : public SocketAddress
 {
-	T_RTTI_CLASS(SocketAddressIPv6)
+	T_RTTI_CLASS;
 
 public:
 	SocketAddressIPv6();

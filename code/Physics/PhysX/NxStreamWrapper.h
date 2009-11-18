@@ -1,7 +1,7 @@
 #ifndef traktor_physics_NxStreamWrapper_H
 #define traktor_physics_NxStreamWrapper_H
 
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -14,7 +14,7 @@ namespace traktor
 class NxStreamWrapper : public NxStream
 {
 public:
-	NxStreamWrapper(Stream& stream)
+	NxStreamWrapper(IStream& stream)
 	:	m_stream(stream)
 	{
 	}
@@ -70,7 +70,7 @@ public:
 	}
 
 private:
-	mutable Stream& m_stream;
+	mutable IStream& m_stream;
 
 	template < typename T >
 	T read() const

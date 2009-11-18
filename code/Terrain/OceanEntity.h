@@ -50,7 +50,7 @@ class Heightfield;
 
 class T_DLLCLASS OceanEntity : public world::Entity
 {
-	T_RTTI_CLASS(OceanEntity)
+	T_RTTI_CLASS;
 
 public:
 	enum { MaxWaves = 32 };

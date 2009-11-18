@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS SoundDriverWinMM : public ISoundDriver
 {
-	T_RTTI_CLASS(SoundDriverWinMM)
+	T_RTTI_CLASS;
 
 public:
 	SoundDriverWinMM();

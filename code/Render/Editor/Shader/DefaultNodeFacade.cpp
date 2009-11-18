@@ -16,17 +16,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DefaultNodeFacade", DefaultNodeFacade, N
 
 DefaultNodeFacade::DefaultNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShapes[0] = gc_new< ui::custom::DefaultNodeShape >(graphControl);
-	m_nodeShapes[1] = gc_new< ui::custom::InputNodeShape >(graphControl);
-	m_nodeShapes[2] = gc_new< ui::custom::OutputNodeShape >(graphControl);
+	m_nodeShapes[0] = new ui::custom::DefaultNodeShape(graphControl);
+	m_nodeShapes[1] = new ui::custom::InputNodeShape(graphControl);
+	m_nodeShapes[2] = new ui::custom::OutputNodeShape(graphControl);
 }
 
 Ref< Node > DefaultNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return checked_type_cast< Node* >(nodeType->newInstance());
+	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
 Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
@@ -48,7 +48,7 @@ Ref< ui::custom::Node > DefaultNodeFacade::createEditorNode(
 	else
 		shape = m_nodeShapes[0];
 
-	Ref< ui::custom::Node > editorNode = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		title,
 		shaderNode->getInformation(),
 		ui::Point(

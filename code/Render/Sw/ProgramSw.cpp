@@ -3,7 +3,7 @@
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Sw/Samplers.h"
 #include "Render/VertexElement.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {
@@ -32,7 +32,7 @@ ProgramSw::ProgramSw(
 		m_parameters[i].set(0.0f, 0.0f, 0.0f, 0.0f);
 
 	for (int i = 0; i < 8; ++i)
-		m_samplers[i] = gc_new< NullTextureSampler >();
+		m_samplers[i] = new NullTextureSampler();
 }
 
 void ProgramSw::destroy()
@@ -121,9 +121,9 @@ void ProgramSw::setSamplerTexture(handle_t handle, ITexture* texture)
 	if (i != m_samplerMap.end())
 	{
 		if (is_a< SimpleTextureSw >(texture))
-			m_samplers[i->second] = gc_new< SimpleTextureSampler< AddressWrap, AddressWrap > >(static_cast< SimpleTextureSw* >(texture));
+			m_samplers[i->second] = new SimpleTextureSampler< AddressWrap, AddressWrap >(static_cast< SimpleTextureSw* >(texture));
 		else if (is_a< RenderTargetSw >(texture))
-			m_samplers[i->second] = gc_new< RenderTargetSampler< AddressWrap, AddressWrap > >(static_cast< RenderTargetSw* >(texture));
+			m_samplers[i->second] = new RenderTargetSampler< AddressWrap, AddressWrap >(static_cast< RenderTargetSw* >(texture));
 	}
 }
 

@@ -1,7 +1,6 @@
 #ifndef traktor_db_RemoteBus_H
 #define traktor_db_RemoteBus_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Provider/IProviderBus.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class Connection;
  */
 class RemoteBus : public IProviderBus
 {
-	T_RTTI_CLASS(RemoteBus)
+	T_RTTI_CLASS;
 
 public:
 	RemoteBus(Connection* connection, uint32_t handle);

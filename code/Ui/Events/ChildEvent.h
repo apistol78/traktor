@@ -23,7 +23,7 @@ class Widget;
  */
 class T_DLLCLASS ChildEvent : public Event
 {
-	T_RTTI_CLASS(ChildEvent)
+	T_RTTI_CLASS;
 	
 public:
 	ChildEvent(EventSubject* sender, Widget* child, bool link);

@@ -21,13 +21,13 @@ class NodeShape;
 
 class ExternalNodeFacade : public NodeFacade
 {
-	T_RTTI_CLASS(ExternalNodeFacade)
+	T_RTTI_CLASS;
 
 public:
 	ExternalNodeFacade(ui::custom::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
-		const Type* nodeType,
+		const TypeInfo* nodeType,
 		editor::IEditor* editor
 	);
 

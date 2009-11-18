@@ -1,5 +1,5 @@
 #include "Spray/Modifiers/VortexModifier.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.VortexModifier", VortexModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.VortexModifier", VortexModifier, Modifier)
 
 VortexModifier::VortexModifier()
 :	m_axis(0.0f, 1.0f, 0.0f, 0.0f)
@@ -42,7 +42,7 @@ void VortexModifier::update(const Scalar& deltaTime, const Transform& transform,
 	}
 }
 
-bool VortexModifier::serialize(Serializer& s)
+bool VortexModifier::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"axis", m_axis);
 	s >> Member< Scalar >(L"tangentForce", m_tangentForce);

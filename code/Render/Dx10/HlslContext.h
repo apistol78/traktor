@@ -2,7 +2,6 @@
 #define traktor_render_HlslContext_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Render/Dx10/HlslEmitter.h"
 #include "Render/Dx10/HlslShader.h"
 

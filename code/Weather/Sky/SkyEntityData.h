@@ -36,14 +36,14 @@ class SkyEntity;
 
 class T_DLLCLASS SkyEntityData : public world::EntityData
 {
-	T_RTTI_CLASS(SkyEntityData)
+	T_RTTI_CLASS;
 
 public:
 	SkyEntityData();
 
 	Ref< SkyEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 

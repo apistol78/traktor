@@ -1,6 +1,5 @@
 #include "Database/Local/Transaction.h"
 #include "Database/Local/Action.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Thread/Mutex.h"
 #include "Core/Log/Log.h"
 
@@ -38,7 +37,7 @@ bool Transaction::create(const Guid& transactionGuid)
 	T_ASSERT_M (!m_locked, L"Transaction already created");
 
 #if T_USE_TRANSACTION_LOCK
-	m_lock = gc_new< Mutex >(cref(transactionGuid));
+	m_lock = new Mutex(transactionGuid);
 	if (!m_lock->acquire(c_transactionTimeout))
 	{
 		log::debug << L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked" << Endl;

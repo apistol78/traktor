@@ -2,7 +2,6 @@
 #define traktor_ui_Bitmap_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -38,7 +37,7 @@ class IBitmap;
  */
 class T_DLLCLASS Bitmap : public Object
 {
-	T_RTTI_CLASS(Bitmap)
+	T_RTTI_CLASS;
 
 public:
 	Bitmap();

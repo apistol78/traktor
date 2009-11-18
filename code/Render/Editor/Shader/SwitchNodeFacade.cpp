@@ -15,15 +15,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwitchNodeFacade", SwitchNodeFacade, Nod
 
 SwitchNodeFacade::SwitchNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
+	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > SwitchNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return gc_new< Switch >();
+	return new Switch();
 }
 
 Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
@@ -32,7 +32,7 @@ Ref< ui::custom::Node > SwitchNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	return gc_new< ui::custom::Node >(
+	return new ui::custom::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_SWITCH"),
 		shaderNode->getInformation(),
 		ui::Point(

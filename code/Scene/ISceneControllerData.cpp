@@ -5,7 +5,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ISceneControllerData", ISceneControllerData, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.ISceneControllerData", ISceneControllerData, ISerializable)
 
 	}
 }

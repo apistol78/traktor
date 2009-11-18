@@ -2,7 +2,6 @@
 #include "Ui/FloodLayout.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Image.h"
-#include "Core/Heap/GcNew.h"
 
 // Resources
 #include "Resources/Splash.h"
@@ -16,13 +15,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Splash", Splash, ui::ToolForm)
 
 bool Splash::create()
 {
-	if (!ui::ToolForm::create(0, L"Splash", 0, 0, ui::WsTop, gc_new< ui::FloodLayout >()))
+	if (!ui::ToolForm::create(0, L"Splash", 0, 0, ui::WsTop, new ui::FloodLayout()))
 		return false;
 
 	Ref< ui::Bitmap > splash = ui::Bitmap::load(c_ResourceSplash, sizeof(c_ResourceSplash), L"png");
 	T_ASSERT (splash);
 
-	Ref< ui::Image > image = gc_new< ui::Image >();
+	Ref< ui::Image > image = new ui::Image();
 	image->create(this, splash, false);
 
 	fit();

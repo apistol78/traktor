@@ -13,14 +13,14 @@ namespace traktor
  */
 class MsgStringResult : public IMessage
 {
-	T_RTTI_CLASS(MsgStringResult)
+	T_RTTI_CLASS;
 
 public:
 	MsgStringResult(const std::wstring& value = L"");
 
 	const std::wstring& get() const { return m_value; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_value;

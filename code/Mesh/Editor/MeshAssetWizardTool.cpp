@@ -16,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshAssetWizardTool", MeshAssetWizardTool, editor::IWizardTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetWizardTool", MeshAssetWizardTool, editor::IWizardTool)
 
 std::wstring MeshAssetWizardTool::getDescription() const
 {
@@ -39,7 +39,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	fileDialog.destroy();
 
 	// Create source asset.
-	Ref< MeshAsset > asset = gc_new< MeshAsset >();
+	Ref< MeshAsset > asset = new MeshAsset();
 	asset->setFileName(fileName);
 	asset->setMeshType(MeshAsset::MtStatic);
 

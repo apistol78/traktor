@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <numeric>
 #include "Core/Io/Path.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/Split.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

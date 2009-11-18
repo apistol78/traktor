@@ -2,7 +2,6 @@
 #define traktor_editor_EditorForm_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Core/Guid.h"
 #include "Editor/IEditor.h"
@@ -73,7 +72,7 @@ class EditorForm
 :	public ui::Form
 ,	public IEditor
 {
-	T_RTTI_CLASS(EditorForm)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const CommandLine& cmdLine);
@@ -89,7 +88,7 @@ public:
 
 	virtual Ref< render::IRenderSystem > getRenderSystem();
 
-	virtual const Type* browseType(const Type* base);
+	virtual const TypeInfo* browseType(const TypeInfo* base);
 
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);
 
@@ -105,7 +104,7 @@ public:
 
 	virtual void buildAssets(bool rebuild);
 
-	virtual bool buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
+	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
 
 	//@}
 

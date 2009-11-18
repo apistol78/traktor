@@ -2,7 +2,6 @@
 #include "Resource/ResourceManager.h"
 #include "Resource/ResourceHandle.h"
 #include "Resource/IResourceFactory.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/Acquire.h"
@@ -30,7 +29,7 @@ public:
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
 ResourceManager::ResourceManager()
-:	m_nullHandle(gc_new< NullResourceHandle >())
+:	m_nullHandle(new NullResourceHandle())
 {
 }
 
@@ -52,7 +51,7 @@ void ResourceManager::removeAllFactories()
 	m_factories.clear();
 }
 
-Ref< IResourceHandle > ResourceManager::bind(const Type& type, const Guid& guid)
+Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
 {
 	Ref< ResourceHandle > handle;
 
@@ -66,14 +65,14 @@ Ref< IResourceHandle > ResourceManager::bind(const Type& type, const Guid& guid)
 	bool cacheable = factory->isCacheable();
 
 	if (!cacheable)
-		handle = gc_new< ResourceHandle >(cref(type));
+		handle = new ResourceHandle(type);
 	else
 	{
 		Acquire< Semaphore > scope(m_lock);
 		handle = m_cache[guid];
 		if (!handle)
 		{
-			handle = gc_new< ResourceHandle >(cref(type));
+			handle = new ResourceHandle(type);
 			m_cache[guid] = handle;
 		}
 	}
@@ -129,11 +128,11 @@ void ResourceManager::flush()
 		i->second->flush();
 }
 
-Ref< IResourceFactory > ResourceManager::findFactory(const Type& type)
+Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 {
 	for (RefArray< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 	{
-		TypeSet typeSet = (*i)->getResourceTypes();
+		TypeInfoSet typeSet = (*i)->getResourceTypes();
 		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
 			return *i;
 	}
@@ -142,11 +141,11 @@ Ref< IResourceFactory > ResourceManager::findFactory(const Type& type)
 
 void ResourceManager::load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle)
 {
-	const Type& resourceType = handle->getResourceType();
+	const TypeInfo& resourceType = handle->getResourceType();
 	Ref< Object > object = factory->create(this, resourceType, guid);
 	if (object)
 	{
-		T_ASSERT_M (is_type_of(resourceType, object->getType()), L"Incorrect type of created resource");
+		T_ASSERT_M (is_type_of(resourceType, type_of(object)), L"Incorrect type of created resource");
 		
 		log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
 		handle->replace(object);

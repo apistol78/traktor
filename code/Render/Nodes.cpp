@@ -1,6 +1,6 @@
 #include "Render/Nodes.h"
 #include "Render/TextureResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberStl.h"
@@ -14,7 +14,7 @@ namespace traktor
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Abs", Abs, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Abs", Abs, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Abs_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Abs_o[] = { L"Output", 0 };
@@ -26,7 +26,7 @@ Abs::Abs()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Add", Add, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Add", Add, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Add_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Add_o[] = { L"Output", 0 };
@@ -38,7 +38,7 @@ Add::Add()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ArcusCos", ArcusCos, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusCos", ArcusCos, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_ArcusCos_i[] = { { L"Theta", false }, 0 };
 const ImmutableNode::OutputPinDesc c_ArcusCos_o[] = { L"Output", 0 };
@@ -50,7 +50,7 @@ ArcusCos::ArcusCos()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ArcusTan", ArcusTan, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTan", ArcusTan, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"Theta", false }, 0 };
 const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { L"Output", 0 };
@@ -62,7 +62,7 @@ ArcusTan::ArcusTan()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Clamp", Clamp, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Clamp", Clamp, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Clamp_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Clamp_o[] = { L"Output", 0 };
@@ -101,7 +101,7 @@ std::wstring Clamp::getInformation() const
 	return ss.str();
 }
 
-bool Clamp::serialize(Serializer& s)
+bool Clamp::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -114,7 +114,7 @@ bool Clamp::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Branch", Branch, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Branch", Branch, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Branch_i[] = { { L"True", false }, { L"False", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Branch_o[] = { L"Output", 0 };
@@ -140,7 +140,7 @@ std::wstring Branch::getInformation() const
 	return m_parameterName;
 }
 
-bool Branch::serialize(Serializer& s)
+bool Branch::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -152,7 +152,7 @@ bool Branch::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Color", Color, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Color", Color, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Color_o[] = { L"Output", 0 };
 
@@ -179,7 +179,7 @@ std::wstring Color::getInformation() const
 	return ss.str();
 }
 
-bool Color::serialize(Serializer& s)
+bool Color::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -191,7 +191,7 @@ bool Color::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Conditional", Conditional, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Conditional", Conditional, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Conditional_o[] = { L"Output", 0 };
@@ -234,7 +234,7 @@ int Conditional::getVersion() const
 	return 1;
 }
 
-bool Conditional::serialize(Serializer& s)
+bool Conditional::serialize(ISerializer& s)
 {
 	if (!ImmutableNode::serialize(s))
 		return false;
@@ -268,7 +268,7 @@ bool Conditional::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Cos", Cos, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cos", Cos, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Cos_i[] = { { L"Theta", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Cos_o[] = { L"Output", 0 };
@@ -280,7 +280,7 @@ Cos::Cos()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Cross", Cross, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Cross", Cross, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Cross_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Cross_o[] = { L"Output", 0 };
@@ -292,7 +292,7 @@ Cross::Cross()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Derivative", Derivative, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Derivative", Derivative, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Derivative_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Derivative_o[] = { L"Output", 0 };
@@ -320,7 +320,7 @@ std::wstring Derivative::getInformation() const
 	return L"";
 }
 
-bool Derivative::serialize(Serializer& s)
+bool Derivative::serialize(ISerializer& s)
 {
 	if (!ImmutableNode::serialize(s))
 		return false;
@@ -339,7 +339,7 @@ bool Derivative::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Div", Div, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Div", Div, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Div_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Div_o[] = { L"Output", 0 };
@@ -351,7 +351,7 @@ Div::Div()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Dot", Dot, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Dot", Dot, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Dot_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Dot_o[] = { L"Output", 0 };
@@ -363,7 +363,7 @@ Dot::Dot()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Exp", Exp, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Exp", Exp, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Exp_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Exp_o[] = { L"Output", 0 };
@@ -375,7 +375,7 @@ Exp::Exp()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Fraction", Fraction, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Fraction", Fraction, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Fraction_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Fraction_o[] = { L"Output", 0 };
@@ -387,7 +387,7 @@ Fraction::Fraction()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.FragmentPosition", FragmentPosition, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FragmentPosition", FragmentPosition, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { L"Output", 0 };
 
@@ -398,7 +398,7 @@ FragmentPosition::FragmentPosition()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.IndexedUniform", IndexedUniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IndexedUniform", IndexedUniform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_IndexedUniform_i[] = { { L"Index", false }, 0 };
 const ImmutableNode::OutputPinDesc c_IndexedUniform_o[] = { L"Output", 0 };
@@ -448,7 +448,7 @@ std::wstring IndexedUniform::getInformation() const
 	return ss.str();
 }
 
-bool IndexedUniform::serialize(Serializer& s)
+bool IndexedUniform::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -470,7 +470,7 @@ bool IndexedUniform::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.InputPort", InputPort, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.InputPort", InputPort, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_InputPort_o[] = { L"Output", 0 };
 
@@ -533,7 +533,7 @@ int InputPort::getVersion() const
 	return 1;
 }
 
-bool InputPort::serialize(Serializer& s)
+bool InputPort::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -552,7 +552,7 @@ bool InputPort::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Interpolator", Interpolator, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Interpolator", Interpolator, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Interpolator_o[] = { L"Output", 0 };
@@ -564,7 +564,7 @@ Interpolator::Interpolator()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Iterate", Iterate, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate", Iterate, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Iterate_o[] = { L"N", L"Output", 0 };
@@ -603,7 +603,7 @@ std::wstring Iterate::getInformation() const
 	return ss.str();
 }
 
-bool Iterate::serialize(Serializer& s)
+bool Iterate::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -616,7 +616,7 @@ bool Iterate::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Length", Length, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Length", Length, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Length_o[] = { L"Output", 0 };
@@ -628,7 +628,7 @@ Length::Length()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Lerp", Lerp, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Lerp", Lerp, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Lerp_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Blend", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Lerp_o[] = { L"Output", 0 };
@@ -640,7 +640,7 @@ Lerp::Lerp()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Log", Log, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Log", Log, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Log_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Log_o[] = { L"Output", 0 };
@@ -672,7 +672,7 @@ std::wstring Log::getInformation() const
 	return L"";
 }
 
-bool Log::serialize(Serializer& s)
+bool Log::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -690,7 +690,7 @@ bool Log::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Matrix", Matrix, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Matrix", Matrix, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Matrix_i[] = { { L"XAxis", true }, { L"YAxis", true }, { L"ZAxis", true }, { L"Translate", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Matrix_o[] = { L"Output", 0 };
@@ -702,7 +702,7 @@ Matrix::Matrix()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Max", Max, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Max", Max, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Max_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Max_o[] = { L"Output", 0 };
@@ -714,7 +714,7 @@ Max::Max()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Min", Min, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Min", Min, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Min_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Min_o[] = { L"Output", 0 };
@@ -726,7 +726,7 @@ Min::Min()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MixIn", MixIn, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixIn", MixIn, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_MixIn_i[] = { { L"X", true }, { L"Y", true }, { L"Z", true }, { L"W", true }, 0 };
 const ImmutableNode::OutputPinDesc c_MixIn_o[] = { L"Output", 0 };
@@ -738,7 +738,7 @@ MixIn::MixIn()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MixOut", MixOut, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MixOut", MixOut, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_MixOut_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_MixOut_o[] = { L"X", L"Y", L"Z", L"W", 0 };
@@ -750,7 +750,7 @@ MixOut::MixOut()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Mul", Mul, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Mul", Mul, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Mul_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Mul_o[] = { L"Output", 0 };
@@ -762,7 +762,7 @@ Mul::Mul()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.MulAdd", MulAdd, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.MulAdd", MulAdd, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_MulAdd_i[] = { { L"Input1", false }, { L"Input2", false }, { L"Input3", false }, 0 };
 const ImmutableNode::OutputPinDesc c_MulAdd_o[] = { L"Output", 0 };
@@ -774,7 +774,7 @@ MulAdd::MulAdd()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Neg", Neg, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Neg", Neg, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Neg_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Neg_o[] = { L"Output", 0 };
@@ -786,7 +786,7 @@ Neg::Neg()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Normalize", Normalize, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Normalize", Normalize, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Normalize_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Normalize_o[] = { L"Output", 0 };
@@ -798,7 +798,7 @@ Normalize::Normalize()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.OutputPort", OutputPort, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.OutputPort", OutputPort, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_OutputPort_i[] = { { L"Input", false }, 0 };
 
@@ -823,7 +823,7 @@ std::wstring OutputPort::getInformation() const
 	return m_name;
 }
 
-bool OutputPort::serialize(Serializer& s)
+bool OutputPort::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -835,7 +835,7 @@ bool OutputPort::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.PixelOutput", PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, 0 };
 
@@ -1080,7 +1080,7 @@ int PixelOutput::getVersion() const
 	return 2;
 }
 
-bool PixelOutput::serialize(Serializer& s)
+bool PixelOutput::serialize(ISerializer& s)
 {
 	const MemberEnum< CullMode >::Key kCullMode[] =
 	{
@@ -1188,7 +1188,7 @@ bool PixelOutput::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Platform", Platform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Platform", Platform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Platform_i[] =
 {
@@ -1212,7 +1212,7 @@ Platform::Platform()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Polynomial", Polynomial, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Polynomial", Polynomial, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Polynomial_i[] = { { L"X", false }, { L"Coefficients", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Polynomial_o[] = { L"Output", 0 };
@@ -1224,7 +1224,7 @@ Polynomial::Polynomial()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Pow", Pow, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Pow", Pow, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Pow_i[] = { { L"Exponent", false }, { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Pow_o[] = { L"Output", 0 };
@@ -1236,7 +1236,7 @@ Pow::Pow()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Reflect", Reflect, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Reflect", Reflect, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Reflect_i[] = { { L"Normal", false }, { L"Direction", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Reflect_o[] = { L"Output", 0 };
@@ -1248,7 +1248,7 @@ Reflect::Reflect()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sampler", Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"TexCoord", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
@@ -1372,7 +1372,7 @@ std::wstring Sampler::getInformation() const
 	return m_parameterName;
 }
 
-bool Sampler::serialize(Serializer& s)
+bool Sampler::serialize(ISerializer& s)
 {
 	const MemberEnum< Lookup >::Key kLookup[] =
 	{
@@ -1417,7 +1417,7 @@ bool Sampler::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Scalar", Scalar, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Scalar", Scalar, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Scalar_o[] = { L"Output", 0 };
 
@@ -1444,7 +1444,7 @@ std::wstring Scalar::getInformation() const
 	return ss.str();
 }
 
-bool Scalar::serialize(Serializer& s)
+bool Scalar::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1456,7 +1456,7 @@ bool Scalar::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sin", Sin, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sin", Sin, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sin_i[] = { { L"Theta", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sin_o[] = { L"Output", 0 };
@@ -1468,7 +1468,7 @@ Sin::Sin()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sqrt", Sqrt, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sqrt", Sqrt, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sqrt_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { L"Output", 0 };
@@ -1480,7 +1480,7 @@ Sqrt::Sqrt()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sub", Sub, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sub", Sub, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sub_i[] = { { L"Input1", false }, { L"Input2", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sub_o[] = { L"Output", 0 };
@@ -1492,7 +1492,7 @@ Sub::Sub()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Sum", Sum, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sum", Sum, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sum_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sum_o[] = { L"N", L"Output", 0 };
@@ -1531,7 +1531,7 @@ std::wstring Sum::getInformation() const
 	return ss.str();
 }
 
-bool Sum::serialize(Serializer& s)
+bool Sum::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1544,14 +1544,14 @@ bool Sum::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Switch", Switch, Node)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", Switch, Node)
 
 Switch::Switch()
 :	m_branch(BrAuto)
 {
-	m_inputPins.push_back(gc_new< InputPin >(this, L"Select", false));
-	m_inputPins.push_back(gc_new< InputPin >(this, L"Default", false));
-	m_outputPin = gc_new< OutputPin >(this, L"Output");
+	m_inputPins.push_back(new InputPin(this, L"Select", false));
+	m_inputPins.push_back(new InputPin(this, L"Default", false));
+	m_outputPin = new OutputPin(this, L"Output");
 }
 
 void Switch::setBranch(Branch branch)
@@ -1569,7 +1569,7 @@ void Switch::addCase(int32_t value)
 	StringOutputStream ss;
 	ss << L"Case " << value;
 	m_cases.push_back(value);
-	m_inputPins.push_back(gc_new< InputPin >(this, ss.str(), false));
+	m_inputPins.push_back(new InputPin(this, ss.str(), false));
 }
 
 const std::vector< int32_t >& Switch::getCases() const
@@ -1602,7 +1602,7 @@ int Switch::getVersion() const
 	return 1;
 }
 
-bool Switch::serialize(Serializer& s)
+bool Switch::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1620,14 +1620,14 @@ bool Switch::serialize(Serializer& s)
 
 	s >> MemberStlVector< int32_t >(L"cases", m_cases);
 
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 	{
 		m_inputPins.resize(2 + m_cases.size());
 		for (uint32_t i = 0; i < uint32_t(m_cases.size()); ++i)
 		{
 			StringOutputStream ss;
 			ss << L"Case " << m_cases[i];
-			m_inputPins[2 + i] = gc_new< InputPin >(this, ss.str(), false);
+			m_inputPins[2 + i] = new InputPin(this, ss.str(), false);
 		}
 	}
 
@@ -1636,7 +1636,7 @@ bool Switch::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Swizzle", Swizzle, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Swizzle", Swizzle, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Swizzle_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Swizzle_o[] = { L"Output", 0 };
@@ -1662,7 +1662,7 @@ std::wstring Swizzle::getInformation() const
 	return m_swizzle;
 }
 
-bool Swizzle::serialize(Serializer& s)
+bool Swizzle::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1674,7 +1674,7 @@ bool Swizzle::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Tan", Tan, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Tan", Tan, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Tan_i[] = { { L"Theta", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Tan_o[] = { L"Output", 0 };
@@ -1686,7 +1686,7 @@ Tan::Tan()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Transform", Transform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transform", Transform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Transform_o[] = { L"Output", 0 };
@@ -1698,7 +1698,7 @@ Transform::Transform()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Transpose", Transpose, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transpose", Transpose, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Transpose_i[] = { { L"Input", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Transpose_o[] = { L"Output", 0 };
@@ -1710,7 +1710,7 @@ Transpose::Transpose()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Uniform", Uniform, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", Uniform, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };
 
@@ -1746,7 +1746,7 @@ std::wstring Uniform::getInformation() const
 	return m_parameterName;
 }
 
-bool Uniform::serialize(Serializer& s)
+bool Uniform::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1767,7 +1767,7 @@ bool Uniform::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Vector", Vector, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Vector", Vector, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Vector_o[] = { L"Output", 0 };
 
@@ -1794,7 +1794,7 @@ std::wstring Vector::getInformation() const
 	return ss.str();
 }
 
-bool Vector::serialize(Serializer& s)
+bool Vector::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1806,7 +1806,7 @@ bool Vector::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.VertexInput", VertexInput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexInput", VertexInput, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_VertexInput_o[] = { L"Output", 0 };
 
@@ -1864,7 +1864,7 @@ std::wstring VertexInput::getInformation() const
 	return m_name;
 }
 
-bool VertexInput::serialize(Serializer& s)
+bool VertexInput::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
@@ -1907,7 +1907,7 @@ bool VertexInput::serialize(Serializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.VertexOutput", VertexOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.VertexOutput", VertexOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_VertexOutput_i[] = { { L"Input", false }, 0 };
 
@@ -1937,7 +1937,7 @@ int VertexOutput::getVersion() const
 	return 1;
 }
 
-bool VertexOutput::serialize(Serializer& s)
+bool VertexOutput::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;

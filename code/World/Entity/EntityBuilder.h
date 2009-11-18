@@ -2,8 +2,7 @@
 #define traktor_world_EntitySetBuilder_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS EntityBuilder : public IEntityBuilder
 {
-	T_RTTI_CLASS(EntityBuilder)
+	T_RTTI_CLASS;
 
 public:
 	EntityBuilder();

@@ -2,7 +2,6 @@
 #define traktor_physics_JointHavok_H
 
 #include <Physics/Dynamics/Constraint/hkpConstraintInstance.h>
-#include "Core/Heap/Ref.h"
 #include "Physics/Havok/Types.h"
 
 namespace traktor

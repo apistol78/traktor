@@ -8,18 +8,18 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.flash.FlashEditorPageFactory", FlashEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashEditorPageFactory", FlashEditorPageFactory, editor::IEditorPageFactory)
 
-const TypeSet FlashEditorPageFactory::getEditableTypes() const
+const TypeInfoSet FlashEditorPageFactory::getEditableTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< FlashMovieAsset >());
 	return typeSet;
 }
 
 Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
-	return gc_new< FlashEditorPage >(editor);
+	return new FlashEditorPage(editor);
 }
 
 void FlashEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const

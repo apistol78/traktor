@@ -9,8 +9,6 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Job", Job, Singleton)
-
 Job::Job(Functor* functor)
 :	m_functor(functor)
 ,	m_finished(1)
@@ -58,8 +56,6 @@ Job& Job::operator = (Functor* functor)
 
 	return *this;
 }
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.JobManager", JobManager, Singleton)
 
 JobManager& JobManager::getInstance()
 {

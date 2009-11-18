@@ -3,7 +3,7 @@
 
 #include <map>
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,9 +18,9 @@ namespace traktor
 	namespace i18n
 	{
 
-class T_DLLCLASS Dictionary : public Serializable
+class T_DLLCLASS Dictionary : public ISerializable
 {
-	T_RTTI_CLASS(Dictionary)
+	T_RTTI_CLASS;
 
 public:
 	bool has(const std::wstring& id) const;
@@ -31,7 +31,7 @@ public:
 
 	const std::map< std::wstring, std::wstring >& get() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::map< std::wstring, std::wstring > m_map;

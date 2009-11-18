@@ -1,7 +1,6 @@
 #ifndef traktor_theater_TheaterControllerEditor_H
 #define traktor_theater_TheaterControllerEditor_H
 
-#include "Core/Heap/Ref.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 
 namespace traktor
@@ -27,7 +26,7 @@ class SequencerControl;
  */
 class TheaterControllerEditor : public scene::ISceneControllerEditor
 {
-	T_RTTI_CLASS(TheaterControllerEditor)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(scene::SceneEditorContext* context, ui::Container* parent);

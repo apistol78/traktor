@@ -28,7 +28,7 @@ namespace traktor
  */
 class T_DLLCLASS VertexElement : public Object
 {
-	T_RTTI_CLASS(VertexElement)
+	T_RTTI_CLASS;
 
 public:
 	VertexElement();

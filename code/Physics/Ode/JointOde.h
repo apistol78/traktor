@@ -1,7 +1,6 @@
 #ifndef traktor_physics_JointOde_H
 #define traktor_physics_JointOde_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/Ode/Types.h"
 
 namespace traktor

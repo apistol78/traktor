@@ -4,7 +4,6 @@
 #include "Render/ITexture.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TextureBaseDx9.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class T_DLLCLASS RenderTargetWin32
 :	public ITexture
 ,	public TextureBaseDx9
 {
-	T_RTTI_CLASS(RenderTargetWin32)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetWin32(ContextDx9* context);

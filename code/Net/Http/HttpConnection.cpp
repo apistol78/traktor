@@ -3,7 +3,6 @@
 #include "Net/Http/HttpChunkStream.h"
 #include "Net/SocketAddressIPv6.h"
 #include "Net/SocketStream.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/StreamStream.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/FileOutputStream.h"
@@ -29,7 +28,7 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 		return ErInvalidUrl;
 	
 	// Create and connect socket to host.
-	m_socket = gc_new< TcpSocket >();
+	m_socket = new TcpSocket();
 	if (!m_socket->connect(addr))
 		return ErConnectFailed;
 
@@ -52,10 +51,10 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	ss << L"Accept: */*\r\n";
 	ss << L"\r\n\r\n";
 
-	Ref< Stream > stream = gc_new< SocketStream >(m_socket);
+	Ref< IStream > stream = new SocketStream(m_socket);
 
 	// Send request, UTF-8 encoded.
-	FileOutputStream fos(stream, gc_new< Utf8Encoding >());
+	FileOutputStream fos(stream, new Utf8Encoding());
 	fos << ss.str();
 	fos.flush();
 
@@ -87,16 +86,16 @@ UrlConnection::EstablishResult HttpConnection::establish(const Url& url, Url* ou
 	}
 	
 	// Reset offset in stream to origin.
-	stream->seek(Stream::SeekSet, 0);
+	stream->seek(IStream::SeekSet, 0);
 
 	// Create chunked-transfer stream if such encoding is required.
-	if (response.get(L"Transfer-Encoding") == L"chunked")
-		stream = gc_new< HttpChunkStream >(stream);
+	if (response.get(L"Transfer-IEncoding") == L"chunked")
+		stream = new HttpChunkStream(stream);
 
 	// If response contains content length field we can cap stream.
 	int contentLength = parseString< int >(response.get(L"Content-Length"));
 	if (contentLength > 0)
-		stream = gc_new< StreamStream >(stream, contentLength);
+		stream = new StreamStream(stream, contentLength);
 
 	m_stream = stream;
 	m_url = url;
@@ -109,7 +108,7 @@ Url HttpConnection::getUrl() const
 	return m_url;
 }
 
-Ref< Stream > HttpConnection::getStream()
+Ref< IStream > HttpConnection::getStream()
 {
 	return m_stream;
 }

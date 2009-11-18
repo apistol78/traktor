@@ -3,7 +3,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/Reader.h"
 
 namespace traktor
@@ -33,9 +32,9 @@ struct TGAHEADER
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, IImageFormat)
 
-Ref< Image > ImageFormatTga::read(Stream* stream)
+Ref< Image > ImageFormatTga::read(IStream* stream)
 {
 	TGAHEADER header;
 	Ref< const PixelFormat > pf;
@@ -58,12 +57,12 @@ Ref< Image > ImageFormatTga::read(Stream* stream)
 	if (header.imagetype != 2 && header.imagetype != 3)
 		return 0;
 
-	stream->seek(Stream::SeekCurrent, header.identsize);
+	stream->seek(IStream::SeekCurrent, header.identsize);
 
 	switch (header.bits)
 	{
 	case 8:
-		pf = gc_new< PixelFormat >(8, 0xff, 0xff, 0xff, 0xff, false, false);
+		pf = new PixelFormat(8, 0xff, 0xff, 0xff, 0xff, false, false);
 		break;
 	case 15:
 		pf = PixelFormat::getR5G5B5();
@@ -75,13 +74,13 @@ Ref< Image > ImageFormatTga::read(Stream* stream)
 		pf = PixelFormat::getR8G8B8();
 		break;
 	case 32:
-		pf = gc_new< PixelFormat >(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << (header.descriptor & 0x0f)) - 1) << 24, false, false);
+		pf = new PixelFormat(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << (header.descriptor & 0x0f)) - 1) << 24, false, false);
 		break;
 	default:
 		return 0;
 	}
 
-	image = gc_new< Image >(pf, header.width, header.height);
+	image = new Image(pf, header.width, header.height);
 
 	uint8_t* data = static_cast< uint8_t* >(image->getData());
 	stream->read(data, header.width * header.height * pf->getByteSize());
@@ -97,7 +96,7 @@ Ref< Image > ImageFormatTga::read(Stream* stream)
 		image = image->applyFilter(&mirrorFilter);
 	}
 
-	Ref< ImageInfo > imageInfo = gc_new< ImageInfo >();
+	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"TGA");
@@ -106,7 +105,7 @@ Ref< Image > ImageFormatTga::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatTga::write(Stream* stream, Image* image)
+bool ImageFormatTga::write(IStream* stream, Image* image)
 {
 	TGAHEADER header;
 	header.identsize = 0;
@@ -138,7 +137,10 @@ bool ImageFormatTga::write(Stream* stream, Image* image)
 		clone->convert(PixelFormat::getR8G8B8());
 		break;
 	case 32:
-		clone->convert(gc_new< PixelFormat >(32, 0xff000000, 0x00ff0000, 0x0000ff00, (1 << image->getPixelFormat()->getAlphaBits()) - 1, false, false));
+		{
+			Ref< PixelFormat > pixelFormat = new PixelFormat(32, 0xff000000, 0x00ff0000, 0x0000ff00, (1 << image->getPixelFormat()->getAlphaBits()) - 1, false, false);
+			clone->convert(pixelFormat);
+		}
 		break;
 	default:
 		return false;

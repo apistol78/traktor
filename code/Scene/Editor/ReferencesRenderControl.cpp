@@ -7,7 +7,6 @@
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -22,11 +21,11 @@ ReferencesRenderControl::ReferencesRenderControl()
 
 bool ReferencesRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 {
-	m_container = gc_new< ui::Container >();
-	if (!m_container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%", 0, 0)))
+	m_container = new ui::Container();
+	if (!m_container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
-	m_referenceGraph = gc_new< ui::custom::GraphControl >();
+	m_referenceGraph = new ui::custom::GraphControl();
 	if (!m_referenceGraph->create(m_container))
 		return false;
 
@@ -35,14 +34,14 @@ bool ReferencesRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		Ref< ui::custom::Node > node = gc_new< ui::custom::Node >(
-			cref((*i)->getName()),
-			cref((*i)->getTypeName()),
-			cref(ui::Point(0, 0)),
-			gc_new< ui::custom::DefaultNodeShape >(m_referenceGraph)
+		Ref< ui::custom::Node > node = new ui::custom::Node(
+			(*i)->getName(),
+			(*i)->getTypeName(),
+			ui::Point(0, 0),
+			new ui::custom::DefaultNodeShape(m_referenceGraph)
 		);
-		node->addInputPin(gc_new< ui::custom::Pin >(node, L"Referee", ui::custom::Pin::DrInput, false));
-		node->addOutputPin(gc_new< ui::custom::Pin >(node, L"References", ui::custom::Pin::DrOutput, false));
+		node->addInputPin(new ui::custom::Pin(node, L"Referee", ui::custom::Pin::DrInput, false));
+		node->addOutputPin(new ui::custom::Pin(node, L"References", ui::custom::Pin::DrOutput, false));
 		m_referenceGraph->addNode(node);
 	}
 

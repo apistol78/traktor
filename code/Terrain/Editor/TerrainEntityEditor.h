@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS TerrainEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(TerrainEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	TerrainEntityEditor();

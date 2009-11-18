@@ -20,7 +20,7 @@ class UserLocal;
 
 class T_DLLCLASS SessionLocal : public ISession
 {
-	T_RTTI_CLASS(SessionLocal)
+	T_RTTI_CLASS;
 
 public:
 	SessionLocal(UserLocal* user);
@@ -33,7 +33,7 @@ public:
 
 	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const;
 
-	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, Serializable* attachment);
+	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment);
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 

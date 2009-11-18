@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.MeshWriter", MeshWriter, Object)
 
-bool MeshWriter::write(Stream* stream, const Mesh* mesh) const
+bool MeshWriter::write(IStream* stream, const Mesh* mesh) const
 {
 	Writer writer(stream);
 

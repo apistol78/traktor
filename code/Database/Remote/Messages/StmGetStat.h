@@ -13,14 +13,14 @@ namespace traktor
  */
 class StmGetStat : public IMessage
 {
-	T_RTTI_CLASS(StmGetStat)
+	T_RTTI_CLASS;
 
 public:
 	StmGetStat(uint32_t handle = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

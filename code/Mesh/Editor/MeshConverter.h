@@ -3,14 +3,13 @@
 
 #include <map>
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 #include "Render/VertexElement.h"
 #include "Mesh/Editor/MeshPipelineParams.h"
 
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace model
 	{
@@ -34,7 +33,7 @@ public:
 		const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
 		MeshResource* meshResource,
-		Stream* meshResourceStream
+		IStream* meshResourceStream
 	) const = 0;
 };
 

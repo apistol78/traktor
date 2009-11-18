@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberRef.h"
@@ -12,16 +12,16 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.CompactBlockEntry", CompactBlockEntry, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactBlockEntry", CompactBlockEntry, ISerializable)
 
-bool CompactBlockEntry::serialize(Serializer& s)
+bool CompactBlockEntry::serialize(ISerializer& s)
 {
 	return s >> Member< uint32_t >(L"blockId", m_blockId);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.CompactGroupEntry", CompactGroupEntry, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactGroupEntry", CompactGroupEntry, ISerializable)
 
-bool CompactGroupEntry::serialize(Serializer& s)
+bool CompactGroupEntry::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRefArray< CompactGroupEntry >(L"childGroups", m_childGroups);
@@ -29,9 +29,9 @@ bool CompactGroupEntry::serialize(Serializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.CompactInstanceEntry", CompactInstanceEntry, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactInstanceEntry", CompactInstanceEntry, ISerializable)
 
-bool CompactInstanceEntry::serialize(Serializer& s)
+bool CompactInstanceEntry::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Guid >(L"guid", m_guid);
@@ -53,25 +53,25 @@ bool CompactInstanceEntry::serialize(Serializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.CompactRegistry", CompactRegistry, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactRegistry", CompactRegistry, ISerializable)
 
 CompactGroupEntry* CompactRegistry::createGroupEntry()
 {
-	Ref< CompactGroupEntry > groupEntry = gc_new< CompactGroupEntry >();
+	Ref< CompactGroupEntry > groupEntry = new CompactGroupEntry();
 	m_groupEntries.push_back(groupEntry);
 	return groupEntry;
 }
 
 CompactInstanceEntry* CompactRegistry::createInstanceEntry()
 {
-	Ref< CompactInstanceEntry > instanceEntry = gc_new< CompactInstanceEntry >();
+	Ref< CompactInstanceEntry > instanceEntry = new CompactInstanceEntry();
 	m_instanceEntries.push_back(instanceEntry);
 	return instanceEntry;
 }
 
 CompactBlockEntry* CompactRegistry::createBlockEntry()
 {
-	Ref< CompactBlockEntry > blockEntry = gc_new< CompactBlockEntry >();
+	Ref< CompactBlockEntry > blockEntry = new CompactBlockEntry();
 	m_blockEntries.push_back(blockEntry);
 	return blockEntry;
 }
@@ -112,7 +112,7 @@ bool CompactRegistry::removeBlock(CompactBlockEntry* blockEntry)
 	return true;
 }
 
-bool CompactRegistry::serialize(Serializer& s)
+bool CompactRegistry::serialize(ISerializer& s)
 {
 	s >> MemberRef< CompactGroupEntry >(L"rootGroup", m_rootGroup);
 	s >> MemberRefArray< CompactGroupEntry >(L"groupEntries", m_groupEntries);

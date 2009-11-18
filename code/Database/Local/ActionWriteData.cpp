@@ -17,8 +17,8 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 ,	m_dataName(dataName)
 ,	m_existingBlob(false)
 {
-	m_dataStream = gc_new< DynamicMemoryStream >(
-		ref(m_dataBuffer),
+	m_dataStream = new DynamicMemoryStream(
+		m_dataBuffer,
 		false,
 		true
 	);
@@ -50,7 +50,7 @@ bool ActionWriteData::execute(Context* context)
 	int dataBufferSize = int(m_dataBuffer.size());
 	if (dataBufferSize > 0)
 	{
-		Ref< Stream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
+		Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 		if (!writeStream)
 			return false;
 

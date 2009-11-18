@@ -25,7 +25,7 @@ struct RenderTargetCreateDesc;
  */
 class T_DLLCLASS RenderTargetSw : public ITexture
 {
-	T_RTTI_CLASS(RenderTargetSw)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSw();

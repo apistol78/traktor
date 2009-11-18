@@ -2,7 +2,7 @@
 #define traktor_input_RecordInputScript_H
 
 #include <map>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,9 +17,9 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS RecordInputScript : public Serializable
+class T_DLLCLASS RecordInputScript : public ISerializable
 {
-	T_RTTI_CLASS(RecordInputScript)
+	T_RTTI_CLASS;
 
 public:
 	void addInputValue(uint32_t frame, int control, float value);
@@ -28,7 +28,7 @@ public:
 
 	uint32_t getLastFrame() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	struct Input
@@ -37,7 +37,7 @@ private:
 		uint32_t end;
 		float value;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	std::map< int, std::vector< Input > > m_data;

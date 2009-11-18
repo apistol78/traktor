@@ -3,14 +3,14 @@
 
 #include <vector>
 #include "Core/Io/OutputStream.h"
-#include "Core/Io/OutputStreamBuffer.h"
+#include "Core/Io/IOutputStreamBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,16 +19,15 @@ namespace traktor
 /*! \brief StringOutputStream buffer.
  * \ingroup Core
  */
-class StringOutputStreamBuffer : public OutputStreamBuffer
+class StringOutputStreamBuffer : public IOutputStreamBuffer
 {
-	T_RTTI_CLASS(StringOutputStreamBuffer)
-
-protected:
-	friend class StringOutputStream;
-	
-	std::vector< wchar_t > m_internal;
-
+public:
 	virtual int overflow(const wchar_t* buffer, int count);
+
+private:
+	friend class StringOutputStream;
+
+	std::vector< wchar_t > m_internal;
 };
 
 /*! \brief Formatting string stream.
@@ -36,7 +35,7 @@ protected:
  */
 class T_DLLCLASS StringOutputStream : public OutputStream
 {
-	T_RTTI_CLASS(StringOutputStream)
+	T_RTTI_CLASS;
 
 public:
 	StringOutputStream();

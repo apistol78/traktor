@@ -2,7 +2,6 @@
 #define traktor_render_OutputPin_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class Node;
  */
 class T_DLLCLASS OutputPin : public Object
 {
-	T_RTTI_CLASS(OutputPin)
+	T_RTTI_CLASS;
 
 public:
 	OutputPin();

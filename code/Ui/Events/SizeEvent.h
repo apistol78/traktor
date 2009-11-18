@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS SizeEvent : public Event
 {
-	T_RTTI_CLASS(SizeEvent)
+	T_RTTI_CLASS;
 	
 public:
 	SizeEvent(EventSubject* sender, Object* item, const Size& size);

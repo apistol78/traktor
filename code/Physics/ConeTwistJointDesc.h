@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ConeTwistJointDesc : public JointDesc
 {
-	T_RTTI_CLASS(ConeTwistJointDesc)
+	T_RTTI_CLASS;
 
 public:
 	ConeTwistJointDesc();
@@ -37,7 +37,7 @@ public:
 
 	void setTwistAngle(float twistAngle);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const Vector4& getAnchor() const
 	{

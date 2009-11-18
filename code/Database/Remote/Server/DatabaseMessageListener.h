@@ -1,7 +1,6 @@
 #ifndef traktor_db_DatabaseMessageListener_H
 #define traktor_db_DatabaseMessageListener_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Remote/Server/IMessageListenerImpl.h"
 
 namespace traktor
@@ -17,7 +16,7 @@ class Connection;
  */
 class DatabaseMessageListener : public IMessageListenerImpl< DatabaseMessageListener >
 {
-	T_RTTI_CLASS(DatabaseMessageListener)
+	T_RTTI_CLASS;
 
 public:
 	DatabaseMessageListener(const Configuration* configuration, Connection* connection);

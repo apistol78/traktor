@@ -2,8 +2,7 @@
 #define traktor_world_IEntityManager_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +28,7 @@ class Entity;
  */
 class T_DLLCLASS IEntityManager : public Object
 {
-	T_RTTI_CLASS(IEntityManager)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Add entity to manager.
@@ -59,14 +58,14 @@ public:
 	 * \param outEntities Array of found entities.
 	 * \return Number of entities found.
 	 */
-	virtual uint32_t getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const = 0;
+	virtual uint32_t getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const = 0;
 
 	/*! \brief Get number of entities which are a certain type.
 	 *
 	 * \param entityType Type of entity.
 	 * \return Number of entities of type.
 	 */
-	virtual uint32_t getEntityCount(const Type& entityType) const = 0;
+	virtual uint32_t getEntityCount(const TypeInfo& entityType) const = 0;
 
 	/*! \brief Get entity of certain type.
 	 *
@@ -74,7 +73,7 @@ public:
 	 * \param index Index of entity of same type.
 	 * \return Found entity, null if no entity found.
 	 */
-	virtual Ref< Entity > getEntity(const Type& entityType, uint32_t index) const = 0;
+	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const = 0;
 
 	/*! \brief Get all entities.
 	 *

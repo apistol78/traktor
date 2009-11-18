@@ -1,7 +1,6 @@
 #ifndef traktor_render_SwitchNodeFacade_H
 #define traktor_render_SwitchNodeFacade_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Editor/Shader/NodeFacade.h"
 
 namespace traktor
@@ -22,13 +21,13 @@ class NodeShape;
 
 class SwitchNodeFacade : public NodeFacade
 {
-	T_RTTI_CLASS(SwitchNodeFacade)
+	T_RTTI_CLASS;
 
 public:
 	SwitchNodeFacade(ui::custom::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
-		const Type* nodeType,
+		const TypeInfo* nodeType,
 		editor::IEditor* editor
 	);
 

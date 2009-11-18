@@ -1,13 +1,11 @@
 #include <algorithm>
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 
 namespace traktor
 {
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ThreadManager", ThreadManager, Singleton)
 
 ThreadManager::ThreadManager()
 :	m_threadBase(new Thread(0, L"Base", -1))

@@ -2,7 +2,6 @@
 #include "Flash/FlashFont.h"
 #include "Flash/FlashShape.h"
 #include "Flash/Action/Classes/AsObject.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -25,7 +24,7 @@ bool FlashFont::create(const AlignedVector< SwfShape* >& shapeTable)
 	m_shapes.resize(shapeTable.size());
 	for (uint32_t i = 0; i < shapeTable.size(); ++i)
 	{
-		m_shapes[i] = gc_new< FlashShape >(0);
+		m_shapes[i] = new FlashShape(0);
 		if (!m_shapes[i]->create(shapeTable[i]))
 			return false;
 	}

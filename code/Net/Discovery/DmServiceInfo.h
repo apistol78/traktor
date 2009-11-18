@@ -2,7 +2,6 @@
 #define traktor_net_DmServiceInfo_H
 
 #include "Net/Discovery/IDiscoveryMessage.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
 
 namespace traktor
@@ -14,7 +13,7 @@ class IService;
 
 class DmServiceInfo : public IDiscoveryMessage
 {
-	T_RTTI_CLASS(DmServiceInfo)
+	T_RTTI_CLASS;
 
 public:
 	DmServiceInfo(const Guid& sessionGuid = Guid(), IService* service = 0);
@@ -23,7 +22,7 @@ public:
 
 	Ref< IService > getService() const { return m_service; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_sessionGuid;

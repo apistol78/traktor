@@ -107,8 +107,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, cons
 
 	for (RefArray< world::IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
 	{
-		const TypeSet& typeSet = (*i)->getEntityTypes();
-		for (TypeSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
+		const TypeInfoSet& typeSet = (*i)->getEntityTypes();
+		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
 		{
 			if (is_type_of(**j, type_of(realEntityData)))
 			{
@@ -159,7 +159,7 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 	}
 	else
 	{
-		entityAdapter = gc_new< EntityAdapter >(const_cast< world::EntityInstance* >(instance));
+		entityAdapter = new EntityAdapter(const_cast< world::EntityInstance* >(instance));
 		m_cachedInstances.insert(std::make_pair(instance, entityAdapter));
 	}
 

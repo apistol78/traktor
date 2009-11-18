@@ -3,7 +3,7 @@
 
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -23,10 +23,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		Ref< Serializable > object = m_ref;
-		if (!(s >> Member< Ref< Serializable > >(getName(), object, &type_of< Class >())))
+		Ref< ISerializable > object = m_ref;
+		if (!(s >> Member< Ref< ISerializable > >(getName(), object, &type_of< Class >())))
 			return false;
 		m_ref = static_cast< Class* >(object.ptr());
 		return true;

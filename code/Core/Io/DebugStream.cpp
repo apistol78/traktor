@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Io/DebugStream.h"
+#include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
 
 namespace traktor
@@ -24,9 +25,9 @@ int32_t getIndex(int32_t size, int32_t maxIndex)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.DebugStream", DebugStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.DebugStream", DebugStream, IStream);
 
-DebugStream::DebugStream(Stream* stream)
+DebugStream::DebugStream(IStream* stream)
 :	m_stream(stream)
 ,	m_canReadCalls(0)
 ,	m_canWriteCalls(0)

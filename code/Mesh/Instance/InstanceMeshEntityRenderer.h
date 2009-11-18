@@ -2,7 +2,6 @@
 #define traktor_mesh_InstanceMeshEntityRenderer_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "World/Entity/IEntityRenderer.h"
 #include "Mesh/Instance/InstanceMesh.h"
@@ -23,10 +22,10 @@ namespace traktor
 
 class T_DLLCLASS InstanceMeshEntityRenderer : public world::IEntityRenderer
 {
-	T_RTTI_CLASS(InstanceMeshEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		world::WorldContext* worldContext,

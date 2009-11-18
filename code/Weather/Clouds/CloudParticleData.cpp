@@ -1,5 +1,5 @@
 #include "Weather/Clouds/CloudParticleData.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.weather.CloudParticleData", CloudParticleData, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.CloudParticleData", CloudParticleData, ISerializable)
 
 CloudParticleData::CloudParticleData()
 :	m_count(1000)
@@ -25,7 +25,7 @@ CloudParticleData::CloudParticleData()
 {
 }
 
-bool CloudParticleData::serialize(Serializer& s)
+bool CloudParticleData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> Member< float >(L"radiusMin", m_radiusMin, 0.0f);

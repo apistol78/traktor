@@ -28,7 +28,7 @@ class SHMatrix;
  */
 class T_DLLCLASS SHEngine : public Object
 {
-	T_RTTI_CLASS(SHEngine)
+	T_RTTI_CLASS;
 
 public:
 	struct Sample

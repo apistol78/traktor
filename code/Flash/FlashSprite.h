@@ -2,7 +2,7 @@
 #define traktor_flash_FlashSprite_H
 
 #include <map>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/SwfTypes.h"
 
@@ -29,7 +29,7 @@ class ActionScript;
  */
 class T_DLLCLASS FlashSprite : public FlashCharacter
 {
-	T_RTTI_CLASS(FlashSprite)
+	T_RTTI_CLASS;
 
 public:
 	FlashSprite(uint16_t id, uint16_t frameRate);

@@ -2,7 +2,7 @@
 #define traktor_db_StmSeek_H
 
 #include "Database/Remote/IMessage.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -14,18 +14,18 @@ namespace traktor
  */
 class StmSeek : public IMessage
 {
-	T_RTTI_CLASS(StmSeek)
+	T_RTTI_CLASS;
 
 public:
-	StmSeek(uint32_t handle = 0, Stream::SeekOriginType origin = Stream::SeekCurrent, int32_t offset = 0);
+	StmSeek(uint32_t handle = 0, IStream::SeekOriginType origin = IStream::SeekCurrent, int32_t offset = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
-	Stream::SeekOriginType getOrigin() const { return Stream::SeekOriginType(m_origin); }
+	IStream::SeekOriginType getOrigin() const { return IStream::SeekOriginType(m_origin); }
 
 	int32_t getOffset() const { return m_offset; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

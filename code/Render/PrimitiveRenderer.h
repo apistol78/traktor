@@ -49,7 +49,7 @@ class VertexBuffer;
  */
 class T_DLLCLASS PrimitiveRenderer : public Object
 {
-	T_RTTI_CLASS(PrimitiveRenderer)
+	T_RTTI_CLASS;
 
 public:
 	PrimitiveRenderer();

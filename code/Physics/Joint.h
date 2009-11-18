@@ -2,7 +2,6 @@
 #define traktor_physics_Joint_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,7 +23,7 @@ class Body;
  */
 class T_DLLCLASS Joint : public Object
 {
-	T_RTTI_CLASS(Joint)
+	T_RTTI_CLASS;
 
 public:
 	virtual void destroy() = 0;

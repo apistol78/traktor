@@ -6,7 +6,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
@@ -98,7 +97,7 @@ bool RenderViewCapture::begin()
 			return m_renderView->begin();
 		}
 
-		m_captureImage = gc_new< drawing::Image >(
+		m_captureImage = new drawing::Image(
 			drawing::PixelFormat::getR8G8B8A8(),
 			vp.width,
 			vp.height

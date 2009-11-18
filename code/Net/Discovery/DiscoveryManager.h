@@ -3,8 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Thread/Thread.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class IService;
  */
 class T_DLLCLASS DiscoveryManager : public Object
 {
-	T_RTTI_CLASS(DiscoveryManager)
+	T_RTTI_CLASS;
 
 public:
 	DiscoveryManager();
@@ -44,7 +43,7 @@ public:
 
 	void removeService(IService* service);
 
-	bool findServices(const Type& serviceType, RefArray< IService >& outServices, uint32_t timeout);
+	bool findServices(const TypeInfo& serviceType, RefArray< IService >& outServices, uint32_t timeout);
 	
 	template < typename ServiceType >
 	bool findServices(RefArray< ServiceType >& outServices, uint32_t timeout)

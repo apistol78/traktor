@@ -1,7 +1,6 @@
 #ifndef traktor_ui_PopupMenu_H
 #define traktor_ui_PopupMenu_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/EventSubject.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class IPopupMenu;
  */
 class T_DLLCLASS PopupMenu : public EventSubject
 {
-	T_RTTI_CLASS(PopupMenu)
+	T_RTTI_CLASS;
 	
 public:
 	PopupMenu();

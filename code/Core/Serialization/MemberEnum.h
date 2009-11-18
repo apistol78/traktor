@@ -1,16 +1,16 @@
 #ifndef traktor_MemberEnum_H
 #define traktor_MemberEnum_H
 
-#include <map>
 #include <algorithm>
+#include <map>
 #include "Core/Serialization/MemberComplex.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -36,7 +36,7 @@ public:
 
 	virtual const wchar_t* get() const = 0;
 
-	virtual bool serialize(Serializer& s) const;
+	virtual bool serialize(ISerializer& s) const;
 
 private:
 	const Key* m_keys;

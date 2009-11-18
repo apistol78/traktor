@@ -2,7 +2,6 @@
 #define traktor_db_ActionWriteObject_H
 
 #include "Database/Local/Action.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 
 namespace traktor
@@ -18,7 +17,7 @@ class DynamicMemoryStream;
  */
 class ActionWriteObject : public Action
 {
-	T_RTTI_CLASS(Action)
+	T_RTTI_CLASS;
 
 public:
 	ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName, DynamicMemoryStream* stream);

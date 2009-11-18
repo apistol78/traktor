@@ -22,9 +22,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		return s >> Member< Serializable >(getName(), m_ref, &type_of< Class >());
+		return s >> Member< ISerializable >(getName(), m_ref, &type_of< Class >());
 	}
 	
 private:

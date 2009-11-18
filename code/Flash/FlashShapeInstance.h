@@ -23,7 +23,7 @@ class FlashShape;
  */
 class T_DLLCLASS FlashShapeInstance : public FlashCharacterInstance
 {
-	T_RTTI_CLASS(FlashShapeInstance)
+	T_RTTI_CLASS;
 
 public:
 	FlashShapeInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashShape* shape);

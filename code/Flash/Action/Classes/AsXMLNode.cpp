@@ -28,7 +28,7 @@ AsXMLNode::AsXMLNode()
 
 void AsXMLNode::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"appendChild", createNativeFunctionValue(this, &AsXMLNode::XMLNode_appendChild));
@@ -47,7 +47,7 @@ void AsXMLNode::createPrototype()
 
 ActionValue AsXMLNode::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionObject >(this));
+	return ActionValue::fromObject(new ActionObject(this));
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

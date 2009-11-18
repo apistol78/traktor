@@ -1,7 +1,7 @@
 #ifndef traktor_scene_SelectEvent_H
 #define traktor_scene_SelectEvent_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Event.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ class EntityAdapter;
 
 class T_DLLCLASS SelectEvent : public ui::Event
 {
-	T_RTTI_CLASS(SelectEvent)
+	T_RTTI_CLASS;
 
 public:
 	SelectEvent(ui::EventSubject* sender, const RefArray< EntityAdapter >& selectedEntities);

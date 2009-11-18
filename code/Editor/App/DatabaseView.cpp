@@ -41,19 +41,19 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView", DatabaseView, ui::Container)
 
-T_IMPLEMENT_RTTI_COMPOSITE_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView, Filter, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.Filter", DatabaseView::Filter, Object)
 
 		namespace
 		{
 
 class DefaultFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS(DefaultFilter)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool acceptInstance(const db::Instance* instance) const
 	{
-		return is_type_of< Serializable >(*instance->getPrimaryType());
+		return is_type_of< ISerializable >(*instance->getPrimaryType());
 	}
 
 	virtual bool acceptEmptyGroups() const
@@ -62,14 +62,14 @@ public:
 	}
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"DefaultFilter", DefaultFilter, DatabaseView::Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.DefaultFilter", DefaultFilter, DatabaseView::Filter)
 
 class TypeSetFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS(TypeSetFilter)
+	T_RTTI_CLASS;
 
 public:
-	TypeSetFilter(const TypeSet& typeSet)
+	TypeSetFilter(const TypeInfoSet& typeSet)
 	:	m_typeSet(typeSet)
 	{
 	}
@@ -85,14 +85,14 @@ public:
 	}
 
 private:
-	mutable TypeSet m_typeSet;
+	mutable TypeInfoSet m_typeSet;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"TypeSetFilter", TypeSetFilter, DatabaseView::Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.TypeSetFilter", TypeSetFilter, DatabaseView::Filter)
 
 class GuidSetFilter : public DatabaseView::Filter
 {
-	T_RTTI_CLASS(DefaultFilter)
+	T_RTTI_CLASS;
 
 public:
 	GuidSetFilter(const std::set< Guid >& guidSet)
@@ -114,36 +114,36 @@ private:
 	mutable std::set< Guid > m_guidSet;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.GuidSetFilter", GuidSetFilter, DatabaseView::Filter)
 
 		}
 
 DatabaseView::DatabaseView(IEditor* editor)
 :	m_editor(editor)
-,	m_filter(gc_new< DefaultFilter >())
+,	m_filter(new DefaultFilter())
 {
 }
 
 bool DatabaseView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolFilter = gc_new< ui::custom::ToolBarButton >(
+	m_toolFilter = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
 		ui::Command(L"Database.Filter"),
 		0,
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
-	m_toolSelection = gc_new< ui::custom::ToolBar >();
+	m_toolSelection = new ui::custom::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
 	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 1);
 	m_toolSelection->addItem(m_toolFilter);
 	m_toolSelection->addClickEventHandler(ui::createMethodHandler(this, &DatabaseView::eventToolSelectionClicked));
 
-	m_treeDatabase = gc_new< ui::TreeView >();
+	m_treeDatabase = new ui::TreeView();
 	if (!m_treeDatabase->create(this, (ui::TreeView::WsDefault | ui::TreeView::WsDrag) & ~ui::WsClientBorder))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
@@ -153,66 +153,66 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addDragEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceDrag));
 	m_treeDatabase->setEnable(false);
 		
-	m_menuGroup = gc_new< ui::PopupMenu >();
+	m_menuGroup = new ui::PopupMenu();
 	if (!m_menuGroup->create())
 		return false;
-	m_menuGroup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
-	m_menuGroup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
-	m_menuGroup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuGroup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
 	
-	std::vector< const Type* > wizardToolTypes;
+	std::vector< const TypeInfo* > wizardToolTypes;
 	type_of< IWizardTool >().findAllOf(wizardToolTypes);
 
 	if (!wizardToolTypes.empty())
 	{
-		Ref< ui::MenuItem > menuWizard = gc_new< ui::MenuItem >(i18n::Text(L"DATABASE_WIZARDS"));
+		Ref< ui::MenuItem > menuWizard = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
 
 		int wizardId = 0;
-		for (std::vector< const Type* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
+		for (std::vector< const TypeInfo* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
 		{
-			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->newInstance());
+			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
 			if (!wizard)
 				continue;
 
 			std::wstring wizardDescription = wizard->getDescription();
 			T_ASSERT (!wizardDescription.empty());
 
-			menuWizard->add(gc_new< ui::MenuItem >(ui::Command(wizardId++, L"Editor.Database.Wizard"), wizardDescription));
+			menuWizard->add(new ui::MenuItem(ui::Command(wizardId++, L"Editor.Database.Wizard"), wizardDescription));
 			m_wizardTools.push_back(wizard);
 		}
 
 		m_menuGroup->add(menuWizard);
 	}
 
-	m_menuInstance = gc_new< ui::PopupMenu >();
+	m_menuInstance = new ui::PopupMenu();
 	if (!m_menuInstance->create())
 		return false;
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
-	m_menuInstance->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstance->add(new ui::MenuItem(L"-"));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
+	m_menuInstance->add(new ui::MenuItem(L"-"));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
-	m_menuInstanceAsset = gc_new< ui::PopupMenu >();
+	m_menuInstanceAsset = new ui::PopupMenu();
 	if (!m_menuInstanceAsset->create())
 		return false;
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Edit"), i18n::Text(L"DATABASE_EDIT")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
-	m_menuInstanceAsset->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Edit"), i18n::Text(L"DATABASE_EDIT")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Explore"), i18n::Text(L"DATABASE_EXPLORE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Clone"), i18n::Text(L"DATABASE_CLONE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceType"), i18n::Text(L"DATABASE_FILTER_TYPE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
 	return true;
 }
@@ -274,7 +274,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	std::map< std::wstring, Ref< PropertyValue > > icons = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
-		const Type* primaryType = (*i)->getPrimaryType();
+		const TypeInfo* primaryType = (*i)->getPrimaryType();
 		if (!primaryType)
 			continue;
 
@@ -284,7 +284,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		int iconIndex = 2;
 		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator j = icons.begin(); j != icons.end(); ++j)
 		{
-			const Type* iconType = Type::find(j->first);
+			const TypeInfo* iconType = TypeInfo::find(j->first);
 			if (iconType && is_type_of(*iconType, *primaryType))
 			{
 				iconIndex = PropertyInteger::get(j->second);
@@ -314,9 +314,9 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 
 void DatabaseView::filterType(db::Instance* instance)
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(instance->getPrimaryType());
-	m_filter = gc_new< TypeSetFilter >(cref(typeSet));
+	m_filter = new TypeSetFilter(typeSet);
 	m_toolFilter->setToggled(true);
 	updateView();
 }
@@ -330,7 +330,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 		for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 			guidSet.insert((*i)->outputGuid);
 
-		m_filter = gc_new< GuidSetFilter >(cref(guidSet));
+		m_filter = new GuidSetFilter(guidSet);
 		m_toolFilter->setToggled(true);
 	}
 	updateView();
@@ -340,21 +340,21 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 {
 	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
 
-	ui::custom::ToolBarButton* toolButton = checked_type_cast< ui::custom::ToolBarButton* >(commandEvent->getItem());
+	Ref< ui::custom::ToolBarButton > toolButton = checked_type_cast< ui::custom::ToolBarButton* >(commandEvent->getItem());
 	if (toolButton->isToggled())
 	{
-		const Type* filterType = m_editor->browseType(&type_of< Serializable >());
+		const TypeInfo* filterType = m_editor->browseType(&type_of< ISerializable >());
 		if (filterType)
 		{
-			TypeSet typeSet;
+			TypeInfoSet typeSet;
 			typeSet.insert(filterType);
-			m_filter = gc_new< TypeSetFilter >(cref(typeSet));
+			m_filter = new TypeSetFilter(typeSet);
 		}
 		else
 			toolButton->setToggled(false);
 	}
 	if (!toolButton->isToggled())
-		m_filter = gc_new< DefaultFilter >();
+		m_filter = new DefaultFilter();
 
 	updateView();
 }
@@ -435,7 +435,7 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 		}
 		else if (selected->getCommand() == L"Editor.Database.Clone")	// Clone
 		{
-			Ref< Serializable > object = instance->getObject< Serializable >();
+			Ref< ISerializable > object = instance->getObject< ISerializable >();
 			if (!object)
 			{
 				log::error << L"Unable to checkout instance" << Endl;
@@ -508,10 +508,10 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 				std::wstring instanceName = newInstanceDlg.getInstanceName();
 				T_ASSERT (!instanceName.empty());
 
-				const Type* type = Type::find(typeName);
+				const TypeInfo* type = TypeInfo::find(typeName);
 				T_ASSERT (type);
 
-				Ref< Serializable > data = dynamic_type_cast< Serializable* >(type->newInstance());
+				Ref< ISerializable > data = dynamic_type_cast< ISerializable* >(type->createInstance());
 				T_ASSERT (data);
 
 				Ref< db::Instance > instance = group->createInstance(instanceName);

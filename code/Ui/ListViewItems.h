@@ -2,8 +2,7 @@
 #define traktor_ui_ListViewItems_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class ListViewItem;
  */
 class T_DLLCLASS ListViewItems : public Object
 {
-	T_RTTI_CLASS(ListViewItems)
+	T_RTTI_CLASS;
 
 public:
 	void add(ListViewItem* item);

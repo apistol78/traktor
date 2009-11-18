@@ -23,7 +23,7 @@ class VertexElement;
  */
 class T_DLLCLASS VertexBufferOpenGL : public VertexBuffer
 {
-	T_RTTI_CLASS(VertexBufferOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferOpenGL(uint32_t bufferSize);

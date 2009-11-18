@@ -10,7 +10,7 @@ namespace traktor
 
 class SphereSourceRenderer : public SourceRenderer
 {
-	T_RTTI_CLASS(SphereSourceRenderer)
+	T_RTTI_CLASS;
 
 public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const;

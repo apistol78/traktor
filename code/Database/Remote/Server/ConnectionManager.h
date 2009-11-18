@@ -2,8 +2,7 @@
 #define traktor_db_ConnectionManager_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,7 +32,7 @@ class Connection;
  */
 class T_DLLCLASS ConnectionManager : public Object
 {
-	T_RTTI_CLASS(ConnectionManager)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const Configuration* configuration);

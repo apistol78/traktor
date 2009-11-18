@@ -1,5 +1,5 @@
 #include "Input/RecordInputScript.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.input.RecordInputScript", RecordInputScript, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RecordInputScript", RecordInputScript, ISerializable)
 
 void RecordInputScript::addInputValue(uint32_t frame, int control, float value)
 {
@@ -44,7 +44,7 @@ uint32_t RecordInputScript::getLastFrame() const
 	return last;
 }
 
-bool RecordInputScript::serialize(Serializer& s)
+bool RecordInputScript::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap<
 		int,
@@ -61,7 +61,7 @@ bool RecordInputScript::serialize(Serializer& s)
 	>(L"data", m_data);
 }
 
-bool RecordInputScript::Input::serialize(Serializer& s)
+bool RecordInputScript::Input::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"start", start);
 	s >> Member< uint32_t >(L"end", end);

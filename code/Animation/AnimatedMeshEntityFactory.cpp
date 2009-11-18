@@ -15,9 +15,9 @@ AnimatedMeshEntityFactory::AnimatedMeshEntityFactory(resource::IResourceManager*
 {
 }
 
-const TypeSet AnimatedMeshEntityFactory::getEntityTypes() const
+const TypeInfoSet AnimatedMeshEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< AnimatedMeshEntityData >());
 	return typeSet;
 }

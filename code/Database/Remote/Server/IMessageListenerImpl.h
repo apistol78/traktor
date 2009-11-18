@@ -2,8 +2,6 @@
 #define traktor_db_MessageListener_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/GcNew.h"
 #include "Database/Remote/Server/IMessageListener.h"
 #include "Database/Remote/IMessage.h"
 
@@ -21,7 +19,7 @@ class IMessageListenerImpl : public IMessageListener
 public:
 	virtual bool notify(const IMessage* message)
 	{
-		typename std::map< const Type*, Ref< IMethod > >::iterator i = m_listenerMethods.find(&type_of(message));
+		typename std::map< const TypeInfo*, Ref< IMethod > >::iterator i = m_listenerMethods.find(&type_of(message));
 		return i != m_listenerMethods.end() ? i->second->invoke(reinterpret_cast< MessageListenerType* >(this), message) : false;
 	}
 
@@ -52,11 +50,11 @@ protected:
 	template < typename MessageType >
 	void registerMessage(typename IMethodImpl< MessageType >::method_t method)
 	{
-		m_listenerMethods[&type_of< MessageType >()] = gc_new< IMethodImpl< MessageType > >(method);
+		m_listenerMethods[&type_of< MessageType >()] = new IMethodImpl< MessageType >(method);
 	}
 
 private:
-	std::map< const Type*, Ref< IMethod > > m_listenerMethods;
+	std::map< const TypeInfo*, Ref< IMethod > > m_listenerMethods;
 };
 
 	}

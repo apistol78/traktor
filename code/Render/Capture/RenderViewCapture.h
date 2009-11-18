@@ -2,7 +2,6 @@
 #define traktor_render_RenderViewCapture_H
 
 #include "Render/IRenderView.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +31,7 @@ class RenderTargetSet;
  */
 class T_DLLCLASS RenderViewCapture : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewCapture)
+	T_RTTI_CLASS;
 
 public:
 	RenderViewCapture(IRenderSystem* renderSystem, IRenderView* renderView);

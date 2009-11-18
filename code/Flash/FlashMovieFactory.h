@@ -2,7 +2,6 @@
 #define traktor_flash_FlashMovieFactory_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.

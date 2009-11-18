@@ -1,8 +1,8 @@
 #ifndef traktor_resource_Proxy_H
 #define traktor_resource_Proxy_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
+#include "Core/Ref.h"
 
 namespace traktor
 {

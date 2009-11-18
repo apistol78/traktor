@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ToolBarSeparator_H
 #define traktor_ui_custom_ToolBarSeparator_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolBarSeparator : public ToolBarItem
 {
-	T_RTTI_CLASS(ToolBarSeparator)
+	T_RTTI_CLASS;
 
 protected:
 	virtual bool getToolTip(std::wstring& outToolTip) const;

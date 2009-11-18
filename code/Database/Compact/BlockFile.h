@@ -1,7 +1,6 @@
 #ifndef traktor_db_BlockFile_H
 #define traktor_db_BlockFile_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Io/Path.h"
 #include "Core/Thread/Mutex.h"
@@ -9,7 +8,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace db
 	{
@@ -19,7 +18,7 @@ class Stream;
  */
 class BlockFile : public Object
 {
-	T_RTTI_CLASS(BlockFile)
+	T_RTTI_CLASS;
 
 public:
 	struct Block
@@ -41,15 +40,15 @@ public:
 
 	void freeBlockId(uint32_t blockId);
 
-	Ref< Stream > readBlock(uint32_t blockId);
+	Ref< IStream > readBlock(uint32_t blockId);
 
-	Ref< Stream > writeBlock(uint32_t blockId);
+	Ref< IStream > writeBlock(uint32_t blockId);
 
 	void flushTOC();
 
 private:
 	Mutex m_lock;
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	std::vector< Block > m_blocks;
 };
 

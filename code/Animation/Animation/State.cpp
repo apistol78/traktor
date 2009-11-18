@@ -1,7 +1,7 @@
 #include "Animation/Animation/State.h"
 #include "Animation/Animation/StateContext.h"
 #include "Animation/Animation/Animation.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Resource/Member.h"
 
@@ -10,7 +10,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.State", State, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.State", State, ISerializable)
 
 State::State()
 :	m_position(0, 0)
@@ -68,7 +68,7 @@ void State::evaluate(
 	m_animation->getPose(time, outPose);
 }
 
-bool State::serialize(Serializer& s)
+bool State::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberStlPair< int, int >(L"position", m_position);

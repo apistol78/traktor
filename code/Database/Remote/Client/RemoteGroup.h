@@ -1,7 +1,6 @@
 #ifndef traktor_db_RemoteGroup_H
 #define traktor_db_RemoteGroup_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Provider/IProviderGroup.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class Connection;
  */
 class RemoteGroup : public IProviderGroup
 {
-	T_RTTI_CLASS(RemoteGroup)
+	T_RTTI_CLASS;
 
 public:
 	RemoteGroup(Connection* connection, uint32_t handle);

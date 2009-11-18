@@ -1,7 +1,6 @@
 #ifndef traktor_flash_DisplayRenderer_H
 #define traktor_flash_DisplayRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
@@ -29,7 +28,7 @@ class FlashMorphShape;
  */
 class T_DLLCLASS DisplayRenderer : public Object
 {
-	T_RTTI_CLASS(DisplayRenderer)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Begin rendering frame.

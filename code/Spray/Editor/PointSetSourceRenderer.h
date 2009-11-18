@@ -10,7 +10,7 @@ namespace traktor
 
 class PointSetSourceRenderer : public SourceRenderer
 {
-	T_RTTI_CLASS(PointSetSourceRenderer)
+	T_RTTI_CLASS;
 
 public:
 	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const;

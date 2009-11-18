@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.GroupEntityData", GroupEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", GroupEntityData, EntityData)
 
 void GroupEntityData::addInstance(EntityInstance* instance)
 {
@@ -38,7 +38,7 @@ const RefArray< EntityInstance >& GroupEntityData::getInstances() const
 	return m_instances;
 }
 	
-bool GroupEntityData::serialize(Serializer& s)
+bool GroupEntityData::serialize(ISerializer& s)
 {
 	return s >> MemberRefArray< EntityInstance >(L"instances", m_instances);
 }

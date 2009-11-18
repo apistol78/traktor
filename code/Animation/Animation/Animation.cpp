@@ -1,7 +1,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/SkeletonUtils.h"
 #include "Core/Math/Hermite.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -58,7 +58,7 @@ struct KeyPoseAccessor
 
 		}
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.Animation", Animation, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Animation", Animation, ISerializable)
 
 uint32_t Animation::addKeyPose(const KeyPose& pose)
 {
@@ -126,12 +126,12 @@ bool Animation::getPose(float at, Pose& outPose) const
 	return true;
 }
 
-bool Animation::serialize(Serializer& s)
+bool Animation::serialize(ISerializer& s)
 {
 	return s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
 }
 
-bool Animation::KeyPose::serialize(Serializer& s)
+bool Animation::KeyPose::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"at", at, 0.0f);
 	s >> MemberComposite< Pose >(L"pose", pose);

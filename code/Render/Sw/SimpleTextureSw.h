@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS SimpleTextureSw : public ISimpleTexture
 {
-	T_RTTI_CLASS(ISimpleTexture)
+	T_RTTI_CLASS;
 
 public:
 	SimpleTextureSw();

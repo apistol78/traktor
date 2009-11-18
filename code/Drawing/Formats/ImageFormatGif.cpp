@@ -5,7 +5,6 @@
 #include "Drawing/Palette.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Color.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -53,7 +52,7 @@ struct IdTag
 
 #pragma pack()
 
-void decodeLzw(const std::vector< unsigned char >& in, int initialCodeSize, std::vector< unsigned char >& out)
+void decodeLzw(const std::vector< uint8_t >& in, int initialCodeSize, std::vector< uint8_t >& out)
 {
 	struct Dictionary
 	{
@@ -143,9 +142,9 @@ void decodeLzw(const std::vector< unsigned char >& in, int initialCodeSize, std:
 
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatGif", ImageFormatGif, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatGif", ImageFormatGif, IImageFormat)
 
-Ref< Image > ImageFormatGif::read(Stream* stream)
+Ref< Image > ImageFormatGif::read(IStream* stream)
 {
 	Ref< Image > image;
 	
@@ -162,7 +161,7 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 		
 	int bpp = (lsd.packedFields & 0x07) + 1;
 	
-	Ref< Palette > globalPalette = gc_new< Palette >(1 << bpp);
+	Ref< Palette > globalPalette = new Palette(1 << bpp);
 	if (lsd.packedFields & 0x80)
 	{
 		for (int i = 0; i < (1 << bpp); ++i)
@@ -242,7 +241,7 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 			
 			if (id.packedFields & 0x80)	// Local palette
 			{
-				palette = gc_new< Palette >(1 << bpp);
+				palette = new Palette(1 << bpp);
 				for (int i = 0; i < (1 << bpp); ++i)
 				{
 					PaletteEntry pe;
@@ -258,16 +257,16 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 				}
 			}
 			
-			unsigned char initialCodeSize;
+			uint8_t initialCodeSize;
 			if (stream->read(&initialCodeSize, sizeof(initialCodeSize)) != sizeof(initialCodeSize))
 				return 0;
 			if (initialCodeSize < 2 || initialCodeSize > 9)
 				return 0;
 
-			std::vector< unsigned char > compressed;
+			std::vector< uint8_t > compressed;
 			for (;;)
 			{
-				unsigned char blockSize;
+				uint8_t blockSize;
 				
 				if (stream->read(&blockSize, sizeof(blockSize)) != sizeof(blockSize))
 					return 0;
@@ -282,7 +281,7 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 					return 0;
 			}
 			
-			std::vector< unsigned char > decompressed;
+			std::vector< uint8_t > decompressed;
 			decodeLzw(compressed, initialCodeSize, decompressed);
 			decompressed.resize(id.width * id.height);
 
@@ -290,8 +289,8 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 			int il[] = { 0, 8, 4, 8, 2, 4, 1, 2 };
 			int ip = 0;
 
-			image = gc_new< Image >(PixelFormat::getP8(), id.width, id.height, palette);
-			unsigned char* dst = static_cast< unsigned char* >(image->getData());
+			image = new Image(PixelFormat::getP8(), id.width, id.height, palette);
+			uint8_t* dst = static_cast< uint8_t* >(image->getData());
 			
 			for (int y = 0, yy = il[0]; y < id.height; ++y)
 			{
@@ -326,7 +325,7 @@ Ref< Image > ImageFormatGif::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatGif::write(Stream* stream, Image* image)
+bool ImageFormatGif::write(IStream* stream, Image* image)
 {
 	return false;
 }

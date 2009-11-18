@@ -2,21 +2,21 @@
 #define traktor_DeepClone_H
 
 #include <vector>
+#include "Core/Ref.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 /*! \brief Clone object.
  * \ingroup Core
@@ -26,13 +26,13 @@ class Serializable;
  */
 class T_DLLCLASS DeepClone : public Object
 {
-	T_RTTI_CLASS(DeepClone)
+	T_RTTI_CLASS;
 
 public:
-	DeepClone(const Serializable* source);
+	DeepClone(const ISerializable* source);
 
 	/*! \brief Create new instance of source object. */
-	Ref< Serializable > create();
+	Ref< ISerializable > create();
 
 	/*! \brief Create new instance of source object. */
 	template < typename T >

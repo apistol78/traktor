@@ -2,7 +2,6 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -61,12 +60,12 @@ Ref< Mesh > SystemMeshFactory::createMesh(
 	Ref< IndexBuffer > indexBuffer;
 
 	if (vertexBufferSize > 0)
-		vertexBuffer = gc_new< InternalVertexBuffer >(vertexBufferSize);
+		vertexBuffer = new InternalVertexBuffer(vertexBufferSize);
 
 	if (indexBufferSize > 0)
-		indexBuffer = gc_new< InternalIndexBuffer >(indexType, indexBufferSize);
+		indexBuffer = new InternalIndexBuffer(indexType, indexBufferSize);
 
-	Ref< Mesh > mesh = gc_new< Mesh >();
+	Ref< Mesh > mesh = new Mesh();
 
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);

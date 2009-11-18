@@ -12,15 +12,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SwizzleNodeFacade", SwizzleNodeFacade, N
 
 SwizzleNodeFacade::SwizzleNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = gc_new< ui::custom::InOutNodeShape >(graphControl);
+	m_nodeShape = new ui::custom::InOutNodeShape(graphControl);
 }
 
 Ref< Node > SwizzleNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return checked_type_cast< Node* >(nodeType->newInstance());
+	return checked_type_cast< Node* >(nodeType->createInstance());
 }
 
 Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
@@ -29,7 +29,7 @@ Ref< ui::custom::Node > SwizzleNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		L"",
 		shaderNode->getInformation(),
 		ui::Point(

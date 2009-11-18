@@ -1,5 +1,5 @@
 #include "Ui/TreeViewState.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.ui.TreeViewState", TreeViewState, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.TreeViewState", TreeViewState, ISerializable)
 
 void TreeViewState::addState(const std::wstring& path, bool expanded, bool selected)
 {
@@ -33,7 +33,7 @@ bool TreeViewState::getSelected(const std::wstring& path) const
 	return i != m_states.end() ? i->second.second : false;
 }
 
-bool TreeViewState::serialize(Serializer& s)
+bool TreeViewState::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< 
 		std::wstring,

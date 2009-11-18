@@ -1,13 +1,12 @@
 #include "Drawing/Filters/BrightnessContrastFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BrightnessContrastFilter", BrightnessContrastFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.BrightnessContrastFilter", BrightnessContrastFilter, IImageFilter)
 
 BrightnessContrastFilter::BrightnessContrastFilter(float brightness, float contrast)
 :	m_brightness(brightness)
@@ -17,7 +16,7 @@ BrightnessContrastFilter::BrightnessContrastFilter(float brightness, float contr
 
 Ref< Image > BrightnessContrastFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	
 	Color in;
 	Color c(m_contrast, m_contrast, m_contrast, 1.0f);

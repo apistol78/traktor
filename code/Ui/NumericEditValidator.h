@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS NumericEditValidator : public EditValidator
 {
-	T_RTTI_CLASS(NumericEditValidator)
+	T_RTTI_CLASS;
 
 public:
 	NumericEditValidator(

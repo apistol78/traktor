@@ -2,7 +2,7 @@
 #include "Mesh/Composite/CompositeMeshEntity.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/EntityInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Log/Log.h"
 
@@ -11,11 +11,11 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.CompositeMeshEntityData", CompositeMeshEntityData, MeshEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.CompositeMeshEntityData", CompositeMeshEntityData, MeshEntityData)
 
 Ref< MeshEntity > CompositeMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
-	Ref< CompositeMeshEntity > compositeMeshEntity = gc_new< CompositeMeshEntity >(cref(getTransform()));
+	Ref< CompositeMeshEntity > compositeMeshEntity = new CompositeMeshEntity(getTransform());
 	for (RefArray< world::EntityInstance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
 		T_FATAL_ASSERT(*i);
@@ -28,7 +28,7 @@ Ref< MeshEntity > CompositeMeshEntityData::createEntity(resource::IResourceManag
 	return compositeMeshEntity;
 }
 
-bool CompositeMeshEntityData::serialize(Serializer& s)
+bool CompositeMeshEntityData::serialize(ISerializer& s)
 {
 	if (!MeshEntityData::serialize(s))
 		return false;

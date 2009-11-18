@@ -27,7 +27,7 @@ class ActionContext;
  */
 class T_DLLCLASS FlashSpriteInstance : public FlashCharacterInstance
 {
-	T_RTTI_CLASS(FlashSpriteInstance)
+	T_RTTI_CLASS;
 
 public:
 	FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite);

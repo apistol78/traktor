@@ -2,8 +2,7 @@
 #define traktor_mesh_BlendMesh_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Transform.h"
 #include "Render/Shader.h"
@@ -49,7 +48,7 @@ class IMeshParameterCallback;
  */
 class T_DLLCLASS BlendMesh : public Object
 {
-	T_RTTI_CLASS(BlendMesh)
+	T_RTTI_CLASS;
 
 public:
 	struct Instance : public Object

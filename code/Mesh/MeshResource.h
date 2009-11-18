@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_MeshResource_H
 #define traktor_mesh_MeshResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,9 +20,9 @@ namespace traktor
  *
  * Base class for all mesh resources.
  */
-class T_DLLCLASS MeshResource : public Serializable
+class T_DLLCLASS MeshResource : public ISerializable
 {
-	T_RTTI_CLASS(MeshResource)
+	T_RTTI_CLASS;
 };
 
 	}

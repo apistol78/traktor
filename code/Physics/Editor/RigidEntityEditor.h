@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS RigidEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(RigidEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	RigidEntityEditor();

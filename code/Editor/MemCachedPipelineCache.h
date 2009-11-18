@@ -1,7 +1,6 @@
 #ifndef traktor_editor_MemCachedPipelineCache_H
 #define traktor_editor_MemCachedPipelineCache_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IPipelineCache.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class MemCachedProto;
 
 class T_DLLCLASS MemCachedPipelineCache : public IPipelineCache
 {
-	T_RTTI_CLASS(MemCachedPipelineCache)
+	T_RTTI_CLASS;
 
 public:
 	MemCachedPipelineCache();
@@ -39,9 +38,9 @@ public:
 
 	virtual void destroy();
 
-	virtual Ref< Stream > get(const Guid& guid, uint32_t hash);
+	virtual Ref< IStream > get(const Guid& guid, uint32_t hash);
 
-	virtual Ref< Stream > put(const Guid& guid, uint32_t hash);
+	virtual Ref< IStream > put(const Guid& guid, uint32_t hash);
 
 private:
 	Ref< net::TcpSocket > m_socket;

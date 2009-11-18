@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS CloudMaskPipeline : public editor::IPipeline
 {
-	T_RTTI_CLASS(CloudMaskPipeline)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(const editor::IPipelineSettings* settings);
@@ -27,18 +27,18 @@ public:
 
 	virtual uint32_t getVersion() const;
 
-	virtual TypeSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,

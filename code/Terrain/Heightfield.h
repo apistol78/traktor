@@ -1,7 +1,6 @@
 #ifndef traktor_terrain_Heightfield_H
 #define traktor_terrain_Heightfield_H
 
-#include "Core/Heap/Ref.h"
 #include "Terrain/HeightfieldResource.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class ITexture;
 
 class T_DLLCLASS Heightfield : public Object
 {
-	T_RTTI_CLASS(Heightfield)
+	T_RTTI_CLASS;
 
 public:
 	typedef unsigned short height_t;

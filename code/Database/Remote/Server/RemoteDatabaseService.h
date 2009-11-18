@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS RemoteDatabaseService : public net::IService
 {
-	T_RTTI_CLASS(RemoteDatabaseService)
+	T_RTTI_CLASS;
 
 public:
 	RemoteDatabaseService();
@@ -35,7 +35,7 @@ public:
 	
 	virtual std::wstring getDescription() const;
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 	
 private:
 	std::wstring m_host;

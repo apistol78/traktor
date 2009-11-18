@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EffectEditorPage_H
 #define traktor_spray_EffectEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -51,7 +50,7 @@ class EffectPreviewControl;
 
 class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(EffectEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	EffectEditorPage(editor::IEditor* editor);

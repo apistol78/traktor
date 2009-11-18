@@ -14,7 +14,7 @@ namespace traktor
  */
 class MsgHandleArrayResult : public IMessage
 {
-	T_RTTI_CLASS(MsgHandleArrayResult)
+	T_RTTI_CLASS;
 
 public:
 	void add(uint32_t handle);
@@ -23,7 +23,7 @@ public:
 
 	uint32_t get(uint32_t index) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< uint32_t > m_handles;

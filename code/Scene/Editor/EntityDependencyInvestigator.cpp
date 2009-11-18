@@ -15,7 +15,6 @@
 #include "Ui/Events/CommandEvent.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/System/OS.h"
 #include "Core/Guid.h"
 #include "Core/Log/Log.h"
@@ -38,12 +37,12 @@ EntityDependencyInvestigator::EntityDependencyInvestigator(SceneEditorContext* c
 
 bool EntityDependencyInvestigator::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
 	setText(i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"));
 
-	m_dependencyTree = gc_new< ui::TreeView >();
+	m_dependencyTree = new ui::TreeView();
 	m_dependencyTree->create(this, ui::TreeView::WsDefault & ~ui::WsClientBorder);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 15);
 	m_dependencyTree->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
@@ -65,12 +64,12 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 		Ref< ui::TreeViewItem > entityRootItem = m_dependencyTree->createItem(0, entityAdapter->getName(), 15);
 		entityRootItem->expand();
 
-		std::map< const Type*, Ref< ui::TreeViewItem > > typeGroups;
+		std::map< const TypeInfo*, Ref< ui::TreeViewItem > > typeGroups;
 		std::set< Path > externalFiles;
 
 		for (RefArray< editor::PipelineDependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		{
-			const Type* assetType = &type_of((*i)->sourceAsset);
+			const TypeInfo* assetType = &type_of((*i)->sourceAsset);
 			T_ASSERT (assetType);
 
 			Ref< ui::TreeViewItem > typeGroup = typeGroups[assetType];
@@ -92,7 +91,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
 			{
 				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
-				fileItem->setData(L"FILE", gc_new< Path >(*i));
+				fileItem->setData(L"FILE", new Path(*i));
 			}
 		}
 	}

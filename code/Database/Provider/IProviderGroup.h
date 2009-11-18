@@ -3,8 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,7 +25,7 @@ class IProviderInstance;
  */
 class T_DLLCLASS IProviderGroup : public Object
 {
-	T_RTTI_CLASS(IProviderGroup)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const = 0;

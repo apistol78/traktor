@@ -1,6 +1,7 @@
 #ifndef traktor_ui_UtilitiesWin32_H
 #define traktor_ui_UtilitiesWin32_H
 
+#include "Core/Config.h"
 #include "Ui/Enums.h"
 
 namespace traktor

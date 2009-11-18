@@ -4,7 +4,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx9/Unmanaged.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class T_DLLCLASS VertexBufferDx9
 :	public VertexBuffer
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(VertexBufferDx9)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferDx9(UnmanagedListener* unmanagedListener, ContextDx9* context, uint32_t bufferSize, VertexDeclCache* vertexDeclCache);

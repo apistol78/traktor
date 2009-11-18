@@ -4,8 +4,7 @@
 #include <string>
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -37,7 +36,7 @@ class T_DLLCLASS SequenceItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(SequenceItem)
+	T_RTTI_CLASS;
 
 public:
 	SequenceItem(const std::wstring& name);

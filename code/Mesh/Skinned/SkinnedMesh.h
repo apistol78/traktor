@@ -47,7 +47,7 @@ class IMeshParameterCallback;
  */
 class T_DLLCLASS SkinnedMesh : public Object
 {
-	T_RTTI_CLASS(SkinnedMesh)
+	T_RTTI_CLASS;
 
 public:
 	SkinnedMesh();

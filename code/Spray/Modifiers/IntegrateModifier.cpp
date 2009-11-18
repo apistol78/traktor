@@ -1,5 +1,5 @@
 #include "Spray/Modifiers/IntegrateModifier.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.IntegrateModifier", IntegrateModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.IntegrateModifier", IntegrateModifier, Modifier)
 
 IntegrateModifier::IntegrateModifier()
 :	m_timeScale(1.0f)
@@ -24,7 +24,7 @@ void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transfo
 	}
 }
 
-bool IntegrateModifier::serialize(Serializer& s)
+bool IntegrateModifier::serialize(ISerializer& s)
 {
 	return s >> Member< Scalar >(L"timeScale", m_timeScale);
 }

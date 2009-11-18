@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS PointSetSource : public Source
 {
-	T_RTTI_CLASS(PointSetSource)
+	T_RTTI_CLASS;
 
 public:
 	PointSetSource();
@@ -38,7 +38,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }
 

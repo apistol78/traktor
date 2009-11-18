@@ -1,5 +1,5 @@
 #include "Physics/ConeTwistJointDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.ConeTwistJointDesc", ConeTwistJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ConeTwistJointDesc", ConeTwistJointDesc, JointDesc)
 
 ConeTwistJointDesc::ConeTwistJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -46,7 +46,7 @@ void ConeTwistJointDesc::setTwistAngle(float twistAngle)
 	m_twistAngle = twistAngle;
 }
 
-bool ConeTwistJointDesc::serialize(Serializer& s)
+bool ConeTwistJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor);
 	s >> Member< Vector4 >(L"coneAxis", m_coneAxis);

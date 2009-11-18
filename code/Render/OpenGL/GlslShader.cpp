@@ -1,5 +1,4 @@
 #include "Render/OpenGL/GlslShader.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -12,10 +11,10 @@ GlslShader::GlslShader(ShaderType shaderType)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
-	pushOutputStream(BtUniform, gc_new< StringOutputStream >());
-	pushOutputStream(BtInput, gc_new< StringOutputStream >());
-	pushOutputStream(BtOutput, gc_new< StringOutputStream >());
-	pushOutputStream(BtBody, gc_new< StringOutputStream >());
+	pushOutputStream(BtUniform, new StringOutputStream());
+	pushOutputStream(BtInput, new StringOutputStream());
+	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 GlslShader::~GlslShader()

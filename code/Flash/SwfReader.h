@@ -17,7 +17,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace flash
 	{
@@ -31,10 +31,10 @@ class Stream;
  */
 class T_DLLCLASS SwfReader : public Object
 {
-	T_RTTI_CLASS(SwfReader)
+	T_RTTI_CLASS;
 
 public:
-	SwfReader(Stream* stream);
+	SwfReader(IStream* stream);
 
 	virtual ~SwfReader();
 
@@ -156,7 +156,7 @@ public:
 	BitReader& getBitReader();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	Ref< BitReader > m_bs;
 	uint8_t* m_allocHead;
 	uint8_t* m_allocTail;

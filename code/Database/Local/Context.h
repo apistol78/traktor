@@ -1,7 +1,6 @@
 #ifndef traktor_db_Context_H
 #define traktor_db_Context_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
 
@@ -15,7 +14,7 @@ namespace traktor
  */
 class Context : public Object
 {
-	T_RTTI_CLASS(Context)
+	T_RTTI_CLASS;
 
 public:
 	Context(bool preferBinary);

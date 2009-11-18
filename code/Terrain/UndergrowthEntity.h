@@ -53,7 +53,7 @@ class MaterialMask;
 
 class T_DLLCLASS UndergrowthEntity : public world::Entity
 {
-	T_RTTI_CLASS(TerrainEntity)
+	T_RTTI_CLASS;
 
 public:
 	struct Settings

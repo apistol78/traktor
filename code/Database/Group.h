@@ -2,8 +2,7 @@
 #define traktor_db_Group_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
@@ -35,7 +34,7 @@ class Instance;
  */
 class T_DLLCLASS Group : public Object
 {
-	T_RTTI_CLASS(Group)
+	T_RTTI_CLASS;
 
 public:
 	Group(IProviderBus* providerBus);
@@ -56,7 +55,7 @@ public:
 
 	virtual Ref< Group > createGroup(const std::wstring& groupName);
 
-	virtual Ref< Instance > getInstance(const std::wstring& instanceName, const Type* primaryType = 0);
+	virtual Ref< Instance > getInstance(const std::wstring& instanceName, const TypeInfo* primaryType = 0);
 
 	virtual Ref< Instance > createInstance(const std::wstring& instanceName, uint32_t flags = CifDefault, const Guid* guid = 0);
 

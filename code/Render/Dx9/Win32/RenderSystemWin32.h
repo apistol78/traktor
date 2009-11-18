@@ -2,8 +2,7 @@
 #define traktor_render_RenderSystemWin32_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
@@ -38,7 +37,7 @@ class T_DLLCLASS RenderSystemWin32
 :	public IRenderSystem
 ,	public UnmanagedListener
 {
-	T_RTTI_CLASS(RenderSystemWin32)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemWin32();

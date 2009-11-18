@@ -10,7 +10,7 @@
 #include "Model/Model.h"
 #include "Model/Utilities.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -35,9 +35,9 @@ uint32_t MeshPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet MeshPipeline::getAssetTypes() const
+TypeInfoSet MeshPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshAsset >());
 	return typeSet;
 }
@@ -45,7 +45,7 @@ TypeSet MeshPipeline::getAssetTypes() const
 bool MeshPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -57,7 +57,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -120,9 +120,9 @@ bool MeshPipeline::buildOutput(
 	if (!instance)
 		return false;
 
-	instance->setObject(gc_new< MeshResource >());
+	instance->setObject(new MeshResource());
 
-	Ref< Stream > stream = instance->writeData(L"Data");
+	Ref< IStream > stream = instance->writeData(L"Data");
 	mesh.write(stream);
 	stream->close();
 

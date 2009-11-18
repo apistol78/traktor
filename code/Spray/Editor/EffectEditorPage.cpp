@@ -54,23 +54,23 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		gc_new< render::TextureFactory >(database, renderSystem)
+		new render::TextureFactory(database, renderSystem)
 	);
 	m_resourceManager->addFactory(
-		gc_new< render::ShaderFactory >(database, renderSystem)
+		new render::ShaderFactory(database, renderSystem)
 	);
 	m_resourceManager->addFactory(
-		gc_new< EffectFactory >(database)
+		new EffectFactory(database)
 	);
 
 	activate();
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolToggleGuide = gc_new< ui::custom::ToolBarButton >(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< editor::Settings > settings = m_editor->getSettings();
 	T_ASSERT (settings);
@@ -78,28 +78,28 @@ bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* si
 	m_guideVisible = settings->getProperty< editor::PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	m_toolToggleGuide->setToggled(m_guideVisible);
 
-	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 12);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEffectEdit, sizeof(c_ResourceEffectEdit), L"png"), 1);
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"EFFECT_EDITOR_REWIND"), ui::Command(L"Effect.Editor.Rewind"), 0));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"EFFECT_EDITOR_PLAY"), ui::Command(L"Effect.Editor.Play"), 1));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"EFFECT_EDITOR_STOP"), ui::Command(L"Effect.Editor.Stop"), 2));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), ui::Command(L"Effect.Editor.Rewind"), 0));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), ui::Command(L"Effect.Editor.Play"), 1));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), ui::Command(L"Effect.Editor.Stop"), 2));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 18));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 18));
 
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
 
-	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(container, false, -150, false);
 
-	m_previewControl = gc_new< EffectPreviewControl >();
+	m_previewControl = new EffectPreviewControl();
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem);
 	m_previewControl->showGuide(m_guideVisible);
 
-	m_sequencer = gc_new< ui::custom::SequencerControl >();
+	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
 	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
@@ -224,13 +224,13 @@ void EffectEditorPage::updateSequencer()
 		StringOutputStream ss;
 		ss << L"Layer " << uint32_t(std::distance(layers.begin(), i) + 1);
 
-		Ref< ui::custom::Sequence > layerItem = gc_new< ui::custom::Sequence >(ss.str());
+		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence(ss.str());
 		layerItem->setData(L"LAYER", *i);
 		
 		float start = (*i)->getTime();
 		float end = (*i)->getTime() + (*i)->getDuration();
 
-		Ref< ui::custom::Range > layerRange = gc_new< ui::custom::Range >(
+		Ref< ui::custom::Range > layerRange = new ui::custom::Range(
 			int(start * 1000),
 			int(end * 1000)
 		);

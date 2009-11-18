@@ -2,7 +2,6 @@
 #define traktor_editor_MemCachedProto_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Thread/Semaphore.h"
 
 namespace traktor
@@ -19,7 +18,7 @@ class Socket;
 
 class MemCachedProto : public Object
 {
-	T_RTTI_CLASS(MemCachedProto)
+	T_RTTI_CLASS;
 
 public:
 	MemCachedProto(net::Socket* socket);

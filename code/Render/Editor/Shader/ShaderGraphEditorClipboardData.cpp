@@ -1,4 +1,4 @@
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Node.h"
@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderGraphEditorClipboardData", ShaderGraphEditorClipboardData, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderGraphEditorClipboardData", ShaderGraphEditorClipboardData, ISerializable)
 
 void ShaderGraphEditorClipboardData::addNode(Node* node)
 {
@@ -41,7 +41,7 @@ const ui::Rect& ShaderGraphEditorClipboardData::getBounds() const
 	return m_bounds;
 }
 
-bool ShaderGraphEditorClipboardData::serialize(Serializer& s)
+bool ShaderGraphEditorClipboardData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);

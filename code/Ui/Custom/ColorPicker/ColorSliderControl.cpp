@@ -31,7 +31,7 @@ bool ColorSliderControl::create(Widget* parent, int style, IGradient* gradient)
 	addPaintEventHandler(createMethodHandler(this, &ColorSliderControl::eventPaint));
 
 	m_gradient = gradient;
-	m_gradientBitmap = gc_new< Bitmap >(c_sliderWidth, 256);
+	m_gradientBitmap = new Bitmap(c_sliderWidth, 256);
 
 	updateGradient();
 	update();

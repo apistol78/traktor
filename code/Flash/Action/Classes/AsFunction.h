@@ -13,7 +13,7 @@ namespace traktor
  */
 class AsFunction : public ActionClass
 {
-	T_RTTI_CLASS(AsFunction)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsFunction > getInstance();

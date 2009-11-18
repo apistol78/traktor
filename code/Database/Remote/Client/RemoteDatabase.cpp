@@ -11,7 +11,6 @@
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -41,14 +40,14 @@ bool RemoteDatabase::open(const std::wstring& connectionString)
 	std::wstring host = parts[0];
 	uint16_t port = parseString< uint16_t >(parts[1]);
 
-	Ref< net::TcpSocket > socket = gc_new< net::TcpSocket >();
+	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(net::SocketAddressIPv4(host, port)))
 	{
 		log::error << L"Failed to open database; unable to connect to server at \"" << host << L"\" port " << port << Endl;
 		return false;
 	}
 
-	m_connection = gc_new< Connection >(socket);
+	m_connection = new Connection(socket);
 
 	std::wstring name = parts[2];
 
@@ -85,7 +84,7 @@ Ref< IProviderBus > RemoteDatabase::getBus()
 		return 0;
 
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetBus());
-	return result ? gc_new< RemoteBus >(m_connection, result->get()) : 0;
+	return result ? new RemoteBus(m_connection, result->get()) : 0;
 }
 
 Ref< IProviderGroup > RemoteDatabase::getRootGroup()
@@ -94,7 +93,7 @@ Ref< IProviderGroup > RemoteDatabase::getRootGroup()
 		return 0;
 
 	Ref< MsgHandleResult > result = m_connection->sendMessage< MsgHandleResult >(DbmGetRootGroup());
-	return result ? gc_new< RemoteGroup >(m_connection, result->get()) : 0;
+	return result ? new RemoteGroup(m_connection, result->get()) : 0;
 }
 
 	}

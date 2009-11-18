@@ -2,7 +2,6 @@
 #define traktor_render_RenderViewOpenGL_H
 
 #include <stack>
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
@@ -31,7 +30,7 @@ class RenderTargetOpenGL;
  */
 class T_DLLCLASS RenderViewOpenGL : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewOpenGL)
+	T_RTTI_CLASS;
 
 public:
 #if defined(_WIN32)

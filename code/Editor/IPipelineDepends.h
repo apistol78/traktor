@@ -3,8 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -18,7 +17,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -36,15 +35,15 @@ class PipelineDependency;
 
 class T_DLLCLASS IPipelineDepends : public Object
 {
-	T_RTTI_CLASS(IPipelineDepends)
+	T_RTTI_CLASS;
 
 public:
 	virtual void addDependency(
-		const Serializable* sourceAsset
+		const ISerializable* sourceAsset
 	) = 0;
 
 	virtual void addDependency(
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
@@ -69,7 +68,7 @@ public:
 
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
-	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid)

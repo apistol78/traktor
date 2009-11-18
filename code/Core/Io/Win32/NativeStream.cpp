@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
 NativeStream::NativeStream(HANDLE hFile, uint32_t mode)
 :	m_hFile(hFile)

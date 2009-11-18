@@ -6,7 +6,7 @@
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
 #include "Core/Math/Const.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Resource/IResourceManager.h"
@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepBlur", PostProcessStepBlur, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", PostProcessStepBlur, PostProcessStep)
 
 Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -50,13 +50,13 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IReso
 	for (int i = 0; i < sizeof_array(gaussianOffsetWeights); ++i)
 		gaussianOffsetWeights[i] *= invWeight;
 
-	return gc_new< InstanceBlur >(
+	return new InstanceBlur(
 		this,
 		gaussianOffsetWeights
 	);
 }
 
-bool PostProcessStepBlur::serialize(Serializer& s)
+bool PostProcessStepBlur::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
@@ -70,7 +70,7 @@ PostProcessStepBlur::Source::Source()
 {
 }
 
-bool PostProcessStepBlur::Source::serialize(Serializer& s)
+bool PostProcessStepBlur::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< int32_t >(L"source", source);

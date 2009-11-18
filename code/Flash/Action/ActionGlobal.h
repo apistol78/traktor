@@ -23,7 +23,7 @@ struct CallArgs;
  */
 class T_DLLCLASS ActionGlobal : public ActionObject
 {
-	T_RTTI_CLASS(ActionGlobal)
+	T_RTTI_CLASS;
 
 public:
 	ActionGlobal();

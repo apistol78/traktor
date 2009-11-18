@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ISoundBuffer : public Object
 {
-	T_RTTI_CLASS(ISoundBuffer)
+	T_RTTI_CLASS;
 
 public:
 	virtual double getDuration() const = 0;

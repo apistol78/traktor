@@ -1,7 +1,7 @@
 #include "Ui/Custom/ProfileControl.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/PaintEvent.h"
-#include "Core/Heap/HeapStats.h"
+//#include "Core/Heap/HeapStats.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Timer/Timer.h"
 
@@ -33,7 +33,7 @@ bool ProfileControl::create(Widget* parent, int time, int minSample, int maxSamp
 	addPaintEventHandler(createMethodHandler(this, &ProfileControl::eventPaint));
 	addTimerEventHandler(createMethodHandler(this, &ProfileControl::eventTimer));
 
-	m_timer = gc_new< Timer >();
+	m_timer = new Timer();
 	m_timer->start();
 
 	startTimer(time);
@@ -60,14 +60,14 @@ void ProfileControl::eventPaint(Event* event)
 	for (int y = rc.top; y < rc.bottom; y += 16)
 		canvas.drawLine(rc.left, y, rc.right, y);
 
-	HeapStats stats;
-	Heap::getStats(stats);
+	//HeapStats stats;
+	//Heap::getStats(stats);
 
 	StringOutputStream ss1;
-	ss1 << stats.objects << L" object(s)";
+	//ss1 << stats.objects << L" object(s)";
 
 	StringOutputStream ss2;
-	ss2 << stats.references << L" reference(s), " << stats.rootReferences << L" root(s)";
+	//ss2 << stats.references << L" reference(s), " << stats.rootReferences << L" root(s)";
 
 	canvas.setForeground(Color(200, 255, 200));
 	canvas.drawText(Point(0,  0), ss1.str());
@@ -113,14 +113,15 @@ void ProfileControl::eventTimer(Event* event)
 	while (!m_samples.empty() && m_samples.front().at < T - c_profileTime)
 		m_samples.pop_front();
 
-	HeapStats stats;
-	Heap::getStats(stats);
+	//HeapStats stats;
+	//Heap::getStats(stats);
 
 	Sample sample =
 	{
 		T,
-		stats.objects,
-		stats.references,
+		//stats.objects,
+		//stats.references,
+		0, 0
 	};
 	m_samples.push_back(sample);
 

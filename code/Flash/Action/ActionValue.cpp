@@ -3,11 +3,10 @@
 #include "Flash/Action/ActionBoolean.h"
 #include "Flash/Action/ActionNumber.h"
 #include "Flash/Action/ActionString.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Heap/Alloc.h"
-#include "Core/Heap/BlockAllocator.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Singleton/Singleton.h"
+#include "Core/Singleton/ISingleton.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -17,10 +16,8 @@ namespace traktor
 		namespace
 		{
 
-class RefHeap : public Singleton
+class RefHeap : public ISingleton
 {
-	T_RTTI_CLASS(RefHeap)
-
 public:
 	static RefHeap& getInstance()
 	{
@@ -74,8 +71,6 @@ private:
 		T_EXCEPTION_GUARD_END
 	}
 };
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.RefHeap", RefHeap, Singleton)
 
 wchar_t* refStringCreate(const wchar_t* s)
 {
@@ -252,11 +247,11 @@ Ref< ActionObject > ActionValue::getObjectSafe() const
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return gc_new< ActionBoolean >(m_value.b);
+		return new ActionBoolean(m_value.b);
 	case AvtNumber:
-		return gc_new< ActionNumber >(m_value.n);
+		return new ActionNumber(m_value.n);
 	case AvtString:
-		return gc_new< ActionString >(m_value.s);
+		return new ActionString(m_value.s);
 	case AvtObject:
 		return *m_value.o;
 	}

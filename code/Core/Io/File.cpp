@@ -1,11 +1,11 @@
 #include "Core/Io/File.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.File", File, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.File", File, ISerializable)
 
 File::File()
 :	m_size(0)
@@ -96,7 +96,7 @@ const DateTime& File::getLastWriteTime() const
 	return m_lastWriteTime;
 }
 
-bool File::serialize(Serializer& s)
+bool File::serialize(ISerializer& s)
 {
 	s >> Member< Path >(L"path", m_path);
 	s >> Member< uint64_t >(L"size", m_size);

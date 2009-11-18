@@ -1,7 +1,6 @@
 #ifndef traktor_world_ExternalEntityData_H
 #define traktor_world_ExternalEntityData_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/EntityData.h"
 #include "Core/Guid.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ExternalEntityData : public EntityData
 {
-	T_RTTI_CLASS(ExternalEntityData)
+	T_RTTI_CLASS;
 
 public:
 	ExternalEntityData();
@@ -34,7 +33,7 @@ public:
 
 	const Guid& getGuid() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_guid;

@@ -7,7 +7,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, IPoseControllerData)
 
 Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,
@@ -28,14 +28,14 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		velocities.push_back(velocity);
 	}
 
-	Ref< RagDollPoseController > poseController = gc_new< RagDollPoseController >();
+	Ref< RagDollPoseController > poseController = new RagDollPoseController();
 	if (!poseController->create(physicsManager, skeleton, worldTransform, boneTransforms, velocities, true))
 		return 0;
 
 	return poseController;
 }
 
-bool RagDollPoseControllerData::serialize(Serializer& s)
+bool RagDollPoseControllerData::serialize(ISerializer& s)
 {
 	return true;
 }

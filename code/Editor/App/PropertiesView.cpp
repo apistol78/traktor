@@ -34,10 +34,10 @@ PropertiesView::PropertiesView(IEditor* editor)
 
 bool PropertiesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::FloodLayout >()))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::FloodLayout()))
 		return false;
 
-	m_propertyList = gc_new< ui::custom::AutoPropertyList >();
+	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(this, ui::WsDoubleBuffer, this);
 	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyCommand));
 	m_propertyList->addChangeEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyChange));
@@ -53,7 +53,7 @@ void PropertiesView::destroy()
 	ui::Container::destroy();
 }
 
-void PropertiesView::setPropertyObject(Serializable* object, Serializable* outer)
+void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* outer)
 {
 	m_propertyList->hide();
 	m_propertyList->bind(object, outer);
@@ -62,7 +62,7 @@ void PropertiesView::setPropertyObject(Serializable* object, Serializable* outer
 	m_propertyObject = object;
 }
 
-Ref< Serializable > PropertiesView::getPropertyObject()
+Ref< ISerializable > PropertiesView::getPropertyObject()
 {
 	return m_propertyObject;
 }
@@ -112,16 +112,16 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 				Ref< db::Instance > instance;
 				if (browseItem->getFilterType())
 				{
-					const Type* filterType = browseItem->getFilterType();
+					const TypeInfo* filterType = browseItem->getFilterType();
 
 					// Check if filter type is actually a result of a asset; in such case we should
 					// browse for the asset and not the final result.
-					std::vector< const Type* > assetTypes;
+					std::vector< const TypeInfo* > assetTypes;
 					type_of< Asset >().findAllOf(assetTypes);
 
-					for (std::vector< const Type* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
+					for (std::vector< const TypeInfo* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
 					{
-						Ref< Asset > asset = dynamic_type_cast< Asset* >((*i)->newInstance());
+						Ref< Asset > asset = dynamic_type_cast< Asset* >((*i)->createInstance());
 						if (asset && asset->getOutputType())
 						{
 							if (is_type_of(*asset->getOutputType(), *filterType))
@@ -172,16 +172,16 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::ObjectPropertyItem > objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(event->getItem());
 	if (objectItem)
 	{
-		const Type* objectType = objectItem->getObjectType();
+		const TypeInfo* objectType = objectItem->getObjectType();
 		if (!objectType)
-			objectType = &type_of< Serializable >();
+			objectType = &type_of< ISerializable >();
 
 		if (!objectItem->getObject())
 		{
 			objectType = m_editor->browseType(objectType);
 			if (objectType)
 			{
-				Ref< Serializable > object = dynamic_type_cast< Serializable* >(objectType->newInstance());
+				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
 				if (object)
 				{
 					objectItem->setObject(object);
@@ -209,10 +209,10 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 	{
 		if (arrayItem->getElementType())
 		{
-			const Type* objectType = m_editor->browseType(arrayItem->getElementType());
+			const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
 			if (objectType)
 			{
-				Ref< Serializable > object = dynamic_type_cast< Serializable* >(objectType->newInstance());
+				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
 				if (object)
 				{
 					m_propertyList->addObject(arrayItem, object);

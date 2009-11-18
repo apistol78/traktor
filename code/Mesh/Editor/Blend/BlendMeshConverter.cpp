@@ -20,7 +20,7 @@ namespace traktor
 
 Ref< MeshResource > BlendMeshConverter::createResource() const
 {
-	return gc_new< BlendMeshResource >();
+	return new BlendMeshResource();
 }
 
 bool BlendMeshConverter::convert(
@@ -28,7 +28,7 @@ bool BlendMeshConverter::convert(
 	const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
-	Stream* meshResourceStream
+	IStream* meshResourceStream
 ) const
 {
 	Writer wr(meshResourceStream);

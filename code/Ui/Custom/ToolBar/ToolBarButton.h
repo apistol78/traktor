@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ToolBarButton_H
 #define traktor_ui_custom_ToolBarButton_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 #include "Ui/Command.h"
 
@@ -25,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolBarButton : public ToolBarItem
 {
-	T_RTTI_CLASS(ToolBarButton)
+	T_RTTI_CLASS;
 
 public:
 	enum ButtonStyles

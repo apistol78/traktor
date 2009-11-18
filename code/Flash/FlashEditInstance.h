@@ -24,7 +24,7 @@ class FlashEdit;
  */
 class T_DLLCLASS FlashEditInstance : public FlashCharacterInstance
 {
-	T_RTTI_CLASS(FlashEditInstance)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::list< std::wstring > text_t;

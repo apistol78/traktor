@@ -2,7 +2,6 @@
 #define traktor_net_UrlConnection_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Net/Url.h"
 
 // import/export mechanism.
@@ -16,14 +15,14 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace net
 	{
 
 class T_DLLCLASS UrlConnection : public Object
 {
-	T_RTTI_CLASS(UrlConnection)
+	T_RTTI_CLASS;
 
 public:
 	enum EstablishResult
@@ -43,7 +42,7 @@ public:
 
 	virtual Url getUrl() const = 0;
 
-	virtual Ref< Stream > getStream() = 0;
+	virtual Ref< IStream > getStream() = 0;
 };
 
 	}

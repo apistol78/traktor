@@ -3,7 +3,7 @@
 
 #include <v8.h>
 #define T_HAVE_TYPES
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Script/IScriptContext.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class IScriptClass;
  */
 class T_DLLCLASS ScriptContextJs : public IScriptContext
 {
-	T_RTTI_CLASS(ScriptContextJs)
+	T_RTTI_CLASS;
 
 public:
 	ScriptContextJs();

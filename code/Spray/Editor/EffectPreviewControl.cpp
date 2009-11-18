@@ -64,13 +64,13 @@ EffectPreviewControl::EffectPreviewControl()
 ,	m_guideVisible(true)
 ,	m_velocityVisible(false)
 {
-	m_sourceRenderers[&type_of< ConeSource >()] = gc_new< ConeSourceRenderer >();
-	m_sourceRenderers[&type_of< DiscSource >()] = gc_new< DiscSourceRenderer >();
-	m_sourceRenderers[&type_of< PointSource >()] = gc_new< PointSourceRenderer >();
-	m_sourceRenderers[&type_of< PointSetSource >()] = gc_new< PointSetSourceRenderer >();
-	m_sourceRenderers[&type_of< QuadSource >()] = gc_new< QuadSourceRenderer >();
-	m_sourceRenderers[&type_of< SphereSource >()] = gc_new< SphereSourceRenderer >();
-	m_sourceRenderers[&type_of< SplineSource >()] = gc_new< SplineSourceRenderer >();
+	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
+	m_sourceRenderers[&type_of< DiscSource >()] = new DiscSourceRenderer();
+	m_sourceRenderers[&type_of< PointSource >()] = new PointSourceRenderer();
+	m_sourceRenderers[&type_of< PointSetSource >()] = new PointSetSourceRenderer();
+	m_sourceRenderers[&type_of< QuadSource >()] = new QuadSourceRenderer();
+	m_sourceRenderers[&type_of< SphereSource >()] = new SphereSourceRenderer();
+	m_sourceRenderers[&type_of< SplineSource >()] = new SplineSourceRenderer();
 }
 
 bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
@@ -91,12 +91,12 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	if (!m_renderView)
 		return false;
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
-	m_renderContext = gc_new< render::RenderContext >(m_renderView);
-	m_pointRenderer = gc_new< PointRenderer >(renderSystem, 1.0f, 1.0f);
+	m_renderContext = new render::RenderContext(m_renderView);
+	m_pointRenderer = new PointRenderer(renderSystem, 1.0f, 1.0f);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonUp));
@@ -305,7 +305,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 				if (!source)
 					continue;
 
-				std::map< const Type*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&source->getType());
+				std::map< const TypeInfo*, Ref< SourceRenderer > >::const_iterator j = m_sourceRenderers.find(&type_of(source));
 				if (j != m_sourceRenderers.end())
 					j->second->render(m_primitiveRenderer, source);
 			}

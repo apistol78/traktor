@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS SwDisplayRenderer : public DisplayRenderer
 {
-	T_RTTI_CLASS(SwDisplayRenderer)
+	T_RTTI_CLASS;
 
 public:
 	SwDisplayRenderer();

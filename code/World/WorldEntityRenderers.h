@@ -3,8 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,16 +25,16 @@ class IEntityRenderer;
  */
 class T_DLLCLASS WorldEntityRenderers : public Object
 {
-	T_RTTI_CLASS(WorldEntityRenderers)
+	T_RTTI_CLASS;
 
 public:
-	typedef std::map< const Type*, IEntityRenderer* > entity_renderer_map_t;
+	typedef std::map< const TypeInfo*, IEntityRenderer* > entity_renderer_map_t;
 
 	void add(IEntityRenderer* entityRenderer);
 
 	void remove(IEntityRenderer* entityRenderer);
 
-	Ref< IEntityRenderer > find(const Type& entityType) const;
+	Ref< IEntityRenderer > find(const TypeInfo& entityType) const;
 
 	const RefArray< IEntityRenderer >& get() const { return m_entityRenderers; }
 

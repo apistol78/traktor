@@ -15,13 +15,13 @@ public:
 
 	virtual void destroy();
 
-	virtual bool setObject(Serializable* object);
+	virtual bool setObject(ISerializable* object);
 
 	virtual bool setText(const std::wstring& text);
 
 	virtual ClipboardContentType getContentType() const;
 
-	virtual Ref< Serializable > getObject() const;
+	virtual Ref< ISerializable > getObject() const;
 
 	virtual std::wstring getText() const;
 

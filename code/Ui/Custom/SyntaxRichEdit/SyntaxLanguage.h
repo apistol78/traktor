@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SyntaxLanguage : public Object
 {
-	T_RTTI_CLASS(SyntaxLanguage)
+	T_RTTI_CLASS;
 
 public:
 	enum State

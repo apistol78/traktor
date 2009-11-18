@@ -13,7 +13,7 @@ class TreeViewWin32;
 
 class TreeViewItemWin32 : public TreeViewItem
 {
-	T_RTTI_CLASS(TreeViewItemWin32)
+	T_RTTI_CLASS;
 
 public:
 	TreeViewItemWin32(TreeViewWin32* owner, TreeViewItem* parent, int image, int expandedImage, HWND hWndTree);

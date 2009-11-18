@@ -6,15 +6,14 @@
 #include "Physics/HeightfieldFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsEditorProfile", PhysicsEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsEditorProfile", PhysicsEditorProfile, scene::ISceneEditorProfile)
 
 void PhysicsEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -35,8 +34,8 @@ void PhysicsEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(gc_new< MeshFactory >(context->getResourceDatabase()));
-	outResourceFactories.push_back(gc_new< HeightfieldFactory >(context->getResourceDatabase()));
+	outResourceFactories.push_back(new MeshFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase()));
 }
 
 void PhysicsEditorProfile::createEntityFactories(
@@ -44,7 +43,7 @@ void PhysicsEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< EntityFactory >(context->getPhysicsManager()));
+	outEntityFactories.push_back(new EntityFactory(context->getPhysicsManager()));
 }
 
 void PhysicsEditorProfile::createEntityRenderers(
@@ -54,7 +53,7 @@ void PhysicsEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(gc_new< EntityRenderer >());
+	outEntityRenderers.push_back(new EntityRenderer());
 }
 
 void PhysicsEditorProfile::createControllerEditorFactories(
@@ -69,7 +68,7 @@ void PhysicsEditorProfile::createEntityEditorFactories(
 	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(gc_new< PhysicsEntityEditorFactory >());
+	outEntityEditorFactories.push_back(new PhysicsEntityEditorFactory());
 }
 
 	}

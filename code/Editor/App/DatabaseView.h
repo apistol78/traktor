@@ -1,8 +1,7 @@
 #ifndef traktor_editor_DatabaseView_H
 #define traktor_editor_DatabaseView_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Container.h"
 
 namespace traktor
@@ -40,12 +39,12 @@ class IWizardTool;
 
 class DatabaseView : public ui::Container
 {
-	T_RTTI_CLASS(EditorPane)
+	T_RTTI_CLASS;
 
 public:
 	class Filter : public Object
 	{
-		T_RTTI_CLASS(Filter)
+		T_RTTI_CLASS;
 
 	public:
 		virtual bool acceptInstance(const db::Instance* instance) const = 0;

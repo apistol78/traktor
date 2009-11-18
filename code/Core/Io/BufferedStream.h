@@ -1,15 +1,14 @@
 #ifndef traktor_BufferedStream_H
 #define traktor_BufferedStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,12 +22,12 @@ namespace traktor
  * This class is designed to improve performance
  * on slow streams by sacrificing local memory.
  */
-class T_DLLCLASS BufferedStream : public Stream
+class T_DLLCLASS BufferedStream : public IStream
 {
-	T_RTTI_CLASS(BufferedStream)
+	T_RTTI_CLASS;
 
 public:
-	BufferedStream(Stream* stream, uint32_t internalBufferSize = 4096);
+	BufferedStream(IStream* stream, uint32_t internalBufferSize = 4096);
 
 	virtual ~BufferedStream();
 
@@ -53,7 +52,7 @@ public:
 	virtual void flush();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	uint32_t m_internalBufferSize;
 	uint8_t* m_readBuf;
 	int32_t m_readBufCnt[2];

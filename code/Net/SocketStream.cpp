@@ -7,7 +7,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketStream", SocketStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketStream", SocketStream, IStream)
 
 SocketStream::SocketStream(Socket* socket, bool readAllowed, bool writeAllowed)
 :	m_socket(socket)
@@ -53,7 +53,7 @@ int SocketStream::available() const
 	return int(queued);
 }
 
-int SocketStream::seek(Stream::SeekOriginType origin, int offset)
+int SocketStream::seek(SeekOriginType origin, int offset)
 {
 	switch (origin)
 	{

@@ -24,14 +24,14 @@ enum MsgStatusType
  */
 class MsgStatus : public IMessage
 {
-	T_RTTI_CLASS(MsgStatus)
+	T_RTTI_CLASS;
 
 public:
 	MsgStatus(MsgStatusType status = StSuccess);
 
 	MsgStatusType getStatus() const { return (MsgStatusType)m_status; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_status;

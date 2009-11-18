@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntityRenderer", MeshEntityRenderer, world::IEntityRenderer)
 
-const TypeSet MeshEntityRenderer::getEntityTypes() const
+const TypeInfoSet MeshEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshEntity >());
 	return typeSet;
 }

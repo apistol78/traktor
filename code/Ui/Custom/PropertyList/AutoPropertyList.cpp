@@ -27,7 +27,7 @@ void removeAllChildren(PropertyList* list, PropertyItem* item)
 		
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AutoPropertyList", AutoPropertyList, PropertyList)
 
-bool AutoPropertyList::bind(Serializable* object, Serializable* outer)
+bool AutoPropertyList::bind(ISerializable* object, ISerializable* outer)
 {
 	removeAllPropertyItems();
 	if (!(m_object = object))
@@ -35,8 +35,10 @@ bool AutoPropertyList::bind(Serializable* object, Serializable* outer)
 
 	m_outer = outer;
 
+	int32_t version = type_of(m_object).getVersion();
+
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, m_object->getVersion(), m_outer))
+	if (!reflector.serialize(m_object, version, m_outer))
 		return false;
 
 	update();
@@ -49,23 +51,27 @@ bool AutoPropertyList::refresh()
 	if (!m_object)
 		return true;
 
+	int32_t version = type_of(m_object).getVersion();
+
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, m_object->getVersion(), m_outer))
+	if (!reflector.serialize(m_object, version, m_outer))
 		return false;
 
 	update();
 	return true;
 }
 
-bool AutoPropertyList::refresh(PropertyItem* parent, Serializable* object)
+bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 {
 	removeAllChildren(this, parent);
 	parent->collapse();
 
 	if (object)
 	{
+		int32_t version = type_of(object).getVersion();
+
 		InspectReflector reflector(this, parent);
-		if (!reflector.serialize(object, object->getVersion(), m_outer))
+		if (!reflector.serialize(object, version, m_outer))
 			return false;
 	}
 
@@ -78,15 +84,17 @@ bool AutoPropertyList::apply()
 	if (!m_object)
 		return false;
 
+	int32_t version = type_of(m_object).getVersion();
+
 	ApplyReflector reflector(this);
 	return reflector.serialize(
 		m_object,
-		m_object->getVersion(),
+		version,
 		m_outer
 	);
 }
 
-bool AutoPropertyList::addObject(PropertyItem* parent, Serializable* object)
+bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 {
 	T_ASSERT_M (m_object, L"No object currently bound to property list");
 
@@ -94,8 +102,8 @@ bool AutoPropertyList::addObject(PropertyItem* parent, Serializable* object)
 
 	InspectReflector reflector(this, parent);
 
-	Ref< Serializable > objectRef(object);
-	if (!(reflector >> Member< Ref< Serializable > >(L"item", objectRef)))
+	Ref< ISerializable > objectRef(object);
+	if (!(reflector >> Member< Ref< ISerializable > >(L"item", objectRef)))
 		return false;
 
 	update();

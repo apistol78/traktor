@@ -2,8 +2,7 @@
 #define traktor_animation_StateGraphEditorPage_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -49,7 +48,7 @@ class Transition;
 
 class T_DLLEXPORT StateGraphEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(StateGraphEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	StateGraphEditorPage(editor::IEditor* editor);

@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS IInputDevice : public Object
 {
-	T_RTTI_CLASS(IInputDevice)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const = 0;

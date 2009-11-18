@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "World/Entity/SpatialGroupEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.SpatialGroupEntityData", SpatialGroupEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpatialGroupEntityData", SpatialGroupEntityData, SpatialEntityData)
 
 void SpatialGroupEntityData::addInstance(EntityInstance* instance)
 {
@@ -53,7 +53,7 @@ void SpatialGroupEntityData::setTransform(const Transform& transform)
 	SpatialEntityData::setTransform(transform);
 }
 
-bool SpatialGroupEntityData::serialize(Serializer& s)
+bool SpatialGroupEntityData::serialize(ISerializer& s)
 {
 	if (!SpatialEntityData::serialize(s))
 		return false;

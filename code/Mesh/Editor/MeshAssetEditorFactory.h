@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS MeshAssetEditorFactory : public editor::IObjectEditorFactory
 {
-	T_RTTI_CLASS(MeshAssetEditorFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
 };

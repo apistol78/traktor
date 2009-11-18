@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Range : public Key
 {
-	T_RTTI_CLASS(Range)
+	T_RTTI_CLASS;
 
 public:
 	Range(int start, int end);

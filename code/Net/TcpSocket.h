@@ -1,7 +1,6 @@
 #ifndef traktor_net_TcpSocket_H
 #define traktor_net_TcpSocket_H
 
-#include "Core/Heap/Ref.h"
 #include "Net/Socket.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class SocketAddressIPv6;
  */
 class T_DLLCLASS TcpSocket : public Socket
 {
-	T_RTTI_CLASS(TcpSocket)
+	T_RTTI_CLASS;
 
 public:
 	TcpSocket();

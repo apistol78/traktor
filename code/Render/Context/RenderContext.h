@@ -2,7 +2,6 @@
 #define traktor_render_RenderContext_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
@@ -32,7 +31,7 @@ class IRenderView;
  */
 class T_DLLCLASS RenderContext : public Object
 {
-	T_RTTI_CLASS(RenderContext)
+	T_RTTI_CLASS;
 
 public:
 	enum

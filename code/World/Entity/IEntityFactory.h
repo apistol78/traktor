@@ -2,7 +2,6 @@
 #define traktor_world_IEntityFactory_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,10 +25,10 @@ class Entity;
  */
 class T_DLLCLASS IEntityFactory : public Object
 {
-	T_RTTI_CLASS(IEntityFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const = 0;
+	virtual const TypeInfoSet getEntityTypes() const = 0;
 
 	virtual Ref< Entity > createEntity(
 		IEntityBuilder* builder,

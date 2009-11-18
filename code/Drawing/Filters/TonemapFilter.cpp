@@ -2,14 +2,13 @@
 #include "Drawing/Filters/TonemapFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TonemapFilter", TonemapFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TonemapFilter", TonemapFilter, IImageFilter)
 
 Ref< Image > TonemapFilter::apply(const Image* image)
 {
@@ -26,7 +25,7 @@ Ref< Image > TonemapFilter::apply(const Image* image)
 	}
 	intensity /= float(image->getWidth() * image->getHeight());
 
-	Ref< Image > final = gc_new< Image >(PixelFormat::getR8G8B8(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(PixelFormat::getR8G8B8(), image->getWidth(), image->getHeight(), image->getPalette());
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{

@@ -2,7 +2,7 @@
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/State.h"
 #include "Animation/Animation/Transition.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 
@@ -11,7 +11,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.StateGraph", StateGraph, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", StateGraph, ISerializable)
 
 void StateGraph::addState(State* state)
 {
@@ -55,7 +55,7 @@ Ref< State > StateGraph::getRootState() const
 	return m_rootState;
 }
 
-bool StateGraph::serialize(Serializer& s)
+bool StateGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< State >(L"states", m_states);
 	s >> MemberRefArray< Transition >(L"transitions", m_transitions);

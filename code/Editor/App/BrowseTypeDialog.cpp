@@ -35,13 +35,13 @@ BrowseTypeDialog::BrowseTypeDialog(Settings* settings)
 {
 }
 
-bool BrowseTypeDialog::create(ui::Widget* parent, const Type* base)
+bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base)
 {
-	std::vector< const Type* > types;
+	std::vector< const TypeInfo* > types;
 	if (base)
 		base->findAllOf(types);
 	else
-		Object::getClassType().findAllOf(types);
+		type_of< Object >().findAllOf(types, false);
 
 	if (types.empty())
 		return false;
@@ -52,64 +52,64 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const Type* base)
 		640,
 		500,
 		ui::ConfigDialog::WsDefaultResizable,
-		gc_new< ui::TableLayout >(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
 
 	addClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventDialogClick));
 
-	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	if (!splitter->create(this, true, 200))
 		return false;
 
-	Ref< ui::Container > left = gc_new< ui::Container >();
-	if (!left->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+	Ref< ui::Container > left = new ui::Container();
+	if (!left->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Static > treeLabel = gc_new< ui::Static >();
+	Ref< ui::Static > treeLabel = new ui::Static();
 	if (!treeLabel->create(left, i18n::Text(L"BROWSE_TYPE_CATEGORY")))
 		return false;
 
-	m_categoryTree = gc_new< ui::TreeView >();
+	m_categoryTree = new ui::TreeView();
 	if (!m_categoryTree->create(left))
 		return false;
 	m_categoryTree->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_categoryTree->addSelectEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventTreeItemSelected));
 
-	Ref< ui::Container > right = gc_new< ui::Container >();
-	if (!right->create(splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"22,100%", 0, 0)))
+	Ref< ui::Container > right = new ui::Container();
+	if (!right->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"22,100%", 0, 0)))
 		return false;
 
-	Ref< ui::Container > rightTop = gc_new< ui::Container >();
-	if (!rightTop->create(right, ui::WsNone, gc_new< ui::TableLayout >(L"100%,*,*", L"100%", 0, 0)))
+	Ref< ui::Container > rightTop = new ui::Container();
+	if (!rightTop->create(right, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"100%", 0, 0)))
 		return false;
 
-	Ref< ui::Static > listLabel = gc_new< ui::Static >();
+	Ref< ui::Static > listLabel = new ui::Static();
 	if (!listLabel->create(rightTop, i18n::Text(L"BROWSE_TYPE_TYPES")))
 		return false;
 
-	m_buttonIcon = gc_new< ui::custom::MiniButton >();
+	m_buttonIcon = new ui::custom::MiniButton();
 	if (!m_buttonIcon->create(rightTop, ui::Bitmap::load(c_ResourceBigIcons, sizeof(c_ResourceBigIcons), L"png")))
 		return false;
 	m_buttonIcon->addClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventButtonClick));
 
-	m_buttonSmall = gc_new< ui::custom::MiniButton >();
+	m_buttonSmall = new ui::custom::MiniButton();
 	if (!m_buttonSmall->create(rightTop, ui::Bitmap::load(c_ResourceSmallIcons, sizeof(c_ResourceSmallIcons), L"png")))
 		return false;
 	m_buttonSmall->addClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventButtonClick));
 
 	int32_t iconSize = m_settings->getProperty< PropertyInteger >(L"Editor.BrowseType.IconSize", 0);
 
-	m_typeList = gc_new< ui::ListView >();
+	m_typeList = new ui::ListView();
 	if (!m_typeList->create(right, ui::WsClientBorder | (iconSize == 0 ? ui::ListView::WsIconNormal : ui::ListView::WsList)))
 		return false;
 	m_typeList->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventListDoubleClick));
 	m_typeList->addImage(ui::Bitmap::load(c_ResourceNew, sizeof(c_ResourceNew), L"png"), 1);
 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 2, 3);
-	for (std::vector< const Type* >::iterator i = types.begin(); i != types.end(); ++i)
+	for (std::vector< const TypeInfo* >::iterator i = types.begin(); i != types.end(); ++i)
 	{
-		const Type* type = *i;
+		const TypeInfo* type = *i;
 
 		std::vector< std::wstring > parts;
 		if (!Split< std::wstring >::any(type->getName(), L".", parts))
@@ -132,11 +132,11 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const Type* base)
 		Ref< ui::ListViewItems > items = group->getData< ui::ListViewItems >(L"ITEMS");
 		if (!items)
 		{
-			items = gc_new< ui::ListViewItems >();
+			items = new ui::ListViewItems();
 			group->setData(L"ITEMS", items);
 		}
 
-		Ref< ui::ListViewItem > item = gc_new< ui::ListViewItem >();
+		Ref< ui::ListViewItem > item = new ui::ListViewItem();
 		item->setImage(0, 0);
 		item->setText(0, className);
 		item->setText(1, type->getName());
@@ -150,9 +150,9 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const Type* base)
 	return true;
 }
 
-const Type* BrowseTypeDialog::getSelectedType() const
+const TypeInfo* BrowseTypeDialog::getSelectedType() const
 {
-	return Type::find(m_typeName);
+	return TypeInfo::find(m_typeName);
 }
 
 void BrowseTypeDialog::eventDialogClick(ui::Event* event)

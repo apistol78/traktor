@@ -2,8 +2,7 @@
 #define traktor_ui_GridRow_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -33,7 +32,7 @@ class T_DLLCLASS GridRow
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(GridRow)
+	T_RTTI_CLASS;
 
 public:
 	enum RowStates

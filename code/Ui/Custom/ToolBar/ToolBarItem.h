@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ToolBarItem_H
 #define traktor_ui_custom_ToolBarItem_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Size.h"
@@ -36,7 +35,7 @@ class T_DLLCLASS ToolBarItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(ToolBarItem)
+	T_RTTI_CLASS;
 
 protected:
 	friend class ToolBar;

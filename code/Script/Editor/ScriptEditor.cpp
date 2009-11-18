@@ -21,7 +21,6 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "I18N/Text.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 
@@ -41,69 +40,69 @@ ScriptEditor::ScriptEditor(editor::IEditor* editor)
 {
 }
 
-bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
+bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
 	m_script = dynamic_type_cast< Script* >(object);
 	if (!m_script)
 		return false;
 
-	m_splitter = gc_new< ui::custom::Splitter >();
+	m_splitter = new ui::custom::Splitter();
 	if (!m_splitter->create(parent, true, 150))
 		return false;
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	if (!container->create(m_splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	Ref< ui::Container > container = new ui::Container();
+	if (!container->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	Ref< ui::custom::ToolBar > dependencyTools = gc_new< ui::custom::ToolBar >();
+	Ref< ui::custom::ToolBar > dependencyTools = new ui::custom::ToolBar();
 	if (!dependencyTools->create(container))
 		return false;
 
 	dependencyTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
-	dependencyTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCRIPT_EDITOR_ADD_DEPENDENCY"), ui::Command(L"Script.Editor.AddDependency"), 0));
-	dependencyTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), ui::Command(L"Script.Editor.RemoveDependency"), 1));
-	dependencyTools->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	dependencyTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), ui::Command(L"Script.Editor.MoveDependencyUp"), 2));
-	dependencyTools->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), ui::Command(L"Script.Editor.MoveDependencyDown"), 3));
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_ADD_DEPENDENCY"), ui::Command(L"Script.Editor.AddDependency"), 0));
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_REMOVE_DEPENDENCY"), ui::Command(L"Script.Editor.RemoveDependency"), 1));
+	dependencyTools->addItem(new ui::custom::ToolBarSeparator());
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_UP"), ui::Command(L"Script.Editor.MoveDependencyUp"), 2));
+	dependencyTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_MOVE_DEPENDENCY_DOWN"), ui::Command(L"Script.Editor.MoveDependencyDown"), 3));
 	dependencyTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyToolClick));
 
-	m_dependencyList = gc_new< ui::ListBox >();
+	m_dependencyList = new ui::ListBox();
 	if (!m_dependencyList->create(container))
 		return false;
 
 	m_dependencyList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyListDoubleClick));
 
-	Ref< ui::Container > containerEdit = gc_new< ui::Container >();
-	if (!containerEdit->create(m_splitter, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%,*", 0, 0)))
+	Ref< ui::Container > containerEdit = new ui::Container();
+	if (!containerEdit->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
 		return false;
 
-	m_edit = gc_new< ui::custom::SyntaxRichEdit >();
+	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, m_script->getText()))
 		return false;
 
 	m_edit->setFont(ui::Font(L"Courier New", 16));
 	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
 
-	m_compileStatus = gc_new< ui::custom::StatusBar >();
+	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
 		return false;
 
 	// Create language specific implementations.
 	{
 		std::wstring syntaxLanguageTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.SyntaxLanguageType");
-		const Type* syntaxLanguageType = Type::find(syntaxLanguageTypeName);
+		const TypeInfo* syntaxLanguageType = TypeInfo::find(syntaxLanguageTypeName);
 		if (syntaxLanguageType)
 		{
-			Ref< ui::custom::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::custom::SyntaxLanguage* >(syntaxLanguageType->newInstance());
+			Ref< ui::custom::SyntaxLanguage > syntaxLanguage = dynamic_type_cast< ui::custom::SyntaxLanguage* >(syntaxLanguageType->createInstance());
 			T_ASSERT (syntaxLanguage);
 			m_edit->setLanguage(syntaxLanguage);
 		}
 
 		std::wstring scriptManagerTypeName = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Editor.ScriptManagerType");
-		const Type* scriptManagerType = Type::find(scriptManagerTypeName);
+		const TypeInfo* scriptManagerType = TypeInfo::find(scriptManagerTypeName);
 		if (scriptManagerType)
 		{
-			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->newInstance());
+			m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
 			T_ASSERT (m_scriptManager);
 
 			m_scriptContext = m_scriptManager->createContext();

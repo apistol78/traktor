@@ -2,7 +2,7 @@
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/EmitterInstance.h"
 #include "Core/Math/Hermite.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -13,7 +13,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SplineSource", SplineSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SplineSource", SplineSource, Source)
 
 SplineSource::SplineSource()
 :	m_mode(MdRandom)
@@ -66,7 +66,7 @@ void SplineSource::emit(
 	}
 }
 
-bool SplineSource::serialize(Serializer& s)
+bool SplineSource::serialize(ISerializer& s)
 {
 	const MemberEnum< Mode >::Key c_Mode_Keys[] =
 	{
@@ -91,7 +91,7 @@ bool SplineSource::serialize(Serializer& s)
 	return true;
 }
 
-bool SplineSource::Key::serialize(Serializer& s)
+bool SplineSource::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T);
 	s >> Member< Vector4 >(L"value", value);

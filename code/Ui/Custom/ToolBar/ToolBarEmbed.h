@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ToolBarEmbed_H
 #define traktor_ui_custom_ToolBarEmbed_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class Widget;
  */
 class T_DLLCLASS ToolBarEmbed : public ToolBarItem
 {
-	T_RTTI_CLASS(ToolBarEmbed)
+	T_RTTI_CLASS;
 
 public:
 	ToolBarEmbed(Widget* widget, int width);

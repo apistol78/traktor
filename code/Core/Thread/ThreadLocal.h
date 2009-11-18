@@ -14,7 +14,7 @@ namespace traktor
  */
 class T_DLLCLASS ThreadLocal : public Object
 {
-	T_RTTI_CLASS(ThreadLocal)
+	T_RTTI_CLASS;
 
 public:
 	ThreadLocal();

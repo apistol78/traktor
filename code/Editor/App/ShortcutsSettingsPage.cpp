@@ -12,28 +12,28 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/ShortcutEdit.h"
 #include "I18N/Text.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.ShortcutsSettingsPage", ShortcutsSettingsPage, ISettingsPage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", ShortcutsSettingsPage, ISettingsPage)
 
 bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	if (!container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%,*", 0, 4)))
+	Ref< ui::Container > container = new ui::Container();
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4)))
 		return false;
 
-	m_gridShortcuts = gc_new< ui::custom::GridView >();
+	m_gridShortcuts = new ui::custom::GridView();
 	m_gridShortcuts->create(container, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
-	m_gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
-	m_gridShortcuts->addColumn(gc_new< ui::custom::GridColumn >(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
+	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_COMMAND"), 200));
+	m_gridShortcuts->addColumn(new ui::custom::GridColumn(i18n::Text(L"EDITOR_SETTINGS_SHORTCUT"), 200));
 	m_gridShortcuts->addSelectEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutSelect));
 
-	m_editShortcut = gc_new< ui::custom::ShortcutEdit >();
+	m_editShortcut = new ui::custom::ShortcutEdit();
 	m_editShortcut->create(container, 0, ui::VkNull, ui::WsClientBorder);
 	m_editShortcut->addChangeEventHandler(ui::createMethodHandler(this, &ShortcutsSettingsPage::eventShortcutModified));
 
@@ -45,13 +45,13 @@ bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, co
 			Ref< PropertyKey > propertyKey = dynamic_type_cast< PropertyKey* >(shortcutGroup->getProperty(i->getName()));
 
 			// Create a copy of property key as we don't want to modify settings without being applied.
-			propertyKey = gc_new< PropertyKey >(cref(PropertyKey::get(propertyKey)));
+			propertyKey = new PropertyKey(PropertyKey::get(propertyKey));
 
-			Ref< ui::custom::GridRow > row = gc_new< ui::custom::GridRow >();
-			row->addItem(gc_new< ui::custom::GridItem >(
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+			row->addItem(new ui::custom::GridItem(
 				i->getName()
 			));
-			row->addItem(gc_new< ui::custom::GridItem >(
+			row->addItem(new ui::custom::GridItem(
 				i18n::Text(L"EDITOR_SETTINGS_SHORTCUT_NOT_ASSIGNED")
 			));
 			row->setData(L"PROPERTYKEY", propertyKey);
@@ -73,9 +73,9 @@ bool ShortcutsSettingsPage::apply(Settings* settings)
 {
 	Ref< PropertyGroup > shortcutGroup = checked_type_cast< PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (shortcutGroup)
-		shortcutGroup = gc_new< PropertyGroup >(cref(PropertyGroup::get(shortcutGroup)));
+		shortcutGroup = new PropertyGroup(PropertyGroup::get(shortcutGroup));
 	else
-		shortcutGroup = gc_new< PropertyGroup >();
+		shortcutGroup = new PropertyGroup();
 
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)
@@ -166,10 +166,10 @@ void ShortcutsSettingsPage::eventShortcutModified(ui::Event* event)
 	Ref< ui::custom::GridRow > gridRow = m_editShortcut->getData< ui::custom::GridRow >(L"GRIDROW");
 	if (gridRow)
 	{
-		gridRow->setData(L"PROPERTYKEY", gc_new< PropertyKey >(cref(std::make_pair(
+		gridRow->setData(L"PROPERTYKEY", new PropertyKey(std::make_pair(
 			m_editShortcut->getKeyState(),
 			m_editShortcut->getVirtualKey()
-		))));
+		)));
 		updateShortcutGrid();
 	}
 }

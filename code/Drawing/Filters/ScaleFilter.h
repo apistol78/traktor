@@ -1,14 +1,14 @@
 #ifndef traktor_drawing_ScaleFilter_H
 #define traktor_drawing_ScaleFilter_H
 
-#include "Drawing/ImageFilter.h"
+#include "Drawing/IImageFilter.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,9 +22,9 @@ namespace traktor
  * Magnify or minify image, either using point sampling or
  * linear filtering.
  */
-class T_DLLCLASS ScaleFilter : public ImageFilter
+class T_DLLCLASS ScaleFilter : public IImageFilter
 {
-	T_RTTI_CLASS(ScaleFilter)
+	T_RTTI_CLASS;
 
 public:
 	// Scale method when image is scaled down.

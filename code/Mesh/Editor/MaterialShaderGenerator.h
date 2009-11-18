@@ -2,7 +2,6 @@
 #define traktor_mesh_MaterialShaderGenerator_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {
@@ -33,7 +32,7 @@ class Material;
 
 class MaterialShaderGenerator : public Object
 {
-	T_RTTI_CLASS(MaterialShaderGenerator)
+	T_RTTI_CLASS;
 
 public:
 	MaterialShaderGenerator(db::Database* database, const model::Model* model);

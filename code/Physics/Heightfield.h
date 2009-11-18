@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace physics
 	{
@@ -25,16 +25,16 @@ class Stream;
  */
 class T_DLLCLASS Heightfield : public Object
 {
-	T_RTTI_CLASS(Heightfield)
+	T_RTTI_CLASS;
 
 public:
 	Heightfield(uint32_t size, const Vector4& worldExtent);
 
 	virtual ~Heightfield();
 
-	bool read(Stream* stream);
+	bool read(IStream* stream);
 
-	bool write(Stream* stream);
+	bool write(IStream* stream);
 
 	float getSampleBilinear(float x, float z) const;
 

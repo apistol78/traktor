@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolTip : public ToolForm
 {
-	T_RTTI_CLASS(ToolTip)
+	T_RTTI_CLASS;
 
 public:
 	enum Events
