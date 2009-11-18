@@ -80,7 +80,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	if (bit_depth == 8 && (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA))
 	{
-		Ref< const PixelFormat > pixelFormat;
+		PixelFormat pixelFormat;
 #if defined(T_LITTLE_ENDIAN)
 		if (color_type == PNG_COLOR_TYPE_RGB)
 			pixelFormat = PixelFormat::getR8G8B8();
@@ -99,7 +99,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 		const void** rows = (const void **)png_get_rows(png_ptr, info_ptr);
 		for (uint32_t i = 0; i < height; ++i)
 		{
-			int rowsize = image->getPixelFormat()->getByteSize() * width;
+			int rowsize = image->getPixelFormat().getByteSize() * width;
 			std::memcpy(
 				data,
 				rows[i],
@@ -149,7 +149,7 @@ bool ImageFormatPng::write(IStream* stream, Image* image)
 		image->getWidth(),
 		image->getHeight(),
 		8,
-		(image->getPixelFormat()->getAlphaBits() > 0) ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB,
+		(image->getPixelFormat().getAlphaBits() > 0) ? PNG_COLOR_TYPE_RGB_ALPHA : PNG_COLOR_TYPE_RGB,
 		PNG_INTERLACE_NONE,
 		PNG_COMPRESSION_TYPE_DEFAULT,
 		PNG_FILTER_TYPE_DEFAULT
@@ -157,14 +157,14 @@ bool ImageFormatPng::write(IStream* stream, Image* image)
 
 	Ref< Image > clone = image->clone();
 	clone->convert(
-		(image->getPixelFormat()->getAlphaBits() > 0) ? PixelFormat::getA8R8G8B8() : PixelFormat::getR8G8B8()
+		(image->getPixelFormat().getAlphaBits() > 0) ? PixelFormat::getA8R8G8B8() : PixelFormat::getR8G8B8()
 	);
 
 	const char* data = (const char *)clone->getData();
 	void** rows = (void **)png_malloc(png_ptr, sizeof(void*) * clone->getHeight());
 	for (int32_t i = 0; i < image->getHeight(); ++i)
 	{
-		int rowsize = clone->getPixelFormat()->getByteSize() * clone->getWidth();
+		int rowsize = clone->getPixelFormat().getByteSize() * clone->getWidth();
 		rows[i] = png_malloc(png_ptr, rowsize);
 		memcpy(
 			rows[i],

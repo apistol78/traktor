@@ -54,7 +54,7 @@ FlashBitmap::~FlashBitmap()
 
 bool FlashBitmap::create(drawing::Image* image)
 {
-	bool hasAlpha = image->getPixelFormat()->getAlphaBits() > 0;
+	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0;
 
 	// Ensure pixel format match Flash bits.
 	Ref< drawing::Image > clone = image->clone();

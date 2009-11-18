@@ -6,9 +6,6 @@ namespace traktor
 {
 	namespace drawing
 	{
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PixelFormat", PixelFormat, Object)
-
 		namespace
 		{
 
@@ -196,7 +193,7 @@ PixelFormat::PixelFormat(
 void PixelFormat::convert(
 	const Palette* srcPalette,
 	const void* srcPixels,
-	const PixelFormat* dstFormat,
+	const PixelFormat& dstFormat,
 	const Palette* dstPalette,
 	void* dstPixels,
 	int pixelCount
@@ -282,27 +279,27 @@ void PixelFormat::convert(
 		}
 
 		// rgba => dst
-		if (dstFormat->isPalettized())
+		if (dstFormat.isPalettized())
 		{
 			pack(
 				dst,
-				dstFormat->getByteSize(),
+				dstFormat.getByteSize(),
 				dstPalette->find(clr)
 			);
 		}
-		else if (dstFormat->isFloatPoint())
+		else if (dstFormat.isFloatPoint())
 		{
-			*(float *)&dst[dstFormat->getRedShift()   >> 3] = clr.getRed();
-			*(float *)&dst[dstFormat->getGreenShift() >> 3] = clr.getGreen();
-			*(float *)&dst[dstFormat->getBlueShift()  >> 3] = clr.getBlue();
-			*(float *)&dst[dstFormat->getAlphaShift() >> 3] = clr.getAlpha();
+			*(float *)&dst[dstFormat.getRedShift()   >> 3] = clr.getRed();
+			*(float *)&dst[dstFormat.getGreenShift() >> 3] = clr.getGreen();
+			*(float *)&dst[dstFormat.getBlueShift()  >> 3] = clr.getBlue();
+			*(float *)&dst[dstFormat.getAlphaShift() >> 3] = clr.getAlpha();
 		}
-		else if (dstFormat->getColorBits() <= 32)
+		else if (dstFormat.getColorBits() <= 32)
 		{
-			uint32_t rmx = ((1 << dstFormat->getRedBits()  ) - 1);
-			uint32_t gmx = ((1 << dstFormat->getGreenBits()) - 1);
-			uint32_t bmx = ((1 << dstFormat->getBlueBits() ) - 1);
-			uint32_t amx = ((1 << dstFormat->getAlphaBits()) - 1);
+			uint32_t rmx = ((1 << dstFormat.getRedBits()  ) - 1);
+			uint32_t gmx = ((1 << dstFormat.getGreenBits()) - 1);
+			uint32_t bmx = ((1 << dstFormat.getBlueBits() ) - 1);
+			uint32_t amx = ((1 << dstFormat.getAlphaBits()) - 1);
 
 			uint32_t r = uint32_t(clamp(clr.getRed()) * rmx);
 			uint32_t g = uint32_t(clamp(clr.getGreen()) * gmx);
@@ -311,20 +308,20 @@ void PixelFormat::convert(
 
 			pack(
 				dst,
-				dstFormat->getByteSize(),
-				(r << dstFormat->getRedShift()) |
-				(g << dstFormat->getGreenShift()) |
-				(b << dstFormat->getBlueShift()) |
-				(a << dstFormat->getAlphaShift())
+				dstFormat.getByteSize(),
+				(r << dstFormat.getRedShift()) |
+				(g << dstFormat.getGreenShift()) |
+				(b << dstFormat.getBlueShift()) |
+				(a << dstFormat.getAlphaShift())
 			);
 		}
-		else	// dstFormat->getColorBits() > 32
+		else	// dstFormat.getColorBits() > 32
 		{
 			tmp = static_cast< uint8_t >(clamp(clr.getRed()) * 255);
-			tmp >>= (8 - dstFormat->getRedBits());
-			for (i = 0; i < uint32_t(dstFormat->getRedBits()); ++i)
+			tmp >>= (8 - dstFormat.getRedBits());
+			for (i = 0; i < uint32_t(dstFormat.getRedBits()); ++i)
 			{
-				uint32_t o = i + dstFormat->getRedShift();
+				uint32_t o = i + dstFormat.getRedShift();
 				if ((tmp & (1 << i)) != 0)
 					dst[o >> 3] |= 1 << (o & 7);
 				else
@@ -332,10 +329,10 @@ void PixelFormat::convert(
 			}
 		
 			tmp = static_cast< uint8_t >(clamp(clr.getGreen()) * 255);
-			tmp >>= (8 - dstFormat->getGreenBits());
-			for (i = 0; i < uint32_t(dstFormat->getGreenBits()); ++i)
+			tmp >>= (8 - dstFormat.getGreenBits());
+			for (i = 0; i < uint32_t(dstFormat.getGreenBits()); ++i)
 			{
-				uint32_t o = i + dstFormat->getGreenShift();
+				uint32_t o = i + dstFormat.getGreenShift();
 				if ((tmp & (1 << i)) != 0)
 					dst[o >> 3] |= 1 << (o & 7);
 				else
@@ -343,10 +340,10 @@ void PixelFormat::convert(
 			}
 			
 			tmp = static_cast< uint8_t >(clamp(clr.getBlue()) * 255);
-			tmp >>= (8 - dstFormat->getBlueBits());
-			for (i = 0; i < uint32_t(dstFormat->getBlueBits()); ++i)
+			tmp >>= (8 - dstFormat.getBlueBits());
+			for (i = 0; i < uint32_t(dstFormat.getBlueBits()); ++i)
 			{
-				uint32_t o = i + dstFormat->getBlueShift();
+				uint32_t o = i + dstFormat.getBlueShift();
 				if ((tmp & (1 << i)) != 0)
 					dst[o >> 3] |= 1 << (o & 7);
 				else
@@ -354,10 +351,10 @@ void PixelFormat::convert(
 			}
 			
 			tmp = static_cast< uint8_t >(clamp(clr.getAlpha()) * 255);
-			tmp >>= (8 - dstFormat->getAlphaBits());
-			for (i = 0; i < uint32_t(dstFormat->getAlphaBits()); ++i)
+			tmp >>= (8 - dstFormat.getAlphaBits());
+			for (i = 0; i < uint32_t(dstFormat.getAlphaBits()); ++i)
 			{
-				uint32_t o = i + dstFormat->getAlphaShift();
+				uint32_t o = i + dstFormat.getAlphaShift();
 				if ((tmp & (1 << i)) != 0)
 					dst[o >> 3] |= 1 << (o & 7);
 				else
@@ -367,7 +364,7 @@ void PixelFormat::convert(
 
 		// Next pixel
 		src += getByteSize();
-		dst += dstFormat->getByteSize();
+		dst += dstFormat.getByteSize();
 	}
 }
 

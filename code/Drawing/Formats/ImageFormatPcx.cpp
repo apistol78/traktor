@@ -148,7 +148,7 @@ bool ImageFormatPcx::write(IStream* stream, Image* image)
 	PCXHEADER hdr;
 	Writer writer(stream);
 
-	if (!image->getPixelFormat()->isPalettized())
+	if (!image->getPixelFormat().isPalettized())
 		return false;
 
 	hdr.manufacturer = 0x0a;

@@ -37,7 +37,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatTga", ImageFormatTga, IImage
 Ref< Image > ImageFormatTga::read(IStream* stream)
 {
 	TGAHEADER header;
-	Ref< const PixelFormat > pf;
+	PixelFormat pf;
 	Ref< Image > image;
 
 	Reader reader(stream);
@@ -62,7 +62,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 	switch (header.bits)
 	{
 	case 8:
-		pf = new PixelFormat(8, 0xff, 0xff, 0xff, 0xff, false, false);
+		pf = PixelFormat(8, 0xff, 0xff, 0xff, 0xff, false, false);
 		break;
 	case 15:
 		pf = PixelFormat::getR5G5B5();
@@ -74,7 +74,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 		pf = PixelFormat::getR8G8B8();
 		break;
 	case 32:
-		pf = new PixelFormat(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << (header.descriptor & 0x0f)) - 1) << 24, false, false);
+		pf = PixelFormat(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << (header.descriptor & 0x0f)) - 1) << 24, false, false);
 		break;
 	default:
 		return 0;
@@ -83,7 +83,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 	image = new Image(pf, header.width, header.height);
 
 	uint8_t* data = static_cast< uint8_t* >(image->getData());
-	stream->read(data, header.width * header.height * pf->getByteSize());
+	stream->read(data, header.width * header.height * pf.getByteSize());
 
 	if (image != 0)
 	{
@@ -118,14 +118,14 @@ bool ImageFormatTga::write(IStream* stream, Image* image)
 	header.ystart = 0;
 	header.width = image->getWidth();
 	header.height = image->getHeight();
-	header.bits = image->getPixelFormat()->getColorBits();
-	header.descriptor = 0x20 | image->getPixelFormat()->getAlphaBits();
+	header.bits = image->getPixelFormat().getColorBits();
+	header.descriptor = 0x20 | image->getPixelFormat().getAlphaBits();
 
 	Ref< Image > clone = image->clone();
 	if (!clone)
 		return false;
 
-	switch (image->getPixelFormat()->getColorBits())
+	switch (image->getPixelFormat().getColorBits())
 	{
 	case 15:
 		clone->convert(PixelFormat::getR5G5B5());
@@ -138,7 +138,7 @@ bool ImageFormatTga::write(IStream* stream, Image* image)
 		break;
 	case 32:
 		{
-			Ref< PixelFormat > pixelFormat = new PixelFormat(32, 0xff000000, 0x00ff0000, 0x0000ff00, (1 << image->getPixelFormat()->getAlphaBits()) - 1, false, false);
+			PixelFormat pixelFormat(32, 0xff000000, 0x00ff0000, 0x0000ff00, (1 << image->getPixelFormat().getAlphaBits()) - 1, false, false);
 			clone->convert(pixelFormat);
 		}
 		break;
@@ -151,7 +151,7 @@ bool ImageFormatTga::write(IStream* stream, Image* image)
 
 	stream->write(
 		clone->getData(),
-		clone->getWidth() * clone->getHeight() * clone->getPixelFormat()->getByteSize()
+		clone->getWidth() * clone->getHeight() * clone->getPixelFormat().getByteSize()
 	);
 	
 	return true;

@@ -112,14 +112,8 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 	if (rc.getHeight() > height)
 		rc.bottom = rc.top + height;
 
-	Ref< drawing::Image > color;
-	if (image->getPixelFormat() != drawing::PixelFormat::getA8R8G8B8() || image->getPixelFormat() != drawing::PixelFormat::getX8R8G8B8())
-	{
-		color = image->clone();
-		color->convert(drawing::PixelFormat::getA8R8G8B8());
-	}
-	else
-		color = image;
+	Ref< drawing::Image > color = image->clone();
+	color->convert(drawing::PixelFormat::getA8R8G8B8());
 
 	const uint32_t* src = reinterpret_cast< const uint32_t* >(color->getData());
 	uint32_t* dstColor = reinterpret_cast< uint32_t* >(m_pBits);
