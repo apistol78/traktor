@@ -21,7 +21,7 @@ namespace traktor
 		namespace
 		{
 
-const world::EntityData* resolveRealEntityData(db::Database* database, const world::EntityData* entityData)
+Ref< const world::EntityData > resolveRealEntityData(db::Database* database, const world::EntityData* entityData)
 {
 	Ref< world::EntityData > realEntityData;
 	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(entityData))
