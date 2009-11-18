@@ -49,7 +49,7 @@ namespace traktor
 		sizeof(CLASS),								\
 		0,											\
 		false,										\
-		&type_of< SUPER >(),						\
+		&traktor::type_of< SUPER >(),				\
 		0											\
 	);												\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
@@ -61,7 +61,7 @@ namespace traktor
 		VERSION,												\
 		false,													\
 		0,														\
-		new InstanceFactory< CLASS >()							\
+		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -71,8 +71,8 @@ namespace traktor
 		sizeof(CLASS),												\
 		VERSION,													\
 		false,														\
-		&type_of< SUPER >(),										\
-		new InstanceFactory< CLASS >()								\
+		&traktor::type_of< SUPER >(),								\
+		new traktor::InstanceFactory< CLASS >()						\
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -83,7 +83,7 @@ namespace traktor
 		VERSION,												\
 		true,													\
 		0,														\
-		new InstanceFactory< CLASS >()							\
+		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -93,8 +93,8 @@ namespace traktor
 		sizeof(CLASS),											\
 		VERSION,												\
 		true,													\
-		&type_of< SUPER >(),									\
-		new InstanceFactory< CLASS >()							\
+		&traktor::type_of< SUPER >(),							\
+		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
