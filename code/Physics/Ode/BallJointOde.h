@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS BallJointOde : public JointOde< BallJoint >
 {
-	T_RTTI_CLASS(BallJointOde)
+	T_RTTI_CLASS;
 
 public:
 	BallJointOde(DestroyCallback* callback, dJointID jointId, Body* body1, Body* body2);

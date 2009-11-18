@@ -27,7 +27,7 @@ namespace traktor
  */
 class T_DLLCLASS SoundDriverXAudio2 : public ISoundDriver
 {
-	T_RTTI_CLASS(SoundDriverXAudio2)
+	T_RTTI_CLASS;
 
 public:
 	SoundDriverXAudio2();

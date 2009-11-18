@@ -4,7 +4,7 @@
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -13,7 +13,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepLuminance", PostProcessStepLuminance, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -37,13 +37,13 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(resource::IRes
 		}
 	}
 
-	return gc_new< InstanceLuminance >(
+	return new InstanceLuminance(
 		this,
-		cref(sampleOffsets)
+		sampleOffsets
 	);
 }
 
-bool PostProcessStepLuminance::serialize(Serializer& s)
+bool PostProcessStepLuminance::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> Member< uint32_t >(L"source", m_source);

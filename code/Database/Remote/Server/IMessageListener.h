@@ -15,7 +15,7 @@ class IMessage;
  */
 class IMessageListener : public Object
 {
-	T_RTTI_CLASS(IMessageListener)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool notify(const IMessage* message) = 0;

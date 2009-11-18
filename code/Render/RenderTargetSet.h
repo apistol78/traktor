@@ -2,7 +2,6 @@
 #define traktor_render_RenderTargetSet_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +27,7 @@ class ITexture;
  */
 class T_DLLCLASS RenderTargetSet : public Object
 {
-	T_RTTI_CLASS(RenderTargetSet)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSet();

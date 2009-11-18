@@ -26,7 +26,7 @@ class ITexture;
  */
 class T_DLLCLASS IProgram : public Object
 {
-	T_RTTI_CLASS(IProgram);
+	T_RTTI_CLASS;
 
 public:
 	virtual void destroy() = 0;

@@ -1,8 +1,7 @@
 #ifndef traktor_net_HttpChunkStream_H
 #define traktor_net_HttpChunkStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,12 +21,12 @@ namespace traktor
  * \note This stream is read-only and should not
  * be written to.
  */
-class T_DLLCLASS HttpChunkStream : public Stream
+class T_DLLCLASS HttpChunkStream : public IStream
 {
-	T_RTTI_CLASS(HttpChunkStream)
+	T_RTTI_CLASS;
 
 public:
-	HttpChunkStream(Stream* stream);
+	HttpChunkStream(IStream* stream);
 
 	virtual void close();
 
@@ -50,7 +49,7 @@ public:
 	virtual void flush();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	int32_t m_available;
 };
 

@@ -66,7 +66,7 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSmProj", PostProcessStepSmProj, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSmProj", PostProcessStepSmProj, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -80,10 +80,10 @@ Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(resource::IResour
 	if (!shadowMapDiscRotation[0] || !shadowMapDiscRotation[1])
 		return 0;
 
-	return gc_new< InstanceSmProj >(this, shadowMapDiscRotation);
+	return new InstanceSmProj(this, shadowMapDiscRotation);
 }
 
-bool PostProcessStepSmProj::serialize(Serializer& s)
+bool PostProcessStepSmProj::serialize(ISerializer& s)
 {
 	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }

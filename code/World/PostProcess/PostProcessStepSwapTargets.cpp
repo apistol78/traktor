@@ -1,6 +1,6 @@
 #include "World/PostProcess/PostProcessStepSwapTargets.h"
 #include "World/PostProcess/PostProcess.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -8,14 +8,14 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSwapTargets", PostProcessStepSwapTargets, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSwapTargets", PostProcessStepSwapTargets, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSwapTargets::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return gc_new< InstanceSwapTargets >(m_destination, m_source);
+	return new InstanceSwapTargets(m_destination, m_source);
 }
 
-bool PostProcessStepSwapTargets::serialize(Serializer& s)
+bool PostProcessStepSwapTargets::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"destination", m_destination);
 	s >> Member< int32_t >(L"source", m_source);

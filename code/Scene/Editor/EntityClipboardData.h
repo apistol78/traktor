@@ -1,9 +1,8 @@
 #ifndef traktor_scene_EntityClipboardData_H
 #define traktor_scene_EntityClipboardData_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -17,16 +16,16 @@ class EntityInstance;
 	namespace scene
 	{
 
-class EntityClipboardData : public Serializable
+class EntityClipboardData : public ISerializable
 {
-	T_RTTI_CLASS(EntityClipboardData)
+	T_RTTI_CLASS;
 
 public:
 	void addInstance(world::EntityInstance* instance);
 
 	const RefArray< world::EntityInstance >& getInstances() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< world::EntityInstance > m_instances;

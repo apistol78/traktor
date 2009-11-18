@@ -2,9 +2,8 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Palette.h"
-#include "Drawing/ImageFormat.h"
-#include "Drawing/ImageFilter.h"
-#include "Core/Heap/GcNew.h"
+#include "Drawing/IImageFormat.h"
+#include "Drawing/IImageFilter.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/MemoryStream.h"
 
@@ -112,7 +111,7 @@ Image::~Image()
 
 Ref< Image > Image::clone(bool includeData) const
 {
-	Ref< Image > clone = gc_new< Image >(m_pixelFormat, m_width, m_height, m_palette);
+	Ref< Image > clone = new Image(m_pixelFormat, m_width, m_height, m_palette);
 	if (includeData)
 	{
 		std::memcpy(clone->m_data, m_data, m_width * m_height * m_pixelFormat->getByteSize());
@@ -251,7 +250,7 @@ bool Image::setPixel(int32_t x, int32_t y, const Color& color)
 	return true;
 }
 
-Ref< Image > Image::applyFilter(ImageFilter* imageFilter) const
+Ref< Image > Image::applyFilter(IImageFilter* imageFilter) const
 {
 	Ref< Image > image = imageFilter->apply(this);
 	checkData(m_data, m_size);
@@ -286,11 +285,11 @@ Ref< Image > Image::load(const Path& fileName)
 {
 	Ref< Image > image;
 
-	Ref< ImageFormat > imageFormat = ImageFormat::determineFormat(fileName);
+	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(fileName);
 	if (imageFormat == 0)
 		return 0;
 
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (file == 0)
 		return 0;
 
@@ -307,7 +306,7 @@ Ref< Image > Image::load(const void* resource, uint32_t size, const std::wstring
 {
 	Ref< Image > image;
 
-	Ref< ImageFormat > imageFormat = ImageFormat::determineFormat(extension);
+	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
 	if (imageFormat == 0)
 		return 0;
 
@@ -325,11 +324,11 @@ bool Image::save(const Path& fileName)
 	if (!m_data)
 		return false;
 
-	Ref< ImageFormat > imageFormat = ImageFormat::determineFormat(fileName);
+	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(fileName);
 	if (imageFormat == 0)
 		return false;
 
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (file == 0)
 		return false;
 

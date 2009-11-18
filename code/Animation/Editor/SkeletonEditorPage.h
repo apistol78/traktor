@@ -1,7 +1,6 @@
 #ifndef traktor_animation_SkeletonEditorPage_H
 #define traktor_animation_SkeletonEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
 
@@ -70,7 +69,7 @@ class Skeleton;
 
 class T_DLLCLASS SkeletonEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(SkeletonEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	SkeletonEditorPage(editor::IEditor* editor);

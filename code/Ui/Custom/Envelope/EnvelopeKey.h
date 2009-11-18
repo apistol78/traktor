@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS EnvelopeKey : public Object
 {
-	T_RTTI_CLASS(EnvelopeKey)
+	T_RTTI_CLASS;
 
 public:
 	EnvelopeKey(float T = 0.0f, float value = 0.0f);

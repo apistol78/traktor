@@ -7,32 +7,32 @@
 #include "Ui/ListBox.h"
 #include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.ModulesSettingsPage", ModulesSettingsPage, ISettingsPage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ModulesSettingsPage", ModulesSettingsPage, ISettingsPage)
 
 bool ModulesSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	if (!container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%,*", 0, 4)))
+	Ref< ui::Container > container = new ui::Container();
+	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4)))
 		return false;
 
-	m_listModules = gc_new< ui::ListBox >();
+	m_listModules = new ui::ListBox();
 	m_listModules->create(container, i18n::Text(L"EDITOR_SETTINGS_DEPENDENT_MODULES"), ui::ListBox::WsDefault | ui::ListBox::WsSort);
 
-	Ref< ui::Container > containerModulesTools = gc_new< ui::Container >();
-	containerModulesTools->create(container, ui::WsNone, gc_new< ui::TableLayout >(L"*,*", L"100%", 0, 4));
+	Ref< ui::Container > containerModulesTools = new ui::Container();
+	containerModulesTools->create(container, ui::WsNone, new ui::TableLayout(L"*,*", L"100%", 0, 4));
 
-	Ref< ui::Button > buttonAddModule = gc_new< ui::Button >();
+	Ref< ui::Button > buttonAddModule = new ui::Button();
 	buttonAddModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_ADD_MODULE"));
 	buttonAddModule->addClickEventHandler(ui::createMethodHandler(this, &ModulesSettingsPage::eventButtonAddModuleClick));
 
-	Ref< ui::Button > buttonRemoveModule = gc_new< ui::Button >();
+	Ref< ui::Button > buttonRemoveModule = new ui::Button();
 	buttonRemoveModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_REMOVE_MODULE"));
 	buttonRemoveModule->addClickEventHandler(ui::createMethodHandler(this, &ModulesSettingsPage::eventButtonRemoveModuleClick));
 

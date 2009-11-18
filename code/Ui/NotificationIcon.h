@@ -29,7 +29,7 @@ class T_DLLCLASS NotificationIcon
 :	public EventSubject
 ,	public Associative
 {
-	T_RTTI_CLASS(NotificationIcon)
+	T_RTTI_CLASS;
 
 public:
 	NotificationIcon();

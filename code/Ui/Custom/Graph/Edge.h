@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_Edge_H
 #define traktor_ui_custom_Edge_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 #include "Ui/Point.h"
@@ -35,7 +34,7 @@ class T_DLLCLASS Edge
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(Edge)
+	T_RTTI_CLASS;
 
 public:
 	Edge(Pin* source, Pin* destination);

@@ -13,10 +13,10 @@ namespace traktor
  */
 class DbmGetBus : public IMessage
 {
-	T_RTTI_CLASS(DbmGetBus)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

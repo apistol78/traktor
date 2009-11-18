@@ -65,8 +65,8 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 
 void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
 {
-	outLeftPane = gc_new< DockPane >(m_owner, this);
-	outRightPane = gc_new< DockPane >(m_owner, this);
+	outLeftPane = new DockPane(m_owner, this);
+	outRightPane = new DockPane(m_owner, this);
 
 	if (m_widget)
 		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
@@ -127,8 +127,8 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 	{
 		if (m_child[0] && m_child[1])
 		{
-			Ref< DockPane > paneLeft = gc_new< DockPane >(m_owner, this);
-			Ref< DockPane > paneRight = gc_new< DockPane >(m_owner, this);
+			Ref< DockPane > paneLeft = new DockPane(m_owner, this);
+			Ref< DockPane > paneRight = new DockPane(m_owner, this);
 		
 			if (direction == DrNorth || direction == DrWest)
 			{

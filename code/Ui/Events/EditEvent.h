@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS EditEvent : public Event
 {
-	T_RTTI_CLASS(EditEvent)
+	T_RTTI_CLASS;
 	
 public:
 	EditEvent(EventSubject* sender, Object* item, int param, const std::wstring& text);

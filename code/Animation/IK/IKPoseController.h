@@ -1,7 +1,6 @@
 #ifndef traktor_animation_IKPoseController_H
 #define traktor_animation_IKPoseController_H
 
-#include "Core/Heap/Ref.h"
 #include "Animation/IPoseController.h"
 
 // import/export mechanism.
@@ -30,7 +29,7 @@ class Body;
  */
 class T_DLLCLASS IKPoseController : public IPoseController
 {
-	T_RTTI_CLASS(IKPoseController)
+	T_RTTI_CLASS;
 
 public:
 	IKPoseController(physics::PhysicsManager* physicsManager, IPoseController* poseController, uint32_t solverIterations);

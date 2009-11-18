@@ -1,7 +1,6 @@
 #ifndef traktor_spray_PointRenderer_H
 #define traktor_spray_PointRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Matrix44.h"
@@ -47,7 +46,7 @@ struct Vertex;
  */
 class T_DLLCLASS PointRenderer : public Object
 {
-	T_RTTI_CLASS(PointRenderer)
+	T_RTTI_CLASS;
 
 public:
 	PointRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);

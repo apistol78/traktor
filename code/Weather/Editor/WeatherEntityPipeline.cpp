@@ -8,11 +8,11 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.weather.WeatherEntityPipeline", WeatherEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.weather.WeatherEntityPipeline", WeatherEntityPipeline, world::EntityPipeline)
 
-TypeSet WeatherEntityPipeline::getAssetTypes() const
+TypeInfoSet WeatherEntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SkyEntityData >());
 	typeSet.insert(&type_of< CloudEntityData >());
 	return typeSet;
@@ -21,7 +21,7 @@ TypeSet WeatherEntityPipeline::getAssetTypes() const
 bool WeatherEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

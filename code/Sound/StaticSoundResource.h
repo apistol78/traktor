@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticSoundResource : public SoundResource
 {
-	T_RTTI_CLASS(StaticSoundResource)
+	T_RTTI_CLASS;
 };
 
 	}

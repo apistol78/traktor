@@ -14,14 +14,14 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::IEntityRenderer)
 
 EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange)
-:	m_pointRenderer(gc_new< PointRenderer >(renderSystem, cullNearDistance, fadeNearRange))
+:	m_pointRenderer(new PointRenderer(renderSystem, cullNearDistance, fadeNearRange))
 ,	m_defaltTechnique(render::getParameterHandle(L"Default"))
 {
 }
 
-const TypeSet EffectEntityRenderer::getEntityTypes() const
+const TypeInfoSet EffectEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EffectEntity >());
 	return typeSet;
 }

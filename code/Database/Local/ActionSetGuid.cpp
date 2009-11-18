@@ -40,7 +40,7 @@ bool ActionSetGuid::execute(Context* context)
 			return false;
 	}
 	else
-		instanceMeta = gc_new< LocalInstanceMeta >();
+		instanceMeta = new LocalInstanceMeta();
 
 	instanceMeta->setGuid(m_newGuid);
 

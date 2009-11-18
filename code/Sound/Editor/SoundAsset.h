@@ -18,14 +18,14 @@ namespace traktor
 
 class T_DLLCLASS SoundAsset : public editor::Asset
 {
-	T_RTTI_CLASS(SoundAsset)
+	T_RTTI_CLASS;
 
 public:
 	SoundAsset();
 
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class SoundPipeline;

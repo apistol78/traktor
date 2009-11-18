@@ -2,7 +2,6 @@
 #define traktor_ui_IPopupMenu_H
 
 #include "Core/Config.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {

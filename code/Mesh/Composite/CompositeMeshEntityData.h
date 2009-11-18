@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_CompositeMeshEntityData_H
 #define traktor_mesh_CompositeMeshEntityData_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Mesh/MeshEntityData.h"
 
 // import/export mechanism.
@@ -26,12 +26,12 @@ class EntityInstance;
 
 class T_DLLCLASS CompositeMeshEntityData : public MeshEntityData
 {
-	T_RTTI_CLASS(CompositeMeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const RefArray< world::EntityInstance >& getInstances() const { return m_instances; }
 

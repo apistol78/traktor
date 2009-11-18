@@ -5,9 +5,9 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.MeshResource", MeshResource, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshResource", MeshResource, ISerializable)
 
-bool MeshResource::serialize(Serializer& s)
+bool MeshResource::serialize(ISerializer& s)
 {
 	return true;
 }

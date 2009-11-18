@@ -1,7 +1,7 @@
 #ifndef traktor_zip_Volume_H
 #define traktor_zip_Volume_H
 
-#include "Core/Io/Volume.h"
+#include "Core/Io/IVolume.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,9 +18,9 @@ namespace traktor
 	namespace zip
 	{
 	
-class T_DLLCLASS Volume : public traktor::Volume
+class T_DLLCLASS Volume : public IVolume
 {
-	T_RTTI_CLASS(Volume)
+	T_RTTI_CLASS;
 	
 public:
 	Volume(const Path& archive);
@@ -35,7 +35,7 @@ public:
 
 	virtual bool modify(const Path& fileName, uint32_t flags);
 	
-	virtual Ref< Stream > open(const Path& filename, File::Mode mode);
+	virtual Ref< IStream > open(const Path& filename, File::Mode mode);
 	
 	virtual bool exist(const Path& filename);
 	

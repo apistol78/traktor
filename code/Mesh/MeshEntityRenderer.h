@@ -2,7 +2,6 @@
 #define traktor_mesh_MeshEntityRenderer_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityRenderer.h"
 
 // import/export mechanism.
@@ -22,10 +21,10 @@ class MeshEntity;
 
 class T_DLLCLASS MeshEntityRenderer : public world::IEntityRenderer
 {
-	T_RTTI_CLASS(MeshEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		world::WorldContext* worldContext,

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ShowEvent : public Event
 {
-	T_RTTI_CLASS(ShowEvent)
+	T_RTTI_CLASS;
 	
 public:
 	ShowEvent(EventSubject* sender, Object* item, bool visible);

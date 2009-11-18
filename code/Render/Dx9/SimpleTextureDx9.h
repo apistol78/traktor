@@ -3,7 +3,6 @@
 
 #include "Render/ISimpleTexture.h"
 #include "Render/Dx9/TextureBaseDx9.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class T_DLLCLASS SimpleTextureDx9
 :	public ISimpleTexture
 ,	public TextureBaseDx9
 {
-	T_RTTI_CLASS(ISimpleTexture)
+	T_RTTI_CLASS;
 
 public:
 	SimpleTextureDx9(ContextDx9* context);

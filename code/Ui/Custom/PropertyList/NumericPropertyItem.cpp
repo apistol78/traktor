@@ -78,12 +78,12 @@ void NumericPropertyItem::setLimit(double limitMin, double limitMax)
 void NumericPropertyItem::createInPlaceControls(Widget* parent)
 {
 	T_ASSERT (!m_editor);
-	m_editor = gc_new< Edit >();
+	m_editor = new Edit();
 	m_editor->create(
 		parent,
 		L"",
 		WsNone,
-		m_hex ? 0 : gc_new< NumericEditValidator >(
+		m_hex ? 0 : new NumericEditValidator(
 			m_floatPoint,
 			m_limitMin,
 			m_limitMax

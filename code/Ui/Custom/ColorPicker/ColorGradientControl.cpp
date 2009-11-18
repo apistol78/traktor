@@ -25,7 +25,7 @@ bool ColorGradientControl::create(Widget* parent, int style, const Color& color)
 	addMouseMoveEventHandler(createMethodHandler(this, &ColorGradientControl::eventMouseMove));
 	addPaintEventHandler(createMethodHandler(this, &ColorGradientControl::eventPaint));
 
-	m_gradientBitmap = gc_new< Bitmap >(256, 256);
+	m_gradientBitmap = new Bitmap(256, 256);
 
 	setColor(color, true);
 	update();

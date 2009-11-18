@@ -11,14 +11,14 @@
 #include "Render/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthEntityData", UndergrowthEntityData, world::EntityData)
 
 UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
@@ -79,7 +79,7 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 		m_settings.density * 4 * 2 - 1
 	);
 
-	return gc_new< UndergrowthEntity >(
+	return new UndergrowthEntity(
 		resourceManager,
 		m_heightfield,
 		m_materialMask,
@@ -91,7 +91,7 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 	);
 }
 
-bool UndergrowthEntityData::serialize(Serializer& s)
+bool UndergrowthEntityData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< MaterialMask, MaterialMaskResource >(L"materialMask", m_materialMask);

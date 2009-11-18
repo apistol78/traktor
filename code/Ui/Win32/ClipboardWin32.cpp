@@ -19,7 +19,7 @@ void ClipboardWin32::destroy()
 	delete this;
 }
 
-bool ClipboardWin32::setObject(Serializable* object)
+bool ClipboardWin32::setObject(ISerializable* object)
 {
 	if (!object)
 		return false;
@@ -92,7 +92,7 @@ ClipboardContentType ClipboardWin32::getContentType() const
 	return contentType;
 }
 
-Ref< Serializable > ClipboardWin32::getObject() const
+Ref< ISerializable > ClipboardWin32::getObject() const
 {
 	if (!OpenClipboard(NULL))
 		return 0;
@@ -107,7 +107,7 @@ Ref< Serializable > ClipboardWin32::getObject() const
 	uint32_t* ptr = (uint32_t*)GlobalLock(handle);
 	T_ASSERT (ptr);
 	MemoryStream ms(&ptr[1], *ptr);
-	Ref< Serializable > object = BinarySerializer(&ms).readObject();
+	Ref< ISerializable > object = BinarySerializer(&ms).readObject();
 	GlobalUnlock(handle);
 
 	CloseClipboard();

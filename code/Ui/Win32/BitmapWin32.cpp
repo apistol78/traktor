@@ -1,7 +1,6 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Math/Color.h"
 
 #if defined(T_USE_GDI_PLUS)
@@ -174,7 +173,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 
 Ref< drawing::Image > BitmapWin32::getImage() const
 {
-	Ref< drawing::Image > image = gc_new< drawing::Image >(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), m_width, m_height);
 
 	const uint32_t* srcColor = reinterpret_cast< const uint32_t* >(m_pBits);
 	const uint32_t* srcAlpha = reinterpret_cast< const uint32_t* >(m_pBitsPreMulAlpha);

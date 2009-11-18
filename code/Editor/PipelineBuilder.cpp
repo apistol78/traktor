@@ -10,7 +10,7 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Misc/Adler32.h"
@@ -48,7 +48,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		(*i)->sourceAssetHash = DeepHash(checked_type_cast< const Serializable* >((*i)->sourceAsset)).get();
+		(*i)->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >((*i)->sourceAsset)).get();
 
 		// Have source asset been modified?
 		if (!rebuild)
@@ -251,11 +251,11 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		return 0;
 }
 
-Ref< const Serializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
+Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
-	Ref< Serializable > object;
+	Ref< ISerializable > object;
 
-	std::map< Guid, Ref< Serializable > >::iterator i = m_readCache.find(instanceGuid);
+	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
 		object = i->second;
 	else
@@ -288,7 +288,7 @@ bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, const
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->put(guid, hash);
+	Ref< IStream > stream = m_cache->put(guid, hash);
 	if (stream)
 	{
 		Writer writer(stream);
@@ -314,7 +314,7 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash)
 {
 	bool result = false;
 
-	Ref< Stream > stream = m_cache->get(guid, hash);
+	Ref< IStream > stream = m_cache->get(guid, hash);
 	if (stream)
 	{
 		Reader reader(stream);
@@ -376,7 +376,7 @@ uint32_t PipelineBuilder::externalFileHash(const Path& path)
 	Adler32 adler;
 	adler.begin();
 
-	Ref< Stream > stream = FileSystem::getInstance().open(path, File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(path, File::FmRead);
 	if (stream)
 	{
 		uint8_t buffer[4096];

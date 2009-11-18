@@ -1,13 +1,14 @@
 #ifndef traktor_db_PhysicalAccess_H
 #define traktor_db_PhysicalAccess_H
 
-#include "Core/Heap/Ref.h"
+#include <string>
+#include "Core/Ref.h"
 
 namespace traktor
 {
 
 class Path;
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -18,9 +19,9 @@ Path getInstanceMetaPath(const Path& instancePath);
 
 Path getInstanceDataPath(const Path& instancePath, const std::wstring& dataName);
 
-Ref< Serializable > readPhysicalObject(const Path& objectPath);
+Ref< ISerializable > readPhysicalObject(const Path& objectPath);
 
-bool writePhysicalObject(const Path& objectPath, const Serializable* object, bool binary);
+bool writePhysicalObject(const Path& objectPath, const ISerializable* object, bool binary);
 
 template < typename ObjectType >
 Ref< ObjectType > readPhysicalObject(const Path& objectPath)

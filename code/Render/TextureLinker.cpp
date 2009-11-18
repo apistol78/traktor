@@ -1,7 +1,6 @@
 #include "Render/TextureLinker.h"
 #include "Render/ProgramResource.h"
 #include "Render/IProgram.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {

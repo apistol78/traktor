@@ -42,7 +42,7 @@ class IMeshParameterCallback;
 
 class T_DLLCLASS IndoorMesh : public Object
 {
-	T_RTTI_CLASS(IndoorMesh)
+	T_RTTI_CLASS;
 
 public:
 	IndoorMesh();

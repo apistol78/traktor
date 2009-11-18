@@ -14,7 +14,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.ScenePipeline", ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
@@ -42,9 +42,9 @@ uint32_t ScenePipeline::getVersion() const
 	return 4;
 }
 
-TypeSet ScenePipeline::getAssetTypes() const
+TypeInfoSet ScenePipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SceneAsset >());
 	return typeSet;
 }
@@ -52,7 +52,7 @@ TypeSet ScenePipeline::getAssetTypes() const
 bool ScenePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -64,7 +64,7 @@ bool ScenePipeline::buildDependencies(
 
 bool ScenePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

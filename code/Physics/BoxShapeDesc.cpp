@@ -1,5 +1,5 @@
 #include "Physics/BoxShapeDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.BoxShapeDesc", BoxShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.BoxShapeDesc", BoxShapeDesc, ShapeDesc)
 
 BoxShapeDesc::BoxShapeDesc()
 :	m_extent(0.0f, 0.0f, 0.0f, 0.0f)
@@ -24,7 +24,7 @@ const Vector4& BoxShapeDesc::getExtent() const
 	return m_extent;
 }
 
-bool BoxShapeDesc::serialize(Serializer& s)
+bool BoxShapeDesc::serialize(ISerializer& s)
 {
 	if (!ShapeDesc::serialize(s))
 		return false;

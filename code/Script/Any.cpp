@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Script/Any.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Misc/String.h"
 
 namespace traktor

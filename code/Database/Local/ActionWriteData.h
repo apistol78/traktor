@@ -2,13 +2,12 @@
 #define traktor_db_ActionWriteData_H
 
 #include "Database/Local/Action.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace db
 	{
@@ -18,7 +17,7 @@ class Stream;
  */
 class ActionWriteData : public Action
 {
-	T_RTTI_CLASS(Action)
+	T_RTTI_CLASS;
 
 public:
 	ActionWriteData(const Path& instancePath, const std::wstring& dataName);
@@ -29,13 +28,13 @@ public:
 
 	virtual void clean(Context* context);
 
-	const Ref< Stream >& getStream() const { return m_dataStream; }
+	const Ref< IStream >& getStream() const { return m_dataStream; }
 
 private:
 	Path m_instancePath;
 	std::wstring m_dataName;
 	std::vector< uint8_t > m_dataBuffer;
-	Ref< Stream > m_dataStream;
+	Ref< IStream > m_dataStream;
 	bool m_existingBlob;
 };
 

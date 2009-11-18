@@ -1,6 +1,5 @@
 #include "Graphics/Dd7/GraphicsSystemDd7.h"
 #include "Graphics/Dd7/SurfaceDd7.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -24,7 +23,7 @@ bool getDDPixelFormat(PixelFormatEnum pixelFormat, DDPIXELFORMAT& ddpf)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemDd7", GraphicsSystemDd7, GraphicsSystem)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemDd7", GraphicsSystemDd7, IGraphicsSystem)
 
 bool GraphicsSystemDd7::getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const
 {
@@ -160,8 +159,8 @@ bool GraphicsSystemDd7::create(const CreateDesc& createDesc)
 		m_bltFlip = true;
 	}
 
-	m_primary = gc_new< SurfaceDd7 >(m_ddsPrimary);
-	m_secondary = gc_new< SurfaceDd7 >(m_ddsSecondary);
+	m_primary = new SurfaceDd7(m_ddsPrimary);
+	m_secondary = new SurfaceDd7(m_ddsSecondary);
 
 	return true;
 }
@@ -197,17 +196,17 @@ bool GraphicsSystemDd7::resize(int width, int height)
 	return true;
 }
 
-Ref< Surface > GraphicsSystemDd7::getPrimarySurface()
+Ref< ISurface > GraphicsSystemDd7::getPrimarySurface()
 {
 	return m_primary;
 }
 
-Ref< Surface > GraphicsSystemDd7::getSecondarySurface()
+Ref< ISurface > GraphicsSystemDd7::getSecondarySurface()
 {
 	return m_secondary;
 }
 
-Ref< Surface > GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
+Ref< ISurface > GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
 {
 	DDSURFACEDESC2 ddsd;
 	HRESULT hr;
@@ -226,7 +225,7 @@ Ref< Surface > GraphicsSystemDd7::createOffScreenSurface(const SurfaceDesc& surf
 	if (FAILED(hr))
 		return 0;
 
-	return gc_new< SurfaceDd7 >(ddsOffScreen);
+	return new SurfaceDd7(ddsOffScreen);
 }
 
 void GraphicsSystemDd7::flip(bool waitVBlank)

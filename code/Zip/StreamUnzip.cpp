@@ -6,7 +6,7 @@ namespace traktor
 	namespace zip
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.StreamUnzip", StreamUnzip, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.StreamUnzip", StreamUnzip, IStream)
 
 StreamUnzip::StreamUnzip(unzFile file) :
 	m_file(file)

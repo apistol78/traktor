@@ -13,7 +13,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
@@ -35,7 +35,7 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::IPipeline)
 
 bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -52,9 +52,9 @@ uint32_t SoundPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet SoundPipeline::getAssetTypes() const
+TypeInfoSet SoundPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SoundAsset >());
 	return typeSet;
 }
@@ -62,7 +62,7 @@ TypeSet SoundPipeline::getAssetTypes() const
 bool SoundPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -74,7 +74,7 @@ bool SoundPipeline::buildDependencies(
 
 bool SoundPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -87,20 +87,20 @@ bool SoundPipeline::buildOutput(
 
 	Ref< IStreamDecoder > decoder;
 	if (compareIgnoreCase(fileName.getExtension(), L"wav") == 0)
-		decoder = gc_new< sound::WavStreamDecoder >();
+		decoder = new sound::WavStreamDecoder();
 	else if (compareIgnoreCase(fileName.getExtension(), L"flac") == 0)
-		decoder = gc_new< sound::FlacStreamDecoder >();
+		decoder = new sound::FlacStreamDecoder();
 	else if (compareIgnoreCase(fileName.getExtension(), L"mp3") == 0)
-		decoder = gc_new< sound::Mp3StreamDecoder >();
+		decoder = new sound::Mp3StreamDecoder();
 	else if (compareIgnoreCase(fileName.getExtension(), L"ogg") == 0)
-		decoder = gc_new< sound::OggStreamDecoder >();
+		decoder = new sound::OggStreamDecoder();
 	else
 	{
 		log::error << L"Failed to build sound asset, unable to determine decoder from extension" << Endl;
 		return false;
 	}
 
-	Ref< Stream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build sound asset, unable to open source" << Endl;
@@ -109,7 +109,7 @@ bool SoundPipeline::buildOutput(
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = gc_new< StreamSoundResource >(&decoder->getType());
+		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder));
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -123,7 +123,7 @@ bool SoundPipeline::buildOutput(
 
 		instance->setObject(resource);
 
-		Ref< Stream > stream = instance->writeData(L"Data");
+		Ref< IStream > stream = instance->writeData(L"Data");
 		if (!stream)
 		{
 			log::error << L"Failed to build sound asset, unable to create data stream" << Endl;
@@ -157,7 +157,7 @@ bool SoundPipeline::buildOutput(
 	}
 	else
 	{
-		Ref< StaticSoundResource > resource = gc_new< StaticSoundResource >();
+		Ref< StaticSoundResource > resource = new StaticSoundResource();
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -171,7 +171,7 @@ bool SoundPipeline::buildOutput(
 
 		instance->setObject(resource);
 
-		Ref< Stream > stream = instance->writeData(L"Data");
+		Ref< IStream > stream = instance->writeData(L"Data");
 		if (!stream)
 		{
 			log::error << L"Failed to build sound asset, unable to create data stream" << Endl;

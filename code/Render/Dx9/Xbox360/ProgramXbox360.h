@@ -4,13 +4,13 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "Core/Heap/Ref.h"
+#include "Core/RefArray.h"
+#include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/Dx9/StateBlockDx9.h"
 #include "Render/Dx9/ParameterMap.h"
-#include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,7 +38,7 @@ class T_DLLCLASS ProgramXbox360
 :	public IProgram
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(ProgramXbox360)
+	T_RTTI_CLASS;
 
 public:
 	struct Uniform

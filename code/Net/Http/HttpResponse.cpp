@@ -1,6 +1,6 @@
 #include <string>
 #include "Net/Http/HttpResponse.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ HttpResponse::HttpResponse()
 {
 }
 	
-bool HttpResponse::parse(Stream* stream)
+bool HttpResponse::parse(IStream* stream)
 {
 	if (!stream)
 		return false;

@@ -3,16 +3,16 @@
 
 #include <string>
 #include <vector>
-#include "Core/Singleton/Singleton.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Singleton/ISingleton.h"
 #include "Core/Thread/CriticalSection.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
@@ -26,10 +26,8 @@ class Thread;
  * All threads should be created and destroyed
  * through the ThreadManager.
  */
-class T_DLLCLASS ThreadManager : public Singleton
+class T_DLLCLASS ThreadManager : public ISingleton
 {
-	T_RTTI_CLASS(ThreadManager)
-
 public:
 	static ThreadManager& getInstance();
 

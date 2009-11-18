@@ -1,7 +1,7 @@
 #ifndef traktor_flash_AsMouse_H
 #define traktor_flash_AsMouse_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Flash/Action/ActionClass.h"
 
 namespace traktor
@@ -18,7 +18,7 @@ struct CallArgs;
  */
 class AsMouse : public ActionClass
 {
-	T_RTTI_CLASS(AsMouse)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsMouse > createInstance();

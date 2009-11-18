@@ -66,7 +66,7 @@ Ref< Node > Node::getLastChild() const
 	return m_lastChild;
 }
 
-void Node::writeHtml(Stream* stream)
+void Node::writeHtml(IStream* stream)
 {
 	for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
 		child->writeHtml(stream);

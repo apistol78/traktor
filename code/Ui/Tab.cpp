@@ -68,7 +68,7 @@ int Tab::addImage(Bitmap* image, int imageCount)
 		width = m_image->getSize().cx + image->getSize().cx;
 		height = std::max(m_image->getSize().cy, image->getSize().cy);
 
-		Ref< ui::Bitmap > newImage = gc_new< ui::Bitmap >(width, height);
+		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
 		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
 		m_image = newImage;

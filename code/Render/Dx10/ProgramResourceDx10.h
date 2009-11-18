@@ -2,7 +2,6 @@
 #define traktor_render_ProgramResourceDx10_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/ProgramResource.h"
 #include "Render/Dx10/Platform.h"
@@ -17,10 +16,10 @@ namespace traktor
  */
 class ProgramResourceDx10 : public ProgramResource
 {
-	T_RTTI_CLASS(ProgramResourceDx10)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ProgramDx10;

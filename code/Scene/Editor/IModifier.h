@@ -21,7 +21,7 @@ class SceneEditorContext;
 /*! \brief Selection modifier abstraction. */
 class IModifier : public Object
 {
-	T_RTTI_CLASS(IModifier)
+	T_RTTI_CLASS;
 
 public:
 	virtual void draw(

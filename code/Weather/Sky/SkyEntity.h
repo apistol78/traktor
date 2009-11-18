@@ -36,7 +36,7 @@ class IndexBuffer;
 
 class T_DLLCLASS SkyEntity : public world::Entity
 {
-	T_RTTI_CLASS(SkyEntity)
+	T_RTTI_CLASS;
 
 public:
 	SkyEntity(

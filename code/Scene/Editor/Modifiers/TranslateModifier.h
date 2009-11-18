@@ -11,7 +11,7 @@ namespace traktor
 /*! \brief Translation modifier. */
 class TranslateModifier : public IModifier
 {
-	T_RTTI_CLASS(TranslateModifier)
+	T_RTTI_CLASS;
 
 public:
 	virtual void draw(

@@ -17,7 +17,7 @@ namespace traktor
  */
 class ContextOpenGLES2 : public IContext
 {
-	T_RTTI_CLASS(ContextOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool enter();

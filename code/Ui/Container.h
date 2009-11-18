@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Container_H
 #define traktor_ui_Container_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class Layout;
  */
 class T_DLLCLASS Container : public Widget
 {
-	T_RTTI_CLASS(Container)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, int style = WsNone, Layout* layout = 0);

@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ArticulatedEntity_H
 #define traktor_physics_ArticulatedEntity_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/SpatialEntity.h"
 
 #undef T_DLLCLASS
@@ -24,7 +24,7 @@ class Joint;
  */
 class T_DLLCLASS ArticulatedEntity : public world::SpatialEntity
 {
-	T_RTTI_CLASS(ArticulatedEntity)
+	T_RTTI_CLASS;
 
 public:
 	ArticulatedEntity(

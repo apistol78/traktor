@@ -1,7 +1,6 @@
 #ifndef traktor_db_RemoteInstance_H
 #define traktor_db_RemoteInstance_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Provider/IProviderInstance.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class Connection;
  */
 class RemoteInstance : public IProviderInstance
 {
-	T_RTTI_CLASS(RemoteInstance)
+	T_RTTI_CLASS;
 
 public:
 	RemoteInstance(Connection* connection, uint32_t handle);
@@ -41,15 +40,15 @@ public:
 
 	virtual bool remove();
 
-	virtual Ref< Stream > readObject(const Type*& outSerializerType);
+	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType);
 
-	virtual Ref< Stream > writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType);
+	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 
-	virtual Ref< Stream > readData(const std::wstring& dataName);
+	virtual Ref< IStream > readData(const std::wstring& dataName);
 
-	virtual Ref< Stream > writeData(const std::wstring& dataName);
+	virtual Ref< IStream > writeData(const std::wstring& dataName);
 
 private:
 	Ref< Connection > m_connection;

@@ -519,7 +519,7 @@ public:
 		m_unknown = unknown;
 	}
 
-	virtual const Type& getExportType() const
+	virtual const TypeInfo& getExportType() const
 	{
 		return type_of< ClassType >();
 	}

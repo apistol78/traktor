@@ -24,7 +24,7 @@ class Bitmap;
  */
 class T_DLLCLASS Canvas : public Object
 {
-	T_RTTI_CLASS(Canvas)
+	T_RTTI_CLASS;
 
 public:
 	Canvas(ICanvas* canvas);

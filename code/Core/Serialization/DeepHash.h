@@ -1,20 +1,21 @@
 #ifndef traktor_DeepHash_H
 #define traktor_DeepHash_H
 
+#include "Core/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 /*! \brief Calculate hash of object.
  * \ingroup Core
@@ -25,10 +26,10 @@ class Serializable;
  */
 class T_DLLCLASS DeepHash : public Object
 {
-	T_RTTI_CLASS(DeepHash)
+	T_RTTI_CLASS;
 
 public:
-	DeepHash(const Serializable* object);
+	DeepHash(const ISerializable* object);
 
 	uint32_t get() const;
 
@@ -40,9 +41,9 @@ public:
 
 	bool operator != (const DeepHash* hash) const;
 
-	bool operator == (const Serializable* object) const;
+	bool operator == (const ISerializable* object) const;
 
-	bool operator != (const Serializable* object) const;
+	bool operator != (const ISerializable* object) const;
 
 	bool operator == (uint32_t hash) const;
 

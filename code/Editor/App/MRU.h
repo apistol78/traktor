@@ -2,7 +2,7 @@
 #define traktor_editor_MRU_H
 
 #include <vector>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/Path.h"
 
 namespace traktor
@@ -11,9 +11,9 @@ namespace traktor
 	{
 
 /*! \brief Most-recently-used. */
-class MRU : public traktor::Serializable
+class MRU : public ISerializable
 {
-	T_RTTI_CLASS(MRU)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Called when a file has been successfully used, ie. opened or saved. */
@@ -22,7 +22,7 @@ public:
 	/*! \brief Get array of most recently used files. */
 	bool getUsedFiles(std::vector< traktor::Path >& outFilePaths) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_filePaths;

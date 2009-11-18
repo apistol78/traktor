@@ -22,14 +22,14 @@ namespace traktor
  */
 class T_DLLCLASS PostProcessDefineTarget : public PostProcessDefine
 {
-	T_RTTI_CLASS(PostProcessDefineTarget)
+	T_RTTI_CLASS;
 
 public:
 	PostProcessDefineTarget();
 
 	virtual bool define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_id;

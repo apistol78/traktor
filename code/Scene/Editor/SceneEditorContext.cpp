@@ -29,7 +29,7 @@ namespace traktor
 Ref< IEntityEditor > createEntityEditor(
 	SceneEditorContext* context,
 	const RefArray< IEntityEditorFactory >& entityEditorFactories,
-	const Type& entityDataType
+	const TypeInfo& entityDataType
 )
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
@@ -37,8 +37,8 @@ Ref< IEntityEditor > createEntityEditor(
 
 	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
 	{
-		TypeSet entityDataTypes = (*i)->getEntityDataTypes();
-		for (TypeSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
+		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
+		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
 		{
 			if (is_type_of(**j, entityDataType))
 			{
@@ -115,12 +115,12 @@ SceneEditorContext::SceneEditorContext(
 ,	m_time(0.0f)
 {
 	for (int i = 0; i < sizeof_array(m_cameras); ++i)
-		m_cameras[i] = gc_new< Camera >(cref(
+		m_cameras[i] = new Camera(
 			lookAt(
 				Vector4(-4.0f, 4.0f, -4.0f, 1.0f),
 				Vector4(0.0f, 0.0f, 0.0f, 1.0f)
 			)
-		));
+		);
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
@@ -269,7 +269,7 @@ void SceneEditorContext::buildEntities()
 {
 	if (m_sceneAsset)
 	{
-		Ref< EntityAdapterBuilder > entityBuilder = gc_new< EntityAdapterBuilder >(this);
+		Ref< EntityAdapterBuilder > entityBuilder = new EntityAdapterBuilder(this);
 
 		// Create entity factories.
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
@@ -283,7 +283,7 @@ void SceneEditorContext::buildEntities()
 
 		// (Re-)build entities.
 		{
-			Ref< world::IEntityManager > entityManager = gc_new< world::EntityManager >();
+			Ref< world::IEntityManager > entityManager = new world::EntityManager();
 			m_scene = m_sceneAsset->createScene(
 				m_resourceManager,
 				m_renderSystem,
@@ -446,7 +446,7 @@ void SceneEditorContext::cloneSelected()
 		Ref< world::EntityInstance > cloneEntityInstance = DeepClone((*i)->getInstance()).create< world::EntityInstance >();
 		T_ASSERT (cloneEntityInstance);
 
-		Ref< EntityAdapter > cloneEntityAdapter = gc_new< EntityAdapter >(cloneEntityInstance);
+		Ref< EntityAdapter > cloneEntityAdapter = new EntityAdapter(cloneEntityInstance);
 		parentContainerGroup->addChild(cloneEntityAdapter, true);
 
 		(*i)->m_selected = false;

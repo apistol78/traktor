@@ -2,7 +2,6 @@
 #define traktor_ui_xtrme_CanvasXtrme_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Ui/Itf/ICanvas.h"
 #include "Ui/Xtrme/BatchRenderer.h"
 #include "Ui/Xtrme/ImageCache.h"

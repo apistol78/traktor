@@ -13,7 +13,7 @@ namespace traktor
  */
 class StmStatResult : public IMessage
 {
-	T_RTTI_CLASS(StmStatResult)
+	T_RTTI_CLASS;
 
 public:
 	StmStatResult(bool canRead = false, bool canWrite = false, bool canSeek = false, int32_t tell = 0, int32_t available = 0);
@@ -28,7 +28,7 @@ public:
 
 	int32_t available() const { return m_available; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_canRead;

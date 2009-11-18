@@ -27,7 +27,7 @@ class BackgroundWorkerStatus;
 
 class ConvertDatabaseTool : public IEditorTool
 {
-	T_RTTI_CLASS(ConvertDatabaseTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getDescription() const;

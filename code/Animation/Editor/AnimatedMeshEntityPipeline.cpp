@@ -8,11 +8,11 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.AnimatedMeshEntityPipeline", AnimatedMeshEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimatedMeshEntityPipeline", AnimatedMeshEntityPipeline, world::EntityPipeline)
 
-TypeSet AnimatedMeshEntityPipeline::getAssetTypes() const
+TypeInfoSet AnimatedMeshEntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< AnimatedMeshEntityData >());
 	return typeSet;
 }
@@ -20,7 +20,7 @@ TypeSet AnimatedMeshEntityPipeline::getAssetTypes() const
 bool AnimatedMeshEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

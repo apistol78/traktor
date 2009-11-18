@@ -2,7 +2,7 @@
 #define traktor_render_RenderTargetSetSw_H
 
 #include <vector>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
 
 // import/export mechanism.
@@ -26,7 +26,7 @@ class RenderTargetSw;
  */
 class T_DLLCLASS RenderTargetSetSw : public RenderTargetSet
 {
-	T_RTTI_CLASS(RenderTargetSetSw)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSetSw();

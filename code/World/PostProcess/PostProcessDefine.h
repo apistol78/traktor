@@ -1,7 +1,7 @@
 #ifndef traktor_world_PostProcessDefine_H
 #define traktor_world_PostProcessDefine_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,9 +28,9 @@ class PostProcess;
 /*! \brief Post process definition.
  * \ingroup World
  */
-class T_DLLCLASS PostProcessDefine : public Serializable
+class T_DLLCLASS PostProcessDefine : public ISerializable
 {
-	T_RTTI_CLASS(PostProcessDefine)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool define(PostProcess* postProcess, render::IRenderSystem* renderSystem, uint32_t screenWidth, uint32_t screenHeight) = 0;

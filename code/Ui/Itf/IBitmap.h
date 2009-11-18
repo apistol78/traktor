@@ -2,7 +2,7 @@
 #define traktor_ui_IBitmap_H
 
 #include "Core/Config.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Ui/Rect.h"
 
 namespace traktor

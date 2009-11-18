@@ -13,14 +13,14 @@ namespace traktor
  */
 class StmWriteResult : public IMessage
 {
-	T_RTTI_CLASS(StmWriteResult)
+	T_RTTI_CLASS;
 
 public:
 	StmWriteResult(int32_t result = 0);
 
 	uint32_t get() const { return m_result; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_result;

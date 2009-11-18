@@ -1,5 +1,5 @@
 #include "Xml/Node.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {

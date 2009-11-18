@@ -10,11 +10,11 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.TerrainEntityPipeline", TerrainEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEntityPipeline", TerrainEntityPipeline, world::EntityPipeline)
 
-TypeSet TerrainEntityPipeline::getAssetTypes() const
+TypeInfoSet TerrainEntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< UndergrowthEntityData >());
@@ -24,7 +24,7 @@ TypeSet TerrainEntityPipeline::getAssetTypes() const
 bool TerrainEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

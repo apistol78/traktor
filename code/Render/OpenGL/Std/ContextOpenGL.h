@@ -18,7 +18,7 @@ namespace traktor
  */
 class ContextOpenGL : public IContext
 {
-	T_RTTI_CLASS(ContextOpenGL)
+	T_RTTI_CLASS;
 
 public:
 #if defined(_WIN32)

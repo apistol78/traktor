@@ -1,7 +1,6 @@
 #ifndef traktor_animation_AnimatedMeshEntityFactory_H
 #define traktor_animation_AnimatedMeshEntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -36,12 +35,12 @@ class PhysicsManager;
  */
 class T_DLLCLASS AnimatedMeshEntityFactory : public world::IEntityFactory
 {
-	T_RTTI_CLASS(AnimatedMeshEntityFactory)
+	T_RTTI_CLASS;
 
 public:
 	AnimatedMeshEntityFactory(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 

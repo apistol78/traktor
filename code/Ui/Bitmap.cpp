@@ -2,7 +2,6 @@
 #include "Ui/Application.h"
 #include "Ui/Itf/IBitmap.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -165,7 +164,7 @@ Ref< Bitmap > Bitmap::load(const std::wstring& fileName)
 	if (!image)
 		return 0;
 
-	Ref< Bitmap > bitmap = gc_new< Bitmap >();
+	Ref< Bitmap > bitmap = new Bitmap();
 	if (!bitmap->create(image))
 		return 0;
 
@@ -178,7 +177,7 @@ Ref< Bitmap > Bitmap::load(const void* resource, uint32_t size, const std::wstri
 	if (!image)
 		return 0;
 
-	Ref< Bitmap > bitmap = gc_new< Bitmap >();
+	Ref< Bitmap > bitmap = new Bitmap();
 	if (!bitmap->create(image))
 		return 0;
 

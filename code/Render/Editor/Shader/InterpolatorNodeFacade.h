@@ -1,7 +1,6 @@
 #ifndef traktor_render_InterpolatorNodeFacade_H
 #define traktor_render_InterpolatorNodeFacade_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Editor/Shader/NodeFacade.h"
 
 namespace traktor
@@ -21,13 +20,13 @@ class NodeShape;
 
 class InterpolatorNodeFacade : public NodeFacade
 {
-	T_RTTI_CLASS(InterpolatorNodeFacade)
+	T_RTTI_CLASS;
 
 public:
 	InterpolatorNodeFacade();
 
 	virtual Ref< Node > createShaderNode(
-		const Type* nodeType,
+		const TypeInfo* nodeType,
 		editor::IEditor* editor
 	);
 

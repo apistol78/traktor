@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionDictionary : public Object
 {
-	T_RTTI_CLASS(ActionDictionary)
+	T_RTTI_CLASS;
 
 public:
 	ActionDictionary(uint16_t tableSize, const char* tableFirstEntry);

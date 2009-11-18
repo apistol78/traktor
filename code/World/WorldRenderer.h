@@ -1,7 +1,6 @@
 #ifndef traktor_world_WorldRenderer_H
 #define traktor_world_WorldRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Matrix44.h"
@@ -104,7 +103,7 @@ enum WorldRenderFlags
  */
 class T_DLLCLASS WorldRenderer : public Object
 {
-	T_RTTI_CLASS(WorldRenderer)
+	T_RTTI_CLASS;
 
 public:
 	WorldRenderer();

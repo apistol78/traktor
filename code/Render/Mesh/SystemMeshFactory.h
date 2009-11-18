@@ -1,7 +1,6 @@
 #ifndef traktor_render_SystemMeshFactory_H
 #define traktor_render_SystemMeshFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Mesh/MeshFactory.h"
 
 // import/export mechanism.
@@ -22,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS SystemMeshFactory : public MeshFactory
 {
-	T_RTTI_CLASS(SystemMeshFactory)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< Mesh > createMesh(

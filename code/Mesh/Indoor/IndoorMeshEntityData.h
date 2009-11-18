@@ -21,12 +21,12 @@ class IndoorMesh;
 
 class T_DLLCLASS IndoorMeshEntityData : public MeshEntityData
 {
-	T_RTTI_CLASS(IndoorMeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< IndoorMesh >& getMesh() const { return m_mesh; }
 

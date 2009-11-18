@@ -2,7 +2,6 @@
 #define traktor_online_ISaveGame_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,19 +14,19 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace online
 	{
 
 class T_DLLCLASS ISaveGame : public Object
 {
-	T_RTTI_CLASS(ISaveGame)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getName() const = 0;
 
-	virtual Ref< Serializable > getAttachment() const = 0;
+	virtual Ref< ISerializable > getAttachment() const = 0;
 };
 
 	}

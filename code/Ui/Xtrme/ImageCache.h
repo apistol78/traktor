@@ -2,7 +2,6 @@
 #define traktor_ui_xtrme_ImageCache_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 namespace traktor
@@ -25,7 +24,7 @@ class IBitmap;
 
 class ImageCache : public Object
 {
-	T_RTTI_CLASS(ImageCache)
+	T_RTTI_CLASS;
 
 public:
 	ImageCache(render::IRenderSystem* renderSystem);

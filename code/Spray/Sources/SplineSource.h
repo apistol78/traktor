@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS SplineSource : public Source
 {
-	T_RTTI_CLASS(SplineSource)
+	T_RTTI_CLASS;
 
 public:
 	enum Mode
@@ -38,7 +38,7 @@ public:
 		float T;
 		Vector4 value;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	SplineSource();
@@ -52,7 +52,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const AlignedVector< Key >& getKeys() const { return m_keys; }
 

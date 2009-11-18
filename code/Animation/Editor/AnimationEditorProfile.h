@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS AnimationEditorProfile : public scene::ISceneEditorProfile
 {
-	T_RTTI_CLASS(AnimationEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(

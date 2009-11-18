@@ -1,7 +1,6 @@
 #ifndef traktor_editor_TextEditorDialog_H
 #define traktor_editor_TextEditorDialog_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor
@@ -18,7 +17,7 @@ class RichEdit;
 
 class TextEditorDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(TextEditorDialog)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* parent, const std::wstring& initialText);

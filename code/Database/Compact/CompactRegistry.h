@@ -4,9 +4,8 @@
 #include <list>
 #include <map>
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -21,16 +20,16 @@ class CompactRegistry;
 /*! \brief Compact registry block entry.
  * \ingroup Database
  */
-class CompactBlockEntry : public Serializable
+class CompactBlockEntry : public ISerializable
 {
-	T_RTTI_CLASS(CompactBlockEntry)
+	T_RTTI_CLASS;
 
 public:
 	inline void setBlockId(uint32_t blockId) { m_blockId = blockId; }
 
 	inline uint32_t getBlockId() const { return m_blockId; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_blockId;
@@ -39,9 +38,9 @@ private:
 /*! \brief Compact registry group entry.
  * \ingroup Database
  */
-class CompactGroupEntry : public Serializable
+class CompactGroupEntry : public ISerializable
 {
-	T_RTTI_CLASS(CompactGroupEntry)
+	T_RTTI_CLASS;
 
 public:
 	inline void setName(const std::wstring& name) { m_name = name; }
@@ -56,7 +55,7 @@ public:
 
 	inline const RefArray< CompactInstanceEntry >& getChildInstances() const { return m_childInstances; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -67,9 +66,9 @@ private:
 /*! \brief Compact registry instance entry.
  * \ingroup Database
  */
-class CompactInstanceEntry : public Serializable
+class CompactInstanceEntry : public ISerializable
 {
-	T_RTTI_CLASS(CompactInstanceEntry)
+	T_RTTI_CLASS;
 
 public:
 	inline void setName(const std::wstring& name) { m_name = name; }
@@ -90,7 +89,7 @@ public:
 
 	inline std::map< std::wstring, Ref< CompactBlockEntry > >& getDataBlocks() { return m_dataBlocks; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -103,9 +102,9 @@ private:
 /*! \brief Compact registry.
  * \ingroup Database
  */
-class CompactRegistry : public Serializable
+class CompactRegistry : public ISerializable
 {
-	T_RTTI_CLASS(CompactRegistry)
+	T_RTTI_CLASS;
 
 public:
 	CompactGroupEntry* createGroupEntry();
@@ -130,7 +129,7 @@ public:
 
 	inline const RefArray< CompactBlockEntry >& getBlockEntries() const { return m_blockEntries; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< CompactGroupEntry > m_rootGroup;

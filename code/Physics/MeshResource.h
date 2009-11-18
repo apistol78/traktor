@@ -1,7 +1,7 @@
 #ifndef traktor_physics_MeshResource_H
 #define traktor_physics_MeshResource_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,12 @@ namespace traktor
 /*! \brief Mesh geometry resource.
  * \ingroup Physics
  */
-class T_DLLCLASS MeshResource : public Serializable
+class T_DLLCLASS MeshResource : public ISerializable
 {
-	T_RTTI_CLASS(MeshResource)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

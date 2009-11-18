@@ -1,7 +1,6 @@
 #ifndef traktor_db_GroupMessageListener_H
 #define traktor_db_GroupMessageListener_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Remote/Server/IMessageListenerImpl.h"
 
 namespace traktor
@@ -16,7 +15,7 @@ class Connection;
  */
 class GroupMessageListener : public IMessageListenerImpl< GroupMessageListener >
 {
-	T_RTTI_CLASS(GroupMessageListener)
+	T_RTTI_CLASS;
 
 public:
 	GroupMessageListener(Connection* connection);

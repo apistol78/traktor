@@ -2,7 +2,6 @@
 #define traktor_render_ProgramSw_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Render/IProgram.h"
 #include "Render/Sw/Core/Types.h"
 #include "Render/Sw/Core/IntrProgram.h"
@@ -29,7 +28,7 @@ class AbstractSampler;
  */
 class T_DLLCLASS ProgramSw : public IProgram
 {
-	T_RTTI_CLASS(ProgramSw)
+	T_RTTI_CLASS;
 
 public:
 	ProgramSw(

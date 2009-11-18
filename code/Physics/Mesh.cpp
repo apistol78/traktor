@@ -1,5 +1,5 @@
 #include "Physics/Mesh.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 
@@ -46,7 +46,7 @@ const std::vector< Mesh::Triangle >& Mesh::getHullTriangles() const
 	return m_hullTriangles;
 }
 
-bool Mesh::read(Stream* stream)
+bool Mesh::read(IStream* stream)
 {
 	Reader rd(stream);
 
@@ -77,7 +77,7 @@ bool Mesh::read(Stream* stream)
 	return true;
 }
 
-bool Mesh::write(Stream* stream)
+bool Mesh::write(IStream* stream)
 {
 	Writer wr(stream);
 

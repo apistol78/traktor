@@ -1,7 +1,6 @@
 #ifndef traktor_input_ReplayInputDevice_H
 #define traktor_input_ReplayInputDevice_H
 
-#include "Core/Heap/Ref.h"
 #include "Input/IInputDevice.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class RecordInputScript;
  */
 class T_DLLCLASS ReplayInputDevice : public IInputDevice
 {
-	T_RTTI_CLASS(ReplayInputDevice)
+	T_RTTI_CLASS;
 
 public:
 	ReplayInputDevice(IInputDevice* inputDevice, RecordInputScript* inputScript, bool loop);

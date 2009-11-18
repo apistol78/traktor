@@ -6,7 +6,7 @@
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 
 namespace traktor
@@ -14,7 +14,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
 
 Ref< RigidEntity > RigidEntityData::createEntity(
 	world::IEntityBuilder* builder,
@@ -40,13 +40,13 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 		entity->setTransform(getTransform());
 	}
 
-	return gc_new< RigidEntity >(
+	return new RigidEntity(
 		body,
 		entity
 	);
 }
 
-bool RigidEntityData::serialize(Serializer& s)
+bool RigidEntityData::serialize(ISerializer& s)
 {
 	if (!world::SpatialEntityData::serialize(s))
 		return false;

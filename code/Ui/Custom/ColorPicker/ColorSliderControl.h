@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ColorSliderControl : public Widget
 {
-	T_RTTI_CLASS(ColorSliderControl)
+	T_RTTI_CLASS;
 
 public:
 	struct IGradient : public Object

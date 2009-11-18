@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS CheckBox : public Widget
 {
-	T_RTTI_CLASS(CheckBox)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", bool checked = false);

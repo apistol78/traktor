@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS IVolumeTexture : public ITexture
 {
-	T_RTTI_CLASS(IVolumeTexture)
+	T_RTTI_CLASS;
 };
 	
 	}

@@ -19,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS CloudMask : public Object
 {
-	T_RTTI_CLASS(CloudMask)
+	T_RTTI_CLASS;
 
 public:
 	struct Sample

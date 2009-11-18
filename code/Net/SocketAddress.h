@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS SocketAddress : public Object
 {
-	T_RTTI_CLASS(SocketAddress)
+	T_RTTI_CLASS;
 };
 	
 	}

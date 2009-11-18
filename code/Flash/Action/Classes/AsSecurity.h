@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsSecurity : public ActionClass
 {
-	T_RTTI_CLASS(AsSecurity)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsSecurity > getInstance();

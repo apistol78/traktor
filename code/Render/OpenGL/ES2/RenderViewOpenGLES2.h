@@ -2,7 +2,6 @@
 #define traktor_render_RenderViewOpenGLES2_H
 
 #include <stack>
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderView.h"
 #include "Render/OpenGL/Platform.h"
 
@@ -36,7 +35,7 @@ class RenderTargetOpenGLES2;
  */
 class T_DLLCLASS RenderViewOpenGLES2 : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 #	if defined(T_OPENGL_ES2_HAVE_EGL)

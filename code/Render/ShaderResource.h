@@ -3,8 +3,7 @@
 
 #include <map>
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,17 +24,17 @@ namespace traktor
  * A shader resource is an intermediate representation
  * of a generated and compiled shader.
  */
-class T_DLLCLASS ShaderResource : public Serializable
+class T_DLLCLASS ShaderResource : public ISerializable
 {
-	T_RTTI_CLASS(ShaderResource)
+	T_RTTI_CLASS;
 
 public:
 	struct Combination
 	{
 		uint32_t parameterValue;
-		Ref< Serializable > program;
+		Ref< ISerializable > program;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	struct Technique
@@ -44,14 +43,14 @@ public:
 		uint32_t parameterMask;
 		std::vector< Combination > combinations;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	const std::map< std::wstring, uint32_t >& getParameterBits() const;
 
 	const std::vector< Technique >& getTechniques() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ShaderPipeline;

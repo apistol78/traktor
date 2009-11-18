@@ -21,14 +21,14 @@ namespace traktor
  */
 class T_DLLCLASS GravityModifier : public Modifier
 {
-	T_RTTI_CLASS(GravityModifier)
+	T_RTTI_CLASS;
 
 public:
 	GravityModifier();
 
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Vector4 m_gravity;

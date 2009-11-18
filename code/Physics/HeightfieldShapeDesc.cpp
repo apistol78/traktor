@@ -1,7 +1,7 @@
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Heightfield.h"
 #include "Physics/HeightfieldResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.HeightfieldShapeDesc", HeightfieldShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldShapeDesc", HeightfieldShapeDesc, ShapeDesc)
 
 void HeightfieldShapeDesc::setHeightfield(const resource::Proxy< Heightfield >& heightfield)
 {
@@ -21,7 +21,7 @@ const resource::Proxy< Heightfield >& HeightfieldShapeDesc::getHeightfield() con
 	return m_heightfield;
 }
 
-bool HeightfieldShapeDesc::serialize(Serializer& s)
+bool HeightfieldShapeDesc::serialize(ISerializer& s)
 {
 	if (!ShapeDesc::serialize(s))
 		return false;

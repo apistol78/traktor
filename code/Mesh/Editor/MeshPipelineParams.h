@@ -2,7 +2,6 @@
 #define traktor_mesh_MeshPipelineParams_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
 #include "Render/VertexElement.h"
 
@@ -27,7 +26,7 @@ class ShaderGraph;
 
 class MeshPipelineParams : public Object
 {
-	T_RTTI_CLASS(MeshPipelineParams)
+	T_RTTI_CLASS;
 
 public:
 	struct MaterialInfo

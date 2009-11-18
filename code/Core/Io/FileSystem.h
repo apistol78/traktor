@@ -2,25 +2,25 @@
 #define traktor_FileSystem_H
 
 #include <map>
-#include "Core/Singleton/Singleton.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Io/Path.h"
+#include "Core/Ref.h"
+#include "Core/RefArray.h"
 #include "Core/Io/File.h"
+#include "Core/Io/IVolume.h"
+#include "Core/Io/Path.h"
+#include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Volume;
-class Stream;
+class IStream;
 
 /*! \brief File system manager.
  * \ingroup Core
@@ -29,10 +29,8 @@ class Stream;
  * Initially all physical drives are mounted
  * in the file system.
  */
-class T_DLLCLASS FileSystem : public Singleton
+class T_DLLCLASS FileSystem : public ISingleton
 {
-	T_RTTI_CLASS(FileSystem)
-
 public:
 	FileSystem();
 
@@ -43,7 +41,7 @@ public:
 	 * \param id Mount identifier.
 	 * \param volume Mount volume.
 	 */
-	void mount(const std::wstring& id, Volume* volume);
+	void mount(const std::wstring& id, IVolume* volume);
 	
 	/*! \brief Unmount volume.
 	 *
@@ -62,7 +60,7 @@ public:
 	 * \param index Index of mounted volume.
 	 * \return Volume instance.
 	 */
-	Ref< Volume > getVolume(int index) const;
+	Ref< IVolume > getVolume(int index) const;
 
 	/*! \brief Get identifier of volume.
 	 *
@@ -75,13 +73,13 @@ public:
 	 *
 	 * \param volume Current volume.
 	 */
-	void setCurrentVolume(Volume* volume);
+	void setCurrentVolume(IVolume* volume);
 	
 	/*! \brief Get current volume.
 	 *
 	 * \return Current volume.
 	 */
-	Ref< Volume > getCurrentVolume() const;
+	Ref< IVolume > getCurrentVolume() const;
 	
 	/*! \brief Get file description.
 	 *
@@ -112,7 +110,7 @@ public:
 	 * \param mode Desired file mode.
 	 * \return Stream to file, null if unable to access file.
 	 */
-	Ref< Stream > open(const Path& fileName, uint32_t mode);
+	Ref< IStream > open(const Path& fileName, uint32_t mode);
 	
 	/*! \brief Return true if file exists.
 	 *
@@ -209,10 +207,10 @@ protected:
 	virtual void destroy();
 
 private:
-	std::map< std::wstring, Ref< Volume > > m_volumes;
-	Ref< Volume > m_currentVolume;
+	std::map< std::wstring, Ref< IVolume > > m_volumes;
+	Ref< IVolume > m_currentVolume;
 
-	Ref< Volume > getVolume(const Path& path) const;
+	Ref< IVolume > getVolume(const Path& path) const;
 };
 
 }

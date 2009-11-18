@@ -1,11 +1,11 @@
-#include <cstring>
 #include <algorithm>
+#include <cstring>
 #include "Core/Io/MemoryStream.h"
 
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.MemoryStream", MemoryStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.MemoryStream", MemoryStream, IStream);
 
 MemoryStream::MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed, bool writeAllowed)
 :	m_buffer(static_cast< uint8_t* >(buffer))

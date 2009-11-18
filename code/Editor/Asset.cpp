@@ -1,5 +1,5 @@
 #include "Editor/Asset.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ISerializable)
 
 Asset::Asset()
 {
@@ -28,7 +28,7 @@ const Path& Asset::getFileName() const
 	return m_fileName;
 }
 
-bool Asset::serialize(Serializer& s)
+bool Asset::serialize(ISerializer& s)
 {
 	return s >> Member< Path >(L"fileName", m_fileName);
 }

@@ -2,7 +2,6 @@
 #define traktor_flash_FlashDisplayList_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/SwfTypes.h"
 
@@ -29,7 +28,7 @@ class FlashFrame;
  */
 class T_DLLCLASS FlashDisplayList : public Object
 {
-	T_RTTI_CLASS(FlashDisplayList)
+	T_RTTI_CLASS;
 
 public:
 	struct Layer

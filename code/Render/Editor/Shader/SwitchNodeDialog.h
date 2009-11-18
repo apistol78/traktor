@@ -1,7 +1,6 @@
 #ifndef traktor_render_SwitchNodeDialog_H
 #define traktor_render_SwitchNodeDialog_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor
@@ -23,7 +22,7 @@ class Switch;
 
 class SwitchNodeDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(SwitchNodeDialog)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* parent, Switch* switchNode);

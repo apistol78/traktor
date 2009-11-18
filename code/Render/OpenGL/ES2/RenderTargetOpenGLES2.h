@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderTargetOpenGLES2_H
 #define traktor_render_RenderTargetOpenGLES2_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/ITexture.h"
 #include "Render/Types.h"
 #include "Core/Math/Vector4.h"
@@ -28,7 +27,7 @@ class IContext;
  */
 class T_DLLCLASS RenderTargetOpenGLES2 : public ITexture
 {
-	T_RTTI_CLASS(RenderTargetOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetOpenGLES2(IContext* context);

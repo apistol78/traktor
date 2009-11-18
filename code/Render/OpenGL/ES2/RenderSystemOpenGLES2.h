@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderSystemOpenGLES2_H
 #define traktor_render_RenderSystemOpenGLES2_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderSystem.h"
 #include "Render/OpenGL/Platform.h"
 
@@ -27,7 +26,7 @@ class ContextOpenGLES2;
  */
 class T_DLLCLASS RenderSystemOpenGLES2 : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemOpenGLES2();

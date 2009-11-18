@@ -14,9 +14,9 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityFactory", GroupEntityFactory, IEntityFactory)
 
-const TypeSet GroupEntityFactory::getEntityTypes() const
+const TypeInfoSet GroupEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< GroupEntityData >());
 	typeSet.insert(&type_of< SpatialGroupEntityData >());
 	return typeSet;
@@ -27,7 +27,7 @@ Ref< Entity > GroupEntityFactory::createEntity(IEntityBuilder* builder, const st
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))
 	{
 		const RefArray< EntityInstance >& instances = groupData->getInstances();
-		Ref< GroupEntity > groupEntity = gc_new< GroupEntity >();
+		Ref< GroupEntity > groupEntity = new GroupEntity();
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 		{
 			T_FATAL_ASSERT(*i);
@@ -42,7 +42,7 @@ Ref< Entity > GroupEntityFactory::createEntity(IEntityBuilder* builder, const st
 	else if (const SpatialGroupEntityData* spatialGroupData = dynamic_type_cast< const SpatialGroupEntityData* >(&entityData))
 	{
 		const RefArray< EntityInstance >& instances = spatialGroupData->getInstances();
-		Ref< SpatialGroupEntity > spatialGroupEntity = gc_new< SpatialGroupEntity >(cref(spatialGroupData->getTransform()));
+		Ref< SpatialGroupEntity > spatialGroupEntity = new SpatialGroupEntity(spatialGroupData->getTransform());
 		for (RefArray< EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 		{
 			T_FATAL_ASSERT(*i);

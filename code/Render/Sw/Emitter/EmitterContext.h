@@ -3,7 +3,6 @@
 
 #include <map>
 #include <bitset>
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Sw/Emitter/Emitter.h"
 #include "Render/Sw/Emitter/Variable.h"

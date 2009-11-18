@@ -20,7 +20,7 @@ class Scene;
 
 class T_DLLCLASS ISceneController : public Object
 {
-	T_RTTI_CLASS(ISceneController)
+	T_RTTI_CLASS;
 
 public:
 	virtual void update(Scene* scene, float time, float deltaTime) = 0;

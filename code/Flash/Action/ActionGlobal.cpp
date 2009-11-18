@@ -68,17 +68,17 @@ ActionGlobal::ActionGlobal()
 	setMember(L"XMLNode", ActionValue::fromObject(AsXMLNode::getInstance()));
 
 	// flash.
-	Ref< ActionObject > flash = gc_new< ActionObject >(AsObject::getInstance());
+	Ref< ActionObject > flash = new ActionObject(AsObject::getInstance());
 	{
 		//// flash.external.
-		//Ref< ActionObject > external = gc_new< ActionObject >(AsObject::getInstance());
+		//Ref< ActionObject > external = new ActionObject(AsObject::getInstance());
 		//{
 		//	external->setMember(L"ExternalInterface", AsExternalInterface::getInstance());
 		//}
 		//flash->setMember(L"external", external);
 
 		// flash.geom.
-		Ref< ActionObject > geom = gc_new< ActionObject >(AsObject::getInstance());
+		Ref< ActionObject > geom = new ActionObject(AsObject::getInstance());
 		{
 			//geom->setMember(L"Matrix", AsMatrix::getInstance());
 			geom->setMember(L"Point", ActionValue::fromObject(AsPoint::getInstance()));

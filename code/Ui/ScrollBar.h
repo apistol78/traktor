@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ScrollBar : public Widget
 {
-	T_RTTI_CLASS(ScrollBar)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

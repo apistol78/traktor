@@ -24,7 +24,7 @@ class Canvas;
  */
 class T_DLLCLASS PaintEvent : public Event
 {
-	T_RTTI_CLASS(PaintEvent)
+	T_RTTI_CLASS;
 	
 public:
 	PaintEvent(EventSubject* sender, Object* item, Canvas& canvas, const Rect& rc);

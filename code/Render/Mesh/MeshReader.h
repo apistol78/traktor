@@ -1,7 +1,6 @@
 #ifndef traktor_render_MeshReader_H
 #define traktor_render_MeshReader_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -15,7 +14,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace render
 	{
@@ -28,12 +27,12 @@ class Mesh;
  */
 class T_DLLCLASS MeshReader : public Object
 {
-	T_RTTI_CLASS(MeshReader)
+	T_RTTI_CLASS;
 
 public:
 	MeshReader(MeshFactory* meshFactory);
 
-	Ref< Mesh > read(Stream* stream) const;
+	Ref< Mesh > read(IStream* stream) const;
 
 private:
 	Ref< MeshFactory > m_meshFactory;

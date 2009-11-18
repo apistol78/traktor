@@ -1,7 +1,6 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#include "Core/Heap/GcNew.h"
 
 #if !defined(T_OFFLINE_ONLY)
 
@@ -40,7 +39,7 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = gc_new< RenderTargetOpenGLES2 >(m_context);
+		m_colorTextures[i] = new RenderTargetOpenGLES2(m_context);
 		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
 			return false;
 	}

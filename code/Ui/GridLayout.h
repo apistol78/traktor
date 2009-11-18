@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS GridLayout : public Layout
 {
-	T_RTTI_CLASS(GridLayout)
+	T_RTTI_CLASS;
 
 public:
 	GridLayout(int columns, int rows);

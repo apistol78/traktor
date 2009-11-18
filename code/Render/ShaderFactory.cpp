@@ -55,9 +55,9 @@ ShaderFactory::ShaderFactory(
 {
 }
 
-const TypeSet ShaderFactory::getResourceTypes() const
+const TypeInfoSet ShaderFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Shader >());
 	return typeSet;
 }
@@ -67,13 +67,13 @@ bool ShaderFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
 	if (!shaderResource)
 		return 0;
 
-	Ref< Shader > shader = gc_new< Shader >();
+	Ref< Shader > shader = new Shader();
 
 	// Create combination parameter mapping.
 	const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();

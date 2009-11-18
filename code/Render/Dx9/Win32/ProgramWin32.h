@@ -4,8 +4,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
@@ -40,7 +39,7 @@ class T_DLLCLASS ProgramWin32
 :	public IProgram
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(ProgramWin32)
+	T_RTTI_CLASS;
 
 public:
 	struct Uniform

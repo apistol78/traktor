@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS VertexBuffer : public Object
 {
-	T_RTTI_CLASS(VertexBuffer)
+	T_RTTI_CLASS;
 
 public:
 	VertexBuffer(uint32_t bufferSize);

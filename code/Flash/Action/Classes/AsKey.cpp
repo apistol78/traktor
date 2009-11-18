@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsKey", AsKey, ActionClass)
 
 Ref< AsKey > AsKey::createInstance()
 {
-	Ref< AsKey > instance = gc_new< AsKey >();
+	Ref< AsKey > instance = new AsKey();
 	instance->createPrototype();
 	instance->setReadOnly();
 	return instance;
@@ -77,7 +77,7 @@ void AsKey::eventKeyUp(ActionVM* actionVM, ActionContext* context, int keyCode)
 
 void AsKey::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"BACKSPACE", ActionValue(8.0));

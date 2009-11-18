@@ -2,7 +2,6 @@
 #define traktor_flash_AccDisplayRenderer_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Flash/DisplayRenderer.h"
 
 // import/export mechanism.
@@ -44,7 +43,7 @@ class AccShape;
  */
 class T_DLLCLASS AccDisplayRenderer : public DisplayRenderer
 {
-	T_RTTI_CLASS(AccDisplayRenderer)
+	T_RTTI_CLASS;
 
 public:
 	AccDisplayRenderer();

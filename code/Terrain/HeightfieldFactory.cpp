@@ -6,7 +6,7 @@
 #include "Database/Instance.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Half.h"
@@ -180,9 +180,9 @@ HeightfieldFactory::HeightfieldFactory(db::Database* database, render::IRenderSy
 {
 }
 
-const TypeSet HeightfieldFactory::getResourceTypes() const
+const TypeInfoSet HeightfieldFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Heightfield >());
 	return typeSet;
 }
@@ -192,7 +192,7 @@ bool HeightfieldFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -202,13 +202,13 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
 	// Allocate heightfield.
 	uint32_t size = resource->getSize();
-	Ref< Heightfield > heightfield = gc_new< Heightfield >(cref(*resource));
+	Ref< Heightfield > heightfield = new Heightfield(*resource);
 
 	// Read heights.
 	Heightfield::height_t* heights = const_cast< Heightfield::height_t* >(heightfield->getHeights());

@@ -21,10 +21,10 @@ namespace traktor
  */
 class T_DLLCLASS PathEntityFactory : public world::IEntityFactory
 {
-	T_RTTI_CLASS(PathEntityFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 };

@@ -15,7 +15,7 @@ namespace traktor
  */
 class DbmPutEvent : public IMessage
 {
-	T_RTTI_CLASS(DbmPutEvent)
+	T_RTTI_CLASS;
 
 public:
 	DbmPutEvent(uint32_t handle = 0, ProviderEvent event = PeInvalid, const Guid& eventId = Guid());
@@ -26,7 +26,7 @@ public:
 
 	const Guid& getEventId() const { return m_eventId; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

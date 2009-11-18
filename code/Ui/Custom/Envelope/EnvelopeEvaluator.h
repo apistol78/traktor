@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +27,7 @@ class EnvelopeKey;
  */
 class T_DLLCLASS EnvelopeEvaluator : public Object
 {
-	T_RTTI_CLASS(EnvelopeEvaluator)
+	T_RTTI_CLASS;
 
 public:
 	virtual float evaluate(const RefArray< EnvelopeKey >& keys, float T) = 0;

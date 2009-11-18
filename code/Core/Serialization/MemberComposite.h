@@ -21,7 +21,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		return m_ref.serialize(s);
 	}

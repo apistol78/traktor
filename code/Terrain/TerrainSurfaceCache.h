@@ -2,8 +2,7 @@
 #define traktor_terrain_TerrainSurfaceCache_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
 
@@ -51,7 +50,7 @@ class Heightfield;
 
 class T_DLLCLASS TerrainSurfaceCache : public Object
 {
-	T_RTTI_CLASS(TerrainSurfaceCache)
+	T_RTTI_CLASS;
 
 public:
 	TerrainSurfaceCache();

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionRectangle : public ActionObject
 {
-	T_RTTI_CLASS(ActionRectangle)
+	T_RTTI_CLASS;
 
 public:
 	double left;

@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,7 +26,7 @@ class ITexture;
  */
 class T_DLLCLASS TextureLinker : public Object
 {
-	T_RTTI_CLASS(TextureLinker)
+	T_RTTI_CLASS;
 
 public:
 	struct TextureReader

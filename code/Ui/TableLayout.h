@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS TableLayout : public Layout
 {
-	T_RTTI_CLASS(TableLayout)
+	T_RTTI_CLASS;
 
 public:
 	TableLayout(const std::wstring& cdef, const std::wstring& rdef, int margin, int pad);

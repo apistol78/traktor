@@ -1,5 +1,5 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageJs.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -8,7 +8,7 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", SyntaxLanguageJs, SyntaxLanguage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", SyntaxLanguageJs, SyntaxLanguage)
 
 void SyntaxLanguageJs::begin()
 {

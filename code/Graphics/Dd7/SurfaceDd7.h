@@ -4,7 +4,7 @@
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <ddraw.h>
-#include "Graphics/Surface.h"
+#include "Graphics/ISurface.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -20,9 +20,9 @@ namespace traktor
 	namespace graphics
 	{
 
-class T_DLLCLASS SurfaceDd7 : public Surface
+class T_DLLCLASS SurfaceDd7 : public ISurface
 {
-	T_RTTI_CLASS(SurfaceDd7)
+	T_RTTI_CLASS;
 
 public:
 	SurfaceDd7(IDirectDrawSurface7* dds);
@@ -34,7 +34,7 @@ public:
 	virtual void unlock();
 
 	virtual void blt(
-		Surface* sourceSurface,
+		ISurface* sourceSurface,
 		int sourceX,
 		int sourceY,
 		int x,

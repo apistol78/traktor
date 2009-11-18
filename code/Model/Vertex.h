@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Vertex : public Object
 {
-	T_RTTI_CLASS(Vertex)
+	T_RTTI_CLASS;
 
 public:
 	Vertex();

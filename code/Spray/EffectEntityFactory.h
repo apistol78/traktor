@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EffectEntityFactory_H
 #define traktor_spray_EffectEntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -29,12 +28,12 @@ class IResourceManager;
  */
 class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 {
-	T_RTTI_CLASS(EffectEntityFactory)
+	T_RTTI_CLASS;
 
 public:
 	EffectEntityFactory(resource::IResourceManager* resourceManager);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 

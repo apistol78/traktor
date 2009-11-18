@@ -38,17 +38,17 @@ void LogTargetDebug::log(const std::wstring& str)
 #endif
 }
 
-LogStreamBuffer::LogStreamBuffer(LogTarget* target)
+LogStreamBuffer::LogStreamBuffer(ILogTarget* target)
 :	m_target(target)
 {
 }
 
-LogTarget* LogStreamBuffer::getTarget()
+ILogTarget* LogStreamBuffer::getTarget()
 {
 	return m_target;
 }
 
-void LogStreamBuffer::setTarget(LogTarget* target)
+void LogStreamBuffer::setTarget(ILogTarget* target)
 {
 	m_target = target;
 }
@@ -70,7 +70,7 @@ int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 	return count;
 }
 
-LogStream::LogStream(LogTarget* target)
+LogStream::LogStream(ILogTarget* target)
 :	m_streamBuffer(target)
 ,	OutputStream(&m_streamBuffer, LeUnix)
 {

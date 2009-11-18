@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS AnimatedMeshEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(AnimatedMeshEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	virtual void drawGuide(

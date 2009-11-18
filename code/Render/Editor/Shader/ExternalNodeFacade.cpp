@@ -20,11 +20,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ExternalNodeFacade", ExternalNodeFacade,
 
 ExternalNodeFacade::ExternalNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
+	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > ExternalNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
@@ -37,7 +37,7 @@ Ref< Node > ExternalNodeFacade::createShaderNode(
 	if (!fragmentGraph)
 		return 0;
 
-	return gc_new< External >(
+	return new External(
 		fragmentInstance->getGuid(),
 		fragmentGraph
 	);
@@ -60,7 +60,7 @@ Ref< ui::custom::Node > ExternalNodeFacade::createEditorNode(
 	else
 		title = fragmentGuid.format();
 
-	Ref< ui::custom::Node > editorNode = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		title,
 		L"",
 		ui::Point(

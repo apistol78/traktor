@@ -2,7 +2,6 @@
 #define traktor_editor_EditorPageSite_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPageSite.h"
 
 namespace traktor
@@ -25,7 +24,7 @@ class EditorForm;
  */
 class EditorPageSite : public IEditorPageSite
 {
-	T_RTTI_CLASS(EditorPageSite)
+	T_RTTI_CLASS;
 
 public:
 	EditorPageSite(EditorForm* editor, bool active);

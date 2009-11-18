@@ -24,14 +24,14 @@ Connection::Connection(const Configuration* configuration, net::TcpSocket* clien
 ,	m_clientSocket(clientSocket)
 ,	m_nextHandle(1)
 {
-	m_messageTransport = gc_new< MessageTransport >(clientSocket);
+	m_messageTransport = new MessageTransport(clientSocket);
 
-	m_messageListeners.push_back(gc_new< BusMessageListener >(this));
-	m_messageListeners.push_back(gc_new< ConnectionMessageListener >(this));
-	m_messageListeners.push_back(gc_new< DatabaseMessageListener >(m_configuration, this));
-	m_messageListeners.push_back(gc_new< GroupMessageListener >(this));
-	m_messageListeners.push_back(gc_new< InstanceMessageListener >(this));
-	m_messageListeners.push_back(gc_new< StreamMessageListener >(this));
+	m_messageListeners.push_back(new BusMessageListener(this));
+	m_messageListeners.push_back(new ConnectionMessageListener(this));
+	m_messageListeners.push_back(new DatabaseMessageListener(m_configuration, this));
+	m_messageListeners.push_back(new GroupMessageListener(this));
+	m_messageListeners.push_back(new InstanceMessageListener(this));
+	m_messageListeners.push_back(new StreamMessageListener(this));
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &Connection::messageThread), L"Message thread");
 	T_ASSERT (m_thread);

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 
@@ -10,7 +10,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.EntityInstance", EntityInstance, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityInstance", EntityInstance, ISerializable)
 
 EntityInstance::EntityInstance()
 {
@@ -42,12 +42,12 @@ Ref< EntityData > EntityInstance::getEntityData() const
 	return m_entityData;
 }
 
-void EntityInstance::setInstanceData(Serializable* instanceData)
+void EntityInstance::setInstanceData(ISerializable* instanceData)
 {
 	m_instanceData = instanceData;
 }
 
-Ref< Serializable > EntityInstance::getInstanceData() const
+Ref< ISerializable > EntityInstance::getInstanceData() const
 {
 	return m_instanceData;
 }
@@ -79,13 +79,13 @@ int EntityInstance::getVersion() const
 	return 1;
 }
 
-bool EntityInstance::serialize(Serializer& s)
+bool EntityInstance::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRef< EntityData >(L"entityData", m_entityData);
 
 	if (s.getVersion() >= 1)
-		s >> MemberRef< Serializable >(L"instanceData", m_instanceData);
+		s >> MemberRef< ISerializable >(L"instanceData", m_instanceData);
 
 	s >> MemberRefArray< EntityInstance >(L"references", m_references);
 	return true;

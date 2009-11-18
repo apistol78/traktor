@@ -1,7 +1,6 @@
 #ifndef traktor_i18n_Text_H
 #define traktor_i18n_Text_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Text : public Object
 {
-	T_RTTI_CLASS(Text)
+	T_RTTI_CLASS;
 
 public:
 	Text(const std::wstring& id, const std::wstring& defaultText = L"");

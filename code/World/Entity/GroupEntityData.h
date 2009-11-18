@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntityData_H
 #define traktor_world_GroupEntityData_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -24,7 +24,7 @@ class EntityInstance;
  */
 class T_DLLCLASS GroupEntityData : public EntityData
 {
-	T_RTTI_CLASS(GroupEntityData)
+	T_RTTI_CLASS;
 
 public:
 	void addInstance(EntityInstance* instance);
@@ -37,7 +37,7 @@ public:
 
 	const RefArray< EntityInstance >& getInstances() const;
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 	
 private:
 	RefArray< EntityInstance > m_instances;

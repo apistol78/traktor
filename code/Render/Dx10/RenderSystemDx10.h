@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderSystemDx10_H
 #define traktor_render_RenderSystemDx10_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IRenderSystem.h"
@@ -29,7 +29,7 @@ class ContextDx10;
  */
 class T_DLLCLASS RenderSystemDx10 : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemDx10)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create();

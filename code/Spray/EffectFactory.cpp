@@ -15,9 +15,9 @@ EffectFactory::EffectFactory(db::Database* db)
 {
 }
 
-const TypeSet EffectFactory::getResourceTypes() const
+const TypeInfoSet EffectFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Effect >());
 	typeSet.insert(&type_of< PointSet >());
 	return typeSet;
@@ -28,7 +28,7 @@ bool EffectFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	if (is_type_a< Effect >(resourceType))
 		return m_db->getObjectReadOnly< Effect >(guid);

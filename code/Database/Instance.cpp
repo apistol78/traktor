@@ -4,9 +4,9 @@
 #include "Database/Provider/IProviderBus.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Thread/Acquire.h"
 
 namespace traktor
@@ -108,10 +108,10 @@ std::wstring Instance::getPrimaryTypeName() const
 #endif
 }
 
-const Type* Instance::getPrimaryType() const
+const TypeInfo* Instance::getPrimaryType() const
 {
 	T_ASSERT (m_providerInstance);
-	return Type::find(getPrimaryTypeName());
+	return TypeInfo::find(getPrimaryTypeName());
 }
 
 bool Instance::checkout()
@@ -216,15 +216,15 @@ bool Instance::remove()
 	return true;
 }
 
-Ref< Serializable > Instance::getObject()
+Ref< ISerializable > Instance::getObject()
 {
 	T_ASSERT (m_providerInstance);
 
 	Acquire< Mutex > __lock__(m_lock);
-	Ref< Serializable > object;
-	const Type* serializerType = 0;
+	Ref< ISerializable > object;
+	const TypeInfo* serializerType = 0;
 
-	Ref< Stream > stream = m_providerInstance->readObject(serializerType);
+	Ref< IStream > stream = m_providerInstance->readObject(serializerType);
 	if (!stream)
 		return 0;
 
@@ -232,9 +232,9 @@ Ref< Serializable > Instance::getObject()
 
 	Ref< Serializer > serializer;
 	if (serializerType == &type_of< BinarySerializer >())
-		serializer = gc_new< BinarySerializer >(stream);
+		serializer = new BinarySerializer(stream);
 	else if (serializerType == &type_of< xml::XmlDeserializer >())
-		serializer = gc_new< xml::XmlDeserializer >(stream);
+		serializer = new xml::XmlDeserializer(stream);
 	else
 	{
 		stream->close();
@@ -248,7 +248,7 @@ Ref< Serializable > Instance::getObject()
 	return object;
 }
 
-bool Instance::setObject(const Serializable* object)
+bool Instance::setObject(const ISerializable* object)
 {
 	T_ASSERT (m_providerInstance);
 
@@ -256,9 +256,9 @@ bool Instance::setObject(const Serializable* object)
 		return false;
 
 	Acquire< Mutex > __lock__(m_lock);
-	const Type* serializerType = 0;
+	const TypeInfo* serializerType = 0;
 
-	Ref< Stream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
+	Ref< IStream > stream = m_providerInstance->writeObject(type_name(object), serializerType);
 	if (!stream)
 		return false;
 
@@ -266,9 +266,9 @@ bool Instance::setObject(const Serializable* object)
 
 	Ref< Serializer > serializer;
 	if (serializerType == &type_of< BinarySerializer >())
-		serializer = gc_new< BinarySerializer >(stream);
+		serializer = new BinarySerializer(stream);
 	else if (serializerType == &type_of< xml::XmlSerializer >())
-		serializer = gc_new< xml::XmlSerializer >(stream);
+		serializer = new xml::XmlSerializer(stream);
 	else
 	{
 		stream->close();
@@ -288,13 +288,13 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 	return m_providerInstance->getDataNames(dataNames);
 }
 
-Ref< Stream > Instance::readData(const std::wstring& dataName)
+Ref< IStream > Instance::readData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
 	return m_providerInstance->readData(dataName);
 }
 
-Ref< Stream > Instance::writeData(const std::wstring& dataName)
+Ref< IStream > Instance::writeData(const std::wstring& dataName)
 {
 	T_ASSERT (m_providerInstance);
 	return m_providerInstance->writeData(dataName);

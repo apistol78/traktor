@@ -1,7 +1,6 @@
 #include <cstring>
 #include <zlib.h>
 #include "Zip/InflateStream.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -11,7 +10,7 @@ namespace traktor
 class InflateImpl : public Object
 {
 public:
-	InflateImpl(Stream* stream, uint32_t internalBufferSize)
+	InflateImpl(IStream* stream, uint32_t internalBufferSize)
 	:	m_stream(stream)
 	,	m_buf(internalBufferSize)
 	,	m_startPosition(stream->tell())
@@ -64,7 +63,7 @@ public:
 		if (position < m_position)
 		{
 			inflateReset(&m_zstream);
-			m_stream->seek(Stream::SeekSet, m_startPosition);
+			m_stream->seek(IStream::SeekSet, m_startPosition);
 			m_zstream.next_in = 0;
 			m_zstream.avail_in = 0;
 			m_position = m_startPosition;
@@ -88,17 +87,17 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	z_stream m_zstream;
 	std::vector< uint8_t > m_buf;
 	int m_startPosition;
 	int m_position;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.InflateStream", InflateStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.InflateStream", InflateStream, IStream)
 
-InflateStream::InflateStream(Stream* stream, uint32_t internalBufferSize)
-:	m_impl(gc_new< InflateImpl >(stream, internalBufferSize))
+InflateStream::InflateStream(IStream* stream, uint32_t internalBufferSize)
+:	m_impl(new InflateImpl(stream, internalBufferSize))
 {
 }
 

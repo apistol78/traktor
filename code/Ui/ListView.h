@@ -24,7 +24,7 @@ class Bitmap;
  */
 class T_DLLCLASS ListView : public Widget
 {
-	T_RTTI_CLASS(ListView)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

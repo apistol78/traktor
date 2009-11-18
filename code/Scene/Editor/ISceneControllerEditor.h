@@ -31,7 +31,7 @@ class EntityAdapter;
  */
 class T_DLLCLASS ISceneControllerEditor : public Object
 {
-	T_RTTI_CLASS(ISceneControllerEditor)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(SceneEditorContext* context, ui::Container* parent) = 0;

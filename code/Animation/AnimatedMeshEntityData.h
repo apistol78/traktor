@@ -47,12 +47,12 @@ class IPoseControllerData;
  */
 class T_DLLCLASS AnimatedMeshEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(AnimatedMeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
 

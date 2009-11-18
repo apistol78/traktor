@@ -2,8 +2,7 @@
 #define traktor_online_ISession_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,7 +15,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace online
 	{
@@ -27,7 +26,7 @@ class ISaveGame;
 
 class T_DLLCLASS ISession : public Object
 {
-	T_RTTI_CLASS(ISession)
+	T_RTTI_CLASS;
 
 public:
 	virtual void destroy() = 0;
@@ -38,7 +37,7 @@ public:
 
 	virtual bool getAvailableAchievements(RefArray< IAchievement >& outAchievements) const = 0;
 
-	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, Serializable* attachment) = 0;
+	virtual Ref< ISaveGame > createSaveGame(const std::wstring& name, ISerializable* attachment) = 0;
 
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const = 0;
 };

@@ -9,20 +9,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditorFactory", DefaultEntityEditorFactory, IEntityEditorFactory)
 
-const TypeSet DefaultEntityEditorFactory::getEntityDataTypes() const
+const TypeInfoSet DefaultEntityEditorFactory::getEntityDataTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< world::SpatialEntityData >());
 	return typeSet;
 }
 
 Ref< IEntityEditor > DefaultEntityEditorFactory::createEntityEditor(
 	SceneEditorContext* context,
-	const Type& entityDataType
+	const TypeInfo& entityDataType
 ) const
 {
 	T_ASSERT (is_type_of< world::SpatialEntityData >(entityDataType));
-	return gc_new< DefaultEntityEditor >();
+	return new DefaultEntityEditor();
 }
 
 	}

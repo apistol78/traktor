@@ -1,35 +1,29 @@
 #include "Core/Io/FileOutputStream.h"
-#include "Core/Io/OutputStreamBuffer.h"
-#include "Core/Io/Stream.h"
-#include "Core/Io/Encoding.h"
-#include "Core/Heap/GcNew.h"
+#include "Core/Io/IEncoding.h"
+#include "Core/Io/IOutputStreamBuffer.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
 	namespace
 	{
 
-class T_DLLCLASS FileOutputStreamBuffer : public OutputStreamBuffer
+class FileOutputStreamBuffer : public IOutputStreamBuffer
 {
-	T_RTTI_CLASS(FileOutputStreamBuffer)
-
 public:
-	FileOutputStreamBuffer(Stream* stream, Encoding* encoding);
+	FileOutputStreamBuffer(IStream* stream, IEncoding* encoding);
 
 	void close();
 
-protected:
 	virtual int overflow(const wchar_t* buffer, int count);
 
 private:
-	Ref< Stream > m_stream;
-	Ref< Encoding > m_encoding;
+	Ref< IStream > m_stream;
+	Ref< IEncoding > m_encoding;
 	std::vector< uint8_t > m_encoded;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.FileOutputStreamBuffer", FileOutputStreamBuffer, OutputStreamBuffer)
-
-FileOutputStreamBuffer::FileOutputStreamBuffer(Stream* stream, Encoding* encoding)
+FileOutputStreamBuffer::FileOutputStreamBuffer(IStream* stream, IEncoding* encoding)
 :	m_stream(stream)
 ,	m_encoding(encoding)
 {
@@ -46,7 +40,7 @@ void FileOutputStreamBuffer::close()
 
 int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
-	m_encoded.resize(count * Encoding::MaxEncodingSize);
+	m_encoded.resize(count * IEncoding::MaxEncodingSize);
 	
 	int encodedCount = m_encoding->translate(buffer, count, &m_encoded[0]);
 	if (encodedCount < 0)
@@ -62,15 +56,15 @@ int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.FileOutputStream", FileOutputStream, OutputStream)
 
-FileOutputStream::FileOutputStream(Stream* stream, Encoding* encoding, LineEnd lineEnd)
-:	OutputStream(gc_new< FileOutputStreamBuffer >(stream, encoding), lineEnd)
+FileOutputStream::FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd)
+:	OutputStream(new FileOutputStreamBuffer(stream, encoding), lineEnd)
 {
 }
 
 void FileOutputStream::close()
 {
 	flush();
-	checked_type_cast< FileOutputStreamBuffer* >(getBuffer())->close();
+	static_cast< FileOutputStreamBuffer* >(getBuffer())->close();
 }
 
 }

@@ -4,15 +4,14 @@
 #include "Spray/EffectEntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.SprayEditorProfile", SprayEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SprayEditorProfile", SprayEditorProfile, scene::ISceneEditorProfile)
 
 void SprayEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -32,7 +31,7 @@ void SprayEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(gc_new< spray::EffectFactory >(context->getResourceDatabase()));
+	outResourceFactories.push_back(new spray::EffectFactory(context->getResourceDatabase()));
 }
 
 void SprayEditorProfile::createEntityFactories(
@@ -40,7 +39,7 @@ void SprayEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< spray::EffectEntityFactory >(context->getResourceManager()));
+	outEntityFactories.push_back(new spray::EffectEntityFactory(context->getResourceManager()));
 }
 
 void SprayEditorProfile::createEntityRenderers(
@@ -50,7 +49,7 @@ void SprayEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(gc_new< spray::EffectEntityRenderer >(context->getRenderSystem(), 1.0f, 1.0f));
+	outEntityRenderers.push_back(new spray::EffectEntityRenderer(context->getRenderSystem(), 1.0f, 1.0f));
 }
 
 void SprayEditorProfile::createControllerEditorFactories(

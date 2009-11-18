@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Enums_H
 #define traktor_ui_Enums_H
 
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {

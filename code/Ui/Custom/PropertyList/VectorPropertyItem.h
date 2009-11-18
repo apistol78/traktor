@@ -27,7 +27,7 @@ class Event;
  */
 class T_DLLCLASS VectorPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(VectorPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	enum { MaxDimension = 4 };

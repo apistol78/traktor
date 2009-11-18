@@ -1,5 +1,5 @@
 #include "Database/Remote/Messages/DbmGetEventResult.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.DbmGetEventResult", DbmGetEventResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetEventResult", DbmGetEventResult, IMessage)
 
 DbmGetEventResult::DbmGetEventResult()
 :	m_haveEvent(false)
@@ -24,7 +24,7 @@ DbmGetEventResult::DbmGetEventResult(ProviderEvent event, const Guid& eventId, b
 {
 }
 
-bool DbmGetEventResult::serialize(Serializer& s)
+bool DbmGetEventResult::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"haveEvent", m_haveEvent);
 	if (m_haveEvent)

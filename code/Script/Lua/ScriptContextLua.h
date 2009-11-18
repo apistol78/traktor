@@ -2,8 +2,7 @@
 #define traktor_script_ScriptContextLua_H
 
 #include <vector>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Script/IScriptContext.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class IScriptClass;
  */
 class T_DLLCLASS ScriptContextLua : public IScriptContext
 {
-	T_RTTI_CLASS(ScriptContextLua)
+	T_RTTI_CLASS;
 
 public:
 	ScriptContextLua(const RefArray< IScriptClass >& registeredClasses);

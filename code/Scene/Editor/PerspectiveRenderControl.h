@@ -1,8 +1,7 @@
 #ifndef traktor_scene_PerspectiveRenderControl_H
 #define traktor_scene_PerspectiveRenderControl_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Timer/Timer.h"
@@ -47,7 +46,7 @@ class EntityAdapter;
 
 class PerspectiveRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(PerspectiveRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	PerspectiveRenderControl();

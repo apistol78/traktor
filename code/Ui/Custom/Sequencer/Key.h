@@ -33,7 +33,7 @@ class T_DLLCLASS Key
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(Key)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const = 0;

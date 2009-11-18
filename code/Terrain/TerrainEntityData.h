@@ -30,12 +30,12 @@ class TerrainSurface;
 
 class T_DLLCLASS TerrainEntityData : public world::EntityData
 {
-	T_RTTI_CLASS(TerrainEntityData)
+	T_RTTI_CLASS;
 
 public:
 	TerrainEntityData();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< Heightfield >& getHeightfield() const { return m_heightfield; }
 

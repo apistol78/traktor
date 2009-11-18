@@ -21,7 +21,7 @@ namespace traktor
 
 class T_DLLCLASS IndoorMeshResource : public MeshResource
 {
-	T_RTTI_CLASS(IndoorMeshResource)
+	T_RTTI_CLASS;
 
 public:
 	struct Part
@@ -29,7 +29,7 @@ public:
 		Guid material;
 		int32_t meshPart;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	struct Sector
@@ -38,7 +38,7 @@ public:
 		Vector4 max;
 		std::vector< Part > parts;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	struct Portal
@@ -47,7 +47,7 @@ public:
 		int32_t sectorA;
 		int32_t sectorB;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	void setSectors(const AlignedVector< Sector >& sectors);
@@ -58,7 +58,7 @@ public:
 
 	const AlignedVector< Portal >& getPortals() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	AlignedVector< Sector > m_sectors;

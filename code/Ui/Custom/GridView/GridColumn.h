@@ -26,7 +26,7 @@ class T_DLLCLASS GridColumn
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(Object)
+	T_RTTI_CLASS;
 
 public:
 	GridColumn(const std::wstring& title, uint32_t width);

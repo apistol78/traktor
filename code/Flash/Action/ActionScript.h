@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionScript : public Object
 {
-	T_RTTI_CLASS(ActionScript)
+	T_RTTI_CLASS;
 
 public:
 	ActionScript(uint32_t codeSize);

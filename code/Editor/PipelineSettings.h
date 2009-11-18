@@ -10,7 +10,7 @@ namespace traktor
 
 class PipelineSettings : public IPipelineSettings
 {
-	T_RTTI_CLASS(PipelineSettings)
+	T_RTTI_CLASS;
 
 public:
 	PipelineSettings(const Settings* settings);

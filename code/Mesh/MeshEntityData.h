@@ -2,7 +2,6 @@
 #define traktor_mesh_MeshEntityData_H
 
 #include "World/Entity/SpatialEntityData.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
@@ -36,7 +35,7 @@ class MeshEntity;
 
 class T_DLLCLASS MeshEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(MeshEntityData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const = 0;

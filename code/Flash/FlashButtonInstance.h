@@ -24,7 +24,7 @@ class FlashMovie;
  */
 class T_DLLCLASS FlashButtonInstance : public FlashCharacterInstance
 {
-	T_RTTI_CLASS(FlashButtonInstance)
+	T_RTTI_CLASS;
 
 public:
 	FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button);

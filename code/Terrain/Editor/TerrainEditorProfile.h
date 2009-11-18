@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS TerrainEditorProfile : public scene::ISceneEditorProfile
 {
-	T_RTTI_CLASS(TerrainEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(

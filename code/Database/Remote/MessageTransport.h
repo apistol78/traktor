@@ -1,7 +1,6 @@
 #ifndef traktor_db_MessageTransport_H
 #define traktor_db_MessageTransport_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 namespace traktor
@@ -24,7 +23,7 @@ class IMessage;
  */
 class MessageTransport : public Object
 {
-	T_RTTI_CLASS(MessageTransport)
+	T_RTTI_CLASS;
 
 public:
 	MessageTransport(net::TcpSocket* socket);

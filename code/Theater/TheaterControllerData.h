@@ -1,7 +1,7 @@
 #ifndef traktor_theater_TheaterControllerData_H
 #define traktor_theater_TheaterControllerData_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Scene/ISceneControllerData.h"
 
 // import/export mechanism.
@@ -21,14 +21,14 @@ class TrackData;
 
 class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 {
-	T_RTTI_CLASS(TheaterControllerData)
+	T_RTTI_CLASS;
 
 public:
 	TheaterControllerData();
 
 	virtual Ref< scene::ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntityManager* entityManager) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	float getDuration() const { return m_duration; }
 

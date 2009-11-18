@@ -12,7 +12,6 @@
 #include "Flash/Action/Classes/AsMovieClip.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Log/Log.h"
@@ -833,7 +832,7 @@ void ActionVM::execute(ActionFrame* frame)
 				if (classObject)
 				{
 					// Create instance of class.
-					Ref< ActionObject > self = gc_new< ActionObject >(classObject);
+					Ref< ActionObject > self = new ActionObject(classObject);
 
 					// Call constructor.
 					ActionValue object = classObject->call(this, frame, self);
@@ -868,7 +867,7 @@ void ActionVM::execute(ActionFrame* frame)
 		VM_BEGIN(AopInitObject)
 			int32_t initialPropertyCount = int32_t(stack.pop().getNumberSafe());
 
-			Ref< ActionObject > scriptObject = gc_new< ActionObject >(AsObject::getInstance());
+			Ref< ActionObject > scriptObject = new ActionObject(AsObject::getInstance());
 			for (int32_t i = 0; i < initialPropertyCount; ++i)
 			{
 				ActionValue value = stack.pop();
@@ -1305,7 +1304,7 @@ void ActionVM::execute(ActionFrame* frame)
 			ActionValue superPrototype;
 			superClass.getObject()->getMember(L"prototype", superPrototype);
 
-			Ref< ActionObject > prototype = gc_new< ActionObject >();
+			Ref< ActionObject > prototype = new ActionObject();
 			prototype->setMember(L"__proto__", superPrototype);
 			prototype->setMember(L"__constructor__", ActionValue::fromObject(superClass.getObject()));
 
@@ -1317,7 +1316,7 @@ void ActionVM::execute(ActionFrame* frame)
 			const char T_UNALIGNED * dictionaryEntry = reinterpret_cast< const char T_UNALIGNED * >(data + 2);
 
 			VM_LOG(L"Dictionary count = " << dictionaryCount);
-			frame->setDictionary(gc_new< ActionDictionary >(
+			frame->setDictionary(new ActionDictionary(
 				dictionaryCount,
 				dictionaryEntry
 			));
@@ -1351,19 +1350,19 @@ void ActionVM::execute(ActionFrame* frame)
 			uint16_t codeSize = readUInt16(data);
 			data += sizeof(uint16_t);
 
-			Ref< ActionFunction > function = gc_new< ActionFunction2 >(
+			Ref< ActionFunction > function = new ActionFunction2(
 				mbstows(functionName),
 				npc,
 				codeSize,
 				registerCount,
 				flags,
-				cref(argumentsIntoRegisters),
+				argumentsIntoRegisters,
 				frame->getDictionary()
 			);
 
 			// Create our own prototype member as it will probably be filled with additional members.
 			// Default extends the Object class.
-			function->setMember(L"prototype", ActionValue::fromObject(gc_new< ActionObject >(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue::fromObject(new ActionObject(AsObject::getInstance())));
 
 			if (*functionName != 0)
 			{
@@ -1406,7 +1405,7 @@ void ActionVM::execute(ActionFrame* frame)
 			uint16_t codeSize = readUInt16(data);
 			data += sizeof(uint16_t);
 
-			Ref< ActionFunction > function = gc_new< ActionFunction1 >(
+			Ref< ActionFunction > function = new ActionFunction1(
 				mbstows(functionName),
 				arguments,
 				npc,
@@ -1415,7 +1414,7 @@ void ActionVM::execute(ActionFrame* frame)
 			);
 
 			// Create our own prototype member as it will probably be filled with additional members.
-			function->setMember(L"prototype", ActionValue::fromObject(gc_new< ActionObject >(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue::fromObject(new ActionObject(AsObject::getInstance())));
 
 			if (*functionName != 0)
 			{

@@ -149,7 +149,7 @@ bool WorldRenderer::create(
 			resource::Proxy< PostProcessSettings > shadowMaskProjectionSettings(c_shadowMaskProjectionSettingsGuid);
 			resourceManager->bind(shadowMaskProjectionSettings);
 
-			m_shadowMaskProjection = gc_new< PostProcess >();
+			m_shadowMaskProjection = new PostProcess();
 			if (!m_shadowMaskProjection->create(
 				shadowMaskProjectionSettings,
 				resourceManager,
@@ -180,26 +180,26 @@ bool WorldRenderer::create(
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = gc_new< WorldContext >(this, entityRenderers, m_renderView);
+			i->depth = new WorldContext(this, entityRenderers, m_renderView);
 	}
 
 	// Allocate "velocity" context.
 	if (m_settings.velocityPassEnable)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->velocity = gc_new< WorldContext >(this, entityRenderers, m_renderView);
+			i->velocity = new WorldContext(this, entityRenderers, m_renderView);
 	}
 
 	// Allocate "shadow" contexts for each slice.
 	if (m_settings.shadowsEnabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->shadow = gc_new< WorldContext >(this, entityRenderers, m_renderView);
+			i->shadow = new WorldContext(this, entityRenderers, m_renderView);
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = gc_new< WorldContext >(this, entityRenderers, m_renderView);
+		i->visual = new WorldContext(this, entityRenderers, m_renderView);
 
 	m_time = 0.0f;
 	m_count = 0;

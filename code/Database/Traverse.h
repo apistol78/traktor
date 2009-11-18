@@ -115,16 +115,16 @@ struct FindInstanceByGuid
 
 struct FindInstanceByType
 {
-	const Type& instanceType;
+	const TypeInfo& instanceType;
 
-	FindInstanceByType(const Type& instanceType_)
+	FindInstanceByType(const TypeInfo& instanceType_)
 	:	instanceType(instanceType_)
 	{
 	}
 
 	bool operator () (const Instance* instance) const
 	{
-		const Type* primaryType = instance->getPrimaryType();
+		const TypeInfo* primaryType = instance->getPrimaryType();
 		if (!primaryType)
 			return false;
 		return is_type_of(instanceType, *primaryType);

@@ -1,7 +1,6 @@
 #ifndef traktor_editor_ModulesSettingsPage_H
 #define traktor_editor_ModulesSettingsPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/ISettingsPage.h"
 
 namespace traktor
@@ -22,7 +21,7 @@ class ListBox;
  */
 class ModulesSettingsPage : public ISettingsPage
 {
-	T_RTTI_CLASS(ModulesSettingsPage)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands);

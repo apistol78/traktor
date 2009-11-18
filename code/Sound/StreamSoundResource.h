@@ -21,17 +21,17 @@ namespace traktor
  */
 class T_DLLCLASS StreamSoundResource : public SoundResource
 {
-	T_RTTI_CLASS(StreamSoundResource)
+	T_RTTI_CLASS;
 
 public:
-	StreamSoundResource(const Type* decoderType = 0);
+	StreamSoundResource(const TypeInfo* decoderType = 0);
 
-	const Type* getDecoderType() const;
+	const TypeInfo* getDecoderType() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
-	const Type* m_decoderType;
+	const TypeInfo* m_decoderType;
 };
 
 	}

@@ -4,8 +4,7 @@
 #include <list>
 #include <string>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Associative.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class T_DLLCLASS TreeViewItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(TreeViewItem)
+	T_RTTI_CLASS;
 
 public:
 	virtual void setText(const std::wstring& text) = 0;

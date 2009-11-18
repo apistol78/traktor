@@ -4,8 +4,7 @@
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <ddraw.h>
-#include "Core/Heap/Ref.h"
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/IGraphicsSystem.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -23,9 +22,9 @@ namespace traktor
 
 class SurfaceDd7;
 
-class T_DLLCLASS GraphicsSystemDd7 : public GraphicsSystem
+class T_DLLCLASS GraphicsSystemDd7 : public IGraphicsSystem
 {
-	T_RTTI_CLASS(GraphicsSystemDd7)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const;
@@ -36,11 +35,11 @@ public:
 
 	virtual bool resize(int width, int height);
 
-	virtual Ref< Surface > getPrimarySurface();
+	virtual Ref< ISurface > getPrimarySurface();
 
-	virtual Ref< Surface > getSecondarySurface();
+	virtual Ref< ISurface > getSecondarySurface();
 
-	virtual Ref< Surface > createOffScreenSurface(const SurfaceDesc& surfaceDesc);
+	virtual Ref< ISurface > createOffScreenSurface(const SurfaceDesc& surfaceDesc);
 
 	virtual void flip(bool waitVBlank);
 

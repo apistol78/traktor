@@ -1,14 +1,14 @@
 #ifndef traktor_drawing_ImageFormatJpeg_H
 #define traktor_drawing_ImageFormatJpeg_H
 
-#include "Drawing/ImageFormat.h"
+#include "Drawing/IImageFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,20 +21,22 @@ class ImageFormatJpegImpl;
 /*! \brief JPEG format.
  * \ingroup Drawing
  */
-class T_DLLCLASS ImageFormatJpeg : public ImageFormat
+class T_DLLCLASS ImageFormatJpeg : public IImageFormat
 {
-	T_RTTI_CLASS(ImageFormatJpeg)
+	T_RTTI_CLASS;
 
 public:
 	ImageFormatJpeg();
 
-	virtual Ref< Image > read(Stream* stream);
+	virtual ~ImageFormatJpeg();
 
-	virtual bool write(Stream* stream, Image* image);
+	virtual Ref< Image > read(IStream* stream);
 
-	bool readJpegHeader(Stream* stream);
+	virtual bool write(IStream* stream, Image* image);
 
-	Ref< Image > readJpegImage(Stream* stream);
+	bool readJpegHeader(IStream* stream);
+
+	Ref< Image > readJpegImage(IStream* stream);
 
 private:
 	ImageFormatJpegImpl* m_impl;

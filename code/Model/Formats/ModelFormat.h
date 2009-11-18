@@ -2,7 +2,6 @@
 #define traktor_model_ModelFormat_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class Model;
  */
 class T_DLLCLASS ModelFormat : public Object
 {
-	T_RTTI_CLASS(ModelFormat)
+	T_RTTI_CLASS;
 
 public:
 	enum ImportFlags

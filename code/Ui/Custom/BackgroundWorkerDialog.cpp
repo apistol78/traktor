@@ -22,23 +22,23 @@ BackgroundWorkerDialog::BackgroundWorkerDialog()
 
 bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& title, const std::wstring& message, int style)
 {
-	if (!ui::Dialog::create(parent, title, 300, 150, style, gc_new< ui::TableLayout >(L"300", L"*,*,*", 4, 4)))
+	if (!ui::Dialog::create(parent, title, 300, 150, style, new ui::TableLayout(L"300", L"*,*,*", 4, 4)))
 		return false;
 
 	addTimerEventHandler(createMethodHandler(this, &BackgroundWorkerDialog::eventTimer));
 
-	m_labelMessage = gc_new< Static >();
+	m_labelMessage = new Static();
 	m_labelMessage->create(this, message);
 
-	m_labelStatus = gc_new< Static >();
+	m_labelStatus = new Static();
 	m_labelStatus->create(this, L"...");
 
-	m_progressBar = gc_new< ProgressBar >();
+	m_progressBar = new ProgressBar();
 	m_progressBar->create(this);
 
 	if (style & WsAbortButton)
 	{
-		m_buttonAbort = gc_new< Button >();
+		m_buttonAbort = new Button();
 		m_buttonAbort->create(this, L"Abort");
 		m_buttonAbort->addClickEventHandler(createMethodHandler(this, &BackgroundWorkerDialog::eventAbortClick));
 	}

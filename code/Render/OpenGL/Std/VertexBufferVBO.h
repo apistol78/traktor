@@ -1,7 +1,6 @@
 #ifndef traktor_render_VertexBufferVBO_H
 #define traktor_render_VertexBufferVBO_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class VertexElement;
  */
 class T_DLLCLASS VertexBufferVBO : public VertexBufferOpenGL
 {
-	T_RTTI_CLASS(VertexBufferVBO)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferVBO(IContext* context, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);

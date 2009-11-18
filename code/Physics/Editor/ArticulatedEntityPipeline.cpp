@@ -8,11 +8,11 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.ArticulatedEntityPipeline", ArticulatedEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.ArticulatedEntityPipeline", ArticulatedEntityPipeline, world::EntityPipeline)
 
-TypeSet ArticulatedEntityPipeline::getAssetTypes() const
+TypeInfoSet ArticulatedEntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ArticulatedEntityData >());
 	return typeSet;
 }
@@ -20,7 +20,7 @@ TypeSet ArticulatedEntityPipeline::getAssetTypes() const
 bool ArticulatedEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

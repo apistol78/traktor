@@ -5,7 +5,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessDefine", PostProcessDefine, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.PostProcessDefine", PostProcessDefine, ISerializable)
 
 	}
 }

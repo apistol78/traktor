@@ -3,7 +3,6 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/Action/ActionContext.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -63,8 +62,8 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 {
 	Ref< ActionObject > global = context->getGlobal();
 
-	Ref< ActionContext > spriteContext = gc_new< ActionContext >(context->getMovie(), global);
-	Ref< FlashSpriteInstance > spriteInstance = gc_new< FlashSpriteInstance >(spriteContext, parent, this);
+	Ref< ActionContext > spriteContext = new ActionContext(context->getMovie(), global);
+	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(spriteContext, parent, this);
 
 	if (!parent)
 	{

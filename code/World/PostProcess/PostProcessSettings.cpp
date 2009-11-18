@@ -1,7 +1,7 @@
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PostProcess/PostProcessDefine.h"
 #include "World/PostProcess/PostProcessStep.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.PostProcessSettings", PostProcessSettings, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.PostProcessSettings", PostProcessSettings, ISerializable)
 
 PostProcessSettings::PostProcessSettings()
 :	m_requireHighRange(false)
@@ -36,7 +36,7 @@ int PostProcessSettings::getVersion() const
 	return 1;
 }
 
-bool PostProcessSettings::serialize(Serializer& s)
+bool PostProcessSettings::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"requireHighRange", m_requireHighRange);

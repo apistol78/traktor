@@ -1,8 +1,7 @@
 #ifndef traktor_scene_SceneEditorContext_H
 #define traktor_scene_SceneEditorContext_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Ui/EventSubject.h"
 
@@ -81,7 +80,7 @@ class Camera;
  */
 class T_DLLCLASS SceneEditorContext : public ui::EventSubject
 {
-	T_RTTI_CLASS(SceneEditorContext)
+	T_RTTI_CLASS;
 
 public:
 	enum GetEntitiesFlags

@@ -24,8 +24,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Obje
 
 FlashMoviePlayer::FlashMoviePlayer(DisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
-,	m_movieRenderer(gc_new< FlashMovieRenderer >(displayRenderer))
-,	m_actionVM(gc_new< ActionVM >())
+,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
+,	m_actionVM(new ActionVM())
 ,	m_intervalNextId(1)
 ,	m_untilNextFrame(0.0f)
 {

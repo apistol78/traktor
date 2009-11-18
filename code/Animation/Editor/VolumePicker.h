@@ -13,7 +13,7 @@ namespace traktor
 
 class VolumePicker : public Object
 {
-	T_RTTI_CLASS(VolumePicker)
+	T_RTTI_CLASS;
 
 public:
 	void setPerspectiveTransform(const Matrix44& perspectiveTransform);

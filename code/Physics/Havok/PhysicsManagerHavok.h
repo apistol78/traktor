@@ -31,7 +31,7 @@ class T_DLLCLASS PhysicsManagerHavok
 :	public PhysicsManager
 ,	public DestroyCallbackHavok
 {
-	T_RTTI_CLASS(PhysicsManagerHavok)
+	T_RTTI_CLASS;
 
 public:
 	PhysicsManagerHavok();

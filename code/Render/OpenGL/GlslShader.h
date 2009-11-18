@@ -5,7 +5,7 @@
 #include <map>
 #include <set>
 #include <string>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/OpenGL/GlslType.h"

@@ -1,7 +1,6 @@
 #ifndef traktor_flash_FlashMovieFactoryTags_H
 #define traktor_flash_FlashMovieFactoryTags_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/SwfTypes.h"
 

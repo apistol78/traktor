@@ -1,6 +1,5 @@
 #include "Ui/Win32/CanvasGdiWin32.h"
 #include "Ui/Win32/BitmapWin32.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/TString.h"
 #include "Core/Math/Envelope.h"
 #include "Core/Math/Vector2.h"

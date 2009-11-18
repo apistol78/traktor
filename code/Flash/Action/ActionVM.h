@@ -134,7 +134,7 @@ class ActionFrame;
  */
 class T_DLLCLASS ActionVM : public Object
 {
-	T_RTTI_CLASS(ActionVM)
+	T_RTTI_CLASS;
 
 public:
 	ActionVM();

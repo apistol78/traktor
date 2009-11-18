@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS TextureBatchWizardTool : public editor::IWizardTool
 {
-	T_RTTI_CLASS(TextureBatchWizardTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getDescription() const;

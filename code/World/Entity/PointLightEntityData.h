@@ -21,12 +21,12 @@ namespace traktor
  */
 class T_DLLCLASS PointLightEntityData : public SpatialEntityData
 {
-	T_RTTI_CLASS(PointLightEntityData)
+	T_RTTI_CLASS;
 
 public:
 	PointLightEntityData();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const Vector4& getSunColor() const { return m_sunColor; }
 

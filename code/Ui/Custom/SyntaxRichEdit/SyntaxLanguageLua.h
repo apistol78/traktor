@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SyntaxLanguageLua : public SyntaxLanguage
 {
-	T_RTTI_CLASS(SyntaxLanguageLua)
+	T_RTTI_CLASS;
 
 public:
 	virtual void begin();

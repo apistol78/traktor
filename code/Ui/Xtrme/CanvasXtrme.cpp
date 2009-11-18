@@ -4,7 +4,6 @@
 #include "Ui/Itf/IBitmap.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Hermite.h"
@@ -49,7 +48,7 @@ void CanvasXtrme::setFont(const Font& font)
 	std::map< const Font*, Ref< FontMap > >::iterator i = m_fontMaps.find(&font);
 	if (i == m_fontMaps.end())
 	{
-		m_currentFontMap = gc_new< FontMap >();
+		m_currentFontMap = new FontMap();
 		m_currentFontMap->create(m_renderSystem, font);
 		m_fontMaps[&font] = m_currentFontMap;
 	}

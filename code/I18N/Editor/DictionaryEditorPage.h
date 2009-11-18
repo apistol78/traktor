@@ -1,7 +1,6 @@
 #ifndef traktor_i18n_DictionaryEditorPage_H
 #define traktor_i18n_DictionaryEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -41,7 +40,7 @@ class Dictionary;
 
 class T_DLLCLASS DictionaryEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(DictionaryEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	DictionaryEditorPage(editor::IEditor* editor);

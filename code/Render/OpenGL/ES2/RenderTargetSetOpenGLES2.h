@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetSetOpenGLES2_H
 #define traktor_render_RenderTargetSetOpenGLES2_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
@@ -29,7 +29,7 @@ class RenderTargetOpenGLES2;
  */
 class T_DLLCLASS RenderTargetSetOpenGLES2 : public RenderTargetSet
 {
-	T_RTTI_CLASS(RenderTargetSetOpenGLES2)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSetOpenGLES2(IContext* context);

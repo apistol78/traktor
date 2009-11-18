@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionPoint : public ActionObject
 {
-	T_RTTI_CLASS(ActionPoint)
+	T_RTTI_CLASS;
 
 public:
 	double x;

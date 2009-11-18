@@ -7,7 +7,7 @@
 #	include <windows.h>
 #	include <xinput.h>
 #endif
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class InputDeviceXi;
 
 class T_DLLCLASS InputDriverXi : public IInputDriver
 {
-	T_RTTI_CLASS(InputDriverXi)
+	T_RTTI_CLASS;
 
 public:
 	InputDriverXi(DWORD deviceCount = 4);

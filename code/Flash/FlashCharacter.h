@@ -25,7 +25,7 @@ class FlashCharacterInstance;
  */
 class T_DLLCLASS FlashCharacter : public ActionObject
 {
-	T_RTTI_CLASS(FlashCharacter)
+	T_RTTI_CLASS;
 
 public:
 	FlashCharacter(uint16_t id);

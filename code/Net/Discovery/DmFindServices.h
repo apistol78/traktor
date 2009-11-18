@@ -11,20 +11,20 @@ namespace traktor
 
 class DmFindServices : public IDiscoveryMessage
 {
-	T_RTTI_CLASS(DmFindServices)
+	T_RTTI_CLASS;
 
 public:
-	DmFindServices(const Guid& sessionGuid = Guid(), const Type* serviceType = 0);
+	DmFindServices(const Guid& sessionGuid = Guid(), const TypeInfo* serviceType = 0);
 
 	const Guid& getSessionGuid() const { return m_sessionGuid; }
 
-	const Type* getServiceType() const { return m_serviceType; }
+	const TypeInfo* getServiceType() const { return m_serviceType; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_sessionGuid;
-	const Type* m_serviceType;
+	const TypeInfo* m_serviceType;
 };
 
 	}

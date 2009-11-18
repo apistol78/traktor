@@ -31,7 +31,7 @@ StreamMessageListener::StreamMessageListener(Connection* connection)
 bool StreamMessageListener::messageClose(const StmClose* message)
 {
 	uint32_t streamHandle = message->getHandle();
-	Ref< Stream > stream = m_connection->getObject< Stream >(streamHandle);
+	Ref< IStream > stream = m_connection->getObject< IStream >(streamHandle);
 	if (!stream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -48,7 +48,7 @@ bool StreamMessageListener::messageClose(const StmClose* message)
 bool StreamMessageListener::messageGetStat(const StmGetStat* message)
 {
 	uint32_t streamHandle = message->getHandle();
-	Ref< Stream > stream = m_connection->getObject< Stream >(streamHandle);
+	Ref< IStream > stream = m_connection->getObject< IStream >(streamHandle);
 	if (!stream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -68,7 +68,7 @@ bool StreamMessageListener::messageGetStat(const StmGetStat* message)
 bool StreamMessageListener::messageSeek(const StmSeek* message)
 {
 	uint32_t streamHandle = message->getHandle();
-	Ref< Stream > stream = m_connection->getObject< Stream >(streamHandle);
+	Ref< IStream > stream = m_connection->getObject< IStream >(streamHandle);
 	if (!stream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -83,7 +83,7 @@ bool StreamMessageListener::messageSeek(const StmSeek* message)
 bool StreamMessageListener::messageRead(const StmRead* message)
 {
 	uint32_t streamHandle = message->getHandle();
-	Ref< Stream > stream = m_connection->getObject< Stream >(streamHandle);
+	Ref< IStream > stream = m_connection->getObject< IStream >(streamHandle);
 	if (!stream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -100,7 +100,7 @@ bool StreamMessageListener::messageRead(const StmRead* message)
 bool StreamMessageListener::messageWrite(const StmWrite* message)
 {
 	uint32_t streamHandle = message->getHandle();
-	Ref< Stream > stream = m_connection->getObject< Stream >(streamHandle);
+	Ref< IStream > stream = m_connection->getObject< IStream >(streamHandle);
 	if (!stream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));

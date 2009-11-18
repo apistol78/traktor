@@ -26,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS InterpreterFixed : public Processor
 {
-	T_RTTI_CLASS(InterpreterFixed)
+	T_RTTI_CLASS;
 
 public:
 	InterpreterFixed();

@@ -39,7 +39,7 @@ class CloudMask;
 
 class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(CloudEntityData)
+	T_RTTI_CLASS;
 
 public:
 	CloudEntityData();
@@ -48,7 +48,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }
 

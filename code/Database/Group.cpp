@@ -4,7 +4,6 @@
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderGroup.h"
 #include "Database/Provider/IProviderBus.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -29,7 +28,7 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 
 	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
 	{
-		Ref< Group > childGroup = gc_new< Group >(m_providerBus);
+		Ref< Group > childGroup = new Group(m_providerBus);
 		if (!childGroup->internalCreate(*i, this))
 			return false;
 
@@ -41,7 +40,7 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
 	{
-		Ref< Instance > childInstance = gc_new< Instance >(m_providerBus);
+		Ref< Instance > childInstance = new Instance(m_providerBus);
 		if (!childInstance->internalCreate(*i, this))
 			return false;
 
@@ -151,7 +150,7 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 	if (!providerGroup)
 		return 0;
 
-	group = gc_new< Group >(m_providerBus);
+	group = new Group(m_providerBus);
 	if (!group->internalCreate(providerGroup, this))
 		return 0;
 
@@ -159,7 +158,7 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 	return group;
 }
 
-Ref< Instance > Group::getInstance(const std::wstring& instanceName, const Type* primaryType)
+Ref< Instance > Group::getInstance(const std::wstring& instanceName, const TypeInfo* primaryType)
 {
 	T_ASSERT (m_providerGroup);
 	if (!primaryType)
@@ -208,7 +207,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 
 	// Create instance object.
 	if (!instance)
-		instance = gc_new< Instance >(m_providerBus);
+		instance = new Instance(m_providerBus);
 
 	if (!instance->internalCreate(providerInstance, this))
 		return 0;

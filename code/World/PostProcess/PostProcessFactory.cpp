@@ -14,9 +14,9 @@ PostProcessFactory::PostProcessFactory(db::Database* db)
 {
 }
 
-const TypeSet PostProcessFactory::getResourceTypes() const
+const TypeInfoSet PostProcessFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< PostProcessSettings >());
 	return typeSet;
 }
@@ -26,7 +26,7 @@ bool PostProcessFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	return m_db->getObjectReadOnly< PostProcessSettings >(guid);
 }

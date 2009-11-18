@@ -3,7 +3,7 @@
 
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Itf/IMenuBar.h"
 #include "Ui/Itf/IWidget.h"
 

@@ -5,7 +5,7 @@
 #include "Physics/JointDesc.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/EntityInstance.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -16,7 +16,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.physics.ArticulatedEntityData", ArticulatedEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.ArticulatedEntityData", ArticulatedEntityData, world::SpatialEntityData)
 
 Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	world::IEntityBuilder* builder,
@@ -67,10 +67,10 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 		}
 	}
 
-	return gc_new< ArticulatedEntity >(
-		cref(getTransform()),
-		cref(entities),
-		cref(joints)
+	return new ArticulatedEntity(
+		getTransform(),
+		entities,
+		joints
 	);
 }
 
@@ -89,7 +89,7 @@ void ArticulatedEntityData::setTransform(const Transform& transform)
 	SpatialEntityData::setTransform(transform);
 }
 
-bool ArticulatedEntityData::serialize(Serializer& s)
+bool ArticulatedEntityData::serialize(ISerializer& s)
 {
 	if (!world::SpatialEntityData::serialize(s))
 		return false;
@@ -106,7 +106,7 @@ ArticulatedEntityData::Constraint::Constraint()
 {
 }
 
-bool ArticulatedEntityData::Constraint::serialize(Serializer& s)
+bool ArticulatedEntityData::Constraint::serialize(ISerializer& s)
 {
 	s >> MemberRef< JointDesc >(L"jointDesc", jointDesc);
 	s >> Member< int32_t >(L"entityIndex1", entityIndex1);

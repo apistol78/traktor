@@ -24,14 +24,14 @@ class Heightfield;
  */
 class T_DLLCLASS HeightfieldShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(HeightfieldShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	void setHeightfield(const resource::Proxy< Heightfield >& heightfield);
 
 	const resource::Proxy< Heightfield >& getHeightfield() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	resource::Proxy< Heightfield > m_heightfield;

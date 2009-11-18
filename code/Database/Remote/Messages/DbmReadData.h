@@ -13,7 +13,7 @@ namespace traktor
  */
 class DbmReadData : public IMessage
 {
-	T_RTTI_CLASS(DbmReadData)
+	T_RTTI_CLASS;
 
 public:
 	DbmReadData(uint32_t handle = 0, const std::wstring& name = L"");
@@ -22,7 +22,7 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

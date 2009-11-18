@@ -8,15 +8,15 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Serializer;
+class ISerializer;
 
 /*! \brief Linear transform.
  * \ingroup Core
@@ -56,7 +56,7 @@ public:
 
 	T_MATH_INLINE bool operator != (const Transform& rh) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	friend T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& rh, const Transform& lh);
 

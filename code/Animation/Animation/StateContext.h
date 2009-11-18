@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS StateContext : public Object
 {
-	T_RTTI_CLASS(StateContext)
+	T_RTTI_CLASS;
 
 public:
 	StateContext();

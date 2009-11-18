@@ -30,7 +30,7 @@ class Event;
  */
 class T_DLLCLASS ProfileControl : public Widget
 {
-	T_RTTI_CLASS(ProfileControl)
+	T_RTTI_CLASS;
 
 public:
 	ProfileControl();

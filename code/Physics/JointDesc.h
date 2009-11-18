@@ -1,7 +1,7 @@
 #ifndef traktor_physics_JointDesc_H
 #define traktor_physics_JointDesc_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Joint description.
  * \ingroup Physics
  */
-class T_DLLCLASS JointDesc : public Serializable
+class T_DLLCLASS JointDesc : public ISerializable
 {
-	T_RTTI_CLASS(JointDesc)
+	T_RTTI_CLASS;
 };
 
 	}

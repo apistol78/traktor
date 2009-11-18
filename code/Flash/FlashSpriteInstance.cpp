@@ -7,7 +7,6 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionScript.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {

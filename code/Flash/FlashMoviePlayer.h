@@ -3,7 +3,6 @@
 
 #include <map>
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -40,7 +39,7 @@ struct CallArgs;
  */
 class T_DLLCLASS FlashMoviePlayer : public Object
 {
-	T_RTTI_CLASS(FlashMoviePlayer)
+	T_RTTI_CLASS;
 
 public:
 	FlashMoviePlayer(DisplayRenderer* displayRenderer);

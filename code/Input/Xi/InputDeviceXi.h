@@ -24,7 +24,7 @@ namespace traktor
 
 class T_DLLCLASS InputDeviceXi : public IInputDevice
 {
-	T_RTTI_CLASS(InputDeviceXi)
+	T_RTTI_CLASS;
 
 public:
 	InputDeviceXi(DWORD controller);

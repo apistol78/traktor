@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.AssetsPipeline", AssetsPipeline, IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", AssetsPipeline, IPipeline)
 
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
@@ -23,9 +23,9 @@ uint32_t AssetsPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet AssetsPipeline::getAssetTypes() const
+TypeInfoSet AssetsPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Assets >());
 	return typeSet;
 }
@@ -33,7 +33,7 @@ TypeSet AssetsPipeline::getAssetTypes() const
 bool AssetsPipeline::buildDependencies(
 	IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -45,7 +45,7 @@ bool AssetsPipeline::buildDependencies(
 
 bool AssetsPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

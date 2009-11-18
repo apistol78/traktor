@@ -1,7 +1,6 @@
 #ifndef traktor_db_CompactContext_H
 #define traktor_db_CompactContext_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 namespace traktor
@@ -17,7 +16,7 @@ class CompactRegistry;
  */
 class CompactContext : public Object
 {
-	T_RTTI_CLASS(CompactContext)
+	T_RTTI_CLASS;
 
 public:
 	CompactContext(BlockFile* blockFile, CompactRegistry* registry);

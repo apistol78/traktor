@@ -1,7 +1,6 @@
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/Xbox360/RenderTargetXbox360.h"
 #include "Render/Dx9/Xbox360/RenderSystemXbox360.h"
-#include "Core/Heap/Ref.h"
 
 namespace traktor
 {

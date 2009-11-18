@@ -28,14 +28,14 @@ class MiniButton;
  */
 class T_DLLCLASS ArrayPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(ArrayPropertyItem)
+	T_RTTI_CLASS;
 	
 public:
-	ArrayPropertyItem(const std::wstring& text, const Type* elementType);
+	ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType);
 
-	void setElementType(const Type* objectType);
+	void setElementType(const TypeInfo* objectType);
 
-	const Type* getElementType() const;
+	const TypeInfo* getElementType() const;
 
 protected:
 	virtual void createInPlaceControls(Widget* parent);
@@ -47,7 +47,7 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
 private:
-	const Type* m_elementType;
+	const TypeInfo* m_elementType;
 	Ref< MiniButton > m_buttonEdit;
 
 	void eventClick(Event* event);

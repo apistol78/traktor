@@ -22,7 +22,7 @@ namespace traktor
  */
 class RenderTargetPool : public Object
 {
-	T_RTTI_CLASS(RenderTargetPool)
+	T_RTTI_CLASS;
 
 public:
 	struct Target

@@ -23,7 +23,7 @@ class Event;
  */
 class T_DLLCLASS EventHandler : public Object
 {
-	T_RTTI_CLASS(EventHandler)
+	T_RTTI_CLASS;
 
 public:
 	virtual void notify(Event* event) = 0;

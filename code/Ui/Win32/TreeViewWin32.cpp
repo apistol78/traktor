@@ -3,7 +3,6 @@
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/TreeView.h"
 #include "Ui/Events/TreeViewDragEvent.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -83,7 +82,7 @@ Ref< TreeViewItem > TreeViewWin32::createItem(TreeViewItem* parent, const std::w
 	if (expandedImage < 0)
 		expandedImage = image;
 
-	Ref< TreeViewItemWin32 > item = gc_new< TreeViewItemWin32 >(this, parent, image, expandedImage, (HWND)m_hWnd);
+	Ref< TreeViewItemWin32 > item = new TreeViewItemWin32(this, parent, image, expandedImage, (HWND)m_hWnd);
 
 	tstring ttext = wstots(text);
 

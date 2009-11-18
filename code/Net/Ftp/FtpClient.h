@@ -2,8 +2,7 @@
 #define traktor_net_FtpClient_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +16,7 @@ namespace traktor
 {
 
 class File;
-class Stream;
+class IStream;
 	
 	namespace net
 	{
@@ -28,7 +27,7 @@ class TcpSocket;
 	
 class T_DLLCLASS FtpClient : public Object
 {
-	T_RTTI_CLASS(FtpClient)
+	T_RTTI_CLASS;
 	
 public:
 	bool connect(const SocketAddressIPv4& socketAddress);
@@ -47,11 +46,11 @@ public:
 	
 	bool getFileList(RefArray< File >& outFiles);
 	
-	Ref< Stream > open(const std::wstring& fileName);
+	Ref< IStream > open(const std::wstring& fileName);
 
 private:
 	Ref< TcpSocket > m_socket;
-	Ref< Stream > m_commandStream;
+	Ref< IStream > m_commandStream;
 };
 	
 	}

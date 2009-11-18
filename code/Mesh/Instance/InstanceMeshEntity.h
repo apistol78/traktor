@@ -21,7 +21,7 @@ class InstanceMesh;
 
 class T_DLLCLASS InstanceMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(InstanceMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	InstanceMeshEntity(const Transform& transform, const resource::Proxy< InstanceMesh >& mesh);

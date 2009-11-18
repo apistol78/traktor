@@ -1,6 +1,6 @@
 #include <sstream>
+#include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
-#include "Core/Io/OutputStreamBuffer.h"
 #include "Core/Thread/Acquire.h"
 
 namespace traktor
@@ -61,9 +61,9 @@ wchar_t* itoa__(T value, wchar_t* buf)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object);
 
-OutputStream::OutputStream(OutputStreamBuffer* buffer, LineEnd lineEnd)
+OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
 ,	m_pushIndent(false)
@@ -87,12 +87,12 @@ OutputStream::~OutputStream()
 	T_EXCEPTION_GUARD_END
 }
 
-void OutputStream::setBuffer(OutputStreamBuffer* buffer)
+void OutputStream::setBuffer(IOutputStreamBuffer* buffer)
 {
 	m_buffer = buffer;
 }
 
-Ref< OutputStreamBuffer > OutputStream::getBuffer() const
+IOutputStreamBuffer* OutputStream::getBuffer() const
 {
 	return m_buffer;
 }

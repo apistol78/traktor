@@ -151,7 +151,7 @@ ProgramResourceDx9* ProgramXbox360::compile(const HlslProgram& hlslProgram, int 
 	if (!validate)
 		flags |= D3DXSHADER_SKIPVALIDATION;
 
-	Ref< ProgramResourceDx9 > resource = gc_new< ProgramResourceDx9 >();
+	Ref< ProgramResourceDx9 > resource = new ProgramResourceDx9();
 
 	if (!compileShader(
 		hlslProgram.getVertexShader(),

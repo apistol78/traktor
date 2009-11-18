@@ -2,7 +2,6 @@
 #define traktor_render_IndexBufferDx10_H
 
 #include "Render/IndexBuffer.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class ContextDx10;
  */
 class T_DLLCLASS IndexBufferDx10 : public IndexBuffer
 {
-	T_RTTI_CLASS(IndexBufferDx10)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferDx10(ContextDx10* context, IndexType indexType, uint32_t bufferSize, ID3D10Buffer* d3dBuffer);

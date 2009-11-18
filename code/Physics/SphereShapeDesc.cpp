@@ -1,5 +1,5 @@
 #include "Physics/SphereShapeDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.SphereShapeDesc", SphereShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.SphereShapeDesc", SphereShapeDesc, ShapeDesc)
 
 SphereShapeDesc::SphereShapeDesc()
 :	m_radius(1.0f)
@@ -24,7 +24,7 @@ float SphereShapeDesc::getRadius() const
 	return m_radius;
 }
 
-bool SphereShapeDesc::serialize(Serializer& s)
+bool SphereShapeDesc::serialize(ISerializer& s)
 {
 	if (!ShapeDesc::serialize(s))
 		return false;

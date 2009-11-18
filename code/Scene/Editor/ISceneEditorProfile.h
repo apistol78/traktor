@@ -4,8 +4,7 @@
 #include <list>
 #include <string>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -65,7 +64,7 @@ class IEntityEditorFactory;
  */
 class T_DLLCLASS ISceneEditorProfile : public Object
 {
-	T_RTTI_CLASS(ISceneEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Get UI commands.

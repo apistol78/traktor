@@ -1,8 +1,7 @@
 #ifndef traktor_render_RenderTargetSetWin32_H
 #define traktor_render_RenderTargetSetWin32_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
@@ -31,7 +30,7 @@ class T_DLLCLASS RenderTargetSetWin32
 :	public RenderTargetSet
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(RenderTargetSetWin32)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSetWin32(UnmanagedListener* unmanagedListener, ContextDx9* context);

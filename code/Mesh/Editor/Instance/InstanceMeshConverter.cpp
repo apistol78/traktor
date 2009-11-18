@@ -21,7 +21,7 @@ namespace traktor
 
 Ref< MeshResource > InstanceMeshConverter::createResource() const
 {
-	return gc_new< InstanceMeshResource >();
+	return new InstanceMeshResource();
 }
 
 bool InstanceMeshConverter::convert(
@@ -29,7 +29,7 @@ bool InstanceMeshConverter::convert(
 	const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
-	Stream* meshResourceStream
+	IStream* meshResourceStream
 ) const
 {
 	// Create a copy of the source model and triangulate it.

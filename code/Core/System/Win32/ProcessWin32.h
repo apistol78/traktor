@@ -3,14 +3,14 @@
 
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "Core/System/Process.h"
+#include "Core/System/IProcess.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,9 +19,9 @@ namespace traktor
 /*! \brief Win32 system process.
  * \ingroup Core
  */
-class T_DLLCLASS ProcessWin32 : public Process
+class T_DLLCLASS ProcessWin32 : public IProcess
 {
-	T_RTTI_CLASS(Process)
+	T_RTTI_CLASS;
 
 public:
 	ProcessWin32(const PROCESS_INFORMATION& pi);

@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Database/Remote/Messages/StmWrite.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.StmWrite", StmWrite, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmWrite", StmWrite, IMessage)
 
 StmWrite::StmWrite(uint32_t handle, int32_t blockSize, const void* block)
 :	m_handle(handle)
@@ -17,7 +17,7 @@ StmWrite::StmWrite(uint32_t handle, int32_t blockSize, const void* block)
 	std::memcpy(m_block, block, blockSize);
 }
 
-bool StmWrite::serialize(Serializer& s)
+bool StmWrite::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< int32_t >(L"blockSize", m_blockSize);

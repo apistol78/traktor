@@ -1,6 +1,5 @@
 #include "Core/Math/BspTree.h"
 #include "Core/Math/Const.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -35,7 +34,7 @@ bool BspTree::inside(const Winding& w) const
 
 Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding >& polygons, const AlignedVector< Plane >& planes)
 {
-	Ref< BspNode > node = gc_new< BspNode >();
+	Ref< BspNode > node = new BspNode();
 	node->plane = planes[0];
 
 	AlignedVector< Winding > frontPolygons, backPolygons;

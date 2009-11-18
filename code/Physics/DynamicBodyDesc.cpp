@@ -1,5 +1,5 @@
 #include "Physics/DynamicBodyDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.DynamicBodyDesc", DynamicBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", DynamicBodyDesc, BodyDesc)
 
 DynamicBodyDesc::DynamicBodyDesc()
 :	m_mass(1.0f)
@@ -95,7 +95,7 @@ int DynamicBodyDesc::getVersion() const
 	return 3;
 }
 
-bool DynamicBodyDesc::serialize(Serializer& s)
+bool DynamicBodyDesc::serialize(ISerializer& s)
 {
 	if (!BodyDesc::serialize(s))
 		return false;

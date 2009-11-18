@@ -13,11 +13,11 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.mesh.MeshEntityPipeline", MeshEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityPipeline", MeshEntityPipeline, world::EntityPipeline)
 
-TypeSet MeshEntityPipeline::getAssetTypes() const
+TypeInfoSet MeshEntityPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< BlendMeshEntityData >());
 	typeSet.insert(&type_of< CompositeMeshEntityData >());
 	typeSet.insert(&type_of< IndoorMeshEntityData >());
@@ -30,7 +30,7 @@ TypeSet MeshEntityPipeline::getAssetTypes() const
 bool MeshEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

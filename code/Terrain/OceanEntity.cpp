@@ -94,7 +94,7 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 		indexCount - 1
 	);
 
-	m_screenRenderer = gc_new< render::ScreenRenderer >();
+	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return 0;
 

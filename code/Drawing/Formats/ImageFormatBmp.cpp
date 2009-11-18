@@ -2,7 +2,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 
@@ -11,7 +10,7 @@ namespace traktor
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatBmp", ImageFormatBmp, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatBmp", ImageFormatBmp, IImageFormat)
 
 #pragma pack(1)
 
@@ -46,7 +45,7 @@ struct BITMAPINFOHEADER
 
 #pragma pack()
 
-Ref< Image > ImageFormatBmp::read(Stream* stream)
+Ref< Image > ImageFormatBmp::read(IStream* stream)
 {
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER bmih;
@@ -105,14 +104,14 @@ Ref< Image > ImageFormatBmp::read(Stream* stream)
 		return 0;
 	}
 
-	Ref< Image > image = gc_new< Image >(pf, bmih.biWidth, bmih.biHeight);
+	Ref< Image > image = new Image(pf, bmih.biWidth, bmih.biHeight);
 
-	stream->seek(Stream::SeekSet, bmfh.bfOffBits);
+	stream->seek(IStream::SeekSet, bmfh.bfOffBits);
 
 	int bs = pf->getByteSize();
 	int rowSize = int(bmih.biWidth * bs);
 
-	char* ptr = static_cast<char*>(image->getData());
+	uint8_t* ptr = static_cast< uint8_t* >(image->getData());
 	for (int y = 0; y < bmih.biHeight; ++y)
 	{
 		reader.read(
@@ -123,7 +122,7 @@ Ref< Image > ImageFormatBmp::read(Stream* stream)
 			reader.skip(4 - (rowSize & 3));
 	}
 
-	Ref< ImageInfo > imageInfo = gc_new< ImageInfo >();
+	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"BMP");
@@ -132,7 +131,7 @@ Ref< Image > ImageFormatBmp::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatBmp::write(Stream* stream, Image* image)
+bool ImageFormatBmp::write(IStream* stream, Image* image)
 {
 	return false;
 }

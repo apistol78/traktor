@@ -1,5 +1,4 @@
 #include "Model/Formats/ModelFormat.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -13,12 +12,12 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 {
 	Ref< Model > md;
 
-	std::vector< const Type* > formatTypes;
+	std::vector< const TypeInfo* > formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
 
-	for (std::vector< const Type* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
 	{
-		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->newInstance());
+		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
 		if (!modelFormat)
 			continue;
 
@@ -35,12 +34,12 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 
 bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 {
-	std::vector< const Type* > formatTypes;
+	std::vector< const TypeInfo* > formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
 
-	for (std::vector< const Type* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
 	{
-		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->newInstance());
+		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
 		if (!modelFormat)
 			continue;
 

@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS FlowLayout : public Layout
 {
-	T_RTTI_CLASS(FlowLayout)
+	T_RTTI_CLASS;
 
 public:
 	FlowLayout();

@@ -2,7 +2,6 @@
 #define traktor_db_Database_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
@@ -19,7 +18,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -37,7 +36,7 @@ class Instance;
  */
 class T_DLLCLASS Database : public Object
 {
-	T_RTTI_CLASS(Database)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(IProviderDatabase* providerDatabase);
@@ -74,7 +73,7 @@ public:
 	 * \param primaryType Optional primary type; if instance isn't of type then null is returned.
 	 * \return Instance.
 	 */
-	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const Type* primaryType = 0);
+	virtual Ref< Instance > getInstance(const std::wstring& instancePath, const TypeInfo* primaryType = 0);
 
 	/*! \brief Create new instance.
 	 *
@@ -90,12 +89,12 @@ public:
 	 * \param guid Instance guid.
 	 * \return Instance's object; null if no instance found.
 	 */
-	virtual Ref< Serializable > getObjectReadOnly(const Guid& guid);
+	virtual Ref< ISerializable > getObjectReadOnly(const Guid& guid);
 
 	template < typename T >
 	Ref< T > getObjectReadOnly(const Guid& guid)
 	{
-		Ref< Serializable > object = getObjectReadOnly(guid);
+		Ref< ISerializable > object = getObjectReadOnly(guid);
 		return dynamic_type_cast< T* >(object);
 	}
 

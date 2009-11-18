@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS EqualizerFilter : public IFilter
 {
-	T_RTTI_CLASS(EqualizerFilter)
+	T_RTTI_CLASS;
 
 public:
 	EqualizerFilter(float gain);

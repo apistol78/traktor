@@ -2,7 +2,6 @@
 #define traktor_ui_custom_NodeShape_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Ui/Point.h"
 #include "Ui/Size.h"
 
@@ -34,7 +33,7 @@ class PaintSettings;
  */
 class T_DLLCLASS NodeShape : public Object
 {
-	T_RTTI_CLASS(NodeShape);
+	T_RTTI_CLASS;
 
 public:
 	virtual Point getPinPosition(const Node* node, const Pin* pin) = 0;

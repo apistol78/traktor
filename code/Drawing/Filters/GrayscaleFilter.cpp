@@ -1,17 +1,16 @@
 #include "Drawing/Filters/GrayscaleFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GrayScaleFilter", GrayscaleFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GrayScaleFilter", GrayscaleFilter, IImageFilter)
 
 Ref< Image > GrayscaleFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{

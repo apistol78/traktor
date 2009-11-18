@@ -8,9 +8,9 @@ namespace traktor
 	namespace zip
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.CompressedStream", CompressedStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.CompressedStream", CompressedStream, IStream)
 
-CompressedStream::CompressedStream(Stream* stream)
+CompressedStream::CompressedStream(IStream* stream)
 :	m_stream(stream)
 ,	m_bufferEnd(m_buffer)
 {

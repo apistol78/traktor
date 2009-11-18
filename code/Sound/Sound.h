@@ -1,7 +1,6 @@
 #ifndef traktor_sound_Sound_H
 #define traktor_sound_Sound_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Sound/Types.h"
 
@@ -25,7 +24,7 @@ class ISoundBuffer;
  */
 class T_DLLCLASS Sound : public Object
 {
-	T_RTTI_CLASS(Sound)
+	T_RTTI_CLASS;
 
 public:
 	Sound(ISoundBuffer* soundBuffer);

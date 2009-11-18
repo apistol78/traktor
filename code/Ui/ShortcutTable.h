@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ShortcutTable : public EventSubject
 {
-	T_RTTI_CLASS(ShortcutTable)
+	T_RTTI_CLASS;
 
 public:
 	enum { EiShortcut = EiUser + 1 };

@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Button : public Widget
 {
-	T_RTTI_CLASS(Button)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

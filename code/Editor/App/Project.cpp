@@ -6,7 +6,7 @@
 #include "Database/Database.h"
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -22,7 +22,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 
 	if (endsWith(toLower(databaseName), L".manifest"))
 	{
-		Ref< db::LocalDatabase > localDatabase = gc_new< db::LocalDatabase >();
+		Ref< db::LocalDatabase > localDatabase = new db::LocalDatabase();
 		if (!localDatabase->open(databaseName))
 		{
 			if (!create || !localDatabase->create(databaseName))
@@ -33,7 +33,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 	}
 	else if (endsWith(toLower(databaseName), L".compact"))
 	{
-		Ref< db::CompactDatabase > compactDatabase = gc_new< db::CompactDatabase >();
+		Ref< db::CompactDatabase > compactDatabase = new db::CompactDatabase();
 		if (!compactDatabase->open(databaseName))
 		{
 			if (!create || !compactDatabase->create(databaseName))
@@ -44,7 +44,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 	}
 	else
 	{
-		Ref< db::RemoteDatabase > remoteDatabase = gc_new< db::RemoteDatabase >();
+		Ref< db::RemoteDatabase > remoteDatabase = new db::RemoteDatabase();
 		if (!remoteDatabase->open(databaseName))
 			return 0;
 
@@ -53,7 +53,7 @@ Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
 
 	T_ASSERT (providerDatabase);
 
-	Ref< db::Database > database = gc_new< db::Database >();
+	Ref< db::Database > database = new db::Database();
 	return database->create(providerDatabase) ? database.ptr() : 0;
 }
 
@@ -68,7 +68,7 @@ bool Project::create(const Path& fileName)
 
 bool Project::open(const Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
 		return false;
 
@@ -80,9 +80,9 @@ bool Project::open(const Path& fileName)
 	if (!group)
 		return false;
 
-	m_settings = gc_new< Settings >(
+	m_settings = new Settings(
 		group,
-		gc_new< PropertyGroup >()
+		new PropertyGroup()
 	);
 
 	std::wstring sourceManifest = m_settings->getProperty< editor::PropertyString >(L"Project.SourceManifest");

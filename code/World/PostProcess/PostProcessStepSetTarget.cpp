@@ -1,20 +1,20 @@
 #include "World/PostProcess/PostProcessStepSetTarget.h"
 #include "World/PostProcess/PostProcess.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 
 namespace traktor
 {
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessStepSetTarget", PostProcessStepSetTarget, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepSetTarget", PostProcessStepSetTarget, PostProcessStep)
 
 Ref< PostProcessStep::Instance > PostProcessStepSetTarget::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	return gc_new< InstanceSetTarget >(m_target);
+	return new InstanceSetTarget(m_target);
 }
 
-bool PostProcessStepSetTarget::serialize(Serializer& s)
+bool PostProcessStepSetTarget::serialize(ISerializer& s)
 {
 	return s >> Member< int32_t >(L"target", m_target);
 }

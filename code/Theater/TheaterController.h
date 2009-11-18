@@ -1,7 +1,7 @@
 #ifndef traktor_theater_TheaterController_H
 #define traktor_theater_TheaterController_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Scene/ISceneController.h"
 
 // import/export mechanism.
@@ -21,7 +21,7 @@ class Track;
 
 class T_DLLCLASS TheaterController : public scene::ISceneController
 {
-	T_RTTI_CLASS(TheaterController)
+	T_RTTI_CLASS;
 
 public:
 	TheaterController(float duration, const RefArray< Track >& tracks);

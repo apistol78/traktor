@@ -11,9 +11,9 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.GroupEntityRenderer", GroupEntityRenderer, IEntityRenderer)
 
-const TypeSet GroupEntityRenderer::getEntityTypes() const
+const TypeInfoSet GroupEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< GroupEntity >());
 	typeSet.insert(&type_of< SpatialGroupEntity >());
 	return typeSet;

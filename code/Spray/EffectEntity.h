@@ -35,7 +35,7 @@ class PointRenderer;
  */
 class T_DLLCLASS EffectEntity : public world::SpatialEntity
 {
-	T_RTTI_CLASS(EffectEntity)
+	T_RTTI_CLASS;
 
 public:
 	EffectEntity(resource::IResourceManager* resourceManager, const Transform& transform, const resource::Proxy< Effect >& effect);

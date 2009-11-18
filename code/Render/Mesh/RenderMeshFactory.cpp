@@ -1,7 +1,6 @@
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/IRenderSystem.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -39,7 +38,7 @@ Ref< Mesh > RenderMeshFactory::createMesh(
 			return 0;
 	}
 
-	Ref< Mesh > mesh = gc_new< Mesh >();
+	Ref< Mesh > mesh = new Mesh();
 
 	mesh->setVertexElements(vertexElements);
 	mesh->setVertexBuffer(vertexBuffer);

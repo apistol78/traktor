@@ -1525,14 +1525,14 @@ HlslEmitter::HlslEmitter()
 
 HlslEmitter::~HlslEmitter()
 {
-	for (std::map< const Type*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
+	for (std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
 		delete i->second;
 }
 
 bool HlslEmitter::emit(HlslContext& c, Node* node)
 {
 	// Find emitter for node.
-	std::map< const Type*, Emitter* >::iterator i = m_emitters.find(&node->getType());
+	std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.find(&type_of(node));
 	if (i == m_emitters.end())
 	{
 		log::error << L"No emitter for node " << type_name(node) << Endl;

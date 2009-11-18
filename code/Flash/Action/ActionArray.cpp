@@ -2,7 +2,6 @@
 #include "Flash/Action/Classes/AsArray.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -19,7 +18,7 @@ ActionArray::ActionArray()
 
 Ref< ActionArray > ActionArray::concat() const
 {
-	Ref< ActionArray > out = gc_new< ActionArray >();
+	Ref< ActionArray > out = new ActionArray();
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	return out;
@@ -27,7 +26,7 @@ Ref< ActionArray > ActionArray::concat() const
 
 Ref< ActionArray > ActionArray::concat(const std::vector< ActionValue >& values) const
 {
-	Ref< ActionArray > out = gc_new< ActionArray >();
+	Ref< ActionArray > out = new ActionArray();
 	out->m_values.insert(out->m_values.end(), m_values.begin(), m_values.end());
 	out->m_values.insert(out->m_values.end(), values.begin(), values.end());
 	return out;

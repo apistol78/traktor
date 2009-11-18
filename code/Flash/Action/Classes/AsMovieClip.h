@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsMovieClip : public ActionClass
 {
-	T_RTTI_CLASS(AsMovieClip)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsMovieClip > getInstance();

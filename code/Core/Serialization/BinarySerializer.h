@@ -2,31 +2,31 @@
 #define traktor_BinarySerializer_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Core/Serialization/Serializer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 /*! \brief Binary serializer.
  * \ingroup Core
  */
 class T_DLLCLASS BinarySerializer : public Serializer
 {
-	T_RTTI_CLASS(BinarySerializer)
+	T_RTTI_CLASS;
 
 public:
-	BinarySerializer(Stream* stream);
+	BinarySerializer(IStream* stream);
 	
 	virtual Direction getDirection();
 	
@@ -73,22 +73,26 @@ public:
 	virtual bool operator >> (const Member< Matrix44 >& m);
 
 	virtual bool operator >> (const Member< Quaternion >& m);
-	
-	virtual bool operator >> (const Member< Serializable >& m);
 
-	virtual bool operator >> (const Member< Ref< Serializable > >& m);
+	virtual bool operator >> (const Member< ISerializable >& m);
+	
+	virtual bool operator >> (const Member< ISerializable* >& m);
+
+	virtual bool operator >> (const Member< Ref< ISerializable > >& m);
 
 	virtual bool operator >> (const Member< void* >& m);
 	
 	virtual bool operator >> (const MemberArray& m);
 	
 	virtual bool operator >> (const MemberComplex& m);
+
+	virtual bool operator >> (const MemberEnumBase& m);
 	
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	Direction m_direction;
-	std::map< uint64_t, Ref< Serializable > > m_readCache;
-	std::map< Ref< Serializable >, uint64_t > m_writeCache;
+	std::map< uint64_t, ISerializable* > m_readCache;
+	std::map< ISerializable*, uint64_t > m_writeCache;
 	uint64_t m_nextCacheId;
 };
 	

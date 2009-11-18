@@ -5,7 +5,6 @@
 #include "Net/UdpSocket.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/MemoryStream.h"
@@ -39,14 +38,14 @@ DiscoveryManager::DiscoveryManager()
 
 bool DiscoveryManager::create(bool verbose)
 {
-	m_multicastSendSocket = gc_new< UdpSocket >();
+	m_multicastSendSocket = new UdpSocket();
 	if (!m_multicastSendSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
 		log::error << L"Discovery setup failed; unable to bind send socket port" << Endl;
 		return false;
 	}
 
-	m_multicastRecvSocket = gc_new< MulticastUdpSocket >();
+	m_multicastRecvSocket = new MulticastUdpSocket();
 	if (!m_multicastRecvSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
 	{
 		log::error << L"Discovery setup failed; unable to bind multicast socket port" << Endl;
@@ -109,7 +108,7 @@ void DiscoveryManager::removeService(IService* service)
 {
 }
 
-bool DiscoveryManager::findServices(const Type& serviceType, RefArray< IService >& outServices, uint32_t timeout)
+bool DiscoveryManager::findServices(const TypeInfo& serviceType, RefArray< IService >& outServices, uint32_t timeout)
 {
 	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
@@ -154,7 +153,7 @@ void DiscoveryManager::threadMulticastListener()
 				if (m_verbose)
 					log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
 
-				const Type* serviceType = findServices->getServiceType();
+				const TypeInfo* serviceType = findServices->getServiceType();
 				if (serviceType)
 				{
 					if (m_verbose)

@@ -2,8 +2,7 @@
 #include "Xml/Element.h"
 #include "Xml/Text.h"
 #include "Xml/XmlPullParser.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/MemoryStream.h"
@@ -19,7 +18,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Document", Document, Object)
 
 bool Document::loadFromFile(const Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	bool result = false;
 	
 	if (file != 0)
@@ -31,7 +30,7 @@ bool Document::loadFromFile(const Path& fileName)
 	return result;
 }
 
-bool Document::loadFromStream(Stream* stream)
+bool Document::loadFromStream(IStream* stream)
 {
 	RefArray< Element > stack;
 	XmlPullParser xpp(stream);
@@ -49,7 +48,7 @@ bool Document::loadFromStream(Stream* stream)
 		{
 		case XmlPullParser::EtStartElement:
 			{
-				Ref< Element > element = gc_new< Element >(e.value);
+				Ref< Element > element = new Element(e.value);
 				for (XmlPullParser::Attributes::const_iterator i = e.attr.begin(); i != e.attr.end(); ++i)
 					element->setAttribute(i->first, i->second);
 
@@ -66,7 +65,7 @@ bool Document::loadFromStream(Stream* stream)
 			{
 				if (!stack.empty())
 					stack.back()->addChild(
-						gc_new< Text >(e.value)
+						new Text(e.value)
 					);
 			}
 			break;
@@ -86,7 +85,7 @@ bool Document::loadFromStream(Stream* stream)
 
 bool Document::loadFromText(const std::wstring& text)
 {
-	return loadFromStream(gc_new< MemoryStream >(
+	return loadFromStream(new MemoryStream(
 		(void*)text.c_str(),
 		int(text.length() * sizeof(wchar_t)),
 		true,
@@ -96,7 +95,7 @@ bool Document::loadFromText(const std::wstring& text)
 
 bool Document::saveAsFile(const Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmWrite);
 	if (!file)
 		return false;
 
@@ -106,12 +105,12 @@ bool Document::saveAsFile(const Path& fileName)
 	return result;
 }
 
-bool Document::saveIntoStream(Stream* stream)
+bool Document::saveIntoStream(IStream* stream)
 {
 	if (!stream)
 		return false;
 
-	FileOutputStream os(stream, gc_new< Utf8Encoding >());
+	FileOutputStream os(stream, new Utf8Encoding());
 	os << L"<?xml version=\"1.0\" encoding=\"utf-8\"?>" << Endl;
 
 	if (m_docElement)

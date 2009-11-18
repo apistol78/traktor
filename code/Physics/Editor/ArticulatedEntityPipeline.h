@@ -18,15 +18,15 @@ namespace traktor
 
 class T_DLLCLASS ArticulatedEntityPipeline : public world::EntityPipeline
 {
-	T_RTTI_CLASS(ArticulatedEntityPipeline)
+	T_RTTI_CLASS;
 
 public:
-	virtual TypeSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 };

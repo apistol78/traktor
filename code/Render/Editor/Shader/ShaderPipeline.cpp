@@ -17,7 +17,7 @@
 #include "Database/Instance.h"
 #include "Xml/XmlSerializer.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
@@ -122,7 +122,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ShaderPipeline", ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -137,14 +137,14 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	{
 		std::wstring renderSystemTypeName = settings->getProperty< editor::PropertyString >(L"Editor.RenderSystem");
 
-		const Type* renderSystemType = Type::find(renderSystemTypeName);
+		const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
 		if (!renderSystemType)
 		{
 			log::error << L"Shader pipeline; unable to find render system type \"" << renderSystemTypeName << L"\"" << Endl;
 			return false;
 		}
 
-		m_renderSystem = checked_type_cast< IRenderSystem* >(renderSystemType->newInstance());
+		m_renderSystem = checked_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 		if (!m_renderSystem)
 		{
 			log::error << L"Shader pipeline; unable to instanciate render system" << Endl;
@@ -181,9 +181,9 @@ uint32_t ShaderPipeline::getVersion() const
 	return 5;
 }
 
-TypeSet ShaderPipeline::getAssetTypes() const
+TypeInfoSet ShaderPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ShaderGraph >());
 	return typeSet;
 }
@@ -191,7 +191,7 @@ TypeSet ShaderPipeline::getAssetTypes() const
 bool ShaderPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -223,7 +223,7 @@ bool ShaderPipeline::buildDependencies(
 
 bool ShaderPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -232,7 +232,7 @@ bool ShaderPipeline::buildOutput(
 ) const
 {
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
-	Ref< ShaderResource > shaderResource = gc_new< ShaderResource >();
+	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
 
 	// Link shader fragments.
@@ -269,7 +269,7 @@ bool ShaderPipeline::buildOutput(
 		Ref< ShaderGraph > shaderGraphTechnique = techniques.generate(*i);
 		T_ASSERT (shaderGraphTechnique);
 
-		Ref< ShaderGraphCombinations > combinations = gc_new< ShaderGraphCombinations >(shaderGraphTechnique);
+		Ref< ShaderGraphCombinations > combinations = new ShaderGraphCombinations(shaderGraphTechnique);
 		uint32_t combinationCount = combinations->getCombinationCount();
 		shaderGraphCombinations.push_back(combinations);
 
@@ -307,7 +307,7 @@ bool ShaderPipeline::buildOutput(
 			task->validate = m_validate;
 			task->result = false;
 
-			Ref< Job > job = gc_new< Job >(makeFunctor(task, &BuildCombinationTask::execute));
+			Ref< Job > job = new Job(makeFunctor(task, &BuildCombinationTask::execute));
 			JobManager::getInstance().add(*job);
 
 			tasks.push_back(task);

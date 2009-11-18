@@ -30,7 +30,7 @@ AsMath::AsMath()
 
 void AsMath::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"e", ActionValue(2.7182818284590452354));

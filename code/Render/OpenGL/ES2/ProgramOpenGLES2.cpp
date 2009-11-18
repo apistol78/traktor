@@ -7,7 +7,6 @@
 #include "Render/OpenGL/ES2/ProgramResourceOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
@@ -83,24 +82,24 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	))
 		return 0;
 
-	resource = gc_new< ProgramResourceOpenGLES2 >(
+	resource = new ProgramResourceOpenGLES2(
 		buffer,
 		bufferSize,
-		cref(glslProgram.getVertexSamplers()),
-		cref(glslProgram.getFragmentSamplers()),
-		cref(glslProgram.getRenderState())
+		glslProgram.getVertexSamplers(),
+		glslProgram.getFragmentSamplers(),
+		glslProgram.getRenderState()
 	);
 
 	SBFreeBuffer(buffer, SB_BINARYTYPE_Z400);
 
 #else
 
-	resource = gc_new< ProgramResourceOpenGL >(
-		cref(glslProgram.getVertexShader()),
-		cref(glslProgram.getFragmentShader()),
-		cref(glslProgram.getVertexSamplers()),
-		cref(glslProgram.getFragmentSamplers()),
-		cref(glslProgram.getRenderState())
+	resource = new ProgramResourceOpenGL(
+		glslProgram.getVertexShader(),
+		glslProgram.getFragmentShader(),
+		glslProgram.getVertexSamplers(),
+		glslProgram.getFragmentSamplers(),
+		glslProgram.getRenderState()
 	);
 
 #endif

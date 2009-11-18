@@ -29,7 +29,7 @@ AsMovieClipLoader::AsMovieClipLoader()
 
 void AsMovieClipLoader::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_addListener));
@@ -45,7 +45,7 @@ void AsMovieClipLoader::createPrototype()
 
 ActionValue AsMovieClipLoader::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionObject >(this));
+	return ActionValue::fromObject(new ActionObject(this));
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

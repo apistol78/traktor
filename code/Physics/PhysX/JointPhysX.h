@@ -1,7 +1,6 @@
 #ifndef traktor_physics_JointPhysX_H
 #define traktor_physics_JointPhysX_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/PhysX/Types.h"
 
 class NxJoint;

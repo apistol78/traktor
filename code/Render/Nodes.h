@@ -34,7 +34,7 @@ class Instance;
 /*! \brief Absolute value. */
 class T_DLLCLASS Abs : public ImmutableNode
 {
-	T_RTTI_CLASS(Abs)
+	T_RTTI_CLASS;
 
 public:
 	Abs();
@@ -43,7 +43,7 @@ public:
 /*! \brief Add two values. */
 class T_DLLCLASS Add : public ImmutableNode
 {
-	T_RTTI_CLASS(Add)
+	T_RTTI_CLASS;
 
 public:
 	Add();
@@ -52,7 +52,7 @@ public:
 /*! \brief Arcus cosine. */
 class T_DLLCLASS ArcusCos : public ImmutableNode
 {
-	T_RTTI_CLASS(ArcusCos)
+	T_RTTI_CLASS;
 
 public:
 	ArcusCos();
@@ -61,7 +61,7 @@ public:
 /*! \brief Absolute tangent. */
 class T_DLLCLASS ArcusTan : public ImmutableNode
 {
-	T_RTTI_CLASS(ArcusTan)
+	T_RTTI_CLASS;
 
 public:
 	ArcusTan();
@@ -70,7 +70,7 @@ public:
 /*! \brief Static branch permutation. */
 class T_DLLCLASS Branch : public ImmutableNode
 {
-	T_RTTI_CLASS(Branch)
+	T_RTTI_CLASS;
 
 public:
 	Branch(const std::wstring& parameterName = L"");
@@ -81,7 +81,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -90,7 +90,7 @@ private:
 /*! \brief Clamp value to given range. */
 class T_DLLCLASS Clamp : public ImmutableNode
 {
-	T_RTTI_CLASS(Clamp)
+	T_RTTI_CLASS;
 
 public:
 	Clamp(float min = 0.0f, float max = 1.0f);
@@ -105,7 +105,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_min;
@@ -115,7 +115,7 @@ private:
 /*! \brief Color constant. */
 class T_DLLCLASS Color : public ImmutableNode
 {
-	T_RTTI_CLASS(Color)
+	T_RTTI_CLASS;
 
 public:
 	Color(const traktor::Color& color = traktor::Color(0, 0, 0, 0));
@@ -126,7 +126,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	traktor::Color m_color;
@@ -135,7 +135,7 @@ private:
 /*! \brief Conditional selection. */
 class T_DLLCLASS Conditional : public ImmutableNode
 {
-	T_RTTI_CLASS(Conditional)
+	T_RTTI_CLASS;
 
 public:
 	enum Branch
@@ -169,7 +169,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Branch m_branch;
@@ -179,7 +179,7 @@ private:
 /*! \brief Cosine. */
 class T_DLLCLASS Cos : public ImmutableNode
 {
-	T_RTTI_CLASS(Cos)
+	T_RTTI_CLASS;
 
 public:
 	Cos();
@@ -188,7 +188,7 @@ public:
 /*! \brief Cross product. */
 class T_DLLCLASS Cross : public ImmutableNode
 {
-	T_RTTI_CLASS(Cross)
+	T_RTTI_CLASS;
 
 public:
 	Cross();
@@ -197,7 +197,7 @@ public:
 /*! \brief Partial derivative. */
 class T_DLLCLASS Derivative : public ImmutableNode
 {
-	T_RTTI_CLASS(Derivative)
+	T_RTTI_CLASS;
 
 public:
 	enum Axis
@@ -212,7 +212,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Axis m_axis;
@@ -221,7 +221,7 @@ private:
 /*! \brief Divide. */
 class T_DLLCLASS Div : public ImmutableNode
 {
-	T_RTTI_CLASS(Div)
+	T_RTTI_CLASS;
 
 public:
 	Div();
@@ -230,7 +230,7 @@ public:
 /*! \brief Dot product. */
 class T_DLLCLASS Dot : public ImmutableNode
 {
-	T_RTTI_CLASS(Dot)
+	T_RTTI_CLASS;
 
 public:
 	Dot();
@@ -239,7 +239,7 @@ public:
 /*! \brief Exponential. */
 class T_DLLCLASS Exp : public ImmutableNode
 {
-	T_RTTI_CLASS(Exp)
+	T_RTTI_CLASS;
 
 public:
 	Exp();
@@ -248,7 +248,7 @@ public:
 /*! \brief Fractional part. */
 class T_DLLCLASS Fraction : public ImmutableNode
 {
-	T_RTTI_CLASS(Fraction)
+	T_RTTI_CLASS;
 
 public:
 	Fraction();
@@ -257,7 +257,7 @@ public:
 /*! \brief Fragment position. */
 class T_DLLCLASS FragmentPosition : public ImmutableNode
 {
-	T_RTTI_CLASS(FragmentPosition)
+	T_RTTI_CLASS;
 
 public:
 	FragmentPosition();
@@ -266,7 +266,7 @@ public:
 /*! \brief Fetch value from array uniform. */
 class T_DLLCLASS IndexedUniform : public ImmutableNode
 {
-	T_RTTI_CLASS(IndexedUniform)
+	T_RTTI_CLASS;
 
 public:
 	IndexedUniform(const std::wstring& parameterName = L"", ParameterType type = PtScalar, int32_t length = 0);
@@ -285,7 +285,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -296,7 +296,7 @@ private:
 /*! \brief Fragment named input. */
 class T_DLLCLASS InputPort : public ImmutableNode
 {
-	T_RTTI_CLASS(InputPort)
+	T_RTTI_CLASS;
 
 public:
 	InputPort(const std::wstring& name = L"", bool connectable = true, bool optional = false, float defaultValue = 0.0f);
@@ -321,7 +321,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -333,7 +333,7 @@ private:
 /*! \brief Interpolator, pass value from vertex to pixel shader. */
 class T_DLLCLASS Interpolator : public ImmutableNode
 {
-	T_RTTI_CLASS(Interpolator)
+	T_RTTI_CLASS;
 
 public:
 	Interpolator();
@@ -342,7 +342,7 @@ public:
 /*! \brief Iterator. */
 class T_DLLCLASS Iterate : public ImmutableNode
 {
-	T_RTTI_CLASS(Iterate)
+	T_RTTI_CLASS;
 
 public:
 	Iterate(int32_t from = 0, int32_t to = 0);
@@ -357,7 +357,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_from;
@@ -367,7 +367,7 @@ private:
 /*! \brief Length of geometrical vector. */
 class T_DLLCLASS Length : public ImmutableNode
 {
-	T_RTTI_CLASS(Length)
+	T_RTTI_CLASS;
 
 public:
 	Length();
@@ -376,7 +376,7 @@ public:
 /*! \brief Linear interpolate. */
 class T_DLLCLASS Lerp : public ImmutableNode
 {
-	T_RTTI_CLASS(Lerp)
+	T_RTTI_CLASS;
 
 public:
 	Lerp();
@@ -385,7 +385,7 @@ public:
 /*! \brief Natural logarithm. */
 class T_DLLCLASS Log : public ImmutableNode
 {
-	T_RTTI_CLASS(Log)
+	T_RTTI_CLASS;
 
 public:
 	enum Base
@@ -401,7 +401,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Base m_base;
@@ -410,7 +410,7 @@ private:
 /*! \brief Build matrix. */
 class T_DLLCLASS Matrix : public ImmutableNode
 {
-	T_RTTI_CLASS(Matrix)
+	T_RTTI_CLASS;
 
 public:
 	Matrix();
@@ -419,7 +419,7 @@ public:
 /*! \brief Maximum of two values. */
 class T_DLLCLASS Max : public ImmutableNode
 {
-	T_RTTI_CLASS(Max)
+	T_RTTI_CLASS;
 
 public:
 	Max();
@@ -428,7 +428,7 @@ public:
 /*! \brief Minimum of two values. */
 class T_DLLCLASS Min : public ImmutableNode
 {
-	T_RTTI_CLASS(Min)
+	T_RTTI_CLASS;
 
 public:
 	Min();
@@ -437,7 +437,7 @@ public:
 /*! \brief Mix in scalars into vector. */
 class T_DLLCLASS MixIn : public ImmutableNode
 {
-	T_RTTI_CLASS(MixIn)
+	T_RTTI_CLASS;
 
 public:
 	MixIn();
@@ -446,7 +446,7 @@ public:
 /*! \brief Extract scalars from vector. */
 class T_DLLCLASS MixOut : public ImmutableNode
 {
-	T_RTTI_CLASS(MixOut)
+	T_RTTI_CLASS;
 
 public:
 	MixOut();
@@ -455,7 +455,7 @@ public:
 /*! \brief Multiply. */
 class T_DLLCLASS Mul : public ImmutableNode
 {
-	T_RTTI_CLASS(Mul)
+	T_RTTI_CLASS;
 
 public:
 	Mul();
@@ -464,7 +464,7 @@ public:
 /*! \brief Multiply then add. */
 class T_DLLCLASS MulAdd : public ImmutableNode
 {
-	T_RTTI_CLASS(MulAdd)
+	T_RTTI_CLASS;
 
 public:
 	MulAdd();
@@ -473,7 +473,7 @@ public:
 /*! \brief Negate value. */
 class T_DLLCLASS Neg : public ImmutableNode
 {
-	T_RTTI_CLASS(Neg)
+	T_RTTI_CLASS;
 
 public:
 	Neg();
@@ -482,7 +482,7 @@ public:
 /*! \brief Normalize vector. */
 class T_DLLCLASS Normalize : public ImmutableNode
 {
-	T_RTTI_CLASS(Normalize)
+	T_RTTI_CLASS;
 
 public:
 	Normalize();
@@ -491,7 +491,7 @@ public:
 /*! \brief Shader fragment named output. */
 class T_DLLCLASS OutputPort : public ImmutableNode
 {
-	T_RTTI_CLASS(OutputPort)
+	T_RTTI_CLASS;
 
 public:
 	OutputPort(const std::wstring& name = L"");
@@ -502,7 +502,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -511,7 +511,7 @@ private:
 /*! \brief Evaluate polynomial. */
 class T_DLLCLASS Polynomial : public ImmutableNode
 {
-	T_RTTI_CLASS(Polynomial)
+	T_RTTI_CLASS;
 
 public:
 	Polynomial();
@@ -520,7 +520,7 @@ public:
 /*! \brief Raise to power. */
 class T_DLLCLASS Pow : public ImmutableNode
 {
-	T_RTTI_CLASS(Pow)
+	T_RTTI_CLASS;
 
 public:
 	Pow();
@@ -529,7 +529,7 @@ public:
 /*! \brief Pixel output. */
 class T_DLLCLASS PixelOutput : public ImmutableNode
 {
-	T_RTTI_CLASS(PixelOutput)
+	T_RTTI_CLASS;
 
 public:
 	enum CullMode
@@ -684,7 +684,7 @@ public:
 
 	virtual int getVersion() const;
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_technique;
@@ -713,7 +713,7 @@ private:
 /*! \brief Conditional based on render platform. */
 class T_DLLCLASS Platform : public ImmutableNode
 {
-	T_RTTI_CLASS(Platform)
+	T_RTTI_CLASS;
 
 public:
 	Platform();
@@ -722,7 +722,7 @@ public:
 /*! \brief Reflect vector. */
 class T_DLLCLASS Reflect : public ImmutableNode
 {
-	T_RTTI_CLASS(Reflect)
+	T_RTTI_CLASS;
 
 public:
 	Reflect();
@@ -731,7 +731,7 @@ public:
 /*! \brief Texture sampler. */
 class T_DLLCLASS Sampler : public ImmutableNode
 {
-	T_RTTI_CLASS(Sampler)
+	T_RTTI_CLASS;
 
 public:
 	enum Lookup
@@ -806,7 +806,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -823,7 +823,7 @@ private:
 /*! \brief Scalar constant. */
 class T_DLLCLASS Scalar : public ImmutableNode
 {
-	T_RTTI_CLASS(Scalar)
+	T_RTTI_CLASS;
 
 public:
 	Scalar(float value = 0.0f);
@@ -834,7 +834,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_value;
@@ -843,7 +843,7 @@ private:
 /*! \brief Sine. */
 class T_DLLCLASS Sin : public ImmutableNode
 {
-	T_RTTI_CLASS(Sin)
+	T_RTTI_CLASS;
 
 public:
 	Sin();
@@ -852,7 +852,7 @@ public:
 /*! \brief Square root of value. */
 class T_DLLCLASS Sqrt : public ImmutableNode
 {
-	T_RTTI_CLASS(Sqrt)
+	T_RTTI_CLASS;
 
 public:
 	Sqrt();
@@ -861,7 +861,7 @@ public:
 /*! \brief Subtract. */
 class T_DLLCLASS Sub : public ImmutableNode
 {
-	T_RTTI_CLASS(Sub)
+	T_RTTI_CLASS;
 
 public:
 	Sub();
@@ -870,7 +870,7 @@ public:
 /*! \brief Summarize function. */
 class T_DLLCLASS Sum : public ImmutableNode
 {
-	T_RTTI_CLASS(Sum)
+	T_RTTI_CLASS;
 
 public:
 	Sum(int32_t from = 0, int32_t to = 0);
@@ -885,7 +885,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_from;
@@ -895,7 +895,7 @@ private:
 /*! \brief Conditional switch. */
 class T_DLLCLASS Switch : public Node
 {
-	T_RTTI_CLASS(Switch)
+	T_RTTI_CLASS;
 
 public:
 	enum Branch
@@ -925,7 +925,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Branch m_branch;
@@ -937,7 +937,7 @@ private:
 /*! \brief Swizzle elements in a vector. */
 class T_DLLCLASS Swizzle : public ImmutableNode
 {
-	T_RTTI_CLASS(Swizzle)
+	T_RTTI_CLASS;
 
 public:
 	Swizzle(const std::wstring& swizzle = L"xyzw");
@@ -948,7 +948,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_swizzle;
@@ -957,7 +957,7 @@ private:
 /*! \brief Tangent. */
 class T_DLLCLASS Tan : public ImmutableNode
 {
-	T_RTTI_CLASS(Tan)
+	T_RTTI_CLASS;
 
 public:
 	Tan();
@@ -966,7 +966,7 @@ public:
 /*! \brief Transform vector by matrix. */
 class T_DLLCLASS Transform : public ImmutableNode
 {
-	T_RTTI_CLASS(Transform)
+	T_RTTI_CLASS;
 
 public:
 	Transform();
@@ -975,7 +975,7 @@ public:
 /*! \brief Transpose matrix. */
 class T_DLLCLASS Transpose : public ImmutableNode
 {
-	T_RTTI_CLASS(Transpose)
+	T_RTTI_CLASS;
 
 public:
 	Transpose();
@@ -984,7 +984,7 @@ public:
 /*! \brief Fetch parameter value. */
 class T_DLLCLASS Uniform : public ImmutableNode
 {
-	T_RTTI_CLASS(Uniform)
+	T_RTTI_CLASS;
 
 public:
 	Uniform(const std::wstring& parameterName = L"", ParameterType type = PtScalar);
@@ -999,7 +999,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -1009,7 +1009,7 @@ private:
 /*! \brief Vector constant. */
 class T_DLLCLASS Vector : public ImmutableNode
 {
-	T_RTTI_CLASS(Vector)
+	T_RTTI_CLASS;
 
 public:
 	Vector(const Vector4& value = Vector4(0, 0, 0, 0));
@@ -1020,7 +1020,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Vector4 m_value;
@@ -1029,7 +1029,7 @@ private:
 /*! \brief Fetch value from vertex. */
 class T_DLLCLASS VertexInput : public ImmutableNode
 {
-	T_RTTI_CLASS(VertexInput)
+	T_RTTI_CLASS;
 
 public:
 	VertexInput(const std::wstring& name = L"", DataUsage usage = DuPosition, DataType type = DtFloat4, int index = 0);
@@ -1052,7 +1052,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -1064,7 +1064,7 @@ private:
 /*! \brief Output vertex's clip position. */
 class T_DLLCLASS VertexOutput : public ImmutableNode
 {
-	T_RTTI_CLASS(VertexOutput)
+	T_RTTI_CLASS;
 
 public:
 	VertexOutput();
@@ -1077,7 +1077,7 @@ public:
 
 	virtual int getVersion() const;
 	
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_technique;

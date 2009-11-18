@@ -29,14 +29,14 @@ class MiniButton;
  */
 class T_DLLCLASS BrowsePropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(BrowsePropertyItem)
+	T_RTTI_CLASS;
 
 public:
-	BrowsePropertyItem(const std::wstring& text, const Type* filterType, const Guid& value);
+	BrowsePropertyItem(const std::wstring& text, const TypeInfo* filterType, const Guid& value);
 
-	void setFilterType(const Type* filterType);
+	void setFilterType(const TypeInfo* filterType);
 
-	const Type* getFilterType() const;
+	const TypeInfo* getFilterType() const;
 
 	void setValue(const Guid& text);
 
@@ -53,7 +53,7 @@ protected:
 
 private:
 	Guid m_value;
-	const Type* m_filterType;
+	const TypeInfo* m_filterType;
 	Ref< MiniButton > m_buttonEdit;
 	Ref< MiniButton > m_buttonBrowse;
 

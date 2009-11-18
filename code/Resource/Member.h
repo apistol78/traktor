@@ -1,7 +1,7 @@
 #ifndef traktor_resource_Member_H
 #define traktor_resource_Member_H
 
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Member.h"
 #include "Resource/Proxy.h"
@@ -37,7 +37,7 @@ public:
 	{
 	}
 	
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		Guid guid = m_ref.getGuid();
 		

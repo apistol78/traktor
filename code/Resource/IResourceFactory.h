@@ -3,7 +3,6 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +31,7 @@ class IResourceManager;
  */
 class T_DLLCLASS IResourceFactory : public Object
 {
-	T_RTTI_CLASS(IResourceFactory)
+	T_RTTI_CLASS;
 	
 public:
 	/*! \brief Get resource types.
@@ -40,7 +39,7 @@ public:
 	 * Return a set of resource types this factory
 	 * supports, i.e. is capable of creating.
 	 */
-	virtual const TypeSet getResourceTypes() const = 0;
+	virtual const TypeInfoSet getResourceTypes() const = 0;
 
 	/*! \brief Check if resource is cacheable.
 	 *
@@ -64,7 +63,7 @@ public:
 	 * \param outCacheable If resource is cacheable (default set to true).
 	 * \return Resource instance.
 	 */
-	virtual Ref< Object > create(IResourceManager* resourceManager, const Type& resourceType, const Guid& guid) = 0;
+	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) = 0;
 };
 	
 	}

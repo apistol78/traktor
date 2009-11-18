@@ -14,14 +14,14 @@ namespace traktor
  */
 class MsgGuidResult : public IMessage
 {
-	T_RTTI_CLASS(MsgGuidResult)
+	T_RTTI_CLASS;
 
 public:
 	MsgGuidResult(const Guid& value = Guid());
 
 	const Guid& get() const { return m_value; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_value;

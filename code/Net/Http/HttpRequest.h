@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +20,7 @@ namespace traktor
 
 class T_DLLCLASS HttpRequest : public Object
 {
-	T_RTTI_CLASS(HttpRequest)
+	T_RTTI_CLASS;
 
 public:
 	enum Method

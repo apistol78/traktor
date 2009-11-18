@@ -23,7 +23,7 @@ class Palette;
  */
 class T_DLLCLASS PixelFormat : public Object
 {
-	T_RTTI_CLASS(PixelFormat)
+	T_RTTI_CLASS;
 
 public:
 	PixelFormat();

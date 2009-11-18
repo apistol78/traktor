@@ -13,14 +13,14 @@ namespace traktor
  */
 class DbmCloseTransaction : public IMessage
 {
-	T_RTTI_CLASS(DbmCloseTransaction)
+	T_RTTI_CLASS;
 
 public:
 	DbmCloseTransaction(uint32_t handle = 0);
 
 	uint32_t getHandle() const { return m_handle; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

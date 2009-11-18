@@ -31,7 +31,7 @@ class PropertyItem;
  */
 class T_DLLCLASS PropertyList : public Widget
 {
-	T_RTTI_CLASS(PropertyList)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

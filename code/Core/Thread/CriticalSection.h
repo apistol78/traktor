@@ -1,14 +1,14 @@
 #ifndef traktor_CriticalSection_H
 #define traktor_CriticalSection_H
 
-#include "Core/Config.h"
+#include "Core/Thread/IWaitable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,14 +17,14 @@ namespace traktor
 /*! \brief Critical section primitive.
  * \ingroup Core
  */
-class T_DLLCLASS CriticalSection
+class T_DLLCLASS CriticalSection : public IWaitable
 {
 public:
 	CriticalSection();
 	
 	~CriticalSection();
 
-	bool acquire(int timeout = -1);
+	virtual bool wait(int32_t timeout = -1);
 
 	void release();
 

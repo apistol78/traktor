@@ -10,7 +10,7 @@
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Math/Const.h"
 #include "Core/Log/Log.h"
@@ -34,7 +34,7 @@ int log2(int v)
 
 Ref< drawing::Image > readRawTerrain(const Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
 		return 0;
 
@@ -45,7 +45,7 @@ Ref< drawing::Image > readRawTerrain(const Path& fileName)
 	uint32_t heights = fileSize / heightByteSize;
 	uint32_t size = uint32_t(std::sqrt(float(heights)));
 
-	Ref< drawing::Image > image = gc_new< drawing::Image >(
+	Ref< drawing::Image > image = new drawing::Image(
 		&s_pfRaw16,
 		size,
 		size
@@ -59,7 +59,7 @@ Ref< drawing::Image > readRawTerrain(const Path& fileName)
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -76,9 +76,9 @@ uint32_t HeightfieldPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet HeightfieldPipeline::getAssetTypes() const
+TypeInfoSet HeightfieldPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< HeightfieldAsset >());
 	return typeSet;
 }
@@ -86,7 +86,7 @@ TypeSet HeightfieldPipeline::getAssetTypes() const
 bool HeightfieldPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -98,7 +98,7 @@ bool HeightfieldPipeline::buildDependencies(
 
 bool HeightfieldPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -136,9 +136,9 @@ bool HeightfieldPipeline::buildOutput(
 	}
 
 	// Create heightfield resource.
-	Ref< HeightfieldResource > resource = gc_new< HeightfieldResource >(
+	Ref< HeightfieldResource > resource = new HeightfieldResource(
 		image->getWidth(),
-		cref(heightfieldAsset->m_worldExtent)
+		heightfieldAsset->m_worldExtent
 	);
 
 	// Create instance's name.
@@ -154,7 +154,7 @@ bool HeightfieldPipeline::buildOutput(
 
 	instance->setObject(resource);
 
-	Ref< Stream > stream = instance->writeData(L"Data");
+	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Failed to build heightfield, unable to create data stream" << Endl;

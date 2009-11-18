@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 {
-	T_RTTI_CLASS(DefaultEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	DefaultEntityEditor();

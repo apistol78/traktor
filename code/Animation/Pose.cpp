@@ -1,5 +1,5 @@
 #include "Animation/Pose.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.Pose", Pose, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Pose", Pose, ISerializable)
 
 void Pose::setBoneOffset(uint32_t boneIndex, const Vector4& boneOffset)
 {
@@ -78,12 +78,12 @@ Pose::Bone& Pose::getEditBone(uint32_t boneIndex)
 	return *m_bones.insert(m_bones.begin() + s, Bone(boneIndex));
 }
 
-bool Pose::serialize(Serializer& s)
+bool Pose::serialize(ISerializer& s)
 {
 	return s >> MemberAlignedVector< Bone, MemberComposite< Bone > >(L"bones", m_bones);
 }
 
-bool Pose::Bone::serialize(Serializer& s)
+bool Pose::Bone::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
 	s >> Member< Vector4 >(L"offset", offset);

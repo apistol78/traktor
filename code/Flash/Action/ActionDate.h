@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionDate : public ActionObject
 {
-	T_RTTI_CLASS(ActionDate)
+	T_RTTI_CLASS;
 
 public:
 	ActionDate();

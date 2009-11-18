@@ -1,7 +1,7 @@
 #include "World/PostProcess/PostProcessDefineTarget.h"
 #include "World/PostProcess/PostProcess.h"
 #include "Render/IRenderSystem.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Log/Log.h"
@@ -11,7 +11,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessDefineTarget", PostProcessDefineTarget, PostProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
 :	m_id(0)
@@ -48,7 +48,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	return true;
 }
 
-bool PostProcessDefineTarget::serialize(Serializer& s)
+bool PostProcessDefineTarget::serialize(ISerializer& s)
 {
 	const MemberEnum< render::TextureFormat >::Key kFormats[] =
 	{

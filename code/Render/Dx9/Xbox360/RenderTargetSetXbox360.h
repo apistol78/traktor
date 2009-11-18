@@ -22,7 +22,7 @@ namespace traktor
 class T_DLLCLASS RenderTargetSetXbox360
 :	public RenderTargetSet
 {
-	T_RTTI_CLASS(RenderTargetSetXbox360)
+	T_RTTI_CLASS;
 
 public:
 	virtual void destroy();
@@ -31,7 +31,7 @@ public:
 	
 	virtual int getHeight() const;
 	
-	virtual ITexture* getColorTexture(int index) const;
+	virtual Ref< ITexture > getColorTexture(int index) const;
 };
 
 	}

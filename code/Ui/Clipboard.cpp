@@ -27,7 +27,7 @@ void Clipboard::destroy()
 	}
 }
 
-bool Clipboard::setObject(Serializable* object)
+bool Clipboard::setObject(ISerializable* object)
 {
 	T_ASSERT (m_clipboard);
 	return m_clipboard->setObject(object);
@@ -45,7 +45,7 @@ ClipboardContentType Clipboard::getContentType() const
 	return m_clipboard->getContentType();
 }
 
-Ref< Serializable > Clipboard::getObject() const
+Ref< ISerializable > Clipboard::getObject() const
 {
 	T_ASSERT (m_clipboard);
 	return m_clipboard->getObject();

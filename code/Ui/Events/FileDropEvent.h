@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS FileDropEvent : public Event
 {
-	T_RTTI_CLASS(FileDropEvent)
+	T_RTTI_CLASS;
 	
 public:
 	FileDropEvent(EventSubject* sender, Object* item, const std::vector< Path >& files);

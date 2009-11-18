@@ -98,7 +98,7 @@ bool RagDollPoseController::create(
 
 		if (bone->getEnableLimits())
 		{
-			Ref< physics::ConeTwistJointDesc > jointDesc = gc_new< physics::ConeTwistJointDesc >();
+			Ref< physics::ConeTwistJointDesc > jointDesc = new physics::ConeTwistJointDesc();
 			jointDesc->setAnchor(anchor);
 			jointDesc->setConeAxis(coneAxis);
 			jointDesc->setTwistAxis(twistAxis);
@@ -114,7 +114,7 @@ bool RagDollPoseController::create(
 		}
 		else
 		{
-			Ref< physics::BallJointDesc > jointDesc = gc_new< physics::BallJointDesc >();
+			Ref< physics::BallJointDesc > jointDesc = new physics::BallJointDesc();
 			jointDesc->setAnchor(anchor);
 
 			joint = physicsManager->createJoint(

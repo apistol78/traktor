@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS StateGraphEditorPageFactory : public editor::IEditorPageFactory
 {
-	T_RTTI_CLASS(StateGraphEditorPageFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEditableTypes() const;
+	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor) const;
 

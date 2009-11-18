@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticBodyPhysX : public BodyPhysX< StaticBody >
 {
-	T_RTTI_CLASS(StaticBodyPhysX)
+	T_RTTI_CLASS;
 
 public:
 	StaticBodyPhysX(DestroyCallbackPhysX* callback, NxActor* actor);

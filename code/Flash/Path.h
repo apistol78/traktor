@@ -65,7 +65,7 @@ struct SubPath
  */
 class T_DLLCLASS Path : public Object
 {
-	T_RTTI_CLASS(Path)
+	T_RTTI_CLASS;
 
 public:
 	enum CoordinateMode

@@ -4,7 +4,6 @@
 #include "Database/Remote/Server/Configuration.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -23,7 +22,7 @@ bool ConnectionManager::create(const Configuration* configuration)
 		return false;
 	}
 
-	m_serverSocket = gc_new< net::TcpSocket >();
+	m_serverSocket = new net::TcpSocket();
 
 	if (!m_serverSocket->bind(net::SocketAddressIPv4(m_configuration->getListenPort())))
 	{
@@ -80,7 +79,7 @@ bool ConnectionManager::acceptConnections(int32_t waitTimeout)
 	if (!clientSocket)
 		return true;
 
-	Ref< Connection > connection = gc_new< Connection >(m_configuration, clientSocket);
+	Ref< Connection > connection = new Connection(m_configuration, clientSocket);
 	m_connections.push_back(connection);
 
 	log::info << L"Connection accepted" << Endl;

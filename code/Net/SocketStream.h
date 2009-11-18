@@ -1,8 +1,7 @@
 #ifndef traktor_net_SocketStream_H
 #define traktor_net_SocketStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,9 +18,9 @@ namespace traktor
 
 class Socket;
 
-class T_DLLCLASS SocketStream : public Stream
+class T_DLLCLASS SocketStream : public IStream
 {
-	T_RTTI_CLASS(SocketStream)
+	T_RTTI_CLASS;
 
 public:
 	SocketStream(Socket* socket, bool readAllowed = true, bool writeAllowed = true);
@@ -38,7 +37,7 @@ public:
 
 	virtual int available() const;
 
-	virtual int seek(Stream::SeekOriginType origin, int offset);
+	virtual int seek(SeekOriginType origin, int offset);
 
 	virtual int read(void* block, int nbytes);
 

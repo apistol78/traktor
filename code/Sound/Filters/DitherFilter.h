@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS DitherFilter : public IFilter
 {
-	T_RTTI_CLASS(DitherFilter)
+	T_RTTI_CLASS;
 
 public:
 	DitherFilter(uint32_t bitsPerSample = 16);

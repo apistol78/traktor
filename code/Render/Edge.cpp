@@ -2,7 +2,7 @@
 #include "Render/Node.h"
 #include "Render/OutputPin.h"
 #include "Render/InputPin.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 
 namespace traktor
@@ -36,9 +36,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
-		if (s.getDirection() == Serializer::SdWrite)
+		if (s.getDirection() == ISerializer::SdWrite)
 		{
 			Ref< Node > node = m_pin->getNode();
 			s >> MemberRef< Node >(L"node", node);
@@ -62,7 +62,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.Edge", Edge, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", Edge, ISerializable)
 
 Edge::Edge(const OutputPin* source, const InputPin* destination)
 :	m_source(source)
@@ -90,7 +90,7 @@ Ref< const InputPin > Edge::getDestination() const
 	return m_destination;
 }
 
-bool Edge::serialize(Serializer& s)
+bool Edge::serialize(ISerializer& s)
 {
 	s >> MemberPin< const OutputPin, OutputPinAccessor >(L"source", m_source);
 	s >> MemberPin< const InputPin, InputPinAccessor >(L"destination", m_destination);

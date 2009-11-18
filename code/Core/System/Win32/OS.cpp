@@ -3,15 +3,16 @@
 #include <lmcons.h>
 #include <shlobj.h>
 #include <tchar.h>
+#include "Core/Io/IVolume.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
 #include "Core/System/Win32/ProcessWin32.h"
 #include "Core/System/Win32/SharedMemoryWin32.h"
-#include "Core/Singleton/SingletonManager.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -26,8 +27,6 @@ IEISPROTECTEDMODEPROCESSPROC* s_IEIsProtectedModeProcess = 0;
 IEGETWRITEABLEFOLDERPATHPROC* s_IEGetWriteableFolderPath = 0;
 
 	}
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Singleton)
 
 OS& OS::getInstance()
 {
@@ -190,7 +189,7 @@ bool OS::exploreFile(const Path& file) const
 #endif
 }
 
-Process* OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute) const
+Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute) const
 {
 	STARTUPINFO si;
 	std::memset(&si, 0, sizeof(si));
@@ -239,12 +238,12 @@ Process* OS::execute(const Path& file, const std::wstring& commandLine, const Pa
 		return 0;
 	}
 
-	return gc_new< ProcessWin32 >(cref(pi));
+	return new ProcessWin32(pi);
 }
 
-Ref< SharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
+Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	Ref< SharedMemoryWin32 > sharedMemory = gc_new< SharedMemoryWin32 >();
+	Ref< SharedMemoryWin32 > sharedMemory = new SharedMemoryWin32();
 	if (!sharedMemory->create(name, size))
 		return 0;
 	return sharedMemory;

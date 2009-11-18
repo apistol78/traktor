@@ -60,7 +60,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 
 	m_viewPlane = viewPlane;
 
-	m_renderWidget = gc_new< ui::Widget >();
+	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent))
 		return false;
 
@@ -75,7 +75,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	if (!m_renderView)
 		return false;
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(
 		m_context->getResourceManager(),
 		m_context->getRenderSystem()
@@ -142,7 +142,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
 	// Create entity renderers.
-	Ref< world::WorldEntityRenderers > worldEntityRenderers = gc_new< world::WorldEntityRenderers >();
+	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
 		RefArray< world::IEntityRenderer > entityRenderers;
@@ -157,7 +157,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	wrs.velocityPassEnable = false;
 	wrs.shadowsEnabled = false;
 
-	m_worldRenderer = gc_new< world::WorldRenderer >();
+	m_worldRenderer = new world::WorldRenderer();
 	if (!m_worldRenderer->create(
 		&wrs,
 		worldEntityRenderers,

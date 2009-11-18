@@ -7,7 +7,7 @@
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Log/Log.h"
 
@@ -16,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.AnimatedMeshEntityData", AnimatedMeshEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", AnimatedMeshEntityData, world::SpatialEntityData)
 
 Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
 {
@@ -53,16 +53,16 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		boneRemap[i] = j->second;
 	}
 
-	return gc_new< AnimatedMeshEntity >(
-		cref(getTransform()),
-		cref(m_mesh),
-		cref(m_skeleton),
+	return new AnimatedMeshEntity(
+		getTransform(),
+		m_mesh,
+		m_skeleton,
 		poseController,
-		cref(boneRemap)
+		boneRemap
 	);
 }
 
-bool AnimatedMeshEntityData::serialize(Serializer& s)
+bool AnimatedMeshEntityData::serialize(ISerializer& s)
 {
 	if (!world::SpatialEntityData::serialize(s))
 		return false;

@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.PointSetPipeline", PointSetPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", PointSetPipeline, editor::IPipeline)
 
 bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -32,9 +32,9 @@ uint32_t PointSetPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet PointSetPipeline::getAssetTypes() const
+TypeInfoSet PointSetPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< PointSetAsset >());
 	return typeSet;
 }
@@ -42,7 +42,7 @@ TypeSet PointSetPipeline::getAssetTypes() const
 bool PointSetPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -54,7 +54,7 @@ bool PointSetPipeline::buildDependencies(
 
 bool PointSetPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -136,7 +136,7 @@ bool PointSetPipeline::buildOutput(
 		}
 	}
 
-	Ref< PointSet > pointSet = gc_new< PointSet >(cref(points));
+	Ref< PointSet > pointSet = new PointSet(points);
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

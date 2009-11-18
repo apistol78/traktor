@@ -2,14 +2,14 @@
 #define traktor_DynamicMemoryStream_H
 
 #include <vector>
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,9 +18,9 @@ namespace traktor
 /*! \brief Dynamic memory stream wrapper.
  * \ingroup Core
  */
-class T_DLLCLASS DynamicMemoryStream : public Stream
+class T_DLLCLASS DynamicMemoryStream : public IStream
 {
-	T_RTTI_CLASS(DynamicMemoryStream)
+	T_RTTI_CLASS;
 
 public:
 	DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true);

@@ -32,7 +32,7 @@ AsTextField::AsTextField()
 
 void AsTextField::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"StyleSheet", ActionValue::fromObject(AsTextField_StyleSheet::getInstance()));

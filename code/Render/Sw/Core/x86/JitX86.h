@@ -26,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS JitX86 : public Processor
 {
-	T_RTTI_CLASS(JitX86)
+	T_RTTI_CLASS;
 
 public:
 	JitX86();

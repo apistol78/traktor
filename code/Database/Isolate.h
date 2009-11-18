@@ -2,7 +2,7 @@
 #define traktor_db_Isolate_H
 
 #include "Core/Config.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace db
 	{
@@ -28,9 +28,9 @@ class Instance;
  */
 struct T_DLLCLASS Isolate
 {
-	static bool createIsolatedInstance(Instance* instance, Stream* stream);
+	static bool createIsolatedInstance(Instance* instance, IStream* stream);
 
-	static Ref< Instance > createInstanceFromIsolation(Group* group, Stream* stream);
+	static Ref< Instance > createInstanceFromIsolation(Group* group, IStream* stream);
 };
 
 	}

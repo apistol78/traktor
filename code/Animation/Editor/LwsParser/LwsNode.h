@@ -10,7 +10,7 @@ namespace traktor
 
 class LwsNode : public Object
 {
-	T_RTTI_CLASS(LwsNode)
+	T_RTTI_CLASS;
 
 public:
 	LwsNode(const std::wstring& name);

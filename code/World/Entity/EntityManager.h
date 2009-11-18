@@ -2,7 +2,6 @@
 #define traktor_world_EntityManager_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityManager.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS EntityManager : public IEntityManager
 {
-	T_RTTI_CLASS(EntityManager)
+	T_RTTI_CLASS;
 
 public:
 	virtual void addEntity(Entity* entity);
@@ -36,11 +35,11 @@ public:
 
 	virtual void removeEntity(Entity* entity);
 
-	virtual uint32_t getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const;
+	virtual uint32_t getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 
-	virtual uint32_t getEntityCount(const Type& entityType) const;
+	virtual uint32_t getEntityCount(const TypeInfo& entityType) const;
 
-	virtual Ref< Entity > getEntity(const Type& entityType, uint32_t index) const;
+	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const;
 
 	virtual const RefArray< Entity >& getEntities() const;
 
@@ -52,7 +51,7 @@ private:
 	};
 
 	RefArray< Entity > m_entities;
-	std::map< const Type*, Range > m_typeRanges;
+	std::map< const TypeInfo*, Range > m_typeRanges;
 };
 
 	}

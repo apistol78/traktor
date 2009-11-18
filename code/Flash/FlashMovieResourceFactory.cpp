@@ -19,9 +19,9 @@ FlashMovieResourceFactory::FlashMovieResourceFactory(db::Database* db)
 {
 }
 
-const TypeSet FlashMovieResourceFactory::getResourceTypes() const
+const TypeInfoSet FlashMovieResourceFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< FlashMovie >());
 	return typeSet;
 }
@@ -31,7 +31,7 @@ bool FlashMovieResourceFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -41,7 +41,7 @@ Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* reso
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
@@ -59,8 +59,8 @@ Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* reso
 
 	stream->close();
 
-	Ref< MemoryStream > memoryStream = gc_new< MemoryStream >(&assetBlob[0], int(assetSize), true, false);
-	Ref< SwfReader > swf = gc_new< SwfReader >(memoryStream);
+	Ref< MemoryStream > memoryStream = new MemoryStream(&assetBlob[0], int(assetSize), true, false);
+	Ref< SwfReader > swf = new SwfReader(memoryStream);
 
 	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
 	return movie;

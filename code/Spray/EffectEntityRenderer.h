@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EffectEntityRenderer_H
 #define traktor_spray_EffectEntityRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityRenderer.h"
 #include "Render/Types.h"
 
@@ -33,12 +32,12 @@ class EffectEntity;
  */
 class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
 {
-	T_RTTI_CLASS(EffectEntityRenderer)
+	T_RTTI_CLASS;
 
 public:
 	EffectEntityRenderer(render::IRenderSystem* renderSystem, float cullNearDistance, float fadeNearRange);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void render(
 		world::WorldContext* worldContext,

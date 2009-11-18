@@ -19,14 +19,14 @@ namespace traktor
 
 class T_DLLCLASS HeightfieldAsset : public editor::Asset
 {
-	T_RTTI_CLASS(HeightfieldAsset)
+	T_RTTI_CLASS;
 
 public:
 	HeightfieldAsset();
 
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class HeightfieldPipeline;

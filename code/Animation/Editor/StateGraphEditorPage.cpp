@@ -44,24 +44,24 @@ bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite
 	m_site = site;
 	T_ASSERT (m_site);
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	container->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	// Create our custom toolbar.
-	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 8);
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), ui::Command(L"StateGraph.Editor.AlignLeft"), 0));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), ui::Command(L"StateGraph.Editor.AlignRight"), 1));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), ui::Command(L"StateGraph.Editor.AlignTop"), 2));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), ui::Command(L"StateGraph.Editor.AlignBottom"), 3));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), ui::Command(L"StateGraph.Editor.EvenSpaceVertically"), 4));
-	m_toolBar->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), ui::Command(L"StateGraph.Editor.EventSpaceHorizontally"), 5));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), ui::Command(L"StateGraph.Editor.AlignLeft"), 0));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), ui::Command(L"StateGraph.Editor.AlignRight"), 1));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), ui::Command(L"StateGraph.Editor.AlignTop"), 2));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), ui::Command(L"StateGraph.Editor.AlignBottom"), 3));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), ui::Command(L"StateGraph.Editor.EvenSpaceVertically"), 4));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), ui::Command(L"StateGraph.Editor.EventSpaceHorizontally"), 5));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolClick));
 
 	// Create state graph editor control.
-	m_editorGraph = gc_new< ui::custom::GraphControl >();
+	m_editorGraph = new ui::custom::GraphControl();
 	m_editorGraph->create(container, ui::custom::GraphControl::WsEdgeSelectable | ui::WsDoubleBuffer | ui::WsAccelerated);
 	m_editorGraph->addButtonDownEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventButtonDown));
 	m_editorGraph->addSelectEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventSelect));
@@ -70,12 +70,12 @@ bool StateGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSite
 	m_editorGraph->addEdgeDisconnectEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventEdgeDisconnect));
 
 	// Build popup menu.
-	m_menuPopup = gc_new< ui::PopupMenu >();
+	m_menuPopup = new ui::PopupMenu();
 	m_menuPopup->create();
-	m_menuPopup->add(gc_new< ui::MenuItem >(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
-	m_menuPopup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
-	m_menuPopup->add(gc_new< ui::MenuItem >(L"-"));
-	m_menuPopup->add(gc_new< ui::MenuItem >(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.Create"), i18n::Text(L"STATEGRAPH_CREATE_STATE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"STATEGRAPH_DELETE_STATE")));
+	m_menuPopup->add(new ui::MenuItem(L"-"));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
 
 	return true;
 }
@@ -151,12 +151,12 @@ void StateGraphEditorPage::propertiesChanged()
 
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	const Type* primaryType = instance->getPrimaryType();
+	const TypeInfo* primaryType = instance->getPrimaryType();
 	T_ASSERT (primaryType);
 
 	if (is_type_of< Animation >(*primaryType))
 	{
-		Ref< State > state = gc_new< State >(instance->getName(), instance->getGuid());
+		Ref< State > state = new State(instance->getName(), instance->getGuid());
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();
 		state->setPosition(std::pair< int, int >(absolutePosition.x, absolutePosition.y));
@@ -182,7 +182,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//		RefArray< ui::custom::Edge > selectedEdges;
 	//		m_editorGraph->getSelectedEdges(selectedEdges, true);
 
-	//		Ref< ShaderGraphEditorClipboardData > data = gc_new< ShaderGraphEditorClipboardData >();
+	//		Ref< ShaderGraphEditorClipboardData > data = new ShaderGraphEditorClipboardData();
 	//		
 	//		ui::Rect bounds(0, 0, 0, 0);
 	//		for (RefArray< ui::custom::Node >::iterator i = selectedNodes.begin(); i != selectedNodes.end(); ++i)
@@ -457,7 +457,7 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, co
 		Ref< ui::custom::Pin > toPin = toNode->findInputPin(L"Enter");
 		T_ASSERT (toPin);
 
-		Ref< ui::custom::Edge > transitionEdge = gc_new< ui::custom::Edge >(fromPin, toPin);
+		Ref< ui::custom::Edge > transitionEdge = new ui::custom::Edge(fromPin, toPin);
 		transitionEdge->setData(L"TRANSITION", transition);
 
 		m_editorGraph->addEdge(transitionEdge);
@@ -466,9 +466,9 @@ void StateGraphEditorPage::createEditorNodes(const RefArray< State >& states, co
 
 Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 {
-	Ref< ui::custom::NodeShape > shape = gc_new< ui::custom::DefaultNodeShape >(m_editorGraph);
+	Ref< ui::custom::NodeShape > shape = new ui::custom::DefaultNodeShape(m_editorGraph);
 
-	Ref< ui::custom::Node > node = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > node = new ui::custom::Node(
 		state->getName(),
 		L"",
 		ui::Point(
@@ -480,10 +480,10 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 	node->setColor(m_stateGraph->getRootState() == state ? Color(128, 255, 128) : Color(255, 255, 255));
 	node->setData(L"STATE", state);
 
-	Ref< ui::custom::Pin > enterPin = gc_new< ui::custom::Pin >(node, L"Enter", ui::custom::Pin::DrInput, true);
+	Ref< ui::custom::Pin > enterPin = new ui::custom::Pin(node, L"Enter", ui::custom::Pin::DrInput, true);
 	node->addInputPin(enterPin);
 
-	Ref< ui::custom::Pin > leavePin = gc_new< ui::custom::Pin >(node, L"Leave", ui::custom::Pin::DrOutput, true);
+	Ref< ui::custom::Pin > leavePin = new ui::custom::Pin(node, L"Leave", ui::custom::Pin::DrOutput, true);
 	node->addOutputPin(leavePin);
 
 	return node;
@@ -491,7 +491,7 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 
 void StateGraphEditorPage::createState(const ui::Point& at)
 {
-	Ref< State > state = gc_new< State >(i18n::Text(L"STATEGRAPH_UNNAMED"), Guid());
+	Ref< State > state = new State(i18n::Text(L"STATEGRAPH_UNNAMED"), Guid());
 	state->setPosition(std::pair< int, int >(at.x, at.y));
 	m_stateGraph->addState(state);
 
@@ -593,7 +593,7 @@ void StateGraphEditorPage::eventEdgeConnect(ui::Event* event)
 	Ref< State > enterState = enterPin->getNode()->getData< State >(L"STATE");
 	T_ASSERT (enterState);
 
-	Ref< Transition > transition = gc_new< Transition >(leaveState, enterState);
+	Ref< Transition > transition = new Transition(leaveState, enterState);
 	m_stateGraph->addTransition(transition);
 
 	edge->setData(L"TRANSITION", transition);

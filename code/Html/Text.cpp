@@ -1,5 +1,5 @@
 #include "Html/Text.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -23,7 +23,7 @@ std::wstring Text::getValue() const
 	return m_text;
 }
 
-void Text::writeHtml(Stream* stream)
+void Text::writeHtml(IStream* stream)
 {
 	stream->write(m_text.c_str(), int(m_text.length()));
 	Node::writeHtml(stream);

@@ -35,7 +35,7 @@ AsMovieClip::AsMovieClip()
 
 void AsMovieClip::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"attachAudio", createNativeFunctionValue(this, &AsMovieClip::MovieClip_attachAudio));
@@ -132,8 +132,8 @@ void AsMovieClip::createPrototype()
 ActionValue AsMovieClip::construct(ActionContext* context, const args_t& args)
 {
 	// Create a fake sprite character for this instance.
-	Ref< FlashSprite > sprite = gc_new< FlashSprite >(0, 0);
-	sprite->addFrame(gc_new< FlashFrame >());
+	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
+	sprite->addFrame(new FlashFrame());
 	return ActionValue::fromObject(sprite->createInstance(context, 0));
 }
 
@@ -223,8 +223,8 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	uint16_t emptyClipId = depth + 40000;
 
 	// Create empty movie character with a single frame.
-	Ref< FlashSprite > emptyClip = gc_new< FlashSprite >(emptyClipId, 0);
-	emptyClip->addFrame(gc_new< FlashFrame >());
+	Ref< FlashSprite > emptyClip = new FlashSprite(emptyClipId, 0);
+	emptyClip->addFrame(new FlashFrame());
 
 	// Create new instance of movie clip.
 	Ref< FlashSpriteInstance > emptyClipInstance = checked_type_cast< FlashSpriteInstance* >(emptyClip->createInstance(ca.context, movieClipInstance));

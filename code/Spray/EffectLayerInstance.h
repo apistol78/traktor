@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EffectLayerInstance_H
 #define traktor_spray_EffectLayerInstance_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
@@ -27,7 +26,7 @@ class PointRenderer;
 
 class T_DLLCLASS EffectLayerInstance : public Object
 {
-	T_RTTI_CLASS(EffectLayerInstance)
+	T_RTTI_CLASS;
 
 public:
 	EffectLayerInstance(const EffectLayer* layer, EmitterInstance* emitterInstance);

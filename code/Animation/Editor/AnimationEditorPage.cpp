@@ -40,7 +40,7 @@
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "Render/PrimitiveRenderer.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
@@ -66,7 +66,7 @@ const float c_wheelRotationDelta = -10.0f;
 
 class RenderWidgetData : public Object
 {
-	T_RTTI_CLASS(RenderWidgetData)
+	T_RTTI_CLASS;
 
 public:
 	RenderWidgetData()
@@ -89,9 +89,9 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.RenderWidgetData", RenderWidgetData, Object)
 
-class KeyPoseClipboardData : public Serializable
+class KeyPoseClipboardData : public ISerializable
 {
-	T_RTTI_CLASS(KeyPoseClipboardData)
+	T_RTTI_CLASS;
 
 public:
 	KeyPoseClipboardData()
@@ -108,7 +108,7 @@ public:
 		return m_pose;
 	}
 
-	virtual bool serialize(Serializer& s)
+	virtual bool serialize(ISerializer& s)
 	{
 		return s >> MemberComposite< Animation::KeyPose >(L"pose", m_pose);
 	}
@@ -117,11 +117,11 @@ private:
 	Animation::KeyPose m_pose;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.KeyPoseClipboardData", KeyPoseClipboardData, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.KeyPoseClipboardData", KeyPoseClipboardData, ISerializable)
 
 class PoseIdData : public Object
 {
-	T_RTTI_CLASS(PoseIdData)
+	T_RTTI_CLASS;
 
 public:
 	int m_id;
@@ -162,12 +162,12 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
-	Ref< ui::custom::QuadSplitter > splitter = gc_new< ui::custom::QuadSplitter >();
+	Ref< ui::custom::QuadSplitter > splitter = new ui::custom::QuadSplitter();
 	splitter->create(parent, ui::Point(50, 50), true);
 
 	for (int i = 0; i < 4; ++i)
 	{
-		m_renderWidgets[i] = gc_new< ui::Widget >();
+		m_renderWidgets[i] = new ui::Widget();
 		m_renderWidgets[i]->create(splitter, ui::WsClientBorder);
 		m_renderWidgets[i]->addButtonDownEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderButtonDown));
 		m_renderWidgets[i]->addButtonUpEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderButtonUp));
@@ -176,33 +176,33 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 		m_renderWidgets[i]->addSizeEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderSize));
 		m_renderWidgets[i]->addPaintEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventRenderPaint));
 		
-		Ref< RenderWidgetData > data = gc_new< RenderWidgetData >();
+		Ref< RenderWidgetData > data = new RenderWidgetData();
 		m_renderWidgets[i]->setData(L"DATA", data);
 	}
 
 	// Create sequencer panel.
-	m_sequencerPanel = gc_new< ui::Container >();
-	m_sequencerPanel->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0));
+	m_sequencerPanel = new ui::Container();
+	m_sequencerPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	m_sequencerPanel->setText(i18n::Text(L"ANIMATION_EDITOR_SEQUENCER"));
 
-	m_toolBarPlay = gc_new< ui::custom::ToolBar >();
+	m_toolBarPlay = new ui::custom::ToolBar();
 	m_toolBarPlay->create(m_sequencerPanel);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceSkeleton, sizeof(c_ResourceSkeleton), L"png"), 5);
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_REWIND"), ui::Command(L"Animation.Editor.Rewind"), 0));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_PLAY"), ui::Command(L"Animation.Editor.Play"), 1));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_STOP"), ui::Command(L"Animation.Editor.Stop"), 2));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), ui::Command(L"Animation.Editor.Forward"), 3));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), ui::Command(L"Animation.Editor.BrowseSkeleton"), 6));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), ui::Command(L"Animation.Editor.BrowseSkin"), 9));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), ui::Command(L"Animation.Editor.ToggleTrail"), 7, m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), ui::Command(L"Animation.Editor.ToggleTwistLock"), 8, m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), ui::Command(L"Animation.Editor.ToggleIK"), 10, m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), ui::Command(L"Animation.Editor.Rewind"), 0));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), ui::Command(L"Animation.Editor.Play"), 1));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), ui::Command(L"Animation.Editor.Stop"), 2));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), ui::Command(L"Animation.Editor.Forward"), 3));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), ui::Command(L"Animation.Editor.BrowseSkeleton"), 6));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), ui::Command(L"Animation.Editor.BrowseSkin"), 9));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), ui::Command(L"Animation.Editor.ToggleTrail"), 7, m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), ui::Command(L"Animation.Editor.ToggleTwistLock"), 8, m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), ui::Command(L"Animation.Editor.ToggleIK"), 10, m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventToolClick));
 
-	m_sequencer = gc_new< ui::custom::SequencerControl >();
+	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(m_sequencerPanel);
 	m_sequencer->setLength(c_animationLength);
 	m_sequencer->addButtonDownEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventSequencerButtonDown));
@@ -213,10 +213,10 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 	m_site->createAdditionalPanel(m_sequencerPanel, 100, true);
 
 	// Build popup menu.
-	m_menuPopup = gc_new< ui::PopupMenu >();
+	m_menuPopup = new ui::PopupMenu();
 	m_menuPopup->create();
-	m_menuPopup->add(gc_new< ui::MenuItem >(ui::Command(L"Animation.Editor.Create"), i18n::Text(L"ANIMATION_EDITOR_CREATE")));
-	m_menuPopup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Delete"), i18n::Text(L"ANIMATION_EDITOR_DELETE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Animation.Editor.Create"), i18n::Text(L"ANIMATION_EDITOR_CREATE")));
+	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"ANIMATION_EDITOR_DELETE")));
 
 	// Create render views.
 	const float c_cameraAngles[][2] =
@@ -246,28 +246,28 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 		if (!data->renderView)
 			return false;
 
-		data->picker = gc_new< VolumePicker >();
+		data->picker = new VolumePicker();
 	}
 
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		gc_new< render::TextureFactory >(database, renderSystem)
+		new render::TextureFactory(database, renderSystem)
 	);
 	m_resourceManager->addFactory(
-		gc_new< render::ShaderFactory >(database, renderSystem)
+		new render::ShaderFactory(database, renderSystem)
 	);
 	m_resourceManager->addFactory(
-		gc_new< AnimationFactory >(database)
+		new AnimationFactory(database)
 	);
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
-	m_undoStack = gc_new< editor::UndoStack >();
+	m_undoStack = new editor::UndoStack();
 
 	return true;
 }
@@ -338,7 +338,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const Animation::KeyPose& keyPose = m_animation->getKeyPose(poseIndex);
-		ui::Application::getInstance().getClipboard()->setObject(gc_new< KeyPoseClipboardData >(cref(keyPose)));
+		ui::Application::getInstance().getClipboard()->setObject(new KeyPoseClipboardData(keyPose));
 
 		if (command == L"Editor.Cut")
 		{
@@ -553,13 +553,13 @@ void AnimationEditorPage::updateSequencer()
 	if (!poseCount)
 		return;
 
-	Ref< ui::custom::Sequence > sequence = gc_new< ui::custom::Sequence >(i18n::Text(L"ANIMATION_EDITOR_SEQUENCE"));
+	Ref< ui::custom::Sequence > sequence = new ui::custom::Sequence(i18n::Text(L"ANIMATION_EDITOR_SEQUENCE"));
 	for (uint32_t i = 0; i < poseCount; ++i)
 	{
 		int ms = int(m_animation->getKeyPose(i).at * 1000.0f);
 
-		Ref< ui::custom::Tick > tick = gc_new< ui::custom::Tick >(ms);
-		tick->setData(L"ID", gc_new< PoseIdData >(i));
+		Ref< ui::custom::Tick > tick = new ui::custom::Tick(ms);
+		tick->setData(L"ID", new PoseIdData(i));
 
 		sequence->addKey(tick);
 	}

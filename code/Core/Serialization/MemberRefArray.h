@@ -1,7 +1,7 @@
 #ifndef traktor_MemberRefArray_H
 #define traktor_MemberRefArray_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberRef.h"
 
@@ -31,9 +31,9 @@ public:
 			m_ref.swap(m_value);
 	}
 
-	virtual const Type* getType() const
+	virtual const TypeInfo* getType() const
 	{
-		return &Class::getClassType();
+		return &Class::getClassTypeInfo();
 	}
 
 	virtual void reserve(size_t size) const
@@ -48,7 +48,7 @@ public:
 		return m_value.size();
 	}
 
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		Ref< Class > object;
 		if (!(s >> MemberType(L"item", object)))
@@ -60,7 +60,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		if (index >= m_value.size())
 			T_FATAL_ERROR;

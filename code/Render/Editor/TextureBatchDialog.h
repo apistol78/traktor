@@ -1,7 +1,7 @@
 #ifndef traktor_render_TextureBatchDialog_H
 #define traktor_render_TextureBatchDialog_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor
@@ -33,7 +33,7 @@ class TextureAsset;
 
 class TextureBatchDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(TextureBatchDialog)
+	T_RTTI_CLASS;
 
 public:
 	TextureBatchDialog(editor::IEditor* editor);

@@ -25,7 +25,7 @@ class Skeleton;
  */
 class T_DLLCLASS IPoseController : public Object
 {
-	T_RTTI_CLASS(IPoseController)
+	T_RTTI_CLASS;
 
 public:
 	struct Velocity

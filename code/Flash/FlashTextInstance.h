@@ -23,7 +23,7 @@ class FlashText;
  */
 class T_DLLCLASS FlashTextInstance : public FlashCharacterInstance
 {
-	T_RTTI_CLASS(FlashTextInstance)
+	T_RTTI_CLASS;
 
 public:
 	FlashTextInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashText* text);

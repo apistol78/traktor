@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Polygon : public Object
 {
-	T_RTTI_CLASS(Polygon)
+	T_RTTI_CLASS;
 
 public:
 	Polygon();

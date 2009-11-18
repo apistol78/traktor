@@ -11,7 +11,7 @@ namespace traktor
 	namespace
 	{
 
-class TestSoundDriver : public sound::ISoundDriver
+class TestSoundDriver : public RefCountImpl< sound::ISoundDriver >
 {
 public:
 	Timer& m_timer;
@@ -54,7 +54,7 @@ public:
 	}
 };
 
-class TestSoundBuffer : public sound::ISoundBuffer
+class TestSoundBuffer : public RefCountImpl< sound::ISoundBuffer >
 {
 public:
 	float m_block[16];

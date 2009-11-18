@@ -3,7 +3,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, Process)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, IProcess)
 
 ProcessWin32::ProcessWin32(const PROCESS_INFORMATION& pi)
 :	m_pi(pi)

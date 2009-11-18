@@ -1,8 +1,8 @@
 #ifndef traktor_animation_Skeleton_H
 #define traktor_animation_Skeleton_H
 
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,9 +22,9 @@ class Bone;
 /*! \brief Animation skeleton.
  * \ingroup Animation
  */
-class T_DLLCLASS Skeleton : public Serializable
+class T_DLLCLASS Skeleton : public ISerializable
 {
-	T_RTTI_CLASS(Skeleton)
+	T_RTTI_CLASS;
 
 public:
 	uint32_t addBone(Bone* bone);
@@ -33,7 +33,7 @@ public:
 
 	bool findBone(const std::wstring& name, uint32_t& outIndex) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
 

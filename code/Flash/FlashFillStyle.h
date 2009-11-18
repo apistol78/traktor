@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS FlashFillStyle : public Object
 {
-	T_RTTI_CLASS(FlashFillStyle)
+	T_RTTI_CLASS;
 
 public:
 	enum GradientType

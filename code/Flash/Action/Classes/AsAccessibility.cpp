@@ -28,7 +28,7 @@ AsAccessibility::AsAccessibility()
 
 void AsAccessibility::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"isActive", createNativeFunctionValue(this, &AsAccessibility::Accessibility_isActive));

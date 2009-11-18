@@ -1,5 +1,4 @@
 #include "Render/Dx9/HlslShader.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 
@@ -16,10 +15,10 @@ HlslShader::HlslShader(ShaderType shaderType)
 ,	m_nextTemporaryVariable(0)
 {
 	pushScope();
-	pushOutputStream(BtUniform, gc_new< StringOutputStream >());
-	pushOutputStream(BtInput, gc_new< StringOutputStream >());
-	pushOutputStream(BtOutput, gc_new< StringOutputStream >());
-	pushOutputStream(BtBody, gc_new< StringOutputStream >());
+	pushOutputStream(BtUniform, new StringOutputStream());
+	pushOutputStream(BtInput, new StringOutputStream());
+	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()

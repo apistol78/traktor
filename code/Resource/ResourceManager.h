@@ -2,8 +2,7 @@
 #define traktor_resource_ResourceManager_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "Resource/IResourceManager.h"
 
@@ -28,7 +27,7 @@ class ResourceHandle;
  */
 class T_DLLCLASS ResourceManager : public IResourceManager
 {
-	T_RTTI_CLASS(ResourceManager)
+	T_RTTI_CLASS;
 
 public:
 	ResourceManager();
@@ -39,7 +38,7 @@ public:
 
 	virtual void removeAllFactories();
 	
-	virtual Ref< IResourceHandle > bind(const Type& type, const Guid& guid);
+	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid);
 
 	virtual void update(const Guid& guid, bool force);
 
@@ -53,7 +52,7 @@ private:
 	std::map< Guid, Ref< ResourceHandle > > m_cache;
 	Semaphore m_lock;
 
-	Ref< IResourceFactory > findFactory(const Type& type);
+	Ref< IResourceFactory > findFactory(const TypeInfo& type);
 
 	void load(const Guid& guid, IResourceFactory* factory, ResourceHandle* handle);
 };

@@ -21,7 +21,7 @@ namespace traktor
 class IStreamWrapper : public Imf::IStream
 {
 public:
-	IStreamWrapper(Stream* stream)
+	IStreamWrapper(IStream* stream)
 	:	Imf::IStream("n/a")
 	,	m_stream(stream)
 	{
@@ -39,17 +39,17 @@ public:
 
 	virtual void seekg(Imf::Int64 pos)
 	{
-		m_stream->seek(Stream::SeekSet, int(pos));
+		m_stream->seek(IStream::SeekSet, int(pos));
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 };
 
 class OStreamWrapper : public Imf::OStream
 {
 public:
-	OStreamWrapper(Stream* stream)
+	OStreamWrapper(IStream* stream)
 	:	Imf::OStream("n/a")
 	,	m_stream(stream)
 	{
@@ -67,18 +67,18 @@ public:
 
 	virtual void seekp(Imf::Int64 pos)
 	{
-		m_stream->seek(Stream::SeekSet, int(pos));
+		m_stream->seek(IStream::SeekSet, int(pos));
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 };
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatExr", ImageFormatExr, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatExr", ImageFormatExr, IImageFormat)
 
-Ref< Image > ImageFormatExr::read(Stream* stream)
+Ref< Image > ImageFormatExr::read(IStream* stream)
 {
 	IStreamWrapper is(stream);
 	Imf::InputFile file(is);
@@ -97,7 +97,7 @@ Ref< Image > ImageFormatExr::read(Stream* stream)
 	file.setFrameBuffer(frameBuffer);
 	file.readPixels(dw.min.y, dw.max.y);
 
-	Ref< drawing::Image > image = gc_new< drawing::Image >(
+	Ref< drawing::Image > image = new drawing::Image(
 		PixelFormat::getRGBAF32(),
 		sizex,
 		sizey
@@ -120,7 +120,7 @@ Ref< Image > ImageFormatExr::read(Stream* stream)
 	return image;
 }
 
-bool ImageFormatExr::write(Stream* stream, Image* image)
+bool ImageFormatExr::write(IStream* stream, Image* image)
 {
 	OStreamWrapper os(stream);
 

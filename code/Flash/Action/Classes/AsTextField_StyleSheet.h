@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsTextField_StyleSheet : public ActionClass
 {
-	T_RTTI_CLASS(AsTextField_StyleSheet)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsTextField_StyleSheet > getInstance();

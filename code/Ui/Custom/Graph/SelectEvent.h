@@ -1,7 +1,7 @@
 #ifndef traktor_ui_custom_SelectEvent_H
 #define traktor_ui_custom_SelectEvent_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Event.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class Edge;
  */
 class T_DLLCLASS SelectEvent : public Event
 {
-	T_RTTI_CLASS(SelectEvent)
+	T_RTTI_CLASS;
 
 public:
 	SelectEvent(EventSubject* sender, const RefArray< Node >& nodes, const RefArray< Edge >& edges);

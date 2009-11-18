@@ -1,7 +1,7 @@
 #ifndef traktor_physics_ShapeDesc_H
 #define traktor_physics_ShapeDesc_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
 
 // import/export mechanism.
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Collision shape description.
  * \ingroup Physics
  */
-class T_DLLCLASS ShapeDesc : public Serializable
+class T_DLLCLASS ShapeDesc : public ISerializable
 {
-	T_RTTI_CLASS(ShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	ShapeDesc();
@@ -31,7 +31,7 @@ public:
 
 	const Transform& getLocalTransform() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Transform m_localTransform;

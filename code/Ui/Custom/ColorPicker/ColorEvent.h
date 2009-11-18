@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS ColorEvent : public Event
 {
-	T_RTTI_CLASS(ColorEvent)
+	T_RTTI_CLASS;
 
 public:
 	ColorEvent(EventSubject* sender, Object* item, const Color& color);

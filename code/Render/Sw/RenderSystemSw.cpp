@@ -11,7 +11,7 @@
 #include "Render/DisplayMode.h"
 #include "Render/ShaderGraph.h"
 #include "Render/VertexElement.h"
-#include "Graphics/GraphicsSystem.h"
+#include "Graphics/IGraphicsSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
@@ -45,14 +45,14 @@ const TCHAR* c_windowClassName = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemSw", RenderSystemSw, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemSw", RenderSystemSw, IRenderSystem)
 
 RenderSystemSw::RenderSystemSw()
 #if defined(_WIN32)
 :	m_hWnd(NULL)
 #endif
 {
-	m_processor = gc_new< ProcessorImpl >();
+	m_processor = new ProcessorImpl();
 }
 
 bool RenderSystemSw::create()
@@ -71,13 +71,13 @@ bool RenderSystemSw::create()
 	wc.lpszClassName = c_windowClassName;
 	RegisterClass(&wc);
 
-	Ref< graphics::GraphicsSystem > graphicsSystem;
+	Ref< graphics::IGraphicsSystem > graphicsSystem;
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+	graphicsSystem = new graphics::GraphicsSystemDd7();
 #	else
-	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+	graphicsSystem = new graphics::GraphicsSystemDdWm5();
 #	endif
 #endif
 
@@ -102,7 +102,7 @@ int RenderSystemSw::getDisplayModeCount() const
 
 Ref< DisplayMode > RenderSystemSw::getDisplayMode(int index)
 {
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		index,
 		m_displayModes[index].width,
 		m_displayModes[index].height,
@@ -141,7 +141,7 @@ bool RenderSystemSw::handleMessages()
 
 Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
-	Ref< graphics::GraphicsSystem > graphicsSystem;
+	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
 #if defined(_WIN32)
@@ -170,9 +170,9 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMo
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+	graphicsSystem = new graphics::GraphicsSystemDd7();
 #	else
-	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+	graphicsSystem = new graphics::GraphicsSystemDdWm5();
 #	endif
 #endif
 
@@ -186,12 +186,12 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMo
 	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
 
-	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
+	return new RenderViewSw(this, graphicsSystem, m_processor);
 }
 
 Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
-	Ref< graphics::GraphicsSystem > graphicsSystem;
+	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
 	graphicsDesc.windowHandle = windowHandle;
@@ -203,9 +203,9 @@ Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const Re
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-	graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+	graphicsSystem = new graphics::GraphicsSystemDd7();
 #	else
-	graphicsSystem = gc_new< graphics::GraphicsSystemDdWm5 >();
+	graphicsSystem = new graphics::GraphicsSystemDdWm5();
 #	endif
 
 	RECT rc;
@@ -218,22 +218,22 @@ Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const Re
 	if (!graphicsSystem->create(graphicsDesc))
 		return 0;
 
-	return gc_new< RenderViewSw >(this, graphicsSystem, m_processor);
+	return new RenderViewSw(this, graphicsSystem, m_processor);
 }
 
 Ref< VertexBuffer > RenderSystemSw::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< VertexBufferSw >(vertexElements, bufferSize);
+	return new VertexBufferSw(vertexElements, bufferSize);
 }
 
 Ref< IndexBuffer > RenderSystemSw::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< IndexBufferSw >(indexType, bufferSize);
+	return new IndexBufferSw(indexType, bufferSize);
 }
 
 Ref< ISimpleTexture > RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureSw > texture = gc_new< SimpleTextureSw >();
+	Ref< SimpleTextureSw > texture = new SimpleTextureSw();
 	if (!texture->create(desc))
 		return 0;
 	return texture;
@@ -251,7 +251,7 @@ Ref< IVolumeTexture > RenderSystemSw::createVolumeTexture(const VolumeTextureCre
 
 Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetSw > renderTargetSet = gc_new< RenderTargetSetSw >();
+	Ref< RenderTargetSetSw > renderTargetSet = new RenderTargetSetSw();
 	if (!renderTargetSet->create(desc))
 		return 0;
 	return renderTargetSet;
@@ -260,7 +260,7 @@ Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetS
 Ref< ProgramResource > RenderSystemSw::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	// @fixme Currently just embedding shader graph in resource.
-	return gc_new< ProgramResourceSw >(shaderGraph);
+	return new ProgramResourceSw(shaderGraph);
 }
 
 Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programResource)
@@ -318,12 +318,12 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 	for (std::map< std::wstring, int >::const_iterator i = parameters.samplers.begin(); i != parameters.samplers.end(); ++i)
 		samplerMap[getParameterHandle(i->first)] = i->second;
 
-	return gc_new< ProgramSw >(
-		cref(parameterMap),
-		cref(samplerMap),
+	return new ProgramSw(
+		parameterMap,
+		samplerMap,
 		vertexProgram,
 		pixelProgram,
-		cref(cx.getRenderState()),
+		cx.getRenderState(),
 		cx.getInterpolatorCount()
 	);
 }

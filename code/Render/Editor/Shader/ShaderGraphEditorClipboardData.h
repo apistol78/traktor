@@ -1,8 +1,8 @@
 #ifndef traktor_render_ShaderGraphEditorClipboardData_H
 #define traktor_render_ShaderGraphEditorClipboardData_H
 
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Ui/Rect.h"
 
 // import/export mechanism.
@@ -21,9 +21,9 @@ namespace traktor
 class Node;
 class Edge;
 
-class T_DLLCLASS ShaderGraphEditorClipboardData : public Serializable
+class T_DLLCLASS ShaderGraphEditorClipboardData : public ISerializable
 {
-	T_RTTI_CLASS(ShaderGraphEditorClipboardData)
+	T_RTTI_CLASS;
 
 public:
 	void addNode(Node* node);
@@ -38,7 +38,7 @@ public:
 
 	const ui::Rect& getBounds() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< Node > m_nodes;

@@ -1,7 +1,6 @@
 #ifndef traktor_physics_ConeTwistJointBullet_H
 #define traktor_physics_ConeTwistJointBullet_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/Bullet/JointBullet.h"
 #include "Physics/Bullet/JointConstraint.h"
@@ -27,7 +26,7 @@ class DynamicBody;
  */
 class T_DLLCLASS ConeTwistJointBullet : public JointBullet< ConeTwistJoint, JointConstraint >
 {
-	T_RTTI_CLASS(ConeTwistJointBullet)
+	T_RTTI_CLASS;
 
 public:
 	ConeTwistJointBullet(DestroyCallback* callback, JointConstraint* constraint, Body* body1, Body* body2, const ConeTwistJointDesc* desc);

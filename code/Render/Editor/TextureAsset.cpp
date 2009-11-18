@@ -1,6 +1,6 @@
 #include "Render/Editor/TextureAsset.h"
 #include "Render/TextureResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.render.TextureAsset", TextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", TextureAsset, editor::Asset)
 
 TextureAsset::TextureAsset()
 :	m_generateNormalMap(false)
@@ -27,7 +27,7 @@ TextureAsset::TextureAsset()
 {
 }
 
-const Type* TextureAsset::getOutputType() const
+const TypeInfo* TextureAsset::getOutputType() const
 {
 	return &type_of< TextureResource >();
 }
@@ -37,7 +37,7 @@ int TextureAsset::getVersion() const
 	return 1;
 }
 
-bool TextureAsset::serialize(Serializer& s)
+bool TextureAsset::serialize(ISerializer& s)
 {
 	if (!editor::Asset::serialize(s))
 		return false;

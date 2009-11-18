@@ -19,7 +19,7 @@ namespace traktor
 
 class T_DLLCLASS StaticMeshResource : public MeshResource
 {
-	T_RTTI_CLASS(StaticMeshResource)
+	T_RTTI_CLASS;
 
 public:
 	struct Part
@@ -27,14 +27,14 @@ public:
 		std::wstring name;
 		Guid material;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	void setParts(const std::vector< Part >& parts);
 
 	const std::vector< Part >& getParts() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< Part > m_parts;

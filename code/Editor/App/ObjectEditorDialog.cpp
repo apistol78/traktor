@@ -22,7 +22,7 @@ ObjectEditorDialog::ObjectEditorDialog(Settings* settings, IObjectEditor* object
 {
 }
 
-bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, Serializable* object)
+bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
 	int32_t width = 500, height = 400;
 
@@ -47,7 +47,7 @@ bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, Seri
 		width,
 		height,
 		ui::ConfigDialog::WsDefaultResizable | ui::ConfigDialog::WsApplyButton,
-		gc_new< ui::FloodLayout >()
+		new ui::FloodLayout()
 	))
 		return false;
 
@@ -73,14 +73,14 @@ void ObjectEditorDialog::destroy()
 		Ref< PropertyGroup > dimensionsGroup = dynamic_type_cast< PropertyGroup* >(m_settings->getProperty(L"Editor.ObjectEditor.Dimensions"));
 		if (!dimensionsGroup)
 		{
-			dimensionsGroup = gc_new< PropertyGroup >();
+			dimensionsGroup = new PropertyGroup();
 			m_settings->setProperty(L"Editor.ObjectEditor.Dimensions", dimensionsGroup);
 		}
 
 		Ref< PropertyGroup > dimensionGroup = dynamic_type_cast< PropertyGroup* >(dimensionsGroup->getProperty(m_instance->getGuid().format()));
 		if (!dimensionGroup)
 		{
-			dimensionGroup = gc_new< PropertyGroup >();
+			dimensionGroup = new PropertyGroup();
 			dimensionsGroup->setProperty(m_instance->getGuid().format(), dimensionGroup);
 		}
 

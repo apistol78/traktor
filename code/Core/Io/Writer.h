@@ -2,15 +2,14 @@
 #define traktor_Writer_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,10 +20,10 @@ namespace traktor
  */
 class T_DLLCLASS Writer : public Object
 {
-	T_RTTI_CLASS(Writer)
+	T_RTTI_CLASS;
 
 public:
-	Writer(Stream* stream);
+	Writer(IStream* stream);
 	
 	Writer& operator << (bool v);
 	
@@ -57,7 +56,7 @@ public:
 	int write(const void* block, int count, int size);
 	
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 };
 	
 }

@@ -5,9 +5,9 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.BufferedStream", BufferedStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.BufferedStream", BufferedStream, IStream)
 
-BufferedStream::BufferedStream(Stream* stream, uint32_t internalBufferSize)
+BufferedStream::BufferedStream(IStream* stream, uint32_t internalBufferSize)
 :	m_stream(stream)
 ,	m_internalBufferSize(internalBufferSize)
 ,	m_readBuf(0)

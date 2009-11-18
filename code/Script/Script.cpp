@@ -1,5 +1,5 @@
 #include "Script/Script.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 
@@ -21,7 +21,7 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.script.Script", Script, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", Script, ISerializable)
 
 Script::Script()
 {
@@ -62,7 +62,7 @@ int Script::getVersion() const
 	return 1;
 }
 
-bool Script::serialize(Serializer& s)
+bool Script::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Guid, MemberDependency >(L"dependencies", m_dependencies);

@@ -1,6 +1,5 @@
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -51,7 +50,7 @@ bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactor
 {
 	m_eventLoop = eventLoop;
 	m_widgetFactory = widgetFactory;
-	m_clipboard = gc_new< Clipboard >(widgetFactory->createClipboard());
+	m_clipboard = new Clipboard(widgetFactory->createClipboard());
 	return true;
 }
 

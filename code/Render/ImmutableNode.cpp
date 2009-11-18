@@ -11,12 +11,12 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 {
 	while (inputPins && inputPins->name)
 	{
-		m_inputPins.push_back(gc_new< InputPin >(this, inputPins->name, inputPins->optional));
+		m_inputPins.push_back(new InputPin(this, inputPins->name, inputPins->optional));
 		++inputPins;
 	}
 	while (outputPins && outputPins->name)
 	{
-		m_outputPins.push_back(gc_new< OutputPin >(this, outputPins->name));
+		m_outputPins.push_back(new OutputPin(this, outputPins->name));
 		++outputPins;
 	}
 }

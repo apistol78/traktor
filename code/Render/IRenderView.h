@@ -1,7 +1,6 @@
 #ifndef traktor_render_IRenderView_H
 #define traktor_render_IRenderView_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Render/Types.h"
 
@@ -33,7 +32,7 @@ class IProgram;
  */
 class T_DLLCLASS IRenderView : public Object
 {
-	T_RTTI_CLASS(IRenderView)
+	T_RTTI_CLASS;
 
 public:
 	/*! \name View management. */

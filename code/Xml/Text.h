@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Text : public Node
 {
-	T_RTTI_CLASS(Text)
+	T_RTTI_CLASS;
 
 public:
 	Text(const std::wstring& text);

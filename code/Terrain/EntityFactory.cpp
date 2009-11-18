@@ -19,9 +19,9 @@ EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, render
 {
 }
 
-const TypeSet EntityFactory::getEntityTypes() const
+const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TerrainEntityData >());
 	typeSet.insert(&type_of< OceanEntityData >());
 	typeSet.insert(&type_of< UndergrowthEntityData >());
@@ -34,13 +34,13 @@ Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder,
 
 	if (is_a< TerrainEntityData >(&entityData))
 	{
-		Ref< TerrainEntity > terrainEntity = gc_new< TerrainEntity >();
+		Ref< TerrainEntity > terrainEntity = new TerrainEntity();
 		if (terrainEntity->create(m_resourceManager, m_renderSystem, static_cast< const TerrainEntityData& >(entityData)))
 			return terrainEntity;
 	}
 	else if (is_a< OceanEntityData >(&entityData))
 	{
-		Ref< OceanEntity > oceanEntity = gc_new< OceanEntity >();
+		Ref< OceanEntity > oceanEntity = new OceanEntity();
 		if (oceanEntity->create(m_resourceManager, m_renderSystem, static_cast< const OceanEntityData& >(entityData)))
 			return oceanEntity;
 	}

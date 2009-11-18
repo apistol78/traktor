@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolTipEvent : public Event
 {
-	T_RTTI_CLASS(ToolTipEvent)
+	T_RTTI_CLASS;
 
 public:
 	ToolTipEvent(EventSubject* sender, const Point& position);

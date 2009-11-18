@@ -5,7 +5,7 @@ namespace traktor
 	namespace zip
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.StreamZip", StreamZip, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.StreamZip", StreamZip, IStream)
 
 StreamZip::StreamZip(zipFile file) :
 	m_file(file)

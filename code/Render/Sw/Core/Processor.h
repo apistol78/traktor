@@ -1,7 +1,6 @@
 #ifndef traktor_render_Processor_H
 #define traktor_render_Processor_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 
@@ -26,7 +25,7 @@ class AbstractSampler;
  */
 class T_DLLCLASS Processor : public Object
 {
-	T_RTTI_CLASS(Processor)
+	T_RTTI_CLASS;
 
 public:
 	typedef void* image_t;

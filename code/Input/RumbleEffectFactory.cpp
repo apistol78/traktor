@@ -14,9 +14,9 @@ RumbleEffectFactory::RumbleEffectFactory(db::Database* db)
 {
 }
 
-const TypeSet RumbleEffectFactory::getResourceTypes() const
+const TypeInfoSet RumbleEffectFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< RumbleEffect >());
 	return typeSet;
 }
@@ -26,7 +26,7 @@ bool RumbleEffectFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	return m_db->getObjectReadOnly< RumbleEffect >(guid);
 }

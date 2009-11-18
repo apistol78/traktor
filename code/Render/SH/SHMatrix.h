@@ -2,7 +2,7 @@
 #define traktor_render_SHMatrix_H
 
 #include <vector>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Spherical harmonics matrix class.
  * \ingroup Render
  */
-class T_DLLCLASS SHMatrix : public Serializable
+class T_DLLCLASS SHMatrix : public ISerializable
 {
-	T_RTTI_CLASS(SHMatrix)
+	T_RTTI_CLASS;
 
 public:
 	SHMatrix();
@@ -44,7 +44,7 @@ public:
 
 	inline float& w(int32_t row, int32_t column) { return m_elements[row + column * m_rows]; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	int32_t m_rows;

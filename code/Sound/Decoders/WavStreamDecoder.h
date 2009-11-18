@@ -1,7 +1,6 @@
 #ifndef traktor_sound_WavStreamDecoder_H
 #define traktor_sound_WavStreamDecoder_H
 
-#include "Core/Heap/Ref.h"
 #include "Sound/IStreamDecoder.h"
 
 // import/export mechanism.
@@ -38,10 +37,10 @@ struct WaveFormat
  */
 class T_DLLCLASS WavStreamDecoder : public IStreamDecoder
 {
-	T_RTTI_CLASS(WavStreamDecoder)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool create(Stream* stream);
+	virtual bool create(IStream* stream);
 
 	virtual void destroy();
 
@@ -52,7 +51,7 @@ public:
 	virtual void rewind();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	WaveFormat m_format;
 	float m_samplesBuffer[16384];
 

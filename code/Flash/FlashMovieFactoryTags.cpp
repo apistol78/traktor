@@ -17,7 +17,6 @@
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Formats/ImageFormatJpeg.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Misc/TString.h"
 #include "Core/Misc/AutoPtr.h"
@@ -54,7 +53,7 @@ ActionScript* readActionScript(BitReader& bs)
 		if (opcode == /*AopEnd*/0)
 			break;
 	}
-	Ref< ActionScript > script = gc_new< ActionScript >(uint32_t(buf.size()));
+	Ref< ActionScript > script = new ActionScript(uint32_t(buf.size()));
 	memcpy(script->getCode(), &buf[0], buf.size());
 	return script;
 }
@@ -102,7 +101,7 @@ bool FlashTagDefineShape::read(SwfReader* swf, ReadContext& context)
 	if (!swf->readShapeWithStyle(shape, styles, m_shapeType))
 		return false;
 
-	Ref< FlashShape > shapeCharacter = gc_new< FlashShape >(shapeId);
+	Ref< FlashShape > shapeCharacter = new FlashShape(shapeId);
 	if (!shapeCharacter->create(shapeBounds, shape, styles))
 		return false;
 
@@ -150,7 +149,7 @@ bool FlashTagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 	if (!endShape)
 		return false;
 
-	Ref< FlashMorphShape > shape = gc_new< FlashMorphShape >(shapeId);
+	Ref< FlashMorphShape > shape = new FlashMorphShape(shapeId);
 	if (!shape->create(startBounds, startShape, endShape, startStyles, endStyles))
 		return false;
 
@@ -187,12 +186,12 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
 			T_ASSERT (offsetBase + offsetTable[i] < context.tagEndPosition);
-			bs.getStream()->seek(Stream::SeekSet, offsetBase + offsetTable[i]);
+			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
 			shapeTable[i] = swf->readShape(0);
 		}
 
-		Ref< FlashFont > font = gc_new< FlashFont >();
+		Ref< FlashFont > font = new FlashFont();
 		if (!font->create(shapeTable))
 			return false;
 
@@ -227,7 +226,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 		for (uint16_t i = 0; i < glyphCount; ++i)
 		{
 			T_ASSERT (offsetBase + offsetTable[i] < context.tagEndPosition);
-			bs.getStream()->seek(Stream::SeekSet, offsetBase + offsetTable[i]);
+			bs.getStream()->seek(IStream::SeekSet, offsetBase + offsetTable[i]);
 			bs.alignByte();
 			shapeTable[i] = swf->readShape(0);
 		}
@@ -264,7 +263,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 				kerningTable[i] = swf->readKerningRecord(wideCodes);
 		}
 
-		Ref< FlashFont > font = gc_new< FlashFont >();
+		Ref< FlashFont > font = new FlashFont();
 		if (!font->create(
 			shapeTable,
 			ascent,
@@ -316,7 +315,7 @@ bool FlashTagDefineText::read(SwfReader* swf, ReadContext& context)
 		textRecords.push_back(textRecord);
 	}
 	
-	Ref< FlashText > text = gc_new< FlashText >(textId, cref(textBounds), cref(Matrix33(textMatrix.m)));
+	Ref< FlashText > text = new FlashText(textId, textBounds, Matrix33(textMatrix.m));
 	if (!text->create(textRecords))
 		return false;
 
@@ -391,13 +390,13 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	if (hasText)
 		initialText = mbstows(swf->readString());
 
-	Ref< FlashEdit > edit = gc_new< FlashEdit >(
+	Ref< FlashEdit > edit = new FlashEdit(
 		textId,
 		fontId,
 		fontHeight,
-		cref(textBounds),
-		cref(textColor),
-		cref(initialText),
+		textBounds,
+		textColor,
+		initialText,
 		(FlashEdit::Align)align,
 		leftMargin,
 		rightMargin,
@@ -421,7 +420,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t buttonId = bs.readUInt16();
-	Ref< FlashButton > button = gc_new< FlashButton >(buttonId);
+	Ref< FlashButton > button = new FlashButton(buttonId);
 
 	if (m_buttonType == 1)
 	{
@@ -524,7 +523,7 @@ bool FlashTagDefineButton::read(SwfReader* swf, ReadContext& context)
 
 bool FlashTagJpegTables::read(SwfReader* swf, ReadContext& context)
 {
-	context.jpegFormat = gc_new< drawing::ImageFormatJpeg >();
+	context.jpegFormat = new drawing::ImageFormatJpeg();
 
 	// Strange, seems Flash CS3 emits a 0 length tag, assuming
 	// it's valid and there is only a single JPEG in the SWF which
@@ -600,7 +599,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		Ref< drawing::Image > image = context.jpegFormat->readJpegImage(&bufferStream);
 		T_ASSERT (image);
 
-		Ref< FlashBitmap > bitmap = gc_new< FlashBitmap >();
+		Ref< FlashBitmap > bitmap = new FlashBitmap();
 		if (!bitmap->create(image))
 			return false;
 
@@ -608,7 +607,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 	}
 	else
 	{
-		Ref< drawing::ImageFormatJpeg > jpegFormat = gc_new< drawing::ImageFormatJpeg >();
+		Ref< drawing::ImageFormatJpeg > jpegFormat = new drawing::ImageFormatJpeg();
 		if (!jpegFormat->readJpegHeader(&bufferStream))
 			return false;
 
@@ -625,7 +624,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 		{
 			uint32_t inflateSize = image->getWidth() * image->getHeight();
 
-			bufferStream.seek(Stream::SeekSet, offsetToAlpha);
+			bufferStream.seek(IStream::SeekSet, offsetToAlpha);
 			zip::InflateStream inf(&bufferStream);
 
 			AutoArrayPtr< uint8_t > alphaBuffer(new uint8_t [inflateSize]);
@@ -645,7 +644,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 
 		if (image)
 		{
-			Ref< FlashBitmap > bitmap = gc_new< FlashBitmap >();
+			Ref< FlashBitmap > bitmap = new FlashBitmap();
 			if (!bitmap->create(image))
 				return false;
 
@@ -689,10 +688,10 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		zip::InflateStream inflateStream(bs.getStream());
 		inflateStream.read(&buffer[0], int(bufferSize));
 
-		bs.getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 		bs.alignByte();
 
-		Ref< FlashBitmap > bitmap = gc_new< FlashBitmap >();
+		Ref< FlashBitmap > bitmap = new FlashBitmap();
 		if (!bitmap->create(width, height))
 			return false;
 
@@ -737,10 +736,10 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		zip::InflateStream inflateStream(bs.getStream());
 		inflateStream.read(&buffer[0], int(bufferSize));
 
-		bs.getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 		bs.alignByte();
 
-		Ref< FlashBitmap > bitmap = gc_new< FlashBitmap >();
+		Ref< FlashBitmap > bitmap = new FlashBitmap();
 		if (!bitmap->create(width, height))
 			return false;
 
@@ -788,33 +787,33 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	uint16_t spriteId = bs.readUInt16();
 	uint16_t frameCount = bs.readUInt16();
 
-	Ref< FlashSprite > sprite = gc_new< FlashSprite >(spriteId, frameCount);
+	Ref< FlashSprite > sprite = new FlashSprite(spriteId, frameCount);
 
 	// Setup readers for supported sprite tags.
 	std::map< uint16_t, Ref< FlashTag > > tagReaders;
-	tagReaders[TiDoAction] = gc_new< FlashTagDoAction >();
-	tagReaders[TiPlaceObject] = gc_new< FlashTagPlaceObject >(1);
-	tagReaders[TiPlaceObject2] = gc_new< FlashTagPlaceObject >(2);
-	tagReaders[TiPlaceObject3] = gc_new< FlashTagPlaceObject >(3);
-	tagReaders[TiRemoveObject] = gc_new< FlashTagRemoveObject >(1);
-	tagReaders[TiRemoveObject2] = gc_new< FlashTagRemoveObject >(2);
-	tagReaders[TiShowFrame] = gc_new< FlashTagShowFrame >();
-	tagReaders[TiFrameLabel] = gc_new< FlashTagFrameLabel >();
+	tagReaders[TiDoAction] = new FlashTagDoAction();
+	tagReaders[TiPlaceObject] = new FlashTagPlaceObject(1);
+	tagReaders[TiPlaceObject2] = new FlashTagPlaceObject(2);
+	tagReaders[TiPlaceObject3] = new FlashTagPlaceObject(3);
+	tagReaders[TiRemoveObject] = new FlashTagRemoveObject(1);
+	tagReaders[TiRemoveObject2] = new FlashTagRemoveObject(2);
+	tagReaders[TiShowFrame] = new FlashTagShowFrame();
+	tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 
 	// Define readers for tags which isn't planed to be implemented.
-	tagReaders[13] = gc_new< FlashTagUnsupported >(13);
-	tagReaders[14] = gc_new< FlashTagUnsupported >(14);
-	tagReaders[15] = gc_new< FlashTagUnsupported >(15);
-	tagReaders[18] = gc_new< FlashTagUnsupported >(18);
-	tagReaders[19] = gc_new< FlashTagUnsupported >(19);
-	tagReaders[45] = gc_new< FlashTagUnsupported >(45);
+	tagReaders[13] = new FlashTagUnsupported(13);
+	tagReaders[14] = new FlashTagUnsupported(14);
+	tagReaders[15] = new FlashTagUnsupported(15);
+	tagReaders[18] = new FlashTagUnsupported(18);
+	tagReaders[19] = new FlashTagUnsupported(19);
+	tagReaders[45] = new FlashTagUnsupported(45);
 
 	// Decode tags.
 	FlashTag::ReadContext spriteContext;
 	spriteContext.version = context.version;
 	spriteContext.movie = context.movie;
 	spriteContext.sprite = sprite;
-	spriteContext.frame = gc_new< FlashFrame >();
+	spriteContext.frame = new FlashFrame();
 	for (;;)
 	{
 		swf->enterScope();
@@ -836,12 +835,12 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 			if (uint32_t(swf->getBitReader().getStream()->tell()) < spriteContext.tagEndPosition)
 			{
 				log::warning << L"Read too few bytes (" << spriteContext.tagEndPosition - swf->getBitReader().getStream()->tell() << L" left) in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(Stream::SeekSet, spriteContext.tagEndPosition);
+				swf->getBitReader().getStream()->seek(IStream::SeekSet, spriteContext.tagEndPosition);
 			}
 			else if (uint32_t(swf->getBitReader().getStream()->tell()) > spriteContext.tagEndPosition)
 			{
 				log::error << L"Read too many bytes (" << swf->getBitReader().getStream()->tell() - spriteContext.tagEndPosition << L") in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(Stream::SeekSet, spriteContext.tagEndPosition);
+				swf->getBitReader().getStream()->seek(IStream::SeekSet, spriteContext.tagEndPosition);
 			}
 		}
 		else
@@ -1040,7 +1039,7 @@ bool FlashTagShowFrame::read(SwfReader* swf, ReadContext& context)
 {
 	T_ASSERT (context.frame);
 	context.sprite->addFrame(context.frame);
-	context.frame = gc_new< FlashFrame >();
+	context.frame = new FlashFrame();
 	return true;
 }
 
@@ -1134,7 +1133,7 @@ FlashTagProtect::FlashTagProtect(int protectType)
 bool FlashTagProtect::read(SwfReader* swf, ReadContext& context)
 {
 	BitReader& bs = swf->getBitReader();
-	bs.getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+	bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 	bs.alignByte();
 	return true;
 }
@@ -1168,7 +1167,7 @@ bool FlashTagUnsupported::read(SwfReader* swf, ReadContext& context)
 	}
 
 	BitReader& bs = swf->getBitReader();
-	bs.getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+	bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 	bs.alignByte();
 
 	return true;

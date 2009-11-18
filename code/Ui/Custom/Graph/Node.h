@@ -5,8 +5,7 @@
 #include <string>
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Color.h"
 #include "Ui/Associative.h"
 #include "Ui/Rect.h"
@@ -42,7 +41,7 @@ class T_DLLCLASS Node
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(Node)
+	T_RTTI_CLASS;
 
 public:
 	Node(const std::wstring& title, const std::wstring& info, const Point& position, NodeShape* shape);

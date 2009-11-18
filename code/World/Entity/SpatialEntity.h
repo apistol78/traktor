@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SpatialEntity : public Entity
 {
-	T_RTTI_CLASS(SpatialEntity)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Set entity transform.

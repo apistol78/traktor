@@ -25,15 +25,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SamplerNodeFacade", SamplerNodeFacade, N
 
 SamplerNodeFacade::SamplerNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = gc_new< ui::custom::DefaultNodeShape >(graphControl);
+	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
 }
 
 Ref< Node > SamplerNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return gc_new< Sampler >();
+	return new Sampler();
 }
 
 Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
@@ -44,7 +44,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 {
 	Sampler* sampler = checked_type_cast< Sampler* >(shaderNode);
 
-	Ref< ui::custom::Node > editorNode = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_SAMPLER"),
 		shaderNode->getInformation(),
 		ui::Point(
@@ -116,7 +116,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 					}
 				}
 
-				Ref< ui::Bitmap > nodeImage = gc_new< ui::Bitmap >();
+				Ref< ui::Bitmap > nodeImage = new ui::Bitmap();
 				if (nodeImage->create(textureImage))
 					editorNode->setImage(nodeImage);
 			}

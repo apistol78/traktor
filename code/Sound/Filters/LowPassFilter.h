@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS LowPassFilter : public IFilter
 {
-	T_RTTI_CLASS(LowPassFilter)
+	T_RTTI_CLASS;
 
 public:
 	LowPassFilter(float cutOff);

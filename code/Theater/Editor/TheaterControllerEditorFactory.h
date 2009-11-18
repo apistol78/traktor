@@ -12,12 +12,12 @@ namespace traktor
  */
 class TheaterControllerEditorFactory : public scene::ISceneControllerEditorFactory
 {
-	T_RTTI_CLASS(TheaterControllerEditorFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getControllerDataTypes() const;
+	virtual const TypeInfoSet getControllerDataTypes() const;
 
-	virtual Ref< scene::ISceneControllerEditor > createControllerEditor(const Type& controllerDataType) const;
+	virtual Ref< scene::ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const;
 };
 
 	}

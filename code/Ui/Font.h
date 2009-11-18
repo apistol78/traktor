@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Font : public Object
 {
-	T_RTTI_CLASS(Font)
+	T_RTTI_CLASS;
 
 public:
 	Font();

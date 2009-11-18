@@ -18,12 +18,12 @@ namespace traktor
  */
 class ProgramResourceDx9 : public ProgramResource
 {
-	T_RTTI_CLASS(ProgramResourceDx9)
+	T_RTTI_CLASS;
 
 public:
 	ProgramResourceDx9();
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	friend class ProgramWin32;

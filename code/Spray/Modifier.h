@@ -1,7 +1,7 @@
 #ifndef traktor_spray_Modifier_H
 #define traktor_spray_Modifier_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
 #include "Spray/Point.h"
 
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Emitter modifier.
  * \ingroup Spray
  */
-class T_DLLCLASS Modifier : public Serializable
+class T_DLLCLASS Modifier : public ISerializable
 {
-	T_RTTI_CLASS(Modifier)
+	T_RTTI_CLASS;
 
 public:
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const = 0;

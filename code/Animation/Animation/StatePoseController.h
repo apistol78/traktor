@@ -28,7 +28,7 @@ class StateContext;
  */
 class T_DLLCLASS StatePoseController : public IPoseController
 {
-	T_RTTI_CLASS(StatePoseController)
+	T_RTTI_CLASS;
 
 public:
 	StatePoseController(const resource::Proxy< StateGraph >& stateGraph);

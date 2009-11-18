@@ -1,7 +1,6 @@
 #ifndef traktor_scene_DefaultRenderControl_H
 #define traktor_scene_DefaultRenderControl_H
 
-#include "Core/Heap/Ref.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 
 namespace traktor
@@ -29,7 +28,7 @@ class SceneEditorContext;
 
 class DefaultRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(DefaultRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t index);

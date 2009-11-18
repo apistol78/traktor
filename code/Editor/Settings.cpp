@@ -1,6 +1,6 @@
 #include "Editor/Settings.h"
 #include "Ui/Application.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberType.h"
@@ -13,9 +13,9 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertyValue", PropertyValue, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertyValue", PropertyValue, ISerializable)
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyBoolean", PropertyBoolean, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyBoolean", PropertyBoolean, PropertyValue)
 
 PropertyBoolean::PropertyBoolean(value_type_t value)
 :	m_value(value)
@@ -27,12 +27,12 @@ PropertyBoolean::value_type_t PropertyBoolean::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyBoolean* >(value)->m_value : false;
 }
 
-bool PropertyBoolean::serialize(Serializer& s)
+bool PropertyBoolean::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyInteger", PropertyInteger, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyInteger", PropertyInteger, PropertyValue)
 
 PropertyInteger::PropertyInteger(value_type_t value)
 :	m_value(value)
@@ -44,12 +44,12 @@ PropertyInteger::value_type_t PropertyInteger::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyInteger* >(value)->m_value : false;
 }
 
-bool PropertyInteger::serialize(Serializer& s)
+bool PropertyInteger::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyFloat", PropertyFloat, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyFloat", PropertyFloat, PropertyValue)
 
 PropertyFloat::PropertyFloat(value_type_t value)
 :	m_value(value)
@@ -61,12 +61,12 @@ PropertyFloat::value_type_t PropertyFloat::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyFloat* >(value)->m_value : false;
 }
 
-bool PropertyFloat::serialize(Serializer& s)
+bool PropertyFloat::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyString", PropertyString, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyString", PropertyString, PropertyValue)
 
 PropertyString::PropertyString(value_type_t value)
 :	m_value(value)
@@ -78,12 +78,12 @@ PropertyString::value_type_t PropertyString::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyString* >(value)->m_value : L"";
 }
 
-bool PropertyString::serialize(Serializer& s)
+bool PropertyString::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyStringArray", PropertyStringArray, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyStringArray", PropertyStringArray, PropertyValue)
 
 PropertyStringArray::PropertyStringArray(const value_type_t& value)
 :	m_value(value)
@@ -95,12 +95,12 @@ PropertyStringArray::value_type_t PropertyStringArray::get(const PropertyValue* 
 	return value ? checked_type_cast< const PropertyStringArray* >(value)->m_value : value_type_t();
 }
 
-bool PropertyStringArray::serialize(Serializer& s)
+bool PropertyStringArray::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyGuid", PropertyGuid, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuid", PropertyGuid, PropertyValue)
 
 PropertyGuid::PropertyGuid(const value_type_t& value)
 :	m_value(value)
@@ -112,12 +112,12 @@ PropertyGuid::value_type_t PropertyGuid::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyGuid* >(value)->m_value : value_type_t();
 }
 
-bool PropertyGuid::serialize(Serializer& s)
+bool PropertyGuid::serialize(ISerializer& s)
 {
 	return s >> Member< Guid >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyGuidArray", PropertyGuidArray, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuidArray", PropertyGuidArray, PropertyValue)
 
 PropertyGuidArray::PropertyGuidArray(const value_type_t& value)
 :	m_value(value)
@@ -129,12 +129,12 @@ PropertyGuidArray::value_type_t PropertyGuidArray::get(const PropertyValue* valu
 	return value ? checked_type_cast< const PropertyGuidArray* >(value)->m_value : value_type_t();
 }
 
-bool PropertyGuidArray::serialize(Serializer& s)
+bool PropertyGuidArray::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< Guid >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyType", PropertyType, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyType", PropertyType, PropertyValue)
 
 PropertyType::PropertyType(value_type_t value)
 :	m_value(value)
@@ -146,12 +146,12 @@ PropertyType::value_type_t PropertyType::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyType* >(value)->m_value : 0;
 }
 
-bool PropertyType::serialize(Serializer& s)
+bool PropertyType::serialize(ISerializer& s)
 {
 	return s >> MemberType(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyTypeSet", PropertyTypeSet, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyTypeSet", PropertyTypeSet, PropertyValue)
 
 PropertyTypeSet::PropertyTypeSet(const value_type_t& value)
 {
@@ -167,19 +167,19 @@ PropertyTypeSet::value_type_t PropertyTypeSet::get(const PropertyValue* value)
 		const std::vector< std::wstring >& tmp = checked_type_cast< const PropertyTypeSet* >(value)->m_value;
 		for (std::vector< std::wstring >::const_iterator i = tmp.begin(); i != tmp.end(); ++i)
 		{
-			if (const Type* type = Type::find(*i))
+			if (const TypeInfo* type = TypeInfo::find(*i))
 				typeSet.insert(type);
 		}
 	}
 	return typeSet;
 }
 
-bool PropertyTypeSet::serialize(Serializer& s)
+bool PropertyTypeSet::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyVector4", PropertyVector4, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyVector4", PropertyVector4, PropertyValue)
 
 PropertyVector4::PropertyVector4(const value_type_t& value)
 :	m_value(value)
@@ -191,12 +191,12 @@ PropertyVector4::value_type_t PropertyVector4::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyVector4* >(value)->m_value : value_type_t();
 }
 
-bool PropertyVector4::serialize(Serializer& s)
+bool PropertyVector4::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyQuaternion", PropertyQuaternion, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyQuaternion", PropertyQuaternion, PropertyValue)
 
 PropertyQuaternion::PropertyQuaternion(const value_type_t& value)
 :	m_value(value)
@@ -208,12 +208,12 @@ PropertyQuaternion::value_type_t PropertyQuaternion::get(const PropertyValue* va
 	return value ? checked_type_cast< const PropertyQuaternion* >(value)->m_value : value_type_t();
 }
 
-bool PropertyQuaternion::serialize(Serializer& s)
+bool PropertyQuaternion::serialize(ISerializer& s)
 {
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyKey", PropertyKey, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyKey", PropertyKey, PropertyValue)
 
 PropertyKey::PropertyKey(const value_type_t& value)
 :	m_value(value)
@@ -225,9 +225,9 @@ PropertyKey::value_type_t PropertyKey::get(const PropertyValue* value)
 	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
 }
 
-bool PropertyKey::serialize(Serializer& s)
+bool PropertyKey::serialize(ISerializer& s)
 {
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 	{
 		std::wstring keydesc = L"";
 
@@ -293,7 +293,7 @@ bool PropertyKey::serialize(Serializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertyGroup", PropertyGroup, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGroup", PropertyGroup, PropertyValue)
 
 PropertyGroup::PropertyGroup(const value_type_t& value)
 :	m_value(value)
@@ -325,7 +325,7 @@ Ref< const PropertyValue > PropertyGroup::getProperty(const std::wstring& proper
 	return it != m_value.end() ? it->second.ptr() : 0;
 }
 
-bool PropertyGroup::serialize(Serializer& s)
+bool PropertyGroup::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap<
 		std::wstring,
@@ -339,7 +339,7 @@ bool PropertyGroup::serialize(Serializer& s)
 	>(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PropertySerializable", PropertySerializable, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertySerializable", PropertySerializable, PropertyValue)
 
 PropertySerializable::PropertySerializable(const value_type_t& value)
 :	m_value(value)
@@ -351,9 +351,9 @@ PropertySerializable::value_type_t PropertySerializable::get(const PropertyValue
 	return value ? checked_type_cast< const PropertySerializable* >(value)->m_value.ptr() : 0;
 }
 
-bool PropertySerializable::serialize(Serializer& s)
+bool PropertySerializable::serialize(ISerializer& s)
 {
-	return s >> MemberRef< Serializable >(L"value", m_value);
+	return s >> MemberRef< ISerializable >(L"value", m_value);
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Settings", Settings, Object)

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_InputNodeShape_H
 #define traktor_ui_custom_InputNodeShape_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/Graph/NodeShape.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class GraphControl;
  */
 class T_DLLCLASS InputNodeShape : public NodeShape
 {
-	T_RTTI_CLASS(InputNodeShape)
+	T_RTTI_CLASS;
 
 public:
 	InputNodeShape(GraphControl* graphControl);

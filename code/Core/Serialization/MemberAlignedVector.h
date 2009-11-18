@@ -35,7 +35,7 @@ public:
 		return m_ref.size();
 	}
 	
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		ValueType item;
 		if (!(s >> ValueMember(L"item", item)))
@@ -45,7 +45,7 @@ public:
 		return true;
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		return s >> ValueMember(L"item", m_ref[index]);
 	}

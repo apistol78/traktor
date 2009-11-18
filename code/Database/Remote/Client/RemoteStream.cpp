@@ -16,7 +16,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteStream", RemoteStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteStream", RemoteStream, IStream)
 
 RemoteStream::RemoteStream(Connection* connection, uint32_t handle)
 :	m_connection(connection)

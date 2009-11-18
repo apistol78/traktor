@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS FlashMovieAsset : public editor::Asset
 {
-	T_RTTI_CLASS(FlashMovieAsset)
+	T_RTTI_CLASS;
 
 public:
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 };
 
 	}

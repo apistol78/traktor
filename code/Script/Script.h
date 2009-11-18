@@ -1,7 +1,7 @@
 #ifndef traktor_script_Script_H
 #define traktor_script_Script_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Guid.h"
 
 // import/export mechanism.
@@ -20,9 +20,9 @@ namespace traktor
 /*! \brief Persistent script.
  * \ingroup Script
  */
-class T_DLLCLASS Script : public Serializable
+class T_DLLCLASS Script : public ISerializable
 {
-	T_RTTI_CLASS(Script)
+	T_RTTI_CLASS;
 
 public:
 	Script();
@@ -41,7 +41,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< Guid > m_dependencies;

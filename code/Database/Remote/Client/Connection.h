@@ -1,7 +1,6 @@
 #ifndef traktor_db_Connection_H
 #define traktor_db_Connection_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Remote/Messages/MsgStatus.h"
@@ -25,7 +24,7 @@ class MessageTransport;
  */
 class Connection : public Object
 {
-	T_RTTI_CLASS(Connection)
+	T_RTTI_CLASS;
 
 public:
 	Connection(net::TcpSocket* socket);

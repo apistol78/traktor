@@ -52,7 +52,7 @@ class FlashMoviePlayer;
 
 class T_DLLCLASS FlashPreviewControl : public ui::Widget
 {
-	T_RTTI_CLASS(FlashPreviewControl)
+	T_RTTI_CLASS;
 
 public:
 	FlashPreviewControl();

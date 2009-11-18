@@ -1,13 +1,12 @@
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ConvolutionFilter", ConvolutionFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ConvolutionFilter", ConvolutionFilter, IImageFilter)
 
 ConvolutionFilter::ConvolutionFilter(const Matrix33& matrix)
 :	m_matrix(matrix)
@@ -16,25 +15,25 @@ ConvolutionFilter::ConvolutionFilter(const Matrix33& matrix)
 
 Ref< ConvolutionFilter > ConvolutionFilter::createGaussianBlur()
 {
-	return gc_new< ConvolutionFilter >(cref(Matrix33(
+	return new ConvolutionFilter(Matrix33(
 		1, 2, 1,
 		2, 4, 2,
 		1, 2, 1
-	)));
+	));
 }
 
 Ref< ConvolutionFilter > ConvolutionFilter::createEmboss()
 {
-	return gc_new< ConvolutionFilter >(cref(Matrix33(
+	return new ConvolutionFilter(Matrix33(
 		2,  0,  0,
 		0, -1,  0,
 		0,  0, -1
-	)));
+	));
 }
 
 Ref< Image > ConvolutionFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;
 
 	for (int32_t y = 1; y < image->getHeight() - 1; ++y)

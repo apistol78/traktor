@@ -1,7 +1,6 @@
 #ifndef traktor_spray_EmitterInstance_H
 #define traktor_spray_EmitterInstance_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
@@ -34,7 +33,7 @@ class PointRenderer;
  */
 class T_DLLCLASS EmitterInstance : public Object
 {
-	T_RTTI_CLASS(EmitterInstance)
+	T_RTTI_CLASS;
 
 public:
 	EmitterInstance(Emitter* emitter);

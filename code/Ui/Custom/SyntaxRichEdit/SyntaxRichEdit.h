@@ -25,7 +25,7 @@ class SyntaxLanguage;
  */
 class T_DLLCLASS SyntaxRichEdit : public RichEdit
 {
-	T_RTTI_CLASS(SyntaxRichEdit)
+	T_RTTI_CLASS;
 
 public:
 	SyntaxRichEdit();

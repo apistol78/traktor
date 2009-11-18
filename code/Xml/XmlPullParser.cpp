@@ -4,23 +4,23 @@
 
 #include <sstream>
 #include "Xml/XmlPullParser.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
 
 #if T_XML_PARSER_THREAD
-#include "Core/Thread/JobManager.h"
-#include "Core/Thread/Signal.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Thread/Acquire.h"
+#	include "Core/Thread/JobManager.h"
+#	include "Core/Thread/Signal.h"
+#	include "Core/Thread/Semaphore.h"
+#	include "Core/Thread/Acquire.h"
 #endif
 
 // On Linux and Apple we externally depend on Expat being part of the system.
 #if !defined(linux) && !defined(__APPLE__)
-#define XML_STATIC
-#define XML_UNICODE
-#define XML_UNICODE_WCHAR_T
+#	define XML_STATIC
+#	define XML_UNICODE
+#	define XML_UNICODE_WCHAR_T
 #endif
 
 #include "expat.h"
@@ -35,15 +35,15 @@ namespace traktor
 inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 {
 #if defined(XML_UNICODE)
-#if defined(XML_UNICODE_WCHAR_T)
+#	if defined(XML_UNICODE_WCHAR_T)
 	T_ASSERT (sizeof(XML_Char) == sizeof(wchar_t));
 	return std::wstring(xmlstr, term);
-#else
+#	else
 	std::wstringstream ss;
 	for (const XML_Char* s = xmlstr; s != term; ++s)
 		ss << wchar_t(*s);
 	return ss.str();
-#endif
+#	endif
 #else
 	return mbstows(std::string(xmlstr, term));
 #endif
@@ -52,15 +52,15 @@ inline std::wstring xmltows(const XML_Char* xmlstr, const XML_Char* term)
 inline std::wstring xmltows(const XML_Char* xmlstr)
 {
 #if defined(XML_UNICODE)
-#if defined(XML_UNICODE_WCHAR_T)
+#	if defined(XML_UNICODE_WCHAR_T)
 	T_ASSERT (sizeof(XML_Char) == sizeof(wchar_t));
 	return xmlstr;
-#else
+#	else
 	std::wstringstream ss;
 	for (const XML_Char* s = xmlstr; *s; ++s)
 		ss << wchar_t(*s);
 	return ss.str();
-#endif
+#	endif
 #else
 	return mbstows(xmlstr);
 #endif
@@ -71,14 +71,14 @@ inline std::wstring xmltows(const XML_Char* xmlstr)
 class XmlPullParserImpl
 {
 public:
-	XmlPullParserImpl(Stream* stream);
+	XmlPullParserImpl(IStream* stream);
 
 	~XmlPullParserImpl();
 	
 	bool get(XmlPullParser::Event& outEvent);
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	XML_Parser m_parser;
 	bool m_done;
 	std::vector< wchar_t > m_cdata;
@@ -88,10 +88,10 @@ private:
 	Job m_parseJob;
 	Signal m_eventQueueSignal;
 	Semaphore m_eventQueueLock;
-#if T_XML_PARSER_THREAD_LOG
+#	if T_XML_PARSER_THREAD_LOG
 	uint32_t m_getCalled;
 	uint32_t m_getStalled;
-#endif
+#	endif
 #endif
 
 	bool parse();
@@ -113,7 +113,7 @@ private:
 	static int XMLCALL unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info);
 };
 
-XmlPullParserImpl::XmlPullParserImpl(Stream* stream)
+XmlPullParserImpl::XmlPullParserImpl(IStream* stream)
 :	m_stream(stream)
 ,	m_parser(0)
 ,	m_done(false)
@@ -144,9 +144,9 @@ XmlPullParserImpl::~XmlPullParserImpl()
 {
 #if T_XML_PARSER_THREAD
 	m_parseJob.wait();
-#if T_XML_PARSER_THREAD_LOG
+#	if T_XML_PARSER_THREAD_LOG
 	log::info << L"XmlPullParserImpl, " << m_getCalled << " get called, " << m_getStalled << " stalled" << Endl;
-#endif
+#	endif
 #endif
 	if (m_parser)
 		XML_ParserFree(m_parser);
@@ -155,15 +155,15 @@ XmlPullParserImpl::~XmlPullParserImpl()
 bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 {
 #if T_XML_PARSER_THREAD
-#if T_XML_PARSER_THREAD_LOG
+#	if T_XML_PARSER_THREAD_LOG
 	++m_getCalled;
-#endif
+#	endif
 	m_eventQueueSignal.reset();
 	while (m_eventQueue.empty())
 	{
-#if T_XML_PARSER_THREAD_LOG
+#	if T_XML_PARSER_THREAD_LOG
 		++m_getStalled;
-#endif
+#	endif
 		if (!m_eventQueueSignal.wait(1000))
 			return false;
 		m_eventQueueSignal.reset();
@@ -293,7 +293,7 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* name, XML_Encoding* info)
 {
 	// Map Windows encoding as iso-8859-1; not completely accurat.
-	// @fixme Should use Encoding classes from Core.
+	// @fixme Should use IEncoding classes from Core.
 	if (compareIgnoreCase(xmltows(name), L"Windows-1252") == 0)
 	{
 		for (int i = 0; i < 256; ++i)
@@ -310,7 +310,7 @@ int XMLCALL XmlPullParserImpl::unknownEncoding(void* userData, const XML_Char* n
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlPullParser", XmlPullParser, Object)
 
-XmlPullParser::XmlPullParser(Stream* stream)
+XmlPullParser::XmlPullParser(IStream* stream)
 :	m_impl(new XmlPullParserImpl(stream))
 ,	m_pushed(0)
 {

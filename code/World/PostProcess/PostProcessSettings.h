@@ -1,8 +1,8 @@
 #ifndef traktor_world_PostProcessSettings_H
 #define traktor_world_PostProcessSettings_H
 
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,9 +23,9 @@ class PostProcessStep;
 /*! \brief Post processing settings.
  * \ingroup World
  */
-class T_DLLCLASS PostProcessSettings : public Serializable
+class T_DLLCLASS PostProcessSettings : public ISerializable
 {
-	T_RTTI_CLASS(PostProcessSettings)
+	T_RTTI_CLASS;
 
 public:
 	PostProcessSettings();
@@ -38,7 +38,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_requireHighRange;

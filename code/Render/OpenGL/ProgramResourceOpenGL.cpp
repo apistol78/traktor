@@ -1,5 +1,5 @@
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceOpenGL", ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 {
@@ -29,7 +29,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 {
 }
 
-bool ProgramResourceOpenGL::serialize(Serializer& s)
+bool ProgramResourceOpenGL::serialize(ISerializer& s)
 {
 	uint32_t renderStateSize = sizeof(m_renderState);
 

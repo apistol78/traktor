@@ -1,8 +1,8 @@
 #include <cstring>
 #include <vorbis/codec.h>
 #include "Sound/Decoders/OggStreamDecoder.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Io/Stream.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ namespace traktor
 class OggStreamDecoderImpl : public Object
 {
 public:
-	bool create(Stream* stream)
+	bool create(IStream* stream)
 	{
 		m_stream = stream;
 
@@ -223,7 +223,7 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	ogg_sync_state m_oy;
 	ogg_stream_state m_os;
 	ogg_page m_og;
@@ -238,9 +238,9 @@ private:
 	bool m_readPacket;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.OggStreamDecoder", OggStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.OggStreamDecoder", OggStreamDecoder, IStreamDecoder)
 
-bool OggStreamDecoder::create(Stream* stream)
+bool OggStreamDecoder::create(IStream* stream)
 {
 	m_stream = stream;
 	rewind();
@@ -271,8 +271,8 @@ bool OggStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 void OggStreamDecoder::rewind()
 {
 	destroy();
-	m_stream->seek(Stream::SeekSet, 0);
-	m_decoderImpl = gc_new< OggStreamDecoderImpl >();
+	m_stream->seek(IStream::SeekSet, 0);
+	m_decoderImpl = new OggStreamDecoderImpl();
 	if (!m_decoderImpl->create(m_stream))
 		m_decoderImpl = 0;
 }

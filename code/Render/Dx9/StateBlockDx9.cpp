@@ -1,6 +1,6 @@
 #include "Render/Dx9/StateBlockDx9.h"
 #include "Render/Dx9/ParameterCache.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Assert.h"
 
@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.StateBlockDx9", StateBlockDx9, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.StateBlockDx9", StateBlockDx9, ISerializable)
 
 StateBlockDx9::StateBlockDx9()
 :	m_opaque(true)
@@ -82,7 +82,7 @@ int StateBlockDx9::getVersion() const
 	return 1;
 }
 
-bool StateBlockDx9::serialize(Serializer& s)
+bool StateBlockDx9::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< std::pair< uint32_t, uint32_t >, MemberStlPair< uint32_t, uint32_t > >(L"renderStates", m_renderStates);
 	s >> MemberStlMap< 

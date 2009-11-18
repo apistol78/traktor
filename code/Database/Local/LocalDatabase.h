@@ -1,7 +1,6 @@
 #ifndef traktor_db_LocalDatabase_H
 #define traktor_db_LocalDatabase_H
 
-#include "Core/Heap/Ref.h"
 #include "Database/Provider/IProviderDatabase.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class LocalGroup;
  */
 class T_DLLCLASS LocalDatabase : public IProviderDatabase
 {
-	T_RTTI_CLASS(LocalDatabase)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const Path& manifestPath); 

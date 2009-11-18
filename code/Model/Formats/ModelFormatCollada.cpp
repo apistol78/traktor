@@ -2,7 +2,7 @@
 #include <limits>
 #include "Model/Formats/ModelFormatCollada.h"
 #include "Model/Model.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Core/Log/Log.h"
@@ -531,7 +531,7 @@ void createMesh(
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.model.ModelFormatCollada", ModelFormatCollada, ModelFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatCollada", ModelFormatCollada, ModelFormat)
 
 void ModelFormatCollada::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
@@ -694,7 +694,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 	}
 
 	// Create model
-	Ref< Model > outModel = gc_new< Model >();
+	Ref< Model > outModel = new Model();
 
 	for (uint32_t i = 0; i < materialRefs.size(); ++i)
 	{

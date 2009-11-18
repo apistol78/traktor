@@ -3,7 +3,6 @@
 
 #include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class IContext;
  */
 class T_DLLCLASS SimpleTextureOpenGL : public ISimpleTexture
 {
-	T_RTTI_CLASS(ISimpleTexture)
+	T_RTTI_CLASS;
 
 public:
 	SimpleTextureOpenGL(IContext* context);

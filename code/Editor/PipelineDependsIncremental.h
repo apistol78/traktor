@@ -24,7 +24,7 @@ class Settings;
  */
 class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 {
-	T_RTTI_CLASS(PipelineDependsIncremental)
+	T_RTTI_CLASS;
 
 public:
 	PipelineDependsIncremental(
@@ -36,11 +36,11 @@ public:
 	virtual ~PipelineDependsIncremental();
 
 	virtual void addDependency(
-		const Serializable* sourceAsset
+		const ISerializable* sourceAsset
 	);
 
 	virtual void addDependency(
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
@@ -65,7 +65,7 @@ public:
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
-	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid);
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< db::Database > m_sourceDatabase;
@@ -74,7 +74,7 @@ private:
 	uint32_t m_currentRecursionDepth;
 	RefArray< PipelineDependency > m_dependencies;
 	Ref< PipelineDependency > m_currentDependency;
-	std::map< Guid, Ref< Serializable > > m_readCache;
+	std::map< Guid, Ref< ISerializable > > m_readCache;
 
 	/*! \brief Find pipeline from source type.
 	 *
@@ -83,7 +83,7 @@ private:
 	 * \param outPipelineHash Hash of pipeline settings.
 	 * \return True if pipeline found.
 	 */
-	bool findPipeline(const Type& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const;
+	bool findPipeline(const TypeInfo& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const;
 
 	/*! \brief Find already added dependency.
 	 *
@@ -104,7 +104,7 @@ private:
 	 */
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,

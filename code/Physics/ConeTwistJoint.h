@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ConeTwistJoint : public Joint
 {
-	T_RTTI_CLASS(ConeTwistJoint)
+	T_RTTI_CLASS;
 };
 
 	}

@@ -1,7 +1,6 @@
 #ifndef traktor_render_ShaderPipeline_H
 #define traktor_render_ShaderPipeline_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IPipeline.h"
 
 // import/export mechanism.
@@ -21,7 +20,7 @@ class IRenderSystem;
 
 class T_DLLCLASS ShaderPipeline : public editor::IPipeline
 {
-	T_RTTI_CLASS(ShaderPipeline)
+	T_RTTI_CLASS;
 
 public:
 	ShaderPipeline();
@@ -32,18 +31,18 @@ public:
 
 	virtual uint32_t getVersion() const;
 
-	virtual TypeSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,

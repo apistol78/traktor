@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsError : public ActionClass
 {
-	T_RTTI_CLASS(AsError)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsError > getInstance();

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ToolBarDropDown_H
 #define traktor_ui_custom_ToolBarDropDown_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/ToolBar/ToolBarItem.h"
 #include "Ui/Command.h"
 #include "Ui/Point.h"
@@ -26,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS ToolBarDropDown : public ToolBarItem
 {
-	T_RTTI_CLASS(ToolBarDropDown)
+	T_RTTI_CLASS;
 
 public:
 	ToolBarDropDown(const Command& command, int32_t width, const std::wstring& toolTip);

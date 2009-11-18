@@ -32,12 +32,12 @@ class Effect;
  */
 class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(EffectEntityData)
+	T_RTTI_CLASS;
 
 public:
 	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_xtrme_BatchRenderer_H
 #define traktor_ui_xtrme_BatchRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Render/Types.h"
 #include "Ui/Size.h"
@@ -28,7 +27,7 @@ struct ScreenVertex;
 
 class BatchRenderer : public Object
 {
-	T_RTTI_CLASS(BatchRenderer)
+	T_RTTI_CLASS;
 
 public:
 	enum ProgramId

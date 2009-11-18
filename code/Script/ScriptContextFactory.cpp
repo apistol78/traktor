@@ -18,9 +18,9 @@ ScriptContextFactory::ScriptContextFactory(db::Database* database, IScriptManage
 {
 }
 
-const TypeSet ScriptContextFactory::getResourceTypes() const
+const TypeInfoSet ScriptContextFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< IScriptContext >());
 	return typeSet;
 }
@@ -30,7 +30,7 @@ bool ScriptContextFactory::isCacheable() const
 	return false;
 }
 
-Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< Script > s = m_database->getObjectReadOnly< Script >(guid);
 	if (!s)

@@ -1,7 +1,6 @@
 #ifndef traktor_editor_HeapView_H
 #define traktor_editor_HeapView_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Container.h"
 
 namespace traktor
@@ -21,7 +20,7 @@ class ProfileControl;
 
 class HeapView : public ui::Container
 {
-	T_RTTI_CLASS(HeapView)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* widget);

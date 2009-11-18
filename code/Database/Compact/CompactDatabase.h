@@ -2,7 +2,6 @@
 #define traktor_db_CompactDatabase_H
 
 #include "Database/Provider/IProviderDatabase.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +27,7 @@ class CompactGroup;
  */
 class T_DLLCLASS CompactDatabase : public IProviderDatabase
 {
-	T_RTTI_CLASS(CompactDatabase)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const Path& filePath);

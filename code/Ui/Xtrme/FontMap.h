@@ -2,7 +2,6 @@
 #define traktor_ui_xtrme_FontMap_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Size.h"
 
@@ -26,7 +25,7 @@ class Font;
 
 class FontMap : public Object
 {
-	T_RTTI_CLASS(FontMapper)
+	T_RTTI_CLASS;
 
 public:
 	struct Glyph

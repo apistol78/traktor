@@ -29,7 +29,7 @@ AsError::AsError()
 
 void AsError::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"message", ActionValue(L""));
@@ -42,7 +42,7 @@ void AsError::createPrototype()
 
 ActionValue AsError::construct(ActionContext* context, const args_t& args)
 {
-	Ref< ActionObject > errorObject = gc_new< ActionObject >(this);
+	Ref< ActionObject > errorObject = new ActionObject(this);
 
 	if (args.size() > 0)
 		errorObject->setMember(L"message", args[0]);

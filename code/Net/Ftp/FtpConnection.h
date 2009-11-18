@@ -1,7 +1,6 @@
 #ifndef traktor_net_FtpConnection_H
 #define traktor_net_FtpConnection_H
 
-#include "Core/Heap/Ref.h"
 #include "Net/UrlConnection.h"
 
 // import/export mechanism.
@@ -15,7 +14,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace net
 	{
@@ -24,7 +23,7 @@ class FtpClient;
 
 class T_DLLCLASS FtpConnection : public UrlConnection
 {
-	T_RTTI_CLASS(FtpConnection)
+	T_RTTI_CLASS;
 
 public:
 	virtual ~FtpConnection();
@@ -33,11 +32,11 @@ public:
 
 	virtual Url getUrl() const;
 
-	virtual Ref< Stream > getStream();
+	virtual Ref< IStream > getStream();
 
 private:
 	Ref< FtpClient > m_client;
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	Url m_url;
 };
 

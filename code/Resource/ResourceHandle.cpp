@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceHandle", ResourceHandle, IResourceHandle)
 
-ResourceHandle::ResourceHandle(const Type& resourceType)
+ResourceHandle::ResourceHandle(const TypeInfo& resourceType)
 :	m_resourceType(resourceType)
 {
 }
@@ -31,7 +31,7 @@ void ResourceHandle::flush()
 	}
 }
 
-const Type& ResourceHandle::getResourceType() const
+const TypeInfo& ResourceHandle::getResourceType() const
 {
 	return m_resourceType;
 }

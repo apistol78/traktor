@@ -21,7 +21,7 @@ class StaticMesh;
 
 class T_DLLCLASS StaticMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(StaticMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	StaticMeshEntity(const Transform& transform, const resource::Proxy< StaticMesh >& mesh);

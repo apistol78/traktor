@@ -1,7 +1,7 @@
 #ifndef traktor_world_GroupEntity_H
 #define traktor_world_GroupEntity_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/Entity.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS GroupEntity : public Entity
 {
-	T_RTTI_CLASS(GroupEntity)
+	T_RTTI_CLASS;
 
 public:
 	GroupEntity();
@@ -39,13 +39,13 @@ public:
 	
 	const RefArray< Entity >& getEntities() const;
 	
-	int getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const;
+	int getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 	
-	Ref< Entity > getFirstEntityOf(const Type& entityType) const;
+	Ref< Entity > getFirstEntityOf(const TypeInfo& entityType) const;
 
-	int getEntitiesOfRecursive(const Type& entityType, RefArray< Entity >& outEntities) const;
+	int getEntitiesOfRecursive(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 	
-	Ref< Entity > getFirstEntityOfRecursive(const Type& entityType) const;
+	Ref< Entity > getFirstEntityOfRecursive(const TypeInfo& entityType) const;
 
 	virtual void update(const EntityUpdate* update);	
 

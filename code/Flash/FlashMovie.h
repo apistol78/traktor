@@ -2,7 +2,6 @@
 #define traktor_flash_FlashMovie_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Flash/SwfTypes.h"
 
@@ -30,7 +29,7 @@ class FlashCharacter;
  */
 class T_DLLCLASS FlashMovie : public Object
 {
-	T_RTTI_CLASS(FlashMovie)
+	T_RTTI_CLASS;
 
 public:
 	FlashMovie(const SwfRect& frameBounds, FlashSprite* movieClip);

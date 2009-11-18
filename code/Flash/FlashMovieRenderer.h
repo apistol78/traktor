@@ -1,7 +1,6 @@
 #ifndef traktor_flash_FlashMovieRenderer_H
 #define traktor_flash_FlashMovieRenderer_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
 
@@ -30,7 +29,7 @@ class FlashFrame;
  */
 class T_DLLCLASS FlashMovieRenderer : public Object
 {
-	T_RTTI_CLASS(FlashMovieRenderer)
+	T_RTTI_CLASS;
 
 public:
 	FlashMovieRenderer(DisplayRenderer* displayRenderer);

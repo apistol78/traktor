@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Aabb.h"
 #include "Render/VertexElement.h"
@@ -29,7 +28,7 @@ class IndexBuffer;
  */
 class T_DLLCLASS Mesh : public Object
 {
-	T_RTTI_CLASS(Mesh)
+	T_RTTI_CLASS;
 
 public:
 	struct Part

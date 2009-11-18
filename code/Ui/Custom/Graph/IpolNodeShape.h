@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_IpolNodeShape_H
 #define traktor_ui_custom_IpolNodeShape_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/Graph/NodeShape.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class Bitmap;
  */
 class T_DLLCLASS IpolNodeShape : public NodeShape
 {
-	T_RTTI_CLASS(IpolNodeShape)
+	T_RTTI_CLASS;
 
 public:
 	IpolNodeShape();

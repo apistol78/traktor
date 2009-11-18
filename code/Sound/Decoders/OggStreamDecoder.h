@@ -1,7 +1,6 @@
 #ifndef traktor_sound_OggStreamDecoder_H
 #define traktor_sound_OggStreamDecoder_H
 
-#include "Core/Heap/Ref.h"
 #include "Sound/IStreamDecoder.h"
 
 // import/export mechanism.
@@ -24,10 +23,10 @@ class OggStreamDecoderImpl;
  */
 class T_DLLCLASS OggStreamDecoder : public IStreamDecoder
 {
-	T_RTTI_CLASS(OggStreamDecoder)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool create(Stream* stream);
+	virtual bool create(IStream* stream);
 
 	virtual void destroy();
 
@@ -38,7 +37,7 @@ public:
 	virtual void rewind();
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	Ref< OggStreamDecoderImpl > m_decoderImpl;
 };
 

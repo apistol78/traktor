@@ -16,7 +16,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.MaterialMaskPipeline", MaterialMaskPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.MaterialMaskPipeline", MaterialMaskPipeline, editor::IPipeline)
 
 bool MaterialMaskPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -33,9 +33,9 @@ uint32_t MaterialMaskPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet MaterialMaskPipeline::getAssetTypes() const
+TypeInfoSet MaterialMaskPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MaterialMaskAsset >());
 	return typeSet;
 }
@@ -43,7 +43,7 @@ TypeSet MaterialMaskPipeline::getAssetTypes() const
 bool MaterialMaskPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -55,7 +55,7 @@ bool MaterialMaskPipeline::buildDependencies(
 
 bool MaterialMaskPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -84,7 +84,7 @@ bool MaterialMaskPipeline::buildOutput(
 	uint32_t size = image->getWidth();
 
 	// Create mask resource.
-	Ref< MaterialMaskResource > resource = gc_new< MaterialMaskResource >(size);
+	Ref< MaterialMaskResource > resource = new MaterialMaskResource(size);
 
 	// Create instance's name.
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
@@ -99,7 +99,7 @@ bool MaterialMaskPipeline::buildOutput(
 
 	instance->setObject(resource);
 
-	Ref< Stream > stream = instance->writeData(L"Data");
+	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Failed to build mask, unable to create data stream" << Endl;

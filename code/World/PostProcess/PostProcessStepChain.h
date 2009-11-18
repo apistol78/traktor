@@ -1,8 +1,7 @@
 #ifndef traktor_world_PostProcessStepChain_H
 #define traktor_world_PostProcessStepChain_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS PostProcessStepChain : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepChain)
+	T_RTTI_CLASS;
 
 public:
 	class InstanceChain : public Instance
@@ -49,7 +48,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const RefArray< PostProcessStep >& getSteps() const { return m_steps; }
 

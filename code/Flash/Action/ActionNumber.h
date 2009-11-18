@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ActionNumber : public ActionObject
 {
-	T_RTTI_CLASS(ActionNumber)
+	T_RTTI_CLASS;
 
 public:
 	ActionNumber(double value);

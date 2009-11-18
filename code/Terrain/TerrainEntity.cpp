@@ -328,7 +328,7 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, render::
 
 	m_indexBuffer->unlock();
 
-	m_surfaceCache = gc_new< TerrainSurfaceCache >();
+	m_surfaceCache = new TerrainSurfaceCache();
 	if (!m_surfaceCache->create(resourceManager, renderSystem))
 		return false;
 

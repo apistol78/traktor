@@ -28,7 +28,7 @@ class GraphControl;
  */
 class T_DLLCLASS OutputNodeShape : public NodeShape
 {
-	T_RTTI_CLASS(OutputNodeShape)
+	T_RTTI_CLASS;
 
 public:
 	OutputNodeShape(GraphControl* graphControl);

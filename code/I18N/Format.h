@@ -1,7 +1,6 @@
 #ifndef traktor_i18n_Format_H
 #define traktor_i18n_Format_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS Format : public Object
 {
-	T_RTTI_CLASS(Format)
+	T_RTTI_CLASS;
 
 public:
 	class T_DLLCLASS Argument

@@ -3,7 +3,6 @@
 
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Render/VertexElement.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class Mesh;
  */
 class T_DLLCLASS MeshFactory : public Object
 {
-	T_RTTI_CLASS(MeshFactory)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< Mesh > createMesh(

@@ -1,7 +1,6 @@
 #include "Input/Win32/InputDriverWin32.h"
 #include "Input/Win32/KeyboardDeviceWin32.h"
 #include "Input/Win32/MouseDeviceWin32.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -11,8 +10,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverWin32", InputDriverWin32, IInputDriver)
 
 InputDriverWin32::InputDriverWin32()
-:	m_keyboardDevice(gc_new< KeyboardDeviceWin32 >())
-,	m_mouseDevice(gc_new< MouseDeviceWin32 >())
+:	m_keyboardDevice(new KeyboardDeviceWin32())
+,	m_mouseDevice(new MouseDeviceWin32())
 {
 }
 

@@ -2,9 +2,8 @@
 #define traktor_html_Document_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +16,7 @@
 namespace traktor
 {
 
-class Encoding;
+class IEncoding;
 
 	namespace html
 	{
@@ -29,20 +28,20 @@ class Element;
  */
 class T_DLLCLASS Document : public Object
 {
-	T_RTTI_CLASS(Document)
+	T_RTTI_CLASS;
 
 public:
 	Document(bool parseComments = true);
 
-	bool loadFromFile(const std::wstring& filename, const Encoding* encoding);
+	bool loadFromFile(const std::wstring& filename, const IEncoding* encoding);
 	
-	bool loadFromStream(Stream* stream, const Encoding* encoding);
+	bool loadFromStream(IStream* stream, const IEncoding* encoding);
 	
 	bool loadFromText(const std::wstring& text);
 	
 	bool saveAsFile(const std::wstring& filename);
 	
-	bool saveIntoStream(Stream* stream);
+	bool saveIntoStream(IStream* stream);
 	
 	void setDocumentElement(Element* docElement);
 

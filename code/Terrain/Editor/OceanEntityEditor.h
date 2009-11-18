@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS OceanEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(OceanEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool isPickable(

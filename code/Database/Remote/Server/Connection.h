@@ -3,8 +3,7 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,7 +39,7 @@ class IProviderDatabase;
  */
 class T_DLLCLASS Connection : public Object
 {
-	T_RTTI_CLASS(Connection)
+	T_RTTI_CLASS;
 
 public:
 	Connection(const Configuration* configuration, net::TcpSocket* clientSocket);

@@ -1,8 +1,7 @@
 #ifndef traktor_render_Edge_H
 #define traktor_render_Edge_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,9 +22,9 @@ class InputPin;
 /*! \brief Shader graph edge.
  * \ingroup Render
  */
-class T_DLLCLASS Edge : public Serializable
+class T_DLLCLASS Edge : public ISerializable
 {
-	T_RTTI_CLASS(Edge)
+	T_RTTI_CLASS;
 
 public:
 	Edge(const OutputPin* source = 0, const InputPin* destination = 0);
@@ -38,7 +37,7 @@ public:
 
 	Ref< const InputPin > getDestination() const;
 
-	bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< const OutputPin > m_source;

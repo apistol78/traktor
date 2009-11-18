@@ -29,7 +29,7 @@ AsBoolean::AsBoolean()
 
 void AsBoolean::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsBoolean::Boolean_toString));
@@ -43,9 +43,9 @@ void AsBoolean::createPrototype()
 ActionValue AsBoolean::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue::fromObject(gc_new< ActionBoolean >(false));
+		return ActionValue::fromObject(new ActionBoolean(false));
 	else
-		return ActionValue::fromObject(gc_new< ActionBoolean >(args[0].getBooleanSafe()));
+		return ActionValue::fromObject(new ActionBoolean(args[0].getBooleanSafe()));
 }
 
 void AsBoolean::Boolean_toString(CallArgs& ca)

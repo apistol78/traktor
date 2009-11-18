@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Tick : public Key
 {
-	T_RTTI_CLASS(Tick)
+	T_RTTI_CLASS;
 
 public:
 	Tick(int time);

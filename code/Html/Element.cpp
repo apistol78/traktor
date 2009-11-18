@@ -1,8 +1,7 @@
 #include <sstream>
 #include "Html/Element.h"
 #include "Html/Attribute.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -39,7 +38,7 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	Ref< Attribute > attr = getAttribute(name);
 	if (attr == 0)
 	{
-		attr = gc_new< Attribute >(name);
+		attr = new Attribute(name);
 		attr->m_previous = 0;
 		attr->m_next = m_firstAttribute;
 		
@@ -120,7 +119,7 @@ Ref< Element > Element::getLastElementChild() const
 	return static_cast< Element* >(node.ptr());
 }
 
-void Element::writeHtml(Stream* stream)
+void Element::writeHtml(IStream* stream)
 {
 	static int depth = 0; depth++;
 	std::wstringstream ss;

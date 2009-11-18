@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS CylinderShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(CylinderShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	CylinderShapeDesc();
@@ -34,7 +34,7 @@ public:
 
 	float getLength() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_radius;

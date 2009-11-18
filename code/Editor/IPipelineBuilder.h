@@ -3,8 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,7 +16,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -34,7 +33,7 @@ class PipelineDependency;
 
 class T_DLLCLASS IPipelineBuilder : public Object
 {
-	T_RTTI_CLASS(IPipelineBuilder)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild) = 0;
@@ -45,7 +44,7 @@ public:
 
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
 
-	virtual Ref< const Serializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid)

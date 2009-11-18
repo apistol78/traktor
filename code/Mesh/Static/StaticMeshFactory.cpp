@@ -8,7 +8,7 @@
 #include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -24,12 +24,12 @@ StaticMeshFactory::StaticMeshFactory(db::Database* database, render::IRenderSyst
 ,	m_meshFactory(meshFactory)
 {
 	if (!m_meshFactory)
-		m_meshFactory = gc_new< render::RenderMeshFactory >(m_renderSystem);
+		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
 }
 
-const TypeSet StaticMeshFactory::getResourceTypes() const
+const TypeInfoSet StaticMeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< StaticMesh >());
 	return typeSet;
 }
@@ -39,7 +39,7 @@ bool StaticMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > StaticMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > StaticMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -55,7 +55,7 @@ Ref< Object > StaticMeshFactory::create(resource::IResourceManager* resourceMana
 		return 0;
 	}
 
-	Ref< Stream > dataStream = instance->readData(L"Data");
+	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
 		log::error << L"Static mesh factory failed; unable to open data stream" << Endl;
@@ -78,7 +78,7 @@ Ref< Object > StaticMeshFactory::create(resource::IResourceManager* resourceMana
 		return 0;
 	}
 
-	Ref< StaticMesh > staticMesh = gc_new< StaticMesh >();
+	Ref< StaticMesh > staticMesh = new StaticMesh();
 	staticMesh->m_mesh = mesh;
 	staticMesh->m_parts.resize(parts.size());
 

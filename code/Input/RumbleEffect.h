@@ -2,7 +2,7 @@
 #define traktor_input_RumbleEffect_H
 
 #include <vector>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Input/InputTypes.h"
 
 // import/export mechanism.
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Rumble effect.
  * \ingroup Input
  */
-class T_DLLCLASS RumbleEffect : public Serializable
+class T_DLLCLASS RumbleEffect : public ISerializable
 {
-	T_RTTI_CLASS(RumbleEffect)
+	T_RTTI_CLASS;
 
 public:
 	void setRumbleKeys(const std::vector< std::pair< float, InputRumble > >& rumbleKeys);
@@ -32,7 +32,7 @@ public:
 
 	void getRumble(float time, InputRumble& outRumble) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< std::pair< float, InputRumble > > m_rumbleKeys;

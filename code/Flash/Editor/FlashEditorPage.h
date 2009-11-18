@@ -1,7 +1,6 @@
 #ifndef traktor_flash_FlashEditorPage_H
 #define traktor_flash_FlashEditorPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/IEditorPage.h"
 
 // import/export mechanism.
@@ -50,7 +49,7 @@ class FlashMovie;
 
 class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
 {
-	T_RTTI_CLASS(FlashEditorPage)
+	T_RTTI_CLASS;
 
 public:
 	FlashEditorPage(editor::IEditor* editor);

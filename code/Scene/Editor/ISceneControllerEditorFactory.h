@@ -2,7 +2,6 @@
 #define traktor_scene_ISceneControllerEditorFactory_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,20 +23,20 @@ class ISceneControllerEditor;
  */
 class T_DLLCLASS ISceneControllerEditorFactory : public Object
 {
-	T_RTTI_CLASS(ISceneControllerEditorFactory)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Get supported set of controller data types.
 	 *
 	 * \return Set of controller data types.
 	 */
-	virtual const TypeSet getControllerDataTypes() const = 0;
+	virtual const TypeInfoSet getControllerDataTypes() const = 0;
 
 	/*! \brief Create controller editor instance.
 	 *
 	 * \param controllerDataType Controller data type.
 	 */
-	virtual Ref< ISceneControllerEditor > createControllerEditor(const Type& controllerDataType) const = 0;
+	virtual Ref< ISceneControllerEditor > createControllerEditor(const TypeInfo& controllerDataType) const = 0;
 };
 
 	}

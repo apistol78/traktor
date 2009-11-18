@@ -30,7 +30,7 @@ AsSystem::AsSystem()
 
 void AsSystem::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"security", ActionValue::fromObject(AsSecurity::getInstance()));
 

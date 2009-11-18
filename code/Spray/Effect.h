@@ -1,9 +1,8 @@
 #ifndef traktor_spray_Effect_H
 #define traktor_spray_Effect_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,16 +30,16 @@ class EffectInstance;
 /*! \brief
  * \ingroup Spray
  */
-class T_DLLCLASS Effect : public Serializable
+class T_DLLCLASS Effect : public ISerializable
 {
-	T_RTTI_CLASS(Effect)
+	T_RTTI_CLASS;
 
 public:
 	Effect();
 
 	Ref< EffectInstance > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline float getDuration() const { return m_duration; }
 

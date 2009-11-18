@@ -2,7 +2,6 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Static.h"
 #include "Ui/Edit.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -26,22 +25,22 @@ bool InputDialog::create(
 	uint32_t outFieldsCount
 )
 {
-	if (!ConfigDialog::create(parent, title, 300, 180, ConfigDialog::WsDefaultFixed, gc_new< TableLayout >(L"100%", L"*,*", 4, 4)))
+	if (!ConfigDialog::create(parent, title, 300, 180, ConfigDialog::WsDefaultFixed, new TableLayout(L"100%", L"*,*", 4, 4)))
 		return false;
 
-	Ref< Static > labelMessage = gc_new< Static >();
+	Ref< Static > labelMessage = new Static();
 	labelMessage->create(this, message);
 
-	Ref< Container > container = gc_new< Container >();
-	container->create(this, WsNone, gc_new< TableLayout >(L"*,100%", L"*", 0, 4));
+	Ref< Container > container = new Container();
+	container->create(this, WsNone, new TableLayout(L"*,100%", L"*", 0, 4));
 
 	m_outFields = outFields;
 	for (uint32_t i = 0; i < outFieldsCount; ++i)
 	{
-		Ref< Static > labelEdit = gc_new< Static >();
+		Ref< Static > labelEdit = new Static();
 		labelEdit->create(container, m_outFields[i].title);
 
-		Ref< Edit > edit = gc_new< Edit >();
+		Ref< Edit > edit = new Edit();
 		edit->create(container, m_outFields[i].value, WsClientBorder, m_outFields[i].validator);
 
 		m_editFields.push_back(edit);

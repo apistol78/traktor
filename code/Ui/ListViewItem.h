@@ -4,7 +4,6 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Associative.h"
 
@@ -28,7 +27,7 @@ class T_DLLCLASS ListViewItem
 :	public Object
 ,	public Associative
 {
-	T_RTTI_CLASS(ListViewItem)
+	T_RTTI_CLASS;
 
 public:
 	void setText(int columnIndex, const std::wstring& text);

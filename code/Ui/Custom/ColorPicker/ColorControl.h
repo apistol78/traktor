@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS ColorControl : public Widget
 {
-	T_RTTI_CLASS(ColorControl)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, int style);

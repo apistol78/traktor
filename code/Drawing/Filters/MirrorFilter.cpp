@@ -1,14 +1,13 @@
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.MirrorFilter", MirrorFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.MirrorFilter", MirrorFilter, IImageFilter)
 
 MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 :	m_flipHorizontal(flipHorizontal)
@@ -18,7 +17,7 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 
 Ref< Image > MirrorFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color in;
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)

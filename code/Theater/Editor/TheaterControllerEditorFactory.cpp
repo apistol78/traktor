@@ -1,7 +1,6 @@
 #include "Theater/Editor/TheaterControllerEditorFactory.h"
 #include "Theater/Editor/TheaterControllerEditor.h"
 #include "Theater/TheaterControllerData.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -10,16 +9,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditorFactory", TheaterControllerEditorFactory, scene::ISceneControllerEditorFactory)
 
-const TypeSet TheaterControllerEditorFactory::getControllerDataTypes() const
+const TypeInfoSet TheaterControllerEditorFactory::getControllerDataTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TheaterControllerData >());
 	return typeSet;
 }
 
-Ref< scene::ISceneControllerEditor > TheaterControllerEditorFactory::createControllerEditor(const Type& controllerDataType) const
+Ref< scene::ISceneControllerEditor > TheaterControllerEditorFactory::createControllerEditor(const TypeInfo& controllerDataType) const
 {
-	return gc_new< TheaterControllerEditor >();
+	return new TheaterControllerEditor();
 }
 
 	}

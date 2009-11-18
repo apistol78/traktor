@@ -31,7 +31,7 @@ class MiniButton;
  */
 class T_DLLCLASS ListPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(ListPropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	ListPropertyItem(const std::wstring& text);

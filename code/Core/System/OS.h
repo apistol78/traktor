@@ -1,31 +1,29 @@
 #ifndef traktor_OS_H
 #define traktor_OS_H
 
-#include "Core/Singleton/Singleton.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
+#include "Core/Singleton/ISingleton.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
 class Path;
-class Process;
-class SharedMemory;
+class IProcess;
+class ISharedMemory;
 
 /*! \brief Operative System information.
  * \ingroup Core
  */
-class T_DLLCLASS OS : public Singleton
+class T_DLLCLASS OS : public ISingleton
 {
-	T_RTTI_CLASS(OS)
-
 public:
 	static OS& getInstance();
 
@@ -85,7 +83,7 @@ public:
 	 * \param mute Mute spawn process's output.
 	 * \return Process instance, null if unable to execute.
 	 */
-	Process* execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute = false) const;
+	Ref< IProcess > execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute = false) const;
 
 	/*! \brief Create shared memory object.
 	 *
@@ -93,7 +91,7 @@ public:
 	 * \param size Size of shared memory.
 	 * \return Shared memory object.
 	 */
-	Ref< SharedMemory > createSharedMemory(const std::wstring& name, uint32_t size) const;
+	Ref< ISharedMemory > createSharedMemory(const std::wstring& name, uint32_t size) const;
 
 protected:
 	OS();

@@ -1,7 +1,6 @@
 #ifndef traktor_physics_ConeTwistJointPhysX_H
 #define traktor_physics_ConeTwistJointPhysX_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/ConeTwistJoint.h"
 #include "Physics/PhysX/JointPhysX.h"
 
@@ -23,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS ConeTwistJointPhysX : public JointPhysX< ConeTwistJoint >
 {
-	T_RTTI_CLASS(ConeTwistJointPhysX)
+	T_RTTI_CLASS;
 
 public:
 	ConeTwistJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2);

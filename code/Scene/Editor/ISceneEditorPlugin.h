@@ -36,7 +36,7 @@ class SceneEditorContext;
  */
 class T_DLLCLASS ISceneEditorPlugin : public Object
 {
-	T_RTTI_CLASS(ISceneEditorPlugin)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar) = 0;

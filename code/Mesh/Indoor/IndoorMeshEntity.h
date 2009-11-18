@@ -21,7 +21,7 @@ class IndoorMesh;
 
 class T_DLLCLASS IndoorMeshEntity : public MeshEntity
 {
-	T_RTTI_CLASS(IndoorMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	IndoorMeshEntity(const Transform& transform, const resource::Proxy< IndoorMesh >& mesh);

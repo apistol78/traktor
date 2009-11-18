@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS MaterialMask : public Object
 {
-	T_RTTI_CLASS(MaterialMask)
+	T_RTTI_CLASS;
 
 public:
 	MaterialMask(uint32_t size);

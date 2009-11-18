@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS BallJointDesc : public JointDesc
 {
-	T_RTTI_CLASS(BallJointDesc)
+	T_RTTI_CLASS;
 
 public:
 	BallJointDesc();
@@ -31,7 +31,7 @@ public:
 
 	const Vector4& getAnchor() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Vector4 m_anchor;

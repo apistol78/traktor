@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Color : public Object
 {
-	T_RTTI_CLASS(Color)
+	T_RTTI_CLASS;
 
 public:
 	Color();

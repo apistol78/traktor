@@ -17,7 +17,7 @@ class IMessageBox;
  */
 class T_DLLCLASS MessageBox : public EventSubject
 {
-	T_RTTI_CLASS(MessageBox)
+	T_RTTI_CLASS;
 
 public:
 	MessageBox();

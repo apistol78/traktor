@@ -1,6 +1,5 @@
 #include "Render/Capture/RenderSystemCapture.h"
 #include "Render/Capture/RenderViewCapture.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -50,7 +49,7 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(const DisplayMode* disp
 	if (!renderView)
 		return 0;
 
-	return gc_new< RenderViewCapture >(m_renderSystem, renderView);
+	return new RenderViewCapture(m_renderSystem, renderView);
 }
 
 Ref< IRenderView > RenderSystemCapture::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
@@ -59,7 +58,7 @@ Ref< IRenderView > RenderSystemCapture::createRenderView(void* windowHandle, con
 	if (!renderView)
 		return 0;
 
-	return gc_new< RenderViewCapture >(m_renderSystem, renderView);
+	return new RenderViewCapture(m_renderSystem, renderView);
 }
 
 Ref< VertexBuffer > RenderSystemCapture::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)

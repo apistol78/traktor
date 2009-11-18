@@ -15,7 +15,7 @@ namespace traktor
  */
 class DbmGetEventResult : public IMessage
 {
-	T_RTTI_CLASS(DbmGetEventResult)
+	T_RTTI_CLASS;
 
 public:
 	DbmGetEventResult();
@@ -30,7 +30,7 @@ public:
 
 	bool getRemote() const { return m_remote; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_haveEvent;

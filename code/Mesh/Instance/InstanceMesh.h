@@ -48,7 +48,7 @@ class WorldRenderView;
  */
 class T_DLLCLASS InstanceMesh : public Object
 {
-	T_RTTI_CLASS(InstanceMesh)
+	T_RTTI_CLASS;
 
 public:
 #if TARGET_OS_IPHONE

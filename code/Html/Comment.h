@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Comment : public Node
 {
-	T_RTTI_CLASS(Comment)
+	T_RTTI_CLASS;
 
 public:
 	Comment(const std::wstring& text);
@@ -30,7 +30,7 @@ public:
 
 	virtual std::wstring getValue() const;
 
-	virtual void writeHtml(Stream* stream);
+	virtual void writeHtml(IStream* stream);
 
 private:
 	std::wstring m_text;

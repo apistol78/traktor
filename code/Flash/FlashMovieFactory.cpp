@@ -4,8 +4,7 @@
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/SwfReader.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 #define T_SHOW_STATISTICS 1
@@ -18,56 +17,56 @@ namespace traktor
 FlashMovieFactory::FlashMovieFactory()
 {
 	// Setup tag readers.
-	m_tagReaders[TiSetBackgroundColor] = gc_new< FlashTagSetBackgroundColor >();
-	m_tagReaders[TiDefineShape] = gc_new< FlashTagDefineShape >(1);
-	m_tagReaders[TiDefineShape2] = gc_new< FlashTagDefineShape >(2);
-	m_tagReaders[TiDefineShape3] = gc_new< FlashTagDefineShape >(3);
-	m_tagReaders[TiDefineShape4] = gc_new< FlashTagDefineShape >(4);
-	m_tagReaders[TiDefineMorphShape] = gc_new< FlashTagDefineMorphShape >(1);
-	m_tagReaders[TiDefineMorphShape2] = gc_new< FlashTagDefineMorphShape >(2);
-	m_tagReaders[TiDefineFont] = gc_new< FlashTagDefineFont >(1);
-	m_tagReaders[TiDefineFont2] = gc_new< FlashTagDefineFont >(2);
-	m_tagReaders[TiDefineFont3] = gc_new< FlashTagDefineFont >(3);
-	m_tagReaders[TiJpegTables] = gc_new< FlashTagJpegTables >();
-	m_tagReaders[TiDefineBitsJpeg] = gc_new< FlashTagDefineBitsJpeg >(1);
-	m_tagReaders[TiDefineBitsJpeg2] = gc_new< FlashTagDefineBitsJpeg >(2);
-	m_tagReaders[TiDefineBitsJpeg3] = gc_new< FlashTagDefineBitsJpeg >(3);
-	m_tagReaders[TiDefineBitsLossLess] = gc_new< FlashTagDefineBitsLossLess >(1);
-	m_tagReaders[TiDefineBitsLossLess2] = gc_new< FlashTagDefineBitsLossLess >(2);
-	m_tagReaders[TiDefineSprite] = gc_new< FlashTagDefineSprite >();
-	m_tagReaders[TiDefineText] = gc_new< FlashTagDefineText >(1);
-	m_tagReaders[TiDefineText2] = gc_new< FlashTagDefineText >(2);
-	m_tagReaders[TiDefineEditText] = gc_new< FlashTagDefineEditText >();
-	//m_tagReaders[TiDefineButton] = gc_new< FlashTagDefineButton >(1);
-	m_tagReaders[TiDefineButton2] = gc_new< FlashTagDefineButton >(2);
-	m_tagReaders[TiPlaceObject] = gc_new< FlashTagPlaceObject >(1);
-	m_tagReaders[TiPlaceObject2] = gc_new< FlashTagPlaceObject >(2);
-	m_tagReaders[TiPlaceObject3] = gc_new< FlashTagPlaceObject >(3);
-	m_tagReaders[TiRemoveObject] = gc_new< FlashTagRemoveObject >(1);
-	m_tagReaders[TiRemoveObject2] = gc_new< FlashTagRemoveObject >(2);
-	m_tagReaders[TiDoAction] = gc_new< FlashTagDoAction >();
-	m_tagReaders[TiExportAssets] = gc_new< FlashTagExportAssets >();
-	m_tagReaders[TiImportAssets] = gc_new< FlashTagImportAssets >(1);
-	m_tagReaders[TiImportAssets2] = gc_new< FlashTagImportAssets >(2);
-	m_tagReaders[TiInitAction] = gc_new< FlashTagInitAction >();
-	m_tagReaders[TiShowFrame] = gc_new< FlashTagShowFrame >();
-	m_tagReaders[TiProtect] = gc_new< FlashTagProtect >(1);
-	m_tagReaders[TiEnableDebugger] = gc_new< FlashTagProtect >(2);
-	m_tagReaders[TiEnableDebugger2] = gc_new< FlashTagProtect >(3);
-	m_tagReaders[TiFrameLabel] = gc_new< FlashTagFrameLabel >();
+	m_tagReaders[TiSetBackgroundColor] = new FlashTagSetBackgroundColor();
+	m_tagReaders[TiDefineShape] = new FlashTagDefineShape(1);
+	m_tagReaders[TiDefineShape2] = new FlashTagDefineShape(2);
+	m_tagReaders[TiDefineShape3] = new FlashTagDefineShape(3);
+	m_tagReaders[TiDefineShape4] = new FlashTagDefineShape(4);
+	m_tagReaders[TiDefineMorphShape] = new FlashTagDefineMorphShape(1);
+	m_tagReaders[TiDefineMorphShape2] = new FlashTagDefineMorphShape(2);
+	m_tagReaders[TiDefineFont] = new FlashTagDefineFont(1);
+	m_tagReaders[TiDefineFont2] = new FlashTagDefineFont(2);
+	m_tagReaders[TiDefineFont3] = new FlashTagDefineFont(3);
+	m_tagReaders[TiJpegTables] = new FlashTagJpegTables();
+	m_tagReaders[TiDefineBitsJpeg] = new FlashTagDefineBitsJpeg(1);
+	m_tagReaders[TiDefineBitsJpeg2] = new FlashTagDefineBitsJpeg(2);
+	m_tagReaders[TiDefineBitsJpeg3] = new FlashTagDefineBitsJpeg(3);
+	m_tagReaders[TiDefineBitsLossLess] = new FlashTagDefineBitsLossLess(1);
+	m_tagReaders[TiDefineBitsLossLess2] = new FlashTagDefineBitsLossLess(2);
+	m_tagReaders[TiDefineSprite] = new FlashTagDefineSprite();
+	m_tagReaders[TiDefineText] = new FlashTagDefineText(1);
+	m_tagReaders[TiDefineText2] = new FlashTagDefineText(2);
+	m_tagReaders[TiDefineEditText] = new FlashTagDefineEditText();
+	//m_tagReaders[TiDefineButton] = new FlashTagDefineButton(1);
+	m_tagReaders[TiDefineButton2] = new FlashTagDefineButton(2);
+	m_tagReaders[TiPlaceObject] = new FlashTagPlaceObject(1);
+	m_tagReaders[TiPlaceObject2] = new FlashTagPlaceObject(2);
+	m_tagReaders[TiPlaceObject3] = new FlashTagPlaceObject(3);
+	m_tagReaders[TiRemoveObject] = new FlashTagRemoveObject(1);
+	m_tagReaders[TiRemoveObject2] = new FlashTagRemoveObject(2);
+	m_tagReaders[TiDoAction] = new FlashTagDoAction();
+	m_tagReaders[TiExportAssets] = new FlashTagExportAssets();
+	m_tagReaders[TiImportAssets] = new FlashTagImportAssets(1);
+	m_tagReaders[TiImportAssets2] = new FlashTagImportAssets(2);
+	m_tagReaders[TiInitAction] = new FlashTagInitAction();
+	m_tagReaders[TiShowFrame] = new FlashTagShowFrame();
+	m_tagReaders[TiProtect] = new FlashTagProtect(1);
+	m_tagReaders[TiEnableDebugger] = new FlashTagProtect(2);
+	m_tagReaders[TiEnableDebugger2] = new FlashTagProtect(3);
+	m_tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 
 	// Define readers for tags which isn't planed to be implemented.
-	m_tagReaders[TiDefineFontInfo] = gc_new< FlashTagUnsupported >(TiDefineFontInfo);
-	m_tagReaders[TiDefineSound] = gc_new< FlashTagUnsupported >(TiDefineSound);
-	m_tagReaders[TiStartSound] = gc_new< FlashTagUnsupported >(TiStartSound);
-	m_tagReaders[TiSoundStreamHead] = gc_new< FlashTagUnsupported >(TiSoundStreamHead);
-	m_tagReaders[TiSoundStreamBlock] = gc_new< FlashTagUnsupported >(TiSoundStreamBlock);
-	m_tagReaders[TiSoundStreamHead2] = gc_new< FlashTagUnsupported >(TiSoundStreamHead2);
-	m_tagReaders[TiFileAttributes] = gc_new< FlashTagUnsupported >(TiFileAttributes);
-	m_tagReaders[TiMetadata] = gc_new< FlashTagUnsupported >(TiMetadata);
-	m_tagReaders[TiDefineFontAlignZones] = gc_new< FlashTagUnsupported >(TiDefineFontAlignZones);
-	m_tagReaders[TiCSMTextSettings] = gc_new< FlashTagUnsupported >(TiCSMTextSettings);
-	m_tagReaders[TiDefineFontName] = gc_new< FlashTagUnsupported >(TiDefineFontName);
+	m_tagReaders[TiDefineFontInfo] = new FlashTagUnsupported(TiDefineFontInfo);
+	m_tagReaders[TiDefineSound] = new FlashTagUnsupported(TiDefineSound);
+	m_tagReaders[TiStartSound] = new FlashTagUnsupported(TiStartSound);
+	m_tagReaders[TiSoundStreamHead] = new FlashTagUnsupported(TiSoundStreamHead);
+	m_tagReaders[TiSoundStreamBlock] = new FlashTagUnsupported(TiSoundStreamBlock);
+	m_tagReaders[TiSoundStreamHead2] = new FlashTagUnsupported(TiSoundStreamHead2);
+	m_tagReaders[TiFileAttributes] = new FlashTagUnsupported(TiFileAttributes);
+	m_tagReaders[TiMetadata] = new FlashTagUnsupported(TiMetadata);
+	m_tagReaders[TiDefineFontAlignZones] = new FlashTagUnsupported(TiDefineFontAlignZones);
+	m_tagReaders[TiCSMTextSettings] = new FlashTagUnsupported(TiCSMTextSettings);
+	m_tagReaders[TiDefineFontName] = new FlashTagUnsupported(TiDefineFontName);
 }
 
 Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
@@ -82,15 +81,15 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 	log::info << L"Flash movie version " << int32_t(header->version) << Endl;
 
 	// Create new movie.
-	Ref< FlashSprite > movieClip = gc_new< FlashSprite >(0, header->frameRate >> 8);
-	Ref< FlashMovie > movie = gc_new< FlashMovie >(cref(header->frameRect), movieClip);
+	Ref< FlashSprite > movieClip = new FlashSprite(0, header->frameRate >> 8);
+	Ref< FlashMovie > movie = new FlashMovie(header->frameRect, movieClip);
 
 	// Decode tags.
 	FlashTag::ReadContext context;
 	context.version = header->version;
 	context.movie = movie;
 	context.sprite = movieClip;
-	context.frame = gc_new< FlashFrame >();
+	context.frame = new FlashFrame();
 	for (;;)
 	{
 		swf->enterScope();
@@ -112,12 +111,12 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 			if (uint32_t(swf->getBitReader().getStream()->tell()) < context.tagEndPosition)
 			{
 				log::warning << L"Read too few bytes (" << context.tagEndPosition - swf->getBitReader().getStream()->tell() << L" left) in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+				swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 			}
 			else if (uint32_t(swf->getBitReader().getStream()->tell()) > context.tagEndPosition)
 			{
 				log::error << L"Read too many bytes (" << swf->getBitReader().getStream()->tell() - context.tagEndPosition << L") in tag " << int32_t(tag->id) << Endl;
-				swf->getBitReader().getStream()->seek(Stream::SeekSet, context.tagEndPosition);
+				swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 			}
 		}
 		else
@@ -131,14 +130,14 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 
 #if T_SHOW_STATISTICS
 	const std::map< uint16_t, Ref< FlashCharacter > >& characters = movie->getCharacters();
-	std::map< const Type*, uint32_t > typeCounts;
+	std::map< const TypeInfo*, uint32_t > typeCounts;
 
 	// Count number of occurrences of each character type.
 	for (std::map< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-		typeCounts[&i->second->getType()]++;
+		typeCounts[&type_of(i->second)]++;
 
 	log::info << L"Characters loaded:" << Endl;
-	for (std::map< const Type*, uint32_t >::iterator i = typeCounts.begin(); i != typeCounts.end(); ++i)
+	for (std::map< const TypeInfo*, uint32_t >::iterator i = typeCounts.begin(); i != typeCounts.end(); ++i)
 		log::info << i->first->getName() << L" " << i->second << Endl;
 #endif
 

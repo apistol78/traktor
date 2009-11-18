@@ -17,7 +17,6 @@ extern "C"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
 #include "Drawing/PixelFormat.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -30,7 +29,7 @@ static bool s_errorOccured = false;
 
 struct my_source_mgr : jpeg_source_mgr
 {
-	Ref< Stream > stream;
+	Ref< IStream > stream;
 	JOCTET buffer[c_bufferSize];
 };
 
@@ -45,7 +44,7 @@ void initializeSource(j_decompress_ptr cinfo)
 	my_source_mgr& src = *static_cast< my_source_mgr* >(cinfo->src);
 	if (src.bytes_in_buffer)
 	{
-		src.stream->seek(Stream::SeekCurrent, -int(src.bytes_in_buffer));
+		src.stream->seek(IStream::SeekCurrent, -int(src.bytes_in_buffer));
 		src.next_input_byte = NULL;
 		src.bytes_in_buffer = 0;
 	}
@@ -83,7 +82,7 @@ void skipInputData(j_decompress_ptr cinfo, long nbytes)
 	else
 	{
 		int skip = int(nbytes - src.bytes_in_buffer);
-		src.stream->seek(Stream::SeekCurrent, skip);
+		src.stream->seek(IStream::SeekCurrent, skip);
 		fillInputBuffer(cinfo);
 	}
 }
@@ -94,7 +93,7 @@ void terminateSource(j_decompress_ptr cinfo)
 	if (src.bytes_in_buffer)
 	{
 		if (src.stream)
-			src.stream->seek(Stream::SeekCurrent, -int(src.bytes_in_buffer));
+			src.stream->seek(IStream::SeekCurrent, -int(src.bytes_in_buffer));
 		src.bytes_in_buffer = 0;
 		src.next_input_byte = NULL;
 	}
@@ -108,9 +107,9 @@ public:
 
 	~ImageFormatJpegImpl();
 
-	bool readJpegHeader(Stream* stream);
+	bool readJpegHeader(IStream* stream);
 
-	Ref< Image > readJpegImage(Stream* stream);
+	Ref< Image > readJpegImage(IStream* stream);
 
 private:
 	struct jpeg_decompress_struct m_cinfo;
@@ -143,7 +142,7 @@ ImageFormatJpegImpl::~ImageFormatJpegImpl()
 	jpeg_destroy_decompress(&m_cinfo);
 }
 
-bool ImageFormatJpegImpl::readJpegHeader(Stream* stream)
+bool ImageFormatJpegImpl::readJpegHeader(IStream* stream)
 {
 	T_ASSERT (m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
@@ -153,7 +152,7 @@ bool ImageFormatJpegImpl::readJpegHeader(Stream* stream)
 	// Roll back unused bytes.
 	if (m_pub.bytes_in_buffer)
 	{
-		m_pub.stream->seek(Stream::SeekCurrent, -int(m_pub.bytes_in_buffer));
+		m_pub.stream->seek(IStream::SeekCurrent, -int(m_pub.bytes_in_buffer));
 		m_pub.bytes_in_buffer = 0;
 		m_pub.next_input_byte = NULL;
 	}
@@ -161,7 +160,7 @@ bool ImageFormatJpegImpl::readJpegHeader(Stream* stream)
 	return !s_errorOccured;
 }
 
-Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
+Ref< Image > ImageFormatJpegImpl::readJpegImage(IStream* stream)
 {
 	T_ASSERT (m_pub.bytes_in_buffer == 0);
 	m_pub.stream = stream;
@@ -191,7 +190,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
 		return 0;
 	}
 
-	Ref< Image > image = gc_new< Image >(
+	Ref< Image > image = new Image(
 		pixelFormat,
 		m_cinfo.output_width,
 		m_cinfo.output_height
@@ -205,7 +204,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
 		data += m_cinfo.output_width * m_cinfo.output_components;
 	}
 
-	Ref< ImageInfo > imageInfo = gc_new< ImageInfo >();
+	Ref< ImageInfo > imageInfo = new ImageInfo();
 	imageInfo->setAuthor(L"Unknown");
 	imageInfo->setCopyright(L"Unknown");
 	imageInfo->setFormat(L"JPEG");
@@ -216,7 +215,7 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
 	// Roll back unused bytes.
 	if (m_pub.bytes_in_buffer)
 	{
-		m_pub.stream->seek(Stream::SeekCurrent, -int(m_pub.bytes_in_buffer));
+		m_pub.stream->seek(IStream::SeekCurrent, -int(m_pub.bytes_in_buffer));
 		m_pub.bytes_in_buffer = 0;
 		m_pub.next_input_byte = NULL;
 	}
@@ -224,29 +223,34 @@ Ref< Image > ImageFormatJpegImpl::readJpegImage(Stream* stream)
 	return image;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatJpeg", ImageFormatJpeg, ImageFormat)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageFormatJpeg", ImageFormatJpeg, IImageFormat)
 
 ImageFormatJpeg::ImageFormatJpeg()
 :	m_impl(new ImageFormatJpegImpl())
 {
 }
 
-Ref< Image > ImageFormatJpeg::read(Stream* stream)
+ImageFormatJpeg::~ImageFormatJpeg()
+{
+	delete m_impl;
+}
+
+Ref< Image > ImageFormatJpeg::read(IStream* stream)
 {
 	return m_impl->readJpegImage(stream);
 }
 
-bool ImageFormatJpeg::write(Stream* stream, Image* image)
+bool ImageFormatJpeg::write(IStream* stream, Image* image)
 {
 	return false;
 }
 
-bool ImageFormatJpeg::readJpegHeader(Stream* stream)
+bool ImageFormatJpeg::readJpegHeader(IStream* stream)
 {
 	return m_impl->readJpegHeader(stream);
 }
 
-Ref< Image > ImageFormatJpeg::readJpegImage(Stream* stream)
+Ref< Image > ImageFormatJpeg::readJpegImage(IStream* stream)
 {
 	return m_impl->readJpegImage(stream);
 }

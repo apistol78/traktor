@@ -3,15 +3,13 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.StringOutputStreamBuffer", StringOutputStreamBuffer, OutputStreamBuffer);
-
 int StringOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
 	m_internal.insert(m_internal.end(), &buffer[0], &buffer[count]);
 	return count;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.StringOutputStream", StringOutputStream, OutputStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.StringOutputStream", StringOutputStream, OutputStream);
 
 StringOutputStream::StringOutputStream()
 {

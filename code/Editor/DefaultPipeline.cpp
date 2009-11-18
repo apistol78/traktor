@@ -1,7 +1,7 @@
 #include "Editor/DefaultPipeline.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.DefaultPipeline", DefaultPipeline, IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.DefaultPipeline", DefaultPipeline, IPipeline)
 
 bool DefaultPipeline::create(const IPipelineSettings* settings)
 {
@@ -25,9 +25,9 @@ uint32_t DefaultPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet DefaultPipeline::getAssetTypes() const
+TypeInfoSet DefaultPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Object >());
 	return typeSet;
 }
@@ -35,7 +35,7 @@ TypeSet DefaultPipeline::getAssetTypes() const
 bool DefaultPipeline::buildDependencies(
 	IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -44,7 +44,7 @@ bool DefaultPipeline::buildDependencies(
 
 bool DefaultPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

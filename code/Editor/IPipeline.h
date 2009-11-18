@@ -1,7 +1,6 @@
 #ifndef traktor_editor_IPipeline_H
 #define traktor_editor_IPipeline_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Guid.h"
 
@@ -16,7 +15,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -37,7 +36,7 @@ class IPipelineBuilder;
  */
 class T_DLLCLASS IPipeline : public Object
 {
-	T_RTTI_CLASS(IPipeline)
+	T_RTTI_CLASS;
 
 public:
 	enum BuildReason
@@ -63,7 +62,7 @@ public:
 	virtual uint32_t getVersion() const = 0;
 
 	/*! \brief Get pipeline asset types. */
-	virtual TypeSet getAssetTypes() const = 0;
+	virtual TypeInfoSet getAssetTypes() const = 0;
 
 	/*! \brief Build dependencies from source asset.
 	 *
@@ -76,7 +75,7 @@ public:
 	virtual bool buildDependencies(
 		IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const = 0;
 
@@ -93,7 +92,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,

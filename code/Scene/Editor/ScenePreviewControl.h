@@ -1,8 +1,7 @@
 #ifndef traktor_scene_ScenePreviewControl_H
 #define traktor_scene_ScenePreviewControl_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Timer/Timer.h"
 #include "Ui/Container.h"
 
@@ -39,7 +38,7 @@ class IModifier;
 
 class T_DLLCLASS ScenePreviewControl : public ui::Container
 {
-	T_RTTI_CLASS(ScenePreviewControl)
+	T_RTTI_CLASS;
 
 public:
 	ScenePreviewControl();

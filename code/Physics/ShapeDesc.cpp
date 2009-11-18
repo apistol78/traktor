@@ -1,5 +1,5 @@
 #include "Physics/ShapeDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ShapeDesc", ShapeDesc, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ShapeDesc", ShapeDesc, ISerializable)
 
 ShapeDesc::ShapeDesc()
 :	m_localTransform(Transform::identity())
@@ -24,7 +24,7 @@ const Transform& ShapeDesc::getLocalTransform() const
 	return m_localTransform;
 }
 
-bool ShapeDesc::serialize(Serializer& s)
+bool ShapeDesc::serialize(ISerializer& s)
 {
 	return s >> MemberComposite< Transform >(L"localTransform", m_localTransform);
 }

@@ -3,7 +3,7 @@
 #include "Terrain/HeightfieldResource.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Resource/Member.h"
@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.terrain.OceanEntityData", OceanEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanEntityData", OceanEntityData, world::EntityData)
 
 OceanEntityData::OceanEntityData()
 :	m_altitude(0.0f)
@@ -32,7 +32,7 @@ const OceanEntityData::Wave& OceanEntityData::getWave(int index) const
 	return m_waves[index];
 }
 
-bool OceanEntityData::serialize(Serializer& s)
+bool OceanEntityData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Heightfield, HeightfieldResource >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
@@ -41,7 +41,7 @@ bool OceanEntityData::serialize(Serializer& s)
 	return true;
 }
 
-bool OceanEntityData::Wave::serialize(Serializer& s)
+bool OceanEntityData::Wave::serialize(ISerializer& s)
 {
 	s >> Member< Vector2 >(L"direction", direction);
 	s >> Member< float >(L"amplitude", amplitude);

@@ -14,7 +14,7 @@ namespace traktor
  */
 class ActionRemove : public Action
 {
-	T_RTTI_CLASS(Action)
+	T_RTTI_CLASS;
 
 public:
 	ActionRemove(const Path& instancePath);

@@ -4,8 +4,7 @@
 #include <map>
 #include <string>
 #include "Core/Guid.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Render/Node.h"
 
 // import/export mechanism.
@@ -33,7 +32,7 @@ class ShaderGraph;
  */
 class T_DLLCLASS External : public Node
 {
-	T_RTTI_CLASS(External)
+	T_RTTI_CLASS;
 
 public:
 	External();
@@ -60,7 +59,7 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline void setInputPins(const RefArray< InputPin >& inputPins) { m_inputPins = inputPins; }
 

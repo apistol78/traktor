@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsRectangle : public ActionClass
 {
-	T_RTTI_CLASS(AsRectangle)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsRectangle > getInstance();

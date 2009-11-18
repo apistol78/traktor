@@ -4,11 +4,10 @@
 #include <vector>
 #include <map>
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Guid.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.
@@ -27,9 +26,9 @@ namespace traktor
 /*! \brief Property value base.
  * \ingroup Editor
  */
-class T_DLLCLASS PropertyValue : public Serializable
+class T_DLLCLASS PropertyValue : public ISerializable
 {
-	T_RTTI_CLASS(PropertyValue)
+	T_RTTI_CLASS;
 };
 
 /*! \brief Boolean property value.
@@ -37,7 +36,7 @@ class T_DLLCLASS PropertyValue : public Serializable
  */
 class T_DLLCLASS PropertyBoolean : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyBoolean)
+	T_RTTI_CLASS;
 
 public:
 	typedef bool value_type_t;
@@ -46,7 +45,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -57,7 +56,7 @@ private:
  */
 class T_DLLCLASS PropertyInteger : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyInteger)
+	T_RTTI_CLASS;
 
 public:
 	typedef int32_t value_type_t;
@@ -66,7 +65,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -77,7 +76,7 @@ private:
  */
 class T_DLLCLASS PropertyFloat : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyFloat)
+	T_RTTI_CLASS;
 
 public:
 	typedef float value_type_t;
@@ -86,7 +85,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -97,7 +96,7 @@ private:
  */
 class T_DLLCLASS PropertyString : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyBoolean)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::wstring value_type_t;
@@ -106,7 +105,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -117,7 +116,7 @@ private:
  */
 class T_DLLCLASS PropertyStringArray : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyStringArray)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::vector< std::wstring > value_type_t;
@@ -126,7 +125,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -137,7 +136,7 @@ private:
  */
 class T_DLLCLASS PropertyGuid : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyGuid)
+	T_RTTI_CLASS;
 
 public:
 	typedef Guid value_type_t;
@@ -146,7 +145,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -157,7 +156,7 @@ private:
  */
 class T_DLLCLASS PropertyGuidArray : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyGuidArray)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::vector< Guid > value_type_t;
@@ -166,7 +165,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -177,16 +176,16 @@ private:
  */
 class T_DLLCLASS PropertyType : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyType)
+	T_RTTI_CLASS;
 
 public:
-	typedef const Type* value_type_t;
+	typedef const TypeInfo* value_type_t;
 
 	PropertyType(value_type_t value = 0);
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -197,16 +196,16 @@ private:
  */
 class T_DLLCLASS PropertyTypeSet : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyTypeSet)
+	T_RTTI_CLASS;
 
 public:
-	typedef TypeSet value_type_t;
+	typedef TypeInfoSet value_type_t;
 
 	PropertyTypeSet(const value_type_t& value = value_type_t());
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_value;
@@ -217,7 +216,7 @@ private:
  */
 class T_DLLCLASS PropertyVector4 : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyVector4)
+	T_RTTI_CLASS;
 
 public:
 	typedef Vector4 value_type_t;
@@ -226,7 +225,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -237,7 +236,7 @@ private:
  */
 class T_DLLCLASS PropertyQuaternion : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyQuaternion)
+	T_RTTI_CLASS;
 
 public:
 	typedef Quaternion value_type_t;
@@ -246,7 +245,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -257,7 +256,7 @@ private:
  */
 class T_DLLCLASS PropertyKey : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyKey)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::pair< int, ui::VirtualKey > value_type_t;
@@ -266,7 +265,7 @@ public:
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
@@ -277,7 +276,7 @@ private:
  */
 class T_DLLCLASS PropertyGroup : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyGroup)
+	T_RTTI_CLASS;
 
 public:
 	typedef std::map< std::wstring, Ref< PropertyValue > > value_type_t;
@@ -299,7 +298,7 @@ public:
 	template < typename PropertyType >
 	void setProperty(const std::wstring& propertyName, typename PropertyType::value_type_t value)
 	{
-		Ref< PropertyType > property = gc_new< PropertyType >(value);
+		Ref< PropertyType > property = new PropertyType(value);
 		setProperty(propertyName, property);
 	}
 
@@ -321,30 +320,30 @@ public:
 		return PropertyType::get(value);
 	}
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	value_type_t m_value;
 };
 
-/*! \brief Serializable property.
+/*! \brief ISerializable property.
  * \ingroup Editor
  */
 class T_DLLCLASS PropertySerializable : public PropertyValue
 {
-	T_RTTI_CLASS(PropertyQuaternion)
+	T_RTTI_CLASS;
 
 public:
-	typedef Ref< Serializable > value_type_t;
+	typedef Ref< ISerializable > value_type_t;
 
 	PropertySerializable(const value_type_t& value = 0);
 
 	static value_type_t get(const PropertyValue* value);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
-	Ref< Serializable > m_value;
+	Ref< ISerializable > m_value;
 };
 
 /*! \brief Settings.
@@ -352,7 +351,7 @@ private:
  */
 class T_DLLCLASS Settings : public Object
 {
-	T_RTTI_CLASS(Settings)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Construct settings object.
@@ -379,7 +378,7 @@ public:
 	template < typename PropertyType >
 	void setProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& value)
 	{
-		Ref< PropertyType > property = gc_new< PropertyType >(cref(value));
+		Ref< PropertyType > property = new PropertyType(value);
 		setProperty(propertyName, property);
 	}
 

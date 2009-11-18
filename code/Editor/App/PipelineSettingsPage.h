@@ -1,7 +1,6 @@
 #ifndef traktor_editor_PipelineSettingsPage_H
 #define traktor_editor_PipelineSettingsPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/ISettingsPage.h"
 
 namespace traktor
@@ -23,7 +22,7 @@ class Event;
  */
 class PipelineSettingsPage : public ISettingsPage
 {
-	T_RTTI_CLASS(PipelineSettingsPage)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands);

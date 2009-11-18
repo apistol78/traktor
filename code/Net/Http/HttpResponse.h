@@ -15,19 +15,19 @@
 namespace traktor
 {
 	
-class Stream;
+class IStream;
 	
 	namespace net
 	{
 
 class T_DLLCLASS HttpResponse : public Object
 {
-	T_RTTI_CLASS(HttpResponse)
+	T_RTTI_CLASS;
 
 public:
 	HttpResponse();
 	
-	bool parse(Stream* stream);
+	bool parse(IStream* stream);
 
 	int32_t getStatusCode() const;
 	

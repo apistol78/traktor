@@ -1,6 +1,6 @@
 #include <sstream>
 #include "Html/Comment.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -24,7 +24,7 @@ std::wstring Comment::getValue() const
 	return m_text;
 }
 
-void Comment::writeHtml(Stream* stream)
+void Comment::writeHtml(IStream* stream)
 {
 	std::wstringstream ss;
 	ss << L"<!-- " << m_text << L" -->" << std::endl;

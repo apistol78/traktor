@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsDate : public ActionClass
 {
-	T_RTTI_CLASS(AsDate)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsDate > getInstance();

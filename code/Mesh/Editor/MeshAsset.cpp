@@ -1,6 +1,6 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/MeshResource.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
 
@@ -9,14 +9,14 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.mesh.MeshAsset", MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
 {
 }
 
-const Type* MeshAsset::getOutputType() const
+const TypeInfo* MeshAsset::getOutputType() const
 {
 	return &type_of< MeshResource >();
 }
@@ -26,7 +26,7 @@ int MeshAsset::getVersion() const
 	return 1;
 }
 
-bool MeshAsset::serialize(Serializer& s)
+bool MeshAsset::serialize(ISerializer& s)
 {
 	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
 	{

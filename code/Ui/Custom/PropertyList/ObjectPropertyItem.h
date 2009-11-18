@@ -28,14 +28,14 @@ class MiniButton;
  */
 class T_DLLCLASS ObjectPropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(ObjectPropertyItem)
+	T_RTTI_CLASS;
 
 public:
-	ObjectPropertyItem(const std::wstring& text, const Type* objectType, Object* object);
+	ObjectPropertyItem(const std::wstring& text, const TypeInfo* objectType, Object* object);
 
-	void setObjectType(const Type* objectType);
+	void setObjectType(const TypeInfo* objectType);
 
-	const Type* getObjectType() const;
+	const TypeInfo* getObjectType() const;
 
 	void setObject(Object* object);
 
@@ -52,7 +52,7 @@ protected:
 
 private:
 	Ref< MiniButton > m_buttonEdit;
-	const Type* m_objectType;
+	const TypeInfo* m_objectType;
 	Ref< Object > m_object;
 
 	void eventClick(Event* event);

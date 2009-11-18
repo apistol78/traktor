@@ -29,7 +29,7 @@ class ScrollBar;
  */
 class T_DLLCLASS LogList : public Widget
 {
-	T_RTTI_CLASS(LogList)
+	T_RTTI_CLASS;
 
 public:
 	enum LogLevel

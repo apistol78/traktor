@@ -16,9 +16,9 @@ EntityFactory::EntityFactory(physics::PhysicsManager* physicsManager)
 {
 }
 
-const TypeSet EntityFactory::getEntityTypes() const
+const TypeInfoSet EntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< RigidEntityData >());
 	typeSet.insert(&type_of< ArticulatedEntityData >());
 	return typeSet;

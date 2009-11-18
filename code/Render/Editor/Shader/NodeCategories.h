@@ -11,7 +11,7 @@ namespace traktor
 
 struct NodeCategory
 {
-	const Type& type;
+	const TypeInfo& type;
 	const wchar_t* category;
 	const wchar_t* description;
 };

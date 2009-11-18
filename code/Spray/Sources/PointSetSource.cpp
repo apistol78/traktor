@@ -4,7 +4,7 @@
 #include "Spray/PointSet.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -13,7 +13,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.PointSetSource", PointSetSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetSource", PointSetSource, Source)
 
 PointSetSource::PointSetSource()
 :	m_offset(0.0f, 0.0f, 0.0f, 0.0f)
@@ -70,7 +70,7 @@ void PointSetSource::emit(
 	}
 }
 
-bool PointSetSource::serialize(Serializer& s)
+bool PointSetSource::serialize(ISerializer& s)
 {
 	if (!Source::serialize(s))
 		return false;

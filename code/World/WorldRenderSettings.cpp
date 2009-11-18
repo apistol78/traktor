@@ -1,5 +1,5 @@
 #include "World/WorldRenderSettings.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/Member.h"
@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.WorldRenderSettings", WorldRenderSettings, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -28,7 +28,7 @@ int WorldRenderSettings::getVersion() const
 	return 2;
 }
 
-bool WorldRenderSettings::serialize(Serializer& s)
+bool WorldRenderSettings::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"viewNearZ", viewNearZ, 0.0f);
 	s >> Member< float >(L"viewFarZ", viewFarZ, 0.0f);

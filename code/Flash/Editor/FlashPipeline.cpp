@@ -5,7 +5,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -29,9 +29,9 @@ uint32_t FlashPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet FlashPipeline::getAssetTypes() const
+TypeInfoSet FlashPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< FlashMovieAsset >());
 	return typeSet;
 }
@@ -39,7 +39,7 @@ TypeSet FlashPipeline::getAssetTypes() const
 bool FlashPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -59,7 +59,7 @@ bool FlashPipeline::buildDependencies(
 
 bool FlashPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -69,7 +69,7 @@ bool FlashPipeline::buildOutput(
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
 
-	Ref< Stream > sourceStream = FileSystem::getInstance().open(movieAsset->getFileName(), File::FmRead);
+	Ref< IStream > sourceStream = FileSystem::getInstance().open(movieAsset->getFileName(), File::FmRead);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to import flash, unable to open source" << Endl;
@@ -86,9 +86,9 @@ bool FlashPipeline::buildOutput(
 		return false;
 	}
 
-	instance->setObject(gc_new< flash::FlashMovieResource >());
+	instance->setObject(new flash::FlashMovieResource());
 
-	Ref< Stream > stream = instance->writeData(L"Data");
+	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Failed to build flash resource, unable to create data stream" << Endl;

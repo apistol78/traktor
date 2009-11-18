@@ -3,7 +3,7 @@
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Input/IInputDriver.h"
 
@@ -24,7 +24,7 @@ class InputDeviceDi8;
 
 class T_DLLCLASS InputDriverDi8 : public IInputDriver
 {
-	T_RTTI_CLASS(InputDriverDi8)
+	T_RTTI_CLASS;
 
 public:
 	InputDriverDi8();

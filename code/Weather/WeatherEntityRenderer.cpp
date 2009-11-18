@@ -16,9 +16,9 @@ WeatherEntityRenderer::WeatherEntityRenderer(render::PrimitiveRenderer* primitiv
 {
 }
 
-const TypeSet WeatherEntityRenderer::getEntityTypes() const
+const TypeInfoSet WeatherEntityRenderer::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SkyEntity >());
 	typeSet.insert(&type_of< CloudEntity >());
 	return typeSet;

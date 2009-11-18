@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderSystemOpenGL_H
 #define traktor_render_RenderSystemOpenGL_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/IRenderSystem.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
@@ -26,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS RenderSystemOpenGL : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemOpenGL();

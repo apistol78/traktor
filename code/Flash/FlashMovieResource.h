@@ -2,7 +2,7 @@
 #define traktor_flash_FlashMovieResource_H
 
 #include <string>
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,12 +20,12 @@ namespace traktor
 /*! \brief Flash movie resource.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashMovieResource : public Serializable
+class T_DLLCLASS FlashMovieResource : public ISerializable
 {
-	T_RTTI_CLASS(FlashMovieResource)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

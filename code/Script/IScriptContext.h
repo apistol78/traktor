@@ -40,7 +40,7 @@ public:
  */
 class T_DLLCLASS IScriptContext : public Object
 {
-	T_RTTI_CLASS(ScriptContext)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Set global variable value.

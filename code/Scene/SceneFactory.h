@@ -1,7 +1,6 @@
 #ifndef traktor_scene_SceneFactory_H
 #define traktor_scene_SceneFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -40,16 +39,16 @@ class IEntityBuilder;
 
 class T_DLLCLASS SceneFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(SceneFactory)
+	T_RTTI_CLASS;
 
 public:
 	SceneFactory(db::Database* database, render::IRenderSystem* renderSystem, world::IEntityBuilder* entityBuilder);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_database;

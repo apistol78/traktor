@@ -1,7 +1,7 @@
 #ifndef traktor_animation_Pose_H
 #define traktor_animation_Pose_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Quaternion.h"
 #include "Animation/BitSet.h"
@@ -22,9 +22,9 @@ namespace traktor
 /*! \brief Skeleton pose.
  * \ingroup Animation
  */
-class T_DLLCLASS Pose : public Serializable
+class T_DLLCLASS Pose : public ISerializable
 {
-	T_RTTI_CLASS(Pose)
+	T_RTTI_CLASS;
 
 public:
 	void setBoneOffset(uint32_t boneIndex, const Vector4& boneOffset);
@@ -37,7 +37,7 @@ public:
 
 	void getIndexMask(BitSet& outIndices) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	struct Bone
@@ -53,7 +53,7 @@ private:
 		{
 		}
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	AlignedVector< Bone > m_bones;

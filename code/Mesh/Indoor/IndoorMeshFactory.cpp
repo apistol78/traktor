@@ -9,7 +9,7 @@
 #include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -25,9 +25,9 @@ IndoorMeshFactory::IndoorMeshFactory(db::Database* database, render::IRenderSyst
 {
 }
 
-const TypeSet IndoorMeshFactory::getResourceTypes() const
+const TypeInfoSet IndoorMeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< IndoorMesh >());
 	return typeSet;
 }
@@ -37,7 +37,7 @@ bool IndoorMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > IndoorMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > IndoorMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -53,7 +53,7 @@ Ref< Object > IndoorMeshFactory::create(resource::IResourceManager* resourceMana
 		return 0;
 	}
 
-	Ref< Stream > dataStream = instance->readData(L"Data");
+	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
 		log::error << L"Indoor mesh factory failed; unable to open data stream" << Endl;
@@ -70,7 +70,7 @@ Ref< Object > IndoorMeshFactory::create(resource::IResourceManager* resourceMana
 	
 	dataStream->close();
 
-	Ref< IndoorMesh > indoorMesh = gc_new< IndoorMesh >();
+	Ref< IndoorMesh > indoorMesh = new IndoorMesh();
 	indoorMesh->m_mesh = mesh;
 
 	const AlignedVector< IndoorMeshResource::Sector >& sectors = resource->getSectors();

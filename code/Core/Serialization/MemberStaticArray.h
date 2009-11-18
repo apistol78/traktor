@@ -29,12 +29,12 @@ public:
 		return ArraySize;
 	}
 
-	virtual bool read(Serializer& s) const
+	virtual bool read(ISerializer& s) const
 	{
 		return s >> ValueMember(L"item", *m_last++);
 	}
 
-	virtual bool write(Serializer& s, size_t index) const
+	virtual bool write(ISerializer& s, size_t index) const
 	{
 		return s >> ValueMember(L"item", m_arr[index]);
 	}

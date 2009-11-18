@@ -1,7 +1,7 @@
 #ifndef traktor_spray_Range_H
 #define traktor_spray_Range_H
 
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Random.h"
 
@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	bool serialize(Serializer& s)
+	bool serialize(ISerializer& s)
 	{
 		s >> Member< Type >(L"min", min);
 		s >> Member< Type >(L"max", max);

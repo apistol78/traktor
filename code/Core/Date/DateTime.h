@@ -1,15 +1,15 @@
 #ifndef traktor_DateTime_H
 #define traktor_DateTime_H
 
-#include "Core/Serialization/Serializable.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,9 +18,9 @@ namespace traktor
 /*! \brief Date and time class.
  * \ingroup Core
  */
-class T_DLLCLASS DateTime : public Serializable
+class T_DLLCLASS DateTime : public ISerializable
 {
-	T_RTTI_CLASS(DateTime)
+	T_RTTI_CLASS;
 
 public:
 	DateTime();
@@ -72,7 +72,7 @@ public:
 	/*! \brief Compare not-equal operator. */
 	bool operator != (const DateTime& dt) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_year;

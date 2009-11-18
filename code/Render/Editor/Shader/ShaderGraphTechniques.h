@@ -2,7 +2,6 @@
 #define traktor_render_ShaderGraphTechniques_H
 
 #include <set>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class Node;
 /*! \brief Shader graph technique generator. */
 class T_DLLCLASS ShaderGraphTechniques : public Object
 {
-	T_RTTI_CLASS(ShaderGraphTechniques)
+	T_RTTI_CLASS;
 
 public:
 	ShaderGraphTechniques(const ShaderGraph* shaderGraph);

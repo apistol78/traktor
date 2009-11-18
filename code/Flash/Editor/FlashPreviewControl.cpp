@@ -65,7 +65,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	if (!m_renderView)
 		return false;
 
-	m_displayRenderer = gc_new< AccDisplayRenderer >();
+	m_displayRenderer = new AccDisplayRenderer();
 	m_displayRenderer->create(resourceManager, renderSystem, m_renderView, true);
 #else
 	graphics::CreateDesc desc;
@@ -77,13 +77,13 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	desc.pixelFormat = graphics::PfeA8R8G8B8;
 
 #if defined(_WIN32)
-	m_graphicsSystem = gc_new< graphics::GraphicsSystemDd7 >();
+	m_graphicsSystem = new graphics::GraphicsSystemDd7();
 #endif
 
 	if (!m_graphicsSystem->create(desc))
 		return false;
 
-	m_displayRenderer = gc_new< SwDisplayRenderer >();
+	m_displayRenderer = new SwDisplayRenderer();
 #endif
 
 	addSizeEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventSize));
@@ -140,7 +140,7 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 	if (m_moviePlayer)
 		m_moviePlayer->destroy();
 
-	m_moviePlayer = gc_new< FlashMoviePlayer >(m_displayRenderer);
+	m_moviePlayer = new FlashMoviePlayer(m_displayRenderer);
 	m_moviePlayer->create(movie);
 
 	m_playing = true;

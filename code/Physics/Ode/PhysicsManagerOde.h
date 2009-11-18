@@ -1,7 +1,6 @@
 #ifndef traktor_physics_PhysicsManagerOde_H
 #define traktor_physics_PhysicsManagerOde_H
 
-#include "Core/Heap/Ref.h"
 #include "Physics/PhysicsManager.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class PhysicsManagerOdeImpl;
  */
 class T_DLLCLASS PhysicsManagerOde : public PhysicsManager
 {
-	T_RTTI_CLASS(PhysicsManagerOde)
+	T_RTTI_CLASS;
 
 public:
 	struct Settings

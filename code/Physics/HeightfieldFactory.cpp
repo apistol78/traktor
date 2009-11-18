@@ -3,7 +3,7 @@
 #include "Physics/Heightfield.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -17,9 +17,9 @@ HeightfieldFactory::HeightfieldFactory(db::Database* db)
 {
 }
 
-const TypeSet HeightfieldFactory::getResourceTypes() const
+const TypeInfoSet HeightfieldFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Heightfield >());
 	return typeSet;
 }
@@ -29,7 +29,7 @@ bool HeightfieldFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -39,11 +39,11 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
-	Ref< Heightfield > heightfield = gc_new< Heightfield >(resource->getSize(), cref(resource->getWorldExtent()));
+	Ref< Heightfield > heightfield = new Heightfield(resource->getSize(), resource->getWorldExtent());
 	if (!heightfield->read(stream))
 		heightfield = 0;
 

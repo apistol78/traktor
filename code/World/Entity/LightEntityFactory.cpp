@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityFactory", LightEntityFactory, IEntityFactory)
 
-const TypeSet LightEntityFactory::getEntityTypes() const
+const TypeInfoSet LightEntityFactory::getEntityTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	return typeSet;
@@ -23,20 +23,20 @@ Ref< Entity > LightEntityFactory::createEntity(IEntityBuilder* builder, const st
 {
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))
 	{
-		return gc_new< DirectionalLightEntity >(
-			cref(directionalLightData->getTransform()),
-			cref(directionalLightData->getSunColor()),
-			cref(directionalLightData->getBaseColor()),
-			cref(directionalLightData->getShadowColor())
+		return new DirectionalLightEntity(
+			directionalLightData->getTransform(),
+			directionalLightData->getSunColor(),
+			directionalLightData->getBaseColor(),
+			directionalLightData->getShadowColor()
 		);
 	}
 	if (const PointLightEntityData* pointLightData = dynamic_type_cast< const PointLightEntityData* >(&entityData))
 	{
-		return gc_new< PointLightEntity >(
-			cref(pointLightData->getTransform()),
-			cref(pointLightData->getSunColor()),
-			cref(pointLightData->getBaseColor()),
-			cref(pointLightData->getShadowColor()),
+		return new PointLightEntity(
+			pointLightData->getTransform(),
+			pointLightData->getSunColor(),
+			pointLightData->getBaseColor(),
+			pointLightData->getShadowColor(),
 			pointLightData->getRange()
 		);
 	}

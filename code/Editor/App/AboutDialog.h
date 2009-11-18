@@ -10,7 +10,7 @@ namespace traktor
 
 class AboutDialog : public ui::Dialog
 {
-	T_RTTI_CLASS(AboutDialog)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* parent);

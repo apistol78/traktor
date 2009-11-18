@@ -15,7 +15,7 @@ struct CallArgs;
  */
 class AsLocalConnection : public ActionClass
 {
-	T_RTTI_CLASS(AsLocalConnection)
+	T_RTTI_CLASS;
 
 public:
 	static Ref< AsLocalConnection > getInstance();

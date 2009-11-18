@@ -18,16 +18,16 @@ namespace traktor
 
 class T_DLLCLASS PointSetAsset : public editor::Asset
 {
-	T_RTTI_CLASS(PointSetAsset)
+	T_RTTI_CLASS;
 
 public:
 	PointSetAsset();
 
 	bool fromFaces() const;
 
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	bool m_fromFaces;

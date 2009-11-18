@@ -1,7 +1,6 @@
 #ifndef traktor_render_RenderMeshFactory_H
 #define traktor_render_RenderMeshFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Mesh/MeshFactory.h"
 
 // import/export mechanism.
@@ -24,7 +23,7 @@ class IRenderSystem;
  */
 class T_DLLCLASS RenderMeshFactory : public MeshFactory
 {
-	T_RTTI_CLASS(RenderMeshFactory)
+	T_RTTI_CLASS;
 
 public:
 	RenderMeshFactory(IRenderSystem* renderSystem);

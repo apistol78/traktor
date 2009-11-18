@@ -8,7 +8,7 @@
 #include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -24,9 +24,9 @@ SkinnedMeshFactory::SkinnedMeshFactory(db::Database* database, render::IRenderSy
 {
 }
 
-const TypeSet SkinnedMeshFactory::getResourceTypes() const
+const TypeInfoSet SkinnedMeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SkinnedMesh >());
 	return typeSet;
 }
@@ -36,7 +36,7 @@ bool SkinnedMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > SkinnedMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)
@@ -52,7 +52,7 @@ Ref< Object > SkinnedMeshFactory::create(resource::IResourceManager* resourceMan
 		return 0;
 	}
 
-	Ref< Stream > dataStream = instance->readData(L"Data");
+	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
 		log::error << L"Skinned mesh factory failed; unable to open data stream" << Endl;
@@ -76,7 +76,7 @@ Ref< Object > SkinnedMeshFactory::create(resource::IResourceManager* resourceMan
 		return 0;
 	}
 
-	Ref< SkinnedMesh > skinnedMesh = gc_new< SkinnedMesh >();
+	Ref< SkinnedMesh > skinnedMesh = new SkinnedMesh();
 	skinnedMesh->m_mesh = mesh;
 	skinnedMesh->m_parts.resize(parts.size());
 

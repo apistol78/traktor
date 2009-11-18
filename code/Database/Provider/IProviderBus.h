@@ -29,7 +29,7 @@ namespace traktor
  */
 class T_DLLCLASS IProviderBus : public Object
 {
-	T_RTTI_CLASS(IProviderBus)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool putEvent(ProviderEvent event, const Guid& eventId) = 0;

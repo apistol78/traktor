@@ -24,7 +24,7 @@ class StateGraph;
  */
 class T_DLLCLASS StatePoseControllerData : public IPoseControllerData
 {
-	T_RTTI_CLASS(StatePoseControllerData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< IPoseController > createInstance(
@@ -34,7 +34,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< StateGraph >& getStateGraph() const { return m_stateGraph; }
 

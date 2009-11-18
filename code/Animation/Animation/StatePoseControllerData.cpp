@@ -5,14 +5,14 @@
 #include "Animation/Animation/Animation.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 
 namespace traktor
 {
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.StatePoseControllerData", StatePoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePoseControllerData", StatePoseControllerData, IPoseControllerData)
 
 Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform)
 {
@@ -26,10 +26,10 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 			return 0;
 	}
 
-	return gc_new< StatePoseController >(cref(m_stateGraph));
+	return new StatePoseController(m_stateGraph);
 }
 
-bool StatePoseControllerData::serialize(Serializer& s)
+bool StatePoseControllerData::serialize(ISerializer& s)
 {
 	return s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
 }

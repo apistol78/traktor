@@ -24,9 +24,9 @@ SoundFactory::SoundFactory(db::Database* db, SoundSystem* soundSystem)
 {
 }
 
-const TypeSet SoundFactory::getResourceTypes() const
+const TypeInfoSet SoundFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Sound >());
 	return typeSet;
 }
@@ -36,7 +36,7 @@ bool SoundFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -46,7 +46,7 @@ Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, 
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
@@ -69,7 +69,7 @@ Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, 
 		reader >> samplesCount;
 		reader >> channelsCount;
 
-		Ref< StaticSoundBuffer > soundBuffer = gc_new< StaticSoundBuffer >();
+		Ref< StaticSoundBuffer > soundBuffer = new StaticSoundBuffer();
 		if (!soundBuffer->create(sampleRate, samplesCount, channelsCount))
 		{
 			log::error << L"Unable to create sound, unable to create static sound buffer" << Endl;
@@ -87,25 +87,25 @@ Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, 
 
 		stream->close();
 
-		sound = gc_new< Sound >(soundBuffer);
+		sound = new Sound(soundBuffer);
 	}
 	else if (StreamSoundResource* streamResource = dynamic_type_cast< StreamSoundResource* >(resource))
 	{
-		Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(streamResource->getDecoderType()->newInstance());
+		Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(streamResource->getDecoderType()->createInstance());
 		if (!streamDecoder->create(stream))
 		{
 			log::error << L"Unable to create sound, unable to create stream decoder" << Endl;
 			return 0;
 		}
 
-		Ref< StreamSoundBuffer > soundBuffer = gc_new< StreamSoundBuffer >();
+		Ref< StreamSoundBuffer > soundBuffer = new StreamSoundBuffer();
 		if (!soundBuffer->create(streamDecoder))
 		{
 			log::error << L"Unable to create sound, unable to create stream sound buffer" << Endl;
 			return 0;
 		}
 
-		sound = gc_new< Sound >(soundBuffer);
+		sound = new Sound(soundBuffer);
 	}
 
 	return sound;

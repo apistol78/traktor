@@ -2,7 +2,7 @@
 #define traktor_physics_JointBullet_H
 
 #include <btBulletDynamicsCommon.h>
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Physics/Bullet/Types.h"
 
 namespace traktor

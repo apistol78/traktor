@@ -25,7 +25,7 @@ class DynamicBodyState;
  */
 class T_DLLCLASS DynamicBody : public Body
 {
-	T_RTTI_CLASS(DynamicBody)
+	T_RTTI_CLASS;
 
 public:
 	virtual void reset() = 0;

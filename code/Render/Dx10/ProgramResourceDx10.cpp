@@ -1,6 +1,6 @@
 #include "Render/Dx10/ProgramResourceDx10.h"
 #include "Render/ShaderGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -20,12 +20,12 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint8_t blob[65535];
 		uint32_t blobSize;
 
-		if (s.getDirection() == Serializer::SdRead)
+		if (s.getDirection() == ISerializer::SdRead)
 		{
 			blobSize = sizeof(blob);
 			if (!(s >> Member< void* >(getName(), blob, blobSize)))
@@ -60,7 +60,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
 		return s >> Member< void* >(getName(), (void*)&m_ref, size);
@@ -79,7 +79,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
 		return s >> Member< void* >(getName(), (void*)&m_ref, size);
@@ -98,7 +98,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
 		return s >> Member< void* >(getName(), (void*)&m_ref, size);
@@ -117,7 +117,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
 		return s >> Member< void* >(getName(), (void*)&m_ref, size);
@@ -129,9 +129,9 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceDx10", ProgramResourceDx10, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx10", ProgramResourceDx10, ProgramResource)
 
-bool ProgramResourceDx10::serialize(Serializer& s)
+bool ProgramResourceDx10::serialize(ISerializer& s)
 {
 	if (!ProgramResource::serialize(s))
 		return false;

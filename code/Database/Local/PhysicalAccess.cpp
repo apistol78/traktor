@@ -4,7 +4,7 @@
 #include "Xml/XmlDeserializer.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -26,9 +26,9 @@ Path getInstanceDataPath(const Path& instancePath, const std::wstring& dataName)
 	return instancePath.getPathName() + L"_" + dataName + L".xdd";
 }
 
-Ref< Serializable > readPhysicalObject(const Path& objectPath)
+Ref< ISerializable > readPhysicalObject(const Path& objectPath)
 {
-	Ref< Stream > objectStream = FileSystem::getInstance().open(objectPath, File::FmRead);
+	Ref< IStream > objectStream = FileSystem::getInstance().open(objectPath, File::FmRead);
 	if (!objectStream)
 		return 0;
 
@@ -39,9 +39,9 @@ Ref< Serializable > readPhysicalObject(const Path& objectPath)
 		return 0;
 	}
 
-	objectStream->seek(Stream::SeekSet, 0);
+	objectStream->seek(IStream::SeekSet, 0);
 
-	Ref< Serializable > object;
+	Ref< ISerializable > object;
 	if (std::memcmp(head, "<?xml", sizeof(head)) != 0)
 		object = BinarySerializer(objectStream).readObject();
 	else
@@ -51,9 +51,9 @@ Ref< Serializable > readPhysicalObject(const Path& objectPath)
 	return object;
 }
 
-bool writePhysicalObject(const Path& objectPath, const Serializable* object, bool binary)
+bool writePhysicalObject(const Path& objectPath, const ISerializable* object, bool binary)
 {
-	Ref< Stream > objectStream = FileSystem::getInstance().open(objectPath, File::FmWrite);
+	Ref< IStream > objectStream = FileSystem::getInstance().open(objectPath, File::FmWrite);
 	if (!objectStream)
 		return false;
 

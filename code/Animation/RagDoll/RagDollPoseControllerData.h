@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS RagDollPoseControllerData : public IPoseControllerData
 {
-	T_RTTI_CLASS(RagDollPoseControllerData)
+	T_RTTI_CLASS;
 
 public:
 	virtual Ref< IPoseController > createInstance(
@@ -31,7 +31,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

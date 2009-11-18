@@ -2,7 +2,6 @@
 #define traktor_db_LocalInstance_H
 
 #include "Database/Provider/IProviderInstance.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 
 namespace traktor
@@ -19,7 +18,7 @@ class Transaction;
  */
 class LocalInstance : public IProviderInstance
 {
-	T_RTTI_CLASS(LocalInstance)
+	T_RTTI_CLASS;
 
 public:
 	LocalInstance(Context* context);
@@ -46,15 +45,15 @@ public:
 
 	virtual bool remove();
 
-	virtual Ref< Stream > readObject(const Type*& outSerializerType);
+	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType);
 
-	virtual Ref< Stream > writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType);
+	virtual Ref< IStream > writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType);
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 
-	virtual Ref< Stream > readData(const std::wstring& dataName);
+	virtual Ref< IStream > readData(const std::wstring& dataName);
 
-	virtual Ref< Stream > writeData(const std::wstring& dataName);
+	virtual Ref< IStream > writeData(const std::wstring& dataName);
 
 private:
 	Ref< Context > m_context;

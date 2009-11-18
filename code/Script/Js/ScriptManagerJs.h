@@ -1,7 +1,7 @@
 #ifndef traktor_script_ScriptManagerJs_H
 #define traktor_script_ScriptManagerJs_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Script/IScriptManager.h"
 
 // import/export mechanism.
@@ -22,12 +22,12 @@ namespace traktor
  */
 class T_DLLCLASS ScriptManagerJs : public IScriptManager
 {
-	T_RTTI_CLASS(ScriptManagerJs)
+	T_RTTI_CLASS;
 
 public:
 	virtual void registerClass(IScriptClass* scriptClass);
 
-	virtual Ref< IScriptClass > findScriptClass(const Type& type) const;
+	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const;
 
 	virtual Ref< IScriptContext > createContext();
 

@@ -17,7 +17,7 @@ namespace traktor
  */
 class ContextDx10 : public Object
 {
-	T_RTTI_CLASS(ContextDx10)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Garbage delete callback.

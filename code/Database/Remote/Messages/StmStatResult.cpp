@@ -1,5 +1,5 @@
 #include "Database/Remote/Messages/StmStatResult.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.StmStatResult", StmStatResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmStatResult", StmStatResult, IMessage)
 
 StmStatResult::StmStatResult(bool canRead, bool canWrite, bool canSeek, int32_t tell, int32_t available)
 :	m_canRead(canRead)
@@ -18,7 +18,7 @@ StmStatResult::StmStatResult(bool canRead, bool canWrite, bool canSeek, int32_t 
 {
 }
 
-bool StmStatResult::serialize(Serializer& s)
+bool StmStatResult::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"canRead", m_canRead);
 	s >> Member< bool >(L"canWrite", m_canWrite);

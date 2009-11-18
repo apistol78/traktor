@@ -15,15 +15,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ColorNodeFacade", ColorNodeFacade, NodeF
 
 ColorNodeFacade::ColorNodeFacade(ui::custom::GraphControl* graphControl)
 {
-	m_nodeShape = gc_new< ui::custom::InputNodeShape >(graphControl);
+	m_nodeShape = new ui::custom::InputNodeShape(graphControl);
 }
 
 Ref< Node > ColorNodeFacade::createShaderNode(
-	const Type* nodeType,
+	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return gc_new< Color >();
+	return new Color();
 }
 
 Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
@@ -32,7 +32,7 @@ Ref< ui::custom::Node > ColorNodeFacade::createEditorNode(
 	Node* shaderNode
 )
 {
-	Ref< ui::custom::Node > editorNode = gc_new< ui::custom::Node >(
+	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
 		i18n::Text(L"SHADERGRAPH_NODE_COLOR"),
 		shaderNode->getInformation(),
 		ui::Point(

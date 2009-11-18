@@ -1,7 +1,6 @@
 #ifndef traktor_ui_DockPane_H
 #define traktor_ui_DockPane_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Ui/Widget.h"
 
@@ -26,7 +25,7 @@ class Canvas;
  */
 class T_DLLCLASS DockPane : public Object
 {
-	T_RTTI_CLASS(DockPane)
+	T_RTTI_CLASS;
 
 public:
 	enum Direction

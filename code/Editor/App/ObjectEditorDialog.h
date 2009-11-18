@@ -1,13 +1,12 @@
 #ifndef traktor_editor_ObjectEditorDialog_H
 #define traktor_editor_ObjectEditorDialog_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/ConfigDialog.h"
 
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -24,12 +23,12 @@ class IObjectEditor;
 
 class ObjectEditorDialog : public ui::ConfigDialog
 {
-	T_RTTI_CLASS(ObjectEditorDialog)
+	T_RTTI_CLASS;
 
 public:
 	ObjectEditorDialog(Settings* settings, IObjectEditor* objectEditor);
 
-	bool create(ui::Widget* parent, db::Instance* instance, Serializable* object);
+	bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
 	void destroy();
 
@@ -41,7 +40,7 @@ private:
 	Ref< Settings > m_settings;
 	Ref< IObjectEditor > m_objectEditor;
 	Ref< db::Instance > m_instance;
-	Ref< Serializable > m_object;
+	Ref< ISerializable > m_object;
 
 	void eventClick(ui::Event* event);
 

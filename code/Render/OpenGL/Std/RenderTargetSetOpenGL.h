@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderTargetSetOpenGL_H
 #define traktor_render_RenderTargetSetOpenGL_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
@@ -27,7 +27,7 @@ class RenderTargetOpenGL;
  */
 class T_DLLCLASS RenderTargetSetOpenGL : public RenderTargetSet
 {
-	T_RTTI_CLASS(RenderTargetSetOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetSetOpenGL(IContext* context);

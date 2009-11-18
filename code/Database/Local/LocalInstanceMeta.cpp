@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "Database/Local/LocalInstanceMeta.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 
@@ -9,7 +9,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.LocalInstanceMeta", LocalInstanceMeta, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", LocalInstanceMeta, ISerializable)
 
 LocalInstanceMeta::LocalInstanceMeta()
 {
@@ -62,7 +62,7 @@ const std::vector< std::wstring >& LocalInstanceMeta::getBlobs() const
 	return m_blobs;
 }
 
-bool LocalInstanceMeta::serialize(Serializer& s)
+bool LocalInstanceMeta::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"guid", m_guid);
 	s >> Member< std::wstring >(L"primaryType", m_primaryType);

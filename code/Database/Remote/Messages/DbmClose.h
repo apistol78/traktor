@@ -13,10 +13,10 @@ namespace traktor
  */
 class DbmClose : public IMessage
 {
-	T_RTTI_CLASS(DbmClose)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

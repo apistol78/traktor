@@ -1,7 +1,6 @@
 #include <sstream>
 #include "Flash/FlashText.h"
 #include "Flash/FlashTextInstance.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -56,7 +55,7 @@ const AlignedVector< FlashText::Character >& FlashText::getCharacters() const
 
 Ref< FlashCharacterInstance > FlashText::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
-	return gc_new< FlashTextInstance >(context, parent, this);
+	return new FlashTextInstance(context, parent, this);
 }
 
 const SwfRect& FlashText::getTextBounds() const

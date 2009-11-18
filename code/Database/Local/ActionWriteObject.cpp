@@ -41,7 +41,7 @@ bool ActionWriteObject::execute(Context* context)
 	if (!instanceMeta)
 		return false;
 
-	Ref< Stream > instanceStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
+	Ref< IStream > instanceStream = FileSystem::getInstance().open(instanceObjectPath, File::FmWrite);
 	if (!instanceStream)
 		return false;
 

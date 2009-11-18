@@ -1,7 +1,6 @@
 #ifndef traktor_animation_PathEntityData_H
 #define traktor_animation_PathEntityData_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/SpatialEntityData.h"
 #include "Animation/PathEntity/PathEntity.h"
 
@@ -31,14 +30,14 @@ class EntityInstance;
  */
 class T_DLLCLASS PathEntityData : public world::SpatialEntityData
 {
-	T_RTTI_CLASS(PathEntityData)
+	T_RTTI_CLASS;
 
 public:
 	PathEntityData();
 
 	Ref< PathEntity > createEntity(world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	TransformPath& getPath() { return m_path; }
 

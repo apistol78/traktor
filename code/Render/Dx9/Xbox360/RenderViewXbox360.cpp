@@ -54,7 +54,7 @@ RenderViewXbox360::RenderViewXbox360(
 ,	m_renderTargetPool(renderTargetPool)
 ,	m_currentRenderState(0)
 {
-	m_renderTargetPrimary = gc_new< RenderTargetXbox360 >(renderSystem);
+	m_renderTargetPrimary = new RenderTargetXbox360(renderSystem);
 	m_renderTargetPrimary->create(m_d3dDevice, m_renderTargetPool, width, height, d3dPrimaryTargetFormat, D3DMULTISAMPLE_NONE, true, true);
 
 	m_d3dViewport.X = 0;
@@ -198,8 +198,8 @@ void RenderViewXbox360::draw(const Primitives& primitives)
 		m_currentRenderState = &rs;
 	}
 
-	m_currentVertexBuffer->activate(m_d3dDevice);
-	m_currentIndexBuffer->activate(m_d3dDevice);
+	//m_currentVertexBuffer->activate(m_d3dDevice);
+	//m_currentIndexBuffer->activate(m_d3dDevice);
 	m_currentProgram->activate();
 
 	if (primitives.indexed)

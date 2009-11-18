@@ -1,11 +1,12 @@
 #ifndef traktor_JobManager_H
 #define traktor_JobManager_H
 
-#include "Core/Singleton/Singleton.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/Event.h"
-#include "Core/Functor/Functor.h"
+#include <vector>
 #include "Core/Containers/ThreadsafeFifo.h"
+#include "Core/Functor/Functor.h"
+#include "Core/Singleton/ISingleton.h"
+#include "Core/Thread/Event.h"
+#include "Core/Thread/Thread.h"
 
 namespace traktor
 {
@@ -15,12 +16,8 @@ namespace traktor
  *
  * Each job is maintained by this class.
  */
-class T_DLLCLASS Job
-:	public Object
-,	public IWaitable
+class T_DLLCLASS Job : public IWaitable
 {
-	T_RTTI_CLASS(Job)
-
 public:
 	Job(Functor* functor = 0);
 
@@ -52,10 +49,8 @@ private:
  * there is no overhead of having to create threads for each
  * job thus more suitable to smaller tasks.
  */
-class T_DLLCLASS JobManager : public Singleton
+class T_DLLCLASS JobManager : public ISingleton
 {
-	T_RTTI_CLASS(JobManager)
-
 public:
 	static JobManager& getInstance();
 

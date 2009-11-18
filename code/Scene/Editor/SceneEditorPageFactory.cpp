@@ -18,11 +18,11 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.scene.SceneEditorPageFactory", SceneEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneEditorPageFactory", SceneEditorPageFactory, editor::IEditorPageFactory)
 
-const TypeSet SceneEditorPageFactory::getEditableTypes() const
+const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< SceneAsset >());
 	typeSet.insert(&type_of< world::EntityData >());
 	return typeSet;
@@ -40,11 +40,11 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	}
 
 	// Create resource manager.
-	Ref< resource::IResourceManager > resourceManager = gc_new< resource::ResourceManager >();
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
 
 	// Get physics manager type.
 	std::wstring physicsManagerTypeName = editor->getSettings()->getProperty< editor::PropertyString >(L"SceneEditor.PhysicsManager");
-	const Type* physicsManagerType = Type::find(physicsManagerTypeName);
+	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
 	if (!physicsManagerType)
 	{
 		log::error << L"Unable to create scene editor; no such physics manager type \"" << physicsManagerTypeName << L"\"." << Endl;
@@ -52,7 +52,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	}
 
 	// Create physics manager.
-	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->newInstance());
+	Ref< physics::PhysicsManager > physicsManager = checked_type_cast< physics::PhysicsManager* >(physicsManagerType->createInstance());
 	if (!physicsManager->create(1.0f / 60.0f))
 	{
 		log::error << L"Unable to create scene editor; failed to create physics manager." << Endl;
@@ -65,7 +65,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	log::debug << L"Using physics manager \"" << physicsManagerTypeName << L"\"; created successfully" << Endl;
 
 	// Create editor context.
-	Ref< SceneEditorContext > context = gc_new< SceneEditorContext >(
+	Ref< SceneEditorContext > context = new SceneEditorContext(
 		editor,
 		project->getOutputDatabase(),
 		project->getSourceDatabase(),
@@ -75,11 +75,11 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	);
 
 	// Create profiles, plugins, resource factories and entity editors.
-	std::vector< const Type* > profileTypes;
+	std::vector< const TypeInfo* > profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->newInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
 		if (!profile)
 			continue;
 
@@ -98,7 +98,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	}
 
 	// Create editor page.
-	return gc_new< SceneEditorPage >(context);
+	return new SceneEditorPage(context);
 }
 
 void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
@@ -123,11 +123,11 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.QuadrupleView"));
 
 	// Add profile commands.
-	std::vector< const Type* > profileTypes;
+	std::vector< const TypeInfo* > profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (std::vector< const Type* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
-		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->newInstance());
+		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
 		if (profile)
 			profile->getCommands(outCommands);
 	}

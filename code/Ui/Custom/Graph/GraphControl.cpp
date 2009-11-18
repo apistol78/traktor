@@ -54,7 +54,7 @@ bool GraphControl::create(Widget* parent, int style)
 		return false;
 #endif
 
-	m_paintSettings = gc_new< PaintSettings >(getFont());
+	m_paintSettings = new PaintSettings(getFont());
 	m_imageBackground = Bitmap::load(c_ResourceBackground, sizeof(c_ResourceBackground), L"png");
 
 	addButtonDownEventHandler(createMethodHandler(this, &GraphControl::eventMouseDown));
@@ -651,7 +651,7 @@ void GraphControl::eventMouseUp(Event* e)
 			Ref< Pin > targetPin = targetNode->getPinAt(m_cursor - m_offset);
 			if (targetPin && targetPin->getDirection() == Pin::DrInput)
 			{
-				Ref< Edge > edge = gc_new< Edge >(
+				Ref< Edge > edge = new Edge(
 					m_selectedPin,
 					targetPin
 				);

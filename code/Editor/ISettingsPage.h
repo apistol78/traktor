@@ -32,7 +32,7 @@ class Settings;
  */
 class T_DLLCLASS ISettingsPage : public Object
 {
-	T_RTTI_CLASS(ISettingsPage)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands) = 0;

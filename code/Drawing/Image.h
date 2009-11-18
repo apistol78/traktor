@@ -1,7 +1,6 @@
 #ifndef traktor_drawing_Image_H
 #define traktor_drawing_Image_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Drawing/Color.h"
 #include "Drawing/ImageInfo.h"
@@ -21,7 +20,7 @@ namespace traktor
 	
 class PixelFormat;
 class Palette;
-class ImageFilter;
+class IImageFilter;
 
 /*! \brief Image class.
  * \ingroup Drawing
@@ -35,7 +34,7 @@ class ImageFilter;
  */
 class T_DLLCLASS Image : public Object
 {
-	T_RTTI_CLASS(Image)
+	T_RTTI_CLASS;
 
 public:
 	Image();
@@ -72,7 +71,7 @@ public:
 	bool setPixel(int32_t x, int32_t y, const Color& color);
 	
 	/*! \brief Apply filter on entire image. */
-	Ref< Image > applyFilter(ImageFilter* imageFilter) const;
+	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
 
 	/*! \brief Convert format of image. */
 	void convert(const PixelFormat* intoPixelFormat, Palette* intoPalette = 0);

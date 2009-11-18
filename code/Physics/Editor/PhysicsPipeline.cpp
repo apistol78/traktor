@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsPipeline", PhysicsPipeline, editor::IPipeline)
 
 bool PhysicsPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -25,9 +25,9 @@ uint32_t PhysicsPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet PhysicsPipeline::getAssetTypes() const
+TypeInfoSet PhysicsPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< BodyDesc >());
 	return typeSet;
 }
@@ -35,7 +35,7 @@ TypeSet PhysicsPipeline::getAssetTypes() const
 bool PhysicsPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -51,7 +51,7 @@ bool PhysicsPipeline::buildDependencies(
 
 bool PhysicsPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

@@ -1,13 +1,12 @@
 #ifndef traktor_editor_LogView_H
 #define traktor_editor_LogView_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Container.h"
 
 namespace traktor
 {
 
-class LogTarget;
+class ILogTarget;
 
 	namespace ui
 	{
@@ -29,7 +28,7 @@ class LogList;
 
 class LogView : public ui::Container
 {
-	T_RTTI_CLASS(LogView)
+	T_RTTI_CLASS;
 
 public:
 	bool create(ui::Widget* parent);
@@ -43,8 +42,8 @@ private:
 	Ref< ui::custom::ToolBar > m_toolFilter;
 	Ref< ui::custom::LogList > m_log;
 	Ref< ui::PopupMenu > m_popup;
-	LogTarget* m_originalTargets[3];
-	LogTarget* m_newTargets[3];
+	ILogTarget* m_originalTargets[3];
+	ILogTarget* m_newTargets[3];
 
 	void eventToolClick(ui::Event* event);
 

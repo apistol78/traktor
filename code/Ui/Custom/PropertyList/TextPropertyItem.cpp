@@ -41,7 +41,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	if (!m_multiLine)
 	{
 		T_ASSERT (!m_editor);
-		m_editor = gc_new< Edit >();
+		m_editor = new Edit();
 		m_editor->create(
 			parent,
 			L"",
@@ -53,7 +53,7 @@ void TextPropertyItem::createInPlaceControls(Widget* parent)
 	else
 	{
 		T_ASSERT (!m_buttonEdit);
-		m_buttonEdit = gc_new< MiniButton >();
+		m_buttonEdit = new MiniButton();
 		m_buttonEdit->create(parent, ui::Bitmap::load(c_ResourceSmallPen, sizeof(c_ResourceSmallPen), L"png"));
 		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &TextPropertyItem::eventClick));
 	}

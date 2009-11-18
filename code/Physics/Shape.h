@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Shape : public Object
 {
-	T_RTTI_CLASS(Shape)
+	T_RTTI_CLASS;
 };
 
 	}

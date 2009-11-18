@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace physics
 	{
@@ -26,7 +26,7 @@ class Stream;
  */
 class T_DLLCLASS Mesh : public Object
 {
-	T_RTTI_CLASS(Mesh)
+	T_RTTI_CLASS;
 
 public:
 #pragma pack(1)
@@ -48,9 +48,9 @@ public:
 
 	const std::vector< Triangle >& getHullTriangles() const;
 
-	bool read(Stream* stream);
+	bool read(IStream* stream);
 
-	bool write(Stream* stream);
+	bool write(IStream* stream);
 
 private:
 	AlignedVector< Vector4 > m_vertices;

@@ -24,7 +24,7 @@ struct DestroyCallback;
  */
 class T_DLLCLASS StaticBodyOde : public StaticBody
 {
-	T_RTTI_CLASS(StaticBodyOde)
+	T_RTTI_CLASS;
 
 public:
 	StaticBodyOde(DestroyCallback* callback, dGeomID geomId);

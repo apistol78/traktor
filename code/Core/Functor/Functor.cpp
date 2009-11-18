@@ -1,8 +1,8 @@
 #include "Core/Functor/Functor.h"
-#include "Core/Singleton/Singleton.h"
+#include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
-#include "Core/Heap/Alloc.h"
-#include "Core/Heap/BlockAllocator.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/CriticalSection.h"
@@ -13,10 +13,8 @@ namespace traktor
 	namespace
 	{
 
-class FunctorHeap : public Singleton
+class FunctorHeap : public ISingleton
 {
-	T_RTTI_CLASS(FunctorHeap)
-
 public:
 	static FunctorHeap& getInstance()
 	{
@@ -88,8 +86,6 @@ private:
 		Alloc::freeAlign(m_block);
 	}
 };
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.FunctorHeap", FunctorHeap, Singleton)
 
 	}
 

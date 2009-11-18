@@ -135,7 +135,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.PhysicsManagerHavok", PhysicsManagerHavok, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerHavok", PhysicsManagerHavok, PhysicsManager)
 
 PhysicsManagerHavok::PhysicsManagerHavok()
 :	m_simulationDeltaTime(0.0f)
@@ -413,9 +413,9 @@ Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 		m_world->addEntity(rigidBody);
 
 		// Create our wrapper.
-		Ref< StaticBodyHavok > staticBody = gc_new< StaticBodyHavok >(
+		Ref< StaticBodyHavok > staticBody = new StaticBodyHavok(
 			this,
-			cref(rigidBody)
+			rigidBody
 		);
 		m_staticBodies.push_back(staticBody);
 
@@ -444,9 +444,9 @@ Ref< Body > PhysicsManagerHavok::createBody(const BodyDesc* desc)
 		m_world->addEntity(rigidBody);
 
 		// Create our wrapper.
-		Ref< DynamicBodyHavok > dynamicBody = gc_new< DynamicBodyHavok >(
+		Ref< DynamicBodyHavok > dynamicBody = new DynamicBodyHavok(
 			this,
-			cref(rigidBody),
+			rigidBody,
 			m_simulationDeltaTime
 		);
 		m_dynamicBodies.push_back(dynamicBody);
@@ -516,7 +516,7 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 		}
 
 		constraint = new hkpConstraintInstance(b1, b2, ballConstraintData);
-		joint = gc_new< BallJointHavok >(this, cref(constraint), body1, body2);
+		joint = new BallJointHavok(this, constraint, body1, body2);
 	}
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
@@ -558,7 +558,7 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 		}
 
 		constraint = new hkpConstraintInstance(b1, b2, hingeConstraintData);
-		joint = gc_new< HingeJointHavok >(this, cref(constraint), body1, body2);
+		joint = new HingeJointHavok(this, constraint, body1, body2);
 	}
 
 	if (!joint)

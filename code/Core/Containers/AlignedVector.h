@@ -3,7 +3,7 @@
 
 #include <iterator>
 #include "Core/Config.h"
-#include "Core/Heap/Alloc.h"
+#include "Core/Memory/Alloc.h"
 
 namespace traktor
 {

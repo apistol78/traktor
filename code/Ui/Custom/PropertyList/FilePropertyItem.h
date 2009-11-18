@@ -30,7 +30,7 @@ class MiniButton;
  */
 class T_DLLCLASS FilePropertyItem : public PropertyItem
 {
-	T_RTTI_CLASS(FilePropertyItem)
+	T_RTTI_CLASS;
 
 public:
 	FilePropertyItem(const std::wstring& text, const Path& path);

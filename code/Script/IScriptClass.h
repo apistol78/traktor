@@ -25,11 +25,11 @@ namespace traktor
  */
 class T_DLLCLASS IScriptClass : public Object
 {
-	T_RTTI_CLASS(IScriptClass)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Get exported native type. */
-	virtual const Type& getExportType() const = 0;
+	virtual const TypeInfo& getExportType() const = 0;
 
 	/*! \brief Get exported method count. */
 	virtual uint32_t getMethodCount() const = 0;

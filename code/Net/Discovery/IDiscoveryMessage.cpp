@@ -5,7 +5,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IDiscoveryMessage", IDiscoveryMessage, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.IDiscoveryMessage", IDiscoveryMessage, ISerializable)
 
 	}
 }

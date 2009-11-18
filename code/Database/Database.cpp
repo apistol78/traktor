@@ -4,7 +4,6 @@
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Thread/Acquire.h"
@@ -36,7 +35,7 @@ bool Database::create(IProviderDatabase* providerDatabase)
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
 
-	m_rootGroup = gc_new< Group >(m_providerBus);
+	m_rootGroup = new Group(m_providerBus);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
 
@@ -139,7 +138,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 	return i->second;
 }
 
-Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Type* primaryType)
+Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -191,7 +190,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 	return group->createInstance(instanceName, flags, guid);
 }
 
-Ref< Serializable > Database::getObjectReadOnly(const Guid& guid)
+Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid)
 {
 	T_ASSERT (m_providerDatabase);
 	Acquire< Semaphore > scopeLock(m_lock);
@@ -222,7 +221,7 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 		if (m_rootGroup)
 			m_rootGroup->internalDestroy();
 
-		m_rootGroup = gc_new< Group >(m_providerBus);
+		m_rootGroup = new Group(m_providerBus);
 		if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 			T_FATAL_ERROR;
 	}

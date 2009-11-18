@@ -1,9 +1,9 @@
 #ifndef traktor_render_RenderViewXbox360_H
 #define traktor_render_RenderViewXbox360_H
 
+#include <list>
 #include <map>
 #include <stack>
-#include "Core/Heap/Ref.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
@@ -33,7 +33,7 @@ class IndexBufferDx9;
  */
 class T_DLLCLASS RenderViewXbox360 : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewXbox360)
+	T_RTTI_CLASS;
 
 public:
 	RenderViewXbox360(

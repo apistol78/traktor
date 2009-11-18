@@ -1,4 +1,4 @@
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::IPipeline)
 
 bool PostProcessPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -33,9 +33,9 @@ uint32_t PostProcessPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet PostProcessPipeline::getAssetTypes() const
+TypeInfoSet PostProcessPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< PostProcessSettings >());
 	return typeSet;
 }
@@ -43,7 +43,7 @@ TypeSet PostProcessPipeline::getAssetTypes() const
 bool PostProcessPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -83,7 +83,7 @@ bool PostProcessPipeline::buildDependencies(
 
 bool PostProcessPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

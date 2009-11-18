@@ -168,7 +168,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.TexturePipeline", TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -193,9 +193,9 @@ uint32_t TexturePipeline::getVersion() const
 	return 7;
 }
 
-TypeSet TexturePipeline::getAssetTypes() const
+TypeInfoSet TexturePipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< TextureAsset >());
 	return typeSet;
 }
@@ -203,7 +203,7 @@ TypeSet TexturePipeline::getAssetTypes() const
 bool TexturePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -215,7 +215,7 @@ bool TexturePipeline::buildDependencies(
 
 bool TexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,
@@ -266,7 +266,7 @@ bool TexturePipeline::buildOutput(
 	{
 		log::info << L"Generating sphere map..." << Endl;
 
-		Ref< drawing::Image > sphereImage = gc_new< drawing::Image >(pixelFormat, height, height);
+		Ref< drawing::Image > sphereImage = new drawing::Image(pixelFormat, height, height);
 
 		for (int y = 0; y < height; ++y)
 		{
@@ -365,7 +365,7 @@ bool TexturePipeline::buildOutput(
 	}
 
 	// Create output instance.
-	Ref< TextureResource > outputResource = gc_new< TextureResource >();
+	Ref< TextureResource > outputResource = new TextureResource();
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
@@ -378,7 +378,7 @@ bool TexturePipeline::buildOutput(
 
 	outputInstance->setObject(outputResource);
 
-	Ref< Stream > stream = outputInstance->writeData(L"Data");
+	Ref< IStream > stream = outputInstance->writeData(L"Data");
 	if (!stream)
 	{
 		log::error << L"Unable to create texture data stream" << Endl;
@@ -419,7 +419,7 @@ bool TexturePipeline::buildOutput(
 		writer << bool(false);
 		writer << bool(true);
 
-		Ref< Stream > streamData = gc_new< zip::DeflateStream >(stream);
+		Ref< IStream > streamData = new zip::DeflateStream(stream);
 		Writer writerData(streamData);
 
 		RefArray< drawing::Image > mipImages(mipCount);
@@ -441,7 +441,7 @@ bool TexturePipeline::buildOutput(
 				ScaleTextureTask* task = new ScaleTextureTask();
 
 				task->image = image;
-				task->filter = gc_new< drawing::ScaleFilter >(
+				task->filter = new drawing::ScaleFilter(
 						mipWidth,
 						mipHeight,
 						drawing::ScaleFilter::MnAverage,
@@ -449,7 +449,7 @@ bool TexturePipeline::buildOutput(
 						textureAsset->m_keepZeroAlpha
 					);
 
-				Ref< Job > job = gc_new< Job >(makeFunctor(task, &ScaleTextureTask::execute));
+				Ref< Job > job = new Job(makeFunctor(task, &ScaleTextureTask::execute));
 				JobManager::getInstance().add(*job);
 
 				tasks.push_back(task);
@@ -493,7 +493,7 @@ bool TexturePipeline::buildOutput(
 					task->textureFormat = textureFormat;
 					task->hasAlpha = hasAlpha;
 
-					Ref< Job > job = gc_new< Job >(makeFunctor(task, &CompressTextureTask::execute));
+					Ref< Job > job = new Job(makeFunctor(task, &CompressTextureTask::execute));
 					JobManager::getInstance().add(*job);
 
 					tasks.push_back(task);
@@ -538,12 +538,12 @@ bool TexturePipeline::buildOutput(
 		writer << bool(true);
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< Stream > streamData = gc_new< zip::DeflateStream >(stream);
+		Ref< IStream > streamData = new zip::DeflateStream(stream);
 		Writer writerData(streamData);
 
 		for (int side = 0; side < 6; ++side)
 		{
-			Ref< drawing::Image > sideImage = gc_new< drawing::Image >(image->getPixelFormat(), sideSize, sideSize);
+			Ref< drawing::Image > sideImage = new drawing::Image(image->getPixelFormat(), sideSize, sideSize);
 			sideImage->copy(image, side * sideSize, 0, sideSize, sideSize);
 
 			for (int i = 0; i < mipCount; ++i)

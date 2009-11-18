@@ -1,5 +1,5 @@
 #include "Database/Remote/Messages/DbmPutEvent.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.DbmPutEvent", DbmPutEvent, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmPutEvent", DbmPutEvent, IMessage)
 
 DbmPutEvent::DbmPutEvent(uint32_t handle, ProviderEvent event, const Guid& eventId)
 :	m_handle(handle)
@@ -16,7 +16,7 @@ DbmPutEvent::DbmPutEvent(uint32_t handle, ProviderEvent event, const Guid& event
 {
 }
 
-bool DbmPutEvent::serialize(Serializer& s)
+bool DbmPutEvent::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< int32_t >(L"event", m_event);

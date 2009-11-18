@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS DirectionalLightEntity : public SpatialEntity
 {
-	T_RTTI_CLASS(DirectionalLightEntity)
+	T_RTTI_CLASS;
 
 public:
 	DirectionalLightEntity(

@@ -2,7 +2,6 @@
 #define traktor_render_ProgramOpenGL_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
@@ -29,7 +28,7 @@ class ContextOpenGL;
  */
 class T_DLLCLASS ProgramOpenGL : public IProgram
 {
-	T_RTTI_CLASS(ProgramOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	ProgramOpenGL(ContextOpenGL* context);

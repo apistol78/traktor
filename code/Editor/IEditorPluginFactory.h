@@ -3,7 +3,6 @@
 
 #include <list>
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Ui/Command.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class IEditorPlugin;
  */
 class T_DLLCLASS IEditorPluginFactory : public Object
 {
-	T_RTTI_CLASS(IEditorPluginFactory)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;

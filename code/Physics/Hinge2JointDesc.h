@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS Hinge2JointDesc : public JointDesc
 {
-	T_RTTI_CLASS(Hinge2JointDesc)
+	T_RTTI_CLASS;
 
 public:
 	Hinge2JointDesc();
@@ -55,7 +55,7 @@ public:
 
 	float getSuspensionCfm() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Vector4 m_anchor;

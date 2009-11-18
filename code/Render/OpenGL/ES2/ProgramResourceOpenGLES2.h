@@ -1,7 +1,6 @@
 #ifndef traktor_render_ProgramResourceOpenGLES2_H
 #define traktor_render_ProgramResourceOpenGLES2_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Render/ProgramResource.h"
 #include "Render/OpenGL/TypesOpenGL.h"
@@ -16,7 +15,7 @@ namespace traktor
  */
 class ProgramResourceOpenGLES2 : public ProgramResource
 {
-	T_RTTI_CLASS(ProgramResourceOpenGL)
+	T_RTTI_CLASS;
 
 public:
 	ProgramResourceOpenGLES2();
@@ -39,7 +38,7 @@ public:
 
 	const RenderState& getRenderState() const { return m_renderState; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_bufferSize;

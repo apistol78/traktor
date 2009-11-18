@@ -15,7 +15,7 @@ namespace traktor
  */
 class ActionSetGuid : public Action
 {
-	T_RTTI_CLASS(Action)
+	T_RTTI_CLASS;
 
 public:
 	ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool create);

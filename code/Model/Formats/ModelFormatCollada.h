@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ModelFormatCollada : public ModelFormat
 {
-	T_RTTI_CLASS(ModelFormatCollada)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const;

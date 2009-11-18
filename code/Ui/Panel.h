@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS Panel : public Container
 {
-	T_RTTI_CLASS(Panel)
+	T_RTTI_CLASS;
 
 public:
 	bool create(Widget* parent, const std::wstring& text, Layout* layout = 0);

@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS MouseEvent : public Event
 {
-	T_RTTI_CLASS(MouseEvent)
+	T_RTTI_CLASS;
 	
 public:
 	enum Button

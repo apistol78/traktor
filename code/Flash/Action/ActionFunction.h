@@ -26,7 +26,7 @@ class ActionValue;
  */
 class T_DLLCLASS ActionFunction : public ActionObject
 {
-	T_RTTI_CLASS(ActionFunction)
+	T_RTTI_CLASS;
 
 public:
 	ActionFunction(const std::wstring& name);

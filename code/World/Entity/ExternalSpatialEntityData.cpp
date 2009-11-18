@@ -1,5 +1,5 @@
 #include "World/Entity/ExternalSpatialEntityData.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.ExternalSpatialEntityData", ExternalSpatialEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalSpatialEntityData", ExternalSpatialEntityData, SpatialEntityData)
 
 ExternalSpatialEntityData::ExternalSpatialEntityData()
 {
@@ -28,7 +28,7 @@ const Guid& ExternalSpatialEntityData::getGuid() const
 	return m_guid;
 }
 
-bool ExternalSpatialEntityData::serialize(Serializer& s)
+bool ExternalSpatialEntityData::serialize(ISerializer& s)
 {
 	if (!SpatialEntityData::serialize(s))
 		return false;

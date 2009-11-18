@@ -1,6 +1,6 @@
 #include "Input/RumbleEffect.h"
 #include "Core/Math/Hermite.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 
@@ -49,7 +49,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		s >> Member< float >(L"lowFrequencyRumble", m_ref.lowFrequencyRumble);
 		s >> Member< float >(L"highFrequencyRumble", m_ref.highFrequencyRumble);
@@ -62,7 +62,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.input.RumbleEffect", RumbleEffect, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.RumbleEffect", RumbleEffect, ISerializable)
 
 float RumbleEffect::getDuration() const
 {
@@ -80,7 +80,7 @@ void RumbleEffect::getRumble(float time, InputRumble& outRumble) const
 	outRumble.highFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, float, RumbleAccessor< HF > >::evaluate(&m_rumbleKeys[0], m_rumbleKeys.size(), time);
 }
 
-bool RumbleEffect::serialize(Serializer& s)
+bool RumbleEffect::serialize(ISerializer& s)
 {
 	s >> MemberStlVector
 		< 

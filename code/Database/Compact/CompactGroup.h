@@ -18,7 +18,7 @@ class CompactInstance;
  */
 class CompactGroup : public IProviderGroup
 {
-	T_RTTI_CLASS(CompactGroup)
+	T_RTTI_CLASS;
 
 public:
 	CompactGroup(CompactContext* context);

@@ -26,7 +26,7 @@ namespace traktor
  */
 class T_DLLCLASS StaticBodyBullet : public BodyBullet< StaticBody >
 {
-	T_RTTI_CLASS(StaticBodyBullet)
+	T_RTTI_CLASS;
 
 public:
 	StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape);

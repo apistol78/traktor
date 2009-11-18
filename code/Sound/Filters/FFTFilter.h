@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS FFTFilter : public IFilter
 {
-	T_RTTI_CLASS(FFTFilter)
+	T_RTTI_CLASS;
 
 public:
 	FFTFilter(uint32_t sampleRate);

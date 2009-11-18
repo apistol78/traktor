@@ -1,7 +1,6 @@
 #include <cstring>
 #include <zlib.h>
 #include "Zip/DeflateStream.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -11,7 +10,7 @@ namespace traktor
 class DeflateImpl : public Object
 {
 public:
-	DeflateImpl(Stream* stream, uint32_t internalBufferSize)
+	DeflateImpl(IStream* stream, uint32_t internalBufferSize)
 	:	m_stream(stream)
 	,	m_buf(internalBufferSize)
 	,	m_position(stream->tell())
@@ -95,16 +94,16 @@ public:
 	}
 
 private:
-	Ref< Stream > m_stream;
+	Ref< IStream > m_stream;
 	z_stream m_zstream;
 	std::vector< uint8_t > m_buf;
 	int m_position;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.DeflateStream", DeflateStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.DeflateStream", DeflateStream, IStream)
 
-DeflateStream::DeflateStream(Stream* stream, uint32_t internalBufferSize)
-:	m_impl(gc_new< DeflateImpl >(stream, internalBufferSize))
+DeflateStream::DeflateStream(IStream* stream, uint32_t internalBufferSize)
+:	m_impl(new DeflateImpl(stream, internalBufferSize))
 {
 }
 

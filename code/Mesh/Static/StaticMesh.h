@@ -46,7 +46,7 @@ class IMeshParameterCallback;
  */
 class T_DLLCLASS StaticMesh : public Object
 {
-	T_RTTI_CLASS(StaticMesh)
+	T_RTTI_CLASS;
 
 public:
 	struct Part

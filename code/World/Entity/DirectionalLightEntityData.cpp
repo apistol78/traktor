@@ -1,5 +1,5 @@
 #include "World/Entity/DirectionalLightEntityData.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.world.DirectionalLightEntityData", DirectionalLightEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", DirectionalLightEntityData, SpatialEntityData)
 
 DirectionalLightEntityData::DirectionalLightEntityData()
 :	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
@@ -16,7 +16,7 @@ DirectionalLightEntityData::DirectionalLightEntityData()
 {
 }
 
-bool DirectionalLightEntityData::serialize(Serializer& s)
+bool DirectionalLightEntityData::serialize(ISerializer& s)
 {
 	if (!SpatialEntityData::serialize(s))
 		return false;

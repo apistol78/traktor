@@ -9,11 +9,11 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.animation.StatePipeline", StatePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.StatePipeline", StatePipeline, editor::DefaultPipeline)
 
-TypeSet StatePipeline::getAssetTypes() const
+TypeInfoSet StatePipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< State >());
 	typeSet.insert(&type_of< StateGraph >());
 	typeSet.insert(&type_of< StatePoseControllerData >());
@@ -23,7 +23,7 @@ TypeSet StatePipeline::getAssetTypes() const
 bool StatePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {

@@ -2,7 +2,6 @@
 #define traktor_input_RumbleEffectPlayer_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -26,7 +25,7 @@ class IInputDevice;
  */
 class T_DLLCLASS RumbleEffectPlayer : public Object
 {
-	T_RTTI_CLASS(RumbleEffectPlayer)
+	T_RTTI_CLASS;
 
 public:
 	RumbleEffectPlayer();

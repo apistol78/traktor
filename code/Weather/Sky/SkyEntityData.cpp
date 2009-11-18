@@ -8,7 +8,7 @@
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
 #include "Render/ShaderGraph.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
 #include "Resource/Member.h"
@@ -28,7 +28,7 @@ const int c_indexCount = c_triangleCount * 3;
 
 		}
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.weather.SkyEntityData", SkyEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.SkyEntityData", SkyEntityData, world::EntityData)
 
 SkyEntityData::SkyEntityData()
 {
@@ -121,7 +121,7 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 		c_vertexCount - 1
 	);
 
-	return gc_new< SkyEntity >(
+	return new SkyEntity(
 		vertexBuffer,
 		indexBuffer,
 		primitives,
@@ -129,7 +129,7 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 	);
 }
 
-bool SkyEntityData::serialize(Serializer& s)
+bool SkyEntityData::serialize(ISerializer& s)
 {
 	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 }

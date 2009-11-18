@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS PathEntityEditor : public scene::DefaultEntityEditor
 {
-	T_RTTI_CLASS(PathEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	PathEntityEditor();

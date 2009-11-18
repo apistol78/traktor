@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-class Stream;
+class IStream;
 
 	namespace render
 	{
@@ -26,10 +26,10 @@ class Mesh;
  */
 class T_DLLCLASS MeshWriter : public Object
 {
-	T_RTTI_CLASS(MeshWriter)
+	T_RTTI_CLASS;
 
 public:
-	bool write(Stream* stream, const Mesh* mesh) const;
+	bool write(IStream* stream, const Mesh* mesh) const;
 };
 
 	}

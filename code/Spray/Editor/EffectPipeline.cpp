@@ -12,7 +12,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", EffectPipeline, editor::IPipeline)
 
 bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -28,9 +28,9 @@ uint32_t EffectPipeline::getVersion() const
 	return 1;
 }
 
-TypeSet EffectPipeline::getAssetTypes() const
+TypeInfoSet EffectPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Effect >());
 	return typeSet;
 }
@@ -38,7 +38,7 @@ TypeSet EffectPipeline::getAssetTypes() const
 bool EffectPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -63,7 +63,7 @@ bool EffectPipeline::buildDependencies(
 
 bool EffectPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

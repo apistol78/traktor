@@ -1,13 +1,13 @@
 #include <cstring>
+#include "Core/Io/IStream.h"
 #include "Core/Io/StringReader.h"
-#include "Core/Io/Stream.h"
 
 namespace traktor
 {
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StringReader", StringReader, Object)
 
-StringReader::StringReader(Stream* stream, Encoding* encoding)
+StringReader::StringReader(IStream* stream, IEncoding* encoding)
 :	m_stream(stream)
 ,	m_encoding(encoding)
 ,	m_count(0)

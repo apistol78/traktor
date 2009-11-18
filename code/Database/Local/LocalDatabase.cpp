@@ -6,7 +6,7 @@
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -26,14 +26,14 @@ bool LocalDatabase::create(const Path& manifestPath)
 		return false;
 	}
 
-	Ref< LocalManifest > manifest = gc_new< LocalManifest >();
+	Ref< LocalManifest > manifest = new LocalManifest();
 
 	manifest->setRootGroupPath(L"");
 	manifest->setEventMonitorEnable(true);
 	manifest->setEventFile(L"temp/Events.xvs");
 	manifest->setUseBinary(false);
 
-	Ref< Stream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmWrite);
+	Ref< IStream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmWrite);
 	if (!manifestFile)
 	{
 		log::error << L"Unable to create manifest \"" << manifestPath.getPathName() << L"\"" << Endl;
@@ -50,18 +50,18 @@ bool LocalDatabase::create(const Path& manifestPath)
 		return false;
 	}
 
-	m_context = gc_new< Context >(manifest->getUseBinary());
+	m_context = new Context(manifest->getUseBinary());
 
 	if (manifest->getEventMonitorEnable())
-		m_bus = gc_new< LocalBus >(manifest->getEventFile());
+		m_bus = new LocalBus(manifest->getEventFile());
 
-	m_rootGroup = gc_new< LocalGroup >(m_context, rootGroupPath);
+	m_rootGroup = new LocalGroup(m_context, rootGroupPath);
 	return true;
 }
 
 bool LocalDatabase::open(const Path& manifestPath)
 {
-	Ref< Stream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmRead);
+	Ref< IStream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmRead);
 	if (!manifestFile)
 	{
 		log::error << L"Unable to open manifest \"" << manifestPath.getPathName() << L"\", file missing?" << Endl;
@@ -80,7 +80,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 
 	Path databasePath = FileSystem::getInstance().getAbsolutePath(manifestPath).getPathOnly();
 
-	m_context = gc_new< Context >(manifest->getUseBinary());
+	m_context = new Context(manifest->getUseBinary());
 
 	if (manifest->getEventMonitorEnable())
 	{
@@ -90,7 +90,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 			log::error << L"Unable to ensure event file directory exist" << Endl;
 			return false;
 		}
-		m_bus = gc_new< LocalBus >(eventFile.getPathName());
+		m_bus = new LocalBus(eventFile.getPathName());
 	}
 
 	Path rootPath = FileSystem::getInstance().getAbsolutePath(databasePath, manifest->getRootGroupPath());
@@ -100,7 +100,7 @@ bool LocalDatabase::open(const Path& manifestPath)
 		return false;
 	}
 
-	m_rootGroup = gc_new< LocalGroup >(m_context, rootPath);
+	m_rootGroup = new LocalGroup(m_context, rootPath);
 	return true;
 }
 

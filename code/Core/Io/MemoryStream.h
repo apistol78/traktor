@@ -1,15 +1,14 @@
 #ifndef traktor_MemoryStream_H
 #define traktor_MemoryStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,9 +17,9 @@ namespace traktor
 /*! \brief Fixed memory stream.
  * \ingroup Core
  */
-class T_DLLCLASS MemoryStream : public Stream
+class T_DLLCLASS MemoryStream : public IStream
 {
-	T_RTTI_CLASS(MemoryStream)
+	T_RTTI_CLASS;
 
 public:
 	MemoryStream(void* buffer, uint32_t bufferSize, bool readAllowed = true, bool writeAllowed = true);

@@ -10,7 +10,7 @@ namespace traktor
 
 class LwsValue : public LwsNode
 {
-	T_RTTI_CLASS(LwsValue)
+	T_RTTI_CLASS;
 
 public:
 	LwsValue(const std::vector< std::wstring >& pieces);

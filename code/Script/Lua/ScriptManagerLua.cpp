@@ -1,22 +1,21 @@
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/IScriptClass.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Heap/GcNew.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, IScriptManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", ScriptManagerLua, IScriptManager)
 
 void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 {
 	m_registeredClasses.push_back(scriptClass);
 }
 
-Ref< IScriptClass > ScriptManagerLua::findScriptClass(const Type& type) const
+Ref< IScriptClass > ScriptManagerLua::findScriptClass(const TypeInfo& type) const
 {
 	Ref< IScriptClass > minScriptClass;
 	uint32_t minScriptClassDiff = ~0UL;
@@ -36,7 +35,7 @@ Ref< IScriptClass > ScriptManagerLua::findScriptClass(const Type& type) const
 
 Ref< IScriptContext > ScriptManagerLua::createContext()
 {
-	return gc_new< ScriptContextLua >(cref(m_registeredClasses));
+	return new ScriptContextLua(m_registeredClasses);
 }
 
 	}

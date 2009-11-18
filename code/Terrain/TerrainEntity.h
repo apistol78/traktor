@@ -52,7 +52,7 @@ class TerrainSurface;
 
 class T_DLLCLASS TerrainEntity : public world::Entity
 {
-	T_RTTI_CLASS(TerrainEntity)
+	T_RTTI_CLASS;
 
 public:
 	struct Patch

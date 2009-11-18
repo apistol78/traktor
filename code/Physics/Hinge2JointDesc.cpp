@@ -1,5 +1,5 @@
 #include "Physics/Hinge2JointDesc.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Math/Const.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.physics.Hinge2JointDesc", Hinge2JointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.Hinge2JointDesc", Hinge2JointDesc, JointDesc)
 
 Hinge2JointDesc::Hinge2JointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
@@ -91,7 +91,7 @@ float Hinge2JointDesc::getSuspensionCfm() const
 	return m_suspensionCfm;
 }
 
-bool Hinge2JointDesc::serialize(Serializer& s)
+bool Hinge2JointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor);
 	s >> Member< Vector4 >(L"axis1", m_axis1);

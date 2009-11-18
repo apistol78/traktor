@@ -2,7 +2,6 @@
 #define traktor_spray_EffectPreviewControl_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Ui/Widget.h"
 #include "Spray/EmitterUpdateContext.h"
 #include "Spray/Point.h"
@@ -46,7 +45,7 @@ class SourceRenderer;
 
 class T_DLLCLASS EffectPreviewControl : public ui::Widget
 {
-	T_RTTI_CLASS(EffectPreviewControl)
+	T_RTTI_CLASS;
 
 public:
 	EffectPreviewControl();
@@ -81,7 +80,7 @@ private:
 	uint32_t m_randomSeed;
 	EmitterUpdateContext m_context;
 	Timer m_timer;
-	std::map< const Type*, Ref< SourceRenderer > > m_sourceRenderers;
+	std::map< const TypeInfo*, Ref< SourceRenderer > > m_sourceRenderers;
 	Vector4 m_effectPosition;
 	float m_angleHead;
 	float m_anglePitch;

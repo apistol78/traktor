@@ -2,16 +2,15 @@
 #define traktor_xml_XmlDeserializer_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Serialization/Serializer.h"
 #include "Xml/XmlPullParser.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_XML_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,12 +23,12 @@ namespace traktor
  */
 class T_DLLCLASS XmlDeserializer : public Serializer
 {
-	T_RTTI_CLASS(XmlDeserializer)
+	T_RTTI_CLASS;
 
 public:
-	XmlDeserializer(Stream* stream);
+	XmlDeserializer(IStream* stream);
 
-	virtual Serializer::Direction getDirection();
+	virtual Direction getDirection();
 
 	virtual bool operator >> (const Member< bool >& m);
 	
@@ -75,15 +74,19 @@ public:
 
 	virtual bool operator >> (const Member< Quaternion >& m);
 	
-	virtual bool operator >> (const Member< Serializable >& m);
+	virtual bool operator >> (const Member< ISerializable >& m);
 
-	virtual bool operator >> (const Member< Ref< Serializable > >& m);
+	virtual bool operator >> (const Member< ISerializable* >& m);
+
+	virtual bool operator >> (const Member< Ref< ISerializable > >& m);
 
 	virtual bool operator >> (const Member< void* >& m);
 	
 	virtual bool operator >> (const MemberArray& m);
 
 	virtual bool operator >> (const MemberComplex& m);
+
+	virtual bool operator >> (const MemberEnumBase& m);
 	
 private:
 	XmlPullParser m_xpp;
@@ -96,7 +99,7 @@ private:
 	};
 
 	std::list< Entry > m_stack;
-	std::map< std::wstring, Object* > m_refs;
+	std::map< std::wstring, ISerializable* > m_refs;
 	std::vector< float > m_values;
 
 	std::wstring stackPath();
@@ -105,7 +108,7 @@ private:
 
 	bool leaveElement(const std::wstring& name);
 
-	void rememberObject(Object* object);
+	void rememberObject(ISerializable* object);
 	
 	bool nextElementValue(const std::wstring& name, std::wstring& value);
 };

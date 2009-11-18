@@ -14,7 +14,7 @@ namespace traktor
  */
 class MsgStringArrayResult : public IMessage
 {
-	T_RTTI_CLASS(MsgStringArrayResult)
+	T_RTTI_CLASS;
 
 public:
 	MsgStringArrayResult();
@@ -29,7 +29,7 @@ public:
 
 	const std::vector< std::wstring >& get() const { return m_values; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_values;

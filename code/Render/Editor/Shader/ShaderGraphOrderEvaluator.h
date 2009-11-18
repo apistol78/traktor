@@ -2,7 +2,6 @@
 #define traktor_render_ShaderGraphOrderEvaluator_H
 
 #include <map>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class Node;
 /*! \brief Evaluate algorithmic order of a shader graph node. */
 class T_DLLCLASS ShaderGraphOrderEvaluator : public Object
 {
-	T_RTTI_CLASS(ShaderGraphOrderEvaluator)
+	T_RTTI_CLASS;
 
 public:
 	enum Order

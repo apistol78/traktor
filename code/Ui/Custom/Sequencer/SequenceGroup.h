@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_SequenceGroup_H
 #define traktor_ui_custom_SequenceGroup_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Custom/Sequencer/SequenceItem.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class Bitmap;
  */
 class T_DLLCLASS SequenceGroup : public SequenceItem
 {
-	T_RTTI_CLASS(SequenceGroup)
+	T_RTTI_CLASS;
 
 public:
 	SequenceGroup(const std::wstring& name);

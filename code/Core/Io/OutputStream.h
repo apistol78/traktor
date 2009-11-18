@@ -3,29 +3,27 @@
 
 #include <string>
 #include <vector>
+#include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
-
-class OutputStreamBuffer;
 
 /*! \brief Output stream.
  * \ingroup Core
  */
 class T_DLLCLASS OutputStream : public Object
 {
-	T_RTTI_CLASS(OutputStream)
+	T_RTTI_CLASS;
 
 public:
 	enum LineEnd
@@ -38,13 +36,13 @@ public:
 
 	typedef OutputStream& (*manipulator_t)(OutputStream& s);
 
-	OutputStream(OutputStreamBuffer* buffer = 0, LineEnd lineEnd = LeAuto);
+	OutputStream(IOutputStreamBuffer* buffer = 0, LineEnd lineEnd = LeAuto);
 
 	virtual ~OutputStream();
 
-	void setBuffer(OutputStreamBuffer* buffer);
+	void setBuffer(IOutputStreamBuffer* buffer);
 
-	Ref< OutputStreamBuffer > getBuffer() const;
+	IOutputStreamBuffer* getBuffer() const;
 
 	LineEnd getLineEnd() const;
 
@@ -94,7 +92,7 @@ public:
 
 private:
 	Semaphore m_lock;
-	Ref< OutputStreamBuffer > m_buffer;
+	Ref< IOutputStreamBuffer > m_buffer;
 	LineEnd m_lineEnd;
 	std::vector< wchar_t > m_indent;
 	bool m_pushIndent;

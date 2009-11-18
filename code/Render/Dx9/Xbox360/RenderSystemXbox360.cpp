@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemXbox360", RenderSystemXbox360, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemXbox360", RenderSystemXbox360, IRenderSystem)
 
 RenderSystemXbox360::RenderSystemXbox360()
 :	m_parameterCache(0)
@@ -70,9 +70,9 @@ int RenderSystemXbox360::getDisplayModeCount() const
 	return 1;
 }
 
-DisplayMode* RenderSystemXbox360::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemXbox360::getDisplayMode(int index)
 {
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		0,
 		1280,
 		720,
@@ -80,9 +80,9 @@ DisplayMode* RenderSystemXbox360::getDisplayMode(int index)
 	);
 }
 
-DisplayMode* RenderSystemXbox360::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemXbox360::getCurrentDisplayMode()
 {
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		0,
 		1280,
 		720,
@@ -95,7 +95,7 @@ bool RenderSystemXbox360::handleMessages()
 	return true;
 }
 
-IRenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemXbox360::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -104,7 +104,7 @@ IRenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMod
 	T_ASSERT (!m_renderView);
 	T_ASSERT (displayMode);
 
-	memset(&d3dPresent, 0, sizeof(d3dPresent));
+	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
 	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
 	d3dPresent.BackBufferCount = 0;
 	d3dPresent.BackBufferWidth = displayMode->getWidth();
@@ -137,12 +137,12 @@ IRenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMod
 	);
 	T_ASSERT (SUCCEEDED(hr));
 
-	m_context = gc_new< ContextDx9 >();
+	m_context = new ContextDx9();
 	m_parameterCache = new ParameterCache(this, m_d3dDevice);
 	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
 
-	m_renderTargetPool = gc_new< RenderTargetPool >();
-	m_renderView = gc_new< RenderViewXbox360 >(
+	m_renderTargetPool = new RenderTargetPool();
+	m_renderView = new RenderViewXbox360(
 		desc,
 		this,
 		m_d3dDevice,
@@ -155,57 +155,57 @@ IRenderView* RenderSystemXbox360::createRenderView(const DisplayMode* displayMod
 	return m_renderView;
 }
 
-IRenderView* RenderSystemXbox360::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemXbox360::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	return 0;
 }
 
-VertexBuffer* RenderSystemXbox360::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemXbox360::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	Ref< VertexBufferDx9 > vertexBuffer = gc_new< VertexBufferDx9 >(this, m_context, bufferSize, m_vertexDeclCache);
+	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(this, m_context, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
 		return 0;
 	return vertexBuffer;
 }
 
-IndexBuffer* RenderSystemXbox360::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemXbox360::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Ref< IndexBufferDx9 > indexBuffer = gc_new< IndexBufferDx9 >(this, m_context, indexType, bufferSize);
+	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(this, m_context, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
 	return indexBuffer;
 }
 
-ISimpleTexture* RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemXbox360::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureDx9 > texture = gc_new< SimpleTextureDx9 >(m_context);
+	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
 }
 
-ICubeTexture* RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemXbox360::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureDx9 > texture = gc_new< CubeTextureDx9 >(m_context);
+	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
 }
 
-IVolumeTexture* RenderSystemXbox360::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemXbox360::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	Ref< VolumeTextureDx9 > texture = gc_new< VolumeTextureDx9 >(m_context);
+	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_context);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
 }
 
-RenderTargetSet* RenderSystemXbox360::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemXbox360::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 	return 0;
 }
 
-ProgramResource* RenderSystemXbox360::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
+Ref< ProgramResource > RenderSystemXbox360::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	HlslProgram program;
 	if (!Hlsl().generate(shaderGraph, program))
@@ -218,7 +218,7 @@ ProgramResource* RenderSystemXbox360::compileProgram(const ShaderGraph* shaderGr
 	return programResource;
 }
 
-IProgram* RenderSystemXbox360::createProgram(const ProgramResource* programResource)
+Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_parameterCache);
 
@@ -226,7 +226,7 @@ IProgram* RenderSystemXbox360::createProgram(const ProgramResource* programResou
 	if (!resource)
 		return 0;
 
-	Ref< ProgramXbox360 > program = gc_new< ProgramXbox360 >(this, m_context, m_parameterCache);
+	Ref< ProgramXbox360 > program = new ProgramXbox360(this, m_context, m_parameterCache);
 	if (!program->create(m_d3dDevice, resource))
 		return 0;
 

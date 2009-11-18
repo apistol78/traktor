@@ -1,8 +1,6 @@
 #include <ctime>
 #include "Core/Date/DateTime.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -14,7 +12,7 @@ const int8_t c_monthDays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.DateTime", DateTime, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.DateTime", DateTime, ISerializable)
 
 DateTime::DateTime()
 :	m_year(0)
@@ -64,7 +62,7 @@ Ref< DateTime > DateTime::now()
 	T_ASSERT (tmp);
 #endif
 
-	Ref< DateTime > date = gc_new< DateTime >();
+	Ref< DateTime > date = new DateTime();
 
 	date->m_year = tmp->tm_year + 1900;
 	date->m_month = tmp->tm_mon + 1;
@@ -161,7 +159,7 @@ bool DateTime::operator != (const DateTime& dt) const
 	return !(*this == dt);
 }
 
-bool DateTime::serialize(Serializer& s)
+bool DateTime::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"year", m_year);
 	s >> Member< uint8_t >(L"month", m_month);

@@ -1,7 +1,6 @@
 #ifndef traktor_editor_Project_H
 #define traktor_editor_Project_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Io/Path.h"
 #include "Editor/IProject.h"
 
@@ -15,7 +14,7 @@ namespace traktor
  */
 class Project : public IProject
 {
-	T_RTTI_CLASS(IProject)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const Path& fileName);

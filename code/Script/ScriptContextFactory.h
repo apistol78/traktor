@@ -1,7 +1,6 @@
 #ifndef traktor_script_ScriptContextFactory_H
 #define traktor_script_ScriptContextFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -31,16 +30,16 @@ class IScriptManager;
  */
 class T_DLLCLASS ScriptContextFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(ScriptContextFactory)
+	T_RTTI_CLASS;
 
 public:
 	ScriptContextFactory(db::Database* database, IScriptManager* scriptManager);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_database;

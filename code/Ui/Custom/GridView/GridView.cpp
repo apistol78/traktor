@@ -62,7 +62,7 @@ bool GridView::create(Widget* parent, uint32_t style)
 	m_expand[0] = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
 	m_expand[1] = Bitmap::load(c_ResourceCollapse, sizeof(c_ResourceCollapse), L"png");
 
-	m_scrollBarRows = gc_new< ScrollBar >();
+	m_scrollBarRows = new ScrollBar();
 	m_scrollBarRows->create(this, ScrollBar::WsVertical);
 	m_scrollBarRows->addScrollEventHandler(createMethodHandler(this, &GridView::eventScroll));
 
@@ -93,7 +93,7 @@ uint32_t GridView::addImage(Bitmap* image, uint32_t imageCount)
 		uint32_t width = m_image->getSize().cx + source->getSize().cx;
 		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
 
-		Ref< ui::Bitmap > newImage = gc_new< ui::Bitmap >(width, height);
+		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
 		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
 		m_image = newImage;

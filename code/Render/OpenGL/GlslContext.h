@@ -3,7 +3,6 @@
 
 #include <map>
 #include <vector>
-#include "Core/Heap/Ref.h"
 #include "Render/OpenGL/GlslEmitter.h"
 #include "Render/OpenGL/GlslShader.h"
 #include "Render/OpenGL/TypesOpenGL.h"

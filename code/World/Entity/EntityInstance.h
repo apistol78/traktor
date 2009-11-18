@@ -1,9 +1,8 @@
 #ifndef traktor_world_EntityInstance_H
 #define traktor_world_EntityInstance_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -30,9 +29,9 @@ class EntityData;
  * have references to those entities produced
  * by the instance references.
  */
-class T_DLLCLASS EntityInstance : public Serializable
+class T_DLLCLASS EntityInstance : public ISerializable
 {
-	T_RTTI_CLASS(EntityInstance)
+	T_RTTI_CLASS;
 
 public:
 	EntityInstance();
@@ -67,13 +66,13 @@ public:
 	 *
 	 * \param customData Per-instance custom data.
 	 */
-	virtual void setInstanceData(Serializable* instanceData);
+	virtual void setInstanceData(ISerializable* instanceData);
 
 	/*! \brief Get per-instance custom data.
 	 *
 	 * \return Instance custom data.
 	 */
-	virtual Ref< Serializable > getInstanceData() const;
+	virtual Ref< ISerializable > getInstanceData() const;
 
 	/*! \brief Add instance reference.
 	 *
@@ -98,12 +97,12 @@ public:
 
 	virtual int getVersion() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
 	Ref< EntityData > m_entityData;
-	Ref< Serializable > m_instanceData;
+	Ref< ISerializable > m_instanceData;
 	RefArray< EntityInstance > m_references;
 };
 

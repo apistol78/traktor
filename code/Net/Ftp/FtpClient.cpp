@@ -1,7 +1,6 @@
 #include "Net/Ftp/FtpClient.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketStream.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -36,22 +35,22 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FtpClient", FtpClient, Object)
 
 bool FtpClient::connect(const SocketAddressIPv4& socketAddress)
 {
-	m_socket = gc_new< TcpSocket >();
+	m_socket = new TcpSocket();
 	if (!m_socket->connect(socketAddress))
 		return false;
 
-	m_commandStream = gc_new< SocketStream >(m_socket);
+	m_commandStream = new SocketStream(m_socket);
 
 	return true;
 }
 
 bool FtpClient::connect(const SocketAddressIPv6& socketAddress)
 {
-	m_socket = gc_new< TcpSocket >();
+	m_socket = new TcpSocket();
 	if (!m_socket->connect(socketAddress))
 		return false;
 
-	m_commandStream = gc_new< SocketStream >(m_socket);
+	m_commandStream = new SocketStream(m_socket);
 
 	return true;
 }
@@ -93,7 +92,7 @@ bool FtpClient::getFileList(RefArray< File >& outFiles)
 	return false;
 }
 
-Ref< Stream > FtpClient::open(const std::wstring& fileName)
+Ref< IStream > FtpClient::open(const std::wstring& fileName)
 {
 	return 0;
 }

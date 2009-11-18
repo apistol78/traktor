@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS SprayEditorProfile : public scene::ISceneEditorProfile
 {
-	T_RTTI_CLASS(SprayEditorProfile)
+	T_RTTI_CLASS;
 
 public:
 	virtual void getCommands(

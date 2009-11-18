@@ -14,7 +14,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "I18N/Text.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Misc/String.h"
 
 namespace traktor
@@ -31,11 +30,11 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_index = index;
 
-	m_container = gc_new< ui::Container >();
-	if (!m_container->create(parent, ui::WsClientBorder, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	m_container = new ui::Container();
+	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolBar = gc_new< ui::custom::ToolBar >();
+	m_toolBar = new ui::custom::ToolBar();
 	if (!m_toolBar->create(m_container))
 		return false;
 
@@ -44,7 +43,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	int32_t viewType = settings->getProperty< editor::PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
 
-	m_toolButtonView = gc_new< ui::custom::ToolBarButton >(L"N/A", ui::Command(), 0, ui::custom::ToolBarButton::BsText);
+	m_toolButtonView = new ui::custom::ToolBarButton(L"N/A", ui::Command(), 0, ui::custom::ToolBarButton::BsText);
 	m_toolBar->addItem(m_toolButtonView);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
 
@@ -102,7 +101,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	{
 	case 0:
 		{
-			Ref< PerspectiveRenderControl > renderControl = gc_new< PerspectiveRenderControl >();
+			Ref< PerspectiveRenderControl > renderControl = new PerspectiveRenderControl();
 			if (renderControl->create(m_container, m_context, m_index))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
@@ -113,7 +112,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 1:	// Front
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
@@ -124,7 +123,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 2:	// Back
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
@@ -135,7 +134,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 3:	// Top
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_TOP"));
@@ -146,7 +145,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 4:	// Bottom
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM"));
@@ -157,7 +156,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 5:	// Left
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
@@ -168,7 +167,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 6:	// Right
 		{
-			Ref< OrthogonalRenderControl > renderControl = gc_new< OrthogonalRenderControl >();
+			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
 			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
@@ -179,7 +178,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 7:	// References
 		{
-			Ref< ReferencesRenderControl > renderControl = gc_new< ReferencesRenderControl >();
+			Ref< ReferencesRenderControl > renderControl = new ReferencesRenderControl();
 			if (renderControl->create(m_container, m_context))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES"));
@@ -190,7 +189,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 	case 8:	// Debug
 		{
-			Ref< DebugRenderControl > renderControl = gc_new< DebugRenderControl >();
+			Ref< DebugRenderControl > renderControl = new DebugRenderControl();
 			if (renderControl->create(m_container, m_context))
 			{
 				m_toolButtonView->setText(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
@@ -213,19 +212,19 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 void DefaultRenderControl::eventToolClick(ui::Event* event)
 {
-	Ref< ui::PopupMenu > popupMenu = gc_new< ui::PopupMenu >();
+	Ref< ui::PopupMenu > popupMenu = new ui::PopupMenu();
 	if (popupMenu->create())
 	{
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(0), i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(1), i18n::Text(L"SCENE_EDITOR_VIEW_FRONT")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(2), i18n::Text(L"SCENE_EDITOR_VIEW_BACK")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(3), i18n::Text(L"SCENE_EDITOR_VIEW_TOP")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(4), i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(5), i18n::Text(L"SCENE_EDITOR_VIEW_LEFT")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(6), i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT")));
-		popupMenu->add(gc_new< ui::MenuItem >(L"-"));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(7), i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES")));
-		popupMenu->add(gc_new< ui::MenuItem >(ui::Command(8), i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG")));
+		popupMenu->add(new ui::MenuItem(ui::Command(0), i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE")));
+		popupMenu->add(new ui::MenuItem(ui::Command(1), i18n::Text(L"SCENE_EDITOR_VIEW_FRONT")));
+		popupMenu->add(new ui::MenuItem(ui::Command(2), i18n::Text(L"SCENE_EDITOR_VIEW_BACK")));
+		popupMenu->add(new ui::MenuItem(ui::Command(3), i18n::Text(L"SCENE_EDITOR_VIEW_TOP")));
+		popupMenu->add(new ui::MenuItem(ui::Command(4), i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM")));
+		popupMenu->add(new ui::MenuItem(ui::Command(5), i18n::Text(L"SCENE_EDITOR_VIEW_LEFT")));
+		popupMenu->add(new ui::MenuItem(ui::Command(6), i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT")));
+		popupMenu->add(new ui::MenuItem(L"-"));
+		popupMenu->add(new ui::MenuItem(ui::Command(7), i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES")));
+		popupMenu->add(new ui::MenuItem(ui::Command(8), i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG")));
 
 		Ref< ui::MenuItem > selectedItem = popupMenu->show(m_toolBar, ui::Point(0, 0));
 		if (selectedItem)

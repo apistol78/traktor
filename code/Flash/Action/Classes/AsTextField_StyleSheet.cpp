@@ -29,7 +29,7 @@ AsTextField_StyleSheet::AsTextField_StyleSheet()
 
 void AsTextField_StyleSheet::createPrototype()
 {
-	Ref< ActionObject > prototype = gc_new< ActionObject >();
+	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
 	prototype->setMember(L"clear", createNativeFunctionValue(this, &AsTextField_StyleSheet::TextField_StyleSheet_clear));
@@ -47,7 +47,7 @@ void AsTextField_StyleSheet::createPrototype()
 
 ActionValue AsTextField_StyleSheet::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(gc_new< ActionObject >(this));
+	return ActionValue::fromObject(new ActionObject(this));
 }
 
 void AsTextField_StyleSheet::TextField_StyleSheet_clear(CallArgs& ca)

@@ -1,10 +1,9 @@
 #ifndef traktor_world_PostProcessStep_H
 #define traktor_world_PostProcessStep_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -40,9 +39,9 @@ class PostProcess;
 /*! \brief Post processing step.
  * \ingroup World
  */
-class T_DLLCLASS PostProcessStep : public Serializable
+class T_DLLCLASS PostProcessStep : public ISerializable
 {
-	T_RTTI_CLASS(PostProcessStep)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Step instance. */

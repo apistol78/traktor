@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS ITexture : public Object
 {
-	T_RTTI_CLASS(ITexture)
+	T_RTTI_CLASS;
 	
 public:
 	struct Lock

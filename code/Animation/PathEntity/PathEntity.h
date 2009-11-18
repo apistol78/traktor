@@ -1,7 +1,6 @@
 #ifndef traktor_animation_PathEntity_H
 #define traktor_animation_PathEntity_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Math/TransformPath.h"
 #include "World/Entity/SpatialEntity.h"
 
@@ -31,7 +30,7 @@ class WorldRenderView;
  */
 class T_DLLCLASS PathEntity : public world::SpatialEntity
 {
-	T_RTTI_CLASS(PathEntity)
+	T_RTTI_CLASS;
 
 public:
 	enum TimeMode

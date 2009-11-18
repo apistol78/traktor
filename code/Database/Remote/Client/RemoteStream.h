@@ -1,8 +1,7 @@
 #ifndef traktor_db_RemoteStream_H
 #define traktor_db_RemoteStream_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -14,9 +13,9 @@ class Connection;
 /*! \brief Remote stream.
  * \ingroup Database
  */
-class RemoteStream : public Stream
+class RemoteStream : public IStream
 {
-	T_RTTI_CLASS(RemoteStream)
+	T_RTTI_CLASS;
 
 public:
 	RemoteStream(Connection* connection, uint32_t handle);

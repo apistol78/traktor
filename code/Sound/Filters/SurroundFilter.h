@@ -2,7 +2,6 @@
 #define traktor_sound_SurroundFilter_H
 
 #include "Sound/IFilter.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Math/Vector4.h"
 
 // import/export mechanism.
@@ -25,7 +24,7 @@ class SurroundEnvironment;
  */
 class T_DLLCLASS SurroundFilter : public IFilter
 {
-	T_RTTI_CLASS(SurroundFilter)
+	T_RTTI_CLASS;
 
 public:
 	SurroundFilter(SurroundEnvironment* environment);

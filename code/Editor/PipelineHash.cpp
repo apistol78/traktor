@@ -1,6 +1,6 @@
 #include "Editor/PipelineHash.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 
@@ -9,7 +9,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.editor.PipelineHash", PipelineHash, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineHash", PipelineHash, ISerializable)
 
 void PipelineHash::set(const Guid& guid, const Hash& hash)
 {
@@ -29,7 +29,7 @@ bool PipelineHash::get(const Guid& guid, Hash& outHash) const
 	return true;
 }
 
-bool PipelineHash::serialize(Serializer& s)
+bool PipelineHash::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< Guid, Hash, MemberStlPair< Guid, Hash, Member< Guid >, MemberComposite< Hash > > >(L"hash", m_hash);
 }
@@ -41,7 +41,7 @@ PipelineHash::Hash::Hash()
 {
 }
 
-bool PipelineHash::Hash::serialize(Serializer& s)
+bool PipelineHash::Hash::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"pipelineVersion", pipelineVersion);
 	s >> Member< uint32_t >(L"pipelineHash", pipelineHash);

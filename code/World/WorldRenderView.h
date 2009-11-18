@@ -2,7 +2,6 @@
 #define traktor_world_WorldRenderView_H
 
 #include <string>
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Matrix44.h"
@@ -40,7 +39,7 @@ class ShaderParameters;
  */
 class T_DLLCLASS WorldRenderView : public Object
 {
-	T_RTTI_CLASS(WorldRenderView)
+	T_RTTI_CLASS;
 	
 public:
 	enum { MaxLightCount = 4 };

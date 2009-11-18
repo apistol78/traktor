@@ -30,7 +30,7 @@ class Shader;
  */
 class T_DLLCLASS PostProcessStepLuminance : public PostProcessStep
 {
-	T_RTTI_CLASS(PostProcessStepLuminance)
+	T_RTTI_CLASS;
 
 public:
 	class InstanceLuminance : public Instance
@@ -60,7 +60,7 @@ public:
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 

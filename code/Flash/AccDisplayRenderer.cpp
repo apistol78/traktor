@@ -9,7 +9,6 @@
 #include "Flash/FlashShape.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -54,7 +53,7 @@ bool AccDisplayRenderer::create(
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
-	m_textureCache = gc_new< AccTextureCache >(m_renderSystem);
+	m_textureCache = new AccTextureCache(m_renderSystem);
 	m_clearBackground = clearBackground;
 	return true;
 }
@@ -151,7 +150,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint32_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
 	{
-		accShape = gc_new< AccShape >();
+		accShape = new AccShape();
 		accShape->create(
 			m_resourceManager,
 			m_renderSystem,
@@ -193,7 +192,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	std::map< uint32_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
 	{
-		accShape = gc_new< AccShape >();
+		accShape = new AccShape();
 		accShape->create(
 			m_resourceManager,
 			m_renderSystem,

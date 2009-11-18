@@ -1,7 +1,7 @@
 #ifndef traktor_world_SpatialGroupEntity_H
 #define traktor_world_SpatialGroupEntity_H
 
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "World/Entity/SpatialEntity.h"
 
 // import/export mechanism.
@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS SpatialGroupEntity : public SpatialEntity
 {
-	T_RTTI_CLASS(SpatialGroupEntity)
+	T_RTTI_CLASS;
 
 public:
 	SpatialGroupEntity(const Transform& transform);
@@ -39,9 +39,9 @@ public:
 	
 	const RefArray< SpatialEntity >& getEntities() const;
 	
-	int getEntitiesOf(const Type& entityType, RefArray< SpatialEntity >& outEntities) const;
+	int getEntitiesOf(const TypeInfo& entityType, RefArray< SpatialEntity >& outEntities) const;
 	
-	Ref< SpatialEntity > getFirstEntityOf(const Type& entityType) const;
+	Ref< SpatialEntity > getFirstEntityOf(const TypeInfo& entityType) const;
 	
 	virtual void update(const EntityUpdate* update);
 

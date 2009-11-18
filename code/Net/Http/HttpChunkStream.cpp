@@ -5,9 +5,9 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpChunkStream", HttpChunkStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpChunkStream", HttpChunkStream, IStream)
 
-HttpChunkStream::HttpChunkStream(Stream* stream)
+HttpChunkStream::HttpChunkStream(IStream* stream)
 :	m_stream(stream)
 ,	m_available(0)
 {

@@ -4,11 +4,11 @@
 #endif
 #include <limits>
 #include <algorithm>
+#include "Core/Io/IStream.h"
 #include "Core/Serialization/BinarySerializer.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Io/Stream.h"
 
 namespace traktor
 {
@@ -17,29 +17,29 @@ namespace traktor
 
 #if defined(T_LITTLE_ENDIAN)
 
-template < typename T > bool read_primitive(const Ref< Stream >& stream, T& value)
+template < typename T > bool read_primitive(const Ref< IStream >& stream, T& value)
 {
 	return stream->read(&value, sizeof(T)) == sizeof(T);
 }
 
-template < typename T > bool write_primitive(const Ref< Stream >& stream, T v)
+template < typename T > bool write_primitive(const Ref< IStream >& stream, T v)
 {
 	return stream->write(&v, sizeof(T)) == sizeof(T);
 }
 
-inline bool read_block(const Ref< Stream >& stream, void* block, int count, int size)
+inline bool read_block(const Ref< IStream >& stream, void* block, int count, int size)
 {
 	return stream->read(block, count * size) == count * size;
 }
 
-inline bool write_block(const Ref< Stream >& stream, const void* block, int count, int size)
+inline bool write_block(const Ref< IStream >& stream, const void* block, int count, int size)
 {
 	return stream->write(block, count * size) == count * size;
 }
 
 #elif defined(T_BIG_ENDIAN)
 
-template < typename T > bool read_primitive(const Ref< Stream >& stream, T& value)
+template < typename T > bool read_primitive(const Ref< IStream >& stream, T& value)
 {
 	switch (sizeof(T))
 	{
@@ -63,7 +63,7 @@ template < typename T > bool read_primitive(const Ref< Stream >& stream, T& valu
 	return false;
 }
 
-template < typename T > bool write_primitive(const Ref< Stream >& stream, T v)
+template < typename T > bool write_primitive(const Ref< IStream >& stream, T v)
 {
 	switch (sizeof(T))
 	{
@@ -80,7 +80,7 @@ template < typename T > bool write_primitive(const Ref< Stream >& stream, T v)
 	return false;
 }
 
-bool read_block(const Ref< Stream >& stream, void* block, int count, int size)
+bool read_block(const Ref< IStream >& stream, void* block, int count, int size)
 {
 	int result = stream->read(block, count * size);
 	if (result > 0 && size > 1)
@@ -96,7 +96,7 @@ bool read_block(const Ref< Stream >& stream, void* block, int count, int size)
 	return result == count * size;
 }
 
-bool write_block(const Ref< Stream >& stream, const void* block, int count, int size)
+bool write_block(const Ref< IStream >& stream, const void* block, int count, int size)
 {
 	if (size > 1)
 	{
@@ -122,7 +122,7 @@ bool write_block(const Ref< Stream >& stream, const void* block, int count, int 
 #endif
 
 template < >
-bool read_primitive(const Ref< Stream >& stream, bool& value)
+bool read_primitive(const Ref< IStream >& stream, bool& value)
 {
 	uint8_t tmp;
 	if (stream->read(&tmp, 1) != 1)
@@ -133,7 +133,7 @@ bool read_primitive(const Ref< Stream >& stream, bool& value)
 }
 
 template < >
-bool write_primitive(const Ref< Stream >& stream, bool v)
+bool write_primitive(const Ref< IStream >& stream, bool v)
 {
 	uint8_t tmp = v ? 0xff : 0x00;
 	if (stream->write(&tmp, 1) == 1)
@@ -142,7 +142,7 @@ bool write_primitive(const Ref< Stream >& stream, bool v)
 }
 
 template < typename StringType >
-bool read_string(const Ref< Stream >& stream, StringType& outString)
+bool read_string(const Ref< IStream >& stream, StringType& outString)
 {
 	uint16_t length;
 	
@@ -168,7 +168,7 @@ bool read_string(const Ref< Stream >& stream, StringType& outString)
 }
 
 template < typename StringType >
-bool write_string(const Ref< Stream >& stream, const StringType& str)
+bool write_string(const Ref< IStream >& stream, const StringType& str)
 {
 	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
 	
@@ -190,12 +190,12 @@ bool write_string(const Ref< Stream >& stream, const StringType& str)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer);
 
 // Disable "Unusual use of Boolean expression"
 /*lint -e514*/
 
-BinarySerializer::BinarySerializer(Stream* stream)
+BinarySerializer::BinarySerializer(IStream* stream)
 :	m_stream(stream)
 ,	m_direction(m_stream->canRead() ? SdRead : SdWrite)
 ,	m_nextCacheId(1)
@@ -493,26 +493,26 @@ bool BinarySerializer::operator >> (const Member< Quaternion >& m)
 	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Serializable >& m)
+bool BinarySerializer::operator >> (const Member< ISerializable >& m)
 {
-	Serializable* o = &static_cast< Serializable& >(m);
+	ISerializable* object = static_cast< ISerializable* >(&(*m));
 	if (m_direction == SdRead)
 	{
 		int32_t version;
 		if (!read_primitive< int32_t >(m_stream, version))
 			return false;
-		return serialize(o, version, 0);
+		return serialize(object, version, 0);
 	}
 	else
 	{
-		int32_t version = o->getVersion();
+		int32_t version = type_of(object).getVersion();
 		if (!write_primitive< int32_t >(m_stream, version))
 			return false;
-		return serialize(o, version, 0);
+		return serialize(object, version, 0);
 	}
 }
 
-bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
+bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 {
 	if (m_direction == SdRead)
 	{
@@ -524,7 +524,7 @@ bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
 		if (!read_primitive< uint64_t >(m_stream, hash))
 			return false;
 
-		Ref< Serializable > o;
+		ISerializable* object;
 
 		if (hash)
 		{
@@ -536,38 +536,38 @@ bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
 				if (!read_string< std::wstring >(m_stream, typeName))
 					return false;
 				
-				const Type* type = Type::find(typeName);
+				const TypeInfo* type = TypeInfo::find(typeName);
 				if (type == 0)
 					return false;
 					
-				if (!(o = checked_type_cast< Serializable* >(type->newInstance())))
+				if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 					return false;
 
 				if (!read_primitive< int32_t >(m_stream, version))
 					return false;
 
-				if (!serialize(o, version, 0))
+				if (!serialize(object, version, 0))
 					return false;
 
-				m_readCache[hash] = o;
+				m_readCache[hash] = object;
 			}
 			else
 			{
-				o = static_cast< Serializable* >(m_readCache[hash]);
-				if (!o)
+				object = static_cast< ISerializable* >(m_readCache[hash]);
+				if (!object)
 					return false;
 			}
 		}
 
-		m = o;
+		m = object;
 	}
 	else
 	{
-		Ref< Serializable > o = *m;
+		ISerializable* object = *m;
 
-		if (o)
+		if (object)
 		{
-			std::map< Ref< Serializable >, uint64_t >::iterator i = m_writeCache.find(o);
+			std::map< ISerializable*, uint64_t >::iterator i = m_writeCache.find(object);
 			if (i != m_writeCache.end())
 			{
 				if (!write_primitive< bool >(m_stream, true))
@@ -577,20 +577,20 @@ bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
 			}
 			else
 			{
-				int32_t version = o->getVersion();
+				int32_t version = type_of(object).getVersion();
 				uint64_t hash = m_nextCacheId++;
 
 				if (!write_primitive< bool >(m_stream, false))
 					return false;
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return false;
-				if (!write_string< std::wstring >(m_stream, type_name(o)))
+				if (!write_string< std::wstring >(m_stream, type_name(object)))
 					return false;
 				if (!write_primitive< int32_t >(m_stream, version))
 					return false;
 
-				m_writeCache[o] = hash;
-				if (!serialize(o, version, 0))
+				m_writeCache[object] = hash;
+				if (!serialize(object, version, 0))
 					return false;
 			}
 		}
@@ -602,6 +602,15 @@ bool BinarySerializer::operator >> (const Member< Ref< Serializable > >& m)
 				return false;
 		}
 	}
+	return true;
+}
+
+bool BinarySerializer::operator >> (const Member< Ref< ISerializable > >& m)
+{
+	ISerializable* object = m->ptr();
+	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
+		return false;
+	m = object;
 	return true;
 }
 
@@ -664,6 +673,11 @@ bool BinarySerializer::operator >> (const MemberArray& m)
 bool BinarySerializer::operator >> (const MemberComplex& m)
 {
 	return m.serialize(*this);
+}
+
+bool BinarySerializer::operator >> (const MemberEnumBase& m)
+{
+	return this->operator >> (*(MemberComplex*)(&m));
 }
 
 /*lint -restore*/

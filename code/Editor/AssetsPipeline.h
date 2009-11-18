@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS AssetsPipeline : public IPipeline
 {
-	T_RTTI_CLASS(AssetsPipeline)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(const IPipelineSettings* settings);
@@ -30,18 +30,18 @@ public:
 
 	virtual uint32_t getVersion() const;
 
-	virtual TypeSet getAssetTypes() const;
+	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
 		IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		Ref< const Object >& outBuildParams
 	) const;
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
-		const Serializable* sourceAsset,
+		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const Object* buildParams,
 		const std::wstring& outputPath,

@@ -2,7 +2,6 @@
 #define traktor_script_IScriptManager_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -32,7 +31,7 @@ class IScriptContext;
  */
 class T_DLLCLASS IScriptManager : public Object
 {
-	T_RTTI_CLASS(IScriptManager)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Register script class.
@@ -46,7 +45,7 @@ public:
 	 * \type Type from which we want a IScriptClass interface.
 	 * \return IScriptClass interface able to call object of 'type'.
 	 */
-	virtual Ref< IScriptClass > findScriptClass(const Type& type) const = 0;
+	virtual Ref< IScriptClass > findScriptClass(const TypeInfo& type) const = 0;
 
 	/*! \brief Create script context.
 	 *

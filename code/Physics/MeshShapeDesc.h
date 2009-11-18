@@ -24,14 +24,14 @@ class Mesh;
  */
 class T_DLLCLASS MeshShapeDesc : public ShapeDesc
 {
-	T_RTTI_CLASS(MeshShapeDesc)
+	T_RTTI_CLASS;
 
 public:
 	void setMesh(const resource::Proxy< Mesh >& mesh);
 
 	const resource::Proxy< Mesh >& getMesh() const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	resource::Proxy< Mesh > m_mesh;

@@ -1,7 +1,7 @@
 #ifndef traktor_spray_Source_H
 #define traktor_spray_Source_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
 #include "Spray/Point.h"
 
@@ -31,9 +31,9 @@ class EmitterInstance;
 /*! \brief Particle source.
  * \ingroup Spray
  */
-class T_DLLCLASS Source : public Serializable
+class T_DLLCLASS Source : public ISerializable
 {
-	T_RTTI_CLASS(Source)
+	T_RTTI_CLASS;
 
 public:
 	Source();
@@ -47,7 +47,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const = 0;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline float getRate() const { return m_rate; }
 

@@ -1,7 +1,6 @@
 #ifndef traktor_ui_Event_H
 #define traktor_ui_Event_H
 
-#include "Core/Heap/Ref.h"
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -31,7 +30,7 @@ class EventSubject;
  */
 class T_DLLCLASS Event : public Object
 {
-	T_RTTI_CLASS(Event)
+	T_RTTI_CLASS;
 	
 public:
 	Event(EventSubject* sender, Object* item);

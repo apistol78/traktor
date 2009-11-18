@@ -25,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS BackgroundWorkerStatus : public Object
 {
-	T_RTTI_CLASS(BackgroundWorkerStatus)
+	T_RTTI_CLASS;
 
 public:
 	struct Notification

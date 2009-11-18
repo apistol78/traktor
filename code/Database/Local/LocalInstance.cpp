@@ -39,15 +39,15 @@ bool LocalInstance::internalCreateNew(const Path& instancePath, const Guid& inst
 	if (!internalCreate(instancePath))
 		return false;
 
-	m_transaction = gc_new< Transaction >();
+	m_transaction = new Transaction();
 	if (!m_transaction->create(instanceGuid))
 		return false;
 
 	m_transactionName.clear();
 
-	m_transaction->add(gc_new< ActionSetGuid >(
-		cref(m_instancePath),
-		cref(instanceGuid),
+	m_transaction->add(new ActionSetGuid(
+		m_instancePath,
+		instanceGuid,
 		true
 	));
 
@@ -66,7 +66,7 @@ bool LocalInstance::openTransaction()
 	if (m_transaction)
 		return false;
 
-	m_transaction = gc_new< Transaction >();
+	m_transaction = new Transaction();
 	if (!m_transaction->create(getGuid()))
 	{
 		m_transaction = 0;
@@ -110,7 +110,7 @@ bool LocalInstance::setName(const std::wstring& name)
 	if (!m_transaction || name.empty())
 		return false;
 
-	Ref< ActionSetName > action = gc_new< ActionSetName >(cref(m_instancePath), cref(name));
+	Ref< ActionSetName > action = new ActionSetName(m_instancePath, name);
 	m_transaction->add(action);
 	m_transactionName = name;
 
@@ -129,9 +129,9 @@ bool LocalInstance::setGuid(const Guid& guid)
 	if (!m_transaction)
 		return false;
 
-	m_transaction->add(gc_new< ActionSetGuid >(
-		cref(m_instancePath), 
-		cref(guid),
+	m_transaction->add(new ActionSetGuid(
+		m_instancePath, 
+		guid,
 		false
 	));
 
@@ -143,18 +143,18 @@ bool LocalInstance::remove()
 	if (!m_transaction)
 		return false;
 
-	m_transaction->add(gc_new< ActionRemove >(
-		cref(m_instancePath)
+	m_transaction->add(new ActionRemove(
+		m_instancePath
 	));
 
 	return true;
 }
 
-Ref< Stream > LocalInstance::readObject(const Type*& outSerializerType)
+Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType)
 {
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 
-	Ref< Stream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
+	Ref< IStream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
 	if (!objectStream)
 		return 0;
 
@@ -165,7 +165,7 @@ Ref< Stream > LocalInstance::readObject(const Type*& outSerializerType)
 		return 0;
 	}
 
-	objectStream->seek(Stream::SeekSet, 0);
+	objectStream->seek(IStream::SeekSet, 0);
 
 	if (std::memcmp(head, "<?xml", sizeof(head)) == 0)
 		outSerializerType = &type_of< xml::XmlDeserializer >();
@@ -175,20 +175,20 @@ Ref< Stream > LocalInstance::readObject(const Type*& outSerializerType)
 	return objectStream;
 }
 
-Ref< Stream > LocalInstance::writeObject(const std::wstring& primaryTypeName, const Type*& outSerializerType)
+Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
 {
 	if (!m_transaction)
 		return false;
 
-	Ref< DynamicMemoryStream > stream = gc_new< DynamicMemoryStream >(false, true);
+	Ref< DynamicMemoryStream > stream = new DynamicMemoryStream(false, true);
 
 	if (!m_context->preferBinary())
 		outSerializerType = &type_of< xml::XmlSerializer >();
 	else
 		outSerializerType = &type_of< BinarySerializer >();
 
-	m_transaction->add(gc_new< ActionWriteObject >(
-		cref(m_instancePath),
+	m_transaction->add(new ActionWriteObject(
+		m_instancePath,
 		primaryTypeName,
 		stream
 	));
@@ -208,18 +208,18 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 	return uint32_t(outDataNames.size());
 }
 
-Ref< Stream > LocalInstance::readData(const std::wstring& dataName)
+Ref< IStream > LocalInstance::readData(const std::wstring& dataName)
 {
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, dataName);
 	return FileSystem::getInstance().open(instanceDataPath, File::FmRead);
 }
 
-Ref< Stream > LocalInstance::writeData(const std::wstring& dataName)
+Ref< IStream > LocalInstance::writeData(const std::wstring& dataName)
 {
 	if (!m_transaction)
 		return 0;
 
-	Ref< ActionWriteData > action = gc_new< ActionWriteData >(cref(m_instancePath), dataName);
+	Ref< ActionWriteData > action = new ActionWriteData(m_instancePath, dataName);
 	m_transaction->add(action);
 
 	return action->getStream();

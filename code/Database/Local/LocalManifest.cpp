@@ -1,5 +1,5 @@
 #include "Database/Local/LocalManifest.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.LocalManifest", LocalManifest, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalManifest", LocalManifest, ISerializable)
 
 LocalManifest::LocalManifest()
 :	m_eventMonitorEnable(false)
@@ -55,7 +55,7 @@ bool LocalManifest::getUseBinary() const
 	return m_useBinary;
 }
 
-bool LocalManifest::serialize(Serializer& s)
+bool LocalManifest::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"rootGroupPath", m_rootGroupPath);
 	s >> Member< bool >(L"eventMonitorEnable", m_eventMonitorEnable);

@@ -29,7 +29,7 @@ class SequenceItem;
  */
 class T_DLLCLASS SequencerControl : public Widget
 {
-	T_RTTI_CLASS(SequencerControl)
+	T_RTTI_CLASS;
 
 public:
 	enum Events

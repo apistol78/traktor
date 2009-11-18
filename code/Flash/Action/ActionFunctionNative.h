@@ -2,7 +2,6 @@
 #define traktor_flash_ActionFunctionNative_H
 
 #include "Flash/Action/ActionFunction.h"
-#include "Core/Heap/GcNew.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -98,7 +97,7 @@ private:
  */
 class T_DLLCLASS ActionFunctionNative : public ActionFunction
 {
-	T_RTTI_CLASS(ActionFunctionNative)
+	T_RTTI_CLASS;
 
 public:
 	ActionFunctionNative(CallFnc* callFnc);
@@ -114,7 +113,7 @@ private:
  */
 inline Ref< ActionFunctionNative > createNativeFunction(FunctionFnc::F function)
 {
-	return gc_new< ActionFunctionNative >(gc_new< FunctionFnc >(function));
+	return new ActionFunctionNative(new FunctionFnc(function));
 }
 
 /*! \brief Create native function as value.
@@ -131,7 +130,7 @@ inline ActionValue createNativeFunctionValue(FunctionFnc::F function)
 template < typename TargetType >
 inline ActionFunctionNative* createNativeFunction(TargetType* object, typename MethodFnc< TargetType >::M method)
 {
-	return gc_new< ActionFunctionNative >(gc_new< MethodFnc< TargetType > >(object, method));
+	return new ActionFunctionNative(new MethodFnc< TargetType >(object, method));
 }
 
 /*! \brief Create native function as value.

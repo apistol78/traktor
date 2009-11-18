@@ -18,10 +18,10 @@ namespace traktor
 
 class T_DLLCLASS MeshAsset : public editor::Asset
 {
-	T_RTTI_CLASS(MeshAsset)
+	T_RTTI_CLASS;
 
 public:
-	virtual const Type* getOutputType() const;
+	virtual const TypeInfo* getOutputType() const;
 };
 
 	}

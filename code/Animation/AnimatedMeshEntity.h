@@ -34,7 +34,7 @@ class IPoseController;
  */
 class T_DLLCLASS AnimatedMeshEntity : public mesh::MeshEntity
 {
-	T_RTTI_CLASS(AnimatedMeshEntity)
+	T_RTTI_CLASS;
 
 public:
 	AnimatedMeshEntity(

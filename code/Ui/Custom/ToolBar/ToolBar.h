@@ -1,8 +1,7 @@
 #ifndef traktor_ui_custom_ToolBar_H
 #define traktor_ui_custom_ToolBar_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Command.h"
 #include "Ui/Widget.h"
 
@@ -32,7 +31,7 @@ class ToolBarItem;
  */
 class T_DLLCLASS ToolBar : public Widget
 {
-	T_RTTI_CLASS(ToolBar)
+	T_RTTI_CLASS;
 
 public:
 	enum WidgetStyles

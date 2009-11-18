@@ -7,7 +7,7 @@
 #include "Database/Instance.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Misc/Save.h"
 #include "Core/Log/Log.h"
 
@@ -27,12 +27,12 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
 {
-	std::vector< const Type* > pipelineTypes;
-	type_of< IPipeline >().findAllOf(pipelineTypes);
+	std::vector< const TypeInfo* > pipelineTypes;
+	type_of< IPipeline >().findAllOf(pipelineTypes, false);
 
-	for (std::vector< const Type* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	for (std::vector< const TypeInfo* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
-		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->newInstance());
+		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->createInstance());
 		if (pipeline)
 		{
 			PipelineSettings pipelineSettings(settings);
@@ -53,7 +53,7 @@ PipelineDependsIncremental::~PipelineDependsIncremental()
 		i->first->destroy();
 }
 
-void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
+void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 {
 	if (!sourceAsset)
 		return;
@@ -65,7 +65,7 @@ void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
 	Ref< IPipeline > pipeline;
 	uint32_t pipelineHash;
 
-	if (findPipeline(sourceAsset->getType(), pipeline, pipelineHash))
+	if (findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
 		Ref< const Object > dummyBuildParams;
 		pipeline->buildDependencies(this, 0, sourceAsset, dummyBuildParams);
@@ -75,7 +75,7 @@ void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset)
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineDependsIncremental::addDependency(const Serializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
 {
 	if (!sourceAsset)
 		return;
@@ -122,7 +122,7 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	}
 
 	// Checkout source asset instance.
-	Ref< Serializable > sourceAsset = sourceAssetInstance->getObject();
+	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
@@ -166,7 +166,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, bool
 	}
 
 	// Checkout source asset instance.
-	Ref< Serializable > sourceAsset = sourceAssetInstance->getObject();
+	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
 		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
@@ -201,11 +201,11 @@ Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
 	return m_sourceDatabase;
 }
 
-Ref< const Serializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
+Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)
 {
-	Ref< Serializable > object;
+	Ref< ISerializable > object;
 
-	std::map< Guid, Ref< Serializable > >::iterator i = m_readCache.find(instanceGuid);
+	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
 	if (i != m_readCache.end())
 		object = i->second;
 	else
@@ -217,18 +217,18 @@ Ref< const Serializable > PipelineDependsIncremental::getObjectReadOnly(const Gu
 	return object;
 }
 
-bool PipelineDependsIncremental::findPipeline(const Type& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const
+bool PipelineDependsIncremental::findPipeline(const TypeInfo& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const
 {
 	uint32_t best = std::numeric_limits< uint32_t >::max();
 	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
 	{
-		TypeSet typeSet = i->first->getAssetTypes();
-		for (TypeSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
+		TypeInfoSet typeSet = i->first->getAssetTypes();
+		for (TypeInfoSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
 		{
 			uint32_t distance = 0;
 
 			// Calculate distance in type hierarchy.
-			const Type* type = &sourceType;
+			const TypeInfo* type = &sourceType;
 			while (type)
 			{
 				if (type == *j)
@@ -263,7 +263,7 @@ Ref< PipelineDependency > PipelineDependsIncremental::findDependency(const Guid&
 
 void PipelineDependsIncremental::addUniqueDependency(
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	const std::wstring& name,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
@@ -274,14 +274,14 @@ void PipelineDependsIncremental::addUniqueDependency(
 	uint32_t pipelineHash;
 
 	// Find appropriate pipeline.
-	if (!findPipeline(sourceAsset->getType(), pipeline, pipelineHash))
+	if (!findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
 		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
 		return;
 	}
 
 	// Register dependency, add to "parent" dependency as well.
-	Ref< PipelineDependency > dependency = gc_new< PipelineDependency >();
+	Ref< PipelineDependency > dependency = new PipelineDependency();
 	dependency->name = name;
 	dependency->pipeline = pipeline;
 	dependency->pipelineHash = pipelineHash;

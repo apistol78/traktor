@@ -3,7 +3,6 @@
 
 #include "Render/IndexBuffer.h"
 #include "Render/Dx9/Unmanaged.h"
-#include "Core/Heap/Ref.h"
 #include "Core/Misc/ComRef.h"
 
 // import/export mechanism.
@@ -28,7 +27,7 @@ class T_DLLCLASS IndexBufferDx9
 :	public IndexBuffer
 ,	public Unmanaged
 {
-	T_RTTI_CLASS(IndexBufferDx9)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferDx9(UnmanagedListener* unmanagedListener, ContextDx9* context, IndexType indexType, uint32_t bufferSize);

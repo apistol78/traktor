@@ -1,7 +1,7 @@
 #include <cstring>
 #include "Sound/Decoders/WavStreamDecoder.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Io/Stream.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -23,9 +23,9 @@ struct RiffChunk
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.WavStreamDecoder", WavStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.WavStreamDecoder", WavStreamDecoder, IStreamDecoder)
 
-bool WavStreamDecoder::create(Stream* stream)
+bool WavStreamDecoder::create(IStream* stream)
 {
 	m_stream = stream;
 	return readHeader();
@@ -90,7 +90,7 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 
 void WavStreamDecoder::rewind()
 {
-	m_stream->seek(Stream::SeekSet, 0);
+	m_stream->seek(IStream::SeekSet, 0);
 	readHeader();
 }
 
@@ -100,12 +100,12 @@ bool WavStreamDecoder::readHeader()
 	
 	// Read RIFF header.
 	m_stream->read(&hdr, sizeof(hdr));
-	m_stream->seek(Stream::SeekCurrent, 4);
+	m_stream->seek(IStream::SeekCurrent, 4);
 	
 	// Read format chunk.
 	m_stream->read(&fmt, sizeof(fmt));
 	m_stream->read(&m_format, sizeof(m_format));
-	m_stream->seek(Stream::SeekCurrent, fmt.size - sizeof(m_format));
+	m_stream->seek(IStream::SeekCurrent, fmt.size - sizeof(m_format));
 
 	// Locate data chunk.
 	for (;;)
@@ -114,7 +114,7 @@ bool WavStreamDecoder::readHeader()
 			return false;
 		if (memcmp(data.id, "data", 4) == 0)
 			break;
-		m_stream->seek(Stream::SeekCurrent, data.size);
+		m_stream->seek(IStream::SeekCurrent, data.size);
 	}
 
 	return true;

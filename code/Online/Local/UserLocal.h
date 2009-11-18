@@ -18,7 +18,7 @@ namespace traktor
 
 class UserLocal : public IUser
 {
-	T_RTTI_CLASS(UserLocal)
+	T_RTTI_CLASS;
 
 public:
 	UserLocal(const std::wstring& name);

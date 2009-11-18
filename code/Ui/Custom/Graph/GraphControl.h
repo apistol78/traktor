@@ -4,8 +4,7 @@
 #define T_GRAPH_USE_XTRME 1
 
 #include <list>
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #if T_GRAPH_USE_XTRME
 #	include "Ui/Xtrme/WidgetXtrme.h"
 #else
@@ -46,7 +45,7 @@ class T_DLLCLASS GraphControl
 :	public Widget
 #endif
 {
-	T_RTTI_CLASS(GraphControl)
+	T_RTTI_CLASS;
 
 public:
 	enum Styles

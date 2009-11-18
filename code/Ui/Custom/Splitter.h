@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS Splitter : public Widget
 {
-	T_RTTI_CLASS(Splitter)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Create splitter control.

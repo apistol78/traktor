@@ -42,7 +42,7 @@ class IModifier;
  */
 class T_DLLCLASS IEntityEditor : public Object
 {
-	T_RTTI_CLASS(IEntityEditor)
+	T_RTTI_CLASS;
 
 public:
 	/*! \brief Is entity pick-able?

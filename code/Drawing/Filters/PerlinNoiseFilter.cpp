@@ -1,7 +1,6 @@
 #include <cmath>
 #include "Drawing/Filters/PerlinNoiseFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Math/Const.h"
 
 namespace traktor
@@ -60,18 +59,18 @@ float interpolateNoise(float x, float y)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PerlinNoiseFilter", PerlinNoiseFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.PerlinNoiseFilter", PerlinNoiseFilter, IImageFilter)
 
-PerlinNoiseFilter::PerlinNoiseFilter(int octaves, float persistence, float magnify) :
-	m_octaves(octaves),
-	m_persistence(persistence),
-	m_magnify(magnify)
+PerlinNoiseFilter::PerlinNoiseFilter(int octaves, float persistence, float magnify)
+:	m_octaves(octaves)
+,	m_persistence(persistence)
+,	m_magnify(magnify)
 {
 }
 
 Ref< Image > PerlinNoiseFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		float fy = float(y) / image->getHeight();

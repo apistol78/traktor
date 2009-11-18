@@ -65,27 +65,27 @@ const RefArray< Entity >& GroupEntity::getEntities() const
 	return m_entities;
 }
 	
-int GroupEntity::getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const
+int GroupEntity::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const
 {
 	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		if (is_type_of(entityType, (*i)->getType()))
+		if (is_type_of(entityType, type_of(*i)))
 			outEntities.push_back(*i);
 	}
 	return int(outEntities.size());
 }
 
-Ref< Entity > GroupEntity::getFirstEntityOf(const Type& entityType) const
+Ref< Entity > GroupEntity::getFirstEntityOf(const TypeInfo& entityType) const
 {
 	for (RefArray< Entity >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
-		if (is_type_of(entityType, (*i)->getType()))
+		if (is_type_of(entityType, type_of(*i)))
 			return *i;
 	}
 	return 0;
 }
 
-int GroupEntity::getEntitiesOfRecursive(const Type& entityType, RefArray< Entity >& outEntities) const
+int GroupEntity::getEntitiesOfRecursive(const TypeInfo& entityType, RefArray< Entity >& outEntities) const
 {
 	getEntitiesOf(entityType, outEntities);
 
@@ -98,7 +98,7 @@ int GroupEntity::getEntitiesOfRecursive(const Type& entityType, RefArray< Entity
 	return int(outEntities.size());
 }
 
-Ref< Entity > GroupEntity::getFirstEntityOfRecursive(const Type& entityType) const
+Ref< Entity > GroupEntity::getFirstEntityOfRecursive(const TypeInfo& entityType) const
 {
 	Ref< Entity > entity = getFirstEntityOf(entityType);
 	if (!entity)

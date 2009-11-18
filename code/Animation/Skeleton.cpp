@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDITABLE_CLASS(L"traktor.animation.Skeleton", Skeleton, Serializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Skeleton", Skeleton, ISerializable)
 
 uint32_t Skeleton::addBone(Bone* bone)
 {
@@ -37,7 +37,7 @@ bool Skeleton::findBone(const std::wstring& name, uint32_t& outIndex) const
 	return false;
 }
 
-bool Skeleton::serialize(Serializer& s)
+bool Skeleton::serialize(ISerializer& s)
 {
 	return s >> MemberRefArray< Bone >(L"bones", m_bones);
 }

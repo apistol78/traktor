@@ -24,10 +24,10 @@ namespace traktor
 		namespace
 		{
 
-class LogListTarget : public LogTarget
+class LogListTarget : public ILogTarget
 {
 public:
-	LogListTarget(ui::custom::LogList* logList, ui::custom::LogList::LogLevel logLevel, LogTarget* previousTarget)
+	LogListTarget(ui::custom::LogList* logList, ui::custom::LogList::LogLevel logLevel, ILogTarget* previousTarget)
 	:	m_logList(logList)
 	,	m_logLevel(logLevel)
 	,	m_previousTarget(previousTarget)
@@ -44,7 +44,7 @@ public:
 private:
 	Ref< ui::custom::LogList > m_logList;
 	ui::custom::LogList::LogLevel m_logLevel;
-	LogTarget* m_previousTarget;
+	ILogTarget* m_previousTarget;
 };
 
 		}
@@ -53,52 +53,52 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.LogView", LogView, ui::Container)
 
 bool LogView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"*,100%", 0, 0)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
-	m_toolToggleInfo = gc_new< ui::custom::ToolBarButton >(
+	m_toolToggleInfo = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_INFO"),
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		0,
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
-	m_toolToggleWarning = gc_new< ui::custom::ToolBarButton >(
+	m_toolToggleWarning = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_WARNING"),
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		1,
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
-	m_toolToggleError = gc_new< ui::custom::ToolBarButton >(
+	m_toolToggleError = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_ERROR"),
 		ui::Command(L"Editor.Log.ToggleLevel"),
 		2,
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
-	m_toolFilter = gc_new< ui::custom::ToolBar >();
+	m_toolFilter = new ui::custom::ToolBar();
 	m_toolFilter->create(this);
 	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceLogFilter, sizeof(c_ResourceLogFilter), L"png"), 3);
 	m_toolFilter->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 10);
 	m_toolFilter->addItem(m_toolToggleInfo);
 	m_toolFilter->addItem(m_toolToggleWarning);
 	m_toolFilter->addItem(m_toolToggleError);
-	m_toolFilter->addItem(gc_new< ui::custom::ToolBarSeparator >());
-	m_toolFilter->addItem(gc_new< ui::custom::ToolBarButton >(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Log.Copy"), 7));
+	m_toolFilter->addItem(new ui::custom::ToolBarSeparator());
+	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Log.Copy"), 7));
 
 	m_toolFilter->addClickEventHandler(ui::createMethodHandler(this, &LogView::eventToolClick));
 
-	m_log = gc_new< ui::custom::LogList >();
+	m_log = new ui::custom::LogList();
 	m_log->create(this, ui::WsNone);
 	m_log->addButtonDownEventHandler(ui::createMethodHandler(this, &LogView::eventButtonDown));
 
-	m_popup = gc_new< ui::PopupMenu >();
+	m_popup = new ui::PopupMenu();
 	m_popup->create();
-	m_popup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Log.Copy"), i18n::Text(L"LOG_COPY")));
-	m_popup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Log.CopyFiltered"), i18n::Text(L"LOG_COPY_FILTERED")));
-	m_popup->add(gc_new< ui::MenuItem >(L"-"));
-	m_popup->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Log.Clear"), i18n::Text(L"LOG_CLEAR_ALL")));
+	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Copy"), i18n::Text(L"LOG_COPY")));
+	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.CopyFiltered"), i18n::Text(L"LOG_COPY_FILTERED")));
+	m_popup->add(new ui::MenuItem(L"-"));
+	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Clear"), i18n::Text(L"LOG_CLEAR_ALL")));
 
 	m_originalTargets[0] = log::info   .getBuffer().getTarget();
 	m_originalTargets[1] = log::warning.getBuffer().getTarget();

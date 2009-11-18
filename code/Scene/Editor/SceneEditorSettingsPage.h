@@ -1,7 +1,6 @@
 #ifndef traktor_scene_SceneEditorSettingsPage_H
 #define traktor_scene_SceneEditorSettingsPage_H
 
-#include "Core/Heap/Ref.h"
 #include "Editor/ISettingsPage.h"
 
 // import/export mechanism.
@@ -29,7 +28,7 @@ class CheckBox;
  */
 class SceneEditorSettingsPage : public editor::ISettingsPage
 {
-	T_RTTI_CLASS(SceneEditorSettingsPage)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(ui::Container* parent, editor::Settings* settings, const std::list< ui::Command >& shortcutCommands);

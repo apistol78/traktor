@@ -1,6 +1,5 @@
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -36,7 +35,7 @@ FlashEdit::FlashEdit(
 
 Ref< FlashCharacterInstance > FlashEdit::createInstance(ActionContext* context, FlashCharacterInstance* parent) const
 {
-	return gc_new< FlashEditInstance >(context, parent, this, cref(m_initialText));
+	return new FlashEditInstance(context, parent, this, m_initialText);
 }
 
 uint16_t FlashEdit::getFontId() const

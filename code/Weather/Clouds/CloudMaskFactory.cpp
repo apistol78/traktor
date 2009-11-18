@@ -3,7 +3,7 @@
 #include "Weather/Clouds/CloudMask.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 
 namespace traktor
@@ -18,9 +18,9 @@ CloudMaskFactory::CloudMaskFactory(db::Database* db)
 {
 }
 
-const TypeSet CloudMaskFactory::getResourceTypes() const
+const TypeInfoSet CloudMaskFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< CloudMask >());
 	return typeSet;
 }
@@ -30,7 +30,7 @@ bool CloudMaskFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -40,13 +40,13 @@ Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManag
 	if (!resource)
 		return 0;
 
-	Ref< Stream > stream = instance->readData(L"Data");
+	Ref< IStream > stream = instance->readData(L"Data");
 	if (!stream)
 		return 0;
 
 	int32_t size = resource->getSize();
 
-	Ref< CloudMask > mask = gc_new< CloudMask >(size);
+	Ref< CloudMask > mask = new CloudMask(size);
 	Reader(stream).read(mask->m_data.ptr(), size * size, sizeof(CloudMask::Sample));
 	stream->close();
 

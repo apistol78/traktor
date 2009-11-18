@@ -31,7 +31,7 @@ class IEditor;
  */
 class T_DLLCLASS IEditorTool : public Object
 {
-	T_RTTI_CLASS(IEditorTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getDescription() const = 0;

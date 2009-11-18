@@ -1,5 +1,5 @@
 #include "Database/Remote/Messages/MsgStringArrayResult.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.MsgStringArrayResult", MsgStringArrayResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgStringArrayResult", MsgStringArrayResult, IMessage)
 
 MsgStringArrayResult::MsgStringArrayResult()
 {
@@ -33,7 +33,7 @@ const std::wstring& MsgStringArrayResult::get(uint32_t index) const
 	return m_values[index];
 }
 
-bool MsgStringArrayResult::serialize(Serializer& s)
+bool MsgStringArrayResult::serialize(ISerializer& s)
 {
 	return s >> MemberStlVector< std::wstring >(L"handles", m_values);
 }

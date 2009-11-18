@@ -75,7 +75,7 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
-	m_renderWidget = gc_new< ui::Widget >();
+	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(parent, ui::WsNone);
 	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventMouseDown));
 	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventMouseUp));
@@ -83,17 +83,17 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventPaint));
 
-	m_boneMenu = gc_new< ui::PopupMenu >();
+	m_boneMenu = new ui::PopupMenu();
 	m_boneMenu->create();
-	m_boneMenu->add(gc_new< ui::MenuItem >(ui::Command(L"Skeleton.Editor.AddBone"), i18n::Text(L"SKELETON_EDITOR_ADD_BONE")));
-	m_boneMenu->add(gc_new< ui::MenuItem >(ui::Command(L"Editor.Delete"), i18n::Text(L"SKELETON_EDITOR_DELETE_BONE")));
+	m_boneMenu->add(new ui::MenuItem(ui::Command(L"Skeleton.Editor.AddBone"), i18n::Text(L"SKELETON_EDITOR_ADD_BONE")));
+	m_boneMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SKELETON_EDITOR_DELETE_BONE")));
 
 	// Create skeleton panel.
-	m_skeletonPanel = gc_new< ui::Container >();
-	m_skeletonPanel->create(parent, ui::WsNone, gc_new< ui::TableLayout >(L"100%", L"100%", 0, 0));
+	m_skeletonPanel = new ui::Container();
+	m_skeletonPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
 	m_skeletonPanel->setText(i18n::Text(L"SKELETON_EDITOR_SKELETON"));
 
-	m_treeSkeleton = gc_new< ui::TreeView >();
+	m_treeSkeleton = new ui::TreeView();
 	m_treeSkeleton->create(m_skeletonPanel, ui::TreeView::WsDefault & ~ui::WsClientBorder);
 	m_treeSkeleton->addImage(ui::Bitmap::load(c_ResourceBones, sizeof(c_ResourceBones), L"png"), 2);
 	m_treeSkeleton->addButtonDownEventHandler(ui::createMethodHandler(this, &SkeletonEditorPage::eventTreeButtonDown));
@@ -116,20 +116,20 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	Ref< editor::IProject > project = m_editor->getProject();
 	Ref< db::Database > database = project->getOutputDatabase();
 
-	m_resourceManager = gc_new< resource::ResourceManager >();
+	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		gc_new< render::TextureFactory >(database, renderSystem)
+		new render::TextureFactory(database, renderSystem)
 	);
 	m_resourceManager->addFactory(
-		gc_new< render::ShaderFactory >(database, renderSystem)
+		new render::ShaderFactory(database, renderSystem)
 	);
 
-	m_primitiveRenderer = gc_new< render::PrimitiveRenderer >();
+	m_primitiveRenderer = new render::PrimitiveRenderer();
 	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
 		return false;
 
 	m_renderWidget->startTimer(30);
-	m_undoStack = gc_new< editor::UndoStack >();
+	m_undoStack = new editor::UndoStack();
 
 	return true;
 }
@@ -260,7 +260,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		Ref< Bone > parentBone = selectedTreeItem->getData< Bone >(L"BONE");
 
-		Ref< Bone > bone = gc_new< Bone >();
+		Ref< Bone > bone = new Bone();
 		bone->setName(L"Bone");
 		bone->setParent(parentBone ? findIndexOfBone(m_skeleton, parentBone) : -1);
 		m_skeleton->addBone(bone);

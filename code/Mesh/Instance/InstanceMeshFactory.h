@@ -1,7 +1,6 @@
 #ifndef traktor_mesh_InstanceMeshFactory_H
 #define traktor_mesh_InstanceMeshFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
@@ -34,16 +33,16 @@ class MeshFactory;
 
 class T_DLLCLASS InstanceMeshFactory : public resource::IResourceFactory
 {
-	T_RTTI_CLASS(InstanceMeshFactory)
+	T_RTTI_CLASS;
 
 public:
 	InstanceMeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
 
-	virtual const TypeSet getResourceTypes() const;
+	virtual const TypeInfoSet getResourceTypes() const;
 
 	virtual bool isCacheable() const;
 
-	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid);
+	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
 	Ref< db::Database > m_database;

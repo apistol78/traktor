@@ -6,15 +6,14 @@
 #include "Terrain/EntityRenderer.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::ISceneEditorProfile)
 
 void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
@@ -37,8 +36,8 @@ void TerrainEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(gc_new< HeightfieldFactory >(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(gc_new< MaterialMaskFactory >(context->getResourceDatabase()));
+	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new MaterialMaskFactory(context->getResourceDatabase()));
 }
 
 void TerrainEditorProfile::createEntityFactories(
@@ -46,7 +45,7 @@ void TerrainEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(gc_new< EntityFactory >(
+	outEntityFactories.push_back(new EntityFactory(
 		context->getResourceManager(),
 		context->getRenderSystem()
 	));
@@ -59,7 +58,7 @@ void TerrainEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(gc_new< EntityRenderer >());
+	outEntityRenderers.push_back(new EntityRenderer());
 }
 
 void TerrainEditorProfile::createControllerEditorFactories(
@@ -74,7 +73,7 @@ void TerrainEditorProfile::createEntityEditorFactories(
 	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(gc_new< TerrainEntityEditorFactory >());
+	outEntityEditorFactories.push_back(new TerrainEntityEditorFactory());
 }
 
 	}

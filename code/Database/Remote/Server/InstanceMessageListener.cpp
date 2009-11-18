@@ -22,7 +22,7 @@
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
 #include "Database/Remote/Messages/DbmWriteObjectResult.h"
 #include "Database/Provider/IProviderInstance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 namespace traktor
 {
@@ -193,8 +193,8 @@ bool InstanceMessageListener::messageReadObject(const DbmReadObject* message)
 		return true;
 	}
 
-	const Type* serializerType = 0;
-	Ref< Stream > objectStream = instance->readObject(serializerType);
+	const TypeInfo* serializerType = 0;
+	Ref< IStream > objectStream = instance->readObject(serializerType);
 	if (!objectStream || !serializerType)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -216,8 +216,8 @@ bool InstanceMessageListener::messageWriteObject(const DbmWriteObject* message)
 		return true;
 	}
 
-	const Type* serializerType = 0;
-	Ref< Stream > objectStream = instance->writeObject(message->getPrimaryTypeName(), serializerType);
+	const TypeInfo* serializerType = 0;
+	Ref< IStream > objectStream = instance->writeObject(message->getPrimaryTypeName(), serializerType);
 	if (!objectStream || !serializerType)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -256,7 +256,7 @@ bool InstanceMessageListener::messageReadData(const DbmReadData* message)
 		return true;
 	}
 
-	Ref< Stream > dataStream = instance->readData(message->getName());
+	Ref< IStream > dataStream = instance->readData(message->getName());
 	if (!dataStream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
@@ -278,7 +278,7 @@ bool InstanceMessageListener::messageWriteData(const DbmWriteData* message)
 		return true;
 	}
 
-	Ref< Stream > dataStream = instance->writeData(message->getName());
+	Ref< IStream > dataStream = instance->writeData(message->getName());
 	if (!dataStream)
 	{
 		m_connection->sendReply(MsgStatus(StFailure));

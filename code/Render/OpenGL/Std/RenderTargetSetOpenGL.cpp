@@ -1,7 +1,6 @@
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -38,7 +37,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTextures.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTextures[i] = gc_new< RenderTargetOpenGL >(m_context);
+		m_colorTextures[i] = new RenderTargetOpenGL(m_context);
 		if (!m_colorTextures[i]->create(desc, desc.targets[i], m_depthBuffer))
 			return false;
 	}

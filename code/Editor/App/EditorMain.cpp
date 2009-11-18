@@ -6,18 +6,9 @@
 #include "Editor/App/EditorForm.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/Split.h"
-#include "Core/Heap/Heap.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Log/Log.h"
-
-#include "Core/Timer/Profiler.h"
-#if defined(T_PROFILER_ENABLE)
-#	include "Core/Io/FileSystem.h"
-#	include "Core/Io/Stream.h"
-#	include "Core/Io/FileOutputStream.h"
-#	include "Core/Io/Utf8Encoding.h"
-#endif
 
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
@@ -95,22 +86,5 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	}
 
 	ui::Application::getInstance().finalize();
-	
-#if defined(T_PROFILER_ENABLE)
-	Ref< Stream> stream = FileSystem::getInstance().open(L"Profile.xml", File::FmWrite);
-	if (stream)
-	{
-		FileOutputStream adapter(stream, gc_new< Utf8Encoding >());
-		Profiler::getInstance().report(adapter);
-		stream->close();
-	}
-	else
-	{
-		traktor::log::warning << L"Unable to save profile report" << Endl;
-		Profiler::getInstance().report(traktor::log::info);
-	}
-#endif
-
-	//Heap::getInstance().collectAll();
 	return 0;
 }

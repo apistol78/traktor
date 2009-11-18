@@ -1,7 +1,7 @@
 #ifndef traktor_render_SHCoeffs_H
 #define traktor_render_SHCoeffs_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,9 +21,9 @@ class SHMatrix;
 /*! \brief Spherical harmonics coefficients.
  * \ingroup Render
  */
-class T_DLLCLASS SHCoeffs : public Serializable
+class T_DLLCLASS SHCoeffs : public ISerializable
 {
-	T_RTTI_CLASS(SHCoeffs)
+	T_RTTI_CLASS;
 
 public:
 	void resize(uint32_t coefficientCount);
@@ -40,7 +40,7 @@ public:
 
 	const std::vector< float >& get() const { return m_coefficients; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< float > m_coefficients;

@@ -24,7 +24,7 @@ class TreeViewItem;
  */
 class T_DLLCLASS TreeViewDragEvent : public Event
 {
-	T_RTTI_CLASS(TreeViewDragEvent)
+	T_RTTI_CLASS;
 	
 public:
 	enum DragMoment

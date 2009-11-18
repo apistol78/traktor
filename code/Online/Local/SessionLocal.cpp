@@ -32,7 +32,7 @@ bool SessionLocal::getAvailableAchievements(RefArray< IAchievement >& outAchieve
 	return true;
 }
 
-Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, Serializable* attachment)
+Ref< ISaveGame > SessionLocal::createSaveGame(const std::wstring& name, ISerializable* attachment)
 {
 	return 0;
 }

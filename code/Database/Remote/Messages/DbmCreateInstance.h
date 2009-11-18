@@ -14,7 +14,7 @@ namespace traktor
  */
 class DbmCreateInstance : public IMessage
 {
-	T_RTTI_CLASS(DbmCreateInstance)
+	T_RTTI_CLASS;
 
 public:
 	DbmCreateInstance(uint32_t handle = 0, const std::wstring& name = L"", const Guid& guid = Guid());
@@ -25,7 +25,7 @@ public:
 
 	const Guid& getGuid() const { return m_guid; }
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

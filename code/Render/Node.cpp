@@ -1,7 +1,7 @@
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Node", Node, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.Node", Node, ISerializable)
 
 Node::Node()
 :	m_position(0, 0)
@@ -69,7 +69,7 @@ Ref< const OutputPin > Node::findOutputPin(const std::wstring& name) const
 	return 0;
 }
 
-bool Node::serialize(Serializer& s)
+bool Node::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"comment", m_comment);
 	s >> MemberStlPair< int, int >(L"position", m_position);

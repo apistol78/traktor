@@ -17,7 +17,7 @@ Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* u
 	const std::vector< Guid >& dependencies = unresolvedScript->getDependencies();
 	if (dependencies.empty())
 	{
-		return gc_new< Script >(
+		return new Script(
 			unresolvedScript->getText()
 		);
 	}
@@ -41,16 +41,16 @@ Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* u
 
 	ss << unresolvedScript->getText();
 
-	return gc_new< Script >(ss.str());
+	return new Script(ss.str());
 }
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.script.ScriptPipeline", ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", ScriptPipeline, editor::DefaultPipeline)
 
-TypeSet ScriptPipeline::getAssetTypes() const
+TypeInfoSet ScriptPipeline::getAssetTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Script >());
 	return typeSet;
 }
@@ -58,7 +58,7 @@ TypeSet ScriptPipeline::getAssetTypes() const
 bool ScriptPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -73,7 +73,7 @@ bool ScriptPipeline::buildDependencies(
 
 bool ScriptPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
-	const Serializable* sourceAsset,
+	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const Object* buildParams,
 	const std::wstring& outputPath,

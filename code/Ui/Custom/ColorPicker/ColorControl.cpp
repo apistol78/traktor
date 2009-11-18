@@ -26,7 +26,7 @@ bool ColorControl::create(Widget* parent, int style)
 
 	addPaintEventHandler(createMethodHandler(this, &ColorControl::eventPaint));
 
-	m_preview = gc_new< ui::Bitmap >(c_width, c_height);
+	m_preview = new ui::Bitmap(c_width, c_height);
 	setColor(Color(0, 0, 0));
 
 	return true;

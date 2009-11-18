@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS SocketAddressIPv4 : public SocketAddress
 {
-	T_RTTI_CLASS(SocketAddressIPv4)
+	T_RTTI_CLASS;
 
 public:
 	SocketAddressIPv4();

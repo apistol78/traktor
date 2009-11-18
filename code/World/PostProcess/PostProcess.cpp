@@ -28,7 +28,7 @@ bool PostProcess::create(
 	uint32_t height
 )
 {
-	m_screenRenderer = gc_new< render::ScreenRenderer >();
+	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 

@@ -1,7 +1,6 @@
 #ifndef traktor_weather_WeatherEntityFactory_H
 #define traktor_weather_WeatherEntityFactory_H
 
-#include "Core/Heap/Ref.h"
 #include "World/Entity/IEntityFactory.h"
 
 // import/export mechanism.
@@ -33,12 +32,12 @@ class IRenderSystem;
 
 class T_DLLCLASS WeatherEntityFactory : public world::IEntityFactory
 {
-	T_RTTI_CLASS(WeatherEntityFactory)
+	T_RTTI_CLASS;
 
 public:
 	WeatherEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
-	virtual const TypeSet getEntityTypes() const;
+	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const;
 

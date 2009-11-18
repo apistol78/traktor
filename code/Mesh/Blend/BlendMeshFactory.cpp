@@ -12,7 +12,7 @@
 #include "Render/ITexture.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 
@@ -29,12 +29,12 @@ BlendMeshFactory::BlendMeshFactory(db::Database* db, render::IRenderSystem* rend
 ,	m_meshFactory(meshFactory)
 {
 	if (!m_meshFactory)
-		m_meshFactory = gc_new< render::RenderMeshFactory >(m_renderSystem);
+		m_meshFactory = new render::RenderMeshFactory(m_renderSystem);
 }
 
-const TypeSet BlendMeshFactory::getResourceTypes() const
+const TypeInfoSet BlendMeshFactory::getResourceTypes() const
 {
-	TypeSet typeSet;
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< BlendMesh >());
 	return typeSet;
 }
@@ -44,7 +44,7 @@ bool BlendMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > BlendMeshFactory::create(resource::IResourceManager* resourceManager, const Type& resourceType, const Guid& guid)
+Ref< Object > BlendMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
@@ -60,7 +60,7 @@ Ref< Object > BlendMeshFactory::create(resource::IResourceManager* resourceManag
 		return 0;
 	}
 
-	Ref< Stream > dataStream = instance->readData(L"Data");
+	Ref< IStream > dataStream = instance->readData(L"Data");
 	if (!dataStream)
 	{
 		log::error << L"Blend mesh factory failed; unable to open data stream" << Endl;
@@ -102,7 +102,7 @@ Ref< Object > BlendMeshFactory::create(resource::IResourceManager* resourceManag
 	// Attach materials to parts.
 	const std::vector< BlendMeshResource::Part >& parts = resource->getParts();
 
-	Ref< BlendMesh > blendMesh = gc_new< BlendMesh >();
+	Ref< BlendMesh > blendMesh = new BlendMesh();
 	blendMesh->m_renderSystem = m_renderSystem;
 	blendMesh->m_meshes = meshes;
 	blendMesh->m_vertices = meshVertices;

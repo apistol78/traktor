@@ -1,7 +1,6 @@
 #ifndef traktor_render_HlslContext_H
 #define traktor_render_HlslContext_H
 
-#include "Core/Heap/Ref.h"
 #include "Render/Dx9/HlslEmitter.h"
 #include "Render/Dx9/HlslShader.h"
 #include "Render/Dx9/StateBlockDx9.h"

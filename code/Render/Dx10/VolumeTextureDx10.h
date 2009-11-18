@@ -21,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS VolumeTextureDx10 : public IVolumeTexture
 {
-	T_RTTI_CLASS(VolumeTextureDx10)
+	T_RTTI_CLASS;
 	
 public:
 	virtual void destroy();

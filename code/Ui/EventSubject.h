@@ -4,7 +4,7 @@
 #include <map>
 #include <vector>
 #include "Core/Object.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Enums.h"
 
 // import/export mechanism.
@@ -28,7 +28,7 @@ class Event;
  */
 class T_DLLCLASS EventSubject : public Object
 {
-	T_RTTI_CLASS(EventSubject)
+	T_RTTI_CLASS;
 
 public:
 	void addEventHandler(int eventId, EventHandler* eventHandler);

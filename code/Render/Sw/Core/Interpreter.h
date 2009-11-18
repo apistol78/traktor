@@ -25,7 +25,7 @@ namespace traktor
  */
 class T_DLLCLASS Interpreter : public Processor
 {
-	T_RTTI_CLASS(Interpreter)
+	T_RTTI_CLASS;
 
 public:
 	virtual image_t compile(const IntrProgram& program) const;

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_CORE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,7 +28,7 @@ public:
 
 	MemberBitMask(const std::wstring& name, uint32_t& bm, const Bit* bits);
 
-	virtual bool serialize(Serializer& s) const;
+	virtual bool serialize(ISerializer& s) const;
 
 private:
 	const Bit* m_bits;

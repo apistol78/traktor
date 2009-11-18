@@ -14,7 +14,7 @@ void EntityManager::addEntity(Entity* entity)
 	T_ASSERT_M (entity, L"Cannot add null entity");
 	T_ASSERT_M (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end(), L"Entity already added");
 	
-	const Type& entityType = entity->getType();
+	const TypeInfo& entityType = type_of(entity);
 	if (m_typeRanges.find(&entityType) != m_typeRanges.end())
 	{
 		Range& range = m_typeRanges[&entityType];
@@ -23,7 +23,7 @@ void EntityManager::addEntity(Entity* entity)
 			entity
 		);
 
-		for (std::map< const Type*, Range >::iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
+		for (std::map< const TypeInfo*, Range >::iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
 		{
 			if (i->second.start >= (range.start + range.count))
 				++i->second.start;
@@ -43,7 +43,7 @@ void EntityManager::insertEntity(Entity* entity)
 {
 	T_ASSERT_M (entity, L"Cannot insert null entity");
 
-	const Type& entityType = entity->getType();
+	const TypeInfo& entityType = type_of(entity);
 	if (m_typeRanges.find(&entityType) != m_typeRanges.end())
 	{
 		const Range& range = m_typeRanges[&entityType];
@@ -61,7 +61,7 @@ void EntityManager::removeEntity(Entity* entity)
 {
 	T_ASSERT_M (entity, L"Cannot remove null entity");
 
-	const Type& entityType = entity->getType();
+	const TypeInfo& entityType = type_of(entity);
 	if (m_typeRanges.find(&entityType) != m_typeRanges.end())
 	{
 		Range& range = m_typeRanges[&entityType];
@@ -70,7 +70,7 @@ void EntityManager::removeEntity(Entity* entity)
 			RefArray< Entity >::iterator i = std::find(m_entities.begin() + range.start, m_entities.begin() + range.start + range.count, entity);
 			m_entities.erase(i);
 
-			for (std::map< const Type*, Range >::iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
+			for (std::map< const TypeInfo*, Range >::iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
 			{
 				if (i->second.start >= (range.start + range.count))
 					--i->second.start;
@@ -81,9 +81,9 @@ void EntityManager::removeEntity(Entity* entity)
 	}
 }
 
-uint32_t EntityManager::getEntitiesOf(const Type& entityType, RefArray< Entity >& outEntities) const
+uint32_t EntityManager::getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const
 {
-	for (std::map< const Type*, Range >::const_iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
+	for (std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.begin(); i != m_typeRanges.end(); ++i)
 	{
 		if (is_type_of(entityType, *i->first))
 		{
@@ -94,15 +94,15 @@ uint32_t EntityManager::getEntitiesOf(const Type& entityType, RefArray< Entity >
 	return uint32_t(outEntities.size());
 }
 
-uint32_t EntityManager::getEntityCount(const Type& entityType) const
+uint32_t EntityManager::getEntityCount(const TypeInfo& entityType) const
 {
-	std::map< const Type*, Range >::const_iterator i = m_typeRanges.find(&entityType);
+	std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.find(&entityType);
 	return i != m_typeRanges.end() ? i->second.count : 0UL;
 }
 
-Ref< Entity > EntityManager::getEntity(const Type& entityType, uint32_t index) const
+Ref< Entity > EntityManager::getEntity(const TypeInfo& entityType, uint32_t index) const
 {
-	std::map< const Type*, Range >::const_iterator i = m_typeRanges.find(&entityType);
+	std::map< const TypeInfo*, Range >::const_iterator i = m_typeRanges.find(&entityType);
 	if (i == m_typeRanges.end() || index >= i->second.count)
 		return 0;
 

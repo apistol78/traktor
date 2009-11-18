@@ -2,14 +2,13 @@
 #include <vector>
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Image.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
 	namespace drawing
 	{
 	
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ScaleFilter", ScaleFilter, ImageFilter)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ScaleFilter", ScaleFilter, IImageFilter)
 
 ScaleFilter::ScaleFilter(
 	int32_t width,
@@ -28,7 +27,7 @@ ScaleFilter::ScaleFilter(
 
 Ref< Image > ScaleFilter::apply(const Image* image)
 {
-	Ref< Image > final = gc_new< Image >(image->getPixelFormat(), m_width, m_height, image->getPalette());
+	Ref< Image > final = new Image(image->getPixelFormat(), m_width, m_height, image->getPalette());
 	Color in, out;
 
 	float sx = image->getWidth() / float(m_width);

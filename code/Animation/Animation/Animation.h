@@ -1,7 +1,7 @@
 #ifndef traktor_animation_Animation_H
 #define traktor_animation_Animation_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Animation/Pose.h"
 
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Key framed animation poses.
  * \ingroup Animation
  */
-class T_DLLCLASS Animation : public Serializable
+class T_DLLCLASS Animation : public ISerializable
 {
-	T_RTTI_CLASS(Animation)
+	T_RTTI_CLASS;
 
 public:
 	struct T_DLLCLASS KeyPose
@@ -31,7 +31,7 @@ public:
 		float at;
 		Pose pose;
 
-		bool serialize(Serializer& s);
+		bool serialize(ISerializer& s);
 	};
 
 	/*! \brief Add key pose to animation.
@@ -87,7 +87,7 @@ public:
 	 */
 	bool getPose(float at, Pose& outPose) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	AlignedVector< KeyPose > m_poses;

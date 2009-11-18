@@ -23,7 +23,7 @@ namespace traktor
  */
 class T_DLLCLASS FlashLineStyle : public Object
 {
-	T_RTTI_CLASS(FlashLineStyle)
+	T_RTTI_CLASS;
 
 public:
 	FlashLineStyle();

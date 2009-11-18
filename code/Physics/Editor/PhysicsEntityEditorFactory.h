@@ -12,12 +12,12 @@ namespace traktor
  */
 class PhysicsEntityEditorFactory : public scene::IEntityEditorFactory
 {
-	T_RTTI_CLASS(PhysicsEntityEditorFactory)
+	T_RTTI_CLASS;
 
 public:
-	virtual const TypeSet getEntityDataTypes() const;
+	virtual const TypeInfoSet getEntityDataTypes() const;
 
-	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, const Type& entityDataType) const;
+	virtual Ref< scene::IEntityEditor > createEntityEditor(scene::SceneEditorContext* context, const TypeInfo& entityDataType) const;
 };
 
 	}

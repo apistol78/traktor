@@ -1,5 +1,5 @@
 #include "Render/Dx9/ProgramResourceDx9.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAggregate.h"
 
 namespace traktor
@@ -18,12 +18,12 @@ public:
 	{
 	}
 
-	virtual bool serialize(Serializer& s) const
+	virtual bool serialize(ISerializer& s) const
 	{
 		uint8_t blob[65535];
 		uint32_t blobSize;
 
-		if (s.getDirection() == Serializer::SdRead)
+		if (s.getDirection() == ISerializer::SdRead)
 		{
 			blobSize = sizeof(blob);
 			if (!(s >> Member< void* >(getName(), blob, blobSize)))
@@ -51,7 +51,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.ProgramResourceDx9", ProgramResourceDx9, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx9", ProgramResourceDx9, ProgramResource)
 
 ProgramResourceDx9::ProgramResourceDx9()
 :	m_vertexShaderHash(0)
@@ -59,7 +59,7 @@ ProgramResourceDx9::ProgramResourceDx9()
 {
 }
 
-bool ProgramResourceDx9::serialize(Serializer& s)
+bool ProgramResourceDx9::serialize(ISerializer& s)
 {
 	if (!ProgramResource::serialize(s))
 		return false;

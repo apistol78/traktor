@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS MoveEvent : public Event
 {
-	T_RTTI_CLASS(MoveEvent)
+	T_RTTI_CLASS;
 	
 public:
 	MoveEvent(EventSubject* sender, Object* item, const Point& position);

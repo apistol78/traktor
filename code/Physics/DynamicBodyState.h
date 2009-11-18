@@ -1,7 +1,7 @@
 #ifndef traktor_physics_DynamicBodyState_H
 #define traktor_physics_DynamicBodyState_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 
@@ -21,9 +21,9 @@ namespace traktor
 /*! \brief Dynamic rigid body state.
  * \ingroup Physics
  */
-class T_DLLCLASS DynamicBodyState : public Serializable
+class T_DLLCLASS DynamicBodyState : public ISerializable
 {
-	T_RTTI_CLASS(DynamicBodyState)
+	T_RTTI_CLASS;
 
 public:
 	DynamicBodyState();
@@ -42,7 +42,7 @@ public:
 
 	DynamicBodyState interpolate(const DynamicBodyState& stateTarget, const Scalar& interpolate) const;
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Transform m_transform;

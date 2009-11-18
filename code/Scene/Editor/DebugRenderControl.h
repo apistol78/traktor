@@ -2,7 +2,6 @@
 #define traktor_scene_DebugRenderControl_H
 
 #include "Scene/Editor/ISceneRenderControl.h"
-#include "Core/Heap/Ref.h"
 #include "Ui/Size.h"
 
 namespace traktor
@@ -31,7 +30,7 @@ class SceneEditorContext;
 
 class DebugRenderControl : public ISceneRenderControl
 {
-	T_RTTI_CLASS(DebugRenderControl)
+	T_RTTI_CLASS;
 
 public:
 	DebugRenderControl();

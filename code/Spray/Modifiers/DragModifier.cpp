@@ -1,5 +1,5 @@
 #include "Spray/Modifiers/DragModifier.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 
 namespace traktor
@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.spray.DragModifier", DragModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DragModifier", DragModifier, Modifier)
 
 DragModifier::DragModifier()
 :	m_linearDrag(0.0f)
@@ -24,7 +24,7 @@ void DragModifier::update(const Scalar& deltaTime, const Transform& transform, P
 	}
 }
 
-bool DragModifier::serialize(Serializer& s)
+bool DragModifier::serialize(ISerializer& s)
 {
 	s >> Member< Scalar >(L"linearDrag", m_linearDrag);
 	s >> Member< float >(L"angularDrag", m_angularDrag);

@@ -2,14 +2,14 @@
 #define traktor_ui_custom_AutoPropertyList_H
 
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,14 +24,14 @@ namespace traktor
  */
 class T_DLLCLASS AutoPropertyList : public PropertyList
 {
-	T_RTTI_CLASS(AutoPropertyList)
+	T_RTTI_CLASS;
 	
 public:
-	bool bind(Serializable* object, Serializable* outer);
+	bool bind(ISerializable* object, ISerializable* outer);
 
 	bool refresh();
 
-	bool refresh(PropertyItem* parent, Serializable* object);
+	bool refresh(PropertyItem* parent, ISerializable* object);
 
 	bool apply();
 
@@ -39,11 +39,11 @@ public:
 	 *
 	 * Use this method when adding an object to an array item.
 	 */
-	bool addObject(PropertyItem* parent, Serializable* object);
+	bool addObject(PropertyItem* parent, ISerializable* object);
 	
 private:
-	Ref< Serializable > m_object;
-	Ref< Serializable > m_outer;
+	Ref< ISerializable > m_object;
+	Ref< ISerializable > m_outer;
 };
 		
 		}

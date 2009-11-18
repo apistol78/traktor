@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Database/Local/LocalBus.h"
-#include "Core/Serialization/Serializable.h"
-#include "Core/Serialization/Serializer.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -10,8 +10,8 @@
 #include "Core/Thread/Acquire.h"
 //#include "Core/Io/FileSystem.h"
 #include "Core/System/OS.h"
-#include "Core/System/SharedMemory.h"
-#include "Core/Io/Stream.h"
+#include "Core/System/ISharedMemory.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -45,9 +45,9 @@ const MemberProviderEvent::Key MemberProviderEvent::ms_keys[] =
 	0
 };
 
-class EventLog : public Serializable
+class EventLog : public ISerializable
 {
-	T_RTTI_CLASS(EventLog)
+	T_RTTI_CLASS;
 
 public:
 	struct Entry
@@ -56,7 +56,7 @@ public:
 		ProviderEvent event;
 		Guid eventId;
 
-		bool serialize(Serializer& s)
+		bool serialize(ISerializer& s)
 		{
 			s >> Member< Guid >(L"sender", sender);
 			s >> MemberProviderEvent(L"event", event);
@@ -89,7 +89,7 @@ public:
 		return m_pending[localGuid];
 	}
 
-	virtual bool serialize(Serializer& s)
+	virtual bool serialize(ISerializer& s)
 	{
 		return s >> MemberStlMap<
 			Guid,
@@ -110,7 +110,7 @@ private:
 	std::map< Guid, std::list< Entry > > m_pending;
 };
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.db.EventLog", EventLog, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EventLog", EventLog, ISerializable)
 
 		}
 
@@ -122,7 +122,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 {
 	Acquire< Mutex > _lock_(m_globalLock);
 	Ref< EventLog > eventLog;
-	Ref< Stream > eventFile;
+	Ref< IStream > eventFile;
 
 	// Create our shared memory object.
 	m_shm = OS::getInstance().createSharedMemory(eventFileName, 4UL * 1024 * 1024);
@@ -140,7 +140,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 	}
 
 	if (!eventLog)
-		eventLog = gc_new< EventLog >();
+		eventLog = new EventLog();
 
 	// Register ourself with log.
 	eventLog->registerPeer(m_localGuid);
@@ -165,14 +165,14 @@ void LocalBus::close()
 
 	// Read change log.
 	Ref< EventLog > eventLog;
-	Ref< Stream > eventFile = m_shm->read();
+	Ref< IStream > eventFile = m_shm->read();
 	if (eventFile)
 	{
 		eventLog = BinarySerializer(eventFile).readObject< EventLog >();
 		eventFile->close();
 	}
 	else
-		eventLog = gc_new< EventLog >();
+		eventLog = new EventLog();
 
 	// Remove ourself from log.
 	eventLog->unregisterPeer(m_localGuid);
@@ -192,14 +192,14 @@ bool LocalBus::putEvent(ProviderEvent event, const Guid& eventId)
 
 	// Read change log.
 	Ref< EventLog > eventLog;
-	Ref< Stream > eventFile = m_shm->read();
+	Ref< IStream > eventFile = m_shm->read();
 	if (eventFile)
 	{
 		eventLog = BinarySerializer(eventFile).readObject< EventLog >();
 		eventFile->close();
 	}
 	else
-		eventLog = gc_new< EventLog >();
+		eventLog = new EventLog();
 
 	// Add change to log.
 	eventLog->addEvent(m_localGuid, event, eventId);
@@ -230,7 +230,7 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	// Read events from global log.
 	Acquire< Mutex > _lock_(m_globalLock);
 
-	Ref< Stream > eventFile = m_shm->read();
+	Ref< IStream > eventFile = m_shm->read();
 	if (!eventFile)
 		return false;
 	

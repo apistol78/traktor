@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechn
 
 ShaderGraphTechniques::ShaderGraphTechniques(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(gc_new< ShaderGraphAdjacency >(shaderGraph))
+,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 {
 }
 
@@ -36,7 +36,7 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 
 Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
-	Ref< ShaderGraph > shaderGraph = gc_new< ShaderGraph >();
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph();
 	std::stack< Ref< Node > > nodeStack;
 	std::set< Ref< Node > > nodeVisited;
 

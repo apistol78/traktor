@@ -23,7 +23,7 @@ Url FileConnection::getUrl() const
 	return m_url;
 }
 
-Ref< Stream > FileConnection::getStream()
+Ref< IStream > FileConnection::getStream()
 {
 	return m_stream;
 }

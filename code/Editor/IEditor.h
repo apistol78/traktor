@@ -4,15 +4,14 @@
 #include <set>
 #include <vector>
 #include "Core/Config.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 
 namespace traktor
 {
 
-class Type;
+class TypeInfo;
 class Guid;
-class Serializable;
+class ISerializable;
 
 	namespace db
 	{
@@ -57,7 +56,7 @@ public:
 	virtual Ref< render::IRenderSystem > getRenderSystem() = 0;
 
 	/*! \brief Browse for rtti type. */
-	virtual const Type* browseType(const Type* base = 0) = 0;
+	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
 
 	/*! \brief Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = 0) = 0;
@@ -87,7 +86,7 @@ public:
 	 * \param outDependencies Set of dependency asset guid;s.
 	 * \return True if successful.
 	 */
-	virtual bool buildAssetDependencies(const Serializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies) = 0;
+	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies) = 0;
 };
 
 	}

@@ -16,7 +16,7 @@
 #endif
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.render.RenderSystemOpenGLES2", RenderSystemOpenGLES2, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES2", RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
 #if defined(T_OPENGL_ES2_HAVE_EGL)
@@ -61,7 +61,7 @@ bool RenderSystemOpenGLES2::create()
 	RegisterClass(&wc);
 #endif
 
-	m_globalContext = gc_new< ContextOpenGLES2 >();
+	m_globalContext = new ContextOpenGLES2();
 	return true;
 }
 
@@ -156,7 +156,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, c
 	if (!wrapper->create(windowHandle, desc.depthBits != 0))
 		return 0;
 		
-	return gc_new< RenderViewOpenGLES2 >(m_globalContext, wrapper);
+	return new RenderViewOpenGLES2(m_globalContext, wrapper);
 #	elif defined(T_OPENGL_ES2_HAVE_EGL)
 	const uint32_t c_maxConfigAttrSize = 32;
 	const uint32_t c_maxMatchConfigs = 64;
@@ -234,7 +234,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, c
 	if (!eglMakeCurrent(m_display, m_surface, m_surface, m_context))
 		return 0;
 
-	return gc_new< RenderViewOpenGLES2 >(m_globalContext, m_display, m_context, m_surface);
+	return new RenderViewOpenGLES2(m_globalContext, m_display, m_context, m_surface);
 #	else
 	return 0;
 #	endif
@@ -245,17 +245,17 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, c
 
 Ref< VertexBuffer > RenderSystemOpenGLES2::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< VertexBufferOpenGLES2 >(m_globalContext, cref(vertexElements), bufferSize, dynamic);
+	return new VertexBufferOpenGLES2(m_globalContext, vertexElements, bufferSize, dynamic);
 }
 
 Ref< IndexBuffer > RenderSystemOpenGLES2::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	return gc_new< IndexBufferOpenGLES2 >(m_globalContext, indexType, bufferSize, dynamic);
+	return new IndexBufferOpenGLES2(m_globalContext, indexType, bufferSize, dynamic);
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureOpenGLES2 > texture = gc_new< SimpleTextureOpenGLES2 >(m_globalContext);
+	Ref< SimpleTextureOpenGLES2 > texture = new SimpleTextureOpenGLES2(m_globalContext);
 	if (texture->create(desc))
 		return texture;
 	else
@@ -275,7 +275,7 @@ Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTex
 Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
-	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = gc_new< RenderTargetSetOpenGLES2 >(m_globalContext);
+	Ref< RenderTargetSetOpenGLES2 > renderTargetSet = new RenderTargetSetOpenGLES2(m_globalContext);
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
 	else
@@ -300,7 +300,7 @@ Ref< ProgramResource > RenderSystemOpenGLES2::compileProgram(const ShaderGraph* 
 
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
-	Ref< ProgramOpenGLES2 > program = gc_new< ProgramOpenGLES2 >(m_globalContext);
+	Ref< ProgramOpenGLES2 > program = new ProgramOpenGLES2(m_globalContext);
 	if (!program->create(programResource))
 		return 0;
 

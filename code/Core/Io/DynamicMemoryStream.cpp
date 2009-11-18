@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.DynamicMemoryStream", DynamicMemoryStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.DynamicMemoryStream", DynamicMemoryStream, IStream)
 
 DynamicMemoryStream::DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed, bool writeAllowed)
 :	m_buffer(buffer)

@@ -4,8 +4,7 @@
 #include <set>
 #include "Core/Guid.h"
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
@@ -19,7 +18,7 @@
 namespace traktor
 {
 
-class Serializable;
+class ISerializable;
 
 	namespace editor
 	{
@@ -34,7 +33,7 @@ class IPipeline;
  */
 class T_DLLCLASS PipelineDependency : public Object
 {
-	T_RTTI_CLASS(PipelineDependency)
+	T_RTTI_CLASS;
 
 public:
 	PipelineDependency();
@@ -42,7 +41,7 @@ public:
 	std::wstring name;							/*!< Name of output dependency. */
 	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
 	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
-	Ref< const Serializable > sourceAsset;		/*!< Source asset. */
+	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
 	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */

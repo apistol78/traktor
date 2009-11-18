@@ -1,7 +1,6 @@
 #ifndef traktor_animation_IKPoseControllerData_H
 #define traktor_animation_IKPoseControllerData_H
 
-#include "Core/Heap/Ref.h"
 #include "Animation/IPoseControllerData.h"
 
 // import/export mechanism.
@@ -22,7 +21,7 @@ namespace traktor
  */
 class T_DLLCLASS IKPoseControllerData : public IPoseControllerData
 {
-	T_RTTI_CLASS(IKPoseControllerData)
+	T_RTTI_CLASS;
 
 public:
 	IKPoseControllerData();
@@ -34,7 +33,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< IPoseControllerData > m_neutralPoseController;

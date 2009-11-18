@@ -22,7 +22,7 @@ namespace traktor
  */
 class T_DLLCLASS NormalizationFilter : public IFilter
 {
-	T_RTTI_CLASS(NormalizationFilter)
+	T_RTTI_CLASS;
 
 public:
 	NormalizationFilter(float targetEnergy = 1.0f, float energyThreshold = 0.2f, float attackRate = 0.1f);

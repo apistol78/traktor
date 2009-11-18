@@ -1,7 +1,6 @@
 #ifndef traktor_ui_custom_ColorDialog_H
 #define traktor_ui_custom_ColorDialog_H
 
-#include "Core/Heap/Ref.h"
 #include "Ui/ConfigDialog.h"
 
 // import/export mechanism.
@@ -34,7 +33,7 @@ struct AlphaGradient;
  */
 class T_DLLCLASS ColorDialog : public ConfigDialog
 {
-	T_RTTI_CLASS(ColorDialog)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

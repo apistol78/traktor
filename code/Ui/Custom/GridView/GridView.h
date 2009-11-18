@@ -1,8 +1,7 @@
 #ifndef traktor_ui_GridView_H
 #define traktor_ui_GridView_H
 
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Ui/Widget.h"
 
 // import/export mechanism.
@@ -32,7 +31,7 @@ class GridRow;
  */
 class T_DLLCLASS GridView : public Widget
 {
-	T_RTTI_CLASS(GridView)
+	T_RTTI_CLASS;
 
 public:
 	enum StyleFlags

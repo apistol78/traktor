@@ -2,8 +2,7 @@
 #define traktor_input_InputSystem_H
 
 #include "Core/Object.h"
-#include "Core/Heap/Ref.h"
-#include "Core/Heap/RefArray.h"
+#include "Core/RefArray.h"
 #include "Input/InputTypes.h"
 
 // import/export mechanism.
@@ -27,7 +26,7 @@ class IInputDevice;
  */
 class T_DLLCLASS InputSystem : public Object
 {
-	T_RTTI_CLASS(InputSystem)
+	T_RTTI_CLASS;
 
 public:
 	void addDriver(IInputDriver* inputDriver);

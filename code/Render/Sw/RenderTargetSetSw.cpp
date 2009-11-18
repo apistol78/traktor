@@ -1,7 +1,6 @@
 #include "Render/Sw/RenderTargetSetSw.h"
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Types.h"
-#include "Core/Heap/GcNew.h"
 
 namespace traktor
 {
@@ -27,7 +26,7 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 	m_colorTargets.resize(desc.count);
 	for (int i = 0; i < desc.count; ++i)
 	{
-		m_colorTargets[i] = gc_new< RenderTargetSw >();
+		m_colorTargets[i] = new RenderTargetSw();
 		if (!m_colorTargets[i]->create(desc, desc.targets[i]))
 			return false;
 	}

@@ -1,7 +1,7 @@
 #ifndef traktor_db_LocalFileLink_H
 #define traktor_db_LocalFileLink_H
 
-#include "Core/Serialization/Serializable.h"
+#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -11,12 +11,12 @@ namespace traktor
 /*! \brief Virtual file link.
  * \ingroup Database
  */
-class LocalFileLink : public Serializable
+class LocalFileLink : public ISerializable
 {
-	T_RTTI_CLASS(LocalFileLink)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(Serializer& s);
+	virtual bool serialize(ISerializer& s);
 
 	inline const std::wstring& getPath() const { return m_path; }
 
