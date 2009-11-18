@@ -121,7 +121,7 @@ void ShortcutsSettingsPage::updateShortcutGrid()
 			if (key.first & ui::KsShift)
 				keyDesc = keyDesc.empty() ? L"Shift" : keyDesc + L"+Shift";
 
-			std::wstring keyName = ui::Application::getInstance().translateVirtualKey(key.second);
+			std::wstring keyName = ui::Application::getInstance()->translateVirtualKey(key.second);
 			keyDesc = keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 
 			items[1]->setText(keyDesc);

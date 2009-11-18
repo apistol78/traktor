@@ -15,7 +15,7 @@ bool Slider::create(Widget* parent, int style)
 	if (!parent)
 		return false;
 
-	ISlider* slider = Application::getInstance().getWidgetFactory()->createSlider(this);
+	ISlider* slider = Application::getInstance()->getWidgetFactory()->createSlider(this);
 	if (!slider)
 	{
 		log::error << L"Failed to create native widget peer (Slider)" << Endl;

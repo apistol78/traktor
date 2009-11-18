@@ -127,7 +127,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &ScenePreviewControl::eventIdle);
-	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
+	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
 
 	m_timer.start();
 	return true;
@@ -138,7 +138,7 @@ void ScenePreviewControl::destroy()
 	// Remove our idle handler first.
 	if (m_idleHandler)
 	{
-		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
+		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
 		m_idleHandler = 0;
 	}
 

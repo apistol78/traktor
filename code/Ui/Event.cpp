@@ -15,7 +15,7 @@ Event::Event(EventSubject* sender, Object* item)
 ,	m_keyState(WsNone)
 ,	m_consumed(false)
 {
-	m_keyState = Application::getInstance().getEventLoop()->getAsyncKeyState();
+	m_keyState = Application::getInstance()->getEventLoop()->getAsyncKeyState();
 }
 
 Ref< EventSubject > Event::getSender() const

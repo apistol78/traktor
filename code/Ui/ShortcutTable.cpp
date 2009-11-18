@@ -23,7 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ShortcutTable", ShortcutTable, EventSubject)
 bool ShortcutTable::create()
 {
 	m_eventHandler = createMethodHandler(this, &ShortcutTable::eventKeyDown);
-	ui::Application::getInstance().addEventHandler(EiKeyDown, m_eventHandler);
+	ui::Application::getInstance()->addEventHandler(EiKeyDown, m_eventHandler);
 	return true;
 }
 
@@ -31,7 +31,7 @@ void ShortcutTable::destroy()
 {
 	if (m_eventHandler)
 	{
-		ui::Application::getInstance().removeEventHandler(EiKeyDown, m_eventHandler);
+		ui::Application::getInstance()->removeEventHandler(EiKeyDown, m_eventHandler);
 		m_eventHandler = 0;
 	}
 	removeAllCommands();

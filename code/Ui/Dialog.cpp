@@ -19,7 +19,7 @@ Dialog::Dialog()
 
 bool Dialog::create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout)
 {
-	IDialog* dialog = Application::getInstance().getWidgetFactory()->createDialog(this);
+	IDialog* dialog = Application::getInstance()->getWidgetFactory()->createDialog(this);
 	if (!dialog)
 	{
 		log::error << L"Failed to create native widget peer (Dialog)" << Endl;

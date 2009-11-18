@@ -20,6 +20,8 @@ namespace traktor
 class T_DLLCLASS IRefCount
 {
 public:
+	virtual ~IRefCount() {}
+
 	virtual void addRef() const = 0;
 
 	virtual void release() const = 0;
@@ -34,6 +36,11 @@ public:
 	AtomicRefCount()
 	:	m_value(0)
 	{
+	}
+
+	operator int32_t () const
+	{
+		return m_value;
 	}
 
 	int32_t operator ++ ()
@@ -57,8 +64,6 @@ template < typename T >
 class RefCountImpl : public T
 {
 public:
-	virtual ~RefCountImpl() {}
-
 	virtual void addRef() const
 	{
 		++m_refCount;
@@ -66,7 +71,8 @@ public:
 
 	virtual void release() const
 	{
-		if (--m_refCount <= 0)
+		T_ASSERT (m_refCount > 0);
+		if (--m_refCount == 0)
 			delete this;
 	}
 

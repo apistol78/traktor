@@ -15,7 +15,7 @@ bool ComboBox::create(Widget* parent, const std::wstring& text, int style)
 	if (!parent)
 		return false;
 
-	IComboBox* comboBox = Application::getInstance().getWidgetFactory()->createComboBox(this);
+	IComboBox* comboBox = Application::getInstance()->getWidgetFactory()->createComboBox(this);
 	if (!comboBox)
 	{
 		log::error << L"Failed to create native widget peer (ComboBox)" << Endl;

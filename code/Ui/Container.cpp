@@ -18,7 +18,7 @@ bool Container::create(Widget* parent, int style, Layout* layout)
 
 	if (!m_widget)
 	{
-		IContainer* container = Application::getInstance().getWidgetFactory()->createContainer(this);
+		IContainer* container = Application::getInstance()->getWidgetFactory()->createContainer(this);
 		if (!container)
 		{
 			log::error << L"Failed to create native widget peer (Container)" << Endl;

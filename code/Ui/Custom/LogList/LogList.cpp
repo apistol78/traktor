@@ -96,7 +96,7 @@ bool LogList::copyLog(uint32_t filter)
 		if ((i->first & filter) != 0)
 			ss << i->second << Endl;
 	}
-	return Application::getInstance().getClipboard()->setText(ss.str());
+	return Application::getInstance()->getClipboard()->setText(ss.str());
 }
 
 Size LogList::getPreferedSize() const

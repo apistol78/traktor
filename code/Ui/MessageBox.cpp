@@ -23,7 +23,7 @@ MessageBox::~MessageBox()
 
 bool MessageBox::create(Widget* parent, const std::wstring& message, const std::wstring& caption, int style)
 {
-	m_messageBox = Application::getInstance().getWidgetFactory()->createMessageBox(this);
+	m_messageBox = Application::getInstance()->getWidgetFactory()->createMessageBox(this);
 	if (!m_messageBox)
 	{
 		log::error << L"Failed to create native widget peer (MessageBox)" << Endl;

@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Form", Form, Container)
 
 bool Form::create(const std::wstring& text, int width, int height, int style, Layout* layout, Widget* parent)
 {
-	IForm* form = Application::getInstance().getWidgetFactory()->createForm(this);
+	IForm* form = Application::getInstance()->getWidgetFactory()->createForm(this);
 	if (!form)
 	{
 		log::error << L"Failed to create native widget peer (Form)" << Endl;

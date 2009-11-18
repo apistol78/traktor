@@ -15,7 +15,7 @@ bool Panel::create(Widget* parent, const std::wstring& text, Layout* layout)
 	if (!parent)
 		return false;
 
-	IPanel* panel = Application::getInstance().getWidgetFactory()->createPanel(this);
+	IPanel* panel = Application::getInstance()->getWidgetFactory()->createPanel(this);
 	if (!panel)
 	{
 		log::error << L"Failed to create native widget peer (Panel)" << Endl;

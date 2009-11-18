@@ -34,7 +34,7 @@ class T_DLLCLASS Application : public EventSubject
 	T_RTTI_CLASS;
 
 public:
-	static Application& getInstance();
+	static Application* getInstance();
 
 	/*! \brief Initialize UI application.
 	 *
@@ -109,7 +109,7 @@ private:
 inline Color getSystemColor(SystemColor systemColor)
 {
 	Color color;
-	Application::getInstance().getWidgetFactory()->getSystemColor(systemColor, color);
+	Application::getInstance()->getWidgetFactory()->getSystemColor(systemColor, color);
 	return color;
 }
 

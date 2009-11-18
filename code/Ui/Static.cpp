@@ -15,7 +15,7 @@ bool Static::create(Widget* parent, const std::wstring& text)
 	if (!parent)
 		return false;
 
-	IStatic* staticText = Application::getInstance().getWidgetFactory()->createStatic(this);
+	IStatic* staticText = Application::getInstance()->getWidgetFactory()->createStatic(this);
 	if (!staticText)
 	{
 		log::error << L"Failed to create native widget peer (Static)" << Endl;
