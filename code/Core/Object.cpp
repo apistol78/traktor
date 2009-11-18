@@ -23,6 +23,12 @@ struct ObjectHeader
 
 #pragma pack()
 
+inline bool isObjectHeapAllocated(void* ptr)
+{
+	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(ptr) - 1;
+	return bool(header->magic == c_magic);
+}
+
 	}
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
@@ -30,8 +36,13 @@ T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 Object::Object()
 :	m_heap(false)
 {
-	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(this) - 1;
-	m_heap = bool(header->magic == c_magic);
+	m_heap = isObjectHeapAllocated(this);
+}
+
+Object::Object(const Object& src)
+:	m_heap(false)
+{
+	m_heap = isObjectHeapAllocated(this);
 }
 
 Object::~Object()
@@ -55,6 +66,12 @@ void Object::release() const
 		if (m_heap)
 			delete this;
 	}
+}
+
+Object& Object::operator = (const Object& rh)
+{
+	// Do not copy m_heap and m_refCount members!
+	return *this;
 }
 
 void* Object::operator new (size_t size)
