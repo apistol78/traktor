@@ -911,19 +911,19 @@ public:
 
 	virtual int getInputPinCount() const;
 
-	virtual Ref< const InputPin > getInputPin(int index) const;
+	virtual const InputPin* getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual Ref< const OutputPin > getOutputPin(int index) const;
+	virtual const OutputPin* getOutputPin(int index) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Branch m_branch;
 	std::vector< int32_t > m_cases;
-	RefArray< InputPin > m_inputPins;
-	Ref< OutputPin > m_outputPin;
+	std::vector< InputPin* > m_inputPins;
+	OutputPin* m_outputPin;
 };
 
 /*! \brief Swizzle elements in a vector. */

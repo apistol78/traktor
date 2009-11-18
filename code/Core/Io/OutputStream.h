@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include "Core/Io/IOutputStreamBuffer.h"
+#include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
@@ -20,8 +21,10 @@ namespace traktor
 /*! \brief Output stream.
  * \ingroup Core
  */
-class T_DLLCLASS OutputStream
+class T_DLLCLASS OutputStream : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	enum LineEnd
 	{

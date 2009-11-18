@@ -21,12 +21,20 @@ ImmutableNode::ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc*
 	}
 }
 
+ImmutableNode::~ImmutableNode()
+{
+	for (std::vector< InputPin* >::iterator i = m_inputPins.begin(); i != m_inputPins.end(); ++i)
+		delete *i;
+	for (std::vector< OutputPin* >::iterator i = m_outputPins.begin(); i != m_outputPins.end(); ++i)
+		delete *i;
+}
+
 int ImmutableNode::getInputPinCount() const
 {
 	return int(m_inputPins.size());
 }
 
-Ref< const InputPin > ImmutableNode::getInputPin(int index) const
+const InputPin* ImmutableNode::getInputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
@@ -37,7 +45,7 @@ int ImmutableNode::getOutputPinCount() const
 	return int(m_outputPins.size());
 }
 
-Ref< const OutputPin > ImmutableNode::getOutputPin(int index) const
+const OutputPin* ImmutableNode::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];

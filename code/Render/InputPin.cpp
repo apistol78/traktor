@@ -6,8 +6,6 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.InputPin", InputPin, Object)
-
 InputPin::InputPin(Node* node, const std::wstring& name, bool optional)
 :	m_node(node)
 ,	m_name(name)
@@ -15,7 +13,7 @@ InputPin::InputPin(Node* node, const std::wstring& name, bool optional)
 {
 }
 
-Ref< Node > InputPin::getNode() const
+Node* InputPin::getNode() const
 {
 	return m_node;
 }

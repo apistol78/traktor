@@ -2,14 +2,14 @@
 #define traktor_render_OutputPin_H
 
 #include <string>
-#include "Core/Object.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,16 +22,14 @@ class Node;
 /*! \brief Shader graph node output pin.
  * \ingroup Render
  */
-class T_DLLCLASS OutputPin : public Object
+class T_DLLCLASS OutputPin
 {
-	T_RTTI_CLASS;
-
 public:
 	OutputPin();
 
 	OutputPin(Node* node, const std::wstring& name);
 	
-	Ref< Node > getNode() const;
+	Node* getNode() const;
 	
 	const std::wstring& getName() const;
 

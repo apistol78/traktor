@@ -28,7 +28,7 @@ public:
 		Ref< ISerializable > object = m_ref;
 		if (!(s >> Member< Ref< ISerializable > >(getName(), object, &type_of< Class >())))
 			return false;
-		m_ref = static_cast< Class* >(object.ptr());
+		m_ref = checked_type_cast< Class* >(object);
 		return true;
 	}
 	

@@ -51,28 +51,28 @@ public:
 
 	virtual int getInputPinCount() const;
 
-	virtual Ref< const InputPin > getInputPin(int index) const;
+	virtual const InputPin* getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual Ref< const OutputPin > getOutputPin(int index) const;	
+	virtual const OutputPin* getOutputPin(int index) const;	
 
 	virtual bool serialize(ISerializer& s);
 
-	inline void setInputPins(const RefArray< InputPin >& inputPins) { m_inputPins = inputPins; }
+	//inline void setInputPins(const std::vector< InputPin* >& inputPins) { m_inputPins = inputPins; }
 
-	inline RefArray< InputPin >& getInputPins() { return m_inputPins; }
+	//inline std::vector< InputPin* >& getInputPins() { return m_inputPins; }
 
-	inline void setOutputPins(const RefArray< OutputPin >& outputPins) { m_outputPins = outputPins; }
+	//inline void setOutputPins(const std::vector< OutputPin* >& outputPins) { m_outputPins = outputPins; }
 
-	inline RefArray< OutputPin >& getOutputPins() { return m_outputPins; }
+	//inline std::vector< OutputPin* >& getOutputPins() { return m_outputPins; }
 
 	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
 
 private:
 	Guid m_fragmentGuid;
-	RefArray< InputPin > m_inputPins;
-	RefArray< OutputPin > m_outputPins;
+	std::vector< InputPin* > m_inputPins;
+	std::vector< OutputPin* > m_outputPins;
 	std::map< std::wstring, float > m_values;
 };
 

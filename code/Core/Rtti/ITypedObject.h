@@ -103,7 +103,7 @@ namespace traktor
 /*! \brief RTTI object.
  * \ingroup Core
  */
-class T_DLLCLASS ITypedObject
+class T_DLLCLASS ITypedObject : public IRefCount
 {
 public:
 	virtual const TypeInfo& getTypeInfo() const = 0;

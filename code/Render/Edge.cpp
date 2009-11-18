@@ -30,7 +30,7 @@ template < typename PinType, typename PinAccessor >
 class MemberPin : public MemberComplex
 {
 public:
-	MemberPin(const std::wstring& name, Ref< PinType >& pin)
+	MemberPin(const std::wstring& name, PinType*& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{
@@ -57,7 +57,7 @@ public:
 	}
 
 private:
-	Ref< PinType >& m_pin;
+	PinType*& m_pin;
 };
 
 		}
@@ -75,7 +75,7 @@ void Edge::setSource(const OutputPin* source)
 	m_source = source;
 }
 
-Ref< const OutputPin > Edge::getSource() const
+const OutputPin* Edge::getSource() const
 {
 	return m_source;
 }
@@ -85,7 +85,7 @@ void Edge::setDestination(const InputPin* destination)
 	m_destination = destination;
 }
 
-Ref< const InputPin > Edge::getDestination() const
+const InputPin* Edge::getDestination() const
 {
 	return m_destination;
 }

@@ -40,7 +40,7 @@ size_t ShaderGraphAdjacency::findEdges(const OutputPin* outputPin, RefArray< Edg
 	return outEdges.size();
 }
 
-Ref< const OutputPin > ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) const
+const OutputPin* ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) const
 {
 	Ref< Edge > edge = findEdge(inputPin);
 	return edge ? edge->getSource() : 0;
