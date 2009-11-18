@@ -17,12 +17,12 @@ namespace traktor
 		namespace
 		{
 
-class MemberInputPinRef : public MemberComplex
+class MemberInputPin : public MemberComplex
 {
 public:
-	typedef Ref< InputPin > value_type;
+	typedef InputPin* value_type;
 
-	MemberInputPinRef(const std::wstring& name, value_type& pin)
+	MemberInputPin(const std::wstring& name, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{
@@ -63,12 +63,12 @@ private:
 	value_type& m_pin;
 };
 
-class MemberOutputPinRef : public MemberComplex
+class MemberOutputPin : public MemberComplex
 {
 public:
-	typedef Ref< OutputPin > value_type;
+	typedef OutputPin* value_type;
 
-	MemberOutputPinRef(const std::wstring& name, value_type& pin)
+	MemberOutputPin(const std::wstring& name, value_type& pin)
 	:	MemberComplex(name, true)
 	,	m_pin(pin)
 	{
@@ -180,7 +180,7 @@ int External::getInputPinCount() const
 	return int(m_inputPins.size());
 }
 
-Ref< const InputPin > External::getInputPin(int index) const
+const InputPin* External::getInputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_inputPins.size()));
 	return m_inputPins[index];
@@ -191,7 +191,7 @@ int External::getOutputPinCount() const
 	return int(m_outputPins.size());
 }
 
-Ref< const OutputPin > External::getOutputPin(int index) const
+const OutputPin* External::getOutputPin(int index) const
 {
 	T_ASSERT (index >= 0 && index < int(m_outputPins.size()));
 	return m_outputPins[index];
@@ -203,8 +203,8 @@ bool External::serialize(ISerializer& s)
 		return false;
 
 	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, &type_of< ShaderGraph >());
-	s >> MemberRefArray< InputPin, MemberInputPinRef >(L"inputPins", m_inputPins);
-	s >> MemberRefArray< OutputPin, MemberOutputPinRef >(L"outputPins", m_outputPins);
+	s >> MemberStlVector< InputPin*, MemberInputPin >(L"inputPins", m_inputPins);
+	s >> MemberStlVector< OutputPin*, MemberOutputPin >(L"outputPins", m_outputPins);
 
 	if (s.getVersion() >= 1)
 		s >> MemberStlMap< std::wstring, float >(L"values", m_values);

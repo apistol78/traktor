@@ -1534,6 +1534,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Switch", 1, Switch, Node)
 Switch::Switch()
 :	m_branch(BrAuto)
 {
+	// @fixme Leak...
 	m_inputPins.push_back(new InputPin(this, L"Select", false));
 	m_inputPins.push_back(new InputPin(this, L"Default", false));
 	m_outputPin = new OutputPin(this, L"Output");
@@ -1567,7 +1568,7 @@ int Switch::getInputPinCount() const
 	return int(m_inputPins.size());
 }
 
-Ref< const InputPin > Switch::getInputPin(int index) const
+const InputPin* Switch::getInputPin(int index) const
 {
 	return m_inputPins[index];
 }
@@ -1577,9 +1578,9 @@ int Switch::getOutputPinCount() const
 	return 1;
 }
 
-Ref< const OutputPin > Switch::getOutputPin(int index) const
+const OutputPin* Switch::getOutputPin(int index) const
 {
-	return m_outputPin.ptr();
+	return m_outputPin;
 }
 
 bool Switch::serialize(ISerializer& s)

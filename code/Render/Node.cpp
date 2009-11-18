@@ -41,12 +41,12 @@ const std::pair< int, int >& Node::getPosition() const
 	return m_position;
 }
 
-Ref< const InputPin > Node::findInputPin(const std::wstring& name) const
+const InputPin* Node::findInputPin(const std::wstring& name) const
 {
 	int count = getInputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
-		Ref< const InputPin > inputPin = getInputPin(i);
+		const InputPin* inputPin = getInputPin(i);
 		T_ASSERT (inputPin);
 
 		if (inputPin->getName() == name)
@@ -55,12 +55,12 @@ Ref< const InputPin > Node::findInputPin(const std::wstring& name) const
 	return 0;
 }
 
-Ref< const OutputPin > Node::findOutputPin(const std::wstring& name) const
+const OutputPin* Node::findOutputPin(const std::wstring& name) const
 {
 	int count = getOutputPinCount();
 	for (int i = 0; i < count; ++i)
 	{
-		Ref< const OutputPin > outputPin = getOutputPin(i);
+		const OutputPin* outputPin = getOutputPin(i);
 		T_ASSERT (outputPin);
 
 		if (outputPin->getName() == name)

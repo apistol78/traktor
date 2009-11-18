@@ -82,11 +82,11 @@ Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches()
 		int inputPinCount = node->getInputPinCount();
 		for (int i = 0; i < inputPinCount; ++i)
 		{
-			Ref< const InputPin > inputPin = node->getInputPin(i);
+			const InputPin* inputPin = node->getInputPin(i);
 			Ref< Edge > edge = m_shaderGraphAdj->findEdge(inputPin);
 			if (edge)
 			{
-				Ref< const OutputPin > outputPin = edge->getSource();
+				const OutputPin* outputPin = edge->getSource();
 				if (outputPin)
 				{
 					usedEdges.push_back(edge);
@@ -192,8 +192,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 				bool wiredIdentical = true;
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					Ref< const OutputPin > sourcePin1 = m_shaderGraphAdj->findSourcePin(nodes[i]->getInputPin(k));
-					Ref< const OutputPin > sourcePin2 = m_shaderGraphAdj->findSourcePin(nodes[j]->getInputPin(k));
+					const OutputPin* sourcePin1 = m_shaderGraphAdj->findSourcePin(nodes[i]->getInputPin(k));
+					const OutputPin* sourcePin2 = m_shaderGraphAdj->findSourcePin(nodes[j]->getInputPin(k));
 					if (sourcePin1 != sourcePin2)
 					{
 						wiredIdentical = false;
@@ -281,10 +281,10 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
-		Ref< const InputPin > inputPin = node->getInputPin(i);
+		const InputPin* inputPin = node->getInputPin(i);
 		T_ASSERT (inputPin);
 
-		Ref< const OutputPin > sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
+		const OutputPin* sourceOutputPin = m_shaderGraphAdj->findSourcePin(inputPin);
 		if (!sourceOutputPin)
 			continue;
 

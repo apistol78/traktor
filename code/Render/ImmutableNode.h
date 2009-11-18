@@ -1,7 +1,6 @@
 #ifndef traktor_render_ImmutableNode_H
 #define traktor_render_ImmutableNode_H
 
-#include "Core/RefArray.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -9,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -44,17 +43,19 @@ public:
 
 	ImmutableNode(const InputPinDesc* inputPins, const OutputPinDesc* outputPins);
 
+	virtual ~ImmutableNode();
+
 	virtual int getInputPinCount() const;
 
-	virtual Ref< const InputPin > getInputPin(int index) const;
+	virtual const InputPin* getInputPin(int index) const;
 
 	virtual int getOutputPinCount() const;
 
-	virtual Ref< const OutputPin > getOutputPin(int index) const;
+	virtual const OutputPin* getOutputPin(int index) const;
 
 private:
-	RefArray< InputPin > m_inputPins;
-	RefArray< OutputPin > m_outputPins;
+	std::vector< InputPin* > m_inputPins;
+	std::vector< OutputPin* > m_outputPins;
 
 	ImmutableNode(const ImmutableNode&) { T_FATAL_ERROR; }
 

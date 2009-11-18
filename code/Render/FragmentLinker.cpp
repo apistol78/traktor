@@ -92,7 +92,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 						replaceWithValue = true;
 
 						// Find input pin by input port.
-						Ref< const InputPin > externalInputPin = externalNode->findInputPin(inputPortName);
+						const InputPin* externalInputPin = externalNode->findInputPin(inputPortName);
 						T_ASSERT (externalInputPin);
 
 						// Create "established port" node and move all edges from input port to established port.
@@ -143,8 +143,8 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 				const RefArray< Edge >& fragmentEdges = fragmentShaderGraph->getEdges();
 				for (RefArray< Edge >::const_iterator j = fragmentEdges.begin(); j != fragmentEdges.end(); ++j)
 				{
-					Ref< const OutputPin > sourcePin;
-					Ref< const InputPin > destinationPin;
+					const OutputPin* sourcePin;
+					const InputPin* destinationPin;
 
 					if (const InputPort* inputPort = dynamic_type_cast< const InputPort* >((*j)->getSource()->getNode()))
 					{
@@ -187,8 +187,8 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 		if (i == resolvedNodes.end())
 			break;
 
-		Ref< const OutputPin > sourcePin = 0;
-		RefArray< const InputPin > destinationPins;
+		const OutputPin* sourcePin = 0;
+		std::vector< const InputPin* > destinationPins;
 
 		for (RefArray< Edge >::iterator j = resolvedEdges.begin(); j != resolvedEdges.end(); )
 		{
@@ -209,7 +209,7 @@ Ref< ShaderGraph > FragmentLinker::resolve(const ShaderGraph* shaderGraph, bool 
 
 		if (sourcePin)
 		{
-			for (RefArray< const InputPin >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
+			for (std::vector< const InputPin* >::const_iterator j = destinationPins.begin(); j != destinationPins.end(); ++j)
 				resolvedEdges.push_back(new Edge(
 					sourcePin,
 					*j

@@ -35,6 +35,8 @@ private:
  */
 class T_DLLCLASS StringOutputStream : public OutputStream
 {
+	T_RTTI_CLASS;
+
 public:
 	StringOutputStream();
 

@@ -54,7 +54,7 @@ public:
 	 * \param inputPin Input pin.
 	 * \return Connected output pin.
 	 */
-	Ref< const OutputPin > findSourcePin(const InputPin* inputPin) const;
+	const OutputPin* findSourcePin(const InputPin* inputPin) const;
 
 	/*! \brief Find all input pins which are connected to output pin.
 	 *

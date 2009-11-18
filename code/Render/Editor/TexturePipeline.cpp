@@ -422,7 +422,7 @@ bool TexturePipeline::buildOutput(
 		// Generate each mip level.
 		{
 			std::vector< ScaleTextureTask* > tasks;
-			RefArray< Job > jobs;
+			std::vector< Job* > jobs;
 
 			log::info << L"Executing mip generation task(s)..." << Endl;
 
@@ -444,7 +444,7 @@ bool TexturePipeline::buildOutput(
 						textureAsset->m_keepZeroAlpha
 					);
 
-				Ref< Job > job = new Job(makeFunctor(task, &ScaleTextureTask::execute));
+				Job* job = new Job(makeFunctor(task, &ScaleTextureTask::execute));
 				JobManager::getInstance().add(*job);
 
 				tasks.push_back(task);
@@ -456,9 +456,12 @@ bool TexturePipeline::buildOutput(
 			for (size_t i = 0; i < jobs.size(); ++i)
 			{
 				jobs[i]->wait();
+
 				mipImages[i] = tasks[i]->output;
 				T_ASSERT (mipImages[i]);
+
 				delete tasks[i];
+				delete jobs[i];
 			}
 
 			log::info << L"All task(s) collected" << Endl;
@@ -467,7 +470,7 @@ bool TexturePipeline::buildOutput(
 		// Create multiple jobs for compressing mips; split big mips into several jobs.
 		{
 			std::vector< CompressTextureTask* > tasks;
-			RefArray< Job > jobs;
+			std::vector< Job* > jobs;
 
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
@@ -488,7 +491,7 @@ bool TexturePipeline::buildOutput(
 					task->textureFormat = textureFormat;
 					task->hasAlpha = hasAlpha;
 
-					Ref< Job > job = new Job(makeFunctor(task, &CompressTextureTask::execute));
+					Job* job = new Job(makeFunctor(task, &CompressTextureTask::execute));
 					JobManager::getInstance().add(*job);
 
 					tasks.push_back(task);
@@ -502,7 +505,9 @@ bool TexturePipeline::buildOutput(
 			{
 				jobs[i]->wait();
 				writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
+
 				delete tasks[i];
+				delete jobs[i];
 			}
 
 			log::info << L"All task(s) collected" << Endl;

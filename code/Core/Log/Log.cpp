@@ -72,8 +72,9 @@ int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 
 LogStream::LogStream(ILogTarget* target)
 :	m_streamBuffer(new LogStreamBuffer(target))
-,	OutputStream(m_streamBuffer, LeUnix)
+,	OutputStream(0, LeUnix)
 {
+	setBuffer(m_streamBuffer);
 }
 
 LogStream::~LogStream()

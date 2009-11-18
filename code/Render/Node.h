@@ -72,7 +72,7 @@ public:
 	 * \param index Index of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
-	virtual Ref< const InputPin > getInputPin(int index) const = 0;
+	virtual const InputPin* getInputPin(int index) const = 0;
 
 	/*! \brief Get number of output pins.
 	 *
@@ -85,21 +85,21 @@ public:
 	 * \param index Index of output pin.
 	 * \return Pointer to output pin, null if no such output pin.
 	 */
-	virtual Ref< const OutputPin > getOutputPin(int index) const = 0;
+	virtual const OutputPin* getOutputPin(int index) const = 0;
 
 	/*! \brief Find input pin by name.
 	 *
 	 * \param name Name of input pin.
 	 * \return Pointer to input pin, null if no such input pin.
 	 */
-	Ref< const InputPin > findInputPin(const std::wstring& name) const;
+	const InputPin* findInputPin(const std::wstring& name) const;
 
 	/*! \brief Find output pin by name.
 	 *
 	 * \param name Name of output pin.
 	 * \return Pointer to output pin, null if no such output pin.
 	 */
-	Ref< const OutputPin > findOutputPin(const std::wstring& name) const;
+	const OutputPin* findOutputPin(const std::wstring& name) const;
 	
 	virtual bool serialize(ISerializer& s);
 

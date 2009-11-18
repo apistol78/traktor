@@ -23,7 +23,7 @@ struct ObjectHeader
 
 #pragma pack()
 
-inline bool isObjectHeapAllocated(void* ptr)
+inline bool isObjectHeapAllocated(const void* ptr)
 {
 	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(ptr) - 1;
 	return bool(header->magic == c_magic);
@@ -33,25 +33,13 @@ inline bool isObjectHeapAllocated(void* ptr)
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
-Object::Object()
-:	m_heap(false)
-{
-	m_heap = isObjectHeapAllocated(this);
-}
-
-Object::Object(const Object& src)
-:	m_heap(false)
-{
-	m_heap = isObjectHeapAllocated(this);
-}
-
 Object::~Object()
 {
-	T_ASSERT_M (
-		m_refCount == 0,
-		L"Object destroyed prematurely;\n"
-		L"Make sure no reference exist to stack objects"
-	);
+	//T_ASSERT_M (
+	//	m_refCount == 0,
+	//	L"Object destroyed prematurely;\n"
+	//	L"Make sure no reference exist to stack objects"
+	//);
 }
 
 void Object::addRef() const
@@ -63,15 +51,9 @@ void Object::release() const
 {
 	if (--m_refCount == 0)
 	{
-		if (m_heap)
+		if (isObjectHeapAllocated(this))
 			delete this;
 	}
-}
-
-Object& Object::operator = (const Object& rh)
-{
-	// Do not copy m_heap and m_refCount members!
-	return *this;
 }
 
 void* Object::operator new (size_t size)

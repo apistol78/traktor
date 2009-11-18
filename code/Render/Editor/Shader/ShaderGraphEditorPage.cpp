@@ -755,6 +755,7 @@ struct RemoveInputPortPred
 
 void ShaderGraphEditorPage::checkUpdatedFragments()
 {
+	/*
 	bool firstMismatch = true;
 
 	RefArray< External > externalNodes;
@@ -865,6 +866,7 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 				(*i)->getOutputPins().push_back(new OutputPin((*i), (*j)->getName()));
 		}
 	}
+	*/
 }
 
 void ShaderGraphEditorPage::eventToolClick(ui::Event* event)

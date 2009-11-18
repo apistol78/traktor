@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,17 +31,17 @@ public:
 
 	void setSource(const OutputPin* source);
 
-	Ref< const OutputPin > getSource() const;
+	const OutputPin* getSource() const;
 
 	void setDestination(const InputPin* destination);
 
-	Ref< const InputPin > getDestination() const;
+	const InputPin* getDestination() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Ref< const OutputPin > m_source;
-	Ref< const InputPin > m_destination;
+	const OutputPin* m_source;
+	const InputPin* m_destination;
 };
 
 	}
