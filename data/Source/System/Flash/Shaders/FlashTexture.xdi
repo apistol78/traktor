@@ -65,8 +65,8 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Mul">
@@ -100,7 +100,7 @@
 				<second>140</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
 				<first>296</first>
@@ -116,6 +116,7 @@
 					<name>Color</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment></comment>
