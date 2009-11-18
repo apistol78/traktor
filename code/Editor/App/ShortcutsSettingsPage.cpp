@@ -19,7 +19,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", ShortcutsSettingsPage, ISettingsPage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", 0, ShortcutsSettingsPage, ISettingsPage)
 
 bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {

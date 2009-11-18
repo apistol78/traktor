@@ -38,7 +38,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", RenderSystemWin32, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", 0, RenderSystemWin32, IRenderSystem)
 
 uint32_t RenderSystemWin32::ms_instances = 0;
 

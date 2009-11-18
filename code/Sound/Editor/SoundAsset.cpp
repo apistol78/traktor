@@ -8,7 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", SoundAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 0, SoundAsset, editor::Asset)
 
 SoundAsset::SoundAsset()
 :	m_stream(false)

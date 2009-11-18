@@ -95,8 +95,6 @@ public:
 	 */
 	virtual const RefArray< EntityInstance >& getReferences() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

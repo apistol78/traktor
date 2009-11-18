@@ -8,7 +8,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", DmFindServices, IDiscoveryMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", 0, DmFindServices, IDiscoveryMessage)
 
 DmFindServices::DmFindServices(const Guid& sessionGuid, const TypeInfo* serviceType)
 :	m_sessionGuid(sessionGuid)

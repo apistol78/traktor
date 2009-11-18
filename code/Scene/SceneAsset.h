@@ -75,8 +75,6 @@ public:
 
 	Ref< ISceneControllerData > getControllerData() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

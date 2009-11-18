@@ -15,7 +15,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PropertyValue", PropertyValue, ISerializable)
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyBoolean", PropertyBoolean, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyBoolean", 0, PropertyBoolean, PropertyValue)
 
 PropertyBoolean::PropertyBoolean(value_type_t value)
 :	m_value(value)
@@ -32,7 +32,7 @@ bool PropertyBoolean::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyInteger", PropertyInteger, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyInteger", 0, PropertyInteger, PropertyValue)
 
 PropertyInteger::PropertyInteger(value_type_t value)
 :	m_value(value)
@@ -49,7 +49,7 @@ bool PropertyInteger::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyFloat", PropertyFloat, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyFloat", 0, PropertyFloat, PropertyValue)
 
 PropertyFloat::PropertyFloat(value_type_t value)
 :	m_value(value)
@@ -66,7 +66,7 @@ bool PropertyFloat::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyString", PropertyString, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyString", 0, PropertyString, PropertyValue)
 
 PropertyString::PropertyString(value_type_t value)
 :	m_value(value)
@@ -83,7 +83,7 @@ bool PropertyString::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyStringArray", PropertyStringArray, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyStringArray", 0, PropertyStringArray, PropertyValue)
 
 PropertyStringArray::PropertyStringArray(const value_type_t& value)
 :	m_value(value)
@@ -100,7 +100,7 @@ bool PropertyStringArray::serialize(ISerializer& s)
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuid", PropertyGuid, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuid", 0, PropertyGuid, PropertyValue)
 
 PropertyGuid::PropertyGuid(const value_type_t& value)
 :	m_value(value)
@@ -117,7 +117,7 @@ bool PropertyGuid::serialize(ISerializer& s)
 	return s >> Member< Guid >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuidArray", PropertyGuidArray, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGuidArray", 0, PropertyGuidArray, PropertyValue)
 
 PropertyGuidArray::PropertyGuidArray(const value_type_t& value)
 :	m_value(value)
@@ -134,7 +134,7 @@ bool PropertyGuidArray::serialize(ISerializer& s)
 	return s >> MemberStlVector< Guid >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyType", PropertyType, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyType", 0, PropertyType, PropertyValue)
 
 PropertyType::PropertyType(value_type_t value)
 :	m_value(value)
@@ -151,7 +151,7 @@ bool PropertyType::serialize(ISerializer& s)
 	return s >> MemberType(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyTypeSet", PropertyTypeSet, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyTypeSet", 0, PropertyTypeSet, PropertyValue)
 
 PropertyTypeSet::PropertyTypeSet(const value_type_t& value)
 {
@@ -179,7 +179,7 @@ bool PropertyTypeSet::serialize(ISerializer& s)
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyVector4", PropertyVector4, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyVector4", 0, PropertyVector4, PropertyValue)
 
 PropertyVector4::PropertyVector4(const value_type_t& value)
 :	m_value(value)
@@ -196,7 +196,7 @@ bool PropertyVector4::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyQuaternion", PropertyQuaternion, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyQuaternion", 0, PropertyQuaternion, PropertyValue)
 
 PropertyQuaternion::PropertyQuaternion(const value_type_t& value)
 :	m_value(value)
@@ -213,7 +213,7 @@ bool PropertyQuaternion::serialize(ISerializer& s)
 	return s >> Member< value_type_t >(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyKey", PropertyKey, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyKey", 0, PropertyKey, PropertyValue)
 
 PropertyKey::PropertyKey(const value_type_t& value)
 :	m_value(value)
@@ -293,7 +293,7 @@ bool PropertyKey::serialize(ISerializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGroup", PropertyGroup, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGroup", 0, PropertyGroup, PropertyValue)
 
 PropertyGroup::PropertyGroup(const value_type_t& value)
 :	m_value(value)
@@ -339,7 +339,7 @@ bool PropertyGroup::serialize(ISerializer& s)
 	>(L"value", m_value);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertySerializable", PropertySerializable, PropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertySerializable", 0, PropertySerializable, PropertyValue)
 
 PropertySerializable::PropertySerializable(const value_type_t& value)
 :	m_value(value)

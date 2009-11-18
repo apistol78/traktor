@@ -95,7 +95,7 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", PhysicsManagerBullet, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerBullet", 0, PhysicsManagerBullet, PhysicsManager)
 
 PhysicsManagerBullet* PhysicsManagerBullet::ms_this = 0;
 

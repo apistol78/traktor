@@ -117,7 +117,7 @@ private:
 	Animation::KeyPose m_pose;
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.KeyPoseClipboardData", KeyPoseClipboardData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.KeyPoseClipboardData", 0, KeyPoseClipboardData, ISerializable)
 
 class PoseIdData : public Object
 {

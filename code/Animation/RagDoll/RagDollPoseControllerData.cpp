@@ -7,7 +7,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", RagDollPoseControllerData, IPoseControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 0, RagDollPoseControllerData, IPoseControllerData)
 
 Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	resource::IResourceManager* resourceManager,

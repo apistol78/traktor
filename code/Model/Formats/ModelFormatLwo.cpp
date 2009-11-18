@@ -332,7 +332,7 @@ bool createMesh(const lwObject* lwo, Model* outModel)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatLwo", ModelFormatLwo, ModelFormat)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatLwo", 0, ModelFormatLwo, ModelFormat)
 
 void ModelFormatLwo::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {

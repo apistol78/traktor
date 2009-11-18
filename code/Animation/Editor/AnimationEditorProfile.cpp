@@ -13,7 +13,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEditorProfile", AnimationEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationEditorProfile", 0, AnimationEditorProfile, scene::ISceneEditorProfile)
 
 void AnimationEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands

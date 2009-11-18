@@ -11,7 +11,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.BlendMeshEntityData", BlendMeshEntityData, MeshEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.BlendMeshEntityData", 0, BlendMeshEntityData, MeshEntityData)
 
 Ref< MeshEntity > BlendMeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {

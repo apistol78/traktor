@@ -149,7 +149,7 @@ private:
 	uint32_t m_consumedCount;
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", Mp3StreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDecoder, IStreamDecoder)
 
 bool Mp3StreamDecoder::create(IStream* stream)
 {

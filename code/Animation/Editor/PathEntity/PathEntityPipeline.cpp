@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PathEntityPipeline", PathEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.PathEntityPipeline", 0, PathEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet PathEntityPipeline::getAssetTypes() const
 {

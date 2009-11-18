@@ -14,7 +14,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", RigidEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", 0, RigidEntityData, world::SpatialEntityData)
 
 Ref< RigidEntity > RigidEntityData::createEntity(
 	world::IEntityBuilder* builder,

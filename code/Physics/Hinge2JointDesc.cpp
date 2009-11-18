@@ -8,7 +8,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.Hinge2JointDesc", Hinge2JointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.Hinge2JointDesc", 0, Hinge2JointDesc, JointDesc)
 
 Hinge2JointDesc::Hinge2JointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)

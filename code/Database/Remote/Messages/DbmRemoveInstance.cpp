@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmRemoveInstance", DbmRemoveInstance, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmRemoveInstance", 0, DbmRemoveInstance, IMessage)
 
 DbmRemoveInstance::DbmRemoveInstance(uint32_t handle)
 :	m_handle(handle)

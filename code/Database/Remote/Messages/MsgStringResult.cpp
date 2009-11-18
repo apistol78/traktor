@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgStringResult", MsgStringResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgStringResult", 0, MsgStringResult, IMessage)
 
 MsgStringResult::MsgStringResult(const std::wstring& value)
 :	m_value(value)

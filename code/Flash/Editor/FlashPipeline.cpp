@@ -13,7 +13,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 1, FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -22,11 +22,6 @@ bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 
 void FlashPipeline::destroy()
 {
-}
-
-uint32_t FlashPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet FlashPipeline::getAssetTypes() const

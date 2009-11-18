@@ -47,7 +47,7 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverXAudio2", SoundDriverXAudio2, ISoundDriver)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverXAudio2", 0, SoundDriverXAudio2, ISoundDriver)
 
 SoundDriverXAudio2::SoundDriverXAudio2()
 :	m_voiceCallback(0)

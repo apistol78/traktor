@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.StateBlockDx9", StateBlockDx9, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.StateBlockDx9", 1, StateBlockDx9, ISerializable)
 
 StateBlockDx9::StateBlockDx9()
 :	m_opaque(true)
@@ -75,11 +75,6 @@ StateBlockDx9& StateBlockDx9::operator = (const StateBlockDx9& stateBlock)
 	m_samplerStates = stateBlock.m_samplerStates;
 	m_opaque = stateBlock.m_opaque;
 	return *this;
-}
-
-int StateBlockDx9::getVersion() const
-{
-	return 1;
 }
 
 bool StateBlockDx9::serialize(ISerializer& s)

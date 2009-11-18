@@ -66,8 +66,6 @@ public:
 
 	inline const Vector2& getConeLimit() const { return m_coneLimit; }
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

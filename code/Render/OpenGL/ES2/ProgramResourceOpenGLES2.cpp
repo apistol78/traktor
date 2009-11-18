@@ -35,7 +35,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGLES2", ProgramResourceOpenGLES2, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGLES2", 0, ProgramResourceOpenGLES2, ProgramResource)
 
 ProgramResourceOpenGLES2::ProgramResourceOpenGLES2()
 :	m_bufferSize(0)

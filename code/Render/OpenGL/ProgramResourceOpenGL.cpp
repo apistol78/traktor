@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 0, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 {

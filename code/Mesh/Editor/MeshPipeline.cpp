@@ -69,7 +69,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 5, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -85,11 +85,6 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 
 void MeshPipeline::destroy()
 {
-}
-
-uint32_t MeshPipeline::getVersion() const
-{
-	return 5;
 }
 
 TypeInfoSet MeshPipeline::getAssetTypes() const

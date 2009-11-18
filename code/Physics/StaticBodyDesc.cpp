@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", StaticBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.StaticBodyDesc", 3, StaticBodyDesc, BodyDesc)
 
 StaticBodyDesc::StaticBodyDesc()
 :	m_initiallyEnabled(true)
@@ -44,11 +44,6 @@ void StaticBodyDesc::setKinematic(bool kinematic)
 bool StaticBodyDesc::isKinematic() const
 {
 	return m_kinematic;
-}
-
-int StaticBodyDesc::getVersion() const
-{
-	return 3;
 }
 
 bool StaticBodyDesc::serialize(ISerializer& s)

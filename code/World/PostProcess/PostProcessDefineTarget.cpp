@@ -11,7 +11,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", PostProcessDefineTarget, PostProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 0, PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
 :	m_id(0)

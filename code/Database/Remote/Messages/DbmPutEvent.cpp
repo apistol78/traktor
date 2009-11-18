@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmPutEvent", DbmPutEvent, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmPutEvent", 0, DbmPutEvent, IMessage)
 
 DbmPutEvent::DbmPutEvent(uint32_t handle, ProviderEvent event, const Guid& eventId)
 :	m_handle(handle)

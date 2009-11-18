@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmSeek", StmSeek, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmSeek", 0, StmSeek, IMessage)
 
 StmSeek::StmSeek(uint32_t handle, IStream::SeekOriginType origin, int32_t offset)
 :	m_handle(handle)

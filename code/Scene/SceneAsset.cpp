@@ -16,7 +16,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", SceneAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 2, SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -99,11 +99,6 @@ void SceneAsset::setControllerData(ISceneControllerData* controllerData)
 Ref< ISceneControllerData > SceneAsset::getControllerData() const
 {
 	return m_controllerData;
-}
-
-int SceneAsset::getVersion() const
-{
-	return 2;
 }
 
 bool SceneAsset::serialize(ISerializer& s)

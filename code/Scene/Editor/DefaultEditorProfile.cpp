@@ -36,7 +36,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", DefaultEditorProfile, ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.DefaultEditorProfile", 0, DefaultEditorProfile, ISceneEditorProfile)
 
 void DefaultEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands

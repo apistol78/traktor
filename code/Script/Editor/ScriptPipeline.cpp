@@ -46,7 +46,7 @@ Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* u
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 0, ScriptPipeline, editor::DefaultPipeline)
 
 TypeInfoSet ScriptPipeline::getAssetTypes() const
 {

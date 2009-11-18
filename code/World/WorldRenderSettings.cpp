@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 2, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -21,11 +21,6 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
 {
-}
-
-int WorldRenderSettings::getVersion() const
-{
-	return 2;
 }
 
 bool WorldRenderSettings::serialize(ISerializer& s)

@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCreateGroup", DbmCreateGroup, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCreateGroup", 0, DbmCreateGroup, IMessage)
 
 DbmCreateGroup::DbmCreateGroup(uint32_t handle, const std::wstring& name)
 :	m_handle(handle)

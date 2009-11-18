@@ -9,7 +9,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", IndoorMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 0, IndoorMeshResource, MeshResource)
 
 void IndoorMeshResource::setSectors(const AlignedVector< Sector >& sectors)
 {

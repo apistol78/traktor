@@ -59,7 +59,7 @@ Ref< drawing::Image > readRawTerrain(const Path& fileName)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldPipeline", HeightfieldPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.HeightfieldPipeline", 1, HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -69,11 +69,6 @@ bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 
 void HeightfieldPipeline::destroy()
 {
-}
-
-uint32_t HeightfieldPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet HeightfieldPipeline::getAssetTypes() const

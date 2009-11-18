@@ -8,7 +8,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Bone", Bone, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Bone", 1, Bone, ISerializable)
 
 Bone::Bone()
 :	m_parent(-1)
@@ -20,11 +20,6 @@ Bone::Bone()
 ,	m_twistLimit(0.0f)
 ,	m_coneLimit(0.0f, 0.0f)
 {
-}
-
-int Bone::getVersion() const
-{
-	return 1;
 }
 
 bool Bone::serialize(ISerializer& s)

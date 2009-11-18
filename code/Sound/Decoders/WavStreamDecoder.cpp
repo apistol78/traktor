@@ -23,7 +23,7 @@ struct RiffChunk
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.WavStreamDecoder", WavStreamDecoder, IStreamDecoder)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.WavStreamDecoder", 0, WavStreamDecoder, IStreamDecoder)
 
 bool WavStreamDecoder::create(IStream* stream)
 {

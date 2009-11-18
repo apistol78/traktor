@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", StaticMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 0, StaticMeshResource, MeshResource)
 
 void StaticMeshResource::setParts(const std::vector< Part >& parts)
 {

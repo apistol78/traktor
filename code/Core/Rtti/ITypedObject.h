@@ -54,48 +54,48 @@ namespace traktor
 	);												\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_FACTORY_CLASS_ROOT(ID, CLASS)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(				\
-		ID,												\
-		sizeof(CLASS),									\
-		0,												\
-		false,											\
-		0,												\
-		new InstanceFactory< CLASS >()					\
-	);													\
+#define T_IMPLEMENT_RTTI_FACTORY_CLASS_ROOT(ID, VERSION, CLASS)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(						\
+		ID,														\
+		sizeof(CLASS),											\
+		VERSION,												\
+		false,													\
+		0,														\
+		new InstanceFactory< CLASS >()							\
+	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_FACTORY_CLASS(ID, CLASS, SUPER)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(					\
-		ID,													\
-		sizeof(CLASS),										\
-		0,													\
-		false,												\
-		&type_of< SUPER >(),								\
-		new InstanceFactory< CLASS >()						\
-	);														\
+#define T_IMPLEMENT_RTTI_FACTORY_CLASS(ID, VERSION, CLASS, SUPER)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(							\
+		ID,															\
+		sizeof(CLASS),												\
+		VERSION,													\
+		false,														\
+		&type_of< SUPER >(),										\
+		new InstanceFactory< CLASS >()								\
+	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_EDIT_CLASS_ROOT(ID, CLASS)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(			\
-		ID,											\
-		sizeof(CLASS),								\
-		0,											\
-		true,										\
-		0,											\
-		new InstanceFactory< CLASS >()				\
-	);												\
+#define T_IMPLEMENT_RTTI_EDIT_CLASS_ROOT(ID, VERSION, CLASS)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(						\
+		ID,														\
+		sizeof(CLASS),											\
+		VERSION,												\
+		true,													\
+		0,														\
+		new InstanceFactory< CLASS >()							\
+	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_EDIT_CLASS(ID, CLASS, SUPER)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(				\
-		ID,												\
-		sizeof(CLASS),									\
-		0,												\
-		true,											\
-		&type_of< SUPER >(),							\
-		new InstanceFactory< CLASS >()					\
-	);													\
+#define T_IMPLEMENT_RTTI_EDIT_CLASS(ID, VERSION, CLASS, SUPER)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(						\
+		ID,														\
+		sizeof(CLASS),											\
+		VERSION,												\
+		true,													\
+		&type_of< SUPER >(),									\
+		new InstanceFactory< CLASS >()							\
+	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
 //@}

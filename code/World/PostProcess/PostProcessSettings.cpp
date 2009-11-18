@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.PostProcessSettings", PostProcessSettings, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.PostProcessSettings", 1, PostProcessSettings, ISerializable)
 
 PostProcessSettings::PostProcessSettings()
 :	m_requireHighRange(false)
@@ -29,11 +29,6 @@ const RefArray< PostProcessDefine >& PostProcessSettings::getDefinitions() const
 const RefArray< PostProcessStep >& PostProcessSettings::getSteps() const
 {
 	return m_steps;
-}
-
-int PostProcessSettings::getVersion() const
-{
-	return 1;
 }
 
 bool PostProcessSettings::serialize(ISerializer& s)

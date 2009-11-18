@@ -28,8 +28,6 @@ public:
 
 	virtual void destroy();
 
-	virtual uint32_t getVersion() const;
-
 	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(

@@ -11,7 +11,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", StateGraph, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.StateGraph", 0, StateGraph, ISerializable)
 
 void StateGraph::addState(State* state)
 {

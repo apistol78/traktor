@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEditorPageFactory", EffectEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEditorPageFactory", 0, EffectEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet EffectEditorPageFactory::getEditableTypes() const
 {

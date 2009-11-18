@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifier", PlaneCollisionModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifier", 0, PlaneCollisionModifier, Modifier)
 
 PlaneCollisionModifier::PlaneCollisionModifier()
 :	m_plane(Vector4(0.0f, 1.0f, 0.0f), Scalar(0.0f))

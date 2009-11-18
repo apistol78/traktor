@@ -39,7 +39,7 @@ struct FrameAccessor
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", TransformPath, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
 
 void TransformPath::insert(float at, const Frame& frame)
 {

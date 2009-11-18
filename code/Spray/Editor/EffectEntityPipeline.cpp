@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", EffectEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 0, EffectEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {

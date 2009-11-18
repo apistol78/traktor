@@ -7,7 +7,7 @@ namespace traktor
 	namespace i18n
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", DictionaryEditorPageFactory, editor::IEditorPageFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.i18n.DictionaryEditorPageFactory", 0, DictionaryEditorPageFactory, editor::IEditorPageFactory)
 
 const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 {

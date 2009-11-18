@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 	
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.RemoteDatabaseService", RemoteDatabaseService, net::IService)	
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.RemoteDatabaseService", 0, RemoteDatabaseService, net::IService)	
 
 RemoteDatabaseService::RemoteDatabaseService()
 :	m_port(0)

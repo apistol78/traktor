@@ -17,7 +17,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", CloudEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", 1, CloudEntityData, world::SpatialEntityData)
 
 CloudEntityData::CloudEntityData()
 :	m_impostorTargetResolution(256)
@@ -59,11 +59,6 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 	}
 
 	return 0;
-}
-
-int CloudEntityData::getVersion() const
-{
-	return 1;
 }
 
 bool CloudEntityData::serialize(ISerializer& s)

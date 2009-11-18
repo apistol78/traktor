@@ -62,7 +62,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.RumbleEffect", RumbleEffect, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.RumbleEffect", 0, RumbleEffect, ISerializable)
 
 float RumbleEffect::getDuration() const
 {

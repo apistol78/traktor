@@ -12,7 +12,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", TheaterControllerData, scene::ISceneControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 0, TheaterControllerData, scene::ISceneControllerData)
 
 TheaterControllerData::TheaterControllerData()
 :	m_duration(0.0f)

@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetRootGroup", DbmGetRootGroup, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetRootGroup", 0, DbmGetRootGroup, IMessage)
 
 bool DbmGetRootGroup::serialize(ISerializer& s)
 {

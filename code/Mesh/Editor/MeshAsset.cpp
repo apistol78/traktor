@@ -9,7 +9,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 1, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
@@ -19,11 +19,6 @@ MeshAsset::MeshAsset()
 const TypeInfo* MeshAsset::getOutputType() const
 {
 	return &type_of< MeshResource >();
-}
-
-int MeshAsset::getVersion() const
-{
-	return 1;
 }
 
 bool MeshAsset::serialize(ISerializer& s)

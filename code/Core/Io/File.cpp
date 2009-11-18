@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.File", File, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.File", 0, File, ISerializable)
 
 File::File()
 :	m_size(0)

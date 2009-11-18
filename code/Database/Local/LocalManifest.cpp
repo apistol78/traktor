@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalManifest", LocalManifest, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalManifest", 0, LocalManifest, ISerializable)
 
 LocalManifest::LocalManifest()
 :	m_eventMonitorEnable(false)

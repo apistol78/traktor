@@ -9,7 +9,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", LocalInstanceMeta, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalInstanceMeta", 0, LocalInstanceMeta, ISerializable)
 
 LocalInstanceMeta::LocalInstanceMeta()
 {

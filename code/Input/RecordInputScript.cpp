@@ -8,7 +8,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RecordInputScript", RecordInputScript, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.RecordInputScript", 0, RecordInputScript, ISerializable)
 
 void RecordInputScript::addInputValue(uint32_t frame, int control, float value)
 {

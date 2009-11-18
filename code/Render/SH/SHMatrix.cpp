@@ -7,7 +7,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHMatrix", SHMatrix, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHMatrix", 0, SHMatrix, ISerializable)
 
 SHMatrix::SHMatrix()
 :	m_rows(0)

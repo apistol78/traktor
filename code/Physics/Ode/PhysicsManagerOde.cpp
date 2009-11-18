@@ -644,7 +644,7 @@ private:
 	}
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerOde", PhysicsManagerOde, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerOde", 0, PhysicsManagerOde, PhysicsManager)
 
 PhysicsManagerOde::PhysicsManagerOde()
 :	m_impl(0)

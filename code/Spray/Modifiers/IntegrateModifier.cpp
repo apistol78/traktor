@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.IntegrateModifier", IntegrateModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.IntegrateModifier", 0, IntegrateModifier, Modifier)
 
 IntegrateModifier::IntegrateModifier()
 :	m_timeScale(1.0f)

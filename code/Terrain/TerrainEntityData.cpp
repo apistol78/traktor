@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", TerrainEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 0, TerrainEntityData, world::EntityData)
 
 TerrainEntityData::TerrainEntityData()
 :	m_patchLodDistance(1500.0f)

@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 	
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", GroupEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 0, GroupEntityData, EntityData)
 
 void GroupEntityData::addInstance(EntityInstance* instance)
 {

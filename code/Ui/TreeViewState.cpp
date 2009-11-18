@@ -7,7 +7,7 @@ namespace traktor
 	namespace ui
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.TreeViewState", TreeViewState, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.TreeViewState", 0, TreeViewState, ISerializable)
 
 void TreeViewState::addState(const std::wstring& path, bool expanded, bool selected)
 {

@@ -111,7 +111,7 @@ void recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, u
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ConvertDatabaseTool", ConvertDatabaseTool, IEditorTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ConvertDatabaseTool", 0, ConvertDatabaseTool, IEditorTool)
 
 std::wstring ConvertDatabaseTool::getDescription() const
 {

@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgStringArrayResult", MsgStringArrayResult, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.MsgStringArrayResult", 0, MsgStringArrayResult, IMessage)
 
 MsgStringArrayResult::MsgStringArrayResult()
 {

@@ -9,7 +9,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineHash", PipelineHash, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PipelineHash", 0, PipelineHash, ISerializable)
 
 void PipelineHash::set(const Guid& guid, const Hash& hash)
 {

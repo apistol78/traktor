@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", PointSetPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetPipeline", 1, PointSetPipeline, editor::IPipeline)
 
 bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -25,11 +25,6 @@ bool PointSetPipeline::create(const editor::IPipelineSettings* settings)
 
 void PointSetPipeline::destroy()
 {
-}
-
-uint32_t PointSetPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet PointSetPipeline::getAssetTypes() const

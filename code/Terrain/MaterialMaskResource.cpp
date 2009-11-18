@@ -7,7 +7,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.MaterialMaskResource", MaterialMaskResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.MaterialMaskResource", 0, MaterialMaskResource, ISerializable)
 
 MaterialMaskResource::MaterialMaskResource(uint32_t size)
 :	m_size(size)

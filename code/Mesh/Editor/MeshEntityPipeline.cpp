@@ -13,7 +13,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityPipeline", MeshEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityPipeline", 0, MeshEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet MeshEntityPipeline::getAssetTypes() const
 {

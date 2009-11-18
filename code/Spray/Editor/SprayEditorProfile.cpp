@@ -11,7 +11,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SprayEditorProfile", SprayEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SprayEditorProfile", 0, SprayEditorProfile, scene::ISceneEditorProfile)
 
 void SprayEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands

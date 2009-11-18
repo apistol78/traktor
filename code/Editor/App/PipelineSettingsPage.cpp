@@ -15,7 +15,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.PipelineSettingsPage", PipelineSettingsPage, ISettingsPage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.PipelineSettingsPage", 0, PipelineSettingsPage, ISettingsPage)
 
 bool PipelineSettingsPage::create(ui::Container* parent, editor::Settings* settings, const std::list< ui::Command >& shortcutCommands)
 {

@@ -35,7 +35,7 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 1, SoundPipeline, editor::IPipeline)
 
 bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -45,11 +45,6 @@ bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 
 void SoundPipeline::destroy()
 {
-}
-
-uint32_t SoundPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet SoundPipeline::getAssetTypes() const

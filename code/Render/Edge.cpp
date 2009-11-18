@@ -62,7 +62,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", Edge, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Edge", 0, Edge, ISerializable)
 
 Edge::Edge(const OutputPin* source, const InputPin* destination)
 :	m_source(source)

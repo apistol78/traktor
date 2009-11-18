@@ -29,7 +29,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGL", RenderSystemOpenGL, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGL", 0, RenderSystemOpenGL, IRenderSystem)
 
 RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(_WIN32)

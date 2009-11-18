@@ -54,8 +54,6 @@ public:
 
 	float getFriction() const;
 
-	virtual int getVersion() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

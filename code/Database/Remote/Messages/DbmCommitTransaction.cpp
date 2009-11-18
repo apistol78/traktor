@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCommitTransaction", DbmCommitTransaction, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCommitTransaction", 0, DbmCommitTransaction, IMessage)
 
 DbmCommitTransaction::DbmCommitTransaction(uint32_t handle)
 :	m_handle(handle)

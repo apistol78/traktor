@@ -13,7 +13,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetSource", PointSetSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetSource", 0, PointSetSource, Source)
 
 PointSetSource::PointSetSource()
 :	m_offset(0.0f, 0.0f, 0.0f, 0.0f)

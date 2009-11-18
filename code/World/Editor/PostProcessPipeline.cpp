@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessPipeline", PostProcessPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessPipeline", 1, PostProcessPipeline, editor::IPipeline)
 
 bool PostProcessPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -26,11 +26,6 @@ bool PostProcessPipeline::create(const editor::IPipelineSettings* settings)
 
 void PostProcessPipeline::destroy()
 {
-}
-
-uint32_t PostProcessPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet PostProcessPipeline::getAssetTypes() const

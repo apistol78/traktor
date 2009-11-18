@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetChildInstances", DbmGetChildInstances, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetChildInstances", 0, DbmGetChildInstances, IMessage)
 
 DbmGetChildInstances::DbmGetChildInstances(uint32_t handle)
 :	m_handle(handle)

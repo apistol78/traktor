@@ -8,7 +8,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.EntityClipboardData", EntityClipboardData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.EntityClipboardData", 0, EntityClipboardData, ISerializable)
 
 void EntityClipboardData::addInstance(world::EntityInstance* instance)
 {

@@ -8,7 +8,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmWrite", StmWrite, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmWrite", 0, StmWrite, IMessage)
 
 StmWrite::StmWrite(uint32_t handle, int32_t blockSize, const void* block)
 :	m_handle(handle)

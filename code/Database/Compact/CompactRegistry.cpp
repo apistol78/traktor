@@ -12,14 +12,14 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactBlockEntry", CompactBlockEntry, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactBlockEntry", 0, CompactBlockEntry, ISerializable)
 
 bool CompactBlockEntry::serialize(ISerializer& s)
 {
 	return s >> Member< uint32_t >(L"blockId", m_blockId);
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactGroupEntry", CompactGroupEntry, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactGroupEntry", 0, CompactGroupEntry, ISerializable)
 
 bool CompactGroupEntry::serialize(ISerializer& s)
 {
@@ -29,7 +29,7 @@ bool CompactGroupEntry::serialize(ISerializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactInstanceEntry", CompactInstanceEntry, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactInstanceEntry", 0, CompactInstanceEntry, ISerializable)
 
 bool CompactInstanceEntry::serialize(ISerializer& s)
 {
@@ -53,7 +53,7 @@ bool CompactInstanceEntry::serialize(ISerializer& s)
 	return true;
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactRegistry", CompactRegistry, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactRegistry", 0, CompactRegistry, ISerializable)
 
 CompactGroupEntry* CompactRegistry::createGroupEntry()
 {

@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", Assets, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", 0, Assets, ISerializable)
 
 bool Assets::serialize(ISerializer& s)
 {

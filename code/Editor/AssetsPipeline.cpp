@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", AssetsPipeline, IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AssetsPipeline", 1, AssetsPipeline, IPipeline)
 
 bool AssetsPipeline::create(const IPipelineSettings* settings)
 {
@@ -16,11 +16,6 @@ bool AssetsPipeline::create(const IPipelineSettings* settings)
 
 void AssetsPipeline::destroy()
 {
-}
-
-uint32_t AssetsPipeline::getVersion() const
-{
-	return 1;
 }
 
 TypeInfoSet AssetsPipeline::getAssetTypes() const

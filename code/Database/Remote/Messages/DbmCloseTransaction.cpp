@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCloseTransaction", DbmCloseTransaction, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmCloseTransaction", 0, DbmCloseTransaction, IMessage)
 
 DbmCloseTransaction::DbmCloseTransaction(uint32_t handle)
 :	m_handle(handle)

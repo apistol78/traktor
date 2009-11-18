@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmGetStat", StmGetStat, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.StmGetStat", 0, StmGetStat, IMessage)
 
 StmGetStat::StmGetStat(uint32_t handle)
 :	m_handle(handle)

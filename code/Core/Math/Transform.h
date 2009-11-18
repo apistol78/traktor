@@ -21,7 +21,7 @@ class ISerializer;
 /*! \brief Linear transform.
  * \ingroup Core
  */
-class T_DLLCLASS Transform
+class T_MATH_ALIGN16 T_DLLCLASS Transform
 {
 public:
 	T_MATH_INLINE Transform();

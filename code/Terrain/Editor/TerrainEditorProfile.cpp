@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEditorProfile", TerrainEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainEditorProfile", 0, TerrainEditorProfile, scene::ISceneEditorProfile)
 
 void TerrainEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands

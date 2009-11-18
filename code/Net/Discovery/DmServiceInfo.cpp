@@ -9,7 +9,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmServiceInfo", DmServiceInfo, IDiscoveryMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmServiceInfo", 0, DmServiceInfo, IDiscoveryMessage)
 
 DmServiceInfo::DmServiceInfo(const Guid& sessionGuid, IService* service)
 :	m_sessionGuid(sessionGuid)

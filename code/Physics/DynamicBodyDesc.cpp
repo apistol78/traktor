@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", DynamicBodyDesc, BodyDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.DynamicBodyDesc", 3, DynamicBodyDesc, BodyDesc)
 
 DynamicBodyDesc::DynamicBodyDesc()
 :	m_mass(1.0f)
@@ -88,11 +88,6 @@ void DynamicBodyDesc::setFriction(float friction)
 float DynamicBodyDesc::getFriction() const
 {
 	return m_friction;
-}
-
-int DynamicBodyDesc::getVersion() const
-{
-	return 3;
 }
 
 bool DynamicBodyDesc::serialize(ISerializer& s)

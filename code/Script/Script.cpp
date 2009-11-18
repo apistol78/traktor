@@ -21,7 +21,7 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", Script, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", 1, Script, ISerializable)
 
 Script::Script()
 {
@@ -55,11 +55,6 @@ void Script::setText(const std::wstring& text)
 const std::wstring& Script::getText() const
 {
 	return m_text;
-}
-
-int Script::getVersion() const
-{
-	return 1;
 }
 
 bool Script::serialize(ISerializer& s)

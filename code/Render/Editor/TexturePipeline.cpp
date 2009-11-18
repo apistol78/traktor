@@ -168,7 +168,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 7, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -186,11 +186,6 @@ bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 
 void TexturePipeline::destroy()
 {
-}
-
-uint32_t TexturePipeline::getVersion() const
-{
-	return 7;
 }
 
 TypeInfoSet TexturePipeline::getAssetTypes() const

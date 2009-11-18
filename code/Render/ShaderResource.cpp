@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", ShaderResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 0, ShaderResource, ISerializable)
 
 const std::map< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
 {

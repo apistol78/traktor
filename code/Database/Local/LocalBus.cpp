@@ -8,7 +8,6 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
-//#include "Core/Io/FileSystem.h"
 #include "Core/System/OS.h"
 #include "Core/System/ISharedMemory.h"
 #include "Core/Io/IStream.h"
@@ -110,7 +109,7 @@ private:
 	std::map< Guid, std::list< Entry > > m_pending;
 };
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EventLog", EventLog, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.EventLog", 0, EventLog, ISerializable)
 
 		}
 

@@ -8,7 +8,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.PointSetAsset", PointSetAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.PointSetAsset", 0, PointSetAsset, editor::Asset)
 
 PointSetAsset::PointSetAsset()
 :	m_fromFaces(false)

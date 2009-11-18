@@ -5,7 +5,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmClose", DbmClose, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmClose", 0, DbmClose, IMessage)
 
 bool DbmClose::serialize(ISerializer& s)
 {

@@ -40,7 +40,7 @@ void sanityCheck(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderGraph", ShaderGraph, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderGraph", 0, ShaderGraph, ISerializable)
 
 ShaderGraph::ShaderGraph()
 {

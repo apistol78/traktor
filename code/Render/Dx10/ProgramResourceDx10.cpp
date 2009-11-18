@@ -129,7 +129,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx10", ProgramResourceDx10, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx10", 0, ProgramResourceDx10, ProgramResource)
 
 bool ProgramResourceDx10::serialize(ISerializer& s)
 {

@@ -8,7 +8,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEditorProfile", TheaterEditorProfile, scene::ISceneEditorProfile)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterEditorProfile", 0, TheaterEditorProfile, scene::ISceneEditorProfile)
 
 void TheaterEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands

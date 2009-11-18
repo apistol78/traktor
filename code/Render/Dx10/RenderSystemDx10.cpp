@@ -28,7 +28,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx10", RenderSystemDx10, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx10", 0, RenderSystemDx10, IRenderSystem)
 
 bool RenderSystemDx10::create()
 {

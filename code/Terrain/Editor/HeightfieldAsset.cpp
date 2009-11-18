@@ -8,7 +8,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.HeightfieldAsset", HeightfieldAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.HeightfieldAsset", 0, HeightfieldAsset, editor::Asset)
 
 HeightfieldAsset::HeightfieldAsset()
 :	m_worldExtent(0.0f, 0.0f, 0.0f, 0.0f)

@@ -46,7 +46,7 @@ void setActorGroup(NxActor *actor, NxCollisionGroup group)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerPhysX", PhysicsManagerPhysX, PhysicsManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerPhysX", 0, PhysicsManagerPhysX, PhysicsManager)
 
 PhysicsManagerPhysX::PhysicsManagerPhysX()
 :	m_simulationDeltaTime(0.0f)

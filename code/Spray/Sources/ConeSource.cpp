@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSource", ConeSource, Source)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSource", 0, ConeSource, Source)
 
 ConeSource::ConeSource()
 :	m_position(0.0f, 0.0f, 0.0f, 1.0f)

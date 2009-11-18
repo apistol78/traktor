@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.GravityModifier", GravityModifier, Modifier)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.GravityModifier", 0, GravityModifier, Modifier)
 
 GravityModifier::GravityModifier()
 :	m_gravity(0.0f, 0.0f, 0.0f, 0.0f)

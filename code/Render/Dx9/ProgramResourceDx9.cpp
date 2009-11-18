@@ -51,7 +51,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx9", ProgramResourceDx9, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx9", 0, ProgramResourceDx9, ProgramResource)
 
 ProgramResourceDx9::ProgramResourceDx9()
 :	m_vertexShaderHash(0)

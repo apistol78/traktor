@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanEntityData", OceanEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanEntityData", 0, OceanEntityData, world::EntityData)
 
 OceanEntityData::OceanEntityData()
 :	m_altitude(0.0f)

@@ -16,7 +16,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetWizardTool", MeshAssetWizardTool, editor::IWizardTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshAssetWizardTool", 0, MeshAssetWizardTool, editor::IWizardTool)
 
 std::wstring MeshAssetWizardTool::getDescription() const
 {

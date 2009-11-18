@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmWriteObject", DbmWriteObject, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmWriteObject", 0, DbmWriteObject, IMessage)
 
 DbmWriteObject::DbmWriteObject(uint32_t handle, const std::wstring& primaryTypeName)
 :	m_handle(handle)

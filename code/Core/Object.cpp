@@ -3,14 +3,35 @@
 
 namespace traktor
 {
+	namespace
+	{
+
+#pragma pack(1)
+
+const uint32_t c_magic = 'TRKT';
+
+/*! \brief Prepended on all heap allocated objects.
+ *
+ * \note
+ * Must be a multiple of maximum alignment requirement.
+ */
+struct ObjectHeader
+{
+	uint32_t magic;
+	uint8_t reserved[12];
+};
+
+#pragma pack()
+
+	}
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
 Object::Object()
 :	m_heap(false)
 {
-	const uint32_t tag = *(reinterpret_cast< const uint32_t* >(this) - 1);
-	m_heap = bool(tag == 'TRKT');
+	const ObjectHeader* header = reinterpret_cast< const ObjectHeader* >(this) - 1;
+	m_heap = bool(header->magic == c_magic);
 }
 
 Object::~Object()
@@ -38,11 +59,18 @@ void Object::release() const
 
 void* Object::operator new (size_t size)
 {
-	uint32_t* ptr = static_cast< uint32_t* >(Alloc::acquire(size + sizeof(uint32_t)));
-	if (ptr)
+	const size_t objectHeaderSize = sizeof(ObjectHeader);
+	ObjectHeader* header = static_cast< ObjectHeader* >(Alloc::acquireAlign(size + objectHeaderSize, 16));
+	if (header)
 	{
-		*ptr++ = 'TOBJ';
-		return ptr;
+		header->magic = c_magic;
+
+#if defined(_DEBUG)
+		for (int i = 0; i < sizeof_array(header->reserved); ++i)
+			header->reserved[i] = 0;
+#endif
+
+		return header + 1;
 	}
 	else
 		return 0;
@@ -52,8 +80,9 @@ void Object::operator delete (void* ptr)
 {
 	if (ptr)
 	{
-		uint32_t* real = static_cast< uint32_t* >(ptr) - 1;
-		Alloc::free(ptr);
+		ObjectHeader* header = static_cast< ObjectHeader* >(ptr) - 1;
+		T_ASSERT (header->magic == c_magic);
+		Alloc::freeAlign(header);
 	}
 }
 

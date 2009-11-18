@@ -7,7 +7,7 @@ namespace traktor
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstanceName", DbmGetInstanceName, IMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetInstanceName", 0, DbmGetInstanceName, IMessage)
 
 DbmGetInstanceName::DbmGetInstanceName(uint32_t handle)
 :	m_handle(handle)
