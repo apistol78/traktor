@@ -14,15 +14,14 @@
 namespace traktor
 {
 
-/*
-*/
+/*! \brief Managed object base class.
+ * \ingroup Core
+ */
 class T_DLLCLASS Object : public ITypedObject
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual ~Object();
-
 	virtual void addRef() const;
 
 	virtual void release() const;
@@ -30,11 +29,6 @@ public:
 	void* operator new (size_t size);
 
 	void operator delete (void* ptr);
-
-protected:
-	void* operator new[] (size_t);
-
-	void operator delete[] (void*);
 
 private:
 	mutable AtomicRefCount m_refCount;

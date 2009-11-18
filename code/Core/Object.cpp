@@ -33,15 +33,6 @@ inline bool isObjectHeapAllocated(const void* ptr)
 
 T_IMPLEMENT_RTTI_CLASS_ROOT(L"traktor.Object", Object)
 
-Object::~Object()
-{
-	//T_ASSERT_M (
-	//	m_refCount == 0,
-	//	L"Object destroyed prematurely;\n"
-	//	L"Make sure no reference exist to stack objects"
-	//);
-}
-
 void Object::addRef() const
 {
 	++m_refCount;
@@ -63,12 +54,6 @@ void* Object::operator new (size_t size)
 	if (header)
 	{
 		header->magic = c_magic;
-
-#if defined(_DEBUG)
-		for (int i = 0; i < sizeof_array(header->reserved); ++i)
-			header->reserved[i] = 0;
-#endif
-
 		return header + 1;
 	}
 	else
@@ -83,17 +68,6 @@ void Object::operator delete (void* ptr)
 		T_ASSERT (header->magic == c_magic);
 		Alloc::freeAlign(header);
 	}
-}
-
-void* Object::operator new[] (size_t)
-{
-	T_FATAL_ERROR;
-	return 0;
-}
-
-void Object::operator delete[] (void*)
-{
-	T_FATAL_ERROR;
 }
 
 }
