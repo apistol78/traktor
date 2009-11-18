@@ -26,11 +26,15 @@ class T_DLLCLASS Object
 public:
 	Object();
 
+	Object(const Object& src);
+
 	virtual ~Object();
 
 	virtual void addRef() const;
 
 	virtual void release() const;
+
+	Object& operator = (const Object& rh);
 
 	void* operator new (size_t size);
 

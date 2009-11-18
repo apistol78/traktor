@@ -213,7 +213,7 @@ bool External::serialize(ISerializer& s)
 	{
 		// Update edges; we have created new pins but the shader graph might still
 		// have edges which reference our old pins.
-		Ref< ShaderGraph > shaderGraph = s.getOuterObject< ShaderGraph >();
+		const ShaderGraph* shaderGraph = s.getOuterObject< ShaderGraph >();
 		if (shaderGraph)
 		{
 			const RefArray< Edge >& edges = shaderGraph->getEdges();
