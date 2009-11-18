@@ -55,7 +55,7 @@ std::wstring ShortcutEdit::getText() const
 	if (m_keyState & ui::KsShift)
 		keyDesc = keyDesc.empty() ? L"Shift" : keyDesc + L"+Shift";
 
-	std::wstring keyName = ui::Application::getInstance().translateVirtualKey(m_virtualKey);
+	std::wstring keyName = ui::Application::getInstance()->translateVirtualKey(m_virtualKey);
 	return keyDesc.empty() ? keyName : keyDesc + L", " + keyName;
 }
 

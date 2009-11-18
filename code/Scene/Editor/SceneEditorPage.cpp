@@ -388,7 +388,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			}
 		}
 
-		ui::Application::getInstance().getClipboard()->setObject(entityClipboardData);
+		ui::Application::getInstance()->getClipboard()->setObject(entityClipboardData);
 
 		if (command == L"Editor.Cut")
 		{
@@ -408,7 +408,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		// Get clipboard data; ensure correct type.
 		Ref< EntityClipboardData > entityClipboardData = dynamic_type_cast< EntityClipboardData* >(
-			ui::Application::getInstance().getClipboard()->getObject()
+			ui::Application::getInstance()->getClipboard()->getObject()
 		);
 		if (!entityClipboardData)
 			return false;

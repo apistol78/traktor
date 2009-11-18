@@ -61,8 +61,6 @@ wchar_t* itoa__(T value, wchar_t* buf)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object);
-
 OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)

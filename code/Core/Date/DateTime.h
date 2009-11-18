@@ -1,8 +1,7 @@
 #ifndef traktor_DateTime_H
 #define traktor_DateTime_H
 
-#include "Core/Ref.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,13 +14,13 @@
 namespace traktor
 {
 
+class ISerializer;
+
 /*! \brief Date and time class.
  * \ingroup Core
  */
-class T_DLLCLASS DateTime : public ISerializable
+class T_DLLCLASS DateTime
 {
-	T_RTTI_CLASS;
-
 public:
 	DateTime();
 
@@ -37,7 +36,7 @@ public:
 	DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uint8_t minute, uint8_t second);
 
 	/*! \brief Return current date. */
-	static Ref< DateTime > now();
+	static DateTime now();
 
 	/*! \brief Return year. */
 	uint16_t getYear() const;
@@ -72,7 +71,8 @@ public:
 	/*! \brief Compare not-equal operator. */
 	bool operator != (const DateTime& dt) const;
 
-	virtual bool serialize(ISerializer& s);
+	/*! \brief Serialize object. */
+	bool serialize(ISerializer& s);
 
 private:
 	uint16_t m_year;

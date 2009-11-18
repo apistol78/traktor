@@ -47,7 +47,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	CommandLine cmdLine(file, mbstows(szCmdLine));
 #endif
 
-	ui::Application::getInstance().initialize(
+	ui::Application::getInstance()->initialize(
 		new EventLoopImpl(),
 		new WidgetFactoryImpl()
 	);
@@ -55,29 +55,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	try
 	{
 #if !defined(_DEBUG)
-		editor::Splash splash;
-		splash.create();
+		Ref< editor::Splash > splash = new editor::Splash();
+		splash->create();
 
 		for (int i = 0; i < 10; ++i)
 		{
-			ui::Application::getInstance().process();
+			ui::Application::getInstance()->process();
 			ThreadManager::getInstance().getCurrentThread()->sleep(50);
 		}
 #endif
 
-		editor::EditorForm editorForm;
-		if (editorForm.create(cmdLine))
+		Ref< editor::EditorForm > editorForm = new editor::EditorForm();
+		if (editorForm->create(cmdLine))
 		{
 #if !defined(_DEBUG)
-			splash.hide();
+			splash->hide();
 #endif
 
-			ui::Application::getInstance().execute();
-			editorForm.destroy();
+			ui::Application::getInstance()->execute();
+			editorForm->destroy();
 		}
 
 #if !defined(_DEBUG)
-		splash.destroy();
+		splash->destroy();
 #endif
 	}
 	catch (...)
@@ -85,6 +85,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		traktor::log::error << L"Unhandled exception, application terminated" << Endl;
 	}
 
-	ui::Application::getInstance().finalize();
+	ui::Application::getInstance()->finalize();
 	return 0;
 }

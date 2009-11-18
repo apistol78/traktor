@@ -29,7 +29,7 @@ bool MenuBar::create(Form* form)
 	if (!form)
 		return false;
 
-	m_menuBar = Application::getInstance().getWidgetFactory()->createMenuBar(this);
+	m_menuBar = Application::getInstance()->getWidgetFactory()->createMenuBar(this);
 	if (!m_menuBar)
 	{
 		log::error << L"Failed to create native widget peer (MenuBar)" << Endl;

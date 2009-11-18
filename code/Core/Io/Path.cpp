@@ -9,8 +9,6 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Path", Path, Object)
-
 Path::Path()
 :	m_relative(false)
 {

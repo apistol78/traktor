@@ -54,8 +54,6 @@ int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.FileOutputStream", FileOutputStream, OutputStream)
-
 FileOutputStream::FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd)
 :	OutputStream(new FileOutputStreamBuffer(stream, encoding), lineEnd)
 {

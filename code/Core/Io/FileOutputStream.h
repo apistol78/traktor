@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-	class IEncoding;
+class IEncoding;
 class IStream;
 
 /*! \brief File output stream.
@@ -22,8 +22,6 @@ class IStream;
  */
 class T_DLLCLASS FileOutputStream : public OutputStream
 {
-	T_RTTI_CLASS;
-
 public:
 	FileOutputStream(IStream* stream, IEncoding* encoding, LineEnd lineEnd = LeAuto);
 

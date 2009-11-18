@@ -338,7 +338,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 			return false;
 
 		const Animation::KeyPose& keyPose = m_animation->getKeyPose(poseIndex);
-		ui::Application::getInstance().getClipboard()->setObject(new KeyPoseClipboardData(keyPose));
+		ui::Application::getInstance()->getClipboard()->setObject(new KeyPoseClipboardData(keyPose));
 
 		if (command == L"Editor.Cut")
 		{
@@ -352,7 +352,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Editor.Paste")
 	{
 		Ref< KeyPoseClipboardData > data = dynamic_type_cast< KeyPoseClipboardData* >(
-			ui::Application::getInstance().getClipboard()->getObject()
+			ui::Application::getInstance()->getClipboard()->getObject()
 		);
 		if (!data)
 			return false;

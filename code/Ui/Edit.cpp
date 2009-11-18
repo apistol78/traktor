@@ -24,7 +24,7 @@ bool Edit::create(Widget* parent, const std::wstring& text, int style, EditValid
 			return false;
 	}
 
-	IEdit* edit = Application::getInstance().getWidgetFactory()->createEdit(this);
+	IEdit* edit = Application::getInstance()->getWidgetFactory()->createEdit(this);
 	if (!edit)
 	{
 		log::error << L"Failed to create native widget peer (Edit)" << Endl;

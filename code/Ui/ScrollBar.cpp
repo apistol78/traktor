@@ -15,7 +15,7 @@ bool ScrollBar::create(Widget* parent, int style)
 	if (!parent)
 		return false;
 
-	IScrollBar* scrollBar = Application::getInstance().getWidgetFactory()->createScrollBar(this);
+	IScrollBar* scrollBar = Application::getInstance()->getWidgetFactory()->createScrollBar(this);
 	if (!scrollBar)
 	{
 		log::error << L"Failed to create native widget peer (ScrollBar)" << Endl;

@@ -15,7 +15,7 @@ bool Button::create(Widget* parent, const std::wstring& text, int style)
 	if (!parent)
 		return false;
 
-	IButton* button = Application::getInstance().getWidgetFactory()->createButton(this);
+	IButton* button = Application::getInstance()->getWidgetFactory()->createButton(this);
 	if (!button)
 	{
 		log::error << L"Failed to create native widget peer (Button)" << Endl;

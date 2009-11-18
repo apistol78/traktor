@@ -27,7 +27,7 @@ bool NotificationIcon::create(const std::wstring& text, Bitmap* image)
 	if (!image || !image->getIBitmap())
 		return false;
 
-	m_ni = Application::getInstance().getWidgetFactory()->createNotificationIcon(this);
+	m_ni = Application::getInstance()->getWidgetFactory()->createNotificationIcon(this);
 	if (!m_ni)
 	{
 		log::error << L"Failed to create native widget peer (NotificationIcon)" << Endl;

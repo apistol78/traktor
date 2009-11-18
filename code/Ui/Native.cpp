@@ -16,7 +16,7 @@ bool Native::create(void* nativeHandle, Layout* layout)
 {
 	m_layout = layout;
 
-	INative* native = Application::getInstance().getWidgetFactory()->createNative(this);
+	INative* native = Application::getInstance()->getWidgetFactory()->createNative(this);
 	if (!native)
 	{
 		log::error << L"Failed to create native widget peer (Native)" << Endl;

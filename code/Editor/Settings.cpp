@@ -260,7 +260,7 @@ bool PropertyKey::serialize(ISerializer& s)
 				return false;
 		}
 
-		m_value.second = ui::Application::getInstance().translateVirtualKey(key);
+		m_value.second = ui::Application::getInstance()->translateVirtualKey(key);
 	}
 	else	// SdWrite
 	{
@@ -286,7 +286,7 @@ bool PropertyKey::serialize(ISerializer& s)
 
 		if (!keydesc.empty())
 			keydesc += L",";
-		keydesc += ui::Application::getInstance().translateVirtualKey(m_value.second);
+		keydesc += ui::Application::getInstance()->translateVirtualKey(m_value.second);
 
 		s >> Member< std::wstring >(L"key", keydesc);
 	}

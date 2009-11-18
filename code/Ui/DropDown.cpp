@@ -15,7 +15,7 @@ bool DropDown::create(Widget* parent, const std::wstring& text, int style)
 	if (!parent)
 		return false;
 
-	IDropDown* dropDown = Application::getInstance().getWidgetFactory()->createDropDown(this);
+	IDropDown* dropDown = Application::getInstance()->getWidgetFactory()->createDropDown(this);
 	if (!dropDown)
 	{
 		log::error << L"Failed to create native widget peer (DropDown)" << Endl;

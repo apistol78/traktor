@@ -25,7 +25,7 @@ bool Widget::create(Widget* parent, int style)
 {
 	if (!m_widget)
 	{
-		IUserWidget* widget = Application::getInstance().getWidgetFactory()->createUserWidget(this);
+		IUserWidget* widget = Application::getInstance()->getWidgetFactory()->createUserWidget(this);
 		if (!widget)
 		{
 			log::error << L"Failed to create native widget peer (UserWidget)" << Endl;

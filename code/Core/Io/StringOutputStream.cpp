@@ -9,8 +9,6 @@ int StringOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 	return count;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.StringOutputStream", StringOutputStream, OutputStream);
-
 StringOutputStream::StringOutputStream()
 {
 	setBuffer(&m_buffer);

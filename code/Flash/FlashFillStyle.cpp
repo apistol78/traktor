@@ -5,8 +5,6 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashFillStyle", FlashFillStyle, Object)
-
 FlashFillStyle::FlashFillStyle()
 :	m_gradientType(GtInvalid)
 ,	m_gradientMatrix(Matrix33::identity())

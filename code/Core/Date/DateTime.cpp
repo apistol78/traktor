@@ -12,8 +12,6 @@ const int8_t c_monthDays[] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
 	}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.DateTime", DateTime, ISerializable)
-
 DateTime::DateTime()
 :	m_year(0)
 ,	m_month(0)
@@ -45,7 +43,7 @@ DateTime::DateTime(uint16_t year, uint8_t month, uint16_t day, uint8_t hour, uin
 		++m_day;
 }
 
-Ref< DateTime > DateTime::now()
+DateTime DateTime::now()
 {
 #if !defined(WINCE)
 	// Get current time.
@@ -62,16 +60,16 @@ Ref< DateTime > DateTime::now()
 	T_ASSERT (tmp);
 #endif
 
-	Ref< DateTime > date = new DateTime();
+	DateTime date;
 
-	date->m_year = tmp->tm_year + 1900;
-	date->m_month = tmp->tm_mon + 1;
-	date->m_day = tmp->tm_yday + 1;
-	date->m_hour = tmp->tm_hour;
-	date->m_minute = tmp->tm_min;
-	date->m_second = tmp->tm_sec;
+	date.m_year = tmp->tm_year + 1900;
+	date.m_month = tmp->tm_mon + 1;
+	date.m_day = tmp->tm_yday + 1;
+	date.m_hour = tmp->tm_hour;
+	date.m_minute = tmp->tm_min;
+	date.m_second = tmp->tm_sec;
 
-	T_ASSERT (date->getDay() == tmp->tm_mday - 1);
+	T_ASSERT (date.getDay() == tmp->tm_mday - 1);
 
 	return date;
 #else

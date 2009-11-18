@@ -15,7 +15,7 @@ bool RadioButton::create(Widget* parent, const std::wstring& text, bool checked)
 	if (!parent)
 		return false;
 
-	IRadioButton* radioButton = Application::getInstance().getWidgetFactory()->createRadioButton(this);
+	IRadioButton* radioButton = Application::getInstance()->getWidgetFactory()->createRadioButton(this);
 	if (!radioButton)
 	{
 		log::error << L"Failed to create native widget peer (RadioButton)" << Endl;

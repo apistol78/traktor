@@ -22,10 +22,8 @@ namespace traktor
 /*! \brief Shape fill style.
  * \ingroup Flash
  */
-class T_DLLCLASS FlashFillStyle : public Object
+class T_DLLCLASS FlashFillStyle
 {
-	T_RTTI_CLASS;
-
 public:
 	enum GradientType
 	{

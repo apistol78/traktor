@@ -212,7 +212,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//			data->addEdge(shaderEdge);
 	//		}
 
-	//		ui::Application::getInstance().getClipboard()->setObject(data);
+	//		ui::Application::getInstance()->getClipboard()->setObject(data);
 
 	//		// Remove edges and nodes from graphs if user cuts.
 	//		if (command == L"Editor.Cut")
@@ -241,7 +241,7 @@ bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 	//else if (command == L"Editor.Paste")
 	//{
 	//	Ref< ShaderGraphEditorClipboardData > data = dynamic_type_cast< ShaderGraphEditorClipboardData* >(
-	//		ui::Application::getInstance().getClipboard()->getObject()
+	//		ui::Application::getInstance()->getClipboard()->getObject()
 	//	);
 	//	if (data)
 	//	{

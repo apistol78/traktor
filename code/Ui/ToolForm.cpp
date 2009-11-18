@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.ToolForm", ToolForm, Container)
 
 bool ToolForm::create(Widget* parent, const std::wstring& text, int width, int height, int style, Layout* layout)
 {
-	IToolForm* toolForm = Application::getInstance().getWidgetFactory()->createToolForm(this);
+	IToolForm* toolForm = Application::getInstance()->getWidgetFactory()->createToolForm(this);
 	if (!toolForm)
 	{
 		log::error << L"Failed to create native widget peer (ToolForm)" << Endl;

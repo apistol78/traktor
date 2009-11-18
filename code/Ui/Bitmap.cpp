@@ -44,7 +44,7 @@ Bitmap::~Bitmap()
 
 bool Bitmap::create(uint32_t width, uint32_t height)
 {
-	if (!(m_bitmap = Application::getInstance().getWidgetFactory()->createBitmap()))
+	if (!(m_bitmap = Application::getInstance()->getWidgetFactory()->createBitmap()))
 	{
 		log::error << L"Failed to create native widget peer (Bitmap)" << Endl;
 		return false;

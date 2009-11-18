@@ -96,7 +96,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &FlashPreviewControl::eventIdle);
-	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
+	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
 
 	m_timer.start();
 	return true;
@@ -106,7 +106,7 @@ void FlashPreviewControl::destroy()
 {
 	if (m_idleHandler)
 	{
-		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
+		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
 		m_idleHandler = 0;
 	}
 

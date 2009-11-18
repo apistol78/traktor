@@ -59,7 +59,7 @@ bool TreeView::create(Widget* parent, int style)
 	if (!parent)
 		return false;
 
-	ITreeView* treeView = Application::getInstance().getWidgetFactory()->createTreeView(this);
+	ITreeView* treeView = Application::getInstance()->getWidgetFactory()->createTreeView(this);
 	if (!treeView)
 	{
 		log::error << L"Failed to create native widget peer (TreeView)" << Endl;

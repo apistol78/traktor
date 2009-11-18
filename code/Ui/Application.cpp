@@ -40,10 +40,12 @@ const struct { const wchar_t* name; VirtualKey vkey; } c_keyTranslateTable[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Application", Application, EventSubject)
 
-Application& Application::getInstance()
+Application* Application::getInstance()
 {
-	static Application instance;
-	return instance;
+	static Ref< Application > s_instance;
+	if (!s_instance)
+		s_instance = new Application();
+	return s_instance;
 }
 
 bool Application::initialize(IEventLoop* eventLoop, IWidgetFactory* widgetFactory)

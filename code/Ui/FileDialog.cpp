@@ -23,7 +23,7 @@ FileDialog::~FileDialog()
 
 bool FileDialog::create(Widget* parent, const std::wstring& title, const std::wstring& filters, bool save)
 {
-	m_fileDialog = Application::getInstance().getWidgetFactory()->createFileDialog(this);
+	m_fileDialog = Application::getInstance()->getWidgetFactory()->createFileDialog(this);
 	if (!m_fileDialog)
 	{
 		log::error << L"Failed to create native widget peer (FileDialog)" << Endl;

@@ -15,7 +15,7 @@ bool CheckBox::create(Widget* parent, const std::wstring& text, bool checked)
 	if (!parent)
 		return false;
 
-	ICheckBox* checkBox = Application::getInstance().getWidgetFactory()->createCheckBox(this);
+	ICheckBox* checkBox = Application::getInstance()->getWidgetFactory()->createCheckBox(this);
 	if (!checkBox)
 	{
 		log::error << L"Failed to create native widget peer (CheckBox)" << Endl;

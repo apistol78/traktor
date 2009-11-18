@@ -108,7 +108,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &EffectPreviewControl::eventIdle);
-	ui::Application::getInstance().addEventHandler(ui::EiIdle, m_idleHandler);
+	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
 
 	return true;
 }
@@ -117,7 +117,7 @@ void EffectPreviewControl::destroy()
 {
 	if (m_idleHandler)
 	{
-		ui::Application::getInstance().removeEventHandler(ui::EiIdle, m_idleHandler);
+		ui::Application::getInstance()->removeEventHandler(ui::EiIdle, m_idleHandler);
 		m_idleHandler = 0;
 	}
 

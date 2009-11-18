@@ -2,7 +2,6 @@
 #define traktor_render_ShaderParameters_H
 
 #include <string>
-#include "Core/Object.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Shader.h"
@@ -10,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,7 +26,7 @@ class RenderContext;
 /*! \brief Shader parameter values.
  * \ingroup Render
  */
-class T_DLLCLASS ShaderParameters : public Object
+class T_DLLCLASS ShaderParameters
 {
 public:
 	ShaderParameters();

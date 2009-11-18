@@ -17,7 +17,7 @@ bool ListView::create(Widget* parent, int style)
 	if (!parent)
 		return false;
 
-	IListView* listView = Application::getInstance().getWidgetFactory()->createListView(this);
+	IListView* listView = Application::getInstance()->getWidgetFactory()->createListView(this);
 	if (!listView)
 	{
 		log::error << L"Failed to create native widget peer (ListView)" << Endl;

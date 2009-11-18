@@ -24,7 +24,7 @@ PopupMenu::~PopupMenu()
 
 bool PopupMenu::create()
 {
-	m_popupMenu = Application::getInstance().getWidgetFactory()->createPopupMenu(this);
+	m_popupMenu = Application::getInstance()->getWidgetFactory()->createPopupMenu(this);
 	if (!m_popupMenu)
 	{
 		log::error << L"Failed to create native widget peer (PopupMenu)" << Endl;

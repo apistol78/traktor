@@ -2,7 +2,7 @@
 #define traktor_Path_H
 
 #include <string>
-#include "Core/Object.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,10 +18,8 @@ namespace traktor
 /*! \brief File path.
  * \ingroup Core
  */
-class T_DLLCLASS Path : public Object
+class T_DLLCLASS Path
 {
-	T_RTTI_CLASS;
-
 public:
 	Path();
 

@@ -15,7 +15,7 @@ bool ListBox::create(Widget* parent, const std::wstring& text, int style)
 	if (!parent)
 		return false;
 
-	IListBox* listBox = Application::getInstance().getWidgetFactory()->createListBox(this);
+	IListBox* listBox = Application::getInstance()->getWidgetFactory()->createListBox(this);
 	if (!listBox)
 	{
 		log::error << L"Failed to create native widget peer (ListBox)" << Endl;

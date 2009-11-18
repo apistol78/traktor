@@ -15,7 +15,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text, int style)
 	if (!parent)
 		return false;
 
-	IRichEdit* richEdit = Application::getInstance().getWidgetFactory()->createRichEdit(this);
+	IRichEdit* richEdit = Application::getInstance()->getWidgetFactory()->createRichEdit(this);
 	if (!richEdit)
 	{
 		log::error << L"Failed to create native widget peer (RichEdit)" << Endl;
