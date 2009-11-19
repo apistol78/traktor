@@ -145,4 +145,14 @@ void TypeInfo::findAllOf(std::vector< const TypeInfo* >& outTypes, bool inclusiv
 	}
 }
 
+void __forceLinkReference(const TypeInfo& type)
+{
+	wchar_t* dummy = static_cast< wchar_t* >(alloca(256 * sizeof(wchar_t)));
+#if defined(_WIN32)
+	wcscpy_s(dummy, 256, type.getName());
+#else
+	wcscpy(dummy, type.getName());
+#endif
+}
+
 }

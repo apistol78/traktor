@@ -19,6 +19,17 @@ namespace traktor
 
 class ITypedObject;
 
+/*! \brief Force linker to keep reference to type.
+ * \ingroup Core
+ */
+//@{
+
+void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
+#define T_FORCE_LINK_REF(CLASS) \
+	traktor::__forceLinkReference(traktor::type_of< CLASS >());
+
+//@}
+
 /*! \brief Instance factory.
  * \ingroup Core
  */
