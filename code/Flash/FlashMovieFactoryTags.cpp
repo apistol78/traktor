@@ -30,7 +30,7 @@ namespace traktor
 		namespace
 		{
 
-ActionScript* readActionScript(BitReader& bs)
+Ref< ActionScript > readActionScript(BitReader& bs)
 {
 	std::vector< uint8_t > buf;
 	for (;;)
@@ -54,7 +54,7 @@ ActionScript* readActionScript(BitReader& bs)
 			break;
 	}
 	Ref< ActionScript > script = new ActionScript(uint32_t(buf.size()));
-	memcpy(script->getCode(), &buf[0], buf.size());
+	std::memcpy(script->getCode(), &buf[0], buf.size());
 	return script;
 }
 

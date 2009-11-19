@@ -29,7 +29,7 @@ static bool s_errorOccured = false;
 
 struct my_source_mgr : jpeg_source_mgr
 {
-	Ref< IStream > stream;
+	IStream* stream;
 	JOCTET buffer[c_bufferSize];
 };
 
