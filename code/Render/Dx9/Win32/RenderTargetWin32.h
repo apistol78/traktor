@@ -35,7 +35,8 @@ public:
 	bool create(
 		IDirect3DDevice9* d3dDevice,
 		const RenderTargetSetCreateDesc& setDesc,
-		const RenderTargetCreateDesc& targetDesc
+		const RenderTargetCreateDesc& targetDesc,
+		D3DFORMAT d3dFormat
 	);
 
 	virtual void destroy();
