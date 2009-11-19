@@ -19,7 +19,7 @@ CriticalSection::~CriticalSection()
 	delete reinterpret_cast< pthread_mutex_t* >(m_handle);
 }
 
-bool CriticalSection::acquire(int timeout)
+bool CriticalSection::wait(int32_t timeout)
 {
 	pthread_mutex_t* mutex = reinterpret_cast< pthread_mutex_t* >(m_handle);
 

@@ -35,7 +35,7 @@ Semaphore::~Semaphore()
 	delete reinterpret_cast< InternalData* >(m_handle);
 }
 
-bool Semaphore::acquire(int timeout)
+bool Semaphore::wait(int32_t timeout)
 {
 	InternalData* data = reinterpret_cast< InternalData* >(m_handle);
 

@@ -1,6 +1,8 @@
 #ifndef traktor_AutoPtr_H
 #define traktor_AutoPtr_H
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 

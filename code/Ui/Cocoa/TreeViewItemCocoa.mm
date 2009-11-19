@@ -87,7 +87,7 @@ bool TreeViewItemCocoa::edit()
 	return false;
 }
 
-TreeViewItem* TreeViewItemCocoa::getParent() const
+Ref< TreeViewItem > TreeViewItemCocoa::getParent() const
 {
 	return m_parent;
 }

@@ -86,20 +86,18 @@ bool ConnectionManager::acceptConnections(int32_t waitTimeout)
 	return true;
 }
 
-namespace
-{
-
-	struct NotAlive
-	{
-		bool operator () (Connection* connection) const { return !connection->alive(); }
-	};
-
-}
-
 bool ConnectionManager::cleanupConnections()
 {
 	uint32_t count = uint32_t(m_connections.size());
-	std::remove_if(m_connections.begin(), m_connections.end(), NotAlive());
+
+	for (RefArray< Connection >::iterator i = m_connections.begin(); i != m_connections.end(); )
+	{
+		if (!(*i)->alive())
+			i = m_connections.erase(i);
+		else
+			++i;
+	}
+
 	count -= uint32_t(m_connections.size());
 
 	if (count)

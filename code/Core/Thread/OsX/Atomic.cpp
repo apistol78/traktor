@@ -25,7 +25,7 @@ uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
 {
 	static Semaphore lock;
-	lock.acquire();
+	lock.wait();
 	uint64_t o = s; s = v;
 	lock.release();
 	return o;

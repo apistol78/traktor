@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
@@ -346,7 +347,8 @@ void GraphControl::evenSpace(EvenSpace space)
 	if (nodes.size() <= 1)
 		return;
 
-	std::sort(nodes.begin(), nodes.end(), SortNodePred(space));
+	//std::sort(nodes.begin(), nodes.end(), SortNodePred(space));
+	log::debug << L"fixme, GraphControl evenSpace" << Endl;
 
 	Rect bounds(
 		std::numeric_limits< int >::max(),

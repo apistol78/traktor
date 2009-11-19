@@ -7,7 +7,6 @@
 #include "Ui/TreeView.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/MirrorFilter.h"
-#include "Core/Heap/GcNew.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -97,11 +96,11 @@ int TreeViewCocoa::addImage(IBitmap* image, int imageCount)
 	return base;
 }
 
-TreeViewItem* TreeViewCocoa::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
+Ref< TreeViewItem > TreeViewCocoa::createItem(TreeViewItem* parent, const std::wstring& text, int image, int expandedImage)
 {
 	Ref< TreeViewItemCocoa > realParent = checked_type_cast< TreeViewItemCocoa* >(parent);
 
-	Ref< TreeViewItemCocoa > item = gc_new< TreeViewItemCocoa >(realParent);
+	Ref< TreeViewItemCocoa > item = new TreeViewItemCocoa(realParent);
 	item->setText(text);
 	item->setImage(image);
 	item->setExpandedImage(expandedImage);
@@ -130,12 +129,12 @@ void TreeViewCocoa::removeAllItems()
 	[m_control reloadData];
 }
 
-TreeViewItem* TreeViewCocoa::getRootItem() const
+Ref< TreeViewItem > TreeViewCocoa::getRootItem() const
 {
 	return m_rootItem;
 }
 
-TreeViewItem* TreeViewCocoa::getSelectedItem() const
+Ref< TreeViewItem > TreeViewCocoa::getSelectedItem() const
 {
 	int row = [m_control selectedRow];
 	
@@ -254,7 +253,7 @@ void TreeViewCocoa::event_willDisplayCell(NSCell* cell, NSTableColumn* tableColu
 	int32_t index = realItem->getImage();
 	if (index >= 0 && index < int32_t(m_bitmaps.size()))
 	{
-		Ref< BitmapCocoa > bitmap = m_bitmaps[index];
+		BitmapCocoa* bitmap = m_bitmaps[index];
 		if (bitmap)
 			[cell setImage: bitmap->getNSImage()];
 		else

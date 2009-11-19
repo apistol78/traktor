@@ -24,7 +24,7 @@ namespace traktor
  */
 class T_DLLCLASS SoundDriverOpenAL : public ISoundDriver
 {
-	T_RTTI_CLASS(SoundDriverOpenAL)
+	T_RTTI_CLASS;
 	
 public:
 	SoundDriverOpenAL();

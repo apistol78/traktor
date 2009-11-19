@@ -72,7 +72,10 @@ Ref< ITexture > RenderTargetSetOpenGL::getColorTexture(int index) const
 
 void RenderTargetSetOpenGL::swap(int index1, int index2)
 {
-	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
+	Ref< RenderTargetOpenGL > target1 = m_colorTextures[index1];
+	Ref< RenderTargetOpenGL > target2 = m_colorTextures[index2];
+	m_colorTextures[index1] = target2;
+	m_colorTextures[index2] = target1;
 }
 
 bool RenderTargetSetOpenGL::read(int index, void* buffer) const

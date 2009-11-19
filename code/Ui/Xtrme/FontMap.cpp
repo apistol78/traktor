@@ -10,7 +10,7 @@
 #	include <ft2build.h>
 #	include FT_FREETYPE_H
 #	include "Core/Io/FileSystem.h"
-#	include "Core/Io/Stream.h"
+#	include "Core/Io/IStream.h"
 #endif
 
 #include <cmath>

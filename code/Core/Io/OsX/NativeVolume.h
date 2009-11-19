@@ -2,7 +2,7 @@
 #define traktor_NativeVolume_H
 
 #include <string>
-#include "Core/Io/Volume.h"
+#include "Core/Io/IVolume.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,22 +17,22 @@ namespace traktor
 	
 class FileSystem;
 	
-class T_DLLCLASS NativeVolume : public Volume
+class T_DLLCLASS NativeVolume : public IVolume
 {
-	T_RTTI_CLASS(NativeVolume)
+	T_RTTI_CLASS;
 
 public:
 	NativeVolume(const Path& currentDirectory);
 	
 	virtual std::wstring getDescription() const;
 
-	virtual File* get(const Path& path);
+	virtual Ref< File > get(const Path& path);
 
 	virtual int find(const Path& mask, RefArray< File >& out);
 
 	virtual bool modify(const Path& fileName, uint32_t flags);
 	
-	virtual Stream* open(const Path& filename, uint32_t mode);
+	virtual Ref< IStream > open(const Path& filename, uint32_t mode);
 	
 	virtual bool exist(const Path& filename);
 	

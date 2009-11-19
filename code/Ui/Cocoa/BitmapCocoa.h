@@ -21,7 +21,7 @@ public:
 
 	virtual void copySubImage(drawing::Image* image, const Rect& srcRect, const Point& destPos);
 
-	virtual drawing::Image* getImage() const;
+	virtual Ref< drawing::Image > getImage() const;
 
 	virtual Size getSize() const;
 

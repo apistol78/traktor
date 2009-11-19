@@ -4,7 +4,6 @@
 #import <Cocoa/Cocoa.h>
 #import "Ui/Cocoa/NSTargetProxy.h"
 
-#include "Core/Heap/Ref.h"
 #include "Ui/Itf/IMenuBar.h"
 
 namespace traktor

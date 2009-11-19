@@ -33,7 +33,7 @@ public:
 	typedef size_t size_type;
 
 	/*! \brief In-place reference handle. */
-	template < typename Class >
+	template < typename HandleClass >
 	class Handle
 	{
 	public:
@@ -85,7 +85,7 @@ public:
 		// \name Cast operators
 		// @{
 
-		operator Class* () const
+		operator HandleClass* () const
 		{
 			return m_ptr;
 		}

@@ -44,7 +44,7 @@ public:
 
 	virtual void setItems(ListViewItems* items);
 
-	virtual ListViewItems* getItems() const;
+	virtual Ref< ListViewItems > getItems() const;
 	
 	virtual int getSelectedItems(std::vector< int >& items) const;
 	
