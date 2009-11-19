@@ -71,7 +71,8 @@ RenderTargetWin32::RenderTargetWin32(ContextDx9* context)
 bool RenderTargetWin32::create(
 	IDirect3DDevice9* d3dDevice,
 	const RenderTargetSetCreateDesc& setDesc,
-	const RenderTargetCreateDesc& targetDesc
+	const RenderTargetCreateDesc& targetDesc,
+	D3DFORMAT d3dFormat
 )
 {
 	HRESULT hr;
@@ -83,7 +84,7 @@ bool RenderTargetWin32::create(
 			setDesc.height,
 			1,
 			D3DUSAGE_RENDERTARGET,
-			c_d3dFormat[targetDesc.format],
+			d3dFormat,
 			D3DPOOL_DEFAULT,
 			&m_d3dTargetTexture.getAssign(),
 			NULL
@@ -100,7 +101,7 @@ bool RenderTargetWin32::create(
 		hr = d3dDevice->CreateRenderTarget(
 			setDesc.width,
 			setDesc.height,
-			c_d3dFormat[targetDesc.format],
+			d3dFormat,
 			(D3DMULTISAMPLE_TYPE)setDesc.multiSample,
 			0,
 			FALSE,
@@ -115,7 +116,7 @@ bool RenderTargetWin32::create(
 			setDesc.height,
 			1,
 			D3DUSAGE_RENDERTARGET,
-			c_d3dFormat[targetDesc.format],
+			d3dFormat,
 			D3DPOOL_DEFAULT,
 			&m_d3dTargetTexture.getAssign(),
 			NULL

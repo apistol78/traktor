@@ -12,16 +12,17 @@ namespace traktor
 		namespace
 		{
 
-TextureFormat c_formatPromote[][2] =
+D3DFORMAT c_formatPromote[][2] =
 {
-	{ TfR16F, TfR32F },
-	{ TfR32F, TfR16G16B16A16F },
-	{ TfR16G16B16A16F, TfR32G32B32A32F }
+	{ D3DFMT_L8, D3DFMT_A8R8G8B8 },
+	{ D3DFMT_R16F, D3DFMT_R32F },
+	{ D3DFMT_R32F, D3DFMT_A16B16G16R16F },
+	{ D3DFMT_A16B16G16R16F, D3DFMT_A32B32G32R32F }
 };
 
-TextureFormat tryPromoteFormat(TextureFormat format)
+D3DFORMAT tryPromoteFormat(D3DFORMAT format)
 {
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < 4; ++i)
 	{
 		if (c_formatPromote[i][0] == format)
 			return c_formatPromote[i][1];
@@ -183,8 +184,10 @@ LRESULT RenderTargetSetWin32::internalCreate()
 	// Ensure all target formats is supported; try to promote format if
 	// available.
 	T_ASSERT (m_desc.count < RenderTargetSetCreateDesc::MaxTargets);
+	D3DFORMAT d3dFormats[RenderTargetSetCreateDesc::MaxTargets];
 	for (int i = 0; i < m_desc.count; ++i)
 	{
+		d3dFormats[i] = c_d3dFormat[m_desc.targets[i].format];
 		for (;;)
 		{
 			hr = d3d->CheckDeviceFormat(
@@ -193,20 +196,19 @@ LRESULT RenderTargetSetWin32::internalCreate()
 				d3dDisplayMode.Format,
 				D3DUSAGE_RENDERTARGET,
 				D3DRTYPE_SURFACE,
-				c_d3dFormat[m_desc.targets[i].format]
+				d3dFormats[i]
 			);
 			if (SUCCEEDED(hr))
 				break;
 			else
 			{
-				TextureFormat promotedFormat = tryPromoteFormat(m_desc.targets[i].format);
-				if (promotedFormat == m_desc.targets[i].format)
+				D3DFORMAT promotedFormat = tryPromoteFormat(d3dFormats[i]);
+				if (promotedFormat == d3dFormats[i])
 				{
-					log::error << L"Device doesn't support target format " << getTextureFormatName(m_desc.targets[i].format) << L"." << Endl;
+					log::error << L"Device doesn't support target format" << Endl;
 					return hr;
 				}
-				log::error << L"Device doesn't support target format " << getTextureFormatName(m_desc.targets[i].format) << L"; promoting to " << getTextureFormatName(promotedFormat) << L"." << Endl;
-				m_desc.targets[i].format = promotedFormat;
+				d3dFormats[i] = promotedFormat;
 			}
 		}
 	}
@@ -219,7 +221,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 			hr = d3d->CheckDeviceMultiSampleType(
 				d3dCaps.AdapterOrdinal,
 				d3dCaps.DeviceType,
-				c_d3dFormat[m_desc.targets[i].format],
+				d3dFormats[i],
 				TRUE,
 				(D3DMULTISAMPLE_TYPE)m_desc.multiSample,
 				NULL
@@ -238,7 +240,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 	for (int i = 0; i < m_desc.count; ++i)
 	{
 		m_colorTextures[i] = new RenderTargetWin32(m_context);
-		if (!m_colorTextures[i]->create(m_d3dDevice, m_desc, m_desc.targets[i]))
+		if (!m_colorTextures[i]->create(m_d3dDevice, m_desc, m_desc.targets[i], d3dFormats[i]))
 			return S_FALSE;
 	}
 
