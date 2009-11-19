@@ -74,7 +74,10 @@ Ref< ITexture > RenderTargetSetOpenGLES2::getColorTexture(int index) const
 
 void RenderTargetSetOpenGLES2::swap(int index1, int index2)
 {
-	std::swap(m_colorTextures[index1], m_colorTextures[index2]);
+	Ref< RenderTargetOpenGLES2 > target1 = m_colorTextures[index1];
+	Ref< RenderTargetOpenGLES2 > target2 = m_colorTextures[index2];
+	m_colorTextures[index1] = target2;
+	m_colorTextures[index2] = target1;
 }
 
 bool RenderTargetSetOpenGLES2::read(int index, void* buffer) const

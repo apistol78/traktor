@@ -15,7 +15,7 @@ class InputDeviceTouch
 :	public IInputDevice
 ,	public ITouchViewCallback
 {
-	T_RTTI_CLASS(InputDeviceTouch)
+	T_RTTI_CLASS;
 	
 public:
 	InputDeviceTouch();

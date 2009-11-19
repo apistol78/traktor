@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
 NativeStream::NativeStream(std::FILE* fp, uint32_t mode)
 :	m_fp(fp)

@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsFunction", AsFunction, ActionClass)
 
 Ref< AsFunction > AsFunction::getInstance()
 {
-	static AsFunction* instance = 0;
+	static Ref< AsFunction > instance;
 	if (!instance)
 	{
 		instance = new AsFunction();

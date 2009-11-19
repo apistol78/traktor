@@ -3,6 +3,7 @@
 
 #include <string>
 #include "Core/Ref.h"
+#include "Core/Rtti/ITypedObject.h"
 
 namespace traktor
 {

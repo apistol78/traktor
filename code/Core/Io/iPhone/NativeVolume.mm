@@ -39,7 +39,7 @@ DateTime fromUnixTime(const time_t& t)
 	
 	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, Volume)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeVolume", NativeVolume, IVolume)
 
 NativeVolume::NativeVolume(const Path& currentDirectory)
 :	m_currentDirectory(currentDirectory)
@@ -51,7 +51,7 @@ std::wstring NativeVolume::getDescription() const
 	return L"Native volume";
 }
 
-File* NativeVolume::get(const Path& path)
+Ref< File > NativeVolume::get(const Path& path)
 {
 	struct stat sb;
 	if (stat(wstombs(getSystemPath(path)).c_str(), &sb) != 0)
@@ -64,7 +64,7 @@ File* NativeVolume::get(const Path& path)
 	if (sb.st_mode & S_ISDIR)
 		flags |= File::FfDirectory;
 	*/
-	return gc_new< File >(
+	return new File(
 		path,
 		sb.st_size,
 		flags,
@@ -113,7 +113,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 				flags = File::FfNormal;
 			}
 			
-			out.push_back(gc_new< File >(
+			out.push_back(new File(
 				maskPath + mbstows(dp->d_name),
 				size,
 				flags
@@ -130,13 +130,13 @@ bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 	return false;
 }
 
-Stream* NativeVolume::open(const Path& filename, uint32_t mode)
+Ref< IStream > NativeVolume::open(const Path& filename, uint32_t mode)
 {
 	FILE* fp = fopen(
 		wstombs(getSystemPath(filename)).c_str(),
 		bool(mode == File::FmRead) ? "rb" : "wb"
 	);
-	return bool(fp != 0) ? gc_new< NativeStream >(fp, mode) : 0;
+	return bool(fp != 0) ? new NativeStream(fp, mode) : 0;
 }
 
 bool NativeVolume::exist(const Path& filename)
@@ -209,7 +209,7 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 	log::info << L"Initial working directory \"" << workingDirectory << L"\"" << Endl;
 
-	Ref< Volume > volume = gc_new< NativeVolume >(workingDirectory);
+	Ref< IVolume > volume = new NativeVolume(workingDirectory);
 	fileSystem.mount(L"C", volume);
 	fileSystem.setCurrentVolume(volume);
 }

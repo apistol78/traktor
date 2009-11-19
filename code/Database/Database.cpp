@@ -18,7 +18,13 @@ namespace traktor
 void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstanceMap)
 {
 	for (RefArray< Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
-		outInstanceMap.insert(std::make_pair((*i)->getGuid(), *i));
+	{
+		Ref< Instance > instance = *i;
+		outInstanceMap.insert(std::make_pair(
+			instance->getGuid(),
+			instance
+		));
+	}
 	for (RefArray< Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildInstanceMap(*i, outInstanceMap);
 }

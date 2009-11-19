@@ -2,7 +2,6 @@
 #define traktor_input_InputDriverIPhone_H
 
 #include "Input/IInputDriver.h"
-#include "Core/Heap/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +20,7 @@ class InputDeviceTouch;
 	
 class T_DLLCLASS InputDriverIPhone : public IInputDriver
 {
-	T_RTTI_CLASS(InputDriverIPhone)
+	T_RTTI_CLASS;
 	
 public:
 	InputDriverIPhone();
@@ -30,7 +29,7 @@ public:
 	
 	virtual int getDeviceCount();
 	
-	virtual IInputDevice* getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index);
 
 private:
 	Ref< InputDeviceTouch > m_inputDeviceTouch;

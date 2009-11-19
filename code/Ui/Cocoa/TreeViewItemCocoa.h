@@ -3,7 +3,7 @@
 
 #import "Ui/Cocoa/ObjCRef.h"
 
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Ui/TreeViewItem.h"
 
 namespace traktor
@@ -13,7 +13,7 @@ namespace traktor
 	
 class TreeViewItemCocoa : public TreeViewItem
 {
-	T_RTTI_CLASS(TreeViewItemCocoa)
+	T_RTTI_CLASS;
 	
 public:
 	TreeViewItemCocoa(TreeViewItemCocoa* parent);
@@ -46,7 +46,7 @@ public:
 
 	virtual bool edit();
 	
-	virtual TreeViewItem* getParent() const;
+	virtual Ref< TreeViewItem > getParent() const;
 
 	virtual bool hasChildren() const;
 	

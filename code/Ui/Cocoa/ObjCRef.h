@@ -1,7 +1,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "Core/Heap/Ref.h"
+#include "Core/Ref.h"
 #include "Core/Object.h"
 
 @interface ObjCRef : NSObject

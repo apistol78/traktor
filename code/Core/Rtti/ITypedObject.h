@@ -228,7 +228,7 @@ T dynamic_type_cast(const ITypedObject* obj)
 template < typename T, typename T0 >
 Ref< typename IsPointer< T >::base_t > dynamic_type_cast(Ref< T0 > obj)
 {
-	return dynamic_type_cast< IsPointer< T >::base_t* >(obj.ptr());
+	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.ptr());
 }
 
 /*! \brief Safe cast object.

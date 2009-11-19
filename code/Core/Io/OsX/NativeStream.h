@@ -2,7 +2,7 @@
 #define traktor_NativeStream_H
 
 #include <cstdio>
-#include "Core/Io/Stream.h"
+#include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,9 +15,9 @@
 namespace traktor
 {
 
-class T_DLLCLASS NativeStream : public Stream
+class T_DLLCLASS NativeStream : public IStream
 {
-	T_RTTI_CLASS(NativeStream)
+	T_RTTI_CLASS;
 
 public:
 	NativeStream(std::FILE* fp, uint32_t mode);

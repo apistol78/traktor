@@ -115,7 +115,7 @@ void ListViewCocoa::setItems(ListViewItems* items)
 	[m_control reloadData];
 }
 
-ListViewItems* ListViewCocoa::getItems() const
+Ref< ListViewItems > ListViewCocoa::getItems() const
 {
 	return m_items;
 }
