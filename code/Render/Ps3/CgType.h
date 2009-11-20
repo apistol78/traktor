@@ -9,9 +9,13 @@ namespace traktor
 	namespace render
 	{
 
+/*! \ingroup PS3 */
+//@{
+
 enum CgType
 {
 	CtVoid,
+	CtBoolean,
 	CtFloat,
 	CtFloat2,
 	CtFloat3,
@@ -19,11 +23,13 @@ enum CgType
 	CtFloat4x4
 };
 
-std::wstring cg_channel_name(DataUsage usage, int index);
+std::wstring cg_semantic(DataUsage usage, int index);
 
 std::wstring cg_type_name(CgType type);
 
 CgType cg_from_data_type(DataType type);
+
+//@}
 
 	}
 }

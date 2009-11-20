@@ -1,10 +1,8 @@
-#include <cassert>
-#include <cctype>
 #include "Render/Ps3/CgEmitter.h"
 #include "Render/Ps3/CgContext.h"
 #include "Render/VertexElement.h"
 #include "Render/Nodes.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -16,467 +14,967 @@ namespace traktor
 
 StringOutputStream& assign(StringOutputStream& f, CgVariable* out)
 {
-	f << cg_type_name(out->getType()) << " " << out->getName() << " = ";
+	f << cg_type_name(out->getType()) << L" " << out->getName() << L" = ";
 	return f;
 }
 
-void emitAbs(CgContext& cx, Abs* node)
+bool emitAbs(CgContext& cx, Abs* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "abs(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"abs(" << in->getName() << L");" << Endl;
+	return true;
 }
 
-void emitAdd(CgContext& cx, Add* node)
+bool emitAdd(CgContext& cx, Add* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << in1->cast(type) << " + " << in2->cast(type) << ";" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << in1->cast(type) << L" + " << in2->cast(type) << L";" << Endl;
+	return true;
 }
 
-void emitArcusCos(CgContext& cx, ArcusCos* node)
+bool emitArcusCos(CgContext& cx, ArcusCos* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* theta = cx.emitInput(node, "Theta");
-	assert (theta->getType() == CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "acos(" << theta->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* theta = cx.emitInput(node, L"Theta");
+	if (!theta || theta->getType() != CtFloat)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"acos(" << theta->getName() << L");" << Endl;
+	return true;
 }
 
-void emitArcusTan(CgContext& cx, ArcusTan* node)
+bool emitArcusTan(CgContext& cx, ArcusTan* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* xy = cx.emitInput(node, "XY");
-	assert (xy->getType() == CtFloat2);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "atan2(" << xy->getName() << ".x, " << xy->getName() << ".y);" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* xy = cx.emitInput(node, L"XY");
+	if (!xy || xy->getType() != CtFloat2)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"atan2(" << xy->getName() << L".x, " << xy->getName() << L".y);" << Endl;
+	return true;
 }
 
-void emitClamp(CgContext& cx, Clamp* node)
+bool emitBranch(CgContext& cx, Branch* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+
+	CgVariable caseTrue, caseFalse;
+	std::wstring caseTrueBranch, caseFalseBranch;
+
+	// Emit true branch.
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		CgVariable* ct = cx.emitInput(node, L"True");
+		if (!ct)
+			return false;
+
+		caseTrue = *ct;
+		caseTrueBranch = fs.str();
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Emit false branch.
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		CgVariable* cf = cx.emitInput(node, L"False");
+		if (!cf)
+			return false;
+
+		caseFalse = *cf;
+		caseFalseBranch = fs.str();
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Create output variable.
+	CgType outputType = std::max< CgType >(caseTrue.getType(), caseFalse.getType());
+	
+	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
+	f << cg_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
+
+	f << L"if (" << node->getParameterName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	f << caseTrueBranch;
+	f << out->getName() << L" = " << caseTrue.cast(outputType) << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;
+	f << L"else" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	f << caseFalseBranch;
+	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
+	
+	f << DecreaseIndent;
+	f << L"}" << Endl;
+
+	// Create boolean uniform.
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		int32_t booleanRegister = cx.allocateBooleanRegister();
+		fu << L"bool " << node->getParameterName() << L" : register(b" << booleanRegister << L") = false;" << Endl;
+		cx.getShader().addUniform(node->getParameterName(), CtBoolean, 1);
+	}
+
+	return true;
+}
+
+bool emitClamp(CgContext& cx, Clamp* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	if (node->getMin() == 0.0f && node->getMax() == 1.0f)
-		assign(f, out) << "saturate(" << in->getName() << ");" << Endl;
+		assign(f, out) << L"saturate(" << in->getName() << L");" << Endl;
 	else
-		assign(f, out) << "clamp(" << in->getName() << ", " << node->getMin() << ", " << node->getMax() << ");" << Endl;
+		assign(f, out) << L"clamp(" << in->getName() << L", " << node->getMin() << L", " << node->getMax() << L");" << Endl;
+	return true;
 }
 
-void emitColor(CgContext& cx, Color* node)
+bool emitColor(CgContext& cx, Color* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat4);
-	Vector4 color = node->getColor();
-	f << "float4 " << out->getName() << " = float4(" << color.x << ", " << color.y << ", " << color.z << ", " << color.w << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
+	if (!out)
+		return false;
+	traktor::Color color = node->getColor();
+	f << L"const float4 " << out->getName() << L" = float4(" << (color.r / 255.0f) << L", " << (color.g / 255.0f) << L", " << (color.b / 255.0f) << L", " << (color.a / 255.0f) << L");" << Endl;
+	return true;
 }
 
-void emitConditional(CgContext& cx, Conditional* node)
+bool emitConditional(CgContext& cx, Conditional* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* ref = cx.emitInput(node, "Reference");
-	CgVariable* ct = cx.emitInput(node, "CaseTrue");
-	CgVariable* cf = cx.emitInput(node, "CaseFalse");
-	
-	CgType type = std::max< CgType >(ct->getType(), cf->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
-	f << cg_type_name(out->getType()) << " " << out->getName() << ";" << Endl;
+	// Emit input and reference branches.
+	CgVariable* in = cx.emitInput(node, L"Input");
+	CgVariable* ref = cx.emitInput(node, L"Reference");
+	if (!in || !ref)
+		return false;
 
+	CgVariable caseTrue, caseFalse;
+	std::wstring caseTrueBranch, caseFalseBranch;
+
+	// Emit true branch.
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		CgVariable* ct = cx.emitInput(node, L"CaseTrue");
+		if (!ct)
+			return false;
+
+		caseTrue = *ct;
+		caseTrueBranch = fs.str();
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Emit false branch.
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		CgVariable* cf = cx.emitInput(node, L"CaseFalse");
+		if (!cf)
+			return false;
+
+		caseFalse = *cf;
+		caseFalseBranch = fs.str();
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Create output variable.
+	CgType outputType = std::max< CgType >(caseTrue.getType(), caseFalse.getType());
+	
+	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
+	f << cg_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
+
+	if (node->getBranch() == Conditional::BrStatic)
+		f << L"[flatten]" << Endl;
+	else if (node->getBranch() == Conditional::BrDynamic)
+		f << L"[branch]" << Endl;
+
+	// Create condition statement.
 	switch (node->getOperator())
 	{
 	case Conditional::CoLess:
-		f << "if (" << in->getName() << " < " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" < " << ref->getName() << L")" << Endl;
 		break;
 	case Conditional::CoLessEqual:
-		f << "if (" << in->getName() << " <= " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" <= " << ref->getName() << L")" << Endl;
 		break;
 	case Conditional::CoEqual:
-		f << "if (" << in->getName() << " == " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" == " << ref->getName() << L")" << Endl;
 		break;
 	case Conditional::CoNotEqual:
-		f << "if (" << in->getName() << " != " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" != " << ref->getName() << L")" << Endl;
 		break;
 	case Conditional::CoGreater:
-		f << "if (" << in->getName() << " > " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" > " << ref->getName() << L")" << Endl;
 		break;
 	case Conditional::CoGreaterEqual:
-		f << "if (" << in->getName() << " >= " << ref->getName() << ")" << Endl;
+		f << L"if (" << in->getName() << L" >= " << ref->getName() << L")" << Endl;
 		break;
 	default:
-		assert (0);
+		T_ASSERT (0);
 	}
 
+	f << L"{" << Endl;
 	f << IncreaseIndent;
-	f << out->getName() << " = " << ct->cast(type) << ";" << Endl;
+
+	f << caseTrueBranch;
+	f << out->getName() << L" = " << caseTrue.cast(outputType) << L";" << Endl;
+
 	f << DecreaseIndent;
-	f << "else" << Endl;
+	f << L"}" << Endl;
+	f << L"else" << Endl;
+	f << L"{" << Endl;
 	f << IncreaseIndent;
-	f << out->getName() << " = " << cf->cast(type) << ";" << Endl;
+
+	f << caseFalseBranch;
+	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
+	
 	f << DecreaseIndent;
+	f << L"}" << Endl;
+
+	return true;
 }
 
-void emitCos(CgContext& cx, Cos* node)
+bool emitCos(CgContext& cx, Cos* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* theta = cx.emitInput(node, "Theta");
-	assert (theta->getType() == CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "cos(" << theta->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* theta = cx.emitInput(node, L"Theta");
+	if (!theta || theta->getType() != CtFloat)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"cos(" << theta->getName() << L");" << Endl;
+	return true;
 }
 
-void emitCross(CgContext& cx, Cross* node)
+bool emitCross(CgContext& cx, Cross* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
-	assert (in1->getType() == in2->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", in1->getType());
-	assign(f, out) << "cross(" << in1->getName() << ", " << in2->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat3);
+	assign(f, out) << L"cross(" << in1->cast(CtFloat3) << L", " << in2->cast(CtFloat3) << L");" << Endl;
+	return true;
 }
 
-void emitDiv(CgContext& cx, Div* node)
+bool emitDerivative(CgContext& cx, Derivative* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* input = cx.emitInput(node, L"Input");
+	if (!input)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", input->getType());
+	switch (node->getAxis())
+	{
+	case Derivative::DaX:
+		assign(f, out) << L"ddx(" << input->getName() << L");" << Endl;
+		break;
+	case Derivative::DaY:
+		assign(f, out) << L"ddy(" << input->getName() << L");" << Endl;
+		break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+bool emitDiv(CgContext& cx, Div* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << in1->cast(type) << " / " << in2->cast(type) << ";" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << in1->cast(type) << L" / " << in2->cast(type) << L";" << Endl;
+	return true;
 }
 
-void emitDot(CgContext& cx, Dot* node)
+bool emitDot(CgContext& cx, Dot* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	assign(f, out) << "dot(" << in1->cast(type) << ", " << in2->cast(type) << ");" << Endl;
+	assign(f, out) << L"dot(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	return true;
 }
 
-void emitFraction(CgContext& cx, Fraction* node)
+bool emitExp(CgContext& cx, Exp* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "frac(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"exp(" << in->getName() << L");" << Endl;
+	return true;
 }
 
-void emitIndexedUniform(CgContext& cx, IndexedUniform* node)
+bool emitFraction(CgContext& cx, Fraction* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"frac(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitFragmentPosition(CgContext& cx, FragmentPosition* node)
+{
+	if (!cx.inPixel())
+		return false;
+
+	cx.allocateVPos();
+
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat2);
+	assign(f, out) << L"vPos;" << Endl;
+
+	return true;
+}
+
+bool emitIndexedUniform(CgContext& cx, IndexedUniform* node)
 {
 	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4 };
 
-	CgVariable* index = cx.emitInput(node, "Index");
+	CgVariable* index = cx.emitInput(node, L"Index");
+	if (!index)
+		return false;
+
 	CgVariable* out = cx.getShader().createTemporaryVariable(
-		node->findOutputPin("Output"),
+		node->findOutputPin(L"Output"),
 		c_parameterType[node->getParameterType()]
 	);
 
-	StringOutputStream& fb = cx.getShader().getFormatter(CgShader::BtBody);
-	assign(fb, out) << node->getParameterName() << "[" << index->getName() << "];" << Endl;
+	StringOutputStream& fb = cx.getShader().getOutputStream(CgShader::BtBody);
+	assign(fb, out) << node->getParameterName() << L"[" << index->getName() << L"];" << Endl;
 
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getFormatter(CgShader::BtUniform);
-		fu << "uniform " << cg_type_name(out->getType()) << " " << node->getParameterName() << "[" << node->getLength() << "];" << Endl;
-		cx.getShader().addUniform(node->getParameterName());
+		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), node->getLength());
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"] : register(c" << registerIndex << L");" << Endl;
 	}
+
+	return true;
 }
 
-void emitInterpolator(CgContext& cx, Interpolator* node)
+bool emitInterpolator(CgContext& cx, Interpolator* node)
 {
-	assert (cx.inPixel());
+	if (!cx.inPixel())
+	{
+		// We're already in vertex state; skip interpolation.
+		CgVariable* in = cx.emitInput(node, L"Input");
+		if (!in)
+			return false;
+
+		CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+
+		StringOutputStream& fb = cx.getShader().getOutputStream(CgShader::BtBody);
+		assign(fb, out) << in->getName() << L";" << Endl;
+
+		return true;
+	}
+
 	cx.enterVertex();
 
-	CgVariable* in = cx.emitInput(node, "Input");
-
-	int interpolatorId = cx.getShader().allocateInterpolator();
-	std::wstring interpolator = "Attr" + toString(interpolatorId);
-
-	StringOutputStream& fo = cx.getVertexShader().getFormatter(CgShader::BtOutput);
-	fo << cg_type_name(in->getType()) << " " << interpolator << " : TEXCOORD" << interpolatorId << ";" << Endl;
-
-	StringOutputStream& fb = cx.getVertexShader().getFormatter(CgShader::BtBody);
-	fb << "o." << interpolator << " = " << in->getName() << ";" << Endl;
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
 
 	cx.enterPixel();
 
-	cx.getPixelShader().createVariable(
-		node->findOutputPin("Output"),
-		"i." + interpolator,
+	int32_t interpolatorId = cx.allocateInterpolator();
+	std::wstring interpolator = L"Attr" + toString(interpolatorId);
+
+	StringOutputStream& fo = cx.getVertexShader().getOutputStream(CgShader::BtOutput);
+	fo << cg_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+
+	StringOutputStream& fb = cx.getVertexShader().getOutputStream(CgShader::BtBody);
+	fb << L"o." << interpolator << L" = " << in->getName() << L";" << Endl;
+
+	cx.getPixelShader().createOuterVariable(
+		node->findOutputPin(L"Output"),
+		L"i." + interpolator,
 		in->getType()
 	);
 
-	StringOutputStream& fpi = cx.getPixelShader().getFormatter(CgShader::BtInput);
-	fpi << cg_type_name(in->getType()) << " " << interpolator << " : TEXCOORD" << interpolatorId << ";" << Endl;
+	StringOutputStream& fpi = cx.getPixelShader().getOutputStream(CgShader::BtInput);
+	fpi << cg_type_name(in->getType()) << L" " << interpolator << L" : TEXCOORD" << interpolatorId << L";" << Endl;
+
+	return true;
 }
 
-void emitLength(CgContext& cx, Length* node)
+bool emitIterate(CgContext& cx, Iterate* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "length(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variable.
+	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
+	T_ASSERT (N);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
+	T_ASSERT (out);
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		CgVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(CgShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	CgVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
 }
 
-void emitLerp(CgContext& cx, Lerp* node)
+bool emitLength(CgContext& cx, Length* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"length(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitLerp(CgContext& cx, Lerp* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	CgVariable* blend = cx.emitInput(node, "Blend");
-	assert (blend->getType() == CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", in1->getType());
-	assign(f, out) << "lerp(" << in1->cast(type) << ", " << in2->cast(type) << ", " << blend->getName() << ");" << Endl;
+	CgVariable* blend = cx.emitInput(node, L"Blend");
+	if (!blend || blend->getType() != CtFloat)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in1->getType());
+	assign(f, out) << L"lerp(" << in1->cast(type) << L", " << in2->cast(type) << L", " << blend->getName() << L");" << Endl;
+	return true;
 }
 
-void emitLog(CgContext& cx, Log* node)
+bool emitLog(CgContext& cx, Log* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
 	switch (node->getBase())
 	{
 	case Log::LbTwo:
-		assign(f, out) << "log2(" << in->getName() << ");" << Endl;
+		assign(f, out) << L"log2(" << in->getName() << L");" << Endl;
 		break;
 
 	case Log::LbTen:
-		assign(f, out) << "log10(" << in->getName() << ");" << Endl;
+		assign(f, out) << L"log10(" << in->getName() << L");" << Endl;
 		break;
 
 	case Log::LbNatural:
-		assign(f, out) << "log(" << in->getName() << ");" << Endl;
+		assign(f, out) << L"log(" << in->getName() << L");" << Endl;
 		break;
 	}
+	return true;
 }
 
-void emitMatrix(CgContext& cx, Matrix* node)
+bool emitMatrix(CgContext& cx, Matrix* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* xaxis = cx.emitInput(node, "XAxis");
-	CgVariable* yaxis = cx.emitInput(node, "YAxis");
-	CgVariable* zaxis = cx.emitInput(node, "ZAxis");
-	CgVariable* translate = cx.emitInput(node, "Translate");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat4x4);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* xaxis = cx.emitInput(node, L"XAxis");
+	CgVariable* yaxis = cx.emitInput(node, L"YAxis");
+	CgVariable* zaxis = cx.emitInput(node, L"ZAxis");
+	CgVariable* translate = cx.emitInput(node, L"Translate");
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4x4);
 	assign(f, out) << Endl;
-	f << "{" << Endl;
+	f << L"{" << Endl;
 	f << IncreaseIndent;
-	f << xaxis->cast(CtFloat4) << "," << Endl;
-	f << yaxis->cast(CtFloat4) << "," << Endl;
-	f << zaxis->cast(CtFloat4) << "," << Endl;
-	f << translate->cast(CtFloat4) << Endl;
+	f << (xaxis     ? xaxis->cast(CtFloat4)     : L"1.0f, 0.0f, 0.0f, 0.0f") << L"," << Endl;
+	f << (yaxis     ? yaxis->cast(CtFloat4)     : L"0.0f, 1.0f, 0.0f, 0.0f") << L"," << Endl;
+	f << (zaxis     ? zaxis->cast(CtFloat4)     : L"0.0f, 0.0f, 1.0f, 0.0f") << L"," << Endl;
+	f << (translate ? translate->cast(CtFloat4) : L"0.0f, 0.0f, 0.0f, 1.0f") << Endl;
 	f << DecreaseIndent;
-	f << "};" << Endl;
+	f << L"};" << Endl;
+	return true;
 }
 
-void emitMixIn(CgContext& cx, MixIn* node)
+bool emitMax(CgContext& cx, Max* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* x = cx.emitInput(node, "X");
-	CgVariable* y = cx.emitInput(node, "Y");
-	CgVariable* z = cx.emitInput(node, "Z");
-	CgVariable* w = cx.emitInput(node, "W");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat4);
-	assign(f, out) << "float4(" << (x ? x->getName() : "0.0f") << ", " << (y ? y->getName() : "0.0f") << ", " << (z ? z->getName() : "0.0f") << ", " << (w ? w->getName() : "0.0f") << ");" << Endl;
-}
-
-void emitMixOut(CgContext& cx, MixOut* node)
-{
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* x = cx.emitOutput(node, "X", CtFloat);
-	CgVariable* y = cx.emitOutput(node, "Y", CtFloat);
-	CgVariable* z = cx.emitOutput(node, "Z", CtFloat);
-	CgVariable* w = cx.emitOutput(node, "W", CtFloat);
-	assign(f, x) << in->getName() << ".x;" << Endl;
-	assign(f, y) << in->getName() << ".y;" << Endl;
-	assign(f, z) << in->getName() << ".z;" << Endl;
-	assign(f, w) << in->getName() << ".w;" << Endl;
-}
-
-void emitMul(CgContext& cx, Mul* node)
-{
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << in1->cast(type) << " * " << in2->cast(type) << ";" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"max(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	return true;
 }
 
-void emitMulAdd(CgContext& cx, MulAdd* node)
+bool emitMin(CgContext& cx, Min* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
-	CgVariable* in3 = cx.emitInput(node, "Input3");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
+	CgType type = std::max< CgType >(in1->getType(), in2->getType());
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"min(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
+	return true;
+}
+
+bool emitMixIn(CgContext& cx, MixIn* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* x = cx.emitInput(node, L"X");
+	CgVariable* y = cx.emitInput(node, L"Y");
+	CgVariable* z = cx.emitInput(node, L"Z");
+	CgVariable* w = cx.emitInput(node, L"W");
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
+	assign(f, out) << L"float4(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L", " << (w ? w->getName() : L"0.0f") << L");" << Endl;
+	return true;
+}
+
+bool emitMixOut(CgContext& cx, MixOut* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+
+	switch (in->getType())
+	{
+	case CtFloat:
+		{
+			CgVariable* x = cx.emitOutput(node, L"X", CtFloat);
+			assign(f, x) << in->getName() << L".x;" << Endl;
+		}
+		break;
+
+	case CtFloat2:
+		{
+			CgVariable* x = cx.emitOutput(node, L"X", CtFloat);
+			CgVariable* y = cx.emitOutput(node, L"Y", CtFloat);
+			assign(f, x) << in->getName() << L".x;" << Endl;
+			assign(f, y) << in->getName() << L".y;" << Endl;
+		}
+		break;
+
+	case CtFloat3:
+		{
+			CgVariable* x = cx.emitOutput(node, L"X", CtFloat);
+			CgVariable* y = cx.emitOutput(node, L"Y", CtFloat);
+			CgVariable* z = cx.emitOutput(node, L"Z", CtFloat);
+			assign(f, x) << in->getName() << L".x;" << Endl;
+			assign(f, y) << in->getName() << L".y;" << Endl;
+			assign(f, z) << in->getName() << L".z;" << Endl;
+		}
+		break;
+
+	case CtFloat4:
+		{
+			CgVariable* x = cx.emitOutput(node, L"X", CtFloat);
+			CgVariable* y = cx.emitOutput(node, L"Y", CtFloat);
+			CgVariable* z = cx.emitOutput(node, L"Z", CtFloat);
+			CgVariable* w = cx.emitOutput(node, L"W", CtFloat);
+			assign(f, x) << in->getName() << L".x;" << Endl;
+			assign(f, y) << in->getName() << L".y;" << Endl;
+			assign(f, z) << in->getName() << L".z;" << Endl;
+			assign(f, w) << in->getName() << L".w;" << Endl;
+		}
+		break;
+
+	default:
+		return false;
+	}
+
+	return true;
+}
+
+bool emitMul(CgContext& cx, Mul* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
+	CgType type = std::max< CgType >(in1->getType(), in2->getType());
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L";" << Endl;
+	return true;
+}
+
+bool emitMulAdd(CgContext& cx, MulAdd* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	CgVariable* in3 = cx.emitInput(node, L"Input3");
+	if (!in1 || !in2 || !in3)
+		return false;
 	CgType type = std::max< CgType >(std::max< CgType >(in1->getType(), in2->getType()), in3->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << in1->cast(type) << " * " << in2->cast(type) << " + " << in3->cast(type) << ";" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << in1->cast(type) << L" * " << in2->cast(type) << L" + " << in3->cast(type) << L";" << Endl;
+	return true;
 }
 
-void emitNeg(CgContext& cx, Neg* node)
+bool emitNeg(CgContext& cx, Neg* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "-" << in->getName() << ";" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"-" << in->getName() << L";" << Endl;
+	return true;
 }
 
-void emitNormalize(CgContext& cx, Normalize* node)
+bool emitNormalize(CgContext& cx, Normalize* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "normalize(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"normalize(" << in->getName() << L");" << Endl;
+	return true;
 }
 
-void emitPixelOutput(CgContext& cx, PixelOutput* node)
+bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 {
-	const uint32_t gcmCullFace[] =
-	{
-		CELL_GCM_FRONT,
-		CELL_GCM_BACK,
-		CELL_GCM_FRONT
-	};
-
-	const uint16_t gcmBlendEquation[] =
-	{
-		CELL_GCM_FUNC_ADD,
-		CELL_GCM_FUNC_SUBTRACT,
-		CELL_GCM_FUNC_REVERSE_SUBTRACT,
-		CELL_GCM_MIN,
-		CELL_GCM_MAX
-	};
-
-	const uint16_t gcmBlendFunction[] =
-	{
-		CELL_GCM_ONE,
-		CELL_GCM_ZERO,
-		CELL_GCM_SRC_COLOR,
-		CELL_GCM_ONE_MINUS_SRC_COLOR,
-		CELL_GCM_DST_COLOR,
-		CELL_GCM_ONE_MINUS_DST_COLOR,
-		CELL_GCM_SRC_ALPHA,
-		CELL_GCM_ONE_MINUS_SRC_ALPHA,
-		CELL_GCM_DST_ALPHA,
-		CELL_GCM_ONE_MINUS_DST_ALPHA
-	};
-
-	const uint32_t gcmFunction[] =
-	{
-		CELL_GCM_ALWAYS,
-		CELL_GCM_NEVER,
-		CELL_GCM_LESS,
-		CELL_GCM_LEQUAL,
-		CELL_GCM_GREATER,
-		CELL_GCM_GEQUAL
-	};
+//	const DWORD d3dCullMode[] =
+//	{
+//		D3DCULL_NONE,
+//		D3DCULL_CW,
+//		D3DCULL_CCW
+//	};
+//
+//	const DWORD d3dBlendOperation[] =
+//	{
+//		D3DBLENDOP_ADD,
+//		D3DBLENDOP_SUBTRACT,
+//		D3DBLENDOP_REVSUBTRACT,
+//		D3DBLENDOP_MIN,
+//		D3DBLENDOP_MAX
+//	};
+//
+//	const DWORD d3dBlendFactor[] =
+//	{
+//		D3DBLEND_ONE,
+//		D3DBLEND_ZERO,
+//		D3DBLEND_SRCCOLOR,
+//		D3DBLEND_INVSRCCOLOR,
+//		D3DBLEND_DESTCOLOR,
+//		D3DBLEND_INVDESTCOLOR,
+//		D3DBLEND_SRCALPHA,
+//		D3DBLEND_INVSRCALPHA,
+//		D3DBLEND_DESTALPHA,
+//		D3DBLEND_INVDESTALPHA
+//	};
+//
+//	const DWORD d3dCompareFunction[] =
+//	{
+//		D3DCMP_ALWAYS,
+//		D3DCMP_NEVER,
+//		D3DCMP_LESS,
+//		D3DCMP_LESSEQUAL,
+//		D3DCMP_GREATER,
+//		D3DCMP_GREATEREQUAL,
+//		D3DCMP_EQUAL,
+//		D3DCMP_NOTEQUAL
+//	};
+//
+//#if defined(_XBOX)
+//	const DWORD d3dDepthCompareFunction[] =
+//	{
+//		D3DCMP_ALWAYS,
+//		D3DCMP_NEVER,
+//		D3DCMP_GREATEREQUAL,
+//		D3DCMP_GREATER,
+//		D3DCMP_LESSEQUAL,
+//		D3DCMP_LESS
+//	};
+//#endif
+//
+//	const DWORD d3dStencilOperation[] =
+//	{
+//		D3DSTENCILOP_KEEP,
+//		D3DSTENCILOP_ZERO,
+//		D3DSTENCILOP_REPLACE,
+//		D3DSTENCILOP_INCRSAT,
+//		D3DSTENCILOP_DECRSAT,
+//		D3DSTENCILOP_INVERT,
+//		D3DSTENCILOP_INCR,
+//		D3DSTENCILOP_DECR
+//	};
 
 	cx.enterPixel();
 
-	CgVariable* in = cx.emitInput(node, "Input");
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
 
-	StringOutputStream& fpo = cx.getPixelShader().getFormatter(CgShader::BtOutput);
-	fpo << "float4 Color0 : COLOR0;" << Endl;
+	StringOutputStream& fpo = cx.getPixelShader().getOutputStream(CgShader::BtOutput);
+	fpo << L"float4 Color0 : COLOR0;" << Endl;
 
-	StringOutputStream& fpb = cx.getPixelShader().getFormatter(CgShader::BtBody);
-	fpb << "o.Color0 = " << in->cast(CtFloat4) << ";" << Endl;
+	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(CgShader::BtBody);
+	fpb << L"o.Color0" << L" = " << in->cast(CtFloat4) << L";" << Endl;
 
-	RenderState& rs = cx.getRenderState();
-	rs.cullFaceEnable = node->getCullMode() == PixelOutput::CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
-	rs.cullFace = gcmCullFace[node->getCullMode()];
-	rs.blendEnable = node->getBlendEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.blendEquation = gcmBlendEquation[node->getBlendOperation()];
-	rs.blendFuncSrc = gcmBlendFunction[node->getBlendSource()];
-	rs.blendFuncDest = gcmBlendFunction[node->getBlendDestination()];
-	rs.depthTestEnable = node->getDepthEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.colorMask = node->getColorWriteEnable() ? CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A : CELL_GCM_ZERO;
-	rs.depthMask = node->getDepthWriteEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.depthFunc = gcmFunction[node->getDepthFunction()];
-	rs.alphaTestEnable = node->getAlphaTestEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
-	rs.alphaFunc = gcmFunction[node->getAlphaTestFunction()];
-	rs.alphaRef = node->getAlphaTestReference();
+//	DWORD d3dColorWriteEnable =
+//		((node->getColorWriteMask() & PixelOutput::CwRed) ? D3DCOLORWRITEENABLE_RED : 0) |
+//		((node->getColorWriteMask() & PixelOutput::CwGreen) ? D3DCOLORWRITEENABLE_GREEN : 0) |
+//		((node->getColorWriteMask() & PixelOutput::CwBlue) ? D3DCOLORWRITEENABLE_BLUE : 0) |
+//		((node->getColorWriteMask() & PixelOutput::CwAlpha) ? D3DCOLORWRITEENABLE_ALPHA : 0);
+//
+//	StateBlockDx9& state = cx.getState();
+//
+//	state.setRenderState(D3DRS_CULLMODE, d3dCullMode[node->getCullMode()]);
+//
+//	if (node->getBlendEnable())
+//	{
+//		state.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+//		state.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[node->getBlendOperation()]);
+//		state.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[node->getBlendSource()]);
+//		state.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[node->getBlendDestination()]);
+//	}
+//	else
+//		state.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+//
+//	state.setRenderState(D3DRS_ZENABLE, node->getDepthEnable() ? TRUE : FALSE);
+//	state.setRenderState(D3DRS_COLORWRITEENABLE, d3dColorWriteEnable);
+//	state.setRenderState(D3DRS_ZWRITEENABLE, node->getDepthWriteEnable() ? TRUE : FALSE);
+//#if !defined(_XBOX)
+//	state.setRenderState(D3DRS_ZFUNC, d3dCompareFunction[node->getDepthFunction()]);
+//#else
+//	state.setRenderState(D3DRS_ZFUNC, d3dDepthCompareFunction[node->getDepthFunction()]);
+//#endif
+//
+//	if (node->getAlphaTestEnable())
+//	{
+//		state.setRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+//		state.setRenderState(D3DRS_ALPHAFUNC, d3dCompareFunction[node->getAlphaTestFunction()]);
+//		state.setRenderState(D3DRS_ALPHAREF, node->getAlphaTestReference());
+//	}
+//	else
+//		state.setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+//
+//	state.setRenderState(D3DRS_FILLMODE, node->getWireframe() ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
+//
+//	if (node->getStencilEnable())
+//	{
+//		state.setRenderState(D3DRS_STENCILENABLE, TRUE);
+//		state.setRenderState(D3DRS_STENCILFAIL, d3dStencilOperation[node->getStencilFail()]);
+//		state.setRenderState(D3DRS_STENCILZFAIL, d3dStencilOperation[node->getStencilZFail()]);
+//		state.setRenderState(D3DRS_STENCILPASS, d3dStencilOperation[node->getStencilPass()]);
+//		state.setRenderState(D3DRS_STENCILFUNC, d3dCompareFunction[node->getStencilFunction()]);
+//		state.setRenderState(D3DRS_STENCILREF, node->getStencilReference());
+//	}
+//	else
+//		state.setRenderState(D3DRS_STENCILENABLE, FALSE);
+
+	return true;
 }
 
-void emitPolynomial(CgContext& cx, Polynomial* node)
+bool emitPlatform(CgContext& cx, Platform* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
-	CgVariable* x = cx.emitInput(node, "X");
-	CgVariable* coeffs = cx.emitInput(node, "Coefficients");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
+	CgVariable* input = cx.emitInput(node, L"GCM");
+	if (!input)
+	{
+		input = cx.emitInput(node, L"Other");
+		if (!input)
+			return false;
+	}
+
+	CgVariable* out = cx.emitOutput(node, L"Output", input->getType());
+	assign(f, out) << input->getName() << L";" << Endl;
+
+	return true;
+}
+
+bool emitPolynomial(CgContext& cx, Polynomial* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+
+	CgVariable* x = cx.emitInput(node, L"X");
+	CgVariable* coeffs = cx.emitInput(node, L"Coefficients");
+	if (!x || !coeffs)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
 
 	assign(f, out);
 	switch (coeffs->getType())
 	{
 	case CtFloat:
-		f << coeffs->getName() << ".x * " << x->getName();
+		f << coeffs->getName() << L".x * " << x->getName();
 		break;
 	case CtFloat2:
-		f << coeffs->getName() << ".x * pow(" << x->getName() << ", 2) + " << coeffs->getName() << ".y * " << x->getName();
+		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".y * " << x->getName();
 		break;
 	case CtFloat3:
-		f << coeffs->getName() << ".x * pow(" << x->getName() << ", 3) + " << coeffs->getName() << ".y * pow(" << x->getName() << ", 2) + " << coeffs->getName() << ".z * " << x->getName();
+		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 3) + " << coeffs->getName() << L".y * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".z * " << x->getName();
 		break;
 	case CtFloat4:
-		f << coeffs->getName() << ".x * pow(" << x->getName() << ", 4) + " << coeffs->getName() << ".y * pow(" << x->getName() << ", 3) + " << coeffs->getName() << ".z * pow(" << x->getName() << ", 2) + " << coeffs->getName() << ".w * " << x->getName();
+		f << coeffs->getName() << L".x * pow(" << x->getName() << L", 4) + " << coeffs->getName() << L".y * pow(" << x->getName() << L", 3) + " << coeffs->getName() << L".z * pow(" << x->getName() << L", 2) + " << coeffs->getName() << L".w * " << x->getName();
 		break;
 	}
-	f << ";" << Endl;
+	f << L";" << Endl;
+
+	return true;
 }
 
-void emitPow(CgContext& cx, Pow* node)
+bool emitPow(CgContext& cx, Pow* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* exponent = cx.emitInput(node, "Exponent");
-	CgVariable* in = cx.emitInput(node, "Input");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* exponent = cx.emitInput(node, L"Exponent");
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!exponent || !in)
+		return false;
 	CgType type = std::max< CgType >(exponent->getType(), in->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << "pow(" << in->cast(type) << ", " << exponent->cast(type) << ");" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"pow(" << in->cast(type) << L", " << exponent->cast(type) << L");" << Endl;
+	return true;
 }
 
-void emitReflect(CgContext& cx, Reflect* node)
+bool emitReflect(CgContext& cx, Reflect* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* normal = cx.emitInput(node, "Normal");
-	CgVariable* direction = cx.emitInput(node, "Direction");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat3);
-	assign(f, out) << "reflect(" << normal->cast(CtFloat3) << ", " << direction->cast(CtFloat3) << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* normal = cx.emitInput(node, L"Normal");
+	CgVariable* direction = cx.emitInput(node, L"Direction");
+	if (!normal || !direction)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", direction->getType());
+	assign(f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
+	return true;
 }
 
-void emitSampler(CgContext& cx, Sampler* node)
+bool emitSampler(CgContext& cx, Sampler* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* texCoord = cx.emitInput(node, "TexCoord");
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat4);
+	//const DWORD d3dFilter[] =
+	//{
+	//	D3DTEXF_POINT,
+	//	D3DTEXF_LINEAR,
+	//	D3DTEXF_ANISOTROPIC
+	//};
 
-	std::wstring parameterName = "SamplerTexture_" + node->getParameterName();
+	//const DWORD d3dAddress[] =
+	//{
+	//	D3DTADDRESS_WRAP,
+	//	D3DTADDRESS_MIRROR,
+	//	D3DTADDRESS_CLAMP,
+	//	D3DTADDRESS_BORDER
+	//};
+
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* texCoord = cx.emitInput(node, L"TexCoord");
+	if (!texCoord)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
 
 	if (cx.inPixel())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << "tex2D(" << parameterName << ", " << texCoord->getName() << ");" << Endl;
+			assign(f, out) << L"tex2D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << "texCUBE(" << parameterName << ", " << texCoord->getName() << ");" << Endl;
+			assign(f, out) << L"texCUBE(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << "tex3D(" << parameterName << ", " << texCoord->getName() << ");" << Endl;
+			assign(f, out) << L"tex3D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
 			break;
 		}
 	}
@@ -485,168 +983,320 @@ void emitSampler(CgContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << "tex2Dlod(" << parameterName << ", " << texCoord->cast(CtFloat4) << ");" << Endl;
+			assign(f, out) << L"tex2Dlod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << "texCUBElod(" << parameterName << ", " << texCoord->cast(CtFloat4) << ");" << Endl;
+			assign(f, out) << L"texCUBElod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << "tex3Dlod(" << parameterName << ", " << texCoord->cast(CtFloat4) << ");" << Endl;
+			assign(f, out) << L"tex3Dlod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 		}
 	}
 	const std::set< std::wstring >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(parameterName) == samplers.end())
+	if (samplers.find(node->getParameterName()) == samplers.end())
 	{
-		int sampler = int(samplers.size());
+		int32_t sampler = int32_t(samplers.size());
 
-		StringOutputStream& fu = cx.getShader().getFormatter(CgShader::BtUniform);
-
-		switch (node->getLookup())
-		{
-		case Sampler::LuSimple:
-			fu << "uniform sampler2D " << parameterName << ";" << Endl;
-			break;
-
-		case Sampler::LuCube:
-			fu << "uniform samplerCUBE " << parameterName << ";" << Endl;
-			break;
-
-		case Sampler::LuVolume:
-			fu << "uniform sampler3D " << parameterName << ";" << Endl;
-			break;
-		}
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"sampler " << node->getParameterName() << L" : register(s" << sampler << L");" << Endl;
 		
-		cx.getShader().addSampler(parameterName);
+		//StateBlockDx9& state = cx.getState();
+		//state.setSamplerState(sampler, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
+		//state.setSamplerState(sampler, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
+		//state.setSamplerState(sampler, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
+		//state.setSamplerState(sampler, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
+		//state.setSamplerState(sampler, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
+		//state.setSamplerState(sampler, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+		//state.setSamplerState(sampler, D3DSAMP_BORDERCOLOR, 0xffffffff);
+		
+		cx.getShader().addSampler(node->getParameterName());
 	}
+
+	return true;
 }
 
-void emitScalar(CgContext& cx, Scalar* node)
+bool emitScalar(CgContext& cx, Scalar* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	f << cg_type_name(out->getType()) << " " << out->getName() << " = " << node->get() << ";" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	f << L"const float " << out->getName() << L" = " << node->get() << L";" << Endl;
+	return true;
 }
 
-void emitSin(CgContext& cx, Sin* node)
+bool emitSin(CgContext& cx, Sin* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* theta = cx.emitInput(node, "Theta");
-	assert (theta->getType() == CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "sin(" << theta->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* theta = cx.emitInput(node, L"Theta");
+	if (!theta || theta->getType() != CtFloat)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"sin(" << theta->getName() << L");" << Endl;
+	return true;
 }
 
-void emitSqrt(CgContext& cx, Sqrt* node)
+bool emitSqrt(CgContext& cx, Sqrt* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "sqrt(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+	return true;
 }
 
-void emitSub(CgContext& cx, Sub* node)
+bool emitSub(CgContext& cx, Sub* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in1 = cx.emitInput(node, "Input1");
-	CgVariable* in2 = cx.emitInput(node, "Input2");
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"Input1");
+	CgVariable* in2 = cx.emitInput(node, L"Input2");
+	if (!in1 || !in2)
+		return false;
 	CgType type = std::max< CgType >(in1->getType(), in2->getType());
-	CgVariable* out = cx.emitOutput(node, "Output", type);
-	assign(f, out) << in1->cast(type) << " - " << in2->cast(type) << ";" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << in1->cast(type) << L" - " << in2->cast(type) << L";" << Endl;
+	return true;
 }
 
-void emitSum(CgContext& cx, Sum* node)
+bool emitSum(CgContext& cx, Sum* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	std::wstring inputName;
 
-	CgVariable* N = cx.emitOutput(node, "N", CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", /*input->getType()*/CtFloat4);
+	// Create iterator variable.
+	CgVariable* N = cx.emitOutput(node, L"N", CtFloat);
+	T_ASSERT (N);
 
-	assign(f, out) << "0;" << Endl;
-	f << "for (float " << N->getName() << " = " << node->getFrom() << "; " << N->getName() << " <= " << node->getTo() << "; ++" << N->getName() << ")" << Endl;
-	f << "{" << Endl;
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	CgVariable* out = cx.emitOutput(node, L"Output", CtVoid);
+	T_ASSERT (out);
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	{
+		CgVariable* input = cx.emitInput(node, L"Input");
+		if (!input)
+			return false;
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(CgShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	assign(f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
+	f << L"{" << Endl;
 	f << IncreaseIndent;
 
-	CgVariable* input = cx.emitInput(node, "Input");
-	f << out->getName() << " += " << input->getName() << ";" << Endl;
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" += " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
-	f << "}" << Endl;
+	f << L"}" << Endl;	
+
+	return true;
 }
 
-void emitSwizzle(CgContext& cx, Swizzle* node)
+bool emitSwizzle(CgContext& cx, Swizzle* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
 	std::wstring map = node->get();
-	assert (map.length() > 0);
+	if (map.length() == 0)
+		return false;
 
 	const CgType types[] = { CtFloat, CtFloat2, CtFloat3, CtFloat4 };
 	CgType type = types[map.length() - 1];
 
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", type);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
 
 	std::wstringstream ss;
-	ss << cg_type_name(type) << "(";
+	ss << cg_type_name(type) << L"(";
 	for (size_t i = 0; i < map.length(); ++i)
 	{
 		if (i > 0)
-			ss << ", ";
+			ss << L", ";
 		switch (std::tolower(map[i]))
 		{
 		case 'x':
 		case 'y':
 		case 'z':
 		case 'w':
-			ss << in->getName() << '.' << char(std::tolower(map[i]));
+			ss << in->getName() << L'.' << char(std::tolower(map[i]));
 			break;
 		case '0':
-			ss << "0.0f";
+			ss << L"0.0f";
 			break;
 		case '1':
-			ss << "1.0f";
+			ss << L"1.0f";
 			break;
 		}
 	}
-	ss << ")";
+	ss << L")";
 
-	assign(f, out) << ss.str() << ";" << Endl;
+	assign(f, out) << ss.str() << L";" << Endl;
+	return true;
 }
 
-void emitTan(CgContext& cx, Tan* node)
+bool emitSwitch(CgContext& cx, Switch* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* theta = cx.emitInput(node, "Theta");
-	assert (theta->getType() == CtFloat);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat);
-	assign(f, out) << "tan(" << theta->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+
+	CgVariable* in = cx.emitInput(node, L"Select");
+	if (!in)
+		return false;
+
+	const std::vector< int32_t >& caseConditions = node->getCases();
+	std::vector< std::wstring > caseBranches;
+	std::vector< CgVariable > caseInputs;
+	CgType outputType = CtVoid;
+
+	// Conditional branches.
+	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		const InputPin* caseInput = node->getInputPin(i + 2);
+		T_ASSERT (caseInput);
+
+		CgVariable* caseInputVariable = cx.emitInput(caseInput);
+		T_ASSERT (caseInputVariable);
+
+		caseBranches.push_back(fs.str());
+		caseInputs.push_back(*caseInputVariable);
+		outputType = std::max(outputType, caseInputVariable->getType());
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Default branch.
+	{
+		StringOutputStream fs;
+
+		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
+		cx.getShader().pushScope();
+
+		const InputPin* caseInput = node->getInputPin(1);
+		T_ASSERT (caseInput);
+
+		CgVariable* caseInputVariable = cx.emitInput(caseInput);
+		T_ASSERT (caseInputVariable);
+
+		caseBranches.push_back(fs.str());
+		caseInputs.push_back(*caseInputVariable);
+		outputType = std::max(outputType, caseInputVariable->getType());
+
+		cx.getShader().popScope();
+		cx.getShader().popOutputStream(CgShader::BtBody);
+	}
+
+	// Create output variable.
+	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
+	assign(f, out) << L"0;" << Endl;
+
+	if (node->getBranch() == Switch::BrStatic)
+		f << L"[flatten]" << Endl;
+	else if (node->getBranch() == Switch::BrDynamic)
+		f << L"[branch]" << Endl;
+
+	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
+	{
+		f << (i == 0 ? L"if (" : L"else if (") << L"int(" << in->cast(CtFloat) << L") == " << caseConditions[i] << L")" << Endl;
+		f << L"{" << Endl;
+		f << IncreaseIndent;
+
+		f << caseBranches[i];
+		f << out->getName() << L" = " << caseInputs[i].cast(outputType) << L";" << Endl;
+
+		f << DecreaseIndent;
+		f << L"}" << Endl;
+	}
+
+	if (!caseConditions.empty())
+	{
+		f << L"else" << Endl;
+		f << L"{" << Endl;
+		f << IncreaseIndent;
+	}
+
+	f << caseBranches.back();
+	f << out->getName() << L" = " << caseInputs.back().cast(outputType) << L";" << Endl;
+
+	if (!caseConditions.empty())
+	{
+		f << DecreaseIndent;
+		f << L"}" << Endl;
+	}
+
+	return true;
 }
 
-void emitTransform(CgContext& cx, Transform* node)
+bool emitTan(CgContext& cx, Tan* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* transform = cx.emitInput(node, "Transform");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "columnMajorMul(" << transform->getName() << ", " << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* theta = cx.emitInput(node, L"Theta");
+	if (!theta || theta->getType() != CtFloat)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
+	assign(f, out) << L"tan(" << theta->getName() << L");" << Endl;
+	return true;
 }
 
-void emitTranspose(CgContext& cx, Transpose* node)
+bool emitTransform(CgContext& cx, Transform* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* in = cx.emitInput(node, "Input");
-	CgVariable* out = cx.emitOutput(node, "Output", in->getType());
-	assign(f, out) << "transpose(" << in->getName() << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	CgVariable* transform = cx.emitInput(node, L"Transform");
+	if (!in || !transform)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"mul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
+	return true;
 }
 
-void emitUniform(CgContext& cx, Uniform* node)
+bool emitTranspose(CgContext& cx, Transpose* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"transpose(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitUniform(CgContext& cx, Uniform* node)
 {
 	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4 };
 	CgVariable* out = cx.getShader().createVariable(
-		node->findOutputPin("Output"),
+		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		c_parameterType[node->getParameterType()]
 	);
@@ -654,136 +1304,149 @@ void emitUniform(CgContext& cx, Uniform* node)
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getFormatter(CgShader::BtUniform);
-		fu << "uniform " << cg_type_name(out->getType()) << " " << node->getParameterName() << ";" << Endl;
-		cx.getShader().addUniform(node->getParameterName());
+		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
+		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+		fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
 	}
+
+	return true;
 }
 
-void emitVector(CgContext& cx, Vector* node)
+bool emitVector(CgContext& cx, Vector* node)
 {
-	StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-	CgVariable* out = cx.emitOutput(node, "Output", CtFloat4);
-	f << "float4 " << out->getName() << " = float4(" << node->get().x << ", " << node->get().y << ", " << node->get().z << ", " << node->get().w << ");" << Endl;
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
+	assign(f, out) << L"float4(" << node->get().x() << L", " << node->get().y() << L", " << node->get().z() << L", " << node->get().w() << L");" << Endl;
+	return true;
 }
 
-void emitVertexInput(CgContext& cx, VertexInput* node)
+bool emitVertexInput(CgContext& cx, VertexInput* node)
 {
-	assert (cx.inVertex());
-	CgVariable* out = cx.getShader().getInputVariable(node->getName());
-	if (!out)
+	if (!cx.inVertex())
+		return false;
+
+	CgShader& shader = cx.getShader();
+	CgType type = cg_from_data_type(node->getDataType());
+
+	// Declare input variable.
+	if (!shader.haveInput(node->getName()))
 	{
-		CgType type = cg_from_data_type(node->getDataType());
+		std::wstring semantic = cg_semantic(node->getDataUsage(), node->getIndex());
 
-		std::wstringstream semantic;
-		semantic << "ATTR" << int(node->getDataUsage());
+		StringOutputStream& fi = shader.getOutputStream(CgShader::BtInput);
+		fi << cg_type_name(type) << L" " << node->getName() << L" : " << semantic << L";" << Endl;
 
-		StringOutputStream& fi = cx.getVertexShader().getFormatter(CgShader::BtInput);
-		fi << cg_type_name(type) << " " << node->getName() << " : " << semantic.str() << ";" << Endl;
+		shader.addInput(node->getName());
+	}
 
-		if (node->getDataUsage() == DuPosition && type != CtFloat4)
+	// Read value from input.
+	if (node->getDataUsage() == DuPosition)
+	{
+		CgVariable* out = shader.createTemporaryVariable(
+			node->findOutputPin(L"Output"),
+			CtFloat4
+		);
+		StringOutputStream& f = shader.getOutputStream(CgShader::BtBody);
+		switch (type)
 		{
-			out = cx.getShader().createTemporaryVariable(
-				node->findOutputPin("Output"),
-				CtFloat4
-			);
-			StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-			switch (type)
-			{
-			case CtFloat:
-				assign(f, out) << "float4(i." << node->getName() << ".x, 0, 0, 1);" << Endl;
-				break;
+		case CtFloat:
+			assign(f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 1.0f);" << Endl;
+			break;
 
-			case CtFloat2:
-				assign(f, out) << "float4(i." << node->getName() << ".xy, 0, 1);" << Endl;
-				break;
+		case CtFloat2:
+			assign(f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 1.0f);" << Endl;
+			break;
 
-			case CtFloat3:
-				assign(f, out) << "float4(i." << node->getName() << ".xyz, 1);" << Endl;
-				break;
-			}
+		case CtFloat3:
+			assign(f, out) << L"float4(i." << node->getName() << L".xyz, 1.0f);" << Endl;
+			break;
+
+		default:
+			assign(f, out) << L"i." << node->getName() << L";" << Endl;
+			break;
 		}
-		else if (node->getDataUsage() == DuNormal && type != CtFloat4)
+	}
+	else if (node->getDataUsage() == DuNormal)
+	{
+		CgVariable* out = shader.createTemporaryVariable(
+			node->findOutputPin(L"Output"),
+			CtFloat4
+		);
+		StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+		switch (type)
 		{
-			out = cx.getShader().createTemporaryVariable(
-				node->findOutputPin("Output"),
-				CtFloat4
-			);
-			StringOutputStream& f = cx.getShader().getFormatter(CgShader::BtBody);
-			switch (type)
-			{
-			case CtFloat:
-				assign(f, out) << "float4(i." << node->getName() << ".x, 0, 0, 0);" << Endl;
-				break;
+		case CtFloat:
+			assign(f, out) << L"float4(i." << node->getName() << L".x, 0.0f, 0.0f, 0.0f);" << Endl;
+			break;
 
-			case CtFloat2:
-				assign(f, out) << "float4(i." << node->getName() << ".xy, 0, 0);" << Endl;
-				break;
+		case CtFloat2:
+			assign(f, out) << L"float4(i." << node->getName() << L".xy, 0.0f, 0.0f);" << Endl;
+			break;
 
-			case CtFloat3:
-				assign(f, out) << "float4(i." << node->getName() << ".xyz, 0);" << Endl;
-				break;
-			}
+		case CtFloat3:
+			assign(f, out) << L"float4(i." << node->getName() << L".xyz, 0.0f);" << Endl;
+			break;
+
+		default:
+			assign(f, out) << L"i." << node->getName() << L";" << Endl;
+			break;
 		}
-		else
-		{
-			out = cx.getShader().createVariable(
-				node->findOutputPin("Output"),
-				"i." + node->getName(),
-				type
-			);
-		}
-
-		cx.getShader().addInputVariable(node->getName(), out);
 	}
 	else
 	{
-		out = cx.getShader().createVariable(
-			node->findOutputPin("Output"),
-			out->getName(),
-			out->getType()
+		CgVariable* out = shader.createTemporaryVariable(
+			node->findOutputPin(L"Output"),
+			type
 		);
+		StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+		assign(f, out) << L"i." << node->getName() << L";" << Endl;
 	}
+
+	return true;
 }
 
-void emitVertexOutput(CgContext& cx, VertexOutput* node)
+bool emitVertexOutput(CgContext& cx, VertexOutput* node)
 {
 	cx.enterVertex();
-	CgVariable* in = cx.emitInput(node, "Input");
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
 
-	StringOutputStream& fo = cx.getVertexShader().getFormatter(CgShader::BtOutput);
-	fo << "float4 Position : POSITION0;" << Endl;
+	StringOutputStream& fo = cx.getVertexShader().getOutputStream(CgShader::BtOutput);
+	fo << L"float4 Position : POSITION0;" << Endl;
 
-	StringOutputStream& fb = cx.getVertexShader().getFormatter(CgShader::BtBody);
+	StringOutputStream& fb = cx.getVertexShader().getOutputStream(CgShader::BtBody);
 	switch (in->getType())
 	{
 	case CtFloat:
-		fb << "_Position_ = o.Position = float4(" << in->getName() << ".x, 0, 0, 1);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".x, 0.0f, 0.0f, 1.0f);" << Endl;
 		break;
 
 	case CtFloat2:
-		fb << "_Position_ = o.Position = float4(" << in->getName() << ".xy, 0, 1);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".xy, 0.0f, 1.0f);" << Endl;
 		break;
 
 	case CtFloat3:
-		fb << "_Position_ = o.Position = float4(" << in->getName() << ".xyz, 1);" << Endl;
+		fb << L"o.Position = float4(" << in->getName() << L".xyz, 1.0f);" << Endl;
 		break;
 
 	case CtFloat4:
-		fb << "_Position_ = o.Position = " << in->getName() << ";" << Endl;
+		fb << L"o.Position = " << in->getName() << L";" << Endl;
 		break;
 	}
+
+	return true;
 }
 
 struct Emitter
 {
-	virtual void emit(CgContext& c, Node* node) = 0;
+	virtual bool emit(CgContext& c, Node* node) = 0;
 };
 
 template < typename NodeType >
 struct EmitterCast : public Emitter
 {
-	typedef void (*function_t)(CgContext& c, NodeType* node);
+	typedef bool (*function_t)(CgContext& c, NodeType* node);
 
 	function_t m_function;
 
@@ -792,10 +1455,10 @@ struct EmitterCast : public Emitter
 	{
 	}
 
-	virtual void emit(CgContext& c, Node* node)
+	virtual bool emit(CgContext& c, Node* node)
 	{
-		assert (is_a< NodeType >(node));
-		(*m_function)(c, static_cast< NodeType* >(node));
+		T_ASSERT (is_a< NodeType >(node));
+		return (*m_function)(c, static_cast< NodeType* >(node));
 	}
 };
 
@@ -807,20 +1470,27 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Add >()] = new EmitterCast< Add >(emitAdd);
 	m_emitters[&type_of< ArcusCos >()] = new EmitterCast< ArcusCos >(emitArcusCos);
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
+	m_emitters[&type_of< Branch >()] = new EmitterCast< Branch >(emitBranch);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
+	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
+	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
+	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
+	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
 	m_emitters[&type_of< Matrix >()] = new EmitterCast< Matrix >(emitMatrix);
+	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
+	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);
 	m_emitters[&type_of< MixOut >()] = new EmitterCast< MixOut >(emitMixOut);
 	m_emitters[&type_of< Mul >()] = new EmitterCast< Mul >(emitMul);
@@ -830,6 +1500,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
+	m_emitters[&type_of< Platform >()] = new EmitterCast< Platform >(emitPlatform);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
@@ -838,6 +1509,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
+	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
@@ -849,16 +1521,29 @@ CgEmitter::CgEmitter()
 
 CgEmitter::~CgEmitter()
 {
-	for (std::map< const Type*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
+	for (std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.begin(); i != m_emitters.end(); ++i)
 		delete i->second;
 }
 
-void CgEmitter::emit(CgContext& c, Node* node)
+bool CgEmitter::emit(CgContext& c, Node* node)
 {
-	std::map< const Type*, Emitter* >::iterator i = m_emitters.find(&node->getType());
-	assert (i != m_emitters.end());
-	assert (i->second);
-	i->second->emit(c, node);
+	// Find emitter for node.
+	std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.find(&type_of(node));
+	if (i == m_emitters.end())
+	{
+		log::error << L"No emitter for node " << type_name(node) << Endl;
+		return false;
+	}
+
+	// Emit HLSL code.
+	T_ASSERT (i->second);
+	if (!i->second->emit(c, node))
+	{
+		log::error << L"Failed to emit " << type_name(node) << Endl;
+		return false;
+	}
+
+	return true;
 }
 
 	}

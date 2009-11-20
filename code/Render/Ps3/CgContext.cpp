@@ -1,32 +1,33 @@
-#include <cassert>
 #include <sstream>
 #include "Render/Ps3/CgContext.h"
 #include "Render/Ps3/CgShader.h"
 #include "Render/ShaderGraph.h"
+#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
-#include "Core/Heap/Ref.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-CgContext::CgContext(ShaderGraph* shaderGraph)
+CgContext::CgContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
+,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_vertexShader(CgShader::StVertex)
 ,	m_pixelShader(CgShader::StPixel)
 ,	m_currentShader(0)
+,	m_interpolatorCount(0)
+,	m_booleanRegisterCount(0)
+,	m_needVPos(false)
 {
 }
 
-CgVariable* CgContext::emitInput(Node* node, const std::wstring& inputPinName)
+CgVariable* CgContext::emitInput(const InputPin* inputPin)
 {
-	Ref< InputPin > inputPin = node->findInputPin(inputPinName);
-	assert (inputPin);
-
-	Ref< OutputPin > sourcePin = m_shaderGraph->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
@@ -35,19 +36,27 @@ CgVariable* CgContext::emitInput(Node* node, const std::wstring& inputPinName)
 	{
 		m_emitter.emit(*this, sourcePin->getNode());
 		variable = m_currentShader->getVariable(sourcePin);
-		assert (variable);
 	}
 
+	T_ASSERT (!variable || variable->getType() != CtVoid);
 	return variable;
+}
+
+CgVariable* CgContext::emitInput(Node* node, const std::wstring& inputPinName)
+{
+	const InputPin* inputPin = node->findInputPin(inputPinName);
+	T_ASSERT (inputPin);
+
+	return emitInput(inputPin);
 }
 
 CgVariable* CgContext::emitOutput(Node* node, const std::wstring& outputPinName, CgType type)
 {
-	Ref< OutputPin > outputPin = node->findOutputPin(outputPinName);
-	assert (outputPin);
+	const OutputPin* outputPin = node->findOutputPin(outputPinName);
+	T_ASSERT (outputPin);
 
 	CgVariable* out = m_currentShader->createTemporaryVariable(outputPin, type);
-	assert (out);
+	T_ASSERT (out);
 
 	return out;
 }
@@ -72,30 +81,19 @@ bool CgContext::inPixel() const
 	return bool(m_currentShader == &m_pixelShader);
 }
 
-CgShader& CgContext::getVertexShader()
+int32_t CgContext::allocateInterpolator()
 {
-	return m_vertexShader;
+	return m_interpolatorCount++;
 }
 
-CgShader& CgContext::getPixelShader()
+int32_t CgContext::allocateBooleanRegister()
 {
-	return m_pixelShader;
+	return m_booleanRegisterCount++;
 }
 
-CgShader& CgContext::getShader()
+void CgContext::allocateVPos()
 {
-	assert (m_currentShader);
-	return *m_currentShader;
-}
-
-CgEmitter& CgContext::getEmitter()
-{
-	return m_emitter;
-}
-
-RenderState& CgContext::getRenderState()
-{
-	return m_renderState;
+	m_needVPos = true;
 }
 
 	}

@@ -6,7 +6,7 @@ namespace traktor
 	namespace render
 	{
 
-std::wstring cg_channel_name(DataUsage usage, int index)
+std::wstring cg_semantic(DataUsage usage, int index)
 {
 	const char* s[] =
 	{
@@ -24,14 +24,14 @@ std::wstring cg_channel_name(DataUsage usage, int index)
 
 std::wstring cg_type_name(CgType type)
 {
-	const char* c[] =
+	const wchar_t* c[] =
 	{
-		"void",
-		"float",
-		"float2",
-		"float3",
-		"float4",
-		"float4x4"
+		L"void",
+		L"float",
+		L"float2",
+		L"float3",
+		L"float4",
+		L"float4x4"
 	};
 	return c[type];
 }

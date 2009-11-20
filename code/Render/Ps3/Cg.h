@@ -7,14 +7,17 @@ namespace traktor
 	{
 
 class ShaderGraph;
-class CgContext;
+class CgProgram;
 
+/*!
+ * \ingroup PS3
+ */
 class Cg
 {
 public:
 	bool generate(
-		CgContext& cx,
-		ShaderGraph* shaderGraph
+		const ShaderGraph* shaderGraph,
+		CgProgram& outProgram
 	);
 };
 

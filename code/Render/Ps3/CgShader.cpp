@@ -1,110 +1,95 @@
-#include <cassert>
-#include <string>
 #include "Render/Ps3/CgShader.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-const wchar_t* c_helperFunctions =
-{
-	L"float4 columnMajorMul(float4x4 m, float4 v)\n"
-	L"{\n"
-	L"	return float4(\n"
-	L"		dot(m._11_21_31_41, v),\n"
-	L"		dot(m._12_22_32_42, v),\n"
-	L"		dot(m._13_23_33_43, v),\n"
-	L"		dot(m._14_24_34_44, v)\n"
-	L"	);\n"
-	L"}\n"
-};
-
-		}
 
 CgShader::CgShader(ShaderType shaderType)
 :	m_shaderType(shaderType)
-,	m_interpolatorCount(1)
+,	m_uniformAllocated(256, false)
 ,	m_nextTemporaryVariable(0)
 {
+	pushScope();
+	pushOutputStream(BtUniform, new StringOutputStream());
+	pushOutputStream(BtInput, new StringOutputStream());
+	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 CgShader::~CgShader()
 {
-	for (std::map< OutputPin*, CgVariable* >::iterator i = m_variables.begin(); i != m_variables.end(); ++i)
-		delete i->second;
+	popOutputStream(BtBody);
+	popOutputStream(BtOutput);
+	popOutputStream(BtInput);
+	popOutputStream(BtUniform);
+	popScope();
 }
 
-void CgShader::addInputPort(const std::wstring& name, DataUsage usage, const CgType& type)
+bool CgShader::haveInput(const std::wstring& inputName) const
 {
-	Port port = { usage, type };
-	m_inputPorts[name] = port;
+	return m_inputs.find(inputName) != m_inputs.end();
 }
 
-void CgShader::addOutputPort(const std::wstring& name, DataUsage usage, const CgType& type)
+void CgShader::addInput(const std::wstring& inputName)
 {
-	Port port = { usage, type };
-	m_outputPorts[name] = port;
+	m_inputs.insert(inputName);
 }
 
-const CgShader::Port* CgShader::getInputPort(const std::wstring& name) const
-{
-	std::map< std::wstring, Port >::const_iterator i = m_inputPorts.find(name);
-	return (i != m_inputPorts.end()) ? &i->second : 0;
-}
-
-const CgShader::Port* CgShader::getOutputPort(const std::wstring& name) const
-{
-	std::map< std::wstring, Port >::const_iterator i = m_outputPorts.find(name);
-	return (i != m_outputPorts.end()) ? &i->second : 0;
-}
-
-const std::map< std::wstring, CgShader::Port >& CgShader::getInputPorts() const
-{
-	return m_inputPorts;
-}
-
-const std::map< std::wstring, CgShader::Port >& CgShader::getOutputPorts() const
-{
-	return m_outputPorts;
-}
-
-void CgShader::addInputVariable(const std::wstring& variableName, CgVariable* variable)
-{
-	assert (!m_inputVariables[variableName]);
-	m_inputVariables[variableName] = variable;
-}
-
-CgVariable* CgShader::getInputVariable(const std::wstring& variableName)
-{
-	return m_inputVariables[variableName];
-}
-
-CgVariable* CgShader::createTemporaryVariable(OutputPin* outputPin, CgType type)
+CgVariable* CgShader::createTemporaryVariable(const OutputPin* outputPin, CgType type)
 {
 	StringOutputStream ss;
-	ss << "v" << m_nextTemporaryVariable++;
+	ss << L"v" << m_nextTemporaryVariable++;
 	return createVariable(outputPin, ss.str(), type);
 }
 
-CgVariable* CgShader::createVariable(OutputPin* outputPin, const std::wstring& variableName, CgType type)
+CgVariable* CgShader::createVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type)
 {
+	T_ASSERT (!m_variables.empty());
+
 	CgVariable* variable = new CgVariable(variableName, type);
-	m_variables[outputPin] = variable;
+	m_variables.back().insert(std::make_pair(outputPin, variable));
+
 	return variable;
 }
 
-CgVariable* CgShader::getVariable(OutputPin* outputPin)
+CgVariable* CgShader::createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type)
 {
-	std::map< OutputPin*, CgVariable* >::iterator i = m_variables.find(outputPin);
-	return (i != m_variables.end()) ? i->second : 0;
+	T_ASSERT (!m_variables.empty());
+
+	CgVariable* variable = new CgVariable(variableName, type);
+	m_variables.front().insert(std::make_pair(outputPin, variable));
+
+	return variable;
 }
 
-int CgShader::allocateInterpolator()
+CgVariable* CgShader::getVariable(const OutputPin* outputPin) const
 {
-	return m_interpolatorCount++;
+	T_ASSERT (!m_variables.empty());
+
+	for (std::list< scope_t >::const_reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
+	{
+		scope_t::const_iterator j = i->find(outputPin);
+		if (j != i->end())
+			return j->second;
+	}
+
+	return 0;
+}
+
+void CgShader::pushScope()
+{
+	m_variables.push_back(scope_t());
+}
+
+void CgShader::popScope()
+{
+	T_ASSERT (!m_variables.empty());
+	for (scope_t::iterator i = m_variables.back().begin(); i != m_variables.back().end(); ++i)
+		delete i->second;
+	m_variables.pop_back();
 }
 
 void CgShader::addSampler(const std::wstring& sampler)
@@ -117,9 +102,62 @@ const std::set< std::wstring >& CgShader::getSamplers() const
 	return m_samplers;
 }
 
-void CgShader::addUniform(const std::wstring& uniform)
+uint32_t CgShader::addUniform(const std::wstring& uniform, CgType type, uint32_t count)
 {
+	const int32_t c_elementCounts[] = { 0, 0, 1, 1, 1, 1, 4 };
+	int32_t elementCount = c_elementCounts[int(type)] * count;
+	int32_t index = 0;
+
+	if (elementCount > 0)
+	{
+		int32_t fromIndex, toIndex;
+
+		if (count <= 1)	// Non-indexed uniform are placed at the lower half.
+		{
+			fromIndex = 0;
+			toIndex = 128 - elementCount;
+		}
+		else	// Upper half.
+		{
+			fromIndex = 128;
+			toIndex = (m_shaderType == StVertex ? 256 : 224) - elementCount;
+			if (toIndex < fromIndex)
+			{
+				log::error << L"Indexed array out-of-range; too many elements " << elementCount << Endl;
+				T_FATAL_ERROR;
+			}
+		}
+
+		Adler32 cs;
+		cs.begin();
+		cs.feed(uniform.c_str(), uniform.length() * sizeof(wchar_t));
+		cs.end();
+
+		index = fromIndex + cs.get() % (toIndex - fromIndex + 1);
+
+		for (;;)
+		{
+			bool occupied = false;
+			for (int32_t i = 0; i < elementCount; ++i)
+			{
+				if (m_uniformAllocated[index + i])
+				{
+					occupied = true;
+					break;
+				}
+			}
+			if (!occupied)
+				break;
+			if (++index >= toIndex)
+				fromIndex = 0;
+		}
+
+		for (int32_t i = 0; i < elementCount; ++i)
+			m_uniformAllocated[index + i] = true;
+	}
+
 	m_uniforms.insert(uniform);
+	return index;
 }
 
 const std::set< std::wstring >& CgShader::getUniforms() const
@@ -127,26 +165,37 @@ const std::set< std::wstring >& CgShader::getUniforms() const
 	return m_uniforms;
 }
 
-StringOutputStream& CgShader::getFormatter(BlockType blockType)
+void CgShader::pushOutputStream(BlockType blockType, StringOutputStream* outputStream)
 {
-	return m_formatters[int(blockType)];
+	m_outputStreams[int(blockType)].push_back(outputStream);
 }
 
-std::wstring CgShader::getGeneratedShader() const
+void CgShader::popOutputStream(BlockType blockType)
+{
+	m_outputStreams[int(blockType)].pop_back();
+}
+
+StringOutputStream& CgShader::getOutputStream(BlockType blockType)
+{
+	T_ASSERT (!m_outputStreams[int(blockType)].empty());
+	return *(m_outputStreams[int(blockType)].back());
+}
+
+std::wstring CgShader::getGeneratedShader(bool needVPos)
 {
 	StringOutputStream ss;
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	std::wstring uniformText = m_formatters[BtUniform].str();
+	std::wstring uniformText = getOutputStream(BtUniform).str();
 	if (!uniformText.empty())
 	{
 		ss << uniformText;
 		ss << Endl;
 	}
 
-	std::wstring inputDataText = m_formatters[BtInput].str();
+	std::wstring inputDataText = getOutputStream(BtInput).str();
 	if (!inputDataText.empty())
 	{
 		ss << L"struct InputData" << Endl;
@@ -158,7 +207,7 @@ std::wstring CgShader::getGeneratedShader() const
 		ss << Endl;
 	}
 
-	std::wstring outputDataText = m_formatters[BtOutput].str();
+	std::wstring outputDataText = getOutputStream(BtOutput).str();
 	if (!outputDataText.empty())
 	{
 		ss << L"struct OutputData" << Endl;
@@ -170,24 +219,22 @@ std::wstring CgShader::getGeneratedShader() const
 		ss << Endl;
 	}
 
-	ss << c_helperFunctions;
-	ss << Endl;
-
 	if (m_shaderType == StVertex)
 	{
+		ss << L"void main(InputData i";
+
 		if (!outputDataText.empty())
-			ss << L"void main(InputData i, out OutputData o, out float4 _Position_ : TEXCOORD0)" << Endl;
-		else
-			ss << L"void main(InputData i, out float4 _Position_ : TEXCOORD0)" << Endl;
+			ss << L", out OutputData o";
+
+		ss << L")" << Endl;
 
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 
 		if (!outputDataText.empty())
 			ss << L"o = (OutputData)0;" << Endl;
-		ss << L"_Position_ = (float4)0;" << Endl;
 
-		ss << m_formatters[BtBody].str();
+		ss << getOutputStream(BtBody).str();
 
 		ss << DecreaseIndent;
 		ss << L"}" << Endl;
@@ -196,17 +243,25 @@ std::wstring CgShader::getGeneratedShader() const
 
 	if (m_shaderType == StPixel)
 	{
+#if defined(_XBOX)
+		ss << L"[removeUnusedInputs]" << Endl;
+#endif
+		ss << L"void main(";
+		
 		if (!inputDataText.empty())
-			ss << L"void main(InputData i, float4 _Position_ : TEXCOORD0, out OutputData o)" << Endl;
-		else
-			ss << L"void main(float4 _Position_ : TEXCOORD0, out OutputData o)" << Endl;
+			ss << L"InputData i, ";
+
+		if (needVPos)
+			ss << L"float2 vPos : VPOS, ";
+		
+		ss << L"out OutputData o)" << Endl;
 
 		ss << L"{" << Endl;
 		ss << IncreaseIndent;
 
 		ss << L"o = (OutputData)0;" << Endl;
 
-		ss << m_formatters[BtBody].str();
+		ss << getOutputStream(BtBody).str();
 
 		ss << DecreaseIndent;
 		ss << L"}" << Endl;

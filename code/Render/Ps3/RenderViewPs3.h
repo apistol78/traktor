@@ -2,15 +2,14 @@
 #define traktor_render_RenderViewPs3_H
 
 #include <list>
-#include "Core/Heap/Ref.h"
-#include "Render/RenderView.h"
+#include "Render/IRenderView.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,36 +20,38 @@ namespace traktor
 class RenderSystemPs3;
 class VertexBufferPs3;
 class IndexBufferPs3;
-class ShaderPs3;
+class ProgramPs3;
 
-class T_DLLCLASS RenderViewPs3 : public RenderView
+class T_DLLCLASS RenderViewPs3 : public IRenderView
 {
-	T_RTTI_CLASS(RenderViewPs3)
+	T_RTTI_CLASS;
 
 public:
 	RenderViewPs3(RenderSystemPs3* renderSystem);
 
 	virtual ~RenderViewPs3();
 
-	bool create(int resolutionId, int width, int height);
+	bool create(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
 
 	virtual void close();
 
-	virtual void resize(int width, int height);
+	virtual void resize(int32_t width, int32_t height);
 
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
 
-	virtual bool begin(RenderTarget* renderTarget, RenderMode renderMode);
+	virtual bool begin();
 
-	virtual void clear(unsigned int clearMask, unsigned int color, float depth, int stencil);
+	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil);
+
+	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
 	virtual void setVertexBuffer(VertexBuffer* vertexBuffer);
 	
 	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
 
-	virtual void setShader(Shader* shader);
+	virtual void setProgram(IProgram* program);
 	
 	virtual void draw(const Primitives& primitives);
 
@@ -69,16 +70,15 @@ private:
 		uint32_t colorPitch;
 		uint32_t depthOffset;
 		uint32_t depthPitch;
-		RenderMode mode;
 	};
 
 	Ref< RenderSystemPs3 > m_renderSystem;
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;
-	Ref< ShaderPs3 > m_currentShader;
+	Ref< ProgramPs3 > m_currentProgram;
 
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
 
 	Viewport m_viewport;
 

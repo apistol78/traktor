@@ -1,13 +1,15 @@
 #ifndef traktor_render_CgShader_H
 #define traktor_render_CgShader_H
 
-#include <string>
+#include <list>
 #include <map>
 #include <set>
+#include <string>
+#include "Core/RefArray.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Render/Types.h"
 #include "Render/Ps3/CgType.h"
 #include "Render/Ps3/CgVariable.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -16,6 +18,9 @@ namespace traktor
 
 class OutputPin;
 
+/*!
+ * \ingroup PS3
+ */
 class CgShader
 {
 public:
@@ -34,63 +39,53 @@ public:
 		BtLast
 	};
 
-	struct Port
-	{
-		DataUsage usage;
-		CgType type;
-	};
-
 	CgShader(ShaderType shaderType);
 
 	virtual ~CgShader();
 
-	void addInputPort(const std::wstring& name, DataUsage usage, const CgType& type);
+	bool haveInput(const std::wstring& inputName) const;
 
-	void addOutputPort(const std::wstring& name, DataUsage usage, const CgType& type);
+	void addInput(const std::wstring& inputName);
 
-	const Port* getInputPort(const std::wstring& name) const;
+	CgVariable* createTemporaryVariable(const OutputPin* outputPin, CgType type);
 
-	const Port* getOutputPort(const std::wstring& name) const;
+	CgVariable* createVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type);
 
-	const std::map< std::wstring, Port >& getInputPorts() const;
+	CgVariable* createOuterVariable(const OutputPin* outputPin, const std::wstring& variableName, CgType type);
 
-	const std::map< std::wstring, Port >& getOutputPorts() const;
+	CgVariable* getVariable(const OutputPin* outputPin) const;
 
-	void addInputVariable(const std::wstring& variableName, CgVariable* variable);
+	void pushScope();
 
-	CgVariable* getInputVariable(const std::wstring& variableName);
-
-	CgVariable* createTemporaryVariable(OutputPin* outputPin, CgType type);
-
-	CgVariable* createVariable(OutputPin* outputPin, const std::wstring& variableName, CgType type);
-
-	CgVariable* getVariable(OutputPin* outputPin);
-
-	int allocateInterpolator();
+	void popScope();
 
 	void addSampler(const std::wstring& sampler);
 
 	const std::set< std::wstring >& getSamplers() const;
 
-	void addUniform(const std::wstring& uniform);
+	uint32_t addUniform(const std::wstring& uniform, CgType type, uint32_t count);
 
 	const std::set< std::wstring >& getUniforms() const;
 
-	StringOutputStream& getFormatter(BlockType blockType);
+	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
-	std::wstring getGeneratedShader() const;
+	void popOutputStream(BlockType blockType);
+
+	StringOutputStream& getOutputStream(BlockType blockType);
+
+	std::wstring getGeneratedShader(bool needVPos);
 
 private:
+	typedef std::map< const OutputPin*, CgVariable* > scope_t;
+
 	ShaderType m_shaderType;
-	std::map< std::wstring, Port > m_inputPorts;
-	std::map< std::wstring, Port > m_outputPorts;
-	std::map< std::wstring, CgVariable* > m_inputVariables;
-	std::map< OutputPin*, CgVariable* > m_variables;
-	int m_interpolatorCount;
+	std::set< std::wstring > m_inputs;
+	std::list< scope_t > m_variables;
 	std::set< std::wstring > m_samplers;
 	std::set< std::wstring > m_uniforms;
-	int m_nextTemporaryVariable;
-	StringOutputStream m_formatters[BtLast];
+	std::vector< bool > m_uniformAllocated;
+	int32_t m_nextTemporaryVariable;
+	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };
 
 	}

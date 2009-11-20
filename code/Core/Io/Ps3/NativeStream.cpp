@@ -1,15 +1,15 @@
-#include <cstdio>
 #include "Core/Io/Ps3/NativeStream.h"
+#include "Core/Io/File.h"
 
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS("traktor.NativeStream", NativeStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
-NativeStream::NativeStream(std::FILE* fp, File::Mode mode) :
-	m_fp(fp),
-	m_mode(mode),
-	m_fileSize(0)
+NativeStream::NativeStream(std::FILE* fp, uint32_t mode)
+:	m_fp(fp)
+,	m_mode(mode)
+,	m_fileSize(0)
 {
 	if (m_mode == File::FmRead)
 	{

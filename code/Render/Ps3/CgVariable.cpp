@@ -1,11 +1,15 @@
-#include <cassert>
 #include "Render/Ps3/CgVariable.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
 	namespace render
 	{
+
+CgVariable::CgVariable()
+:	m_type(CtVoid)
+{
+}
 
 CgVariable::CgVariable(const std::wstring& name, CgType type)
 :	m_name(name)
@@ -13,31 +17,22 @@ CgVariable::CgVariable(const std::wstring& name, CgType type)
 {
 }
 
-const std::wstring& CgVariable::getName() const
-{
-	return m_name;
-}
-
-CgType CgVariable::getType() const
-{
-	return m_type;
-}
-
 std::wstring CgVariable::cast(CgType to) const
 {
-	const char* c[5][5] =
+	const wchar_t* c[6][6] =
 	{
-		{ 0, 0, 0, 0, 0 },
-		{ 0, "%", "%.xx", "%.xxx", "%.xxxx" },
-		{ 0, 0, "%", "float3(%.xy, 0)", "float4(%.xy, 0, 0)" },
-		{ 0, 0, 0, "%", "float4(%.xyz, 0)" },
-		{ 0, 0, 0, "%.xyz", "%" }
+		{ 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, 0, 0, 0, 0 },
+		{ 0, 0, L"%", L"%.xx", L"%.xxx", L"%.xxxx" },
+		{ 0, 0, L"%.x", L"%", L"float3(%.xy, 0)", L"float4(%.xy, 0, 0)" },
+		{ 0, 0, L"%.x", L"%.xy", L"%", L"float4(%.xyz, 0)" },
+		{ 0, 0, L"%.x", L"%.xy", L"%.xyz", L"%" }
 	};
 	
-	const char* f = c[m_type][to];
-	assert (f);
+	const wchar_t* f = c[m_type][to];
+	T_ASSERT (f);
 
-	return replaceAll(f, "%", m_name);
+	return replaceAll< std::wstring >(f, L"%", m_name);
 }
 
 	}

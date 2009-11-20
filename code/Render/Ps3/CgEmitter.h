@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Type;
+class TypeInfo;
 
 	namespace render
 	{
@@ -20,6 +20,9 @@ struct Emitter;
 class Node;
 class CgContext;
 
+/*!
+ * \ingroup PS3
+ */
 class CgEmitter
 {
 public:
@@ -27,10 +30,10 @@ public:
 
 	virtual ~CgEmitter();
 
-	void emit(CgContext& c, Node* node);
+	bool emit(CgContext& c, Node* node);
 
 private:
-	std::map< const Type*, Emitter* > m_emitters;
+	std::map< const TypeInfo*, Emitter* > m_emitters;
 };
 
 	}

@@ -1,18 +1,17 @@
 #include <cstdlib>
 #include <cell/gcm.h>
 #include <sysutil/sysutil_sysparam.h>
-#include "Render/Ps3/RenderSystemPs3.h"
-#include "Render/Ps3/RenderViewPs3.h"
-#include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/SimpleTexturePs3.h"
-#include "Render/Ps3/ShaderPs3.h"
-#include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/CgContext.h"
-#include "Render/Ps3/Cg.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
-#include "Render/DisplayMode.h"
 #include "Core/Log/Log.h"
+#include "Render/DisplayMode.h"
+#include "Render/Ps3/Cg.h"
+#include "Render/Ps3/CgContext.h"
+#include "Render/Ps3/IndexBufferPs3.h"
+#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/RenderSystemPs3.h"
+#include "Render/Ps3/RenderTargetSetPs3.h"
+#include "Render/Ps3/RenderViewPs3.h"
+#include "Render/Ps3/SimpleTexturePs3.h"
+#include "Render/Ps3/VertexBufferPs3.h"
 
 using namespace cell::Gcm;
 
@@ -28,23 +27,30 @@ const uint32_t c_hostSize = 1 * 1024 * 1024;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderSystemPs3", RenderSystemPs3, RenderSystem)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderSystemPs3", RenderSystemPs3, IRenderSystem)
 
 RenderSystemPs3::RenderSystemPs3()
 {
+}
+
+RenderSystemPs3::~RenderSystemPs3()
+{
+}
+
+bool RenderSystemPs3::create()
+{
 	void* hostAddr = std::memalign(1024 * 1024, c_hostSize);
 	if (cellGcmInit(c_cbSize, c_hostSize, hostAddr) != CELL_OK)
-	{
-		log::error << L"GCM init failed, program halted!" << Endl;
-		for (;;);
-	}
+		return false;
 
 	CellGcmConfig config;
 	cellGcmGetConfiguration(&config);
 	LocalMemoryAllocator::getInstance().setHeap(config.localAddress, config.localSize);
+
+	return true;
 }
 
-RenderSystemPs3::~RenderSystemPs3()
+void RenderSystemPs3::destroy()
 {
 	cellGcmSetWaitFlip();
 	cellGcmFinish(1);
@@ -55,7 +61,7 @@ int RenderSystemPs3::getDisplayModeCount() const
 	return 1;
 }
 
-DisplayMode* RenderSystemPs3::getDisplayMode(int index)
+Ref< DisplayMode > RenderSystemPs3::getDisplayMode(int index)
 {
 	CellVideoOutState videoState;
 	CellVideoOutResolution videoResolution;
@@ -70,7 +76,7 @@ DisplayMode* RenderSystemPs3::getDisplayMode(int index)
 
 	cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
 
-	return gc_new< DisplayMode >(
+	return new DisplayMode(
 		videoState.displayMode.resolutionId,
 		videoResolution.width,
 		videoResolution.height,
@@ -78,7 +84,7 @@ DisplayMode* RenderSystemPs3::getDisplayMode(int index)
 	);
 }
 
-DisplayMode* RenderSystemPs3::getCurrentDisplayMode()
+Ref< DisplayMode > RenderSystemPs3::getCurrentDisplayMode()
 {
 	return getDisplayMode(0);
 }
@@ -88,21 +94,21 @@ bool RenderSystemPs3::handleMessages()
 	return true;
 }
 
-RenderView* RenderSystemPs3::createRenderView(DisplayMode* displayMode, int depthBits, int stencilBits, int multiSample, bool waitVBlank)
+Ref< IRenderView > RenderSystemPs3::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
-	Ref< RenderViewPs3 > renderView = gc_new< RenderViewPs3 >(this);
-	if (!renderView->create(displayMode->getIndex(), displayMode->getWidth(), displayMode->getHeight()))
+	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this);
+	if (renderView->create(displayMode, desc))
+		return renderView;
+	else
 		return 0;
-
-	return renderView;
 }
 
-RenderView* RenderSystemPs3::createRenderView(void* windowHandle, int depthBits, int stencilBits, int multiSample)
+Ref< IRenderView > RenderSystemPs3::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
 {
 	return 0;
 }
 
-VertexBuffer* RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, int bufferSize, bool dynamic)
+Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
 	void* ptr = LocalMemoryAllocator::getInstance().allocAlign(bufferSize, 128);
 	if (!ptr)
@@ -112,10 +118,10 @@ VertexBuffer* RenderSystemPs3::createVertexBuffer(const std::vector< VertexEleme
 	if (cellGcmAddressToOffset(ptr, &offset) != CELL_OK)
 		return 0;
 
-	return gc_new< VertexBufferPs3 >(vertexElements, ptr, offset, bufferSize);
+	return new VertexBufferPs3(vertexElements, ptr, offset, bufferSize);
 }
 
-IndexBuffer* RenderSystemPs3::createIndexBuffer(IndexType indexType, int bufferSize, bool dynamic)
+Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	void* ptr = LocalMemoryAllocator::getInstance().allocAlign(bufferSize, 128);
 	if (!ptr)
@@ -125,38 +131,38 @@ IndexBuffer* RenderSystemPs3::createIndexBuffer(IndexType indexType, int bufferS
 	if (cellGcmAddressToOffset(ptr, &offset) != CELL_OK)
 		return 0;
 
-	return gc_new< IndexBufferPs3 >(ptr, offset, indexType, bufferSize);
+	return new IndexBufferPs3(ptr, offset, indexType, bufferSize);
 }
 
-SimpleTexture* RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
+Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTexturePs3 > texture = gc_new< SimpleTexturePs3 >();
-	if (!texture->create(desc))
+	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3();
+	if (texture->create(desc))
+		return texture;
+	else
 		return 0;
-
-	return texture;
 }
 
-CubeTexture* RenderSystemPs3::createCubeTexture(const CubeTextureCreateDesc& desc)
+Ref< ICubeTexture > RenderSystemPs3::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-VolumeTexture* RenderSystemPs3::createVolumeTexture(const VolumeTextureCreateDesc& desc)
+Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
 	return 0;
 }
 
-RenderTarget* RenderSystemPs3::createRenderTarget(const RenderTargetCreateDesc& desc)
+Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetPs3 > renderTarget = gc_new< RenderTargetPs3 >();
-	if (!renderTarget->create(desc))
+	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3();
+	if (renderTargetSet->create(desc))
+		return renderTargetSet;
+	else
 		return 0;
-
-	return renderTarget;
 }
 
-Shader* RenderSystemPs3::createShader(ShaderGraph* shaderGraph)
+Ref< ProgramResource > RenderSystemPs3::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
 {
 	CgContext cx(shaderGraph);
 	Cg cg;
@@ -167,11 +173,18 @@ Shader* RenderSystemPs3::createShader(ShaderGraph* shaderGraph)
 	std::wstring vertexShader = cx.getVertexShader().getGeneratedShader();
 	std::wstring pixelShader = cx.getPixelShader().getGeneratedShader();
 
-	Ref< ShaderPs3 > shader = gc_new< ShaderPs3 >();
-	if (!shader->create(shaderGraph, vertexShader, pixelShader, cx.getRenderState()))
-		return 0;
+	//Ref< ShaderPs3 > shader = gc_new< ShaderPs3 >();
+	//if (!shader->create(shaderGraph, vertexShader, pixelShader, cx.getRenderState()))
+	//	return 0;
 
-	return shader;
+	//return shader;
+
+	return 0;
+}
+
+Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource)
+{
+	return 0;
 }
 
 	}

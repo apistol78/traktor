@@ -1,14 +1,14 @@
 #ifndef traktor_render_RenderSystemPs3_H
 #define traktor_render_RenderSystemPs3_H
 
-#include "Render/RenderSystem.h"
+#include "Render/IRenderSystem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,40 +16,46 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS RenderSystemPs3 : public RenderSystem
+class T_DLLCLASS RenderSystemPs3 : public IRenderSystem
 {
-	T_RTTI_CLASS(RenderSystemPs3)
+	T_RTTI_CLASS;
 
 public:
 	RenderSystemPs3();
 
 	virtual ~RenderSystemPs3();
 
+	virtual bool create();
+
+	virtual void destroy();
+
 	virtual int getDisplayModeCount() const;
 	
-	virtual DisplayMode* getDisplayMode(int index);
+	virtual Ref< DisplayMode > getDisplayMode(int index);
 	
-	virtual DisplayMode* getCurrentDisplayMode();
+	virtual Ref< DisplayMode > getCurrentDisplayMode();
 
 	virtual bool handleMessages();
 
-	virtual RenderView* createRenderView(DisplayMode* displayMode, int depthBits, int stencilBits, int multiSample, bool waitVBlank);
+	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
 
-	virtual RenderView* createRenderView(void* windowHandle, int depthBits, int stencilBits, int multiSample);
+	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
 
-	virtual VertexBuffer* createVertexBuffer(const std::vector< VertexElement >& vertexElements, int bufferSize, bool dynamic);
+	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 
-	virtual IndexBuffer* createIndexBuffer(IndexType indexType, int bufferSize, bool dynamic);
+	virtual Ref< IndexBuffer > createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic);
 
-	virtual SimpleTexture* createSimpleTexture(const SimpleTextureCreateDesc& desc);
+	virtual Ref< ISimpleTexture > createSimpleTexture(const SimpleTextureCreateDesc& desc);
 
-	virtual CubeTexture* createCubeTexture(const CubeTextureCreateDesc& desc);
+	virtual Ref< ICubeTexture > createCubeTexture(const CubeTextureCreateDesc& desc);
 	
-	virtual VolumeTexture* createVolumeTexture(const VolumeTextureCreateDesc& desc);
+	virtual Ref< IVolumeTexture > createVolumeTexture(const VolumeTextureCreateDesc& desc);
 
-	virtual RenderTarget* createRenderTarget(const RenderTargetCreateDesc& desc);
+	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Shader* createShader(ShaderGraph* shaderGraph);
+	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
+
+	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
 };
 
 	}

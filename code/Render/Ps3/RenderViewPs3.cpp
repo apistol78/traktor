@@ -1,15 +1,14 @@
 #include <cstring>
 #include <cell/gcm.h>
 #include <sysutil/sysutil_sysparam.h>
+#include "Core/Log/Log.h"
 #include "Render/Ps3/RenderViewPs3.h"
 #include "Render/Ps3/RenderSystemPs3.h"
-#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/ShaderPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
-#include "Render/Primitives.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -23,7 +22,7 @@ uint8_t c_targetSyncLabelId = 129;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, RenderView)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
 
 RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 :	m_renderSystem(renderSystem)
@@ -46,19 +45,19 @@ RenderViewPs3::~RenderViewPs3()
 {
 }
 
-bool RenderViewPs3::create(int resolutionId, int width, int height)
+bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
 	int32_t ret;
 
-	m_width = width;
-	m_height = height;
+	m_width = displayMode->getWidth();
+	m_height = displayMode->getHeight();
 
-	m_colorPitch = width * 4;
+	m_colorPitch = m_width * 4;
 
-	memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
-	videoConfig.resolutionId = resolutionId;
+	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
+	videoConfig.resolutionId = displayMode->getIndex();
 	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
 	videoConfig.pitch = m_colorPitch;
 
@@ -78,12 +77,12 @@ bool RenderViewPs3::create(int resolutionId, int width, int height)
 
 	cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
 
-	uint32_t colorSize = m_colorPitch * height;
+	uint32_t colorSize = m_colorPitch * m_height;
 	uint32_t colorBaseAddr = (uint32_t)LocalMemoryAllocator::getInstance().allocAlign(sizeof_array(m_colorAddr) * colorSize, 4096);
 
 	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
-		m_colorAddr[i] = (void *)(colorBaseAddr + (i * colorSize));
+		m_colorAddr[i] = (void*)(colorBaseAddr + (i * colorSize));
 
 		ret = cellGcmAddressToOffset(m_colorAddr[i], &m_colorOffset[i]);
 		if (ret != CELL_OK)
@@ -96,8 +95,8 @@ bool RenderViewPs3::create(int resolutionId, int width, int height)
 			i,
 			m_colorOffset[i],
 			m_colorPitch,
-			width,
-			height
+			m_width,
+			m_height
 		);
 		if (ret != CELL_OK)
 		{
@@ -106,9 +105,9 @@ bool RenderViewPs3::create(int resolutionId, int width, int height)
 		}
 	}
 
-	m_depthPitch = width * 4;
+	m_depthPitch = m_width * 4;
 
-	uint32_t depthSize = m_depthPitch * height;
+	uint32_t depthSize = m_depthPitch * m_height;
 	m_depthAddr = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
 
 	ret = cellGcmAddressToOffset(m_depthAddr, &m_depthOffset);
@@ -124,7 +123,7 @@ bool RenderViewPs3::create(int resolutionId, int width, int height)
 	m_targetSyncLabelData = cellGcmGetLabelAddress(c_targetSyncLabelId);
 	*m_targetSyncLabelData = m_targetCounter;
 
-	setViewport(Viewport(0, 0, width, height, 0.0f, 1.0f));
+	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 
 	return true;
 }
@@ -186,50 +185,23 @@ Viewport RenderViewPs3::getViewport()
 	return m_viewport;
 }
 
-bool RenderViewPs3::begin(RenderTarget* renderTarget, RenderMode renderMode)
+bool RenderViewPs3::begin()
 {
-	if (!renderTarget)
+	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
+
+	RenderState rs =
 	{
-		assert (m_renderStateStack.empty());
+		m_viewport,
+		m_width,
+		m_height,
+		CELL_GCM_SURFACE_A8R8G8B8,
+		m_colorOffset[frameIndex],
+		m_colorPitch,
+		m_depthOffset,
+		m_depthPitch
+	};
 
-		uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
-
-		RenderState rs =
-		{
-			m_viewport,
-			m_width,
-			m_height,
-			CELL_GCM_SURFACE_A8R8G8B8,
-			m_colorOffset[frameIndex],
-			m_colorPitch,
-			m_depthOffset,
-			m_depthPitch,
-			renderMode
-		};
-
-		m_renderStateStack.push_back(rs);
-	}
-	else
-	{
-		T_ASSERT (!m_renderStateStack.empty());
-
-		RenderTargetPs3* rt = checked_type_cast< RenderTargetPs3* >(renderTarget);
-
-		RenderState rs =
-		{
-			Viewport(0, 0, rt->getWidth(), rt->getHeight(), 0.0f, 1.0f),
-			rt->getWidth(),
-			rt->getHeight(),
-			rt->getGcmSurfaceColorFormat(),
-			rt->getGcmColorTexture().offset,
-			rt->getGcmColorTexture().pitch,
-			rt->getGcmDepthTexture().offset,
-			rt->getGcmDepthTexture().pitch,
-			renderMode
-		};
-
-		m_renderStateStack.push_back(rs);
-	}
+	m_renderStateStack.push_back(rs);
 
 	setCurrentRenderState();
 
@@ -239,7 +211,36 @@ bool RenderViewPs3::begin(RenderTarget* renderTarget, RenderMode renderMode)
 	return true;
 }
 
-void RenderViewPs3::clear(unsigned int clearMask, unsigned int color, float depth, int stencil)
+bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
+{
+	T_ASSERT (!m_renderStateStack.empty());
+
+	RenderTargetPs3* rt = checked_type_cast< RenderTargetSetPs3* >(renderTargetSet)->getRenderTarget(renderTarget);
+	T_ASSERT (rt);
+
+	RenderState rs =
+	{
+		Viewport(0, 0, rt->getWidth(), rt->getHeight(), 0.0f, 1.0f),
+		rt->getWidth(),
+		rt->getHeight(),
+		rt->getGcmSurfaceColorFormat(),
+		rt->getGcmColorTexture().offset,
+		rt->getGcmColorTexture().pitch,
+		rt->getGcmDepthTexture().offset,
+		rt->getGcmDepthTexture().pitch
+	};
+
+	m_renderStateStack.push_back(rs);
+
+	setCurrentRenderState();
+
+	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
+	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
+
+	return true;
+}
+
+void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
 	if (!m_renderStateStack.empty())
 	{
@@ -273,9 +274,9 @@ void RenderViewPs3::setIndexBuffer(IndexBuffer* indexBuffer)
 	m_currentIndexBuffer = checked_type_cast< IndexBufferPs3* >(indexBuffer);
 }
 
-void RenderViewPs3::setShader(Shader* shader)
+void RenderViewPs3::setProgram(IProgram* program)
 {
-	m_currentShader = checked_type_cast< ShaderPs3* >(shader);
+	m_currentProgram = checked_type_cast< ProgramPs3* >(program);
 }
 
 void RenderViewPs3::draw(const Primitives& primitives)
@@ -292,68 +293,64 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	uint32_t count = 0;
 
 	T_ASSERT (m_currentVertexBuffer);
-	T_ASSERT (m_currentShader);
+	T_ASSERT (m_currentProgram);
 
 	m_currentVertexBuffer->bind();
-	m_currentShader->bind(m_renderStateStack.back().mode);
+	m_currentProgram->bind();
 
-	const std::vector< Primitives::Set >& sets = primitives.get();
-	for (std::vector< Primitives::Set >::const_iterator i = sets.begin(); i != sets.end(); ++i)
+	switch (primitives.type)
 	{
-		switch (i->type)
+	case Primitives::PtPoints:
+		count = primitives.count;
+		break;
+
+	case Primitives::PtLineStrip:
+		count = primitives.count + 1;
+		break;
+
+	case Primitives::PtLines:
+		count = primitives.count * 2;
+		break;
+
+	case Primitives::PtTriangleStrip:
+		count = primitives.count + 2;
+		break;
+
+	case Primitives::PtTriangles:
+		count = primitives.count * 3;
+		break;
+	}
+
+	if (primitives.indexed)
+	{
+		T_ASSERT (m_currentIndexBuffer);
+
+		uint8_t type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_16;
+		uint32_t offset = m_currentIndexBuffer->getPs3Offset() + primitives.offset * 2;
+
+		if (m_currentIndexBuffer->getIndexType() == ItUInt32)
 		{
-		case Primitives::PtPoints:
-			count = i->count;
-			break;
-
-		case Primitives::PtLineStrip:
-			count = i->count + 1;
-			break;
-
-		case Primitives::PtLines:
-			count = i->count * 2;
-			break;
-
-		case Primitives::PtTriangleStrip:
-			count = i->count + 2;
-			break;
-
-		case Primitives::PtTriangles:
-			count = i->count * 3;
-			break;
+			type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_32;
+			offset += primitives.offset * 2;
 		}
-
-		if (i->indexed)
-		{
-			T_ASSERT (m_currentIndexBuffer);
-
-			uint8_t type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_16;
-			uint32_t offset = m_currentIndexBuffer->getPs3Offset() + i->offset * 2;
-
-			if (m_currentIndexBuffer->getIndexType() == ItUInt32)
-			{
-				type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_32;
-				offset += i->offset * 2;
-			}
-			
-			cellGcmSetDrawIndexArray(
-				gCellGcmCurrentContext,
-				c_mode[i->type],
-				count,
-				type,
-				CELL_GCM_LOCATION_LOCAL,
-				offset
-			);
-		}
-		else
-		{
-			cellGcmSetDrawArrays(
-				gCellGcmCurrentContext,
-				c_mode[i->type],
-				i->offset,
-				count
-			);
-		}
+		
+		cellGcmSetDrawIndexArray(
+			gCellGcmCurrentContext,
+			c_mode[primitives.type],
+			count,
+			type,
+			CELL_GCM_LOCATION_LOCAL,
+			offset
+		);
+	}
+	else
+	{
+		cellGcmSetDrawArrays(
+			gCellGcmCurrentContext,
+			c_mode[primitives.type],
+			primitives.offset,
+			count
+		);
 	}
 }
 
