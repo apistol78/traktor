@@ -18,7 +18,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClip", AsMovieClip, ActionClass)
 
 Ref< AsMovieClip > AsMovieClip::getInstance()
 {
-	static AsMovieClip* instance = 0;
+	static Ref< AsMovieClip > instance;
 	if (!instance)
 	{
 		instance = new AsMovieClip();
@@ -668,7 +668,7 @@ void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
 	Matrix33 transform = movieClipInstance->getTransform();
 	float x = transform.e11;
 	float y = transform.e21;
-	float a = atan2(y, x);
+	float a = atan2f(y, x);
 	ca.ret = ActionValue(rad2deg(a));
 }
 

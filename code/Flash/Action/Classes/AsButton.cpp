@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsButton", AsButton, ActionClass)
 
 Ref< AsButton > AsButton::getInstance()
 {
-	static AsButton* instance = 0;
+	static Ref< AsButton > instance = 0;
 	if (!instance)
 	{
 		instance = new AsButton();

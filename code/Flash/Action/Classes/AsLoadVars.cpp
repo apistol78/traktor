@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLoadVars", AsLoadVars, ActionClass)
 
 Ref< AsLoadVars > AsLoadVars::getInstance()
 {
-	static AsLoadVars* instance = 0;
+	static Ref< AsLoadVars > instance = 0;
 	if (!instance)
 	{
 		instance = new AsLoadVars();

@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsXML", AsXML, ActionClass)
 
 Ref< AsXML > AsXML::getInstance()
 {
-	static AsXML* instance = 0;
+	static Ref< AsXML > instance = 0;
 	if (!instance)
 	{
 		instance = new AsXML();

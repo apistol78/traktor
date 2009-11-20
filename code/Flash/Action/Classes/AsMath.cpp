@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMath", AsMath, ActionClass)
 
 Ref< AsMath > AsMath::getInstance()
 {
-	static AsMath* instance = 0;
+	static Ref< AsMath > instance = 0;
 	if (!instance)
 	{
 		instance = new AsMath();

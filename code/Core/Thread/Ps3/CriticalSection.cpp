@@ -23,7 +23,7 @@ CriticalSection::~CriticalSection()
 	delete mutex;
 }
 
-bool CriticalSection::acquire(int timeout)
+bool CriticalSection::wait(int32_t timeout)
 {
 	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
 	int rc = sys_mutex_lock(*mutex, timeout);

@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS("traktor.Timer", Timer, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
 :	m_paused(true)

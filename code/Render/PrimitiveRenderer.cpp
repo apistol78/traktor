@@ -806,8 +806,8 @@ void PrimitiveRenderer::drawProtractor(
 	if (maxAngle - minAngle < FUZZY_EPSILON)
 		return;
 
-	float minAngleClamp = ceil(minAngle / angleStep) * angleStep;
-	float maxAngleClamp = floor(maxAngle / angleStep) * angleStep;
+	float minAngleClamp = std::ceil(minAngle / angleStep) * angleStep;
+	float maxAngleClamp = std::floor(maxAngle / angleStep) * angleStep;
 
 	float angle1 = minAngle;
 	float angle2 = minAngleClamp;

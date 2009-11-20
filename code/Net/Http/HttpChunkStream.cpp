@@ -87,7 +87,7 @@ int HttpChunkStream::read(void* block, int nbytes)
 #if defined(_MSC_VER) && !defined(WINCE)
 		sscanf_s(buf, "%x", &m_available);
 #else
-		sscanf(buf, "%x", &m_available);
+		std::sscanf(buf, "%x", &m_available);
 #endif
 	}
 

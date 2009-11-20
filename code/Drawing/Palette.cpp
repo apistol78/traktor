@@ -9,8 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Palette", Palette, Object)
 
-Palette::Palette(int size) :
-	m_colors(size)
+Palette::Palette(int size)
+:	m_colors(size)
 {
 }
 

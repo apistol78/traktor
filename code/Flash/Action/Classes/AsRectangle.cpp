@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsRectangle", AsRectangle, ActionClass)
 
 Ref< AsRectangle > AsRectangle::getInstance()
 {
-	static AsRectangle* instance = 0;
+	static Ref< AsRectangle > instance = 0;
 	if (!instance)
 	{
 		instance = new AsRectangle();

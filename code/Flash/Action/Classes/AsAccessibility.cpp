@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsAccessibility", AsAccessibility, Action
 
 Ref< AsAccessibility > AsAccessibility::getInstance()
 {
-	static AsAccessibility* instance = 0;
+	static Ref< AsAccessibility > instance = 0;
 	if (!instance)
 	{
 		instance = new AsAccessibility();

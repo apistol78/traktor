@@ -2,15 +2,15 @@
 #define traktor_model_Vertex_H
 
 #include <vector>
-#include "Core/Object.h"
+#include "Core/Config.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MODEL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,10 +21,8 @@ namespace traktor
 /*! \brief Vertex
  * \ingroup Model
  */
-class T_DLLCLASS Vertex : public Object
+class T_DLLCLASS Vertex
 {
-	T_RTTI_CLASS;
-
 public:
 	Vertex();
 

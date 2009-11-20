@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsDate", AsDate, ActionClass)
 
 Ref< AsDate > AsDate::getInstance()
 {
-	static AsDate* instance = 0;
+	static Ref< AsDate > instance = 0;
 	if (!instance)
 	{
 		instance = new AsDate();

@@ -22,7 +22,7 @@ SwfReader::SwfReader(IStream* stream)
 :	m_stream(stream)
 ,	m_bs(new BitReader(stream))
 {
-	m_allocHead = static_cast< uint8_t* >(malloc(c_allocSize));
+	m_allocHead = static_cast< uint8_t* >(std::malloc(c_allocSize));
 	T_ASSERT (m_allocHead);
 
 	m_allocTail = m_allocHead;
@@ -32,11 +32,11 @@ SwfReader::SwfReader(IStream* stream)
 
 SwfReader::~SwfReader()
 {
-	T_EXCEPTION_GUARD_BEGIN
+	T_EXCEPTION_GUARD_BEGIN;
 
-	free(m_allocHead);
+	std::free(m_allocHead);
 
-	T_EXCEPTION_GUARD_END
+	T_EXCEPTION_GUARD_END;
 }
 
 void SwfReader::enterScope()

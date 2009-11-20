@@ -1,15 +1,16 @@
 #ifndef traktor_model_Polygon_H
 #define traktor_model_Polygon_H
 
-#include "Core/Object.h"
+#include <vector>
+#include "Core/Config.h"
 #include "Model/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MODEL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,10 +21,8 @@ namespace traktor
 /*! \brief Polygon
  * \ingroup Model
  */
-class T_DLLCLASS Polygon : public Object
+class T_DLLCLASS Polygon
 {
-	T_RTTI_CLASS;
-
 public:
 	Polygon();
 

@@ -48,8 +48,6 @@ wchar_t* refStringDec(wchar_t* s)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Any", Any, Object)
-
 Any::Any()
 :	m_type(AtVoid)
 {

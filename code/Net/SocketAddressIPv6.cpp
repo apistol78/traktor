@@ -10,6 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
+#if !defined(_PS3)
+
 SocketAddressIPv6::SocketAddressIPv6()
 :	m_info(0)
 {
@@ -101,6 +103,36 @@ const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
 
 	return 0;
 }
+
+#else	// _PS3
+
+SocketAddressIPv6::SocketAddressIPv6()
+{
+}
+
+SocketAddressIPv6::SocketAddressIPv6(uint16_t port)
+{
+}
+
+SocketAddressIPv6::SocketAddressIPv6(const std::wstring& host, uint16_t port)
+{
+}
+
+SocketAddressIPv6::~SocketAddressIPv6()
+{
+}
+
+bool SocketAddressIPv6::valid() const
+{
+	return false;
+}
+
+const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
+{
+	return 0;
+}
+
+#endif
 
 	}
 }

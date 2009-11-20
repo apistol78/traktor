@@ -15,7 +15,7 @@ struct Internal
 	
 	}
 
-Event::Event(bool manualReset)
+Event::Event()
 :	m_handle(0)
 {
 	Internal* in = new Internal();
@@ -42,7 +42,7 @@ Event::~Event()
 	delete in;
 }
 
-void Event::pulse()
+void Event::pulse(int count)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
 	assert (in);
@@ -67,7 +67,7 @@ void Event::reset()
 	assert (0);
 }
 
-bool Event::wait(int timeout)
+bool Event::wait(int32_t timeout)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
 	assert (in);

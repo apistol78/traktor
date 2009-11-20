@@ -25,7 +25,7 @@ bool TcpSocket::bind(const SocketAddressIPv4& socketAddress)
 
 	if (m_socket == INVALID_SOCKET)
 	{
-		m_socket = ::socket(PF_INET, SOCK_STREAM, 0);
+		m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
 		if (m_socket == INVALID_SOCKET)
 			return false;
 	}
@@ -38,6 +38,7 @@ bool TcpSocket::bind(const SocketAddressIPv4& socketAddress)
 
 bool TcpSocket::bind(const SocketAddressIPv6& socketAddress)
 {
+#if !defined(_PS3)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_STREAM);
 	if (!info)
 		return false;
@@ -61,6 +62,9 @@ bool TcpSocket::bind(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool TcpSocket::connect(const SocketAddressIPv4& socketAddress)
@@ -69,7 +73,7 @@ bool TcpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 	if (m_socket == INVALID_SOCKET)
 	{
-		m_socket = ::socket(PF_INET, SOCK_STREAM, 0);
+		m_socket = ::socket(AF_INET, SOCK_STREAM, 0);
 		if (m_socket == INVALID_SOCKET)
 			return false;
 	}
@@ -82,6 +86,7 @@ bool TcpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 bool TcpSocket::connect(const SocketAddressIPv6& socketAddress)
 {
+#if !defined(_PS3)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_STREAM);
 	if (!info)
 		return false;
@@ -97,6 +102,9 @@ bool TcpSocket::connect(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool TcpSocket::listen()

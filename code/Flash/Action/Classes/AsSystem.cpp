@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSystem", AsSystem, ActionClass)
 
 Ref< AsSystem > AsSystem::getInstance()
 {
-	static AsSystem* instance = 0;
+	static Ref< AsSystem > instance = 0;
 	if (!instance)
 	{
 		instance = new AsSystem();

@@ -45,7 +45,7 @@ private:
 #	define CHECK_LUA_STACK(state, expectedOffset)
 #endif
 
-jmp_buf s_jb;
+std::jmp_buf s_jb;
 
 		}
 
@@ -147,7 +147,11 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, const st
 
 	Any returnValue;
 
+#if !defined(_WIN32)
+	if (std::setjmp(s_jb) == 0)
+#else
 	if (setjmp(s_jb) == 0)
+#endif
 	{
 		lua_getglobal(m_luaState, wstombs(functionName).c_str());
 		if (!lua_isnil(m_luaState, -1))
@@ -170,7 +174,11 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 
 	Any returnValue;
 
+#if !defined(_WIN32)
+	if (std::setjmp(s_jb) == 0)
+#else
 	if (setjmp(s_jb) == 0)
+#endif
 	{
 		lua_getglobal(m_luaState, wstombs(methodName).c_str());
 		if (!lua_isnil(m_luaState, -1))
@@ -431,7 +439,7 @@ int ScriptContextLua::gcMethod(lua_State* luaState)
 int ScriptContextLua::luaPanic(lua_State* luaState)
 {
 	log::error << L"LUA PANIC; Unrecoverable error \"" << mbstows(lua_tostring(luaState, lua_gettop(luaState))) << L"\"" << Endl;
-	longjmp(s_jb, 1);
+	std::longjmp(s_jb, 1);
 	return 0;
 }
 

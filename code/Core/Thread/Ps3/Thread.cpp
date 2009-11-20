@@ -22,20 +22,6 @@ void threadEntry(uint64_t data)
 	
 	}
 
-Thread::Thread(Functor* functor)
-:	m_handle(0)
-,	m_id(0)
-,	m_stopped(false)
-,	m_functor(functor)
-{
-}
-
-Thread::~Thread()
-{
-	sys_ppu_thread_t* thread = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
-	delete thread;
-}
-
 bool Thread::start(Priority priority)
 {
 	const uint32_t c_priorities[] = { 0, 2000, 4000 };
@@ -119,6 +105,20 @@ bool Thread::current() const
 bool Thread::finished() const
 {
 	return false;
+}
+
+Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
+:	m_handle(0)
+,	m_id(0)
+,	m_stopped(false)
+,	m_functor(functor)
+{
+}
+
+Thread::~Thread()
+{
+	sys_ppu_thread_t* thread = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
+	delete thread;
 }
 
 }

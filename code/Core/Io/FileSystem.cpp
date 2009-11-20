@@ -15,10 +15,13 @@
 #		include "Core/Io/WinCE/NativeVolume.h"
 #	endif
 #	define HAS_NATIVE_VOLUME
-#elif defined(__APPLE__)	// _MAC
+#elif defined(__APPLE__)	// MAC
 #	include "Core/Io/OsX/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
-#else				// GNU
+#elif defined(_PS3)			// PS3
+#	include "Core/Io/Ps3/NativeVolume.h"
+#	define HAS_NATIVE_VOLUME
+#else						// LINUX
 #	include "Core/Io/Linux/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
 #endif

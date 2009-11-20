@@ -2,6 +2,7 @@
 #define traktor_drawing_Palette_H
 
 #include <vector>
+#include "Core/Object.h"
 #include "Drawing/Color.h"
 
 // import/export mechanism.

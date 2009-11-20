@@ -5,8 +5,6 @@ namespace traktor
 	namespace model
 	{
 		
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Material", Material, Object)
-
 Material::Material()
 :	m_name(L"")
 ,	m_diffuseMap(L"")

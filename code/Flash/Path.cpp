@@ -5,8 +5,6 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Path", Path, Object)
-
 Path::Path()
 :	m_cursor(0.0f, 0.0f)
 {

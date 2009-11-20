@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsLocalConnection", AsLocalConnection, Ac
 
 Ref< AsLocalConnection > AsLocalConnection::getInstance()
 {
-	static AsLocalConnection* instance = 0;
+	static Ref< AsLocalConnection > instance = 0;
 	if (!instance)
 	{
 		instance = new AsLocalConnection();

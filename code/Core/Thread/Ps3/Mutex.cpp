@@ -22,7 +22,7 @@ Mutex::Mutex(const Guid& id)
 :	m_existing(false)
 ,	m_handle(0)
 {
-	assert (0);
+	T_FATAL_ERROR;
 }
 
 Mutex::~Mutex()
@@ -32,7 +32,7 @@ Mutex::~Mutex()
 	delete mutex;
 }
 
-bool Mutex::acquire(int timeout)
+bool Mutex::wait(int32_t timeout)
 {
 	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
 	int rc = sys_mutex_lock(*mutex, timeout);

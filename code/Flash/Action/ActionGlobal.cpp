@@ -107,7 +107,12 @@ void ActionGlobal::Global_escape(CallArgs& ca)
 	for (size_t i = 0; i < text.length(); ++i)
 	{
 		wchar_t ch = text[i];
-		if ((ch >= L'0' && ch <= L'9') || (tolower(ch) >= L'a' && tolower(ch) <= L'z') || ch == L'.' || ch == L',' || ch == L'-' || ch == L'_' || ch == L'~')
+		if (
+			(ch >= '0' && ch <= '9') ||
+			(ch >= 'a' && ch <= 'z') ||
+			(ch >= 'A' && ch <= 'Z') ||
+			ch == '.' || ch == ',' || ch == '-' || ch == '_' || ch == '~'
+		)
 			ss.put(ch);
 		else
 		{

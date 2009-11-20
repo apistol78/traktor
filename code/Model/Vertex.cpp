@@ -6,8 +6,6 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Vertex", Vertex, Object)
-
 Vertex::Vertex()
 :	m_position(c_InvalidIndex)
 ,	m_color(c_InvalidIndex)

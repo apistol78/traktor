@@ -1,6 +1,7 @@
 #ifndef traktor_script_IScriptClass_H
 #define traktor_script_IScriptClass_H
 
+#include "Core/Object.h"
 #include "Script/Any.h"
 
 // import/export mechanism.

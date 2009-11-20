@@ -17,7 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsString", AsString, ActionClass)
 
 Ref< AsString > AsString::getInstance()
 {
-	static AsString* instance = 0;
+	static Ref< AsString > instance = 0;
 	if (!instance)
 	{
 		instance = new AsString();
