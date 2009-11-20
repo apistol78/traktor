@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsArray", AsArray, ActionClass)
 
 Ref< AsArray > AsArray::getInstance()
 {
-	static AsArray* instance = 0;
+	static Ref< AsArray > instance = 0;
 	if (!instance)
 	{
 		instance = new AsArray();

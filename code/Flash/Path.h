@@ -3,15 +3,15 @@
 
 #include <vector>
 #include <list>
-#include "Core/Object.h"
+#include "Core/Config.h"
 #include "Core/Math/Vector2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -63,10 +63,8 @@ struct SubPath
 /*! \brief Shape path.
  * \ingroup Flash
  */
-class T_DLLCLASS Path : public Object
+class T_DLLCLASS Path
 {
-	T_RTTI_CLASS;
-
 public:
 	enum CoordinateMode
 	{

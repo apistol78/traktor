@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSound", AsSound, ActionClass)
 
 Ref< AsSound > AsSound::getInstance()
 {
-	static AsSound* instance = 0;
+	static Ref< AsSound > instance = 0;
 	if (!instance)
 	{
 		instance = new AsSound();

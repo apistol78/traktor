@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
 Ref< AsTextField > AsTextField::getInstance()
 {
-	static AsTextField* instance = 0;
+	static Ref< AsTextField > instance = 0;
 	if (!instance)
 	{
 		instance = new AsTextField();

@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsBoolean", AsBoolean, ActionClass)
 
 Ref< AsBoolean > AsBoolean::getInstance()
 {
-	static AsBoolean* instance = 0;
+	static Ref< AsBoolean > instance = 0;
 	if (!instance)
 	{
 		instance = new AsBoolean();

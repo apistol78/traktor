@@ -5,29 +5,27 @@ namespace traktor
 	namespace drawing
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.Color", Color, Object)
-
-Color::Color() :
-	m_red(0),
-	m_green(0),
-	m_blue(0),
-	m_alpha(0)
+Color::Color()
+:	m_red(0)
+,	m_green(0)
+,	m_blue(0)
+,	m_alpha(0)
 {
 }
 
-Color::Color(const Color& src) :
-	m_red(src.m_red),
-	m_green(src.m_green),
-	m_blue(src.m_blue),
-	m_alpha(src.m_alpha)
+Color::Color(const Color& src)
+:	m_red(src.m_red)
+,	m_green(src.m_green)
+,	m_blue(src.m_blue)
+,	m_alpha(src.m_alpha)
 {
 }
 
-Color::Color(float red, float green, float blue, float alpha) :
-	m_red(red),
-	m_green(green),
-	m_blue(blue),
-	m_alpha(alpha)
+Color::Color(float red, float green, float blue, float alpha)
+:	m_red(red)
+,	m_green(green)
+,	m_blue(blue)
+,	m_alpha(alpha)
 {
 }
 

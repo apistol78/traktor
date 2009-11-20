@@ -1,9 +1,10 @@
 #include <cmath>
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Math/MathUtils.h"
 #include "Flash/Action/Classes/AsPoint.h"
 #include "Flash/Action/Classes/AsObject.h"
 #include "Flash/Action/ActionPoint.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {
@@ -14,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsPoint", AsPoint, ActionClass)
 
 Ref< AsPoint > AsPoint::getInstance()
 {
-	static AsPoint* instance = 0;
+	static Ref< AsPoint > instance = 0;
 	if (!instance)
 	{
 		instance = new AsPoint();
@@ -87,7 +88,7 @@ void AsPoint::Point_distance(CallArgs& ca)
 	Ref< ActionPoint > pt2 = ca.args[1].getObject< ActionPoint >();
 	double dx = pt2->x - pt1->x;
 	double dy = pt2->y - pt1->y;
-	ca.ret = ActionValue(sqrt(dx * dx + dy * dy));
+	ca.ret = ActionValue(sqrtf(dx * dx + dy * dy));
 }
 
 void AsPoint::Point_equals(CallArgs& ca)
@@ -112,7 +113,7 @@ void AsPoint::Point_normalize(CallArgs& ca)
 {
 	Ref< ActionPoint > pt = checked_type_cast< ActionPoint* >(ca.self);
 	double scale = ca.args[0].getNumberSafe();
-	double ln = sqrt(pt->x * pt->x + pt->y * pt->y);
+	double ln = sqrtf(pt->x * pt->x + pt->y * pt->y);
 	pt->x *= scale / ln;
 	pt->y *= scale / ln;
 }
@@ -129,8 +130,8 @@ void AsPoint::Point_polar(CallArgs& ca)
 	double length = ca.args[0].getNumberSafe();
 	double angle = ca.args[1].getNumberSafe();
 	ca.ret = ActionValue::fromObject(new ActionPoint(
-		cos(angle) * length,
-		sin(angle) * length
+		cosf(angle) * length,
+		sinf(angle) * length
 	));
 }
 
@@ -152,7 +153,7 @@ void AsPoint::Point_toString(CallArgs& ca)
 void AsPoint::Point_get_length(CallArgs& ca)
 {
 	Ref< ActionPoint > pt = checked_type_cast< ActionPoint* >(ca.self);
-	ca.ret = ActionValue(sqrt(pt->x * pt->x + pt->y * pt->y));
+	ca.ret = ActionValue(sqrtf(pt->x * pt->x + pt->y * pt->y));
 }
 
 void AsPoint::Point_set_length(CallArgs& ca)

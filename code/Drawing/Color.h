@@ -1,14 +1,14 @@
 #ifndef traktor_drawing_Color_H
 #define traktor_drawing_Color_H
 
-#include "Core/Object.h"
+#include "Core/Config.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DRAWING_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,10 +19,8 @@ namespace traktor
 /*! \brief High range color.
  * \ingroup Drawing
  */
-class T_DLLCLASS Color : public Object
+class T_DLLCLASS Color
 {
-	T_RTTI_CLASS;
-
 public:
 	Color();
 

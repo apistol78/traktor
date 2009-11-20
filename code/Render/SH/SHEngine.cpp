@@ -2,6 +2,7 @@
 #include "Render/SH/SHFunction.h"
 #include "Render/SH/SHMatrix.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
 
@@ -15,9 +16,9 @@ namespace traktor
 Vector4 polarToCartesian(double phi, double theta)
 {
 	return Vector4(
-		float(cos(theta) * sin(phi)),
-		float(cos(phi)),
-		float(sin(theta) * sin(phi))
+		float(cosf(theta) * sinf(phi)),
+		float(cosf(phi)),
+		float(sinf(theta) * sinf(phi))
 	);
 }
 
@@ -26,7 +27,7 @@ double P(int l, int m, double x)
 	double pmm = 1.0;
 	if (m > 0)
 	{
-		double somx2 = sqrt((1.0 - x) * (1.0 + x));
+		double somx2 = sqrtf((1.0 - x) * (1.0 + x));
 		double fact = 1.0;
 		for (int i = 1; i <= m; ++i)
 		{
@@ -61,18 +62,18 @@ int factorial(int n)
 double K(int l, int m)
 {
 	double temp = ((2.0 * l + 1.0) * factorial(l - m)) / (4.0 * PI * factorial(l + m));
-	return sqrt(temp);
+	return sqrtf(temp);
 }
 
 double SH(int l, int m, double phi, double theta)
 {
-	const double sqrt2 = sqrt(2.0);
+	const double sqrt2 = sqrtf(2.0);
 	if (m == 0)
-		return K(l, 0) * P(l, m, cos(phi));
+		return K(l, 0) * P(l, m, cosf(phi));
 	else if (m > 0)
-		return sqrt2 * K(l, m) * cos(m * theta) * P(l, m, cos(phi));
+		return sqrt2 * K(l, m) * cosf(m * theta) * P(l, m, cosf(phi));
 	else
-		return sqrt2 * K(l, -m) * sin(-m * theta) * P(l, -m, cos(phi));
+		return sqrt2 * K(l, -m) * sinf(-m * theta) * P(l, -m, cosf(phi));
 }
 
 		}
@@ -100,7 +101,7 @@ void SHEngine::generateSamplePoints(uint32_t count)
 			double x = (i + rg.nextDouble()) / double(sqrtCount);
 			double y = (j + rg.nextDouble()) / double(sqrtCount);
 
-			double phi = 2.0 * acos(sqrt(1.0 - x));
+			double phi = 2.0 * acosf(sqrtf(1.0 - x));
 			double theta = 2.0 * PI * y;
 
 			uint32_t o = i + j * sqrtCount;

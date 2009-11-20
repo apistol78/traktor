@@ -5,8 +5,6 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexElement", VertexElement, Object)
-
 VertexElement::VertexElement()
 :	m_usage(DuPosition)
 ,	m_type(DtFloat4)

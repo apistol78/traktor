@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsSecurity", AsSecurity, ActionClass)
 
 Ref< AsSecurity > AsSecurity::getInstance()
 {
-	static AsSecurity* instance = 0;
+	static Ref< AsSecurity > instance = 0;
 	if (!instance)
 	{
 		instance = new AsSecurity();

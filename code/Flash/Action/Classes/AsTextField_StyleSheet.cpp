@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField_StyleSheet", AsTextField_Styl
 
 Ref< AsTextField_StyleSheet > AsTextField_StyleSheet::getInstance()
 {
-	static AsTextField_StyleSheet* instance = 0;
+	static Ref< AsTextField_StyleSheet > instance = 0;
 	if (!instance)
 	{
 		instance = new AsTextField_StyleSheet();

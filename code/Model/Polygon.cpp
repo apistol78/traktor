@@ -6,8 +6,6 @@ namespace traktor
 	namespace model
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Polygon", Polygon, Object)
-
 Polygon::Polygon()
 :	m_material(c_InvalidIndex)
 {

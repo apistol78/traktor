@@ -1,18 +1,22 @@
 #ifndef traktor_script_Any_H
 #define traktor_script_Any_H
 
-#include "Core/Object.h"
+#include "Core/Config.h"
+#include "Core/Ref.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCRIPT_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+
+class Object;
+
 	namespace script
 	{
 
@@ -23,10 +27,8 @@ namespace traktor
  * as a value placeholder when communicating
  * back and forth to script land.
  */
-class T_DLLCLASS Any : public Object
+class T_DLLCLASS Any
 {
-	T_RTTI_CLASS;
-
 public:
 	Any();
 

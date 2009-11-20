@@ -1,3 +1,6 @@
+#if !defined(_WIN32)
+#	include <alloca.h>
+#endif
 #include <cstdlib>
 #include <string>
 #include "Core/Rtti/TypeInfo.h"
@@ -19,7 +22,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	if (!s_typeInfoRegistry)
 	{
 		s_typeInfoRegistrySize = 1024;
-		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(malloc(s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
+		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::malloc(s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
 		T_ASSERT (s_typeInfoRegistry);
 	}
 
@@ -51,7 +54,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	if (++s_typeInfoCount >= s_typeInfoRegistrySize)
 	{
 		s_typeInfoRegistrySize += 1024;
-		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(realloc(s_typeInfoRegistry, s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
+		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::realloc(s_typeInfoRegistry, s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
 		T_ASSERT (s_typeInfoRegistry);
 	}
 }

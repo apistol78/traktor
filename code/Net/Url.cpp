@@ -184,7 +184,12 @@ std::wstring Url::encode(const uint8_t* bytes, uint32_t len)
 	for (uint32_t i = 0; i < len; ++i)
 	{
 		uint8_t ch = bytes[i];
-		if ((ch >= '0' && ch <= '9') || (tolower(ch) >= 'a' && tolower(ch) <= 'z') || ch == '.' || ch == ',' || ch == '-' || ch == '_' || ch == '~')
+		if (
+			(ch >= '0' && ch <= '9') ||
+			(ch >= 'a' && ch <= 'z') ||
+			(ch >= 'A' && ch <= 'Z') ||
+			ch == '.' || ch == ',' || ch == '-' || ch == '_' || ch == '~'
+		)
 			ss.put(wchar_t(ch));
 		else
 		{

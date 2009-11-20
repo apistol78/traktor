@@ -2,8 +2,6 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Log/Log.h"
 
-#pragma optimize("", off)
-
 namespace traktor
 {
 	namespace render

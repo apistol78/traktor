@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
 
 Ref< AsNumber > AsNumber::getInstance()
 {
-	static AsNumber* instance = 0;
+	static Ref< AsNumber > instance = 0;
 	if (!instance)
 	{
 		instance = new AsNumber();

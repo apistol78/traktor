@@ -15,7 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsStage", AsStage, ActionClass)
 
 Ref< AsStage > AsStage::getInstance()
 {
-	static AsStage* instance = 0;
+	static Ref< AsStage > instance = 0;
 	if (!instance)
 	{
 		instance = new AsStage();

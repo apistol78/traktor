@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsError", AsError, ActionClass)
 
 Ref< AsError > AsError::getInstance()
 {
-	static AsError* instance = 0;
+	static Ref< AsError > instance = 0;
 	if (!instance)
 	{
 		instance = new AsError();

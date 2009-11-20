@@ -131,7 +131,11 @@ uint8_t fromHex(wchar_t hc)
 {
 	if (hc >= L'0' && hc <= L'9')
 		return hc - L'0';
+#if !defined(_WIN32)
+	hc = std::tolower(hc);
+#else
 	hc = tolower(hc);
+#endif
 	if (hc >= L'a' && hc <= L'f')
 		return (hc - L'a') + 10;
 	return 0;

@@ -15,10 +15,10 @@ float delta(int i, int j)
 float u(int l, int m, int n)
 {
 	if (abs(n) < l)
-		return sqrt(float( ((l + m) * (l - m)) / ((l + n) * (l - n)) ));
+		return sqrtf(float( ((l + m) * (l - m)) / ((l + n) * (l - n)) ));
 	// abs(n) == l
 	T_ASSERT (abs(n) == l);
-	return sqrt( ((l + m) * (l - m)) / ((2.0f * l) * (2.0f * l - 1.0f)) );
+	return sqrtf( ((l + m) * (l - m)) / ((2.0f * l) * (2.0f * l - 1.0f)) );
 }
 
 float v(int l, int m, int n)
@@ -28,14 +28,14 @@ float v(int l, int m, int n)
 		float ca = (1.0f + delta(m, 0)) * (l + abs(m) - 1.0f) * (l + abs(m));
 		float cb = float( (l + n) * (l - n) );
 		float cc = (1.0f - 2.0f * delta(m, 0));
-		return 0.5f * sqrt(ca / cb) * cc;
+		return 0.5f * sqrtf(ca / cb) * cc;
 	}
 	// abs(n) == l
 	T_ASSERT (abs(n) == l);
 	float ca = (1.0f + delta(m, 0)) * (l + abs(m) - 1.0f) * (l + abs(m));
 	float cb = (2.0f * l) * (2.0f * l - 1.0f);
 	float cc = (1.0f - 2.0f * delta(m, 0));
-	return 0.5f * sqrt(ca / cb) * cc;
+	return 0.5f * sqrtf(ca / cb) * cc;
 }
 
 float w(int l, int m, int n)
@@ -47,14 +47,14 @@ float w(int l, int m, int n)
 		T_ASSERT ((1.0f - delta(m, 0)) == 1.0f);
 		float ca = (l - abs(m) - 1.0f) * (l - abs(m));
 		float cb = float( (l + n) * (l - n) );
-		return -0.5f * sqrt(ca / cb);
+		return -0.5f * sqrtf(ca / cb);
 	}
 	// abs(n) == l
 	T_ASSERT (abs(n) == l);
 	T_ASSERT ((1.0f - delta(m, 0)) == 1.0f);
 	float ca = (l - abs(m) - 1.0f) * (l - abs(m));
 	float cb = (2.0f * l) * (2.0f * l - 1.0f);
-	return -0.5f * sqrt(ca / cb);
+	return -0.5f * sqrtf(ca / cb);
 }
 
 float P(const SHMatrix& M, int l, int i, int a, int b)
@@ -78,10 +78,10 @@ float V(const SHMatrix& M, int l, int m, int n)
 	if (m == 0)
 		return P(M, l, 1, 1, n) + P(M, l, -1, -1, n);
 	else if (m > 0)
-		return P(M, l, 1, m - 1, n) * sqrt(1.0f + delta(m, 1)) - P(M, l, -1, -m + 1, n) * (1.0f - delta(m, 1));
+		return P(M, l, 1, m - 1, n) * sqrtf(1.0f + delta(m, 1)) - P(M, l, -1, -m + 1, n) * (1.0f - delta(m, 1));
 	// m < 0
 	T_ASSERT (m < 0);
-	return P(M, l, 1, m + 1, n) * (1.0f - delta(m, -1)) + P(M, l, -1, -m - 1, n) * sqrt(1.0f - delta(m, -1));
+	return P(M, l, 1, m + 1, n) * (1.0f - delta(m, -1)) + P(M, l, -1, -m - 1, n) * sqrtf(1.0f - delta(m, -1));
 }
 
 float W(const SHMatrix& M, int l, int m, int n)

@@ -20,12 +20,12 @@ bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 	
 	if (m_socket == INVALID_SOCKET)
 	{
-		m_socket = ::socket(PF_INET, SOCK_DGRAM, 0);
+		m_socket = ::socket(AF_INET, SOCK_DGRAM, 0);
 		if (m_socket == INVALID_SOCKET)
 			return false;
 	}
 
-	u_int opt = 1;
+	uint32_t opt = 1;
 	if (setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, (const char*)&opt, sizeof(opt)) < 0)
 		return false;
 
@@ -42,6 +42,7 @@ bool UdpSocket::bind(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 {
+#if !defined(_PS3)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
@@ -69,6 +70,9 @@ bool UdpSocket::bind(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
@@ -77,7 +81,7 @@ bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 	if (m_socket == INVALID_SOCKET)
 	{
-		m_socket = ::socket(PF_INET, SOCK_DGRAM, 0);
+		m_socket = ::socket(AF_INET, SOCK_DGRAM, 0);
 		if (m_socket == INVALID_SOCKET)
 			return false;
 	}
@@ -90,6 +94,7 @@ bool UdpSocket::connect(const SocketAddressIPv4& socketAddress)
 
 bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 {
+#if !defined(_PS3)
 	const addrinfo* info = socketAddress.getAddrInfo(SOCK_DGRAM);
 	if (!info)
 		return false;
@@ -105,6 +110,9 @@ bool UdpSocket::connect(const SocketAddressIPv6& socketAddress)
 		return false;
 
 	return true;
+#else
+	return false;
+#endif
 }
 
 int UdpSocket::sendTo(const SocketAddressIPv4& socketAddress, const void* data, int length)

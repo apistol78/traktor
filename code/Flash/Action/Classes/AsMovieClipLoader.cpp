@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsMovieClipLoader", AsMovieClipLoader, Ac
 
 Ref< AsMovieClipLoader > AsMovieClipLoader::getInstance()
 {
-	static AsMovieClipLoader* instance = 0;
+	static Ref< AsMovieClipLoader > instance = 0;
 	if (!instance)
 	{
 		instance = new AsMovieClipLoader();

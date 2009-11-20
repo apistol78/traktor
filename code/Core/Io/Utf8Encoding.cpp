@@ -36,7 +36,7 @@ int Utf8Encoding::translate(const wchar_t* chars, int count, uint8_t* out) const
 			continue;
 		}
 
-#if !defined(_WIN32)	// Windows use UCS-2 as wide characters.
+#if !defined(_WIN32) && !defined(_PS3)	// Windows use UCS-2 as wide characters.
 
 		if (ch <= 0x1fffff)
 		{
