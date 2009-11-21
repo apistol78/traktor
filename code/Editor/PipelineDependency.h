@@ -49,7 +49,7 @@ public:
 	std::set< Path > files;						/*!< External file dependencies. */
 	bool build;									/*!< If dependency is required to build. */
 	uint32_t reason;							/*!< Build reason, updated prior to being built. */
-	Ref< PipelineDependency > parent;			/*!< Parent dependency. */
+	PipelineDependency* parent;					/*!< Parent dependency. */
 	RefArray< PipelineDependency > children;	/*!< Child dependencies. */
 };
 
