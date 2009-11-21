@@ -59,14 +59,6 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	//inline void setInputPins(const std::vector< InputPin* >& inputPins) { m_inputPins = inputPins; }
-
-	//inline std::vector< InputPin* >& getInputPins() { return m_inputPins; }
-
-	//inline void setOutputPins(const std::vector< OutputPin* >& outputPins) { m_outputPins = outputPins; }
-
-	//inline std::vector< OutputPin* >& getOutputPins() { return m_outputPins; }
-
 	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
 
 private:
