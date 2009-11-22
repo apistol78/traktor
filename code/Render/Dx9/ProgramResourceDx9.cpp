@@ -1,6 +1,6 @@
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberAggregate.h"
+#include "Core/Serialization/MemberComposite.h"
 
 namespace traktor
 {
@@ -68,7 +68,7 @@ bool ProgramResourceDx9::serialize(ISerializer& s)
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
-	s >> MemberAggregate< StateBlockDx9 >(L"state", m_state);
+	s >> MemberComposite< StateBlockDx9 >(L"state", m_state);
 
 	return true;
 }

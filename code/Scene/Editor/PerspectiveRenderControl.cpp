@@ -619,8 +619,8 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				);
 
 				// Draw reference arrows.
-				const RefArray< world::EntityInstance >& references = (*i)->getInstance()->getReferences();
-				for (RefArray< world::EntityInstance >::const_iterator j = references.begin(); j != references.end(); ++j)
+				const std::vector< world::EntityInstance* >& references = (*i)->getInstance()->getReferences();
+				for (std::vector< world::EntityInstance* >::const_iterator j = references.begin(); j != references.end(); ++j)
 				{
 					Ref< EntityAdapter > referencedAdapter = m_context->findAdapterFromInstance(*j);
 					if (referencedAdapter)

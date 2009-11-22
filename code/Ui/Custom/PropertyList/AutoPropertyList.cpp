@@ -102,8 +102,7 @@ bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 
 	InspectReflector reflector(this, parent);
 
-	Ref< ISerializable > objectRef(object);
-	if (!(reflector >> Member< Ref< ISerializable > >(L"item", objectRef)))
+	if (!(reflector >> Member< ISerializable* >(L"item", object)))
 		return false;
 
 	update();

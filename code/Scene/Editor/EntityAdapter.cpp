@@ -139,7 +139,7 @@ bool EntityAdapter::addReference(EntityAdapter* reference)
 	T_ASSERT (m_instance);
 	T_ASSERT (reference->m_instance);
 
-	const RefArray< world::EntityInstance >& references = m_instance->getReferences();
+	const std::vector< world::EntityInstance* >& references = m_instance->getReferences();
 	if (std::find(references.begin(), references.end(), reference->m_instance) != references.end())
 		return false;
 

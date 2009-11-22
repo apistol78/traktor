@@ -25,8 +25,8 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		Ref< ISerializable > object = m_ref;
-		if (!(s >> Member< Ref< ISerializable > >(getName(), object, &type_of< Class >())))
+		ISerializable* object = m_ref;
+		if (!(s >> Member< ISerializable* >(getName(), object, &type_of< Class >())))
 			return false;
 		m_ref = checked_type_cast< Class* >(object);
 		return true;

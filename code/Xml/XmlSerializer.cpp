@@ -281,12 +281,6 @@ bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 	return result;
 }
 
-bool XmlSerializer::operator >> (const Member< Ref< ISerializable > >& m)
-{
-	ISerializable* object = m->ptr();
-	return *this >> Member< ISerializable* >(m.getName(), object);
-}
-
 bool XmlSerializer::operator >> (const Member< void* >& m)
 {
 	uint32_t size = m.getBlobSize();

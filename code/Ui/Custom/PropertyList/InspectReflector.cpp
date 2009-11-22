@@ -315,12 +315,6 @@ bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< Ref< ISerializable > >& m)
-{
-	ISerializable* object = m->ptr();
-	return *this >> Member< ISerializable* >(m.getName(), object);
-}
-
 bool InspectReflector::operator >> (const Member< void* >& m)
 {
 	return false;
