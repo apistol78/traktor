@@ -79,8 +79,6 @@ public:
 
 	virtual bool operator >> (const Member< ISerializable* >& m);
 
-	virtual bool operator >> (const Member< Ref< ISerializable > >& m);
-
 	virtual bool operator >> (const Member< void* >& m);
 	
 	virtual bool operator >> (const MemberArray& m);

@@ -93,7 +93,7 @@ public:
 	 *
 	 * \return Array of instance's references.
 	 */
-	virtual const RefArray< EntityInstance >& getReferences() const;
+	virtual const std::vector< EntityInstance* >& getReferences() const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -101,7 +101,7 @@ private:
 	std::wstring m_name;
 	Ref< EntityData > m_entityData;
 	Ref< ISerializable > m_instanceData;
-	RefArray< EntityInstance > m_references;
+	std::vector< EntityInstance* > m_references;
 };
 
 	}

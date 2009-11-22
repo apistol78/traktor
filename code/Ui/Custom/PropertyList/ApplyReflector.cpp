@@ -212,15 +212,6 @@ bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
 	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Ref< ISerializable > >& m)
-{
-	ISerializable* object = 0;
-	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
-		return false;
-	m = object;
-	return true;
-}
-
 bool ApplyReflector::operator >> (const Member< void* >& m)
 {
 	return false;

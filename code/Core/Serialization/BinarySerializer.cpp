@@ -605,15 +605,6 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 	return true;
 }
 
-bool BinarySerializer::operator >> (const Member< Ref< ISerializable > >& m)
-{
-	ISerializable* object = m->ptr();
-	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
-		return false;
-	m = object;
-	return true;
-}
-
 bool BinarySerializer::operator >> (const Member< void* >& m)
 {
 	if (m_direction == SdRead)

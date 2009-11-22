@@ -1,6 +1,7 @@
 #ifndef traktor_MemberAggregate_H
 #define traktor_MemberAggregate_H
 
+#include "Core/Meta/Traits.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/Member.h"
 
@@ -14,7 +15,8 @@ template < typename Class >
 class MemberAggregate : public MemberComplex
 {
 public:
-	typedef Class value_type;
+	typedef typename IsPointer< Class >::base_t class_type;
+	typedef class_type* value_type;
 	
 	MemberAggregate(const std::wstring& name, value_type& ref)
 	:	MemberComplex(name, false)
@@ -24,7 +26,15 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		return s >> Member< ISerializable >(getName(), m_ref, &type_of< Class >());
+		ISerializable* rf = m_ref;
+		if (!(s >> Member< ISerializable* >(
+			getName(),
+			rf, 
+			&type_of< class_type >()
+		)))
+			return false;
+		m_ref = checked_type_cast< class_type* >(rf);
+		return true;
 	}
 	
 private:

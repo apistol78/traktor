@@ -2,8 +2,10 @@
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/EntityData.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAggregate.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberStl.h"
 
 namespace traktor
 {
@@ -59,7 +61,7 @@ void EntityInstance::addReference(EntityInstance* reference)
 
 void EntityInstance::removeReference(EntityInstance* reference)
 {
-	RefArray< EntityInstance >::iterator i = std::find(m_references.begin(), m_references.end(), reference);
+	std::vector< EntityInstance* >::iterator i = std::find(m_references.begin(), m_references.end(), reference);
 	if (i != m_references.end())
 		m_references.erase(i);
 }
@@ -69,7 +71,7 @@ void EntityInstance::removeAllReferences()
 	m_references.resize(0);
 }
 
-const RefArray< EntityInstance >& EntityInstance::getReferences() const
+const std::vector< EntityInstance* >& EntityInstance::getReferences() const
 {
 	return m_references;
 }
@@ -82,7 +84,7 @@ bool EntityInstance::serialize(ISerializer& s)
 	if (s.getVersion() >= 1)
 		s >> MemberRef< ISerializable >(L"instanceData", m_instanceData);
 
-	s >> MemberRefArray< EntityInstance >(L"references", m_references);
+	s >> MemberStlVector< EntityInstance*, MemberAggregate< EntityInstance* > >(L"references", m_references);
 	return true;
 }
 

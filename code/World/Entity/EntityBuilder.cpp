@@ -115,8 +115,8 @@ Ref< Entity > EntityBuilder::build(const EntityInstance* instance)
 	));
 
 	// Resolve references to this entity instance.
-	const RefArray< EntityInstance >& references = instanceRef->getReferences();
-	for (RefArray< EntityInstance >::const_iterator i = references.begin(); i != references.end(); ++i)
+	const std::vector< EntityInstance* >& references = instanceRef->getReferences();
+	for (std::vector< EntityInstance* >::const_iterator i = references.begin(); i != references.end(); ++i)
 	{
 		Ref< Entity > reference = build(*i);
 		if (reference)

@@ -410,15 +410,6 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Ref< ISerializable > >& m)
-{
-	ISerializable* object = 0;
-	if (!(*this >> Member< ISerializable* >(m.getName(), object)))
-		return false;
-	m = object;
-	return true;
-}
-
 bool XmlDeserializer::operator >> (const Member< void* >& m)
 {
 	if (!enterElement(m.getName()))
