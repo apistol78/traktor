@@ -136,10 +136,16 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 			eventLog = BinarySerializer(eventFile).readObject< EventLog >();
 			eventFile->close();
 		}
+		
+		if (!eventLog)
+			log::warning << L"Global lock exist but unable to read shared memory" << Endl;
 	}
 
 	if (!eventLog)
+	{
 		eventLog = new EventLog();
+		log::debug << L"Event log created" << Endl;
+	}
 
 	// Register ourself with log.
 	eventLog->registerPeer(m_localGuid);
@@ -151,6 +157,8 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 		BinarySerializer(eventFile).writeObject(eventLog);
 		eventFile->close();
 	}
+	else
+		log::error << L"Unable to write back event log into shared memory" << Endl;
 }
 
 LocalBus::~LocalBus()
@@ -234,6 +242,10 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 		return false;
 	
 	Ref< EventLog > eventLog = BinarySerializer(eventFile).readObject< EventLog >();
+	eventFile->close();
+
+	if (!eventLog)
+		return false;
 
 	// Move into local pending events.
 	std::list< EventLog::Entry >& events = eventLog->getEvents(m_localGuid);
@@ -243,7 +255,6 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 		m_pendingEvents.push_back(event);
 	}
 	events.resize(0);
-	eventFile->close();
 
 	// Write back event log.
 	eventFile = m_shm->write();
