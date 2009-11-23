@@ -1,6 +1,6 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/FileOutputStream.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Log/Log.h>
@@ -20,7 +20,7 @@ using namespace traktor;
 namespace
 {
 
-class ReportLogTarget : public LogTarget
+class ReportLogTarget : public ILogTarget
 {
 public:
 	ReportLogTarget(OutputStream* report)
@@ -59,7 +59,7 @@ void verify(ReportLogTarget& report, const Path& pathName)
 
 	if (!file->isDirectory())
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(pathName, File::FmRead);
+		Ref< IStream > file = FileSystem::getInstance().open(pathName, File::FmRead);
 		if (!file)
 		{
 			log::error << L"Unable to open file \"" << pathName.getPathName() << L"\"" << Endl;
@@ -148,9 +148,9 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('r'))
 	{
 		std::wstring logFile = cmdLine.getOption('r').getString();
-		Ref< Stream > file = FileSystem::getInstance().open(logFile, File::FmWrite);
+		Ref< IStream > file = FileSystem::getInstance().open(logFile, File::FmWrite);
 		if (file)
-			fos = gc_new< FileOutputStream >(file, gc_new< Utf8Encoding >());
+			fos = new FileOutputStream(file, new Utf8Encoding());
 	}
 
 	ReportLogTarget report(fos);

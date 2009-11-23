@@ -5,7 +5,7 @@
 
 class Macros : public Condition
 {
-	T_RTTI_CLASS(Macros)
+	T_RTTI_CLASS;
 
 public:
 	virtual void check(const traktor::Path& fileName, const Source& source, bool isHeader, traktor::OutputStream& report) const;
