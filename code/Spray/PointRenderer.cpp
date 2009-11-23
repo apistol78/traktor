@@ -112,7 +112,11 @@ void PointRenderer::render(
 )
 {
 	uint32_t pointOffset = m_vertexOffset >> 2;
-	if (pointOffset >= c_pointCount)
+
+	uint32_t size = uint32_t(points.size());
+	T_ASSERT (size > 0);
+
+	if (pointOffset + size >= c_pointCount)
 		return;
 
 	AlignedVector< Batch >& batches = m_batches[m_currentBuffer];
@@ -130,9 +134,6 @@ void PointRenderer::render(
 		{  1.0f, -1.0f },
 		{ -1.0f, -1.0f }
 	};
-
-	uint32_t size = uint32_t(points.size());
-	T_ASSERT (size > 0);
 
 	static std::vector< std::pair< uint32_t, float > > sorted;
 	sorted.resize(size);
