@@ -5,14 +5,14 @@
 
 class Filter : public ProjectItem
 {
-	T_RTTI_CLASS(Filter)
+	T_RTTI_CLASS;
 
 public:
 	void setName(const std::wstring& name);
 
 	const std::wstring& getName() const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_name;

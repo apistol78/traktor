@@ -2,7 +2,7 @@
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include <Core/Serialization/MemberStaticArray.h>
@@ -22,7 +22,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcVCProj", SolutionBuilderMsvcVCProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCProj", 0, SolutionBuilderMsvcVCProj, SolutionBuilderMsvcProject)
 
 std::wstring SolutionBuilderMsvcVCProj::getPlatform() const
 {
@@ -69,7 +69,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
-	FileOutputStream os(&bufferStream, gc_new< AnsiEncoding >());
+	FileOutputStream os(&bufferStream, new AnsiEncoding());
 
 	os << L"<?xml version=\"1.0\" encoding=\"Windows-1252\"?>" << Endl;
 	os << L"<VisualStudioProject" << Endl;
@@ -95,8 +95,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 	os << L"<Configurations>" << Endl;
 	os << IncreaseIndent;
 
-	const RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const RefArray< Configuration >& configurations = project->getConfigurations();
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		context.set(L"CONFIGURATION_NAME", (*i)->getName());
 
@@ -113,8 +113,8 @@ bool SolutionBuilderMsvcVCProj::generate(
 	os << L"<Files>" << Endl;
 	os << IncreaseIndent;
 
-	const RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	const RefArray< ProjectItem >& items = project->getItems();
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (!addItem(context, solution, project, *i, os))
 			return false;
@@ -130,7 +130,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 
 	if (!buffer.empty())
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(
+		Ref< IStream > file = FileSystem::getInstance().open(
 			projectFileName,
 			traktor::File::FmWrite
 		);
@@ -143,7 +143,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCProj::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcVCProj::serialize(traktor::ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	s >> Member< std::wstring >(L"platform", m_platform);
@@ -171,8 +171,8 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 		os << L"Name=\"" << filter->getName() << L"\"" << Endl;
 		os << L">" << Endl;
 
-		const RefList< ProjectItem >& items = item->getItems();
-		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		const RefArray< ProjectItem >& items = item->getItems();
+		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			addItem(context, solution, project, *i, os);
 
 		os << DecreaseIndent;
@@ -219,8 +219,8 @@ bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* sol
 				os << IncreaseIndent;
 
 				// Add custom configurations to this file.
-				const RefList< Configuration >& configurations = project->getConfigurations();
-				for (RefList< Configuration >::const_iterator k = configurations.begin(); k != configurations.end(); ++k)
+				const RefArray< Configuration >& configurations = project->getConfigurations();
+				for (RefArray< Configuration >::const_iterator k = configurations.begin(); k != configurations.end(); ++k)
 				{
 					os << L"<FileConfiguration Name=\"" << (*k)->getName() << L"|" << m_platform << L"\">" << Endl;
 					os << IncreaseIndent;

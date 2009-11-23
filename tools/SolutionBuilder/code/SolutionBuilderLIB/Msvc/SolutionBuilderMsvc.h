@@ -1,7 +1,6 @@
 #ifndef SolutionBuilderMsvc_H
 #define SolutionBuilderMsvc_H
 
-#include <Core/Heap/Ref.h>
 #include "SolutionBuilderLIB/SolutionBuilder.h"
 
 class SolutionBuilderMsvcSettings;
@@ -9,7 +8,7 @@ class SolutionBuilderMsvcSettings;
 /*! Generate solution files for Visual Studio 2003, 2005, 2008 or 2010. */
 class SolutionBuilderMsvc : public SolutionBuilder
 {
-	T_RTTI_CLASS(SolutionBuilderMsvc)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(const traktor::CommandLine& cmdLine);

@@ -1,16 +1,16 @@
 #ifndef SolutionBuilderMsvcVCXBuildTool_H
 #define SolutionBuilderMsvcVCXBuildTool_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 #include <Core/Io/Path.h>
 
 class GeneratorContext;
 class Solution;
 class Project;
 
-class SolutionBuilderMsvcVCXBuildTool : public traktor::Serializable
+class SolutionBuilderMsvcVCXBuildTool : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcVCXBuildTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool generate(
@@ -21,7 +21,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 protected:
 	std::wstring m_name;

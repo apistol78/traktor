@@ -9,24 +9,25 @@ class ProjectItem;
 /*! \brief Visual Studio linker tool. */
 class SolutionBuilderMsvcLinkerTool : public SolutionBuilderMsvcTool
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcLinkerTool)
+	T_RTTI_CLASS;
 
 public:
 	SolutionBuilderMsvcLinkerTool();
 
 	virtual bool generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, traktor::OutputStream& os) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	bool m_resolvePaths;
+	bool m_resolveFullLibraryPaths;
 	std::map< std::wstring, std::wstring > m_staticOptions;
 
 	void findDefinitions(
 		GeneratorContext& context,
 		Solution* solution,
 		Project* project,
-		const traktor::RefList< ProjectItem >& items
+		const traktor::RefArray< ProjectItem >& items
 	) const;
 
 	void collectAdditionalLibraries(

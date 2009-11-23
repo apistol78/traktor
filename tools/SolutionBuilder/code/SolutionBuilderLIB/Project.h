@@ -2,8 +2,8 @@
 #define Project_H
 
 #include <string>
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 
 class Configuration;
 class ProjectItem;
@@ -18,9 +18,9 @@ class Dependency;
  * to other projects, either to projects in the same solution
  * or to an external project in another solution.
  */
-class Project : public traktor::Serializable
+class Project : public traktor::ISerializable
 {
-	T_RTTI_CLASS(Project)
+	T_RTTI_CLASS;
 
 public:
 	Project();
@@ -44,7 +44,7 @@ public:
 
 	void removeConfiguration(Configuration* configuration);
 
-	const traktor::RefList< Configuration >& getConfigurations() const;
+	const traktor::RefArray< Configuration >& getConfigurations() const;
 
 	Configuration* getConfiguration(const std::wstring& name) const;
 
@@ -57,7 +57,7 @@ public:
 
 	void removeItem(ProjectItem* item);
 
-	const traktor::RefList< ProjectItem >& getItems() const;
+	const traktor::RefArray< ProjectItem >& getItems() const;
 
 	//@}
 
@@ -68,23 +68,21 @@ public:
 
 	void removeDependency(Dependency* dependency);
 	
-	void setDependencies(const traktor::RefList< Dependency >& dependencies);
+	void setDependencies(const traktor::RefArray< Dependency >& dependencies);
 
-	const traktor::RefList< Dependency >& getDependencies() const;
+	const traktor::RefArray< Dependency >& getDependencies() const;
 
 	//@}
 
-	virtual int getVersion() const;
-
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	bool m_enable;
 	std::wstring m_name;
 	std::wstring m_sourcePath;
-	traktor::RefList< Configuration > m_configurations;
-	traktor::RefList< ProjectItem > m_items;
-	traktor::RefList< Dependency > m_dependencies;
+	traktor::RefArray< Configuration > m_configurations;
+	traktor::RefArray< ProjectItem > m_items;
+	traktor::RefArray< Dependency > m_dependencies;
 };
 
 #endif	// Project_H

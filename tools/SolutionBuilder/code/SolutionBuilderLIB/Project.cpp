@@ -1,6 +1,6 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include "Project.h"
 #include "ProjectItem.h"
 #include "Configuration.h"
@@ -11,7 +11,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"Project", Project, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Project", 1, Project, ISerializable)
 
 Project::Project()
 :	m_enable(true)
@@ -58,14 +58,14 @@ void Project::removeConfiguration(Configuration* configuration)
 	m_configurations.remove(configuration);
 }
 
-const RefList< Configuration >& Project::getConfigurations() const
+const RefArray< Configuration >& Project::getConfigurations() const
 {
 	return m_configurations;
 }
 
 Configuration* Project::getConfiguration(const std::wstring& name) const
 {
-	for (RefList< Configuration >::const_iterator i = m_configurations.begin(); i != m_configurations.end(); ++i)
+	for (RefArray< Configuration >::const_iterator i = m_configurations.begin(); i != m_configurations.end(); ++i)
 	{
 		if ((*i)->getName() == name)
 			return *i;
@@ -83,7 +83,7 @@ void Project::removeItem(ProjectItem* item)
 	m_items.remove(item);
 }
 
-const RefList< ProjectItem >& Project::getItems() const
+const RefArray< ProjectItem >& Project::getItems() const
 {
 	return m_items;
 }
@@ -98,49 +98,47 @@ void Project::removeDependency(Dependency* dependency)
 	m_dependencies.remove(dependency);
 }
 
-void Project::setDependencies(const RefList< Dependency >& dependencies)
+void Project::setDependencies(const RefArray< Dependency >& dependencies)
 {
 	m_dependencies = dependencies;
 }
 	
-const RefList< Dependency >& Project::getDependencies() const
+const RefArray< Dependency >& Project::getDependencies() const
 {
 	return m_dependencies;
 }
 
-int Project::getVersion() const
-{
-	return 1;
-}
-
-bool Project::serialize(Serializer& s)
+bool Project::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"enable", m_enable);
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"sourcePath", m_sourcePath);
-	s >> MemberRefList< Configuration >(L"configurations", m_configurations);
-	s >> MemberRefList< ProjectItem >(L"items", m_items);
+	s >> MemberRefArray< Configuration >(L"configurations", m_configurations);
+	s >> MemberRefArray< ProjectItem >(L"items", m_items);
 
 	// Handle old style dependencies as well.
 	// Remove this when we have converted all solutions.
-	if (s.getDirection() == Serializer::SdRead)
+	if (s.getDirection() == ISerializer::SdRead)
 	{
-		RefList< Object > dependencies;
-		s >> MemberRefList< Object >(L"dependencies", dependencies);
+		RefArray< ISerializable > dependencies;
+		s >> MemberRefArray< ISerializable >(L"dependencies", dependencies);
 
 		m_dependencies.clear();
-		for (RefList< Object >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		for (RefArray< ISerializable >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		{
 			if (is_a< Project >(*i))
-				m_dependencies.push_back(gc_new< ProjectDependency >(static_cast< Project* >(*i)));
+			{
+				Project* project = static_cast< Project* >((*i).ptr());
+				m_dependencies.push_back(new ProjectDependency(project));
+			}
 			else
 				m_dependencies.push_back(checked_type_cast< Dependency* >(*i));
 		}
 	}
 	else
-		s >> MemberRefList< Dependency >(L"dependencies", m_dependencies);
+		s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
 
 	return true;
 }

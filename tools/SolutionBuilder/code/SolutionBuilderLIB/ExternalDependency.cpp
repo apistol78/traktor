@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/MemberRef.h>
 #include "ExternalDependency.h"
 #include "ProjectDependency.h"
@@ -6,7 +6,7 @@
 #include "Solution.h"
 #include "SolutionLoader.h"
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"ExternalDependency", ExternalDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ExternalDependency", 1, ExternalDependency, Dependency)
 
 ExternalDependency::ExternalDependency(const std::wstring& solutionFileName, const std::wstring& projectName)
 :	m_solutionFileName(solutionFileName)
@@ -53,8 +53,8 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 	if (!m_solution)
 		return false;
 
-	const traktor::RefList< Project >& projects = m_solution->getProjects();
-	for (traktor::RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const traktor::RefArray< Project >& projects = m_solution->getProjects();
+	for (traktor::RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if ((*i)->getName() == m_projectName)
 		{
@@ -67,17 +67,17 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 		return false;
 
 	// Resolve other external dependencies from this dependency.
-	traktor::RefList< Dependency > originalDependencies = m_project->getDependencies();
-	traktor::RefList< Dependency > resolvedDependencies;
+	traktor::RefArray< Dependency > originalDependencies = m_project->getDependencies();
+	traktor::RefArray< Dependency > resolvedDependencies;
 
-	for (traktor::RefList< Dependency >::const_iterator i = originalDependencies.begin(); i != originalDependencies.end(); ++i)
+	for (traktor::RefArray< Dependency >::const_iterator i = originalDependencies.begin(); i != originalDependencies.end(); ++i)
 	{
 		if (ProjectDependency* projectDependency = traktor::dynamic_type_cast< ProjectDependency* >(*i))
 		{
-			traktor::Ref< ExternalDependency > externalDependency = (traktor::gc_new< ExternalDependency >(
+			traktor::Ref< ExternalDependency > externalDependency = new ExternalDependency(
 				m_solutionFileName,
 				projectDependency->getProject()->getName()
-			));
+			);
 			if (externalDependency->resolve(solutionLoader))
 				resolvedDependencies.push_back(externalDependency);
 			else
@@ -98,12 +98,7 @@ bool ExternalDependency::resolve(SolutionLoader* solutionLoader)
 	return true;
 }
 
-int ExternalDependency::getVersion() const
-{
-	return 1;
-}
-
-bool ExternalDependency::serialize(traktor::Serializer& s)
+bool ExternalDependency::serialize(traktor::ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 	{

@@ -8,7 +8,7 @@
 
 class File : public ProjectItem
 {
-	T_RTTI_CLASS(File)
+	T_RTTI_CLASS;
 
 public:
 	void setFileName(const std::wstring& fileName);
@@ -17,7 +17,7 @@ public:
 
 	void getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Path >& outFiles) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_fileName;

@@ -1,14 +1,13 @@
 #ifndef Dependency_H
 #define Dependency_H
 
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 class SolutionLoader;
 
-class Dependency : public traktor::Serializable
+class Dependency : public traktor::ISerializable
 {
-	T_RTTI_CLASS(Dependency)
+	T_RTTI_CLASS;
 
 public:
 	Dependency();
@@ -23,7 +22,7 @@ public:
 
 	virtual bool resolve(SolutionLoader* solutionLoader) = 0;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	bool m_linkWithProduct;

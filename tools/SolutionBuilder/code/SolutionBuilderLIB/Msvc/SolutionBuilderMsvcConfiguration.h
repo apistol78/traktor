@@ -2,8 +2,8 @@
 #define SolutionBuilderMsvcConfiguration_H
 
 #include <map>
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 #include <Core/Io/OutputStream.h>
 
 class SolutionBuilderMsvcTool;
@@ -13,9 +13,9 @@ class Project;
 class Configuration;
 
 /*! Visual Studio solution configuration settings. */
-class SolutionBuilderMsvcConfiguration : public traktor::Serializable
+class SolutionBuilderMsvcConfiguration : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcConfiguration)
+	T_RTTI_CLASS;
 
 public:
 	bool generate(
@@ -27,7 +27,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

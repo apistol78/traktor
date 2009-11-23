@@ -19,7 +19,7 @@ class DependencyCache;
 
 class SolutionBuilderMake : public SolutionBuilder
 {
-	T_RTTI_CLASS(SolutionBuilderMake)
+	T_RTTI_CLASS;
 
 public:
 	enum Dialect

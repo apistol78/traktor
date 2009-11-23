@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 /*! \brief Configuration settings.
  *
@@ -13,9 +13,9 @@
  * It also contains project specific paths for headers
  * and/or libraries.
  */
-class Configuration : public traktor::Serializable
+class Configuration : public traktor::ISerializable
 {
-	T_RTTI_CLASS(Configuration)
+	T_RTTI_CLASS;
 
 public:
 	enum TargetFormat
@@ -70,7 +70,7 @@ public:
 
 	const std::vector< std::wstring >& getLibraries() const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_name;

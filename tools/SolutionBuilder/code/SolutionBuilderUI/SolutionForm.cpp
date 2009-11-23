@@ -39,7 +39,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.99.9"
+#define TITLE L"SolutionBuilder v2.0.0"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -63,7 +63,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 		800,
 		600,
 		ui::Form::WsDefault,
-		gc_new< ui::FloodLayout >()
+		new ui::FloodLayout()
 	))
 		return false;
 
@@ -72,7 +72,7 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	addTimerEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTimer));
 	addCloseEventHandler(ui::createMethodHandler(this, &SolutionForm::eventClose));
 
-	m_shortcutTable = gc_new< ui::ShortcutTable >();
+	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
 	m_shortcutTable->addCommand(ui::KsControl, ui::VkN, ui::Command(L"File.New"));
 	m_shortcutTable->addCommand(ui::KsControl, ui::VkO, ui::Command(L"File.Open"));
@@ -81,33 +81,33 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_shortcutTable->addCommand(ui::KsControl, ui::VkX, ui::Command(L"File.Exit"));
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &SolutionForm::eventShortcut));
 
-	m_menuBar = gc_new< ui::MenuBar >();
+	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &SolutionForm::eventMenuClick));
 
-	m_menuItemMRU = gc_new< ui::MenuItem >(L"Recent");
+	m_menuItemMRU = new ui::MenuItem(L"Recent");
 
-	Ref< ui::MenuItem > menuFile = gc_new< ui::MenuItem >(L"File");
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.New"), L"&New"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.Open"), L"&Open..."));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.Save"), L"&Save"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.SaveAs"), L"Save As..."));
+	Ref< ui::MenuItem > menuFile = new ui::MenuItem(L"File");
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.New"), L"&New"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Open"), L"&Open..."));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Save"), L"&Save"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.SaveAs"), L"Save As..."));
 	menuFile->add(m_menuItemMRU);
-	menuFile->add(gc_new< ui::MenuItem >(L"-"));
-	menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.Exit"), L"E&xit"));
+	menuFile->add(new ui::MenuItem(L"-"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"File.Exit"), L"E&xit"));
 	m_menuBar->add(menuFile);
 
-	Ref< ui::MenuItem > menuTools = gc_new< ui::MenuItem >(L"Tools");
-	menuTools->add(gc_new< ui::MenuItem >(ui::Command(L"Tools.AddMultipleConfigurations"), L"&Add multiple configurations..."));
-	menuTools->add(gc_new< ui::MenuItem >(ui::Command(L"Tools.EditConfigurations"), L"&Edit configurations..."));
-	menuTools->add(gc_new< ui::MenuItem >(ui::Command(L"Tools.ImportProject"), L"&Import project..."));
-	menuTools->add(gc_new< ui::MenuItem >(ui::Command(L"Tools.ImportMsvcProject"), L"&Import MSVC project..."));
+	Ref< ui::MenuItem > menuTools = new ui::MenuItem(L"Tools");
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"&Add multiple configurations..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"&Edit configurations..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"&Import project..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"&Import MSVC project..."));
 	m_menuBar->add(menuTools);
 
-	Ref< ui::custom::Splitter > splitter = gc_new< ui::custom::Splitter >();
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(this, true, 300);
 
-	m_treeSolution = gc_new< ui::TreeView >();
+	m_treeSolution = new ui::TreeView();
 	m_treeSolution->create(
 		splitter,
 		ui::WsClientBorder |
@@ -120,57 +120,57 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	m_treeSolution->addSelectEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeSelect));
 	m_treeSolution->addEditedEventHandler(ui::createMethodHandler(this, &SolutionForm::eventTreeChange));
 
-	m_menuSolution = gc_new< ui::PopupMenu >();
+	m_menuSolution = new ui::PopupMenu();
 	m_menuSolution->create();
-	m_menuSolution->add(gc_new< ui::MenuItem >(ui::Command(L"Solution.AddProject"), L"Add New Project"));
+	m_menuSolution->add(new ui::MenuItem(ui::Command(L"Solution.AddProject"), L"Add New Project"));
 
-	m_menuProject = gc_new< ui::PopupMenu >();
+	m_menuProject = new ui::PopupMenu();
 	m_menuProject->create();
-	m_menuProject->add(gc_new< ui::MenuItem >(ui::Command(L"Project.AddConfiguration"), L"Add New Configuration"));
-	m_menuProject->add(gc_new< ui::MenuItem >(ui::Command(L"Project.AddFilter"), L"Add New Filter"));
-	m_menuProject->add(gc_new< ui::MenuItem >(ui::Command(L"Project.AddFile"), L"Add New File"));
-	m_menuProject->add(gc_new< ui::MenuItem >(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
-	m_menuProject->add(gc_new< ui::MenuItem >(ui::Command(L"Project.Remove"), L"Remove"));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddConfiguration"), L"Add New Configuration"));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFilter"), L"Add New Filter"));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddFile"), L"Add New File"));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuProject->add(new ui::MenuItem(ui::Command(L"Project.Remove"), L"Remove"));
 
-	m_menuConfiguration = gc_new< ui::PopupMenu >();
+	m_menuConfiguration = new ui::PopupMenu();
 	m_menuConfiguration->create();
-	m_menuConfiguration->add(gc_new< ui::MenuItem >(ui::Command(L"Configuration.Remove"), L"Remove"));
+	m_menuConfiguration->add(new ui::MenuItem(ui::Command(L"Configuration.Remove"), L"Remove"));
 
-	m_menuFilter = gc_new< ui::PopupMenu >();
+	m_menuFilter = new ui::PopupMenu();
 	m_menuFilter->create();
-	m_menuFilter->add(gc_new< ui::MenuItem >(ui::Command(L"Filter.AddFilter"), L"Add New Filter"));
-	m_menuFilter->add(gc_new< ui::MenuItem >(ui::Command(L"Filter.AddFile"), L"Add New File"));
-	m_menuFilter->add(gc_new< ui::MenuItem >(ui::Command(L"Filter.AddExistingFiles"), L"Add Existing File(s)..."));
-	m_menuFilter->add(gc_new< ui::MenuItem >(ui::Command(L"Filter.Remove"), L"Remove"));
+	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFilter"), L"Add New Filter"));
+	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddFile"), L"Add New File"));
+	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.AddExistingFiles"), L"Add Existing File(s)..."));
+	m_menuFilter->add(new ui::MenuItem(ui::Command(L"Filter.Remove"), L"Remove"));
 
-	m_menuFile = gc_new< ui::PopupMenu >();
+	m_menuFile = new ui::PopupMenu();
 	m_menuFile->create();
-	m_menuFile->add(gc_new< ui::MenuItem >(ui::Command(L"File.Remove"), L"Remove"));
+	m_menuFile->add(new ui::MenuItem(ui::Command(L"File.Remove"), L"Remove"));
 
-	Ref< ui::Container > pageContainer = gc_new< ui::Container >();
-	pageContainer->create(splitter, ui::WsNone, gc_new< ui::FloodLayout >());
+	Ref< ui::Container > pageContainer = new ui::Container();
+	pageContainer->create(splitter, ui::WsNone, new ui::FloodLayout());
 
-	m_pageSolution = gc_new< SolutionPropertyPage >();
+	m_pageSolution = new SolutionPropertyPage();
 	m_pageSolution->create(pageContainer);
 	m_pageSolution->hide();
 
-	m_pageProject = gc_new< ProjectPropertyPage >();
+	m_pageProject = new ProjectPropertyPage();
 	m_pageProject->create(pageContainer);
 	m_pageProject->hide();
 
-	m_pageConfiguration = gc_new< ConfigurationPropertyPage >();
+	m_pageConfiguration = new ConfigurationPropertyPage();
 	m_pageConfiguration->create(pageContainer);
 	m_pageConfiguration->hide();
 
 	// Load MRU registry.
-	Ref< Stream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmRead);
 	if (file)
 	{
 		m_mru = xml::XmlDeserializer(file).readObject< MRU >();
 		file->close();
 	}
 	if (!m_mru)
-		m_mru = gc_new< MRU >();
+		m_mru = new MRU();
 
 	bool loaded = false;
 	if (cmdLine.getCount() > 0)
@@ -231,10 +231,10 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setData(L"PRIMARY", m_solution);
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
-	RefList< Project > projects = m_solution->getProjects();
-	projects.sort(ProjectSortPredicate());
+	RefArray< Project > projects = m_solution->getProjects();
+	//projects.sort(ProjectSortPredicate());
 
-	for (RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 		createTreeProjectItem(treeSolution, *i);
 
 	m_treeSolution->applyState(treeState);
@@ -248,12 +248,12 @@ void SolutionForm::updateMRU()
 	if (!m_mru->getUsedFiles(usedFiles))
 		return;
 
-	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
-	{
-		Ref< ui::MenuItem > menuItem = gc_new< ui::MenuItem >(ui::Command(L"File.MRU"), i->getPathName());
-		menuItem->setData(L"PATH", gc_new< Path >(*i));
-		m_menuItemMRU->add(menuItem);
-	}
+	//for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
+	//{
+	//	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"File.MRU"), i->getPathName());
+	//	menuItem->setData(L"PATH", new Path(*i));
+	//	m_menuItemMRU->add(menuItem);
+	//}
 }
 
 bool SolutionForm::isModified() const
@@ -269,17 +269,17 @@ ui::TreeViewItem* SolutionForm::createTreeProjectItem(ui::TreeViewItem* parentIt
 
 	Ref< ui::TreeViewItem > treeConfigurations = m_treeSolution->createItem(treeProject, L"Configurations", 2, 3);
 
-	const RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	const RefArray< Configuration >& configurations = project->getConfigurations();
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		createTreeConfigurationItem(treeConfigurations, project, *j);
 
-	const RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+	const RefArray< ProjectItem >& items = project->getItems();
+	for (RefArray< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
 	{
 		if (is_a< Filter >(*j))
 			createTreeFilterItem(treeProject, project, static_cast< Filter* >(*j));
 	}
-	for (RefList< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+	for (RefArray< ProjectItem >::const_iterator j = items.begin(); j != items.end(); ++j)
 	{
 		if (is_a< ::File >(*j))
 			createTreeFileItem(treeProject, project, static_cast< ::File* >(*j));
@@ -304,13 +304,13 @@ ui::TreeViewItem* SolutionForm::createTreeFilterItem(ui::TreeViewItem* parentIte
 	treeFilter->setData(L"PROJECT", project);
 	treeFilter->setData(L"FILTER", filter);
 
-	const RefList< ProjectItem >& items = filter->getItems();
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	const RefArray< ProjectItem >& items = filter->getItems();
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (is_a< Filter >(*i))
 			createTreeFilterItem(treeFilter, project, static_cast< Filter* >(*i));
 	}
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (is_a< ::File >(*i))
 			createTreeFileItem(treeFilter, project, static_cast< ::File* >(*i));
@@ -330,7 +330,7 @@ ui::TreeViewItem* SolutionForm::createTreeFileItem(ui::TreeViewItem* parentItem,
 
 bool SolutionForm::loadSolution(const traktor::Path& fileName)
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return false;
 
@@ -356,7 +356,7 @@ void SolutionForm::commandNew()
 			return;
 	}
 
-	m_solution = gc_new< Solution >();
+	m_solution = new Solution();
 	m_solution->setName(L"Unnamed");
 	
 	m_solutionHash = DeepHash(m_solution).get();
@@ -408,7 +408,7 @@ void SolutionForm::commandSave(bool saveAs)
 	if (cancelled)
 		return;
 
-	Ref< Stream > file = FileSystem::getInstance().open(filePath, traktor::File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, traktor::File::FmWrite);
 	if (file)
 	{
 		result = xml::XmlSerializer(file).writeObject(m_solution);
@@ -439,14 +439,14 @@ bool SolutionForm::commandExit()
 	}
 
 	// Save MRU registry.
-	Ref< Stream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmWrite);
+	Ref< IStream > file = FileSystem::getInstance().open(L"SolutionBuilder.mru", traktor::File::FmWrite);
 	if (file)
 	{
 		xml::XmlSerializer(file).writeObject(m_mru);
 		file->close();
 	}
 
-	ui::Application::getInstance().exit(0);
+	ui::Application::getInstance()->exit(0);
 	return true;
 }
 
@@ -492,26 +492,26 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 		commandSave(true);
 	else if (command == L"File.MRU")
 	{
-		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
-		T_ASSERT (path);
+		//Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
+		//T_ASSERT (path);
 
-		Ref< Stream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
-		if (file)
-		{
-			m_solution = xml::XmlDeserializer(file).readObject< Solution >();
-			file->close();
+		//Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
+		//if (file)
+		//{
+		//	m_solution = xml::XmlDeserializer(file).readObject< Solution >();
+		//	file->close();
 
-			updateSolutionTree();
+		//	updateSolutionTree();
 
-			m_solutionHash = DeepHash(m_solution).get();
-			m_solutionFileName = path->getPathName();
+		//	m_solutionHash = DeepHash(m_solution).get();
+		//	m_solutionFileName = path->getPathName();
 
-			m_mru->usedFile(*path);
+		//	m_mru->usedFile(*path);
 
-			updateMRU();
-		}
-		else
-			ui::MessageBox::show(this, L"Unable to open solution", L"Error", ui::MbIconExclamation | ui::MbOk);
+		//	updateMRU();
+		//}
+		//else
+		//	ui::MessageBox::show(this, L"Unable to open solution", L"Error", ui::MbIconExclamation | ui::MbOk);
 	}
 	else if (command == L"File.Exit")
 		commandExit();
@@ -557,7 +557,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 	{
 		if (m_menuSolution->show(m_treeSolution, mouseEvent->getPosition()))
 		{
-			Ref< Project > project = gc_new< Project >();
+			Ref< Project > project = new Project();
 			project->setName(L"Unnamed");
 
 			solution->addProject(project);
@@ -576,7 +576,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			const ui::Command& command = menuItem->getCommand();
 			if (command == L"Project.AddConfiguration")
 			{
-				Ref< Configuration > configuration = gc_new< Configuration >();
+				Ref< Configuration > configuration = new Configuration();
 				configuration->setName(L"Unnamed");
 
 				project->addConfiguration(configuration);
@@ -586,7 +586,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			}
 			else if (command == L"Project.AddFilter")
 			{
-				Ref< Filter > filter = gc_new< Filter >();
+				Ref< Filter > filter = new Filter();
 				filter->setName(L"Unnamed");
 
 				project->addItem(filter);
@@ -596,7 +596,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			}
 			else if (command == L"Project.AddFile")
 			{
-				Ref< ::File > file = gc_new< ::File >();
+				Ref< ::File > file = new ::File();
 				file->setFileName(L"*.*");
 
 				project->addItem(file);
@@ -619,7 +619,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 							traktor::Path relativePath;
 							if (FileSystem::getInstance().getRelativePath(*i, sourcePath, relativePath))
 							{
-								Ref< ::File > file = gc_new< ::File >();
+								Ref< ::File > file = new ::File();
 								file->setFileName(relativePath.getPathName());
 
 								project->addItem(file);
@@ -674,7 +674,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			const ui::Command& command = menuItem->getCommand();
 			if (command == L"Filter.AddFilter")
 			{
-				Ref< Filter > childFilter = gc_new< Filter >();
+				Ref< Filter > childFilter = new Filter();
 				childFilter->setName(L"Unnamed");
 
 				filter->addItem(childFilter);
@@ -684,7 +684,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 			}
 			else if (command == L"Filter.AddFile")
 			{
-				Ref< ::File > file = gc_new< ::File >();
+				Ref< ::File > file = new ::File();
 				file->setFileName(filter->getName() + L"/*.*");
 
 				filter->addItem(file);
@@ -707,7 +707,7 @@ void SolutionForm::eventTreeButtonDown(ui::Event* event)
 							traktor::Path relativePath;
 							if (FileSystem::getInstance().getRelativePath(*i, sourcePath, relativePath))
 							{
-								Ref< ::File > file = gc_new< ::File >();
+								Ref< ::File > file = new ::File();
 								file->setFileName(relativePath.getPathName());
 
 								filter->addItem(file);
@@ -812,7 +812,7 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 void SolutionForm::eventTreeChange(ui::Event* event)
 {
 	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem()
+		static_cast< ui::CommandEvent* >(event)->getItem().ptr()
 	);
 
 	Ref< Solution > solution = treeItem->getData< Solution >(L"PRIMARY");

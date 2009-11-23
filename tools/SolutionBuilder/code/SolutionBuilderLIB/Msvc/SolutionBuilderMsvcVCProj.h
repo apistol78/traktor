@@ -1,7 +1,6 @@
 #ifndef SolutionBuilderMsvcVCProj_H
 #define SolutionBuilderMsvcVCProj_H
 
-#include <Core/Heap/Ref.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcProject.h"
 
 class SolutionBuilderMsvcConfiguration;
@@ -11,7 +10,7 @@ class ProjectItem;
 /*! \brief Visual Studio solution project settings. */
 class SolutionBuilderMsvcVCProj : public SolutionBuilderMsvcProject
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcVCProj)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getPlatform() const;
@@ -31,7 +30,7 @@ public:
 		Project* project
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

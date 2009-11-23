@@ -25,7 +25,7 @@ class MRU;
 
 class SolutionForm : public traktor::ui::Form
 {
-	T_RTTI_CLASS(SolutionForm)
+	T_RTTI_CLASS;
 
 public:
 	bool create(const traktor::CommandLine& cmdLine);

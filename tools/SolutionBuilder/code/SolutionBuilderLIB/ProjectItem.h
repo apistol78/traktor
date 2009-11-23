@@ -1,24 +1,24 @@
 #ifndef ProjectItem_H
 #define ProjectItem_H
 
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 
-class ProjectItem : public traktor::Serializable
+class ProjectItem : public traktor::ISerializable
 {
-	T_RTTI_CLASS(ProjectItem)
+	T_RTTI_CLASS;
 
 public:
 	void addItem(ProjectItem* item);
 
 	void removeItem(ProjectItem* item);
 
-	const traktor::RefList< ProjectItem >& getItems() const;
+	const traktor::RefArray< ProjectItem >& getItems() const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
-	traktor::RefList< ProjectItem > m_items;
+	traktor::RefArray< ProjectItem > m_items;
 };
 
 #endif	// ProjectItem_H

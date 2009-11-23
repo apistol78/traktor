@@ -7,9 +7,9 @@
  * "/I{0}"
  * "-I {0}"
  */
-class CompilerFormats : public traktor::Serializable
+class CompilerFormats : public traktor::ISerializable
 {
-	T_RTTI_CLASS(CompilerFormats)
+	T_RTTI_CLASS;
 
 public:
 	std::wstring formatIncludePath(const std::wstring& includePath) const;
@@ -22,7 +22,7 @@ public:
 
 	std::wstring getObjectSuffix() const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_includePathFormat;

@@ -16,8 +16,8 @@ namespace
 
 	bool hasConfiguration(const Project* project, const std::wstring& configurationName)
 	{
-		const RefList< Configuration >& configurations = project->getConfigurations();
-		for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+		const RefArray< Configuration >& configurations = project->getConfigurations();
+		for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 		{
 			if ((*i)->getName() == configurationName)
 				return true;
@@ -47,12 +47,12 @@ namespace
 
 bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 {
-	const RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Project >& projects = solution->getProjects();
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (!hasConfiguration(*i, L"DebugShared"))
 		{
-			Ref< Configuration > configuration = gc_new< Configuration >();
+			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"DebugShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpDebug);
@@ -63,7 +63,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 		}
 		if (!hasConfiguration(*i, L"ReleaseShared"))
 		{
-			Ref< Configuration > configuration = gc_new< Configuration >();
+			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"ReleaseShared");
 			configuration->setTargetFormat(Configuration::TfSharedLibrary);
 			configuration->setTargetProfile(Configuration::TpRelease);
@@ -74,7 +74,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 		}
 		if (!hasConfiguration(*i, L"DebugStatic"))
 		{
-			Ref< Configuration > configuration = gc_new< Configuration >();
+			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"DebugStatic");
 			configuration->setTargetFormat(Configuration::TfStaticLibrary);
 			configuration->setTargetProfile(Configuration::TpDebug);
@@ -85,7 +85,7 @@ bool AddMultipleConfigurations::execute(ui::Widget* parent, Solution* solution)
 		}
 		if (!hasConfiguration(*i, L"ReleaseStatic"))
 		{
-			Ref< Configuration > configuration = gc_new< Configuration >();
+			Ref< Configuration > configuration = new Configuration();
 			configuration->setName(L"ReleaseStatic");
 			configuration->setTargetFormat(Configuration::TfStaticLibrary);
 			configuration->setTargetProfile(Configuration::TpRelease);

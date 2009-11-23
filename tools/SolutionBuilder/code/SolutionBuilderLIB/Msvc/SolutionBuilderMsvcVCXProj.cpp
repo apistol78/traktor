@@ -2,10 +2,10 @@
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStaticArray.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include <Core/Misc/String.h>
 #include <Core/Misc/MD5.h>
 #include <Core/Log/Log.h>
@@ -33,7 +33,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcVCXProj", SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 0, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 std::wstring SolutionBuilderMsvcVCXProj::getPlatform() const
 {
@@ -80,7 +80,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	buffer.reserve(40000);
 
 	DynamicMemoryStream bufferStream(buffer, false, true);
-	FileOutputStream os(&bufferStream, gc_new< AnsiEncoding >());
+	FileOutputStream os(&bufferStream, new AnsiEncoding());
 
 	os << L"<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">" << Endl;
 	os << IncreaseIndent;
@@ -89,8 +89,8 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<ItemGroup Label=\"ProjectConfigurations\">" << Endl;
 	os << IncreaseIndent;
 
-	const RefList< Configuration >& configurations = project->getConfigurations();
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	const RefArray< Configuration >& configurations = project->getConfigurations();
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Ref< const Configuration > configuration = *i;
 
@@ -119,7 +119,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<Import Project=\"$(VCTargetsPath)\\Microsoft.Cpp.Default.props\" />" << Endl;
 
 	// Configurations
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Ref< const Configuration > configuration = *i;
 
@@ -159,7 +159,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<PropertyGroup>" << Endl;
 	os << IncreaseIndent;
 	os << L"<_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>" << Endl;
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
@@ -202,7 +202,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"</PropertyGroup>" << Endl;
 
 	// Build definitions.
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
@@ -230,8 +230,8 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 	// Collect all files.
 	std::vector< Path > files;
-	const RefList< ProjectItem >& items = project->getItems();
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	const RefArray< ProjectItem >& items = project->getItems();
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (!collectFiles(project, *i, files))
 			return false;
@@ -264,8 +264,8 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	os << L"<ItemGroup>" << Endl;
 	os << IncreaseIndent;
 
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		Ref< const ProjectDependency > projectDependency = dynamic_type_cast< const ProjectDependency* >(*i);
 		if (projectDependency)
@@ -312,7 +312,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 
 	if (!buffer.empty())
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(
+		Ref< IStream > file = FileSystem::getInstance().open(
 			projectFileName,
 			traktor::File::FmWrite
 		);
@@ -325,7 +325,7 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXProj::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
@@ -352,8 +352,8 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 	Ref< Filter > filter = dynamic_type_cast< Filter* >(item);
 	if (filter)
 	{
-		const RefList< ProjectItem >& items = item->getItems();
-		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		const RefArray< ProjectItem >& items = item->getItems();
+		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			collectFiles(
 				project,
 				*i,

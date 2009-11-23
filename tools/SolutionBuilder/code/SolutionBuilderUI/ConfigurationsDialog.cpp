@@ -18,36 +18,36 @@ bool ConfigurationsDialog::create(ui::Widget* parent, Solution* solution)
 		400,
 		300,
 		ui::ConfigDialog::WsDefaultResizable,
-		gc_new< ui::TableLayout >(L"100%", L"100%,*", 4, 4)
+		new ui::TableLayout(L"100%", L"100%,*", 4, 4)
 	))
 		return false;
 
-	m_listConfigurations = gc_new< ui::ListBox >();
+	m_listConfigurations = new ui::ListBox();
 	m_listConfigurations->create(this, L"", ui::WsClientBorder);
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	container->create(this, ui::WsNone, gc_new< ui::TableLayout >(L"*,*,*", L"*", 0, 4));
+	Ref< ui::Container > container = new ui::Container();
+	container->create(this, ui::WsNone, new ui::TableLayout(L"*,*,*", L"*", 0, 4));
 
-	Ref< ui::Button > buttonNew = gc_new< ui::Button >();
+	Ref< ui::Button > buttonNew = new ui::Button();
 	buttonNew->create(container, L"New...");
 	buttonNew->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonNew));
 
-	Ref< ui::Button > buttonRename = gc_new< ui::Button >();
+	Ref< ui::Button > buttonRename = new ui::Button();
 	buttonRename->create(container, L"Rename...");
 	buttonRename->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonRename));
 
-	Ref< ui::Button > buttonRemove = gc_new< ui::Button >();
+	Ref< ui::Button > buttonRemove = new ui::Button();
 	buttonRemove->create(container, L"Remove");
 	buttonRemove->addClickEventHandler(ui::createMethodHandler(this, &ConfigurationsDialog::eventButtonRemove));
 
 	std::set< std::wstring > configurations;
 
 	// Get all unique configuration names.
-	const RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Project >& projects = solution->getProjects();
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Configuration >& projectConfigurations = (*i)->getConfigurations();
-		for (RefList< Configuration >::const_iterator j = projectConfigurations.begin(); j != projectConfigurations.end(); ++j)
+		const RefArray< Configuration >& projectConfigurations = (*i)->getConfigurations();
+		for (RefArray< Configuration >::const_iterator j = projectConfigurations.begin(); j != projectConfigurations.end(); ++j)
 			configurations.insert((*j)->getName());
 	}
 

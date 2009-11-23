@@ -14,7 +14,7 @@ class Solution;
  */
 class SolutionBuilder : public traktor::Object
 {
-	T_RTTI_CLASS(SolutionBuilder)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool create(const traktor::CommandLine& cmdLine) = 0;

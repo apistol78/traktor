@@ -1,10 +1,10 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/File.h>
 #include "File.h"
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"File", File, ProjectItem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"File", 0, File, ProjectItem)
 
 void File::setFileName(const std::wstring& fileName)
 {
@@ -23,7 +23,7 @@ void File::getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Pa
 	traktor::RefArray< traktor::File > files;
 	traktor::FileSystem::getInstance().find(path, files);
 
-	traktor::RefList< traktor::File > directories;
+	traktor::RefArray< traktor::File > directories;
 	for (traktor::RefArray< traktor::File >::iterator i = files.begin(); i != files.end(); ++i)
 	{
 		traktor::Ref< traktor::File > file = *i;
@@ -34,7 +34,7 @@ void File::getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Pa
 	}
 }
 
-bool File::serialize(traktor::Serializer& s)
+bool File::serialize(traktor::ISerializer& s)
 {
 	s >> traktor::Member< std::wstring >(L"fileName", m_fileName);
 	return ProjectItem::serialize(s);

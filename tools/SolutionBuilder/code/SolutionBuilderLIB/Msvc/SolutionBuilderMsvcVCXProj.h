@@ -11,7 +11,7 @@ class SolutionBuilderMsvcVCXBuildTool;
 /*! \brief Visual Studio solution project settings. */
 class SolutionBuilderMsvcVCXProj : public SolutionBuilderMsvcProject
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcVCXProj)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getPlatform() const;
@@ -31,7 +31,7 @@ public:
 		Project* project
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_platform;

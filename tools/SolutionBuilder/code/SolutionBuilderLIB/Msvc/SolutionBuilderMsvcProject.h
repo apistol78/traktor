@@ -1,16 +1,16 @@
 #ifndef SolutionBuilderMsvcProject_H
 #define SolutionBuilderMsvcProject_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 class GeneratorContext;
 class Solution;
 class Project;
 
 /*! \brief Visual Studio solution project settings. */
-class SolutionBuilderMsvcProject : public traktor::Serializable
+class SolutionBuilderMsvcProject : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcProject)
+	T_RTTI_CLASS;
 
 public:
 	virtual std::wstring getPlatform() const = 0;

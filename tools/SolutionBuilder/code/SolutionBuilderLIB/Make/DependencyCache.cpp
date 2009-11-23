@@ -1,5 +1,5 @@
 #include <Core/Log/Log.h>
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/MemberStl.h>
 #include <Core/Serialization/MemberComposite.h>
 #include <Core/Serialization/MemberStaticArray.h>
@@ -7,7 +7,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"DependencyCache", DependencyCache, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"DependencyCache", 0, DependencyCache, ISerializable)
 
 void DependencyCache::set(const std::wstring& key, const MD5& md5, const std::set< std::wstring >& dependencies)
 {
@@ -36,12 +36,12 @@ bool DependencyCache::get(const std::wstring& key, const MD5& md5, std::set< std
 	return true;
 }
 
-bool DependencyCache::serialize(Serializer& s)
+bool DependencyCache::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< std::wstring, CacheItem, MemberStlPair< std::wstring, CacheItem, Member< std::wstring >, MemberComposite< CacheItem > > >(L"cache", m_cache);
 }
 
-bool DependencyCache::CacheItem::serialize(Serializer& s)
+bool DependencyCache::CacheItem::serialize(ISerializer& s)
 {
 	s >> MemberStaticArray< uint32_t, 4 >(L"md5", md5);
 	s >> MemberStlSet< std::wstring >(L"dependencies", dependencies);

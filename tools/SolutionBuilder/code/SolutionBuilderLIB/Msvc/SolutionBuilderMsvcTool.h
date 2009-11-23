@@ -1,7 +1,7 @@
 #ifndef SolutionBuilderMsvcTool_H
 #define SolutionBuilderMsvcTool_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 #include <Core/Io/OutputStream.h>
 
 class GeneratorContext;
@@ -10,9 +10,9 @@ class Project;
 class Configuration;
 
 /*! \brief Visual Studio solution tool. */
-class SolutionBuilderMsvcTool : public traktor::Serializable
+class SolutionBuilderMsvcTool : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool generate(

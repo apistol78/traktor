@@ -1,16 +1,16 @@
 #ifndef SolutionBuilderMsvcVCXDefinition_H
 #define SolutionBuilderMsvcVCXDefinition_H
 
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 class GeneratorContext;
 class Solution;
 class Project;
 class Configuration;
 
-class SolutionBuilderMsvcVCXDefinition : public traktor::Serializable
+class SolutionBuilderMsvcVCXDefinition : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcVCXDefinition)
+	T_RTTI_CLASS;
 
 public:
 	bool generate(
@@ -21,7 +21,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	struct Option
@@ -29,7 +29,7 @@ private:
 		std::wstring name;
 		std::wstring value;
 
-		bool serialize(traktor::Serializer& s);
+		bool serialize(traktor::ISerializer& s);
 	};
 
 	std::wstring m_name;

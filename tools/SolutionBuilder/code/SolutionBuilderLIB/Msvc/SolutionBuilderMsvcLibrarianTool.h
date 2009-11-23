@@ -7,7 +7,7 @@
 /*! \brief Visual Studio librarian tool. */
 class SolutionBuilderMsvcLibrarianTool : public SolutionBuilderMsvcTool
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcLibrarianTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool generate(
@@ -18,7 +18,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

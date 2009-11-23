@@ -1,8 +1,8 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include "Filter.h"
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"Filter", Filter, ProjectItem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Filter", 0, Filter, ProjectItem)
 
 void Filter::setName(const std::wstring& name)
 {
@@ -14,7 +14,7 @@ const std::wstring& Filter::getName() const
 	return m_name;
 }
 
-bool Filter::serialize(traktor::Serializer& s)
+bool Filter::serialize(traktor::ISerializer& s)
 {
 	s >> traktor::Member< std::wstring >(L"name", m_name);
 	return ProjectItem::serialize(s);

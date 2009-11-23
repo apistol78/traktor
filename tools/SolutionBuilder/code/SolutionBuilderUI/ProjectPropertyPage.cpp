@@ -35,58 +35,58 @@ bool ProjectPropertyPage::create(ui::Widget* parent)
 	if (!ui::Container::create(
 		parent,
 		ui::WsClientBorder,
-		gc_new< ui::TableLayout >(L"100%", L"*,100%", 4, 4)
+		new ui::TableLayout(L"100%", L"*,100%", 4, 4)
 	))
 		return false;
 
-	m_checkEnable = gc_new< ui::CheckBox >();
+	m_checkEnable = new ui::CheckBox();
 	m_checkEnable->create(this, L"Include project in build");
 	m_checkEnable->addClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventEnableClick));
 
-	Ref< ui::Container > container = gc_new< ui::Container >();
-	container->create(this, ui::WsNone, gc_new< ui::TableLayout >(L"*,100%", L"*,100%,*", 0, 4));
+	Ref< ui::Container > container = new ui::Container();
+	container->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,100%,*", 0, 4));
 
-	Ref< ui::Static > staticSourcePath = gc_new< ui::Static >();
+	Ref< ui::Static > staticSourcePath = new ui::Static();
 	staticSourcePath->create(container, L"Source path");
 
-	m_editSourcePath = gc_new< ui::Edit >();
+	m_editSourcePath = new ui::Edit();
 	m_editSourcePath->create(container);
 	m_editSourcePath->addFocusEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventFocusSource));
 
-	Ref< ui::Static > staticDependencies = gc_new< ui::Static >();
+	Ref< ui::Static > staticDependencies = new ui::Static();
 	staticDependencies->create(container, L"Dependencies");
 
-	m_listDependencies = gc_new< ui::ListView >();
+	m_listDependencies = new ui::ListView();
 	m_listDependencies->create(container, ui::WsClientBorder | ui::ListView::WsReport);
 	m_listDependencies->addColumn(L"Dependency", 130);
 	m_listDependencies->addColumn(L"Location", 180);
 	m_listDependencies->addColumn(L"Link", 50);
 	m_listDependencies->addDoubleClickEventHandler(ui::createMethodHandler(this, &ProjectPropertyPage::eventDependencyDoubleClick));
 
-	Ref< ui::Static > staticAvailable = gc_new< ui::Static >();
+	Ref< ui::Static > staticAvailable = new ui::Static();
 	staticAvailable->create(container, L"Available");
 
-	Ref< ui::Container > containerAvailable = gc_new< ui::Container >();
-	containerAvailable->create(container, ui::WsNone, gc_new< ui::TableLayout >(L"100%,*,*,*", L"*", 0, 4));
+	Ref< ui::Container > containerAvailable = new ui::Container();
+	containerAvailable->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*,*", L"*", 0, 4));
 
-	m_dropAvailable = gc_new< ui::DropDown >();
+	m_dropAvailable = new ui::DropDown();
 	m_dropAvailable->create(containerAvailable);
 
-	Ref< ui::Button > buttonAdd = gc_new< ui::Button >();
+	Ref< ui::Button > buttonAdd = new ui::Button();
 	buttonAdd->create(containerAvailable, L"Add");
 	buttonAdd->addClickEventHandler(ui::createMethodHandler(
 		this,
 		&ProjectPropertyPage::eventClickAdd
 	));
 
-	Ref< ui::Button > buttonRemove = gc_new< ui::Button >();
+	Ref< ui::Button > buttonRemove = new ui::Button();
 	buttonRemove->create(containerAvailable, L"Remove");
 	buttonRemove->addClickEventHandler(ui::createMethodHandler(
 		this,
 		&ProjectPropertyPage::eventClickRemove
 	));
 
-	Ref< ui::Button > buttonAddExternal = gc_new< ui::Button >();
+	Ref< ui::Button > buttonAddExternal = new ui::Button();
 	buttonAddExternal->create(containerAvailable, L"External...");
 	buttonAddExternal->addClickEventHandler(ui::createMethodHandler(
 		this,
@@ -109,19 +109,19 @@ void ProjectPropertyPage::set(Solution* solution, Project* project)
 
 void ProjectPropertyPage::updateDependencyList()
 {
-	RefList< Dependency > dependencies = m_project->getDependencies();
-	Ref< ui::ListViewItems > dependencyItems = gc_new< ui::ListViewItems >();
+	RefArray< Dependency > dependencies = m_project->getDependencies();
+	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
 
 	// Sort all dependencies.
-	dependencies.sort(DependencyPredicate());
+	//dependencies.sort(DependencyPredicate());
 
 	// Add all local dependencies first.
-	for (RefList< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if (is_a< ExternalDependency >(*i))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = gc_new< ui::ListViewItem >();
+		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
 		dependencyItem->setText(2, (*i)->shouldLinkWithProduct() ? L"Yes" : L"No");
@@ -130,12 +130,12 @@ void ProjectPropertyPage::updateDependencyList()
 	}
 
 	// Add external dependencies last.
-	for (RefList< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if (is_a< ProjectDependency >(*i))
 			continue;
 
-		Ref< ui::ListViewItem > dependencyItem = gc_new< ui::ListViewItem >();
+		Ref< ui::ListViewItem > dependencyItem = new ui::ListViewItem();
 		dependencyItem->setText(0, (*i)->getName());
 		dependencyItem->setText(1, (*i)->getLocation());
 		dependencyItem->setData(L"DEPENDENCY", *i);
@@ -145,20 +145,20 @@ void ProjectPropertyPage::updateDependencyList()
 	m_listDependencies->setItems(dependencyItems);
 
 	// Get available projects, remove all local projects which are already in dependency list.
-	RefList< Project > projects = m_solution->getProjects();
-	for (RefList< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	RefArray< Project > projects = m_solution->getProjects();
+	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if (!is_a< ProjectDependency >(*i))
 			continue;
 
-		RefList< Project >::iterator j = std::find(projects.begin(), projects.end(), static_cast< ProjectDependency* >(*i)->getProject());
+		RefArray< Project >::iterator j = std::find(projects.begin(), projects.end(), static_cast< ProjectDependency* >((*i).ptr())->getProject());
 		if (j != projects.end())
 			projects.erase(j);
 	}
 
 	// Update drop down with available projects.
 	m_dropAvailable->removeAll();
-	for(RefList< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
+	for(RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (*i != m_project)
 			m_dropAvailable->add((*i)->getName());
@@ -228,12 +228,12 @@ void ProjectPropertyPage::eventClickAdd(ui::Event* event)
 	std::wstring dependencyName = m_dropAvailable->getSelectedItem();
 	if (!dependencyName.empty())
 	{
-		const RefList< Project >& projects = m_solution->getProjects();
-		for(RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+		const RefArray< Project >& projects = m_solution->getProjects();
+		for(RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		{
 			if ((*i)->getName() == dependencyName)
 			{
-				Ref< ProjectDependency > dependency = gc_new< ProjectDependency >(*i);
+				Ref< ProjectDependency > dependency = new ProjectDependency(*i);
 				m_project->addDependency(dependency);
 				break;
 			}
@@ -252,8 +252,8 @@ void ProjectPropertyPage::eventClickRemove(ui::Event* event)
 	Ref< Dependency > selectedDependency = selectedItem->getData< Dependency >(L"DEPENDENCY");
 	T_ASSERT (selectedDependency);
 
-	RefList< Dependency > dependencies = m_project->getDependencies();
-	RefList< Dependency >::iterator i = std::find(dependencies.begin(), dependencies.end(), selectedDependency);
+	RefArray< Dependency > dependencies = m_project->getDependencies();
+	RefArray< Dependency >::iterator i = std::find(dependencies.begin(), dependencies.end(), selectedDependency);
 	T_ASSERT (i != dependencies.end());
 
 	dependencies.erase(i);
@@ -282,7 +282,7 @@ void ProjectPropertyPage::eventClickAddExternal(ui::Event* event)
 				importDialog.getSelectedProjects(externalProjects);
 
 				for (RefArray< Project >::iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
-					m_project->addDependency(gc_new< ExternalDependency >(filePath.getPathName(), (*i)->getName()));
+					m_project->addDependency(new ExternalDependency(filePath.getPathName(), (*i)->getName()));
 
 				updateDependencyList();
 			}

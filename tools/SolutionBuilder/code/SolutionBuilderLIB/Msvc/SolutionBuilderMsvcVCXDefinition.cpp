@@ -1,5 +1,5 @@
 #include <Core/Io/StringOutputStream.h>
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberComposite.h>
 #include <Core/Serialization/MemberStl.h>
@@ -15,7 +15,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcVCXDefinition", SolutionBuilderMsvcVCXDefinition, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXDefinition", 0, SolutionBuilderMsvcVCXDefinition, ISerializable)
 
 bool SolutionBuilderMsvcVCXDefinition::generate(
 	GeneratorContext& context,
@@ -62,7 +62,7 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXDefinition::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcVCXDefinition::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"fileTypes", m_fileTypes);
@@ -70,7 +70,7 @@ bool SolutionBuilderMsvcVCXDefinition::serialize(traktor::Serializer& s)
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXDefinition::Option::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcVCXDefinition::Option::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< std::wstring >(L"value", value);
@@ -94,8 +94,8 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 		configuration->getLibraryPaths().end()
 	);
 
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Traverse all static library dependencies and at their "additional libraries" as well.
 		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))

@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcGenericTool.h"
@@ -6,7 +6,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcGenericTool", SolutionBuilderMsvcGenericTool, SolutionBuilderMsvcTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcGenericTool", 0, SolutionBuilderMsvcGenericTool, SolutionBuilderMsvcTool)
 
 bool SolutionBuilderMsvcGenericTool::generate(GeneratorContext& context, Solution* solution, Project* project, Configuration* configuration, traktor::OutputStream& os) const
 {
@@ -22,7 +22,7 @@ bool SolutionBuilderMsvcGenericTool::generate(GeneratorContext& context, Solutio
 	return true;
 }
 
-bool SolutionBuilderMsvcGenericTool::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcGenericTool::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"toolName", m_toolName);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);

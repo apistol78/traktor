@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcCompilerTool.h"
@@ -7,7 +7,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcCompilerTool", SolutionBuilderMsvcCompilerTool, SolutionBuilderMsvcTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcCompilerTool", 0, SolutionBuilderMsvcCompilerTool, SolutionBuilderMsvcTool)
 
 SolutionBuilderMsvcCompilerTool::SolutionBuilderMsvcCompilerTool()
 :	m_resolvePaths(false)
@@ -81,7 +81,7 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	return true;
 }
 
-bool SolutionBuilderMsvcCompilerTool::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcCompilerTool::serialize(traktor::ISerializer& s)
 {
 	s >> Member< bool >(L"resolvePaths", m_resolvePaths);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
