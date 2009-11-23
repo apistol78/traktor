@@ -27,8 +27,8 @@ enum
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
-Instance::Instance(IProviderBus* providerBus)
-:	m_providerBus(providerBus)
+Instance::Instance()
+:	m_providerBus(0)
 ,	m_renamed(false)
 ,	m_removed(false)
 #if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
@@ -37,9 +37,10 @@ Instance::Instance(IProviderBus* providerBus)
 {
 }
 
-bool Instance::internalCreate(IProviderInstance* providerInstance, Group* parent)
+bool Instance::internalCreate(IProviderBus* providerBus, IProviderInstance* providerInstance, Group* parent)
 {
 	T_FATAL_ASSERT_M(providerInstance, L"No provider instance");
+	m_providerBus = providerBus;
 	m_providerInstance = providerInstance;
 	m_parent = parent;
 	return true;

@@ -40,8 +40,8 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
 	{
-		Ref< Instance > childInstance = new Instance(m_providerBus);
-		if (!childInstance->internalCreate(*i, this))
+		Ref< Instance > childInstance = new Instance();
+		if (!childInstance->internalCreate(m_providerBus, *i, this))
 			return false;
 
 		m_childInstances.push_back(childInstance);
@@ -66,8 +66,6 @@ void Group::internalDestroy()
 		(*i)->internalDestroy();
 
 	m_childInstances.resize(0);
-
-	//Heap::getInstance().invalidateRefs(this);
 }
 
 std::wstring Group::getName() const
@@ -207,9 +205,9 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 
 	// Create instance object.
 	if (!instance)
-		instance = new Instance(m_providerBus);
+		instance = new Instance();
 
-	if (!instance->internalCreate(providerInstance, this))
+	if (!instance->internalCreate(m_providerBus, providerInstance, this))
 		return 0;
 
 	// @fixme We should add instance when it's finally committed.

@@ -41,9 +41,9 @@ class T_DLLCLASS Instance : public Object
 	T_RTTI_CLASS;
 
 public:
-	Instance(IProviderBus* providerBus);
+	Instance();
 
-	bool internalCreate(IProviderInstance* providerInstance, Group* parent);
+	bool internalCreate(IProviderBus* providerBus, IProviderInstance* providerInstance, Group* parent);
 
 	void internalDestroy();
 
@@ -86,7 +86,7 @@ public:
 	}
 
 private:
-	Ref< IProviderBus > m_providerBus;
+	IProviderBus* m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
 	Ref< Group > m_parent;
 	Mutex m_lock;

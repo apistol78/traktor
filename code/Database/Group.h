@@ -74,7 +74,7 @@ public:
 	void removeChildGroup(Group* childGroup);
 
 private:
-	Ref< IProviderBus > m_providerBus;
+	IProviderBus* m_providerBus;
 	Ref< IProviderGroup > m_providerGroup;
 	Ref< Group > m_parent;
 	std::wstring m_name;
