@@ -4,11 +4,11 @@
 #include <vector>
 #include <string>
 #include <Core/Object.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 
 class Source : public traktor::Object
 {
-	T_RTTI_CLASS(Source)
+	T_RTTI_CLASS;
 
 public:
 	struct Line
@@ -17,7 +17,7 @@ public:
 		std::wstring text;
 	};
 
-	bool create(traktor::Stream* file);
+	bool create(traktor::IStream* file);
 
 	const std::vector< Line >& getOriginalLines() const { return m_originalLines; }
 

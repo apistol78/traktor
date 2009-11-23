@@ -1,4 +1,3 @@
-#include <Core/Heap/New.h>
 #include <Core/Io/StringReader.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Misc/String.h>
@@ -8,9 +7,9 @@ using namespace traktor;
 
 T_IMPLEMENT_RTTI_CLASS(L"Source", Source, Object)
 
-bool Source::create(Stream* file)
+bool Source::create(IStream* file)
 {
-	StringReader sr(file, gc_new< Utf8Encoding >());
+	StringReader sr(file, new Utf8Encoding());
 
 	std::wstring text;
 	for (uint32_t i = 1; sr.readLine(text) >= 0; ++i)

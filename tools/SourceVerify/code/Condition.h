@@ -11,7 +11,7 @@ class Source;
 
 class Condition : public traktor::Object
 {
-	T_RTTI_CLASS(Condition)
+	T_RTTI_CLASS;
 
 public:
 	virtual void check(const traktor::Path& fileName, const Source& source, bool isHeader, traktor::OutputStream& report) const = 0;
