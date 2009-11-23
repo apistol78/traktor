@@ -27,83 +27,83 @@ bool ConfigurationPropertyPage::create(ui::Widget* parent)
 	if (!ui::Container::create(
 		parent,
 		ui::WsClientBorder,
-		gc_new< ui::TableLayout >(L"*,100%", L"*,*,100%,100%,100%,100%", 4, 4)
+		new ui::TableLayout(L"*,100%", L"*,*,100%,100%,100%,100%", 4, 4)
 	))
 		return false;
 
-	Ref< ui::Static > staticType = gc_new< ui::Static >();
+	Ref< ui::Static > staticType = new ui::Static();
 	staticType->create(this, L"Type");
 
-	m_dropType = gc_new< ui::DropDown >();
+	m_dropType = new ui::DropDown();
 	m_dropType->create(this);
 	m_dropType->add(L"Static library");
 	m_dropType->add(L"Shared library");
 	m_dropType->add(L"Executable");
 	m_dropType->add(L"Executable (console)");
 	m_dropType->addSelectEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventSelectType
 		)
 	);
 
-	Ref< ui::Static > staticProfile = gc_new< ui::Static >();
+	Ref< ui::Static > staticProfile = new ui::Static();
 	staticProfile->create(this, L"Profile");
 
-	m_dropProfile = gc_new< ui::DropDown >();
+	m_dropProfile = new ui::DropDown();
 	m_dropProfile->create(this);
 	m_dropProfile->add(L"Debug");
 	m_dropProfile->add(L"Release");
 	m_dropProfile->addSelectEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventSelectProfile
 		)
 	);
 
-	Ref< ui::Static > staticIncludePaths = gc_new< ui::Static >();
+	Ref< ui::Static > staticIncludePaths = new ui::Static();
 	staticIncludePaths->create(this, L"Include paths");
 
-	m_listIncludePaths = gc_new< EditList >();
+	m_listIncludePaths = new EditList();
 	m_listIncludePaths->create(this);
 	m_listIncludePaths->addEditEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventChangeIncludePath
 		)
 	);
 
-	Ref< ui::Static > staticDefinitions = gc_new< ui::Static >();
+	Ref< ui::Static > staticDefinitions = new ui::Static();
 	staticDefinitions->create(this, L"Definitions");
 
-	m_listDefinitions = gc_new< EditList >();
+	m_listDefinitions = new EditList();
 	m_listDefinitions->create(this);
 	m_listDefinitions->addEditEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventChangeDefinitions
 		)
 	);
 
-	Ref< ui::Static > staticLibraryPaths = gc_new< ui::Static >();
+	Ref< ui::Static > staticLibraryPaths = new ui::Static();
 	staticLibraryPaths->create(this, L"Library paths");
 
-	m_listLibraryPaths = gc_new< EditList >();
+	m_listLibraryPaths = new EditList();
 	m_listLibraryPaths->create(this);
 	m_listLibraryPaths->addEditEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventChangeLibraryPaths
 		)
 	);
 
-	Ref< ui::Static > staticLibraries = gc_new< ui::Static >();
+	Ref< ui::Static > staticLibraries = new ui::Static();
 	staticLibraries->create(this, L"Libraries");
 
-	m_listLibraries = gc_new< EditList >();
+	m_listLibraries = new EditList();
 	m_listLibraries->create(this);
 	m_listLibraries->addEditEventHandler(
-		gc_new< ui::MethodHandler< ConfigurationPropertyPage > >(
+		new ui::MethodHandler< ConfigurationPropertyPage >(
 			this,
 			&ConfigurationPropertyPage::eventChangeLibraries
 		)

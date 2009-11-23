@@ -1,5 +1,5 @@
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Misc/String.h>
 #include <Xml/XmlDeserializer.h>
 #include "SolutionLoader.h"
@@ -18,7 +18,7 @@ Solution* SolutionLoader::load(const std::wstring& fileName)
 		return i->second;
 
 	// Open solution file and deserialize solution object.
-	traktor::Ref< traktor::Stream > file = traktor::FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	traktor::Ref< traktor::IStream > file = traktor::FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return 0;
 

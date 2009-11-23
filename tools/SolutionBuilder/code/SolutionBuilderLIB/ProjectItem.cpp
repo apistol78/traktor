@@ -1,10 +1,10 @@
-#include <Core/Serialization/Serializer.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/ISerializer.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include "ProjectItem.h"
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"ProjectItem", ProjectItem, ISerializable)
 
 void ProjectItem::addItem(ProjectItem* item)
 {
@@ -16,12 +16,12 @@ void ProjectItem::removeItem(ProjectItem* item)
 	m_items.remove(item);
 }
 
-const RefList< ProjectItem >& ProjectItem::getItems() const
+const RefArray< ProjectItem >& ProjectItem::getItems() const
 {
 	return m_items;
 }
 
-bool ProjectItem::serialize(Serializer& s)
+bool ProjectItem::serialize(ISerializer& s)
 {
-	return s >> MemberRefList< ProjectItem >(L"items", m_items);
+	return s >> MemberRefArray< ProjectItem >(L"items", m_items);
 }

@@ -7,7 +7,7 @@
 /*! \brief Visual Studio generic tool. */
 class SolutionBuilderMsvcGenericTool : public SolutionBuilderMsvcTool
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcGenericTool)
+	T_RTTI_CLASS;
 
 public:
 	virtual bool generate(
@@ -18,7 +18,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_toolName;

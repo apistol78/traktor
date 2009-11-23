@@ -1,6 +1,6 @@
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/File.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/BufferedStream.h>
 #include <Core/Io/FileOutputStream.h>
@@ -26,9 +26,9 @@ namespace
 
 #define SCAN_RECURSIVE_DEPENDENCIES 0	// Scan header dependencies recursive.
 
-void collectFiles(const Project* project, const RefList< ProjectItem >& items, std::set< Path >& outFiles)
+void collectFiles(const Project* project, const RefArray< ProjectItem >& items, std::set< Path >& outFiles)
 {
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (::File* fileItem = dynamic_type_cast< ::File* >(*i))
 			fileItem->getSystemFiles(project->getSourcePath(), outFiles);
@@ -99,7 +99,7 @@ bool SolutionBuilderMake::generate(Solution* solution)
 
 	// Read dependency cache if available.
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmRead);
+		Ref< IStream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmRead);
 		if (file)
 		{
 			m_dependencyCache = BinarySerializer(file).readObject< DependencyCache >();
@@ -109,29 +109,29 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	if (!m_dependencyCache)
 	{
 		traktor::log::info << L"Creating new dependency cache..." << Endl;
-		m_dependencyCache = gc_new< DependencyCache >();
+		m_dependencyCache = new DependencyCache();
 	}
 
-	Ref< Stream > file = FileSystem::getInstance().open(
+	Ref< IStream > file = FileSystem::getInstance().open(
 		solutionMake,
 		traktor::File::FmWrite
 	);
 	if (!file)
 		return false;
 
-	FileOutputStream s(file, gc_new< AnsiEncoding >());
+	FileOutputStream s(file, new AnsiEncoding());
 
 	// Sort projects by their dependencies.
-	RefList< Project > projects = solution->getProjects();
-	RefList< Project > generate;
+	RefArray< Project > projects = solution->getProjects();
+	RefArray< Project > generate;
 	while (!projects.empty())
 	{
-		RefList< Project >::iterator i = projects.begin();
+		RefArray< Project >::iterator i = projects.begin();
 		while (i != projects.end())
 		{
 			bool satisfied = true;
-			const RefList< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (!is_a< ProjectDependency >(*j))
 					continue;
@@ -153,10 +153,10 @@ bool SolutionBuilderMake::generate(Solution* solution)
 
 	// Collect all types of configurations available in solution.
 	std::set< std::wstring > configurationNames;
-	for (RefList< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
+	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
 	{
-		const RefList< Configuration >& configurations = (*i)->getConfigurations();
-		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		const RefArray< Configuration >& configurations = (*i)->getConfigurations();
+		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 			configurationNames.insert((*j)->getName());
 	}
 
@@ -166,7 +166,7 @@ bool SolutionBuilderMake::generate(Solution* solution)
 
 	s << L".PHONY : All" << Endl;
 	s << L"All :" << Endl;
-	for (RefList< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
+	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
 		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak All" << Endl;
 	s << Endl;
 
@@ -174,10 +174,10 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	{
 		s << L".PHONY : " << *i << Endl;
 		s << *i << L" :" << Endl;
-		for (RefList< Project >::iterator j = generate.begin(); j != generate.end(); ++j)
+		for (RefArray< Project >::iterator j = generate.begin(); j != generate.end(); ++j)
 		{
-			const RefList< Configuration >& configurations = (*j)->getConfigurations();
-			for (RefList< Configuration >::const_iterator k = configurations.begin(); k != configurations.end(); ++k)
+			const RefArray< Configuration >& configurations = (*j)->getConfigurations();
+			for (RefArray< Configuration >::const_iterator k = configurations.begin(); k != configurations.end(); ++k)
 			{
 				if ((*k)->getName() == *i)
 				{
@@ -191,14 +191,14 @@ bool SolutionBuilderMake::generate(Solution* solution)
 
 	s << L".PHONY : Clean" << Endl;
 	s << L"Clean :" << Endl;
-	for (RefList< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
+	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
 		s << L"\t-$(MAKE) -f " << (*i)->getName() << L"/" << (*i)->getName() << L".mak Clean" << Endl;
 	s << Endl;
 
 	s.close();
 
 	// Generate project makefiles.
-	for (RefList< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
+	for (RefArray< Project >::iterator i = generate.begin(); i != generate.end(); ++i)
 	{
 		if (!generateProject(solution, *i))
 			return false;
@@ -207,7 +207,7 @@ bool SolutionBuilderMake::generate(Solution* solution)
 	// Write dependency cache.
 	if (m_dependencyCache)
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmWrite);
+		Ref< IStream > file = FileSystem::getInstance().open(solution->getRootPath() + L"/DependencyCache.bin", traktor::File::FmWrite);
 		if (file)
 		{
 			BinarySerializer(file).writeObject(m_dependencyCache);
@@ -232,14 +232,14 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	std::set< ::Path > files;
 	collectFiles(project, project->getItems(), files);
 
-	const RefList< Configuration >& configurations = project->getConfigurations();
+	const RefArray< Configuration >& configurations = project->getConfigurations();
 
 	// Create directory for project.
 	if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + project->getName()))
 		return false;
 	
 	// Create directory for each configuration.
-	for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+	for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 	{
 		Configuration* configuration = *i;
 		if (!FileSystem::getInstance().makeDirectory(solution->getRootPath() + L"/" + toLower(configuration->getName())))
@@ -256,7 +256,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 	// Generate project file into memory buffer.
 	DynamicMemoryStream bufferStream(buffer, false, true);
-	FileOutputStream s(&bufferStream, gc_new< AnsiEncoding >());
+	FileOutputStream s(&bufferStream, new AnsiEncoding());
 
 	s << L"# This makefile is automatically generated, DO NOT EDIT!" << Endl;
 	s << Endl;
@@ -271,7 +271,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	Path rootPath = FileSystem::getInstance().getAbsolutePath(solution->getRootPath());
 
 	// Build include strings for each configuration.
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		
@@ -314,7 +314,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	s << Endl;
 
 	// Build macro strings for each configuration.
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		
@@ -338,7 +338,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	// Define the "All" target.
 	s << L".PHONY : All" << Endl;
 	s << L"All : \\" << Endl;
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		s << L"\t" << configuration->getName() << (*j != configurations.back() ? L" \\" : L"") << Endl;
@@ -349,7 +349,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	// Define the "Clean" target.
 	s << L".PHONY : Clean" << Endl;
 	s << L"Clean :" << Endl;
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 		if (m_platform == MpWin32)
@@ -360,7 +360,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 	s << Endl;
 
 	// Define build rules for each target.
-	for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+	for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 	{
 		Configuration* configuration = *j;
 
@@ -639,7 +639,7 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 
 	if (!buffer.empty())
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(
+		Ref< IStream > file = FileSystem::getInstance().open(
 			makeFile,
 			traktor::File::FmWrite
 		);
@@ -681,8 +681,8 @@ void SolutionBuilderMake::collectLinkDependencies(
 	}
 
 	// Add products from project's dependencies.
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		Ref< Solution > dependentSolution;
 		Ref< Project > dependentProject;
@@ -747,7 +747,7 @@ bool SolutionBuilderMake::scanDependencies(
 	std::wstring key = fileName + L"_" + configuration->getName();
 
 	// Calculate MD5 hash of source file.
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return false;
 
@@ -785,12 +785,12 @@ bool SolutionBuilderMake::scanDependencies(
 	std::set< std::wstring >& resolvedDependencies
 )
 {
-	Ref< Stream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	Ref< IStream > file = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!file)
 		return false;
 
 	BufferedStream bufferedFile(file);
-	StringReader sr(&bufferedFile, gc_new< AnsiEncoding >());
+	StringReader sr(&bufferedFile, new AnsiEncoding());
 
 	std::wstring line;
 	while (sr.readLine(line) >= 0)

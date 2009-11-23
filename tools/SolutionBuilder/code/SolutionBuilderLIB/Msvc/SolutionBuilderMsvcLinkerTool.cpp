@@ -1,5 +1,5 @@
 #include <Core/Io/FileSystem.h>
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include <Core/Misc/String.h>
@@ -15,10 +15,11 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcLinkerTool", SolutionBuilderMsvcLinkerTool, SolutionBuilderMsvcTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcLinkerTool", 1, SolutionBuilderMsvcLinkerTool, SolutionBuilderMsvcTool)
 
 SolutionBuilderMsvcLinkerTool::SolutionBuilderMsvcLinkerTool()
 :	m_resolvePaths(false)
+,	m_resolveFullLibraryPaths(false)
 {
 }
 
@@ -115,17 +116,22 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 	return true;
 }
 
-bool SolutionBuilderMsvcLinkerTool::serialize(traktor::Serializer& s)
+bool SolutionBuilderMsvcLinkerTool::serialize(traktor::ISerializer& s)
 {
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"resolvePaths", m_resolvePaths);
+		s >> Member< bool >(L"resolveFullLibraryPaths", m_resolveFullLibraryPaths);
+	}
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	return true;
 }
 
-void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, Solution* solution, Project* project, const RefList< ProjectItem >& items) const
+void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, Solution* solution, Project* project, const RefArray< ProjectItem >& items) const
 {
 	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
 
-	for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 	{
 		if (const ::File* file = dynamic_type_cast< const ::File* >(*i))
 		{
@@ -166,14 +172,14 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 		configuration->getLibraryPaths().end()
 	);
 
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Skip dependencies with we shouldn't link with.
 		if (!(*i)->shouldLinkWithProduct())
 			continue;
 
-		// Traverse all static library dependencies and at their "additional libraries" as well.
+		// Traverse all static library dependencies and add their "additional libraries" as well.
 		if (ProjectDependency* projectDependency = dynamic_type_cast< ProjectDependency* >(*i))
 		{
 			Configuration* dependentConfiguration = projectDependency->getProject()->getConfiguration(configuration->getName());
@@ -194,7 +200,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 			}
 		}
 
-		// Add products from external dependencies and their "additional libraries" as well.
+		// Add products from external dependencies and add their "additional libraries" as well.
 		if (ExternalDependency* externalDependency = dynamic_type_cast< ExternalDependency* >(*i))
 		{
 			Ref< Configuration > externalConfiguration = externalDependency->getProject()->getConfiguration(configuration->getName());
@@ -208,8 +214,15 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 			std::wstring externalProjectPath = externalRootPath + L"/" + toLower(externalConfiguration->getName());
 			std::wstring externalProjectName = externalDependency->getProject()->getName() + ((configuration->getTargetProfile() == Configuration::TpDebug) ? L"_d.lib" : L".lib");
 
-			outAdditionalLibraries.insert(externalProjectName);
-			outAdditionalLibraryPaths.insert(externalProjectPath);
+			if (!m_resolveFullLibraryPaths)
+			{
+				outAdditionalLibraries.insert(externalProjectName);
+				outAdditionalLibraryPaths.insert(externalProjectPath);
+			}
+			else
+			{
+				outAdditionalLibraries.insert(externalProjectPath + L"/" + externalProjectName);
+			}
 
 			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
 			{

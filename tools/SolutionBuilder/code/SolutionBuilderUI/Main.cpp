@@ -35,17 +35,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	T_FORCE_LINK_REF(ExternalDependency)
 
 #if defined(_WIN32)
-	ui::Application::getInstance().initialize(
+	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),
 		new ui::WidgetFactoryWin32()
 	);
 #elif defined(__APPLE__)
-	ui::Application::getInstance().initialize(
+	ui::Application::getInstance()->initialize(
 		new ui::EventLoopCocoa(),
 		new ui::WidgetFactoryCocoa()
 	);
 #else
-	ui::Application::getInstance().initialize(
+	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWx(),
 		new ui::WidgetFactoryWx()
 	);
@@ -54,10 +54,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	SolutionForm form;
 	if (form.create(cmdLine))
 	{
-		ui::Application::getInstance().execute();
+		ui::Application::getInstance()->execute();
 		form.destroy();
 	}
 
-	ui::Application::getInstance().finalize();
+	ui::Application::getInstance()->finalize();
 	return 0;
 }

@@ -13,15 +13,15 @@ bool ImportProjectDialog::create(ui::Widget* parent, const std::wstring& title, 
 		500,
 		400,
 		ui::ConfigDialog::WsDefaultResizable,
-		gc_new< ui::TableLayout >(L"100%", L"100%", 4, 4)
+		new ui::TableLayout(L"100%", L"100%", 4, 4)
 	))
 		return false;
 
-	m_listProjects = gc_new< ui::ListBox >();
+	m_listProjects = new ui::ListBox();
 	m_listProjects->create(this, L"", ui::WsClientBorder | ui::ListBox::WsExtended);
 
-	const RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Project >& projects = solution->getProjects();
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		m_listProjects->add((*i)->getName(), *i);
 	}

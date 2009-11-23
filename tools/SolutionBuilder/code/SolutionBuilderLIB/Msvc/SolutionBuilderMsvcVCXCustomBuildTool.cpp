@@ -1,4 +1,4 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Io/OutputStream.h>
 #include <Core/Misc/String.h>
@@ -7,7 +7,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcVCXCustomBuildTool", SolutionBuilderMsvcVCXCustomBuildTool, SolutionBuilderMsvcVCXBuildTool)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXCustomBuildTool", 0, SolutionBuilderMsvcVCXCustomBuildTool, SolutionBuilderMsvcVCXBuildTool)
 
 bool SolutionBuilderMsvcVCXCustomBuildTool::generate(
 	GeneratorContext& context,
@@ -34,7 +34,7 @@ bool SolutionBuilderMsvcVCXCustomBuildTool::generate(
 
 }
 
-bool SolutionBuilderMsvcVCXCustomBuildTool::serialize(Serializer& s)
+bool SolutionBuilderMsvcVCXCustomBuildTool::serialize(ISerializer& s)
 {
 	if (!SolutionBuilderMsvcVCXBuildTool::serialize(s))
 		return false;

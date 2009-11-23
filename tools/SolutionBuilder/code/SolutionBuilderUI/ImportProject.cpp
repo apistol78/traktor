@@ -2,7 +2,7 @@
 #include <Ui/MessageBox.h>
 #include <Xml/XmlDeserializer.h>
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include "ImportProject.h"
 #include "ImportProjectDialog.h"
 #include "SolutionBuilderLIB/Solution.h"
@@ -24,7 +24,7 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 	Path filePath;
 	if (fileDialog.showModal(filePath))
 	{
-		Ref< Stream > file = FileSystem::getInstance().open(filePath, traktor::File::FmRead);
+		Ref< IStream > file = FileSystem::getInstance().open(filePath, traktor::File::FmRead);
 		if (file)
 		{
 			Ref< Solution > otherSolution = xml::XmlDeserializer(file).readObject< Solution >();
@@ -40,23 +40,23 @@ bool ImportProject::execute(ui::Widget* parent, Solution* solution)
 
 				for (RefArray< Project >::iterator i = otherProjects.begin(); i != otherProjects.end(); ++i)
 				{
-					RefList< Dependency > resolvedDependencies;
+					RefArray< Dependency > resolvedDependencies;
 
 					// Find local project for each dependency of the imported projects.
-					const RefList< Dependency >& dependencies = (*i)->getDependencies();
-					for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+					const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+					for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 					{
 						if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 						{
 							std::wstring projectName = projectDependency->getName();
 
 							// Find local project with same name.
-							const RefList< Project >& projects = solution->getProjects();
-							for (RefList< Project >::const_iterator k = projects.begin(); k != projects.end(); ++k)
+							const RefArray< Project >& projects = solution->getProjects();
+							for (RefArray< Project >::const_iterator k = projects.begin(); k != projects.end(); ++k)
 							{
 								if ((*k)->getName() == projectName)
 								{
-									resolvedDependencies.push_back(gc_new< ProjectDependency >(*k));
+									resolvedDependencies.push_back(new ProjectDependency(*k));
 									break;
 								}
 							}

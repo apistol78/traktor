@@ -2,4 +2,4 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvcTool", SolutionBuilderMsvcTool, Serializable)
+T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvcTool", SolutionBuilderMsvcTool, ISerializable)

@@ -1,18 +1,17 @@
 #ifndef SolutionBuilderMsvcSettings_H
 #define SolutionBuilderMsvcSettings_H
 
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/Serialization/ISerializable.h>
 
 class SolutionBuilderMsvcProject;
 
 /*! Visual Studio solution settings. */
-class SolutionBuilderMsvcSettings : public traktor::Serializable
+class SolutionBuilderMsvcSettings : public traktor::ISerializable
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcSettings)
+	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 	inline const std::wstring& getSLNVersion() const { return m_slnVersion; }
 

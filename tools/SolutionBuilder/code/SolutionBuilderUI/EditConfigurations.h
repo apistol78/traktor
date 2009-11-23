@@ -5,7 +5,7 @@
 
 class EditConfigurations : public CustomTool
 {
-	T_RTTI_CLASS(EditConfigurations)
+	T_RTTI_CLASS;
 
 public:
 	bool execute(traktor::ui::Widget* parent, Solution* solution);

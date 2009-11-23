@@ -45,8 +45,8 @@ bool EditConfigurations::execute(traktor::ui::Widget* parent, Solution* solution
 		const std::vector< ConfigurationsDialog::Action >& actions = configurationsDialog.getActions();
 		for (std::vector< ConfigurationsDialog::Action >::const_iterator i = actions.begin(); i != actions.end(); ++i)
 		{
-			const RefList< Project >& projects = solution->getProjects();
-			for (RefList< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
+			const RefArray< Project >& projects = solution->getProjects();
+			for (RefArray< Project >::const_iterator j = projects.begin(); j != projects.end(); ++j)
 			{
 				if (i->type == ConfigurationsDialog::AtNew)
 				{
@@ -57,7 +57,7 @@ bool EditConfigurations::execute(traktor::ui::Widget* parent, Solution* solution
 					if (!templateConfiguration)
 						traktor::log::warning << L"Unable to find template configuration \"" << i->current << L"\" for project \"" << (*j)->getName() << L"\"" << Endl;
 
-					Ref< Configuration > configuration = gc_new< Configuration >();
+					Ref< Configuration > configuration = new Configuration();
 					configuration->setName(i->name);
 					if (templateConfiguration)
 					{

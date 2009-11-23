@@ -1,9 +1,9 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/MemberRef.h>
 #include "ProjectDependency.h"
 #include "Project.h"
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"ProjectDependency", ProjectDependency, Dependency)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"ProjectDependency", 1, ProjectDependency, Dependency)
 
 ProjectDependency::ProjectDependency(Project* project)
 :	m_project(project)
@@ -32,8 +32,8 @@ std::wstring ProjectDependency::getLocation() const
 
 bool ProjectDependency::resolve(SolutionLoader* solutionLoader)
 {
-	const traktor::RefList< Dependency >& projectDependencies = m_project->getDependencies();
-	for (traktor::RefList< Dependency >::const_iterator i = projectDependencies.begin(); i != projectDependencies.end(); ++i)
+	const traktor::RefArray< Dependency >& projectDependencies = m_project->getDependencies();
+	for (traktor::RefArray< Dependency >::const_iterator i = projectDependencies.begin(); i != projectDependencies.end(); ++i)
 	{
 		if (!(*i)->resolve(solutionLoader))
 			return false;
@@ -41,12 +41,7 @@ bool ProjectDependency::resolve(SolutionLoader* solutionLoader)
 	return true;
 }
 
-int ProjectDependency::getVersion() const
-{
-	return 1;
-}
-
-bool ProjectDependency::serialize(traktor::Serializer& s)
+bool ProjectDependency::serialize(traktor::ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 	{

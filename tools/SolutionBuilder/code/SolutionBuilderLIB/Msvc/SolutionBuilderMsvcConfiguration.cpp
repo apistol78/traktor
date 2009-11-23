@@ -1,8 +1,8 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
 #include <Core/Serialization/MemberStaticArray.h>
-#include <Core/Serialization/MemberRef.h>
+#include <Core/Serialization/MemberRefArray.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcConfiguration.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcTool.h"
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
@@ -10,7 +10,7 @@
 
 using namespace traktor;
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"SolutionBuilderMsvcConfiguration", SolutionBuilderMsvcConfiguration, Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcConfiguration", 0, SolutionBuilderMsvcConfiguration, ISerializable)
 
 bool SolutionBuilderMsvcConfiguration::generate(
 	GeneratorContext& context,
@@ -42,7 +42,7 @@ bool SolutionBuilderMsvcConfiguration::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcConfiguration::serialize(Serializer& s)
+bool SolutionBuilderMsvcConfiguration::serialize(ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	s >> MemberStaticArray< RefArray< SolutionBuilderMsvcTool >, 2, MemberRefArray< SolutionBuilderMsvcTool > >(L"tools", m_tools);

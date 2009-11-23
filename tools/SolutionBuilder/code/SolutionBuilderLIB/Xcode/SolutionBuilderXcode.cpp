@@ -2,12 +2,13 @@
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Io/StringReader.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/Path.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Serialization/DeepHash.h>
 #include <Core/Misc/Adler32.h>
 #include <Core/Guid.h>
+#include <Core/RefSet.h>
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 #include "SolutionBuilderLIB/Solution.h"
@@ -208,9 +209,9 @@ namespace
 		Ref< const Project > m_project;
 	};
 
-	void collectProjectFiles(const Project* project, const RefList< ProjectItem >& items, std::set< Path >& outFiles)
+	void collectProjectFiles(const Project* project, const RefArray< ProjectItem >& items, std::set< Path >& outFiles)
 	{
-		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 		{
 			if (const ::File* file = dynamic_type_cast< const ::File* >(*i))
 				file->getSystemFiles(project->getSourcePath(), outFiles);
@@ -221,14 +222,14 @@ namespace
 
 	void collectProjectFiles(const Project* project, std::set< Path >& outFiles)
 	{
-		const RefList< ProjectItem >& items = project->getItems();
+		const RefArray< ProjectItem >& items = project->getItems();
 		collectProjectFiles(project, items, outFiles);
 	}
 
 	void collectFrameworks(const Project* project, std::set< std::wstring >& outFrameworks)
 	{
-		const RefList< Configuration >& configurations = project->getConfigurations();
-		for (RefList< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
+		const RefArray< Configuration >& configurations = project->getConfigurations();
+		for (RefArray< Configuration >::const_iterator i = configurations.begin(); i != configurations.end(); ++i)
 		{
 			const std::vector< std::wstring >& libraries = (*i)->getLibraries();
 			for (std::vector< std::wstring >::const_iterator j = libraries.begin(); j != libraries.end(); ++j)
@@ -238,8 +239,8 @@ namespace
 			}
 		}
 
-		const RefList< Dependency >& dependencies = project->getDependencies();
-		for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		const RefArray< Dependency >& dependencies = project->getDependencies();
+		for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		{
 			Ref< const Project > dependencyProject;
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*i))
@@ -256,11 +257,11 @@ namespace
 		OutputStream& s,
 		const std::wstring& groupUid,
 		const std::wstring& groupName,
-		const RefList< ProjectItem >& items,
+		const RefArray< ProjectItem >& items,
 		bool addFrameworks
 	)
 	{
-		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 		{
 			if (const Filter* filter = dynamic_type_cast< const Filter* >(*i))
 			{
@@ -280,7 +281,7 @@ namespace
 		s << L"\t\t\tisa = PBXGroup;" << Endl;
 		s << L"\t\t\tchildren = (" << Endl;
 
-		for (RefList< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+		for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 		{
 			if (const Filter* filter = dynamic_type_cast< const Filter* >(*i))
 			{
@@ -369,20 +370,20 @@ struct DisabledProjectPred
 bool SolutionBuilderXcode::generate(Solution* solution)
 {
 	// Get projects; remove disabled projects.
-	RefList< Project > unsorted = solution->getProjects();
-	RefList< Project >::iterator i = std::remove_if(unsorted.begin(), unsorted.end(), DisabledProjectPred());
+	RefArray< Project > unsorted = solution->getProjects();
+	RefArray< Project >::iterator i = std::remove_if(unsorted.begin(), unsorted.end(), DisabledProjectPred());
 	unsorted.erase(i, unsorted.end());
 
 	// Sort projects by their dependencies.
-	RefList< Project > projects;
+	RefArray< Project > projects;
 	while (!unsorted.empty())
 	{
-		RefList< Project >::iterator i = unsorted.begin();
+		RefArray< Project >::iterator i = unsorted.begin();
 		while (i != unsorted.end())
 		{
 			bool satisfied = true;
-			const RefList< Dependency >& dependencies = (*i)->getDependencies();
-			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (!is_a< ProjectDependency >(*j))
 					continue;
@@ -404,7 +405,7 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	
 	// Collect all files references from solution.
 	std::set< Path > files;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectProjectFiles(*i, files);
 
 	std::wstring xcodeProjectPath = solution->getRootPath() + L"/" + solution->getName() + L".xcodeproj";
@@ -412,14 +413,14 @@ bool SolutionBuilderXcode::generate(Solution* solution)
 	if (!FileSystem::getInstance().makeAllDirectories(xcodeProjectPath))
 		return false;
 
-	Ref< Stream > file = FileSystem::getInstance().open(
+	Ref< IStream > file = FileSystem::getInstance().open(
 		xcodeProjectPath + L"/project.pbxproj",
 		traktor::File::FmWrite
 	);
 	if (!file)
 		return false;
 
-	FileOutputStream s(file, gc_new< Utf8Encoding >(), OutputStream::LeUnix);
+	FileOutputStream s(file, new Utf8Encoding(), OutputStream::LeUnix);
 
 	s << L"// !$*UTF8*$!" << Endl;
 	s << L"{" << Endl;
@@ -464,10 +465,10 @@ void SolutionBuilderXcode::showOptions() const
 	log::info << L"\t-r = Release configuration" << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXBuildFile section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< Path > projectFiles;
 		collectProjectFiles(*i, projectFiles);
@@ -486,7 +487,7 @@ void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const So
 				s << L"\t\t" << buildFileUid << L" /* " << j->getFileName() << L" in Resources */ = { isa = PBXBuildFile; fileRef = " << fileUid << L" /* " << j->getFileName() << L" */; };" << Endl;
 		}
 	}
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -576,13 +577,13 @@ void SolutionBuilderXcode::generatePBXBuildRuleSection(OutputStream& s, const So
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXContainerItemProxy section */" << Endl;
 	
 	// Local proxies.
 	RefSet< const Project > localProjects;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
 		collectDependencies(solution, *i, dependencies, false, false);
@@ -606,7 +607,7 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 	
 	// External proxies.
 	RefSet< const Project > externalProjects;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
 		collectDependencies(solution, *i, dependencies, false, false);
@@ -637,9 +638,9 @@ void SolutionBuilderXcode::generatePBXContainerItemProxySection(OutputStream& s,
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::OutputStream& s, const Solution* solution, const traktor::RefArray< Project >& projects) const
 {
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		// Only executable (not console though) projects gets files copied as they are "bundles".
 		if (isAggregate(*i) || getTargetFormat(*i) != Configuration::TfExecutable)
@@ -681,7 +682,7 @@ void SolutionBuilderXcode::generatePBXCopyFilesBuildPhaseSection(traktor::Output
 	}
 }
 
-void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects, const std::set< Path >& files) const
+void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects, const std::set< Path >& files) const
 {
 	s << L"/* Begin PBXFileReference section */" << Endl;
 	for (std::set< Path >::const_iterator i = files.begin(); i != files.end(); ++i)
@@ -698,7 +699,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 		s << L"\t\t" << fileUid << L" /* " << i->getFileName() << L" */ = { isa = PBXFileReference; name = " << i->getFileName() << L"; path = " << relativeFilePath.getPathName() << L"; sourceTree = \"<group>\"; };" << Endl;
 	}
 
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -712,10 +713,10 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	}
 
 	std::set< Path > externalSolutionPaths;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
 			{
@@ -740,7 +741,7 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	}
 
 	std::set< std::wstring > frameworks;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		collectFrameworks(*i, frameworks);
 		
 	for (std::set< std::wstring >::const_iterator i = frameworks.begin(); i != frameworks.end(); ++i)
@@ -756,10 +757,10 @@ void SolutionBuilderXcode::generatePBXFileReferenceSection(OutputStream& s, cons
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXFrameworksBuildPhase section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -829,7 +830,7 @@ void SolutionBuilderXcode::generatePBXFrameworksBuildPhaseSection(OutputStream& 
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXGroup section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getGroupUid() << L" = {" << Endl;
@@ -837,7 +838,7 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 	s << L"\t\t\tchildren = (" << Endl;
 
 	RefSet< const Solution > externalSolutions;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
 		collectDependencies(solution, *i, dependencies, false, false);
@@ -863,7 +864,7 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		}
 	}
 
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::wstring projectGroupUid = ProjectUids(*i).getGroupUid();
 		s << L"\t\t\t\t" << projectGroupUid << L" /* " << (*i)->getName() << L" */," << Endl;
@@ -875,7 +876,7 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 	s << L"\t\t\tsourceTree = \"<group>\";" << Endl;
 	s << L"\t\t};" << Endl;
 
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		createGroups(
 			*i,
@@ -901,8 +902,8 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 		s << L"\t\t\tisa = PBXGroup;" << Endl;
 		s << L"\t\t\tchildren = (" << Endl;
 
-		const RefList< Project >& externalProjects = (*i)->getProjects();
-		for (RefList< Project >::const_iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
+		const RefArray< Project >& externalProjects = (*i)->getProjects();
+		for (RefArray< Project >::const_iterator i = externalProjects.begin(); i != externalProjects.end(); ++i)
 		{
 			if (isAggregate(*i))
 				continue;
@@ -925,10 +926,10 @@ void SolutionBuilderXcode::generatePBXGroupSection(OutputStream& s, const Soluti
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXAggregateTarget section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (!isAggregate(*i))
 			continue;
@@ -942,8 +943,8 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 
 		s << L"\t\t\tdependencies = (" << Endl;
 
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 				s << L"\t\t\t\t" << ProjectUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */," << Endl;
@@ -959,10 +960,10 @@ void SolutionBuilderXcode::generatePBXAggregateTargetSection(OutputStream& s, co
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXNativeTarget section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -988,8 +989,8 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 		s << L"\t\t\t);" << Endl;
 		s << L"\t\t\tdependencies = (" << Endl;
 
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 				s << L"\t\t\t\t" << ProjectUids(*i).getTargetDependencyUid(projectDependency->getProject()) << L" /* PBXTargetDependency */," << Endl;
@@ -1006,7 +1007,7 @@ void SolutionBuilderXcode::generatePBXNativeTargetSection(OutputStream& s, const
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXProject section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getProjectUid() << L" /* Project object */ = {" << Endl;
@@ -1020,10 +1021,10 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 	s << L"\t\t\tprojectReferences = (" << Endl;
 
 	std::set< std::wstring > externalSolutionPaths;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ExternalDependency* externalDependency = dynamic_type_cast< const ExternalDependency* >(*j))
 			{
@@ -1047,7 +1048,7 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t\tprojectRoot = \"\";" << Endl;
 	s << L"\t\t\ttargets = (" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 		s << L"\t\t\t\t" << ProjectUids(*i).getTargetUid() << L" /* " << (*i)->getName() << L" */," << Endl;
 	s << L"\t\t\t);" << Endl;
 	s << L"\t\t};" << Endl;
@@ -1055,12 +1056,12 @@ void SolutionBuilderXcode::generatePBXProjectSection(OutputStream& s, const Solu
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXReferenceProxy section */" << Endl;
 	
 	RefSet< const Project > externalProjects;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		std::set< ResolvedDependency > dependencies;
 		collectDependencies(solution, *i, dependencies, false, false);
@@ -1089,10 +1090,10 @@ void SolutionBuilderXcode::generatePBXReferenceProxySection(OutputStream& s, con
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXHeadersBuildPhase section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -1121,10 +1122,10 @@ void SolutionBuilderXcode::generatePBXHeadersBuildPhaseSection(OutputStream& s, 
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::OutputStream& s, const traktor::RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXResourcesBuildPhase section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -1151,10 +1152,10 @@ void SolutionBuilderXcode::generatePBXResourcesBuildPhaseSection(traktor::Output
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXSourcesBuildPhase section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -1189,13 +1190,13 @@ void SolutionBuilderXcode::generatePBXSourcesBuildPhaseSection(OutputStream& s, 
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin PBXTargetDependency section */" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (const ProjectDependency* projectDependency = dynamic_type_cast< const ProjectDependency* >(*j))
 			{
@@ -1211,7 +1212,7 @@ void SolutionBuilderXcode::generatePBXTargetDependencySection(OutputStream& s, c
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin XCBuildConfiguration section */" << Endl;
 
@@ -1237,7 +1238,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << L"\t\t};" << Endl;
 
 	// Project settings.
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (!isAggregate(*i))
 			continue;
@@ -1259,7 +1260,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 		s << L"\t\t};" << Endl;
 	}
 
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (isAggregate(*i))
 			continue;
@@ -1382,7 +1383,7 @@ void SolutionBuilderXcode::generateXCBuildConfigurationSection(OutputStream& s, 
 	s << Endl;
 }
 
-void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, const Solution* solution, const RefList< Project >& projects) const
+void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
 {
 	s << L"/* Begin XCConfigurationList section */" << Endl;
 	s << L"\t\t" << SolutionUids(solution).getBuildConfigurationListUid() << L" /* Build configuration list for PBXProject \"" << solution->getName() << L"\" */ = {" << Endl;
@@ -1394,7 +1395,7 @@ void SolutionBuilderXcode::generateXCConfigurationListSection(OutputStream& s, c
 	s << L"\t\t\tdefaultConfigurationIsVisible = 0;" << Endl;
 	s << L"\t\t\tdefaultConfigurationName = Debug;" << Endl;
 	s << L"\t\t};" << Endl;
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		if (!isAggregate(*i))
 			s << L"\t\t" << ProjectUids(*i).getBuildConfigurationListUid() << L" /* Build configuration list for PBXNativeTarget \"" << (*i)->getName() << L"\" */ = {" << Endl;
@@ -1500,8 +1501,8 @@ void SolutionBuilderXcode::collectDependencies(
 	bool parentExternal
 ) const
 {
-	const RefList< Dependency >& dependencies = project->getDependencies();
-	for (RefList< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+	const RefArray< Dependency >& dependencies = project->getDependencies();
+	for (RefArray< Dependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		if (!copyFilesDependencies && !(*i)->shouldLinkWithProduct())
 			continue;
@@ -1549,11 +1550,11 @@ bool SolutionBuilderXcode::includeFile(traktor::OutputStream& s, const traktor::
 	ScopeIndent scopeIndent(s);
 	s.setIndent(s.getIndent() + indent);
 
-	Ref< Stream > stream = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(fileName, traktor::File::FmRead);
 	if (!stream)
 		return false;
 
-	StringReader sr(stream, gc_new< Utf8Encoding >());
+	StringReader sr(stream, new Utf8Encoding());
 	std::wstring line;
 
 	while (sr.readLine(line) >= 0)

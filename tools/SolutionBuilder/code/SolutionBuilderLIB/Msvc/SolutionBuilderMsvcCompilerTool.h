@@ -7,7 +7,7 @@
 /*! \brief Visual Studio compiler tool. */
 class SolutionBuilderMsvcCompilerTool : public SolutionBuilderMsvcTool
 {
-	T_RTTI_CLASS(SolutionBuilderMsvcCompilerTool)
+	T_RTTI_CLASS;
 
 public:
 	SolutionBuilderMsvcCompilerTool();
@@ -20,7 +20,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	bool m_resolvePaths;

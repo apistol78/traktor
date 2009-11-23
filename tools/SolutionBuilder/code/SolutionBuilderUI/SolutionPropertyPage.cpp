@@ -11,17 +11,17 @@ bool SolutionPropertyPage::create(ui::Widget* parent)
 	if (!ui::Container::create(
 		parent,
 		ui::WsNone,
-		gc_new< ui::TableLayout >(L"*,100%", L"*", 4, 4)
+		new ui::TableLayout(L"*,100%", L"*", 4, 4)
 	))
 		return false;
 
-	Ref< ui::Static > rootLabel = gc_new< ui::Static >();
+	Ref< ui::Static > rootLabel = new ui::Static();
 	rootLabel->create(this, L"Root path");
 
-	m_rootPath = gc_new< ui::Edit >();
+	m_rootPath = new ui::Edit();
 	m_rootPath->create(this);
 	m_rootPath->addFocusEventHandler(
-		gc_new< ui::MethodHandler< SolutionPropertyPage > >(
+		new ui::MethodHandler< SolutionPropertyPage >(
 			this,
 			&SolutionPropertyPage::eventEditFocus
 		)

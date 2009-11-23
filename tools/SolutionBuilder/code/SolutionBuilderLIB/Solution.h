@@ -2,15 +2,15 @@
 #define Solution_H
 
 #include <string>
-#include <Core/Heap/Ref.h>
-#include <Core/Serialization/Serializable.h>
+#include <Core/RefArray.h>
+#include <Core/Serialization/ISerializable.h>
 
 class Configuration;
 class Project;
 
-class Solution : public traktor::Serializable
+class Solution : public traktor::ISerializable
 {
-	T_RTTI_CLASS(Solution)
+	T_RTTI_CLASS;
 
 public:
 	void setName(const std::wstring& name);
@@ -25,15 +25,15 @@ public:
 
 	void removeProject(Project* project);
 
-	const traktor::RefList< Project >& getProjects() const;
+	const traktor::RefArray< Project >& getProjects() const;
 
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_name;
 	std::wstring m_rootPath;
-	traktor::RefList< Configuration > m_configurations;
-	traktor::RefList< Project > m_projects;
+	traktor::RefArray< Configuration > m_configurations;
+	traktor::RefArray< Project > m_projects;
 };
 
 #endif	// Solution_H

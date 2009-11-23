@@ -2,14 +2,13 @@
 #define SolutionLoader_H
 
 #include <map>
-#include <Core/Heap/Ref.h>
 #include <Core/Object.h>
 
 class Solution;
 
 class SolutionLoader : public traktor::Object
 {
-	T_RTTI_CLASS(SolutionLoader)
+	T_RTTI_CLASS;
 
 public:
 	Solution* load(const std::wstring& fileName);

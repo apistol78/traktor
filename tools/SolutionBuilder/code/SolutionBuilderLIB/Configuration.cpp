@@ -1,10 +1,10 @@
-#include <Core/Serialization/Serializer.h>
+#include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberEnum.h>
 #include <Core/Serialization/MemberStl.h>
 #include "Configuration.h"
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"Configuration", Configuration, traktor::Serializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Configuration", 0, Configuration, traktor::ISerializable)
 
 Configuration::Configuration() :
 	m_targetFormat(TfStaticLibrary),
@@ -102,7 +102,7 @@ const std::vector< std::wstring >& Configuration::getLibraries() const
 	return m_libraries;
 }
 
-bool Configuration::serialize(traktor::Serializer& s)
+bool Configuration::serialize(traktor::ISerializer& s)
 {
 	traktor::MemberEnum< TargetFormat >::Key kTargetFormat[] =
 	{

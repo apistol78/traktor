@@ -12,17 +12,17 @@ bool EditList::create(ui::Widget* parent)
 		return false;
 
 	addDoubleClickEventHandler(
-		gc_new< ui::MethodHandler< EditList > >(
+		new ui::MethodHandler< EditList >(
 			this,
 			&EditList::eventDoubleClick
 		)
 	);
 
-	m_editItem = gc_new< ui::Edit >();
+	m_editItem = new ui::Edit();
 	m_editItem->create(this, L"", ui::WsBorder);
 	m_editItem->hide();
 	m_editItem->addFocusEventHandler(
-		gc_new< ui::MethodHandler< EditList > >(
+		new ui::MethodHandler< EditList >(
 			this,
 			&EditList::eventEditFocus
 		)

@@ -7,7 +7,7 @@ class Project;
 
 class ProjectDependency : public Dependency
 {
-	T_RTTI_CLASS(ProjectDependency)
+	T_RTTI_CLASS;
 
 public:
 	ProjectDependency(Project* project = 0);
@@ -22,9 +22,7 @@ public:
 
 	virtual bool resolve(SolutionLoader* solutionLoader);
 
-	virtual int getVersion() const;
-
-	virtual bool serialize(traktor::Serializer& s);
+	virtual bool serialize(traktor::ISerializer& s);
 
 private:
 	traktor::Ref< Project > m_project;

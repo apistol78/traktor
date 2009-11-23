@@ -1,5 +1,5 @@
 #include <Core/Io/FileSystem.h>
-#include <Core/Io/Stream.h>
+#include <Core/Io/IStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/AnsiEncoding.h>
 #include <Core/Misc/MD5.h>
@@ -41,14 +41,14 @@ T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderMsvc", SolutionBuilderMsvc, SolutionBuil
 
 bool SolutionBuilderMsvc::create(const CommandLine& cmdLine)
 {
-	Ref< SolutionBuilderMsvcSettings > settings = gc_new< SolutionBuilderMsvcSettings >();
+	Ref< SolutionBuilderMsvcSettings > settings = new SolutionBuilderMsvcSettings();
 	if (cmdLine.hasOption('p'))
 	{
 		std::wstring platform = cmdLine.getOption('p').getString();
 
 		traktor::log::info << L"Loading settings \"" << platform << L"\"..." << Endl;
 
-		Ref< Stream > file = FileSystem::getInstance().open(platform, traktor::File::FmRead);
+		Ref< IStream > file = FileSystem::getInstance().open(platform, traktor::File::FmRead);
 		if (!file)
 		{
 			traktor::log::error << L"Unable to open platform type \"" << platform << L"\"" << Endl;
@@ -95,8 +95,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	// Generate projects.
 	std::map< const Project*, std::wstring > projectGuids;
 
-	const RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Project >& projects = solution->getProjects();
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 
@@ -128,19 +128,19 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 	// Generate solution.
 	std::wstring solutionGuid = context.generateGUID(solutionFileName);
 
-	Ref< Stream > file = FileSystem::getInstance().open(
+	Ref< IStream > file = FileSystem::getInstance().open(
 		solutionFileName,
 		traktor::File::FmWrite
 	);
 	if (!file)
 		return false;
 
-	FileOutputStream os(file, gc_new< AnsiEncoding >());
+	FileOutputStream os(file, new AnsiEncoding());
 
 	os << L"Microsoft Visual Studio Solution File, Format Version " << m_settings->getSLNVersion() << Endl;
 	os << L"# Visual Studio " << m_settings->getVSVersion() << Endl;
 	
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 
@@ -163,12 +163,12 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		os << L"Project(\"" << solutionGuid << L"\") = \"" << project->getName() << L"\", \"" << project->getName() << L"\\" << project->getName() << L"." << projectExtension << L"\", \"" << projectGuids[project] << L"\"" << Endl;
 
 		// Add local dependencies.
-		const RefList< Dependency >& dependencies = project->getDependencies();
+		const RefArray< Dependency >& dependencies = project->getDependencies();
 		if (!dependencies.empty())
 		{
 			os << IncreaseIndent;
 			os << L"ProjectSection(ProjectDependencies) = postProject" << Endl;
-			for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+			for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 			{
 				if (!is_a< ProjectDependency >(*j))
 					continue;
@@ -197,7 +197,7 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 
 	std::wstring platform = m_settings->getProject()->getPlatform();
 
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
 		Ref< Project > project = *i;
 
@@ -205,8 +205,8 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		if (!project->getEnable())
 			continue;
 
-		const RefList< Configuration >& configurations = project->getConfigurations();
-		for (RefList< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
+		const RefArray< Configuration >& configurations = project->getConfigurations();
+		for (RefArray< Configuration >::const_iterator j = configurations.begin(); j != configurations.end(); ++j)
 		{
 			Ref< const Configuration > configuration = *j;
 

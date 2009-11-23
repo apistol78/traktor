@@ -9,13 +9,12 @@
 #include "SolutionBuilderLIB/ExternalDependency.h"
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
-#include "SolutionBuilderLIB/Msvc2005/SolutionBuilderMsvc2005.h"
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
 #include "SolutionBuilderLIB/SolutionLoader.h"
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.7"
+#define TITLE L"SolutionBuilder v1.8.0"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -37,13 +36,11 @@ int main(int argc, const char** argv)
 	{
 		std::wstring ide = cmdLine.getOption('f').getString();
 		if (ide == L"make")
-			builder = gc_new< SolutionBuilderMake >();
+			builder = new SolutionBuilderMake();
 		else if (ide == L"msvc")
-			builder = gc_new< SolutionBuilderMsvc >();
-		else if (ide == L"msvc2k5")
-			builder = gc_new< SolutionBuilderMsvc2005 >();
+			builder = new SolutionBuilderMsvc();
 		else if (ide == L"xcode")
-			builder = gc_new< SolutionBuilderXcode >();
+			builder = new SolutionBuilderXcode();
 		else
 		{
 			traktor::log::error << L"Unknown format \"" << ide << L"\"" << Endl;
@@ -51,7 +48,7 @@ int main(int argc, const char** argv)
 		}
 	}
 	else
-		builder = gc_new< SolutionBuilderMsvc >();
+		builder = new SolutionBuilderMsvc();
 
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h') || cmdLine.getCount() <= 0)
 	{
@@ -78,11 +75,11 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << L"Resolving dependencies..." << Endl;
 
-	const RefList< Project >& projects = solution->getProjects();
-	for (RefList< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
+	const RefArray< Project >& projects = solution->getProjects();
+	for (RefArray< Project >::const_iterator i = projects.begin(); i != projects.end(); ++i)
 	{
-		const RefList< Dependency >& dependencies = (*i)->getDependencies();
-		for (RefList< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		const RefArray< Dependency >& dependencies = (*i)->getDependencies();
+		for (RefArray< Dependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
 		{
 			if (!(*j)->resolve(&solutionLoader))
 			{

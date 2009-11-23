@@ -41,7 +41,7 @@ namespace
 				relativePath
 			);
 
-			Ref< ::File > file = gc_new< ::File >();
+			Ref< ::File > file = new ::File();
 			file->setFileName(relativePath.getPathName());
 
 			if (filter)
@@ -59,7 +59,7 @@ namespace
 
 			std::wstring name = attribName->getValue();
 
-			Ref< Filter > childFilter = gc_new< Filter >();
+			Ref< Filter > childFilter = new Filter();
 			childFilter->setName(name);
 
 			if (filter)
@@ -89,7 +89,7 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 			Ref< xml::Attribute > attribName = document.getDocumentElement()->getAttribute(L"Name");
 			std::wstring projectName = attribName ? attribName->getValue() : L"Unnamed";
 
-			Ref< Project > project = gc_new< Project >();
+			Ref< Project > project = new Project();
 			project->setName(projectName);
 
 			RefArray< xml::Element > configurations;
@@ -109,7 +109,7 @@ bool ImportMsvcProject::execute(traktor::ui::Widget* parent, Solution* solution,
 				if (compareIgnoreCase(platformName, L"Win32") != 0)
 					continue;
 
-				Ref< Configuration > configuration = gc_new< Configuration >();
+				Ref< Configuration > configuration = new Configuration();
 				configuration->setName(configurationName);
 
 				Ref< xml::Element > elementCompilerTool = (*i)->getSingle(L"Tool[@Name=VCCLCompilerTool]");

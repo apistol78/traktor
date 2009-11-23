@@ -8,7 +8,7 @@ class Solution;
 
 class CustomTool : public traktor::Object
 {
-	T_RTTI_CLASS(CustomTool)
+	T_RTTI_CLASS;
 };
 
 #endif	// CustomTool_H
