@@ -33,7 +33,7 @@ ProgramDx10::~ProgramDx10()
 	destroy();
 }
 
-ProgramResourceDx10* ProgramDx10::compile(ID3D10Device* d3dDevice, const HlslProgram& hlslProgram)
+Ref< ProgramResourceDx10 > ProgramDx10::compile(ID3D10Device* d3dDevice, const HlslProgram& hlslProgram)
 {
 	Ref< ProgramResourceDx10 > resource = new ProgramResourceDx10();
 
