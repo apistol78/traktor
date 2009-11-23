@@ -62,7 +62,7 @@ void createHeightTextureJob(
 	}
 }
 
-render::ITexture* createHeightTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
+Ref< render::ITexture > createHeightTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
 {
 	uint32_t size = heightfield->getResource().getSize();
 	T_ASSERT (size > 0);
@@ -136,7 +136,7 @@ void createNormalTextureJob(
 	}
 }
 
-render::ITexture* createNormalTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
+Ref< render::ITexture > createNormalTexture(render::IRenderSystem* renderSystem, const Heightfield* heightfield)
 {
 	uint32_t size = heightfield->getResource().getSize();
 	T_ASSERT (size > 0);
