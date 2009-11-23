@@ -52,6 +52,11 @@ template < typename ResourceType >
 void Proxy< ResourceType >::replace(IResourceHandle* handle)
 {
 	m_handle = handle;
+
+	// Get resource from new handle; we automatically try to validate proxy
+	// here as it was done so previously.
+	if (m_handle)
+		m_resource = (ResourceType*)m_handle->get();
 }
 
 template < typename ResourceType >
