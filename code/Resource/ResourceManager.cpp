@@ -19,7 +19,7 @@ class NullResourceHandle : public IResourceHandle
 public:
 	virtual void replace(Object* object) { T_BREAKPOINT; }
 
-	virtual Ref< Object > get() { return 0; }
+	virtual Object* get() const { return 0; }
 
 	virtual void flush() {}
 };

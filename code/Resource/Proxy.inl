@@ -7,43 +7,39 @@ namespace traktor
 
 template < typename ResourceType >
 Proxy< ResourceType >::Proxy()
-:	Ref< ResourceType >()
 {
 }
 
 template < typename ResourceType >
-Proxy< ResourceType >::Proxy(ResourceType* resource)
-:	Ref< ResourceType >(resource)
+Proxy< ResourceType >::Proxy(const Proxy< ResourceType >& rs)
+:	m_handle(rs.m_handle)
+,	m_resource(rs.m_resource)
+,	m_guid(rs.m_guid)
 {
 }
 
 template < typename ResourceType >
-Proxy< ResourceType >::Proxy(const Ref< ResourceType >& resource)
-:	Ref< ResourceType >(resource)
+Proxy< ResourceType >::Proxy(ResourceType* rs)
+:	m_resource(rs)
 {
 }
 
 template < typename ResourceType >
-Proxy< ResourceType >::Proxy(const Proxy< ResourceType >& resource)
-:	Ref< ResourceType >(resource)
-,	m_handle(resource.m_handle)
-,	m_guid(resource.m_guid)
+Proxy< ResourceType >::Proxy(const Ref< ResourceType >& rs)
+:	m_resource(rs)
 {
 }
 
 template < typename ResourceType >
 Proxy< ResourceType >::Proxy(const Guid& guid)
-:	Ref< ResourceType >()
-,	m_guid(guid)
+:	m_guid(guid)
 {
 }
 
 template < typename ResourceType >
 Proxy< ResourceType >::Proxy(IResourceHandle* handle)
-:	Ref< ResourceType >()
-,	m_handle(handle)
+:	m_handle(handle)
 {
-	validate();
 }
 
 template < typename ResourceType >
@@ -56,56 +52,60 @@ template < typename ResourceType >
 void Proxy< ResourceType >::replace(IResourceHandle* handle)
 {
 	m_handle = handle;
-	validate();
 }
 
 template < typename ResourceType >
 bool Proxy< ResourceType >::valid() const
 {
-	return bool(Ref< ResourceType >::ptr() != 0);
+	T_ASSERT_M (m_handle, L"Trying to call unbound proxy");
+	if (m_resource != 0 && m_resource == m_handle->get())
+		return true;
+	else
+		return false;
 }
 
 template < typename ResourceType >
 bool Proxy< ResourceType >::validate()
 {
 	T_ASSERT_M (m_handle, L"Trying to validate unbound proxy");
-	Ref< ResourceType >::replace(
-		(ResourceType*)m_handle->get().ptr()
-	);
-	return valid();
+	m_resource = (ResourceType*)m_handle->get();
+	return m_resource != 0;
 }
 
 template < typename ResourceType >
 inline Proxy< ResourceType >::operator ResourceType* ()
 {
-	return Ref< ResourceType >::ptr();
+	return m_resource;
+}
+
+template < typename ResourceType >
+inline Proxy< ResourceType >::operator Ref< ResourceType > ()
+{
+	return m_resource;
 }
 
 template < typename ResourceType >
 inline ResourceType& Proxy< ResourceType >::operator * ()
 {
-	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
-	if (!valid())
-		T_FATAL_ERROR;
-	return *Ref< ResourceType >::ptr();
+	T_ASSERT_M (m_handle, L"Trying to dereference unbound proxy");
+	T_ASSERT_M (m_resource, L"Trying to dereference null pointer");
+	return *m_resource;
 }
 
 template < typename ResourceType >
 inline ResourceType* Proxy< ResourceType >::operator -> ()
 {
-	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
-	if (!valid())
-		T_FATAL_ERROR;
-	return Ref< ResourceType >::ptr();
+	T_ASSERT_M (m_handle, L"Trying to dereference unbound proxy");
+	T_ASSERT_M (m_resource, L"Trying to call null pointer");
+	return m_resource;
 }
 
 template < typename ResourceType >
 inline const ResourceType* Proxy< ResourceType >::operator -> () const
 {
-	T_ASSERT_M (valid() || m_handle, L"Trying to dereference unbound proxy");
-	if (!valid())
-		T_FATAL_ERROR;
-	return Ref< ResourceType >::ptr();
+	T_ASSERT_M (m_handle, L"Trying to dereference unbound proxy");
+	T_ASSERT_M (m_resource, L"Trying to call null pointer");
+	return m_resource;
 }
 
 template < typename ResourceType >
@@ -113,7 +113,6 @@ inline Proxy< ResourceType >& Proxy< ResourceType >::operator = (const Guid& gui
 {
 	if (guid != m_guid)
 	{
-		Ref< ResourceType >::replace(0);
 		m_handle = 0;
 		m_guid = guid;
 	}
@@ -121,27 +120,27 @@ inline Proxy< ResourceType >& Proxy< ResourceType >::operator = (const Guid& gui
 }
 
 template < typename ResourceType >
-inline bool Proxy< ResourceType >::operator == (const ResourceType* resource)
+inline bool Proxy< ResourceType >::operator == (const ResourceType* rs)
 {
-	return bool(Ref< ResourceType >::ptr() == resource);
+	return bool(m_resource == rs);
 }
 
 template < typename ResourceType >
-inline bool Proxy< ResourceType >::operator != (const ResourceType* resource)
+inline bool Proxy< ResourceType >::operator != (const ResourceType* rs)
 {
-	return bool(Ref< ResourceType >::ptr() != resource);
+	return bool(m_resource != rs);
 }
 
 template < typename ResourceType >
-inline bool Proxy< ResourceType >::operator == (const Ref< ResourceType >& ref)
+inline bool Proxy< ResourceType >::operator == (const Ref< ResourceType >& rs)
 {
-	return bool(Ref< ResourceType >::ptr() == ref.ptr());
+	return bool(m_resource == rs);
 }
 
 template < typename ResourceType >
-inline bool Proxy< ResourceType >::operator != (const Ref< ResourceType >& ref)
+inline bool Proxy< ResourceType >::operator != (const Ref< ResourceType >& rs)
 {
-	return bool(Ref< ResourceType >::ptr() != ref.ptr());
+	return bool(m_resource != rs);
 }
 
 	}

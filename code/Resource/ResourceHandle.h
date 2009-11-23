@@ -3,6 +3,14 @@
 
 #include "Resource/IResourceHandle.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_RESOURCE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace resource
@@ -11,7 +19,7 @@ namespace traktor
 /*! \brief Resource handle.
  * \ingroup Resource
  */
-class ResourceHandle : public IResourceHandle
+class T_DLLCLASS ResourceHandle : public IResourceHandle
 {
 	T_RTTI_CLASS;
 
@@ -20,7 +28,7 @@ public:
 
 	virtual void replace(Object* object);
 
-	virtual Ref< Object > get();
+	virtual Object* get() const;
 
 	virtual void flush();
 

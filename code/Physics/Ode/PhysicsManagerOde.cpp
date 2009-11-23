@@ -218,7 +218,7 @@ public:
 
 			dGeomHeightfieldDataBuildCallback(
 				heightId,
-				heightfield.ptr(),
+				heightfield,
 				&PhysicsManagerOdeImpl::heightfieldCallback,
 				heightfield->getWorldExtent().x(),
 				heightfield->getWorldExtent().z(),

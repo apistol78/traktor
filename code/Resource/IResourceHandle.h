@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RESOURCE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,7 +34,7 @@ public:
 	 *
 	 * \return Resource object.
 	 */
-	virtual Ref< Object > get() = 0;
+	virtual Object* get() const = 0;
 
 	/*! \brief Flush resource object. */
 	virtual void flush() = 0;
