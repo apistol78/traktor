@@ -30,8 +30,11 @@ public:
 
 	void operator delete (void* ptr);
 
+	static int32_t getInstanceCount();
+
 private:
 	mutable AtomicRefCount m_refCount;
+	static AtomicRefCount ms_instanceCount;
 };	
 
 }

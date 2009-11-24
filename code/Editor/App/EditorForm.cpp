@@ -882,6 +882,9 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 {
+	Timer timerBuild;
+	timerBuild.start();
+
 	Ref< PipelineHash > pipelineHash = loadPipelineHash();
 	T_ASSERT (pipelineHash);
 
@@ -936,13 +939,19 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	pipelineBuilder.build(dependencies, rebuild);
 
-	log::info << DecreaseIndent;
-	log::info << L"Finished" << Endl;
-
 	if (pipelineCache)
 		pipelineCache->destroy();
 
 	savePipelineHash(pipelineHash);
+
+	double elapsed = timerBuild.getElapsedTime();
+
+	uint32_t seconds = uint32_t(elapsed + 0.5);
+	uint32_t minutes = seconds / 60; seconds %= 60;
+	uint32_t hours = minutes / 60; minutes %= 60;
+
+	log::info << DecreaseIndent;
+	log::info << L"Finished (" << hours << L":" << minutes << L":" << seconds << L")" << Endl;
 }
 
 void EditorForm::buildCancel()
