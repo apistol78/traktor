@@ -60,8 +60,6 @@ public:
 
 	virtual ~ProgramXbox360();
 
-	static ProgramResourceDx9* compile(const HlslProgram& hlslProgram, int optimize, bool validate);
-
 	bool create(
 		IDirect3DDevice9* d3dDevice,
 		const ProgramResourceDx9* resource

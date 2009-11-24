@@ -1,4 +1,4 @@
-#include <cell/gcm.h>
+#include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
 #include "Render/VertexElement.h"
@@ -90,6 +90,13 @@ void VertexBufferPs3::destroy()
 void* VertexBufferPs3::lock()
 {
 	return m_ptr;
+}
+
+void* VertexBufferPs3::lock(uint32_t vertexOffset, uint32_t vertexCount)
+{
+	uint8_t* ptr = static_cast< uint8_t* >(m_ptr);
+	ptr += vertexOffset * m_vertexStride;
+	return ptr;
 }
 
 void VertexBufferPs3::unlock()

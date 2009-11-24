@@ -1,9 +1,7 @@
 #ifndef traktor_render_RenderTargetPs3_H
 #define traktor_render_RenderTargetPs3_H
 
-#include <cell/gcm.h>
-#include "Render/RenderTarget.h"
-#include "Render/Types.h"
+#include "Render/ITexture.h"
 #include "Render/Ps3/TypesPs3.h"
 
 // import/export mechanism.
@@ -19,14 +17,14 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS RenderTargetPs3 : public RenderTarget
+class T_DLLCLASS RenderTargetPs3 : public ITexture
 {
-	T_RTTI_CLASS(RenderTargetPs3)
+	T_RTTI_CLASS;
 
 public:
 	RenderTargetPs3();
 
-	bool create(const RenderTargetCreateDesc& desc);
+	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -38,29 +36,20 @@ public:
 
 	void bind(int stage, const SamplerState& samplerState);
 
-	inline uint32_t getGcmSurfaceColorFormat() const
-	{
+	uint32_t getGcmSurfaceColorFormat() const {
 		return m_colorSurfaceFormat;
 	}
 
-	inline const CellGcmTexture& getGcmColorTexture() const
-	{
+	const CellGcmTexture& getGcmColorTexture() const {
 		return m_colorTexture;
 	}
 
-	inline const CellGcmTexture& getGcmDepthTexture() const
-	{
-		return m_depthTexture;
-	}
-
 private:
+	int32_t m_width;
+	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
-	CellGcmTexture m_depthTexture;
 	void* m_colorData;
-	void* m_depthData;
-	int m_width;
-	int m_height;
 };
 
 	}

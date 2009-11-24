@@ -62,7 +62,7 @@ int Socket::select(bool read, bool write, bool except, int timeout)
 #if !defined(_PS3)
 	return ::select(m_socket + 1, fds[0], fds[1], fds[2], &to);
 #else
-	return socketselect(0, fds[0], fds[1], fds[2], &to);
+	return socketselect(m_socket + 1, fds[0], fds[1], fds[2], &to);
 #endif
 }
 

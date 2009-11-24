@@ -225,10 +225,10 @@ bool emitConditional(CgContext& cx, Conditional* node)
 	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
 	f << cg_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
-	if (node->getBranch() == Conditional::BrStatic)
-		f << L"[flatten]" << Endl;
-	else if (node->getBranch() == Conditional::BrDynamic)
-		f << L"[branch]" << Endl;
+	//if (node->getBranch() == Conditional::BrStatic)
+	//	f << L"[flatten]" << Endl;
+	//else if (node->getBranch() == Conditional::BrDynamic)
+	//	f << L"[branch]" << Endl;
 
 	// Create condition statement.
 	switch (node->getOperator())
@@ -498,8 +498,6 @@ bool emitIterate(CgContext& cx, Iterate* node)
 		assign(f, out) << L"0;" << Endl;
 
 	// Write outer for-loop statement.
-	if (cx.inPixel())
-		f << L"[unroll]" << Endl;
 	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
@@ -724,8 +722,12 @@ bool emitNormalize(CgContext& cx, Normalize* node)
 	CgVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
+	
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"normalize(" << in->getName() << L");" << Endl;
+	
+	f << L"float " << in->getName() << L"_invlen = rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
+	assign(f, out) << in->getName() << L" * " << in->getName() << L"_invlen;" << Endl;
+
 	return true;
 }
 
@@ -933,8 +935,8 @@ bool emitReflect(CgContext& cx, Reflect* node)
 	CgVariable* direction = cx.emitInput(node, L"Direction");
 	if (!normal || !direction)
 		return false;
-	CgVariable* out = cx.emitOutput(node, L"Output", direction->getType());
-	assign(f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
+	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat3);
+	assign(f, out) << L"reflect(" << direction->cast(CtFloat3) << L", " << normal->cast(CtFloat3) << L");" << Endl;
 	return true;
 }
 
@@ -961,20 +963,22 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		return false;
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
 
+	std::wstring samplerName = L"sampler_" + node->getParameterName();
+
 	if (cx.inPixel())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"tex2D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"tex2D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"texCUBE(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"tex3D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 		}
 	}
@@ -983,25 +987,26 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"tex2Dlod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
+			assign(f, out) << L"tex2Dlod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"texCUBElod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
+			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"tex3Dlod(" << node->getParameterName() << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
+			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 		}
 	}
+
 	const std::set< std::wstring >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(node->getParameterName()) == samplers.end())
+	if (samplers.find(samplerName) == samplers.end())
 	{
 		int32_t sampler = int32_t(samplers.size());
 
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
-		fu << L"sampler " << node->getParameterName() << L" : register(s" << sampler << L");" << Endl;
+		fu << L"sampler " << samplerName << L" : register(s" << sampler << L");" << Endl;
 		
 		//StateBlockDx9& state = cx.getState();
 		//state.setSamplerState(sampler, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
@@ -1012,7 +1017,7 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		//state.setSamplerState(sampler, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
 		//state.setSamplerState(sampler, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		
-		cx.getShader().addSampler(node->getParameterName());
+		cx.getShader().addSampler(samplerName);
 	}
 
 	return true;
@@ -1100,8 +1105,6 @@ bool emitSum(CgContext& cx, Sum* node)
 	assign(f, out) << L"0;" << Endl;
 
 	// Write outer for-loop statement.
-	if (cx.inPixel())
-		f << L"[unroll]" << Endl;
 	f << L"for (float " << N->getName() << L" = " << node->getFrom() << L"; " << N->getName() << L" <= " << node->getTo() << L"; ++" << N->getName() << L")" << Endl;
 	f << L"{" << Endl;
 	f << IncreaseIndent;
@@ -1221,10 +1224,10 @@ bool emitSwitch(CgContext& cx, Switch* node)
 	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
 	assign(f, out) << L"0;" << Endl;
 
-	if (node->getBranch() == Switch::BrStatic)
-		f << L"[flatten]" << Endl;
-	else if (node->getBranch() == Switch::BrDynamic)
-		f << L"[branch]" << Endl;
+	//if (node->getBranch() == Switch::BrStatic)
+	//	f << L"[flatten]" << Endl;
+	//else if (node->getBranch() == Switch::BrDynamic)
+	//	f << L"[branch]" << Endl;
 
 	for (uint32_t i = 0; i < uint32_t(caseConditions.size()); ++i)
 	{

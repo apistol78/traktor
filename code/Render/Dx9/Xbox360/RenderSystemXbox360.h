@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -68,9 +68,9 @@ public:
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
-
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
+
+	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
 	/*! \name Unmanaged listener. */
 	//@{

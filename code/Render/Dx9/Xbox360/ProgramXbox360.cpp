@@ -8,9 +8,7 @@
 #include "Render/Dx9/SimpleTextureDx9.h"
 #include "Render/Dx9/CubeTextureDx9.h"
 #include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/HlslProgram.h"
 #include "Core/Misc/TString.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -19,40 +17,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-bool compileShader(
-	const std::wstring& hlslShader,
-	const std::string& entry,
-	const std::string& profile,
-	DWORD flags,
-	ComRef< ID3DXBuffer >& outProgramResource
-)
-{
-	ComRef< ID3DXBuffer > d3dErrorMsgs;
-	HRESULT hr;
-
-	hr = D3DXCompileShader(
-		wstombs(hlslShader).c_str(),
-		(UINT)hlslShader.length(),
-		NULL,
-		NULL,
-		entry.c_str(),
-		profile.c_str(),
-		flags,
-		&outProgramResource.getAssign(),
-		&d3dErrorMsgs.getAssign(),
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		if (d3dErrorMsgs)
-			log::error << L"HLSL compile error : \"" << trim(mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer())) << L"\"" << Endl;
-		log::error << hlslShader << Endl;
-		return false;
-	}
-
-	return true;
-}
 
 size_t collectParameters(
 	ID3DXConstantTable* d3dConstantTable,
@@ -134,45 +98,6 @@ ProgramXbox360::ProgramXbox360(UnmanagedListener* unmanagedListener, ContextDx9*
 ProgramXbox360::~ProgramXbox360()
 {
 	destroy();
-}
-
-ProgramResourceDx9* ProgramXbox360::compile(const HlslProgram& hlslProgram, int optimize, bool validate)
-{
-	const DWORD c_optimizationLevels[] =
-	{
-		D3DXSHADER_SKIPOPTIMIZATION,
-		0,
-		0,
-		0,
-		0
-	};
-
-	DWORD flags = c_optimizationLevels[max(min(optimize, 4), 0)];
-	if (!validate)
-		flags |= D3DXSHADER_SKIPVALIDATION;
-
-	Ref< ProgramResourceDx9 > resource = new ProgramResourceDx9();
-
-	if (!compileShader(
-		hlslProgram.getVertexShader(),
-		"main",
-		"vs_3_0",
-		flags,
-		resource->m_vertexShader
-	))
-		return 0;
-
-	if (!compileShader(
-		hlslProgram.getPixelShader(),
-		"main",
-		"ps_3_0",
-		flags,
-		resource->m_pixelShader
-	))
-		return 0;
-
-	resource->m_state = hlslProgram.getState();
-	return resource;
 }
 
 bool ProgramXbox360::create(

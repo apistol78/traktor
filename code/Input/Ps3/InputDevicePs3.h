@@ -2,14 +2,14 @@
 #define traktor_input_InputDevicePs3_H
 
 #include <cell/pad.h>
-#include "Input/InputDevice.h"
+#include "Input/IInputDevice.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,28 +17,36 @@ namespace traktor
 	namespace input
 	{
 
-class T_DLLCLASS InputDevicePs3 : public InputDevice
+class T_DLLCLASS InputDevicePs3 : public IInputDevice
 {
-	T_RTTI_CLASS(InputDevicePs3)
+	T_RTTI_CLASS;
 
 public:
 	InputDevicePs3(int padIndex);
 
-	virtual std::string getName() const;
+	virtual std::wstring getName() const;
 
-	virtual Category getCategory() const;
+	virtual InputCategory getCategory() const;
+
+	virtual bool isConnected() const;
 
 	virtual int getControlCount();
 
-	virtual std::string getControlName(int control);
+	virtual std::wstring getControlName(int control);
 
 	virtual bool isControlAnalogue(int control) const;
 
 	virtual float getControlValue(int control);
 
-	virtual bool getDefaultControl(DefaultControlType controlType, int& control) const;
+	virtual bool getDefaultControl(InputDefaultControlType controlType, int& control) const;
+
+	virtual void resetState();
 
 	virtual void readState();
+
+	virtual bool supportRumble() const;
+
+	virtual void setRumble(const InputRumble& rumble);
 
 private:
 	bool m_enabled;

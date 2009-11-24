@@ -1,10 +1,9 @@
 #include <algorithm>
 #include <locale>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/Glsl.h"
-#include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
+#include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
 #include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
@@ -285,19 +284,6 @@ Ref< RenderTargetSet > RenderSystemOpenGLES2::createRenderTargetSet(const Render
 #endif
 }
 
-Ref< ProgramResource > RenderSystemOpenGLES2::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, glslProgram))
-		return 0;
-
-	Ref< ProgramResource > resource = ProgramOpenGLES2::compile(glslProgram, optimize, validate);
-	if (!resource)
-		return 0;
-
-	return resource;
-}
-
 Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* programResource)
 {
 	Ref< ProgramOpenGLES2 > program = new ProgramOpenGLES2(m_globalContext);
@@ -305,6 +291,11 @@ Ref< IProgram > RenderSystemOpenGLES2::createProgram(const ProgramResource* prog
 		return 0;
 
 	return program;
+}
+
+Ref< IProgramCompiler > RenderSystemOpenGLES2::createProgramCompiler() const
+{
+	return new ProgramCompilerOpenGLES2();
 }
 
 #if defined(_WIN32)

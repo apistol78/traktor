@@ -2,6 +2,7 @@
 #define traktor_render_RenderViewPs3_H
 
 #include <list>
+#include "Render/DisplayMode.h"
 #include "Render/IRenderView.h"
 
 // import/export mechanism.

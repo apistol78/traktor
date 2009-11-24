@@ -287,8 +287,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -402,8 +403,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -536,8 +538,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -554,6 +557,15 @@
                 <item>
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
+                </item>
+              </staticOptions>
+            </item>
+           <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPostBuildEventTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>CommandLine</first>
+                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
                 </item>
               </staticOptions>
             </item>
@@ -634,8 +646,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
-              <resolvePaths>false</resolvePaths>
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
+               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -663,6 +676,15 @@
 				</item>				
               </staticOptions>
             </item>
+			<item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPostBuildEventTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>CommandLine</first>
+                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
+                </item>
+              </staticOptions>
+            </item>			
           </item>
         </tools>
       </item>
@@ -751,8 +773,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -772,7 +795,16 @@
                 </item>
               </staticOptions>
             </item>
-           </item>
+            <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPostBuildEventTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>CommandLine</first>
+                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
+                </item>
+              </staticOptions>
+            </item>			
+          </item>
           <!-- 1: TpRelease -->
           <item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -849,8 +881,9 @@
               <toolName>VCPreLinkEventTool</toolName>
               <staticOptions/>
             </item>
-            <item type="SolutionBuilderMsvcLinkerTool">
+            <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
+			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -878,6 +911,15 @@
 				</item>				
               </staticOptions>
             </item>
+           <item type="SolutionBuilderMsvcGenericTool">
+              <toolName>VCPostBuildEventTool</toolName>
+              <staticOptions>
+                <item>
+                  <first>CommandLine</first>
+                  <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
+                </item>
+              </staticOptions>
+            </item>			
           </item>
         </tools>
       </item>

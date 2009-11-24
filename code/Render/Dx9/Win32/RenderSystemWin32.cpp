@@ -1,6 +1,7 @@
 #include "Render/Dx9/Win32/RenderSystemWin32.h"
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
+#include "Render/Dx9/Win32/ProgramCompilerWin32.h"
 #include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/ShaderCache.h"
@@ -12,8 +13,6 @@
 #include "Render/Dx9/SimpleTextureDx9.h"
 #include "Render/Dx9/CubeTextureDx9.h"
 #include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
@@ -415,19 +414,6 @@ Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTarg
 	return renderTargetSet;
 }
 
-Ref< ProgramResource > RenderSystemWin32::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	HlslProgram program;
-	if (!Hlsl().generate(shaderGraph, program))
-		return 0;
-
-	Ref< ProgramResourceDx9 > programResource = ProgramWin32::compile(program, optimize, validate);
-	if (!programResource)
-		return 0;
-
-	return programResource;
-}
-
 Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_shaderCache);
@@ -442,6 +428,11 @@ Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programR
 		return 0;
 
 	return program;
+}
+
+Ref< IProgramCompiler > RenderSystemWin32::createProgramCompiler() const
+{
+	return new ProgramCompilerWin32();
 }
 
 IDirect3D9* RenderSystemWin32::getD3D() const

@@ -37,13 +37,13 @@ uint32_t calculateTextureSize(uint32_t pitch, uint32_t height, int mipCount)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexturePs3", SimpleTexturePs3, SimpleTexture)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexturePs3", SimpleTexturePs3, ISimpleTexture)
 
 SimpleTexturePs3::SimpleTexturePs3()
 :	m_data(0)
 ,	m_offset(0)
 {
-	std::memset (&m_texture, 0, sizeof(m_texture));
+	std::memset(&m_texture, 0, sizeof(m_texture));
 }
 
 SimpleTexturePs3::~SimpleTexturePs3()

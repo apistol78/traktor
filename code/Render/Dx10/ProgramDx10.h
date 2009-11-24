@@ -35,7 +35,7 @@ public:
 
 	virtual ~ProgramDx10();
 
-	static Ref< ProgramResourceDx10 > compile(ID3D10Device* d3dDevice, const HlslProgram& hlslProgram);
+	static Ref< ProgramResourceDx10 > compile(const HlslProgram& hlslProgram);
 
 	bool create(ID3D10Device* d3dDevice, const ProgramResourceDx10* resource);
 

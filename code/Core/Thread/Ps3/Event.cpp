@@ -1,4 +1,3 @@
-#include <cassert>
 #include <sys/synchronization.h>
 #include "Core/Thread/Event.h"
 
@@ -34,7 +33,7 @@ Event::Event()
 Event::~Event()
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	assert (in);
+	T_ASSERT (in);
 
 	sys_cond_destroy(in->cond);
 	sys_mutex_destroy(in->mutex);
@@ -45,7 +44,7 @@ Event::~Event()
 void Event::pulse(int count)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	assert (in);
+	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
 	sys_cond_signal(in->cond);
@@ -55,7 +54,7 @@ void Event::pulse(int count)
 void Event::broadcast()
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	assert (in);
+	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
 	sys_cond_signal(in->cond);
@@ -64,13 +63,13 @@ void Event::broadcast()
 
 void Event::reset()
 {
-	assert (0);
+	T_FATAL_ERROR;
 }
 
 bool Event::wait(int32_t timeout)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
-	assert (in);
+	T_ASSERT (in);
 
 	int rc = sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
 	if (rc != CELL_OK)

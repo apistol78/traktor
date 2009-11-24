@@ -1,4 +1,6 @@
 #include "Render/Ps3/RenderTargetSetPs3.h"
+#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/LocalMemoryAllocator.h"
 
 namespace traktor
 {
@@ -7,38 +9,91 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, RenderTargetSet)
 
-RenderTargetPs3::RenderTargetPs3()
+RenderTargetSetPs3::RenderTargetSetPs3()
+:	m_width(0)
+,	m_height(0)
+,	m_depthData(0)
 {
+	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
 }
 
-bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& desc)
+bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 {
+	m_width = desc.width;
+	m_height = desc.height;
+
+	m_renderTargets.resize(desc.count);
+	for (int32_t i = 0; i < desc.count; ++i)
+	{
+		m_renderTargets[i] = new RenderTargetPs3();
+		if (!m_renderTargets[i]->create(desc, desc.targets[i]))
+			return false;
+	}
+
+	if (desc.depthStencil)
+	{
+		int surfaceWidth = (m_width & ~63) + 64;
+		int surfaceHeight = (m_height & ~63) + 64;
+
+		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
+		m_depthTexture.mipmap = 1;
+		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_depthTexture.cubemap = 0;
+		m_depthTexture.remap = 0;
+		m_depthTexture.width = desc.width;
+		m_depthTexture.height = surfaceHeight;
+		m_depthTexture.depth = 1;
+		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_depthTexture.pitch = surfaceWidth * 4;
+		m_depthTexture.offset = 0;
+
+		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
+
+		m_depthData = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
+		if (cellGcmAddressToOffset(m_depthData, &m_depthTexture.offset) != CELL_OK)
+			return false;
+	}
+	else
+	{
+		m_depthTexture.width = 0;
+		m_depthTexture.height = 0;
+		m_depthTexture.depth = 0;
+		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_depthTexture.pitch = 64;
+		m_depthTexture.offset = 0;
+	}
+
 	return true;
 }
 
-void RenderTargetPs3::destroy()
+void RenderTargetSetPs3::destroy()
 {
 }
 
-int RenderTargetPs3::getWidth() const
+int RenderTargetSetPs3::getWidth() const
 {
 	return m_width;
 }
 
-int RenderTargetPs3::getHeight() const
+int RenderTargetSetPs3::getHeight() const
 {
 	return m_height;
 }
 
-Ref< ITexture > RenderTargetPs3::getColorTexture(int index) const
+Ref< ITexture > RenderTargetSetPs3::getColorTexture(int index) const
 {
+	return m_renderTargets[index];
 }
 
-void RenderTargetPs3::swap(int index1, int index2)
+void RenderTargetSetPs3::swap(int index1, int index2)
 {
+	Ref< RenderTargetPs3 > rt1 = m_renderTargets[index1];
+	Ref< RenderTargetPs3 > rt2 = m_renderTargets[index2];
+	m_renderTargets[index1] = rt2;
+	m_renderTargets[index2] = rt1;
 }
 
-bool RenderTargetPs3::read(int index, void* buffer) const
+bool RenderTargetSetPs3::read(int index, void* buffer) const
 {
 	return false;
 }

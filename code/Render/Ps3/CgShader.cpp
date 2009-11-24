@@ -252,7 +252,7 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 			ss << L"InputData i, ";
 
 		if (needVPos)
-			ss << L"float2 vPos : VPOS, ";
+			ss << L"float2 vPos : WPOS, ";
 		
 		ss << L"out OutputData o)" << Endl;
 

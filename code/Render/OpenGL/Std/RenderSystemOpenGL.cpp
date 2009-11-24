@@ -1,11 +1,10 @@
 #include <algorithm>
 #include <locale>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/Glsl.h"
-#include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
+#include "Render/OpenGL/Std/ProgramCompilerOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/VertexBufferVAR.h"
 #include "Render/OpenGL/Std/VertexBufferVBO.h"
@@ -547,19 +546,6 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 	return renderTargetSet;
 }
 
-Ref< ProgramResource > RenderSystemOpenGL::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	GlslProgram glslProgram;
-	if (!Glsl().generate(shaderGraph, glslProgram))
-		return 0;
-
-	Ref< ProgramResource > resource = ProgramOpenGL::compile(glslProgram, optimize, validate);
-	if (!resource)
-		return 0;
-
-	return resource;
-}
-
 Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* programResource)
 {
 	T_CONTEXT_SCOPE(m_globalContext)
@@ -569,6 +555,11 @@ Ref< IProgram > RenderSystemOpenGL::createProgram(const ProgramResource* program
 		return 0;
 
 	return shader;
+}
+
+Ref< IProgramCompiler > RenderSystemOpenGL::createProgramCompiler() const
+{
+	return new ProgramCompilerOpenGL();
 }
 
 #if defined(_WIN32)

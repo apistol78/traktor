@@ -1,5 +1,5 @@
 #include "Input/Ps3/InputDevicePs3.h"
-#include "Core/Misc/StringUtils.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -17,23 +17,28 @@ float adjustDeadZone(float value)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS("traktor.input.InputDevicePs3", InputDevicePs3, InputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDevicePs3", InputDevicePs3, IInputDevice)
 
 InputDevicePs3::InputDevicePs3(int padIndex)
 :	m_enabled(false)
 ,	m_padIndex(padIndex)
 {
-	memset(&m_padData, 0, sizeof(m_padData));
+	std::memset(&m_padData, 0, sizeof(m_padData));
 }
 
-std::string InputDevicePs3::getName() const
+std::wstring InputDevicePs3::getName() const
 {
-	return "Pad " + toString(m_padIndex);
+	return L"Pad " + toString(m_padIndex);
 }
 
-InputDevice::Category InputDevicePs3::getCategory() const
+InputCategory InputDevicePs3::getCategory() const
 {
 	return CtJoystick;
+}
+
+bool InputDevicePs3::isConnected() const
+{
+	return true;
 }
 
 int InputDevicePs3::getControlCount()
@@ -41,9 +46,9 @@ int InputDevicePs3::getControlCount()
 	return 0;
 }
 
-std::string InputDevicePs3::getControlName(int control)
+std::wstring InputDevicePs3::getControlName(int control)
 {
-	return "";
+	return L"";
 }
 
 bool InputDevicePs3::isControlAnalogue(int control) const
@@ -85,7 +90,7 @@ float InputDevicePs3::getControlValue(int control)
 	return 0.0f;
 }
 
-bool InputDevicePs3::getDefaultControl(DefaultControlType controlType, int& control) const
+bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, int& control) const
 {
 	switch (controlType)
 	{
@@ -135,9 +140,22 @@ bool InputDevicePs3::getDefaultControl(DefaultControlType controlType, int& cont
 	return true;
 }
 
+void InputDevicePs3::resetState()
+{
+}
+
 void InputDevicePs3::readState()
 {
 	m_enabled = bool(cellPadGetData(m_padIndex, &m_padData) == CELL_PAD_OK);
+}
+
+bool InputDevicePs3::supportRumble() const
+{
+	return false;
+}
+
+void InputDevicePs3::setRumble(const InputRumble& rumble)
+{
 }
 
 	}

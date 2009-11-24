@@ -8,14 +8,14 @@ namespace traktor
 
 std::wstring cg_semantic(DataUsage usage, int index)
 {
-	const char* s[] =
+	const wchar_t* s[] =
 	{
-		"Position",
-		"Normal",
-		"Tangent",
-		"Binormal",
-		"Color",
-		"Custom"
+		L"POSITION",
+		L"NORMAL",
+		L"TANGENT",
+		L"BINORMAL",
+		L"COLOR",
+		L"TEXCOORD"
 	};
 	std::wstringstream ss;
 	ss << s[usage] << index;
@@ -27,6 +27,7 @@ std::wstring cg_type_name(CgType type)
 	const wchar_t* c[] =
 	{
 		L"void",
+		L"bool",
 		L"float",
 		L"float2",
 		L"float3",
@@ -45,6 +46,8 @@ CgType cg_from_data_type(DataType type)
 		CtFloat3,
 		CtFloat4,
 		CtFloat4,
+		CtFloat4,
+		CtFloat2,
 		CtFloat4,
 		CtFloat2,
 		CtFloat4,

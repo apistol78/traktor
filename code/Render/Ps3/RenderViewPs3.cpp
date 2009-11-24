@@ -1,13 +1,12 @@
 #include <cstring>
-#include <cell/gcm.h>
-#include <sysutil/sysutil_sysparam.h>
 #include "Core/Log/Log.h"
 #include "Render/Ps3/RenderViewPs3.h"
 #include "Render/Ps3/RenderSystemPs3.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
+#include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/ShaderPs3.h"
+#include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
 
 namespace traktor
@@ -19,6 +18,27 @@ namespace traktor
 
 uint8_t c_frameSyncLabelId = 128;
 uint8_t c_targetSyncLabelId = 129;
+
+int32_t findResolutionId(int32_t width, int32_t height)
+{
+	struct { int32_t width; int32_t height; int32_t id; } c_resolutionIds[] =
+	{
+		{ 1920, 1080, CELL_VIDEO_OUT_RESOLUTION_1080 },
+		{ 1280, 720, CELL_VIDEO_OUT_RESOLUTION_720 },
+		{ 640, 480, CELL_VIDEO_OUT_RESOLUTION_480 },
+		{ 720, 576, CELL_VIDEO_OUT_RESOLUTION_576 },
+		{ 1600, 1080, CELL_VIDEO_OUT_RESOLUTION_1600x1080 },
+		{ 1440, 1080, CELL_VIDEO_OUT_RESOLUTION_1440x1080 },
+		{ 1280, 1080, CELL_VIDEO_OUT_RESOLUTION_1280x1080 },
+		{ 960, 1080, CELL_VIDEO_OUT_RESOLUTION_960x1080 }
+	};
+	for (int32_t i = 0; i < sizeof_array(c_resolutionIds); ++i)
+	{
+		if (c_resolutionIds[i].width == width && c_resolutionIds[i].height == height)
+			return c_resolutionIds[i].id;
+	}
+	return CELL_VIDEO_OUT_RESOLUTION_UNDEFINED;
+}
 
 		}
 
@@ -57,7 +77,7 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 	m_colorPitch = m_width * 4;
 
 	std::memset(&videoConfig, 0, sizeof(CellVideoOutConfiguration));
-	videoConfig.resolutionId = displayMode->getIndex();
+	videoConfig.resolutionId = findResolutionId(m_width, m_height);
 	videoConfig.format = CELL_VIDEO_OUT_BUFFER_COLOR_FORMAT_X8R8G8B8;
 	videoConfig.pitch = m_colorPitch;
 
@@ -124,7 +144,6 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 	*m_targetSyncLabelData = m_targetCounter;
 
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
-
 	return true;
 }
 
@@ -215,7 +234,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
-	RenderTargetPs3* rt = checked_type_cast< RenderTargetSetPs3* >(renderTargetSet)->getRenderTarget(renderTarget);
+	RenderTargetSetPs3* rts = checked_type_cast< RenderTargetSetPs3* >(renderTargetSet);
+	RenderTargetPs3* rt = rts->getRenderTarget(renderTarget);
 	T_ASSERT (rt);
 
 	RenderState rs =
@@ -226,8 +246,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 		rt->getGcmSurfaceColorFormat(),
 		rt->getGcmColorTexture().offset,
 		rt->getGcmColorTexture().pitch,
-		rt->getGcmDepthTexture().offset,
-		rt->getGcmDepthTexture().pitch
+		rts->getGcmDepthTexture().offset,
+		rts->getGcmDepthTexture().pitch
 	};
 
 	m_renderStateStack.push_back(rs);
@@ -257,9 +277,20 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		((clearMask & (CfDepth | CfStencil)) ? (CELL_GCM_CLEAR_Z) : 0);
 	
 	if (clearMask & CfColor)
-		cellGcmSetClearColor(gCellGcmCurrentContext, color);
+	{
+		uint32_t clearColor =
+			(uint32_t(color[0] * 255.0f) << 16) |
+			(uint32_t(color[1] * 255.0f) << 8) |
+			(uint32_t(color[2] * 255.0f) << 0) |
+			(uint32_t(color[3] * 255.0f) << 24);
+
+		cellGcmSetClearColor(gCellGcmCurrentContext, clearColor);
+	}
 	if (clearMask & (CfDepth | CfStencil))
-		cellGcmSetClearDepthStencil(gCellGcmCurrentContext, (uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff));
+		cellGcmSetClearDepthStencil(
+			gCellGcmCurrentContext,
+			(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
+		);
 
 	cellGcmSetClearSurface(gCellGcmCurrentContext, gcmClear);
 }
@@ -300,23 +331,23 @@ void RenderViewPs3::draw(const Primitives& primitives)
 
 	switch (primitives.type)
 	{
-	case Primitives::PtPoints:
+	case PtPoints:
 		count = primitives.count;
 		break;
 
-	case Primitives::PtLineStrip:
+	case PtLineStrip:
 		count = primitives.count + 1;
 		break;
 
-	case Primitives::PtLines:
+	case PtLines:
 		count = primitives.count * 2;
 		break;
 
-	case Primitives::PtTriangleStrip:
+	case PtTriangleStrip:
 		count = primitives.count + 2;
 		break;
 
-	case Primitives::PtTriangles:
+	case PtTriangles:
 		count = primitives.count * 3;
 		break;
 	}
@@ -473,7 +504,6 @@ void RenderViewPs3::setCurrentRenderState()
 	}
 	else
 		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, CELL_GCM_FALSE);
-
 }
 
 	}

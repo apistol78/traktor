@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,7 +18,7 @@ namespace traktor
 
 class T_DLLCLASS IndexBufferPs3 : public IndexBuffer
 {
-	T_RTTI_CLASS(IndexBufferPs3)
+	T_RTTI_CLASS;
 
 public:
 	IndexBufferPs3(void* ptr, uint32_t offset, IndexType indexType, int bufferSize);
@@ -31,8 +31,7 @@ public:
 	
 	virtual void unlock();
 
-	inline uint32_t getPs3Offset() const
-	{
+	uint32_t getPs3Offset() const {
 		return m_offset;
 	}
 	

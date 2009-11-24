@@ -20,7 +20,7 @@ namespace traktor
 
 class T_DLLCLASS VertexBufferPs3 : public VertexBuffer
 {
-	T_RTTI_CLASS(VertexBufferPs3)
+	T_RTTI_CLASS;
 
 public:
 	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, void* ptr, uint32_t offset, int bufferSize);
@@ -30,6 +30,8 @@ public:
 	virtual void destroy();
 
 	virtual void* lock();
+
+	virtual void* lock(uint32_t vertexOffset, uint32_t vertexCount);
 	
 	virtual void unlock();
 

@@ -1,17 +1,16 @@
 #ifndef traktor_render_SimpleTexturePs3_H
 #define traktor_render_SimpleTexturePs3_H
 
-#include <cell/gcm.h>
-#include "Render/SimpleTexture.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Types.h"
 #include "Render/Ps3/TypesPs3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,9 +18,9 @@ namespace traktor
 	namespace render
 	{
 		
-class T_DLLCLASS SimpleTexturePs3 : public SimpleTexture
+class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
 {
-	T_RTTI_CLASS(SimpleTexture)
+	T_RTTI_CLASS;
 
 public:
 	SimpleTexturePs3();

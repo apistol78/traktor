@@ -1,12 +1,12 @@
 #include <cstdlib>
-#include <cell/gcm.h>
-#include <sysutil/sysutil_sysparam.h>
 #include "Core/Log/Log.h"
 #include "Render/DisplayMode.h"
-#include "Render/Ps3/Cg.h"
-#include "Render/Ps3/CgContext.h"
+#include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/ProgramPs3.h"
+#include "Render/Ps3/ProgramCompilerPs3.h"
+#include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/RenderSystemPs3.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/RenderViewPs3.h"
@@ -27,7 +27,7 @@ const uint32_t c_hostSize = 1 * 1024 * 1024;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderSystemPs3", RenderSystemPs3, IRenderSystem)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemPs3", 0, RenderSystemPs3, IRenderSystem)
 
 RenderSystemPs3::RenderSystemPs3()
 {
@@ -162,29 +162,22 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 		return 0;
 }
 
-Ref< ProgramResource > RenderSystemPs3::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	CgContext cx(shaderGraph);
-	Cg cg;
-
-	if (!cg.generate(cx, shaderGraph))
-		return 0;
-
-	std::wstring vertexShader = cx.getVertexShader().getGeneratedShader();
-	std::wstring pixelShader = cx.getPixelShader().getGeneratedShader();
-
-	//Ref< ShaderPs3 > shader = gc_new< ShaderPs3 >();
-	//if (!shader->create(shaderGraph, vertexShader, pixelShader, cx.getRenderState()))
-	//	return 0;
-
-	//return shader;
-
-	return 0;
-}
-
 Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource)
 {
-	return 0;
+	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
+	if (!resource)
+		return 0;
+
+	Ref< ProgramPs3 > program = new ProgramPs3();
+	if (!program->create(resource))
+		return 0;
+
+	return program;
+}
+
+Ref< IProgramCompiler > RenderSystemPs3::createProgramCompiler() const
+{
+	return new ProgramCompilerPs3();
 }
 
 	}

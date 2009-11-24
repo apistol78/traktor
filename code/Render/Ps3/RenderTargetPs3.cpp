@@ -8,31 +8,30 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetPs3", RenderTargetPs3, RenderTarget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetPs3", RenderTargetPs3, ITexture)
 
 RenderTargetPs3::RenderTargetPs3()
-:	m_colorData(0)
-,	m_depthData(0)
-,	m_width(0)
+:	m_width(0)
 ,	m_height(0)
+,	m_colorSurfaceFormat(0)
+,	m_colorData(0)
 {
-	memset(&m_colorTexture, 0, sizeof(m_colorTexture));
-	memset(&m_depthTexture, 0, sizeof(m_depthTexture));
+	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
 }
 
-bool RenderTargetPs3::create(const RenderTargetCreateDesc& desc)
+bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	int byteSize;
 
 	switch (desc.format)
 	{
-	case TfA8R8G8B8:
+	case TfR8G8B8A8:
 		m_colorTexture.format = CELL_GCM_TEXTURE_A8R8G8B8;
 		m_colorSurfaceFormat = CELL_GCM_SURFACE_A8R8G8B8;
 		byteSize = 4;
 		break;
 
-	case TfA16B16G16R16F:
+	case TfR16G16B16A16F:
 		m_colorTexture.format = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
 		m_colorSurfaceFormat = CELL_GCM_SURFACE_F_W16Z16Y16X16;
 		byteSize = 2 * 4;
@@ -49,8 +48,8 @@ bool RenderTargetPs3::create(const RenderTargetCreateDesc& desc)
 		return false;
 	}
 
-	m_width = desc.width;
-	m_height = desc.height;
+	m_width = setDesc.width;
+	m_height = setDesc.height;
 
 	int surfaceWidth = (m_width & ~63) + 64;
 	int surfaceHeight = (m_height & ~63) + 64;
@@ -78,38 +77,9 @@ bool RenderTargetPs3::create(const RenderTargetCreateDesc& desc)
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
 
 	m_colorData = LocalMemoryAllocator::getInstance().allocAlign(textureSize, 4096);
+
 	if (cellGcmAddressToOffset(m_colorData, &m_colorTexture.offset) != CELL_OK)
 		return false;
-
-	if (desc.depthStencil)
-	{
-		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
-		m_depthTexture.mipmap = 1;
-		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
-		m_depthTexture.cubemap = 0;
-		m_depthTexture.remap = 0;
-		m_depthTexture.width = desc.width;
-		m_depthTexture.height = surfaceHeight;
-		m_depthTexture.depth = 1;
-		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-		m_depthTexture.pitch = surfaceWidth * 4;
-		m_depthTexture.offset = 0;
-
-		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-
-		m_depthData = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
-		if (cellGcmAddressToOffset(m_depthData, &m_depthTexture.offset) != CELL_OK)
-			return false;
-	}
-	else
-	{
-		m_depthTexture.width = 0;
-		m_depthTexture.height = 0;
-		m_depthTexture.depth = 0;
-		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-		m_depthTexture.pitch = 64;
-		m_depthTexture.offset = 0;
-	}
 
 	return true;
 }

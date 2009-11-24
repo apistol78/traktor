@@ -91,14 +91,14 @@ Ref< RenderTargetSet > RenderSystemCapture::createRenderTargetSet(const RenderTa
 	return m_renderSystem->createRenderTargetSet(desc);
 }
 
-Ref< ProgramResource > RenderSystemCapture::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	return m_renderSystem->compileProgram(shaderGraph, optimize, validate);
-}
-
 Ref< IProgram > RenderSystemCapture::createProgram(const ProgramResource* programResource)
 {
 	return m_renderSystem->createProgram(programResource);
+}
+
+Ref< IProgramCompiler > RenderSystemCapture::createProgramCompiler() const
+{
+	return m_renderSystem->createProgramCompiler();
 }
 
 	}

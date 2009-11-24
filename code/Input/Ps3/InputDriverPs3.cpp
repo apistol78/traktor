@@ -6,18 +6,18 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS("traktor.input.InputDriverPs3", InputDriverPs3, InputDriver)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverPs3", InputDriverPs3, IInputDriver)
 
 InputDriverPs3::InputDriverPs3(int padCount)
 {
 	int32_t ret;
 
 	ret = cellPadInit(padCount);
-	assert (ret == CELL_OK);
+	T_ASSERT (ret == CELL_OK);
 
 	m_devices.resize(padCount);
 	for (int i = 0; i < padCount; ++i)
-		m_devices[i] = gc_new< InputDevicePs3 >(i);
+		m_devices[i] = new InputDevicePs3(i);
 }
 
 int InputDriverPs3::getDeviceCount()
@@ -25,7 +25,7 @@ int InputDriverPs3::getDeviceCount()
 	return int(m_devices.size());
 }
 
-InputDevice* InputDriverPs3::getDevice(int index)
+Ref< IInputDevice > InputDriverPs3::getDevice(int index)
 {
 	return m_devices[index];
 }

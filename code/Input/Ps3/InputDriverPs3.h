@@ -1,15 +1,15 @@
 #ifndef traktor_input_InputDriverPs3_H
 #define traktor_input_InputDriverPs3_H
 
-#include "Core/Heap/Ref.h"
-#include "Input/InputDriver.h"
+#include "Core/RefArray.h"
+#include "Input/IInputDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,16 +19,16 @@ namespace traktor
 
 class InputDevicePs3;
 
-class T_DLLCLASS InputDriverPs3 : public InputDriver
+class T_DLLCLASS InputDriverPs3 : public IInputDriver
 {
-	T_RTTI_CLASS(InputDriverPs3)
+	T_RTTI_CLASS;
 
 public:
 	InputDriverPs3(int padCount = 4);
 
 	virtual int getDeviceCount();
 
-	virtual InputDevice* getDevice(int index);
+	virtual Ref< IInputDevice > getDevice(int index);
 
 private:
 	RefArray< InputDevicePs3 > m_devices;

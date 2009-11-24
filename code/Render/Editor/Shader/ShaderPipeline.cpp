@@ -3,7 +3,7 @@
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/IRenderSystem.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/ShaderGraph.h"
 #include "Render/ShaderResource.h"
 #include "Render/Nodes.h"
@@ -53,7 +53,7 @@ struct BuildCombinationTask
 	ShaderResource* shaderResource;
 	ShaderResource::Technique* shaderResourceTechnique;
 	ShaderResource::Combination* shaderResourceCombination;
-	render::IRenderSystem* renderSystem;
+	render::IProgramCompiler* programCompiler;
 	int optimize;
 	bool validate;
 	bool result;
@@ -87,9 +87,9 @@ struct BuildCombinationTask
 			return;
 		}
 
-		if (renderSystem)
+		if (programCompiler)
 		{
-			Ref< ProgramResource > programResource = renderSystem->compileProgram(shaderGraphCombination, optimize, validate);
+			Ref< ProgramResource > programResource = programCompiler->compile(shaderGraphCombination, optimize, validate);
 			if (!programResource)
 			{
 				log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
@@ -135,25 +135,19 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
 	if (settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.CompileShaders", false))
 	{
-		std::wstring renderSystemTypeName = settings->getProperty< editor::PropertyString >(L"Editor.RenderSystem");
+		std::wstring programCompilerTypeName = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.ProgramCompiler");
 
-		const TypeInfo* renderSystemType = TypeInfo::find(renderSystemTypeName);
-		if (!renderSystemType)
+		const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
+		if (!programCompilerType)
 		{
-			log::error << L"Shader pipeline; unable to find render system type \"" << renderSystemTypeName << L"\"" << Endl;
+			log::error << L"Shader pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
 			return false;
 		}
 
-		m_renderSystem = checked_type_cast< IRenderSystem* >(renderSystemType->createInstance());
-		if (!m_renderSystem)
+		m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
+		if (!m_programCompiler)
 		{
-			log::error << L"Shader pipeline; unable to instanciate render system" << Endl;
-			return false;
-		}
-
-		if (!m_renderSystem->create())
-		{
-			log::error << L"Shader pipeline; unable to create render system" << Endl;
+			log::error << L"Shader pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
 			return false;
 		}
 	}
@@ -169,11 +163,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 
 void ShaderPipeline::destroy()
 {
-	if (m_renderSystem)
-	{
-		m_renderSystem->destroy();
-		m_renderSystem = 0;
-	}
+	m_programCompiler = 0;
 }
 
 TypeInfoSet ShaderPipeline::getAssetTypes() const
@@ -297,7 +287,7 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResourceTechnique = shaderResourceTechnique;
 			task->shaderResourceCombination = new ShaderResource::Combination;
 			task->shaderResourceCombination->parameterValue = 0;
-			task->renderSystem = m_renderSystem;
+			task->programCompiler = m_programCompiler;
 			task->optimize = m_optimize;
 			task->validate = m_validate;
 			task->result = false;

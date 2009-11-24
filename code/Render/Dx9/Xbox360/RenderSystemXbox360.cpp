@@ -3,6 +3,7 @@
 #include "Render/Dx9/Xbox360/RenderTargetPool.h"
 #include "Render/Dx9/Xbox360/RenderTargetSetXbox360.h"
 #include "Render/Dx9/Xbox360/ProgramXbox360.h"
+#include "Render/Dx9/Xbox360/ProgramCompilerXbox360.h"
 #include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexDeclCache.h"
@@ -12,8 +13,6 @@
 #include "Render/Dx9/SimpleTextureDx9.h"
 #include "Render/Dx9/CubeTextureDx9.h"
 #include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/Hlsl.h"
-#include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/TypesDx9.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
@@ -205,19 +204,6 @@ Ref< RenderTargetSet > RenderSystemXbox360::createRenderTargetSet(const RenderTa
 	return 0;
 }
 
-Ref< ProgramResource > RenderSystemXbox360::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	HlslProgram program;
-	if (!Hlsl().generate(shaderGraph, program))
-		return 0;
-
-	Ref< ProgramResourceDx9 > programResource = ProgramXbox360::compile(program, optimize, validate);
-	if (!programResource)
-		return 0;
-
-	return programResource;
-}
-
 Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* programResource)
 {
 	T_ASSERT (m_parameterCache);
@@ -231,6 +217,11 @@ Ref< IProgram > RenderSystemXbox360::createProgram(const ProgramResource* progra
 		return 0;
 
 	return program;
+}
+
+Ref< IProgramCompiler > RenderSystemXbox360::createProgramCompiler() const
+{
+	return new ProgramCompilerXbox360();
 }
 
 void RenderSystemXbox360::addUnmanaged(Unmanaged* unmanaged)

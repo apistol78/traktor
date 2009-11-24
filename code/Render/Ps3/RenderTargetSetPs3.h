@@ -1,8 +1,10 @@
-#ifndef traktor_render_RenderTargetPs3_H
-#define traktor_render_RenderTargetPs3_H
+#ifndef traktor_render_RenderTargetSetPs3_H
+#define traktor_render_RenderTargetSetPs3_H
 
-#include <cell/gcm.h>
+#include "Core/RefArray.h"
 #include "Render/RenderTargetSet.h"
+#include "Render/Types.h"
+#include "Render/Ps3/PlatformPs3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,12 +19,14 @@ namespace traktor
 	namespace render
 	{
 
+class RenderTargetPs3;
+
 class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetPs3();
+	RenderTargetSetPs3();
 
 	bool create(const RenderTargetSetCreateDesc& desc);
 
@@ -38,12 +42,23 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
+	RenderTargetPs3* getRenderTarget(int index) {
+		return m_renderTargets[index];
+	}
+
+	const CellGcmTexture& getGcmDepthTexture() const {
+		return m_depthTexture;
+	}
+
 private:
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
+	RefArray< RenderTargetPs3 > m_renderTargets;
+	CellGcmTexture m_depthTexture;
+	void* m_depthData;
 };
 
 	}
 }
 
-#endif	// traktor_render_RenderTargetPs3_H
+#endif	// traktor_render_RenderTargetSetPs3_H

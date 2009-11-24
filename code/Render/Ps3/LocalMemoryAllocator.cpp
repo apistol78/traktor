@@ -67,7 +67,7 @@ void* LocalMemoryAllocator::alloc(const size_t size)
 		offset += i->size;
 	}
 
-	assert (ptr);
+	T_ASSERT (ptr);
 	return ptr;
 }
 
