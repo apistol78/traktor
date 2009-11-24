@@ -4,8 +4,9 @@
 #include "Render/Sw/IndexBufferSw.h"
 #include "Render/Sw/SimpleTextureSw.h"
 #include "Render/Sw/RenderTargetSetSw.h"
-#include "Render/Sw/ProgramResourceSw.h"
 #include "Render/Sw/ProgramSw.h"
+#include "Render/Sw/ProgramCompilerSw.h"
+#include "Render/Sw/ProgramResourceSw.h"
 #include "Render/Sw/Emitter/Emitter.h"
 #include "Render/Sw/Emitter/EmitterContext.h"
 #include "Render/DisplayMode.h"
@@ -257,12 +258,6 @@ Ref< RenderTargetSet > RenderSystemSw::createRenderTargetSet(const RenderTargetS
 	return renderTargetSet;
 }
 
-Ref< ProgramResource > RenderSystemSw::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	// @fixme Currently just embedding shader graph in resource.
-	return new ProgramResourceSw(shaderGraph);
-}
-
 Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceSw > resource = dynamic_type_cast< const ProgramResourceSw* >(programResource);
@@ -326,6 +321,11 @@ Ref< IProgram > RenderSystemSw::createProgram(const ProgramResource* programReso
 		cx.getRenderState(),
 		cx.getInterpolatorCount()
 	);
+}
+
+Ref< IProgramCompiler > RenderSystemSw::createProgramCompiler() const
+{
+	return new ProgramCompilerSw();
 }
 
 #if defined(_WIN32)

@@ -58,9 +58,9 @@ public:
 
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc);
 
-	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate);
-
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
+
+	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
 private:
 	friend class RenderViewOpenGL;

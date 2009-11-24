@@ -11918,7 +11918,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Render.Ps3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
 			<configurations>
@@ -11929,13 +11929,23 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_PS3_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool.lib</item>
+						<item>libcgc.lib</item>
+						<item>libcgutil.lib</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseShared</name>
@@ -11944,13 +11954,23 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_PS3_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool.lib</item>
+						<item>libcgc.lib</item>
+						<item>libcgutil.lib</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>DebugStatic</name>
@@ -11959,13 +11979,23 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool.lib</item>
+						<item>libcgc.lib</item>
+						<item>libcgutil.lib</item>
+					</libraries>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseStatic</name>
@@ -11974,18 +12004,100 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(SCE_PS3_ROOT)\host-common\include</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\include</item>
+						<item>$(SCE_PS3_ROOT)\target\common\include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(SCE_PS3_ROOT)\host-win32\lib</item>
+						<item>$(SCE_PS3_ROOT)\host-win32\Cg\lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libgcm_tool.lib</item>
+						<item>libcgc.lib</item>
+						<item>libcgutil.lib</item>
+					</libraries>
 				</item>
 			</configurations>
 			<items>
 				<item type="File">
-					<fileName>*.*</fileName>
+					<fileName>Cg.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Cg.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgContext.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgContext.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgEmitter.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgEmitter.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgProgram.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgProgram.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgShader.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgShader.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgType.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgType.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgVariable.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>CgVariable.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>PlatformPs3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs3.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramCompilerPs3.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs3.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourcePs3.h</fileName>
 					<items/>
 				</item>
 			</items>
@@ -12225,18 +12337,102 @@
 				</item>
 			</configurations>
 			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
 				<item type="Filter">
 					<name>Xbox360</name>
 					<items>
 						<item type="File">
-							<fileName>Xbox360/*.*</fileName>
+							<fileName>Xbox360/ProgramCompilerXbox360.cpp</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>Xbox360/ProgramCompilerXbox360.h</fileName>
 							<items/>
 						</item>
 					</items>
+				</item>
+				<item type="File">
+					<fileName>Hlsl.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Hlsl.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslContext.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslContext.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslEmitter.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslEmitter.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslProgram.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslProgram.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslShader.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslShader.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslType.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslType.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslVariable.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>HlslVariable.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>Platform.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourceDx9.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ProgramResourceDx9.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>StateBlockDx9.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>StateBlockDx9.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ParameterCache.cpp</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>ParameterCache.h</fileName>
+					<items/>
 				</item>
 			</items>
 			<dependencies>

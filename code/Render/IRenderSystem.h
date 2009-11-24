@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,9 +28,9 @@ class ISimpleTexture;
 class ICubeTexture;
 class IVolumeTexture;
 class RenderTargetSet;
-class ShaderGraph;
 class ProgramResource;
 class IProgram;
+class IProgramCompiler;
 
 /*! \brief Render system interface.
  * \ingroup Render
@@ -144,21 +144,18 @@ public:
 	/*! \brief Create render target set. */
 	virtual Ref< RenderTargetSet > createRenderTargetSet(const RenderTargetSetCreateDesc& desc) = 0;
 
-	/*! \brief Compile "simple" shader graph into a render program resource.
-	 *
-	 * \param shaderGraph Shader graph instance.
-	 * \param optimize Level of optimization (0-4; 0 = No optimization; 4 = Maximum optimization).
-	 * \param validate Validate generated shader to known capabilities.
-	 * \return Compiled program resource.
-	 */
-	virtual Ref< ProgramResource > compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate) = 0;
-
 	/*! \brief Create shader from shader resource.
 	 *
 	 * \param shaderResource Compiled shader resource.
 	 * \return Shader suitable for rendering with this render system.
 	 */
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource) = 0;
+
+	/*! \brief Create runtime program compiler.
+	 *
+	 * \return Runtime program compiler.
+	 */
+	virtual Ref< IProgramCompiler > createProgramCompiler() const = 0;
 
 	//@}
 };

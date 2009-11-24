@@ -4,9 +4,10 @@
 #include "Render/Shader.h"
 #include "Render/Nodes.h"
 #include "Render/IRenderSystem.h"
-#include "Render/ProgramResource.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/IProgram.h"
 #include "Render/TextureLinker.h"
+#include "Render/ProgramResource.h"
 #include "Resource/IResourceManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -95,7 +96,11 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			Ref< ProgramResource > programResource;
 			if (ShaderGraph* programShaderGraph = dynamic_type_cast< ShaderGraph* >(j->program))
 			{
-				programResource = m_renderSystem->compileProgram(programShaderGraph, 4, false);
+				Ref< render::IProgramCompiler > programCompiler = m_renderSystem->createProgramCompiler();
+				if (!programCompiler)
+					return 0;
+
+				programResource = programCompiler->compile(programShaderGraph, 4, false);
 				if (!programResource)
 					return 0;
 

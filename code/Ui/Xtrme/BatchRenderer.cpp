@@ -3,6 +3,7 @@
 #include "Render/IRenderView.h"
 #include "Render/ShaderGraph.h"
 #include "Render/IProgram.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Xml/XmlDeserializer.h"
@@ -33,7 +34,10 @@ Ref< render::IProgram > createProgram(
 
 	T_ASSERT_M (shaderGraph, L"Unable to read shader graph");
 
-	Ref< render::ProgramResource > programResource = renderSystem->compileProgram(shaderGraph, 4, true);
+	Ref< render::IProgramCompiler > programCompiler = renderSystem->createProgramCompiler();
+	T_ASSERT_M (programCompiler, L"Unable to create program compiler");
+
+	Ref< render::ProgramResource > programResource = programCompiler->compile(shaderGraph, 4, true);
 	T_ASSERT_M (programResource, L"Unable to compile shader");
 
 	Ref< render::IProgram > program = renderSystem->createProgram(programResource);

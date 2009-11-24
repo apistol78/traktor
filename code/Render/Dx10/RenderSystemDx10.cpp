@@ -7,10 +7,9 @@
 #include "Render/Dx10/CubeTextureDx10.h"
 #include "Render/Dx10/VolumeTextureDx10.h"
 #include "Render/Dx10/RenderTargetSetDx10.h"
+#include "Render/Dx10/ProgramCompilerDx10.h"
 #include "Render/Dx10/ProgramResourceDx10.h"
 #include "Render/Dx10/ProgramDx10.h"
-#include "Render/Dx10/Hlsl.h"
-#include "Render/Dx10/HlslProgram.h"
 #include "Render/Dx10/TypesDx10.h"
 #include "Render/Dx10/Utilities.h"
 #include "Render/DisplayMode.h"
@@ -402,19 +401,6 @@ Ref< RenderTargetSet > RenderSystemDx10::createRenderTargetSet(const RenderTarge
 	return renderTargetSet;
 }
 
-Ref< ProgramResource > RenderSystemDx10::compileProgram(const ShaderGraph* shaderGraph, int optimize, bool validate)
-{
-	HlslProgram hlslProgram;
-	if (!Hlsl().generate(shaderGraph, hlslProgram))
-		return 0;
-
-	Ref< ProgramResourceDx10 > programResource = ProgramDx10::compile(m_d3dDevice, hlslProgram);
-	if (!programResource)
-		return 0;
-
-	return programResource;
-}
-
 Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programResource)
 {
 	Ref< const ProgramResourceDx10 > resource = dynamic_type_cast< const ProgramResourceDx10* >(programResource);
@@ -426,6 +412,11 @@ Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programRe
 		return 0;
 
 	return program;
+}
+
+Ref< IProgramCompiler > RenderSystemDx10::createProgramCompiler() const
+{
+	return new ProgramCompilerDx10();
 }
 
 LRESULT RenderSystemDx10::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -107,7 +107,6 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	T_ASSERT (MaxWaves <= OceanEntityData::MaxWaves);
 	for (int i = 0; i < MaxWaves; ++i)
 		m_waveData[i] = Vector4(data.m_waves[i].direction.x, data.m_waves[i].direction.y, data.m_waves[i].amplitude, data.m_waves[i].phase);
 
