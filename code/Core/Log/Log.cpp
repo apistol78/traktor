@@ -6,18 +6,53 @@
 namespace traktor
 {
 
-LogTargetConsole::LogTargetConsole(const std::wstring& prefix)
+LogTargetConsole::LogTargetConsole(const std::wstring& prefix, int color)
 :	m_prefix(prefix)
+,	m_color(color)
+,	m_defaultColorAttribs(0)
 {
+#if defined(_WIN32) && !defined(WINCE) && !defined(_XBOX)
+	CONSOLE_SCREEN_BUFFER_INFO csbiInfo;
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+	GetConsoleScreenBufferInfo(hStdOut, &csbiInfo);
+	m_defaultColorAttribs = csbiInfo.wAttributes; 
+#endif
 }
 
 void LogTargetConsole::log(const std::wstring& str)
 {
 #if defined(_WIN32)
-	std::wstringstream ss; ss << m_prefix << str << std::endl;
+	std::wstringstream ss;
+	ss << m_prefix << str << std::endl;
+
+	tstring tss = wstots(ss.str());
+
 #	if !defined(WINCE) && !defined(_XBOX)
-	std::wcout << ss.str() << std::flush;
+
+	HANDLE hStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+
+	switch (m_color)
+	{
+	case 1:
+		SetConsoleTextAttribute(hStdOut, FOREGROUND_GREEN | FOREGROUND_INTENSITY);
+		break;
+
+	case 2:
+		SetConsoleTextAttribute(hStdOut, FOREGROUND_RED | FOREGROUND_INTENSITY);
+	}
+	
+	WriteConsole(
+		hStdOut,
+		tss.c_str(),
+		tss.length(),
+		NULL,
+		NULL
+	);
+
+	SetConsoleTextAttribute(hStdOut, m_defaultColorAttribs);
+
 #	endif
+
 	OutputDebugString(wstots(ss.str()).c_str());
 #else
 	std::wcout << m_prefix << str << std::endl;
@@ -94,9 +129,9 @@ Ref< LogStreamBuffer > LogStream::getBuffer()
 	namespace log
 	{
 
-static LogTargetConsole infoTarget(L"Info    : ");
-static LogTargetConsole warningTarget(L"Warning : ");
-static LogTargetConsole errorTarget(L"Error   : ");
+static LogTargetConsole infoTarget(L"Info    : ", 0);
+static LogTargetConsole warningTarget(L"Warning : ", 1);
+static LogTargetConsole errorTarget(L"Error   : ", 2);
 static LogTargetDebug debugTarget(L"Debug   : ");
 
 LogStream info(&infoTarget);
