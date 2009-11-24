@@ -3,9 +3,11 @@
 #include "Flash/FlashMovieResource.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineSettings.h"
 #include "Database/Instance.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -17,6 +19,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 1, FlashPipeline,
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
+	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	return true;
 }
 
@@ -39,7 +42,8 @@ bool FlashPipeline::buildDependencies(
 ) const
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
-	pipelineDepends->addDependency(movieAsset->getFileName());
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, movieAsset->getFileName());
+	pipelineDepends->addDependency(fileName);
 
 	// Add dependencies to shaders.
 	pipelineDepends->addDependency(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"), true);	// Solid
@@ -63,8 +67,9 @@ bool FlashPipeline::buildOutput(
 ) const
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, movieAsset->getFileName());
 
-	Ref< IStream > sourceStream = FileSystem::getInstance().open(movieAsset->getFileName(), File::FmRead);
+	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!sourceStream)
 	{
 		log::error << L"Failed to import flash, unable to open source" << Endl;
@@ -91,12 +96,7 @@ bool FlashPipeline::buildOutput(
 		return false;
 	}
 
-	uint8_t buf[1024];
-	while (sourceStream->available() > 0)
-	{
-		int nread = sourceStream->read(buf, sizeof(buf));
-		stream->write(buf, nread);
-	}
+	StreamCopy(stream, sourceStream).execute();
 
 	stream->close();
 	sourceStream->close();
