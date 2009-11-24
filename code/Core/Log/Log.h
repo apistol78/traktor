@@ -33,12 +33,14 @@ public:
 class T_DLLCLASS LogTargetConsole : public ILogTarget
 {
 public:
-	LogTargetConsole(const std::wstring& prefix);
+	LogTargetConsole(const std::wstring& prefix, int color);
 
 	virtual void log(const std::wstring& str);
 	
 private:
 	std::wstring m_prefix;
+	int m_color;
+	uint16_t m_defaultColorAttribs;
 };
 
 /*! \brief Debugger log target.
