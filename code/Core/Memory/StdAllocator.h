@@ -10,11 +10,9 @@ namespace traktor
  * \ingroup Core
  *
  * The standard allocator uses the standard malloc and free
- * from the C runtime in order to allocate memory. Thus
- * it's not as efficient for small object allocations such
- * as the FastAllocator.
+ * from the C runtime in order to allocate memory.
  */
-class StdAllocator : public IAllocator
+class StdAllocator : public RefCountImpl< IAllocator >
 {
 public:
 	virtual void* alloc(size_t size, size_t align);

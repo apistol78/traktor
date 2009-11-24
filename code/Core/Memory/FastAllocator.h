@@ -16,10 +16,8 @@ class BlockAllocator;
  * The fast allocator is optimized for allocated
  * fixed size chunks for small objects. It uses
  * a greedy O(1) allocation scheme for such allocations.
- * The fast allocator is enabled in release build by default
- * but can be turned off in HeapConfig.h
  */
-class FastAllocator : public IAllocator
+class FastAllocator : public RefCountImpl< IAllocator >
 {
 public:
 	FastAllocator(IAllocator* systemAllocator);
