@@ -6,19 +6,27 @@ namespace traktor
 	namespace render
 	{
 
-std::wstring cg_semantic(DataUsage usage, int index)
+int32_t cg_attr_index(DataUsage usage, int index)
 {
-	const wchar_t* s[] =
+	const int32_t base[] =
 	{
-		L"POSITION",
-		L"NORMAL",
-		L"TANGENT",
-		L"BINORMAL",
-		L"COLOR",
-		L"TEXCOORD"
+		0,	// DuPosition
+		1,	// DuNormal
+		2,	// DuTangent
+		3,	// DuBinormal
+		4,	// DuColor
+		5,	// DuCustom
+		16	// Last attribute index
 	};
+	int32_t attr = base[int(usage)] + index;
+	T_ASSERT (attr < base[int(usage) + 1]);
+	return attr;
+}
+
+std::wstring cg_semantic(DataUsage usage, int32_t index)
+{
 	std::wstringstream ss;
-	ss << s[usage] << index;
+	ss << L"ATTR" << cg_attr_index(usage, index);
 	return ss.str();
 }
 

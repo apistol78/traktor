@@ -23,7 +23,7 @@ namespace traktor
 		{
 
 const uint32_t c_cbSize = 0x10000;
-const uint32_t c_hostSize = 1 * 1024 * 1024;
+const uint32_t c_hostSize = 16 * 1024 * 1024;
 
 		}
 

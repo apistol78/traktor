@@ -188,6 +188,17 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
+	ss << L"float4 columnMajorMul(float4x4 m, float4 v)" << Endl;
+	ss << L"{" << Endl;
+	ss << L"	return float4(" << Endl;
+	ss << L"		dot(m._11_21_31_41, v)," << Endl;
+	ss << L"		dot(m._12_22_32_42, v)," << Endl;
+	ss << L"		dot(m._13_23_33_43, v)," << Endl;
+	ss << L"		dot(m._14_24_34_44, v)" << Endl;
+	ss << L"	);" << Endl;
+	ss << L"}" << Endl;
+	ss << Endl;
+
 	std::wstring uniformText = getOutputStream(BtUniform).str();
 	if (!uniformText.empty())
 	{

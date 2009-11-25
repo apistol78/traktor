@@ -1,6 +1,7 @@
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/CgType.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
 
@@ -22,51 +23,70 @@ VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexEleme
 
 	for (std::vector< VertexElement >::const_iterator i = vertexElements.begin(); i != vertexElements.end(); ++i)
 	{
-		if (i->getIndex() != 0)
-			continue;
-
-		int usage = i->getDataUsage();
+		int32_t attr = cg_attr_index(i->getDataUsage(), i->getIndex());
 		switch (i->getDataType())
 		{
 		case DtFloat1:
-			m_attributeDesc[usage].size = 1;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_F;
+			m_attributeDesc[attr].size = 1;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_F;
 			break;
 
 		case DtFloat2:
-			m_attributeDesc[usage].size = 2;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_F;
+			m_attributeDesc[attr].size = 2;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_F;
 			break;
 
 		case DtFloat3:
-			m_attributeDesc[usage].size = 3;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_F;
+			m_attributeDesc[attr].size = 3;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_F;
 			break;
 
 		case DtFloat4:
-			m_attributeDesc[usage].size = 3;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_F;
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_F;
 			break;
 
 		case DtByte4:
-			m_attributeDesc[usage].size = 4;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_UB256;
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_UB256;
 			break;
 
 		case DtByte4N:
-			m_attributeDesc[usage].size = 4;
-			m_attributeDesc[usage].type = CELL_GCM_VERTEX_UB;
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_UB;
 			break;
 
 		case DtShort2:
+			m_attributeDesc[attr].size = 2;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_S32K;
+			break;
+
 		case DtShort4:
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_S32K;
+			break;
+
 		case DtShort2N:
+			m_attributeDesc[attr].size = 2;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_S1;
+
 		case DtShort4N:
-			log::error << "Data type not implemented" << Endl;
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_S1;
+			break;
+
+		case DtHalf2:
+			m_attributeDesc[attr].size = 2;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_SF;
+			break;
+
+		case DtHalf4:
+			m_attributeDesc[attr].size = 4;
+			m_attributeDesc[attr].type = CELL_GCM_VERTEX_SF;
 			break;
 		}
 
-		if (cellGcmAddressToOffset(static_cast< unsigned char* >(m_ptr) + i->getOffset(), &m_attributeDesc[usage].offset) != CELL_OK)
+		if (cellGcmAddressToOffset(static_cast< uint8_t* >(m_ptr) + i->getOffset(), &m_attributeDesc[attr].offset) != CELL_OK)
 			log::error << "Unable to get offset to vertex element" << Endl;
 	}
 }
@@ -105,7 +125,7 @@ void VertexBufferPs3::unlock()
 
 void VertexBufferPs3::bind()
 {
-	for (int i = 0; i < 6; ++i)
+	for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
 	{
 		if (m_attributeDesc[i].size)
 		{

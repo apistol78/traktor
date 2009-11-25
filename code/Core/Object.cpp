@@ -31,7 +31,7 @@ inline bool isObjectHeapAllocated(const void* ptr)
 	return bool(header->magic == c_magic);
 }
 
-#if !defined(_DEBUG)
+#if !defined(_DEBUG) && !defined(_PS3)
 FastAllocator g_allocator(new StdAllocator());
 #else
 StdAllocator g_allocator;
@@ -58,18 +58,16 @@ void Object::release() const
 void* Object::operator new (size_t size)
 {
 	const size_t objectHeaderSize = sizeof(ObjectHeader);
+
 	ObjectHeader* header = static_cast< ObjectHeader* >(g_allocator.alloc(size + objectHeaderSize, 16));
-	if (header)
-	{
-		Object* object = reinterpret_cast< Object* >(header + 1);
+	T_FATAL_ASSERT_M (header, L"Out of memory");
 
-		header->magic = c_magic;
-		++ms_instanceCount;
+	Object* object = reinterpret_cast< Object* >(header + 1);
 
-		return object;
-	}
-	else
-		return 0;
+	header->magic = c_magic;
+	++ms_instanceCount;
+
+	return object;
 }
 
 void Object::operator delete (void* ptr)

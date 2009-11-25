@@ -2,6 +2,8 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
+#include "Render/ShaderGraph.h"
+#include "Render/Nodes.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/Cg.h"
 #include "Render/Ps3/CgProgram.h"
@@ -12,24 +14,30 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct ParameterLess
+{
+	bool operator () (const ProgramResourcePs3::Parameter& p1, const ProgramResourcePs3::Parameter& p2) const
+	{
+		return p1.name < p2.name;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramCompilerPs3, IProgramCompiler)
 
 Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
 {
 	CgProgram cgProgram;
-	if (Cg().generate(shaderGraph, cgProgram))
-		return compile(cgProgram);
-	else
-		return 0;
-}
+	if (!Cg().generate(shaderGraph, cgProgram))
+		return false;
 
-Ref< ProgramResource > ProgramCompilerPs3::compile(const CgProgram& cgProgram) const
-{
 	static Semaphore s_globalLock;
-	static Semaphore s_errorLock;
 
-	const char* argv[] = { 0 };
+	const char* argv[] = { "-O3", "--fastmath", "--fastprecision", 0 };
 	CGCstatus status;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_globalLock);
@@ -60,7 +68,6 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const CgProgram& cgProgram) c
 	);
 	if (status != SCECGC_OK)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_errorLock);
 		log::error << L"Compile CG vertex shader failed" << Endl;
 		if (sceCgcGetBinSize(msg) > 1)
 			log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
@@ -83,7 +90,6 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const CgProgram& cgProgram) c
 	);
 	if (status != SCECGC_OK)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_errorLock);
 		log::error << L"Compile CG fragment shader failed" << Endl;
 		if (sceCgcGetBinSize(msg) > 1)
 			log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
@@ -94,7 +100,99 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const CgProgram& cgProgram) c
 	sceCgcDeleteContext(cgc);
 	sceCgcDeleteBin(msg);
 
-	return new ProgramResourcePs3(vertexShaderBin, pixelShaderBin);
+	// Collect information about parameters which are hard to extract
+	// through CG reflection.
+	std::set< ProgramResourcePs3::Parameter, ParameterLess > parameters;
+
+	RefArray< Uniform > uniformNodes;
+	RefArray< IndexedUniform > indexedUniformNodes;
+	RefArray< Sampler > samplerNodes;
+
+	shaderGraph->findNodesOf< Uniform >(uniformNodes);
+	shaderGraph->findNodesOf< IndexedUniform >(indexedUniformNodes);
+	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+
+	for (RefArray< Uniform >::const_iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
+	{
+		struct ProgramResourcePs3::Parameter param =
+		{
+			(*i)->getParameterName(),
+			false,
+			0,
+			1
+		};
+
+		switch ((*i)->getParameterType())
+		{
+		case PtScalar:
+			param.size = 1;
+			break;
+
+		case PtVector:
+			param.size = 4;
+			break;
+
+		case PtMatrix:
+			param.size = 16;
+			break;
+
+		default:
+			T_FATAL_ERROR;
+		}
+
+		parameters.insert(param);
+	}
+
+	for (RefArray< IndexedUniform >::const_iterator i = indexedUniformNodes.begin(); i != indexedUniformNodes.end(); ++i)
+	{
+		struct ProgramResourcePs3::Parameter param =
+		{
+			(*i)->getParameterName(),
+			false,
+			0,
+			(*i)->getLength()
+		};
+
+		switch ((*i)->getParameterType())
+		{
+		case PtScalar:
+			param.size = 1;
+			break;
+
+		case PtVector:
+			param.size = 4;
+			break;
+
+		case PtMatrix:
+			param.size = 16;
+			break;
+
+		default:
+			T_FATAL_ERROR;
+		}
+
+		parameters.insert(param);
+	}
+
+	for (RefArray< Sampler >::const_iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+	{
+		struct ProgramResourcePs3::Parameter param =
+		{
+			(*i)->getParameterName(),
+			true,
+			0,
+			0
+		};
+
+		parameters.insert(param);
+	}
+
+	return new ProgramResourcePs3(
+		vertexShaderBin,
+		pixelShaderBin,
+		std::vector< ProgramResourcePs3::Parameter >(parameters.begin(), parameters.end()),
+		cgProgram.getRenderState()
+	);
 }
 
 	}

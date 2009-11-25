@@ -8,6 +8,15 @@ namespace traktor
 		namespace
 		{
 
+#define T_CONTROL_ID(offset, bit) \
+	((offset) << 8) | (bit)
+
+#define T_CONTROL_OFFSET(id) \
+	((id) >> 8)
+
+#define T_CONTROL_BIT(id) \
+	((id) & 255)
+
 float adjustDeadZone(float value)
 {
 	if (value >= -0.2f && value <= 0.2f)
@@ -62,7 +71,11 @@ float InputDevicePs3::getControlValue(int control)
 		return 0.0f;
 
 	if (control > 0)
-		return m_padData.button[control >> 4] & (1 << (control & 15)) ? 1.0f : 0.0f;
+	{
+		int offset = T_CONTROL_OFFSET(control);
+		int bit = T_CONTROL_BIT(control);
+		return (m_padData.button[offset] & bit) ? 1.0f : 0.0f;
+	}
 	else if (control < 0)
 	{
 		float thumb = 0.0f;
@@ -94,29 +107,61 @@ bool InputDevicePs3::getDefaultControl(InputDefaultControlType controlType, int&
 {
 	switch (controlType)
 	{
-	//case DtUp:
-	//	control = XINPUT_GAMEPAD_DPAD_UP;
-	//	break;
-
-	//case DtDown:
-	//	control = XINPUT_GAMEPAD_DPAD_DOWN;
-	//	break;
-
-	//case DtLeft:
-	//	control = XINPUT_GAMEPAD_DPAD_LEFT;
-	//	break;
-
-	//case DtRight:
-	//	control = XINPUT_GAMEPAD_DPAD_RIGHT;
-	//	break;
-
-	case DtSelect:
-		control = 4 * 16 + 0;
+	case DtUp:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_UP);
 		break;
 
-	//case DtCancel:
-	//	control = XINPUT_GAMEPAD_BACK;
-	//	break;
+	case DtDown:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_DOWN);
+		break;
+
+	case DtLeft:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_LEFT);
+		break;
+
+	case DtRight:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_RIGHT);
+		break;
+
+	case DtSelect:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_SELECT);
+		break;
+
+	case DtCancel:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL1, CELL_PAD_CTRL_START);
+		break;
+
+	case DtButton1:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CROSS);
+		break;
+
+	case DtButton2:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_CIRCLE);
+		break;
+
+	case DtButton3:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_TRIANGLE);
+		break;
+
+	case DtButton4:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_SQUARE);
+		break;
+
+	case DtTriggerLeft:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L2);
+		break;
+
+	case DtTriggerRight:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R2);
+		break;
+
+	case DtShoulderLeft:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_L1);
+		break;
+
+	case DtShoulderRight:
+		control = T_CONTROL_ID(CELL_PAD_BTN_OFFSET_DIGITAL2, CELL_PAD_CTRL_R1);
+		break;
 
 	case DtThumbLeftX:
 		control = -1;

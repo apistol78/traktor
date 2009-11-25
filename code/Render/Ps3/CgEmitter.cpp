@@ -723,81 +723,58 @@ bool emitNormalize(CgContext& cx, Normalize* node)
 	if (!in)
 		return false;
 	
+	CgVariable* tmp = cx.getShader().createTemporaryVariable(0, CtFloat);
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	
-	f << L"float " << in->getName() << L"_invlen = rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
-	assign(f, out) << in->getName() << L" * " << in->getName() << L"_invlen;" << Endl;
+	assign(f, tmp) << L"rsqrt(dot(" << in->getName() << L", " << in->getName() << L"));" << Endl;
+	assign(f, out) << in->getName() << L" * " << tmp->getName() << L";" << Endl;
 
 	return true;
 }
 
 bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 {
-//	const DWORD d3dCullMode[] =
-//	{
-//		D3DCULL_NONE,
-//		D3DCULL_CW,
-//		D3DCULL_CCW
-//	};
-//
-//	const DWORD d3dBlendOperation[] =
-//	{
-//		D3DBLENDOP_ADD,
-//		D3DBLENDOP_SUBTRACT,
-//		D3DBLENDOP_REVSUBTRACT,
-//		D3DBLENDOP_MIN,
-//		D3DBLENDOP_MAX
-//	};
-//
-//	const DWORD d3dBlendFactor[] =
-//	{
-//		D3DBLEND_ONE,
-//		D3DBLEND_ZERO,
-//		D3DBLEND_SRCCOLOR,
-//		D3DBLEND_INVSRCCOLOR,
-//		D3DBLEND_DESTCOLOR,
-//		D3DBLEND_INVDESTCOLOR,
-//		D3DBLEND_SRCALPHA,
-//		D3DBLEND_INVSRCALPHA,
-//		D3DBLEND_DESTALPHA,
-//		D3DBLEND_INVDESTALPHA
-//	};
-//
-//	const DWORD d3dCompareFunction[] =
-//	{
-//		D3DCMP_ALWAYS,
-//		D3DCMP_NEVER,
-//		D3DCMP_LESS,
-//		D3DCMP_LESSEQUAL,
-//		D3DCMP_GREATER,
-//		D3DCMP_GREATEREQUAL,
-//		D3DCMP_EQUAL,
-//		D3DCMP_NOTEQUAL
-//	};
-//
-//#if defined(_XBOX)
-//	const DWORD d3dDepthCompareFunction[] =
-//	{
-//		D3DCMP_ALWAYS,
-//		D3DCMP_NEVER,
-//		D3DCMP_GREATEREQUAL,
-//		D3DCMP_GREATER,
-//		D3DCMP_LESSEQUAL,
-//		D3DCMP_LESS
-//	};
-//#endif
-//
-//	const DWORD d3dStencilOperation[] =
-//	{
-//		D3DSTENCILOP_KEEP,
-//		D3DSTENCILOP_ZERO,
-//		D3DSTENCILOP_REPLACE,
-//		D3DSTENCILOP_INCRSAT,
-//		D3DSTENCILOP_DECRSAT,
-//		D3DSTENCILOP_INVERT,
-//		D3DSTENCILOP_INCR,
-//		D3DSTENCILOP_DECR
-//	};
+	const uint32_t gcmCullFace[] =
+	{
+		CELL_GCM_FRONT,
+		CELL_GCM_BACK,
+		CELL_GCM_FRONT
+	};
+
+	const uint16_t gcmBlendEquation[] =
+	{
+		CELL_GCM_FUNC_ADD,
+		CELL_GCM_FUNC_SUBTRACT,
+		CELL_GCM_FUNC_REVERSE_SUBTRACT,
+		CELL_GCM_MIN,
+		CELL_GCM_MAX
+	};
+
+	const uint16_t gcmBlendFunction[] =
+	{
+		CELL_GCM_ONE,
+		CELL_GCM_ZERO,
+		CELL_GCM_SRC_COLOR,
+		CELL_GCM_ONE_MINUS_SRC_COLOR,
+		CELL_GCM_DST_COLOR,
+		CELL_GCM_ONE_MINUS_DST_COLOR,
+		CELL_GCM_SRC_ALPHA,
+		CELL_GCM_ONE_MINUS_SRC_ALPHA,
+		CELL_GCM_DST_ALPHA,
+		CELL_GCM_ONE_MINUS_DST_ALPHA
+	};
+
+	const uint32_t gcmFunction[] =
+	{
+		CELL_GCM_ALWAYS,
+		CELL_GCM_NEVER,
+		CELL_GCM_LESS,
+		CELL_GCM_LEQUAL,
+		CELL_GCM_GREATER,
+		CELL_GCM_GEQUAL,
+		CELL_GCM_EQUAL,
+		CELL_GCM_NOTEQUAL
+	};
 
 	cx.enterPixel();
 
@@ -811,57 +788,30 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(CgShader::BtBody);
 	fpb << L"o.Color0" << L" = " << in->cast(CtFloat4) << L";" << Endl;
 
-//	DWORD d3dColorWriteEnable =
-//		((node->getColorWriteMask() & PixelOutput::CwRed) ? D3DCOLORWRITEENABLE_RED : 0) |
-//		((node->getColorWriteMask() & PixelOutput::CwGreen) ? D3DCOLORWRITEENABLE_GREEN : 0) |
-//		((node->getColorWriteMask() & PixelOutput::CwBlue) ? D3DCOLORWRITEENABLE_BLUE : 0) |
-//		((node->getColorWriteMask() & PixelOutput::CwAlpha) ? D3DCOLORWRITEENABLE_ALPHA : 0);
-//
-//	StateBlockDx9& state = cx.getState();
-//
-//	state.setRenderState(D3DRS_CULLMODE, d3dCullMode[node->getCullMode()]);
-//
-//	if (node->getBlendEnable())
-//	{
-//		state.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-//		state.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[node->getBlendOperation()]);
-//		state.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[node->getBlendSource()]);
-//		state.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[node->getBlendDestination()]);
-//	}
-//	else
-//		state.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-//
-//	state.setRenderState(D3DRS_ZENABLE, node->getDepthEnable() ? TRUE : FALSE);
-//	state.setRenderState(D3DRS_COLORWRITEENABLE, d3dColorWriteEnable);
-//	state.setRenderState(D3DRS_ZWRITEENABLE, node->getDepthWriteEnable() ? TRUE : FALSE);
-//#if !defined(_XBOX)
-//	state.setRenderState(D3DRS_ZFUNC, d3dCompareFunction[node->getDepthFunction()]);
-//#else
-//	state.setRenderState(D3DRS_ZFUNC, d3dDepthCompareFunction[node->getDepthFunction()]);
-//#endif
-//
-//	if (node->getAlphaTestEnable())
-//	{
-//		state.setRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-//		state.setRenderState(D3DRS_ALPHAFUNC, d3dCompareFunction[node->getAlphaTestFunction()]);
-//		state.setRenderState(D3DRS_ALPHAREF, node->getAlphaTestReference());
-//	}
-//	else
-//		state.setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-//
-//	state.setRenderState(D3DRS_FILLMODE, node->getWireframe() ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
-//
-//	if (node->getStencilEnable())
-//	{
-//		state.setRenderState(D3DRS_STENCILENABLE, TRUE);
-//		state.setRenderState(D3DRS_STENCILFAIL, d3dStencilOperation[node->getStencilFail()]);
-//		state.setRenderState(D3DRS_STENCILZFAIL, d3dStencilOperation[node->getStencilZFail()]);
-//		state.setRenderState(D3DRS_STENCILPASS, d3dStencilOperation[node->getStencilPass()]);
-//		state.setRenderState(D3DRS_STENCILFUNC, d3dCompareFunction[node->getStencilFunction()]);
-//		state.setRenderState(D3DRS_STENCILREF, node->getStencilReference());
-//	}
-//	else
-//		state.setRenderState(D3DRS_STENCILENABLE, FALSE);
+	RenderState& rs = cx.getRenderState();
+
+	rs.cullFaceEnable = node->getCullMode() == PixelOutput::CmNever ? CELL_GCM_FALSE : CELL_GCM_TRUE;
+	rs.cullFace = gcmCullFace[node->getCullMode()];
+	rs.blendEnable = node->getBlendEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rs.blendEquation = gcmBlendEquation[node->getBlendOperation()];
+	rs.blendFuncSrc = gcmBlendFunction[node->getBlendSource()];
+	rs.blendFuncDest = gcmBlendFunction[node->getBlendDestination()];
+	rs.depthTestEnable = node->getDepthEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rs.depthMask = node->getDepthWriteEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rs.depthFunc = gcmFunction[node->getDepthFunction()];
+	rs.alphaTestEnable = node->getAlphaTestEnable() ? CELL_GCM_TRUE : CELL_GCM_FALSE;
+	rs.alphaFunc = gcmFunction[node->getAlphaTestFunction()];
+	rs.alphaRef = node->getAlphaTestReference();
+
+	rs.colorMask = 0;
+	if (node->getColorWriteMask() & PixelOutput::CwRed)
+		rs.colorMask |= CELL_GCM_COLOR_MASK_R;
+	if (node->getColorWriteMask() & PixelOutput::CwGreen)
+		rs.colorMask |= CELL_GCM_COLOR_MASK_G;
+	if (node->getColorWriteMask() & PixelOutput::CwBlue)
+		rs.colorMask |= CELL_GCM_COLOR_MASK_B;
+	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
+		rs.colorMask |= CELL_GCM_COLOR_MASK_A;
 
 	return true;
 }
@@ -1280,7 +1230,7 @@ bool emitTransform(CgContext& cx, Transform* node)
 	if (!in || !transform)
 		return false;
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"mul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
+	assign(f, out) << L"columnMajorMul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
 	return true;
 }
 

@@ -1,9 +1,9 @@
-#include <cassert>
 #include <sys/ppu_thread.h>
 #include <sys/process.h>
 #include <sys/timer.h>
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -13,7 +13,7 @@ namespace traktor
 void threadEntry(uint64_t data)
 {
 	Functor* functor = reinterpret_cast< Functor* >(data);
-	assert (functor);
+	T_ASSERT (functor);
 	
 	(functor->operator())();
 	
@@ -25,34 +25,33 @@ void threadEntry(uint64_t data)
 bool Thread::start(Priority priority)
 {
 	const uint32_t c_priorities[] = { 0, 2000, 4000 };
-	const uint32_t c_stackSize = 4096;
+	const uint32_t c_stackSize = 4 * 1024 * 1024;
 
-	sys_ppu_thread_t* thread = new sys_ppu_thread_t();
+	sys_ppu_thread_t* th = new sys_ppu_thread_t();
 
 	int rc = sys_ppu_thread_create(
-		thread,
+		th,
 		threadEntry,
 		(uint64_t)m_functor,
 		c_priorities[priority],
 		c_stackSize,
 		SYS_PPU_THREAD_CREATE_JOINABLE,
-		"Thread"
+		m_name.c_str()
 	);
 
-	m_handle = thread;
+	m_handle = th;
 
 	return bool(rc == CELL_OK);
 }
 
 bool Thread::wait(int timeout)
 {
-	sys_ppu_thread_t* thread = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
-	assert (thread);
-
-	assert (timeout == 0);
+	sys_ppu_thread_t* th = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
+	T_ASSERT (th);
+	T_ASSERT (timeout == 0);
 
 	uint64_t status;
-	int rc = sys_ppu_thread_join(*thread, &status);
+	int rc = sys_ppu_thread_join(*th, &status);
 
 	return bool(rc == CELL_OK);
 }
@@ -65,13 +64,13 @@ bool Thread::stop(int timeout)
 
 bool Thread::pause()
 {
-	assert (0);
+	T_ASSERT (0);
 	return false;
 }
 
 bool Thread::resume()
 {
-	assert (0);
+	T_ASSERT (0);
 	return false;
 }
 
@@ -92,14 +91,14 @@ bool Thread::stopped() const
 
 bool Thread::current() const
 {
-	sys_ppu_thread_t* thread = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
-	if (!thread)
+	sys_ppu_thread_t* th = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
+	if (!th)
 		return false;
 
 	sys_ppu_thread_t current;
 	sys_ppu_thread_get_id(&current);
 
-	return bool(current == *thread);
+	return bool(current == *th);
 }
 
 bool Thread::finished() const
@@ -112,13 +111,15 @@ Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
 ,	m_id(0)
 ,	m_stopped(false)
 ,	m_functor(functor)
+,	m_name(wstombs(name))
+,	m_hardwareCore(hardwareCore)
 {
 }
 
 Thread::~Thread()
 {
-	sys_ppu_thread_t* thread = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
-	delete thread;
+	sys_ppu_thread_t* th = reinterpret_cast< sys_ppu_thread_t* >(m_handle);
+	delete th;
 }
 
 }

@@ -10,8 +10,10 @@ bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& o
 {
 	switch (textureFormat)
 	{
-	//case TfR8:
-	//	break;
+	case TfR8:
+		outByteSize = 1;
+		outGcmFormat = CELL_GCM_TEXTURE_B8;
+		break;
 
 	case TfR8G8B8A8:
 		outByteSize = 4;
@@ -43,7 +45,6 @@ bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& o
 	//case TfDXT5:
 
 	default:
-		log::error << "Unsupported texture format" << Endl;
 		return false;
 	}
 	return true;
@@ -124,7 +125,7 @@ namespace
 				*dst++ = src[(ypos * width + xpos) * depth + 2];
 			}
 			else
-				T_ASSERT (0 && "invalid depth size");
+				T_ASSERT_M (0, L"Invalid depth size");
 			return;
 		}
 		else

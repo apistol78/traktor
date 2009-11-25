@@ -6,6 +6,7 @@
 #include "Core/Io/Utf16Encoding.h"
 #include "Core/Io/Utf32Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
 #include "Html/Document.h"
@@ -295,8 +296,13 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 
 bool Document::loadFromText(const std::wstring& text)
 {
-	Ref< MemoryStream > stream = new MemoryStream((void*)text.c_str(), int(text.length() * sizeof(wchar_t)));
-#if defined(_WIN32)
+	std::vector< wchar_t > buffer(text.begin(), text.end());
+#if defined(_PS3)
+	for (std::vector< wchar_t >::iterator i = buffer.begin(); i != buffer.end(); ++i)
+		swap8in16(*i);
+#endif
+	Ref< MemoryStream > stream = new MemoryStream(&buffer[0], buffer.size() * sizeof(wchar_t));
+#if defined(_WIN32) || defined(_PS3)
 	Ref< IEncoding > encoding = new Utf16Encoding();
 #else
 	Ref< IEncoding > encoding = new Utf32Encoding();

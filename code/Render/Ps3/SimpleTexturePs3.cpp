@@ -55,7 +55,10 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 {
 	int byteSize = 0;
 	if (!getGcmTextureInfo(desc.format, byteSize, m_texture.format))
+	{
+		log::error << L"Unable to create texture; unsupported format" << Endl;
 		return false;
+	}
 
 	bool linear = false;
 	if (desc.immutable)
@@ -84,10 +87,10 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 		CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
 		CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
 		CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
-		CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
-		CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
-		CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
-		CELL_GCM_TEXTURE_REMAP_FROM_A;
+		CELL_GCM_TEXTURE_REMAP_FROM_G << 6 |
+		CELL_GCM_TEXTURE_REMAP_FROM_R << 4 |
+		CELL_GCM_TEXTURE_REMAP_FROM_A << 2 |
+		CELL_GCM_TEXTURE_REMAP_FROM_B;
 	m_texture.width = desc.width;
 	m_texture.height = desc.height;
 	m_texture.depth = 1;
@@ -122,11 +125,14 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 			}
 			else
 			{
+				int32_t mipWidth = std::max< int32_t >(m_texture.width >> i, 1);
+				int32_t mipHeight = std::max< int32_t >(m_texture.height >> i, 1);
+
 				cellUtilConvertLinearToSwizzle(
 					dest,
 					src,
-					m_texture.width >> i,
-					m_texture.height >> i,
+					mipWidth,
+					mipHeight,
 					byteSize
 				);
 			}
@@ -166,7 +172,15 @@ int SimpleTexturePs3::getDepth() const
 
 bool SimpleTexturePs3::lock(int level, Lock& lock)
 {
-	return false;
+	if (m_texture.pitch != 0 && level == 0)
+	{
+		uint8_t* ptr = static_cast< uint8_t* >(m_data);
+		lock.bits = ptr;
+		lock.pitch = m_texture.pitch;
+		return true;
+	}
+	else
+		return false;
 }
 
 void SimpleTexturePs3::unlock(int level)

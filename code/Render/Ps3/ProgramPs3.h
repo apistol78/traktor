@@ -30,15 +30,8 @@ public:
 	{
 		std::vector< CGparameter > parameters;
 		bool sampler;
-		union
-		{
-			struct
-			{
-				uint32_t offset;
-				uint32_t stride;
-			};
-			uint32_t stage;
-		};
+		uint32_t offsetOrStage;
+		uint32_t stride;
 	};
 
 	ProgramPs3();

@@ -3,6 +3,7 @@
 
 #include "Render/Ps3/CgEmitter.h"
 #include "Render/Ps3/CgShader.h"
+#include "Render/Ps3/TypesPs3.h"
 
 namespace traktor
 {
@@ -51,6 +52,8 @@ public:
 
 	inline CgEmitter& getEmitter() { return m_emitter; }
 
+	inline RenderState& getRenderState() { return m_renderState; }
+
 	inline bool needVPos() const { return m_needVPos; }
 
 private:
@@ -60,6 +63,7 @@ private:
 	CgShader m_pixelShader;
 	CgShader* m_currentShader;
 	CgEmitter m_emitter;
+	RenderState m_renderState;
 	int32_t m_interpolatorCount;
 	int32_t m_booleanRegisterCount;
 	bool m_needVPos;

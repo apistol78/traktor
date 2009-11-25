@@ -262,9 +262,9 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 
 void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
+	// Do not try to clear depth buffer if none is attached.
 	if (!m_renderStateStack.empty())
 	{
-		clearMask &= ~CfColor;
 		if (!m_renderStateStack.back().depthOffset)
 			clearMask &= ~(CfDepth | CfStencil);
 	}

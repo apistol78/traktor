@@ -23,7 +23,9 @@ enum CgType
 	CtFloat4x4
 };
 
-std::wstring cg_semantic(DataUsage usage, int index);
+int32_t cg_attr_index(DataUsage usage, int32_t index);
+
+std::wstring cg_semantic(DataUsage usage, int32_t index);
 
 std::wstring cg_type_name(CgType type);
 

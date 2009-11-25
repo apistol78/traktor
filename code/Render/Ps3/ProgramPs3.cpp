@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/ProgramPs3.h"
@@ -17,123 +18,64 @@ namespace traktor
 		{
 
 int buildParameterMap(
+	const ProgramResourcePs3* resource,
 	CGprogram program,
 	std::map< handle_t, ProgramPs3::Parameter >& outParameterMap
 )
 {
-	uint32_t parameterCount = cellGcmCgGetCountParameter(program);
+	const std::vector< ProgramResourcePs3::Parameter >& params = resource->getParameters();
 
-	for (uint32_t i = 0; i < parameterCount; ++i)
+	int32_t offset = 0;
+	for (std::vector< ProgramResourcePs3::Parameter >::const_iterator i = params.begin(); i != params.end(); ++i)
 	{
-		CGparameter parameter = cellGcmCgGetIndexParameter(program, i);
+		handle_t handle = getParameterHandle(i->name);
 
-		const char* parameterName = cellGcmCgGetParameterName(program, parameter);
-		T_ASSERT (parameterName);
-
-		log::debug << L"Parameter " << i << L" \"" << mbstows(parameterName) << L"\"" << Endl;
-	}
-
-	return 0;
-
-	/*
-	RefArray< Uniform > uniformNodes;
-	RefArray< IndexedUniform > indexedUniformNodes;
-	RefArray< Sampler > samplerNodes;
-
-	shaderGraph->findNodesOf< Uniform >(uniformNodes);
-	shaderGraph->findNodesOf< IndexedUniform >(indexedUniformNodes);
-	shaderGraph->findNodesOf< Sampler >(samplerNodes);
-
-	int offset = 0;
-
-	for (RefArray< Uniform >::iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
-	{
-		std::wstring parameterName = (*i)->getParameterName();
-
-		CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName).c_str());
-		if (!parameter)
-			continue;
-
-		outParameterMap[parameterName].parameters.push_back(parameter);
-		outParameterMap[parameterName].sampler = false;
-		outParameterMap[parameterName].offset = offset;
-
-		switch ((*i)->getParameterType())
+		if (!i->sampler)
 		{
-		case PtScalar:
-			outParameterMap[parameterName].stride = 1;
-			offset += 1;
-			break;
+			std::vector< CGparameter > parameters;
 
-		case PtVector:
-			outParameterMap[parameterName].stride = 4;
-			offset += 4;
-			break;
+			if (i->count > 1)
+			{
+				for (int32_t j = 0; j < i->count; ++j)
+				{
+					CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name + L"[" + toString(j) + L"]").c_str());
+					if (parameter)
+						parameters.push_back(parameter);
+				}
+			}
+			else
+			{
+				CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name).c_str());
+				if (parameter)
+					parameters.push_back(parameter);
+			}
 
-		case PtMatrix:
-			outParameterMap[parameterName].stride = 4 * 4;
-			offset += 4 * 4;
-			break;
+			if (!parameters.empty())
+			{
+				outParameterMap[handle].parameters = parameters;
+				outParameterMap[handle].sampler = false;
+				outParameterMap[handle].offsetOrStage = offset;
+				outParameterMap[handle].stride = i->size;
+				offset += i->size * int32_t(parameters.size());
+			}
 		}
-	}
-
-	for (RefArray< IndexedUniform >::iterator i = indexedUniformNodes.begin(); i != indexedUniformNodes.end(); ++i)
-	{
-		for (int j = 0; j < (*i)->getLength(); ++j)
+		else
 		{
-			std::wstring parameterName = (*i)->getParameterName() + L"[" + toString(j) + L"]";
-
-			CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName).c_str());
+			CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(L"sampler_" + i->name).c_str());
 			if (!parameter)
-				break;
+				continue;
 
-			outParameterMap[parameterName].parameters.push_back(parameter);
+			CGresource resource = cellGcmCgGetParameterResource(program, parameter);
+			if (resource < CG_TEXUNIT0 || resource > CG_TEXUNIT15)
+				continue;
 
-			if (j == 0)
-			{
-				outParameterMap[parameterName].sampler = false;
-				outParameterMap[parameterName].offset = offset;
-			}
-
-			switch ((*i)->getParameterType())
-			{
-			case PtScalar:
-				outParameterMap[parameterName].stride = 1;
-				offset += 1;
-				break;
-
-			case PtVector:
-				outParameterMap[parameterName].stride = 4;
-				offset += 4;
-				break;
-
-			case PtMatrix:
-				outParameterMap[parameterName].stride = 4 * 4;
-				offset += 4 * 4;
-				break;
-			}
+			outParameterMap[handle].parameters.push_back(parameter);
+			outParameterMap[handle].sampler = true;
+			outParameterMap[handle].offsetOrStage = resource - CG_TEXUNIT0;
 		}
-	}	
-
-	for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
-	{
-		std::wstring parameterName = L"SamplerTexture_" + (*i)->getParameterName();
-
-		CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName).c_str());
-		if (!parameter)
-			continue;
-
-		CGresource resource = cellGcmCgGetParameterResource(program, parameter);
-		if (resource < CG_TEXUNIT0 || resource > CG_TEXUNIT15)
-			continue;
-
-		outParameterMap[parameterName].parameters.push_back(parameter);
-		outParameterMap[parameterName].sampler = true;
-		outParameterMap[parameterName].stage = resource - CG_TEXUNIT0;
 	}
 
 	return offset;
-	*/
 }
 
 		}
@@ -185,13 +127,13 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 		return false;
 	}
 
-	size = buildParameterMap(m_vertexProgram, m_vertexParameterMap);
+	size = buildParameterMap(resource, m_vertexProgram, m_vertexParameterMap);
 	m_vertexParameters.resize(size);
 
-	size = buildParameterMap(m_pixelProgram, m_pixelParameterMap);
+	size = buildParameterMap(resource, m_pixelProgram, m_pixelParameterMap);
 	m_pixelParameters.resize(size);
 
-	//m_renderState = renderState;
+	m_renderState = resource->getRenderState();
 	return true;
 }
 
@@ -217,14 +159,32 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 	if (i != m_vertexParameterMap.end())
 	{
 		T_ASSERT (!i->second.sampler);
-		std::memcpy(&m_vertexParameters[i->second.offset], param, length * sizeof(float));
+
+		length = std::min< int >(length, i->second.parameters.size() * i->second.stride);
+		if (length > 0)
+		{
+			std::memcpy(
+				&m_vertexParameters[i->second.offsetOrStage],
+				param,
+				length * sizeof(float)
+			);
+		}
 	}
 
 	std::map< handle_t, Parameter >::iterator j = m_pixelParameterMap.find(handle);
 	if (j != m_pixelParameterMap.end())
 	{
 		T_ASSERT (!j->second.sampler);
-		std::memcpy(&m_pixelParameters[j->second.offset], param, length * sizeof(float));
+
+		length = std::min< int >(length, i->second.parameters.size() * i->second.stride);
+		if (length > 0)
+		{
+			std::memcpy(
+				&m_pixelParameters[j->second.offsetOrStage],
+				param,
+				length * sizeof(float)
+			);
+		}
 	}
 }
 
@@ -254,7 +214,7 @@ void ProgramPs3::setSamplerTexture(handle_t handle, ITexture* texture)
 	if (i != m_pixelParameterMap.end())
 	{
 		T_ASSERT (i->second.sampler);
-		m_pixelTextures[i->second.stage] = texture;
+		m_pixelTextures[i->second.offsetOrStage] = texture;
 	}
 }
 
@@ -269,7 +229,7 @@ bool ProgramPs3::isOpaque() const
 
 void ProgramPs3::bind()
 {
-	cellGcmSetCullFaceEnable(m_renderState.cullFaceEnable);
+	cellGcmSetCullFaceEnable(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
 	cellGcmSetCullFace(gCellGcmCurrentContext, m_renderState.cullFace);
 	cellGcmSetBlendEnable(gCellGcmCurrentContext, m_renderState.blendEnable);
 	cellGcmSetBlendEquation(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
@@ -278,7 +238,7 @@ void ProgramPs3::bind()
 	cellGcmSetColorMask(gCellGcmCurrentContext, m_renderState.colorMask);
 	cellGcmSetDepthMask(gCellGcmCurrentContext, m_renderState.depthMask);
 	cellGcmSetDepthFunc(gCellGcmCurrentContext, m_renderState.depthFunc);
-	cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, CELL_GCM_FALSE); //m_renderState.alphaTestEnable);
+	cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
 	cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
 
 	cellGcmSetVertexProgram(m_vertexProgram, m_vertexShaderUCode);
@@ -293,7 +253,7 @@ void ProgramPs3::bind()
 			cellGcmSetVertexProgramParameter(
 				gCellGcmCurrentContext,
 				i->second.parameters[j],
-				&m_vertexParameters[i->second.offset + j * i->second.stride]
+				&m_vertexParameters[i->second.offsetOrStage + j * i->second.stride]
 			);
 		}
 	}
@@ -311,7 +271,7 @@ void ProgramPs3::bind()
 				gCellGcmCurrentContext,
 				m_pixelProgram,
 				i->second.parameters[j],
-				&m_pixelParameters[i->second.offset + j * i->second.stride],
+				&m_pixelParameters[i->second.offsetOrStage + j * i->second.stride],
 				m_pixelShaderOffset
 			);
 		}

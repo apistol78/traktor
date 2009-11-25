@@ -48,7 +48,7 @@ private:
 	void* m_ptr;
 	uint32_t m_offset;
 	uint8_t m_vertexStride;
-	AttributeDesc m_attributeDesc[6];
+	AttributeDesc m_attributeDesc[16];
 };
 
 	}

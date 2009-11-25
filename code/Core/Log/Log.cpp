@@ -70,6 +70,8 @@ void LogTargetDebug::log(const std::wstring& str)
 	std::wstringstream ss;
 	ss << m_prefix << L"(" << GetCurrentProcessId() << L") " << str << std::endl;
 	OutputDebugString(wstots(ss.str()).c_str());
+#else
+	std::wcout << m_prefix << str << std::endl;
 #endif
 }
 

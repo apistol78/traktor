@@ -19,9 +19,6 @@ class ProgramCompilerPs3 : public IProgramCompiler
 
 public:
 	virtual Ref< ProgramResource > compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const;
-
-private:
-	Ref< ProgramResource > compile(const CgProgram& cgProgram) const;
 };
 
 	}
