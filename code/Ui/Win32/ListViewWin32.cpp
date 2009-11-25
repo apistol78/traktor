@@ -44,7 +44,7 @@ bool ListViewWin32::create(IWidget* parent, int style)
 		WC_LISTVIEW,
 		_T(""),
 		WS_VISIBLE | WS_CHILD | WS_TABSTOP | LVS_SHOWSELALWAYS | nativeStyle,
-		0,
+		nativeStyleEx,
 		0,
 		0,
 		0,
