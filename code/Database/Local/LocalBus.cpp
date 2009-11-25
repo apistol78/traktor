@@ -136,9 +136,6 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 			eventLog = BinarySerializer(eventFile).readObject< EventLog >();
 			eventFile->close();
 		}
-		
-		if (!eventLog)
-			log::warning << L"Global lock exist but unable to read shared memory" << Endl;
 	}
 
 	if (!eventLog)

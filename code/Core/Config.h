@@ -138,15 +138,6 @@ typedef long unsigned int uint64_t;
 #	define sizeof_array(arr) (sizeof(arr) / sizeof(arr[0]))
 #endif
 
-/*
- * Type used to return object from gc_new; by returning in
- * a Ref<> we ensure no objects are leaked but the following scenario
- * won't work:
- *   someFunction(Object* ptr) { ... }
- *   someFunction(new Object());
- */
-#define T_GC_NEW_TYPE(T) T*
-
 // Use these macros in c/d tors only.
 #if !defined(T_EXCEPTION_GUARD_BEGIN)
 #	define T_EXCEPTION_GUARD_BEGIN try {

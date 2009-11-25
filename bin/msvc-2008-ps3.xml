@@ -69,6 +69,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-g</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -129,6 +133,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-O3 -ffast-math -funroll-loops</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -240,6 +248,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-g</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -336,6 +348,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-O3 -ffast-math -funroll-loops</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -491,6 +507,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-g</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -579,6 +599,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-O3 -ffast-math -funroll-loops</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -726,6 +750,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-g</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -814,6 +842,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
+				<item>
+				  <first>AdditionalOptions</first>
+				  <second>-O3 -ffast-math -funroll-loops</second>
+				</item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
