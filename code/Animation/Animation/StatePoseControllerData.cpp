@@ -19,6 +19,9 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	if (!resourceManager->bind(m_stateGraph))
 		return 0;
 
+	if (!m_stateGraph.validate())
+		return 0;
+
 	const RefArray< State >& states = m_stateGraph->getStates();
 	for (RefArray< State >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
