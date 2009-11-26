@@ -2095,6 +2095,15 @@
 							<fileName>Math/*.*</fileName>
 							<items/>
 						</item>
+						<item type="Filter">
+							<name>AltiVec</name>
+							<items>
+								<item type="File">
+									<fileName>Math/AltiVec/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
 					</items>
 				</item>
 				<item type="Filter">
@@ -5421,6 +5430,107 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[24]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>UnitTest</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/UnitTest</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UNITTEST</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UNITTEST</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UNITTEST</item>
+						<item>_DEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UNITTEST</item>
+						<item>NDEBUG</item>
+						<item>T_STATIC</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[13]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[44]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[45]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[38]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[11]"/>
 				</item>
 			</dependencies>
 		</item>

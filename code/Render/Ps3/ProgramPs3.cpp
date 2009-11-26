@@ -150,62 +150,164 @@ void ProgramPs3::destroy()
 
 void ProgramPs3::setFloatParameter(handle_t handle, float param)
 {
-	setFloatArrayParameter(handle, &param, 1);
+	{
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			m_vertexParameters[i->second.offsetOrStage] = param;
+		}
+	}
+
+	{
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			m_pixelParameters[i->second.offsetOrStage] = param;
+		}
+	}
 }
 
 void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
-	if (i != m_vertexParameterMap.end())
 	{
-		T_ASSERT (!i->second.sampler);
-
-		length = std::min< int >(length, i->second.parameters.size() * i->second.stride);
-		if (length > 0)
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
 		{
-			std::memcpy(
-				&m_vertexParameters[i->second.offsetOrStage],
-				param,
-				length * sizeof(float)
-			);
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 1);
+
+			length = std::min< int >(length, i->second.parameters.size());
+			if (length > 0)
+			{
+				std::memcpy(
+					&m_vertexParameters[i->second.offsetOrStage],
+					param,
+					length * sizeof(float)
+				);
+			}
 		}
 	}
 
-	std::map< handle_t, Parameter >::iterator j = m_pixelParameterMap.find(handle);
-	if (j != m_pixelParameterMap.end())
 	{
-		T_ASSERT (!j->second.sampler);
-
-		length = std::min< int >(length, i->second.parameters.size() * i->second.stride);
-		if (length > 0)
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
 		{
-			std::memcpy(
-				&m_pixelParameters[j->second.offsetOrStage],
-				param,
-				length * sizeof(float)
-			);
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 1);
+
+			length = std::min< int >(length, i->second.parameters.size());
+			if (length > 0)
+			{
+				std::memcpy(
+					&m_pixelParameters[i->second.offsetOrStage],
+					param,
+					length * sizeof(float)
+				);
+			}
 		}
 	}
 }
 
 void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	setFloatArrayParameter(handle, (const float*)&param, 4);
+	{
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			param.store(&m_vertexParameters[i->second.offsetOrStage]);
+		}
+	}
+
+	{
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			param.store(&m_pixelParameters[i->second.offsetOrStage]);
+		}
+	}
 }
 
 void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	setFloatArrayParameter(handle, (const float*)param, 4 * length);
+	{
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 4);
+
+			length = std::min< int >(length, i->second.parameters.size() * 4);
+			for (int j = 0; j < length; ++j)
+				param[j].store(&m_vertexParameters[i->second.offsetOrStage + j * 4]);
+		}
+	}
+
+	{
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 4);
+
+			length = std::min< int >(length, i->second.parameters.size() * 4);
+			for (int j = 0; j < length; ++j)
+				param[j].store(&m_pixelParameters[i->second.offsetOrStage + j * 4]);
+		}
+	}
 }
 
 void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	setFloatArrayParameter(handle, (const float*)&param, 4 * 4);
+	{
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			param.store(&m_vertexParameters[i->second.offsetOrStage]);
+		}
+	}
+
+	{
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			param.store(&m_pixelParameters[i->second.offsetOrStage]);
+		}
+	}
 }
 
 void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	setFloatArrayParameter(handle, (const float*)param, 4 * 4 * length);
+	{
+		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
+		if (i != m_vertexParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 16);
+
+			length = std::min< int >(length, i->second.parameters.size() * 16);
+			for (int j = 0; j < length; ++j)
+				param[j].store(&m_vertexParameters[i->second.offsetOrStage + j * 16]);
+		}
+	}
+
+	{
+		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
+		if (i != m_pixelParameterMap.end())
+		{
+			T_ASSERT (!i->second.sampler);
+			T_ASSERT (i->second.stride == 16);
+
+			length = std::min< int >(length, i->second.parameters.size() * 16);
+			for (int j = 0; j < length; ++j)
+				param[j].store(&m_pixelParameters[i->second.offsetOrStage + j * 16]);
+		}
+	}
 }
 
 void ProgramPs3::setSamplerTexture(handle_t handle, ITexture* texture)

@@ -23,6 +23,8 @@ class T_MATH_ALIGN16 T_DLLCLASS Scalar
 public:
 #if defined(T_MATH_USE_SSE2)
 	__m128 m_data;
+#elif defined(T_MATH_USE_ALTIVEC)
+	vec_float4 m_data;
 #else
 	float m_data;
 #endif
@@ -35,6 +37,8 @@ public:
 
 #if defined(T_MATH_USE_SSE2)
 	explicit T_MATH_INLINE Scalar(__m128 value);
+#elif defined(T_MATH_USE_ALTIVEC)
+	explicit T_MATH_INLINE Scalar(vec_float4 value);
 #endif
 
 	T_MATH_INLINE Scalar operator - () const;
@@ -74,6 +78,8 @@ T_MATH_INLINE T_DLLCLASS Scalar abs(const Scalar& s);
 
 T_MATH_INLINE T_DLLCLASS Scalar squareRoot(const Scalar& s);
 
+T_MATH_INLINE T_DLLCLASS Scalar reciprocalSquareRoot(const Scalar& s);
+
 T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Scalar& c);
 
 }
@@ -81,6 +87,8 @@ T_MATH_INLINE T_DLLCLASS Scalar lerp(const Scalar& a, const Scalar& b, const Sca
 #if defined(T_MATH_USE_INLINE)
 #	if defined(T_MATH_USE_SSE2)
 #		include "Core/Math/Sse2/Scalar.inl"
+#	elif defined(T_MATH_USE_ALTIVEC)
+#		include "Core/Math/AltiVec/Scalar.inl"
 #	else
 #		include "Core/Math/Std/Scalar.inl"
 #	endif
