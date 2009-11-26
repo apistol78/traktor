@@ -892,20 +892,20 @@ bool emitReflect(CgContext& cx, Reflect* node)
 
 bool emitSampler(CgContext& cx, Sampler* node)
 {
-	//const DWORD d3dFilter[] =
-	//{
-	//	D3DTEXF_POINT,
-	//	D3DTEXF_LINEAR,
-	//	D3DTEXF_ANISOTROPIC
-	//};
+	const uint8_t gcmFilter[] =
+	{
+		CELL_GCM_TEXTURE_NEAREST,
+		CELL_GCM_TEXTURE_LINEAR,
+		CELL_GCM_TEXTURE_LINEAR
+	};
 
-	//const DWORD d3dAddress[] =
-	//{
-	//	D3DTADDRESS_WRAP,
-	//	D3DTADDRESS_MIRROR,
-	//	D3DTADDRESS_CLAMP,
-	//	D3DTADDRESS_BORDER
-	//};
+	const uint8_t gcmAddress[] =
+	{
+		CELL_GCM_TEXTURE_WRAP,
+		CELL_GCM_TEXTURE_MIRROR,
+		CELL_GCM_TEXTURE_CLAMP,
+		CELL_GCM_TEXTURE_BORDER
+	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 	CgVariable* texCoord = cx.emitInput(node, L"TexCoord");
@@ -950,24 +950,35 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		}
 	}
 
-	const std::set< std::wstring >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(samplerName) == samplers.end())
+	const std::map< std::wstring, uint32_t >& samplers = cx.getShader().getSamplers();
+	if (samplers.find(node->getParameterName()) == samplers.end())
 	{
-		int32_t sampler = int32_t(samplers.size());
+		uint32_t sampler = uint32_t(samplers.size());
 
 		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
 		fu << L"sampler " << samplerName << L" : register(s" << sampler << L");" << Endl;
 		
-		//StateBlockDx9& state = cx.getState();
-		//state.setSamplerState(sampler, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
-		//state.setSamplerState(sampler, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
-		//state.setSamplerState(sampler, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
-		//state.setSamplerState(sampler, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
-		//state.setSamplerState(sampler, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
-		//state.setSamplerState(sampler, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
-		//state.setSamplerState(sampler, D3DSAMP_BORDERCOLOR, 0xffffffff);
+		RenderState& rs = cx.getRenderState();
+		SamplerState& ss = rs.samplerStates[sampler];
+
+		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+
+		if (!minLinear && !mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
+		else if (!minLinear && mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_NEAREST_LINEAR;
+		else if (minLinear && !mipLinear)
+			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_NEAREST;
+		else
+			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
+
+		ss.magFilter = gcmFilter[node->getMagFilter()];
+		ss.wrapU = gcmAddress[node->getAddressU()];
+		ss.wrapV = gcmAddress[node->getAddressV()];
+		ss.wrapW = gcmAddress[node->getAddressW()];
 		
-		cx.getShader().addSampler(samplerName);
+		cx.getShader().addSampler(node->getParameterName(), sampler);
 	}
 
 	return true;

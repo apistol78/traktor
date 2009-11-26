@@ -20,9 +20,16 @@ public:
 	struct Parameter
 	{
 		std::wstring name;
-		bool sampler;
 		int32_t size;		//< Number of elements, ie float4 == 4, float4x4 == 16 etc.
 		int32_t count;		//< Size of indexed uniforms.
+
+		bool serialize(ISerializer& s);
+	};
+
+	struct Sampler
+	{
+		std::wstring name;
+		uint32_t stage;
 
 		bool serialize(ISerializer& s);
 	};
@@ -33,6 +40,8 @@ public:
 		CGCbin* vertexShaderBin,
 		CGCbin* pixelShaderBin,
 		const std::vector< Parameter >& parameters,
+		const std::vector< Sampler >& vertexSamplers,
+		const std::vector< Sampler >& pixelSamplers,
 		const RenderState& renderState
 	);
 
@@ -52,6 +61,14 @@ public:
 		return m_parameters;
 	}
 
+	const std::vector< Sampler >& getVertexSamplers() const {
+		return m_vertexSamplers;
+	}
+
+	const std::vector< Sampler >& getPixelSamplers() const {
+		return m_pixelSamplers;
+	}
+
 	const RenderState& getRenderState() const {
 		return m_renderState;
 	}
@@ -60,6 +77,8 @@ private:
 	CGCbin* m_vertexShaderBin;
 	CGCbin* m_pixelShaderBin;
 	std::vector< Parameter > m_parameters;
+	std::vector< Sampler > m_vertexSamplers;
+	std::vector< Sampler > m_pixelSamplers;
 	RenderState m_renderState;
 };
 

@@ -45,6 +45,8 @@ bool Cg::generate(
 	outProgram = CgProgram(
 		cx.getVertexShader().getGeneratedShader(cx.needVPos()),
 		cx.getPixelShader().getGeneratedShader(cx.needVPos()),
+		cx.getVertexShader().getSamplers(),
+		cx.getPixelShader().getSamplers(),
 		cx.getRenderState()
 	);
 

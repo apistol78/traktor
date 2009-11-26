@@ -29,9 +29,13 @@ public:
 	struct Parameter
 	{
 		std::vector< CGparameter > parameters;
-		bool sampler;
-		uint32_t offsetOrStage;
+		uint32_t offset;
 		uint32_t stride;
+	};
+
+	struct Sampler
+	{
+		uint32_t stage;
 	};
 
 	ProgramPs3();
@@ -75,7 +79,8 @@ private:
 	std::vector< float > m_vertexParameters;
 	std::map< handle_t, Parameter > m_pixelParameterMap;
 	std::vector< float > m_pixelParameters;
-	ITexture* m_pixelTextures[16];
+	std::map< handle_t, Sampler > m_pixelSamplerMap;
+	ITexture* m_pixelTextures[8];
 	RenderState m_renderState;
 };
 

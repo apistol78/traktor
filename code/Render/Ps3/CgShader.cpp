@@ -92,12 +92,12 @@ void CgShader::popScope()
 	m_variables.pop_back();
 }
 
-void CgShader::addSampler(const std::wstring& sampler)
+void CgShader::addSampler(const std::wstring& sampler, uint32_t stage)
 {
-	m_samplers.insert(sampler);
+	m_samplers.insert(std::make_pair(sampler, stage));
 }
 
-const std::set< std::wstring >& CgShader::getSamplers() const
+const std::map< std::wstring, uint32_t >& CgShader::getSamplers() const
 {
 	return m_samplers;
 }

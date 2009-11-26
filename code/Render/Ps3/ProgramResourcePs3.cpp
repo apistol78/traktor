@@ -2,6 +2,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
 
 namespace traktor
@@ -55,6 +56,29 @@ private:
 	CGCbin*& m_ref;
 };
 
+class MemberSamplerState : public MemberComplex
+{
+public:
+	MemberSamplerState(const std::wstring& name, SamplerState& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint8_t >(L"minFilter", m_ref.minFilter);
+		s >> Member< uint8_t >(L"magFilter", m_ref.magFilter);
+		s >> Member< uint8_t >(L"wrapU", m_ref.wrapU);
+		s >> Member< uint8_t >(L"wrapV", m_ref.wrapV);
+		s >> Member< uint8_t >(L"wrapW", m_ref.wrapW);
+		return true;
+	}
+
+private:
+	SamplerState& m_ref;
+};
+
 class MemberRenderState : public MemberComplex
 {
 public:
@@ -79,6 +103,7 @@ public:
 		s >> Member< uint32_t >(L"alphaTestEnable", m_ref.alphaTestEnable);
 		s >> Member< uint32_t >(L"alphaFunc", m_ref.alphaFunc);
 		s >> Member< uint32_t >(L"alphaRef", m_ref.alphaRef);
+		s >> MemberStaticArray< SamplerState, 8, MemberSamplerState >(L"samplerStates", m_ref.samplerStates);
 		return true;
 	}
 
@@ -100,11 +125,15 @@ ProgramResourcePs3::ProgramResourcePs3(
 	CGCbin* vertexShaderBin,
 	CGCbin* pixelShaderBin,
 	const std::vector< Parameter >& parameters,
+	const std::vector< Sampler >& vertexSamplers,
+	const std::vector< Sampler >& pixelSamplers,
 	const RenderState& renderState
 )
 :	m_vertexShaderBin(vertexShaderBin)
 ,	m_pixelShaderBin(pixelShaderBin)
 ,	m_parameters(parameters)
+,	m_vertexSamplers(vertexSamplers)
+,	m_pixelSamplers(pixelSamplers)
 ,	m_renderState(renderState)
 {
 }
@@ -125,6 +154,8 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< Parameter, MemberComposite< Parameter > >(L"parameters", m_parameters);
+	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"pixelSamplers", m_pixelSamplers);
 	s >> MemberRenderState(L"renderState", m_renderState);
 
 	return true;
@@ -133,9 +164,15 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 bool ProgramResourcePs3::Parameter::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< bool >(L"sampler", sampler);
 	s >> Member< int32_t >(L"size", size);
 	s >> Member< int32_t >(L"count", count);
+	return true;
+}
+
+bool ProgramResourcePs3::Sampler::serialize(ISerializer& s)
+{
+	s >> Member< std::wstring >(L"name", name);
+	s >> Member< uint32_t >(L"stage", stage);
 	return true;
 }
 

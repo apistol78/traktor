@@ -9,6 +9,24 @@ namespace traktor
 	namespace render
 	{
 
+struct SamplerState
+{
+	uint8_t minFilter;
+	uint8_t magFilter;
+	uint8_t wrapU;
+	uint8_t wrapV;
+	uint8_t wrapW;
+
+	SamplerState()
+	:	minFilter(CELL_GCM_TEXTURE_NEAREST_LINEAR)
+	,	magFilter(CELL_GCM_TEXTURE_LINEAR)
+	,	wrapU(CELL_GCM_TEXTURE_WRAP)
+	,	wrapV(CELL_GCM_TEXTURE_WRAP)
+	,	wrapW(CELL_GCM_TEXTURE_CLAMP_TO_EDGE)
+	{
+	}
+};
+
 struct RenderState
 {
 	uint32_t cullFaceEnable;
@@ -24,6 +42,7 @@ struct RenderState
 	uint32_t alphaTestEnable;
 	uint32_t alphaFunc;
 	uint32_t alphaRef;
+	SamplerState samplerStates[8];
 
 	RenderState()
 	:	cullFaceEnable(CELL_GCM_TRUE)
@@ -41,10 +60,6 @@ struct RenderState
 	,	alphaRef(0)
 	{
 	}
-};
-
-struct SamplerState
-{
 };
 
 bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& outGcmFormat);

@@ -202,17 +202,17 @@ void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 		gCellGcmCurrentContext,
 		stage,
 		0,
-		CELL_GCM_TEXTURE_LINEAR_LINEAR,
-		CELL_GCM_TEXTURE_LINEAR,
+		samplerState.minFilter,
+		samplerState.magFilter,
 		CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 	);
 
 	cellGcmSetTextureAddress(
 		gCellGcmCurrentContext,
 		stage,
-		CELL_GCM_TEXTURE_WRAP,
-		CELL_GCM_TEXTURE_WRAP,
-		CELL_GCM_TEXTURE_WRAP,
+		samplerState.wrapU,
+		samplerState.wrapV,
+		samplerState.wrapW,
 		CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
 		CELL_GCM_TEXTURE_ZFUNC_NEVER,
 		0

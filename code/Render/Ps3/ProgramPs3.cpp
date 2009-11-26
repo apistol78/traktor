@@ -30,48 +30,30 @@ int buildParameterMap(
 	{
 		handle_t handle = getParameterHandle(i->name);
 
-		if (!i->sampler)
-		{
-			std::vector< CGparameter > parameters;
+		std::vector< CGparameter > parameters;
 
-			if (i->count > 1)
+		if (i->count > 1)
+		{
+			for (int32_t j = 0; j < i->count; ++j)
 			{
-				for (int32_t j = 0; j < i->count; ++j)
-				{
-					CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name + L"[" + toString(j) + L"]").c_str());
-					if (parameter)
-						parameters.push_back(parameter);
-				}
-			}
-			else
-			{
-				CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name).c_str());
+				CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name + L"[" + toString(j) + L"]").c_str());
 				if (parameter)
 					parameters.push_back(parameter);
-			}
-
-			if (!parameters.empty())
-			{
-				outParameterMap[handle].parameters = parameters;
-				outParameterMap[handle].sampler = false;
-				outParameterMap[handle].offsetOrStage = offset;
-				outParameterMap[handle].stride = i->size;
-				offset += i->size * int32_t(parameters.size());
 			}
 		}
 		else
 		{
-			CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(L"sampler_" + i->name).c_str());
-			if (!parameter)
-				continue;
+			CGparameter parameter = cellGcmCgGetNamedParameter(program, wstombs(i->name).c_str());
+			if (parameter)
+				parameters.push_back(parameter);
+		}
 
-			CGresource resource = cellGcmCgGetParameterResource(program, parameter);
-			if (resource < CG_TEXUNIT0 || resource > CG_TEXUNIT15)
-				continue;
-
-			outParameterMap[handle].parameters.push_back(parameter);
-			outParameterMap[handle].sampler = true;
-			outParameterMap[handle].offsetOrStage = resource - CG_TEXUNIT0;
+		if (!parameters.empty())
+		{
+			outParameterMap[handle].parameters = parameters;
+			outParameterMap[handle].offset = offset;
+			outParameterMap[handle].stride = i->size;
+			offset += i->size * int32_t(parameters.size());
 		}
 	}
 
@@ -133,6 +115,13 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 	size = buildParameterMap(resource, m_pixelProgram, m_pixelParameterMap);
 	m_pixelParameters.resize(size);
 
+	const std::vector< ProgramResourcePs3::Sampler >& samplers = resource->getPixelSamplers();
+	for (std::vector< ProgramResourcePs3::Sampler >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->name);
+		m_pixelSamplerMap[handle].stage = i->stage;
+	}
+
 	m_renderState = resource->getRenderState();
 	return true;
 }
@@ -153,19 +142,13 @@ void ProgramPs3::setFloatParameter(handle_t handle, float param)
 	{
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			m_vertexParameters[i->second.offsetOrStage] = param;
-		}
+			m_vertexParameters[i->second.offset] = param;
 	}
 
 	{
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			m_pixelParameters[i->second.offsetOrStage] = param;
-		}
+			m_pixelParameters[i->second.offset] = param;
 	}
 }
 
@@ -175,14 +158,13 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 1);
 
 			length = std::min< int >(length, i->second.parameters.size());
 			if (length > 0)
 			{
 				std::memcpy(
-					&m_vertexParameters[i->second.offsetOrStage],
+					&m_vertexParameters[i->second.offset],
 					param,
 					length * sizeof(float)
 				);
@@ -194,14 +176,13 @@ void ProgramPs3::setFloatArrayParameter(handle_t handle, const float* param, int
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 1);
 
 			length = std::min< int >(length, i->second.parameters.size());
 			if (length > 0)
 			{
 				std::memcpy(
-					&m_pixelParameters[i->second.offsetOrStage],
+					&m_pixelParameters[i->second.offset],
 					param,
 					length * sizeof(float)
 				);
@@ -215,19 +196,13 @@ void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 	{
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			param.store(&m_vertexParameters[i->second.offsetOrStage]);
-		}
+			param.store(&m_vertexParameters[i->second.offset]);
 	}
 
 	{
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			param.store(&m_pixelParameters[i->second.offsetOrStage]);
-		}
+			param.store(&m_pixelParameters[i->second.offset]);
 	}
 }
 
@@ -237,12 +212,11 @@ void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, 
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 4);
 
 			length = std::min< int >(length, i->second.parameters.size() * 4);
 			for (int j = 0; j < length; ++j)
-				param[j].store(&m_vertexParameters[i->second.offsetOrStage + j * 4]);
+				param[j].store(&m_vertexParameters[i->second.offset + j * 4]);
 		}
 	}
 
@@ -250,12 +224,11 @@ void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, 
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 4);
 
 			length = std::min< int >(length, i->second.parameters.size() * 4);
 			for (int j = 0; j < length; ++j)
-				param[j].store(&m_pixelParameters[i->second.offsetOrStage + j * 4]);
+				param[j].store(&m_pixelParameters[i->second.offset + j * 4]);
 		}
 	}
 }
@@ -265,19 +238,13 @@ void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 	{
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			param.store(&m_vertexParameters[i->second.offsetOrStage]);
-		}
+			param.store(&m_vertexParameters[i->second.offset]);
 	}
 
 	{
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
-		{
-			T_ASSERT (!i->second.sampler);
-			param.store(&m_pixelParameters[i->second.offsetOrStage]);
-		}
+			param.store(&m_pixelParameters[i->second.offset]);
 	}
 }
 
@@ -287,12 +254,11 @@ void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param,
 		std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.find(handle);
 		if (i != m_vertexParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 16);
 
 			length = std::min< int >(length, i->second.parameters.size() * 16);
 			for (int j = 0; j < length; ++j)
-				param[j].store(&m_vertexParameters[i->second.offsetOrStage + j * 16]);
+				param[j].store(&m_vertexParameters[i->second.offset + j * 16]);
 		}
 	}
 
@@ -300,24 +266,20 @@ void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param,
 		std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
 		if (i != m_pixelParameterMap.end())
 		{
-			T_ASSERT (!i->second.sampler);
 			T_ASSERT (i->second.stride == 16);
 
 			length = std::min< int >(length, i->second.parameters.size() * 16);
 			for (int j = 0; j < length; ++j)
-				param[j].store(&m_pixelParameters[i->second.offsetOrStage + j * 16]);
+				param[j].store(&m_pixelParameters[i->second.offset + j * 16]);
 		}
 	}
 }
 
 void ProgramPs3::setSamplerTexture(handle_t handle, ITexture* texture)
 {
-	std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.find(handle);
-	if (i != m_pixelParameterMap.end())
-	{
-		T_ASSERT (i->second.sampler);
-		m_pixelTextures[i->second.offsetOrStage] = texture;
-	}
+	std::map< handle_t, Sampler >::iterator i = m_pixelSamplerMap.find(handle);
+	if (i != m_pixelSamplerMap.end())
+		m_pixelTextures[i->second.stage] = texture;
 }
 
 void ProgramPs3::setStencilReference(uint32_t stencilReference)
@@ -347,15 +309,12 @@ void ProgramPs3::bind()
 
 	for (std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.begin(); i != m_vertexParameterMap.end(); ++i)
 	{
-		if (i->second.sampler)
-			continue;
-
 		for (uint32_t j = 0; j < i->second.parameters.size(); ++j)
 		{
 			cellGcmSetVertexProgramParameter(
 				gCellGcmCurrentContext,
 				i->second.parameters[j],
-				&m_vertexParameters[i->second.offsetOrStage + j * i->second.stride]
+				&m_vertexParameters[i->second.offset + j * i->second.stride]
 			);
 		}
 	}
@@ -364,29 +323,26 @@ void ProgramPs3::bind()
 
 	for (std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.begin(); i != m_pixelParameterMap.end(); ++i)
 	{
-		if (i->second.sampler)
-			continue;
-
 		for (uint32_t j = 0; j < i->second.parameters.size(); ++j)
 		{
 			cellGcmSetFragmentProgramParameter(
 				gCellGcmCurrentContext,
 				m_pixelProgram,
 				i->second.parameters[j],
-				&m_pixelParameters[i->second.offsetOrStage + j * i->second.stride],
+				&m_pixelParameters[i->second.offset + j * i->second.stride],
 				m_pixelShaderOffset
 			);
 		}
 	}
 
-	for (int i = 0; i < 16; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		if (m_pixelTextures[i])
 		{
 			if (is_a< SimpleTexturePs3 >(m_pixelTextures[i]))
-				static_cast< SimpleTexturePs3* >(m_pixelTextures[i])->bind(i, *(SamplerState*)0);
+				static_cast< SimpleTexturePs3* >(m_pixelTextures[i])->bind(i, m_renderState.samplerStates[i]);
 			else if (is_a< RenderTargetPs3 >(m_pixelTextures[i]))
-				static_cast< RenderTargetPs3* >(m_pixelTextures[i])->bind(i, *(SamplerState*)0);
+				static_cast< RenderTargetPs3* >(m_pixelTextures[i])->bind(i, m_renderState.samplerStates[i]);
 		}
 		else
 			cellGcmSetTextureControl(
