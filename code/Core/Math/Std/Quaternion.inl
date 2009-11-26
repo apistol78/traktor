@@ -135,8 +135,6 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 {
 	T_ASSERT (abs(from.w()) == 0.0f);
 	T_ASSERT (abs(to.w()) == 0.0f);
-	T_ASSERT (abs(1.0f - from.length()) < FUZZY_EPSILON);
-	T_ASSERT (abs(1.0f - to.length()) < FUZZY_EPSILON);
 
 	Vector4 c = cross(from, to);
 	float d = dot3(from, to);

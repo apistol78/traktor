@@ -25,6 +25,8 @@ class T_MATH_ALIGN16 T_DLLCLASS Vector4
 public:
 #if defined(T_MATH_USE_SSE2)
 	__m128 m_data;
+#elif defined(T_MATH_USE_ALTIVEC)
+	vec_float4 m_data;
 #else
 	union
 	{
@@ -39,6 +41,8 @@ public:
 
 #if defined(T_MATH_USE_SSE2)
 	explicit T_MATH_INLINE Vector4(__m128 v);
+#elif defined(T_MATH_USE_ALTIVEC)
+	explicit T_MATH_INLINE Vector4(vec_float4 v);
 #endif
 
 	explicit T_MATH_INLINE Vector4(float x, float y, float z, float w = 0);
@@ -73,6 +77,10 @@ public:
 		Vector4 tmp; tmp.m_data = _mm_shuffle_ps(m_data, m_data, mask);
 		return tmp;
 #else
+#	if defined(T_MATH_USE_ALTIVEC)
+		float T_MATH_ALIGN16 _e[4];
+		vec_st(m_data, 0, _e);
+#	endif
 		return Vector4(_e[iX], _e[iY], _e[iZ], _e[iW]);
 #endif
 	}
@@ -163,6 +171,8 @@ T_MATH_INLINE T_DLLCLASS Vector4 max(const Vector4& l, const Vector4& r);
 #if defined(T_MATH_USE_INLINE)
 #	if defined(T_MATH_USE_SSE2)
 #		include "Core/Math/Sse2/Vector4.inl"
+#	elif defined(T_MATH_USE_ALTIVEC)
+#		include "Core/Math/AltiVec/Vector4.inl"
 #	else
 #		include "Core/Math/Std/Vector4.inl"
 #	endif

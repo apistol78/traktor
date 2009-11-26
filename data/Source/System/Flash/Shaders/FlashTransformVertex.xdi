@@ -124,8 +124,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>230</first>
-				<second>508</second>
+				<first>8</first>
+				<second>665</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -135,10 +135,25 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>452</first>
-				<second>521</second>
+				<first>578</first>
+				<second>539</second>
 			</position>
 			<name>Color</name>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment></comment>
+			<position>
+				<first>342</first>
+				<second>502</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment></comment>
+			<position>
+				<first>241</first>
+				<second>627</second>
+			</position>
+			<swizzle>wzyx</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -308,8 +323,38 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>GCM</name>
 			</destination>
 		</item>
 	</edges>

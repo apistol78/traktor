@@ -45,11 +45,24 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(v1.x, 3.5f);
 	CASE_ASSERT_EQUAL(v1.y, 4.5f);
 
-	CASE_ASSERT_EQUAL(v1.length(), sqrt(3.5f * 3.5f + 4.5f * 4.5f));
+	CASE_ASSERT_EQUAL(v1.length(), std::sqrt(3.5f * 3.5f + 4.5f * 4.5f));
 	CASE_ASSERT_EQUAL(v1.length2(), (3.5f * 3.5f + 4.5f * 4.5f));
 	
 	CASE_ASSERT_EQUAL(Vector2(1.0f, 2.0f) + 3.0f, Vector2(4.0f, 5.0f));
 	CASE_ASSERT_EQUAL(Vector2(1.0f, 2.0f) + Vector2(2.0f, 3.0f), Vector2(3.0f, 5.0f));
+
+	// Unaligned store/load
+	float vd1[5] = { 666.0f, 1.0f, 2.0f, 3.0f, 4.0f };
+	Vector4 unalignedLoad(&vd1[1]);
+	CASE_ASSERT_COMPARE(unalignedLoad, Vector4(1.0f, 2.0f, 3.0f, 4.0f), compareEqual);
+
+	float vd2[5] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	unalignedLoad.store(&vd2[1]);
+	CASE_ASSERT_EQUAL(vd2[0], 0.0f);
+	CASE_ASSERT_EQUAL(vd2[1], 1.0f);
+	CASE_ASSERT_EQUAL(vd2[2], 2.0f);
+	CASE_ASSERT_EQUAL(vd2[3], 3.0f);
+	CASE_ASSERT_EQUAL(vd2[4], 4.0f);
 
 	Vector4 v2(1.5f, 2.5f, 3.5f, 4.5f);
 
@@ -65,7 +78,11 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(v2.z(), 7.5f);
 	CASE_ASSERT_EQUAL(v2.w(), 8.5f);
 
-	CASE_ASSERT_EQUAL(v2.length(), sqrt(5.5f * 5.5f + 6.5f * 6.5f + 7.5f * 7.5f + 8.5f * 8.5f));
+	Scalar ln = v2.length();
+	float fln = ln;
+	float flnr = std::sqrt(5.5f * 5.5f + 6.5f * 6.5f + 7.5f * 7.5f + 8.5f * 8.5f);
+	CASE_ASSERT_EQUAL(fln, flnr);
+
 	CASE_ASSERT_EQUAL(v2.length2(), (5.5f * 5.5f + 6.5f * 6.5f + 7.5f * 7.5f + 8.5f * 8.5f));
 
 	CASE_ASSERT_EQUAL(Vector4(1.0f, 2.0f, 3.0f, 4.0f) + Scalar(5.0f), Vector4(6.0f, 7.0f, 8.0f, 9.0f));
