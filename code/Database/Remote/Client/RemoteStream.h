@@ -20,6 +20,8 @@ class RemoteStream : public IStream
 public:
 	RemoteStream(Connection* connection, uint32_t handle);
 
+	virtual ~RemoteStream();
+
 	virtual void close();
 
 	virtual bool canRead() const;

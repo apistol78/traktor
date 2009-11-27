@@ -14,6 +14,7 @@
 #include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 
 namespace traktor
@@ -81,9 +82,15 @@ bool LocalInstance::openTransaction()
 bool LocalInstance::commitTransaction()
 {
 	if (!m_transaction)
+	{
+		log::error << L"commitTransaction failed; no pending transaction" << Endl;
 		return false;
+	}
 	if (!m_transaction->commit(m_context))
+	{
+		log::error << L"commitTransaction failed; commit failed" << Endl;
 		return false;
+	}
 	if (!m_transactionName.empty())
 		m_instancePath = m_instancePath = m_instancePath.getPathOnly() + L"/" + m_transactionName;
 	return true;

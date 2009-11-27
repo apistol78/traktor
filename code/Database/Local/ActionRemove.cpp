@@ -3,6 +3,7 @@
 #include "Database/Local/PhysicalAccess.h"
 #include "Database/Local/LocalInstanceMeta.h"
 #include "Core/Io/FileSystem.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -23,7 +24,10 @@ bool ActionRemove::execute(Context* context)
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
+	{
+		log::error << L"Action remove failed; unable to read meta object" << Endl;
 		return false;
+	}
 
 	const std::vector< std::wstring >& blobs = instanceMeta->getBlobs();
 	for (std::vector< std::wstring >::const_iterator i = blobs.begin(); i != blobs.end(); ++i)
@@ -36,7 +40,10 @@ bool ActionRemove::execute(Context* context)
 		))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
+		{
+			log::error << L"Action remove failed; unable to move \"" << instanceDataPath.getPathName() << L"\"" << Endl;
 			return false;
+		}
 	}
 
 	if (FileSystem::getInstance().move(
@@ -46,7 +53,10 @@ bool ActionRemove::execute(Context* context)
 	))
 		m_renamedFiles.push_back(instanceObjectPath.getPathName());
 	else
+	{
+		log::error << L"Action remove failed; unable to move \"" << instanceObjectPath.getPathName() << L"~\"" << Endl;
 		return false;
+	}
 
 	if (FileSystem::getInstance().move(
 		instanceMetaPath.getPathName() + L"~",
@@ -55,7 +65,10 @@ bool ActionRemove::execute(Context* context)
 	))
 		m_renamedFiles.push_back(instanceMetaPath.getPathName());
 	else
+	{
+		log::error << L"Action remove failed; unable to move \"" << instanceMetaPath.getPathName() << L"~\"" << Endl;
 		return false;
+	}
 
 	return true;
 }
