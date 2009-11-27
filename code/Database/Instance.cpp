@@ -4,6 +4,7 @@
 #include "Database/Provider/IProviderBus.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/IStream.h"
@@ -137,15 +138,24 @@ bool Instance::commit(uint32_t flags)
 	Acquire< Mutex > __lock__(m_lock);
 
 	if ((flags & CfKeepCheckedOut) != 0 && m_removed)
+	{
+		log::error << L"Instance commit failed; cannot keep checked out as instance was removed" << Endl;
 		return false;
+	}
 
 	if (!m_providerInstance->commitTransaction())
+	{
+		log::error << L"Instance commit failed; commitTransaction failed" << Endl;
 		return false;
+	}
 
 	if ((flags & CfKeepCheckedOut) == 0)
 	{
 		if (!m_providerInstance->closeTransaction())
+		{
+			log::error << L"Instance commit failed; closeTransaction failed" << Endl;
 			return false;
+		}
 	}
 
 	if (m_providerBus)

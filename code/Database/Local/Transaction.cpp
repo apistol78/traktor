@@ -92,6 +92,7 @@ bool Transaction::commit(Context* context)
 	{
 		if (!m_actions[i]->execute(context))
 		{
+			log::error << L"Transaction action " << type_name(m_actions[i]) << L" failed; performing rollback" << Endl;
 			for (int32_t j = i; j >= 0; --j)
 			{
 				if (!m_actions[j]->undo(context))

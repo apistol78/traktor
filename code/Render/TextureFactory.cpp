@@ -181,6 +181,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			log::error << L"Unable to create texture, null texture" << Endl;
 	}
 
+	stream->close();
 	return texture;
 }
 
