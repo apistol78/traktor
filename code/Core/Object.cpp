@@ -31,7 +31,7 @@ inline bool isObjectHeapAllocated(const void* ptr)
 	return bool(header->magic == c_magic);
 }
 
-#if !defined(_DEBUG) && !defined(_PS3)
+#if !defined(_DEBUG) && !defined(_PS3) && !defined(__APPLE__)
 FastAllocator g_allocator(new StdAllocator());
 #else
 StdAllocator g_allocator;
