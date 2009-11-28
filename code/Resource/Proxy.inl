@@ -62,18 +62,23 @@ void Proxy< ResourceType >::replace(IResourceHandle* handle)
 template < typename ResourceType >
 bool Proxy< ResourceType >::valid() const
 {
-	T_ASSERT_M (m_handle, L"Trying to call unbound proxy");
-	if (m_resource != 0 && m_resource == m_handle->get())
-		return true;
-	else
+	if (!m_resource)
 		return false;
+
+	if (m_handle)
+	{	
+		if (m_resource != m_handle->get())
+			return false;
+	}
+
+	return true;
 }
 
 template < typename ResourceType >
 bool Proxy< ResourceType >::validate()
 {
-	T_ASSERT_M (m_handle, L"Trying to validate unbound proxy");
-	m_resource = (ResourceType*)m_handle->get();
+	if (m_handle)
+		m_resource = (ResourceType*)m_handle->get();
 	return m_resource != 0;
 }
 

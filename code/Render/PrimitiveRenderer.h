@@ -269,7 +269,7 @@ private:
 	struct Batch
 	{
 		uint8_t shaderId;
-		ITexture* texture;
+		Ref< ITexture > texture;
 		Primitives primitives;
 	};
 

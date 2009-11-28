@@ -147,7 +147,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, const st
 
 	Any returnValue;
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(__APPLE__)
 	if (std::setjmp(s_jb) == 0)
 #else
 	if (setjmp(s_jb) == 0)
@@ -174,7 +174,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 
 	Any returnValue;
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(__APPLE__)
 	if (std::setjmp(s_jb) == 0)
 #else
 	if (setjmp(s_jb) == 0)
