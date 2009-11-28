@@ -33,7 +33,21 @@ public:
 	Proxy< ResourceType >(const Guid& guid);
 
 	Proxy< ResourceType >(IResourceHandle* handle);
-	
+
+	template < typename DerivedType >
+	Proxy< ResourceType >(const Proxy< DerivedType >& rs)
+	:	m_handle(rs.m_handle)
+	,	m_resource(rs.m_resource)
+	,	m_guid(rs.m_guid)
+	{
+	}
+
+	template < typename DerivedType >
+	Proxy< ResourceType >(const Ref< DerivedType >& rs)
+	:	m_resource(rs)
+	{
+	}
+
 	/*! \brief Get resource's guid. */
 	const Guid& getGuid() const;
 

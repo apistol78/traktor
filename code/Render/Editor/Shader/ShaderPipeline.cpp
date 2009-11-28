@@ -96,21 +96,6 @@ struct BuildCombinationTask
 				return;
 			}
 
-			RefArray< Sampler > samplerNodes;
-			shaderGraphCombination->findNodesOf< Sampler >(samplerNodes);
-
-			for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
-			{
-				const Guid& textureGuid = (*i)->getExternal();
-				if (!textureGuid.isNull() && textureGuid.isValid())
-				{
-					programResource->addTexture(
-						(*i)->getParameterName(),
-						textureGuid
-					);
-				}
-			}
-
 			shaderResourceCombination->program = programResource;
 		}
 		else
@@ -122,7 +107,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 5, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 6, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -338,6 +323,21 @@ bool ShaderPipeline::buildOutput(
 	{
 		log::error << L"ShaderPipeline failed; " << failed << L" task(s) failed" << Endl;
 		return false;
+	}
+
+	RefArray< Sampler > samplerNodes;
+	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+
+	for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+	{
+		const Guid& textureGuid = (*i)->getExternal();
+		if (!textureGuid.isNull() && textureGuid.isValid())
+		{
+			shaderResource->addTexture(
+				(*i)->getParameterName(),
+				textureGuid
+			);
+		}
 	}
 
 	// Create output instance.

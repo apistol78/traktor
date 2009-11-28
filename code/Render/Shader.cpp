@@ -135,16 +135,9 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 	}
 }
 
-void Shader::setSamplerTexture(handle_t handle, ITexture* texture)
+void Shader::setSamplerTexture(handle_t handle, const resource::Proxy< ITexture >& texture)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setSamplerTexture(handle, texture);
-	}
+	m_textures[handle] = texture;
 }
 
 void Shader::setStencilReference(uint32_t stencilReference)
@@ -163,6 +156,15 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 {
 	if (!m_currentProgram)
 		return;
+
+	// Update textures here as resource proxies might have been updated.
+	for (std::map< handle_t, resource::Proxy< ITexture > >::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
+	{
+		if (i->second.validate())
+			m_currentProgram->setSamplerTexture(i->first, i->second);
+		else
+			m_currentProgram->setSamplerTexture(i->first, 0);
+	}
 
 	renderView->setProgram(m_currentProgram);
 	renderView->draw(primitives);

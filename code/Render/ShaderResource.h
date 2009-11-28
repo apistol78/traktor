@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include "Core/Guid.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -50,6 +51,10 @@ public:
 
 	const std::vector< Technique >& getTechniques() const;
 
+	void addTexture(const std::wstring& parameterName, const Guid& guid);
+
+	const std::vector< std::pair< std::wstring, Guid > >& getTextures() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -57,6 +62,7 @@ private:
 
 	std::map< std::wstring, uint32_t > m_parameterBits;
 	std::vector< Technique > m_techniques;
+	std::vector< std::pair< std::wstring, Guid > > m_textures;
 };
 
 	}

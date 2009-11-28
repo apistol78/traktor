@@ -133,9 +133,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx10", 0, Program
 
 bool ProgramResourceDx10::serialize(ISerializer& s)
 {
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	s >> MemberID3D10Blob(L"vertexShader", m_vertexShader);
 	s >> MemberID3D10Blob(L"pixelShader", m_pixelShader);
 	s >> MemberD3D10_RASTERIZER_DESC(L"d3dRasterizerDesc", m_d3dRasterizerDesc);

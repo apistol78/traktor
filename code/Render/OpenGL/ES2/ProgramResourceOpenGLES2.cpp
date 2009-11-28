@@ -62,9 +62,6 @@ bool ProgramResourceOpenGLES2::serialize(ISerializer& s)
 {
 	uint32_t renderStateSize = sizeof(m_renderState);
 
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	s >> Member< uint32_t >(L"bufferSize", m_bufferSize);
 	s >> MemberBuffer(L"buffer", m_buffer, m_bufferSize);
 	s >> MemberStlSet< std::wstring >(L"vertexSamplers", m_vertexSamplers);
