@@ -33,9 +33,6 @@ bool ProgramResourceOpenGL::serialize(ISerializer& s)
 {
 	uint32_t renderStateSize = sizeof(m_renderState);
 
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
 	s >> Member< std::wstring >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStlSet< std::wstring >(L"vertexSamplers", m_vertexSamplers);

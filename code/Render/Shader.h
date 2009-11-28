@@ -6,6 +6,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -60,7 +61,7 @@ public:
 
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	void setSamplerTexture(handle_t handle, ITexture* texture);
+	void setSamplerTexture(handle_t handle, const resource::Proxy< ITexture >& texture);
 
 	void setStencilReference(uint32_t stencilReference);
 
@@ -96,7 +97,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setSamplerTexture(const std::wstring& name, ITexture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
+	inline void setSamplerTexture(const std::wstring& name, const resource::Proxy< ITexture >& texture) { setSamplerTexture(getParameterHandle(name), texture); }
 
 	//@}
 
@@ -131,6 +132,7 @@ private:
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	Ref< IProgram > m_currentProgram;
+	std::map< handle_t, resource::Proxy< ITexture > > m_textures;
 
 	void updateCurrentProgram();
 };

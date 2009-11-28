@@ -17,9 +17,6 @@ ProgramResourceSw::ProgramResourceSw(const ShaderGraph* shaderGraph)
 
 bool ProgramResourceSw::serialize(ISerializer& s)
 {
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	return s >> MemberRef< ShaderGraph >(L"shaderGraph", m_shaderGraph);
 }
 

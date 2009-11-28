@@ -1,6 +1,6 @@
 #include "Render/TextureLinker.h"
-#include "Render/ProgramResource.h"
-#include "Render/IProgram.h"
+#include "Render/Shader.h"
+#include "Render/ShaderResource.h"
 
 namespace traktor
 {
@@ -14,14 +14,14 @@ TextureLinker::TextureLinker(TextureReader& textureReader)
 {
 }
 
-bool TextureLinker::link(const ProgramResource* programResource, IProgram* program)
+bool TextureLinker::link(const ShaderResource* shaderResource, Shader* shader)
 {
-	const std::vector< std::pair< std::wstring, Guid > >& textures = programResource->getTextures();
+	const std::vector< std::pair< std::wstring, Guid > >& textures = shaderResource->getTextures();
 	for (std::vector< std::pair< std::wstring, Guid > >::const_iterator i = textures.begin(); i != textures.end(); ++i)
 	{
-		Ref< ITexture > texture = m_textureReader.read(i->second);
+		resource::Proxy< ITexture > texture = m_textureReader.read(i->second);
 		if (texture)
-			program->setSamplerTexture(i->first, texture);
+			shader->setSamplerTexture(i->first, texture);
 	}
 	return true;
 }

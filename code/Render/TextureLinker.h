@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,8 +18,8 @@ namespace traktor
 	namespace render
 	{
 
-class ProgramResource;
-class IProgram;
+class Shader;
+class ShaderResource;
 class ITexture;
 
 /*! \brief Bind textures to shaders.
@@ -31,12 +32,12 @@ class T_DLLCLASS TextureLinker : public Object
 public:
 	struct TextureReader
 	{
-		virtual Ref< ITexture > read(const Guid& textureGuid) = 0;
+		virtual resource::Proxy< ITexture > read(const Guid& textureGuid) = 0;
 	};
 
 	TextureLinker(TextureReader& textureReader);
 
-	bool link(const ProgramResource* programResource, IProgram* program);
+	bool link(const ShaderResource* shaderResource, Shader* shader);
 
 private:
 	TextureReader& m_textureReader;

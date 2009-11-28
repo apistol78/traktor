@@ -1,9 +1,7 @@
 #ifndef traktor_render_ProgramResource_H
 #define traktor_render_ProgramResource_H
 
-#include <vector>
 #include "Core/Serialization/ISerializable.h"
-#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,19 +22,6 @@ namespace traktor
 class T_DLLCLASS ProgramResource : public ISerializable
 {
 	T_RTTI_CLASS;
-
-public:
-	void addTexture(const std::wstring& parameterName, const Guid& guid);
-
-	const std::vector< std::pair< std::wstring, Guid > >& getTextures() const;
-
-	virtual bool serialize(ISerializer& s);
-
-private:
-	friend class ShaderPipeline;
-	friend class ShaderFactory;
-
-	std::vector< std::pair< std::wstring, Guid > > m_textures;
 };
 
 	}

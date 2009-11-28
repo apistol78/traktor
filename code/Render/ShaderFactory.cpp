@@ -27,16 +27,13 @@ public:
 	{
 	}
 
-	virtual Ref< ITexture > read(const Guid& textureGuid)
+	virtual resource::Proxy< ITexture > read(const Guid& textureGuid)
 	{
-		Ref< resource::IResourceHandle > handle = m_resourceManager->bind< ITexture >(textureGuid);
-		if (handle)
-		{
-			Ref< Object > texture = handle->get();
-			return dynamic_type_cast< ITexture* >(texture);
-		}
+		resource::Proxy< ITexture > texture(textureGuid);
+		if (m_resourceManager->bind(texture))
+			return texture;
 		else
-			return 0;
+			return (ITexture*)0;
 	}
 
 private:
@@ -101,26 +98,12 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 					return 0;
 
 				programResource = programCompiler->compile(programShaderGraph, 4, false);
-				if (!programResource)
-					return 0;
-
-				RefArray< Sampler > samplerNodes;
-				programShaderGraph->findNodesOf< Sampler >(samplerNodes);
-
-				for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
-				{
-					const Guid& textureGuid = (*i)->getExternal();
-					if (!textureGuid.isNull() && textureGuid.isValid())
-					{
-						programResource->m_textures.push_back(std::make_pair(
-							(*i)->getParameterName(),
-							textureGuid
-						));
-					}
-				}
 			}
 			else
 				programResource = checked_type_cast< ProgramResource* >(j->program);
+
+			if (!programResource)
+				return 0;
 
 			Shader::Combination combination;
 			combination.parameterValue = j->parameterValue;
@@ -128,13 +111,13 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			if (!combination.program)
 				return 0;
 
-			TextureReaderAdapter textureReader(resourceManager);
-			if (!TextureLinker(textureReader).link(programResource, combination.program))
-				return 0;
-
 			technique.combinations.push_back(combination);
 		}
 	}
+
+	TextureReaderAdapter textureReader(resourceManager);
+	if (!TextureLinker(textureReader).link(shaderResource, shader))
+		return 0;
 
 	shader->setTechnique(L"Default");
 	return shader;

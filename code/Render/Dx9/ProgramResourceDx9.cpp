@@ -61,15 +61,11 @@ ProgramResourceDx9::ProgramResourceDx9()
 
 bool ProgramResourceDx9::serialize(ISerializer& s)
 {
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	s >> MemberID3DXBuffer(L"vertexShader", m_vertexShader);
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
 	s >> MemberComposite< StateBlockDx9 >(L"state", m_state);
-
 	return true;
 }
 
