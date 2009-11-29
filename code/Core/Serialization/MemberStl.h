@@ -241,20 +241,10 @@ public:
 
 	virtual bool insert() const
 	{
-		uint8_t key[sizeof(KeyType)];
-		std::memset(key, 0, sizeof(key));
-
-		uint8_t value[sizeof(ValueType)];
-		std::memset(value, 0, sizeof(value));
-
-		KeyType* k = new (key) KeyType();
-		ValueType* v = new (value) ValueType();
-
-		m_ref.insert(std::make_pair< KeyType, ValueType >(*k, *v));
-
-		k->~KeyType();
-		v->~ValueType();
-
+		m_ref.insert(std::make_pair< KeyType, ValueType >(
+			KeyType(),
+			ValueType()
+		));
 		return true;
 	}
 

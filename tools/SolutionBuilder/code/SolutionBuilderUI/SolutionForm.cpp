@@ -39,7 +39,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.0.0"
+#define TITLE L"SolutionBuilder v2.0.1"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -232,7 +232,7 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
 	RefArray< Project > projects = m_solution->getProjects();
-	//projects.sort(ProjectSortPredicate());
+	std::sort(projects.begin(), projects.end(), ProjectSortPredicate());
 
 	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 		createTreeProjectItem(treeSolution, *i);
@@ -248,12 +248,12 @@ void SolutionForm::updateMRU()
 	if (!m_mru->getUsedFiles(usedFiles))
 		return;
 
-	//for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
-	//{
-	//	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"File.MRU"), i->getPathName());
-	//	menuItem->setData(L"PATH", new Path(*i));
-	//	m_menuItemMRU->add(menuItem);
-	//}
+	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
+	{
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"File.MRU"), i->getPathName());
+		menuItem->setData(L"PATH", new Path(*i));
+		m_menuItemMRU->add(menuItem);
+	}
 }
 
 bool SolutionForm::isModified() const
@@ -492,26 +492,26 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 		commandSave(true);
 	else if (command == L"File.MRU")
 	{
-		//Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
-		//T_ASSERT (path);
+		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
+		T_ASSERT (path);
 
-		//Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
-		//if (file)
-		//{
-		//	m_solution = xml::XmlDeserializer(file).readObject< Solution >();
-		//	file->close();
+		Ref< IStream > file = FileSystem::getInstance().open(*path, traktor::File::FmRead);
+		if (file)
+		{
+			m_solution = xml::XmlDeserializer(file).readObject< Solution >();
+			file->close();
 
-		//	updateSolutionTree();
+			updateSolutionTree();
 
-		//	m_solutionHash = DeepHash(m_solution).get();
-		//	m_solutionFileName = path->getPathName();
+			m_solutionHash = DeepHash(m_solution).get();
+			m_solutionFileName = path->getPathName();
 
-		//	m_mru->usedFile(*path);
+			m_mru->usedFile(*path);
 
-		//	updateMRU();
-		//}
-		//else
-		//	ui::MessageBox::show(this, L"Unable to open solution", L"Error", ui::MbIconExclamation | ui::MbOk);
+			updateMRU();
+		}
+		else
+			ui::MessageBox::show(this, L"Unable to open solution", L"Error", ui::MbIconExclamation | ui::MbOk);
 	}
 	else if (command == L"File.Exit")
 		commandExit();
