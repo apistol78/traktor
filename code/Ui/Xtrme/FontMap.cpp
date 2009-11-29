@@ -18,6 +18,7 @@
 #include "Ui/Font.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
@@ -190,7 +191,7 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 #if defined(_WIN32)
 	Ref< IStream > stream = FileSystem::getInstance().open(L"C:/Windows/Fonts/" + font.getFace() + L".ttf", File::FmRead);
 #elif defined(__APPLE__)
-	Ref< IStream > stream = FileSystem::getInstance().open(L"/Library/Fonts/ArialHB.ttf", File::FmRead);
+	Ref< IStream > stream = FileSystem::getInstance().open(L"/Library/Fonts/Tahoma.ttf", File::FmRead);
 #else
 	Ref< IStream > stream = FileSystem::getInstance().open(L"/usr/share/fonts/truetype/DejaVuSans.ttf", File::FmRead);
 #endif
@@ -204,6 +205,9 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 	T_ASSERT (!err);
 
 	err = FT_New_Memory_Face(library, (const FT_Byte*)&fontBuffer[0], fontBuffer.size(), 0, &face);
+	T_ASSERT (!err);
+	
+	err = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
 	T_ASSERT (!err);
 
 	int pixelSize = abs(font.getSize());
@@ -235,8 +239,16 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 	{
 		int x = (i & 15) * (dim / 16);
 		int y = (i / 16) * (dim / 16);
+		
+		FT_UInt glyphIndex = FT_Get_Char_Index(face, char(i));
+		
+		log::info << L"Char " << int(i) << L" => Glyph " << glyphIndex << Endl;
 
-		err = FT_Load_Char(face, char(i), FT_LOAD_RENDER);
+		err = FT_Load_Glyph(face, glyphIndex, FT_LOAD_DEFAULT);
+		if (err)
+			continue;
+			
+		err = FT_Render_Glyph(face->glyph, FT_RENDER_MODE_NORMAL);
 		if (err)
 			continue;
 
@@ -247,9 +259,9 @@ void FontMap::create(render::IRenderSystem* renderSystem, const Font& font)
 				uint8_t* d = &dp[(x + xx) * 4 + (y + yy + (pixelSize - face->glyph->bitmap_top)) * lock.pitch];
 
 				uint8_t g = face->glyph->bitmap.buffer ? face->glyph->bitmap.buffer[xx + yy * face->glyph->bitmap.pitch] : 0;
-				d[0] = g;
-				d[1] = g;
-				d[2] = g;
+				d[0] = 0;
+				d[1] = 0;
+				d[2] = 0;
 				d[3] = g;
 			}
 		}
