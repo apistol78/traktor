@@ -1072,18 +1072,18 @@ void EditorForm::updateTitle()
 
 void EditorForm::updateMRU()
 {
-	//m_menuItemMRU->removeAll();
+	m_menuItemMRU->removeAll();
 
-	//std::vector< Path > usedFiles;
-	//if (!m_mru->getUsedFiles(usedFiles))
-	//	return;
+	std::vector< Path > usedFiles;
+	if (!m_mru->getUsedFiles(usedFiles))
+		return;
 
-	//for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
-	//{
-	//	Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.MRU"), i->getPathName());
-	//	menuItem->setData(L"PATH", new Path(*i));
-	//	m_menuItemMRU->add(menuItem);
-	//}
+	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
+	{
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.MRU"), i->getPathName());
+		menuItem->setData(L"PATH", new Path(*i));
+		m_menuItemMRU->add(menuItem);
+	}
 }
 
 void EditorForm::updateShortcutTable()
@@ -1804,11 +1804,11 @@ void EditorForm::eventMenuClick(ui::Event* event)
 	const ui::Command& command = checked_type_cast< const ui::MenuItem* >(event->getItem())->getCommand();
 	if (command == L"Editor.MRU")
 	{
-		//Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
-		//T_ASSERT (path);
+		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
+		T_ASSERT (path);
 
-		//if (handleMRU(command, *path))
-		//	event->consume();
+		if (handleMRU(command, *path))
+			event->consume();
 	}
 	else if (handleCommand(command))
 		event->consume();
