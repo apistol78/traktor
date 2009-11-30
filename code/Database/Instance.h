@@ -47,6 +47,8 @@ public:
 
 	void internalDestroy();
 
+	void internalReset();
+
 	virtual std::wstring getName() const;
 
 	virtual std::wstring getPath() const;

@@ -59,6 +59,13 @@ void Instance::internalDestroy()
 #endif
 }
 
+void Instance::internalReset()
+{
+#if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
+	m_cache = 0;
+#endif
+}
+
 std::wstring Instance::getName() const
 {
 	T_ASSERT (m_providerInstance);
