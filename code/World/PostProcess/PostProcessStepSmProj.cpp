@@ -9,6 +9,7 @@
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Core/Math/Random.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -36,7 +37,7 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 {
 	static Random random;
 
-	uint8_t data[128 * 128 * 4];
+	AutoArrayPtr< uint8_t > data(new uint8_t [128 * 128 * 4]);
 	for (uint32_t y = 0; y < 128; ++y)
 	{
 		for (uint32_t x = 0; x < 128; ++x)
@@ -57,7 +58,7 @@ Ref< render::ISimpleTexture > createRandomRotationTexture(render::IRenderSystem*
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
-	desc.initialData[0].data = data;
+	desc.initialData[0].data = data.ptr();
 	desc.initialData[0].pitch = 128 * 4;
 	desc.initialData[0].slicePitch = 0;
 
