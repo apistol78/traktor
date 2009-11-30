@@ -215,21 +215,31 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	if (!m_providerBus->getEvent(outEvent, outEventId, outRemote))
 		return false;
 
-	// Possibly re-create database as we need to flush instance tree if remote has committed a tree change.
+	// Need to reset states as database has been remotely modified.
 	if (outRemote && (outEvent == PeCommited || outEvent == PeRenamed || outEvent == PeRemoved))
 	{
 		Acquire< Semaphore > scopeLock(m_lock);
 
-		log::debug << L"Re-creating database tree; remotely modified" << Endl;
+		// Remove from instance map if removed.
+		if (outEvent == PeRemoved)
+		{
+			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(outEventId);
+			if (i != m_instanceMap.end())
+				m_instanceMap.erase(i);
+		}
 
-		m_instanceMap.clear();
+		// Reset instance cached state; need to retrieve new state from provider.
+		Ref< Instance > modifiedInstance = getInstance(outEventId);
+		if (modifiedInstance)
+		{
+			Ref< Group > parentGroup = modifiedInstance->getParent();
+			T_ASSERT (parentGroup);
 
-		if (m_rootGroup)
-			m_rootGroup->internalDestroy();
+			if (outEvent == PeRenamed || outEvent == PeRemoved)
+				parentGroup->internalReset();
 
-		m_rootGroup = new Group(m_providerBus);
-		if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
-			T_FATAL_ERROR;
+			modifiedInstance->internalReset();
+		}
 	}
 
 	return true;

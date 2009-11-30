@@ -22,6 +22,31 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	m_providerGroup = providerGroup;
 	m_parent = parent;
 	m_name = m_providerGroup->getName();
+	return internalReset();
+}
+
+void Group::internalDestroy()
+{
+	m_providerBus = 0;
+	m_providerGroup = 0;
+	m_parent = 0;
+	m_name = L"";
+
+	for (RefArray< Group >::iterator i = m_childGroups.begin(); i != m_childGroups.end(); ++i)
+		(*i)->internalDestroy();
+
+	m_childGroups.resize(0);
+
+	for (RefArray< Instance >::iterator i = m_childInstances.begin(); i != m_childInstances.end(); ++i)
+		(*i)->internalDestroy();
+
+	m_childInstances.resize(0);
+}
+
+bool Group::internalReset()
+{
+	m_childGroups.resize(0);
+	m_childInstances.resize(0);
 
 	RefArray< IProviderGroup > providerChildGroups;
 	m_providerGroup->getChildGroups(providerChildGroups);
@@ -48,24 +73,6 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	}
 
 	return true;
-}
-
-void Group::internalDestroy()
-{
-	m_providerBus = 0;
-	m_providerGroup = 0;
-	m_parent = 0;
-	m_name = L"";
-
-	for (RefArray< Group >::iterator i = m_childGroups.begin(); i != m_childGroups.end(); ++i)
-		(*i)->internalDestroy();
-
-	m_childGroups.resize(0);
-
-	for (RefArray< Instance >::iterator i = m_childInstances.begin(); i != m_childInstances.end(); ++i)
-		(*i)->internalDestroy();
-
-	m_childInstances.resize(0);
 }
 
 std::wstring Group::getName() const
