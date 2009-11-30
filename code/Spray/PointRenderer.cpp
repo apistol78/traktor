@@ -60,7 +60,7 @@ struct Vertex
 	struct Attributes2
 	{
 		float color[3];
-		float dummy;
+		float age;
 	}
 	attrib2;
 };
@@ -158,7 +158,7 @@ void PointRenderer::render(
 			const Point& point = points[i->first];
 
 			// Calculate alpha based on point age and distance from near culling plane.
-			float age = point.age / point.maxAge;
+			float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
 			float middle = age - middleAge;
 			float alpha = select(middle, 1.0f - middle / (1.0f - middleAge), age / middleAge);
 			alpha *= min((i->second - m_cullNearDistance) / m_fadeNearRange, 1.0f);
@@ -182,6 +182,7 @@ void PointRenderer::render(
 				vertex->attrib2.color[0] = point.color.x();
 				vertex->attrib2.color[1] = point.color.y();
 				vertex->attrib2.color[2] = point.color.z();
+				vertex->attrib2.age = age;
 				vertex++;
 			}
 
