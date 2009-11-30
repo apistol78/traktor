@@ -29,14 +29,24 @@ public:
 			if (!(s >> Member< void* >(getName(), blob, blobSize)))
 				return false;
 
-			D3DXCreateBuffer(blobSize, &m_ref.getAssign());
-			std::memcpy(m_ref->GetBufferPointer(), blob, blobSize);
+			if (blobSize > 0)
+			{
+				D3DXCreateBuffer(blobSize, &m_ref.getAssign());
+				std::memcpy(m_ref->GetBufferPointer(), blob, blobSize);
+			}
+			else
+				m_ref = 0;
 		}
 		else	// SdWrite
 		{
-			blobSize = m_ref->GetBufferSize();
-			T_ASSERT (blobSize < sizeof(blob));
-			std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
+			if (m_ref)
+			{
+				blobSize = m_ref->GetBufferSize();
+				T_ASSERT (blobSize < sizeof(blob));
+				std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
+			}
+			else
+				blobSize = 0;
 
 			if (!(s >> Member< void* >(getName(), blob, blobSize)))
 				return false;
