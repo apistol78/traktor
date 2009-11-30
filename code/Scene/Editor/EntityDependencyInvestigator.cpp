@@ -54,6 +54,9 @@ bool EntityDependencyInvestigator::create(ui::Widget* parent)
 
 void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter)
 {
+	if (!isVisible(false))
+		return;
+
 	m_dependencyTree->removeAllItems();
 
 	if (entityAdapter)
@@ -85,15 +88,15 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 			externalFiles.insert((*i)->files.begin(), (*i)->files.end());
 		}
 
-		//if (!externalFiles.empty())
-		//{
-		//	Ref< ui::TreeViewItem > filesGroup = m_dependencyTree->createItem(entityRootItem, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
-		//	for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
-		//	{
-		//		Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
-		//		fileItem->setData(L"FILE", new Path(*i));
-		//	}
-		//}
+		if (!externalFiles.empty())
+		{
+			Ref< ui::TreeViewItem > filesGroup = m_dependencyTree->createItem(entityRootItem, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_FILES"), 0, 1);
+			for (std::set< Path >::iterator i = externalFiles.begin(); i != externalFiles.end(); ++i)
+			{
+				Ref< ui::TreeViewItem > fileItem = m_dependencyTree->createItem(filesGroup, i->getFileName(), 2);
+				fileItem->setData(L"FILE", new Path(*i));
+			}
+		}
 	}
 }
 
@@ -111,12 +114,12 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
 			m_context->getEditor()->openEditor(instance);
 	}
 
-	//Ref< Path > file = item->getData< Path >(L"FILE");
-	//if (file)
-	//{
-	//	if (!OS::getInstance().editFile(*file))
-	//		log::error << L"Unable to edit file \"" << file->getFileName() << L"\"" << Endl;
-	//}
+	Ref< Path > file = item->getData< Path >(L"FILE");
+	if (file)
+	{
+		if (!OS::getInstance().editFile(*file))
+			log::error << L"Unable to edit file \"" << file->getFileName() << L"\"" << Endl;
+	}
 }
 
 void EntityDependencyInvestigator::eventContextSelect(ui::Event* event)
