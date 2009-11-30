@@ -307,10 +307,26 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>-45</first>
+				<first>-49</first>
 				<second>714</second>
 			</position>
 			<name>Color</name>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment>Age</comment>
+			<position>
+				<first>-149</first>
+				<second>775</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>-49</first>
+				<second>775</second>
+			</position>
+			<name>Age</name>
 		</item>
 	</nodes>
 	<edges>
@@ -661,6 +677,26 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[34]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Input</name>
 			</destination>
 		</item>

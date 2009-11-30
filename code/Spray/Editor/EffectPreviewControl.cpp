@@ -1,5 +1,6 @@
 #include <ctime>
 #include "Spray/Editor/EffectPreviewControl.h"
+#include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
 #include "Spray/Editor/PointSourceRenderer.h"
@@ -12,6 +13,7 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/Emitter.h"
+#include "Spray/Sources/BoxSource.h"
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/DiscSource.h"
 #include "Spray/Sources/PointSource.h"
@@ -64,6 +66,7 @@ EffectPreviewControl::EffectPreviewControl()
 ,	m_guideVisible(true)
 ,	m_velocityVisible(false)
 {
+	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
 	m_sourceRenderers[&type_of< DiscSource >()] = new DiscSourceRenderer();
 	m_sourceRenderers[&type_of< PointSource >()] = new PointSourceRenderer();
