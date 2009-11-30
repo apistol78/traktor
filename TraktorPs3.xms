@@ -4144,6 +4144,14 @@
 					<fileName>*.*</fileName>
 					<items/>
 				</item>
+				<item type="File">
+					<fileName>../../../res/ps3/ClearFp_fragment.fpo</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../res/ps3/ClearFp_vertex.vpo</fileName>
+					<items/>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">

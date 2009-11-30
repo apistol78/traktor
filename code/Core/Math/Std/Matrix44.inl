@@ -193,7 +193,9 @@ T_MATH_INLINE Matrix44 Matrix44::inverse() const
 T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
 {
 	Scalar s = determinant();
-	T_ASSERT (abs(s) > FUZZY_EPSILON);
+
+	if (abs(s) <= FUZZY_EPSILON)
+		return Matrix44::identity();
 	
 	s = Scalar(1.0f) / s;
 	
