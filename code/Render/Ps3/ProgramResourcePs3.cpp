@@ -148,16 +148,12 @@ ProgramResourcePs3::~ProgramResourcePs3()
 
 bool ProgramResourcePs3::serialize(ISerializer& s)
 {
-	if (!ProgramResource::serialize(s))
-		return false;
-
 	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< Parameter, MemberComposite< Parameter > >(L"parameters", m_parameters);
 	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"vertexSamplers", m_vertexSamplers);
 	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"pixelSamplers", m_pixelSamplers);
 	s >> MemberRenderState(L"renderState", m_renderState);
-
 	return true;
 }
 

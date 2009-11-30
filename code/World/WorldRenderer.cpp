@@ -140,7 +140,7 @@ bool WorldRenderer::create(
 		desc.width = shadowMaskWidth;
 		desc.height = shadowMaskHeight;
 		desc.multiSample = 0;
-		desc.depthStencil = true;
+		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR8;
 		m_shadowMaskTargetSet = renderSystem->createRenderTargetSet(desc);
 

@@ -31,7 +31,7 @@ void LocalMemoryAllocator::setHeap(void* heapTop, size_t heapSize)
 {
 	HEAP_LOCK
 
-	m_heapTop = (unsigned char*)heapTop;
+	m_heapTop = (uint8_t*)heapTop;
 	m_allocated = 0;
 	m_size = heapSize;
 
@@ -67,7 +67,12 @@ void* LocalMemoryAllocator::alloc(const size_t size)
 		offset += i->size;
 	}
 
-	T_ASSERT (ptr);
+	if (!ptr)
+	{
+		log::error << L"Out of local memory!" << Endl;
+		T_FATAL_ASSERT (ptr);
+	}
+
 	return ptr;
 }
 

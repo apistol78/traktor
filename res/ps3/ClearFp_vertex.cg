@@ -1,0 +1,12 @@
+
+void main
+(
+	float4 position	: POSITION,
+	float4 color : COLOR0,
+	out float4 oPosition : POSITION,
+	out float4 v2f_color
+)
+{
+	oPosition = position;
+	v2f_color = color;
+}

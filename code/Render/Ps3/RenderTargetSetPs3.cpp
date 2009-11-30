@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
 #include "Render/Ps3/LocalMemoryAllocator.h"
@@ -32,15 +33,15 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 
 	if (desc.depthStencil)
 	{
-		int surfaceWidth = (m_width & ~63) + 64;
-		int surfaceHeight = (m_height & ~63) + 64;
+		int surfaceWidth = m_width; //(m_width & ~63) + 64;
+		int surfaceHeight = m_height; //(m_height & ~63) + 64;
 
 		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
 		m_depthTexture.mipmap = 1;
 		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 		m_depthTexture.cubemap = 0;
 		m_depthTexture.remap = 0;
-		m_depthTexture.width = desc.width;
+		m_depthTexture.width = surfaceWidth;
 		m_depthTexture.height = surfaceHeight;
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
@@ -51,7 +52,10 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 
 		m_depthData = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
 		if (cellGcmAddressToOffset(m_depthData, &m_depthTexture.offset) != CELL_OK)
+		{
+			log::error << L"Create render target failed, unable to create depth buffer" << Endl;
 			return false;
+		}
 	}
 	else
 	{

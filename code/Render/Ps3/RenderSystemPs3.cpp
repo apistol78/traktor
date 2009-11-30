@@ -47,6 +47,11 @@ bool RenderSystemPs3::create()
 	cellGcmGetConfiguration(&config);
 	LocalMemoryAllocator::getInstance().setHeap(config.localAddress, config.localSize);
 
+	log::info << 
+		L"PS3 render system created" << Endl <<
+		L"\tLocal address " << config.localAddress << Endl <<
+		L"\t      size " << config.localSize << Endl;
+
 	return true;
 }
 

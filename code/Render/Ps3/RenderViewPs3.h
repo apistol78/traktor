@@ -4,6 +4,8 @@
 #include <list>
 #include "Render/DisplayMode.h"
 #include "Render/IRenderView.h"
+#include "Render/Ps3/PlatformPs3.h"
+#include "Render/Ps3/ClearFpPs3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -77,27 +79,20 @@ private:
 	Ref< VertexBufferPs3 > m_currentVertexBuffer;
 	Ref< IndexBufferPs3 > m_currentIndexBuffer;
 	Ref< ProgramPs3 > m_currentProgram;
-
 	int32_t m_width;
 	int32_t m_height;
-
 	Viewport m_viewport;
-
 	void* m_colorAddr[2];
 	uint32_t m_colorOffset[2];
 	uint32_t m_colorPitch;
-
 	void* m_depthAddr;
-	uint32_t m_depthOffset;
-	uint32_t m_depthPitch;
-
+	CellGcmTexture m_depthTexture;
 	volatile uint32_t* m_frameSyncLabelData;
 	uint32_t m_frameCounter;
-
 	volatile uint32_t* m_targetSyncLabelData;
 	uint32_t m_targetCounter;
-
 	std::list< RenderState > m_renderStateStack;
+	ClearFpPs3 m_clearFp;
 
 	void setCurrentRenderState();
 };

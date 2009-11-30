@@ -50,8 +50,6 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 ,	m_height(0)
 ,	m_colorPitch(0)
 ,	m_depthAddr(0)
-,	m_depthOffset(0)
-,	m_depthPitch(0)
 ,	m_frameSyncLabelData(0)
 ,	m_frameCounter(0)
 ,	m_targetSyncLabelData(0)
@@ -59,6 +57,7 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
+	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
 }
 
 RenderViewPs3::~RenderViewPs3()
@@ -111,6 +110,8 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 			return false;
 		}
 
+		log::info << L"PS color buffer " << i << L", address " << m_colorAddr[i] << Endl;
+
 		ret = cellGcmSetDisplayBuffer(
 			i,
 			m_colorOffset[i],
@@ -125,16 +126,36 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 		}
 	}
 
-	m_depthPitch = m_width * 4;
-
-	uint32_t depthSize = m_depthPitch * m_height;
-	m_depthAddr = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
-
-	ret = cellGcmAddressToOffset(m_depthAddr, &m_depthOffset);
-	if (ret != CELL_OK)
+	// Allocate depth buffer.
 	{
-		log::error << L"Create render view failed, unable to create depth buffer" << Endl;
-		return false;
+		int surfaceWidth = m_width; //(m_width & ~63) + 64;
+		int surfaceHeight = m_height; //(m_height & ~63) + 64;
+
+		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
+		m_depthTexture.mipmap = 1;
+		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
+		m_depthTexture.cubemap = 0;
+		m_depthTexture.remap = 0;
+		m_depthTexture.width = surfaceWidth;
+		m_depthTexture.height = surfaceHeight;
+		m_depthTexture.depth = 1;
+		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
+		m_depthTexture.pitch = surfaceWidth * 4;
+		m_depthTexture.offset = 0;
+
+		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
+
+		m_depthAddr = LocalMemoryAllocator::getInstance().allocAlign(
+			depthSize,
+			4096
+		);
+
+		ret = cellGcmAddressToOffset(m_depthAddr, &m_depthTexture.offset);
+		if (ret != CELL_OK)
+		{
+			log::error << L"Create render view failed, unable to create depth buffer" << Endl;
+			return false;
+		}
 	}
 
 	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
@@ -216,10 +237,11 @@ bool RenderViewPs3::begin()
 		CELL_GCM_SURFACE_A8R8G8B8,
 		m_colorOffset[frameIndex],
 		m_colorPitch,
-		m_depthOffset,
-		m_depthPitch
+		m_depthTexture.offset,
+		m_depthTexture.pitch
 	};
 
+	T_ASSERT (m_renderStateStack.empty());
 	m_renderStateStack.push_back(rs);
 
 	setCurrentRenderState();
@@ -250,6 +272,12 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 		rts->getGcmDepthTexture().pitch
 	};
 
+	if (keepDepthStencil)
+	{
+		rs.depthOffset = m_renderStateStack.back().depthOffset;
+		rs.depthPitch = m_renderStateStack.back().depthPitch;
+	}
+
 	m_renderStateStack.push_back(rs);
 
 	setCurrentRenderState();
@@ -262,37 +290,49 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 
 void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
-	// Do not try to clear depth buffer if none is attached.
-	if (!m_renderStateStack.empty())
-	{
-		if (!m_renderStateStack.back().depthOffset)
-			clearMask &= ~(CfDepth | CfStencil);
-	}
+	T_ASSERT (!m_renderStateStack.empty());
 
-	if (!clearMask)
-		return;
+	const RenderState& rs = m_renderStateStack.back();
+	uint32_t gcmClearMask = 0;
 
-	uint32_t gcmClear =
-		((clearMask & CfColor) ? (CELL_GCM_CLEAR_R | CELL_GCM_CLEAR_G | CELL_GCM_CLEAR_B | CELL_GCM_CLEAR_A) : 0) |
-		((clearMask & (CfDepth | CfStencil)) ? (CELL_GCM_CLEAR_Z) : 0);
-	
 	if (clearMask & CfColor)
 	{
-		uint32_t clearColor =
-			(uint32_t(color[0] * 255.0f) << 16) |
-			(uint32_t(color[1] * 255.0f) << 8) |
-			(uint32_t(color[2] * 255.0f) << 0) |
-			(uint32_t(color[3] * 255.0f) << 24);
+		if (
+			rs.colorFormat == CELL_GCM_SURFACE_A8R8G8B8 ||
+			rs.colorFormat == CELL_GCM_SURFACE_B8
+		)
+		{
+			gcmClearMask |= CELL_GCM_CLEAR_R | CELL_GCM_CLEAR_G | CELL_GCM_CLEAR_B | CELL_GCM_CLEAR_A;
 
-		cellGcmSetClearColor(gCellGcmCurrentContext, clearColor);
+			uint32_t clearColor =
+				(uint32_t(color[0] * 255.0f) << 16) |
+				(uint32_t(color[1] * 255.0f) << 8) |
+				(uint32_t(color[2] * 255.0f) << 0) |
+				(uint32_t(color[3] * 255.0f) << 24);
+
+			cellGcmSetClearColor(gCellGcmCurrentContext, clearColor);
+		}
+		else
+		{
+			m_clearFp.clear(color);
+		}
 	}
-	if (clearMask & (CfDepth | CfStencil))
-		cellGcmSetClearDepthStencil(
-			gCellGcmCurrentContext,
-			(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
-		);
 
-	cellGcmSetClearSurface(gCellGcmCurrentContext, gcmClear);
+	if (clearMask & (CfDepth | CfStencil))
+	{
+		if (rs.depthOffset)
+		{
+			gcmClearMask |= CELL_GCM_CLEAR_Z;
+
+			cellGcmSetClearDepthStencil(
+				gCellGcmCurrentContext,
+				(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
+			);
+		}
+	}
+
+	if (gcmClearMask)
+		cellGcmSetClearSurface(gCellGcmCurrentContext, gcmClearMask);
 }
 
 void RenderViewPs3::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -417,6 +457,7 @@ void RenderViewPs3::present()
 
 	while (*m_frameSyncLabelData + 2 < m_frameCounter)
 		sys_timer_usleep(100);
+	//cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_frameCounter);
 
 	m_frameCounter++;
 }
