@@ -3,13 +3,12 @@
 
 #include "Core/Guid.h"
 #include "Core/Ref.h"
+#include "Resource/IResourceHandle.h"
 
 namespace traktor
 {
 	namespace resource
 	{
-
-class IResourceHandle;
 
 /*! \brief Resource proxy.
  * \ingroup Resource
@@ -22,17 +21,36 @@ template < typename ResourceType >
 class Proxy
 {
 public:
-	Proxy< ResourceType >();
+	Proxy< ResourceType >()
+	{
+	}
 
-	Proxy< ResourceType >(const Proxy< ResourceType >& rs);
+	Proxy< ResourceType >(const Proxy< ResourceType >& rs)
+	:	m_handle(rs.m_handle)
+	,	m_resource(rs.m_resource)
+	,	m_guid(rs.m_guid)
+	{
+	}
 
-	Proxy< ResourceType >(ResourceType* rs);
+	Proxy< ResourceType >(ResourceType* rs)
+	:	m_resource(rs)
+	{
+	}
 
-	Proxy< ResourceType >(const Ref< ResourceType >& rs);
+	Proxy< ResourceType >(const Ref< ResourceType >& rs)
+	:	m_resource(rs)
+	{
+	}
 
-	Proxy< ResourceType >(const Guid& guid);
+	Proxy< ResourceType >(const Guid& guid)
+	:	m_guid(guid)
+	{
+	}
 
-	Proxy< ResourceType >(IResourceHandle* handle);
+	Proxy< ResourceType >(IResourceHandle* handle)
+	:	m_handle(handle)
+	{
+	}
 
 	template < typename DerivedType >
 	Proxy< ResourceType >(const Proxy< DerivedType >& rs)
@@ -49,36 +67,101 @@ public:
 	}
 
 	/*! \brief Get resource's guid. */
-	const Guid& getGuid() const;
+	const Guid& getGuid() const
+	{
+		return m_guid;
+	}
 
-	/*! \brief Replace resource handle. */
-	void replace(IResourceHandle* handle);
+	/*! \brief Replace resource handle.
+	 *
+	 * \param handle New resource handle.
+	 */
+	void replace(IResourceHandle* handle)
+	{
+		m_handle = handle;
+		validate();
+	}
 
 	/*! \brief Check if proxy is valid. */
-	bool valid() const;
+	bool valid() const
+	{
+		if (!m_resource)
+			return false;
+
+		if (m_handle)
+		{	
+			if (m_resource != m_handle->get())
+				return false;
+		}
+
+		return true;
+	}
 
 	/*! \brief Validate proxy; ie get resource from handle. */
-	bool validate();
+	bool validate()
+	{
+		if (m_handle)
+			m_resource = (ResourceType*)m_handle->get();
+		return m_resource != 0;
+	}
 
-	inline operator ResourceType* ();
+	inline operator ResourceType* ()
+	{
+		return m_resource;
+	}
 
-	inline operator Ref< ResourceType > ();
-	
-	inline ResourceType& operator * ();
+	inline operator Ref< ResourceType > ()
+	{
+		return m_resource;
+	}
 
-	inline ResourceType* operator -> ();
+	inline ResourceType& operator * ()
+	{
+		T_ASSERT_M (m_resource, L"Trying to dereference null pointer");
+		return *m_resource;
+	}
 
-	inline const ResourceType* operator -> () const;
+	inline ResourceType* operator -> ()
+	{
+		T_ASSERT_M (m_resource, L"Trying to call null pointer");
+		return m_resource;
+	}
 
-	inline Proxy< ResourceType >& operator = (const Guid& guid);
+	inline const ResourceType* operator -> () const
+	{
+		T_ASSERT_M (m_resource, L"Trying to call null pointer");
+		return m_resource;
+	}
 
-	inline bool operator == (const ResourceType* rs);
+	inline Proxy< ResourceType >& operator = (const Guid& guid)
+	{
+		if (guid != m_guid)
+		{
+			m_handle = 0;
+			m_guid = guid;
+		}
+		return *this;
+	}
 
-	inline bool operator != (const ResourceType* rs);
+	inline bool operator == (const ResourceType* rs)
+	{
+		return bool(m_resource == rs);
+	}
 
-	inline bool operator == (const Ref< ResourceType >& rs);
+	inline bool operator != (const ResourceType* rs)
+	{
+		return bool(m_resource != rs);
+	}
 
-	inline bool operator != (const Ref< ResourceType >& rs);
+	inline bool operator == (const Ref< ResourceType >& rs)
+	{
+		return bool(m_resource == rs);
+	}
+
+	inline bool operator != (const Ref< ResourceType >& rs)
+	{
+		return bool(m_resource != rs);
+	}
 
 private:
 	Ref< IResourceHandle > m_handle;
@@ -88,7 +171,5 @@ private:
 
 	}
 }
-
-#include "Resource/Proxy.inl"
 
 #endif	// traktor_resource_Proxy_H
