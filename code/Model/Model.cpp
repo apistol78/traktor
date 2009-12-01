@@ -86,7 +86,19 @@ uint32_t Model::addVertex(const Vertex& vertex)
 
 uint32_t Model::addUniqueVertex(const Vertex& vertex)
 {
-	return addUniqueId< std::vector< Vertex >, Vertex, DefaultPredicate< Vertex > >(m_vertices, vertex);
+	uint32_t hash = vertex.getHash();
+
+	std::map< uint32_t, uint32_t >::const_iterator i = m_verticesHash.find(hash);
+	if (i != m_verticesHash.end())
+	{
+		if (m_vertices[i->second] == vertex)
+			return i->second;
+	}
+
+	uint32_t id = addId(m_vertices, vertex);
+	
+	m_verticesHash[hash] = id;
+	return id;
 }
 
 void Model::setVertex(uint32_t index, const Vertex& vertex)
