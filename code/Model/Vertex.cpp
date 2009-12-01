@@ -1,4 +1,5 @@
 #include <cmath>
+#include "Core/Misc/Adler32.h"
 #include "Model/Vertex.h"
 
 namespace traktor
@@ -104,6 +105,24 @@ float Vertex::getBoneInfluence(uint32_t boneIndex) const
 		return 0.0f;
 
 	return m_boneInfluences[boneIndex];
+}
+
+uint32_t Vertex::getHash() const
+{
+	Adler32 adler;
+
+	adler.begin();
+	adler.feed(&m_position, sizeof(m_position));
+	adler.feed(&m_color, sizeof(m_color));
+	adler.feed(&m_normal, sizeof(m_normal));
+	adler.feed(&m_tangent, sizeof(m_tangent));
+	adler.feed(&m_binormal, sizeof(m_binormal));
+	adler.feed(&m_texCoord, sizeof(m_texCoord));
+	if (!m_boneInfluences.empty())
+		adler.feed(&m_boneInfluences[0], m_boneInfluences.size() * sizeof(float));
+	adler.end();
+
+	return adler.get();
 }
 
 bool Vertex::operator == (const Vertex& r) const

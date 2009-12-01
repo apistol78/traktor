@@ -155,6 +155,7 @@ private:
 	std::vector< std::wstring > m_bones;
 	std::vector< std::wstring > m_blendTargets;
 	std::map< uint32_t, SpatialHashArray< Vector4 > > m_blendTargetPositions;
+	std::map< uint32_t, uint32_t > m_verticesHash;
 };
 
 	}

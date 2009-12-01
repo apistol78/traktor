@@ -5,6 +5,9 @@
 #include <limits>
 #include <algorithm>
 #include "Core/Io/IStream.h"
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/MemberArray.h"
@@ -141,51 +144,81 @@ bool write_primitive(const Ref< IStream >& stream, bool v)
 	return false;
 }
 
-template < typename StringType >
-bool read_string(const Ref< IStream >& stream, StringType& outString)
+bool read_string(const Ref< IStream >& stream, std::wstring& outString)
 {
-	uint16_t length;
-	
-	if (!read_primitive< uint16_t >(stream, length))
+	uint32_t u8len;
+	wchar_t wc;
+
+	outString.clear();
+
+	if (!read_primitive< uint32_t >(stream, u8len))
 		return false;
 
-	if (length > 0)
+	if (u8len > 0)
 	{
-		std::vector< uint16_t > tmp(length);
-		if (!read_block(stream, &tmp[0], length, sizeof(uint16_t)))
+		AutoArrayPtr< uint8_t > u8str(new uint8_t [u8len]);
+
+		if (!read_block(stream, u8str.ptr(), u8len, sizeof(uint8_t)))
 			return false;
 
-		std::vector< typename StringType::value_type > str(length);
-		for (size_t i = 0; i < length; ++i)
-			str[i] = (typename StringType::value_type)(tmp[i]);
-
-		outString = StringType(str.begin(), str.end());
+		Utf8Encoding utf8enc;
+		for (uint32_t i = 0; i < u8len; )
+		{
+			int n = utf8enc.translate(u8str.ptr() + i, u8len - i, wc);
+			if (n > 0)
+			{
+				outString.push_back(wc);
+				i += n;
+			}
+			else
+				return false;
+		}
 	}
-	else
-		outString.clear();
 
 	return true;
 }
 
-template < typename StringType >
-bool write_string(const Ref< IStream >& stream, const StringType& str)
+bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 {
 	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
 	
-	uint16_t length = uint16_t(str.length());
-	if (!write_primitive< uint16_t >(stream, length))
-		return false;
-
+	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
-		std::vector< uint16_t > tmp(length);
-		for (size_t i = 0; i < length; ++i)
-			tmp[i] = str[i];
+		AutoArrayPtr< uint8_t > u8str(new uint8_t [length * 4]);
+		uint32_t u8len;
+		
+		Utf8Encoding utf8enc;
+		u8len = utf8enc.translate(str.c_str(), length, u8str.ptr());
 
-		return write_block(stream, &tmp[0], length, sizeof(uint16_t));
+		if (!write_primitive< uint32_t >(stream, u8len))
+			return false;
+
+		return write_block(stream, u8str.ptr(), u8len, sizeof(uint8_t));
 	}
 	else
+	{
+		if (!write_primitive< uint32_t >(stream, 0))
+			return false;
+
 		return true;
+	}
+}
+
+bool read_string(const Ref< IStream >& stream, std::string& outString)
+{
+	std::wstring ws;
+	if (!read_string(stream, ws))
+		return false;
+
+	outString = wstombs(ws);
+	return true;
+}
+
+bool write_string(const Ref< IStream >& stream, const std::string& str)
+{
+	std::wstring ws = mbstows(str);
+	return write_string(stream, ws);
 }
 
 	}
@@ -298,17 +331,17 @@ bool BinarySerializer::operator >> (const Member< double >& m)
 bool BinarySerializer::operator >> (const Member< std::string >& m)
 {
 	if (m_direction == SdRead)
-		return read_string< std::string >(m_stream, m);
+		return read_string(m_stream, m);
 	else
-		return write_string< std::string >(m_stream, m);
+		return write_string(m_stream, m);
 }
 
 bool BinarySerializer::operator >> (const Member< std::wstring >& m)
 {
 	if (m_direction == SdRead)
-		return read_string< std::wstring >(m_stream, m);
+		return read_string(m_stream, m);
 	else
-		return write_string< std::wstring >(m_stream, m);
+		return write_string(m_stream, m);
 }
 
 bool BinarySerializer::operator >> (const Member< Guid >& m)
@@ -351,7 +384,7 @@ bool BinarySerializer::operator >> (const Member< Path >& m)
 	if (m_direction == SdRead)
 	{
 		std::wstring path;
-		if (!read_string< std::wstring >(m_stream, path))
+		if (!read_string(m_stream, path))
 			return false;
 		*m = Path(path);
 	}
@@ -533,7 +566,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				std::wstring typeName;
 				int32_t version;
 
-				if (!read_string< std::wstring >(m_stream, typeName))
+				if (!read_string(m_stream, typeName))
 					return false;
 				
 				const TypeInfo* type = TypeInfo::find(typeName);
@@ -584,7 +617,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					return false;
 				if (!write_primitive< uint64_t >(m_stream, hash))
 					return false;
-				if (!write_string< std::wstring >(m_stream, type_name(object)))
+				if (!write_string(m_stream, type_name(object)))
 					return false;
 				if (!write_primitive< int32_t >(m_stream, version))
 					return false;
