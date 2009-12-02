@@ -97,9 +97,9 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 					{
 						Vertex vertex;
 						vertex.setPosition(indices[0] - 1);
-						if (indices.size() >= 1 && indices[1] > 0)
+						if (indices.size() > 1 && indices[1] > 0)
 							vertex.setTexCoord(indices[1] - 1);
-						if (indices.size() >= 2 && indices[2] > 0)
+						if (indices.size() > 2 && indices[2] > 0)
 							vertex.setNormal(indices[2] - 1);
 						polygon.addVertex(md->addUniqueVertex(vertex));
 					}
