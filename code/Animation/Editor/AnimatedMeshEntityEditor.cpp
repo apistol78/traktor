@@ -25,52 +25,62 @@ void AnimatedMeshEntityEditor::drawGuide(
 	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getEntityData());
 	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(entityAdapter->getEntity());
 
-	primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
-
-	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
-	const AlignedVector< Transform >& poseTransforms = animatedEntity->getPoseTransforms();
-
-	if (skeleton.valid() && poseTransforms.size() == skeleton->getBoneCount())
+	if (context->getGuideEnable())
 	{
-		const Color color(255, 255, 0, 180);
-		for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+		primitiveRenderer->pushWorld(entityAdapter->getTransform().toMatrix44());
+		primitiveRenderer->pushDepthEnable(false);
+
+		resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
+		if (skeleton.valid())
 		{
-			const Bone* bone = skeleton->getBone(i);
+			AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
+			if (poseTransforms.empty())
+				calculateBoneTransforms(skeleton, poseTransforms);
 
-			Vector4 start = poseTransforms[i].translation().xyz1();
-			Vector4 end = (poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f)).xyz1();
+			if (poseTransforms.size() == skeleton->getBoneCount())
+			{
+				const Color color(255, 255, 0, 180);
+				for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+				{
+					const Bone* bone = skeleton->getBone(i);
 
-			Vector4 d = poseTransforms[i].axisZ();
-			Vector4 a = poseTransforms[i].axisX();
-			Vector4 b = poseTransforms[i].axisY();
+					Vector4 start = poseTransforms[i].translation();
+					Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
 
-			Scalar radius = bone->getRadius();
-			d *= radius;
-			a *= radius;
-			b *= radius;
+					Vector4 d = poseTransforms[i].axisZ();
+					Vector4 a = poseTransforms[i].axisX();
+					Vector4 b = poseTransforms[i].axisY();
 
-			primitiveRenderer->drawLine(start, start + d + a + b, color);
-			primitiveRenderer->drawLine(start, start + d - a + b, color);
-			primitiveRenderer->drawLine(start, start + d + a - b, color);
-			primitiveRenderer->drawLine(start, start + d - a - b, color);
+					Scalar radius = bone->getRadius();
+					d *= radius;
+					a *= radius;
+					b *= radius;
 
-			primitiveRenderer->drawLine(start + d + a + b, end, color);
-			primitiveRenderer->drawLine(start + d - a + b, end, color);
-			primitiveRenderer->drawLine(start + d + a - b, end, color);
-			primitiveRenderer->drawLine(start + d - a - b, end, color);
+					primitiveRenderer->drawLine(start, start + d + a + b, color);
+					primitiveRenderer->drawLine(start, start + d - a + b, color);
+					primitiveRenderer->drawLine(start, start + d + a - b, color);
+					primitiveRenderer->drawLine(start, start + d - a - b, color);
 
-			primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-			primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-			primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-			primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+					primitiveRenderer->drawLine(start + d + a + b, end, color);
+					primitiveRenderer->drawLine(start + d - a + b, end, color);
+					primitiveRenderer->drawLine(start + d + a - b, end, color);
+					primitiveRenderer->drawLine(start + d - a - b, end, color);
 
-			primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 180));
-			primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 180));
-			primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
+					primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
+					primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
+					primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
+					primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+
+					primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 180));
+					primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 180));
+					primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
+				}
+			}
 		}
-	}
 
-	primitiveRenderer->popWorld();
+		primitiveRenderer->popDepthEnable();
+		primitiveRenderer->popWorld();
+	}
 
 	scene::DefaultEntityEditor::drawGuide(context, primitiveRenderer, entityAdapter);
 }

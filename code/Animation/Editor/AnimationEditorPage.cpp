@@ -929,6 +929,19 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			);
 		}
 
+		m_primitiveRenderer->drawArrowHead(
+			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
+			0.8f,
+			Color(255, 64, 64)
+		);
+		m_primitiveRenderer->drawArrowHead(
+			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
+			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
+			0.8f,
+			Color(64, 64, 255)
+		);
+
 		if (m_skeleton)
 		{
 			float time = float(m_sequencer->getCursor() / 1000.0f);

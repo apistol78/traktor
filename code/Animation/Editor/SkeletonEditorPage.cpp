@@ -354,8 +354,13 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 			{
 				Quaternion orientation = bone->getOrientation();
 
-				orientation *= Quaternion(Vector4(0.0f, mouseDelta.x, 0.0f, 0.0f));
-				orientation *= Quaternion(Vector4(mouseDelta.y, 0.0f, 0.0f, 0.0f));
+				if ((mouseEvent->getKeyState() & ui::KsMenu) == 0)
+				{
+					orientation *= Quaternion(Vector4(0.0f, mouseDelta.x, 0.0f, 0.0f));
+					orientation *= Quaternion(Vector4(mouseDelta.y, 0.0f, 0.0f, 0.0f));
+				}
+				else
+					orientation *= Quaternion(Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f));
 
 				bone->setOrientation(orientation);
 			}
@@ -443,6 +448,19 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 				Color(100, 100, 100)
 			);
 		}
+
+		m_primitiveRenderer->drawArrowHead(
+			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
+			0.8f,
+			Color(255, 64, 64)
+		);
+		m_primitiveRenderer->drawArrowHead(
+			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
+			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
+			0.8f,
+			Color(64, 64, 255)
+		);
 
 		AlignedVector< Transform > boneTransforms;
 		calculateBoneTransforms(

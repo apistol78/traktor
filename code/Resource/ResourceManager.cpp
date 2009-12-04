@@ -70,7 +70,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	{
 		Acquire< Semaphore > scope(m_lock);
 		handle = m_cache[guid];
-		if (!handle)
+		if (!handle || &handle->getResourceType() != &type)
 		{
 			handle = new ResourceHandle(type);
 			m_cache[guid] = handle;
@@ -78,7 +78,6 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	}
 	
 	T_ASSERT (handle);
-	T_ASSERT_M(&handle->getResourceType() == &type, L"Incorrect resource type; already bound as another type");
 
 	if (!handle->get())
 		load(guid, factory, handle);
