@@ -18,8 +18,8 @@ void calculateBoneLocalTransforms(
 	outBoneLocalTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 		outBoneLocalTransforms[i] =
-			Transform(skeleton->getBone(i)->getOrientation()) *
-			Transform(skeleton->getBone(i)->getPosition());
+			Transform(skeleton->getBone(i)->getPosition()) *
+			Transform(skeleton->getBone(i)->getOrientation());
 }
 
 void calculateBoneTransforms(
@@ -56,8 +56,8 @@ void calculatePoseLocalTransforms(
 	outBoneLocalTransforms.resize(skeleton->getBoneCount());
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 		outBoneLocalTransforms[i] = 
-			Transform(skeleton->getBone(i)->getOrientation() * pose->getBoneOrientation(i)) *
-			Transform(skeleton->getBone(i)->getPosition() + pose->getBoneOffset(i));
+			Transform(skeleton->getBone(i)->getPosition() + pose->getBoneOffset(i)) *
+			Transform(skeleton->getBone(i)->getOrientation() * pose->getBoneOrientation(i));
 }
 
 void calculatePoseTransforms(

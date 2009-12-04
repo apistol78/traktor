@@ -35,27 +35,37 @@ public:
 	
 	T_FORCE_INLINE void range(int& outMin, int& outMax) const
 	{
-		outMin =
-		outMax = 0;
+		outMin = 0;
+		outMax = sizeof_array(m_bits) * 32;
+
 		for (int i = 0; i < sizeof_array(m_bits); ++i)
 		{
 			if (m_bits[i])
 			{
-				outMin = i << 5;
-				if (!(m_bits[i] & 0x0000ffff))
-					outMin += 16;
+				for (int j = 0; j < 32; ++j)
+				{
+					if (m_bits[i] & (1 << j))
+						break;
+					++outMin;
+				}
 				break;
 			}
+			outMin += 32;
 		}
-		for (int i = sizeof_array(m_bits); i > 0; --i)
+
+		for (int i = sizeof_array(m_bits) - 1; i >= 0; --i)
 		{
-			if (m_bits[i - 1])
+			if (m_bits[i])
 			{
-				outMax = i << 5;
-				if (!(m_bits[i] & 0xffff0000))
-					outMax -= 16;
+				for (int j = 31; j >= 0; --j)
+				{
+					if (m_bits[i] & (1 << j))
+						break;
+					--outMax;
+				}
 				break;
 			}
+			outMax -= 32;
 		}
 	}
 	
