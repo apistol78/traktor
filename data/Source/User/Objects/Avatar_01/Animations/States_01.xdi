@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.animation.StateGraph">
+	<states>
+		<item type="traktor.animation.State">
+			<name>Dance 2</name>
+			<position>
+				<first>323</first>
+				<second>316</second>
+			</position>
+			<animation>{34300ED5-9259-544A-AB1D-A023574C9AC5}</animation>
+		</item>
+		<item type="traktor.animation.State">
+			<name>Dance 1</name>
+			<position>
+				<first>56</first>
+				<second>155</second>
+			</position>
+			<animation>{01F2651B-1715-C749-A9D9-909A7E0256EE}</animation>
+		</item>
+		<item type="traktor.animation.State">
+			<name>Hello</name>
+			<position>
+				<first>532</first>
+				<second>390</second>
+			</position>
+			<animation>{B5B5C4DC-58EE-CF4A-893A-5FF380D60DA9}</animation>
+		</item>
+		<item type="traktor.animation.State">
+			<name>Muscle Beach</name>
+			<position>
+				<first>442</first>
+				<second>555</second>
+			</position>
+			<animation>{B82A0EE3-795A-5D43-B5D6-745F83BD7F61}</animation>
+		</item>
+	</states>
+	<transitions>
+		<item type="traktor.animation.Transition">
+			<from type="traktor.animation.State">
+				<name>Animation_01</name>
+				<position>
+					<first>531</first>
+					<second>138</second>
+				</position>
+				<animation>{5841622D-54FD-7842-B2D2-963B45B636D6}</animation>
+			</from>
+			<to ref="/object/transitions/item/from"/>
+			<duration>0</duration>
+			<moment>TmEnd</moment>
+			<condition></condition>
+		</item>
+		<item type="traktor.animation.Transition">
+			<from ref="/object/states/item[1]"/>
+			<to ref="/object/states/item"/>
+			<duration>0.2</duration>
+			<moment>TmEnd</moment>
+			<condition></condition>
+		</item>
+		<item type="traktor.animation.Transition">
+			<from ref="/object/states/item"/>
+			<to ref="/object/states/item[2]"/>
+			<duration>0.2</duration>
+			<moment>TmEnd</moment>
+			<condition></condition>
+		</item>
+		<item type="traktor.animation.Transition">
+			<from ref="/object/states/item[2]"/>
+			<to ref="/object/states/item[3]"/>
+			<duration>0.2</duration>
+			<moment>TmEnd</moment>
+			<condition></condition>
+		</item>
+		<item type="traktor.animation.Transition">
+			<from ref="/object/states/item[3]"/>
+			<to ref="/object/states/item[1]"/>
+			<duration>0.2</duration>
+			<moment>TmEnd</moment>
+			<condition></condition>
+		</item>
+	</transitions>
+	<rootState ref="/object/states/item[1]"/>
+</object>

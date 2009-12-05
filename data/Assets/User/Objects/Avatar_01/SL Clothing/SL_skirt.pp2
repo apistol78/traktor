@@ -1,0 +1,1460 @@
+{
+
+version
+	{
+	number 5
+	}
+prop SL_skirt
+	{
+	geomCustom 
+		{ 
+		numbVerts    162
+		numbTVerts    182
+		numbTSets     822
+		numbElems   264
+		numbSets    822
+		v -0.029986 0.314296 0.560616
+		v 0.003939 0.401048 0.559752
+		v 0.051605 0.441247 0.559752
+		v 0.120122 0.424442 0.559752
+		v 0.147489 0.314296 0.560616
+		v -0.150797 0.314296 0.401554
+		v -0.127167 0.444050 0.401554
+		v 0.042368 0.542674 0.401554
+		v 0.168471 0.436958 0.401554
+		v 0.187232 0.314296 0.401554
+		v -0.203150 0.335178 0.072289
+		v -0.168866 0.471225 0.072109
+		v 0.034756 0.585849 0.072109
+		v 0.211474 0.466598 0.072109
+		v 0.244664 0.339247 0.072348
+		v -0.228900 0.331277 -0.182443
+		v -0.199127 0.489778 -0.182352
+		v 0.027075 0.614991 -0.182352
+		v 0.218616 0.484802 -0.182352
+		v 0.251824 0.338243 -0.182543
+		v -0.263719 0.340430 -0.561401
+		v -0.214686 0.493667 -0.558972
+		v 0.025957 0.628592 -0.558972
+		v 0.219706 0.488455 -0.558972
+		v 0.263719 0.340375 -0.561942
+		v 0.255121 0.331816 -0.390949
+		v 0.218138 0.486879 -0.388900
+		v 0.026553 0.617444 -0.388873
+		v -0.206791 0.491929 -0.388884
+		v -0.246729 0.331967 -0.390265
+		v 0.258503 0.333687 -0.080023
+		v 0.223906 0.473358 -0.080095
+		v 0.032165 0.596494 -0.080144
+		v -0.187788 0.477929 -0.080127
+		v -0.219727 0.328017 -0.080072
+		v 0.219214 0.330108 0.262841
+		v 0.196165 0.457831 0.262681
+		v 0.034527 0.572797 0.262679
+		v -0.158817 0.462150 0.262712
+		v -0.182635 0.371925 0.262909
+		v 0.159857 0.313673 0.506822
+		v 0.126995 0.428778 0.505633
+		v 0.040687 0.499627 0.505543
+		v -0.056431 0.428675 0.505563
+		v -0.086598 0.314296 0.507828
+		v 0.073753 0.594889 -0.558972
+		v -0.052676 0.595187 -0.558972
+		v 0.081390 0.585931 -0.182526
+		v -0.051989 0.586199 -0.182685
+		v 0.092656 0.565908 0.072170
+		v -0.038085 0.558968 0.072149
+		v 0.186292 0.343402 0.401649
+		v 0.115230 0.533108 0.401559
+		v -0.024554 0.528561 0.401693
+		v -0.147785 0.366322 0.401600
+		v 0.145026 0.357504 0.561157
+		v 0.078607 0.443217 0.559752
+		v 0.021941 0.425000 0.559752
+		v -0.034678 0.357155 0.561942
+		v 0.074361 0.588585 -0.388945
+		v -0.052262 0.588877 -0.389028
+		v 0.092413 0.572844 -0.080128
+		v -0.045376 0.569177 -0.080122
+		v 0.126040 0.553048 0.262698
+		v -0.035356 0.554021 0.262785
+		v 0.152528 0.373049 0.506696
+		v 0.095285 0.488144 0.505563
+		v -0.010801 0.477412 0.505658
+		v -0.079414 0.373027 0.507120
+		v 0.003939 0.227544 0.559752
+		v 0.051605 0.187345 0.559752
+		v 0.120122 0.204150 0.559752
+		v -0.127167 0.184542 0.401554
+		v 0.042368 0.085918 0.401554
+		v 0.168471 0.191634 0.401554
+		v -0.168866 0.157367 0.072109
+		v 0.034756 0.042743 0.072109
+		v 0.211474 0.161994 0.072109
+		v -0.199127 0.138814 -0.182352
+		v 0.027075 0.013601 -0.182352
+		v 0.218616 0.143790 -0.182352
+		v -0.214686 0.134925 -0.558972
+		v 0.025957 0.000000 -0.558972
+		v 0.219706 0.140137 -0.558972
+		v 0.218138 0.141713 -0.388900
+		v 0.026553 0.011148 -0.388873
+		v -0.206791 0.136663 -0.388884
+		v 0.223906 0.155234 -0.080095
+		v 0.032165 0.032097 -0.080144
+		v -0.187788 0.150663 -0.080127
+		v 0.196165 0.170761 0.262681
+		v 0.034527 0.055795 0.262679
+		v -0.158817 0.166442 0.262712
+		v 0.126995 0.199814 0.505633
+		v 0.040687 0.128965 0.505543
+		v -0.056431 0.199917 0.505563
+		v 0.263719 0.288216 -0.561942
+		v 0.073753 0.033703 -0.558972
+		v -0.052676 0.033405 -0.558972
+		v -0.263719 0.288162 -0.561401
+		v 0.251824 0.290349 -0.182543
+		v 0.081390 0.042661 -0.182526
+		v -0.051989 0.042393 -0.182685
+		v -0.228900 0.297315 -0.182443
+		v 0.244664 0.289345 0.072348
+		v 0.092656 0.062684 0.072170
+		v -0.038085 0.069624 0.072149
+		v -0.203150 0.293414 0.072289
+		v 0.186292 0.285190 0.401649
+		v 0.115230 0.095484 0.401559
+		v -0.024554 0.100031 0.401693
+		v -0.147785 0.262270 0.401600
+		v 0.145026 0.271088 0.561157
+		v 0.078607 0.185375 0.559752
+		v 0.021941 0.203592 0.559752
+		v -0.034678 0.271437 0.561942
+		v 0.255121 0.296776 -0.390949
+		v 0.074361 0.040007 -0.388945
+		v -0.052262 0.039715 -0.389028
+		v -0.246729 0.296625 -0.390265
+		v 0.258503 0.294905 -0.080023
+		v 0.092413 0.055748 -0.080128
+		v -0.045376 0.059415 -0.080122
+		v -0.219727 0.300575 -0.080072
+		v 0.219214 0.298484 0.262841
+		v 0.126040 0.075544 0.262698
+		v -0.035356 0.074571 0.262785
+		v -0.182635 0.256667 0.262909
+		v 0.152528 0.255543 0.506696
+		v 0.095285 0.140448 0.505563
+		v -0.010801 0.151180 0.505658
+		v -0.079414 0.255565 0.507120
+		v -0.177300 0.343214 0.332187
+		v -0.149346 0.453410 0.332187
+		v 0.038452 0.558376 0.332187
+		v 0.182304 0.447676 0.332187
+		v 0.204606 0.322226 0.332187
+		v 0.204150 0.336815 0.332187
+		v 0.124527 0.543685 0.332187
+		v -0.029960 0.541912 0.332187
+		v -0.174090 0.369287 0.332187
+		v -0.149346 0.175182 0.332187
+		v 0.038452 0.070216 0.332187
+		v 0.182304 0.180917 0.332187
+		v 0.204150 0.291777 0.332187
+		v 0.124527 0.084907 0.332187
+		v -0.029960 0.086681 0.332187
+		v -0.174090 0.259305 0.332187
+		v -0.177300 0.285378 0.332187
+		v 0.204606 0.306366 0.332187
+		v -0.092821 0.495808 0.332187
+		v 0.090824 0.548486 0.332187
+		v 0.195227 0.383686 0.332187
+		v 0.155658 0.495960 0.332187
+		v 0.003515 0.548977 0.332187
+		v -0.161538 0.408514 0.332187
+		v -0.092821 0.132785 0.332187
+		v 0.090824 0.080106 0.332187
+		v 0.191228 0.227798 0.332187
+		v 0.155658 0.132632 0.332187
+		v 0.003515 0.079615 0.332187
+		v -0.161195 0.214136 0.332187
+		vt 0.217620 0.933429
+		vt 0.256669 0.933429
+		vt 0.220995 0.982405
+		vt 0.256870 0.982405
+		vt 0.138754 0.935168
+		vt 0.180457 0.935168
+		vt 0.164206 0.982405
+		vt 0.184254 0.982405
+		vt 0.256848 0.838400
+		vt 0.869665 0.935168
+		vt 0.902574 0.934164
+		vt 0.225457 0.838400
+		vt 0.854607 0.982405
+		vt 0.878227 0.982405
+		vt 0.829226 0.935168
+		vt 0.829305 0.982405
+		vt 0.219275 0.693372
+		vt 0.097803 0.691525
+		vt 0.172109 0.691525
+		vt 0.112973 0.839406
+		vt 0.184823 0.839406
+		vt 0.087761 0.547881
+		vt 0.081830 0.450000
+		vt 0.169370 0.547881
+		vt 0.791284 0.933429
+		vt 0.784876 0.982405
+		vt 0.171899 0.450000
+		vt 0.940492 0.692962
+		vt 0.927446 0.837683
+		vt 0.896830 0.691525
+		vt 0.885978 0.839406
+		vt 0.158082 0.308475
+		vt 0.072077 0.308475
+		vt 0.155437 0.162767
+		vt 0.066479 0.162013
+		vt 0.032738 0.162317
+		vt 0.046224 0.017595
+		vt 0.021173 0.017595
+		vt 0.837541 0.691525
+		vt 0.825194 0.839406
+		vt 0.036153 0.307038
+		vt 0.759685 0.691714
+		vt 0.769097 0.838400
+		vt 0.924630 0.450000
+		vt 0.962293 0.451760
+		vt 0.102173 0.017595
+		vt 0.227681 0.017595
+		vt 0.237340 0.161600
+		vt 0.240801 0.308286
+		vt 0.041380 0.451760
+		vt 0.050674 0.548240
+		vt 0.243695 0.451657
+		vt 0.920297 0.547881
+		vt 0.953098 0.548240
+		vt 0.239867 0.548343
+		vt 0.770794 0.548343
+		vt 0.768785 0.451657
+		vt 0.835953 0.547881
+		vt 0.830626 0.450000
+		vt 0.967464 0.307038
+		vt 0.941889 0.308475
+		vt 0.970843 0.162317
+		vt 0.063415 0.692962
+		vt 0.076601 0.837683
+		vt 0.101740 0.934164
+		vt 0.123940 0.982405
+		vt 0.945100 0.162045
+		vt 0.773428 0.308286
+		vt 0.768586 0.161600
+		vt 0.296125 0.933429
+		vt 0.292744 0.982405
+		vt 0.374754 0.935168
+		vt 0.349533 0.982405
+		vt 0.333214 0.935168
+		vt 0.329485 0.982405
+		vt 0.294494 0.693372
+		vt 0.288249 0.838400
+		vt 0.415917 0.691525
+		vt 0.850881 0.308475
+		vt 0.848491 0.163425
+		vt 0.902146 0.017595
+		vt 0.781113 0.017595
+		vt 0.957280 0.017595
+		vt 0.982285 0.017595
+		vt 0.400739 0.839406
+		vt 0.341560 0.691525
+		vt 0.328976 0.839406
+		vt 0.270047 0.451657
+		vt 0.273877 0.548343
+		vt 0.425975 0.547881
+		vt 0.344361 0.547881
+		vt 0.431907 0.450000
+		vt 0.749104 0.838400
+		vt 0.748591 0.933429
+		vt 0.749093 0.982405
+		vt 0.628517 0.935168
+		vt 0.643579 0.982405
+		vt 0.595613 0.934164
+		vt 0.341833 0.450000
+		vt 0.276268 0.161600
+		vt 0.272934 0.308286
+		vt 0.355622 0.308475
+		vt 0.357973 0.162773
+		vt 0.441662 0.308475
+		vt 0.447393 0.162008
+		vt 0.492567 0.017595
+		vt 0.617293 0.982405
+		vt 0.668949 0.935168
+		vt 0.706879 0.933429
+		vt 0.668881 0.982405
+		vt 0.713311 0.982405
+		vt 0.557694 0.692962
+		vt 0.481002 0.162317
+		vt 0.467516 0.017595
+		vt 0.477587 0.307038
+		vt 0.411566 0.017595
+		vt 0.286058 0.017595
+		vt 0.472360 0.451760
+		vt 0.463066 0.548240
+		vt 0.450325 0.692962
+		vt 0.437138 0.837683
+		vt 0.601373 0.691525
+		vt 0.570741 0.837683
+		vt 0.612205 0.839406
+		vt 0.672968 0.839406
+		vt 0.660692 0.691525
+		vt 0.729099 0.838400
+		vt 0.738552 0.691714
+		vt 0.573558 0.450000
+		vt 0.577893 0.547881
+		vt 0.535893 0.451760
+		vt 0.411999 0.934164
+		vt 0.375132 0.982405
+		vt 0.545088 0.548240
+		vt 0.667565 0.450000
+		vt 0.729406 0.451657
+		vt 0.662246 0.547881
+		vt 0.727404 0.548343
+		vt 0.530722 0.307038
+		vt 0.527343 0.162317
+		vt 0.556298 0.308475
+		vt 0.553086 0.162045
+		vt 0.649695 0.163425
+		vt 0.729601 0.161600
+		vt 0.647307 0.308475
+		vt 0.724761 0.308286
+		vt 0.717073 0.017595
+		vt 0.596040 0.017595
+		vt 0.540906 0.017595
+		vt 0.515901 0.017595
+		vt 0.238049 0.765838
+		vt 0.178471 0.765521
+		vt 0.070015 0.765395
+		vt 0.933962 0.765395
+		vt 0.831362 0.765538
+		vt 0.754395 0.765045
+		vt 0.764387 0.764996
+		vt 0.891399 0.765527
+		vt 0.105382 0.765408
+		vt 0.222363 0.765814
+		vt 0.335264 0.765521
+		vt 0.564224 0.765395
+		vt 0.443725 0.765395
+		vt 0.666836 0.765538
+		vt 0.733830 0.764996
+		vt 0.606794 0.765527
+		vt 0.408334 0.765408
+		vt 0.291374 0.765814
+		vt 0.275683 0.765838
+		vt 0.743827 0.765045
+		vt 0.142548 0.765447
+		vt 0.912151 0.764667
+		vt 0.792434 0.765548
+		vt 0.861782 0.765536
+		vt 0.087199 0.764621
+		vt 0.202060 0.766341
+		vt 0.371142 0.765447
+		vt 0.586044 0.764667
+		vt 0.694906 0.764985
+		vt 0.636425 0.765536
+		vt 0.426530 0.764621
+		vt 0.314893 0.764994
+		usemtl Material_skirt
+		g		Material_skirt
+		f 69/1 45/2 59/3
+		f 1/4 59/3 45/2
+		f 68/5 44/6 58/7
+		f 2/8 58/7 44/6
+		f 67/10 43/11 57/13
+		f 3/14 57/13 43/11
+		f 42/15 4/16 66/25
+		f 4/16 56/26 66/25
+		f 6/9 55/12 141/160 133/151
+		f 65/18 39/19 151/171 140/159
+		f 7/21 54/20 151/171 134/152
+		f 38/28 135/154 152/172 64/30
+		f 8/29 53/31 139/158 152/172
+		f 37/39 136/155 153/173 36/42
+		f 9/40 52/43 138/157 153/173
+		f 51/22 63/23 12/24
+		f 12/24 63/23 34/27
+		f 62/44 33/45 50/53
+		f 13/54 50/53 33/45
+		f 15/56 31/57 14/58
+		f 14/58 31/57 32/59
+		f 17/32 49/33 29/34
+		f 49/33 61/35 29/34
+		f 18/60 48/61 28/62
+		f 48/61 60/67 28/62
+		f 20/68 26/69 19/79
+		f 19/79 26/69 27/80
+		f 24/81 27/80 25/82
+		f 27/80 26/69 25/82
+		f 46/83 60/67 24/81
+		f 60/67 27/80 24/81
+		f 60/67 48/61 27/80
+		f 27/80 48/61 19/79
+		f 60/67 46/83 28/62
+		f 28/62 46/83 23/84
+		f 61/35 28/36 47/37
+		f 47/37 28/36 23/38
+		f 28/36 61/35 18/41
+		f 61/35 49/33 18/41
+		f 47/37 22/46 61/35
+		f 29/34 61/35 22/46
+		f 22/46 21/47 29/34
+		f 21/47 30/48 29/34
+		f 29/34 30/48 17/32
+		f 30/48 16/49 17/32
+		f 19/79 32/59 20/68
+		f 32/59 31/57 20/68
+		f 48/61 62/44 19/79
+		f 62/44 32/59 19/79
+		f 62/44 50/53 32/59
+		f 32/59 50/53 14/58
+		f 33/45 62/44 18/60
+		f 62/44 48/61 18/60
+		f 18/41 49/33 33/50
+		f 49/33 63/23 33/50
+		f 63/23 51/22 33/50
+		f 33/50 51/22 13/51
+		f 63/23 49/33 34/27
+		f 34/27 49/33 17/32
+		f 35/52 34/27 16/49
+		f 16/49 34/27 17/32
+		f 35/52 11/55 34/27
+		f 34/27 11/55 12/24
+		f 36/42 138/157 137/156
+		f 14/58 37/39 15/56
+		f 37/39 36/42 15/56
+		f 50/53 64/30 14/58
+		f 64/30 37/39 14/58
+		f 64/30 139/158 154/174 37/39
+		f 37/39 154/174 136/155
+		f 38/28 64/30 13/54
+		f 64/30 50/53 13/54
+		f 51/22 65/18 13/51
+		f 65/18 38/63 13/51
+		f 38/63 65/18 155/175 135/153
+		f 65/18 140/159 155/175
+		f 39/19 65/18 12/24
+		f 65/18 51/22 12/24
+		f 40/17 39/19 11/55
+		f 11/55 39/19 12/24
+		f 39/19 40/17 156/176 134/152
+		f 40/17 141/160 156/176
+		f 52/43 66/25 10/93
+		f 66/25 41/94 10/93
+		f 66/25 56/26 41/94
+		f 41/94 56/26 5/95
+		f 52/43 9/40 66/25
+		f 42/15 66/25 9/40
+		f 9/40 53/31 42/15
+		f 53/31 67/10 42/15
+		f 57/13 4/16 67/10
+		f 42/15 67/10 4/16
+		f 43/11 67/10 8/29
+		f 67/10 53/31 8/29
+		f 68/5 43/65 54/20
+		f 54/20 43/65 8/64
+		f 43/65 68/5 3/66
+		f 68/5 58/7 3/66
+		f 54/20 7/21 68/5
+		f 44/6 68/5 7/21
+		f 7/21 55/12 44/6
+		f 55/12 69/1 44/6
+		f 69/1 59/3 44/6
+		f 44/6 59/3 2/8
+		f 6/9 45/2 55/12
+		f 45/2 69/1 55/12
+		f 45/2 132/70 1/4
+		f 1/4 132/70 116/71
+		f 131/72 115/73 96/74
+		f 70/75 96/74 115/73
+		f 130/96 114/97 95/98
+		f 71/107 95/98 114/97
+		f 94/108 129/109 72/110
+		f 72/110 129/109 113/111
+		f 40/17 128/76 149/169 133/151
+		f 6/9 149/169 148/168 112/77
+		f 127/78 147/167 157/177 93/86
+		f 73/87 142/161 157/177 111/85
+		f 92/112 126/122 158/178 143/162
+		f 74/123 158/178 146/166 110/124
+		f 75/125 144/164 159/179 109/127
+		f 91/126 125/128 145/165 159/179
+		f 35/52 124/88 11/55
+		f 11/55 124/88 108/89
+		f 107/90 76/91 123/92
+		f 76/91 90/99 123/92
+		f 122/129 106/130 89/131
+		f 77/134 89/131 106/130
+		f 88/135 121/136 78/137
+		f 78/137 121/136 105/138
+		f 30/48 120/100 16/49
+		f 16/49 120/100 104/101
+		f 79/102 87/103 103/104
+		f 87/103 119/105 103/104
+		f 80/139 86/140 102/141
+		f 86/140 118/142 102/141
+		f 85/143 117/144 81/145
+		f 81/145 117/144 101/146
+		f 97/147 25/82 117/144
+		f 25/82 26/69 117/144
+		f 117/144 26/69 101/146
+		f 26/69 20/68 101/146
+		f 84/148 97/147 85/143
+		f 85/143 97/147 117/144
+		f 98/149 84/148 118/142
+		f 84/148 85/143 118/142
+		f 118/142 85/143 102/141
+		f 85/143 81/145 102/141
+		f 83/150 98/149 86/140
+		f 86/140 98/149 118/142
+		f 83/106 86/113 99/114
+		f 99/114 86/113 119/105
+		f 86/113 80/115 119/105
+		f 80/115 103/104 119/105
+		f 82/116 99/114 87/103
+		f 87/103 99/114 119/105
+		f 82/116 87/103 100/117
+		f 100/117 87/103 120/100
+		f 87/103 79/102 120/100
+		f 79/102 104/101 120/100
+		f 100/117 120/100 21/47
+		f 30/48 21/47 120/100
+		f 101/146 20/68 121/136
+		f 20/68 31/57 121/136
+		f 31/57 15/56 121/136
+		f 15/56 105/138 121/136
+		f 81/145 101/146 88/135
+		f 88/135 101/146 121/136
+		f 102/141 81/145 122/129
+		f 81/145 88/135 122/129
+		f 78/137 106/130 88/135
+		f 88/135 106/130 122/129
+		f 89/131 80/139 122/129
+		f 80/139 102/141 122/129
+		f 80/115 89/118 103/104
+		f 103/104 89/118 123/92
+		f 123/92 89/118 107/90
+		f 89/118 77/119 107/90
+		f 123/92 90/99 103/104
+		f 90/99 79/102 103/104
+		f 79/102 90/99 104/101
+		f 104/101 90/99 124/88
+		f 76/91 108/89 90/99
+		f 90/99 108/89 124/88
+		f 104/101 124/88 16/49
+		f 35/52 16/49 124/88
+		f 105/138 15/56 125/128
+		f 15/56 36/42 125/128
+		f 36/42 137/156 150/170 125/128
+		f 10/93 109/127 145/165 150/170
+		f 78/137 105/138 91/126
+		f 91/126 105/138 125/128
+		f 106/130 78/137 126/122
+		f 78/137 91/126 126/122
+		f 126/122 91/126 160/180 146/166
+		f 91/126 144/164 160/180
+		f 92/112 77/134 126/122
+		f 77/134 106/130 126/122
+		f 107/90 77/119 127/78
+		f 77/119 92/120 127/78
+		f 92/120 143/163 161/181 127/78
+		f 74/121 111/85 147/167 161/181
+		f 93/86 76/91 127/78
+		f 76/91 107/90 127/78
+		f 76/91 93/86 108/89
+		f 108/89 93/86 128/76
+		f 73/87 112/77 162/182 142/161
+		f 93/86 162/182 148/168 128/76
+		f 108/89 128/76 11/55
+		f 40/17 11/55 128/76
+		f 109/127 10/93 129/109
+		f 129/109 10/93 41/94
+		f 129/109 41/94 113/111
+		f 41/94 5/95 113/111
+		f 109/127 129/109 75/125
+		f 94/108 75/125 129/109
+		f 75/125 94/108 110/124
+		f 110/124 94/108 130/96
+		f 114/97 130/96 72/110
+		f 94/108 72/110 130/96
+		f 95/98 74/123 130/96
+		f 74/123 110/124 130/96
+		f 74/121 95/132 111/85
+		f 111/85 95/132 131/72
+		f 95/132 71/133 131/72
+		f 71/133 115/73 131/72
+		f 111/85 131/72 73/87
+		f 96/74 73/87 131/72
+		f 73/87 96/74 112/77
+		f 112/77 96/74 132/70
+		f 70/75 116/71 96/74
+		f 96/74 116/71 132/70
+		f 6/9 112/77 45/2
+		f 45/2 112/77 132/70
+		f 133/151 141/160 40/17
+		f 140/159 151/171 54/20
+		f 134/152 151/171 39/19
+		f 152/172 135/154 8/29
+		f 152/172 139/158 64/30
+		f 153/173 136/155 9/40
+		f 153/173 138/157 36/42
+		f 137/156 138/157 52/43 10/93
+		f 154/174 139/158 53/31
+		f 136/155 154/174 53/31 9/40
+		f 135/153 155/175 8/64
+		f 155/175 140/159 54/20 8/64
+		f 134/152 156/176 7/21
+		f 156/176 141/160 55/12 7/21
+		f 133/151 149/169 6/9
+		f 148/168 149/169 128/76
+		f 157/177 147/167 111/85
+		f 157/177 142/161 93/86
+		f 143/162 158/178 74/123
+		f 146/166 158/178 126/122
+		f 159/179 144/164 91/126
+		f 159/179 145/165 109/127
+		f 150/170 137/156 10/93
+		f 150/170 145/165 125/128
+		f 146/166 160/180 110/124
+		f 160/180 144/164 75/125 110/124
+		f 161/181 143/163 74/121
+		f 161/181 147/167 127/78
+		f 142/161 162/182 93/86
+		f 148/168 162/182 112/77
+		} 
+
+	}
+
+prop SL_skirt
+	{
+	name    SL_skirt_1
+	on
+	bend 1
+	dynamicsLock		1
+	hidden		0
+	addToMenu	1
+	castsShadow		1
+	includeInDepthCue		1
+	parent UNIVERSE
+	channels
+		{
+		groups
+			{
+			groupNode Transform
+				{
+				parmNode Scale
+				parmNode xScale
+				parmNode yScale
+				parmNode zScale
+				parmNode yRotate
+				parmNode xRotate
+				parmNode zRotate
+				parmNode xTran
+				parmNode yTran
+				parmNode zTran
+				}
+			}
+		xOffsetA OriginX
+			{
+			name GetStringRes(1028,44)
+			initValue 0
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue 0
+			}
+		yOffsetA OriginY
+			{
+			name GetStringRes(1028,45)
+			initValue 0.314296
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue 0.314296
+			}
+		zOffsetA OriginZ
+			{
+			name GetStringRes(1028,46)
+			initValue 0
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue 0
+			}
+		propagatingScale Scale
+			{
+			name GetStringRes(1028,5)
+			initValue 0.32
+			hidden 0
+			forceLimits 0
+			min 0.001
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  0
+				k  0  0.32
+				}
+			interpStyleLocked 0
+			}
+		propagatingScaleX xScale
+			{
+			name GetStringRes(1028,6)
+			initValue 1
+			hidden 0
+			forceLimits 0
+			min 0.001
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  0
+				k  0  1
+				}
+			interpStyleLocked 0
+			}
+		propagatingScaleY yScale
+			{
+			name GetStringRes(1028,7)
+			initValue 1
+			hidden 0
+			forceLimits 0
+			min 0.001
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  0
+				k  0  1
+				}
+			interpStyleLocked 0
+			}
+		propagatingScaleZ zScale
+			{
+			name GetStringRes(1028,8)
+			initValue 1
+			hidden 0
+			forceLimits 0
+			min 0.001
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  0
+				k  0  1
+				}
+			interpStyleLocked 0
+			}
+		rotateY yRotate
+			{
+			name yrot
+			initValue 90
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 1
+			keys
+				{
+				static  0
+				k  0  90
+				}
+			interpStyleLocked 0
+			}
+		rotateX xRotate
+			{
+			name xrot
+			initValue 180
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 1
+			keys
+				{
+				static  0
+				k  0  180
+				}
+			interpStyleLocked 0
+			}
+		rotateZ zRotate
+			{
+			name zrot
+			initValue 90
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 1
+			keys
+				{
+				static  0
+				k  0  90
+				}
+			interpStyleLocked 0
+			}
+		translateX xTran
+			{
+			name GetStringRes(1028,12)
+			initValue 0
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.001
+			keys
+				{
+				static  0
+				k  0  0
+				}
+			interpStyleLocked 0
+			}
+		translateY yTran
+			{
+			name GetStringRes(1028,13)
+			initValue -0.137
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.001
+			keys
+				{
+				static  0
+				k  0  -0.137
+				}
+			interpStyleLocked 0
+			}
+		translateZ zTran
+			{
+			name GetStringRes(1028,14)
+			initValue -0.011
+			hidden 0
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.001
+			keys
+				{
+				static  0
+				k  0  -0.011
+				}
+			interpStyleLocked 0
+			}
+		xOffsetB xOffB
+			{
+			name xOffB
+			initValue 0
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue 0
+			}
+		yOffsetB yOffB
+			{
+			name yOffB
+			initValue -0.314296
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue -0.314296
+			}
+		zOffsetB zOffB
+			{
+			name zOffB
+			initValue 0
+			hidden 1
+			forceLimits 0
+			min -100000
+			max 100000
+			trackingScale 0.004
+			keys
+				{
+				static  1
+				k  0  0
+				}
+			interpStyleLocked 0
+			staticValue 0
+			}
+		}
+	endPoint 0 0.628592 0
+	origin 0 0.314296 0
+	orientation 0 0 0
+	displayOrigin		0
+	displayMode USEPARENT
+	customMaterial	1
+	material Preview
+		{
+		KdColor 0.643137 0.517647 0.27451 1 
+		KaColor 0 0 0 1 
+		KsColor 0.0463881 0.0673421 0.121317 1 
+		TextureColor 1 1 1 1 
+		NsExponent 59.9999 
+		tMin 0 
+		tMax 0 
+		tExpo 0.6 
+		bumpStrength 1 
+		ksIgnoreTexture 0 
+		reflectThruLights 1 
+		reflectThruKd 0 
+		textureMap NO_MAP
+		bumpMap NO_MAP
+		reflectionMap NO_MAP
+		transparencyMap NO_MAP
+		ReflectionColor 1 1 1 1 
+		reflectionStrength 1 
+		shaderTree
+			{
+			node "poser" "PoserSurface"
+				{
+				name "PoserSurface"
+				pos 30 20
+				showPreview 1
+				nodeInput "Diffuse_Color"
+					{
+					name "Diffuse_Color"
+					value 0.643137 0.517647 0.27451
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Diffuse_Value"
+					{
+					name "Diffuse_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Highlight_Color"
+					{
+					name "Specular_Color"
+					value 0.0463881 0.0673421 0.121317
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Highlight_Value"
+					{
+					name "Specular_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Roughness"
+					{
+					name "Highlight_Size"
+					value 0.0166667 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Ambient_Color"
+					{
+					name "Ambient_Color"
+					value 0 0 0
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Ambient_Value"
+					{
+					name "Ambient_Value"
+					value 0 1 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Max"
+					{
+					name "Transparency"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Min"
+					{
+					name "Transparency_Edge"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Falloff"
+					{
+					name "Transparency_Falloff"
+					value 0.6 0 100
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Translucence_Color"
+					{
+					name "Translucence_Color"
+					value 0 0 0
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Translucence_Value"
+					{
+					name "Translucence_Value"
+					value 0 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Reflection_Color"
+					{
+					name "Reflection_Color"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Reflection_Value"
+					{
+					name "Reflection_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Refraction_Color"
+					{
+					name "Refraction_Color"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Refraction_Value"
+					{
+					name "Refraction_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Bump"
+					{
+					name "Bump"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Displacement"
+					{
+					name "Displacement"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "AlternateDiffuse"
+					{
+					name "Alternate_Diffuse"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "AlternateSpecular"
+					{
+					name "Alternate_Specular"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "ReflectionLiteMult"
+					{
+					name "Reflection_Lite_Mult"
+					value 1 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "ReflectionKdMult"
+					{
+					name "Reflection_Kd_Mult"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Gradient_Bump"
+					{
+					name "Gradient_Bump"
+					value 1 -1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				}
+			}
+		}
+	material Material_skirt
+		{
+		KdColor 0.992157 0.996078 0.984314 1 
+		KaColor 0 0 0 1 
+		KsColor 0.168902 0.083346 0.0765099 1 
+		TextureColor 1 1 1 1 
+		NsExponent 59.9999 
+		tMin 0 
+		tMax 0 
+		tExpo 0.6 
+		bumpStrength 1 
+		ksIgnoreTexture 0 
+		reflectThruLights 1 
+		reflectThruKd 0 
+		textureMap NO_MAP
+		bumpMap NO_MAP
+		reflectionMap NO_MAP
+		transparencyMap NO_MAP
+		ReflectionColor 1 1 1 1 
+		reflectionStrength 1 
+		shaderTree
+			{
+			node "poser" "PoserSurface"
+				{
+				name "PoserSurface"
+				pos 6 19
+				showPreview 1
+				nodeInput "Diffuse_Color"
+					{
+					name "Diffuse_Color"
+					value 0.992157 0.996078 0.984314
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Diffuse_Value"
+					{
+					name "Diffuse_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Highlight_Color"
+					{
+					name "Specular_Color"
+					value 0.168902 0.083346 0.0765099
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Highlight_Value"
+					{
+					name "Specular_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Roughness"
+					{
+					name "Highlight_Size"
+					value 0.0166667 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Ambient_Color"
+					{
+					name "Ambient_Color"
+					value 0 0 0
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Ambient_Value"
+					{
+					name "Ambient_Value"
+					value 0 1 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Max"
+					{
+					name "Transparency"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Min"
+					{
+					name "Transparency_Edge"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Transparency_Falloff"
+					{
+					name "Transparency_Falloff"
+					value 0.6 0 100
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Translucence_Color"
+					{
+					name "Translucence_Color"
+					value 0 0 0
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Translucence_Value"
+					{
+					name "Translucence_Value"
+					value 0 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Reflection_Color"
+					{
+					name "Reflection_Color"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Reflection_Value"
+					{
+					name "Reflection_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Refraction_Color"
+					{
+					name "Refraction_Color"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Refraction_Value"
+					{
+					name "Refraction_Value"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Bump"
+					{
+					name "Bump"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Displacement"
+					{
+					name "Displacement"
+					value 1 0 10
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "AlternateDiffuse"
+					{
+					name "Alternate_Diffuse"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "AlternateSpecular"
+					{
+					name "Alternate_Specular"
+					value 1 1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "ReflectionLiteMult"
+					{
+					name "Reflection_Lite_Mult"
+					value 1 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "ReflectionKdMult"
+					{
+					name "Reflection_Kd_Mult"
+					value 0 0 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				nodeInput "Gradient_Bump"
+					{
+					name "Gradient_Bump"
+					value 1 -1 1
+					parmR NO_PARM
+					parmG NO_PARM
+					parmB NO_PARM
+					node NO_NODE
+					file "" 
+					}
+				}
+			}
+		}
+	locked 0
+	backfaceCull 0
+	visibleInReflections 1
+	visibleInRender 1
+	displacementBounds 0
+	shadingRate 0.2
+	smoothPolys 1
+	}
+doc
+	{
+	addActor SL_skirt
+	}
+}
