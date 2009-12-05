@@ -1,10 +1,11 @@
 #ifndef traktor_animation_AnimatedMeshEntity_H
 #define traktor_animation_AnimatedMeshEntity_H
 
-#include "Core/Containers/AlignedVector.h"
-#include "Mesh/MeshEntity.h"
 #include "Animation/Pose.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Thread/JobManager.h"
 #include "Resource/Proxy.h"
+#include "Mesh/MeshEntity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -77,6 +78,11 @@ private:
 	AlignedVector< Matrix44 > m_skinTransforms;
 	float m_totalTime;
 	bool m_updateController;
+	mutable Job m_updatePoseControllerJob;
+
+	void synchronize() const;
+
+	void updatePoseController(float deltaTime);
 };
 
 	}

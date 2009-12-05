@@ -35,6 +35,8 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 
 Aabb AnimatedMeshEntity::getBoundingBox() const
 {
+	synchronize();
+
 	if (!m_poseTransforms.empty())
 	{
 		Aabb boundingBox;
@@ -52,6 +54,7 @@ Aabb AnimatedMeshEntity::getBoundingBox() const
 		}
 		return boundingBox;
 	}
+
 	return m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb();
 }
 
@@ -59,6 +62,8 @@ void AnimatedMeshEntity::render(world::WorldContext* worldContext, world::WorldR
 {
 	if (!m_mesh.validate())
 		return;
+
+	synchronize();
 
 	m_mesh->render(
 		worldContext->getRenderContext(),
@@ -77,12 +82,80 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 	if (!m_updateController)
 		return;
 
+	synchronize();
+
 	// Prevent further updates from evaluating pose controller,
 	// each pose controller needs to set this flag if it's
 	// required to continue running even when this entity
 	// hasn't been rendered.
 	m_updateController = false;
 
+	m_updatePoseControllerJob = makeFunctor< AnimatedMeshEntity, float >(
+		this,
+		&AnimatedMeshEntity::updatePoseController,
+		update->getDeltaTime()
+	);
+
+	JobManager::getInstance().add(m_updatePoseControllerJob);
+}
+
+bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const
+{
+	uint32_t index;
+
+	synchronize();
+
+	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+		return false;
+	if (index >= m_boneTransforms.size())
+		return false;
+
+	outTransform = m_boneTransforms[index];
+	return true;
+}
+
+bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transform& outTransform) const
+{
+	uint32_t index;
+
+	synchronize();
+
+	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+		return false;
+	if (index >= m_poseTransforms.size())
+		return false;
+
+	outTransform = m_poseTransforms[index];
+	return true;
+}
+
+bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Matrix44& outTransform) const
+{
+	uint32_t index;
+
+	synchronize();
+
+	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+		return false;
+	if (index >= m_poseTransforms.size())
+		return false;
+
+	int skinIndex = m_boneRemap[index];
+	if (skinIndex < 0)
+		return false;
+
+	outTransform = m_skinTransforms[skinIndex];
+	return true;
+}
+
+void AnimatedMeshEntity::synchronize() const
+{
+	m_updatePoseControllerJob.wait();
+	m_updatePoseControllerJob = 0;
+}
+
+void AnimatedMeshEntity::updatePoseController(float deltaTime)
+{
 	if (m_poseController)
 	{
 		m_boneTransforms.resize(0);
@@ -94,7 +167,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		);
 
 		m_poseController->evaluate(
-			update->getDeltaTime(),
+			deltaTime,
 			m_transform,
 			m_skeleton,
 			m_boneTransforms,
@@ -106,7 +179,7 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 			m_poseTransforms.push_back(Transform::identity());
 
 		m_skinTransforms.resize(m_boneTransforms.size());
-		
+
 		for (size_t i = 0; i < m_boneTransforms.size(); ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 
@@ -123,49 +196,6 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		for (size_t i = 0; i < m_skinTransforms.size(); ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 	}
-}
-
-bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const
-{
-	uint32_t index;
-
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
-		return false;
-	if (index >= m_boneTransforms.size())
-		return false;
-
-	outTransform = m_boneTransforms[index];
-	return true;
-}
-
-bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transform& outTransform) const
-{
-	uint32_t index;
-
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
-		return false;
-	if (index >= m_poseTransforms.size())
-		return false;
-
-	outTransform = m_poseTransforms[index];
-	return true;
-}
-
-bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Matrix44& outTransform) const
-{
-	uint32_t index;
-
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
-		return false;
-	if (index >= m_poseTransforms.size())
-		return false;
-
-	int skinIndex = m_boneRemap[index];
-	if (skinIndex < 0)
-		return false;
-
-	outTransform = m_skinTransforms[skinIndex];
-	return true;
 }
 
 	}
