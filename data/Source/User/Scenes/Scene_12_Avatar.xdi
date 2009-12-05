@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.scene.SceneAsset" version="2">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="2">
+		<viewNearZ>0.1</viewNearZ>
+		<viewFarZ>1000</viewFarZ>
+		<depthPassEnabled>true</depthPassEnabled>
+		<velocityPassEnable>false</velocityPassEnable>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowFarZ>200</shadowFarZ>
+		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowMapBias>0.001</shadowMapBias>
+	</worldRenderSettings>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
+	<instance type="traktor.world.EntityInstance" version="1">
+		<name>Root</name>
+		<entityData type="traktor.world.GroupEntityData">
+			<instances>
+				<item type="traktor.world.EntityInstance" version="1">
+					<name>Light</name>
+					<entityData type="traktor.world.DirectionalLightEntityData">
+						<transform>
+							<translation>-5.01567, 2.08424, -6.07079, 0</translation>
+							<rotation>-0.324312, -0.103966, -0.0452493, -0.93913</rotation>
+						</transform>
+						<sunColor>1, 1, 1, 0</sunColor>
+						<baseColor>0.5, 0.7, 0.5, 0</baseColor>
+						<shadowColor>0.1, 0.1, 0.1, 0</shadowColor>
+					</entityData>
+					<instanceData/>
+					<references/>
+				</item>
+				<item type="traktor.world.EntityInstance" version="1">
+					<name>Avatar</name>
+					<entityData type="traktor.animation.AnimatedMeshEntityData">
+						<transform>
+							<translation>0, 0, 0, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+						<mesh>{0ADEEC97-BDCD-C34B-98C0-9CD0BEB95158}</mesh>
+						<skeleton>{FA421F3A-CDC1-0748-9A7B-5720FE6B91C2}</skeleton>
+						<poseController type="traktor.animation.StatePoseControllerData">
+							<stateGraph>{B6D28FB3-6C33-6F43-9BC0-4BB16AF0B646}</stateGraph>
+						</poseController>
+					</entityData>
+					<instanceData/>
+					<references/>
+				</item>
+			</instances>
+		</entityData>
+		<instanceData/>
+		<references/>
+	</instance>
+	<controllerData/>
+</object>
