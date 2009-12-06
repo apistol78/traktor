@@ -89,7 +89,7 @@ void PathEntity::update(const world::EntityUpdate* update)
 		}
 	}
 
-	TransformPath::Frame frame = m_path.evaluate(m_time);
+	TransformPath::Frame frame = m_path.evaluate(m_time, m_timeMode == TmLoop);
 	Transform transform(frame.position, frame.orientation);
 
 	m_entity->setTransform(m_transform * transform);

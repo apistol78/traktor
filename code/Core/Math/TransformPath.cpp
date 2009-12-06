@@ -75,15 +75,17 @@ void TransformPath::insert(float at, const Frame& frame)
 	}
 }
 
-TransformPath::Frame TransformPath::evaluate(float at) const
+TransformPath::Frame TransformPath::evaluate(float at, bool loop) const
 {
 	size_t nkeys = m_keys.size();
 	if (nkeys == 0)
 		return Frame();
 	else if (nkeys == 1)
 		return m_keys[0].value;
+	else if (loop)
+		return Hermite< Key, Scalar, Frame, FrameAccessor, WrapTime< Scalar > >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));	
 	else
-		return Hermite< Key, Scalar, Frame, FrameAccessor >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));
+		return Hermite< Key, Scalar, Frame, FrameAccessor, ClampTime< Scalar > >::evaluate(&m_keys[0], m_keys.size(), Scalar(at));	
 }
 
 TransformPath::Key* TransformPath::getClosestKey(float at)

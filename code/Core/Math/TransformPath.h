@@ -54,7 +54,7 @@ public:
 
 	void insert(float at, const Frame& frame);
 
-	Frame evaluate(float at) const;
+	Frame evaluate(float at, bool loop) const;
 
 	Key* getClosestKey(float at);
 

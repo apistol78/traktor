@@ -10,8 +10,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, scene::ISceneController)
 
-TheaterController::TheaterController(float duration, const RefArray< Track >& tracks)
+TheaterController::TheaterController(float duration, bool loop, const RefArray< Track >& tracks)
 :	m_duration(duration)
+,	m_loop(loop)
 ,	m_tracks(tracks)
 ,	m_lastTime(0.0f)
 {
@@ -22,7 +23,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	if (abs(m_lastTime - time) <= FUZZY_EPSILON)
 		return;
 
-	if (time > m_duration)
+	if (!m_loop && time > m_duration)
 		return;
 
 	for (RefArray< Track >::iterator i = m_tracks.begin(); i != m_tracks.end(); ++i)
@@ -31,7 +32,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 		T_ASSERT (entity);
 
 		const TransformPath& path = (*i)->getPath();
-		TransformPath::Frame frame = path.evaluate(time);
+		TransformPath::Frame frame = path.evaluate(time, m_loop);
 		Transform transform(frame.position, frame.orientation);
 		entity->setTransform(transform);
 	}

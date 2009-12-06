@@ -12,10 +12,11 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 0, TheaterControllerData, scene::ISceneControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 1, TheaterControllerData, scene::ISceneControllerData)
 
 TheaterControllerData::TheaterControllerData()
 :	m_duration(0.0f)
+,	m_loop(true)
 {
 }
 
@@ -33,12 +34,14 @@ Ref< scene::ISceneController > TheaterControllerData::createController(world::IE
 			m_trackData[i]->getPath()
 		);
 	}
-	return new TheaterController(m_duration, tracks);
+	return new TheaterController(m_duration, m_loop, tracks);
 }
 
 bool TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"loop", m_loop);
 	s >> MemberRefArray< TrackData >(L"trackData", m_trackData);
 	return true;
 }
