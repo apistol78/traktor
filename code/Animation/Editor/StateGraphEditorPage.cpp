@@ -128,27 +128,6 @@ Ref< Object > StateGraphEditorPage::getDataObject()
 	return m_stateGraph;
 }
 
-void StateGraphEditorPage::propertiesChanged()
-{
-	// Refresh editor nodes.
-	RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
-	for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
-	{
-		Ref< ui::custom::Node > node = *i;
-
-		Ref< State > state = node->getData< State >(L"STATE");
-		node->setTitle(state->getName());
-
-		const std::pair< int, int >& position = state->getPosition();
-		node->setPosition(ui::Point(
-			position.first,
-			position.second
-		));
-	}
-
-	updateGraph();
-}
-
 bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
@@ -173,6 +152,26 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 bool StateGraphEditorPage::handleCommand(const ui::Command& command)
 {
+	if (command == L"Editor.PropertiesChanged")
+	{
+		// Refresh editor nodes.
+		RefArray< ui::custom::Node >& editorNodes = m_editorGraph->getNodes();
+		for (RefArray< ui::custom::Node >::const_iterator i = editorNodes.begin(); i != editorNodes.end(); ++i)
+		{
+			Ref< ui::custom::Node > node = *i;
+
+			Ref< State > state = node->getData< State >(L"STATE");
+			node->setTitle(state->getName());
+
+			const std::pair< int, int >& position = state->getPosition();
+			node->setPosition(ui::Point(
+				position.first,
+				position.second
+			));
+		}
+
+		updateGraph();
+	}
 	//if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	//{
 	//	RefArray< ui::custom::Node > selectedNodes;

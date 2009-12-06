@@ -187,12 +187,6 @@ Ref< Object > SkeletonEditorPage::getDataObject()
 	return m_skeleton;
 }
 
-void SkeletonEditorPage::propertiesChanged()
-{
-	createSkeletonTreeNodes();
-	m_renderWidget->update();
-}
-
 bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;
@@ -200,7 +194,12 @@ bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& p
 
 bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.Undo")
+	if (command == L"Editor.PropertiesChanged")
+	{
+		createSkeletonTreeNodes();
+		m_renderWidget->update();
+	}
+	else if (command == L"Editor.Undo")
 	{
 		if (!m_undoStack->canUndo())
 			return false;

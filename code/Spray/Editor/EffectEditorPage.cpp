@@ -150,14 +150,6 @@ Ref< Object > EffectEditorPage::getDataObject()
 	return m_effect;
 }
 
-void EffectEditorPage::propertiesChanged()
-{
-	if (m_previewControl)
-		m_previewControl->syncEffect();
-
-	updateSequencer();
-}
-
 bool EffectEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;
@@ -168,7 +160,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	if (!m_previewControl)
 		return false;
 
-	if (command == L"Effect.Editor.Reset")
+	if (command == L"Editor.PropertiesChanged")
+	{
+		m_previewControl->syncEffect();
+		updateSequencer();
+	}
+	else if (command == L"Effect.Editor.Reset")
 	{
 		m_previewControl->setTotalTime(0.0f);
 		m_previewControl->syncEffect();

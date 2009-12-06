@@ -74,10 +74,6 @@ Ref< Object > DictionaryEditorPage::getDataObject()
 	return m_dictionary;
 }
 
-void DictionaryEditorPage::propertiesChanged()
-{
-}
-
 bool DictionaryEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

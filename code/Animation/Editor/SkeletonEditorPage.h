@@ -88,8 +88,6 @@ public:
 
 	virtual Ref< Object > getDataObject();
 
-	virtual void propertiesChanged();
-
 	virtual bool dropInstance(db::Instance* instance, const ui::Point& position);
 
 	virtual bool handleCommand(const ui::Command& command);

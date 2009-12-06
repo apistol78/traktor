@@ -1672,7 +1672,17 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			{
 				saveSettings(L"Traktor.Editor");
 				updateShortcutTable();
+
+				// Notify editor pages about changed settings.
+				for (int i = 0; i < m_tab->getPageCount(); ++i)
+				{
+					Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+					Ref< IEditorPage > editorPage = checked_type_cast< IEditorPage* >(tabPage->getData(L"EDITORPAGE"));
+					if (editorPage)
+						editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+				}
 			}
+
 			settingsDialog.destroy();
 		}
 	}
