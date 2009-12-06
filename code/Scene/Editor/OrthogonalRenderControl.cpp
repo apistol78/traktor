@@ -36,7 +36,7 @@ const float c_minMagnification = 0.01f;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
 :	m_mousePosition(0, 0)

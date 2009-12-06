@@ -315,10 +315,6 @@ Ref< Object > AnimationEditorPage::getDataObject()
 	return m_animation;
 }
 
-void AnimationEditorPage::propertiesChanged()
-{
-}
-
 bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	Ref< Skeleton > skeleton = instance->getObject< Skeleton >();

@@ -238,15 +238,6 @@ Ref< Object > ShaderGraphEditorPage::getDataObject()
 	return m_shaderGraph;
 }
 
-void ShaderGraphEditorPage::propertiesChanged()
-{
-	// Save undo state.
-	m_undoStack->push(m_shaderGraph);
-
-	refreshGraph();
-	updateGraph();
-}
-
 bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
@@ -297,7 +288,15 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 
 bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.Cut" || command == L"Editor.Copy")
+	if (command == L"Editor.PropertiesChanged")
+	{
+		// Save undo state.
+		m_undoStack->push(m_shaderGraph);
+
+		refreshGraph();
+		updateGraph();
+	}
+	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
 		RefArray< ui::custom::Node > selectedNodes;
 		if (m_editorGraph->getSelectedNodes(selectedNodes) > 0)

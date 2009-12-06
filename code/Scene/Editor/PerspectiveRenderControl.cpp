@@ -51,7 +51,7 @@ const float c_clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ui::Widget)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
 :	m_fieldOfView(c_defaultFieldOfView)

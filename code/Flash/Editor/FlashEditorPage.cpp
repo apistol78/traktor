@@ -137,10 +137,6 @@ Ref< Object > FlashEditorPage::getDataObject()
 	return 0;
 }
 
-void FlashEditorPage::propertiesChanged()
-{
-}
-
 bool FlashEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	return false;

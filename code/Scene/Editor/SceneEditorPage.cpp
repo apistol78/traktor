@@ -245,16 +245,6 @@ Ref< Object > SceneEditorPage::getDataObject()
 	return m_dataObject;
 }
 
-void SceneEditorPage::propertiesChanged()
-{
-	updateScene();
-	updateInstanceGrid();
-
-	// Notify controller editor as well.
-	if (m_controllerEditor)
-		m_controllerEditor->propertiesChanged();
-}
-
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
 	const TypeInfo* primaryType = instance->getPrimaryType();
@@ -314,7 +304,16 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 {
 	bool result = true;
 
-	if (command == L"Editor.Undo")
+	if (command == L"Editor.PropertiesChanged")
+	{
+		updateScene();
+		updateInstanceGrid();
+
+		// Notify controller editor as well.
+		if (m_controllerEditor)
+			m_controllerEditor->propertiesChanged();
+	}
+	else if (command == L"Editor.Undo")
 	{
 		if (!m_undoStack->canUndo())
 			return false;

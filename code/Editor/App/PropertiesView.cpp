@@ -142,14 +142,14 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 				{
 					browseItem->setValue(instance->getGuid());
 					m_propertyList->apply();
-					m_editor->getActiveEditorPage()->propertiesChanged();
+					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 				}
 			}
 			else
 			{
 				browseItem->setValue(Guid());
 				m_propertyList->apply();
-				m_editor->getActiveEditorPage()->propertiesChanged();
+				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 			}
 		}
 		else if (cmd == L"Property.Edit")
@@ -189,7 +189,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 					m_propertyList->refresh(objectItem, object);
 					m_propertyList->apply();
 
-					m_editor->getActiveEditorPage()->propertiesChanged();
+					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 				}
 			}
 		}
@@ -200,7 +200,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 			m_propertyList->refresh(objectItem, 0);
 			m_propertyList->apply();
 
-			m_editor->getActiveEditorPage()->propertiesChanged();
+			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 		}
 	}
 	
@@ -219,7 +219,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 					m_propertyList->apply();
 					m_propertyList->refresh();
 
-					m_editor->getActiveEditorPage()->propertiesChanged();
+					m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 				}
 			}
 		}
@@ -240,7 +240,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 			textItem->setValue(textEditorDialog.getText());
 
 			m_propertyList->apply();
-			m_editor->getActiveEditorPage()->propertiesChanged();
+			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 		}
 		textEditorDialog.destroy();
 	}
@@ -255,7 +255,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 			colorItem->setValue(colorDialog.getColor());
 
 			m_propertyList->apply();
-			m_editor->getActiveEditorPage()->propertiesChanged();
+			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 		}
 		colorDialog.destroy();
 	}
@@ -266,7 +266,7 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 void PropertiesView::eventPropertyChange(ui::Event* event)
 {
 	m_propertyList->apply();
-	m_editor->getActiveEditorPage()->propertiesChanged();
+	m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 }
 
 	}
