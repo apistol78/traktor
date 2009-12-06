@@ -110,7 +110,7 @@ bool PathEntityEditor::handleCommand(
 	else if (command == L"Animation.Editor.InsertKey")
 	{
 		TransformPath& path = entityData->getPath();
-		TransformPath::Frame frame = path.evaluate(m_time);
+		TransformPath::Frame frame = path.evaluate(m_time, false);
 		path.insert(m_time, frame);
 		context->buildEntities();
 	}
@@ -164,14 +164,14 @@ void PathEntityEditor::drawGuide(
 			float t1 = st + (i * (et - st)) / 40.0f;
 			float t2 = st + ((i + 1) * (et - st)) / 40.0f;
 			primitiveRenderer->drawLine(
-				path.evaluate(t1).position,
-				path.evaluate(t2).position,
+				path.evaluate(t1, false).position,
+				path.evaluate(t2, false).position,
 				Color(170, 170, 255)
 			);
 		}
 
 		// Draw cursor.
-		Vector4 cursor = path.evaluate(m_time).position;
+		Vector4 cursor = path.evaluate(m_time, false).position;
 		primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color(255, 255, 255, 200));
 	}
 
