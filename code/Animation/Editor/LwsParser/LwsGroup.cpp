@@ -5,7 +5,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsGroup", LwsGroup, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.LwsGroup", LwsGroup, LwsNode)
 
 LwsGroup::LwsGroup(const std::wstring& name)
 :	LwsNode(name)
