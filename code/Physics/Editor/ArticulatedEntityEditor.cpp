@@ -20,6 +20,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntityEditor", ArticulatedEntityEditor, scene::DefaultEntityEditor)
 
+ArticulatedEntityEditor::ArticulatedEntityEditor(
+	scene::SceneEditorContext* context
+)
+:	scene::DefaultEntityEditor(context)
+{
+}
+
 void ArticulatedEntityEditor::entitySelected(
 	scene::SceneEditorContext* context,
 	scene::EntityAdapter* entityAdapter,

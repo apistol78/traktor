@@ -22,6 +22,7 @@
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
 #include "World/PostProcess/PostProcess.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
 #include "Ui/Events/SizeEvent.h"
@@ -47,7 +48,6 @@ const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
-const float c_clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
 
 		}
 
@@ -98,6 +98,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &PerspectiveRenderControl::eventPaint));
 
+	updateSettings();
 	updateWorldRenderer();
 
 	m_camera = m_context->getCamera(index);
@@ -234,29 +235,24 @@ void PerspectiveRenderControl::updateWorldRenderer()
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
-	if (m_renderWidget->hasFocus())
-	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-		{
-			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-			if (entityEditor)
-			{
-				// Propagate command to entity editor.
-				result = entityEditor->handleCommand(m_context, *i, command);
-				if (result)
-					break;
-			}
-		}
-	}
+	if (command == L"Editor.SettingsChanged")
+		updateSettings();
+
 	return result;
 }
 
 void PerspectiveRenderControl::update()
 {
 	m_renderWidget->update();
+}
+
+void PerspectiveRenderControl::updateSettings()
+{
+	Ref< editor::PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
+	m_colorRef = colors->getProperty< editor::PropertyColor >(L"ReferenceEdge");
 }
 
 void PerspectiveRenderControl::updateWorldRenderView()
@@ -542,8 +538,12 @@ void PerspectiveRenderControl::eventSize(ui::Event* event)
 
 void PerspectiveRenderControl::eventPaint(ui::Event* event)
 {
+	float colorClear[4];
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
+
+	// Convert color to fp.
+	m_colorClear.getRGBA32F(colorClear);
 
 	// Update camera.
 	m_camera->update(deltaTime);
@@ -564,7 +564,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	{
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
-			c_clearColor,
+			colorClear,
 			1.0f,
 			128
 		);
@@ -579,8 +579,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		// Render XZ grid.
 		if (m_context->getGridEnable())
 		{
-			const Color gridColor(0, 0, 0, 64);
-
 			Vector4 viewPosition = view.inverse().translation();
 			float vx = floorf(viewPosition.x());
 			float vz = floorf(viewPosition.z());
@@ -592,13 +590,13 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 					Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
 					Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
 					(int(fx + vx) == 0) ? 2.0f : 0.0f,
-					gridColor
+					m_colorGrid
 				);
 				m_primitiveRenderer->drawLine(
 					Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
 					Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
 					(int(fx + vz) == 0) ? 2.0f : 0.0f,
-					gridColor
+					m_colorGrid
 				);
 			}
 		}
@@ -635,8 +633,8 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 						if (length > 0.1f)
 							offset *= Scalar(0.1f) / length;
 
-						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, Color(255, 200, 0, 255));
-						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, Color(255, 200, 0, 255));
+						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, m_colorRef);
+						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, m_colorRef);
 					}
 				}
 			}
@@ -658,7 +656,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				m_renderView->begin(m_renderTarget, 0, true);
 				m_renderView->clear(
 					render::CfColor,
-					c_clearColor,
+					colorClear,
 					1.0f,
 					128
 				);

@@ -2,6 +2,7 @@
 #define traktor_scene_PerspectiveRenderControl_H
 
 #include "Core/RefArray.h"
+#include "Core/Math/Color.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Timer/Timer.h"
@@ -70,6 +71,9 @@ private:
 	Ref< world::WorldRenderer > m_worldRenderer;
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
+	Color m_colorClear;
+	Color m_colorGrid;
+	Color m_colorRef;
 	float m_fieldOfView;
 	Timer m_timer;
 	ui::Point m_mousePosition;
@@ -80,6 +84,8 @@ private:
 	Ref< Camera > m_camera;
 	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;
+
+	void updateSettings();
 
 	void updateWorldRenderView();
 

@@ -108,10 +108,11 @@ void IKPoseController::evaluate(
 				Vector4 d = ep - sp;
 				Scalar ln = d.length(); d /= ln;
 				
-				if (m_physicsManager->queryRay(
-					worldTransform * (sp - d * bone->getRadius()),
+				if (m_physicsManager->querySweep(
+					worldTransform * sp,
 					worldTransform * d,
-					ln + bone->getRadius() * Scalar(2.0f),
+					ln,
+					bone->getRadius(),
 					m_ignoreBody,
 					result
 				))
@@ -134,6 +135,7 @@ void IKPoseController::evaluate(
 			}
 
 			// Constraint 3; keep cone angle.
+			if (bone->getEnableLimits())
 			{
 				int parent = bone->getParent();
 				if (parent >= 0)

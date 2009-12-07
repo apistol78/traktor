@@ -274,6 +274,50 @@
       <second>Build when asset modified</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_COLOR</first>
+      <second>Colors</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BACKGROUND</first>
+      <second>Background</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_GRID</first>
+      <second>Grid</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE</first>
+      <second>Bones</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE_SEL</first>
+      <second>Bones (Selected)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE</first>
+      <second>Bounding box</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE_SEL</first>
+      <second>Bounding box (Selected)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_FACE_SEL</first>
+      <second>Bounding box (Selected face)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_SNAP_POINTS</first>
+      <second>Snap points</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_REFERENCE_EDGES</first>
+      <second>Reference edges</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_CAMERA_WIRE</first>
+      <second>Camera symbol</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_COMMAND</first>
       <second>Command</second>
     </item>

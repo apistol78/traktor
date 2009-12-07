@@ -22,7 +22,11 @@ Ref< IEntityEditor > DefaultEntityEditorFactory::createEntityEditor(
 ) const
 {
 	T_ASSERT (is_type_of< world::SpatialEntityData >(entityDataType));
-	return new DefaultEntityEditor();
+
+	Ref< IEntityEditor > entityEditor = new DefaultEntityEditor(context);
+	T_ASSERT (entityEditor);
+
+	return entityEditor;
 }
 
 	}

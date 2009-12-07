@@ -17,6 +17,7 @@
 #include "World/WorldRenderView.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/EntityInstance.h"
+#include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
 #include "Ui/Events/SizeEvent.h"
@@ -89,6 +90,7 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &OrthogonalRenderControl::eventPaint));
 
+	updateSettings();
 	updateWorldRenderer();
 
 	m_timer.start();
@@ -176,29 +178,25 @@ void OrthogonalRenderControl::updateWorldRenderer()
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 {
 	bool result = false;
-	if (m_renderWidget->hasFocus())
-	{
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
 
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-		{
-			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-			if (entityEditor)
-			{
-				// Propagate command to entity editor.
-				result = entityEditor->handleCommand(m_context, *i, command);
-				if (result)
-					break;
-			}
-		}
-	}
+	if (command == L"Editor.SettingsChanged")
+		updateSettings();
+
 	return result;
 }
 
 void OrthogonalRenderControl::update()
 {
 	m_renderWidget->update();
+}
+
+void OrthogonalRenderControl::updateSettings()
+{
+	Ref< editor::PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
+	m_colorRef = colors->getProperty< editor::PropertyColor >(L"ReferenceEdge");
+	m_colorCamera = colors->getProperty< editor::PropertyColor >(L"CameraWire");
 }
 
 Matrix44 OrthogonalRenderControl::getProjectionTransform() const
@@ -512,10 +510,11 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 	// Render world.
 	if (m_renderView->begin())
 	{
-		const float clearColor[] = { 0.7f, 0.7f, 0.7f, 0.0f };
+		float tmp[4];
+		m_colorClear.getRGBA32F(tmp);
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
-			clearColor,
+			tmp,
 			1.0f,
 			128
 		);
@@ -536,8 +535,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushProjection(worldRenderView.getProjection());
 
 		// Render grid.
-		const Color gridColor(0, 0, 0, 64);
-
 		float unitsPerStep = 1.0f / 5.0f;
 		int steps = int32_t(m_magnification / unitsPerStep);
 		while (steps > 40)
@@ -556,14 +553,14 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 				Vector4(fx, -fz, 0.0f, 1.0f),
 				Vector4(fx, fz, 0.0f, 1.0f),
 				0.0f,
-				gridColor
+				m_colorGrid
 			);
 
 			m_primitiveRenderer->drawLine(
 				Vector4(-fz, fy, 0.0f, 1.0f),
 				Vector4(fz, fy, 0.0f, 1.0f),
 				0.0f,
-				gridColor
+				m_colorGrid
 			);
 		}
 
@@ -602,8 +599,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 						if (length > 0.1f)
 							offset *= Scalar(0.1f) / length;
 
-						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, Color(255, 200, 0, 255));
-						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, Color(255, 200, 0, 255));
+						m_primitiveRenderer->drawLine(sourcePosition, targetPosition, 3.0f, m_colorRef);
+						m_primitiveRenderer->drawArrowHead(center - offset, center + offset, 0.5f, m_colorRef);
 					}
 				}
 			}
@@ -625,7 +622,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawWireAabb(
 				Vector4::origo(),
 				Vector4(0.1f, 0.1f, 0.1f, 0.0f),
-				Color(255, 255, 0, 255)
+				m_colorCamera
 			);
 
 			for (int j = 0; j < sizeof_array(c_cameraMeshIndices); j += 2)
@@ -639,7 +636,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 				m_primitiveRenderer->drawLine(
 					Vector4(v1[0], v1[1], v1[2], 1.0f),
 					Vector4(v2[0], v2[1], v2[2], 1.0f),
-					Color(255, 255, 0, 200)
+					m_colorCamera
 				);
 			}
 

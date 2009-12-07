@@ -25,9 +25,9 @@ Ref< scene::IEntityEditor > TerrainEntityEditorFactory::createEntityEditor(
 ) const
 {
 	if (is_type_of< TerrainEntityData >(entityDataType))
-		return new TerrainEntityEditor();
+		return new TerrainEntityEditor(context);
 	if (is_type_of< OceanEntityEditor >(entityDataType))
-		return new OceanEntityEditor();
+		return new OceanEntityEditor(context);
 	return 0;
 }
 

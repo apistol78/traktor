@@ -71,11 +71,8 @@ void ShortcutsSettingsPage::destroy()
 
 bool ShortcutsSettingsPage::apply(Settings* settings)
 {
-	Ref< PropertyGroup > shortcutGroup = checked_type_cast< PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
-	if (shortcutGroup)
-		shortcutGroup = new PropertyGroup(PropertyGroup::get(shortcutGroup));
-	else
-		shortcutGroup = new PropertyGroup();
+	Ref< PropertyGroup > shortcutGroup = settings->getProperty< PropertyGroup >(L"Editor.Shortcuts");
+	T_ASSERT (shortcutGroup);
 
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)

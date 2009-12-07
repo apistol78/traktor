@@ -10,6 +10,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/IProject.h"
+#include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
 #include "Database/Instance.h"
@@ -269,6 +270,7 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 
 	m_undoStack = new editor::UndoStack();
 
+	updateSettings();
 	return true;
 }
 
@@ -327,6 +329,10 @@ bool AnimationEditorPage::dropInstance(db::Instance* instance, const ui::Point& 
 
 bool AnimationEditorPage::handleCommand(const ui::Command& command)
 {
+	if (command == L"Editor.SettingsChanged")
+	{
+		updateSettings();
+	}
 	if (command == L"Editor.Cut" || command == L"Editor.Copy")
 	{
 		int poseIndex;
@@ -669,6 +675,16 @@ void AnimationEditorPage::drawSkeleton(float time, const Color& defaultColor, co
 	}
 }
 
+void AnimationEditorPage::updateSettings()
+{
+	Ref< editor::PropertyGroup > colors = m_editor->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< editor::PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< editor::PropertyColor >(L"Grid");
+	m_colorBone = colors->getProperty< editor::PropertyColor >(L"BoneWire");
+	m_colorBoneSel = colors->getProperty< editor::PropertyColor >(L"BoneWireSelected");
+	updateRenderWidgets();
+}
+
 void AnimationEditorPage::eventRenderButtonDown(ui::Event* event)
 {
 	Ref< ui::Widget > renderWidget = checked_type_cast< ui::Widget* >(event->getSender());
@@ -867,10 +883,12 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 	if (!data->renderView->begin())
 		return;
 
-	const float clearColor[] = { 0.5f, 0.5f, 0.44f, 0.0f };
+	float tmp[4];
+	m_colorClear.getRGBA32F(tmp);
+
 	data->renderView->clear(
 		render::CfColor | render::CfDepth,
-		clearColor,
+		tmp,
 		1.0f,
 		128
 	);
@@ -916,12 +934,12 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				Color(100, 100, 100)
+				m_colorGrid
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				Color(100, 100, 100)
+				m_colorGrid
 			);
 		}
 
@@ -929,13 +947,13 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
 			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
 			0.8f,
-			Color(255, 64, 64)
+			Color(255, 0, 0)
 		);
 		m_primitiveRenderer->drawArrowHead(
 			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
 			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
 			0.8f,
-			Color(64, 64, 255)
+			Color(0, 0, 255)
 		);
 
 		if (m_skeleton)
@@ -957,7 +975,12 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			}
 
 			// Render current skeleton.
-			drawSkeleton(time, Color(255, 255, 0, 180), Color(255, 200, 255, 180), true);
+			drawSkeleton(
+				time,
+				m_colorBone,
+				m_colorBoneSel,
+				true
+			);
 
 			// Update picker volumes.
 			Pose pose;

@@ -1,10 +1,11 @@
 #ifndef traktor_editor_Settings_H
 #define traktor_editor_Settings_H
 
-#include <vector>
 #include <map>
 #include <string>
+#include <vector>
 #include "Core/Guid.h"
+#include "Core/Math/Color.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Serialization/ISerializable.h"
@@ -43,7 +44,7 @@ public:
 
 	PropertyBoolean(value_type_t value = false);
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -63,7 +64,7 @@ public:
 
 	PropertyInteger(value_type_t value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -83,7 +84,7 @@ public:
 
 	PropertyFloat(value_type_t value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -103,7 +104,7 @@ public:
 
 	PropertyString(value_type_t value = L"");
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -123,7 +124,7 @@ public:
 
 	PropertyStringArray(const value_type_t& value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -143,7 +144,7 @@ public:
 
 	PropertyGuid(const value_type_t& value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -163,7 +164,7 @@ public:
 
 	PropertyGuidArray(const value_type_t& value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -183,7 +184,7 @@ public:
 
 	PropertyType(value_type_t value = 0);
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -203,12 +204,32 @@ public:
 
 	PropertyTypeSet(const value_type_t& value = value_type_t());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_value;
+};
+
+/*! \brief Color property value.
+ * \ingroup Editor
+ */
+class T_DLLCLASS PropertyColor : public PropertyValue
+{
+	T_RTTI_CLASS;
+
+public:
+	typedef Color value_type_t;
+
+	PropertyColor(const value_type_t& value = value_type_t());
+
+	static value_type_t get(PropertyValue* value);
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	value_type_t m_value;
 };
 
 /*! \brief Vector4 property value.
@@ -223,7 +244,7 @@ public:
 
 	PropertyVector4(const value_type_t& value = value_type_t::zero());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -243,7 +264,7 @@ public:
 
 	PropertyQuaternion(const value_type_t& value = value_type_t::identity());
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -263,7 +284,7 @@ public:
 
 	PropertyKey(const value_type_t& value = value_type_t(0, ui::VkNull));
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -279,17 +300,15 @@ class T_DLLCLASS PropertyGroup : public PropertyValue
 	T_RTTI_CLASS;
 
 public:
-	typedef std::map< std::wstring, Ref< PropertyValue > > value_type_t;
+	typedef Ref< PropertyGroup > value_type_t;
 
-	PropertyGroup(const value_type_t& value = value_type_t());
+	PropertyGroup();
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
 
-	Ref< PropertyValue > getProperty(const std::wstring& propertyName);
-
-	Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const;
+	Ref< PropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
 	 *
@@ -309,21 +328,23 @@ public:
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, typename PropertyType::value_type_t defaultValue) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
 	}
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::map< std::wstring, Ref< PropertyValue > >& getValues() const { return m_value; }
+
 private:
-	value_type_t m_value;
+	std::map< std::wstring, Ref< PropertyValue > > m_value;
 };
 
 /*! \brief ISerializable property.
@@ -338,7 +359,7 @@ public:
 
 	PropertySerializable(const value_type_t& value = 0);
 
-	static value_type_t get(const PropertyValue* value);
+	static value_type_t get(PropertyValue* value);
 
 	virtual bool serialize(ISerializer& s);
 
@@ -367,9 +388,7 @@ public:
 
 	void setProperty(const std::wstring& propertyName, PropertyValue* value);
 
-	Ref< PropertyValue > getProperty(const std::wstring& propertyName);
-
-	Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const;
+	Ref< PropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
 	 *
@@ -389,14 +408,14 @@ public:
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& defaultValue) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
 	}
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
 
