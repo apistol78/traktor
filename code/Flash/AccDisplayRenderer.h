@@ -53,11 +53,14 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		render::IRenderView* renderView,
 		bool clearBackground
 	);
 
 	void destroy();
+
+	void beginRender(render::IRenderView* renderView);
+
+	void endRender();
 
 	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor);
 

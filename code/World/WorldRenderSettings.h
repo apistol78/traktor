@@ -37,6 +37,7 @@ public:
 	bool depthPassEnabled;
 	bool velocityPassEnable;
 	bool shadowsEnabled;
+	bool ssaoEnabled;
 	float shadowFarZ;
 	int32_t shadowMapResolution;
 	float shadowMapBias;

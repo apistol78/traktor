@@ -66,7 +66,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		return false;
 
 	m_displayRenderer = new AccDisplayRenderer();
-	m_displayRenderer->create(resourceManager, renderSystem, m_renderView, true);
+	m_displayRenderer->create(resourceManager, renderSystem, true);
 #else
 	graphics::CreateDesc desc;
 
@@ -237,7 +237,11 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 			0
 		);
 		if (m_movie)
+		{
+			m_displayRenderer->beginRender(m_renderView);
 			m_moviePlayer->renderFrame();
+			m_displayRenderer->endRender();
+		}
 		m_renderView->end();
 	}
 
