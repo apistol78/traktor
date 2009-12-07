@@ -21,7 +21,7 @@ class T_DLLCLASS PathEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	PathEntityEditor();
+	PathEntityEditor(scene::SceneEditorContext* context);
 
 	virtual void entitySelected(
 		scene::SceneEditorContext* context,

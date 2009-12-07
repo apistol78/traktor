@@ -2,6 +2,7 @@
 #define traktor_scene_OrthogonalRenderControl_H
 
 #include "Core/RefArray.h"
+#include "Core/Math/Color.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
@@ -71,6 +72,10 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderer > m_worldRenderer;
+	Color m_colorClear;
+	Color m_colorGrid;
+	Color m_colorRef;
+	Color m_colorCamera;
 	Timer m_timer;
 	ui::Point m_mousePosition;
 	int m_mouseButton;
@@ -84,6 +89,8 @@ private:
 	float m_cameraX;
 	float m_cameraY;
 	ui::Size m_dirtySize;
+
+	void updateSettings();
 
 	Matrix44 getProjectionTransform() const;
 

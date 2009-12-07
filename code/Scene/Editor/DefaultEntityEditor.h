@@ -1,6 +1,7 @@
 #ifndef traktor_scene_DefaultEntityEditor_H
 #define traktor_scene_DefaultEntityEditor_H
 
+#include "Core/Math/Color.h"
 #include "Scene/Editor/IEntityEditor.h"
 
 // import/export mechanism.
@@ -21,7 +22,7 @@ class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	DefaultEntityEditor();
+	DefaultEntityEditor(SceneEditorContext* context);
 
 	virtual bool isPickable(
 		EntityAdapter* entityAdapter
@@ -73,6 +74,12 @@ public:
 
 private:
 	bool m_inModify;
+	Color m_colorBoundingBox;
+	Color m_colorBoundingBoxSel;
+	Color m_colorBoundingBoxFaceSel;
+	Color m_colorSnap;
+
+	void updateSettings(SceneEditorContext* context);
 };
 
 	}

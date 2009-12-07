@@ -14,6 +14,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntityEditor", OceanEntityEditor, scene::DefaultEntityEditor)
 
+OceanEntityEditor::OceanEntityEditor(
+	scene::SceneEditorContext* context
+)
+:	scene::DefaultEntityEditor(context)
+{
+}
+
 bool OceanEntityEditor::isPickable(
 	scene::EntityAdapter* entityAdapter
 ) const

@@ -96,6 +96,14 @@ T_MATH_INLINE uint32_t Color::getBGRA() const
 		(uint32_t(a));
 }
 
+T_MATH_INLINE void Color::getRGBA32F(float outRGBA[4]) const
+{
+	outRGBA[0] = float(r) / 255.0f;
+	outRGBA[1] = float(g) / 255.0f;
+	outRGBA[2] = float(b) / 255.0f;
+	outRGBA[3] = float(a) / 255.0f;
+}
+
 T_MATH_INLINE Color& Color::operator = (const Color& v)
 {
 	r = v.r;

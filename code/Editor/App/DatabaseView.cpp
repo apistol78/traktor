@@ -271,7 +271,11 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	for (RefArray< db::Group >::iterator i = group->getBeginChildGroup(); i != group->getEndChildGroup(); ++i)
 		buildTreeItem(treeView, groupItem, *i);
 
-	std::map< std::wstring, Ref< PropertyValue > > icons = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
+	Ref< PropertyGroup > iconsGroup = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Icons");
+	T_ASSERT (iconsGroup);
+
+	const std::map< std::wstring, Ref< PropertyValue > >& icons = iconsGroup->getValues();
+
 	for (RefArray< db::Instance >::iterator i = group->getBeginChildInstance(); i != group->getEndChildInstance(); ++i)
 	{
 		const TypeInfo* primaryType = (*i)->getPrimaryType();

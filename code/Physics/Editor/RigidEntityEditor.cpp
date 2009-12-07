@@ -26,8 +26,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntityEditor", RigidEntityEditor, scene::DefaultEntityEditor)
 
-RigidEntityEditor::RigidEntityEditor()
-:	m_showHull(false)
+RigidEntityEditor::RigidEntityEditor(scene::SceneEditorContext* context)
+:	scene::DefaultEntityEditor(context)
+,	m_showHull(false)
 {
 }
 

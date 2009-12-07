@@ -21,7 +21,7 @@ class T_DLLCLASS RigidEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	RigidEntityEditor();
+	RigidEntityEditor(scene::SceneEditorContext* context);
 
 	virtual void entitySelected(
 		scene::SceneEditorContext* context,

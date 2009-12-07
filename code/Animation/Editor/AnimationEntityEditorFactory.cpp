@@ -25,9 +25,9 @@ Ref< scene::IEntityEditor > AnimationEntityEditorFactory::createEntityEditor(
 ) const
 {
 	if (is_type_of< AnimatedMeshEntityData >(entityDataType))
-		return new AnimatedMeshEntityEditor();
+		return new AnimatedMeshEntityEditor(context);
 	if (is_type_of< PathEntityData >(entityDataType))
-		return new PathEntityEditor();
+		return new PathEntityEditor(context);
 	return 0;
 }
 

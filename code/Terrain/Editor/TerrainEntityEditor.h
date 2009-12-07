@@ -21,7 +21,7 @@ class T_DLLCLASS TerrainEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
-	TerrainEntityEditor();
+	TerrainEntityEditor(scene::SceneEditorContext* context);
 
 	virtual bool isPickable(
 		scene::EntityAdapter* entityAdapter

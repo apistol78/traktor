@@ -49,6 +49,8 @@ public:
 
 	T_MATH_INLINE uint32_t getBGRA() const;
 
+	T_MATH_INLINE void getRGBA32F(float outRGBA[4]) const;
+
 	T_MATH_INLINE Color& operator = (const Color& v);
 
 	T_MATH_INLINE Color operator + (const Color& color) const;

@@ -5,9 +5,12 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Render/PrimitiveRenderer.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -15,6 +18,28 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimatedMeshEntityEditor", AnimatedMeshEntityEditor, scene::DefaultEntityEditor)
+
+AnimatedMeshEntityEditor::AnimatedMeshEntityEditor(scene::SceneEditorContext* context)
+:	scene::DefaultEntityEditor(context)
+{
+	updateSettings(context);
+}
+
+bool AnimatedMeshEntityEditor::handleCommand(
+	scene::SceneEditorContext* context,
+	scene::EntityAdapter* entityAdapter,
+	const ui::Command& command
+)
+{
+	if (command == L"Editor.SettingsChanged")
+		updateSettings(context);
+
+	return scene::DefaultEntityEditor::handleCommand(
+		context,
+		entityAdapter,
+		command
+	);
+}
 
 void AnimatedMeshEntityEditor::drawGuide(
 	scene::SceneEditorContext* context,
@@ -39,7 +64,6 @@ void AnimatedMeshEntityEditor::drawGuide(
 
 			if (poseTransforms.size() == skeleton->getBoneCount())
 			{
-				const Color color(255, 255, 0, 180);
 				for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 				{
 					const Bone* bone = skeleton->getBone(i);
@@ -56,22 +80,22 @@ void AnimatedMeshEntityEditor::drawGuide(
 					a *= radius;
 					b *= radius;
 
-					primitiveRenderer->drawLine(start, start + d + a + b, color);
-					primitiveRenderer->drawLine(start, start + d - a + b, color);
-					primitiveRenderer->drawLine(start, start + d + a - b, color);
-					primitiveRenderer->drawLine(start, start + d - a - b, color);
+					primitiveRenderer->drawLine(start, start + d + a + b, m_colorBone);
+					primitiveRenderer->drawLine(start, start + d - a + b, m_colorBone);
+					primitiveRenderer->drawLine(start, start + d + a - b, m_colorBone);
+					primitiveRenderer->drawLine(start, start + d - a - b, m_colorBone);
 
-					primitiveRenderer->drawLine(start + d + a + b, end, color);
-					primitiveRenderer->drawLine(start + d - a + b, end, color);
-					primitiveRenderer->drawLine(start + d + a - b, end, color);
-					primitiveRenderer->drawLine(start + d - a - b, end, color);
+					primitiveRenderer->drawLine(start + d + a + b, end, m_colorBone);
+					primitiveRenderer->drawLine(start + d - a + b, end, m_colorBone);
+					primitiveRenderer->drawLine(start + d + a - b, end, m_colorBone);
+					primitiveRenderer->drawLine(start + d - a - b, end, m_colorBone);
 
-					primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-					primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-					primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-					primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+					primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, m_colorBone);
+					primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, m_colorBone);
+					primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, m_colorBone);
+					primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, m_colorBone);
 
-					primitiveRenderer->drawLine(start, end, Color(255, 255, 128, 180));
+					primitiveRenderer->drawLine(start, end, m_colorBone);
 					primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color(255, 0, 0, 180));
 					primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color(0, 255, 0, 180));
 				}
@@ -83,6 +107,12 @@ void AnimatedMeshEntityEditor::drawGuide(
 	}
 
 	scene::DefaultEntityEditor::drawGuide(context, primitiveRenderer, entityAdapter);
+}
+
+void AnimatedMeshEntityEditor::updateSettings(scene::SceneEditorContext* context)
+{
+	Ref< editor::PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
+	m_colorBone = colors->getProperty< editor::PropertyColor >(L"BoneWire");
 }
 
 	}

@@ -282,6 +282,50 @@
       <second>Bygg automatiskt när tillgångar modifieras</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_COLOR</first>
+      <second>Färger</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BACKGROUND</first>
+      <second>Bakgrund</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_GRID</first>
+      <second>Rutnät</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE</first>
+      <second>Ben</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BONE_WIRE_SEL</first>
+      <second>Ben (Markerad)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE</first>
+      <second>Bounding box</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_WIRE_SEL</first>
+      <second>Bounding box (Merkerad)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_BBOX_FACE_SEL</first>
+      <second>Bounding box (Markerad yta)</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_SNAP_POINTS</first>
+      <second>Snap punkter</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_REFERENCE_EDGES</first>
+      <second>Referenser</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_COLOR_CAMERA_WIRE</first>
+      <second>Kamera symbol</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_COMMAND</first>
       <second>Kommando</second>
     </item>

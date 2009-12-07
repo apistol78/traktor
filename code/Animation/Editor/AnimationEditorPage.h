@@ -111,6 +111,10 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::ResourceManager > m_resourceManager;
 	Ref< editor::UndoStack > m_undoStack;
+	Color m_colorClear;
+	Color m_colorGrid;
+	Color m_colorBone;
+	Color m_colorBoneSel;
 	ui::Point m_lastMousePosition;
 	int m_selectedBone;
 	bool m_showGhostTrail;
@@ -134,6 +138,8 @@ private:
 	bool calculateRelativeTwist(int poseIndex, int boneIndex, float& outRelativeTwist) const;
 
 	void drawSkeleton(float time, const Color& defaultColor, const Color& selectedColor, bool drawAxis) const;
+
+	void updateSettings();
 
 	void eventRenderButtonDown(ui::Event* event);
 

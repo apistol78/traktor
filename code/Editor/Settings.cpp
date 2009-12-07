@@ -22,7 +22,7 @@ PropertyBoolean::PropertyBoolean(value_type_t value)
 {
 }
 
-PropertyBoolean::value_type_t PropertyBoolean::get(const PropertyValue* value)
+PropertyBoolean::value_type_t PropertyBoolean::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyBoolean* >(value)->m_value : false;
 }
@@ -39,7 +39,7 @@ PropertyInteger::PropertyInteger(value_type_t value)
 {
 }
 
-PropertyInteger::value_type_t PropertyInteger::get(const PropertyValue* value)
+PropertyInteger::value_type_t PropertyInteger::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyInteger* >(value)->m_value : false;
 }
@@ -56,7 +56,7 @@ PropertyFloat::PropertyFloat(value_type_t value)
 {
 }
 
-PropertyFloat::value_type_t PropertyFloat::get(const PropertyValue* value)
+PropertyFloat::value_type_t PropertyFloat::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyFloat* >(value)->m_value : false;
 }
@@ -73,7 +73,7 @@ PropertyString::PropertyString(value_type_t value)
 {
 }
 
-PropertyString::value_type_t PropertyString::get(const PropertyValue* value)
+PropertyString::value_type_t PropertyString::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyString* >(value)->m_value : L"";
 }
@@ -90,7 +90,7 @@ PropertyStringArray::PropertyStringArray(const value_type_t& value)
 {
 }
 
-PropertyStringArray::value_type_t PropertyStringArray::get(const PropertyValue* value)
+PropertyStringArray::value_type_t PropertyStringArray::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyStringArray* >(value)->m_value : value_type_t();
 }
@@ -107,7 +107,7 @@ PropertyGuid::PropertyGuid(const value_type_t& value)
 {
 }
 
-PropertyGuid::value_type_t PropertyGuid::get(const PropertyValue* value)
+PropertyGuid::value_type_t PropertyGuid::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyGuid* >(value)->m_value : value_type_t();
 }
@@ -124,7 +124,7 @@ PropertyGuidArray::PropertyGuidArray(const value_type_t& value)
 {
 }
 
-PropertyGuidArray::value_type_t PropertyGuidArray::get(const PropertyValue* value)
+PropertyGuidArray::value_type_t PropertyGuidArray::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyGuidArray* >(value)->m_value : value_type_t();
 }
@@ -141,7 +141,7 @@ PropertyType::PropertyType(value_type_t value)
 {
 }
 
-PropertyType::value_type_t PropertyType::get(const PropertyValue* value)
+PropertyType::value_type_t PropertyType::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyType* >(value)->m_value : 0;
 }
@@ -159,7 +159,7 @@ PropertyTypeSet::PropertyTypeSet(const value_type_t& value)
 		m_value.push_back((*i)->getName());
 }
 
-PropertyTypeSet::value_type_t PropertyTypeSet::get(const PropertyValue* value)
+PropertyTypeSet::value_type_t PropertyTypeSet::get(PropertyValue* value)
 {
 	value_type_t typeSet;
 	if (value)
@@ -179,6 +179,23 @@ bool PropertyTypeSet::serialize(ISerializer& s)
 	return s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyColor", 0, PropertyColor, PropertyValue)
+
+PropertyColor::PropertyColor(const value_type_t& value)
+:	m_value(value)
+{
+}
+
+PropertyColor::value_type_t PropertyColor::get(PropertyValue* value)
+{
+	return value ? checked_type_cast< const PropertyColor* >(value)->m_value : value_type_t();
+}
+
+bool PropertyColor::serialize(ISerializer& s)
+{
+	return s >> Member< value_type_t >(L"value", m_value);
+}
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyVector4", 0, PropertyVector4, PropertyValue)
 
 PropertyVector4::PropertyVector4(const value_type_t& value)
@@ -186,7 +203,7 @@ PropertyVector4::PropertyVector4(const value_type_t& value)
 {
 }
 
-PropertyVector4::value_type_t PropertyVector4::get(const PropertyValue* value)
+PropertyVector4::value_type_t PropertyVector4::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyVector4* >(value)->m_value : value_type_t();
 }
@@ -203,7 +220,7 @@ PropertyQuaternion::PropertyQuaternion(const value_type_t& value)
 {
 }
 
-PropertyQuaternion::value_type_t PropertyQuaternion::get(const PropertyValue* value)
+PropertyQuaternion::value_type_t PropertyQuaternion::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyQuaternion* >(value)->m_value : value_type_t();
 }
@@ -220,7 +237,7 @@ PropertyKey::PropertyKey(const value_type_t& value)
 {
 }
 
-PropertyKey::value_type_t PropertyKey::get(const PropertyValue* value)
+PropertyKey::value_type_t PropertyKey::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
 }
@@ -295,14 +312,16 @@ bool PropertyKey::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyGroup", 0, PropertyGroup, PropertyValue)
 
-PropertyGroup::PropertyGroup(const value_type_t& value)
-:	m_value(value)
+PropertyGroup::PropertyGroup()
 {
 }
 
-PropertyGroup::value_type_t PropertyGroup::get(const PropertyValue* value)
+PropertyGroup::value_type_t PropertyGroup::get(PropertyValue* value)
 {
-	return value ? checked_type_cast< const PropertyGroup* >(value)->m_value : value_type_t();
+	if (value)
+		return checked_type_cast< PropertyGroup* >(value);
+	else
+		return new PropertyGroup();
 }
 
 void PropertyGroup::setProperty(const std::wstring& propertyName, PropertyValue* value)
@@ -313,13 +332,7 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, PropertyValue*
 		m_value.erase(propertyName);
 }
 
-Ref< PropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName)
-{
-	std::map< std::wstring, Ref< PropertyValue > >::iterator it = m_value.find(propertyName);
-	return it != m_value.end() ? it->second.ptr() : 0;
-}
-
-Ref< const PropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName) const
+Ref< PropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
 	std::map< std::wstring, Ref< PropertyValue > >::const_iterator it = m_value.find(propertyName);
 	return it != m_value.end() ? it->second.ptr() : 0;
@@ -346,7 +359,7 @@ PropertySerializable::PropertySerializable(const value_type_t& value)
 {
 }
 
-PropertySerializable::value_type_t PropertySerializable::get(const PropertyValue* value)
+PropertySerializable::value_type_t PropertySerializable::get(PropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertySerializable* >(value)->m_value.ptr() : 0;
 }
@@ -378,17 +391,9 @@ void Settings::setProperty(const std::wstring& propertyName, PropertyValue* valu
 	m_userGroup->setProperty(propertyName, value);
 }
 
-Ref< PropertyValue > Settings::getProperty(const std::wstring& propertyName)
+Ref< PropertyValue > Settings::getProperty(const std::wstring& propertyName) const
 {
 	Ref< PropertyValue > value = m_userGroup->getProperty(propertyName);
-	if (!value)
-		value = m_globalGroup->getProperty(propertyName);
-	return value;
-}
-
-Ref< const PropertyValue > Settings::getProperty(const std::wstring& propertyName) const
-{
-	Ref< const PropertyValue > value = m_userGroup->getProperty(propertyName);
 	if (!value)
 		value = m_globalGroup->getProperty(propertyName);
 	return value;

@@ -15,8 +15,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntityEditor", PathEntityEditor, scene::DefaultEntityEditor)
 
-PathEntityEditor::PathEntityEditor()
-:	m_time(0.0f)
+PathEntityEditor::PathEntityEditor(scene::SceneEditorContext* context)
+:	scene::DefaultEntityEditor(context)
+,	m_time(0.0f)
 {
 }
 

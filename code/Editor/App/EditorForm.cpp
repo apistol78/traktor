@@ -678,9 +678,12 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (editorPage);
 
 		// Find icon index.
-		int iconIndex = 2;
+		Ref< PropertyGroup > iconsGroup = m_settings->getProperty< PropertyGroup >(L"Editor.Icons");
+		T_ASSERT (iconsGroup);
 
-		std::map< std::wstring, Ref< PropertyValue > > icons = m_settings->getProperty< PropertyGroup >(L"Editor.Icons");
+		const std::map< std::wstring, Ref< PropertyValue > >& icons = iconsGroup->getValues();
+
+		int iconIndex = 2;
 		for (std::map< std::wstring, Ref< PropertyValue > >::const_iterator i = icons.begin(); i != icons.end(); ++i)
 		{
 			const TypeInfo* iconType = TypeInfo::find(i->first);

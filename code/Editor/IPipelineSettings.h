@@ -22,19 +22,19 @@ class T_DLLCLASS IPipelineSettings : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< const PropertyValue > getProperty(const std::wstring& propertyName) const = 0;
+	virtual Ref< PropertyValue > getProperty(const std::wstring& propertyName) const = 0;
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName, const typename PropertyType::value_type_t& defaultValue) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return value ? PropertyType::get(value) : defaultValue;
 	}
 
 	template < typename PropertyType >
 	typename PropertyType::value_type_t getProperty(const std::wstring& propertyName) const
 	{
-		Ref< const PropertyValue > value = getProperty(propertyName);
+		Ref< PropertyValue > value = getProperty(propertyName);
 		return PropertyType::get(value);
 	}
 };

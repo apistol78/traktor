@@ -1,4 +1,6 @@
 #include <limits>
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IModifier.h"
@@ -6,6 +8,7 @@
 #include "World/Entity/SpatialEntityData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -14,9 +17,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultEntityEditor", DefaultEntityEditor, IEntityEditor)
 
-DefaultEntityEditor::DefaultEntityEditor()
+DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context)
 :	m_inModify(false)
 {
+	updateSettings(context);
 }
 
 bool DefaultEntityEditor::isPickable(
@@ -149,6 +153,8 @@ bool DefaultEntityEditor::handleCommand(
 	const ui::Command& command
 )
 {
+	if (command == L"Editor.SettingsChanged")
+		updateSettings(context);
 	return false;
 }
 
@@ -190,7 +196,7 @@ void DefaultEntityEditor::drawGuide(
 		);
 
 		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(Aabb(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), Color(255, 255, 0));
+		primitiveRenderer->drawWireAabb(Aabb(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 	}
 	else
@@ -198,32 +204,22 @@ void DefaultEntityEditor::drawGuide(
 		primitiveRenderer->pushWorld(transform.toMatrix44());
 		if (entityAdapter->isSelected())
 		{
-			primitiveRenderer->drawSolidAabb(boundingBox, Color(255, 128, 128, 128));
-			primitiveRenderer->drawWireAabb(boundingBox, Color(255, 255, 0));
+			primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
+			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
 		}
 		else
-			primitiveRenderer->drawWireAabb(boundingBox, Color(255, 255, 0, 200));
+			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
 		primitiveRenderer->popWorld();
 
 		if (entityAdapter->isSelected() && context->getSnapEnable())
 		{
-			Matrix44 viewInverse = primitiveRenderer->getView().inverseOrtho();
-
-			Scalar cameraDistance = (transform.toMatrix44() * primitiveRenderer->getView()).translation().length();
-			Scalar snapSize = cameraDistance * Scalar(0.005f);
-
-			Vector4 axisX = viewInverse.axisX() * snapSize;
-			Vector4 axisY = viewInverse.axisY() * snapSize;
-
 			AlignedVector< EntityAdapter::SnapPoint > snapPoints = entityAdapter->getSnapPoints();
 			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
 			{
-				primitiveRenderer->drawSolidQuad(
-					i->position - axisX + axisY,
-					i->position + axisX + axisY,
-					i->position + axisX - axisY,
-					i->position - axisX - axisY,
-					Color(128, 0, 255)
+				primitiveRenderer->drawSolidPoint(
+					i->position,
+					4.0f,
+					m_colorSnap
 				);
 			}
 		}
@@ -237,6 +233,15 @@ bool DefaultEntityEditor::getStatusText(
 ) const
 {
 	return false;
+}
+
+void DefaultEntityEditor::updateSettings(SceneEditorContext* context)
+{
+	Ref< editor::PropertyGroup > colors = context->getEditor()->getSettings()->getProperty< editor::PropertyGroup >(L"Editor.Colors");
+	m_colorBoundingBox = colors->getProperty< editor::PropertyColor >(L"BoundingBoxWire");
+	m_colorBoundingBoxSel = colors->getProperty< editor::PropertyColor >(L"BoundingBoxWireSelected");
+	m_colorBoundingBoxFaceSel = colors->getProperty< editor::PropertyColor >(L"BoundingBoxFaceSelected");
+	m_colorSnap = colors->getProperty< editor::PropertyColor >(L"SnapPoint");
 }
 
 	}

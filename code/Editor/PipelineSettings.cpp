@@ -14,9 +14,9 @@ PipelineSettings::PipelineSettings(const Settings* settings)
 {
 }
 
-Ref< const PropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
+Ref< PropertyValue > PipelineSettings::getProperty(const std::wstring& propertyName) const
 {
-	Ref< const PropertyValue > prop = m_settings->getProperty(propertyName);
+	Ref< PropertyValue > prop = m_settings->getProperty(propertyName);
 	if (prop)
 		m_hash += DeepHash(prop).get();
 	return prop;

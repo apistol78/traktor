@@ -276,6 +276,37 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			if ((result = (*i)->handleCommand(command)) == true)
 				break;
 		}
+
+		// Update settings in all entity editors.
+		if (command == L"Editor.SettingsChanged")
+		{
+			RefArray< EntityAdapter > entities;
+			m_context->getEntities(entities, SceneEditorContext::GfDescendants);
+
+			for (RefArray< EntityAdapter >::iterator i = entities.begin(); i != entities.end(); ++i)
+			{
+				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+				if (entityEditor)
+					entityEditor->handleCommand(m_context, *i, command);
+			}
+		}
+		// Propagate command to selected entity editors if render control has focus.
+		else if (containFocus())
+		{
+			RefArray< EntityAdapter > entities;
+			m_context->getEntities(entities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+			for (RefArray< EntityAdapter >::iterator i = entities.begin(); i != entities.end(); ++i)
+			{
+				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
+				if (entityEditor)
+				{
+					result = entityEditor->handleCommand(m_context, *i, command);
+					if (result)
+						break;
+				}
+			}
+		}
 	}
 
 	return result;

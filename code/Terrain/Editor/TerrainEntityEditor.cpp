@@ -15,8 +15,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntityEditor", TerrainEntityEditor, scene::DefaultEntityEditor)
 
-TerrainEntityEditor::TerrainEntityEditor()
-:	m_followGround(false)
+TerrainEntityEditor::TerrainEntityEditor(scene::SceneEditorContext* context)
+:	scene::DefaultEntityEditor(context)
+,	m_followGround(false)
 ,	m_followHeight(20.0f)
 {
 }

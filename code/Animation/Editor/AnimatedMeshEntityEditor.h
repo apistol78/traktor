@@ -21,11 +21,24 @@ class T_DLLCLASS AnimatedMeshEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
+	AnimatedMeshEntityEditor(scene::SceneEditorContext* context);
+
+	virtual bool handleCommand(
+		scene::SceneEditorContext* context,
+		scene::EntityAdapter* entityAdapter,
+		const ui::Command& command
+	);
+
 	virtual void drawGuide(
 		scene::SceneEditorContext* context,
 		render::PrimitiveRenderer* primitiveRenderer,
 		scene::EntityAdapter* entityAdapter
 	) const;
+
+private:
+	Color m_colorBone;
+
+	void updateSettings(scene::SceneEditorContext* context);
 };
 
 	}

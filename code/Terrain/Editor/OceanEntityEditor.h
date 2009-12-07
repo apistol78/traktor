@@ -21,6 +21,10 @@ class T_DLLCLASS OceanEntityEditor : public scene::DefaultEntityEditor
 	T_RTTI_CLASS;
 
 public:
+	OceanEntityEditor(
+		scene::SceneEditorContext* context
+	);
+
 	virtual bool isPickable(
 		scene::EntityAdapter* entityAdapter
 	) const;
