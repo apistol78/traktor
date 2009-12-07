@@ -70,7 +70,6 @@ public:
 
 private:
 	Ref< ui::EventHandler > m_idleHandler;
-	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;

@@ -129,8 +129,12 @@ void EffectEditorPage::deactivate()
 bool EffectEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
 	m_effectInstance = instance;
+
 	m_effect = dynamic_type_cast< Effect* >(data);
 	if (!m_effect)
+		return false;
+
+	if (!m_effect->bind(m_resourceManager))
 		return false;
 
 	m_previewControl->setEffect(m_effect);

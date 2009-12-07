@@ -81,8 +81,6 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	if (!Widget::create(parent, style))
 		return false;
 
-	m_resourceManager = resourceManager;
-
 	render::RenderViewCreateDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
@@ -95,7 +93,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 		return false;
 
 	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, renderSystem))
+	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
 		return false;
 
 	m_renderContext = new render::RenderContext(m_renderView);
@@ -142,7 +140,7 @@ void EffectPreviewControl::destroy()
 void EffectPreviewControl::setEffect(Effect* effect)
 {
 	m_effect = effect;
-	m_effectInstance = m_effect->createInstance(m_resourceManager);
+	m_effectInstance = m_effect->createInstance();
 }
 
 void EffectPreviewControl::setTimeScale(float timeScale)
@@ -179,7 +177,7 @@ void EffectPreviewControl::syncEffect()
 	float currentTime = m_effectInstance->getTime();
 
 	// Re-create instance.
-	m_effectInstance = m_effect->createInstance(m_resourceManager);
+	m_effectInstance = m_effect->createInstance();
 
 	// Run emitter until total time is reached.
 	const float c_deltaTime = 1.0f / 30.0f;

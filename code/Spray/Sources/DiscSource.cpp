@@ -25,7 +25,7 @@ DiscSource::DiscSource()
 {
 }
 
-bool DiscSource::create(resource::IResourceManager* resourceManager)
+bool DiscSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

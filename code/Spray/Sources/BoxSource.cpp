@@ -24,7 +24,7 @@ BoxSource::BoxSource()
 {
 }
 
-bool BoxSource::create(resource::IResourceManager* resourceManager)
+bool BoxSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

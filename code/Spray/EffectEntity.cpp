@@ -76,7 +76,7 @@ void EffectEntity::update(const world::EntityUpdate* update)
 				return;
 		}
 
-		m_effectInstance = m_effect->createInstance(m_resourceManager);
+		m_effectInstance = m_effect->createInstance();
 	}
 
 	m_context.deltaTime = update->getDeltaTime();

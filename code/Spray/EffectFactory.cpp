@@ -31,7 +31,12 @@ bool EffectFactory::isCacheable() const
 Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
 	if (is_type_a< Effect >(resourceType))
-		return m_db->getObjectReadOnly< Effect >(guid);
+	{
+		Ref< Effect > effect = m_db->getObjectReadOnly< Effect >(guid);
+		if (effect)
+			effect->bind(resourceManager);
+		return effect;
+	}
 	else if (is_type_a< PointSet >(resourceType))
 		return m_db->getObjectReadOnly< PointSet >(guid);
 	else

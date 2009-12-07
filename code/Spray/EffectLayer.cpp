@@ -18,12 +18,20 @@ EffectLayer::EffectLayer()
 {
 }
 
-Ref< EffectLayerInstance > EffectLayer::createInstance(resource::IResourceManager* resourceManager) const
+bool EffectLayer::bind(resource::IResourceManager* resourceManager)
+{
+	if (m_emitter)
+		return m_emitter->bind(resourceManager);
+	else
+		return false;
+}
+
+Ref< EffectLayerInstance > EffectLayer::createInstance() const
 {
 	if (!m_emitter)
 		return 0;
 
-	Ref< EmitterInstance > emitterInstance = m_emitter->createInstance(resourceManager);
+	Ref< EmitterInstance > emitterInstance = m_emitter->createInstance();
 	if (!emitterInstance)
 		return 0;
 

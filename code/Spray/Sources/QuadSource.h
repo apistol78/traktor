@@ -28,7 +28,7 @@ class T_DLLCLASS QuadSource : public Source
 public:
 	QuadSource();
 
-	virtual bool create(resource::IResourceManager* resourceManager);
+	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual void emit(
 		EmitterUpdateContext& context,

@@ -49,7 +49,9 @@ class T_DLLCLASS Emitter : public ISerializable
 public:
 	Emitter();
 
-	Ref< EmitterInstance > createInstance(resource::IResourceManager* resourceManager);
+	bool bind(resource::IResourceManager* resourceManager);
+
+	Ref< EmitterInstance > createInstance();
 
 	inline Ref< Source > getSource() const { return m_source; }
 
