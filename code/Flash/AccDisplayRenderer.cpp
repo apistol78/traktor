@@ -46,13 +46,11 @@ AccDisplayRenderer::~AccDisplayRenderer()
 bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	render::IRenderView* renderView,
 	bool clearBackground
 )
 {
 	m_resourceManager = resourceManager;
 	m_renderSystem = renderSystem;
-	m_renderView = renderView;
 	m_textureCache = new AccTextureCache(m_renderSystem);
 	m_clearBackground = clearBackground;
 	return true;
@@ -60,8 +58,8 @@ bool AccDisplayRenderer::create(
 
 void AccDisplayRenderer::destroy()
 {
+	T_ASSERT (m_renderView == 0);
 	m_renderSystem = 0;
-	m_renderView = 0;
 	
 	if (m_textureCache)
 	{
@@ -77,8 +75,20 @@ void AccDisplayRenderer::destroy()
 	m_shapeCache.clear();
 }
 
+void AccDisplayRenderer::beginRender(render::IRenderView* renderView)
+{
+	T_ASSERT (m_renderView == 0);
+	m_renderView = renderView;
+}
+
+void AccDisplayRenderer::endRender()
+{
+	m_renderView = 0;
+}
+
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
 {
+	T_ASSERT (m_renderView != 0);
 	const SwfRect& bounds = movie.getFrameBounds();
 
 	m_frameSize = Vector4(

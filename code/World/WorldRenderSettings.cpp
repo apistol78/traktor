@@ -9,7 +9,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 2, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 3, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -17,6 +17,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	depthPassEnabled(true)
 ,	velocityPassEnable(false)
 ,	shadowsEnabled(false)
+,	ssaoEnabled(false)
 ,	shadowFarZ(100.0f)
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
@@ -33,6 +34,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< bool >(L"velocityPassEnable", velocityPassEnable);
 
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"ssaoEnabled", ssaoEnabled);
 
 	if (s.getVersion() <= 1)
 	{
