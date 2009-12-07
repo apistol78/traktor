@@ -352,7 +352,7 @@ bool TexturePipeline::buildOutput(
 	height = std::max(1, height >> m_skipMips);
 	
 	// Ensure power-of-2 textures.
-	if (!isLog2(width) || !isLog2(height))
+	if (!textureAsset->m_isCubeMap && (!isLog2(width) || !isLog2(height)))
 	{
 		log::warning << L"Texture dimension not power-of-2; resized to nearest valid dimension" << Endl;
 		width = nearestLog2(width);
