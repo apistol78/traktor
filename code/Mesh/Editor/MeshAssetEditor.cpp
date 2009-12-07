@@ -150,16 +150,19 @@ void MeshAssetEditor::apply()
 	std::map< std::wstring, Guid > materialShaders;
 
 	Ref< ui::ListViewItems > items = m_materialList->getItems();
-	for (int i = 0; i < items->count(); ++i)
+	if (items)
 	{
-		Ref< ui::ListViewItem > item = items->get(i);
-		T_ASSERT (item);
+		for (int i = 0; i < items->count(); ++i)
+		{
+			Ref< ui::ListViewItem > item = items->get(i);
+			T_ASSERT (item);
 
-		std::wstring materialName = item->getText(0);
-		Ref< db::Instance > materialShaderInstance = item->getData< db::Instance >(L"INSTANCE");
+			std::wstring materialName = item->getText(0);
+			Ref< db::Instance > materialShaderInstance = item->getData< db::Instance >(L"INSTANCE");
 
-		if (materialShaderInstance)
-			materialShaders.insert(std::make_pair(materialName, materialShaderInstance->getGuid()));
+			if (materialShaderInstance)
+				materialShaders.insert(std::make_pair(materialName, materialShaderInstance->getGuid()));
+		}
 	}
 
 	m_asset->setMaterialShaders(materialShaders);
