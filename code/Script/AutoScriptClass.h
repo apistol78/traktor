@@ -14,7 +14,7 @@ namespace traktor
 
 struct T_NOVTABLE IInvokable
 {
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const = 0;
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const = 0;
 };
 
 template <
@@ -199,7 +199,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 1 > : p
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)();
 		return Any(returnValue);
@@ -222,7 +222,7 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 1 > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType* >(object)->*m_method)();
 		return Any();
@@ -247,11 +247,11 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 2 > : p
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 1, L"Not enough arguments");
+		T_ASSERT_M (argc >= 1, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0])
+			CastAny< arg1_t >::get(argv[0])
 		);
 		return Any(returnValue);
 	}
@@ -274,11 +274,11 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 2 > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 1, L"Not enough arguments");
+		T_ASSERT_M (argc >= 1, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0])
+			CastAny< arg1_t >::get(argv[0])
 		);
 		return Any();
 	}
@@ -303,12 +303,12 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 3 > : p
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 2, L"Not enough arguments");
+		T_ASSERT_M (argc >= 2, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1])
 		);
 		return Any(returnValue);
 	}
@@ -332,12 +332,12 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 3 > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 2, L"Not enough arguments");
+		T_ASSERT_M (argc >= 2, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1])
 		);
 		return Any();
 	}
@@ -363,13 +363,13 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 4 > : p
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 3, L"Not enough arguments");
+		T_ASSERT_M (argc >= 3, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1]),
-			CastAny< arg3_t >::get(args[2])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1]),
+			CastAny< arg3_t >::get(argv[2])
 		);
 		return Any(returnValue);
 	}
@@ -394,13 +394,13 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 4 > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 3, L"Not enough arguments");
+		T_ASSERT_M (argc >= 3, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1]),
-			CastAny< arg3_t >::get(args[2])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1]),
+			CastAny< arg3_t >::get(argv[2])
 		);
 		return Any();
 	}
@@ -427,14 +427,14 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, ReturnType, 5 > : p
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 4, L"Not enough arguments");
+		T_ASSERT_M (argc >= 4, L"Not enough arguments");
 		ReturnType returnValue = (checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1]),
-			CastAny< arg3_t >::get(args[2]),
-			CastAny< arg4_t >::get(args[3])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1]),
+			CastAny< arg3_t >::get(argv[2]),
+			CastAny< arg4_t >::get(argv[3])
 		);
 		return Any(returnValue);
 	}
@@ -460,14 +460,14 @@ struct Invokable < ClassType, ArgumentTypeList, ConstMethod, void, 5 > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
-		T_ASSERT_M (args.size() >= 4, L"Not enough arguments");
+		T_ASSERT_M (argc >= 4, L"Not enough arguments");
 		(checked_type_cast< ClassType* >(object)->*m_method)(
-			CastAny< arg1_t >::get(args[0]),
-			CastAny< arg2_t >::get(args[1]),
-			CastAny< arg3_t >::get(args[2]),
-			CastAny< arg4_t >::get(args[3])
+			CastAny< arg1_t >::get(argv[0]),
+			CastAny< arg2_t >::get(argv[1]),
+			CastAny< arg3_t >::get(argv[2]),
+			CastAny< arg4_t >::get(argv[3])
 		);
 		return Any();
 	}
@@ -486,7 +486,7 @@ template < typename ClassType >
 class AutoScriptClass : public IScriptClass
 {
 public:
-	typedef Any (ClassType::*unknown_method_t)(const std::wstring& methodName, const std::vector< Any >& args);
+	typedef Any (ClassType::*unknown_method_t)(const std::wstring& methodName, uint32_t argc, const Any* argv);
 
 	AutoScriptClass()
 	{
@@ -534,15 +534,15 @@ public:
 		return m_methods[methodId].name;
 	}
 
-	virtual Any invoke(Object* object, uint32_t methodId, const std::vector< Any >& args) const
+	virtual Any invoke(Object* object, uint32_t methodId, uint32_t argc, const Any* argv) const
 	{
-		return m_methods[methodId].mptr->invoke(object, args);
+		return m_methods[methodId].mptr->invoke(object, argc, argv);
 	}
 
-	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, const std::vector< Any >& args) const
+	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, uint32_t argc, const Any* argv) const
 	{
 		if (m_unknown)
-			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, args);
+			return (checked_type_cast< ClassType* >(object)->*m_unknown)(methodName, argc, argv);
 		else
 			return Any();
 	}

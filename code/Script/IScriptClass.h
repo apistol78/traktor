@@ -39,10 +39,10 @@ public:
 	virtual std::wstring getMethodName(uint32_t methodId) const = 0;
 
 	/*! \brief Invoke exported method. */
-	virtual Any invoke(Object* object, uint32_t methodId, const std::vector< Any >& args) const = 0;
+	virtual Any invoke(Object* object, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Invoke unknown method. */
-	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, const std::vector< Any >& args) const = 0;
+	virtual Any invokeUnknown(Object* object, const std::wstring& methodName, uint32_t argc, const Any* argv) const = 0;
 };
 
 	}
