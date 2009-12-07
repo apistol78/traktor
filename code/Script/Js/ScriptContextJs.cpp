@@ -170,7 +170,7 @@ bool ScriptContextJs::haveFunction(const std::wstring& functionName) const
 	return m_context->Global()->Has(createString(functionName));
 }
 
-Any ScriptContextJs::executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments)
+Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
 {
 	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
@@ -184,14 +184,14 @@ Any ScriptContextJs::executeFunction(const std::wstring& functionName, const std
 	if (function.IsEmpty())
 		return Any();
 
-	std::vector< v8::Local< v8::Value > > argv(arguments.size());
-	for (uint32_t i = 0; i < uint32_t(arguments.size()); ++i)
-		argv[i] = v8::Local< v8::Value >::New(toValue(arguments[i]));
+	std::vector< v8::Local< v8::Value > > av(argc);
+	for (uint32_t i = 0; i < argc; ++i)
+		av[i] = v8::Local< v8::Value >::New(toValue(argv[i]));
 
 	v8::Local< v8::Value > result = function->Call(
 		m_context->Global(),
-		argv.size(),
-		&argv[0]
+		av.size(),
+		&av[0]
 	);
 
 	if (result.IsEmpty())
@@ -205,7 +205,7 @@ Any ScriptContextJs::executeFunction(const std::wstring& functionName, const std
 	return fromValue(result);
 }
 
-Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments)
+Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
 {
 	v8::Context::Scope contextScope(m_context);
 	v8::HandleScope handleScope;
@@ -219,16 +219,16 @@ Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName,
 	if (function.IsEmpty())
 		return Any();
 
-	std::vector< v8::Local< v8::Value > > argv(arguments.size());
-	for (uint32_t i = 0; i < uint32_t(arguments.size()); ++i)
-		argv[i] = v8::Local< v8::Value >::New(toValue(arguments[i]));
+	std::vector< v8::Local< v8::Value > > av(argc);
+	for (uint32_t i = 0; i < argc; ++i)
+		av[i] = v8::Local< v8::Value >::New(toValue(argv[i]));
 
 	v8::Local< v8::Object > recv = v8::Local< v8::Object >::New(createObject(self));
 
 	v8::Local< v8::Value > result = function->Call(
 		recv,
-		argv.size(),
-		&argv[0]
+		av.size(),
+		&av[0]
 	);
 
 	if (result.IsEmpty())
@@ -255,14 +255,15 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 	v8::Local< v8::External > functionDataX = v8::Local< v8::External >::Cast(arguments.Data());
 	FunctionData* functionData = static_cast< FunctionData* >(functionDataX->Value());
 
-	std::vector< Any > args(arguments.Length());
+	Any argv[16];
 	for (int i = 0; i < arguments.Length(); ++i)
-		args[i] = functionData->scriptContext->fromValue(arguments[i]);
+		argv[i] = functionData->scriptContext->fromValue(arguments[i]);
 
 	Any result = functionData->scriptClass->invoke(
 		object,
 		functionData->methodId,
-		args
+		arguments.Length(),
+		argv
 	);
 
 	return functionData->scriptContext->toValue(result);

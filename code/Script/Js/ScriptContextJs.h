@@ -45,9 +45,9 @@ public:
 
 	virtual bool haveFunction(const std::wstring& functionName) const;
 
-	virtual Any executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments);
+	virtual Any executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv);
 
-	virtual Any executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments);
+	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv);
 
 private:
 	struct RegisteredClass

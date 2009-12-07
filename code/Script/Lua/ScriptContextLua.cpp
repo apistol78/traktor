@@ -141,7 +141,7 @@ bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 	}
 }
 
-Any ScriptContextLua::executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments)
+Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
@@ -156,9 +156,9 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, const st
 		lua_getglobal(m_luaState, wstombs(functionName).c_str());
 		if (!lua_isnil(m_luaState, -1))
 		{
-			for (std::vector< Any >::const_iterator i = arguments.begin(); i != arguments.end(); ++i)
-				pushAny(*i);
-			lua_call(m_luaState, int32_t(arguments.size()), 1);
+			for (uint32_t i = 0; i < argc; ++i)
+				pushAny(argv[i]);
+			lua_call(m_luaState, argc, 1);
 			returnValue = toAny(-1);
 		}
 		lua_pop(m_luaState, 1);
@@ -168,7 +168,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, const st
 	return returnValue;
 }
 
-Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments)
+Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
 {
 	CHECK_LUA_STACK(m_luaState, 0);
 
@@ -184,9 +184,9 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 		if (!lua_isnil(m_luaState, -1))
 		{
 			pushAny(Any(self));
-			for (std::vector< Any >::const_iterator i = arguments.begin(); i != arguments.end(); ++i)
-				pushAny(*i);
-			lua_call(m_luaState, int32_t(arguments.size() + 1), 1);
+			for (uint32_t i = 0; i < argc; ++i)
+				pushAny(argv[i]);
+			lua_call(m_luaState, int32_t(argc + 1), 1);
 			returnValue = toAny(-1);
 		}
 		lua_pop(m_luaState, 1);
@@ -347,6 +347,7 @@ int ScriptContextLua::getUnknownMethod(lua_State* luaState)
 int ScriptContextLua::callMethod(lua_State* luaState)
 {
 	CHECK_LUA_STACK(luaState, 1);
+	Any argv[16];
 
 	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (context);
@@ -374,13 +375,13 @@ int ScriptContextLua::callMethod(lua_State* luaState)
 	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
 
 	// Convert arguments.
-	int32_t argsCount = lua_gettop(luaState) - 1;
-	std::vector< Any > args(argsCount);
-	for (int32_t i = 0; i < argsCount; ++i)
-		args[i] = context->toAny(2 + i);
+	int32_t argc = lua_gettop(luaState) - 1;
+	T_ASSERT (argc <= sizeof_array(argv));
+	for (int32_t i = 0; i < argc; ++i)
+		argv[i] = context->toAny(2 + i);
 
 	// Invoke native method.
-	Any returnValue = scriptClass->invoke(object, methodId, args);
+	Any returnValue = scriptClass->invoke(object, methodId, argc, argv);
 	context->pushAny(returnValue);
 
 	return 1;
@@ -390,6 +391,8 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 {
 	ScriptContextLua* context = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (context);
+
+	Any argv[16];
 
 	if (!lua_istable(luaState, 1))
 		return 0;
@@ -413,13 +416,13 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 		return 0;
 
 	// Convert arguments.
-	int32_t argsCount = lua_gettop(luaState) - 1;
-	std::vector< Any > args(argsCount);
-	for (int32_t i = 0; i < argsCount; ++i)
-		args[i] = context->toAny(2 + i);
+	int32_t argc = lua_gettop(luaState) - 1;
+	T_ASSERT (argc <= sizeof_array(argv));
+	for (int32_t i = 0; i < argc; ++i)
+		argv[i] = context->toAny(2 + i);
 
 	// Invoke native method.
-	Any returnValue = scriptClass->invokeUnknown(object, mbstows(methodName), args);
+	Any returnValue = scriptClass->invokeUnknown(object, mbstows(methodName), argc, argv);
 	context->pushAny(returnValue);
 
 	return 1;

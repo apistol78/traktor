@@ -76,19 +76,21 @@ public:
 	/*! \brief Execute function.
 	 *
 	 * \param functionName Name of function to execute.
-	 * \param arguments Call arguments.
+	 * \param argc Number of arguments.
+	 * \param argv Argument vector.
 	 * \return Return value from function.
 	 */
-	virtual Any executeFunction(const std::wstring& functionName, const std::vector< Any >& arguments = std::vector< Any >()) = 0;
+	virtual Any executeFunction(const std::wstring& functionName, uint32_t argc = 0, const Any* argv = 0) = 0;
 
 	/*! \brief Execute method.
 	*
 	* \param self This object.
 	* \param methodName Name of method to execute.
-	* \param arguments Call arguments.
+	* \param argc Number of arguments.
+	* \param argv Argument vector.
 	* \return Return value from function.
 	*/
-	virtual Any executeMethod(Object* self, const std::wstring& methodName, const std::vector< Any >& arguments = std::vector< Any >()) = 0;
+	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc = 0, const Any* argv = 0) = 0;
 };
 
 	}
