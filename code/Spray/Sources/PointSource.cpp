@@ -23,7 +23,7 @@ PointSource::PointSource()
 {
 }
 
-bool PointSource::create(resource::IResourceManager* resourceManager)
+bool PointSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

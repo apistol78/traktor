@@ -29,7 +29,7 @@ class T_DLLCLASS PointSetSource : public Source
 public:
 	PointSetSource();
 
-	virtual bool create(resource::IResourceManager* resourceManager);
+	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual void emit(
 		EmitterUpdateContext& context,

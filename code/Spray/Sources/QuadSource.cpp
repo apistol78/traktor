@@ -26,7 +26,7 @@ QuadSource::QuadSource()
 {
 }
 
-bool QuadSource::create(resource::IResourceManager* resourceManager)
+bool QuadSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

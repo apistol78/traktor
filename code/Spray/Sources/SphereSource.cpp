@@ -24,7 +24,7 @@ SphereSource::SphereSource()
 {
 }
 
-bool SphereSource::create(resource::IResourceManager* resourceManager)
+bool SphereSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

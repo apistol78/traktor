@@ -37,7 +37,9 @@ class T_DLLCLASS Effect : public ISerializable
 public:
 	Effect();
 
-	Ref< EffectInstance > createInstance(resource::IResourceManager* resourceManager) const;
+	bool bind(resource::IResourceManager* resourceManager);
+
+	Ref< EffectInstance > createInstance() const;
 
 	virtual bool serialize(ISerializer& s);
 

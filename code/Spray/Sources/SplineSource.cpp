@@ -27,7 +27,7 @@ SplineSource::SplineSource()
 {
 }
 
-bool SplineSource::create(resource::IResourceManager* resourceManager)
+bool SplineSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

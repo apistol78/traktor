@@ -20,7 +20,7 @@ ConeSource::ConeSource()
 {
 }
 
-bool ConeSource::create(resource::IResourceManager* resourceManager)
+bool ConeSource::bind(resource::IResourceManager* resourceManager)
 {
 	return true;
 }

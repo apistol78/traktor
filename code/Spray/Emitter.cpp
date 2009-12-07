@@ -23,14 +23,19 @@ Emitter::Emitter()
 {
 }
 
-Ref< EmitterInstance > Emitter::createInstance(resource::IResourceManager* resourceManager)
+bool Emitter::bind(resource::IResourceManager* resourceManager)
 {
 	if (!resourceManager->bind(m_shader))
-		return 0;
+		return false;
+	
+	if (m_source && !m_source->bind(resourceManager))
+		return false;
 
-	if (m_source && !m_source->create(resourceManager))
-		return 0;
+	return true;
+}
 
+Ref< EmitterInstance > Emitter::createInstance()
+{
 	return new EmitterInstance(this);
 }
 

@@ -38,7 +38,7 @@ class T_DLLCLASS Source : public ISerializable
 public:
 	Source();
 
-	virtual bool create(resource::IResourceManager* resourceManager) = 0;
+	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
 
 	virtual void emit(
 		EmitterUpdateContext& context,

@@ -26,12 +26,9 @@ PointSetSource::PointSetSource()
 {
 }
 
-bool PointSetSource::create(resource::IResourceManager* resourceManager)
+bool PointSetSource::bind(resource::IResourceManager* resourceManager)
 {
-	if (!resourceManager->bind(m_pointSet))
-		return false;
-
-	return true;
+	return resourceManager->bind(m_pointSet);
 }
 
 void PointSetSource::emit(
