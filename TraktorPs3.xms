@@ -4610,10 +4610,10 @@
 					</items>
 				</item>
 				<item type="Filter">
-					<name>Track</name>
+					<name>Resound</name>
 					<items>
 						<item type="File">
-							<fileName>Track/*.*</fileName>
+							<fileName>Resound/*.*</fileName>
 							<items/>
 						</item>
 					</items>
