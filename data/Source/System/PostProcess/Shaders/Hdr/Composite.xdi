@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="1">
+		<item type="traktor.render.PixelOutput" version="2">
 			<comment></comment>
 			<position>
 				<first>750</first>
@@ -26,6 +26,13 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Add">
 			<comment></comment>
@@ -34,7 +41,7 @@
 				<second>219</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
 				<first>284</first>
@@ -44,6 +51,7 @@
 			<inputPins>
 				<item>
 					<name>TexCoord</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -51,6 +59,7 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment></comment>
@@ -68,7 +77,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
 				<first>425</first>
@@ -78,6 +87,7 @@
 			<inputPins>
 				<item>
 					<name>Input</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -85,12 +95,13 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
+		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
-				<first>-138</first>
-				<second>300</second>
+				<first>96</first>
+				<second>204</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -102,127 +113,10 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
-		</item>
-		<item type="traktor.render.Platform">
-			<comment></comment>
-			<position>
-				<first>125</first>
-				<second>246</second>
-			</position>
-		</item>
-		<item type="traktor.render.Add">
-			<comment></comment>
-			<position>
-				<first>-13</first>
-				<second>191</second>
-			</position>
-		</item>
-		<item type="traktor.render.Div">
-			<comment></comment>
-			<position>
-				<first>-128</first>
-				<second>143</second>
-			</position>
-		</item>
-		<item type="traktor.render.Uniform">
-			<comment></comment>
-			<position>
-				<first>-336</first>
-				<second>191</second>
-			</position>
-			<parameterName>SourceTexture_Size</parameterName>
-			<type>PtVector</type>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment></comment>
-			<position>
-				<first>-246</first>
-				<second>149</second>
-			</position>
-			<value>0.5</value>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>DX9</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>TexCoord</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[3]"/>
@@ -261,6 +155,26 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>
