@@ -61,9 +61,16 @@ void SoundChannel::stop()
 
 void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 {
-	m_sound = sound;
-	m_time = time;
-	m_repeat = max< uint32_t >(repeat, 1U);
+	Ref< ISoundBuffer > soundBuffer = sound->getSoundBuffer();
+	if (soundBuffer)
+	{
+		m_sound = sound;
+		m_time = time;
+		m_repeat = max< uint32_t >(repeat, 1U);
+
+		// Reset sound buffer to ensure we're good to go.
+		soundBuffer->reset();
+	}
 }
 
 bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
@@ -72,8 +79,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 		return false;
 
 	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();
-	if (!soundBuffer)
-		return false;
+	T_ASSERT (soundBuffer);
 
 	// Local sound time.
 	double soundTime = time - m_time;

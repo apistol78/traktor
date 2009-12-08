@@ -65,9 +65,8 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual double getDuration() const
+	virtual void reset()
 	{
-		return 1000.0;
 	}
 
 	virtual bool getBlock(double time, sound::SoundBlock& outBlock)

@@ -3,7 +3,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IProject.h"
-#include "Editor/Asset.h"
+#include "Editor/ITypedAsset.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Ui/FileDialog.h"
 #include "Ui/FloodLayout.h"
@@ -116,23 +116,24 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 
 					// Check if filter type is actually a result of a asset; in such case we should
 					// browse for the asset and not the final result.
-					std::vector< const TypeInfo* > assetTypes;
-					type_of< Asset >().findAllOf(assetTypes);
+					TypeInfoSet filterTypes;
 
+					std::vector< const TypeInfo* > assetTypes;
+					type_of< ITypedAsset >().findAllOf(assetTypes);
 					for (std::vector< const TypeInfo* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
 					{
-						Ref< Asset > asset = dynamic_type_cast< Asset* >((*i)->createInstance());
+						Ref< ITypedAsset > asset = dynamic_type_cast< ITypedAsset* >((*i)->createInstance());
 						if (asset && asset->getOutputType())
 						{
 							if (is_type_of(*asset->getOutputType(), *filterType))
-							{
-								filterType = *i;
-								break;
-							}
+								filterTypes.insert(*i);
 						}
 					}
 
-					editor::TypeBrowseFilter filter(*filterType);
+					if (filterTypes.empty())
+						filterTypes.insert(filterType);
+
+					editor::TypeBrowseFilter filter(filterTypes);
 					instance = m_editor->browseInstance(&filter);
 				}
 				else

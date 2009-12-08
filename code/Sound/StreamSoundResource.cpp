@@ -1,22 +1,52 @@
-#include "Sound/StreamSoundResource.h"
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberType.h"
+#include "Database/Instance.h"
+#include "Sound/IStreamDecoder.h"
+#include "Sound/Sound.h"
+#include "Sound/StreamSoundBuffer.h"
+#include "Sound/StreamSoundResource.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 0, StreamSoundResource, SoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 0, StreamSoundResource, ISoundResource)
 
 StreamSoundResource::StreamSoundResource(const TypeInfo* decoderType)
 :	m_decoderType(decoderType)
 {
 }
 
-const TypeInfo* StreamSoundResource::getDecoderType() const
+Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
 {
-	return m_decoderType;
+	Ref< IStream > stream = resourceInstance->readData(L"Data");
+	if (!stream)
+		return 0;
+
+	if (!m_decoderType)
+	{
+		log::error << L"Unable to create sound, no decoder type" << Endl;
+		return 0;
+	}
+
+	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
+	if (!streamDecoder->create(stream))
+	{
+		log::error << L"Unable to create sound, unable to create stream decoder" << Endl;
+		return 0;
+	}
+
+	Ref< StreamSoundBuffer > soundBuffer = new StreamSoundBuffer();
+	if (!soundBuffer->create(streamDecoder))
+	{
+		log::error << L"Unable to create sound, unable to create stream sound buffer" << Endl;
+		return 0;
+	}
+
+	return new Sound(soundBuffer);
 }
 
 bool StreamSoundResource::serialize(ISerializer& s)

@@ -27,7 +27,7 @@ public:
 
 	int16_t* getSamplesData(uint32_t channel);
 
-	virtual double getDuration() const;
+	virtual void reset();
 
 	virtual bool getBlock(double time, SoundBlock& outBlock);
 

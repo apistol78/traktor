@@ -24,13 +24,12 @@ public:
 
 	void destroy();
 
-	virtual double getDuration() const;
+	virtual void reset();
 
 	virtual bool getBlock(double time, SoundBlock& outBlock);
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;
-	double m_duration;
 	double m_time;
 };
 
