@@ -140,6 +140,8 @@ bool PhysicsManagerBullet::create(float simulationDeltaTime)
 
 void PhysicsManagerBullet::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	while (!m_joints.empty())
 		m_joints.front()->destroy();
 	while (!m_dynamicBodies.empty())
@@ -162,7 +164,7 @@ void PhysicsManagerBullet::setGravity(const Vector4& gravity)
 
 Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!desc)
 		return 0;
@@ -357,7 +359,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 
 Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	if (!desc)
 		return 0;
@@ -500,7 +502,7 @@ void PhysicsManagerBullet::update()
 {
 	T_ASSERT (m_dynamicsWorld);
 
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
@@ -654,7 +656,7 @@ void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveC
 
 void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCollisionShape* shape)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	m_dynamicsWorld->removeRigidBody(rigidBody);
 
@@ -677,7 +679,7 @@ void PhysicsManagerBullet::destroyBody(Body* body, btRigidBody* rigidBody, btCol
 
 void PhysicsManagerBullet::destroyJoint(Joint* joint, btTypedConstraint* constraint)
 {
-	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	m_dynamicsWorld->removeConstraint(constraint);
 

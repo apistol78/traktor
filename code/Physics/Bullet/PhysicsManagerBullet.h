@@ -3,7 +3,7 @@
 
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"
-#include "Core/Thread/CriticalSection.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -80,7 +80,7 @@ private:
 	btBroadphaseInterface* m_broadphase;
 	btConstraintSolver* m_solver;
 	btDynamicsWorld* m_dynamicsWorld;
-	CriticalSection m_lock;
+	Semaphore m_lock;
 	RefArray< StaticBodyBullet > m_staticBodies;
 	RefArray< DynamicBodyBullet > m_dynamicBodies;
 	RefArray< Joint > m_joints;
