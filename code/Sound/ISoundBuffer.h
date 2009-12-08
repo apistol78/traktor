@@ -17,6 +17,15 @@ namespace traktor
 	namespace sound
 	{
 
+/*! \brief Sound buffer cursor interface.
+ * \ingroup Sound
+ */
+class T_DLLCLASS ISoundBufferCursor : public IRefCount
+{
+public:
+	virtual void setCursor(double time) = 0;
+};
+
 /*! \brief Sound buffer base class.
  * \ingroup Sound
  */
@@ -25,9 +34,9 @@ class T_DLLCLASS ISoundBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void reset() = 0;
+	virtual Ref< ISoundBufferCursor > createCursor() = 0;
 
-	virtual bool getBlock(double time, SoundBlock& outBlock) = 0;
+	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock) = 0;
 };
 
 	}

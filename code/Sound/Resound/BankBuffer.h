@@ -19,13 +19,12 @@ class BankBuffer : public ISoundBuffer
 public:
 	BankBuffer(std::vector< resource::Proxy< Sound > >& sounds);
 
-	virtual void reset();
+	virtual Ref< ISoundBufferCursor > createCursor();
 
-	virtual bool getBlock(double time, SoundBlock& outBlock);
+	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
 
 private:
 	std::vector< resource::Proxy< Sound > > m_sounds;
-	Ref< Sound > m_activeSound;
 };
 
 	}

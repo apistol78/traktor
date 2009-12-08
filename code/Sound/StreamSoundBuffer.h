@@ -24,9 +24,9 @@ public:
 
 	void destroy();
 
-	virtual void reset();
+	virtual Ref< ISoundBufferCursor > createCursor();
 
-	virtual bool getBlock(double time, SoundBlock& outBlock);
+	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;

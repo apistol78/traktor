@@ -4,6 +4,25 @@ namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
+{
+	double m_time;
+
+	StaticSoundBufferCursor()
+	:	m_time(0.0)
+	{
+	}
+
+	virtual void setCursor(double time)
+	{
+		m_time = time;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StaticSoundBuffer", StaticSoundBuffer, ISoundBuffer)
 
@@ -46,13 +65,16 @@ int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
 	return m_samples[channel].ptr();
 }
 
-void StaticSoundBuffer::reset()
+Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor()
 {
+	return new StaticSoundBufferCursor();
 }
 
-bool StaticSoundBuffer::getBlock(double time, SoundBlock& outBlock)
+bool StaticSoundBuffer::getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock)
 {
+	double time = static_cast< const StaticSoundBufferCursor* >(cursor)->m_time;
 	uint32_t samplePosition = uint32_t(time * m_sampleRate);
+
 	if (samplePosition >= m_samplesCount)
 		return false;
 

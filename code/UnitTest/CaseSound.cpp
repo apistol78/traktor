@@ -65,11 +65,12 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual void reset()
+	virtual Ref< sound::ISoundBufferCursor > createCursor()
 	{
+		return 0;
 	}
 
-	virtual bool getBlock(double time, sound::SoundBlock& outBlock)
+	virtual bool getBlock(const sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock)
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);
