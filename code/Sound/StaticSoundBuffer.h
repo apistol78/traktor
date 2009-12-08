@@ -27,9 +27,9 @@ public:
 
 	int16_t* getSamplesData(uint32_t channel);
 
-	virtual void reset();
+	virtual Ref< ISoundBufferCursor > createCursor();
 
-	virtual bool getBlock(double time, SoundBlock& outBlock);
+	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
 
 private:
 	uint32_t m_sampleRate;

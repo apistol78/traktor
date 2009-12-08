@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class IFilter;
+class ISoundBufferCursor;
 class Sound;
 
 /*! \brief Virtual sound channel.
@@ -54,6 +55,7 @@ private:
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Ref< IFilter > m_filter;
 	Ref< Sound > m_sound;
+	Ref< ISoundBufferCursor > m_cursor;
 	double m_time;
 	uint32_t m_repeat;
 	float* m_outputSamples[SbcMaxChannelCount];

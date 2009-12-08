@@ -67,9 +67,7 @@ void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 		m_sound = sound;
 		m_time = time;
 		m_repeat = max< uint32_t >(repeat, 1U);
-
-		// Reset sound buffer to ensure we're good to go.
-		soundBuffer->reset();
+		m_cursor = soundBuffer->createCursor();
 	}
 }
 
@@ -85,15 +83,18 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	double soundTime = time - m_time;
 	soundTime = std::max(0.0, soundTime);
 
+	// Move cursor to local time.
+	m_cursor->setCursor(soundTime);
+
 	// Request sound block from buffer.
 	SoundBlock soundBlock = { { 0, 0 }, outBlock.samplesCount, 0, 0 };
-	if (!soundBuffer->getBlock(soundTime, soundBlock))
+	if (!soundBuffer->getBlock(m_cursor, soundBlock))
 	{
 		// No more blocks from sound buffer.
 		if (--m_repeat > 0)
 		{
-			soundTime = 0.0;
-			if (!soundBuffer->getBlock(soundTime, soundBlock))
+			m_cursor->setCursor(0.0);
+			if (!soundBuffer->getBlock(m_cursor, soundBlock))
 			{
 				m_sound = 0;
 				return false;

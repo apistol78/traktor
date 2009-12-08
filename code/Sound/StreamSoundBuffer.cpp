@@ -6,6 +6,25 @@ namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
+{
+	double m_time;
+
+	StreamSoundBufferCursor()
+	:	m_time(0.0)
+	{
+	}
+
+	virtual void setCursor(double time)
+	{
+		m_time = time;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
@@ -27,20 +46,19 @@ void StreamSoundBuffer::destroy()
 	m_streamDecoder = 0;
 }
 
-void StreamSoundBuffer::reset()
+Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor()
 {
-	m_streamDecoder->rewind();
-	m_time = 0.0;
+	return new StreamSoundBufferCursor();
 }
 
-bool StreamSoundBuffer::getBlock(double time, SoundBlock& outBlock)
+bool StreamSoundBuffer::getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock)
 {
-	T_ASSERT (m_streamDecoder);
+	double time = static_cast< const StreamSoundBufferCursor* >(cursor)->m_time;
 	
 	if (m_time > time)
 	{
-		log::warning << L"Rewinding stream; severe performance penalty" << Endl;
-		reset();
+		m_streamDecoder->rewind();
+		m_time = 0.0;
 	}
 
 	while (m_time < time)
