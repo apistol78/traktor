@@ -2,6 +2,7 @@
 #define traktor_physics_BodyBullet_H
 
 #include <btBulletDynamicsCommon.h>
+#include "Core/Thread/Atomic.h"
 #include "Physics/Bullet/Types.h"
 
 namespace traktor
@@ -31,14 +32,13 @@ public:
 
 	virtual void destroy()
 	{
-		if (m_callback)
+		DestroyCallback* callback = Atomic::exchange< DestroyCallback* >(m_callback, 0);
+		if (callback)
 		{
-			m_callback->destroyBody(this, m_body, m_shape);
-			m_callback = 0;
+			callback->destroyBody(this, m_body, m_shape);
+			m_body = 0;
+			m_shape = 0;
 		}
-
-		m_body = 0;
-		m_shape = 0;
 	}
 
 	inline btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
