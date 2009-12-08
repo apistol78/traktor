@@ -4,6 +4,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberType.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
@@ -319,7 +320,7 @@ PropertyGroup::PropertyGroup()
 PropertyGroup::value_type_t PropertyGroup::get(PropertyValue* value)
 {
 	if (value)
-		return checked_type_cast< PropertyGroup* >(value);
+		return DeepClone(value).create< PropertyGroup >();
 	else
 		return new PropertyGroup();
 }
