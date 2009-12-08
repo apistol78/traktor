@@ -1,8 +1,8 @@
 #ifndef traktor_render_TypesPs3_H
 #define traktor_render_TypesPs3_H
 
-#include "Render/Types.h"
 #include "Render/Ps3/PlatformPs3.h"
+#include "Render/Types.h"
 
 namespace traktor
 {

@@ -1,8 +1,8 @@
 #ifndef traktor_render_ProgramResourceDx10_H
 #define traktor_render_ProgramResourceDx10_H
 
-#include "Render/ProgramResource.h"
 #include "Render/Ps3/TypesPs3.h"
+#include "Render/ProgramResource.h"
 
 namespace traktor
 {

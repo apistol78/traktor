@@ -1,9 +1,9 @@
 #ifndef traktor_render_CgContext_H
 #define traktor_render_CgContext_H
 
+#include "Render/Ps3/TypesPs3.h"
 #include "Render/Ps3/CgEmitter.h"
 #include "Render/Ps3/CgShader.h"
-#include "Render/Ps3/TypesPs3.h"
 
 namespace traktor
 {
