@@ -29,6 +29,8 @@ class T_DLLCLASS Body : public Object
 	T_RTTI_CLASS;
 
 public:
+	Body();
+
 	/*! \brief Destroy rigid body. */
 	virtual void destroy() = 0;
 
@@ -102,11 +104,11 @@ public:
 	 *
 	 * \return User object.
 	 */
-	Ref< Object > getUserObject() const;
+	Object* getUserObject() const;
 
 private:
 	RefArray< CollisionListener > m_collisionListeners;
-	Ref< Object > m_userObject;
+	Object* m_userObject;
 };
 
 	}

@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Body", Body, Object)
 
+Body::Body()
+:	m_userObject(0)
+{
+}
+
 void Body::addCollisionListener(CollisionListener* collisionListener)
 {
 	m_collisionListeners.push_back(collisionListener);
@@ -32,7 +37,7 @@ void Body::setUserObject(Object* userObject)
 	m_userObject = userObject;
 }
 
-Ref< Object > Body::getUserObject() const
+Object* Body::getUserObject() const
 {
 	return m_userObject;
 }
