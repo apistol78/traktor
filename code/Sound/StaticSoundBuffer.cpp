@@ -46,9 +46,8 @@ int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
 	return m_samples[channel].ptr();
 }
 
-double StaticSoundBuffer::getDuration() const
+void StaticSoundBuffer::reset()
 {
-	return double(m_samplesCount) / m_sampleRate;
 }
 
 bool StaticSoundBuffer::getBlock(double time, SoundBlock& outBlock)

@@ -10,18 +10,16 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
 StreamSoundBuffer::StreamSoundBuffer()
-:	m_duration(0.0)
-,	m_time(0.0)
+:	m_time(0.0)
 {
 }
 
 bool StreamSoundBuffer::create(IStreamDecoder* streamDecoder)
 {
-	if (!(m_streamDecoder = streamDecoder))
+	if ((m_streamDecoder = streamDecoder) != 0)
+		return true;
+	else
 		return false;
-
-	m_duration = m_streamDecoder->getDuration();
-	return true;
 }
 
 void StreamSoundBuffer::destroy()
@@ -29,9 +27,10 @@ void StreamSoundBuffer::destroy()
 	m_streamDecoder = 0;
 }
 
-double StreamSoundBuffer::getDuration() const
+void StreamSoundBuffer::reset()
 {
-	return m_duration;
+	m_streamDecoder->rewind();
+	m_time = 0.0;
 }
 
 bool StreamSoundBuffer::getBlock(double time, SoundBlock& outBlock)
@@ -41,8 +40,7 @@ bool StreamSoundBuffer::getBlock(double time, SoundBlock& outBlock)
 	if (m_time > time)
 	{
 		log::warning << L"Rewinding stream; severe performance penalty" << Endl;
-		m_streamDecoder->rewind();
-		m_time = 0.0;
+		reset();
 	}
 
 	while (m_time < time)

@@ -1,7 +1,7 @@
-#include "Sound/Editor/SoundAsset.h"
-#include "Sound/SoundResource.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Sound/ISoundResource.h"
+#include "Sound/Editor/SoundAsset.h"
 
 namespace traktor
 {
@@ -17,7 +17,7 @@ SoundAsset::SoundAsset()
 
 const TypeInfo* SoundAsset::getOutputType() const
 {
-	return &type_of< SoundResource >();
+	return &type_of< ISoundResource >();
 }
 
 bool SoundAsset::serialize(ISerializer& s)

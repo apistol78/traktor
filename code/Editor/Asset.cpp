@@ -7,7 +7,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ITypedAsset)
 
 Asset::Asset()
 {

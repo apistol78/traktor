@@ -25,7 +25,7 @@ class T_DLLCLASS ISoundBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual double getDuration() const = 0;
+	virtual void reset() = 0;
 
 	virtual bool getBlock(double time, SoundBlock& outBlock) = 0;
 };

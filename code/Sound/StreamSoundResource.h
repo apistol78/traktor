@@ -1,7 +1,7 @@
 #ifndef traktor_sound_StreamSoundResource_H
 #define traktor_sound_StreamSoundResource_H
 
-#include "Sound/SoundResource.h"
+#include "Sound/ISoundResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,14 +19,14 @@ namespace traktor
 /*! \brief Stream sound resource.
  * \ingroup Sound
  */
-class T_DLLCLASS StreamSoundResource : public SoundResource
+class T_DLLCLASS StreamSoundResource : public ISoundResource
 {
 	T_RTTI_CLASS;
 
 public:
 	StreamSoundResource(const TypeInfo* decoderType = 0);
 
-	const TypeInfo* getDecoderType() const;
+	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
 	virtual bool serialize(ISerializer& s);
 

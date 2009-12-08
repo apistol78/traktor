@@ -23,12 +23,14 @@ namespace traktor
 class T_DLLCLASS TypeBrowseFilter : public IBrowseFilter
 {
 public:
-	TypeBrowseFilter(const TypeInfo& type);
+	TypeBrowseFilter(const TypeInfoSet& typeSet);
+
+	TypeBrowseFilter(const TypeInfo& typeInfo);
 
 	virtual bool acceptable(db::Instance* instance) const;
 
 private:
-	const TypeInfo& m_type;
+	TypeInfoSet m_typeSet;
 };
 
 	}
