@@ -21,6 +21,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
 EntityAdapter::EntityAdapter(world::EntityInstance* instance)
 :	m_instance(instance)
+,	m_parent(0)
 ,	m_selected(false)
 {
 }
@@ -165,15 +166,15 @@ bool EntityAdapter::isGroup() const
 		return false;
 }
 
-Ref< EntityAdapter > EntityAdapter::getParent() const
+EntityAdapter* EntityAdapter::getParent() const
 {
 	return m_parent;
 }
 
 Ref< EntityAdapter > EntityAdapter::getParentGroup()
 {
-	Ref< EntityAdapter > entity = this;
-	for (; entity; entity = entity->getParent())
+	EntityAdapter* entity = this;
+	for (; entity; entity = entity->m_parent)
 	{
 		if (entity->isGroup())
 			break;
@@ -183,8 +184,8 @@ Ref< EntityAdapter > EntityAdapter::getParentGroup()
 
 Ref< EntityAdapter > EntityAdapter::getParentContainerGroup()
 {
-	Ref< EntityAdapter > entity = getParent();
-	for (; entity; entity = entity->getParent())
+	EntityAdapter* entity = m_parent;
+	for (; entity; entity = entity->m_parent)
 	{
 		if (entity->isGroup())
 			break;

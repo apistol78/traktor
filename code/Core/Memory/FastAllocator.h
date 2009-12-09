@@ -24,11 +24,9 @@ public:
 	
 	virtual ~FastAllocator();
 	
-	virtual void* alloc(size_t size, size_t align);
+	virtual void* alloc(size_t size, size_t align, const wchar_t* const tag);
 	
 	virtual void free(void* ptr);
-
-	virtual MemoryType type(void* ptr) const;
 	
 private:
 	CriticalSection m_lock;

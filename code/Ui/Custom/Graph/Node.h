@@ -74,13 +74,13 @@ public:
 
 	bool isSelected() const;
 
-	void addInputPin(Pin* pin);
+	Ref< Pin > createInputPin(const std::wstring& name, bool mandatory);
 
 	const RefArray< Pin >& getInputPins() const;
 
 	Ref< Pin > findInputPin(const std::wstring& name) const;
 
-	void addOutputPin(Pin* pin);
+	Ref< Pin > createOutputPin(const std::wstring& name);
 
 	const RefArray< Pin >& getOutputPins() const;
 

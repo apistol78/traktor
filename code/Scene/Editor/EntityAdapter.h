@@ -107,7 +107,7 @@ public:
 
 	bool isGroup() const;
 
-	Ref< EntityAdapter > getParent() const;
+	EntityAdapter* getParent() const;
 
 	Ref< EntityAdapter > getParentGroup();
 
@@ -158,7 +158,7 @@ private:
 	Ref< world::EntityData > m_realEntityData;
 	Ref< world::EntityInstance > m_instance;
 	Ref< world::Entity > m_entity;
-	Ref< EntityAdapter > m_parent;
+	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;
 	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;

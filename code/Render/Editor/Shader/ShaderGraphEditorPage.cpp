@@ -610,7 +610,7 @@ void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNode
 	}
 }
 
-ui::custom::Node* ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
+Ref< ui::custom::Node > ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 {
 	Ref< NodeFacade > nodeFacade = m_nodeFacades[&type_of(shaderNode)];
 	T_ASSERT_M (nodeFacade, L"No node facade class found");
@@ -627,23 +627,18 @@ ui::custom::Node* ShaderGraphEditorPage::createEditorNode(Node* shaderNode)
 	for (int j = 0; j < shaderNode->getInputPinCount(); ++j)
 	{
 		const InputPin* inputPin = shaderNode->getInputPin(j);
-		editorNode->addInputPin(new ui::custom::Pin(
-			editorNode,
+		editorNode->createInputPin(
 			inputPin->getName(),
-			ui::custom::Pin::DrInput,
 			!inputPin->isOptional()
-		));
+		);
 	}
 
 	for (int j = 0; j < shaderNode->getOutputPinCount(); ++j)
 	{
 		const OutputPin* outputPin = shaderNode->getOutputPin(j);
-		editorNode->addOutputPin(new ui::custom::Pin(
-			editorNode,
-			outputPin->getName(),
-			ui::custom::Pin::DrOutput,
-			true
-		));
+		editorNode->createOutputPin(
+			outputPin->getName()
+		);
 	}
 
 	editorNode->setComment(shaderNode->getComment());

@@ -43,7 +43,7 @@ public:
 
 	Pin(Node* node, const std::wstring& name, Direction direction, bool mandatory);
 
-	Ref< Node > getNode();
+	Node* getNode() const;
 
 	const std::wstring& getName() const;
 
@@ -54,7 +54,7 @@ public:
 	Point getPosition() const;
 
 private:
-	Ref< Node > m_node;
+	Node* m_node;
 	std::wstring m_name;
 	Direction m_direction;
 	bool m_mandatory;

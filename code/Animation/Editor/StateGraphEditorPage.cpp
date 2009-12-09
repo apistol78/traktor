@@ -479,11 +479,8 @@ Ref< ui::custom::Node > StateGraphEditorPage::createEditorNode(State* state)
 	node->setColor(m_stateGraph->getRootState() == state ? Color(128, 255, 128) : Color(255, 255, 255));
 	node->setData(L"STATE", state);
 
-	Ref< ui::custom::Pin > enterPin = new ui::custom::Pin(node, L"Enter", ui::custom::Pin::DrInput, true);
-	node->addInputPin(enterPin);
-
-	Ref< ui::custom::Pin > leavePin = new ui::custom::Pin(node, L"Leave", ui::custom::Pin::DrOutput, true);
-	node->addOutputPin(leavePin);
+	node->createInputPin(L"Enter", true);
+	node->createOutputPin(L"Leave");
 
 	return node;
 }

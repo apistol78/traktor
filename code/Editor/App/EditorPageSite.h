@@ -46,7 +46,7 @@ public:
 	const std::map< Ref< ui::Widget >, bool >& getPanelWidgets() const { return m_panelWidgets; }
 
 private:
-	Ref< EditorForm > m_editor;
+	EditorForm* m_editor;
 	Ref< Object > m_properties;
 	std::map< Ref< ui::Widget >, bool > m_panelWidgets;
 	bool m_active;

@@ -56,7 +56,7 @@ public:
 
 	int getDepth() const;
 
-	Ref< PropertyItem > getParentItem();
+	PropertyItem* getParentItem();
 
 	RefArray< PropertyItem >& getChildItems();
 
@@ -65,7 +65,7 @@ protected:
 
 	void setPropertyList(PropertyList* propertyList);
 
-	Ref< PropertyList > getPropertyList() const;
+	PropertyList* getPropertyList() const;
 
 	void notifyUpdate();
 
@@ -98,11 +98,11 @@ protected:
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
 private:
-	Ref< PropertyList > m_propertyList;
+	PropertyList* m_propertyList;
 	std::wstring m_text;
 	bool m_expanded;
 	bool m_selected;
-	Ref< PropertyItem > m_parent;
+	PropertyItem* m_parent;
 	RefArray< PropertyItem > m_childItems;
 
 	void updateChildrenInPlaceControls(bool create);

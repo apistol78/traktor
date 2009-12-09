@@ -4,7 +4,7 @@
 namespace traktor
 {
 
-void* StdAllocator::alloc(size_t size, size_t align)
+void* StdAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 {
 	void* ptr = Alloc::acquireAlign(size, align);
 	T_ASSERT (ptr);
@@ -14,11 +14,6 @@ void* StdAllocator::alloc(size_t size, size_t align)
 void StdAllocator::free(void* ptr)
 {
 	Alloc::freeAlign(ptr);
-}
-
-IAllocator::MemoryType StdAllocator::type(void* ptr) const
-{
-	return MtUnknown;
 }
 
 }

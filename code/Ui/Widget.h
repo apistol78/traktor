@@ -150,7 +150,7 @@ public:
 
 	void setParent(Widget* parent);
 	
-	Ref< Widget > getParent() const;
+	Widget* getParent() const;
 	
 	Ref< Widget > getPreviousSibling() const;
 	
@@ -281,7 +281,7 @@ public:
 	
 protected:
 	IWidget* m_widget;
-	Ref< Widget > m_parent;
+	Widget* m_parent;
 	Ref< Widget > m_previousSibling;
 	Ref< Widget > m_nextSibling;
 	Ref< Widget > m_firstChild;

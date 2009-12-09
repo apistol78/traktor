@@ -10,15 +10,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Pin", Pin, Object)
 
-Pin::Pin(Node* node, const std::wstring& name, Direction direction, bool mandatory) :
-	m_node(node),
-	m_name(name),
-	m_direction(direction),
-	m_mandatory(mandatory)
+Pin::Pin(Node* node, const std::wstring& name, Direction direction, bool mandatory)
+:	m_node(node)
+,	m_name(name)
+,	m_direction(direction)
+,	m_mandatory(mandatory)
 {
 }
 
-Ref< Node > Pin::getNode()
+Node* Pin::getNode() const
 {
 	return m_node;
 }

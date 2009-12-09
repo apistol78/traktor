@@ -29,6 +29,9 @@ class T_DLLCLASS Associative
 public:
 	virtual ~Associative();
 
+	/*! \brief Remove all objects. */
+	void removeAllData();
+
 	/*! \brief Set named object. */
 	void setData(const std::wstring& key, Object* data);
 
