@@ -80,7 +80,7 @@ void TrackAllocator::free(void* ptr)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	for (std::list< Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+	for (std::list< Block >::iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 	{
 		if (i->top == ptr)
 		{

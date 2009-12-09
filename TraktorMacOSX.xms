@@ -4355,6 +4355,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>BvhParser</name>
+								<items>
+									<item type="File">
+										<fileName>BvhParser/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -8415,6 +8424,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Resound</name>
+											<items>
+												<item type="File">
+													<fileName>Resound/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -8517,6 +8535,15 @@
 											<fileName>*.*</fileName>
 											<items/>
 										</item>
+										<item type="Filter">
+											<name>Resound</name>
+											<items>
+												<item type="File">
+													<fileName>Resound/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -8538,6 +8565,14 @@
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[6]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[7]/project/dependencies/item[6]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 										</item>
 									</dependencies>
 								</project>

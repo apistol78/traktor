@@ -32,18 +32,23 @@ inline bool isObjectHeapAllocated(const void* ptr)
 	return bool(header->magic == c_magic);
 }
 
-#if !defined(_DEBUG) && !defined(_PS3) && !defined(__APPLE__)
-StdAllocator g_stdAllocator;
-FastAllocator g_allocator0(&g_stdAllocator);
+IAllocator* getAllocator()
+{
+	static IAllocator* s_allocator = 0;
+	if (!s_allocator)
+	{
+#if !defined(_DEBUG)
+		s_allocator = new FastAllocator(
+			new StdAllocator()
+		);
 #else
-StdAllocator g_allocator0;
+		s_allocator = new TrackAllocator(
+			new StdAllocator()
+		);
 #endif
-
-#if defined(_DEBUG)
-TrackAllocator g_allocator(&g_allocator0);
-#else
-IAllocator& g_allocator = g_allocator0;
-#endif
+	}
+	return s_allocator;
+}
 
 	}
 
@@ -66,8 +71,10 @@ void Object::release() const
 void* Object::operator new (size_t size)
 {
 	const size_t objectHeaderSize = sizeof(ObjectHeader);
+	
+	IAllocator* allocator = getAllocator();
 
-	ObjectHeader* header = static_cast< ObjectHeader* >(g_allocator.alloc(size + objectHeaderSize, 16, L"Object"));
+	ObjectHeader* header = static_cast< ObjectHeader* >(allocator->alloc(size + objectHeaderSize, 16, L"Object"));
 	T_FATAL_ASSERT_M (header, L"Out of memory");
 
 	Object* object = reinterpret_cast< Object* >(header + 1);
@@ -87,7 +94,8 @@ void Object::operator delete (void* ptr)
 
 		--ms_instanceCount;
 
-		g_allocator.free(header);
+		IAllocator* allocator = getAllocator();
+		allocator->free(header);
 	}
 }
 
