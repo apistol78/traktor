@@ -46,14 +46,14 @@ void StreamSoundBuffer::destroy()
 	m_streamDecoder = 0;
 }
 
-Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor()
+Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
 {
 	return new StreamSoundBufferCursor();
 }
 
-bool StreamSoundBuffer::getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock)
+bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
-	double time = static_cast< const StreamSoundBufferCursor* >(cursor)->m_time;
+	double time = static_cast< StreamSoundBufferCursor* >(cursor)->m_time;
 	
 	if (m_time > time)
 	{

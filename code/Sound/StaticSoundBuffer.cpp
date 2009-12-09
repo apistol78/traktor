@@ -65,14 +65,14 @@ int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
 	return m_samples[channel].ptr();
 }
 
-Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor()
+Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 {
 	return new StaticSoundBufferCursor();
 }
 
-bool StaticSoundBuffer::getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock)
+bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
-	double time = static_cast< const StaticSoundBufferCursor* >(cursor)->m_time;
+	double time = static_cast< StaticSoundBufferCursor* >(cursor)->m_time;
 	uint32_t samplePosition = uint32_t(time * m_sampleRate);
 
 	if (samplePosition >= m_samplesCount)

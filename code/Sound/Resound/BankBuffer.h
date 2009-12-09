@@ -1,30 +1,44 @@
 #ifndef traktor_sound_BankBuffer_H
 #define traktor_sound_BankBuffer_H
 
-#include <vector>
-#include "Resource/Proxy.h"
+#include "Core/RefArray.h"
 #include "Sound/ISoundBuffer.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
 	namespace sound
 	{
 
-class Sound;
+class IGrain;
+class BankSound;
 
-class BankBuffer : public ISoundBuffer
+class T_DLLCLASS BankBuffer : public ISoundBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	BankBuffer(std::vector< resource::Proxy< Sound > >& sounds);
+	BankBuffer(
+		const RefArray< IGrain >& grains,
+		const RefArray< BankSound >& sounds
+	);
 
-	virtual Ref< ISoundBufferCursor > createCursor();
+	BankSound* getSound(int32_t index) const;
 
-	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
+	virtual Ref< ISoundBufferCursor > createCursor() const;
+
+	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
-	std::vector< resource::Proxy< Sound > > m_sounds;
+	RefArray< IGrain > m_grains;
+	RefArray< BankSound > m_sounds;
 };
 
 	}

@@ -1,5 +1,6 @@
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
+#include "Sound/Resound/BankSound.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankPipeline.h"
 
@@ -26,9 +27,9 @@ bool BankPipeline::buildDependencies(
 {
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset* >(sourceAsset);
 
-	const std::vector< resource::Proxy< Sound > >& sounds = bankAsset->getSounds();
-	for (std::vector< resource::Proxy< Sound > >::const_iterator i = sounds.begin(); i != sounds.end(); ++i)
-		pipelineDepends->addDependency(i->getGuid(), true);
+	const RefArray< BankSound >& sounds = bankAsset->getSounds();
+	for (RefArray< BankSound >::const_iterator i = sounds.begin(); i != sounds.end(); ++i)
+		pipelineDepends->addDependency((*i)->getSound().getGuid(), true);
 
 	return true;
 }
@@ -46,6 +47,7 @@ bool BankPipeline::buildOutput(
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset* >(sourceAsset);
 
 	Ref< BankResource > bankResource = new BankResource(
+		bankAsset->getGrains(),
 		bankAsset->getSounds()
 	);
 

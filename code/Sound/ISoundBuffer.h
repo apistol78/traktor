@@ -34,9 +34,9 @@ class T_DLLCLASS ISoundBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISoundBufferCursor > createCursor() = 0;
+	virtual Ref< ISoundBufferCursor > createCursor() const = 0;
 
-	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock) = 0;
+	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const = 0;
 };
 
 	}

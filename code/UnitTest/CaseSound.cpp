@@ -57,7 +57,7 @@ public:
 class TestSoundBuffer : public RefCountImpl< sound::ISoundBuffer >
 {
 public:
-	float m_block[16];
+	mutable float m_block[16];
 
 	TestSoundBuffer()
 	{
@@ -65,12 +65,12 @@ public:
 			m_block[i] = 2.0f;
 	}
 
-	virtual Ref< sound::ISoundBufferCursor > createCursor()
+	virtual Ref< sound::ISoundBufferCursor > createCursor() const
 	{
 		return 0;
 	}
 
-	virtual bool getBlock(const sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock)
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);

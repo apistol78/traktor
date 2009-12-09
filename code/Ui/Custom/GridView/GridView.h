@@ -72,6 +72,8 @@ public:
 
 	uint32_t getRows(RefArray< GridRow >& outRows, uint32_t flags) const;
 
+	GridRow* getSelectedRow() const;
+
 	void addSelectEventHandler(EventHandler* eventHandler);
 
 	void addDragEventHandler(EventHandler* eventHandler);

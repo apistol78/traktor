@@ -27,16 +27,16 @@ public:
 
 	int16_t* getSamplesData(uint32_t channel);
 
-	virtual Ref< ISoundBufferCursor > createCursor();
+	virtual Ref< ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
+	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
 	uint32_t m_sampleRate;
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
 	AutoArrayPtr< int16_t > m_samples[SbcMaxChannelCount];
-	float m_blocks[SbcMaxChannelCount][4096];
+	mutable float m_blocks[SbcMaxChannelCount][4096];
 };
 
 	}
