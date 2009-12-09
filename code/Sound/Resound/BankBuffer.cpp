@@ -1,47 +1,78 @@
 #include "Sound/Sound.h"
 #include "Sound/Resound/BankBuffer.h"
-#include "Sound/Resound/BankBufferCursor.h"
+#include "Sound/Resound/IGrain.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
+{
+	int32_t m_grainIndex;
+	Ref< ISoundBufferCursor > m_grainCursor;
+
+	virtual void setCursor(double time)
+	{
+		m_grainCursor->setCursor(time);
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankBuffer", BankBuffer, ISoundBuffer)
 
-BankBuffer::BankBuffer(std::vector< resource::Proxy< Sound > >& sounds)
-:	m_sounds(sounds)
+BankBuffer::BankBuffer(
+	const RefArray< IGrain >& grains,
+	const RefArray< BankSound >& sounds
+)
+:	m_grains(grains)
+,	m_sounds(sounds)
 {
 }
 
-Ref< ISoundBufferCursor > BankBuffer::createCursor()
+BankSound* BankBuffer::getSound(int32_t index) const
 {
-	int32_t index = int32_t(std::rand() % m_sounds.size());
-
-	if (!m_sounds[index].validate())
+	if (index >= 0 && index < int32_t(m_sounds.size()))
+		return m_sounds[index];
+	else
 		return 0;
-
-	Ref< ISoundBuffer > activeBuffer = m_sounds[index]->getSoundBuffer();
-	T_ASSERT (activeBuffer);
-
-	Ref< ISoundBufferCursor > activeCursor = activeBuffer->createCursor();
-	if (!activeCursor)
-		return 0;
-
-	return new BankBufferCursor(activeBuffer, activeCursor);
 }
 
-bool BankBuffer::getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock)
+Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 {
-	const BankBufferCursor* bankCursor = static_cast< const BankBufferCursor* >(cursor);
+	Ref< BankBufferCursor > bankCursor = new BankBufferCursor();
 
-	ISoundBuffer* activeBuffer = bankCursor->getActiveBuffer();
-	T_ASSERT (activeBuffer);
+	bankCursor->m_grainIndex = 0;
+	bankCursor->m_grainCursor = m_grains[0]->createCursor(this);
 
-	return activeBuffer->getBlock(
-		bankCursor->getActiveCursor(),
-		outBlock
-	);
+	return bankCursor;
+}
+
+bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+{
+	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
+	IGrain* grain = m_grains[bankCursor->m_grainIndex];
+
+	for (;;)
+	{
+		if (grain->getBlock(
+			bankCursor->m_grainCursor,
+			outBlock
+		))
+			break;
+
+		if (++bankCursor->m_grainIndex >= int32_t(m_grains.size()))
+			return false;
+
+		grain = m_grains[bankCursor->m_grainIndex];
+
+		bankCursor->m_grainCursor = grain->createCursor(this);
+	}
+
+	return true;
 }
 
 	}

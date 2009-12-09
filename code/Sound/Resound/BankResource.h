@@ -1,8 +1,7 @@
 #ifndef traktor_sound_StaticSoundResource_H
 #define traktor_sound_StaticSoundResource_H
 
-#include <vector>
-#include "Resource/Proxy.h"
+#include "Core/RefArray.h"
 #include "Sound/ISoundResource.h"
 
 // import/export mechanism.
@@ -18,6 +17,9 @@ namespace traktor
 	namespace sound
 	{
 
+class BankSound;
+class IGrain;
+
 /*! \brief Bank sound resource.
  * \ingroup Sound
  */
@@ -28,16 +30,22 @@ class T_DLLCLASS BankResource : public ISoundResource
 public:
 	BankResource();
 
-	BankResource(const std::vector< resource::Proxy< Sound > >& sounds);
+	BankResource(
+		const RefArray< IGrain >& grains,
+		const RefArray< BankSound >& sounds
+	);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
 	virtual bool serialize(ISerializer& s);
 
-	const std::vector< resource::Proxy< Sound > >& getSounds() const { return m_sounds; }
+	const RefArray< IGrain >& getGrains() const { return m_grains; }
+
+	const RefArray< BankSound >& getSounds() const { return m_sounds; }
 
 private:
-	mutable std::vector< resource::Proxy< Sound > > m_sounds;
+	RefArray< IGrain > m_grains;
+	RefArray< BankSound > m_sounds;
 };
 
 	}

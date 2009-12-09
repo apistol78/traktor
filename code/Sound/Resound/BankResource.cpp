@@ -1,11 +1,12 @@
 #include "Core/Log/Log.h"
-#include "Core/Serialization/MemberStl.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
-#include "Sound/ISoundResource.h"
-#include "Sound/Sound.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BankResource.h"
+#include "Sound/Resound/BankSound.h"
+#include "Sound/Resound/IGrain.h"
+#include "Sound/Sound.h"
 
 namespace traktor
 {
@@ -18,20 +19,25 @@ BankResource::BankResource()
 {
 }
 
-BankResource::BankResource(const std::vector< resource::Proxy< Sound > >& sounds)
-:	m_sounds(sounds)
+BankResource::BankResource(
+	const RefArray< IGrain >& grains,
+	const RefArray< BankSound >& sounds
+)
+:	m_grains(grains)
+,	m_sounds(sounds)
 {
 }
 
 Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
 {
-	for (std::vector< resource::Proxy< Sound > >::iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
+	for (RefArray< BankSound >::const_iterator i = m_sounds.begin(); i != m_sounds.end(); ++i)
 	{
-		if (!resourceManager->bind(*i))
+		if (!(*i)->bind(resourceManager))
 			return 0;
 	}
 
 	Ref< BankBuffer > bankBuffer = new BankBuffer(
+		m_grains,
 		m_sounds
 	);
 
@@ -40,7 +46,9 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 
 bool BankResource::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< resource::Proxy< Sound >, resource::Member< Sound, ISoundResource > >(L"sounds", m_sounds);
+	s >> MemberRefArray< IGrain >(L"grains", m_grains);
+	s >> MemberRefArray< BankSound >(L"sounds", m_sounds);
+	return true;
 }
 
 	}

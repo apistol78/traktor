@@ -24,13 +24,13 @@ public:
 
 	void destroy();
 
-	virtual Ref< ISoundBufferCursor > createCursor();
+	virtual Ref< ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(const ISoundBufferCursor* cursor, SoundBlock& outBlock);
+	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;
-	double m_time;
+	mutable double m_time;
 };
 
 	}

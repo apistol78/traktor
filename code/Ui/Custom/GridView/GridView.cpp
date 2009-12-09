@@ -170,6 +170,15 @@ uint32_t GridView::getRows(RefArray< GridRow >& outRows, uint32_t flags) const
 	return uint32_t(outRows.size());
 }
 
+GridRow* GridView::getSelectedRow() const
+{
+	RefArray< GridRow > selectedRows;
+	if (getRows(selectedRows, GfDescendants | GfSelectedOnly) == 1)
+		return selectedRows[0];
+	else
+		return 0;
+}
+
 void GridView::addSelectEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiSelectionChange, eventHandler);
@@ -262,19 +271,22 @@ void GridView::eventButtonDown(Event* event)
 
 	if (m_columnHeader && pos.y <= c_columnsHeight)
 	{
-		int32_t x = 0;
-		for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+		if (m_columns.size() > 1)
 		{
-			int32_t cx = x + (*i)->getWidth();
-			if (pos.x - 3 < cx && pos.x + 3 > cx)
+			int32_t x = 0;
+			for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 			{
-				m_resizeColumn = *i;
-				m_resizeColumnLeft = x;
-				setCapture();
-				setCursor(CrSizeWE);
-				break;
+				int32_t cx = x + (*i)->getWidth();
+				if (pos.x - 3 < cx && pos.x + 3 > cx)
+				{
+					m_resizeColumn = *i;
+					m_resizeColumnLeft = x;
+					setCapture();
+					setCursor(CrSizeWE);
+					break;
+				}
+				x = cx;
 			}
-			x = cx;
 		}
 	}
 	else
@@ -445,16 +457,19 @@ void GridView::eventMouseMove(Event* event)
 	}
 	else if (m_columnHeader && pos.y <= c_columnsHeight)
 	{
-		int32_t x = 0;
-		for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+		if (m_columns.size() > 1)
 		{
-			int32_t cx = x + (*i)->getWidth();
-			if (pos.x - 3 < cx && pos.x + 3 > cx)
+			int32_t x = 0;
+			for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 			{
-				setCursor(CrSizeWE);
-				break;
+				int32_t cx = x + (*i)->getWidth();
+				if (pos.x - 3 < cx && pos.x + 3 > cx)
+				{
+					setCursor(CrSizeWE);
+					break;
+				}
+				x = cx;
 			}
-			x = cx;
 		}
 		event->consume();
 	}
@@ -494,8 +509,12 @@ void GridView::eventPaint(Event* event)
 		{
 			GridColumn* column = m_columns[i];
 
+			int32_t width = column->getWidth();
+			if (m_columns.size() == 1)
+				width = rc.getWidth();
+
 			canvas.setForeground(getSystemColor(ScWindowText));
-			canvas.drawText(Rect(left + 2, rc.top, left + column->getWidth() - 2, rc.top + c_columnsHeight), column->getTitle(), AnLeft, AnCenter);
+			canvas.drawText(Rect(left + 2, rc.top, left + width - 2, rc.top + c_columnsHeight), column->getTitle(), AnLeft, AnCenter);
 
 			if (i > 0)
 			{
@@ -503,7 +522,7 @@ void GridView::eventPaint(Event* event)
 				canvas.drawLine(left, rc.top + 4, left, rc.top + c_columnsHeight - 4);
 			}
 
-			left += column->getWidth();
+			left += width;
 		}
 	}
 
@@ -569,23 +588,30 @@ void GridView::eventPaint(Event* event)
 				left += m_imageWidth + c_imageMargin;
 			}
 
+			int32_t width = (m_columns.size() > 1) ? m_columns[0]->getWidth() : rc.getWidth();
+
 			canvas.setForeground(getSystemColor(ScWindowText));
-			canvas.drawText(Rect(left, top, m_columns[0]->getWidth() - 2, top + c_itemHeight), items[0]->getText(), AnLeft, AnCenter);
+			canvas.drawText(Rect(left, top, width - 2, top + c_itemHeight), items[0]->getText(), AnLeft, AnCenter);
 
-			left = m_columns[0]->getWidth();
-
-			for (uint32_t j = 1; j < items.size(); ++j)
+			if (m_columns.size() > 1)
 			{
-				if (j >= m_columns.size())
-					break;
+				left = m_columns[0]->getWidth();
 
-				canvas.setForeground(Color(190, 190, 200));
-				canvas.drawLine(left, top, left, top + c_itemHeight);
+				for (uint32_t j = 1; j < items.size(); ++j)
+				{
+					if (j >= m_columns.size())
+						break;
 
-				canvas.setForeground(getSystemColor(ScWindowText));
-				canvas.drawText(Rect(left + 2, top, left + m_columns[j]->getWidth() - 2, top + c_itemHeight), items[j]->getText(), AnLeft, AnCenter);
+					int32_t width = m_columns[j]->getWidth();
 
-				left += m_columns[j]->getWidth();
+					canvas.setForeground(Color(190, 190, 200));
+					canvas.drawLine(left, top, left, top + c_itemHeight);
+
+					canvas.setForeground(getSystemColor(ScWindowText));
+					canvas.drawText(Rect(left + 2, top, left + width - 2, top + c_itemHeight), items[j]->getText(), AnLeft, AnCenter);
+
+					left += width;
+				}
 			}
 
 			canvas.setForeground(Color(190, 190, 200));
