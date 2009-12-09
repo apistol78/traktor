@@ -31,7 +31,7 @@ void createBones(
 	Skeleton* skeleton,
 	const BvhJoint* joint,
 	int32_t parent,
-	Quaternion& QworldParent
+	const Quaternion& QworldParent
 )
 {
 	std::map< std::wstring, int32_t > boneNameCount;
