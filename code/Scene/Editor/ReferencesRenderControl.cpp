@@ -40,8 +40,8 @@ bool ReferencesRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 			ui::Point(0, 0),
 			new ui::custom::DefaultNodeShape(m_referenceGraph)
 		);
-		node->addInputPin(new ui::custom::Pin(node, L"Referee", ui::custom::Pin::DrInput, false));
-		node->addOutputPin(new ui::custom::Pin(node, L"References", ui::custom::Pin::DrOutput, false));
+		node->createInputPin(L"Referee", false);
+		node->createOutputPin(L"References");
 		m_referenceGraph->addNode(node);
 	}
 

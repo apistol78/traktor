@@ -82,6 +82,9 @@ bool GraphControl::create(Widget* parent, int style)
 
 void GraphControl::destroy()
 {
+	m_nodes.clear();
+	m_edges.clear();
+
 #if T_GRAPH_USE_XTRME
 	WidgetXtrme::destroy();
 #else

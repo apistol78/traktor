@@ -25,9 +25,11 @@ Ref< Bitmap > s_imageCollapse;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.PropertyItem", PropertyItem, Object)
 
 PropertyItem::PropertyItem(const std::wstring& text)
-:	m_text(text)
+:	m_propertyList(0)
+,	m_text(text)
 ,	m_expanded(false)
 ,	m_selected(false)
+,	m_parent(0)
 {
 	if (!s_imageExpand)
 		s_imageExpand = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
@@ -91,7 +93,7 @@ int PropertyItem::getDepth() const
 	return depth;
 }
 
-Ref< PropertyItem > PropertyItem::getParentItem()
+PropertyItem* PropertyItem::getParentItem()
 {
 	return m_parent;
 }
@@ -106,7 +108,7 @@ void PropertyItem::setPropertyList(PropertyList* propertyList)
 	m_propertyList = propertyList;
 }
 
-Ref< PropertyList > PropertyItem::getPropertyList() const
+PropertyList* PropertyItem::getPropertyList() const
 {
 	return m_propertyList;
 }

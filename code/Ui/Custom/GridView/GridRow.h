@@ -65,7 +65,7 @@ public:
 
 	void removeAllChildren();
 
-	Ref< GridRow > getParent() { return m_parent; }
+	GridRow* getParent() { return m_parent; }
 
 	const RefArray< GridRow >& getChildren() const { return m_children; }
 
@@ -73,7 +73,7 @@ private:
 	uint32_t m_state;
 	Ref< Font > m_font;
 	RefArray< GridItem > m_items;
-	Ref< GridRow > m_parent;
+	GridRow* m_parent;
 	RefArray< GridRow > m_children;
 };
 

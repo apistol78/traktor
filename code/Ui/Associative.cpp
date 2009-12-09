@@ -9,6 +9,11 @@ Associative::~Associative()
 {
 }
 
+void Associative::removeAllData()
+{
+	m_data.clear();
+}
+
 void Associative::setData(const std::wstring& key, Object* data)
 {
 	if (data)

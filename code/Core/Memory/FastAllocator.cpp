@@ -33,7 +33,7 @@ FastAllocator::~FastAllocator()
 	}
 }
 
-void* FastAllocator::alloc(size_t size, size_t align)
+void* FastAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 {
 	void* p = 0;
 	
@@ -48,7 +48,7 @@ void* FastAllocator::alloc(size_t size, size_t align)
 		BlockAllocator* blockAlloc = m_blockAlloc[qid];
 		if (!blockAlloc)
 			m_blockAlloc[qid] = blockAlloc = new BlockAllocator(
-				m_systemAllocator->alloc(qsize * c_blockCount, 16),
+				m_systemAllocator->alloc(qsize * c_blockCount, 16, tag),
 				c_blockCount,
 				qsize
 			);
@@ -57,7 +57,7 @@ void* FastAllocator::alloc(size_t size, size_t align)
 	}
 	
 	if (!p)
-		p = m_systemAllocator->alloc(size, align);
+		p = m_systemAllocator->alloc(size, align, tag);
 		
 	return p;
 }
@@ -73,11 +73,6 @@ void FastAllocator::free(void* ptr)
 		}
 	}	
 	m_systemAllocator->free(ptr);
-}
-
-IAllocator::MemoryType FastAllocator::type(void* ptr) const
-{
-	return m_systemAllocator->type(ptr);
 }
 
 }

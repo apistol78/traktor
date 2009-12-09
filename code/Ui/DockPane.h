@@ -70,8 +70,8 @@ private:
 	friend class Dock;
 
 	Ref< EventHandler > m_focusEventHandler;
-	Ref< Widget > m_owner;
-	Ref< DockPane > m_parent;
+	Widget* m_owner;
+	DockPane* m_parent;
 	Ref< Widget > m_widget;
 	bool m_detachable;
 	Ref< DockPane > m_child[2];

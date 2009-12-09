@@ -90,7 +90,7 @@ private:
 
 	void createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges);
 
-	ui::custom::Node* createEditorNode(Node* shaderNode);
+	Ref< ui::custom::Node > createEditorNode(Node* shaderNode);
 
 	void createNode(const TypeInfo* nodeType, const ui::Point& at);
 

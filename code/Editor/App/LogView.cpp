@@ -42,7 +42,7 @@ public:
 	}
 
 private:
-	Ref< ui::custom::LogList > m_logList;
+	ui::custom::LogList* m_logList;
 	ui::custom::LogList::LogLevel m_logLevel;
 	ILogTarget* m_previousTarget;
 };

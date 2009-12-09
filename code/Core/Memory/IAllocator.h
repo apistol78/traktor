@@ -15,20 +15,9 @@ namespace traktor
 class IAllocator : public IRefCount
 {
 public:
-	enum MemoryType
-	{
-		MtUnknown,
-		MtStack,
-		MtAllocated,
-		MtFreed,
-		MtDebug
-	};
-
-	virtual void* alloc(size_t size, size_t align) = 0;
+	virtual void* alloc(size_t size, size_t align, const wchar_t* const tag) = 0;
 	
 	virtual void free(void* ptr) = 0;
-
-	virtual MemoryType type(void* ptr) const = 0;
 };
 
 }

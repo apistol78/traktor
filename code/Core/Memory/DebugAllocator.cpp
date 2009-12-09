@@ -24,13 +24,13 @@ DebugAllocator::~DebugAllocator()
 		m_systemAllocator->free(i->top);
 }
 
-void* DebugAllocator::alloc(size_t size, size_t align)
+void* DebugAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 {
 	Acquire< CriticalSection > scope(m_lock);
 
 	checkBlocks();
 
-	uint8_t* ptr = static_cast< uint8_t* >(m_systemAllocator->alloc(size + c_wallSize * 2, align));
+	uint8_t* ptr = static_cast< uint8_t* >(m_systemAllocator->alloc(size + c_wallSize * 2, align, tag));
 	if (!ptr)
 		return 0;
 
@@ -99,37 +99,6 @@ void DebugAllocator::checkBlocks()
 		m_systemAllocator->free(m_freedBlocks.front().top);
 		m_freedBlocks.pop_front();
 	}
-}
-
-IAllocator::MemoryType DebugAllocator::type(void* ptr) const
-{
-	Acquire< CriticalSection > scope(m_lock);
-
-	for (std::list< Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
-	{
-		uint8_t* top = static_cast< uint8_t* >(i->top);
-		if (ptr >= top && ptr < top + i->size)
-		{
-			if (ptr >= top + c_wallSize && ptr < top + i->size - c_wallSize)
-				return MtAllocated;
-			else
-				return MtDebug;
-		}
-	}
-
-	for (std::list< Block >::const_iterator i = m_freedBlocks.begin(); i != m_freedBlocks.end(); ++i)
-	{
-		uint8_t* top = static_cast< uint8_t* >(i->top);
-		if (ptr >= top && ptr < top + i->size)
-		{
-			if (ptr >= top + c_wallSize && ptr < top + i->size - c_wallSize)
-				return MtFreed;
-			else
-				return MtDebug;
-		}
-	}
-
-	return MtUnknown;
 }
 
 }

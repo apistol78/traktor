@@ -126,6 +126,8 @@ void MenuBarWin32::destroy()
 	DestroyMenu(m_hMenu);
 
 	m_hMenu = NULL;
+
+	delete this;
 }
 
 void MenuBarWin32::add(MenuItem* item)

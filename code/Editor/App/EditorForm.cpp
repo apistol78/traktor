@@ -769,6 +769,8 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 			m_activeEditorPageSite->hide();
 	}
 
+	setPropertyObject(0);
+
 	m_activeEditorPage = editorPage;
 
 	if (m_activeEditorPage)

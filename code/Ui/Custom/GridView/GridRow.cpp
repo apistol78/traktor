@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridRow", GridRow, Object)
 
 GridRow::GridRow(uint32_t initialState)
 :	m_state(initialState)
+,	m_parent(0)
 {
 }
 

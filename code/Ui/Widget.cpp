@@ -13,6 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Widget", Widget, EventSubject)
 
 Widget::Widget()
 :	m_widget(0)
+,	m_parent(0)
 {
 }
 
@@ -50,8 +51,9 @@ void Widget::destroy()
 {
 	// Ensure this instance is alive as unlink might otherwise
 	// cause this instance to be collected as we will become "unreachable".
-	Ref< Widget > scopeRef(this);
+	T_ANONYMOUS_VAR(Ref< Widget >)(this);
 
+	removeAllData();
 	removeAllEventHandlers();
 
 	while (m_firstChild)
@@ -378,7 +380,7 @@ void Widget::setParent(Widget* parent)
 		m_widget->setParent(0);
 }
 
-Ref< Widget > Widget::getParent() const
+Widget* Widget::getParent() const
 {
 	return m_parent;
 }

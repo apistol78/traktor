@@ -2,6 +2,7 @@
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/FastAllocator.h"
 #include "Core/Memory/StdAllocator.h"
+#include "Core/Memory/TrackAllocator.h"
 
 namespace traktor
 {
@@ -32,9 +33,16 @@ inline bool isObjectHeapAllocated(const void* ptr)
 }
 
 #if !defined(_DEBUG) && !defined(_PS3) && !defined(__APPLE__)
-FastAllocator g_allocator(new StdAllocator());
+StdAllocator g_stdAllocator;
+FastAllocator g_allocator0(&g_stdAllocator);
 #else
-StdAllocator g_allocator;
+StdAllocator g_allocator0;
+#endif
+
+#if defined(_DEBUG)
+TrackAllocator g_allocator(&g_allocator0);
+#else
+IAllocator& g_allocator = g_allocator0;
 #endif
 
 	}
@@ -59,7 +67,7 @@ void* Object::operator new (size_t size)
 {
 	const size_t objectHeaderSize = sizeof(ObjectHeader);
 
-	ObjectHeader* header = static_cast< ObjectHeader* >(g_allocator.alloc(size + objectHeaderSize, 16));
+	ObjectHeader* header = static_cast< ObjectHeader* >(g_allocator.alloc(size + objectHeaderSize, 16, L"Object"));
 	T_FATAL_ASSERT_M (header, L"Out of memory");
 
 	Object* object = reinterpret_cast< Object* >(header + 1);
