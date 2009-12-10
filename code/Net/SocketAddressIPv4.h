@@ -2,6 +2,7 @@
 #define traktor_net_SocketAddressIPv4_H
 
 #include <string>
+#include "Core/RefArray.h"
 #include "Net/Network.h"
 #include "Net/SocketAddress.h"
 
@@ -45,6 +46,8 @@ public:
 	void setSockAddr(const sockaddr_in& sockaddr);
 
 	const sockaddr_in& getSockAddr() const;
+
+	static RefArray< SocketAddressIPv4 > getInterfaces();
 	
 private:
 	sockaddr_in m_sockaddr;

@@ -118,7 +118,7 @@ Ref< TcpSocket > TcpSocket::accept()
 	SOCKET client;
 
 	socklen_t len = sizeof(in);
-	if ((client = ::accept(m_socket, (struct sockaddr *)&in, &len)) == INVALID_SOCKET)
+	if ((client = ::accept(m_socket, (struct sockaddr*)&in, &len)) == INVALID_SOCKET)
 		return 0;
 
 	return new TcpSocket(client);
@@ -126,7 +126,13 @@ Ref< TcpSocket > TcpSocket::accept()
 
 Ref< SocketAddress > TcpSocket::getLocalAddress()
 {
-	return 0;
+	struct sockaddr_in in;
+
+	socklen_t len = sizeof(in);
+	if (getsockname(m_socket, (struct sockaddr*)&in, &len) != 0)
+		return 0;
+
+	return new SocketAddressIPv4(in);
 }
 
 Ref< SocketAddress > TcpSocket::getRemoteAddress()
@@ -134,7 +140,7 @@ Ref< SocketAddress > TcpSocket::getRemoteAddress()
 	struct sockaddr_in in;
 
 	socklen_t len = sizeof(in);
-	if (getpeername(m_socket, (struct sockaddr *)&in, &len) != 0)
+	if (getpeername(m_socket, (struct sockaddr*)&in, &len) != 0)
 		return 0;
 
 	return new SocketAddressIPv4(in);

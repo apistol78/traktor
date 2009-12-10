@@ -88,5 +88,28 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 	return m_sockaddr;
 }
 
+RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
+{
+	RefArray< SocketAddressIPv4 > interfaces;
+
+#if defined(_WIN32)
+	char hostName[200];
+	gethostname(hostName, sizeof(hostName));
+
+	LPHOSTENT host;
+	host = gethostbyname(hostName);
+
+	in_addr* ptr = (in_addr*)host->h_addr;
+
+	sockaddr_in addr;
+	addr.sin_port = 0;
+	addr.sin_addr = *ptr;
+
+	interfaces.push_back(new SocketAddressIPv4(addr));
+#endif
+
+	return interfaces;
+}
+
 	}
 }
