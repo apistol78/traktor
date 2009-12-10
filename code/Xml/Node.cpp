@@ -8,6 +8,11 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.Node", Node, Object)
 
+Node::Node()
+:	m_parent(0)
+{
+}
+
 std::wstring Node::getName() const
 {
 	return L"";
@@ -34,6 +39,8 @@ void Node::write(OutputStream& os) const
 
 void Node::addChild(Node* child)
 {
+	T_ASSERT (child->m_parent == 0);
+
 	child->m_parent = this;
 	child->m_previousSibling = m_lastChild;
 	child->m_nextSibling = 0;
@@ -44,6 +51,26 @@ void Node::addChild(Node* child)
 		m_firstChild = child;
 		
 	m_lastChild = child;
+}
+
+void Node::removeChild(Node* child)
+{
+	T_ASSERT (child->m_parent == this);
+
+	if (child->m_previousSibling)
+		child->m_previousSibling->m_nextSibling = child->m_nextSibling;
+
+	if (child->m_nextSibling)
+		child->m_nextSibling->m_previousSibling = child->m_previousSibling;
+
+	if (m_firstChild == child)
+		m_firstChild = child->m_nextSibling;
+	if (m_lastChild == child)
+		m_lastChild = child->m_previousSibling;
+
+	child->m_parent = 0;
+	child->m_previousSibling = 0;
+	child->m_nextSibling = 0;
 }
 
 void Node::removeAllChildren()
@@ -57,17 +84,39 @@ void Node::removeAllChildren()
 	m_lastChild = 0;
 }
 
-void Node::insertBefore(Node* child, Node* node)
+void Node::insertBefore(Node* child, Node* beforeNode)
 {
 	// TODO Implement and alter addChild.
 }
 
-void Node::insertAfter(Node* child, Node* node)
+void Node::insertAfter(Node* child, Node* afterNode)
 {
-	// TODO Implement and alter addChild.
+	T_ASSERT (child->m_parent == 0);
+	T_ASSERT (!afterNode || afterNode->m_parent == this);
+
+	if (afterNode)
+	{
+		child->m_parent = this;
+		
+		child->m_previousSibling = afterNode;
+		child->m_nextSibling = afterNode->m_nextSibling;
+
+		if (child->m_nextSibling)
+			child->m_nextSibling->m_previousSibling = child;
+
+		afterNode->m_nextSibling = child;
+
+		if (m_lastChild == afterNode)
+			m_lastChild = child;
+	}
+	else
+	{
+		T_ASSERT (m_firstChild == 0);
+		addChild(child);
+	}
 }
 
-Ref< Node > Node::getParent() const
+Node* Node::getParent() const
 {
 	return m_parent;
 }

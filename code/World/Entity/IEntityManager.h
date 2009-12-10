@@ -33,18 +33,20 @@ class T_DLLCLASS IEntityManager : public Object
 public:
 	/*! \brief Add entity to manager.
 	 *
+	 * \param name Instance name.
 	 * \param entity Entity to add.
 	 */
-	virtual void addEntity(Entity* entity) = 0;
+	virtual void addEntity(const std::wstring& name, Entity* entity) = 0;
 
 	/*! \brief Insert entity in manager.
 	 *
 	 * This is method checks to ensure entity isn't
 	 * added multiple times.
 	 *
+	 * \param name Instance name.
 	 * \param entity Entity to insert.
 	 */
-	virtual void insertEntity(Entity* entity) = 0;
+	virtual void insertEntity(const std::wstring& name, Entity* entity) = 0;
 
 	/*! \brief Remove entity from manager.
 	 *
@@ -75,11 +77,13 @@ public:
 	 */
 	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const = 0;
 
-	/*! \brief Get all entities.
+	/*! \brief Get named entity of certain type.
 	 *
-	 * \return Array with all entities.
+	 * \param entityType Type of entity.
+	 * \param name Name of entity instance.
+	 * \return Found entity, null if no entity found.
 	 */
-	virtual const RefArray< Entity >& getEntities() const = 0;
+	virtual Ref< Entity > getEntity(const TypeInfo& entityType, const std::wstring& name) const = 0;
 
 	/*! \brief Get all entities of certain type.
 	 *
@@ -117,6 +121,19 @@ public:
 	Ref< EntityType > getEntity(uint32_t index) const
 	{
 		Ref< Entity > entity = getEntity(type_of< EntityType >(), index);
+		return static_cast< EntityType* >(entity.ptr());
+	}
+
+	/*! \brief Get named entity of certain type.
+	 *
+	 * \param entityType Type of entity.
+	 * \param name Name of entity instance.
+	 * \return Found entity, null if no entity found.
+	 */
+	template < typename EntityType >
+	Ref< EntityType > getEntity(const std::wstring& name) const
+	{
+		Ref< Entity > entity = getEntity(type_of< EntityType >(), name);
 		return static_cast< EntityType* >(entity.ptr());
 	}
 };

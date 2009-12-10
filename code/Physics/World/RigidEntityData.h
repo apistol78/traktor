@@ -20,6 +20,13 @@ class EntityInstance;
 
 	}
 
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -37,6 +44,7 @@ class T_DLLCLASS RigidEntityData : public world::SpatialEntityData
 public:
 	Ref< RigidEntity > createEntity(
 		world::IEntityBuilder* builder,
+		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;
 

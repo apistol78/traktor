@@ -1,3 +1,4 @@
+#include <Xml/Attribute.h>
 #include <Xml/Document.h>
 #include <Xml/Element.h>
 #include <Xml/Text.h>
@@ -31,6 +32,13 @@ void recursiveFindFiles(const Path& currentPath, std::set< Path >& outFiles)
 	}
 }
 
+void createElementValue(xml::Element* element, const std::wstring& key, const std::wstring& value)
+{
+	Ref< xml::Element > kv = new xml::Element(key);
+	kv->addChild(new xml::Text(value));
+	element->addChild(kv);
+}
+
 uint32_t transform(xml::Element* element)
 {
 	uint32_t changes = 0;
@@ -52,16 +60,153 @@ uint32_t transform(xml::Element* element)
 			StringOutputStream sstf; sstf << T.translation();
 			StringOutputStream ssrt; ssrt << T.rotation();
 
-			Ref< xml::Element > xtranslation = gc_new< xml::Element >(L"translation");
-			xtranslation->addChild(gc_new< xml::Text >( sstf.str() ));
+			Ref< xml::Element > xtranslation = new xml::Element(L"translation");
+			xtranslation->addChild(new xml::Text( sstf.str() ));
 
-			Ref< xml::Element > xrotation = gc_new< xml::Element >(L"rotation");
-			xrotation->addChild(gc_new< xml::Text >( ssrt.str() ));
+			Ref< xml::Element > xrotation = new xml::Element(L"rotation");
+			xrotation->addChild(new xml::Text( ssrt.str() ));
 
 			element->addChild(xtranslation);
 			element->addChild(xrotation);
 
 			changes++;
+		}
+	}
+
+	if (element->getName() == L"worldRenderSettings")
+	{
+		if (element->getAttribute(L"version", L"")->getValue() != L"3")
+		{
+			element->removeAllChildren();
+
+			createElementValue(element, L"viewNearZ", L"1");
+			createElementValue(element, L"viewFarZ", L"500");
+			createElementValue(element, L"depthPassEnabled", L"true");
+			createElementValue(element, L"velocityPassEnable", L"false");
+			createElementValue(element, L"shadowsEnabled", L"true");
+			createElementValue(element, L"ssaoEnabled", L"false");
+			createElementValue(element, L"shadowFarZ", L"100");
+			createElementValue(element, L"shadowMapResolution", L"1024");
+			createElementValue(element, L"shadowMapBias", L"0.01");
+
+			element->setAttribute(L"version", L"3");
+
+			changes++;
+		}
+	}
+
+	if (
+		element->getName() == L"object" ||
+		element->getName() == L"entityData" ||
+		element->getName() == L"item"
+	)
+	{
+		std::wstring typeName = element->getAttribute(L"type", L"")->getValue();
+
+		if (typeName == L"traktor.world.GroupEntityData")
+		{
+			Ref< xml::Element > xentityData = element->getChildElementByName(L"entityData");
+			if (xentityData)
+			{
+				Ref< xml::Node > previousSibling = xentityData->getPreviousSibling();
+				element->removeChild(xentityData);
+
+				Ref< xml::Element > xinstances = new xml::Element(L"instances");
+
+				RefArray< xml::Element > xentityDataItems;
+				xentityData->get(L"item", xentityDataItems);
+
+				for (RefArray< xml::Element >::iterator i = xentityDataItems.begin(); i != xentityDataItems.end(); ++i)
+				{
+					xentityData->removeChild(*i);
+
+					xml::Element* xentityDataItemName = (*i)->getChildElementByName(L"name");
+					std::wstring name = xentityDataItemName ? xentityDataItemName->getValue() : L"";
+
+					Ref< xml::Element > xinstancesItem = new xml::Element(L"item");
+					xinstancesItem->setAttribute(L"type", L"traktor.world.EntityInstance");
+
+					Ref< xml::Element > xinstancesItemName = new xml::Element(L"name");
+					xinstancesItemName->addChild(new xml::Text(name));
+
+					xinstancesItem->addChild(xinstancesItemName);
+					
+					(*i)->setName(L"entityData");
+					xinstancesItem->addChild(*i);
+
+					xinstancesItem->addChild(new xml::Element(L"references"));
+
+					xinstances->addChild(xinstancesItem);
+				}
+
+				element->insertAfter(xinstances, previousSibling);
+				changes++;
+			}
+		}
+
+		if (
+			typeName == L"traktor.scene.SceneAsset" ||
+			typeName == L"traktor.physics.RigidEntityData"
+		)
+		{
+			Ref< xml::Element > xentityData = element->getChildElementByName(L"entityData");
+			if (xentityData)
+			{
+				if (xentityData->getFirstChild())
+				{
+					Ref< xml::Element > xentityDataName = xentityData->getChildElementByName(L"name");
+					std::wstring entityDataName = xentityDataName ? xentityDataName->getValue() : L"";
+
+					Ref< xml::Node > previousSibling = xentityData->getPreviousSibling();
+					element->removeChild(xentityData);
+
+					Ref< xml::Element > xinstance = new xml::Element(L"instance");
+					xinstance->setAttribute(L"type", L"traktor.world.EntityInstance");
+
+					Ref< xml::Element > xinstanceName = new xml::Element(L"name");
+					xinstanceName->addChild(new xml::Text(entityDataName));
+
+					xinstance->addChild(xinstanceName);
+					xinstance->addChild(xentityData);
+					xinstance->addChild(new xml::Element(L"references"));
+
+					element->insertAfter(xinstance, previousSibling);
+				}
+				else
+				{
+					Ref< xml::Node > previousSibling = xentityData->getPreviousSibling();
+					element->removeChild(xentityData);
+
+					Ref< xml::Element > xinstance = new xml::Element(L"instance");
+					element->insertAfter(xinstance, previousSibling);
+				}
+
+				changes++;
+			}
+
+			Ref< xml::Element > xjoints = element->getChildElementByName(L"joints");
+			if (xjoints)
+			{
+				element->removeChild(xjoints);
+				changes++;
+			}
+		}
+
+		if (
+			typeName == L"traktor.world.GroupEntityData" ||
+			typeName == L"traktor.world.ExternalEntityData" ||
+			typeName == L"traktor.world.ExternalSpatialEntityData" ||
+			typeName == L"traktor.physics.RigidEntityData" ||
+			typeName == L"traktor.world.DirectionalLightEntityData" ||
+			typeName == L"traktor.terrain.TerrainEntityData"
+		)
+		{
+			Ref< xml::Element > xentityDataName = element->getChildElementByName(L"name");
+			if (xentityDataName)
+			{
+				element->removeChild(xentityDataName);
+				changes++;
+			}
 		}
 	}
 

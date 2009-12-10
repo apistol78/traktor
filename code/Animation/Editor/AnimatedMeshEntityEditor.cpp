@@ -47,7 +47,7 @@ void AnimatedMeshEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getEntityData());
+	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(entityAdapter->getRealEntityData());
 	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(entityAdapter->getEntity());
 
 	if (context->getGuideEnable())

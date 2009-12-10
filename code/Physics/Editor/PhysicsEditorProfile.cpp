@@ -43,7 +43,7 @@ void PhysicsEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new EntityFactory(context->getPhysicsManager()));
+	outEntityFactories.push_back(new EntityFactory(context->getResourceManager(), context->getPhysicsManager()));
 }
 
 void PhysicsEditorProfile::createEntityRenderers(

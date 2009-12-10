@@ -31,6 +31,8 @@ public:
 
 	const resource::Proxy< Mesh >& getMesh() const;
 
+	virtual bool bind(resource::IResourceManager* resourceManager);
+
 	virtual bool serialize(ISerializer& s);
 
 private:
