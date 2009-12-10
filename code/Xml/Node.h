@@ -28,6 +28,8 @@ class T_DLLCLASS Node : public Object
 	T_RTTI_CLASS;
 
 public:
+	Node();
+
 	virtual std::wstring getName() const;
 
 	virtual void setName(const std::wstring& name);
@@ -40,13 +42,15 @@ public:
 
 	void addChild(Node* child);
 
+	void removeChild(Node* child);
+
 	void removeAllChildren();
 	
-	void insertBefore(Node* child, Node* node);
+	void insertBefore(Node* child, Node* beforeNode);
 	
-	void insertAfter(Node* child, Node* node);
+	void insertAfter(Node* child, Node* afterNode);
 
-	Ref< Node > getParent() const;
+	Node* getParent() const;
 	
 	Ref< Node > getPreviousSibling() const;
 	
@@ -57,7 +61,7 @@ public:
 	Ref< Node > getLastChild() const;
 
 private:
-	Ref< Node > m_parent;
+	Node* m_parent;
 	Ref< Node > m_previousSibling;
 	Ref< Node > m_nextSibling;
 	Ref< Node > m_firstChild;

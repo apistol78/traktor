@@ -89,7 +89,7 @@ void RigidEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getEntityData());
+	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(entityAdapter->getRealEntityData());
 	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(entityAdapter->getEntity());
 
 	if (context->getGuideEnable() || entityAdapter->isSelected())

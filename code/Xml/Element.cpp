@@ -108,7 +108,7 @@ std::wstring Element::getPath() const
 {
 	std::stack< const Element* > elm;
 
-	for (Ref< const Element > e = this; e != 0; e = static_cast< const Element* >(e->getParent().ptr()))
+	for (const Element* e = this; e != 0; e = static_cast< const Element* >(e->getParent()))
 		elm.push(e);
 
 	std::wstringstream ss;

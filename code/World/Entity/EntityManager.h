@@ -29,9 +29,9 @@ class T_DLLCLASS EntityManager : public IEntityManager
 	T_RTTI_CLASS;
 
 public:
-	virtual void addEntity(Entity* entity);
+	virtual void addEntity(const std::wstring& name, Entity* entity);
 
-	virtual void insertEntity(Entity* entity);
+	virtual void insertEntity(const std::wstring& name, Entity* entity);
 
 	virtual void removeEntity(Entity* entity);
 
@@ -41,16 +41,19 @@ public:
 
 	virtual Ref< Entity > getEntity(const TypeInfo& entityType, uint32_t index) const;
 
-	virtual const RefArray< Entity >& getEntities() const;
+	virtual Ref< Entity > getEntity(const TypeInfo& entityType, const std::wstring& name) const;
 
 private:
+	typedef std::pair< std::wstring, Ref< Entity > > named_entity_t;
+	typedef std::vector< named_entity_t > named_entity_vector_t;
+
 	struct Range
 	{
 		uint32_t start;
 		uint32_t count;
 	};
 
-	RefArray< Entity > m_entities;
+	named_entity_vector_t m_entities;
 	std::map< const TypeInfo*, Range > m_typeRanges;
 };
 

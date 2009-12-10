@@ -12,6 +12,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -25,7 +32,10 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(physics::PhysicsManager* physicsManager);
+	EntityFactory(
+		resource::IResourceManager* resourceManager,
+		PhysicsManager* physicsManager
+	);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -37,7 +47,8 @@ public:
 	) const;
 
 private:
-	Ref< physics::PhysicsManager > m_physicsManager;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< PhysicsManager > m_physicsManager;
 };
 
 	}

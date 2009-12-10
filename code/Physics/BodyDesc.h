@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -30,6 +37,8 @@ public:
 	void setShape(ShapeDesc* shape);
 
 	Ref< const ShapeDesc > getShape() const;
+
+	bool bind(resource::IResourceManager* resourceManager);
 
 	virtual bool serialize(ISerializer& s);
 

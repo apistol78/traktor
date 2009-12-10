@@ -84,7 +84,7 @@ Ref< Entity > EntityBuilder::create(const std::wstring& name, const EntityData* 
 
 	// Add this entity to the manager.
 	if (m_entityManager)
-		m_entityManager->insertEntity(entity);
+		m_entityManager->insertEntity(name, entity);
 
 	return entity;
 }

@@ -24,6 +24,11 @@ const Transform& ShapeDesc::getLocalTransform() const
 	return m_localTransform;
 }
 
+bool ShapeDesc::bind(resource::IResourceManager* resourceManager)
+{
+	return true;
+}
+
 bool ShapeDesc::serialize(ISerializer& s)
 {
 	return s >> MemberComposite< Transform >(L"localTransform", m_localTransform);

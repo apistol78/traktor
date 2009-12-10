@@ -14,6 +14,13 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -30,6 +37,8 @@ public:
 	void setLocalTransform(const Transform& localTransform);
 
 	const Transform& getLocalTransform() const;
+
+	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual bool serialize(ISerializer& s);
 

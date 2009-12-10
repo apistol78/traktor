@@ -138,7 +138,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const std::wstring& name, cons
 
 	// Add this entity to the manager.
 	if (m_entityManager)
-		m_entityManager->insertEntity(entity);
+		m_entityManager->insertEntity(name, entity);
 
 	return entity;
 }

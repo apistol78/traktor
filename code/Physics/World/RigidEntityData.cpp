@@ -18,10 +18,14 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", 0, RigidEntityDa
 
 Ref< RigidEntity > RigidEntityData::createEntity(
 	world::IEntityBuilder* builder,
+	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const
 {
 	if (!m_bodyDesc && !m_instance)
+		return 0;
+
+	if (!m_bodyDesc->bind(resourceManager))
 		return 0;
 
 	Ref< Body > body = physicsManager->createBody(m_bodyDesc);
