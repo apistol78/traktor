@@ -4,8 +4,8 @@
 		<item type="traktor.render.Sampler">
 			<comment></comment>
 			<position>
-				<first>403</first>
-				<second>299</second>
+				<first>153</first>
+				<second>150</second>
 			</position>
 			<parameterName>ShadowMap</parameterName>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
@@ -13,23 +13,23 @@
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
+			<addressU>AdBorder</addressU>
+			<addressV>AdBorder</addressV>
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>573</first>
-				<second>335</second>
+				<first>323</first>
+				<second>186</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment></comment>
 			<position>
-				<first>197</first>
-				<second>335</second>
+				<first>-53</first>
+				<second>186</second>
 			</position>
 			<name>ShadowMapUV</name>
 			<connectable>true</connectable>
@@ -104,6 +104,31 @@
 				<second>408</second>
 			</position>
 		</item>
+		<item type="traktor.render.Conditional" version="1">
+			<comment>Some renderers are unable to set FP border color thus we remap 0 to infinity</comment>
+			<position>
+				<first>519</first>
+				<second>178</second>
+			</position>
+			<branch>BrAuto</branch>
+			<operator>CoGreater</operator>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment></comment>
+			<position>
+				<first>271</first>
+				<second>244</second>
+			</position>
+			<value>0.1</value>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>Infinity</comment>
+			<position>
+				<first>258</first>
+				<second>305</second>
+			</position>
+			<value>1e+006</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -123,16 +148,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -204,6 +219,56 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>CaseFalse</name>
 			</destination>
 		</item>
 	</edges>
