@@ -9,6 +9,8 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/EntityUpdate.h"
 
+//#define T_USE_UPDATE_JOBS
+
 namespace traktor
 {
 	namespace animation
@@ -90,13 +92,16 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 	// hasn't been rendered.
 	m_updateController = false;
 
+#if defined(T_USE_UPDATE_JOBS)
 	m_updatePoseControllerJob = makeFunctor< AnimatedMeshEntity, float >(
 		this,
 		&AnimatedMeshEntity::updatePoseController,
 		update->getDeltaTime()
 	);
-
 	JobManager::getInstance().add(m_updatePoseControllerJob);
+#else
+	updatePoseController(update->getDeltaTime());
+#endif
 }
 
 bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const
@@ -150,8 +155,10 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Matrix44
 
 void AnimatedMeshEntity::synchronize() const
 {
+#if defined(T_USE_UPDATE_JOBS)
 	m_updatePoseControllerJob.wait();
 	m_updatePoseControllerJob = 0;
+#endif
 }
 
 void AnimatedMeshEntity::updatePoseController(float deltaTime)

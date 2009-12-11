@@ -574,6 +574,8 @@ public:
 			for (size_type i = m_size; i < size; ++i)
 				items[i] = 0;
 
+			delete[] m_items;
+
 			m_items = items;
 			m_capacity = size;
 		}

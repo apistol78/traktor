@@ -71,7 +71,7 @@ RenderContext::~RenderContext()
 void* RenderContext::alloc(int blockSize)
 {
 	if (m_heapPtr + blockSize >= m_heapEnd)
-		return 0;
+		T_FATAL_ERROR;
 
 	void* ptr = m_heapPtr;
 	m_heapPtr += blockSize;
