@@ -16,16 +16,16 @@ TrackAllocator::~TrackAllocator()
 	{
 #if defined(_WIN32)
 		OutputDebugString(L"Memory leak detected, following allocation(s) not freed:\n");
-		for (std::list< Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
+		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
 		{
 			wchar_t tmp[1024];
 
-			wsprintf(tmp, L"0x%p, %d byte(s), tag \"%s\"\n", i->top, i->size, i->tag);
+			wsprintf(tmp, L"0x%p, %d byte(s), tag \"%s\"\n", i->first, i->second.size, i->second.tag);
 			OutputDebugString(tmp);
 
-			for (int j = 0; j < sizeof_array(i->at); ++j)
+			for (int j = 0; j < sizeof_array(i->second.at); ++j)
 			{
-				wsprintf(tmp, L"   %d: 0x%p\n", j, i->at[j]);
+				wsprintf(tmp, L"   %d: 0x%p\n", j, i->second.at[j]);
 				OutputDebugString(tmp);
 			}
 		}
@@ -47,7 +47,6 @@ void* TrackAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 
 	Block block;
 	block.tag = tag;
-	block.top = ptr;
 	block.size = size;
 	block.at[0] =
 	block.at[1] =
@@ -71,7 +70,8 @@ void* TrackAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 
 #endif
 
-	m_aliveBlocks.push_back(block);
+	m_aliveBlocks.insert(std::make_pair(ptr, block));
+	m_allocCount[block.at[0]]++;
 
 	return ptr;
 }
@@ -80,14 +80,9 @@ void TrackAllocator::free(void* ptr)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	for (std::list< Block >::iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
-	{
-		if (i->top == ptr)
-		{
-			m_aliveBlocks.erase(i);
-			break;
-		}
-	}
+	std::map< void*, Block >::iterator i = m_aliveBlocks.find(ptr);
+	if (i != m_aliveBlocks.end())
+		m_aliveBlocks.erase(i);
 
 	m_systemAllocator->free(ptr);
 }
