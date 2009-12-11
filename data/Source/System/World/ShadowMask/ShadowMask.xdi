@@ -40,7 +40,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>3, 0, 0, 0</direction>
+			<direction>2, 0, 0, 0</direction>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>0</target>
@@ -54,7 +54,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 3, 0, 0</direction>
+			<direction>0, 2, 0, 0</direction>
 		</item>
 	</steps>
 </object>
