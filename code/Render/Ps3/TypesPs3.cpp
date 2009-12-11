@@ -6,27 +6,23 @@ namespace traktor
 	namespace render
 	{
 
-bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& outGcmFormat)
+bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat)
 {
 	switch (textureFormat)
 	{
 	case TfR8:
-		outByteSize = 1;
 		outGcmFormat = CELL_GCM_TEXTURE_B8;
 		break;
 
 	case TfR8G8B8A8:
-		outByteSize = 4;
 		outGcmFormat = CELL_GCM_TEXTURE_A8R8G8B8;
 		break;
 
 	case TfR16G16B16A16F:
-		outByteSize = 8;
 		outGcmFormat = CELL_GCM_TEXTURE_W16_Z16_Y16_X16_FLOAT;
 		break;
 
 	case TfR32G32B32A32F:
-		outByteSize = 16;
 		outGcmFormat = CELL_GCM_TEXTURE_W32_Z32_Y32_X32_FLOAT;
 		break;
 
@@ -34,15 +30,22 @@ bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& o
 	//	break;
 
 	case TfR32F:
-		outByteSize = 4;
 		outGcmFormat = CELL_GCM_TEXTURE_X32_FLOAT;
 		break;
 
-	//case TfDXT1:
-	//case TfDXT2:
-	//case TfDXT3:
-	//case TfDXT4:
-	//case TfDXT5:
+	case TfDXT1:
+		outGcmFormat = CELL_GCM_TEXTURE_COMPRESSED_DXT1;
+		break;
+
+	case TfDXT2:
+	case TfDXT3:
+		outGcmFormat = CELL_GCM_TEXTURE_COMPRESSED_DXT23;
+		break;
+
+	case TfDXT4:
+	case TfDXT5:
+		outGcmFormat = CELL_GCM_TEXTURE_COMPRESSED_DXT45;
+		break;
 
 	default:
 		return false;

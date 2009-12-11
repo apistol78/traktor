@@ -2,11 +2,12 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/PlatformPs3.h"
+#include "Render/Ps3/LocalMemoryAllocator.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
-#include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/SimpleTexturePs3.h"
+#include "Render/Ps3/StateCachePs3.h"
 
 using namespace cell::Gcm;
 
@@ -291,19 +292,9 @@ bool ProgramPs3::isOpaque() const
 	return true;
 }
 
-void ProgramPs3::bind()
+void ProgramPs3::bind(StateCachePs3& stateCache)
 {
-	cellGcmSetCullFaceEnable(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
-	cellGcmSetCullFace(gCellGcmCurrentContext, m_renderState.cullFace);
-	cellGcmSetBlendEnable(gCellGcmCurrentContext, m_renderState.blendEnable);
-	cellGcmSetBlendEquation(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
-	cellGcmSetBlendFunc(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
-	cellGcmSetDepthTestEnable(gCellGcmCurrentContext, m_renderState.depthTestEnable);
-	cellGcmSetColorMask(gCellGcmCurrentContext, m_renderState.colorMask);
-	cellGcmSetDepthMask(gCellGcmCurrentContext, m_renderState.depthMask);
-	cellGcmSetDepthFunc(gCellGcmCurrentContext, m_renderState.depthFunc);
-	cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
-	cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
+	stateCache.setRenderState(m_renderState);
 
 	cellGcmSetVertexProgram(m_vertexProgram, m_vertexShaderUCode);
 

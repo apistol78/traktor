@@ -45,16 +45,16 @@ struct RenderState
 	SamplerState samplerStates[8];
 
 	RenderState()
-	:	cullFaceEnable(CELL_GCM_TRUE)
+	:	cullFaceEnable(CELL_GCM_FALSE)
 	,	cullFace(CELL_GCM_BACK)
 	,	blendEnable(CELL_GCM_FALSE)
 	,	blendEquation(CELL_GCM_FUNC_ADD)
 	,	blendFuncSrc(CELL_GCM_ONE)
 	,	blendFuncDest(CELL_GCM_ZERO)
-	,	depthTestEnable(CELL_GCM_TRUE)
+	,	depthTestEnable(CELL_GCM_FALSE)
 	,	colorMask(CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A)
 	,	depthMask(CELL_GCM_TRUE)
-	,	depthFunc(CELL_GCM_LEQUAL)
+	,	depthFunc(CELL_GCM_LESS)
 	,	alphaTestEnable(CELL_GCM_FALSE)
 	,	alphaFunc(CELL_GCM_ALWAYS)
 	,	alphaRef(0)
@@ -62,7 +62,7 @@ struct RenderState
 	}
 };
 
-bool getGcmTextureInfo(TextureFormat textureFormat, int& outByteSize, uint8_t& outGcmFormat);
+bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat);
 
 void cellUtilConvertLinearToSwizzle(
 	uint8_t *dst,

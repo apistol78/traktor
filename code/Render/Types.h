@@ -356,6 +356,14 @@ uint32_t T_DLLCLASS getTextureBlockSize(TextureFormat format);
  */
 uint32_t T_DLLCLASS getTextureBlockDenom(TextureFormat format);
 
+/*! \brief Get texture mip size.
+ *
+ * \param textureSize Size of texture in pixels.
+ * \param mipLevel Mip level.
+ * \return Mip level size in pixels.
+ */
+uint32_t T_DLLCLASS getTextureMipSize(uint32_t textureSize, uint32_t mipLevel);
+
 /*! \brief Calculate pitch in bytes from format and width.
  *
  * \param format Texture format.
@@ -383,14 +391,24 @@ uint32_t T_DLLCLASS getTextureRowPitch(TextureFormat format, uint32_t textureWid
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight);
 
 /*! \brief Calculate pitch in bytes from format and width, pitch of an entire mip.
-*
-* \param format Texture format.
-* \param textureWidth Width of texture in pixels.
-* \param textureHeight Height of texture in pixels.
-* \param mipLevel Mip level.
-* \return Mip pitch in bytes.
-*/
+ *
+ * \param format Texture format.
+ * \param textureWidth Width of texture in pixels.
+ * \param textureHeight Height of texture in pixels.
+ * \param mipLevel Mip level.
+ * \return Mip pitch in bytes.
+ */
 uint32_t T_DLLCLASS getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevel);
+
+/*! \brief Calculate texture size; assuming continious layout.
+ *
+ * \param format Texture format.
+ * \param textureWidth Width of texture in pixels.
+ * \param textureHeight Height of texture in pixels.
+ * \param mipLevels Number of mip levels.
+ * \return Texture size in bytes.
+ */
+uint32_t T_DLLCLASS getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels);
 
 //@}
 

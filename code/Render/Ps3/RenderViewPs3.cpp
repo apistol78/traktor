@@ -40,6 +40,11 @@ int32_t findResolutionId(int32_t width, int32_t height)
 	return CELL_VIDEO_OUT_RESOLUTION_UNDEFINED;
 }
 
+uint32_t incrementLabel(uint32_t label)
+{
+	return (++label != 0) ? label : 1;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewPs3", RenderViewPs3, IRenderView)
@@ -51,9 +56,9 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 ,	m_colorPitch(0)
 ,	m_depthAddr(0)
 ,	m_frameSyncLabelData(0)
-,	m_frameCounter(0)
+,	m_frameCounter(1)
 ,	m_targetSyncLabelData(0)
-,	m_targetCounter(0)
+,	m_targetCounter(1)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
@@ -128,8 +133,8 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 
 	// Allocate depth buffer.
 	{
-		int surfaceWidth = m_width; //(m_width & ~63) + 64;
-		int surfaceHeight = m_height; //(m_height & ~63) + 64;
+		int surfaceWidth = m_width;
+		int surfaceHeight = m_height;
 
 		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
 		m_depthTexture.mipmap = 1;
@@ -238,7 +243,8 @@ bool RenderViewPs3::begin()
 		m_colorOffset[frameIndex],
 		m_colorPitch,
 		m_depthTexture.offset,
-		m_depthTexture.pitch
+		m_depthTexture.pitch,
+		0
 	};
 
 	T_ASSERT (m_renderStateStack.empty());
@@ -269,7 +275,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 		rt->getGcmColorTexture().offset,
 		rt->getGcmColorTexture().pitch,
 		rts->getGcmDepthTexture().offset,
-		rts->getGcmDepthTexture().pitch
+		rts->getGcmDepthTexture().pitch,
+		rt
 	};
 
 	if (keepDepthStencil)
@@ -367,7 +374,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	T_ASSERT (m_currentProgram);
 
 	m_currentVertexBuffer->bind();
-	m_currentProgram->bind();
+	m_currentProgram->bind(m_stateCache);
 
 	switch (primitives.type)
 	{
@@ -428,17 +435,21 @@ void RenderViewPs3::draw(const Primitives& primitives)
 void RenderViewPs3::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
+
+	RenderState& rs = m_renderStateStack.back();
+	RenderTargetPs3* rt = rs.renderTarget;
 	
 	m_renderStateStack.pop_back();
 
 	if (!m_renderStateStack.empty())
 	{
-		cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
-		cellGcmFlush(gCellGcmCurrentContext);
-		cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
+		T_ASSERT (rt);
 
-		++m_targetCounter;
-		
+		cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
+		rt->setWaitLabel(m_targetCounter);
+
+		m_targetCounter = incrementLabel(m_targetCounter);
+
 		setCurrentRenderState();
 	}
 }
@@ -459,7 +470,7 @@ void RenderViewPs3::present()
 		sys_timer_usleep(100);
 	//cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_frameCounter);
 
-	m_frameCounter++;
+	m_frameCounter = incrementLabel(m_frameCounter);
 }
 
 void RenderViewPs3::setCurrentRenderState()
@@ -538,13 +549,7 @@ void RenderViewPs3::setCurrentRenderState()
 	cellGcmSetColorMask(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
 	cellGcmSetColorMaskMrt(gCellGcmCurrentContext, 0);
 
-	if (rs.depthOffset)
-	{
-		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, CELL_GCM_TRUE);
-		cellGcmSetDepthFunc(gCellGcmCurrentContext, CELL_GCM_LEQUAL);
-	}
-	else
-		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, CELL_GCM_FALSE);
+	m_stateCache.reset();
 }
 
 	}

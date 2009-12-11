@@ -136,6 +136,12 @@ uint32_t getTextureBlockDenom(TextureFormat format)
 	return c_blockDenoms[int(format)];
 }
 
+uint32_t getTextureMipSize(uint32_t textureSize, uint32_t mipLevel)
+{
+	uint32_t mipSize = textureSize >> mipLevel;
+	return mipSize > 0 ? mipSize : 1;
+}
+
 uint32_t getTextureRowPitch(TextureFormat format, uint32_t textureWidth)
 {
 	uint32_t blockDenom = getTextureBlockDenom(format);
@@ -145,7 +151,7 @@ uint32_t getTextureRowPitch(TextureFormat format, uint32_t textureWidth)
 
 uint32_t getTextureRowPitch(TextureFormat format, uint32_t textureWidth, uint32_t mipLevel)
 {
-	return getTextureRowPitch(format, textureWidth >> mipLevel);
+	return getTextureRowPitch(format, getTextureMipSize(textureWidth, mipLevel));
 }
 
 uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight)
@@ -159,7 +165,15 @@ uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_
 
 uint32_t getTextureMipPitch(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevel)
 {
-	return getTextureMipPitch(format, textureWidth >> mipLevel, textureHeight >> mipLevel);
+	return getTextureMipPitch(format, getTextureMipSize(textureWidth, mipLevel), getTextureMipSize(textureHeight, mipLevel));
+}
+
+uint32_t getTextureSize(TextureFormat format, uint32_t textureWidth, uint32_t textureHeight, uint32_t mipLevels)
+{
+	uint32_t textureSize = 0;
+	for (uint32_t mipLevel = 0; mipLevel < mipLevels; ++mipLevel)
+		textureSize += getTextureMipPitch(format, textureWidth, textureHeight, mipLevel);
+	return textureSize;
 }
 
 	}

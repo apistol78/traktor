@@ -44,12 +44,17 @@ public:
 		return m_colorTexture;
 	}
 
+	void setWaitLabel(uint32_t waitLabel) {
+		m_waitLabel = waitLabel;
+	}
+
 private:
 	int32_t m_width;
 	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
 	void* m_colorData;
+	uint32_t m_waitLabel;
 };
 
 	}

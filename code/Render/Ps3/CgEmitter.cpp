@@ -572,15 +572,14 @@ bool emitMatrix(CgContext& cx, Matrix* node)
 	CgVariable* zaxis = cx.emitInput(node, L"ZAxis");
 	CgVariable* translate = cx.emitInput(node, L"Translate");
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4x4);
-	assign(f, out) << Endl;
-	f << L"{" << Endl;
+	assign(f, out) << L"transpose(float4x4(" << Endl;
 	f << IncreaseIndent;
 	f << (xaxis     ? xaxis->cast(CtFloat4)     : L"1.0f, 0.0f, 0.0f, 0.0f") << L"," << Endl;
 	f << (yaxis     ? yaxis->cast(CtFloat4)     : L"0.0f, 1.0f, 0.0f, 0.0f") << L"," << Endl;
 	f << (zaxis     ? zaxis->cast(CtFloat4)     : L"0.0f, 0.0f, 1.0f, 0.0f") << L"," << Endl;
 	f << (translate ? translate->cast(CtFloat4) : L"0.0f, 0.0f, 0.0f, 1.0f") << Endl;
 	f << DecreaseIndent;
-	f << L"};" << Endl;
+	f << L"));" << Endl;
 	return true;
 }
 

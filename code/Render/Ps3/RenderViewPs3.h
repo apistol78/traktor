@@ -6,6 +6,7 @@
 #include "Render/IRenderView.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/ClearFpPs3.h"
+#include "Render/Ps3/StateCachePs3.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,10 +21,11 @@ namespace traktor
 	namespace render
 	{
 
-class RenderSystemPs3;
-class VertexBufferPs3;
 class IndexBufferPs3;
 class ProgramPs3;
+class RenderSystemPs3;
+class RenderTargetPs3;
+class VertexBufferPs3;
 
 class T_DLLCLASS RenderViewPs3 : public IRenderView
 {
@@ -73,6 +75,7 @@ private:
 		uint32_t colorPitch;
 		uint32_t depthOffset;
 		uint32_t depthPitch;
+		RenderTargetPs3* renderTarget;
 	};
 
 	Ref< RenderSystemPs3 > m_renderSystem;
@@ -93,6 +96,7 @@ private:
 	uint32_t m_targetCounter;
 	std::list< RenderState > m_renderStateStack;
 	ClearFpPs3 m_clearFp;
+	StateCachePs3 m_stateCache;
 
 	void setCurrentRenderState();
 };

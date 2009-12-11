@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class ProgramResourcePs3;
+class StateCachePs3;
 
 class T_DLLCLASS ProgramPs3 : public IProgram
 {
@@ -64,7 +65,7 @@ public:
 
 	virtual bool isOpaque() const;
 
-	void bind();
+	void bind(StateCachePs3& stateCache);
 
 private:
 	Ref< const ProgramResourcePs3 > m_resource;

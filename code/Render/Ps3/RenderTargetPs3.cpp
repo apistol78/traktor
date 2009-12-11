@@ -7,6 +7,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+uint8_t c_targetSyncLabelId = 129;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetPs3", RenderTargetPs3, ITexture)
 
@@ -15,6 +21,7 @@ RenderTargetPs3::RenderTargetPs3()
 ,	m_height(0)
 ,	m_colorSurfaceFormat(0)
 ,	m_colorData(0)
+,	m_waitLabel(0)
 {
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
 }
@@ -64,8 +71,8 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-	int surfaceWidth = m_width; //(m_width & ~63) + 64;
-	int surfaceHeight = m_height; //(m_height & ~63) + 64;
+	int surfaceWidth = m_width;
+	int surfaceHeight = m_height;
 
 	m_colorTexture.format |= CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
 	m_colorTexture.mipmap = 1;
@@ -124,6 +131,15 @@ int RenderTargetPs3::getDepth() const
 
 void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 {
+	// Need to flush render queue to ensure target has been
+	// properly updated.
+	if (m_waitLabel)
+	{
+		cellGcmFlush(gCellGcmCurrentContext);
+		cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_waitLabel);
+		m_waitLabel = 0;
+	}
+
 	cellGcmSetTextureControl(
 		gCellGcmCurrentContext,
 		stage,
