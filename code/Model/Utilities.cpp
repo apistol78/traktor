@@ -383,7 +383,7 @@ void calculateConvexHull(Model& model)
 				vertices[faces[j].i[1]],
 				vertices[faces[j].i[2]]
 			);
-			visible[j] = bool(pl.distance(vertices[i]) > 0.1f);
+			visible[j] = bool(pl.distance(vertices[i]) >= -FUZZY_EPSILON);
 		}
 
 		std::vector< std::pair< uint32_t, uint32_t > > silouette;
