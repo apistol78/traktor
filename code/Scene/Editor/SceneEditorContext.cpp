@@ -382,6 +382,20 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	return uint32_t(outEntityAdapters.size());
 }
 
+Ref< EntityAdapter > SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
+{
+	RefArray< EntityAdapter > entityAdapters;
+	getEntities(entityAdapters);
+
+	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	{
+		if ((*i)->getEntity() == entity)
+			return *i;
+	}
+
+	return 0;
+}
+
 Ref< EntityAdapter > SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
 {
 	RefArray< EntityAdapter > entityAdapters;

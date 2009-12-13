@@ -5,6 +5,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityRendererAdapter.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/CameraMesh.h"
 #include "Scene/Scene.h"
@@ -150,7 +151,10 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		RefArray< world::IEntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			worldEntityRenderers->add(*j);
+		{
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(m_context, *j);
+			worldEntityRenderers->add(entityRenderer);
+		}
 	}
 
 	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.

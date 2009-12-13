@@ -23,6 +23,7 @@ EntityAdapter::EntityAdapter(world::EntityInstance* instance)
 :	m_instance(instance)
 ,	m_parent(0)
 ,	m_selected(false)
+,	m_visible(true)
 {
 }
 
@@ -260,6 +261,11 @@ Ref< IEntityEditor > EntityAdapter::getEntityEditor() const
 bool EntityAdapter::isSelected() const
 {
 	return m_selected;
+}
+
+bool EntityAdapter::isVisible() const
+{
+	return m_visible;
 }
 
 AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const

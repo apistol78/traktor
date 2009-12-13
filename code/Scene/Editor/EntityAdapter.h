@@ -136,6 +136,8 @@ public:
 	//@{
 
 	bool isSelected() const;
+	
+	bool isVisible() const;
 
 	//@}
 
@@ -162,6 +164,7 @@ private:
 	RefArray< EntityAdapter > m_children;
 	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;
+	bool m_visible;
 };
 
 	}

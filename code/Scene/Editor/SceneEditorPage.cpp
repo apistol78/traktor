@@ -112,7 +112,8 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_instanceGrid = new ui::custom::GridView();
 	m_instanceGrid->create(m_entityPanel, ui::custom::GridView::WsDrag | ui::WsDoubleBuffer);
 	m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
-	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 300));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
+	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
 	m_instanceGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceButtonDown));
 	m_instanceGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceDoubleClick));
@@ -594,7 +595,7 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
 	row->setState(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0);
-
+	
 	// All external entities is highlighted as they shouldn't be edited.
 	if (entityAdapter->isChildOfExternal())
 	{
@@ -610,6 +611,9 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 2, 3));
 	else
 		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 0));
+
+	// Create "visible" check box.
+	row->addItem(new ui::custom::GridItem(L"", 0));
 
 	// Recursively add children.
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
