@@ -196,6 +196,8 @@ public:
 
 	/*! \brief Get entities. */
 	uint32_t getEntities(RefArray< EntityAdapter >& outEntityAdapters, uint32_t flags = GfDefault) const;
+	
+	Ref< EntityAdapter > findAdapterFromEntity(const world::Entity* entity) const;
 
 	Ref< EntityAdapter > findAdapterFromInstance(const world::EntityInstance* instance) const;
 

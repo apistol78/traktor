@@ -4,6 +4,7 @@
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityRendererAdapter.h"
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/FrameEvent.h"
@@ -193,7 +194,10 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		RefArray< world::IEntityRenderer > entityRenderers;
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
-			worldEntityRenderers->add(*j);
+		{
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(m_context, *j);
+			worldEntityRenderers->add(entityRenderer);
+		}
 	}
 
 	// Create world renderer.
