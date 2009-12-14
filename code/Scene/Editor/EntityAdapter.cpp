@@ -263,6 +263,11 @@ bool EntityAdapter::isSelected() const
 	return m_selected;
 }
 
+void EntityAdapter::setVisible(bool visible)
+{
+	m_visible = visible;
+}
+
 bool EntityAdapter::isVisible() const
 {
 	return m_visible;

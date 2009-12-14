@@ -28,7 +28,7 @@ bool SwitchNodeDialog::create(ui::Widget* parent, Switch* switchNode)
 		return false;
 
 	m_caseList = new ui::custom::GridView();
-	m_caseList->create(this, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader | ui::custom::GridView::WsDrag);
+	m_caseList->create(this, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
 	m_caseList->addColumn(new ui::custom::GridColumn(i18n::Text(L"SHADERGRAPH_SWITCH_CASES"), 300));
 
 	const std::vector< int32_t >& cases = switchNode->getCases();

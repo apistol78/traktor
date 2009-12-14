@@ -1,5 +1,6 @@
+#include "Scene/SceneResource.h"
 #include "Scene/Editor/ScenePipeline.h"
-#include "Scene/SceneAsset.h"
+#include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/EntityInstance.h"
 #include "Editor/IPipelineDepends.h"
@@ -14,7 +15,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 4, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 5, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
@@ -68,25 +69,31 @@ bool ScenePipeline::buildOutput(
 ) const
 {
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
+	Ref< SceneResource > sceneResource = new SceneResource();
 
-	if (m_suppressDepthPass && sceneAsset->getWorldRenderSettings()->depthPassEnabled)
+	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
+	sceneResource->setPostProcessSettings(sceneAsset->getPostProcessSettings());
+	sceneResource->setInstance(sceneAsset->getInstance());
+	sceneResource->setControllerData(sceneAsset->getControllerData());
+
+	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPassEnabled)
 	{
-		sceneAsset->getWorldRenderSettings()->depthPassEnabled = false;
+		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
 		log::info << L"Depth pass suppressed" << Endl;
 	}
-	if (m_suppressVelocity && sceneAsset->getWorldRenderSettings()->velocityPassEnable)
+	if (m_suppressVelocity && sceneResource->getWorldRenderSettings()->velocityPassEnable)
 	{
-		sceneAsset->getWorldRenderSettings()->velocityPassEnable = false;
+		sceneResource->getWorldRenderSettings()->velocityPassEnable = false;
 		log::info << L"Velocity pass suppressed" << Endl;
 	}
-	if (m_suppressShadows && sceneAsset->getWorldRenderSettings()->shadowsEnabled)
+	if (m_suppressShadows && sceneResource->getWorldRenderSettings()->shadowsEnabled)
 	{
-		sceneAsset->getWorldRenderSettings()->shadowsEnabled = false;
+		sceneResource->getWorldRenderSettings()->shadowsEnabled = false;
 		log::info << L"Shadows suppressed" << Endl;
 	}
-	if (m_suppressPostProcess && !sceneAsset->getPostProcessSettings().getGuid().isNull())
+	if (m_suppressPostProcess && !sceneResource->getPostProcessSettings().getGuid().isNull())
 	{
-		sceneAsset->setPostProcessSettings(Guid());
+		sceneResource->setPostProcessSettings(Guid());
 		log::info << L"Post processing suppressed" << Endl;
 	}
 
@@ -97,7 +104,7 @@ bool ScenePipeline::buildOutput(
 		return false;
 	}
 
-	outputInstance->setObject(sceneAsset);
+	outputInstance->setObject(sceneResource);
 
 	if (!outputInstance->commit())
 	{

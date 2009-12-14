@@ -3,7 +3,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/SceneAsset.h"
+#include "Scene/Editor/SceneAsset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
 #include "Editor/Settings.h"

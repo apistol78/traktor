@@ -4,7 +4,7 @@
 #include "Theater/TrackData.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/SceneAsset.h"
+#include "Scene/Editor/SceneAsset.h"
 #include "World/Entity/EntityInstance.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MethodHandler.h"

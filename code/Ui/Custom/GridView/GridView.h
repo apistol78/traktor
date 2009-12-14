@@ -36,8 +36,7 @@ class T_DLLCLASS GridView : public Widget
 public:
 	enum StyleFlags
 	{
-		WsColumnHeader = WsUser,
-		WsDrag = (WsUser << 1)
+		WsColumnHeader = WsUser
 	};
 
 	enum GetFlags
@@ -46,12 +45,6 @@ public:
 		GfDescendants = 1,
 		GfExpandedOnly = 2,
 		GfSelectedOnly = 4
-	};
-
-	enum Events
-	{
-		EiDrag = EiUser + 1,
-		EiDragValid = EiUser + 2
 	};
 
 	GridView();
@@ -76,9 +69,7 @@ public:
 
 	void addSelectEventHandler(EventHandler* eventHandler);
 
-	void addDragEventHandler(EventHandler* eventHandler);
-
-	void addDragValidEventHandler(EventHandler* eventHandler);
+	void addClickEventHandler(EventHandler* eventHandler);
 
 	virtual Size getPreferedSize() const;
 
@@ -94,19 +85,20 @@ private:
 	Ref< Bitmap > m_expand[2];
 	Ref< ScrollBar > m_scrollBarRows;
 	Ref< GridColumn > m_resizeColumn;
-	int m_resizeColumnLeft;
-	bool m_dragEnabled;
-	Ref< GridRow > m_dragRow;
-	bool m_dragActive;
-	Point m_dragPosition;
+	int32_t m_resizeColumnLeft;
 	bool m_columnHeader;
-	int m_lastSelected;
+	int32_t m_lastSelected;
+
+	Ref< GridRow > m_clickRow;
+	int32_t m_clickColumn;
 
 	void updateScrollBars();
 
-	int dropRow() const;
+	void getColumnPositions(std::vector< int32_t >& outColumnPos) const;
 
-	bool dropValid();
+	void getColumnSplits(std::vector< int32_t >& outColumnSplits) const;
+
+	int32_t getColumnIndex(int32_t position) const;
 
 	void eventButtonDown(Event* event);
 

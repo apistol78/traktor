@@ -1,29 +1,29 @@
-#include "Scene/SceneAsset.h"
-#include "Scene/Scene.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneResource.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/EntityInstance.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/PostProcess/PostProcessSettings.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 2, SceneAsset, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.SceneResource", 0, SceneResource, ISerializable)
 
-SceneAsset::SceneAsset()
+SceneResource::SceneResource()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
 {
 }
 
-Ref< Scene > SceneAsset::createScene(
+Ref< Scene > SceneResource::createScene(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
@@ -61,62 +61,52 @@ Ref< Scene > SceneAsset::createScene(
 	);
 }
 
-void SceneAsset::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
+void SceneResource::setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings)
 {
 	m_worldRenderSettings = worldRenderSettings;
 }
 
-Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
+Ref< world::WorldRenderSettings > SceneResource::getWorldRenderSettings() const
 {
 	return m_worldRenderSettings;
 }
 
-void SceneAsset::setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcessSettings)
+void SceneResource::setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcessSettings)
 {
 	m_postProcessSettings = postProcessSettings;
 }
 
-const resource::Proxy< world::PostProcessSettings >& SceneAsset::getPostProcessSettings() const
+const resource::Proxy< world::PostProcessSettings >& SceneResource::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
 }
 
-void SceneAsset::setInstance(world::EntityInstance* instance)
+void SceneResource::setInstance(world::EntityInstance* instance)
 {
 	m_instance = instance;
 }
 
-Ref< world::EntityInstance > SceneAsset::getInstance() const
+Ref< world::EntityInstance > SceneResource::getInstance() const
 {
 	return m_instance;
 }
 
-void SceneAsset::setControllerData(ISceneControllerData* controllerData)
+void SceneResource::setControllerData(ISceneControllerData* controllerData)
 {
 	m_controllerData = controllerData;
 }
 
-Ref< ISceneControllerData > SceneAsset::getControllerData() const
+Ref< ISceneControllerData > SceneResource::getControllerData() const
 {
 	return m_controllerData;
 }
 
-bool SceneAsset::serialize(ISerializer& s)
+bool SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
-
-	if (s.getVersion() >= 2)
-	{
-		s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
-	}
-
+	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
 	s >> MemberRef< world::EntityInstance >(L"instance", m_instance);
-
-	if (s.getVersion() >= 1)
-	{
-		s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
-	}
-
+	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 	return true;
 }
 
