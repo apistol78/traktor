@@ -3,11 +3,11 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridDragEvent.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/SizeEvent.h"
@@ -51,6 +51,10 @@ GridView::GridView()
 :	m_imageWidth(c_imageSize)
 ,	m_imageHeight(c_imageSize)
 ,	m_imageCount(0)
+,	m_resizeColumnLeft(0)
+,	m_columnHeader(false)
+,	m_lastSelected(-1)
+,	m_clickColumn(-1)
 {
 }
 
@@ -73,8 +77,6 @@ bool GridView::create(Widget* parent, uint32_t style)
 	addPaintEventHandler(createMethodHandler(this, &GridView::eventPaint));
 	addSizeEventHandler(createMethodHandler(this, &GridView::eventSize));
 
-	m_dragActive = false;
-	m_dragEnabled = bool((style & WsDrag) == WsDrag);
 	m_columnHeader = bool((style & WsColumnHeader) == WsColumnHeader);
 	m_lastSelected = -1;
 
@@ -88,14 +90,12 @@ uint32_t GridView::addImage(Bitmap* image, uint32_t imageCount)
 
 	if (m_image)
 	{
-		Ref< Bitmap > source = image;
-
-		uint32_t width = m_image->getSize().cx + source->getSize().cx;
-		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
+		uint32_t width = m_image->getSize().cx + image->getSize().cx;
+		uint32_t height = std::max(m_image->getSize().cy, image->getSize().cy);
 
 		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
 		newImage->copyImage(m_image->getImage());
-		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), image->getSize()), Point(m_image->getSize().cx, 0));
 		m_image = newImage;
 	}
 	else
@@ -184,14 +184,9 @@ void GridView::addSelectEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiSelectionChange, eventHandler);
 }
 
-void GridView::addDragEventHandler(EventHandler* eventHandler)
+void GridView::addClickEventHandler(EventHandler* eventHandler)
 {
-	addEventHandler(EiDrag, eventHandler);
-}
-
-void GridView::addDragValidEventHandler(EventHandler* eventHandler)
-{
-	addEventHandler(EiDragValid, eventHandler);
+	addEventHandler(EiClick, eventHandler);
 }
 
 Size GridView::getPreferedSize() const
@@ -224,39 +219,41 @@ void GridView::updateScrollBars()
 	m_scrollBarRows->update();
 }
 
-int GridView::dropRow() const
+void GridView::getColumnPositions(std::vector< int32_t >& outColumnPos) const
 {
-	return (m_dragPosition.y - (m_columnHeader ? c_columnsHeight : 0) + c_itemHeight / 2) / c_itemHeight;
+	int32_t left = 16;
+	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+	{
+		outColumnPos.push_back(left);
+		left += (*i)->getWidth();
+	}
+	outColumnPos.push_back(left);
 }
 
-bool GridView::dropValid()
+void GridView::getColumnSplits(std::vector< int32_t >& outColumnSplits) const
 {
-	int32_t row = dropRow();
-
-	if (row < 0)
-		return false;
-
-	RefArray< GridRow > rows;
-	getRows(rows, GfDescendants | GfExpandedOnly);
-
-	if (row > int32_t(rows.size()))
-		return false;
-
-	// Cannot drag into own children.
-	Ref< GridRow > sibling = rows[std::max(row - 1, 0)];
-	for (Ref< GridRow > parent = sibling->getParent(); parent; parent = parent->getParent())
+	int32_t left = 16;
+	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 	{
-		if (parent == m_dragRow)
-			return false;
+		outColumnSplits.push_back(left);
+		left += (*i)->getWidth();
+	}
+	if (!outColumnSplits.empty())
+		outColumnSplits.pop_back();
+}
+
+int32_t GridView::getColumnIndex(int32_t position) const
+{
+	std::vector< int32_t > columnPos;
+	getColumnPositions(columnPos);
+
+	for (int32_t i = 0; i < int32_t(columnPos.size()) - 1; ++i)
+	{
+		if (position >= columnPos[i] && position < columnPos[i + 1])
+			return i;
 	}
 
-	// Check with user if drop still valid.
-	GridDragEvent dragEvent(this, m_dragRow, row);
-	raiseEvent(EiDragValid, &dragEvent);
-	if (dragEvent.cancelled())
-		return false;
-
-	return true;
+	return -1;
 }
 
 void GridView::eventButtonDown(Event* event)
@@ -271,31 +268,28 @@ void GridView::eventButtonDown(Event* event)
 
 	if (m_columnHeader && pos.y <= c_columnsHeight)
 	{
-		if (m_columns.size() > 1)
+		// Column click.
+		std::vector< int32_t > splits;
+		getColumnSplits(splits);
+
+		for (std::vector< int32_t >::iterator i = splits.begin(); i != splits.end(); ++i)
 		{
-			int32_t x = 0;
-			for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+			if (pos.x - 3 < *i && pos.x + 3 > *i)
 			{
-				int32_t cx = x + (*i)->getWidth();
-				if (pos.x - 3 < cx && pos.x + 3 > cx)
-				{
-					m_resizeColumn = *i;
-					m_resizeColumnLeft = x;
-					setCapture();
-					setCursor(CrSizeWE);
-					break;
-				}
-				x = cx;
+				m_resizeColumn = *(m_columns.begin() + std::distance(splits.begin(), i));
+				m_resizeColumnLeft = *i;
+				setCapture();
+				setCursor(CrSizeWE);
+				break;
 			}
 		}
 	}
 	else
 	{
 		// Row click.
-
 		bool modifier = bool((mouseEvent->getKeyState() & (KsShift | KsControl)) != 0);
 
-		// Deselect all rows if no modifier isn't being held.
+		// De-select all rows if no modifier key.
 		if (!modifier)
 		{
 			RefArray< GridRow > rows;
@@ -305,18 +299,26 @@ void GridView::eventButtonDown(Event* event)
 			m_lastSelected = -1;
 		}
 
+		// Calculate row index.
+		int32_t row = m_scrollBarRows->getPosition();
+		int32_t index = row + (pos.y - (m_columnHeader ? c_columnsHeight : 0)) / c_itemHeight;
+
+		// Handle row modification.
 		RefArray< GridRow > rows;
 		getRows(rows, GfDescendants | GfExpandedOnly);
 
-		int32_t row = m_scrollBarRows->getPosition();
-		int32_t index = row + (pos.y - (m_columnHeader ? c_columnsHeight : 0)) / c_itemHeight;
 		if (index >= 0 && index < int32_t(rows.size()))
 		{
 			uint32_t state = rows[index]->getState();
 
 			// Expand or collapse row.
 			int32_t depth = getHierarchyDepth(rows[index]);
-			if (!modifier && !rows[index]->getChildren().empty() && pos.x >= 2 + depth * c_indentWidth && pos.x <= 2 + depth * c_indentWidth + m_expand[0]->getSize().cx)
+			if (
+				!modifier &&
+				!rows[index]->getChildren().empty() &&
+				pos.x >= 2 + depth * c_indentWidth &&
+				pos.x <= 2 + depth * c_indentWidth + m_expand[0]->getSize().cx
+			)
 			{
 				if (state & GridRow::RsExpanded)
 					state &= ~GridRow::RsExpanded;
@@ -329,6 +331,7 @@ void GridView::eventButtonDown(Event* event)
 			{
 				if (m_lastSelected >= 0 && (mouseEvent->getKeyState() & KsShift) == KsShift)
 				{
+					// Select range.
 					int32_t from = index;
 					int32_t to = m_lastSelected;
 
@@ -346,6 +349,7 @@ void GridView::eventButtonDown(Event* event)
 				}
 				else
 				{
+					// Toggle selected.
 					if (state & GridRow::RsSelected)
 					{
 						state &= ~GridRow::RsSelected;
@@ -356,14 +360,12 @@ void GridView::eventButtonDown(Event* event)
 						state |= GridRow::RsSelected;
 						m_lastSelected = index;
 
-						// Remember which item selected to determine if we should enter "drag" mode.
-						if (m_dragEnabled && !modifier)
-						{
-							m_dragRow = rows[index];
-							m_dragActive = false;
-							setCapture();
-						}
+						// Remember clicked column.
+						m_clickRow = rows[index];
+						m_clickColumn = getColumnIndex(pos.x);
 					}
+
+					setCapture();
 				}
 			}
 
@@ -379,54 +381,30 @@ void GridView::eventButtonDown(Event* event)
 
 void GridView::eventButtonUp(Event* event)
 {
+	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
+	Point pos = mouseEvent->getPosition();
+
+	releaseCapture();
+
 	if (m_resizeColumn)
 	{
 		m_resizeColumn = 0;
-		releaseCapture();
 		update();
 	}
-	else if (m_dragEnabled && m_dragRow)
+	else
 	{
-		if (m_dragActive)
+		if (m_clickColumn != -1)
 		{
-			//RefArray< GridRow > rows;
-			//getRows(rows, GfDescendants | GfExpandedOnly);
-			//T_ASSERT (!rows.empty());
-
-			//int32_t dragTargetRow = (m_dragPosition.y - (m_columnHeader ? c_columnsHeight : 0) + c_itemHeight / 2) / c_itemHeight - 1;
-
-			//dragTargetRow = std::max(dragTargetRow, 0);
-			//dragTargetRow = std::min(dragTargetRow, int32_t(rows.size()));
-
-			//GridDragEvent dragEvent(this, m_dragRow, dragTargetRow);
-			//raiseEvent(EiDrag, &dragEvent);
-			//if (!dragEvent.cancelled())
-			//{
-			//	m_dragRow->getParent()->removeChild(m_dragRow);
-
-			//	if (dragTargetRow > 0)
-			//	{
-			//		Ref< GridRow > targetRow = rows[dragTargetRow - 1];
-			//		if (targetRow->getParent())
-			//		{
-			//			targetRow->getParent()->insertChildAfter(targetRow, m_dragRow);
-			//		}
-			//		else
-			//		{
-			//			RefArray< GridRow >::iterator i = std::find(m_rows.begin(), m_rows.end(), targetRow);
-			//			m_rows.insert(i, m_dragRow);
-			//		}
-			//	}
-			//	else
-			//		m_rows.insert(m_rows.begin(), m_dragRow);
-			//}
+			int32_t releaseColumnIndex = getColumnIndex(pos.x);
+			if (releaseColumnIndex == m_clickColumn)
+			{
+				CommandEvent cmdEvent(this, m_clickRow, Command(m_clickColumn));
+				raiseEvent(EiClick, &cmdEvent);
+			}
 		}
 
-		m_dragRow = 0;
-		m_dragActive = false;
-
-		releaseCapture();
-		update();
+		m_clickRow = 0;
+		m_clickColumn = -1;
 	}
 }
 
@@ -445,32 +423,20 @@ void GridView::eventMouseMove(Event* event)
 		update();
 		event->consume();
 	}
-	else if (m_dragEnabled && m_dragRow)
-	{
-		setCursor(CrHand);
-
-		m_dragPosition = pos;
-		m_dragActive = true;
-
-		update();
-		event->consume();
-	}
 	else if (m_columnHeader && pos.y <= c_columnsHeight)
 	{
-		if (m_columns.size() > 1)
+		std::vector< int32_t > splits;
+		getColumnSplits(splits);
+
+		for (std::vector< int32_t >::const_iterator i = splits.begin(); i != splits.end(); ++i)
 		{
-			int32_t x = 0;
-			for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
+			if (*i > pos.x - 3 && *i < pos.x + 3)
 			{
-				int32_t cx = x + (*i)->getWidth();
-				if (pos.x - 3 < cx && pos.x + 3 > cx)
-				{
-					setCursor(CrSizeWE);
-					break;
-				}
-				x = cx;
+				setCursor(CrSizeWE);
+				break;
 			}
 		}
+
 		event->consume();
 	}
 }
@@ -521,6 +487,8 @@ void GridView::eventPaint(Event* event)
 				canvas.setForeground(Color(208, 208, 208));
 				canvas.drawLine(left, rc.top + 4, left, rc.top + c_columnsHeight - 4);
 			}
+			else
+				left += 16;
 
 			left += width;
 		}
@@ -573,7 +541,64 @@ void GridView::eventPaint(Event* event)
 			const RefArray< GridItem >& items = rw->getItems();
 
 			int32_t left = 16 + depth * c_indentWidth;
+			int32_t right = 16 + m_columns[0]->getWidth();
 
+			for (uint32_t j = 0; j < uint32_t(m_columns.size()); ++j)
+			{
+				if (left >= rc.right)
+					break;
+
+				int32_t textOffset = 2;
+
+				// Draw cell image.
+				int32_t image = (rw->getState() & GridRow::RsExpanded) ? items[j]->getExpandedImage() : items[j]->getImage();
+				if (image >= 0)
+				{
+					int32_t centerOffsetY = (c_itemHeight - m_imageHeight) / 2;
+
+					canvas.drawBitmap(
+						Point(left + textOffset, top + centerOffsetY),
+						Point(image * m_imageWidth, 0),
+						Size(m_imageWidth, m_imageHeight),
+						m_image,
+						BmAlpha
+					);
+
+					textOffset += m_imageWidth + 2;
+				}
+
+				// Draw cell value.
+				canvas.setForeground(getSystemColor(ScWindowText));
+				canvas.drawText(
+					Rect(
+						left + textOffset,
+						top,
+						right - textOffset,
+						top + c_itemHeight
+					),
+					items[j]->getText(),
+					AnLeft,
+					AnCenter
+				);
+
+				left = right;
+
+				if (j < uint32_t(m_columns.size() - 1))
+				{
+					// Draw cell edge.
+					canvas.setForeground(Color(190, 190, 200));
+					canvas.drawLine(right, top, right, top + c_itemHeight);
+
+					right += m_columns[j + 1]->getWidth();
+				}
+				else if (right < rc.right)
+					right = rc.right;
+				else
+					break;
+			}
+
+
+			/*
 			int32_t imageIndex = (rw->getState() & GridRow::RsExpanded) ? items[0]->getExpandedImage() : items[0]->getImage();
 			if (imageIndex >= 0)
 			{
@@ -607,12 +632,28 @@ void GridView::eventPaint(Event* event)
 					canvas.setForeground(Color(190, 190, 200));
 					canvas.drawLine(left, top, left, top + c_itemHeight);
 
+					int32_t imageIndex = (rw->getState() & GridRow::RsExpanded) ? items[j]->getExpandedImage() : items[j]->getImage();
+					if (imageIndex >= 0)
+					{
+						int32_t centerOffsetY = (c_itemHeight - m_imageHeight) / 2;
+						canvas.drawBitmap(
+							Point(left, top + centerOffsetY),
+							Point(imageIndex * m_imageWidth, 0),
+							Size(m_imageWidth, m_imageHeight),
+							m_image,
+							BmAlpha
+						);
+						left += m_imageWidth + c_imageMargin;
+					}
+
 					canvas.setForeground(getSystemColor(ScWindowText));
 					canvas.drawText(Rect(left + 2, top, left + width - 2, top + c_itemHeight), items[j]->getText(), AnLeft, AnCenter);
 
 					left += width;
 				}
 			}
+
+			*/
 
 			canvas.setForeground(Color(190, 190, 200));
 			canvas.drawLine(rc.left, top + c_itemHeight, rc.right, top + c_itemHeight);
@@ -622,20 +663,6 @@ void GridView::eventPaint(Event* event)
 
 			top += c_itemHeight;
 		}
-	}
-
-	// Draw drag image.
-	if (m_dragEnabled && m_dragActive && dropValid())
-	{
-		int32_t row = dropRow();
-		int32_t line = row * c_itemHeight + (m_columnHeader ? c_columnsHeight : 0);
-
-		canvas.setForeground(Color(0, 0, 0));
-		canvas.drawLine(rc.left, line, rc.right, line);
-
-		canvas.setForeground(Color(128, 128, 128));
-		canvas.drawLine(rc.left, line - 1, rc.right, line - 1);
-		canvas.drawLine(rc.left, line + 1, rc.right, line + 1);
 	}
 
 	event->consume();

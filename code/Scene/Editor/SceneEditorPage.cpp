@@ -8,7 +8,7 @@
 #include "Scene/Editor/EntityClipboardData.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SelectEvent.h"
-#include "Scene/SceneAsset.h"
+#include "Scene/Editor/SceneAsset.h"
 #include "Scene/Scene.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/ISceneController.h"
@@ -44,7 +44,6 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridDragEvent.h"
 #include "Ui/Custom/InputDialog.h"
 #include "I18N/Text.h"
 #include "Database/Instance.h"
@@ -58,6 +57,8 @@
 // Resources
 #include "Resources/EntityEdit.h"
 #include "Resources/EntityTypes.h"
+#include "Resources/LayerHidden.h"
+#include "Resources/LayerVisible.h"
 
 namespace traktor
 {
@@ -110,13 +111,15 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
 	m_instanceGrid = new ui::custom::GridView();
-	m_instanceGrid->create(m_entityPanel, ui::custom::GridView::WsDrag | ui::WsDoubleBuffer);
+	m_instanceGrid->create(m_entityPanel, ui::WsDoubleBuffer);
 	m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceEntityTypes, sizeof(c_ResourceEntityTypes), L"png"), 4);
+	m_imageHidden = m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png"), 1);
+	m_imageVisible = m_instanceGrid->addImage(ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png"), 1);
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
 	m_instanceGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceButtonDown));
-	m_instanceGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceDoubleClick));
+	m_instanceGrid->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceClick));
 
 	m_instanceGridFontItalic = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontItalic->setItalic(true);
@@ -613,7 +616,9 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 		row->addItem(new ui::custom::GridItem(entityAdapter->getName(), 0));
 
 	// Create "visible" check box.
-	row->addItem(new ui::custom::GridItem(L"", 0));
+	row->addItem(new ui::custom::GridItem(
+		entityAdapter->isVisible() ? m_imageVisible : m_imageHidden
+	));
 
 	// Recursively add children.
 	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
@@ -836,34 +841,32 @@ void SceneEditorPage::eventInstanceButtonDown(ui::Event* event)
 	}
 }
 
-void SceneEditorPage::eventInstanceDoubleClick(ui::Event* event)
+void SceneEditorPage::eventInstanceClick(ui::Event* event)
 {
-	RefArray< ui::custom::GridRow > selectedRows;
-	if (m_instanceGrid->getRows(selectedRows, ui::custom::GridView::GfDescendants | ui::custom::GridView::GfSelectedOnly) != 1)
-		return;
+	const ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
+	const ui::Command& cmd = cmdEvent->getCommand();
 
-	Ref< world::EntityInstance > instance = selectedRows[0]->getData< EntityAdapter >(L"ENTITY")->getInstance();
-
-	ui::custom::InputDialog::Field fields[] =
+	if (cmd.getId() == 1)
 	{
-		{ i18n::Text(L"SCENE_EDITOR_NAME"), instance->getName(), 0 }
-	};
+		ui::custom::GridRow* row = checked_type_cast< ui::custom::GridRow*, false >(cmdEvent->getItem());
+		ui::custom::GridItem* item = row->getItems().at(1);
 
-	ui::custom::InputDialog inputDialog;
-	if (!inputDialog.create(m_instanceGrid, i18n::Text(L"SCENE_EDITOR_ENTER_NAME"), i18n::Text(L"SCENE_EDITOR_ENTER_NAME"), fields, sizeof_array(fields)))
-		return;
+		EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
+		T_ASSERT (entityAdapter);
 
-	if (inputDialog.showModal() == ui::DrOk)
-	{
-		instance->setName(fields[0].value);
+		if (entityAdapter->isVisible())
+		{
+			item->setImage(m_imageHidden);
+			entityAdapter->setVisible(false);
+		}
+		else
+		{
+			item->setImage(m_imageVisible);
+			entityAdapter->setVisible(true);
+		}
 
-		// Directly update item in instance grid.
-		selectedRows[0]->getItems().at(0)->setText(fields[0].value);
 		m_instanceGrid->update();
 	}
-
-	inputDialog.destroy();
-	event->consume();
 }
 
 void SceneEditorPage::eventContextPostBuild(ui::Event* event)

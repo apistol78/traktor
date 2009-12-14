@@ -37,17 +37,21 @@ public:
 
 	GridItem(const std::wstring& text, int32_t image, int32_t expandedImage);
 
+	GridItem(int32_t image);
+
+	GridItem(int32_t image, int32_t expandedImage);
+
 	void setText(const std::wstring& text);
 
-	const std::wstring& getText() const { return m_text; }
+	const std::wstring& getText() const;
 
 	void setImage(int32_t image);
 
-	int32_t getImage() const { return m_image; }
+	int32_t getImage() const;
 
 	void setExpandedImage(int expandedImage);
 
-	int32_t getExpandedImage() const { return m_expandedImage; }
+	int32_t getExpandedImage() const;
 
 private:
 	std::wstring m_text;

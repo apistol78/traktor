@@ -106,6 +106,8 @@ private:
 	Ref< editor::UndoStack > m_undoStack;
 	Guid m_currentGuid;
 	uint32_t m_currentHash;
+	uint32_t m_imageHidden;
+	uint32_t m_imageVisible;
 
 	void createControllerEditor();
 
@@ -133,7 +135,7 @@ private:
 
 	void eventInstanceButtonDown(ui::Event* event);
 
-	void eventInstanceDoubleClick(ui::Event* event);
+	void eventInstanceClick(ui::Event* event);
 
 	void eventContextPostBuild(ui::Event* event);
 

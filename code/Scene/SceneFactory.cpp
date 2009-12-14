@@ -1,8 +1,8 @@
-#include "Scene/SceneFactory.h"
-#include "Scene/SceneAsset.h"
-#include "Scene/Scene.h"
-#include "World/Entity/EntityManager.h"
 #include "Database/Database.h"
+#include "Scene/Scene.h"
+#include "Scene/SceneFactory.h"
+#include "Scene/SceneResource.h"
+#include "World/Entity/EntityManager.h"
 
 namespace traktor
 {
@@ -32,12 +32,17 @@ bool SceneFactory::isCacheable() const
 
 Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
 {
-	Ref< SceneAsset > asset = m_database->getObjectReadOnly< SceneAsset >(guid);
-	if (!asset)
+	Ref< SceneResource > sceneResource = m_database->getObjectReadOnly< SceneResource >(guid);
+	if (!sceneResource)
 		return 0;
 
 	Ref< world::IEntityManager > entityManager = new world::EntityManager();
-	return asset->createScene(resourceManager, m_renderSystem, m_entityBuilder, entityManager);
+	return sceneResource->createScene(
+		resourceManager,
+		m_renderSystem,
+		m_entityBuilder,
+		entityManager
+	);
 }
 
 	}

@@ -136,6 +136,8 @@ public:
 	//@{
 
 	bool isSelected() const;
+
+	void setVisible(bool visible);
 	
 	bool isVisible() const;
 

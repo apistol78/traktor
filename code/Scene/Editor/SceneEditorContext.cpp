@@ -1,5 +1,12 @@
 #include <limits>
 #include <stack>
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Resource/IResourceManager.h"
+#include "Scene/ISceneController.h"
+#include "Scene/ISceneControllerData.h"
+#include "Scene/Scene.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/IModifier.h"
@@ -8,15 +15,13 @@
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/Camera.h"
-#include "Scene/SceneAsset.h"
+#include "Scene/Editor/SceneAsset.h"
+#include "Ui/Event.h"
 #include "World/Entity/EntityManager.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityInstance.h"
-#include "Ui/Event.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -281,22 +286,21 @@ void SceneEditorContext::buildEntities()
 				entityBuilder->addFactory(*j);
 		}
 
-		// (Re-)build entities.
-		{
-			Ref< world::IEntityManager > entityManager = new world::EntityManager();
-			m_scene = m_sceneAsset->createScene(
-				m_resourceManager,
-				m_renderSystem,
-				entityBuilder,
-				entityManager
-			);
+		// Create entity manager and build root instance.
+		Ref< world::IEntityManager > entityManager = new world::EntityManager();
 
-			// Save new root entity adapter.
-			m_rootEntityAdapter = entityBuilder->getRootAdapter();
+		entityBuilder->begin(entityManager);
+		Ref< world::Entity > rootEntity = entityBuilder->build(m_sceneAsset->getInstance());
 
-			// Ensure no references exist to our entity builder; not allowed to cache it.
-			//Heap::getInstance().invalidateRefs(entityBuilder);
-		}
+		// Update scene controller also.
+		Ref< ISceneController > controller;
+		if (m_sceneAsset->getControllerData())
+			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entityManager);
+
+		entityBuilder->end();
+
+		// Save new root entity adapter.
+		m_rootEntityAdapter = entityBuilder->getRootAdapter();
 
 		// Create entity editors.
 		if (m_rootEntityAdapter)
@@ -306,15 +310,25 @@ void SceneEditorContext::buildEntities()
 				(*i)->createEntityEditorFactories(this, entityEditorFactories);
 			createEntityEditors(this, entityEditorFactories, m_rootEntityAdapter);
 		}
+
+		// Bind post process settings.
+		resource::Proxy< world::PostProcessSettings > postProcessSettings = m_sceneAsset->getPostProcessSettings();
+		m_resourceManager->bind(postProcessSettings);
+
+		// Create our scene.
+		m_scene = new Scene(
+			controller,
+			entityManager,
+			rootEntity,
+			m_sceneAsset->getWorldRenderSettings(),
+			postProcessSettings
+		);
 	}
 	else
 	{
 		m_scene = 0;
 		m_rootEntityAdapter = 0;
 	}
-
-	// Force a collect in order to as quickly as possible remove old, unused, entities.
-	//Heap::getInstance().collect();
 
 	raisePostBuild();
 }
@@ -420,8 +434,13 @@ Ref< EntityAdapter > SceneEditorContext::queryRay(const Vector4& worldRayOrigin,
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be spatial and exclusively pick-able.
-		if (!(*i)->isSpatial() || !(*i)->getEntityEditor() || !(*i)->getEntityEditor()->isPickable(*i))
+		// Must be visible, spatial and exclusively pick-able.
+		if (
+			!(*i)->isVisible() ||
+			!(*i)->isSpatial() ||
+			!(*i)->getEntityEditor() ||
+			!(*i)->getEntityEditor()->isPickable(*i)
+		)
 			continue;
 
 		// Transform ray into object space.
