@@ -25,19 +25,16 @@ HeightfieldShapeBullet::HeightfieldShapeBullet(const resource::Proxy< Heightfiel
 :	m_heightfield(heightfield)
 ,	m_localScaling(1.0f, 1.0f, 1.0f)
 {
+	m_shapeType = TERRAIN_SHAPE_PROXYTYPE;
 }
 
 HeightfieldShapeBullet::~HeightfieldShapeBullet()
 {
 }
 
-int	HeightfieldShapeBullet::getShapeType() const
-{
-	return TERRAIN_SHAPE_PROXYTYPE;
-}
-
 void HeightfieldShapeBullet::setLocalScaling(const btVector3& scaling)
 {
+	m_localScaling = scaling;
 }
 
 const btVector3& HeightfieldShapeBullet::getLocalScaling() const

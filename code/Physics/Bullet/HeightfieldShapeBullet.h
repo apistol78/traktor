@@ -21,8 +21,6 @@ public:
 
 	virtual ~HeightfieldShapeBullet();
 
-	virtual int	getShapeType() const;
-
 	virtual void setLocalScaling(const btVector3& scaling);
 
 	virtual const btVector3& getLocalScaling() const;
