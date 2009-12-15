@@ -1,11 +1,24 @@
 #include "Sound/Filters/SurroundFilter.h"
 #include "Sound/Filters/SurroundEnvironment.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+float angleDifference(float angle1, float angle2)
+{
+	float A = abs(angle1 - angle2);
+	float B = abs(angle1 + TWO_PI - angle2);
+	float C = abs(angle2 + TWO_PI - angle1);
+	return min(min(A, B), C);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
 
@@ -13,6 +26,7 @@ SurroundFilter::SurroundFilter(SurroundEnvironment* environment)
 :	m_environment(environment)
 ,	m_speakerPosition(0.0f, 0.0f, 0.0f, 1.0f)
 {
+	std::memset(m_buffer, 0, sizeof(m_buffer));
 }
 
 void SurroundFilter::setSpeakerPosition(const Vector4& position)
@@ -22,21 +36,17 @@ void SurroundFilter::setSpeakerPosition(const Vector4& position)
 
 void SurroundFilter::apply(SoundBlock& outBlock)
 {
-	const struct Listener
+	const struct Speaker
 	{
 		float angle;
-		float angleOffsetMax;
 		int channel;
 	}
-	c_listenerCones[] =
+	c_speakers[] =
 	{
-		{ 0.0f, 45.0f, SbcSideRight },
-		{ 45.0f, 45.0f, SbcRight },
-		{ 90.0f, 45.0f, SbcCenter },
-		{ 135.0f, 45.0f, SbcLeft },
-		{ 180.0f, 45.0f, SbcSideLeft },
-		{ 235.0f, 65.0f, SbcRearLeft },
-		{ 305.0f, 65.0f, SbcRearRight }
+		{ deg2rad(45), SbcRight },
+		{ deg2rad(135), SbcLeft },
+		{ deg2rad(225), SbcRearLeft },
+		{ deg2rad(315), SbcRearRight }
 	};
 
 	// Collapse all channels; should be mono sound sources.
@@ -45,43 +55,47 @@ void SurroundFilter::apply(SoundBlock& outBlock)
 		float sample = 0.0f;
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			sample += outBlock.samples[j][i];
-		for (uint32_t j = 0; j < sizeof_array(c_listenerCones); ++j)
-			m_buffer[c_listenerCones[j].channel][i] = sample;
+		for (uint32_t j = 0; j < sizeof_array(c_speakers); ++j)
+			m_buffer[c_speakers[j].channel][i] = sample;
+		m_buffer[SbcCenter][i] = sample;
 		m_buffer[SbcLfe][i] = 0.0f;
 	}
+
 	outBlock.maxChannel = SbcMaxChannelCount;
 	for (uint32_t j = 0; j < SbcMaxChannelCount; ++j)
 		outBlock.samples[j] = m_buffer[j];
 
 	// Get speaker position in listener space.
-	Matrix44 listenerInvTransform = m_environment->getListenerTransform().inverseOrtho();
-	Vector4 speakerPosition = listenerInvTransform * m_speakerPosition;
+	Matrix44 listenerTransformInv = m_environment->getListenerTransformInv();
 
-	// Speaker direction in XZ plane.
-	Vector4 speakerDirection = speakerPosition * Vector4(1.0f, 0.0f, 1.0f, 0.0f);
-	Scalar speakerDistance = speakerDirection.length();
+	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
+	float speakerDistance = speakerPosition.xyz0().length();
+	float speakerAngle = atan2f(speakerPosition.x(), speakerPosition.z()) + PI;
 
-	// Outside listener circle.
-	if (speakerDistance > Scalar(1.0f))
+	float maxDistance = m_environment->getMaxDistance();
+	float innerRadius = m_environment->getInnerRadius();
+
+	float distanceAtten = clamp(1.0f - speakerDistance / maxDistance, 0.0f, 1.0f);
+	float innerAtten = clamp(speakerDistance / innerRadius, 0.0f, 1.0f);
+
+	const float c_angleCone = deg2rad(90.0f + 30.0f);
+
+	// Satellite speakers.
+	for (uint32_t i = 0; i < sizeof_array(c_speakers); ++i)
 	{
-		speakerDirection /= speakerDistance;
-		float angle = rad2deg(atan2f(-speakerDirection.z(), -speakerDirection.x()) + PI);
-		for (uint32_t i = 0; i < sizeof_array(c_listenerCones); ++i)
-		{
-			float angleOffset = abs(angle - c_listenerCones[i].angle);
-			while (angleOffset > 180.0f)
-				angleOffset -= 360.0f;
+		float angleOffset = angleDifference(c_speakers[i].angle, speakerAngle);
+		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
+		float attenuation = angleAtten * distanceAtten * innerAtten;
 
-			float attenuate = 1.0f - abs(angleOffset) / c_listenerCones[i].angleOffsetMax;
-			attenuate = min(attenuate, 1.0f);
-			attenuate = max(attenuate, 0.0f);
+		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+			outBlock.samples[c_speakers[i].channel][j] *= attenuation;
+	}
 
-			for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-			{
-				outBlock.samples[c_listenerCones[i].channel][j] *= attenuate;
-				outBlock.samples[SbcLfe][j] += outBlock.samples[c_listenerCones[i].channel][j];
-			}
-		}
+	// Center speaker.
+	for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
+	{
+		outBlock.samples[SbcCenter][j] *= (1.0f - innerAtten);
+		outBlock.samples[SbcLfe][j] = outBlock.samples[SbcCenter][j];
 	}
 }
 

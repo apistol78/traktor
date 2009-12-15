@@ -90,6 +90,44 @@ void createEntityEditors(
 		createEntityEditors(context, entityEditorFactories, *i);
 }
 
+// Find adapter by traverse entity adapter hierarchy.
+template < typename Predicate >
+EntityAdapter* findAdapter(EntityAdapter* entityAdapter, Predicate predicate)
+{
+	if (predicate(entityAdapter))
+		return entityAdapter;
+
+	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		EntityAdapter* foundEntityAdapter = findAdapter(*i, predicate);
+		if (foundEntityAdapter)
+			return foundEntityAdapter;
+	}
+
+	return 0;
+}
+
+struct FindFromEntity
+{
+	const world::Entity* m_entity;
+
+	bool operator () (const EntityAdapter* entityAdapter) const
+	{
+		return entityAdapter->getEntity() == m_entity;
+	}
+};
+
+struct FindFromInstance
+{
+	const world::EntityInstance* m_entityInstance;
+
+	bool operator () (const EntityAdapter* entityAdapter) const
+	{
+		return entityAdapter->getInstance() == m_entityInstance;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
@@ -396,40 +434,26 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	return uint32_t(outEntityAdapters.size());
 }
 
-Ref< EntityAdapter > SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
+EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	{
-		if ((*i)->getEntity() == entity)
-			return *i;
-	}
-
-	return 0;
+	FindFromEntity predicate;
+	predicate.m_entity = entity;
+	return findAdapter(m_rootEntityAdapter, predicate);
 }
 
-Ref< EntityAdapter > SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
+EntityAdapter* SceneEditorContext::findAdapterFromInstance(const world::EntityInstance* instance) const
 {
-	RefArray< EntityAdapter > entityAdapters;
-	getEntities(entityAdapters);
-
-	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	{
-		if ((*i)->getInstance() == instance)
-			return *i;
-	}
-
-	return 0;
+	FindFromInstance predicate;
+	predicate.m_entityInstance = instance;
+	return findAdapter(m_rootEntityAdapter, predicate);
 }
 
-Ref< EntityAdapter > SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
+EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection) const
 {
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
-	Ref< EntityAdapter > minEntityAdapter;
+	EntityAdapter* minEntityAdapter = 0;
 	Scalar minDistance(1e8f);
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)

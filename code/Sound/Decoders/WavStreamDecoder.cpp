@@ -1,8 +1,9 @@
 #include <cstring>
-#include "Sound/Decoders/WavStreamDecoder.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/Decoders/WavStreamDecoder.h"
 
 namespace traktor
 {
@@ -73,6 +74,9 @@ bool WavStreamDecoder::getBlock(SoundBlock& outSoundBlock)
 			uint16_t* blockPtr = reinterpret_cast< uint16_t* >(block);
 			for (uint32_t i = 0; i < readSamples; ++i)
 			{
+#if defined(T_BIG_ENDIAN)
+				swap8in32(*blockPtr);
+#endif
 				m_samplesBuffer[i] = *reinterpret_cast< int16_t* >(blockPtr) / 32767.0f;
 				blockPtr++;
 			}
@@ -101,10 +105,24 @@ bool WavStreamDecoder::readHeader()
 	// Read RIFF header.
 	m_stream->read(&hdr, sizeof(hdr));
 	m_stream->seek(IStream::SeekCurrent, 4);
-	
+#if defined(T_BIG_ENDIAN)
+	swap8in32(hdr.size);
+#endif
+
 	// Read format chunk.
 	m_stream->read(&fmt, sizeof(fmt));
+#if defined(T_BIG_ENDIAN)
+	swap8in32(fmt.size);
+#endif
 	m_stream->read(&m_format, sizeof(m_format));
+#if defined(T_BIG_ENDIAN)
+	swap8in32(m_format.compression);
+	swap8in32(m_format.channels);
+	swap8in32(m_format.sampleRate);
+	swap8in32(m_format.averageBytesPerSecond);
+	swap8in32(m_format.blockAlign);
+	swap8in32(m_format.bitsPerSample);
+#endif
 	m_stream->seek(IStream::SeekCurrent, fmt.size - sizeof(m_format));
 
 	// Locate data chunk.
@@ -112,8 +130,11 @@ bool WavStreamDecoder::readHeader()
 	{
 		if (m_stream->read(&data, sizeof(data)) != sizeof(data))
 			return false;
-		if (memcmp(data.id, "data", 4) == 0)
+		if (std::memcmp(data.id, "data", 4) == 0)
 			break;
+#if defined(T_BIG_ENDIAN)
+		swap8in32(data.size);
+#endif
 		m_stream->seek(IStream::SeekCurrent, data.size);
 	}
 

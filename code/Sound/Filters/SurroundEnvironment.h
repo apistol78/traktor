@@ -22,14 +22,30 @@ class T_DLLCLASS SurroundEnvironment : public Object
 	T_RTTI_CLASS;
 
 public:
-	SurroundEnvironment();
+	SurroundEnvironment(
+		float maxDistance = 10.0f,
+		float innerRadius = 1.0f
+	);
+
+	void setMaxDistance(float maxDistance);
+
+	float getMaxDistance() const { return m_maxDistance; }
+
+	void setInnerRadius(float innerRadius);
+
+	float getInnerRadius() const { return m_innerRadius; }
 
 	void setListenerTransform(const Matrix44& listenerTransform);
 
-	const Matrix44& getListenerTransform() const;
+	const Matrix44& getListenerTransform() const { return m_listenerTransform; }
+
+	const Matrix44& getListenerTransformInv() const { return m_listenerTransformInv; }
 
 private:
+	float m_maxDistance;
+	float m_innerRadius;
 	Matrix44 m_listenerTransform;
+	Matrix44 m_listenerTransformInv;
 };
 
 	}
