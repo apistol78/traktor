@@ -1,5 +1,5 @@
-#ifndef traktor_sound_StaticSoundResource_H
-#define traktor_sound_StaticSoundResource_H
+#ifndef traktor_sound_BankResource_H
+#define traktor_sound_BankResource_H
 
 #include "Core/RefArray.h"
 #include "Sound/ISoundResource.h"
@@ -51,4 +51,4 @@ private:
 	}
 }
 
-#endif	// traktor_sound_StaticSoundResource_H
+#endif	// traktor_sound_BankResource_H
