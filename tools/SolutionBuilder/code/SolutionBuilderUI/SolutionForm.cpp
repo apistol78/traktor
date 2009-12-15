@@ -232,7 +232,7 @@ void SolutionForm::updateSolutionTree()
 	treeSolution->setData(L"SOLUTION", m_solution);
 	
 	RefArray< Project > projects = m_solution->getProjects();
-	std::sort(projects.begin(), projects.end(), ProjectSortPredicate());
+	projects.sort(ProjectSortPredicate());
 
 	for (RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 		createTreeProjectItem(treeSolution, *i);

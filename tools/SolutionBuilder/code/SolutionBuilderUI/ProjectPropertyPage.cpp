@@ -113,7 +113,7 @@ void ProjectPropertyPage::updateDependencyList()
 	Ref< ui::ListViewItems > dependencyItems = new ui::ListViewItems();
 
 	// Sort all dependencies.
-	std::sort(dependencies.begin(), dependencies.end(), DependencyPredicate());
+	dependencies.sort(DependencyPredicate());
 
 	// Add all local dependencies first.
 	for (RefArray< Dependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
