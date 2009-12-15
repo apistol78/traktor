@@ -1,7 +1,8 @@
+#include "Core/Serialization/ISerializer.h"
 #include "Physics/HeightfieldShapeDesc.h"
 #include "Physics/Heightfield.h"
 #include "Physics/HeightfieldResource.h"
-#include "Core/Serialization/ISerializer.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -19,6 +20,11 @@ void HeightfieldShapeDesc::setHeightfield(const resource::Proxy< Heightfield >& 
 const resource::Proxy< Heightfield >& HeightfieldShapeDesc::getHeightfield() const
 {
 	return m_heightfield;
+}
+
+bool HeightfieldShapeDesc::bind(resource::IResourceManager* resourceManager)
+{
+	return resourceManager->bind(m_heightfield);
 }
 
 bool HeightfieldShapeDesc::serialize(ISerializer& s)
