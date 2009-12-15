@@ -223,6 +223,7 @@ public:
 		}
 	};
 
+	/*! \brief Mutable iterator. */
 	class iterator : public const_iterator
 	{
 	public:
@@ -321,6 +322,7 @@ public:
 		}
 	};
 
+	/*! \brief Construct empty array. */
 	RefArray()
 	:	m_items(0)
 	,	m_size(0)
@@ -328,6 +330,7 @@ public:
 	{
 	}
 
+	/*! \brief Construct array with size. */
 	RefArray(size_type size)
 	:	m_items(0)
 	,	m_size(0)
@@ -341,6 +344,7 @@ public:
 			m_items[i] = 0;
 	}
 
+	/*! \brief Copy array. */
 	RefArray(const RefArray< Class >& s)
 	{
 		m_items = new value_type [s.m_size];
@@ -359,6 +363,11 @@ public:
 		clear();
 	}
 
+	/*! \brief Clear array.
+	 *
+	 * All elements are released and
+	 * allocated memory are freed.
+	 */
 	void clear()
 	{
 		for (size_type i = 0; i < m_size; ++i)
@@ -369,50 +378,59 @@ public:
 		m_capacity = 0;
 	}
 
+	/*! \brief Return iterator at beginning of array. */
 	iterator begin()
 	{
 		return iterator(&m_items[0]);
 	}
 
+	/*! \brief Return iterator one past last element. */
 	iterator end()
 	{
 		return iterator(&m_items[m_size]);
 	}
 
+	/*! \brief Return iterator at beginning of array. */
 	const_iterator begin() const
 	{
 		return const_iterator(&m_items[0]);
 	}
 
+	/*! \brief Return iterator one past last element. */
 	const_iterator end() const
 	{
 		return const_iterator(&m_items[m_size]);
 	}
 
+	/*! \brief Get front element. */
 	Class* front()
 	{
 		T_ASSERT (m_items);
 		return m_items[0];
 	}
 
+	/*! \brief Get back element. */
 	Class* back()
 	{
 		T_ASSERT (m_items);
 		return m_items[m_size - 1];
 	}
 
+	/*! \brief Get front element. */
 	const Class* front() const
 	{
 		T_ASSERT (m_items);
 		return m_items[0];
 	}
 
+	/*! \brief Get back element. */
 	const Class* back() const
 	{
 		T_ASSERT (m_items);
 		return m_items[m_size - 1];
 	}
 
+	/*! \brief Push element as front. */
 	void push_front(Class* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -422,6 +440,7 @@ public:
 		m_items[0] = val;
 	}
 
+	/*! \brief Pop front element. */
 	void pop_front()
 	{
 		T_SAFE_RELEASE(m_items[0]);
@@ -430,6 +449,7 @@ public:
 		shrink(1);
 	}
 
+	/*! \brief Push element as back. */
 	void push_back(Class* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -437,12 +457,14 @@ public:
 		m_items[m_size - 1] = val;
 	}
 
+	/*! \brief Pop back element. */
 	void pop_back()
 	{
 		T_SAFE_RELEASE(m_items[m_size - 1]);
 		shrink(1);
 	}
 
+	/*! \brief Insert element at specified location. */
 	void insert(iterator at, Class* const val)
 	{
 		T_SAFE_ADDREF(val);
@@ -458,6 +480,7 @@ public:
 		m_items[offset] = val;
 	}
 
+	/*! \brief Insert elements at specified location. */
 	void insert(iterator at, iterator first, iterator last)
 	{
 		size_type size = m_size;
@@ -479,6 +502,7 @@ public:
 		return iterator(&m_items[offset]);
 	}
 
+	/*! \brief Erase element from array. */
 	iterator erase(iterator iter)
 	{
 		T_SAFE_RELEASE(*iter.m_item);
@@ -493,6 +517,7 @@ public:
 		return iterator(&m_items[offset]);
 	}
 
+	/*! \brief Remove first element from array by value. */
 	void remove(value_type item)
 	{
 		iterator i = std::find(begin(), end(), item);
@@ -500,6 +525,7 @@ public:
 			erase(i);
 	}
 
+	/*! \brief Erase range of elements from array. */
 	void erase(iterator first, iterator last)
 	{
 		size_type offset = size_type(first.m_item - m_items);
@@ -518,6 +544,7 @@ public:
 		m_size = size;
 	}
 
+	/*! \brief Swap content with another array. */
 	void swap(RefArray< Class >& src)
 	{
 		std::swap(m_items, src.m_items);
@@ -525,16 +552,19 @@ public:
 		std::swap(m_capacity, src.m_capacity);
 	}
 
+	/*! \brief Check if array is empty. */
 	bool empty() const
 	{
 		return m_size == 0;
 	}
 
+	/*! \brief Number of elements in array. */
 	size_type size() const
 	{
 		return m_size;
 	}
 
+	/*! \brief Resize array. */
 	void resize(size_type size)
 	{
 		if (size > m_size)
@@ -557,11 +587,17 @@ public:
 		m_size = size;
 	}
 
+	/*! \brief Capacity of array.
+	 *
+	 * Return number of elements which can fit in the
+	 * array without allocate more memory.
+	 */
 	size_type capacity() const
 	{
 		return m_capacity;
 	}
 
+	/*! \brief Reserve capacity of array. */
 	void reserve(size_type size)
 	{
 		if (size > m_capacity)
@@ -581,14 +617,32 @@ public:
 		}
 	}
 
+	/*! \brief Return handle to element at specified location. */
 	Handle< Class > at(size_type index)
 	{
 		return m_items[index];
 	}
 
+	/*! \brief Return element at specified location. */
 	Class* at(size_type index) const
 	{
 		return m_items[index];
+	}
+
+	/*! \brief Sort array.
+	 *
+	 * Prefer use of this method instead
+	 * of std::sort directly as this will not cause
+	 * reference counts to be modified when
+	 * swapping elements thus being faster.
+	 *
+	 * \param predicate Sort predicate.
+	 */
+	template < typename PredicateType >
+	void sort(PredicateType predicate)
+	{
+		if (m_size > 1)
+			std::sort(&m_items[0], &m_items[m_size], predicate);
 	}
 
 	Handle< Class > operator [] (size_type index)
