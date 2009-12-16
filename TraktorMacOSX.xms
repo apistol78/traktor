@@ -5035,6 +5035,14 @@
 													<fileName>../../../res/editor/Types.png</fileName>
 													<items/>
 												</item>
+												<item type="File">
+													<fileName>../../../res/LayerHidden.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/LayerVisible.png</fileName>
+													<items/>
+												</item>
 											</items>
 										</item>
 									</items>
