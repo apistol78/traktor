@@ -87,7 +87,7 @@ bool WorldRenderer::create(
 		desc.height = viewPort.height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
-		desc.targets[0].format = render::TfR32F; //16F;
+		desc.targets[0].format = render::TfR16F;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_depthTargetSet)
@@ -129,7 +129,7 @@ bool WorldRenderer::create(
 		desc.height = m_settings.shadowMapResolution;
 		desc.multiSample = 0;
 		desc.depthStencil = true;
-		desc.targets[0].format = render::TfR32F;
+		desc.targets[0].format = render::TfR16F;
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Create shadow mask target.
