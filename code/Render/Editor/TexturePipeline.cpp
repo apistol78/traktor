@@ -172,6 +172,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 7, TexturePipe
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
+,	m_clampSize(0)
 ,	m_allowCompression(true)
 {
 }
@@ -180,6 +181,7 @@ bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
 	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);
+	m_clampSize = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.ClampSize", 0);
 	m_allowCompression = settings->getProperty< editor::PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
 	return true;
 }
@@ -350,6 +352,21 @@ bool TexturePipeline::buildOutput(
 	// Skip mips.
 	width = std::max(1, width >> m_skipMips);
 	height = std::max(1, height >> m_skipMips);
+
+	// Ensure image size doesn't exceed clamp size.
+	if (m_clampSize > 0)
+	{
+		if (width > m_clampSize)
+		{
+			height = (height * m_clampSize) / width;
+			width = m_clampSize;
+		}
+		if (height > m_clampSize)
+		{
+			width = (width * m_clampSize) / height;
+			height = m_clampSize;
+		}
+	}
 	
 	// Ensure power-of-2 textures.
 	if (!textureAsset->m_isCubeMap && (!isLog2(width) || !isLog2(height)))
