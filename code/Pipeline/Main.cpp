@@ -1,6 +1,6 @@
 #include "Editor/PipelineDependsIncremental.h"
 #include "Editor/PipelineBuilder.h"
-#include "Editor/PipelineHash.h"
+#include "Editor/PipelineDb.h"
 #include "Editor/IPipeline.h"
 #include "Editor/MemCachedPipelineCache.h"
 #include "Editor/Settings.h"
@@ -86,28 +86,6 @@ Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
 	return new editor::Settings(globalGroup, userGroup);
 }
 
-Ref< editor::PipelineHash > loadPipelineHash(const std::wstring& pipelineHashFile)
-{
-	Ref< editor::PipelineHash > pipelineHash;
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
-	if (file)
-	{
-		pipelineHash = BinarySerializer(file).readObject< editor::PipelineHash >();
-		file->close();
-	}
-	return pipelineHash;
-}
-
-void savePipelineHash(const std::wstring& pipelineHashFile, editor::PipelineHash* pipelineHash)
-{
-	Ref< traktor::IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
-	if (file)
-	{
-		BinarySerializer(file).writeObject(pipelineHash);
-		file->close();
-	}
-}
-
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
@@ -182,13 +160,14 @@ int main(int argc, const char** argv)
 		return 2;
 	}
 
-	std::wstring hashFile = settings->getProperty< editor::PropertyString >(L"Pipeline.Hash");
+	std::wstring pipelineDbConnectionStr = settings->getProperty< editor::PropertyString >(L"Pipeline.Db");
 
-	Ref< editor::PipelineHash > pipelineHash;
-	if (!hashFile.empty())
-		pipelineHash = loadPipelineHash(hashFile);
-	if (!pipelineHash)
-		pipelineHash = new editor::PipelineHash();
+	Ref< editor::PipelineDb > pipelineDb = new editor::PipelineDb();
+	if (!pipelineDb->open(pipelineDbConnectionStr))
+	{
+		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
+		return 3;
+	}
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
@@ -241,7 +220,7 @@ int main(int argc, const char** argv)
 		sourceDatabase,
 		outputDatabase,
 		pipelineCache,
-		pipelineHash
+		pipelineDb
 	);
 
 	bool rebuild = cmdLine.hasOption('f');
@@ -257,9 +236,7 @@ int main(int argc, const char** argv)
 	traktor::log::info << DecreaseIndent;
 	traktor::log::info << L"Finished" << Endl;
 
-	if (!hashFile.empty())
-		savePipelineHash(hashFile, pipelineHash);
-
+	pipelineDb->close();
 	outputDatabase->close();
 	sourceDatabase->close();
 

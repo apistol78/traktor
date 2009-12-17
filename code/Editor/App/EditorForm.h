@@ -60,7 +60,6 @@ class IEditorPluginFactory;
 class IEditorPlugin;
 class IEditorTool;
 class EditorPageSite;
-class PipelineHash;
 class MRU;
 
 /*! \brief Main editor form.
@@ -194,10 +193,6 @@ private:
 	void saveSettings(const std::wstring& settingsFile);
 
 	void loadDictionary();
-
-	Ref< PipelineHash > loadPipelineHash();
-
-	void savePipelineHash(PipelineHash* pipelineHash);
 
 	void checkModified();
 

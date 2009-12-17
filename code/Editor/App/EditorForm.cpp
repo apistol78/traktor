@@ -23,7 +23,7 @@
 #include "Editor/PipelineDependsIncremental.h"
 #include "Editor/PipelineBuilder.h"
 #include "Editor/PipelineDependency.H"
-#include "Editor/PipelineHash.h"
+#include "Editor/PipelineDb.h"
 #include "Editor/IPipeline.h"
 #include "Editor/MemCachedPipelineCache.h"
 #include "Editor/Assets.h"
@@ -893,8 +893,14 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(0);
 
-	Ref< PipelineHash > pipelineHash = loadPipelineHash();
-	T_ASSERT (pipelineHash);
+	std::wstring pipelineDbConnectionStr = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineDb");
+
+	Ref< PipelineDb > pipelineDb = new PipelineDb();
+	if (!pipelineDb->open(pipelineDbConnectionStr))
+	{
+		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
+		return;
+	}
 
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
@@ -933,7 +939,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		m_project->getSourceDatabase(),
 		m_project->getOutputDatabase(),
 		pipelineCache,
-		pipelineHash,
+		pipelineDb,
 		&listener
 	);
 
@@ -949,7 +955,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	if (pipelineCache)
 		pipelineCache->destroy();
 
-	savePipelineHash(pipelineHash);
+	pipelineDb->close();
 
 	double elapsed = timerBuild.getElapsedTime();
 
@@ -1530,38 +1536,6 @@ void EditorForm::loadDictionary()
 		i18n::I18N::getInstance().appendDictionary(dictionary);
 	else
 		log::warning << L"Unable to load dictionary \"" << dictionaryFile << L"\"; possibly corrupted." << Endl;
-}
-
-Ref< PipelineHash > EditorForm::loadPipelineHash()
-{
-	T_ASSERT (m_project);
-
-	Ref< PipelineHash > pipelineHash;
-
-	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
-	Ref< IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmRead);
-	if (file)
-	{
-		pipelineHash = BinarySerializer(file).readObject< PipelineHash >();
-		file->close();
-	}
-	if (!pipelineHash)
-		pipelineHash = new PipelineHash();
-
-	return pipelineHash;
-}
-
-void EditorForm::savePipelineHash(PipelineHash* pipelineHash)
-{
-	T_ASSERT (m_project);
-
-	std::wstring pipelineHashFile = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineHash");
-	Ref< IStream > file = FileSystem::getInstance().open(pipelineHashFile, File::FmWrite);
-	if (file)
-	{
-		BinarySerializer(file).writeObject(pipelineHash);
-		file->close();
-	}
 }
 
 void EditorForm::checkModified()

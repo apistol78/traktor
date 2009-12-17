@@ -14,9 +14,9 @@
       </second>
     </item>
     <item>
-      <first>Project.PipelineHash</first>
+      <first>Project.PipelineDb</first>
       <second type="traktor.editor.PropertyString">
-        <value>data/Target/Win32/Temp/Pipeline.hash</value>
+        <value>fileName=data/Target/Win32/Temp/Pipeline.db</value>
       </second>
     </item>
   </value>
