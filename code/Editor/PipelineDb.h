@@ -1,10 +1,7 @@
 #ifndef traktor_editor_PipelineDb_H
 #define traktor_editor_PipelineDb_H
 
-#include <map>
-#include "Core/Guid.h"
-#include "Core/Date/DateTime.h"
-#include "Core/Io/Path.h"
+#include "Editor/IPipelineDb.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,33 +23,20 @@ class IConnection;
 	namespace editor
 	{
 
-/*! \brief Pipeline database.
- * \ingroup Editor
- *
- * The pipeline db keeps records of builds
- * used by the pipeline to check if an asset
- * needs to be rebuilt.
- */
-class T_DLLCLASS PipelineDb : public Object
+class T_DLLCLASS PipelineDb : public IPipelineDb
 {
 	T_RTTI_CLASS;
 
 public:
-	struct Hash
-	{
-		uint32_t pipelineVersion;
-		uint32_t pipelineHash;
-		uint32_t sourceAssetHash;
-		std::map< Path, DateTime > timeStamps;
-	};
-
 	bool open(const std::wstring& connectionString);
 
 	void close();
 
-	void set(const Guid& guid, const Hash& hash);
+	virtual void set(const Guid& guid, const Hash& hash);
 
-	bool get(const Guid& guid, Hash& outHash) const;
+	virtual bool get(const Guid& guid, Hash& outHash) const;
+
+	virtual IPipelineReport* createReport(const std::wstring& name, const Guid& guid);
 
 private:
 	Ref< sql::IConnection > m_connection;

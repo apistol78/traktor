@@ -30,8 +30,8 @@ class Group;
 	{
 
 class IPipelineCache;
+class IPipelineDb;
 class PipelineDependency;
-class PipelineDb;
 
 /*! \brief Pipeline manager.
  * \ingroup Editor
@@ -62,7 +62,7 @@ public:
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
-		PipelineDb* db,
+		IPipelineDb* db,
 		IListener* listener = 0
 	);
 
@@ -76,11 +76,13 @@ public:
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
+	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
+
 private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
-	Ref< PipelineDb > m_db;
+	Ref< IPipelineDb > m_db;
 	IListener* m_listener;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Path, uint32_t > m_externalFileHash;
