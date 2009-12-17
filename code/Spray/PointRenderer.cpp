@@ -211,7 +211,7 @@ void PointRenderer::flush(
 
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 
-			renderBlock->type = i->shader->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;
+			renderBlock->type = render::RbtAlphaBlend;
 			renderBlock->distance = i->distance;
 			renderBlock->shader = i->shader;
 			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
