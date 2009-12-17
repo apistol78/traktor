@@ -6934,6 +6934,15 @@
 								<fileName>*.*</fileName>
 								<items/>
 							</item>
+							<item type="Filter">
+								<name>Pipeline</name>
+								<items>
+									<item type="File">
+										<fileName>Pipeline/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
