@@ -1,15 +1,15 @@
 #include <limits>
-#include "Editor/PipelineDependsIncremental.h"
-#include "Editor/PipelineSettings.h"
-#include "Editor/PipelineDependency.h"
-#include "Editor/IPipeline.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/Save.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Misc/Save.h"
-#include "Core/Log/Log.h"
+#include "Editor/IPipeline.h"
+#include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineSettings.h"
 
 namespace traktor
 {

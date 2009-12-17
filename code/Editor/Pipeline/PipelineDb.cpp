@@ -1,5 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
-#include "Editor/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDb.h"
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 

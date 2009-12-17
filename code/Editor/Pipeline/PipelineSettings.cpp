@@ -1,4 +1,4 @@
-#include "Editor/PipelineSettings.h"
+#include "Editor/Pipeline/PipelineSettings.h"
 #include "Core/Serialization/DeepHash.h"
 
 namespace traktor
