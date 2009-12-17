@@ -1,7 +1,7 @@
 #include "Editor/PipelineBuilder.h"
 #include "Editor/PipelineDependency.h"
-#include "Editor/PipelineDb.h"
 #include "Editor/IPipelineCache.h"
+#include "Editor/IPipelineDb.h"
 #include "Editor/IPipeline.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -28,7 +28,7 @@ PipelineBuilder::PipelineBuilder(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
-	PipelineDb* db,
+	IPipelineDb* db,
 	IListener* listener
 )
 :	m_sourceDatabase(sourceDatabase)
@@ -43,7 +43,7 @@ PipelineBuilder::PipelineBuilder(
 
 bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
-	PipelineDb::Hash hash;
+	IPipelineDb::Hash hash;
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -266,6 +266,11 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 	}
 
 	return object;
+}
+
+Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
+{
+	return m_db->createReport(name, guid);
 }
 
 bool PipelineBuilder::needBuild(PipelineDependency* dependency) const

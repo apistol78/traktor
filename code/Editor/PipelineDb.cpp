@@ -8,7 +8,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, IPipelineDb)
 
 bool PipelineDb::open(const std::wstring& connectionString)
 {
@@ -149,6 +149,11 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	}
 
 	return true;
+}
+
+IPipelineReport* PipelineDb::createReport(const std::wstring& name, const Guid& guid)
+{
+	return 0;
 }
 
 	}

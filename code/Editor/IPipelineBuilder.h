@@ -29,6 +29,7 @@ class Instance;
 	namespace editor
 	{
 
+class IPipelineReport;
 class PipelineDependency;
 
 class T_DLLCLASS IPipelineBuilder : public Object
@@ -45,6 +46,8 @@ public:
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+
+	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid)
