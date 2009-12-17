@@ -1,6 +1,6 @@
 #include "Editor/PipelineBuilder.h"
 #include "Editor/PipelineDependency.h"
-#include "Editor/PipelineHash.h"
+#include "Editor/PipelineDb.h"
 #include "Editor/IPipelineCache.h"
 #include "Editor/IPipeline.h"
 #include "Database/Database.h"
@@ -28,13 +28,13 @@ PipelineBuilder::PipelineBuilder(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
-	PipelineHash* hash,
+	PipelineDb* db,
 	IListener* listener
 )
 :	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
 ,	m_cache(cache)
-,	m_hash(hash)
+,	m_db(db)
 ,	m_listener(listener)
 ,	m_succeeded(0)
 ,	m_failed(0)
@@ -43,7 +43,7 @@ PipelineBuilder::PipelineBuilder(
 
 bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
-	PipelineHash::Hash hash;
+	PipelineDb::Hash hash;
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -53,7 +53,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		// Have source asset been modified?
 		if (!rebuild)
 		{
-			if (!m_hash->get((*i)->outputGuid, hash))
+			if (!m_db->get((*i)->outputGuid, hash))
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
 				(*i)->reason |= IPipeline::BrSourceModified;
@@ -116,6 +116,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		hash.pipelineVersion = type_of((*i)->pipeline).getVersion();
 		hash.pipelineHash = (*i)->pipelineHash;
 		hash.sourceAssetHash = (*i)->sourceAssetHash;
+		hash.timeStamps.clear();
 
 		const std::set< Path >& files = (*i)->files;
 		for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
@@ -130,7 +131,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		// Skip building asset; just update hash.
 		if (!(*i)->build)
 		{
-			m_hash->set((*i)->outputGuid, hash);
+			m_db->set((*i)->outputGuid, hash);
 			continue;
 		}
 
@@ -161,7 +162,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				{
 					log::info << L"Cached instance(s) used" << Endl;
 
-					m_hash->set((*i)->outputGuid, hash);
+					m_db->set((*i)->outputGuid, hash);
 					m_succeeded++;
 				}
 			}
@@ -204,7 +205,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						log::info << DecreaseIndent;
 					}
 
-					m_hash->set((*i)->outputGuid, hash);
+					m_db->set((*i)->outputGuid, hash);
 					m_succeeded++;
 				}
 				else

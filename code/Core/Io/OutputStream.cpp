@@ -274,7 +274,8 @@ void OutputStream::increaseIndent()
 void OutputStream::decreaseIndent()
 {
 	Acquire< Semaphore > lock(m_lock);
-	m_indent.pop_back();
+	if (!m_indent.empty())
+		m_indent.pop_back();
 }
 
 OutputStream& operator << (OutputStream& os, wchar_t ch)

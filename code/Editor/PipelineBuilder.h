@@ -31,7 +31,7 @@ class Group;
 
 class IPipelineCache;
 class PipelineDependency;
-class PipelineHash;
+class PipelineDb;
 
 /*! \brief Pipeline manager.
  * \ingroup Editor
@@ -62,7 +62,7 @@ public:
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
-		PipelineHash* hash,
+		PipelineDb* db,
 		IListener* listener = 0
 	);
 
@@ -80,7 +80,7 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
-	Ref< PipelineHash > m_hash;
+	Ref< PipelineDb > m_db;
 	IListener* m_listener;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Path, uint32_t > m_externalFileHash;

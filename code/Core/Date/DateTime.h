@@ -24,6 +24,12 @@ class T_DLLCLASS DateTime
 public:
 	DateTime();
 
+	/*! \brief Initialize DateTime object from seconds since the Epoch.
+	 *
+	 * \param seconds Seconds since the Epoch 1970-01-01 00:00:00 UTC.
+	 */
+	DateTime(uint64_t seconds);
+
 	/*! \brief Initialize DateTime object with given date.
 	 *
 	 * \param year Fully qualified year.
@@ -37,6 +43,9 @@ public:
 
 	/*! \brief Return current date. */
 	static DateTime now();
+
+	/*! \brief Parse date; must conform to ISO 8601. */
+	static DateTime parse(const std::wstring& str);
 
 	/*! \brief Return year. */
 	uint16_t getYear() const;
@@ -65,6 +74,17 @@ public:
 	/*! \brief Return second (0 - 59). */
 	uint8_t getSecond() const;
 
+	/*! \brief Return seconds since the Epoch. */
+	uint64_t getSecondsSinceEpoch() const;
+
+	/*! \brief Format as string.
+	 *
+	 * See strftime for further information.
+	 *
+	 * \param fmt Format.
+	 */
+	std::wstring format(const std::wstring& fmt) const;
+
 	/*! \brief Compare equal operator. */
 	bool operator == (const DateTime& dt) const;
 
@@ -75,12 +95,7 @@ public:
 	bool serialize(ISerializer& s);
 
 private:
-	uint16_t m_year;
-	uint8_t m_month;
-	uint16_t m_day;
-	uint8_t m_hour;
-	uint8_t m_minute;
-	uint8_t m_second;
+	uint64_t m_epoch;
 };
 
 }

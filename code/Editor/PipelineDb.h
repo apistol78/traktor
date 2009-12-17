@@ -1,34 +1,39 @@
-#ifndef traktor_editor_PipelineHash_H
-#define traktor_editor_PipelineHash_H
+#ifndef traktor_editor_PipelineDb_H
+#define traktor_editor_PipelineDb_H
 
 #include <map>
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Date/DateTime.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Io/Path.h"
 #include "Core/Guid.h"
+#include "Core/Date/DateTime.h"
+#include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+	namespace sql
+	{
+
+class IConnection;
+
+	}
+
 	namespace editor
 	{
 
-/*! \brief Pipeline hash.
+/*! \brief Pipeline database.
  * \ingroup Editor
  *
- * The pipeline hash keeps records of builds
+ * The pipeline db keeps records of builds
  * used by the pipeline to check if an asset
  * needs to be rebuilt.
  */
-class T_DLLCLASS PipelineHash : public ISerializable
+class T_DLLCLASS PipelineDb : public Object
 {
 	T_RTTI_CLASS;
 
@@ -39,24 +44,21 @@ public:
 		uint32_t pipelineHash;
 		uint32_t sourceAssetHash;
 		std::map< Path, DateTime > timeStamps;
-
-		Hash();
-
-		bool serialize(ISerializer& s);
 	};
+
+	bool open(const std::wstring& connectionString);
+
+	void close();
 
 	void set(const Guid& guid, const Hash& hash);
 
 	bool get(const Guid& guid, Hash& outHash) const;
 
-	virtual bool serialize(ISerializer& s);
-
 private:
-	std::map< Guid, Hash > m_hash;
-	mutable Semaphore m_lock;
+	Ref< sql::IConnection > m_connection;
 };
 
 	}
 }
 
-#endif	// traktor_editor_PipelineHash_H
+#endif	// traktor_editor_PipelineDb_H
