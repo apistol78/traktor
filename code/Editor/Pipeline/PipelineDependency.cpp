@@ -1,4 +1,4 @@
-#include "Editor/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineDependency.h"
 
 namespace traktor
 {

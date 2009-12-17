@@ -1,8 +1,8 @@
 #include <sstream>
-#include "Editor/MemCachedPipelineCache.h"
-#include "Editor/MemCachedProto.h"
-#include "Editor/MemCachedGetStream.h"
-#include "Editor/MemCachedPutStream.h"
+#include "Editor/Pipeline/MemCachedPipelineCache.h"
+#include "Editor/Pipeline/MemCachedProto.h"
+#include "Editor/Pipeline/MemCachedGetStream.h"
+#include "Editor/Pipeline/MemCachedPutStream.h"
 #include "Editor/Settings.h"
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"

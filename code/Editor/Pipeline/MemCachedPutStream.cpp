@@ -1,7 +1,7 @@
 #include <cstring>
 #include <sstream>
-#include "Editor/MemCachedPutStream.h"
-#include "Editor/MemCachedProto.h"
+#include "Editor/Pipeline/MemCachedPutStream.h"
+#include "Editor/Pipeline/MemCachedProto.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
