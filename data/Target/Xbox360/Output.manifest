@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<object type="traktor.db.LocalManifest">
-	<rootGroupPath>Output</rootGroupPath>
-	<eventMonitorEnable>true</eventMonitorEnable>
-	<eventFile>Temp/Output.xvs</eventFile>
-  <useBinary>false</useBinary>
-</object>
