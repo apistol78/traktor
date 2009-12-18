@@ -3,7 +3,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Editor/IEditor.h"
 #include "Editor/IProject.h"
-#include "Editor/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineDependency.h"
 #include "World/Entity/EntityData.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
