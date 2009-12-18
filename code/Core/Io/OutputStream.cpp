@@ -1,4 +1,4 @@
-#include <sstream>
+#include <cmath>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
 #include "Core/Thread/Acquire.h"
@@ -49,6 +49,69 @@ wchar_t* itoa__(T value, wchar_t* buf)
 			un /= 10;
 		}
 		while (un);
+	}
+	else
+		*p-- = L'0';
+
+	if (negative)
+		*p-- = L'-';
+
+	return p + 1;
+}
+
+template < typename T > struct ftoa_int_type {};
+template <> struct ftoa_int_type < float > { typedef int32_t int_t; };
+template <> struct ftoa_int_type < double > { typedef int64_t int_t; };
+
+template < typename T, int fractions, int size >
+wchar_t* ftoa__(T value, wchar_t* buf)
+{
+	typedef typename ftoa_int_type< T >::int_t int_t;
+
+	bool negative = value < 0;
+	T un = negative ? -value : value;
+
+	wchar_t* p = &buf[size - 1];
+	*p-- = L'\0';
+
+	int_t vi = int_t(un);
+	int_t vf = int_t((un - vi) * std::powf(10, fractions));
+
+	if (vf)
+	{
+		int_t nf = fractions;
+
+		while ((vf % 10) == 0)
+		{
+			vf /= 10;
+			nf--;
+		}
+
+		do
+		{
+			*p-- = L'0' + int_t(vf % 10);
+			vf /= 10;
+			nf--;
+		}
+		while (vf);
+
+		while (nf > 0)
+		{
+			*p-- = L'0';
+			nf--;
+		}
+
+		*p-- = L'.';
+	}
+
+	if (vi)
+	{
+		do 
+		{
+			*p-- = L'0' + int_t(vi % 10);
+			vi /= 10;
+		}
+		while (vi);
 	}
 	else
 		*p-- = L'0';
@@ -170,22 +233,22 @@ OutputStream& OutputStream::operator << (uint64_t n)
 
 OutputStream& OutputStream::operator << (float f)
 {
-	std::wstringstream ss; ss << f;
-	puts(ss.str().c_str());
+	wchar_t buf[128];
+	puts(ftoa__< float, 5, sizeof_array(buf) >(f, buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (double f)
 {
-	std::wstringstream ss; ss << f;
-	puts(ss.str().c_str());
+	wchar_t buf[256];
+	puts(ftoa__< double, 8, sizeof_array(buf) >(f, buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (long double f)
 {
-	std::wstringstream ss; ss << f;
-	puts(ss.str().c_str());
+	wchar_t buf[256];
+	puts(ftoa__< double, 8, sizeof_array(buf) >(f, buf));
 	return *this;
 }
 

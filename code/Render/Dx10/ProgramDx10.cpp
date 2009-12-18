@@ -60,7 +60,7 @@ Ref< ProgramResourceDx10 > ProgramDx10::compile(const HlslProgram& hlslProgram)
 		if (d3dErrorMsgs)
 			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
 		log::error << Endl;
-		log::error << hlslProgram.getVertexShader() << Endl;
+		FormatMultipleLines(log::error, hlslProgram.getVertexShader());
 		return 0;
 	}
 
@@ -82,7 +82,7 @@ Ref< ProgramResourceDx10 > ProgramDx10::compile(const HlslProgram& hlslProgram)
 		if (d3dErrorMsgs)
 			log::error << mbstows((LPCSTR)d3dErrorMsgs->GetBufferPointer()) << Endl;
 		log::error << Endl;
-		log::error << hlslProgram.getPixelShader() << Endl;
+		FormatMultipleLines(log::error, hlslProgram.getPixelShader());
 		return 0;
 	}
 
