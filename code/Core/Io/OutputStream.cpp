@@ -75,10 +75,15 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 	*p-- = L'\0';
 
 	int_t vi = int_t(un);
-	int_t vf = int_t((un - vi) * std::powf(10, fractions));
+	int_t vf = int_t((un - vi) * powf(10, fractions + 1));
 
 	if (vf)
 	{
+		if (vf % 10 >= 5)
+			vf += 10;
+
+		vf /= 10;
+
 		int_t nf = fractions;
 
 		while ((vf % 10) == 0)
