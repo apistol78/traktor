@@ -86,19 +86,18 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 
 		int_t nf = fractions;
 
-		while ((vf % 10) == 0)
+		while (nf > 0 && (vf % 10) == 0)
 		{
 			vf /= 10;
 			nf--;
 		}
 
-		do
+		while (nf > 0 && vf)
 		{
 			*p-- = L'0' + int_t(vf % 10);
 			vf /= 10;
 			nf--;
 		}
-		while (vf);
 
 		while (nf > 0)
 		{
@@ -111,12 +110,11 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 
 	if (vi)
 	{
-		do 
+		while (vi)
 		{
 			*p-- = L'0' + int_t(vi % 10);
 			vi /= 10;
 		}
-		while (vi);
 	}
 	else
 		*p-- = L'0';
