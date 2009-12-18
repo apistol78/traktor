@@ -36,7 +36,7 @@ public:
 
 	virtual bool get(const Guid& guid, Hash& outHash) const;
 
-	virtual IPipelineReport* createReport(const std::wstring& name, const Guid& guid);
+	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
 	Ref< sql::IConnection > m_connection;
