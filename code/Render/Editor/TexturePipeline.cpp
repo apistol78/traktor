@@ -1,23 +1,24 @@
 #include <cstring>
 #include <squish.h>
-#include "Render/Editor/TexturePipeline.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Render/TextureResource.h"
-#include "Render/Types.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
+#include "Core/Thread/JobManager.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
-#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineReport.h"
+#include "Editor/IPipelineSettings.h"
+#include "Render/TextureResource.h"
+#include "Render/Types.h"
+#include "Render/Editor/TextureAsset.h"
+#include "Render/Editor/TexturePipeline.h"
 #include "Zip/DeflateStream.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/Writer.h"
-#include "Core/Thread/JobManager.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -233,6 +234,8 @@ bool TexturePipeline::buildOutput(
 
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
+	int32_t mipCount = 1;
+	int32_t dataSize = 0;
 	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha;
 
 	// Determine pixel and texel formats.
@@ -400,7 +403,7 @@ bool TexturePipeline::buildOutput(
 
 	if (!textureAsset->m_isCubeMap || textureAsset->m_generateSphereMap)
 	{
-		int mipCount = textureAsset->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
+		mipCount = textureAsset->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
 		T_ASSERT (mipCount >= 1);
 
 		// Determine texture compression format.
@@ -521,7 +524,7 @@ bool TexturePipeline::buildOutput(
 			for (size_t i = 0; i < jobs.size(); ++i)
 			{
 				jobs[i]->wait();
-				writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
+				dataSize += writerData.write(&tasks[i]->output[0], uint32_t(tasks[i]->output.size()), 1);
 
 				delete tasks[i];
 				delete jobs[i];
@@ -541,7 +544,7 @@ bool TexturePipeline::buildOutput(
 			return false;
 		}
 
-		int mipCount = textureAsset->m_generateMips ? log2(sideSize) + 1 : 1;
+		mipCount = textureAsset->m_generateMips ? log2(sideSize) + 1 : 1;
 		T_ASSERT (mipCount >= 1);
 
 		Writer writer(stream);
@@ -577,7 +580,7 @@ bool TexturePipeline::buildOutput(
 				Ref< drawing::Image > mipImage = sideImage->applyFilter(&mipScaleFilter);
 				T_ASSERT (mipImage);
 
-				writerData.write(
+				dataSize += writerData.write(
 					mipImage->getData(),
 					mipSize * mipSize,
 					sizeof(unsigned int)
@@ -594,6 +597,17 @@ bool TexturePipeline::buildOutput(
 	{
 		log::error << L"Unable to commit output instance" << Endl;
 		return false;
+	}
+
+	// Create report.
+	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Texture", outputGuid);
+	if (report)
+	{
+		report->set(L"width", width);
+		report->set(L"height", height);
+		report->set(L"mipCount", mipCount);
+		report->set(L"format", int32_t(textureFormat));
+		report->set(L"dataSize", dataSize);
 	}
 
 	return true;

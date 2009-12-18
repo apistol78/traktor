@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Editor/Pipeline/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IResultSet.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
 
@@ -151,9 +152,9 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	return true;
 }
 
-IPipelineReport* PipelineDb::createReport(const std::wstring& name, const Guid& guid)
+Ref< IPipelineReport > PipelineDb::createReport(const std::wstring& name, const Guid& guid)
 {
-	return 0;
+	return new PipelineDbReport(m_connection, L"Report_" + name, guid);
 }
 
 	}

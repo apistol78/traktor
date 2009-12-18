@@ -50,7 +50,7 @@ public:
 
 	virtual bool get(const Guid& guid, Hash& outHash) const = 0;
 
-	virtual IPipelineReport* createReport(const std::wstring& name, const Guid& guid) = 0;
+	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
 };
 
 	}
