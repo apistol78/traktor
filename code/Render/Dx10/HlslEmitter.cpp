@@ -708,7 +708,32 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	fpo << L"float4 Color0 : SV_Target0;" << Endl;
 
 	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(HlslShader::BtBody);
-	fpb << L"o.Color0 = " << in->cast(HtFloat4) << L";" << Endl;
+	fpb << L"float4 out_Color = " << in->cast(HtFloat4) << L";" << Endl;
+
+	// Emulate old fashion alpha test through "discard" instruction.
+	if (node->getAlphaTestEnable())
+	{
+		float alphaRef = node->getAlphaTestReference() / 255.0f;
+
+		if (node->getAlphaTestFunction() == PixelOutput::CfLess)
+			fpb << L"if (out_Color.w >= " << alphaRef << L")" << Endl;
+		else if (node->getAlphaTestFunction() == PixelOutput::CfLessEqual)
+			fpb << L"if (out_Color.w > " << alphaRef << L")" << Endl;
+		else if (node->getAlphaTestFunction() == PixelOutput::CfGreater)
+			fpb << L"if (out_Color.w <= " << alphaRef << L")" << Endl;
+		else if (node->getAlphaTestFunction() == PixelOutput::CfGreaterEqual)
+			fpb << L"if (out_Color.w < " << alphaRef << L")" << Endl;
+		else if (node->getAlphaTestFunction() == PixelOutput::CfEqual)
+			fpb << L"if (out_Color.w != " << alphaRef << L")" << Endl;
+		else if (node->getAlphaTestFunction() == PixelOutput::CfNotEqual)
+			fpb << L"if (out_Color.w == " << alphaRef << L")" << Endl;
+		else
+			return false;
+
+		fpb << L"\tdiscard;" << Endl;
+	}
+
+	fpb << L"o.Color0 = out_Color;" << Endl;
 
 	cx.getD3DRasterizerDesc().FillMode = node->getWireframe() ? D3D10_FILL_WIREFRAME : D3D10_FILL_SOLID;
 	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[node->getCullMode()];
@@ -739,7 +764,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_RED;
 	if (node->getColorWriteMask() & PixelOutput::CwGreen)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_GREEN;
-	if (node->getColorWriteMask() & PixelOutput::CwBlue)
+	if (node->getColorWriteMask() & PixelOutput::CwBlue)	
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_BLUE;
 	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_ALPHA;

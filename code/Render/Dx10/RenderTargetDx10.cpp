@@ -42,16 +42,8 @@ bool RenderTargetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetCrea
 	dtd.CPUAccessFlags = 0;
 	dtd.MiscFlags = 0;
 
-	if (setDesc.depthStencil)
-	{
-		if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
-			return false;
-	}
-	else
-	{
-		if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], dtd.SampleDesc))
-			return false;
-	}
+	if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+		return false;
 
 	hr = d3dDevice->CreateTexture2D(
 		&dtd,
