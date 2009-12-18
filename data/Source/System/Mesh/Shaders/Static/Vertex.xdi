@@ -340,8 +340,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>878</first>
-				<second>406</second>
+				<first>898</first>
+				<second>451</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -351,8 +351,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>1074</first>
-				<second>401</second>
+				<first>1235</first>
+				<second>451</second>
 			</position>
 			<name>Color</name>
 		</item>
@@ -483,6 +483,26 @@
 				<first>70</first>
 				<second>694</second>
 			</position>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment></comment>
+			<position>
+				<first>1062</first>
+				<second>431</second>
+			</position>
+			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -818,16 +838,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[45]"/>
 				<name>Output</name>
 			</source>
@@ -1114,6 +1124,26 @@
 			<destination>
 				<node ref="/object/nodes/item[31]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
