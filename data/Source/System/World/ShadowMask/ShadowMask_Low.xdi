@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>1</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget">
+			<id>2</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<multiSample>0</multiSample>
+		</item>
+	</definitions>
+	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>1</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSmProj">
+			<shader>{826F6985-8449-3F47-A6E8-1F15EAC59136}</shader>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>2</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{B8239ACF-8DFF-584B-8DC5-A993D1A005F2}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>1</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>2, 0, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>0</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{B8239ACF-8DFF-584B-8DC5-A993D1A005F2}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>2</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>0, 2, 0, 0</direction>
+			<taps>7</taps>
+		</item>
+	</steps>
+</object>

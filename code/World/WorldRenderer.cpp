@@ -36,8 +36,9 @@ void safeDestroy(T& tv)
 	}
 }
 
-const Guid c_shadowMaskProjectionSettingsGuid(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
-//const Guid c_shadowMaskProjectionSettingsGuid(L"{19222311-363F-CB45-86E5-34D376CDA8AD}");
+const Guid c_shadowMaskProjectionSettingsLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
+const Guid c_shadowMaskProjectionSettingsMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
+const Guid c_shadowMaskProjectionSettingsHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
 
 		}
 
@@ -146,7 +147,21 @@ bool WorldRenderer::create(
 
 		if (m_shadowTargetSet && m_shadowMaskTargetSet)
 		{
-			resource::Proxy< PostProcessSettings > shadowMaskProjectionSettings(c_shadowMaskProjectionSettingsGuid);
+			resource::Proxy< PostProcessSettings > shadowMaskProjectionSettings;
+
+			switch (m_settings.shadowsQuality)
+			{
+			case WorldRenderSettings::SqLow:
+				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsLow;
+				break;
+			case WorldRenderSettings::SqMedium:
+				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsMedium;
+				break;
+			case WorldRenderSettings::SqHigh:
+				shadowMaskProjectionSettings = c_shadowMaskProjectionSettingsHigh;
+				break;
+			}
+
 			resourceManager->bind(shadowMaskProjectionSettings);
 
 			m_shadowMaskProjection = new PostProcess();
