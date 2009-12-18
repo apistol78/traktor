@@ -74,47 +74,60 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 	wchar_t* p = &buf[size - 1];
 	*p-- = L'\0';
 
+	int_t fm = int_t(powf(10, fractions + 1));
 	int_t vi = int_t(un);
-	int_t vf = int_t((un - vi) * powf(10, fractions + 1));
+	int_t vf = int_t((un - vi) * fm);
 
 	if (vf)
 	{
 		if (vf % 10 >= 5)
+		{
 			vf += 10;
+			if (vf >= fm)
+			{
+				++vi;
+				vf -= fm;
+			}
+		}
 
 		vf /= 10;
 
-		int_t nf = fractions;
-
-		while (nf > 0 && (vf % 10) == 0)
+		if (vf)
 		{
-			vf /= 10;
-			nf--;
-		}
+			int_t nf = fractions;
 
-		while (nf > 0 && vf)
-		{
-			*p-- = L'0' + int_t(vf % 10);
-			vf /= 10;
-			nf--;
-		}
+			while (nf > 0 && (vf % 10) == 0)
+			{
+				vf /= 10;
+				nf--;
+			}
 
-		while (nf > 0)
-		{
-			*p-- = L'0';
-			nf--;
-		}
+			do
+			{
+				*p-- = L'0' + int_t(vf % 10);
+				vf /= 10;
+				nf--;
+			}
+			while (nf > 0 && vf);
 
-		*p-- = L'.';
+			while (nf > 0)
+			{
+				*p-- = L'0';
+				nf--;
+			}
+
+			*p-- = L'.';
+		}
 	}
 
 	if (vi)
 	{
-		while (vi)
+		do 
 		{
 			*p-- = L'0' + int_t(vi % 10);
 			vi /= 10;
 		}
+		while (vi);
 	}
 	else
 		*p-- = L'0';
@@ -237,7 +250,7 @@ OutputStream& OutputStream::operator << (uint64_t n)
 OutputStream& OutputStream::operator << (float f)
 {
 	wchar_t buf[128];
-	puts(ftoa__< float, 5, sizeof_array(buf) >(f, buf));
+	puts(ftoa__< float, 6, sizeof_array(buf) >(f, buf));
 	return *this;
 }
 
