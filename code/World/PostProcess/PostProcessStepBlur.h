@@ -1,8 +1,9 @@
 #ifndef traktor_world_PostProcessStepBlur_H
 #define traktor_world_PostProcessStepBlur_H
 
-#include "World/PostProcess/PostProcessStep.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,7 +49,7 @@ public:
 	public:
 		InstanceBlur(
 			const PostProcessStepBlur* step,
-			const Vector4 gaussianOffsetWeights[15]
+			const AlignedVector< Vector4 >& gaussianOffsetWeights
 		);
 
 		virtual void destroy();
@@ -65,8 +66,10 @@ public:
 
 	private:
 		Ref< const PostProcessStepBlur > m_step;
-		Vector4 m_gaussianOffsetWeights[15];
+		AlignedVector< Vector4 > m_gaussianOffsetWeights;
 	};
+
+	PostProcessStepBlur();
 
 	virtual Ref< Instance > create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
@@ -78,6 +81,7 @@ private:
 	mutable resource::Proxy< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 	Vector4 m_direction;
+	int32_t m_taps;
 };
 
 	}

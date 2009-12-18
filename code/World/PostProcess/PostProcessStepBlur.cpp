@@ -17,21 +17,26 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 0, PostProcessStepBlur, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 1, PostProcessStepBlur, PostProcessStep)
+
+PostProcessStepBlur::PostProcessStepBlur()
+:	m_taps(15)
+{
+}
 
 Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
 	if (!resourceManager->bind(m_shader))
 		return false;
 
-	Vector4 gaussianOffsetWeights[15];
+	AlignedVector< Vector4 > gaussianOffsetWeights(m_taps);
 	float totalWeight = 0.0f;
 
-	float step = 1.0f / (sizeof_array(gaussianOffsetWeights) - 1.0f);
+	float step = 1.0f / (m_taps - 1.0f);
 	float angleMin = (PI * step) / 2.0f;
 	float angleMax = PI - angleMin;
 
-	for (int i = 0; i < sizeof_array(gaussianOffsetWeights); ++i)
+	for (int i = 0; i < m_taps; ++i)
 	{
 		float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
 
@@ -39,7 +44,7 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IReso
 		totalWeight += weight;
 
 		gaussianOffsetWeights[i].set(
-			i - sizeof_array(gaussianOffsetWeights) / 2.0f,
+			i - m_taps / 2.0f,
 			weight,
 			0.0f,
 			0.0f
@@ -47,7 +52,7 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(resource::IReso
 	}
 
 	Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
-	for (int i = 0; i < sizeof_array(gaussianOffsetWeights); ++i)
+	for (int i = 0; i < m_taps; ++i)
 		gaussianOffsetWeights[i] *= invWeight;
 
 	return new InstanceBlur(
@@ -61,6 +66,8 @@ bool PostProcessStepBlur::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 	s >> Member< Vector4 >(L"direction", m_direction);
+	if (s.getVersion() >= 1)
+		s >> Member< int32_t >(L"taps", m_taps);
 	return true;
 }
 
@@ -82,12 +89,11 @@ bool PostProcessStepBlur::Source::serialize(ISerializer& s)
 
 PostProcessStepBlur::InstanceBlur::InstanceBlur(
 	const PostProcessStepBlur* step,
-	const Vector4 gaussianOffsetWeights[15]
+	const AlignedVector< Vector4 >& gaussianOffsetWeights
 )
 :	m_step(step)
+,	m_gaussianOffsetWeights(gaussianOffsetWeights)
 {
-	for (int i = 0; i < sizeof_array(m_gaussianOffsetWeights); ++i)
-		m_gaussianOffsetWeights[i] = gaussianOffsetWeights[i];
 }
 
 void PostProcessStepBlur::InstanceBlur::destroy()
@@ -126,7 +132,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 		}
 	}
 
-	shader->setVectorArrayParameter(L"GaussianOffsetWeights", m_gaussianOffsetWeights, sizeof_array(m_gaussianOffsetWeights));
+	shader->setVectorArrayParameter(L"GaussianOffsetWeights", &m_gaussianOffsetWeights[0], m_gaussianOffsetWeights.size());
 	shader->setVectorParameter(L"Direction", m_step->m_direction);
 	shader->setFloatParameter(L"ViewFar", viewFrustum.getFarZ());
 

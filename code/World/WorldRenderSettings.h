@@ -32,11 +32,19 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum ShadowQuality
+	{
+		SqLow,
+		SqMedium,
+		SqHigh
+	};
+
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;
 	bool velocityPassEnable;
 	bool shadowsEnabled;
+	ShadowQuality shadowsQuality;
 	bool ssaoEnabled;
 	float shadowFarZ;
 	int32_t shadowMapResolution;

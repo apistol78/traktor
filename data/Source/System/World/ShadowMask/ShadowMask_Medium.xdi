@@ -26,13 +26,13 @@
 			<target>1</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSmProj">
-			<shader>{4959A509-9162-244A-AE0B-DDD10B6B0B50}</shader>
+			<shader>{B47D3E75-E8DD-CF41-902D-1C8AF5D55FCD}</shader>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>2</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
-			<shader>{D278373F-A898-9B45-BA54-0F61D2633258}</shader>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
@@ -41,12 +41,13 @@
 				</item>
 			</sources>
 			<direction>2, 0, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>0</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur">
-			<shader>{D278373F-A898-9B45-BA54-0F61D2633258}</shader>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{7B24A14D-9B1D-7D41-8758-7EA20C944C04}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
@@ -55,6 +56,7 @@
 				</item>
 			</sources>
 			<direction>0, 2, 0, 0</direction>
+			<taps>15</taps>
 		</item>
 	</steps>
 </object>

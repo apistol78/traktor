@@ -127,7 +127,7 @@
 				<second>454</second>
 			</position>
 			<from>0</from>
-			<to>2</to>
+			<to>1</to>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment></comment>
@@ -300,7 +300,7 @@
 				<first>918</first>
 				<second>562</second>
 			</position>
-			<value>6</value>
+			<value>4</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment></comment>
