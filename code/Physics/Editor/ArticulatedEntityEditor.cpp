@@ -27,30 +27,13 @@ ArticulatedEntityEditor::ArticulatedEntityEditor(
 {
 }
 
-void ArticulatedEntityEditor::entitySelected(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	bool selected
-)
-{
-}
-
-bool ArticulatedEntityEditor::handleCommand(
-	scene::SceneEditorContext* context,
-	scene::EntityAdapter* entityAdapter,
-	const ui::Command& command
-)
-{
-	return false;
-}
-
 void ArticulatedEntityEditor::drawGuide(
 	scene::SceneEditorContext* context,
 	render::PrimitiveRenderer* primitiveRenderer,
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getEntityData());
+	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(entityAdapter->getRealEntityData());
 	const RefArray< world::EntityInstance >& instances = articulatedEntityData->getInstances();
 	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 
@@ -69,6 +52,9 @@ void ArticulatedEntityEditor::drawGuide(
 
 		Ref< scene::EntityAdapter > entity1 = context->findAdapterFromInstance(instance1);
 		Ref< scene::EntityAdapter > entity2 = instance2 ? context->findAdapterFromInstance(instance2) : 0;
+
+		if (!entity1)
+			continue;
 
 		Transform body1OriginalTransformInv = entity1->getTransform().inverse();
 		Transform body1Transform = entity1->getTransform();

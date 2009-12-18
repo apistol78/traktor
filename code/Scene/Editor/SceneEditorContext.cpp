@@ -63,7 +63,10 @@ Ref< IEntityEditor > createEntityEditor(
 		return 0;
 	}
 
-	return entityEditorFactory->createEntityEditor(context, entityDataType);
+	Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
+	T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
+
+	return entityEditor;
 }
 
 // Create entity editor for each adapter.

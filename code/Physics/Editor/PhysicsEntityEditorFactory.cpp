@@ -26,7 +26,7 @@ Ref< scene::IEntityEditor > PhysicsEntityEditorFactory::createEntityEditor(
 {
 	if (is_type_of< RigidEntityData >(entityDataType))
 		return new RigidEntityEditor(context);
-	if (is_type_of< ArticulatedEntityEditor >(entityDataType))
+	if (is_type_of< ArticulatedEntityData >(entityDataType))
 		return new ArticulatedEntityEditor(context);
 	return 0;
 }

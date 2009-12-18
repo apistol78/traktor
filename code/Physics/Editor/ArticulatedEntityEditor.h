@@ -25,18 +25,6 @@ public:
 		scene::SceneEditorContext* context
 	);
 
-	virtual void entitySelected(
-		scene::SceneEditorContext* context,
-		scene::EntityAdapter* entityAdapter,
-		bool selected
-	);
-
-	virtual bool handleCommand(
-		scene::SceneEditorContext* context,
-		scene::EntityAdapter* entityAdapter,
-		const ui::Command& command
-	);
-
 	virtual void drawGuide(
 		scene::SceneEditorContext* context,
 		render::PrimitiveRenderer* primitiveRenderer,
