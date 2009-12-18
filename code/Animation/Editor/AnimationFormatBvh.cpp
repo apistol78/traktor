@@ -72,6 +72,11 @@ void convertKeyPose(
 
 		Quaternion Qref = calculateReferenceOrientation(skeleton, boneIndex);
 
+		kp.pose.setBoneOffset(
+			boneIndex,
+			P
+		);
+
 		kp.pose.setBoneOrientation(
 			boneIndex,
 			Qref.inverse() * QlocalOrientation * Qref
@@ -133,6 +138,33 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream) const
 		anim->addKeyPose(kp);
 
 		at += document->getFrameTime();
+	}
+
+	// Re-center key poses; assume first key pose are centered and
+	// calculate offset from it.
+	uint32_t poseCount = anim->getKeyPoseCount();
+	if (poseCount > 1)
+	{
+		uint32_t boneCount = skeleton->getBoneCount();
+		for (uint32_t i = 0; i < boneCount; ++i)
+		{
+			if (skeleton->getBone(i)->getParent() < 0)
+			{
+				Vector4 offset = anim->getKeyPose(0).pose.getBoneOffset(i);
+				for (uint32_t j = 0; j < poseCount; ++j)
+				{
+					Vector4 poseOffset = anim->getKeyPose(j).pose.getBoneOffset(i);
+					anim->getKeyPose(j).pose.setBoneOffset(i, poseOffset - offset);
+				}
+			}
+			else
+			{
+				// For now we reset child bone offsets as they are expressed
+				// in world space from BVH but in parent space in our animations.
+				for (uint32_t j = 0; j < poseCount; ++j)
+					anim->getKeyPose(j).pose.setBoneOffset(i, Vector4::zero());
+			}
+		}
 	}
 	
 	return anim;
