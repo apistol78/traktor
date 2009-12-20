@@ -47,10 +47,6 @@ struct Vertex
 	{
 		pos_.store(pos);
 		rgb = rgb_;
-
-#if defined(T_BIG_ENDIAN)
-		swap8in32(rgb);
-#endif
 	}
 
 	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color& rgb_)
@@ -59,10 +55,6 @@ struct Vertex
 		texCoord[0] = texCoord_.x;
 		texCoord[1] = texCoord_.y;
 		rgb = rgb_;
-
-#if defined(T_BIG_ENDIAN)
-		swap8in32(rgb);
-#endif
 	}
 };
 #pragma pack()
