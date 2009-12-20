@@ -70,7 +70,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_gridSounds = new ui::custom::GridView();
 	m_gridSounds->create(containerSounds, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
-	m_gridSounds->addColumn(new ui::custom::GridColumn(L"Sounds", 0));
+	m_gridSounds->addColumn(new ui::custom::GridColumn(L"Sounds", 300));
 	m_gridSounds->addSelectEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGridSoundsSelect));
 	m_gridSounds->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGridSoundsButtonUp));
 
@@ -84,7 +84,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 	m_gridGrains = new ui::custom::GridView();
 	m_gridGrains->create(containerGrains, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer);
-	m_gridGrains->addColumn(new ui::custom::GridColumn(L"Grains", 0));
+	m_gridGrains->addColumn(new ui::custom::GridColumn(L"Grains", 300));
 	m_gridGrains->addSelectEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGridGrainsSelect));
 	m_gridGrains->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGridGrainsButtonUp));
 
