@@ -78,8 +78,10 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 			entityAdapter->setEntity(0);
 		}
 
-		// Unlink adapter from hierarchy.
-		entityAdapter->unlink();
+		// Unlink adapter from parent.
+		EntityAdapter* parent = entityAdapter->getParent();
+		if (parent)
+			parent->unlink(entityAdapter);
 
 		// Insert into map from instance to adapter.
 		m_cachedInstances.insert(std::make_pair(entityAdapter->getInstance(), entityAdapter));
@@ -166,7 +168,7 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 	if (!entity)
 	{
 		if (m_currentAdapter)
-			m_currentAdapter->addChild(entityAdapter, false);
+			m_currentAdapter->link(entityAdapter);
 		else
 		{
 			T_ASSERT (!m_rootAdapter);
@@ -174,7 +176,7 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 		}
 
 		{
-			Save< Ref< EntityAdapter > > scope(m_currentAdapter, entityAdapter);
+			T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
 			entity = create(instance->getName(), instance->getEntityData(), instance->getInstanceData());
 		}
 

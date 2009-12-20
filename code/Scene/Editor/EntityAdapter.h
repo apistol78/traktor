@@ -113,13 +113,15 @@ public:
 
 	Ref< EntityAdapter > getParentContainerGroup();
 
-	bool addChild(EntityAdapter* child, bool modifyEntityData);
+	void addChild(EntityAdapter* child);
 
-	void removeChild(EntityAdapter* child, bool modifyEntityData);
+	void removeChild(EntityAdapter* child);
 
 	const RefArray< EntityAdapter >& getChildren() const;
 
-	void unlink();
+	void link(EntityAdapter* child);
+
+	void unlink(EntityAdapter* child);
 
 	//@}
 
