@@ -194,44 +194,28 @@ Ref< EntityAdapter > EntityAdapter::getParentContainerGroup()
 	return entity;
 }
 
-bool EntityAdapter::addChild(EntityAdapter* child, bool modifyEntityData)
+void EntityAdapter::addChild(EntityAdapter* child)
 {
-	T_ASSERT (child);
+	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
+		groupEntityData->addInstance(child->getInstance());
+	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
+		spatialGroupEntityData->addInstance(child->getInstance());
+	else
+		T_FATAL_ERROR;
 
-	if (modifyEntityData)
-	{
-		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-			groupEntityData->addInstance(child->getInstance());
-		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-			spatialGroupEntityData->addInstance(child->getInstance());
-		else
-			return false;
-	}
-
-	child->m_parent = this;
-	m_children.push_back(child);
-
-	return true;
+	link(child);
 }
 
-void EntityAdapter::removeChild(EntityAdapter* child, bool modifyEntityData)
+void EntityAdapter::removeChild(EntityAdapter* child)
 {
-	T_ASSERT (child);
-	T_ASSERT (child->m_parent == this);
+	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
+		groupEntityData->removeInstance(child->getInstance());
+	else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
+		spatialGroupEntityData->removeInstance(child->getInstance());
+	else
+		T_FATAL_ERROR;
 
-	if (modifyEntityData)
-	{
-		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(getEntityData()))
-			groupEntityData->removeInstance(child->getInstance());
-		else if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(getEntityData()))
-			spatialGroupEntityData->removeInstance(child->getInstance());
-	}
-
-	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
-	T_ASSERT (i != m_children.end());
-	m_children.erase(i);
-
-	child->m_parent = 0;
+	unlink(child);
 }
 
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
@@ -239,13 +223,23 @@ const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
 	return m_children;
 }
 
-void EntityAdapter::unlink()
+void EntityAdapter::link(EntityAdapter* child)
 {
-	if (m_parent)
-	{
-		m_parent->removeChild(this, false);
-		m_parent = 0;
-	}
+	T_ASSERT_M (child->m_parent == 0, L"Child already linked to another parent");
+	child->m_parent = this;
+	m_children.push_back(child);
+}
+
+void EntityAdapter::unlink(EntityAdapter* child)
+{
+	T_ASSERT (child);
+	T_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
+
+	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
+	T_ASSERT (i != m_children.end());
+	m_children.erase(i);
+
+	child->m_parent = 0;
 }
 
 void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)

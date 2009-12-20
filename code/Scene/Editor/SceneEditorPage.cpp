@@ -291,7 +291,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityInstance);
 
 		if (parentGroupAdapter)
-			parentGroupAdapter->addChild(entityAdapter, true);
+			parentGroupAdapter->addChild(entityAdapter);
 		else
 			m_context->getSceneAsset()->setInstance(entityInstance);
 
@@ -383,7 +383,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				Ref< EntityAdapter > parentGroup = (*i)->getParent();
 				if (parentGroup->isGroup())
 				{
-					parentGroup->removeChild((*i), true);
+					parentGroup->removeChild(*i);
 
 					if (m_controllerEditor)
 						m_controllerEditor->entityRemoved(*i);
@@ -423,7 +423,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		for (RefArray< world::EntityInstance >::const_iterator i = instances.begin(); i != instances.end(); ++i)
 		{
 			Ref< EntityAdapter > adapter = new EntityAdapter(*i);
-			parentEntity->addChild(adapter, true);
+			parentEntity->addChild(adapter);
 		}
 
 		updateScene();
@@ -443,7 +443,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			Ref< EntityAdapter > parentGroup = (*i)->getParent();
 			if (parentGroup->isGroup())
 			{
-				parentGroup->removeChild(*i, true);
+				parentGroup->removeChild(*i);
 				removedCount++;
 
 				if (m_controllerEditor)
@@ -712,7 +712,7 @@ bool SceneEditorPage::addEntity()
 	Ref< EntityAdapter > entityAdapter = new EntityAdapter(instance);
 
 	if (parentGroupAdapter)
-		parentGroupAdapter->addChild(entityAdapter, true);
+		parentGroupAdapter->addChild(entityAdapter);
 	else
 		m_context->getSceneAsset()->setInstance(instance);
 
