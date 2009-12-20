@@ -1,12 +1,13 @@
-#include <cstring>
 #include <cmath>
-#include "Sound/SoundChannel.h"
-#include "Sound/IFilter.h"
-#include "Sound/Sound.h"
-#include "Sound/ISoundBuffer.h"
-#include "Core/Memory/Alloc.h"
+#include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Thread/Acquire.h"
+#include "Sound/IFilter.h"
+#include "Sound/ISoundBuffer.h"
+#include "Sound/Sound.h"
+#include "Sound/SoundChannel.h"
 
 namespace traktor
 {
@@ -40,6 +41,7 @@ void SoundChannel::setVolume(float volume)
 
 void SoundChannel::setFilter(IFilter* filter)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
 	m_filter = filter;
 }
 
@@ -114,7 +116,10 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 
 	// Apply filter on sound block.
 	if (m_filter)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
 		m_filter->apply(soundBlock);
+	}
 
 	// Normalize sound block to hardware sample rate.
 	outBlock.samplesCount = (soundBlock.samplesCount * m_hwSampleRate) / soundBlock.sampleRate;
