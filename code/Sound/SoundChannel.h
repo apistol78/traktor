@@ -2,14 +2,15 @@
 #define traktor_sound_SoundChannel_H
 
 #include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -53,6 +54,7 @@ private:
 
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
+	Semaphore m_filterLock;
 	Ref< IFilter > m_filter;
 	Ref< Sound > m_sound;
 	Ref< ISoundBufferCursor > m_cursor;
