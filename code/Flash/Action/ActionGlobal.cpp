@@ -7,6 +7,7 @@
 #include "Flash/Action/Classes/AsDate.h"
 #include "Flash/Action/Classes/AsError.h"
 #include "Flash/Action/Classes/AsFunction.h"
+#include "Flash/Action/Classes/AsI18N.h"
 #include "Flash/Action/Classes/AsKey.h"
 #include "Flash/Action/Classes/AsLoadVars.h"
 #include "Flash/Action/Classes/AsLocalConnection.h"
@@ -50,6 +51,7 @@ ActionGlobal::ActionGlobal()
 	setMember(L"Date", ActionValue::fromObject(AsDate::getInstance()));
 	setMember(L"Error", ActionValue::fromObject(AsError::getInstance()));
 	setMember(L"Function", ActionValue::fromObject(AsFunction::getInstance()));
+	setMember(L"I18N", ActionValue::fromObject(AsI18N::getInstance()));
 	setMember(L"Key", ActionValue::fromObject(AsKey::createInstance()));
 	setMember(L"LoadVars", ActionValue::fromObject(AsLoadVars::getInstance()));
 	setMember(L"LocalConnection", ActionValue::fromObject(AsLocalConnection::getInstance()));
