@@ -17,6 +17,7 @@
 #include "Render/Context/RenderContext.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Format.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -25,16 +26,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-template < typename T >
-void safeDestroy(T& tv)
-{
-	if (tv)
-	{
-		tv->destroy();
-		tv = 0;
-	}
-}
 
 const Guid c_shadowMaskProjectionSettingsNoFilter(L"{19222311-363F-CB45-86E5-34D376CDA8AD}");
 const Guid c_shadowMaskProjectionSettingsLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
@@ -331,7 +322,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 	{
 		if (m_renderView->begin(m_depthTargetSet, 0, true))
 		{
-			const float depthColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
 			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(render::RenderContext::RfOpaque);
 			m_renderView->end();
