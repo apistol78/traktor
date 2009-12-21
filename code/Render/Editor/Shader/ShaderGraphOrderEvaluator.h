@@ -55,6 +55,8 @@ private:
 
 	int nodeTrig(const Node* node);
 
+	int nodeArcusTan(const Node* node);
+
 	int nodeIndexedUniform(const Node* node);
 
 	int nodeMatrix(const Node* node);

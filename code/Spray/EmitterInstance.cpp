@@ -68,14 +68,13 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			i = m_points.erase(i);
 	}
 
-	m_totalTime += context.deltaTime;
-
 	// Emit particles.
 	if (emit)
 	{
 		Source* source = m_emitter->getSource();
 		if (source)
 		{
+			m_totalTime += context.deltaTime;
 			if (!singleShot)
 			{
 				// Emit in multiple frames; estimate number of particles to emit.
