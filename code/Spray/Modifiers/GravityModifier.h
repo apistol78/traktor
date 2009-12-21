@@ -32,6 +32,7 @@ public:
 
 private:
 	Vector4 m_gravity;
+	bool m_world;
 };
 
 	}
