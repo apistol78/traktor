@@ -149,12 +149,12 @@ bool RenderSystemWin32::create()
 		// Ensure device supports at least SM 3.0.
 		if (d3dDeviceCaps.VertexShaderVersion < D3DVS_VERSION(3, 0))
 		{
-			log::error << L"Reset device failed, need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.VertexShaderVersion)) << L")" << Endl;
+			log::error << L"Create device failed, need at least VS 3.0 (device VS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.VertexShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.VertexShaderVersion)) << L")" << Endl;
 			return false;
 		}
 		if (d3dDeviceCaps.PixelShaderVersion < D3DPS_VERSION(3, 0))
 		{
-			log::error << L"Reset device failed, need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.PixelShaderVersion)) << L")" << Endl;
+			log::error << L"Create device failed, need at least PS 3.0 (device PS " << uint32_t(D3DSHADER_VERSION_MAJOR(d3dDeviceCaps.PixelShaderVersion)) << L"." << uint32_t(D3DSHADER_VERSION_MINOR(d3dDeviceCaps.PixelShaderVersion)) << L")" << Endl;
 			return false;
 		}
 
@@ -162,6 +162,10 @@ bool RenderSystemWin32::create()
 	}
 	else
 		log::warning << L"Unable to get device capabilities; may produce unexpected results" << Endl;
+
+	// Investigate available texture memory.
+	UINT availTextureMem = m_d3dDevice->GetAvailableTextureMem();
+	log::debug << L"Estimated " << availTextureMem / (1024 * 1024) << L" Mb texture memory available" << Endl;
 
 	T_ASSERT (!m_shaderCache);
 	m_shaderCache= new ShaderCache();
