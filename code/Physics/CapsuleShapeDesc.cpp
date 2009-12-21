@@ -7,7 +7,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CapsuleShapeDesc", 0, CapsuleShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.CapsuleShapeDesc", 1, CapsuleShapeDesc, ShapeDesc)
 
 CapsuleShapeDesc::CapsuleShapeDesc()
 :	m_radius(0.0f)

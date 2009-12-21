@@ -36,12 +36,28 @@ namespace traktor
 		namespace
 		{
 
+uint32_t getGroup(const btCollisionObject* collisionObject)
+{
+	Body* body = static_cast< Body* >(collisionObject->getUserPointer());
+	if (!body)
+		return ~0UL;
+
+	if (DynamicBodyBullet* dynamicBody = dynamic_type_cast< DynamicBodyBullet* >(body))
+		return dynamicBody->getGroup();
+	if (StaticBodyBullet* staticBody = dynamic_type_cast< StaticBodyBullet* >(body))
+		return staticBody->getGroup();
+
+	return ~0UL;
+}
+
 struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConvexResultCallback
 {
+	uint32_t m_group;
 	btCollisionObject* m_excludeObject;
 
-	ClosestConvexExcludeResultCallback(btCollisionObject* excludeObject, const btVector3& convexFromWorld, const btVector3& convexToWorld)
+	ClosestConvexExcludeResultCallback(uint32_t group, btCollisionObject* excludeObject, const btVector3& convexFromWorld, const btVector3& convexToWorld)
 	:	btCollisionWorld::ClosestConvexResultCallback(convexFromWorld, convexToWorld)
+	,	m_group(group)
 	,	m_excludeObject(excludeObject)
 	{
 	}
@@ -51,6 +67,9 @@ struct ClosestConvexExcludeResultCallback : public btCollisionWorld::ClosestConv
 		T_ASSERT (convexResult.m_hitFraction <= m_closestHitFraction);
 
 		if (m_excludeObject == convexResult.m_hitCollisionObject)
+			return convexResult.m_hitFraction;
+
+		if (m_group != ~0UL && (getGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
 			return convexResult.m_hitFraction;
 		
 		return btCollisionWorld::ClosestConvexResultCallback::addSingleResult(convexResult, normalInWorldSpace);
@@ -299,7 +318,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(this, m_dynamicsWorld, rigidBody, shape);
+		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(this, m_dynamicsWorld, rigidBody, shape, shapeDesc->getGroup());
 		m_staticBodies.push_back(staticBody);
 
 		rigidBody->setUserPointer(staticBody);
@@ -338,7 +357,7 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(this, m_dynamicsWorld, rigidBody, shape);
+		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(this, m_dynamicsWorld, rigidBody, shape, shapeDesc->getGroup());
 		m_dynamicBodies.push_back(dynamicBody);
 
 		rigidBody->setUserPointer(dynamicBody);
@@ -607,7 +626,15 @@ uint32_t PhysicsManagerBullet::querySphere(const Vector4& at, float radius, uint
 	return uint32_t(outBodies.size());
 }
 
-bool PhysicsManagerBullet::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerBullet::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	QueryResult& outResult
+) const
 {
 	btSphereShape sphereShape(radius);
 	btTransform from, to;
@@ -625,7 +652,7 @@ bool PhysicsManagerBullet::querySweep(const Vector4& at, const Vector4& directio
 	else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
 		excludeBody = staticBody->getBtRigidBody();
 
-	ClosestConvexExcludeResultCallback callback(excludeBody, from.getOrigin(), to.getOrigin());
+	ClosestConvexExcludeResultCallback callback(group, excludeBody, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		&sphereShape,
 		from,
@@ -701,6 +728,21 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	Body* body2 = static_cast< Body* >(colObj1->getUserPointer());
 	if (body1 && body2)
 	{
+		uint32_t group1 = 0, group2 = 0;
+
+		if (DynamicBodyBullet* dynamicBody1 = dynamic_type_cast< DynamicBodyBullet* >(body1))
+			group1 = dynamicBody1->getGroup();
+		else if (StaticBodyBullet* staticBody1 = dynamic_type_cast< StaticBodyBullet* >(body1))
+			group1 = staticBody1->getGroup();
+
+		if (DynamicBodyBullet* dynamicBody2 = dynamic_type_cast< DynamicBodyBullet* >(body2))
+			group2 = dynamicBody2->getGroup();
+		else if (StaticBodyBullet* staticBody2 = dynamic_type_cast< StaticBodyBullet* >(body2))
+			group2 = staticBody2->getGroup();
+
+		if ((group1 & group2) == 0)
+			return;
+
 		CollisionInfo info;
 		info.body1 = body1;
 		info.body2 = body2;

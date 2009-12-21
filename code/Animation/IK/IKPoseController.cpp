@@ -113,6 +113,7 @@ void IKPoseController::evaluate(
 					worldTransform * d,
 					ln,
 					bone->getRadius(),
+					~0UL,
 					m_ignoreBody,
 					result
 				))

@@ -17,11 +17,18 @@ template < typename Outer >
 class BodyBullet : public Outer
 {
 public:
-	BodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape)
+	BodyBullet(
+		DestroyCallback* callback,
+		btDynamicsWorld* dynamicsWorld,
+		btRigidBody* body,
+		btCollisionShape* shape,
+		uint32_t group
+	)
 	:	m_callback(callback)
 	,	m_dynamicsWorld(dynamicsWorld)
 	,	m_body(body)
 	,	m_shape(shape)
+	,	m_group(group)
 	{
 	}
 
@@ -41,17 +48,20 @@ public:
 		}
 	}
 
-	inline btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
+	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
 
-	inline btRigidBody* getBtRigidBody() const { return m_body; }
+	btRigidBody* getBtRigidBody() const { return m_body; }
 
-	inline btCollisionShape* getBtCollisionShape() const { return m_shape; }
+	btCollisionShape* getBtCollisionShape() const { return m_shape; }
+
+	uint32_t getGroup() const { return m_group; }
 
 protected:
 	DestroyCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
+	uint32_t m_group;
 };
 
 	}

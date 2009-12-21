@@ -488,7 +488,7 @@ uint32_t PhysicsManagerPhysX::querySphere(const Vector4& at, float radius, uint3
 	return 0;
 }
 
-bool PhysicsManagerPhysX::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerPhysX::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const
 {
 	return false;
 }
