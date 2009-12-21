@@ -169,7 +169,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 7, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 8, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -426,7 +426,7 @@ bool TexturePipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(4);
+		writer << uint32_t(5);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(mipCount);
@@ -549,7 +549,7 @@ bool TexturePipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(4);
+		writer << uint32_t(5);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(mipCount);

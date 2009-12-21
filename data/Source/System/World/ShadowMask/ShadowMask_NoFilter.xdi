@@ -4,7 +4,7 @@
 	<definitions/>
 	<steps>
 		<item type="traktor.world.PostProcessStepSmProj">
-			<shader>{4959A509-9162-244A-AE0B-DDD10B6B0B50}</shader>
+			<shader>{826F6985-8449-3F47-A6E8-1F15EAC59136}</shader>
 		</item>
 	</steps>
 </object>

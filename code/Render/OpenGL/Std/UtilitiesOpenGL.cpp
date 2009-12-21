@@ -24,8 +24,8 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		break;
 
-	case TfR16G16B16A16F:
-		break;
+	//case TfR16G16B16A16F:
+	//	break;
 
 	case TfR32G32B32A32F:
 		outPixelSize = 16;
@@ -33,6 +33,12 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		break;
+
+	//case TfR16G16F:
+	//	break;
+
+	//case TfR32G32F:
+	//	break;
 
 	case TfR16F:
 		outPixelSize = 2;

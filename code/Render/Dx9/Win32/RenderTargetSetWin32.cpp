@@ -16,8 +16,10 @@ D3DFORMAT c_formatPromote[][2] =
 {
 	{ D3DFMT_L8, D3DFMT_A8R8G8B8 },
 	{ D3DFMT_R16F, D3DFMT_R32F },
-	{ D3DFMT_R32F, D3DFMT_A16B16G16R16F },
-	{ D3DFMT_A16B16G16R16F, D3DFMT_A32B32G32R32F }
+	{ D3DFMT_G16R16F, D3DFMT_G32R32F },
+	{ D3DFMT_A16B16G16R16F, D3DFMT_A32B32G32R32F },
+	{ D3DFMT_R32F, D3DFMT_G32R32F },
+	{ D3DFMT_G32R32F, D3DFMT_A32B32G32R32F }
 };
 
 D3DFORMAT tryPromoteFormat(D3DFORMAT format)
@@ -202,6 +204,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 				break;
 			else
 			{
+				log::debug << L"Unsupported format, trying with promotion" << Endl;
 				D3DFORMAT promotedFormat = tryPromoteFormat(d3dFormats[i]);
 				if (promotedFormat == d3dFormats[i])
 				{

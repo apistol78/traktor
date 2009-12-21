@@ -52,6 +52,9 @@ bool SimpleTextureSw::create(const SimpleTextureCreateDesc& desc)
 
 				case TfR16G16B16A16F:
 				case TfR32G32B32A32F:
+				case TfR16G16F:
+				case TfR32G32F:
+				case TfR16F:
 				case TfR32F:
 					T_BREAKPOINT;
 					break;

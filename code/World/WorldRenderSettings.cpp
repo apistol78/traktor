@@ -30,6 +30,7 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 {
 	const MemberEnum< ShadowQuality >::Key c_ShadowQuality_Keys[] =
 	{
+		{ L"SqNoFilter", SqNoFilter },
 		{ L"SqLow", SqLow },
 		{ L"SqMedium", SqMedium },
 		{ L"SqHigh", SqHigh },
