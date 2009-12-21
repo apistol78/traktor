@@ -42,12 +42,13 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node)
 
 	if (
 		is_a< ArcusCos >(node) ||
-		is_a< ArcusTan >(node) ||
 		is_a< Cos >(node) ||
 		is_a< Sin >(node) ||
 		is_a< Tan >(node)
 	)
 		order = nodeTrig(node);
+	else if (is_a< ArcusTan >(node))
+		order = nodeArcusTan(node);
 	else if (
 		is_a< Color >(node) ||
 		is_a< Scalar >(node) ||
@@ -143,6 +144,12 @@ int ShaderGraphOrderEvaluator::nodeMulAdd(const Node* node)
 int ShaderGraphOrderEvaluator::nodeTrig(const Node* node)
 {
 	int order = evaluate(node, L"Theta");
+	return order <= 0 ? OrConstant : OrNonLinear;
+}
+
+int ShaderGraphOrderEvaluator::nodeArcusTan(const Node* node)
+{
+	int order = evaluate(node, L"XY");
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 

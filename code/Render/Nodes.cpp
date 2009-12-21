@@ -52,7 +52,7 @@ ArcusCos::ArcusCos()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ArcusTan", 0, ArcusTan, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"Theta", false }, 0 };
+const ImmutableNode::InputPinDesc c_ArcusTan_i[] = { { L"XY", false }, 0 };
 const ImmutableNode::OutputPinDesc c_ArcusTan_o[] = { L"Output", 0 };
 
 ArcusTan::ArcusTan()
