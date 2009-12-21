@@ -9709,6 +9709,10 @@
 						</dependencies>
 					</project>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

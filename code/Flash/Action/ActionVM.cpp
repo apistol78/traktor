@@ -996,6 +996,12 @@ void ActionVM::execute(ActionFrame* frame)
 				else
 					stack.push(ActionValue());
 			}
+			else if (value2.isObject() || value1.isObject())
+			{
+				Ref< ActionObject > object2 = value2.getObjectSafe();
+				Ref< ActionObject > object1 = value1.getObjectSafe();
+				stack.push(ActionValue(bool(object1 == object2)));
+			}
 			else
 			{
 				ActionValue number2 = value2.toNumber();
