@@ -85,6 +85,8 @@ enum TextureFormat
 
 	TfR16G16B16A16F,
 	TfR32G32B32A32F,
+	TfR16G16F,
+	TfR32G32F,
 	TfR16F,
 	TfR32F,
 

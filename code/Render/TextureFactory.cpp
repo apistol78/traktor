@@ -69,7 +69,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	uint32_t version;
 	reader >> version;
-	if (version != 4)
+	if (version != 5)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
 		return 0;

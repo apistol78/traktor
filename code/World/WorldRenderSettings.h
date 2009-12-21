@@ -34,6 +34,7 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 public:
 	enum ShadowQuality
 	{
+		SqNoFilter,
 		SqLow,
 		SqMedium,
 		SqHigh

@@ -127,6 +127,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 
 	postProcess->prepareShader(shader);
 
+	float viewRange = viewFrustum.getFarZ() - viewFrustum.getNearZ();
+
 	Vector4 sourceDepthSize(
 		float(sourceDepth->getWidth()),
 		float(sourceDepth->getHeight()),
@@ -135,7 +137,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	);
 	Vector4 shadowMapSizeAndBias(
 		1.0f / float(sourceShMap->getWidth()),
-		shadowMapBias,
+		shadowMapBias / viewRange,
 		0.0f,
 		0.0f
 	);
