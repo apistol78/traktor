@@ -29,7 +29,13 @@ class T_DLLCLASS DynamicBodyBullet : public BodyBullet< DynamicBody >
 	T_RTTI_CLASS;
 
 public:
-	DynamicBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape);
+	DynamicBodyBullet(
+		DestroyCallback* callback,
+		btDynamicsWorld* dynamicsWorld,
+		btRigidBody* body,
+		btCollisionShape* shape,
+		uint32_t group
+	);
 
 	virtual void setTransform(const Transform& transform);
 

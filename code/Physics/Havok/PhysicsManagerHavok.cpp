@@ -695,7 +695,7 @@ uint32_t PhysicsManagerHavok::querySphere(const Vector4& at, float radius, uint3
 	return uint32_t(outBodies.size());
 }
 
-bool PhysicsManagerHavok::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerHavok::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const
 {
 	hkTransform sphereTransform;
 	sphereTransform.setIdentity();

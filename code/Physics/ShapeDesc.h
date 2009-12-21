@@ -38,12 +38,17 @@ public:
 
 	const Transform& getLocalTransform() const;
 
+	void setGroup(uint32_t group);
+
+	uint32_t getGroup() const;
+
 	virtual bool bind(resource::IResourceManager* resourceManager);
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Transform m_localTransform;
+	uint32_t m_group;
 };
 
 	}

@@ -58,7 +58,7 @@ public:
 
 	virtual uint32_t querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const;
 
-	virtual bool querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const;
+	virtual bool querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const;
 
 	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const;
 

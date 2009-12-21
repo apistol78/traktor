@@ -9,8 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.StaticBodyBullet", StaticBodyBullet, StaticBody)
 
-StaticBodyBullet::StaticBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape)
-:	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape)
+StaticBodyBullet::StaticBodyBullet(
+	DestroyCallback* callback,
+	btDynamicsWorld* dynamicsWorld,
+	btRigidBody* body,
+	btCollisionShape* shape,
+	uint32_t group
+)
+:	BodyBullet< StaticBody >(callback, dynamicsWorld, body, shape, group)
 ,	m_enable(false)
 {
 }

@@ -189,11 +189,20 @@ public:
 	 * \param direction Sweep direction in world space.
 	 * \param maxLength Max sweep length.
 	 * \param radius Sphere radius.
+	 * \param group Collision groups.
 	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
 	 */
-	virtual bool querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const = 0;
+	virtual bool querySweep(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		float radius,
+		uint32_t group,
+		const Body* ignoreBody,
+		QueryResult& outResult
+	) const = 0;
 
 	/*! \brief Get number of bodies within world.
 	 *

@@ -25,8 +25,14 @@ inline Vector4 convert(const DynamicBodyBullet* body, const Vector4& v, bool loc
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.DynamicBodyBullet", DynamicBodyBullet, DynamicBody)
 
-DynamicBodyBullet::DynamicBodyBullet(DestroyCallback* callback, btDynamicsWorld* dynamicsWorld, btRigidBody* body, btCollisionShape* shape)
-:	BodyBullet< DynamicBody >(callback, dynamicsWorld, body, shape)
+DynamicBodyBullet::DynamicBodyBullet(
+	DestroyCallback* callback,
+	btDynamicsWorld* dynamicsWorld,
+	btRigidBody* body,
+	btCollisionShape* shape,
+	uint32_t group
+)
+:	BodyBullet< DynamicBody >(callback, dynamicsWorld, body, shape, group)
 ,	m_enable(false)
 {
 }

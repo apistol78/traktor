@@ -714,7 +714,7 @@ uint32_t PhysicsManagerOde::querySphere(const Vector4& at, float radius, uint32_
 	return 0;
 }
 
-bool PhysicsManagerOde::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, const Body* ignoreBody, QueryResult& outResult) const
+bool PhysicsManagerOde::querySweep(const Vector4& at, const Vector4& direction, float maxLength, float radius, uint32_t group, const Body* ignoreBody, QueryResult& outResult) const
 {
 	return false;
 }
