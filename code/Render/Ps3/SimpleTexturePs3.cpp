@@ -3,6 +3,7 @@
 #include "Render/Ps3/LocalMemoryAllocator.h"
 #include "Render/Ps3/TypesPs3.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
 
 namespace traktor
 {
@@ -14,25 +15,6 @@ namespace traktor
 bool isPowerOf2(int value)
 {
 	return bool((value & -value) == value);
-}
-
-uint32_t calculateMipPitch(uint32_t pitch, int mipLevel)
-{
-	//return std::max< uint32_t >(pitch >> mipLevel, 64);
-	return pitch >> mipLevel;
-}
-
-uint32_t calculateMipSize(uint32_t pitch, uint32_t height, int mipLevel)
-{
-	return calculateMipPitch(pitch, mipLevel) * (height >> mipLevel);
-}
-
-uint32_t calculateTextureSize(uint32_t pitch, uint32_t height, int mipCount)
-{
-	uint32_t textureSize = 0;
-	for (int i = 0; i < mipCount; ++i)
-		textureSize += calculateMipSize(pitch, height, i);
-	return textureSize;
 }
 
 		}
@@ -53,8 +35,7 @@ SimpleTexturePs3::~SimpleTexturePs3()
 
 bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 {
-	int byteSize = 0;
-	if (!getGcmTextureInfo(desc.format, byteSize, m_texture.format))
+	if (!getGcmTextureInfo(desc.format, m_texture.format))
 	{
 		log::error << L"Unable to create texture; unsupported format" << Endl;
 		return false;
@@ -64,10 +45,7 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 	if (desc.immutable)
 	{
 		if (!isPowerOf2(desc.width) || !isPowerOf2(desc.height))
-		{
-			log::warning << "Non-power of 2 texture, cannot use swizzled texture format" << Endl;
 			linear = true;
-		}
 	}
 	else
 		linear = true;
@@ -77,32 +55,54 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 	else
 		m_texture.format |= CELL_GCM_TEXTURE_SZ | CELL_GCM_TEXTURE_NR;
 
-	uint32_t texturePitch = desc.width * byteSize;
+	bool dxtn = (desc.format >= TfDXT1 && desc.format <= TfDXT5);
+	uint32_t blockSize = getTextureBlockSize(desc.format);
+	uint32_t blockDenom = getTextureBlockDenom(desc.format);
+	uint32_t texturePitch = getTextureRowPitch(desc.format, desc.width);
 
 	m_texture.mipmap = desc.mipCount;
 	m_texture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 	m_texture.cubemap = 0;
-	m_texture.remap =
-		CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
-		CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
-		CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
-		CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
-		CELL_GCM_TEXTURE_REMAP_FROM_G << 6 |
-		CELL_GCM_TEXTURE_REMAP_FROM_R << 4 |
-		CELL_GCM_TEXTURE_REMAP_FROM_A << 2 |
-		CELL_GCM_TEXTURE_REMAP_FROM_B;
+
+	if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
+	{
+		// GBAR (LE ARGB8)
+		m_texture.remap =
+			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+			CELL_GCM_TEXTURE_REMAP_FROM_B << 6 |
+			CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
+			CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
+			CELL_GCM_TEXTURE_REMAP_FROM_A;
+	}
+	else
+	{
+		// BARG (LE RGBA8)
+		m_texture.remap =
+			CELL_GCM_TEXTURE_REMAP_REMAP << 14 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 12 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 10 |
+			CELL_GCM_TEXTURE_REMAP_REMAP << 8 |
+			CELL_GCM_TEXTURE_REMAP_FROM_G << 6 |
+			CELL_GCM_TEXTURE_REMAP_FROM_R << 4 |
+			CELL_GCM_TEXTURE_REMAP_FROM_A << 2 |
+			CELL_GCM_TEXTURE_REMAP_FROM_B;
+	}
+
 	m_texture.width = desc.width;
 	m_texture.height = desc.height;
 	m_texture.depth = 1;
 	m_texture.location = CELL_GCM_LOCATION_LOCAL;
-	if (linear)
-		m_texture.pitch = texturePitch;
+	m_texture.pitch = /*linear ? */texturePitch/* : 0*/;
 	m_texture.offset = 0;
 
-	uint32_t textureSize = calculateTextureSize(
-		texturePitch,
-		m_texture.height,
-		m_texture.mipmap
+	uint32_t textureSize = getTextureSize(
+		desc.format,
+		desc.width,
+		desc.height,
+		desc.mipCount
 	);
 
 	m_data = LocalMemoryAllocator::getInstance().allocAlign(textureSize, 128);
@@ -112,32 +112,38 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 	if (desc.immutable)
 	{
 		uint32_t offset = 0;
-		for (int i = 0; i < m_texture.mipmap; ++i)
+		for (uint32_t i = 0; i < desc.mipCount; ++i)
 		{
-			uint32_t size = calculateMipSize(texturePitch, m_texture.height, i);
+			uint32_t mipWidth = getTextureMipSize(desc.width, i);
+			uint32_t mipHeight = getTextureMipSize(desc.height, i);
+			uint32_t mipSize = getTextureMipPitch(desc.format, mipWidth, mipHeight);
+			uint32_t mipPitch = getTextureRowPitch(desc.format, desc.width, i);
 
 			const uint8_t* src = static_cast< const uint8_t* >(desc.initialData[i].data);
 			uint8_t* dest = static_cast< uint8_t* >(m_data) + offset;
 
-			if (linear)
+			if (dxtn || linear)
 			{
-				std::memcpy(dest, src, size);
+				uint32_t blockRows = mipHeight / blockDenom;
+				for (uint32_t y = 0; y < blockRows; ++y)
+				{
+					std::memcpy(dest, src, desc.initialData[i].pitch);
+					src += desc.initialData[i].pitch;
+					dest += mipPitch;
+				}
 			}
 			else
 			{
-				int32_t mipWidth = std::max< int32_t >(m_texture.width >> i, 1);
-				int32_t mipHeight = std::max< int32_t >(m_texture.height >> i, 1);
-
 				cellUtilConvertLinearToSwizzle(
 					dest,
 					src,
 					mipWidth,
 					mipHeight,
-					byteSize
+					getTextureBlockSize(desc.format)
 				);
 			}
 
-			offset += size;
+			offset += mipSize;
 		}
 	}
 

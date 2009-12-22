@@ -116,11 +116,17 @@ namespace
 		if (level == 1)
 		{
 			if (depth == 16)	// FP32
+			{
 				*((uint32_t*&)dst)++ = *((uint32_t*)src + (ypos * width + xpos));
+			}
 			else if (depth == 8)	// FP16
+			{
 				*((uint32_t*&)dst)++ = *((uint32_t*)src + (ypos * width + xpos));
+			}
 			else if (depth == 4)	// RGBA or ARGB
+			{
 				*((uint32_t*&)dst)++ = *((uint32_t*)src + (ypos * width + xpos));
+			}
 			else if (depth == 3)	// RGB
 			{
 				*dst++ = src[(ypos * width + xpos) * depth];
