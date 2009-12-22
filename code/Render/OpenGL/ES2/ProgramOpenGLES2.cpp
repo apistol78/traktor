@@ -202,11 +202,6 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 {
 }
 
-bool ProgramOpenGLES2::isOpaque() const
-{
-	return true;
-}
-
 bool ProgramOpenGLES2::activate(bool landspace)
 {
 	if (ms_activeProgram == this && !m_dirty)

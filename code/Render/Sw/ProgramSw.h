@@ -58,8 +58,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	virtual bool isOpaque() const;
-
 	inline Processor::image_t getVertexProgram() const {
 		return m_vertexProgram;
 	}

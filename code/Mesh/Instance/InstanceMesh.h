@@ -60,6 +60,7 @@ public:
 	struct Part
 	{
 		resource::Proxy< render::Shader > material;
+		bool opaque;
 	};
 
 	typedef std::pair< InstanceMeshData, float > instance_distance_t;

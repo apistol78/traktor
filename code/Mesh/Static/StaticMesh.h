@@ -52,6 +52,7 @@ public:
 	struct Part
 	{
 		resource::Proxy< render::Shader > material;
+		bool opaque;
 	};
 
 	StaticMesh();

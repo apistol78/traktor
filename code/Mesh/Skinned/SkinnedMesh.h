@@ -71,6 +71,7 @@ private:
 	struct Part
 	{
 		resource::Proxy< render::Shader > material;
+		bool opaque;
 	};
 
 	Ref< render::Mesh > m_mesh;

@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 0, SkinnedMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 1, SkinnedMeshResource, MeshResource)
 
 void SkinnedMeshResource::setParts(const std::vector< Part >& parts)
 {
@@ -37,10 +37,17 @@ bool SkinnedMeshResource::serialize(ISerializer& s)
 	return true;
 }
 
+SkinnedMeshResource::Part::Part()
+:	opaque(true)
+{
+}
+
 bool SkinnedMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< Guid >(L"material", material);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

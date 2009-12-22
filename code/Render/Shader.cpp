@@ -170,14 +170,6 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	renderView->draw(primitives);
 }
 
-bool Shader::isOpaque() const
-{
-	if (!m_currentProgram)
-		return true;
-
-	return m_currentProgram->isOpaque();
-}
-
 void Shader::updateCurrentProgram()
 {
 	m_currentProgram = 0;

@@ -57,8 +57,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	virtual bool isOpaque() const;
-
 	bool bind(
 		ID3D10Device* d3dDevice,
 		size_t d3dInputElementsHash,
@@ -100,7 +98,6 @@ private:
 	ComRef< ID3D10RasterizerState > m_d3dRasterizerState;
 	ComRef< ID3D10DepthStencilState > m_d3dDepthStencilState;
 	ComRef< ID3D10BlendState > m_d3dBlendState;
-	bool m_blendEnable;
 	uint32_t m_stencilReference;
 	ComRef< ID3D10VertexShader > m_d3dVertexShader;
 	ComRef< ID3D10PixelShader > m_d3dPixelShader;

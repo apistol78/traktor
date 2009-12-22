@@ -144,9 +144,7 @@ void PointRenderer::render(
 		sorted[i].second = cameraPlane.distance(points[i].position);
 	}
 
-	// Ensure particles are sorted if shader isn't opaque.
-	if (!shader->isOpaque())
-		std::sort(sorted.begin(), sorted.end(), PredicateZ());
+	std::sort(sorted.begin(), sorted.end(), PredicateZ());
 
 	Vertex* vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock(m_vertexOffset, size * 4));
 	if (vertex)

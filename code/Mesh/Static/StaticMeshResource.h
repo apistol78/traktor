@@ -22,10 +22,13 @@ class T_DLLCLASS StaticMeshResource : public MeshResource
 	T_RTTI_CLASS;
 
 public:
-	struct Part
+	struct T_DLLCLASS Part
 	{
 		std::wstring name;
 		Guid material;
+		bool opaque;
+
+		Part();
 
 		bool serialize(ISerializer& s);
 	};

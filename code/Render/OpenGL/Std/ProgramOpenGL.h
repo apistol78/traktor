@@ -57,8 +57,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	virtual bool isOpaque() const;
-
 	bool activate();
 
 	const GLint* getAttributeLocs() const;

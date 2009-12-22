@@ -55,7 +55,9 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	{
 		if (!m_parts[i].material.validate())
 			continue;
-		if (!m_parts[i].material->isOpaque())
+		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
+			continue;
+		if (!m_parts[i].opaque)
 		{
 			haveAlphaBlend = true;
 			continue;
@@ -105,7 +107,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 
 		for (size_t i = 0; i < parts.size(); ++i)
 		{
-			if (!m_parts[i].material.validate() || m_parts[i].material->isOpaque())
+			if (!m_parts[i].material.validate() || m_parts[i].opaque)
 				continue;
 
 			for (uint32_t batchOffset = 0; batchOffset < instanceWorld.size(); )

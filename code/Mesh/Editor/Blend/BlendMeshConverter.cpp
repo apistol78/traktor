@@ -2,6 +2,7 @@
 #include <limits>
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
+#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Blend/BlendMeshResource.h"
 #include "Model/Utilities.h"
@@ -153,6 +154,7 @@ bool BlendMeshConverter::convert(
 		assetParts.push_back(BlendMeshResource::Part());
 		assetParts.back().name = material.getName();
 		assetParts.back().material = materialIt->second.guid;
+		assetParts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
 	}
 
 	baseMesh->getIndexBuffer()->unlock();

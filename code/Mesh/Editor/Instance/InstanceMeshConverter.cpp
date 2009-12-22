@@ -2,6 +2,7 @@
 #include <limits>
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
+#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Instance/InstanceMeshResource.h"
 #include "Mesh/Instance/InstanceMesh.h"
@@ -146,6 +147,7 @@ bool InstanceMeshConverter::convert(
 		assetParts.push_back(InstanceMeshResource::Part());
 		assetParts.back().name = material.getName();
 		assetParts.back().material = materialIt->second.guid;
+		assetParts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
 	}
 
 	mesh->getIndexBuffer()->unlock();

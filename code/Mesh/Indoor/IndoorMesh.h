@@ -64,6 +64,7 @@ private:
 	{
 		resource::Proxy< render::Shader > material;
 		int meshPart;
+		bool opaque;
 	};
 
 	struct Sector

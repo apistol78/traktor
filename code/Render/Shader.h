@@ -101,17 +101,6 @@ public:
 
 	//@}
 
-	/*! \brief Check if shader is opaque.
-	 *
-	 * Opaque shader are those who not use
-	 * hardware blending.
-	 *
-	 * \note
-	 * The return value depends on which technique
-	 * and combination is currently selected.
-	 */
-	bool isOpaque() const;
-
 private:
 	friend class ShaderFactory;
 

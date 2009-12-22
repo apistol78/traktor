@@ -47,6 +47,8 @@ void SkinnedMesh::render(
 	{
 		if (!m_parts[i].material.validate())
 			continue;
+		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
+			continue;
 
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
@@ -70,7 +72,7 @@ void SkinnedMesh::render(
 		);
 		renderBlock->shaderParams->endParameters(renderContext);
 
-		renderBlock->type = m_parts[i].material->isOpaque() ? render::RbtOpaque : render::RbtAlphaBlend;
+		renderBlock->type = m_parts[i].opaque ? render::RbtOpaque : render::RbtAlphaBlend;
 
 		renderContext->draw(renderBlock);
 	}

@@ -85,6 +85,7 @@ Ref< Object > StaticMeshFactory::create(resource::IResourceManager* resourceMana
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		staticMesh->m_parts[i].material = parts[i].material;
+		staticMesh->m_parts[i].opaque = parts[i].opaque;
 		if (!resourceManager->bind(staticMesh->m_parts[i].material))
 			return 0;
 	}

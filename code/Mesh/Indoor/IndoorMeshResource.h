@@ -24,10 +24,13 @@ class T_DLLCLASS IndoorMeshResource : public MeshResource
 	T_RTTI_CLASS;
 
 public:
-	struct Part
+	struct T_DLLCLASS Part
 	{
 		Guid material;
 		int32_t meshPart;
+		bool opaque;
+
+		Part();
 
 		bool serialize(ISerializer& s);
 	};

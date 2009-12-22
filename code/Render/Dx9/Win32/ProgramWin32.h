@@ -88,8 +88,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	virtual bool isOpaque() const;
-
 	/*! \brief Force shader to dirty state.
 	 *
 	 * Next time any shader is activated the shader's state are
