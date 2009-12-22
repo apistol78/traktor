@@ -3,6 +3,14 @@
 
 #include "Flash/Action/ActionClass.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_FLASH_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace flash
@@ -13,7 +21,7 @@ struct CallArgs;
 /*! \brief Object class.
  * \ingroup Flash
  */
-class AsObject : public ActionClass
+class T_DLLCLASS AsObject : public ActionClass
 {
 	T_RTTI_CLASS;
 
