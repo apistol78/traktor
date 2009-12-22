@@ -328,6 +328,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		}
 		else
 		{
+			m_stateCache.reset();
 			m_clearFp.clear(color);
 		}
 	}
@@ -452,11 +453,11 @@ void RenderViewPs3::end()
 	{
 		T_ASSERT (rt);
 
-		cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
+		//cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
 
 		rt->finishRender(m_targetCounter);
 
-		m_targetCounter = incrementLabel(m_targetCounter);
+		//m_targetCounter = incrementLabel(m_targetCounter);
 
 		setCurrentRenderState();
 	}
