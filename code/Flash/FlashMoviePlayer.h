@@ -149,6 +149,12 @@ public:
 	 */
 	Ref< FlashSpriteInstance > getMovieInstance() const;
 
+	/*! \brief Get action virtual machine.
+	 *
+	 * \return action virtual machine.
+	 */
+	Ref< ActionVM > getVM() const;
+
 private:
 	struct Event
 	{
