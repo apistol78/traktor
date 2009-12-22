@@ -182,7 +182,6 @@ private:
 	int m_lightCount;
 	Ref< render::ITexture > m_shadowMask;
 	float m_shadowMapBias;
-	int m_shadowMapSlice;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;
 };

@@ -43,6 +43,7 @@ WorldRenderView::WorldRenderView()
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
+,	m_shadowMapBias(0.0f)
 ,	m_time(0.0f)
 {
 	for (int i = 0; i < MaxLightCount; ++i)
