@@ -131,10 +131,5 @@ void ProgramSw::setStencilReference(uint32_t stencilReference)
 {
 }
 
-bool ProgramSw::isOpaque() const
-{
-	return true;
-}
-
 	}
 }

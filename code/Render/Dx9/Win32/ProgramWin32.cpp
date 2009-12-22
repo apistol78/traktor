@@ -438,11 +438,6 @@ void ProgramWin32::setStencilReference(uint32_t stencilReference)
 	ms_activeProgram = 0;
 }
 
-bool ProgramWin32::isOpaque() const
-{
-	return m_state.isOpaque();
-}
-
 void ProgramWin32::forceDirty()
 {
 	ms_activeProgram = 0;

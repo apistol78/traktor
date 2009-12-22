@@ -9,7 +9,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 0, IndoorMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 1, IndoorMeshResource, MeshResource)
 
 void IndoorMeshResource::setSectors(const AlignedVector< Sector >& sectors)
 {
@@ -38,10 +38,17 @@ bool IndoorMeshResource::serialize(ISerializer& s)
 	return true;
 }
 
+IndoorMeshResource::Part::Part()
+:	opaque(true)
+{
+}
+
 bool IndoorMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"material", material);
 	s >> Member< int32_t >(L"meshPart", meshPart);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

@@ -20,7 +20,6 @@ ProgramDx10* ProgramDx10::ms_activeProgram = 0;
 
 ProgramDx10::ProgramDx10(ContextDx10* context)
 :	m_context(context)
-,	m_blendEnable(false)
 ,	m_stencilReference(0)
 ,	m_d3dInputElementsHash(0)
 ,	m_parameterArrayDirty(false)
@@ -158,7 +157,6 @@ bool ProgramDx10::create(ID3D10Device* d3dDevice, const ProgramResourceDx10* res
 		&m_d3dBlendState.getAssign()
 	);
 
-	m_blendEnable = bool(resource->m_d3dBlendDesc.BlendEnable[0] != 0);
 	m_stencilReference = resource->m_stencilReference;
 
 	return true;
@@ -251,11 +249,6 @@ void ProgramDx10::setSamplerTexture(handle_t handle, ITexture* texture)
 void ProgramDx10::setStencilReference(uint32_t stencilReference)
 {
 	m_stencilReference = stencilReference;
-}
-
-bool ProgramDx10::isOpaque() const
-{
-	return !m_blendEnable;
 }
 
 bool ProgramDx10::bind(

@@ -193,17 +193,10 @@ bool AccShape::create(
 			{
 				vertex->pos[0] = j->v[k].x;
 				vertex->pos[1] = j->v[k].y;
-#if defined(T_LITTLE_ENDIAN)
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
-#else
-				vertex->color[3] = color.r;
-				vertex->color[2] = color.g;
-				vertex->color[1] = color.b;
-				vertex->color[0] = color.a;
-#endif
 				vertex++;
 			}
 
@@ -250,17 +243,10 @@ bool AccShape::create(
 			{
 				vertex->pos[0] = v[c_indices[k]].x;
 				vertex->pos[1] = v[c_indices[k]].y;
-#if defined(T_LITTLE_ENDIAN)
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
-#else
-				vertex->color[3] = color.r;
-				vertex->color[2] = color.g;
-				vertex->color[1] = color.b;
-				vertex->color[0] = color.a;
-#endif
 				vertex++;
 			}
 

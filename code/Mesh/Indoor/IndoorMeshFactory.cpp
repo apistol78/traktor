@@ -87,6 +87,7 @@ Ref< Object > IndoorMeshFactory::create(resource::IResourceManager* resourceMana
 		{
 			indoorMesh->m_sectors[i].parts[j].material = sectorParts[j].material;
 			indoorMesh->m_sectors[i].parts[j].meshPart = sectorParts[j].meshPart;
+			indoorMesh->m_sectors[i].parts[i].opaque = sectorParts[j].opaque;
 
 			if (!resourceManager->bind(indoorMesh->m_sectors[i].parts[j].material))
 				return 0;

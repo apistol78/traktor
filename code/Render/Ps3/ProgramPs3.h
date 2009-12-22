@@ -63,8 +63,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	virtual bool isOpaque() const;
-
 	void bind(StateCachePs3& stateCache);
 
 private:

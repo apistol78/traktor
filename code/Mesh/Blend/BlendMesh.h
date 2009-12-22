@@ -54,6 +54,7 @@ public:
 	struct Instance : public Object
 	{
 		Ref< render::Mesh > mesh;
+		bool opaque;
 	};
 
 	BlendMesh();
@@ -82,6 +83,7 @@ private:
 	struct Part
 	{
 		resource::Proxy< render::Shader > material;
+		bool opaque;
 	};
 
 	Ref< render::IRenderSystem > m_renderSystem;

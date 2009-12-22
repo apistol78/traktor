@@ -47,8 +47,6 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference) = 0;
 
-	virtual bool isOpaque() const = 0;
-
 	/*! \name Set parameter by name.
 	 *
 	 * These methods are implemented for backward compatibility and should not be used in

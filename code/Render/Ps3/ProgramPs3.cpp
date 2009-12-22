@@ -287,11 +287,6 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 {
 }
 
-bool ProgramPs3::isOpaque() const
-{
-	return true;
-}
-
 void ProgramPs3::bind(StateCachePs3& stateCache)
 {
 	stateCache.setRenderState(m_renderState);

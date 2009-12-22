@@ -95,7 +95,7 @@ void IndoorMesh::render(
 
 			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
-			renderBlock->type = render::RbtOpaque;
+			renderBlock->type = j->opaque ? render::RbtOpaque : render::RbtAlphaBlend;
 			renderBlock->distance = distance;
 			renderBlock->shader = material;
 			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();

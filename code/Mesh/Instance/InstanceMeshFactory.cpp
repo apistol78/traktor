@@ -180,6 +180,7 @@ Ref< Object > InstanceMeshFactory::create(resource::IResourceManager* resourceMa
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		instanceMesh->m_parts[i].material = parts[i].material;
+		instanceMesh->m_parts[i].opaque = parts[i].opaque;
 		if (!resourceManager->bind(instanceMesh->m_parts[i].material))
 			return 0;
 	}

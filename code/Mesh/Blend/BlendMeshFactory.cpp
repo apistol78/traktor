@@ -111,6 +111,7 @@ Ref< Object > BlendMeshFactory::create(resource::IResourceManager* resourceManag
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		blendMesh->m_parts[i].material = parts[i].material;
+		blendMesh->m_parts[i].opaque = parts[i].opaque;
 		if (!resourceManager->bind(blendMesh->m_parts[i].material))
 			return 0;
 	}

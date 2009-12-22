@@ -2,6 +2,7 @@
 #include <limits>
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
+#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Model/Model.h"
@@ -146,6 +147,7 @@ bool StaticMeshConverter::convert(
 		assetParts.push_back(StaticMeshResource::Part());
 		assetParts.back().name = material.getName();
 		assetParts.back().material = materialIt->second.guid;
+		assetParts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
 	}
 
 	mesh->getIndexBuffer()->unlock();

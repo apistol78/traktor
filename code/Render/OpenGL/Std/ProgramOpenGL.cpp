@@ -396,11 +396,6 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 {
 }
 
-bool ProgramOpenGL::isOpaque() const
-{
-	return true;
-}
-
 bool ProgramOpenGL::activate()
 {
 	if (ms_activeProgram == this && !m_dirty)

@@ -3,6 +3,7 @@
 #include <list>
 #include <map>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
+#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Model/Model.h"
@@ -630,6 +631,7 @@ bool IndoorMeshConverter::convert(
 			assetSectors.back().parts.push_back(IndoorMeshResource::Part());
 			assetSectors.back().parts.back().material = materialIt->second.guid;
 			assetSectors.back().parts.back().meshPart = int(meshParts.size());
+			assetSectors.back().parts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
 
 			meshParts.push_back(render::Mesh::Part());
 			meshParts.back().name = i->name + L"_" + toString(material);
