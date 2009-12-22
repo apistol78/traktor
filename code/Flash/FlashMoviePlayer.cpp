@@ -276,6 +276,11 @@ Ref< FlashSpriteInstance > FlashMoviePlayer::getMovieInstance() const
 	return m_movieInstance;
 }
 
+Ref< ActionVM > FlashMoviePlayer::getVM() const
+{
+	return m_actionVM;
+}
+
 void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
 {
 	std::wstring url = ca.args[0].getString();
