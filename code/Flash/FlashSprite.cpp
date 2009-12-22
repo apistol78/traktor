@@ -1,9 +1,10 @@
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -42,7 +43,7 @@ int FlashSprite::findFrame(const std::wstring& frameLabel) const
 {
 	for (RefArray< FlashFrame >::const_iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 	{
-		if ((*i)->getLabel() == frameLabel)
+		if (compareIgnoreCase((*i)->getLabel(), frameLabel) == 0)
 			return int(std::distance(m_frames.begin(), i));
 	}
 	return -1;
