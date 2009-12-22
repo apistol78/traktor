@@ -326,19 +326,25 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 		if (m_pixelTextures[i])
 		{
 			if (is_a< SimpleTexturePs3 >(m_pixelTextures[i]))
+			{
 				static_cast< SimpleTexturePs3* >(m_pixelTextures[i])->bind(i, m_renderState.samplerStates[i]);
-			else if (is_a< RenderTargetPs3 >(m_pixelTextures[i]))
+				continue;
+			}
+			if (is_a< RenderTargetPs3 >(m_pixelTextures[i]))
+			{
 				static_cast< RenderTargetPs3* >(m_pixelTextures[i])->bind(i, m_renderState.samplerStates[i]);
+				continue;
+			}
 		}
-		else
-			cellGcmSetTextureControl(
-				gCellGcmCurrentContext,
-				i,
-				CELL_GCM_FALSE,
-				0,
-				0,
-				0
-			);
+
+		cellGcmSetTextureControl(
+			gCellGcmCurrentContext,
+			i,
+			CELL_GCM_FALSE,
+			0,
+			0,
+			0
+		);
 	}
 }
 

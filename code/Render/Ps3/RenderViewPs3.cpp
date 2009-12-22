@@ -297,6 +297,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
 	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
 
+	rt->beginRender();
+
 	return true;
 }
 
@@ -451,7 +453,8 @@ void RenderViewPs3::end()
 		T_ASSERT (rt);
 
 		cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
-		rt->setWaitLabel(m_targetCounter);
+
+		rt->finishRender(m_targetCounter);
 
 		m_targetCounter = incrementLabel(m_targetCounter);
 
@@ -473,7 +476,6 @@ void RenderViewPs3::present()
 
 	while (*m_frameSyncLabelData + 2 < m_frameCounter)
 		sys_timer_usleep(100);
-	//cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_frameCounter);
 
 	m_frameCounter = incrementLabel(m_frameCounter);
 }

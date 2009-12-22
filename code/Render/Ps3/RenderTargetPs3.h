@@ -34,6 +34,10 @@ public:
 	
 	virtual int getDepth() const;
 
+	void beginRender();
+
+	void finishRender(uint32_t waitLabel);
+
 	void bind(int stage, const SamplerState& samplerState);
 
 	uint32_t getGcmSurfaceColorFormat() const {
@@ -44,16 +48,13 @@ public:
 		return m_colorTexture;
 	}
 
-	void setWaitLabel(uint32_t waitLabel) {
-		m_waitLabel = waitLabel;
-	}
-
 private:
 	int32_t m_width;
 	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
 	void* m_colorData;
+	bool m_inRender;
 	uint32_t m_waitLabel;
 };
 

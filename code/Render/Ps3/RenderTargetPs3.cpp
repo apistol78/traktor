@@ -21,6 +21,7 @@ RenderTargetPs3::RenderTargetPs3()
 ,	m_height(0)
 ,	m_colorSurfaceFormat(0)
 ,	m_colorData(0)
+,	m_inRender(false)
 ,	m_waitLabel(0)
 {
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
@@ -112,6 +113,11 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 
 void RenderTargetPs3::destroy()
 {
+	if (m_colorData)
+	{
+		LocalMemoryAllocator::getInstance().free(m_colorData);
+		m_colorData = 0;
+	}
 }
 
 int RenderTargetPs3::getWidth() const
@@ -129,28 +135,44 @@ int RenderTargetPs3::getDepth() const
 	return 1;
 }
 
+void RenderTargetPs3::beginRender()
+{
+	T_ASSERT (m_inRender == false);
+	m_inRender = true;
+}
+
+void RenderTargetPs3::finishRender(uint32_t waitLabel)
+{
+	T_ASSERT (m_inRender == true);
+	T_ASSERT (waitLabel != 0);
+	m_waitLabel = waitLabel;
+	m_inRender = false;
+}
+
 void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 {
+	T_ASSERT (!m_inRender);
+
 	// Need to flush render queue to ensure target has been
 	// properly updated.
-	if (m_waitLabel)
-	{
-		cellGcmFlush(gCellGcmCurrentContext);
-		cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_waitLabel);
-		m_waitLabel = 0;
-	}
-
-	cellGcmSetTextureControl(
-		gCellGcmCurrentContext,
-		stage,
-		CELL_GCM_TRUE,
-		0,
-		0,
-		CELL_GCM_TEXTURE_MAX_ANISO_1
-	);
+	//if (m_waitLabel)
+	//{
+	//	cellGcmFlush(gCellGcmCurrentContext);
+	//	cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_waitLabel);
+	//	m_waitLabel = 0;
+	//}
 
 	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
+		cellGcmSetTextureControl(
+			gCellGcmCurrentContext,
+			stage,
+			CELL_GCM_TRUE,
+			0,
+			0,
+			CELL_GCM_TEXTURE_MAX_ANISO_1
+		);
+
 		cellGcmSetTextureFilter(
 			gCellGcmCurrentContext,
 			stage,
@@ -159,9 +181,29 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			samplerState.magFilter,
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 		);
+
+		cellGcmSetTextureAddress(
+			gCellGcmCurrentContext,
+			stage,
+			samplerState.wrapU,
+			samplerState.wrapV,
+			samplerState.wrapW,
+			CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
+			CELL_GCM_TEXTURE_ZFUNC_NEVER,
+			0
+		);
 	}
-	else
+	else	// FP targets.
 	{
+		cellGcmSetTextureControl(
+			gCellGcmCurrentContext,
+			stage,
+			CELL_GCM_TRUE,
+			0,
+			0,
+			0
+		);
+
 		cellGcmSetTextureFilter(
 			gCellGcmCurrentContext,
 			stage,
@@ -170,18 +212,18 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			CELL_GCM_TEXTURE_NEAREST,
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 		);
-	}
 
-	cellGcmSetTextureAddress(
-		gCellGcmCurrentContext,
-		stage,
-		samplerState.wrapU,
-		samplerState.wrapV,
-		samplerState.wrapW,
-		CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
-		CELL_GCM_TEXTURE_ZFUNC_NEVER,
-		0
-	);
+		cellGcmSetTextureAddress(
+			gCellGcmCurrentContext,
+			stage,
+			CELL_GCM_TEXTURE_CLAMP,
+			CELL_GCM_TEXTURE_CLAMP,
+			CELL_GCM_TEXTURE_CLAMP,
+			CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
+			CELL_GCM_TEXTURE_ZFUNC_NEVER,
+			0
+		);
+	}
 
 	cellGcmSetTexture(
 		gCellGcmCurrentContext,

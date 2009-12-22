@@ -50,6 +50,8 @@ ClearFpPs3::~ClearFpPs3()
 
 void ClearFpPs3::clear(const float color[4])
 {
+	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, "Clear FP target");
+
 	cellGcmSetVertexProgram(gCellGcmCurrentContext, m_clearVertexProgram, m_clearVertexProgramUcode);
 	cellGcmSetFragmentProgram(gCellGcmCurrentContext, m_clearFragmentProgram, m_clearFragmentProgramOffset);
 	cellGcmSetVertexDataArray(
@@ -70,6 +72,8 @@ void ClearFpPs3::clear(const float color[4])
 
 	cellGcmSetFrontPolygonMode(gCellGcmCurrentContext, CELL_GCM_POLYGON_MODE_FILL);
 	cellGcmSetDrawArrays(gCellGcmCurrentContext, CELL_GCM_PRIMITIVE_TRIANGLE_STRIP, 0, 4);
+
+	cellGcmSetPerfMonPopMarker(gCellGcmCurrentContext);
 }
 
 	}
