@@ -294,6 +294,11 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	T_ASSERT (m_renderViews.empty());
 	T_ASSERT (displayMode);
 
+	// Determine output aspect ratio from default display mode; not
+	// correct but we assume user have a matching resolution and monitor
+	// have square pixels.
+	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
+
 	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_SHOWWINDOW);
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 	UpdateWindow(m_hWnd);
@@ -323,7 +328,8 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 		desc,
 		this,
 		d3dPresent,
-		d3dDepthStencilFormat
+		d3dDepthStencilFormat,
+		aspectRatio
 	);
 }
 
@@ -334,6 +340,11 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	RECT rcWindow;
 
 	T_ASSERT (m_hWnd);
+
+	// Determine output aspect ratio from default display mode; not
+	// correct but we assume user have a matching resolution and monitor
+	// have square pixels.
+	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 
 	GetClientRect((HWND)windowHandle, &rcWindow);
 	if (rcWindow.left >= rcWindow.right)
@@ -366,7 +377,8 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 		desc,
 		this,
 		d3dPresent,
-		d3dDepthStencilFormat
+		d3dDepthStencilFormat,
+		aspectRatio
 	);
 }
 

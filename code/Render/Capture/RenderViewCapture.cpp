@@ -47,6 +47,11 @@ Viewport RenderViewCapture::getViewport()
 	return m_renderView->getViewport();
 }
 
+bool RenderViewCapture::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return m_renderView->getNativeAspectRatio(outAspectRatio);
+}
+
 bool RenderViewCapture::begin()
 {
 	if (!m_renderView->begin())

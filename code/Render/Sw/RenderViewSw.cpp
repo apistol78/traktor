@@ -160,6 +160,11 @@ Viewport RenderViewSw::getViewport()
 	return m_viewPort;
 }
 
+bool RenderViewSw::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return false;
+}
+
 bool RenderViewSw::begin()
 {
 	T_ASSERT (m_renderStateStack.empty());
