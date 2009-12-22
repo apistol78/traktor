@@ -44,7 +44,8 @@ public:
 		const RenderViewCreateDesc& createDesc,
 		RenderSystemWin32* renderSystem,
 		const D3DPRESENT_PARAMETERS& d3dPresent,
-		D3DFORMAT d3dDepthStencilFormat
+		D3DFORMAT d3dDepthStencilFormat,
+		float nativeAspectRatio
 	);
 
 	virtual ~RenderViewWin32();
@@ -56,6 +57,8 @@ public:
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();
+
+	virtual bool getNativeAspectRatio(float& outAspectRatio) const;
 
 	virtual bool begin();
 
@@ -109,6 +112,7 @@ private:
 	IDirect3DDevice9* m_d3dDevice;
 	D3DPRESENT_PARAMETERS m_d3dPresent;
 	D3DFORMAT m_d3dDepthStencilFormat;
+	float m_nativeAspectRatio;
 	D3DVIEWPORT9 m_d3dViewport;
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;

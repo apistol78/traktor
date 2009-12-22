@@ -45,6 +45,13 @@ public:
 	virtual void setViewport(const Viewport& viewport) = 0;
 
 	virtual Viewport getViewport() = 0;
+
+	/*! \brief Get native aspect ratio of monitor.
+	 *
+	 * \param outAspectRatio Aspect ratio.
+	 * \return True if able to retrieve native aspect.
+	 */
+	virtual bool getNativeAspectRatio(float& outAspectRatio) const = 0;
 	
 	//@}
 

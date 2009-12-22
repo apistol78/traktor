@@ -137,6 +137,11 @@ Viewport RenderViewOpenGLES2::getViewport()
 	return viewport;
 }
 
+bool RenderViewOpenGLES2::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return false;
+}
+
 bool RenderViewOpenGLES2::begin()
 {
 #	if TARGET_OS_IPHONE

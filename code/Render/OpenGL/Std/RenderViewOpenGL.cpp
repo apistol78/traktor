@@ -120,6 +120,11 @@ Viewport RenderViewOpenGL::getViewport()
 	return viewport;
 }
 
+bool RenderViewOpenGL::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return false;
+}
+
 bool RenderViewOpenGL::begin()
 {
 	m_context->enter();

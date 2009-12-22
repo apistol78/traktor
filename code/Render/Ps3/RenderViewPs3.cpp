@@ -230,6 +230,11 @@ Viewport RenderViewPs3::getViewport()
 	return m_viewport;
 }
 
+bool RenderViewPs3::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return false;
+}
+
 bool RenderViewPs3::begin()
 {
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);

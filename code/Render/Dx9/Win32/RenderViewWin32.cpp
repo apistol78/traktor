@@ -1,3 +1,5 @@
+#include <HighLevelMonitorConfigurationAPI.h>
+
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 #include "Render/Dx9/Win32/RenderSystemWin32.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
@@ -47,7 +49,8 @@ RenderViewWin32::RenderViewWin32(
 	const RenderViewCreateDesc& createDesc,
 	RenderSystemWin32* renderSystem,
 	const D3DPRESENT_PARAMETERS& d3dPresent,
-	D3DFORMAT d3dDepthStencilFormat
+	D3DFORMAT d3dDepthStencilFormat,
+	float nativeAspectRatio
 )
 :	Unmanaged(renderSystem)
 ,	m_context(context)
@@ -56,6 +59,7 @@ RenderViewWin32::RenderViewWin32(
 ,	m_d3dDevice(0)
 ,	m_d3dPresent(d3dPresent)
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
+,	m_nativeAspectRatio(nativeAspectRatio)
 #if defined(_DEBUG)
 ,	m_ownerThread(-1)
 ,	m_frameCount(0)
@@ -199,6 +203,12 @@ Viewport RenderViewWin32::getViewport()
 		d3dViewport.MinZ,
 		d3dViewport.MaxZ
 	);
+}
+
+bool RenderViewWin32::getNativeAspectRatio(float& outAspectRatio) const
+{
+	outAspectRatio = m_nativeAspectRatio;
+	return true;
 }
 
 bool RenderViewWin32::begin()

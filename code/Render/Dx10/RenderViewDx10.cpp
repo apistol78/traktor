@@ -190,6 +190,11 @@ Viewport RenderViewDx10::getViewport()
 	);
 }
 
+bool RenderViewDx10::getNativeAspectRatio(float& outAspectRatio) const
+{
+	return false;
+}
+
 bool RenderViewDx10::begin()
 {
 	T_ASSERT (m_renderStateStack.empty());
