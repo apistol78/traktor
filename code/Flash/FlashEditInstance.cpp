@@ -1,6 +1,6 @@
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashEdit.h"
-#include "Flash/Action/Classes/AsTextField.h"
+#include "Flash/Action/Avm1/Classes/AsTextField.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
 #include "Html/Text.h"

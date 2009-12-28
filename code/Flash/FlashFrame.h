@@ -4,7 +4,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Core/Math/Matrix33.h"
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/Avm1/ActionObject.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.

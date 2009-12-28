@@ -3,7 +3,7 @@
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFrame.h"
-#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/Avm1/ActionContext.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

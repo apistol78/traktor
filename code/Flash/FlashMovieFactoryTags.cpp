@@ -11,7 +11,7 @@
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashBitmap.h"
-#include "Flash/Action/ActionScript.h"
+#include "Flash/Action/Avm1/ActionScript.h"
 #include "Flash/SwfReader.h"
 #include "Zip/InflateStream.h"
 #include "Drawing/Image.h"

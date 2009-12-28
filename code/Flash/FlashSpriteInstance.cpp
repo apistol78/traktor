@@ -2,11 +2,11 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
-#include "Flash/Action/Classes/AsMovieClip.h"
-#include "Flash/Action/ActionVM.h"
-#include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionScript.h"
+#include "Flash/Action/Avm1/Classes/AsMovieClip.h"
+#include "Flash/Action/Avm1/ActionVM.h"
+#include "Flash/Action/Avm1/ActionFrame.h"
+#include "Flash/Action/Avm1/ActionContext.h"
+#include "Flash/Action/Avm1/ActionScript.h"
 
 namespace traktor
 {

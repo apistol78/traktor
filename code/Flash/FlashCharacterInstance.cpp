@@ -1,7 +1,7 @@
 #include "Flash/FlashCharacterInstance.h"
-#include "Flash/Action/ActionVM.h"
-#include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/ActionScript.h"
+#include "Flash/Action/Avm1/ActionVM.h"
+#include "Flash/Action/Avm1/ActionFrame.h"
+#include "Flash/Action/Avm1/ActionScript.h"
 
 namespace traktor
 {

@@ -1,6 +1,6 @@
 #include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashShape.h"
-#include "Flash/Action/Classes/AsObject.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {

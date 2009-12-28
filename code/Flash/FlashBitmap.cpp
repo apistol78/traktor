@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Flash/FlashBitmap.h"
-#include "Flash/Action/Classes/AsObject.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"

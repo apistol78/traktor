@@ -1,7 +1,7 @@
 #ifndef traktor_flash_FlashBitmap_H
 #define traktor_flash_FlashBitmap_H
 
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/Avm1/ActionObject.h"
 #include "Flash/SwfTypes.h"
 #include "Core/Misc/AutoPtr.h"
 
