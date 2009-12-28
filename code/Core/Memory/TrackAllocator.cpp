@@ -53,7 +53,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const wchar_t* const tag)
 	block.at[2] =
 	block.at[3] = 0;
 
-#if defined(_WIN32) && !defined(_WIN64)
+#if defined(_WIN32) && !defined(_WIN64) && !defined(WINCE)
 
 	uint32_t at_0 = 0, at_1 = 0;
 	uint32_t at_2 = 0, at_3 = 0;

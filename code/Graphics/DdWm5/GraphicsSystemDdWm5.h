@@ -2,16 +2,15 @@
 #define traktor_graphics_GraphicsSystemDdWm5_H
 
 #include <ddraw.h>
-#include "Core/Heap/Ref.h"
-#include "Graphics/GraphicsSystem.h"
 #include "Core/Misc/ComRef.h"
+#include "Graphics/IGraphicsSystem.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_GRAPHICS_DDWM5_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,9 +20,9 @@ namespace traktor
 
 class SurfaceDdWm5;
 
-class T_DLLCLASS GraphicsSystemDdWm5 : public GraphicsSystem
+class T_DLLCLASS GraphicsSystemDdWm5 : public IGraphicsSystem
 {
-	T_RTTI_CLASS(GraphicsSystemDdWm5)
+	T_RTTI_CLASS;
 
 public:
 	GraphicsSystemDdWm5();
@@ -36,11 +35,11 @@ public:
 
 	virtual bool resize(int width, int height);
 
-	virtual Surface* getPrimarySurface();
+	virtual Ref< ISurface > getPrimarySurface();
 
-	virtual Surface* getSecondarySurface();
+	virtual Ref< ISurface > getSecondarySurface();
 
-	virtual Surface* createOffScreenSurface(const SurfaceDesc& surfaceDesc);
+	virtual Ref< ISurface > createOffScreenSurface(const SurfaceDesc& surfaceDesc);
 
 	virtual void flip(bool waitVBlank);
 
