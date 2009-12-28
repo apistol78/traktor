@@ -3,14 +3,15 @@
 
 #include <vector>
 #include "Core/RefArray.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/RenderTargetSet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_SW_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -45,11 +46,11 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
-	float* getDepthSurface();
+	uint16_t* getDepthSurface();
 
 private:
 	RefArray< RenderTargetSw > m_colorTargets;
-	std::vector< float > m_depthSurface;
+	AutoArrayPtr< uint16_t > m_depthSurface;
 	int m_width;
 	int m_height;
 };

@@ -188,26 +188,26 @@ bool RenderViewSw::begin()
 
 bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
-	//T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT (!m_renderStateStack.empty());
 
-	//RenderTargetSetSw* rts = checked_type_cast< RenderTargetSetSw* >(renderTargetSet);
-	//RenderTargetSw* rt = checked_type_cast< RenderTargetSw* >(rts->getColorTexture(renderTarget));
+	RenderTargetSetSw* rts = checked_type_cast< RenderTargetSetSw* >(renderTargetSet);
+	RenderTargetSw* rt = checked_type_cast< RenderTargetSw* >(rts->getColorTexture(renderTarget));
 
-	//RenderState rs =
-	//{
-	//	Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
-	//	rt->getColorSurface(),
-	//	rts->getDepthSurface(),
-	//	rts->getHeight(),
-	//	rts->getWidth()
-	//};
+	RenderState rs =
+	{
+		Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f),
+		rts->getWidth(),
+		rts->getHeight(),
+		rt->getColorSurface(),
+		rt->getWidth() * 4,
+		rts->getDepthSurface(),
+		rt->getWidth() * 2
+	};
 
-	//m_renderStateStack.push_back(rs);
+	m_renderStateStack.push_back(rs);
 
-	//rts->setContentValid(true);
-	//return true;
-
-	return false;
+	rts->setContentValid(true);
+	return true;
 }
 
 void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)

@@ -1,12 +1,46 @@
 #include <algorithm>
+#include "Core/Io/OutputStream.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberAlignedVector.h"
+#include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberStaticArray.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Sw/Core/IntrProgram.h"
 #include "Render/Sw/Emitter/Variable.h"
-#include "Core/Io/OutputStream.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+class MemberInstruction : public MemberComplex
+{
+public:
+	typedef Instruction value_type;
+
+	MemberInstruction(const std::wstring& name, value_type& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint8_t >(L"op", m_ref.op);
+		s >> Member< uint8_t >(L"dest", m_ref.dest);
+		s >> MemberStaticArray< uint8_t, 4 >(L"src", m_ref.src);
+		return true;
+	}
+
+private:
+	value_type& m_ref;
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.IntrProgram", 0, IntrProgram, ISerializable)
 
 uint32_t IntrProgram::addInstruction(const Instruction& instruction)
 {
@@ -135,6 +169,13 @@ void IntrProgram::dump(OutputStream& os, const std::map< std::wstring, Variable*
 	}
 
 	os << L"--- End ---" << Endl;
+}
+
+bool IntrProgram::serialize(ISerializer& s)
+{
+	s >> MemberStlVector< Instruction, MemberInstruction >(L"instructions", m_instructions);
+	s >> MemberAlignedVector< Vector4 >(L"constants", m_constants);
+	return true;
 }
 
 	}

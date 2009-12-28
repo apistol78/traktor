@@ -124,13 +124,13 @@ public:
 		x = AddressU::eval(m_width, x);
 		y = AddressV::eval(m_height, y);
 
-		const uint32_t* data = m_renderTarget->getColorSurface() + x + y * m_width;
+		const uint16_t* data = m_renderTarget->getColorSurface() + x + y * m_width;
 
 		return Vector4(
-			((*data & 0x00ff0000) >> 16) / 255.0f,
-			((*data & 0x0000ff00) >>  8) / 255.0f,
-			((*data & 0x000000ff)      ) / 255.0f,
-			((*data & 0xff000000) >> 24) / 255.0f
+			((*data & 0xf800) >> 11) / float((1 << 5) - 1),
+			((*data & 0x07e0) >> 5) / float((1 << 6) - 1),
+			 (*data & 0x001f) / float((1 << 5) - 1),
+			0.0f
 		);
 	}
 
