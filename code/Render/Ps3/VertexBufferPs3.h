@@ -45,6 +45,8 @@ private:
 		uint32_t offset;
 	};
 
+	static VertexBufferPs3* ms_activeVertexBuffer;
+
 	void* m_ptr;
 	uint32_t m_offset;
 	uint8_t m_vertexStride;

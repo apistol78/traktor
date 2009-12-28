@@ -190,12 +190,10 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 
 	ss << L"float4 columnMajorMul(float4x4 m, float4 v)" << Endl;
 	ss << L"{" << Endl;
-	ss << L"	return float4(" << Endl;
-	ss << L"		dot(m._11_21_31_41, v)," << Endl;
-	ss << L"		dot(m._12_22_32_42, v)," << Endl;
-	ss << L"		dot(m._13_23_33_43, v)," << Endl;
-	ss << L"		dot(m._14_24_34_44, v)" << Endl;
-	ss << L"	);" << Endl;
+	ss << L"	float4 tmp = v.y * m._21_22_23_24;" << Endl;
+	ss << L"	tmp = m._11_12_13_14 * v.x + tmp;" << Endl;
+	ss << L"	tmp = m._31_32_33_34 * v.z + tmp;" << Endl;
+	ss << L"	return m._41_42_43_44 * v.w + tmp;" << Endl;
 	ss << L"}" << Endl;
 	ss << Endl;
 

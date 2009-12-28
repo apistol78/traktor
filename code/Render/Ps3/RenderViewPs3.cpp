@@ -328,7 +328,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		}
 		else
 		{
-			m_stateCache.reset();
+			m_stateCache.reset(false);
 			m_clearFp.clear(color);
 		}
 	}
@@ -557,7 +557,12 @@ void RenderViewPs3::setCurrentRenderState()
 	cellGcmSetColorMask(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
 	cellGcmSetColorMaskMrt(gCellGcmCurrentContext, 0);
 
-	m_stateCache.reset();
+	if (rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32)
+		m_stateCache.setInFp32Mode(true);
+	else
+		m_stateCache.setInFp32Mode(false);
+
+	m_stateCache.reset(false);
 }
 
 	}

@@ -67,9 +67,24 @@ Guid incrementGuid(const Guid& g)
 	return Guid(d);
 }
 
+struct PixelOutputPred
+{
+	std::wstring m_technique;
+
+	PixelOutputPred(const std::wstring& technique)
+	:	m_technique(technique)
+	{
+	}
+
+	bool operator () (const render::PixelOutput* pixelOutputNode) const
+	{
+		return pixelOutputNode->getTechnique() == m_technique;
+	}
+};
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 7, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 8, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -202,7 +217,7 @@ bool MeshPipeline::buildDependencies(
 				(*i)->setFragmentGuid(vertexShaderGuid);
 		}
 
-		// Increment guid for each material, quite hackish but won't guids still be universally unique?
+		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
 		materialGuid = incrementGuid(materialGuid);
 
 		pipelineDepends->addDependency(

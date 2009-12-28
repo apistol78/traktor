@@ -37,7 +37,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGrap
 
 	static Semaphore s_globalLock;
 
-	const char* argv[] = { "-O3", "--fastmath", "--fastprecision", 0 };
+	const char* argv[] = { "-O3", "--fastmath"/*, "--fastprecision"*/, 0 };
 	CGCstatus status;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_globalLock);

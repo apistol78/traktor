@@ -66,6 +66,7 @@ public:
 	void bind(StateCachePs3& stateCache);
 
 private:
+	static ProgramPs3* ms_activeProgram;
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;

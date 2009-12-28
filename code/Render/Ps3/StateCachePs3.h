@@ -13,11 +13,14 @@ class StateCachePs3
 public:
 	StateCachePs3();
 
+	void setInFp32Mode(bool inFp32Mode);
+
 	void setRenderState(const RenderState& rs);
 
-	void reset();
+	void reset(bool force);
 
 private:
+	bool m_inFp32Mode;
 	RenderState m_renderState;
 };
 

@@ -6,7 +6,13 @@ namespace traktor
 	{
 
 StateCachePs3::StateCachePs3()
+:	m_inFp32Mode(false)
 {
+}
+
+void StateCachePs3::setInFp32Mode(bool inFp32Mode)
+{
+	m_inFp32Mode = inFp32Mode;
 }
 
 void StateCachePs3::setRenderState(const RenderState& rs)
@@ -21,25 +27,6 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 	{
 		cellGcmSetCullFace(gCellGcmCurrentContext, rs.cullFace);
 		m_renderState.cullFace = rs.cullFace;
-	}
-
-	if (rs.blendEnable != m_renderState.blendEnable)
-	{
-		cellGcmSetBlendEnable(gCellGcmCurrentContext, rs.blendEnable);
-		m_renderState.blendEnable = rs.blendEnable;
-	}
-
-	if (rs.blendEquation != m_renderState.blendEquation)
-	{
-		cellGcmSetBlendEquation(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
-		m_renderState.blendEquation = rs.blendEquation;
-	}
-
-	if (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest)
-	{
-		cellGcmSetBlendFunc(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
-		m_renderState.blendFuncSrc = rs.blendFuncSrc;
-		m_renderState.blendFuncDest = rs.blendFuncDest;
 	}
 
 	if (rs.depthTestEnable != m_renderState.depthTestEnable)
@@ -66,35 +53,68 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.depthFunc = rs.depthFunc;
 	}
 
-	if (rs.alphaTestEnable != m_renderState.alphaTestEnable)
+	if (!m_inFp32Mode)
 	{
-		cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, rs.alphaTestEnable);
-		m_renderState.alphaTestEnable = rs.alphaTestEnable;
-	}
+		if (rs.blendEnable != m_renderState.blendEnable)
+		{
+			cellGcmSetBlendEnable(gCellGcmCurrentContext, rs.blendEnable);
+			m_renderState.blendEnable = rs.blendEnable;
+		}
 
-	if (rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef)
-	{
-		cellGcmSetAlphaFunc(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
-		m_renderState.alphaFunc = rs.alphaFunc;
-		m_renderState.alphaRef = rs.alphaRef;
+		if (rs.blendEquation != m_renderState.blendEquation)
+		{
+			cellGcmSetBlendEquation(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
+			m_renderState.blendEquation = rs.blendEquation;
+		}
+
+		if (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest)
+		{
+			cellGcmSetBlendFunc(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			m_renderState.blendFuncSrc = rs.blendFuncSrc;
+			m_renderState.blendFuncDest = rs.blendFuncDest;
+		}
+
+		if (rs.alphaTestEnable != m_renderState.alphaTestEnable)
+		{
+			cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, rs.alphaTestEnable);
+			m_renderState.alphaTestEnable = rs.alphaTestEnable;
+		}
+
+		if (rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef)
+		{
+			cellGcmSetAlphaFunc(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
+			m_renderState.alphaFunc = rs.alphaFunc;
+			m_renderState.alphaRef = rs.alphaRef;
+		}
 	}
 }
 
-void StateCachePs3::reset()
+void StateCachePs3::reset(bool force)
 {
-	m_renderState = RenderState();
+	if (!force)
+	{
+		setRenderState(RenderState());
+	}
+	else
+	{
+		m_renderState = RenderState();
 
-	cellGcmSetCullFaceEnable(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
-	cellGcmSetCullFace(gCellGcmCurrentContext, m_renderState.cullFace);
-	cellGcmSetBlendEnable(gCellGcmCurrentContext, m_renderState.blendEnable);
-	cellGcmSetBlendEquation(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
-	cellGcmSetBlendFunc(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
-	cellGcmSetDepthTestEnable(gCellGcmCurrentContext, m_renderState.depthTestEnable);
-	cellGcmSetColorMask(gCellGcmCurrentContext, m_renderState.colorMask);
-	cellGcmSetDepthMask(gCellGcmCurrentContext, m_renderState.depthMask);
-	cellGcmSetDepthFunc(gCellGcmCurrentContext, m_renderState.depthFunc);
-	cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
-	cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
+		cellGcmSetCullFaceEnable(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
+		cellGcmSetCullFace(gCellGcmCurrentContext, m_renderState.cullFace);
+		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, m_renderState.depthTestEnable);
+		cellGcmSetColorMask(gCellGcmCurrentContext, m_renderState.colorMask);
+		cellGcmSetDepthMask(gCellGcmCurrentContext, m_renderState.depthMask);
+		cellGcmSetDepthFunc(gCellGcmCurrentContext, m_renderState.depthFunc);
+
+		if (!m_inFp32Mode)
+		{
+			cellGcmSetBlendEnable(gCellGcmCurrentContext, m_renderState.blendEnable);
+			cellGcmSetBlendEquation(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
+			cellGcmSetBlendFunc(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
+			cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
+		}
+	}
 }
 
 	}

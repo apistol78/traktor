@@ -70,7 +70,6 @@ void ClearFpPs3::clear(const float color[4])
 		color
 	);
 
-	cellGcmSetFrontPolygonMode(gCellGcmCurrentContext, CELL_GCM_POLYGON_MODE_FILL);
 	cellGcmSetDrawArrays(gCellGcmCurrentContext, CELL_GCM_PRIMITIVE_TRIANGLE_STRIP, 0, 4);
 
 	cellGcmSetPerfMonPopMarker(gCellGcmCurrentContext);

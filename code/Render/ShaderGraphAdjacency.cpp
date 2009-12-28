@@ -30,14 +30,14 @@ Ref< Edge > ShaderGraphAdjacency::findEdge(const InputPin* inputPin) const
 	return i != m_inputPinEdge.end() ? i->second : 0;
 }
 
-size_t ShaderGraphAdjacency::findEdges(const OutputPin* outputPin, RefArray< Edge >& outEdges) const
+uint32_t ShaderGraphAdjacency::findEdges(const OutputPin* outputPin, RefArray< Edge >& outEdges) const
 {
 	std::map< const OutputPin*, RefArray< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
 	if (i != m_outputPinEdges.end())
 		outEdges = i->second;
 	else
 		outEdges.resize(0);
-	return outEdges.size();
+	return uint32_t(outEdges.size());
 }
 
 const OutputPin* ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) const
@@ -46,7 +46,7 @@ const OutputPin* ShaderGraphAdjacency::findSourcePin(const InputPin* inputPin) c
 	return edge ? edge->getSource() : 0;
 }
 
-size_t ShaderGraphAdjacency::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const
+uint32_t ShaderGraphAdjacency::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const
 {
 	RefArray< Edge > edges;
 	findEdges(outputPin, edges);
@@ -55,7 +55,13 @@ size_t ShaderGraphAdjacency::findDestinationPins(const OutputPin* outputPin, std
 	for (size_t i = 0; i < edges.size(); ++i)
 		outDestinations[i] = edges[i]->getDestination();
 
-	return outDestinations.size();
+	return uint32_t(outDestinations.size());
+}
+
+uint32_t ShaderGraphAdjacency::getDestinationCount(const OutputPin* outputPin) const
+{
+	std::map< const OutputPin*, RefArray< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	return i != m_outputPinEdges.end() ? uint32_t(i->second.size()) : 0;
 }
 
 	}

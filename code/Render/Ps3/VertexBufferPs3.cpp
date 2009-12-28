@@ -10,6 +10,8 @@ namespace traktor
 	namespace render
 	{
 
+VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
 VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, void* ptr, uint32_t offset, int bufferSize)
@@ -98,6 +100,25 @@ VertexBufferPs3::~VertexBufferPs3()
 
 void VertexBufferPs3::destroy()
 {
+	if (ms_activeVertexBuffer == this)
+	{
+		for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
+		{
+			cellGcmSetVertexDataArray(
+				gCellGcmCurrentContext,
+				i,
+				0,
+				0,
+				0,
+				CELL_GCM_VERTEX_F,
+				CELL_GCM_LOCATION_LOCAL,
+				0
+			);
+		}
+
+		ms_activeVertexBuffer = 0;
+	}
+
 	if (m_ptr)
 	{
 		LocalMemoryAllocator::getInstance().free(m_ptr);
@@ -125,6 +146,9 @@ void VertexBufferPs3::unlock()
 
 void VertexBufferPs3::bind()
 {
+	if (ms_activeVertexBuffer == this)
+		return;
+
 	for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
 	{
 		if (m_attributeDesc[i].size)
@@ -140,20 +164,9 @@ void VertexBufferPs3::bind()
 				m_attributeDesc[i].offset
 			);
 		}
-		else
-		{
-			cellGcmSetVertexDataArray(
-				gCellGcmCurrentContext,
-				i,
-				0,
-				0,
-				0,
-				CELL_GCM_VERTEX_F,
-				CELL_GCM_LOCATION_LOCAL,
-				0
-			);
-		}
 	}
+
+	ms_activeVertexBuffer = this;
 }
 
 	}
