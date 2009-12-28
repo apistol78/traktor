@@ -1,19 +1,20 @@
 #ifndef traktor_render_IntrProgram_H
 #define traktor_render_IntrProgram_H
 
-#include <vector>
 #include <map>
-#include "Render/Sw/Core/Types.h"
-#include "Render/Types.h"
-#include "Core/Math/Vector4.h"
+#include <vector>
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Render/Types.h"
+#include "Render/Sw/Core/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_SW_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,8 +30,10 @@ struct Variable;
 /*! \brief Intermediate program representation.
  * \ingroup SW
  */
-class T_DLLCLASS IntrProgram
+class T_DLLCLASS IntrProgram : public ISerializable
 {
+	T_RTTI_CLASS;
+
 public:
 	uint32_t addInstruction(const Instruction& instruction);
 
@@ -47,6 +50,8 @@ public:
 	inline const Vector4& getConstant(uint32_t index) const { T_ASSERT (index < uint32_t(m_constants.size())); return m_constants[index]; }
 
 	void dump(OutputStream& os, const std::map< std::wstring, Variable* >& uniforms) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	std::vector< Instruction > m_instructions;

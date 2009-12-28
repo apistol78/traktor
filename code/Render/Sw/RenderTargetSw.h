@@ -1,15 +1,15 @@
 #ifndef traktor_render_RenderTargetSw_H
 #define traktor_render_RenderTargetSw_H
 
-#include <vector>
+#include "Core/Misc/AutoPtr.h"
 #include "Render/ITexture.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_SW_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -40,10 +40,10 @@ public:
 	
 	virtual int getDepth() const;
 
-	uint32_t* getColorSurface();
+	uint16_t* getColorSurface();
 
 private:
-	std::vector< uint32_t > m_color;
+	AutoArrayPtr< uint16_t > m_color;
 	int m_width;
 	int m_height;
 };

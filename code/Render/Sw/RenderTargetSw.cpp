@@ -24,7 +24,7 @@ bool RenderTargetSw::create(const RenderTargetSetCreateDesc& setDesc, const Rend
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-	m_color.resize(setDesc.width * setDesc.height);
+	m_color.reset(new uint16_t [setDesc.width * setDesc.height]);
 	return true;
 }
 
@@ -32,7 +32,7 @@ void RenderTargetSw::destroy()
 {
 	m_width =
 	m_height = 0;
-	m_color.resize(0);
+	m_color.release();
 }
 
 int RenderTargetSw::getWidth() const
@@ -50,9 +50,9 @@ int RenderTargetSw::getDepth() const
 	return 1;
 }
 
-uint32_t* RenderTargetSw::getColorSurface()
+uint16_t* RenderTargetSw::getColorSurface()
 {
-	return &m_color[0];
+	return m_color.ptr();
 }
 
 	}

@@ -131,6 +131,13 @@ struct Instruction
 		int32_t offset;
 	};
 
+	Instruction()
+	:	op(0)
+	,	dest(0)
+	,	offset(0)
+	{
+	}
+
 	Instruction(uint8_t op, uint8_t dest, uint8_t src1, uint8_t src2, uint8_t src3, uint8_t src4)
 	{
 		this->op = op;

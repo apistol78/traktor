@@ -32,7 +32,7 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 	}
 
 	if (desc.depthStencil)
-		m_depthSurface.resize(desc.width * desc.height);
+		m_depthSurface.reset(new uint16_t [desc.width * desc.height]);
 
 	return true;
 }
@@ -46,7 +46,7 @@ void RenderTargetSetSw::destroy()
 		(*i)->destroy();
 
 	m_colorTargets.resize(0);
-	m_depthSurface.resize(0);
+	m_depthSurface.release();
 }
 
 int RenderTargetSetSw::getWidth() const
@@ -74,9 +74,9 @@ bool RenderTargetSetSw::read(int index, void* buffer) const
 	return false;
 }
 
-float* RenderTargetSetSw::getDepthSurface()
+uint16_t* RenderTargetSetSw::getDepthSurface()
 {
-	return (!m_depthSurface.empty()) ? &m_depthSurface[0] : 0;
+	return m_depthSurface.ptr();
 }
 
 	}
