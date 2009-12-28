@@ -1,15 +1,15 @@
 #ifndef traktor_graphics_SurfaceOffscreen_H
 #define traktor_graphics_SurfaceOffscreen_H
 
-#include "Graphics/Surface.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Graphics/ISurface.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_GRAPHICS_DDWM5_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,9 +17,9 @@ namespace traktor
 	namespace graphics
 	{
 
-class T_DLLCLASS SurfaceOffscreen : public Surface
+class T_DLLCLASS SurfaceOffscreen : public ISurface
 {
-	T_RTTI_CLASS(SurfaceOffscreen)
+	T_RTTI_CLASS;
 
 public:
 	SurfaceOffscreen(const SurfaceDesc& surfaceDesc);
@@ -31,7 +31,7 @@ public:
 	virtual void unlock();
 
 	virtual void blt(
-		Surface* sourceSurface,
+		ISurface* sourceSurface,
 		int sourceX,
 		int sourceY,
 		int x,

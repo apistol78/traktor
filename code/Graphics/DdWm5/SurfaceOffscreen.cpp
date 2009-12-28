@@ -5,13 +5,13 @@ namespace traktor
 	namespace graphics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.SurfaceOffscreen", SurfaceOffscreen, Surface)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.SurfaceOffscreen", SurfaceOffscreen, ISurface)
 
 SurfaceOffscreen::SurfaceOffscreen(const SurfaceDesc& surfaceDesc)
 :	m_surfaceDesc(surfaceDesc)
 {
 	m_surfaceDesc.pitch = m_surfaceDesc.width * getByteSize(m_surfaceDesc.pixelFormat);
-	m_data = new uint8_t [m_surfaceDesc.height * m_surfaceDesc.pitch];
+	m_data.reset(new uint8_t [m_surfaceDesc.height * m_surfaceDesc.pitch]);
 }
 
 bool SurfaceOffscreen::getSurfaceDesc(SurfaceDesc& surfaceDesc) const
@@ -31,7 +31,7 @@ void SurfaceOffscreen::unlock()
 }
 
 void SurfaceOffscreen::blt(
-	Surface* sourceSurface,
+	ISurface* sourceSurface,
 	int sourceX,
 	int sourceY,
 	int x,

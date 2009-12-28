@@ -4,15 +4,15 @@
 #define _WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <ddraw.h>
-#include "Graphics/Surface.h"
 #include "Core/Misc/ComRef.h"
+#include "Graphics/ISurface.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_GRAPHICS_DDWM5_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,9 +20,9 @@ namespace traktor
 	namespace graphics
 	{
 
-class T_DLLCLASS SurfaceDdWm5 : public Surface
+class T_DLLCLASS SurfaceDdWm5 : public ISurface
 {
-	T_RTTI_CLASS(SurfaceDdWm5)
+	T_RTTI_CLASS;
 
 public:
 	SurfaceDdWm5(IDirectDrawSurface* dds);
@@ -34,7 +34,7 @@ public:
 	virtual void unlock();
 
 	virtual void blt(
-		Surface* sourceSurface,
+		ISurface* sourceSurface,
 		int sourceX,
 		int sourceY,
 		int x,

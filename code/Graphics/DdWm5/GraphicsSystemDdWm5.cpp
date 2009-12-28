@@ -1,8 +1,7 @@
+#include "Core/Log/Log.h"
 #include "Graphics/DdWm5/GraphicsSystemDdWm5.h"
 #include "Graphics/DdWm5/SurfaceDdWm5.h"
 #include "Graphics/DdWm5/SurfaceOffscreen.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -62,7 +61,7 @@ struct GetBackSurfaceEnum
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemDdWm5", GraphicsSystemDdWm5, GraphicsSystem)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemDdWm5", GraphicsSystemDdWm5, IGraphicsSystem)
 
 GraphicsSystemDdWm5::GraphicsSystemDdWm5()
 :	m_hWnd(NULL)
@@ -166,8 +165,8 @@ bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 		}
 	}
 
-	m_primary = gc_new< SurfaceDdWm5 >(m_ddsPrimary);
-	m_secondary = gc_new< SurfaceDdWm5 >(m_ddsSecondary);
+	m_primary = new SurfaceDdWm5(m_ddsPrimary);
+	m_secondary = new SurfaceDdWm5(m_ddsSecondary);
 	return true;
 }
 
@@ -183,19 +182,19 @@ bool GraphicsSystemDdWm5::resize(int width, int height)
 	return false;
 }
 
-Surface* GraphicsSystemDdWm5::getPrimarySurface()
+Ref< ISurface > GraphicsSystemDdWm5::getPrimarySurface()
 {
 	return m_primary;
 }
 
-Surface* GraphicsSystemDdWm5::getSecondarySurface()
+Ref< ISurface > GraphicsSystemDdWm5::getSecondarySurface()
 {
 	return m_secondary;
 }
 
-Surface* GraphicsSystemDdWm5::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
+Ref< ISurface > GraphicsSystemDdWm5::createOffScreenSurface(const SurfaceDesc& surfaceDesc)
 {
-	return gc_new< SurfaceOffscreen >(cref(surfaceDesc));
+	return new SurfaceOffscreen(surfaceDesc);
 }
 
 void GraphicsSystemDdWm5::flip(bool waitVBlank)

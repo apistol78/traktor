@@ -5,7 +5,7 @@ namespace traktor
 	namespace graphics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.SurfaceDdWm5", SurfaceDdWm5, Surface)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.SurfaceDdWm5", SurfaceDdWm5, ISurface)
 
 SurfaceDdWm5::SurfaceDdWm5(IDirectDrawSurface* dds)
 :	m_dds(dds)
@@ -61,7 +61,7 @@ void SurfaceDdWm5::unlock()
 }
 
 void SurfaceDdWm5::blt(
-	Surface* sourceSurface,
+	ISurface* sourceSurface,
 	int sourceX,
 	int sourceY,
 	int x,
