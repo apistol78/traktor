@@ -1,0 +1,71 @@
+#include <limits>
+#include "Flash/Action/Avm1/Classes/AsNumber.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Flash/Action/Avm1/ActionNumber.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
+#include "Core/Misc/String.h"
+
+namespace traktor
+{
+	namespace flash
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsNumber", AsNumber, ActionClass)
+
+Ref< AsNumber > AsNumber::getInstance()
+{
+	static Ref< AsNumber > instance = 0;
+	if (!instance)
+	{
+		instance = new AsNumber();
+		instance->createPrototype();
+		instance->setReadOnly();
+	}
+	return instance;
+}
+
+AsNumber::AsNumber()
+:	ActionClass(L"Number")
+{
+}
+
+void AsNumber::createPrototype()
+{
+	Ref< ActionObject > prototype = new ActionObject();
+
+	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< double >::max()));
+	prototype->setMember(L"MIN_VALUE", ActionValue(std::numeric_limits< double >::min()));
+	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< double >::signaling_NaN()));
+	prototype->setMember(L"NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< double >::infinity()));
+	prototype->setMember(L"POSITIVE_INFINITY", ActionValue(std::numeric_limits< double >::infinity()));
+	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsNumber::Number_toString));
+	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsNumber::Number_valueOf));
+
+	prototype->setReadOnly();
+
+	setMember(L"prototype", ActionValue::fromObject(prototype));
+}
+
+ActionValue AsNumber::construct(ActionContext* context, const args_t& args)
+{
+	if (args.empty())
+		return ActionValue::fromObject(new ActionNumber(0.0));
+	else
+		return ActionValue::fromObject(new ActionNumber(args[0].getNumberSafe()));
+}
+
+void AsNumber::Number_toString(CallArgs& ca)
+{
+	const ActionNumber* obj = checked_type_cast< const ActionNumber* >(ca.self);
+	ca.ret = ActionValue(traktor::toString(obj->get()));
+}
+
+void AsNumber::Number_valueOf(CallArgs& ca)
+{
+	const ActionNumber* obj = checked_type_cast< const ActionNumber* >(ca.self);
+	ca.ret = ActionValue(obj->get());
+}
+
+	}
+}

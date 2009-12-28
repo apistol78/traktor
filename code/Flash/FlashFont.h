@@ -2,7 +2,7 @@
 #define traktor_flash_FlashFont_H
 
 #include "Core/RefArray.h"
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/Avm1/ActionObject.h"
 #include "Flash/SwfTypes.h"
 
 // import/export mechanism.

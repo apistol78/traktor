@@ -4,8 +4,8 @@
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionGlobal.h"
+#include "Flash/Action/Avm1/ActionContext.h"
+#include "Flash/Action/Avm1/ActionGlobal.h"
 
 namespace traktor
 {

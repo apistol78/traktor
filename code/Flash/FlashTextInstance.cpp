@@ -1,6 +1,6 @@
 #include "Flash/FlashTextInstance.h"
 #include "Flash/FlashText.h"
-#include "Flash/Action/Classes/AsTextField.h"
+#include "Flash/Action/Avm1/Classes/AsTextField.h"
 
 namespace traktor
 {
