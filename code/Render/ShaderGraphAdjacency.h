@@ -47,7 +47,7 @@ public:
 	 * \param outEdges Connected edges.
 	 * \return Number of connected edges.
 	 */
-	size_t findEdges(const OutputPin* outputPin, RefArray< Edge >& outEdges) const;
+	uint32_t findEdges(const OutputPin* outputPin, RefArray< Edge >& outEdges) const;
 
 	/*! \brief Find output pin connected to input pin.
 	 *
@@ -62,7 +62,14 @@ public:
 	 * \param outDestinations Connected input pins.
 	 * \return Number of connected input pins.
 	 */
-	size_t findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const;
+	uint32_t findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const;
+
+	/*! \brief Get number of destination pins connected to an output pin.
+	 *
+	 * \param outputPin Output pin.
+	 * \return Number of connected destinations.
+	 */
+	uint32_t getDestinationCount(const OutputPin* outputPin) const;
 	
 private:
 	Ref< const ShaderGraph > m_shaderGraph;

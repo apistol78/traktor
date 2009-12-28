@@ -22,6 +22,7 @@ ScenePipeline::ScenePipeline()
 ,	m_suppressVelocity(false)
 ,	m_suppressShadows(false)
 ,	m_suppressPostProcess(false)
+,	m_shadowMapSizeDenom(1)
 {
 }
 
@@ -31,6 +32,7 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_suppressVelocity = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressVelocityPass");
 	m_suppressShadows = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressPostProcess = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
+	m_shadowMapSizeDenom = settings->getProperty< editor::PropertyBoolean >(L"ScenePipeline.ShadowMapSizeDenom");
 	return true;
 }
 
@@ -95,6 +97,13 @@ bool ScenePipeline::buildOutput(
 	{
 		sceneResource->setPostProcessSettings(Guid());
 		log::info << L"Post processing suppressed" << Endl;
+	}
+
+	if (m_shadowMapSizeDenom > 1)
+	{
+		sceneResource->getWorldRenderSettings()->shadowMapResolution =
+			sceneAsset->getWorldRenderSettings()->shadowMapResolution / m_shadowMapSizeDenom;
+		log::info << L"Reduced shadow map size " << sceneResource->getWorldRenderSettings()->shadowMapResolution << Endl;
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
