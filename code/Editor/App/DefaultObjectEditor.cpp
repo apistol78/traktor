@@ -6,6 +6,7 @@
 #include "Ui/FileDialog.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Event.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
@@ -66,6 +67,9 @@ bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& re
 
 void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 {
+	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
+	const ui::Command& cmd = cmdEvent->getCommand();
+
 	Ref< ui::custom::FilePropertyItem > fileItem = dynamic_type_cast< ui::custom::FilePropertyItem* >(event->getItem());
 	if (fileItem)
 	{
@@ -86,48 +90,66 @@ void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::BrowsePropertyItem > browseItem = dynamic_type_cast< ui::custom::BrowsePropertyItem* >(event->getItem());
 	if (browseItem)
 	{
-		if (browseItem->getValue().isNull())
+		if (cmd == L"Property.Browse")
 		{
-			Ref< db::Instance > instance;
-			if (browseItem->getFilterType())
+			if (browseItem->getValue().isNull())
 			{
-				const TypeInfo* filterType = browseItem->getFilterType();
-
-				// Check if filter type is actually a result of a asset; in such case we should
-				// browse for the asset and not the final result.
-				TypeInfoSet filterTypes;
-
-				std::vector< const TypeInfo* > assetTypes;
-				type_of< ITypedAsset >().findAllOf(assetTypes);
-				for (std::vector< const TypeInfo* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
+				Ref< db::Instance > instance;
+				if (browseItem->getFilterType())
 				{
-					Ref< ITypedAsset > asset = dynamic_type_cast< ITypedAsset* >((*i)->createInstance());
-					if (asset && asset->getOutputType())
+					const TypeInfo* filterType = browseItem->getFilterType();
+
+					// Check if filter type is actually a result of a asset; in such case we should
+					// browse for the asset and not the final result.
+					TypeInfoSet filterTypes;
+
+					std::vector< const TypeInfo* > assetTypes;
+					type_of< ITypedAsset >().findAllOf(assetTypes);
+					for (std::vector< const TypeInfo* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
 					{
-						if (is_type_of(*asset->getOutputType(), *filterType))
-							filterTypes.insert(*i);
+						Ref< ITypedAsset > asset = dynamic_type_cast< ITypedAsset* >((*i)->createInstance());
+						if (asset && asset->getOutputType())
+						{
+							if (is_type_of(*asset->getOutputType(), *filterType))
+								filterTypes.insert(*i);
+						}
 					}
+
+					if (filterTypes.empty())
+						filterTypes.insert(filterType);
+
+					editor::TypeBrowseFilter filter(filterTypes);
+					instance = m_editor->browseInstance(&filter);
 				}
+				else
+					instance = m_editor->browseInstance();
 
-				if (filterTypes.empty())
-					filterTypes.insert(filterType);
-
-				editor::TypeBrowseFilter filter(filterTypes);
-				instance = m_editor->browseInstance(&filter);
+				if (instance)
+				{
+					browseItem->setValue(instance->getGuid());
+					m_propertyList->apply();
+				}
 			}
 			else
-				instance = m_editor->browseInstance();
-
-			if (instance)
 			{
-				browseItem->setValue(instance->getGuid());
+				browseItem->setValue(Guid());
 				m_propertyList->apply();
 			}
 		}
-		else
+		else if (cmd == L"Property.Edit")
 		{
-			browseItem->setValue(Guid());
-			m_propertyList->apply();
+			Guid instanceGuid = browseItem->getValue();
+			if (instanceGuid.isNull() || !instanceGuid.isValid())
+				return;
+
+			Ref< IProject > project = m_editor->getProject();
+			T_ASSERT (project);
+
+			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(instanceGuid);
+			if (!instance)
+				return;
+
+			m_editor->openEditor(instance);
 		}
 	}
 
