@@ -1,10 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Flash/FlashEditInstance.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
 #include "Flash/Action/Avm1/Classes/AsTextField_StyleSheet.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Flash/FlashEditInstance.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

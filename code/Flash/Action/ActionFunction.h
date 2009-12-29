@@ -1,14 +1,14 @@
 #ifndef traktor_flash_ActionFunction_H
 #define traktor_flash_ActionFunction_H
 
-#include "Flash/Action/Avm1/ActionObject.h"
+#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,10 +16,10 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionVM;
-class ActionFrame;
 class ActionObject;
+class ActionFrame;
 class ActionValue;
+class IActionVM;
 
 /*! \brief ActionScript callable function base.
  * \ingroup Flash
@@ -31,7 +31,7 @@ class T_DLLCLASS ActionFunction : public ActionObject
 public:
 	ActionFunction(const std::wstring& name);
 
-	virtual ActionValue call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self) = 0;
+	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self) = 0;
 
 	virtual std::wstring toString() const;
 

@@ -1,8 +1,8 @@
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsSystem.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Avm1/Classes/AsSecurity.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionContext.h"
 
 namespace traktor
 {

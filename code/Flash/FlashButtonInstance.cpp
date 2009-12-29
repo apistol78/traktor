@@ -2,9 +2,9 @@
 #include "Flash/FlashButtonInstance.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
-#include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/ActionScript.h"
 #include "Flash/Action/Avm1/Classes/AsButton.h"
 

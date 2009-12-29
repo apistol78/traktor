@@ -1,9 +1,9 @@
 #include <algorithm>
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ AsMouse::AsMouse()
 {
 }
 
-void AsMouse::eventMouseDown(ActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseDown(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -46,7 +46,7 @@ void AsMouse::eventMouseDown(ActionVM* actionVM, ActionContext* context, int x, 
 	}
 }
 
-void AsMouse::eventMouseUp(ActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseUp(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.
@@ -67,7 +67,7 @@ void AsMouse::eventMouseUp(ActionVM* actionVM, ActionContext* context, int x, in
 	}
 }
 
-void AsMouse::eventMouseMove(ActionVM* actionVM, ActionContext* context, int x, int y, int button)
+void AsMouse::eventMouseMove(IActionVM* actionVM, ActionContext* context, int x, int y, int button)
 {
 	// Create a snapshot of active listeners the moment this event is raised,
 	// this because listeners can be either added or removed by listeners.

@@ -9,8 +9,8 @@ namespace traktor
 	namespace flash
 	{
 
-class ActionVM;
 class ActionContext;
+class IActionVM;
 struct CallArgs;
 
 /*! \brief Mouse class.
@@ -25,11 +25,11 @@ public:
 
 	AsMouse();
 
-	void eventMouseDown(ActionVM* actionVM, ActionContext* context, int x, int y, int button);
+	void eventMouseDown(IActionVM* actionVM, ActionContext* context, int x, int y, int button);
 
-	void eventMouseUp(ActionVM* actionVM, ActionContext* context, int x, int y, int button);
+	void eventMouseUp(IActionVM* actionVM, ActionContext* context, int x, int y, int button);
 
-	void eventMouseMove(ActionVM* actionVM, ActionContext* context, int x, int y, int button);
+	void eventMouseMove(IActionVM* actionVM, ActionContext* context, int x, int y, int button);
 
 private:
 	RefArray< ActionObject > m_listeners;

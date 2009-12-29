@@ -1,6 +1,6 @@
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
-#include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Core/Log/Log.h"
 
@@ -21,7 +21,7 @@ ActionFunctionNative::ActionFunctionNative(CallFnc* callFnc)
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunctionNative::call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionFunctionNative::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;

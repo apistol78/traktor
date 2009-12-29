@@ -1,10 +1,10 @@
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
 
 namespace traktor
 {
@@ -28,7 +28,7 @@ AsKey::AsKey()
 	std::memset(m_keyState, 0, sizeof(m_keyState));
 }
 
-void AsKey::eventKeyDown(ActionVM* actionVM, ActionContext* context, int keyCode)
+void AsKey::eventKeyDown(IActionVM* actionVM, ActionContext* context, int keyCode)
 {
 	m_keyState[keyCode] = true;
 	m_lastKeyCode = keyCode;
@@ -52,7 +52,7 @@ void AsKey::eventKeyDown(ActionVM* actionVM, ActionContext* context, int keyCode
 	}
 }
 
-void AsKey::eventKeyUp(ActionVM* actionVM, ActionContext* context, int keyCode)
+void AsKey::eventKeyUp(IActionVM* actionVM, ActionContext* context, int keyCode)
 {
 	m_keyState[keyCode] = false;
 

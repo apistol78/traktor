@@ -8,9 +8,9 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/Avm1/ActionVM1.h"
 #include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
@@ -25,7 +25,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Obje
 FlashMoviePlayer::FlashMoviePlayer(DisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
-,	m_actionVM(new IActionVM())
+,	m_actionVM(new ActionVM1())
 ,	m_intervalNextId(1)
 ,	m_untilNextFrame(0.0f)
 {

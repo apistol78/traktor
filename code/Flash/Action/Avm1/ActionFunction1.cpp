@@ -1,6 +1,6 @@
+#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionFunction1.h"
-#include "Flash/Action/Avm1/ActionVM.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Core/Log/Log.h"
 
@@ -30,7 +30,7 @@ ActionFunction1::ActionFunction1(
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunction1::call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
 

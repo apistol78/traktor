@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Flash/Action/Avm1/ActionDictionary.h"
+#include "Flash/Action/ActionDictionary.h"
 
 namespace traktor
 {

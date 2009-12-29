@@ -1,10 +1,10 @@
+#include "Core/Log/Log.h"
 #include "Flash/FlashDisplayList.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFrame.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Core/Log/Log.h"
+#include "Flash/Action/ActionContext.h"
 
 namespace traktor
 {
