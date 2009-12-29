@@ -2,14 +2,15 @@
 #define traktor_flash_AccDisplayRenderer_H
 
 #include <map>
-#include "Flash/DisplayRenderer.h"
+#include "Core/RefArray.h"
+#include "Flash/IDisplayRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,6 +27,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class RenderTargetSet;
 
 	}
 
@@ -34,6 +36,7 @@ class IRenderView;
 
 class AccTextureCache;
 class AccShape;
+class AccQuad;
 
 /*! \brief Accelerated display renderer.
  * \ingroup Flash
@@ -41,7 +44,7 @@ class AccShape;
  * This display renderer uses the render system
  * in order to accelerate rendering of SWF shapes.
  */
-class T_DLLCLASS AccDisplayRenderer : public DisplayRenderer
+class T_DLLCLASS AccDisplayRenderer : public IDisplayRenderer
 {
 	T_RTTI_CLASS;
 
@@ -86,8 +89,11 @@ private:
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::IRenderView > m_renderView;
+	RefArray< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
+	Ref< AccQuad > m_quad;
 	std::map< uint32_t, CacheEntry > m_shapeCache;
+	std::map< uint32_t, render::RenderTargetSet* > m_glyphCache;
 	Vector4 m_frameSize;
 	bool m_clearBackground;
 	bool m_maskWrite;

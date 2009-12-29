@@ -27,7 +27,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Object)
 
-FlashMoviePlayer::FlashMoviePlayer(DisplayRenderer* displayRenderer)
+FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_intervalNextId(1)

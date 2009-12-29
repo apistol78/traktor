@@ -63,6 +63,8 @@ public:
 		uint8_t maskReference
 	);
 
+	const SwfRect& getBounds() const { return m_bounds; }
+
 private:
 	struct Batch
 	{
@@ -79,6 +81,7 @@ private:
 	resource::Proxy< render::Shader > m_shaderDecrementMask;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	AlignedVector< Batch > m_batches;
+	SwfRect m_bounds;
 };
 
 	}

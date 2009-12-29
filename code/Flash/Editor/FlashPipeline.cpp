@@ -15,7 +15,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 1, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 2, FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -52,6 +52,7 @@ bool FlashPipeline::buildDependencies(
 	pipelineDepends->addDependency(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"), true);	// Textured Mask
 	pipelineDepends->addDependency(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"), true);	// Increment Mask
 	pipelineDepends->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"), true);	// Decrement Mask
+	pipelineDepends->addDependency(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"), true);	// Textured Quad
 
 	return true;
 }

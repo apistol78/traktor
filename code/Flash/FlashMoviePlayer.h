@@ -19,9 +19,9 @@ namespace traktor
 	namespace flash
 	{
 
-class DisplayRenderer;
 class FlashMovieRenderer;
 class IActionVM;
+class IDisplayRenderer;
 class ActionObject;
 class ActionFunction;
 class AsKey;
@@ -42,7 +42,7 @@ class T_DLLCLASS FlashMoviePlayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMoviePlayer(DisplayRenderer* displayRenderer);
+	FlashMoviePlayer(IDisplayRenderer* displayRenderer);
 
 	virtual ~FlashMoviePlayer();
 
@@ -180,7 +180,7 @@ private:
 		Ref< ActionFunction > function;
 	};
 
-	Ref< DisplayRenderer > m_displayRenderer;
+	Ref< IDisplayRenderer > m_displayRenderer;
 	Ref< FlashMovieRenderer > m_movieRenderer;
 	Ref< IActionVM > m_actionVM;
 	Ref< AsKey > m_key;

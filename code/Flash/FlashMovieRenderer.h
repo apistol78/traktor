@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 	namespace flash
 	{
 
-class DisplayRenderer;
+class IDisplayRenderer;
 class FlashMovie;
 class FlashSprite;
 class FlashSpriteInstance;
@@ -32,12 +32,12 @@ class T_DLLCLASS FlashMovieRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMovieRenderer(DisplayRenderer* displayRenderer);
+	FlashMovieRenderer(IDisplayRenderer* displayRenderer);
 
 	void renderFrame(FlashMovie* movie, FlashSpriteInstance* movieInstance);
 
 private:
-	Ref< DisplayRenderer > m_displayRenderer;
+	Ref< IDisplayRenderer > m_displayRenderer;
 
 	void renderSprite(
 		FlashMovie* movie,
