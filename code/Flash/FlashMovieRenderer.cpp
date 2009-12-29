@@ -12,7 +12,7 @@
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashFont.h"
-#include "Flash/DisplayRenderer.h"
+#include "Flash/IDisplayRenderer.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -22,7 +22,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMovieRenderer", FlashMovieRenderer, Object)
 
-FlashMovieRenderer::FlashMovieRenderer(DisplayRenderer* displayRenderer)
+FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 {
 }

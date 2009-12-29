@@ -1,7 +1,7 @@
 #ifndef traktor_flash_SwDisplayRenderer_H
 #define traktor_flash_SwDisplayRenderer_H
 
-#include "Flash/DisplayRenderer.h"
+#include "Flash/IDisplayRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Software display renderer.
  * \ingroup Flash
  */
-class T_DLLCLASS SwDisplayRenderer : public DisplayRenderer
+class T_DLLCLASS SwDisplayRenderer : public IDisplayRenderer
 {
 	T_RTTI_CLASS;
 

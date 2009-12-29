@@ -66,7 +66,7 @@ bool culled(const Vector2* pts, int npts, float width, float height)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SwDisplayRenderer", SwDisplayRenderer, DisplayRenderer)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SwDisplayRenderer", SwDisplayRenderer, IDisplayRenderer)
 
 SwDisplayRenderer::SwDisplayRenderer()
 :	m_transform(Matrix33::identity())

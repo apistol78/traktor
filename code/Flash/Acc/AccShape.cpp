@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Color.h"
 #include "Flash/FlashMovie.h"
@@ -93,6 +94,9 @@ bool AccShape::create(
 	m_shaderDecrementMask = c_guidShaderDecrementMask;
 	if (!resourceManager->bind(m_shaderDecrementMask))
 		return false;
+
+	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
+	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
@@ -191,12 +195,18 @@ bool AccShape::create(
 
 			for (int k = 0; k < 3; ++k)
 			{
+				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
+				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
+				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
+				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+
 				vertex->pos[0] = j->v[k].x;
 				vertex->pos[1] = j->v[k].y;
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
+
 				vertex++;
 			}
 
@@ -241,12 +251,18 @@ bool AccShape::create(
 			const int c_indices[6] = { 0, 1, 2, 0, 2, 3 };
 			for (int k = 0; k < 6; ++k)
 			{
+				m_bounds.min.x = min(m_bounds.min.x, v[c_indices[k]].x);
+				m_bounds.min.y = min(m_bounds.min.y, v[c_indices[k]].y);
+				m_bounds.max.x = max(m_bounds.max.x, v[c_indices[k]].x);
+				m_bounds.max.y = max(m_bounds.max.y, v[c_indices[k]].y);
+
 				vertex->pos[0] = v[c_indices[k]].x;
 				vertex->pos[1] = v[c_indices[k]].y;
 				vertex->color[0] = color.r;
 				vertex->color[1] = color.g;
 				vertex->color[2] = color.b;
 				vertex->color[3] = color.a;
+
 				vertex++;
 			}
 

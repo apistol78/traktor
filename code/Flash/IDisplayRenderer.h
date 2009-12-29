@@ -1,5 +1,5 @@
-#ifndef traktor_flash_DisplayRenderer_H
-#define traktor_flash_DisplayRenderer_H
+#ifndef traktor_flash_IDisplayRenderer_H
+#define traktor_flash_IDisplayRenderer_H
 
 #include "Core/Object.h"
 #include "Core/Math/Matrix33.h"
@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,7 @@ class FlashMorphShape;
 /*! \brief Rendering interface.
  * \ingroup Flash
  */
-class T_DLLCLASS DisplayRenderer : public Object
+class T_DLLCLASS IDisplayRenderer : public Object
 {
 	T_RTTI_CLASS;
 
@@ -82,4 +82,4 @@ public:
 	}
 }
 
-#endif	// traktor_flash_DisplayRenderer_H
+#endif	// traktor_flash_IDisplayRenderer_H
