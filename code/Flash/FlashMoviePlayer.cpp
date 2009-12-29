@@ -52,7 +52,7 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 	m_movieInstance = m_movie->createMovieClipInstance();
 
 	// Create ActionScript virtual machine.
-	if (0)
+	if (1)
 		m_actionVM = new ActionVM1();
 	else
 		m_actionVM = new ActionVM2();
