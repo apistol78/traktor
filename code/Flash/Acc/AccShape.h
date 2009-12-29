@@ -2,9 +2,9 @@
 #define traktor_flash_AccShape_H
 
 #include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 

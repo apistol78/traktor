@@ -1,9 +1,9 @@
-#include <cfloat>
 #include <algorithm>
-#include "Flash/Triangulator.h"
+#include <cfloat>
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Triangulator.h"
-#include "Core/Log/Log.h"
+#include "Flash/Acc/Triangulator.h"
 
 namespace traktor
 {

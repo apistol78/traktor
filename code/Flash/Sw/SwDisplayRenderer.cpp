@@ -1,8 +1,8 @@
 #include <algorithm>
 #include <limits>
-#include "Flash/SwDisplayRenderer.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
+#include "Flash/Sw/SwDisplayRenderer.h"
 
 namespace traktor
 {
@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-inline uint32_t castColor(const SwfColor& color)
+uint32_t castColor(const SwfColor& color)
 {
 	return 
 		(uint32_t(color.red) << 16) |
@@ -20,7 +20,7 @@ inline uint32_t castColor(const SwfColor& color)
 		(uint32_t(color.alpha) << 24);
 }
 
-inline uint32_t lerpColor(uint32_t c1, uint32_t c2, float blend)
+uint32_t lerpColor(uint32_t c1, uint32_t c2, float blend)
 {
 	int r = int(((c1 >> 16) & 255) * (1.0f - blend) + ((c2 >> 16) & 255) * blend);
 	int g = int(((c1 >> 8) & 255) * (1.0f - blend) + ((c2 >> 8) & 255) * blend);
@@ -28,7 +28,7 @@ inline uint32_t lerpColor(uint32_t c1, uint32_t c2, float blend)
 	return (r << 16) | (g << 8) | b;
 }
 
-inline Vector2 evalQuadratic(
+Vector2 evalQuadratic(
 	double t,
 	const Vector2& cp0,
 	const Vector2& cp1,
@@ -39,12 +39,12 @@ inline Vector2 evalQuadratic(
 	return float(it * it) * cp0 + float(2.0 * it * t) * cp1 + float(t * t) * cp2;
 }
 
-inline float scale(float v, float fromDim, float toDim)
+float scale(float v, float fromDim, float toDim)
 {
 	return (v * toDim) / fromDim;
 }
 
-inline bool culled(const Vector2* pts, int npts, float width, float height)
+bool culled(const Vector2* pts, int npts, float width, float height)
 {
 	Vector2 mn( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max());
 	Vector2 mx(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());

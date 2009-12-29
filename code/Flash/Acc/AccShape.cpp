@@ -1,17 +1,17 @@
-#include "Flash/AccShape.h"
-#include "Flash/AccTextureCache.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Color.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
-#include "Flash/PathTesselator.h"
-#include "Flash/Triangulator.h"
+#include "Flash/Acc/AccShape.h"
+#include "Flash/Acc/AccTextureCache.h"
+#include "Flash/Acc/PathTesselator.h"
+#include "Flash/Acc/Triangulator.h"
 #include "Resource/IResourceManager.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
-#include "Core/Math/Color.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
