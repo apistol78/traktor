@@ -66,6 +66,7 @@ private:
 	bool m_warm;
 	Aabb m_boundingBox;
 	mutable Job m_jobs[4];
+	uint32_t m_count;
 
 	void updateTask(float deltaTime, const Transform& transform, size_t first, size_t last);
 };
