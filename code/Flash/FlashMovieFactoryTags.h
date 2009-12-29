@@ -221,6 +221,12 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context);
 };
 
+class FlashTagDoABC : public FlashTag
+{
+public:
+	virtual bool read(SwfReader* swf, ReadContext& context);
+};
+
 class FlashTagUnsupported : public FlashTag
 {
 public:

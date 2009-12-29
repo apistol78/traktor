@@ -1,9 +1,9 @@
 #include <limits>
+#include "Core/Misc/String.h"
+#include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/ActionNumber.h"
 #include "Flash/Action/Avm1/Classes/AsNumber.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionNumber.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {

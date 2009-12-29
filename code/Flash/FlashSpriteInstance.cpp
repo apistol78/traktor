@@ -4,8 +4,8 @@
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/ActionScript.h"
 #include "Flash/Action/IActionVM.h"
-#include "Flash/Action/Avm1/ActionScript.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
 namespace traktor
@@ -228,7 +228,7 @@ bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue&
 	return FlashCharacterInstance::getMember(memberName, outMemberValue);
 }
 
-void FlashSpriteInstance::eventInit(IActionVM* actionVM)
+void FlashSpriteInstance::eventInit(const IActionVM* actionVM)
 {
 	const RefArray< ActionScript >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< ActionScript >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
@@ -240,7 +240,7 @@ void FlashSpriteInstance::eventInit(IActionVM* actionVM)
 	FlashCharacterInstance::eventInit(actionVM);
 }
 
-void FlashSpriteInstance::eventLoad(IActionVM* actionVM)
+void FlashSpriteInstance::eventLoad(const IActionVM* actionVM)
 {
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -256,7 +256,7 @@ void FlashSpriteInstance::eventLoad(IActionVM* actionVM)
 	FlashCharacterInstance::eventLoad(actionVM);
 }
 
-void FlashSpriteInstance::eventFrame(IActionVM* actionVM)
+void FlashSpriteInstance::eventFrame(const IActionVM* actionVM)
 {
 	Ref< FlashFrame > frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
@@ -290,7 +290,7 @@ void FlashSpriteInstance::eventFrame(IActionVM* actionVM)
 	FlashCharacterInstance::eventFrame(actionVM);
 }
 
-void FlashSpriteInstance::eventKeyDown(IActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyDown(const IActionVM* actionVM, int keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyDown");
@@ -306,7 +306,7 @@ void FlashSpriteInstance::eventKeyDown(IActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyDown(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventKeyUp(IActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyUp(const IActionVM* actionVM, int keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyUp");
@@ -322,7 +322,7 @@ void FlashSpriteInstance::eventKeyUp(IActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyUp(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseDown(const IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -341,7 +341,7 @@ void FlashSpriteInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int 
 	FlashCharacterInstance::eventMouseDown(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseUp(const IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -360,7 +360,7 @@ void FlashSpriteInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int bu
 	FlashCharacterInstance::eventMouseUp(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseMove(const IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -403,7 +403,7 @@ SwfRect FlashSpriteInstance::getBounds() const
 	return bounds;
 }
 
-void FlashSpriteInstance::executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName)
+void FlashSpriteInstance::executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))

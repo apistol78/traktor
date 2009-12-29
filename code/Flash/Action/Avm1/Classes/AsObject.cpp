@@ -1,6 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor

@@ -1,9 +1,10 @@
 #include <cstdlib>
 #include <cstring>
-#include "Flash/SwfReader.h"
 #include "Core/Io/IStream.h"
-#include "Zip/InflateStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Memory/PoolAllocator.h"
+#include "Flash/SwfReader.h"
+#include "Zip/InflateStream.h"
 
 namespace traktor
 {
@@ -21,38 +22,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SwfReader", SwfReader, Object)
 SwfReader::SwfReader(IStream* stream)
 :	m_stream(stream)
 ,	m_bs(new BitReader(stream))
+,	m_pool(new PoolAllocator(c_allocSize))
 {
-	m_allocHead = static_cast< uint8_t* >(std::malloc(c_allocSize));
-	T_ASSERT (m_allocHead);
-
-	m_allocTail = m_allocHead;
-
-	std::memset(m_allocHead, 0, c_allocSize);
-}
-
-SwfReader::~SwfReader()
-{
-	T_EXCEPTION_GUARD_BEGIN;
-
-	std::free(m_allocHead);
-
-	T_EXCEPTION_GUARD_END;
 }
 
 void SwfReader::enterScope()
 {
-	m_scope.push(m_allocTail);
+	m_pool->enter();
 }
 
 void SwfReader::leaveScope()
 {
-	m_allocTail = m_scope.top();
-	m_scope.pop();
+	m_pool->leave();
 }
 
 SwfHeader* SwfReader::readHeader()
 {
-	SwfHeader* header = alloc< SwfHeader >();
+	SwfHeader* header = m_pool->alloc< SwfHeader >();
 
 	header->signature[0] = m_bs->readUInt8();
 	header->signature[1] = m_bs->readUInt8();
@@ -86,7 +72,7 @@ SwfHeader* SwfReader::readHeader()
 
 SwfTag* SwfReader::readTag()
 {
-	SwfTag* tag = alloc< SwfTag >();
+	SwfTag* tag = m_pool->alloc< SwfTag >();
 
 	uint16_t code = m_bs->readUInt16();
 	tag->id = code >> 6;
@@ -99,7 +85,7 @@ SwfTag* SwfReader::readTag()
 
 SwfGradientRecord* SwfReader::readGradientRecord(int shapeType)
 {
-	SwfGradientRecord* gradientRecord = alloc< SwfGradientRecord >();
+	SwfGradientRecord* gradientRecord = m_pool->alloc< SwfGradientRecord >();
 
 	gradientRecord->ratio = m_bs->readUInt8();
 	if (shapeType == 1 || shapeType == 2)
@@ -112,7 +98,7 @@ SwfGradientRecord* SwfReader::readGradientRecord(int shapeType)
 
 SwfGradient* SwfReader::readGradient(int shapeType)
 {
-	SwfGradient* gradient = alloc< SwfGradient >();
+	SwfGradient* gradient = m_pool->alloc< SwfGradient >();
 
 	m_bs->alignByte();
 
@@ -120,7 +106,7 @@ SwfGradient* SwfReader::readGradient(int shapeType)
 	uint32_t interpolationMode = m_bs->readUnsigned(2);
 
 	gradient->numGradientRecords = m_bs->readUnsigned(4);
-	gradient->gradientRecords = allocArray< SwfGradientRecord >(gradient->numGradientRecords);
+	gradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(gradient->numGradientRecords);
 	for (int i = 0; i < gradient->numGradientRecords; ++i)
 		gradient->gradientRecords[i] = readGradientRecord(shapeType);
 
@@ -130,7 +116,7 @@ SwfGradient* SwfReader::readGradient(int shapeType)
 
 SwfGradient* SwfReader::readFocalGradient(int shapeType)
 {
-	SwfGradient* gradient = alloc< SwfGradient >();
+	SwfGradient* gradient = m_pool->alloc< SwfGradient >();
 
 	m_bs->alignByte();
 
@@ -138,7 +124,7 @@ SwfGradient* SwfReader::readFocalGradient(int shapeType)
 	uint32_t interpolationMode = m_bs->readUnsigned(2);
 
 	gradient->numGradientRecords = m_bs->readUnsigned(4);
-	gradient->gradientRecords = allocArray< SwfGradientRecord >(gradient->numGradientRecords);
+	gradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(gradient->numGradientRecords);
 	for (int i = 0; i < gradient->numGradientRecords; ++i)
 		gradient->gradientRecords[i] = readGradientRecord(shapeType);
 
@@ -148,7 +134,7 @@ SwfGradient* SwfReader::readFocalGradient(int shapeType)
 
 SwfFillStyle* SwfReader::readFillStyle(int shapeType)
 {
-	SwfFillStyle* fillStyle = alloc< SwfFillStyle >();
+	SwfFillStyle* fillStyle = m_pool->alloc< SwfFillStyle >();
 
 	fillStyle->type = m_bs->readUInt8();
 	if (fillStyle->type == FstSolid)
@@ -187,7 +173,7 @@ SwfFillStyle* SwfReader::readFillStyle(int shapeType)
 
 SwfLineStyle* SwfReader::readLineStyle(int shapeType)
 {
-	SwfLineStyle* lineStyle = alloc< SwfLineStyle >();
+	SwfLineStyle* lineStyle = m_pool->alloc< SwfLineStyle >();
 
 	lineStyle->width = m_bs->readUInt16();
 	if (shapeType == 1 || shapeType == 2)
@@ -229,13 +215,13 @@ SwfLineStyle* SwfReader::readLineStyle(int shapeType)
 
 SwfStyles* SwfReader::readStyles(int shapeType)
 {
-	SwfStyles* styles = alloc< SwfStyles >();
+	SwfStyles* styles = m_pool->alloc< SwfStyles >();
 
 	styles->numFillStyles = m_bs->readUInt8();
 	if ((shapeType == 3 || shapeType == 4) && styles->numFillStyles == 0xff)
 		styles->numFillStyles = m_bs->readUInt16();
 
-	styles->fillStyles = allocArray< SwfFillStyle >(styles->numFillStyles);
+	styles->fillStyles = m_pool->allocArray< SwfFillStyle >(styles->numFillStyles);
 	for (uint16_t i = 0; i < styles->numFillStyles; ++i)
 		styles->fillStyles[i] = readFillStyle(shapeType);
 
@@ -243,7 +229,7 @@ SwfStyles* SwfReader::readStyles(int shapeType)
 	if (styles->numLineStyles == 0xff)
 		styles->numLineStyles = m_bs->readUInt16();
 
-	styles->lineStyles = allocArray< SwfLineStyle >(styles->numLineStyles);
+	styles->lineStyles = m_pool->allocArray< SwfLineStyle >(styles->numLineStyles);
 	for (uint16_t i = 0; i < styles->numLineStyles; ++i)
 		styles->lineStyles[i] = readLineStyle(shapeType);
 
@@ -256,11 +242,11 @@ SwfStyles* SwfReader::readStyles(int shapeType)
 
 bool SwfReader::readMorphGradientRecord(SwfGradientRecord*& outStartGradientRecord, SwfGradientRecord*& outEndGradientRecord)
 {
-	outStartGradientRecord = alloc< SwfGradientRecord >();
+	outStartGradientRecord = m_pool->alloc< SwfGradientRecord >();
 	outStartGradientRecord->ratio = m_bs->readUInt8();
 	outStartGradientRecord->color = readRgba();
 
-	outEndGradientRecord = alloc< SwfGradientRecord >();
+	outEndGradientRecord = m_pool->alloc< SwfGradientRecord >();
 	outEndGradientRecord->ratio = m_bs->readUInt8();
 	outEndGradientRecord->color = readRgba();
 
@@ -271,13 +257,13 @@ bool SwfReader::readMorphGradient(SwfGradient*& outStartGradient, SwfGradient*& 
 {
 	uint8_t numGradientRecords = m_bs->readUInt8();
 	
-	outStartGradient = alloc< SwfGradient >();
+	outStartGradient = m_pool->alloc< SwfGradient >();
 	outStartGradient->numGradientRecords = numGradientRecords;
-	outStartGradient->gradientRecords = allocArray< SwfGradientRecord >(numGradientRecords);
+	outStartGradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(numGradientRecords);
 
-	outEndGradient = alloc< SwfGradient >();
+	outEndGradient = m_pool->alloc< SwfGradient >();
 	outEndGradient->numGradientRecords = numGradientRecords;
-	outEndGradient->gradientRecords = allocArray< SwfGradientRecord >(numGradientRecords);
+	outEndGradient->gradientRecords = m_pool->allocArray< SwfGradientRecord >(numGradientRecords);
 
 	for (int i = 0; i < numGradientRecords; ++i)
 	{
@@ -290,8 +276,8 @@ bool SwfReader::readMorphGradient(SwfGradient*& outStartGradient, SwfGradient*& 
 
 bool SwfReader::readMorphFillStyle(SwfFillStyle*& outStartFillStyle, SwfFillStyle*& outEndFillStyle, int shapeType)
 {
-	outStartFillStyle = alloc< SwfFillStyle >();
-	outEndFillStyle = alloc< SwfFillStyle >();
+	outStartFillStyle = m_pool->alloc< SwfFillStyle >();
+	outEndFillStyle = m_pool->alloc< SwfFillStyle >();
 
 	outStartFillStyle->type =
 	outEndFillStyle->type = m_bs->readUInt8();
@@ -333,8 +319,8 @@ bool SwfReader::readMorphFillStyle(SwfFillStyle*& outStartFillStyle, SwfFillStyl
 
 bool SwfReader::readMorphLineStyle(SwfLineStyle*& outStartLineStyle, SwfLineStyle*& outEndLineStyle, int shapeType)
 {
-	outStartLineStyle = alloc< SwfLineStyle >();
-	outEndLineStyle = alloc< SwfLineStyle >();
+	outStartLineStyle = m_pool->alloc< SwfLineStyle >();
+	outEndLineStyle = m_pool->alloc< SwfLineStyle >();
 
 	outStartLineStyle->width = m_bs->readUInt16();
 	outEndLineStyle->width = m_bs->readUInt16();
@@ -382,13 +368,13 @@ bool SwfReader::readMorphStyles(SwfStyles*& outStartStyles, SwfStyles*& outEndSt
 	if (numFillStyles == 0xff)
 		numFillStyles = m_bs->readUInt16();
 
-	outStartStyles = alloc< SwfStyles >();
+	outStartStyles = m_pool->alloc< SwfStyles >();
 	outStartStyles->numFillStyles = numFillStyles;
-	outStartStyles->fillStyles = allocArray< SwfFillStyle >(numFillStyles);
+	outStartStyles->fillStyles = m_pool->allocArray< SwfFillStyle >(numFillStyles);
 
-	outEndStyles = alloc< SwfStyles >();
+	outEndStyles = m_pool->alloc< SwfStyles >();
 	outEndStyles->numFillStyles = numFillStyles;
-	outEndStyles->fillStyles = allocArray< SwfFillStyle >(numFillStyles);
+	outEndStyles->fillStyles = m_pool->allocArray< SwfFillStyle >(numFillStyles);
 
 	for (uint16_t i = 0; i < numFillStyles; ++i)
 	{
@@ -401,10 +387,10 @@ bool SwfReader::readMorphStyles(SwfStyles*& outStartStyles, SwfStyles*& outEndSt
 		numLineStyles = m_bs->readUInt16();
 
 	outStartStyles->numLineStyles = numLineStyles;
-	outStartStyles->lineStyles = allocArray< SwfLineStyle >(numLineStyles);
+	outStartStyles->lineStyles = m_pool->allocArray< SwfLineStyle >(numLineStyles);
 	
 	outEndStyles->numLineStyles = numLineStyles;
-	outEndStyles->lineStyles = allocArray< SwfLineStyle >(numLineStyles);
+	outEndStyles->lineStyles = m_pool->allocArray< SwfLineStyle >(numLineStyles);
 
 	for (uint16_t i = 0; i < numLineStyles; ++i)
 	{
@@ -417,9 +403,9 @@ bool SwfReader::readMorphStyles(SwfStyles*& outStartStyles, SwfStyles*& outEndSt
 
 SwfShapeRecord* SwfReader::readShapeRecord(uint32_t numFillBits, uint32_t numLineBits, int shapeType)
 {
-	SwfShapeRecord* shapeRecord = alloc< SwfShapeRecord >();
+	SwfShapeRecord* shapeRecord = m_pool->alloc< SwfShapeRecord >();
 
-	memset(shapeRecord, 0, sizeof(SwfShapeRecord));
+	std::memset(shapeRecord, 0, sizeof(SwfShapeRecord));
 
 	shapeRecord->edgeFlag = m_bs->readBit();
 	if (!shapeRecord->edgeFlag)
@@ -494,9 +480,9 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 	if (!outStyles)
 		return false;
 
-	outShape = alloc< SwfShape >();
+	outShape = m_pool->alloc< SwfShape >();
 	outShape->numShapeRecords = 0;
-	outShape->shapeRecords = allocArray< SwfShapeRecord >(c_maxRecordCount);
+	outShape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(c_maxRecordCount);
 
 	for (;;)
 	{
@@ -533,9 +519,9 @@ bool SwfReader::readShapeWithStyle(SwfShape*& outShape, SwfStyles*& outStyles, i
 
 SwfShape* SwfReader::readShape(int shapeType)
 {
-	SwfShape* shape = alloc< SwfShape >();
+	SwfShape* shape = m_pool->alloc< SwfShape >();
 	shape->numShapeRecords = 0;
-	shape->shapeRecords = allocArray< SwfShapeRecord >(256);
+	shape->shapeRecords = m_pool->allocArray< SwfShapeRecord >(256);
 
 	uint32_t numFillBits = m_bs->readUnsigned(4);
 	uint32_t numLineBits = m_bs->readUnsigned(4);
@@ -564,7 +550,7 @@ SwfShape* SwfReader::readShape(int shapeType)
 
 SwfTextRecord* SwfReader::readTextRecord(uint8_t numGlyphBits, uint8_t numAdvanceBits, int textType)
 {
-	SwfTextRecord* textRecord = alloc< SwfTextRecord >();
+	SwfTextRecord* textRecord = m_pool->alloc< SwfTextRecord >();
 
 	textRecord->styleFlag = m_bs->readBit();
 	if (textRecord->styleFlag)
@@ -595,10 +581,10 @@ SwfTextRecord* SwfReader::readTextRecord(uint8_t numGlyphBits, uint8_t numAdvanc
 	else
 	{
 		textRecord->glyph.glyphCount = m_bs->readUnsigned(7);
-		textRecord->glyph.glyphEntries = allocArray< SwfGlyphEntry >(textRecord->glyph.glyphCount);
+		textRecord->glyph.glyphEntries = m_pool->allocArray< SwfGlyphEntry >(textRecord->glyph.glyphCount);
 		for (uint8_t i = 0; i < textRecord->glyph.glyphCount; ++i)
 		{
-			textRecord->glyph.glyphEntries[i] = alloc< SwfGlyphEntry >();
+			textRecord->glyph.glyphEntries[i] = m_pool->alloc< SwfGlyphEntry >();
 			textRecord->glyph.glyphEntries[i]->glyphIndex = m_bs->readUnsigned(numGlyphBits);
 			textRecord->glyph.glyphEntries[i]->glyphAdvance = m_bs->readSigned(numAdvanceBits);
 		}
@@ -610,7 +596,7 @@ SwfTextRecord* SwfReader::readTextRecord(uint8_t numGlyphBits, uint8_t numAdvanc
 
 SwfFilter* SwfReader::readFilter()
 {
-	SwfFilter* filter = alloc< SwfFilter >();
+	SwfFilter* filter = m_pool->alloc< SwfFilter >();
 
 	m_bs->alignByte();
 
@@ -675,7 +661,7 @@ SwfFilter* SwfReader::readFilter()
 			filter->convolution.matrixY = m_bs->readUInt8();
 			filter->convolution.divisor = readFloat32();
 			filter->convolution.bias = readFloat32();
-			filter->convolution.matrix = alloc< float >(filter->convolution.matrixX * filter->convolution.matrixY);
+			filter->convolution.matrix = m_pool->alloc< float >(filter->convolution.matrixX * filter->convolution.matrixY);
 			for (int i = 0; i < filter->convolution.matrixX * filter->convolution.matrixY; ++i)
 				filter->convolution.matrix[i] = readFloat32();
 			filter->convolution.defaultColor = readRgba();
@@ -895,13 +881,6 @@ float SwfReader::readFixed8()
 BitReader& SwfReader::getBitReader()
 {
 	return *m_bs;
-}
-
-void* SwfReader::alloc(uint32_t size)
-{
-	T_ASSERT_M (uint32_t(m_allocTail - m_allocHead) + size < c_allocSize, L"Out of memory");
-	void* ptr = m_allocTail; m_allocTail += size;
-	return ptr;
 }
 
 	}

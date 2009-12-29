@@ -5,7 +5,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 

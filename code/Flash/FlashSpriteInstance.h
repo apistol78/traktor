@@ -62,21 +62,21 @@ public:
 
 	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
 
-	virtual void eventInit(IActionVM* actionVM);
+	virtual void eventInit(const IActionVM* actionVM);
 
-	virtual void eventLoad(IActionVM* actionVM);
+	virtual void eventLoad(const IActionVM* actionVM);
 
-	virtual void eventFrame(IActionVM* actionVM);
+	virtual void eventFrame(const IActionVM* actionVM);
 
-	virtual void eventKeyDown(IActionVM* actionVM, int keyCode);
+	virtual void eventKeyDown(const IActionVM* actionVM, int keyCode);
 
-	virtual void eventKeyUp(IActionVM* actionVM, int keyCode);
+	virtual void eventKeyUp(const IActionVM* actionVM, int keyCode);
 
-	virtual void eventMouseDown(IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseDown(const IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseUp(IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(const IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseMove(IActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(const IActionVM* actionVM, int x, int y, int button);
 
 	virtual SwfRect getBounds() const;
 
@@ -100,7 +100,7 @@ private:
 	int m_mouseX;
 	int m_mouseY;
 
-	void executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName);
+	void executeScriptEvent(const IActionVM* actionVM, const std::wstring& eventName);
 };
 
 	}

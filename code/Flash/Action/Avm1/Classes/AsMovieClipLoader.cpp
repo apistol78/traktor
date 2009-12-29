@@ -1,7 +1,7 @@
+#include "Core/Log/Log.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClipLoader.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 

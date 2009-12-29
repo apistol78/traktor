@@ -1,7 +1,6 @@
 #ifndef traktor_flash_SwfReader_H
 #define traktor_flash_SwfReader_H
 
-#include <stack>
 #include "Core/Object.h"
 #include "Core/Io/BitReader.h"
 #include "Flash/SwfTypes.h"
@@ -9,15 +8,16 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 
 class IStream;
+class PoolAllocator;
 
 	namespace flash
 	{
@@ -35,8 +35,6 @@ class T_DLLCLASS SwfReader : public Object
 
 public:
 	SwfReader(IStream* stream);
-
-	virtual ~SwfReader();
 
 	/*! \brief Enter allocation scope. */
 	void enterScope();
@@ -158,38 +156,7 @@ public:
 private:
 	Ref< IStream > m_stream;
 	Ref< BitReader > m_bs;
-	uint8_t* m_allocHead;
-	uint8_t* m_allocTail;
-	std::stack< uint8_t* > m_scope;
-
-	void* alloc(uint32_t size);
-
-	template < typename Type >
-	Type* alloc()
-	{
-		void* ptr = alloc(sizeof(Type));
-		return new (ptr) Type();
-	}
-
-	template < typename Type >
-	Type* alloc(uint32_t count)
-	{
-		if (!count)
-			return 0;
-
-		void* ptr = alloc(sizeof(Type) * count);
-		return new (ptr) Type [count];
-	}
-
-	template < typename Type >
-	Type** allocArray(uint32_t count)
-	{
-		if (!count)
-			return 0;
-
-		void* ptr = alloc(sizeof(Type*) * count);
-		return static_cast< Type** >(ptr);
-	}
+	Ref< PoolAllocator > m_pool;
 };
 
 	}
