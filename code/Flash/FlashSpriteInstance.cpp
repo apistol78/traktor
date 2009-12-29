@@ -2,8 +2,8 @@
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashFrame.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
-#include "Flash/Action/Avm1/ActionVM.h"
 #include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/ActionScript.h"
@@ -141,7 +141,7 @@ void FlashSpriteInstance::updateDisplayList()
 	}
 }
 
-void FlashSpriteInstance::preDispatchEvents(ActionVM* actionVM)
+void FlashSpriteInstance::preDispatchEvents(IActionVM* actionVM)
 {
 	T_ASSERT (!m_inDispatch);
 	m_inDispatch = true;
@@ -170,7 +170,7 @@ void FlashSpriteInstance::preDispatchEvents(ActionVM* actionVM)
 	}
 }
 
-void FlashSpriteInstance::postDispatchEvents(ActionVM* actionVM)
+void FlashSpriteInstance::postDispatchEvents(IActionVM* actionVM)
 {
 	if (!m_inDispatch)
 		return;
@@ -228,7 +228,7 @@ bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue&
 	return FlashCharacterInstance::getMember(memberName, outMemberValue);
 }
 
-void FlashSpriteInstance::eventInit(ActionVM* actionVM)
+void FlashSpriteInstance::eventInit(IActionVM* actionVM)
 {
 	const RefArray< ActionScript >& initActionScripts = m_sprite->getInitActionScripts();
 	for (RefArray< ActionScript >::const_iterator i = initActionScripts.begin(); i != initActionScripts.end(); ++i)
@@ -240,7 +240,7 @@ void FlashSpriteInstance::eventInit(ActionVM* actionVM)
 	FlashCharacterInstance::eventInit(actionVM);
 }
 
-void FlashSpriteInstance::eventLoad(ActionVM* actionVM)
+void FlashSpriteInstance::eventLoad(IActionVM* actionVM)
 {
 	// Issue events on "visible" characters.
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
@@ -256,7 +256,7 @@ void FlashSpriteInstance::eventLoad(ActionVM* actionVM)
 	FlashCharacterInstance::eventLoad(actionVM);
 }
 
-void FlashSpriteInstance::eventFrame(ActionVM* actionVM)
+void FlashSpriteInstance::eventFrame(IActionVM* actionVM)
 {
 	Ref< FlashFrame > frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
@@ -290,7 +290,7 @@ void FlashSpriteInstance::eventFrame(ActionVM* actionVM)
 	FlashCharacterInstance::eventFrame(actionVM);
 }
 
-void FlashSpriteInstance::eventKeyDown(ActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyDown(IActionVM* actionVM, int keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyDown");
@@ -306,7 +306,7 @@ void FlashSpriteInstance::eventKeyDown(ActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyDown(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventKeyUp(ActionVM* actionVM, int keyCode)
+void FlashSpriteInstance::eventKeyUp(IActionVM* actionVM, int keyCode)
 {
 	// Issue script assigned event.
 	executeScriptEvent(actionVM, L"onKeyUp");
@@ -322,7 +322,7 @@ void FlashSpriteInstance::eventKeyUp(ActionVM* actionVM, int keyCode)
 	FlashCharacterInstance::eventKeyUp(actionVM, keyCode);
 }
 
-void FlashSpriteInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -341,7 +341,7 @@ void FlashSpriteInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int b
 	FlashCharacterInstance::eventMouseDown(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseUp(ActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -360,7 +360,7 @@ void FlashSpriteInstance::eventMouseUp(ActionVM* actionVM, int x, int y, int but
 	FlashCharacterInstance::eventMouseUp(actionVM, x, y, button);
 }
 
-void FlashSpriteInstance::eventMouseMove(ActionVM* actionVM, int x, int y, int button)
+void FlashSpriteInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int button)
 {
 	m_mouseX = x;
 	m_mouseY = y;
@@ -403,7 +403,7 @@ SwfRect FlashSpriteInstance::getBounds() const
 	return bounds;
 }
 
-void FlashSpriteInstance::executeScriptEvent(ActionVM* actionVM, const std::wstring& eventName)
+void FlashSpriteInstance::executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))

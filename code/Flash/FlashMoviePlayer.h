@@ -1,17 +1,17 @@
 #ifndef traktor_flash_FlashMoviePlayer_H
 #define traktor_flash_FlashMoviePlayer_H
 
-#include <map>
 #include <list>
+#include <map>
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,7 +21,7 @@ namespace traktor
 
 class DisplayRenderer;
 class FlashMovieRenderer;
-class ActionVM;
+class IActionVM;
 class ActionObject;
 class ActionFunction;
 class AsKey;
@@ -153,7 +153,7 @@ public:
 	 *
 	 * \return action virtual machine.
 	 */
-	Ref< ActionVM > getVM() const;
+	Ref< IActionVM > getVM() const;
 
 private:
 	struct Event
@@ -182,7 +182,7 @@ private:
 
 	Ref< DisplayRenderer > m_displayRenderer;
 	Ref< FlashMovieRenderer > m_movieRenderer;
-	Ref< ActionVM > m_actionVM;
+	Ref< IActionVM > m_actionVM;
 	Ref< AsKey > m_key;
 	Ref< AsMouse > m_mouse;
 	Ref< FlashMovie > m_movie;

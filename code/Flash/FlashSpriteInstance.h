@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,7 +19,7 @@ namespace traktor
 
 class FlashSprite;
 class FlashCharacter;
-class ActionVM;
+class IActionVM;
 class ActionContext;
 
 /*! \brief Flash sprite instance.
@@ -48,9 +48,9 @@ public:
 
 	void updateDisplayList();
 
-	void preDispatchEvents(ActionVM* actionVM);
+	void preDispatchEvents(IActionVM* actionVM);
 
-	void postDispatchEvents(ActionVM* actionVM);
+	void postDispatchEvents(IActionVM* actionVM);
 
 	FlashDisplayList& getDisplayList();
 
@@ -62,21 +62,21 @@ public:
 
 	virtual bool getMember(const std::wstring& memberName, ActionValue& outMemberValue) const;
 
-	virtual void eventInit(ActionVM* actionVM);
+	virtual void eventInit(IActionVM* actionVM);
 
-	virtual void eventLoad(ActionVM* actionVM);
+	virtual void eventLoad(IActionVM* actionVM);
 
-	virtual void eventFrame(ActionVM* actionVM);
+	virtual void eventFrame(IActionVM* actionVM);
 
-	virtual void eventKeyDown(ActionVM* actionVM, int keyCode);
+	virtual void eventKeyDown(IActionVM* actionVM, int keyCode);
 
-	virtual void eventKeyUp(ActionVM* actionVM, int keyCode);
+	virtual void eventKeyUp(IActionVM* actionVM, int keyCode);
 
-	virtual void eventMouseDown(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseDown(IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseUp(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseMove(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(IActionVM* actionVM, int x, int y, int button);
 
 	virtual SwfRect getBounds() const;
 
@@ -100,7 +100,7 @@ private:
 	int m_mouseX;
 	int m_mouseY;
 
-	void executeScriptEvent(ActionVM* actionVM, const std::wstring& eventName);
+	void executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName);
 };
 
 	}
