@@ -1,15 +1,15 @@
-#ifndef traktor_flash_ActionVM_H
-#define traktor_flash_ActionVM_H
+#ifndef traktor_flash_ActionVM1_H
+#define traktor_flash_ActionVM1_H
 
-#include "Core/Object.h"
 #include "Core/Timer/Timer.h"
+#include "Flash/Action/IActionVM.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -124,32 +124,30 @@ enum ActionOpcodes
 	AopSetRegister			= 0x87
 };
 
-class ActionFrame;
-
 /*! \brief ActionScript virtual machine.
  * \ingroup Flash
  *
  * Virtual machine to execute blocks of ActionScript
  * byte code.
  */
-class T_DLLCLASS ActionVM : public Object
+class T_DLLCLASS ActionVM1 : public IActionVM
 {
 	T_RTTI_CLASS;
 
 public:
-	ActionVM();
+	ActionVM1();
 
 	/*! \brief Execute frame.
 	 *
 	 * \param frame Execution frame.
 	 */
-	void execute(ActionFrame* frame);
+	virtual void execute(ActionFrame* frame) const;
 
 private:
-	Timer m_timer;
+	mutable Timer m_timer;
 };
 
 	}
 }
 
-#endif	// traktor_flash_ActionVM_H
+#endif	// traktor_flash_ActionVM1_H

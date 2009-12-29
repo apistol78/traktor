@@ -1,5 +1,5 @@
 #include "Flash/FlashCharacterInstance.h"
-#include "Flash/Action/Avm1/ActionVM.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionScript.h"
 
@@ -81,7 +81,7 @@ const std::map< uint32_t, Ref< ActionScript > >& FlashCharacterInstance::getEven
 	return m_eventScripts;
 }
 
-void FlashCharacterInstance::eventInit(ActionVM* actionVM)
+void FlashCharacterInstance::eventInit(IActionVM* actionVM)
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtInitialize);
 	if (i != m_eventScripts.end())
@@ -99,7 +99,7 @@ void FlashCharacterInstance::eventInit(ActionVM* actionVM)
 	}
 }
 
-void FlashCharacterInstance::eventLoad(ActionVM* actionVM)
+void FlashCharacterInstance::eventLoad(IActionVM* actionVM)
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtLoad);
 	if (i != m_eventScripts.end())
@@ -117,7 +117,7 @@ void FlashCharacterInstance::eventLoad(ActionVM* actionVM)
 	}
 }
 
-void FlashCharacterInstance::eventFrame(ActionVM* actionVM)
+void FlashCharacterInstance::eventFrame(IActionVM* actionVM)
 {
 	std::map< uint32_t, Ref< ActionScript > >::iterator i = m_eventScripts.find(EvtEnterFrame);
 	if (i != m_eventScripts.end())
@@ -135,23 +135,23 @@ void FlashCharacterInstance::eventFrame(ActionVM* actionVM)
 	}
 }
 
-void FlashCharacterInstance::eventKeyDown(ActionVM* actionVM, int keyCode)
+void FlashCharacterInstance::eventKeyDown(IActionVM* actionVM, int keyCode)
 {
 }
 
-void FlashCharacterInstance::eventKeyUp(ActionVM* actionVM, int keyCode)
+void FlashCharacterInstance::eventKeyUp(IActionVM* actionVM, int keyCode)
 {
 }
 
-void FlashCharacterInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseUp(ActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseMove(ActionVM* actionVM, int x, int y, int button)
+void FlashCharacterInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int button)
 {
 }
 

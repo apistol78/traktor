@@ -1,16 +1,16 @@
 #ifndef traktor_flash_FlashCharacterInstance_H
 #define traktor_flash_FlashCharacterInstance_H
 
-#include "Flash/Action/Avm1/ActionObject.h"
-#include "Flash/SwfTypes.h"
 #include "Core/Math/Matrix33.h"
+#include "Flash/SwfTypes.h"
+#include "Flash/Action/Avm1/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,7 +19,7 @@ namespace traktor
 	{
 
 class ActionContext;
-class ActionVM;
+class IActionVM;
 class ActionScript;
 
 /*! \brief Character instance.
@@ -102,21 +102,21 @@ public:
 	/*! \name Events */
 	//@{
 
-	virtual void eventInit(ActionVM* actionVM);
+	virtual void eventInit(IActionVM* actionVM);
 
-	virtual void eventLoad(ActionVM* actionVM);
+	virtual void eventLoad(IActionVM* actionVM);
 
-	virtual void eventFrame(ActionVM* actionVM);
+	virtual void eventFrame(IActionVM* actionVM);
 
-	virtual void eventKeyDown(ActionVM* actionVM, int keyCode);
+	virtual void eventKeyDown(IActionVM* actionVM, int keyCode);
 
-	virtual void eventKeyUp(ActionVM* actionVM, int keyCode);
+	virtual void eventKeyUp(IActionVM* actionVM, int keyCode);
 
-	virtual void eventMouseDown(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseDown(IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseUp(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseUp(IActionVM* actionVM, int x, int y, int button);
 
-	virtual void eventMouseMove(ActionVM* actionVM, int x, int y, int button);
+	virtual void eventMouseMove(IActionVM* actionVM, int x, int y, int button);
 
 	//@}
 

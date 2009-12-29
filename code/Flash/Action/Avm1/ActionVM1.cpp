@@ -1,6 +1,11 @@
 #include <cstring>
 #include <cmath>
-#include "Flash/Action/Avm1/ActionVM.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Misc/Endian.h"
+#include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
+#include "Flash/Action/Avm1/ActionVM1.h"
 #include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/ActionDictionary.h"
@@ -10,11 +15,6 @@
 #include "Flash/Action/Avm1/Classes/AsArray.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/Endian.h"
-#include "Core/Log/Log.h"
 
 #if defined(_DEBUG)
 #	define VM_TRACE_ENABLE 1
@@ -94,14 +94,14 @@ inline float readFloat(const uint8_t* data)
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM", ActionVM, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVM1", ActionVM1, IActionVM)
 
-ActionVM::ActionVM()
+ActionVM1::ActionVM1()
 {
 	m_timer.start();
 }
 
-void ActionVM::execute(ActionFrame* frame)
+void ActionVM1::execute(ActionFrame* frame) const
 {
 	VM_LOG(L"-- Execute begin --");
 

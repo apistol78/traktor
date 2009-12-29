@@ -2,11 +2,11 @@
 #include "Flash/FlashButtonInstance.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashMovie.h"
-#include "Flash/Action/Avm1/Classes/AsButton.h"
-#include "Flash/Action/Avm1/ActionVM.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/ActionScript.h"
+#include "Flash/Action/Avm1/Classes/AsButton.h"
 
 namespace traktor
 {
@@ -53,7 +53,7 @@ Ref< FlashCharacterInstance > FlashButtonInstance::getCharacterInstance(uint16_t
 	return i != m_characterInstances.end() ? i->second.ptr() : 0;
 }
 
-void FlashButtonInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseDown(IActionVM* actionVM, int x, int y, int button)
 {
 	if (m_inside && !m_pushed)
 	{
@@ -64,7 +64,7 @@ void FlashButtonInstance::eventMouseDown(ActionVM* actionVM, int x, int y, int b
 	}
 }
 
-void FlashButtonInstance::eventMouseUp(ActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseUp(IActionVM* actionVM, int x, int y, int button)
 {
 	if (m_inside && m_pushed)
 	{
@@ -82,7 +82,7 @@ void FlashButtonInstance::eventMouseUp(ActionVM* actionVM, int x, int y, int but
 	}
 }
 
-void FlashButtonInstance::eventMouseMove(ActionVM* actionVM, int x, int y, int button)
+void FlashButtonInstance::eventMouseMove(IActionVM* actionVM, int x, int y, int button)
 {
 	SwfRect bounds = getBounds();
 	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
@@ -148,7 +148,7 @@ SwfRect FlashButtonInstance::getBounds() const
 	return bounds;
 }
 
-void FlashButtonInstance::executeCondition(ActionVM* actionVM, uint32_t conditionMask)
+void FlashButtonInstance::executeCondition(IActionVM* actionVM, uint32_t conditionMask)
 {
 	const FlashButton::button_conditions_t& conditions = m_button->getButtonConditions();
 	for (FlashButton::button_conditions_t::const_iterator i = conditions.begin(); i != conditions.end(); ++i)
@@ -161,7 +161,7 @@ void FlashButtonInstance::executeCondition(ActionVM* actionVM, uint32_t conditio
 	}
 }
 
-void FlashButtonInstance::executeScriptEvent(ActionVM* actionVM, const std::wstring& eventName)
+void FlashButtonInstance::executeScriptEvent(IActionVM* actionVM, const std::wstring& eventName)
 {
 	ActionValue memberValue;
 	if (!getLocalMember(eventName, memberValue))

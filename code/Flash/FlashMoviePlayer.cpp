@@ -1,19 +1,19 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Math/Const.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Timer/Timer.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
-#include "Flash/Action/Avm1/ActionVM.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionContext.h"
 #include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Timer/Timer.h"
-#include "Core/Math/Const.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -25,7 +25,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Obje
 FlashMoviePlayer::FlashMoviePlayer(DisplayRenderer* displayRenderer)
 :	m_displayRenderer(displayRenderer)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
-,	m_actionVM(new ActionVM())
+,	m_actionVM(new IActionVM())
 ,	m_intervalNextId(1)
 ,	m_untilNextFrame(0.0f)
 {
@@ -276,7 +276,7 @@ Ref< FlashSpriteInstance > FlashMoviePlayer::getMovieInstance() const
 	return m_movieInstance;
 }
 
-Ref< ActionVM > FlashMoviePlayer::getVM() const
+Ref< IActionVM > FlashMoviePlayer::getVM() const
 {
 	return m_actionVM;
 }
