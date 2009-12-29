@@ -1,5 +1,5 @@
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionClass.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 
 namespace traktor
@@ -14,7 +14,7 @@ ActionClass::ActionClass(const std::wstring& name)
 {
 }
 
-ActionValue ActionClass::call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionClass::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
 	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;

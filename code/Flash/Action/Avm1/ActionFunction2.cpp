@@ -1,9 +1,9 @@
-#include "Flash/Action/Avm1/ActionFunction2.h"
-#include "Flash/Action/Avm1/ActionVM.h"
-#include "Flash/Action/Avm1/ActionFrame.h"
-#include "Flash/Action/Avm1/ActionContext.h"
-#include "Flash/Action/Avm1/ActionSuper.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionFrame.h"
+#include "Flash/Action/IActionVM.h"
 #include "Flash/Action/Avm1/ActionArray.h"
+#include "Flash/Action/Avm1/ActionFunction2.h"
+#include "Flash/Action/Avm1/ActionSuper.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Core/Log/Log.h"
@@ -38,7 +38,7 @@ ActionFunction2::ActionFunction2(
 		setMember(L"__proto__", classPrototype);
 }
 
-ActionValue ActionFunction2::call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	Ref< ActionContext > context = callerFrame->getContext();
 

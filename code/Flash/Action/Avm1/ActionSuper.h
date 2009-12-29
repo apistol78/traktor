@@ -1,14 +1,14 @@
 #ifndef traktor_flash_ActionSuper_H
 #define traktor_flash_ActionSuper_H
 
-#include "Flash/Action/Avm1/ActionFunction.h"
+#include "Flash/Action/ActionFunction.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,7 +31,7 @@ class T_DLLCLASS ActionSuper : public ActionFunction
 public:
 	ActionSuper(ActionObject* object);
 
-	virtual ActionValue call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 private:
 	Ref< ActionObject > m_superClass;

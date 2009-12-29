@@ -4,14 +4,14 @@
 #include <map>
 #include <string>
 #include "Core/Object.h"
-#include "Flash/Action/Avm1/ActionValue.h"
+#include "Flash/Action/ActionValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

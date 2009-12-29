@@ -1,14 +1,14 @@
 #ifndef traktor_flash_ActionFunctionNative_H
 #define traktor_flash_ActionFunctionNative_H
 
-#include "Flash/Action/Avm1/ActionFunction.h"
+#include "Flash/Action/ActionFunction.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,7 +23,7 @@ class ActionContext;
  */
 struct CallArgs
 {
-	ActionVM* vm;
+	const IActionVM* vm;
 	ActionContext* context;
 	ActionObject* self;
 	std::vector< ActionValue > args;
@@ -102,7 +102,7 @@ class T_DLLCLASS ActionFunctionNative : public ActionFunction
 public:
 	ActionFunctionNative(CallFnc* callFnc);
 
-	virtual ActionValue call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 private:
 	Ref< CallFnc > m_callFnc;

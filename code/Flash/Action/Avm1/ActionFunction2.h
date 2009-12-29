@@ -1,14 +1,14 @@
 #ifndef traktor_flash_ActionFunction2_H
 #define traktor_flash_ActionFunction2_H
 
-#include "Flash/Action/Avm1/ActionFunction.h"
+#include "Flash/Action/ActionFunction.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_FLASH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -49,7 +49,7 @@ public:
 		ActionDictionary* dictionary
 	);
 
-	virtual ActionValue call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
+	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 private:
 	const uint8_t* m_code;

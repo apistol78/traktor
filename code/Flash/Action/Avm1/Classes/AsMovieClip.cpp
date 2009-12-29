@@ -1,13 +1,13 @@
-#include "Flash/Action/Avm1/Classes/AsMovieClip.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/ActionContext.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashFrame.h"
-#include "Core/Math/Const.h"
-#include "Core/Log/Log.h"
+#include "Flash/Action/ActionContext.h"
+#include "Flash/Action/Avm1/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/Classes/AsMovieClip.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {

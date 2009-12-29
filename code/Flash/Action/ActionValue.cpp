@@ -1,13 +1,13 @@
 #include <cstring>
-#include "Flash/Action/Avm1/ActionValue.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Memory/BlockAllocator.h"
+#include "Core/Misc/String.h"
+#include "Core/Singleton/ISingleton.h"
+#include "Core/Singleton/SingletonManager.h"
+#include "Flash/Action/ActionValue.h"
 #include "Flash/Action/Avm1/ActionBoolean.h"
 #include "Flash/Action/Avm1/ActionNumber.h"
 #include "Flash/Action/Avm1/ActionString.h"
-#include "Core/Memory/Alloc.h"
-#include "Core/Memory/BlockAllocator.h"
-#include "Core/Singleton/SingletonManager.h"
-#include "Core/Singleton/ISingleton.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {

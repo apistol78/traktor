@@ -1,4 +1,4 @@
-#include "Flash/Action/Avm1/ActionFunction.h"
+#include "Flash/Action/ActionFunction.h"
 #include "Core/Io/StringOutputStream.h"
 
 namespace traktor

@@ -1,5 +1,5 @@
-#include "Flash/Action/Avm1/ActionObject.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Flash/Action/ActionObject.h"
 
 namespace traktor
 {

@@ -38,7 +38,7 @@ ActionSuper::ActionSuper(ActionObject* object)
 		log::debug << L"ActionSuper; no constructor" << Endl;
 }
 
-ActionValue ActionSuper::call(ActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
+ActionValue ActionSuper::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	Ref< ActionFunction > superCtor = dynamic_type_cast< ActionFunction* >(m_superClass);
 	return superCtor ? superCtor->call(vm, callerFrame, self) : ActionValue();

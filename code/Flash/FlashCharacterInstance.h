@@ -3,7 +3,7 @@
 
 #include "Core/Math/Matrix33.h"
 #include "Flash/SwfTypes.h"
-#include "Flash/Action/Avm1/ActionObject.h"
+#include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

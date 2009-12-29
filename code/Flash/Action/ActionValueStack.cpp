@@ -1,4 +1,4 @@
-#include "Flash/Action/Avm1/ActionValueStack.h"
+#include "Flash/Action/ActionValueStack.h"
 
 namespace traktor
 {
