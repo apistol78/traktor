@@ -29,6 +29,7 @@ EmitterInstance::EmitterInstance(Emitter* emitter)
 ,	m_totalTime(0.0f)
 ,	m_emitted(0)
 ,	m_warm(false)
+,	m_count(0)
 {
 }
 
@@ -98,9 +99,13 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 
 	// Calculate bounding box; do this before modifiers as modifiers are executed
 	// asynchronously.
-	m_boundingBox = Aabb();
-	for (PointVector::iterator i = m_points.begin(); i != m_points.end(); ++i)
-		m_boundingBox.contain(i->position);
+	if ((m_count++ & 15) == 0)
+	{
+		m_boundingBox = Aabb();
+		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
+		for (PointVector::iterator i = m_points.begin(); i != m_points.end(); ++i)
+			m_boundingBox.contain(i->position + i->velocity * deltaTime16);
+	}
 
 #if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
