@@ -1,10 +1,10 @@
 #include <cmath>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
+#include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/ActionPoint.h"
 #include "Flash/Action/Avm1/Classes/AsPoint.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionPoint.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
 
 namespace traktor
 {

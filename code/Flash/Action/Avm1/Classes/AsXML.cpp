@@ -1,6 +1,6 @@
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
 
 namespace traktor
 {

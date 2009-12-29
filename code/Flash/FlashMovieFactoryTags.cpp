@@ -1,4 +1,12 @@
 #include <cstring>
+#include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/Endian.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
+#include "Drawing/Formats/ImageFormatJpeg.h"
 #include "Flash/FlashMovieFactoryTags.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashMovie.h"
@@ -11,17 +19,9 @@
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashBitmap.h"
-#include "Flash/Action/Avm1/ActionScript.h"
 #include "Flash/SwfReader.h"
+#include "Flash/Action/ActionScript.h"
 #include "Zip/InflateStream.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
-#include "Drawing/Formats/ImageFormatJpeg.h"
-#include "Core/Io/MemoryStream.h"
-#include "Core/Misc/TString.h"
-#include "Core/Misc/AutoPtr.h"
-#include "Core/Misc/Endian.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -1146,6 +1146,31 @@ bool FlashTagFrameLabel::read(SwfReader* swf, ReadContext& context)
 	std::string label = swf->readString();
 	if (context.frame)
 		context.frame->setLabel(mbstows(label));
+	return true;
+}
+
+// ============================================================================
+// ABC
+
+bool FlashTagDoABC::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+	IStream* st = bs.getStream();
+
+	uint32_t flags = bs.readUInt32();
+	std::string name = swf->readString();
+
+	uint32_t abcDataSize = context.tagEndPosition - st->tell();
+
+	Ref< ActionScript > script = new ActionScript(abcDataSize);
+	if (abcDataSize > 0)
+	{
+		uint8_t* abcData = script->getCode();
+		if (st->read(abcData, abcDataSize) != abcDataSize)
+			return false;
+	}
+	
+	context.frame->addActionScript(script);
 	return true;
 }
 

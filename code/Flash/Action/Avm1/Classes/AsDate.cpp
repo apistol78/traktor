@@ -1,7 +1,7 @@
+#include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/ActionDate.h"
 #include "Flash/Action/Avm1/Classes/AsDate.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionDate.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
 
 namespace traktor
 {

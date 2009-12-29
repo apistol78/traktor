@@ -1,12 +1,12 @@
 #include <limits>
-#include "Flash/Action/Avm1/Classes/AsString.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionString.h"
-#include "Flash/Action/Avm1/ActionArray.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
+#include "Flash/Action/ActionFunctionNative.h"
+#include "Flash/Action/Avm1/ActionString.h"
+#include "Flash/Action/Avm1/ActionArray.h"
+#include "Flash/Action/Avm1/Classes/AsString.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {

@@ -1,3 +1,5 @@
+#include "Core/Io/StringOutputStream.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/ActionGlobal.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
 #include "Flash/Action/Avm1/Classes/AsAccessibility.h"
@@ -26,8 +28,6 @@
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Core/Io/StringOutputStream.h"
 
 namespace traktor
 {

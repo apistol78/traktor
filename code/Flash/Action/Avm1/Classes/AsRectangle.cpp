@@ -1,9 +1,9 @@
-#include "Flash/Action/Avm1/Classes/AsRectangle.h"
-#include "Flash/Action/Avm1/Classes/AsObject.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/ActionRectangle.h"
 #include "Flash/Action/Avm1/ActionPoint.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Core/Io/StringOutputStream.h"
+#include "Flash/Action/Avm1/Classes/AsRectangle.h"
+#include "Flash/Action/Avm1/Classes/AsObject.h"
 
 namespace traktor
 {

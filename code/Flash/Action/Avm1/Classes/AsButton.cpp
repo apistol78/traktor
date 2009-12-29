@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
+#include "Flash/FlashButtonInstance.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsButton.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
-#include "Flash/Action/Avm1/ActionFunctionNative.h"
-#include "Flash/FlashButtonInstance.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
