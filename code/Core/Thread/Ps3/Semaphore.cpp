@@ -8,51 +8,35 @@ namespace traktor
 Semaphore::Semaphore()
 :	m_handle(0)
 {
-	//sys_semaphore_t* sem = new sys_semaphore_t();
+	sys_lwmutex_attribute_t attr;
+	sys_lwmutex_attribute_initialize(attr);
+	attr.attr_recursive = SYS_SYNC_RECURSIVE;
 
-	//sys_semaphore_attribute_t attr;
-	//sys_semaphore_attribute_initialize(attr);
-	//sys_semaphore_create(sem, &attr, 1, 1024);
+	sys_lwmutex_t* lwm = new sys_lwmutex_t();
+	sys_lwmutex_create(lwm, &attr);
 
-	//m_handle = sem;
-
-	sys_mutex_t* mutex = new sys_mutex_t();
-
-	sys_mutex_attribute_t attr;
-	sys_mutex_attribute_initialize(attr);
-	sys_mutex_create(mutex, &attr);
-
-	m_handle = mutex;
+	m_handle = lwm;
 }
 
 Semaphore::~Semaphore()
 {
-	//sys_semaphore_t* sem = reinterpret_cast< sys_semaphore_t* >(m_handle);
-	//sys_semaphore_destroy(*sem);
-	//delete sem;
+	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
+	sys_lwmutex_destroy(mutex);
 
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	sys_mutex_destroy(*mutex);
 	delete mutex;
 }
 
 bool Semaphore::wait(int32_t timeout)
 {
-	//sys_semaphore_t* sem = reinterpret_cast< sys_semaphore_t* >(m_handle);
-	//return sys_semaphore_wait(*sem, timeout * 1000) == CELL_OK;
-
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	int rc = sys_mutex_lock(*mutex, timeout);
+	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
+	int rc = sys_lwmutex_lock(mutex, timeout);
 	return bool(rc == CELL_OK);
 }
 
 void Semaphore::release()
 {
-	//sys_semaphore_t* sem = reinterpret_cast< sys_semaphore_t* >(m_handle);
-	//sys_semaphore_post(*sem, 1);
-
-	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	sys_mutex_unlock(*mutex);
+	sys_lwmutex_t* mutex = reinterpret_cast< sys_lwmutex_t* >(m_handle);
+	sys_lwmutex_unlock(mutex);
 }
 
 }
