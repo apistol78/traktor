@@ -7,7 +7,8 @@
 #include "Render/Ps3/VertexBufferPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/ProgramPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 
 namespace traktor
 {
@@ -53,7 +54,9 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 :	m_renderSystem(renderSystem)
 ,	m_width(0)
 ,	m_height(0)
+,	m_colorObject(0)
 ,	m_colorPitch(0)
+,	m_depthObject(0)
 ,	m_depthAddr(0)
 ,	m_frameSyncLabelData(0)
 ,	m_frameCounter(1)
@@ -102,20 +105,12 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 	cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
 
 	uint32_t colorSize = m_colorPitch * m_height;
-	uint32_t colorBaseAddr = (uint32_t)LocalMemoryAllocator::getInstance().allocAlign(sizeof_array(m_colorAddr) * colorSize, 4096);
+	m_colorObject = LocalMemoryManager::getInstance().alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
 
 	for (size_t i = 0; i < sizeof_array(m_colorAddr); i++)
 	{
-		m_colorAddr[i] = (void*)(colorBaseAddr + (i * colorSize));
-
-		ret = cellGcmAddressToOffset(m_colorAddr[i], &m_colorOffset[i]);
-		if (ret != CELL_OK)
-		{
-			log::error << L"Create render view failed, unable to create color buffers" << Endl;
-			return false;
-		}
-
-		log::info << L"PS color buffer " << i << L", address " << m_colorAddr[i] << Endl;
+		m_colorAddr[i] = (uint8_t*)m_colorObject->getPointer() + (i * colorSize);
+		m_colorOffset[i] = m_colorObject->getOffset() + (i * colorSize);
 
 		ret = cellGcmSetDisplayBuffer(
 			i,
@@ -149,18 +144,10 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 		m_depthTexture.offset = 0;
 
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
+		m_depthObject = LocalMemoryManager::getInstance().alloc(depthSize, 4096, true);
 
-		m_depthAddr = LocalMemoryAllocator::getInstance().allocAlign(
-			depthSize,
-			4096
-		);
-
-		ret = cellGcmAddressToOffset(m_depthAddr, &m_depthTexture.offset);
-		if (ret != CELL_OK)
-		{
-			log::error << L"Create render view failed, unable to create depth buffer" << Endl;
-			return false;
-		}
+		m_depthAddr = m_depthObject->getPointer();
+		m_depthTexture.offset = m_depthObject->getOffset();
 	}
 
 	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
@@ -175,6 +162,16 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 
 void RenderViewPs3::close()
 {
+	if (m_depthObject)
+	{
+		LocalMemoryManager::getInstance().free(m_depthObject);
+		m_depthObject = 0;
+	}
+	if (m_colorObject)
+	{
+		LocalMemoryManager::getInstance().free(m_colorObject);
+		m_colorObject = 0;
+	}
 }
 
 void RenderViewPs3::resize(int width, int height)
@@ -412,7 +409,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 		T_ASSERT (m_currentIndexBuffer);
 
 		uint8_t type = CELL_GCM_DRAW_INDEX_ARRAY_TYPE_16;
-		uint32_t offset = m_currentIndexBuffer->getPs3Offset() + primitives.offset * 2;
+		uint32_t offset = m_currentIndexBuffer->getOffset() + primitives.offset * 2;
 
 		if (m_currentIndexBuffer->getIndexType() == ItUInt32)
 		{

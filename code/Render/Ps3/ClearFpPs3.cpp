@@ -1,5 +1,6 @@
 #include "Render/Ps3/ClearFpPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 
 // Resources
 #include "Resources/ClearFp_vertex.h"
@@ -15,13 +16,14 @@ ClearFpPs3::ClearFpPs3()
 	uint32_t ucodeSize;
 	void* ucode;
 
-	m_quadBuffer = (float*)LocalMemoryAllocator::getInstance().allocAlign(sizeof(float) * 4 * 2, 128);
-	cellGcmAddressToOffset((void*)m_quadBuffer, &m_quadBufferOffset);
+	m_quadBuffer = LocalMemoryManager::getInstance().alloc(sizeof(float) * 4 * 2, 128, false);
 
-	m_quadBuffer[0] = -1.0f; m_quadBuffer[1] = -1.0f;
-	m_quadBuffer[2] =  1.0f; m_quadBuffer[3] = -1.0f;
-	m_quadBuffer[4] = -1.0f; m_quadBuffer[5] =  1.0f;
-	m_quadBuffer[6] =  1.0f; m_quadBuffer[7] =  1.0f;
+	float* ptr = (float*)m_quadBuffer->getPointer();
+
+	ptr[0] = -1.0f; ptr[1] = -1.0f;
+	ptr[2] =  1.0f; ptr[3] = -1.0f;
+	ptr[4] = -1.0f; ptr[5] =  1.0f;
+	ptr[6] =  1.0f; ptr[7] =  1.0f;
 
 	m_clearVertexProgram = (CGprogram)c_ResourceClearFp_vertex;
 	m_clearFragmentProgram = (CGprogram)c_ResourceClearFp_fragment;
@@ -30,9 +32,8 @@ ClearFpPs3::ClearFpPs3()
 	cellGcmCgInitProgram(m_clearFragmentProgram);
 
 	cellGcmCgGetUCode(m_clearFragmentProgram, &ucode, &ucodeSize);
-	m_clearFragmentProgramUcode = LocalMemoryAllocator::getInstance().allocAlign(ucodeSize, 64);
-	std::memcpy(m_clearFragmentProgramUcode, ucode, ucodeSize); 
-	cellGcmAddressToOffset(m_clearFragmentProgramUcode, &m_clearFragmentProgramOffset);
+	m_clearFragmentProgramUcode = LocalMemoryManager::getInstance().alloc(ucodeSize, 64, false);
+	std::memcpy(m_clearFragmentProgramUcode->getPointer(), ucode, ucodeSize); 
 
 	cellGcmCgGetUCode(m_clearVertexProgram, &ucode, &ucodeSize);
 	m_clearVertexProgramUcode = ucode;
@@ -53,7 +54,7 @@ void ClearFpPs3::clear(const float color[4])
 	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, "Clear FP target");
 
 	cellGcmSetVertexProgram(gCellGcmCurrentContext, m_clearVertexProgram, m_clearVertexProgramUcode);
-	cellGcmSetFragmentProgram(gCellGcmCurrentContext, m_clearFragmentProgram, m_clearFragmentProgramOffset);
+	cellGcmSetFragmentProgram(gCellGcmCurrentContext, m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset());
 	cellGcmSetVertexDataArray(
 		gCellGcmCurrentContext,
 		m_clearPositionIndex,
@@ -62,7 +63,7 @@ void ClearFpPs3::clear(const float color[4])
 		2, 
 		CELL_GCM_VERTEX_F, 
 		CELL_GCM_LOCATION_LOCAL, 
-		m_quadBufferOffset
+		m_quadBuffer->getOffset()
 	);
 	cellGcmSetVertexData4f(
 		gCellGcmCurrentContext,

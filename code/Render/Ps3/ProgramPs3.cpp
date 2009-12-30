@@ -3,7 +3,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/PlatformPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
@@ -21,39 +22,37 @@ namespace traktor
 
 struct UCodeCacheEntry
 {
-	uint32_t ucodeSize;
-	void* ucode;
+	LocalMemoryObject* ucode;
 	uint32_t count;
 };
 
 std::map< uint32_t, UCodeCacheEntry > m_ucodeCache;
 
-void getProgramUCode(CGprogram program, uint32_t& outUCodeSize, void*& outUCode)
+void getProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
 {
-	cellGcmCgInitProgram(program);
-	cellGcmCgGetUCode(program, &outUCode, &outUCodeSize);
+	uint32_t ucodeSize;
+	void* ucode;
 
-	Adler32 a32; a32.begin(); a32.feed(outUCode, outUCodeSize); a32.end();
+	cellGcmCgInitProgram(program);
+	cellGcmCgGetUCode(program, &ucode, &ucodeSize);
+
+	Adler32 a32; a32.begin(); a32.feed(ucode, ucodeSize); a32.end();
 	uint32_t hash = a32.get();
 
 	std::map< uint32_t, UCodeCacheEntry >::iterator i = m_ucodeCache.find(hash);
 	if (i == m_ucodeCache.end())
 	{
-		void* aligned = LocalMemoryAllocator::getInstance().allocAlign(outUCodeSize, 64);
-		std::memcpy(aligned, outUCode, outUCodeSize);
-		outUCode = aligned;
+		outUCode = LocalMemoryManager::getInstance().alloc(ucodeSize, 64, false);
+		std::memcpy(outUCode->getPointer(), ucode, ucodeSize);
 
 		UCodeCacheEntry entry;
-		entry.ucodeSize = outUCodeSize;
 		entry.ucode = outUCode;
 		entry.count = 1;
 		m_ucodeCache.insert(std::make_pair(hash, entry));
 	}
 	else
 	{
-		outUCodeSize = i->second.ucodeSize;
 		outUCode = i->second.ucode;
-
 		i->second.count++;
 	}
 }
@@ -110,11 +109,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramPs3", ProgramPs3, IProgram)
 ProgramPs3::ProgramPs3()
 :	m_vertexProgram(0)
 ,	m_pixelProgram(0)
-,	m_vertexShaderUCodeSize(0)
 ,	m_vertexShaderUCode(0)
-,	m_pixelShaderUCodeSize(0)
 ,	m_pixelShaderUCode(0)
-,	m_pixelShaderOffset(0)
 {
 	std::memset(m_pixelTextures, 0, sizeof(m_pixelTextures));
 }
@@ -135,15 +131,8 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 	m_vertexProgram = (CGprogram)sceCgcGetBinData(resource->getVertexShaderBin());
 	m_pixelProgram = (CGprogram)sceCgcGetBinData(resource->getPixelShaderBin());
 
-	getProgramUCode(m_vertexProgram, m_vertexShaderUCodeSize, m_vertexShaderUCode);
-	getProgramUCode(m_pixelProgram, m_pixelShaderUCodeSize, m_pixelShaderUCode);
-
-	ret = cellGcmAddressToOffset(m_pixelShaderUCode, &m_pixelShaderOffset);
-	if (ret != CELL_OK)
-	{
-		log::error << L"Create shader failed, unable to get offset to pixel shader" << Endl;
-		return false;
-	}
+	getProgramUCode(m_vertexProgram, m_vertexShaderUCode);
+	getProgramUCode(m_pixelProgram, m_pixelShaderUCode);
 
 	size = buildParameterMap(resource, m_vertexProgram, m_vertexParameterMap);
 	m_vertexParameters.resize(size);
@@ -321,8 +310,8 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 {
 	//if (ms_activeProgram != this)
 	{
-		cellGcmSetVertexProgram(m_vertexProgram, m_vertexShaderUCode);
-		cellGcmSetFragmentProgram(m_pixelProgram, m_pixelShaderOffset);
+		cellGcmSetVertexProgram(m_vertexProgram, m_vertexShaderUCode->getPointer());
+		cellGcmSetFragmentProgram(m_pixelProgram, m_pixelShaderUCode->getOffset());
 	}
 
 	stateCache.setRenderState(m_renderState);
@@ -348,7 +337,7 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 				m_pixelProgram,
 				i->second.parameters[j],
 				&m_pixelParameters[i->second.offset + j * i->second.stride],
-				m_pixelShaderOffset
+				m_pixelShaderUCode->getOffset()
 			);
 		}
 	}

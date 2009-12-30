@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Render/Ps3/SimpleTexturePs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/TypesPs3.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
@@ -23,7 +24,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTexturePs3", SimpleTexturePs3, ISi
 
 SimpleTexturePs3::SimpleTexturePs3()
 :	m_data(0)
-,	m_offset(0)
 {
 	std::memset(&m_texture, 0, sizeof(m_texture));
 }
@@ -105,8 +105,8 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 		desc.mipCount
 	);
 
-	m_data = LocalMemoryAllocator::getInstance().allocAlign(textureSize, 128);
-	if (cellGcmAddressToOffset(m_data, &m_texture.offset) != CELL_OK)
+	m_data = LocalMemoryManager::getInstance().alloc(textureSize, 128, false);
+	if (!m_data)
 		return false;
 
 	if (desc.immutable)
@@ -120,7 +120,7 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 			uint32_t mipPitch = getTextureRowPitch(desc.format, desc.width, i);
 
 			const uint8_t* src = static_cast< const uint8_t* >(desc.initialData[i].data);
-			uint8_t* dest = static_cast< uint8_t* >(m_data) + offset;
+			uint8_t* dest = static_cast< uint8_t* >(m_data->getPointer()) + offset;
 
 			if (dxtn || linear)
 			{
@@ -154,10 +154,8 @@ void SimpleTexturePs3::destroy()
 {
 	if (m_data)
 	{
-		LocalMemoryAllocator::getInstance().free(m_data);
-
+		LocalMemoryManager::getInstance().free(m_data);
 		m_data = 0;
-		m_offset = 0;
 	}
 }
 
@@ -180,7 +178,7 @@ bool SimpleTexturePs3::lock(int level, Lock& lock)
 {
 	if (m_texture.pitch != 0 && level == 0)
 	{
-		uint8_t* ptr = static_cast< uint8_t* >(m_data);
+		uint8_t* ptr = static_cast< uint8_t* >(m_data->getPointer());
 		lock.bits = ptr;
 		lock.pitch = m_texture.pitch;
 		return true;
@@ -195,6 +193,8 @@ void SimpleTexturePs3::unlock(int level)
 
 void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 {
+	m_texture.offset = m_data->getOffset();
+
 	cellGcmSetTextureControl(
 		gCellGcmCurrentContext,
 		stage,

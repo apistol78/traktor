@@ -19,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class LocalMemoryObject;
 class RenderTargetPs3;
 
 class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
@@ -42,12 +43,10 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
+	const CellGcmTexture& getGcmDepthTexture();
+
 	RenderTargetPs3* getRenderTarget(int index) {
 		return m_renderTargets[index];
-	}
-
-	const CellGcmTexture& getGcmDepthTexture() const {
-		return m_depthTexture;
 	}
 
 private:
@@ -55,7 +54,7 @@ private:
 	int32_t m_height;
 	RefArray< RenderTargetPs3 > m_renderTargets;
 	CellGcmTexture m_depthTexture;
-	void* m_depthData;
+	LocalMemoryObject* m_depthData;
 };
 
 	}

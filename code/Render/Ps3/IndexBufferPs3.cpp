@@ -1,5 +1,6 @@
 #include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 
 namespace traktor
 {
@@ -8,10 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferPs3", IndexBufferPs3, IndexBuffer)
 
-IndexBufferPs3::IndexBufferPs3(void* ptr, uint32_t offset, IndexType indexType, int bufferSize)
+IndexBufferPs3::IndexBufferPs3(LocalMemoryObject* ibo, IndexType indexType, int bufferSize)
 :	IndexBuffer(indexType, bufferSize)
-,	m_ptr(ptr)
-,	m_offset(offset)
+,	m_ibo(ibo)
 {
 }
 
@@ -22,22 +22,25 @@ IndexBufferPs3::~IndexBufferPs3()
 
 void IndexBufferPs3::destroy()
 {
-	if (m_ptr)
+	if (m_ibo)
 	{
-		LocalMemoryAllocator::getInstance().free(m_ptr);
-
-		m_ptr = 0;
-		m_offset = 0;
+		LocalMemoryManager::getInstance().free(m_ibo);
+		m_ibo = 0;
 	}
 }
 
 void* IndexBufferPs3::lock()
 {
-	return m_ptr;
+	return m_ibo->getPointer();
 }
 
 void IndexBufferPs3::unlock()
 {
+}
+
+uint32_t IndexBufferPs3::getOffset() const
+{
+	return m_ibo->getOffset();
 }
 
 	}

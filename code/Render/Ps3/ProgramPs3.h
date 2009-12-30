@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,6 +19,7 @@ namespace traktor
 	namespace render
 	{
 
+class LocalMemoryObject;
 class ProgramResourcePs3;
 class StateCachePs3;
 
@@ -70,11 +71,8 @@ private:
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;
-	uint32_t m_vertexShaderUCodeSize;
-	void* m_vertexShaderUCode;
-	uint32_t m_pixelShaderUCodeSize;
-	void* m_pixelShaderUCode;
-	uint32_t m_pixelShaderOffset;
+	LocalMemoryObject* m_vertexShaderUCode;
+	LocalMemoryObject* m_pixelShaderUCode;
 	std::map< handle_t, Parameter > m_vertexParameterMap;
 	std::vector< float > m_vertexParameters;
 	std::map< handle_t, Parameter > m_pixelParameterMap;

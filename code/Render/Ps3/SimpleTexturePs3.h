@@ -17,6 +17,8 @@ namespace traktor
 {
 	namespace render
 	{
+
+class LocalMemoryObject;
 		
 class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
 {
@@ -44,8 +46,7 @@ public:
 	void bind(int stage, const SamplerState& samplerState);
 
 private:
-	void* m_data;
-	uint32_t m_offset;
+	LocalMemoryObject* m_data;
 	CellGcmTexture m_texture;
 };
 		

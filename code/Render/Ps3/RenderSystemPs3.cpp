@@ -3,7 +3,7 @@
 #include "Render/DisplayMode.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramCompilerPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
@@ -45,7 +45,7 @@ bool RenderSystemPs3::create()
 
 	CellGcmConfig config;
 	cellGcmGetConfiguration(&config);
-	LocalMemoryAllocator::getInstance().setHeap(config.localAddress, config.localSize);
+	LocalMemoryManager::getInstance().setHeap(config.localAddress, config.localSize);
 
 	log::info << 
 		L"PS3 render system created" << Endl <<
@@ -115,28 +115,20 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(void* windowHandle, const R
 
 Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	void* ptr = LocalMemoryAllocator::getInstance().allocAlign(bufferSize, 128);
-	if (!ptr)
+	LocalMemoryObject* vbo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
+	if (vbo)
+		return new VertexBufferPs3(vertexElements, vbo, bufferSize);
+	else
 		return 0;
-
-	uint32_t offset;
-	if (cellGcmAddressToOffset(ptr, &offset) != CELL_OK)
-		return 0;
-
-	return new VertexBufferPs3(vertexElements, ptr, offset, bufferSize);
 }
 
 Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	void* ptr = LocalMemoryAllocator::getInstance().allocAlign(bufferSize, 128);
-	if (!ptr)
+	LocalMemoryObject* ibo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
+	if (ibo)
+		return new IndexBufferPs3(ibo, indexType, bufferSize);
+	else
 		return 0;
-
-	uint32_t offset;
-	if (cellGcmAddressToOffset(ptr, &offset) != CELL_OK)
-		return 0;
-
-	return new IndexBufferPs3(ptr, offset, indexType, bufferSize);
 }
 
 Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)

@@ -1,7 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Render/Ps3/RenderTargetSetPs3.h"
 #include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 
 namespace traktor
 {
@@ -33,29 +34,20 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 
 	if (desc.depthStencil)
 	{
-		int surfaceWidth = m_width; //(m_width & ~63) + 64;
-		int surfaceHeight = m_height; //(m_height & ~63) + 64;
-
 		m_depthTexture.format = CELL_GCM_TEXTURE_DEPTH24_D8 | CELL_GCM_TEXTURE_LN;
 		m_depthTexture.mipmap = 1;
 		m_depthTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
 		m_depthTexture.cubemap = 0;
 		m_depthTexture.remap = 0;
-		m_depthTexture.width = surfaceWidth;
-		m_depthTexture.height = surfaceHeight;
+		m_depthTexture.width = m_width;
+		m_depthTexture.height = m_height;
 		m_depthTexture.depth = 1;
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
-		m_depthTexture.pitch = surfaceWidth * 4;
+		m_depthTexture.pitch = m_width * 4;
 		m_depthTexture.offset = 0;
 
 		uint32_t depthSize = m_depthTexture.pitch * m_depthTexture.height;
-
-		m_depthData = LocalMemoryAllocator::getInstance().allocAlign(depthSize, 4096);
-		if (cellGcmAddressToOffset(m_depthData, &m_depthTexture.offset) != CELL_OK)
-		{
-			log::error << L"Create render target failed, unable to create depth buffer" << Endl;
-			return false;
-		}
+		m_depthData = LocalMemoryManager::getInstance().alloc(depthSize, 4096, false);
 	}
 	else
 	{
@@ -100,6 +92,14 @@ void RenderTargetSetPs3::swap(int index1, int index2)
 bool RenderTargetSetPs3::read(int index, void* buffer) const
 {
 	return false;
+}
+
+const CellGcmTexture& RenderTargetSetPs3::getGcmDepthTexture()
+{
+	if (m_depthData)
+		m_depthTexture.offset = m_depthData->getOffset();
+
+	return m_depthTexture;
 }
 
 	}

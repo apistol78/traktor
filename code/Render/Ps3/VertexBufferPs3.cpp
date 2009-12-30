@@ -1,6 +1,7 @@
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/VertexBufferPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/CgType.h"
 #include "Render/VertexElement.h"
 #include "Core/Log/Log.h"
@@ -14,10 +15,9 @@ VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
-VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, void* ptr, uint32_t offset, int bufferSize)
+VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexElements, LocalMemoryObject* vbo, int bufferSize)
 :	VertexBuffer(bufferSize)
-,	m_ptr(ptr)
-,	m_offset(offset)
+,	m_vbo(vbo)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 
@@ -88,8 +88,7 @@ VertexBufferPs3::VertexBufferPs3(const std::vector< VertexElement >& vertexEleme
 			break;
 		}
 
-		if (cellGcmAddressToOffset(static_cast< uint8_t* >(m_ptr) + i->getOffset(), &m_attributeDesc[attr].offset) != CELL_OK)
-			log::error << "Unable to get offset to vertex element" << Endl;
+		m_attributeDesc[attr].offset = i->getOffset();
 	}
 }
 
@@ -119,23 +118,21 @@ void VertexBufferPs3::destroy()
 		ms_activeVertexBuffer = 0;
 	}
 
-	if (m_ptr)
+	if (m_vbo)
 	{
-		LocalMemoryAllocator::getInstance().free(m_ptr);
-
-		m_ptr = 0;
-		m_offset = 0;
+		LocalMemoryManager::getInstance().free(m_vbo);
+		m_vbo = 0;
 	}
 }
 
 void* VertexBufferPs3::lock()
 {
-	return m_ptr;
+	return m_vbo->getPointer();
 }
 
 void* VertexBufferPs3::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	uint8_t* ptr = static_cast< uint8_t* >(m_ptr);
+	uint8_t* ptr = static_cast< uint8_t* >(m_vbo->getPointer());
 	ptr += vertexOffset * m_vertexStride;
 	return ptr;
 }
@@ -146,8 +143,8 @@ void VertexBufferPs3::unlock()
 
 void VertexBufferPs3::bind()
 {
-	if (ms_activeVertexBuffer == this)
-		return;
+	//if (ms_activeVertexBuffer == this)
+	//	return;
 
 	for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
 	{
@@ -161,7 +158,7 @@ void VertexBufferPs3::bind()
 				m_attributeDesc[i].size,
 				m_attributeDesc[i].type,
 				CELL_GCM_LOCATION_LOCAL,
-				m_attributeDesc[i].offset
+				m_vbo->getOffset() + m_attributeDesc[i].offset
 			);
 		}
 	}

@@ -7,15 +7,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace render
 	{
+
+class LocalMemoryObject;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
 {
@@ -40,12 +42,10 @@ public:
 
 	void bind(int stage, const SamplerState& samplerState);
 
+	const CellGcmTexture& getGcmColorTexture();
+
 	uint32_t getGcmSurfaceColorFormat() const {
 		return m_colorSurfaceFormat;
-	}
-
-	const CellGcmTexture& getGcmColorTexture() const {
-		return m_colorTexture;
 	}
 
 private:
@@ -53,7 +53,7 @@ private:
 	int32_t m_height;
 	uint32_t m_colorSurfaceFormat;
 	CellGcmTexture m_colorTexture;
-	void* m_colorData;
+	LocalMemoryObject* m_colorData;
 	bool m_inRender;
 	uint32_t m_waitLabel;
 };

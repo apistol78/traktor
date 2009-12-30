@@ -87,9 +87,11 @@ private:
 	int32_t m_width;
 	int32_t m_height;
 	Viewport m_viewport;
+	LocalMemoryObject* m_colorObject;
 	void* m_colorAddr[2];
 	uint32_t m_colorOffset[2];
 	uint32_t m_colorPitch;
+	LocalMemoryObject* m_depthObject;
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
 	volatile uint32_t* m_frameSyncLabelData;

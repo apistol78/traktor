@@ -1,5 +1,6 @@
 #include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/LocalMemoryAllocator.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/TypesPs3.h"
 #include "Core/Log/Log.h"
 
@@ -96,16 +97,13 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 	m_colorTexture.offset = 0;
 
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
-
-	m_colorData = LocalMemoryAllocator::getInstance().allocAlign(textureSize, 4096);
-	if (cellGcmAddressToOffset(m_colorData, &m_colorTexture.offset) != CELL_OK)
-		return false;
+	m_colorData = LocalMemoryManager::getInstance().alloc(textureSize, 4096, false);
 
 	log::info <<
 		L"PS3 render target created:" << Endl <<
 		L" format " << getTextureFormatName(desc.format) << Endl <<
 		L" size " << m_width << L"*" << m_height << Endl <<
-		L" offset " << (void*)m_colorTexture.offset << Endl <<
+		L" offset " << (void*)m_colorData->getOffset() << L" (initial)" << Endl <<
 		L" pitch " << m_colorTexture.pitch << Endl;
 
 	return true;
@@ -115,7 +113,7 @@ void RenderTargetPs3::destroy()
 {
 	if (m_colorData)
 	{
-		LocalMemoryAllocator::getInstance().free(m_colorData);
+		LocalMemoryManager::getInstance().free(m_colorData);
 		m_colorData = 0;
 	}
 }
@@ -161,6 +159,8 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 	//	cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_waitLabel);
 	//	m_waitLabel = 0;
 	//}
+
+	m_colorTexture.offset = m_colorData->getOffset();
 
 	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
@@ -230,6 +230,14 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 		stage,
 		&m_colorTexture
 	);
+}
+
+const CellGcmTexture& RenderTargetPs3::getGcmColorTexture()
+{
+	if (m_colorData)
+		m_colorTexture.offset = m_colorData->getOffset();
+
+	return m_colorTexture;
 }
 
 	}

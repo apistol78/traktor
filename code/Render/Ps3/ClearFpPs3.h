@@ -8,6 +8,8 @@ namespace traktor
 	namespace render
 	{
 
+class LocalMemoryObject;
+
 /*! \brief Clear FP targets helper.
  *
  * As PS3 doesn't support clearing FP targets
@@ -24,13 +26,12 @@ public:
 	void clear(const float color[4]);
 
 private:
-	float* m_quadBuffer;
+	LocalMemoryObject* m_quadBuffer;
 	uint32_t m_quadBufferOffset;
 	CGprogram m_clearVertexProgram;
 	CGprogram m_clearFragmentProgram;
 	void* m_clearVertexProgramUcode;
-	void* m_clearFragmentProgramUcode;
-	uint32_t m_clearFragmentProgramOffset;
+	LocalMemoryObject* m_clearFragmentProgramUcode;
 	uint32_t m_clearPositionIndex;
 	uint32_t m_clearColorIndex;
 };

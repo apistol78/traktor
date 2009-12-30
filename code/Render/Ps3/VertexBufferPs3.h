@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_PS3_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,12 +18,14 @@ namespace traktor
 	namespace render
 	{
 
+class LocalMemoryObject;
+
 class T_DLLCLASS VertexBufferPs3 : public VertexBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, void* ptr, uint32_t offset, int bufferSize);
+	VertexBufferPs3(const std::vector< VertexElement >& vertexElements, LocalMemoryObject* vbo, int bufferSize);
 
 	virtual ~VertexBufferPs3();
 
@@ -47,8 +49,7 @@ private:
 
 	static VertexBufferPs3* ms_activeVertexBuffer;
 
-	void* m_ptr;
-	uint32_t m_offset;
+	LocalMemoryObject* m_vbo;
 	uint8_t m_vertexStride;
 	AttributeDesc m_attributeDesc[16];
 };
