@@ -121,6 +121,11 @@ inline float sqrtf(float x)
 	return std::sqrtf(x);
 }
 
+inline float powf(float x, float e)
+{
+	return std::powf(x, e);
+}
+
 #else
 
 inline float sinf(float rad)
@@ -151,6 +156,11 @@ inline float atan2f(float x, float y)
 inline float sqrtf(float x)
 {
 	return (float)sqrt(x);
+}
+
+inline float powf(float x, float e)
+{
+	return (float)::powf(x, e);
 }
 
 #endif

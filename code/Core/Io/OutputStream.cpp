@@ -74,7 +74,7 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 	wchar_t* p = &buf[size - 1];
 	*p-- = L'\0';
 
-	int_t fm = int_t(std::powf(10, fractions + 1));
+	int_t fm = int_t(powf(10, fractions + 1));
 	int_t vi = int_t(un);
 	int_t vf = int_t((un - vi) * fm);
 

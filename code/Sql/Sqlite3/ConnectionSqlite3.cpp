@@ -1,6 +1,5 @@
 #include <map>
 #include <sqlite3.h>
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
@@ -39,7 +38,6 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	if (fileName.empty())
 		return false;
 
-	fileName = FileSystem::getInstance().getAbsolutePath(fileName).getPathName();
 	log::debug << L"Using SQLite db \"" << fileName << L"\"" << Endl;
 
 	sqlite3* db = 0;
