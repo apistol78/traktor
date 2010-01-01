@@ -1,7 +1,8 @@
 #include <cmath>
 #include <vector>
-#include "Drawing/Filters/ScaleFilter.h"
+#include "Core/Math/Const.h"
 #include "Drawing/Image.h"
+#include "Drawing/Filters/ScaleFilter.h"
 
 namespace traktor
 {
@@ -71,14 +72,27 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 				int y2 = int(std::floor(y * sy + sy));
 				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
+					bool zeroAlpha = false;
+				
 					row[x] = Color(0, 0, 0, 0);
 					for (int32_t yy = y1; yy < y2; ++yy)
 					{
 						Color c;
 						image->getPixel(x, yy, c);
+						
+						if (m_keepZeroAlpha)
+						{
+							if (c.getAlpha() <= FUZZY_EPSILON)
+								zeroAlpha = true;
+						}
+						
 						row[x] += c;
 					}
+					
 					row[x] /= float(y2 - y1);
+					
+					if (zeroAlpha)
+						row[x].setAlpha(0.0f);
 				}
 			}
 		}
@@ -121,7 +135,7 @@ Ref< Image > ScaleFilter::apply(const Image* image)
 					for (int32_t xx = x1; xx < x2; ++xx)
 					{
 						c += row[xx];
-						if (row[xx].getAlpha() == 0.0f)
+						if (row[xx].getAlpha() <= FUZZY_EPSILON)
 							zeroAlpha = true;
 					}
 
