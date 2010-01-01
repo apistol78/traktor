@@ -4451,6 +4451,15 @@
 											<fileName>*.*</fileName>
 											<items/>
 										</item>
+										<item type="Filter">
+											<name>Pipeline</name>
+											<items>
+												<item type="File">
+													<fileName>Pipeline/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -4833,6 +4842,255 @@
 													<item type="ProjectDependency" version="1">
 														<linkWithProduct>true</linkWithProduct>
 														<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Sql</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
+												<configurations>
+													<item type="Configuration">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_SQL_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_SQL_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Sql.Sqlite3</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
+												<configurations>
+													<item type="Configuration">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>T_SQL_SQLITE3_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>T_SQL_SQLITE3_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader></precompiledHeader>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[4]/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project type="Project" version="1">
+															<enable>true</enable>
+															<name>Extern.sqlite-3.6.21</name>
+															<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</sourcePath>
+															<configurations>
+																<item type="Configuration">
+																	<name>DebugShared</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+																	</includePaths>
+																	<definitions>
+																		<item>_DEBUG</item>
+																		<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseShared</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+																	</includePaths>
+																	<definitions>
+																		<item>NDEBUG</item>
+																		<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>DebugStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpDebug</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+																	</includePaths>
+																	<definitions>
+																		<item>_DEBUG</item>
+																		<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+																<item type="Configuration">
+																	<name>ReleaseStatic</name>
+																	<targetFormat>TfStaticLibrary</targetFormat>
+																	<targetProfile>TpRelease</targetProfile>
+																	<precompiledHeader></precompiledHeader>
+																	<includePaths>
+																		<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+																	</includePaths>
+																	<definitions>
+																		<item>NDEBUG</item>
+																		<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+																	</definitions>
+																	<libraryPaths/>
+																	<libraries/>
+																</item>
+															</configurations>
+															<items>
+																<item type="File">
+																	<fileName>*.*</fileName>
+																	<items/>
+																</item>
+															</items>
+															<dependencies/>
+														</project>
 													</item>
 												</dependencies>
 											</project>
@@ -6942,6 +7200,10 @@
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item/dependencies/item[14]/project/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[6]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -12048,5 +12310,8 @@
 		<item ref="/object/projects/item/dependencies/item[69]/project"/>
 		<item ref="/object/projects/item/dependencies/item[26]/project/dependencies/item[52]/project"/>
 		<item ref="/object/projects/item/dependencies/item[73]/project"/>
+		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item/dependencies/item[15]/project/dependencies/item[3]/project/dependencies/item[5]/project"/>
 	</projects>
 </object>

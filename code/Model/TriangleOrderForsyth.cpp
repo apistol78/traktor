@@ -20,6 +20,7 @@
 #include <cmath>
 #include <limits>
 #include <vector>
+#include "Core/Math/MathUtils.h"
 #include "Model/TriangleOrderForsyth.h"
 
 namespace traktor
@@ -58,7 +59,7 @@ float ComputeVertexCacheScore(int32_t cachePosition, uint32_t vertexCacheSize)
 			// Points for being high in the cache.
 			const float scaler = 1.0f / (vertexCacheSize - 3);
 			score = 1.0f - (cachePosition - 3) * scaler;
-			score = std::powf(score, FindVertexScore_CacheDecayPower);
+			score = powf(score, FindVertexScore_CacheDecayPower);
 		}
 	}
 
@@ -74,7 +75,7 @@ float ComputeVertexValenceScore(uint32_t numActiveFaces)
 
 	// Bonus points for having a low number of tris still to
 	// use the vert, so we get rid of lone verts quickly.
-	float valenceBoost = std::powf(static_cast< float >(numActiveFaces), -FindVertexScore_ValenceBoostPower);
+	float valenceBoost = powf(static_cast< float >(numActiveFaces), -FindVertexScore_ValenceBoostPower);
 	score += FindVertexScore_ValenceBoostScale * valenceBoost;
 
 	return score;
