@@ -19,6 +19,45 @@ namespace traktor
 
 struct FloatData
 {
+	Vector4 getDataPosition(uint32_t index) const
+	{
+		T_ASSERT((index + 1)* stride <= data.size());
+		return Vector4(
+			-data[index * stride + 0],
+			data[index * stride + 1],
+			data[index * stride + 2],
+			1.0f
+			);
+	}
+	Vector4 getDataNormal(uint32_t index) const
+	{
+		T_ASSERT((index + 1) * stride <= data.size());
+		return Vector4(
+			-data[index * stride + 0],
+			data[index * stride + 1],
+			data[index * stride + 2],
+			0.0f
+			);
+	}
+	Vector2 getTexcoord(uint32_t index) const
+	{
+		T_ASSERT((index + 1) * stride <= data.size());
+		return Vector2(
+					data[index * stride + 0],
+			 1.0f - data[index * stride + 1]
+			);
+	}
+	Vector4 getDataColor(uint32_t index) const
+	{
+		T_ASSERT((index + 1) * stride <= data.size());
+		return Vector4(
+			data[index * stride + 0],
+			data[index * stride + 1],
+			data[index * stride + 2],
+			stride == 4 ? data[index * stride + 3] : 0
+			);
+	}
+
 	std::wstring id;
 	std::vector< float > data;
 	int stride;
@@ -362,25 +401,16 @@ void createMesh(
 		source_data_info_t texBinormalDataInfo = findSourceData(L"TEXBINORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texTangentDataInfo = findSourceData(L"TEXTANGENT", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 
-		uint32_t vertexOffset = vertexDataInfo.second;
-		uint32_t normalOffset = normalDataInfo.second;
-		uint32_t texcoord0Offset = texcoord0DataInfo.second;
-		uint32_t texcoord1Offset = texcoord1DataInfo.second;
-		uint32_t vcolorOffset = vcolorDataInfo.second;
-		uint32_t biNormalOffset = biNormalDataInfo.second;
-		uint32_t tangentOffset = tangentDataInfo.second;
-		uint32_t texBinormalOffset = texBinormalDataInfo.second;
-		uint32_t texTangentOffset = texTangentDataInfo.second;
 		uint32_t indexOffset = 0;
 
-		uint32_t vertexIndexStride = max(vertexOffset, normalOffset);
-		vertexIndexStride = max(vertexIndexStride, texcoord0Offset);
-		vertexIndexStride = max(vertexIndexStride, texcoord1Offset);
-		vertexIndexStride = max(vertexIndexStride, vcolorOffset);
-		vertexIndexStride = max(vertexIndexStride, biNormalOffset);
-		vertexIndexStride = max(vertexIndexStride, tangentOffset);
-		vertexIndexStride = max(vertexIndexStride, texBinormalOffset);
-		vertexIndexStride = max(vertexIndexStride, texTangentOffset);
+		uint32_t vertexIndexStride = max(vertexDataInfo.second, normalDataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, texcoord0DataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, texcoord1DataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, vcolorDataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, biNormalDataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, tangentDataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, texBinormalDataInfo.second);
+		vertexIndexStride = max(vertexIndexStride, texTangentDataInfo.second);
 		vertexIndexStride += 1;
 
 		for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
@@ -391,98 +421,69 @@ void createMesh(
 			for (uint32_t l = 0; l < polygonData[j].vertexCounts[k]; ++l)
 			{
 				Vertex vertex;
-
+				uint32_t vIndex = (indexOffset + l) * vertexIndexStride;
 				if (vertexDataInfo.first)
 				{
-					uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
-					if (positionIndex != -1)
+					const source_data_info_t& dataInfo = vertexDataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						T_ASSERT(positionIndex * 3 +3 <= vertexDataInfo.first->data.size());
-						Vector4 position(
-							-vertexDataInfo.first->data[positionIndex * 3 + 0],
-							vertexDataInfo.first->data[positionIndex * 3 + 1],
-							vertexDataInfo.first->data[positionIndex * 3 + 2],
-							1.0f
-						);
+						Vector4 position = dataInfo.first->getDataPosition(index);
 						vertex.setPosition(outModel->addUniquePosition(position));
 					}
 				}
 
 				if (normalDataInfo.first)
 				{
-					uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
-					if (normalIndex != -1)
+					const source_data_info_t& dataInfo = normalDataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						T_ASSERT(normalIndex * 3 +3 <= normalDataInfo.first->data.size());
-						Vector4 normal(
-							-normalDataInfo.first->data[normalIndex * 3 + 0],
-							normalDataInfo.first->data[normalIndex * 3 + 1],
-							normalDataInfo.first->data[normalIndex * 3 + 2],
-							0.0f
-						);
+						Vector4 normal = dataInfo.first->getDataNormal(index);
 						vertex.setNormal(outModel->addUniqueNormal(normal));
 					}
 				}
 
 				if (biNormalDataInfo.first)
 				{
-					uint32_t binormalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + biNormalOffset];
-					if (binormalIndex != -1)
+					const source_data_info_t& dataInfo = biNormalDataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						Vector4 binormal(
-							-biNormalDataInfo.first->data[binormalIndex * 3 + 0],
-							biNormalDataInfo.first->data[binormalIndex * 3 + 1],
-							biNormalDataInfo.first->data[binormalIndex * 3 + 2],
-							0.0f
-							);
+						Vector4 binormal = dataInfo.first->getDataNormal(index);
 						vertex.setBinormal(outModel->addUniqueNormal(binormal));
 					}
 				}
 
 				if (tangentDataInfo.first)
 				{
-					uint32_t tangentIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + tangentOffset];
-					if (tangentIndex!= -1)
+					const source_data_info_t& dataInfo = tangentDataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index!= -1)
 					{
-						Vector4 tangent(
-							-tangentDataInfo.first->data[tangentIndex * 3 + 0],
-							tangentDataInfo.first->data[tangentIndex * 3 + 1],
-							tangentDataInfo.first->data[tangentIndex * 3 + 2],
-							0.0f
-							);
+						Vector4 tangent = dataInfo.first->getDataNormal(index);
 						vertex.setBinormal(outModel->addUniqueNormal(tangent));
 					}
 				}
 
 				if (texcoord0DataInfo.first)
 				{
-					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord0Offset];
-					int stride = texcoord0DataInfo.first->stride;
-					if (stride == -1)
-						stride = 2;
-					if (texCoordIndex != -1)
+					const source_data_info_t& dataInfo = texcoord0DataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						T_ASSERT(texCoordIndex * stride + stride <= texcoord0DataInfo.first->data.size());
-						Vector2 texCoord(
-									texcoord0DataInfo.first->data[texCoordIndex * stride + 0],
-							 1.0f - texcoord0DataInfo.first->data[texCoordIndex * stride + 1]
-						);
+						Vector2 texCoord = dataInfo.first->getTexcoord(index);
 						vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
 					}
 				}
 				// Second uv set
 				if (texcoord1DataInfo.first)
 				{
-					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord1Offset];
-					int stride = texcoord1DataInfo.first->stride;
-					if (stride == -1)
-						stride = 2;
-					if (texCoordIndex != -1)
+					const source_data_info_t& dataInfo = texcoord1DataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						Vector2 texCoord(
-									texcoord1DataInfo.first->data[texCoordIndex * stride + 0],
-							 1.0f - texcoord1DataInfo.first->data[texCoordIndex * stride + 1]
-						);
+						Vector2 texCoord = dataInfo.first->getTexcoord(index);
 						// Unsupported!
 						//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
 					}
@@ -490,19 +491,11 @@ void createMesh(
 
 				if (vcolorDataInfo.first)
 				{
-					uint32_t vcolorIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vcolorOffset];
-					if (vcolorIndex != -1)
+					const source_data_info_t& dataInfo = vcolorDataInfo;
+					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					if (index != -1)
 					{
-						int stride = vcolorDataInfo.first->stride;
-						if (stride == -1)
-							stride = 4;
-						T_ASSERT(vcolorIndex * stride <= vcolorDataInfo.first->data.size());						
-						Vector4 vcolor(
-							vcolorDataInfo.first->data[vcolorIndex * stride + 0],
-							vcolorDataInfo.first->data[vcolorIndex * stride + 1],
-							vcolorDataInfo.first->data[vcolorIndex * stride + 2],
-							stride == 4 ? vcolorDataInfo.first->data[vcolorIndex * stride + 3] : 0
-							);
+						Vector4 vcolor = dataInfo.first->getDataColor(index);
 						vertex.setColor(outModel->addColor(vcolor));
 					}
 				}
