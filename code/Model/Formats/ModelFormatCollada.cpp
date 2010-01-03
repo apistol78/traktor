@@ -17,8 +17,48 @@ namespace traktor
 		namespace
 		{
 
+template < typename ValueType >
+inline void parseStringToArray(const std::wstring& text, std::vector< ValueType >& outValueArray)
+{
+	Split< std::wstring, ValueType >::any(text, L" \n", outValueArray);
+}
+
+inline bool isReference(const std::wstring& node, const std::wstring& reference)
+{
+	return (reference[0] == '#') ? (reference.substr(1) == node) : false;
+}
+
+inline std::wstring dereference(const std::wstring& reference)
+{
+	if (reference.empty())
+		return L"";
+	return reference[0] == L'#' ? reference.substr(1) : reference;
+}
+
 struct FloatData
 {
+	bool read(Ref< xml::Element > source)
+	{
+		Ref< const xml::Element > floatArray = source->getSingle(L"float_array");
+		if (floatArray)
+		{
+			id = source->getAttribute(L"id", L"")->getValue();
+			parseStringToArray(floatArray->getValue(), data);
+			if (Ref< xml::Element > techniqueCommon = source->getSingle(L"technique_common"))
+			{
+				if (Ref< const xml::Element > accessor = techniqueCommon->getSingle(L"accessor"))
+				{
+					stride = parseString< int >(accessor->getAttribute(L"stride", L"")->getValue());
+					count = parseString< int >(accessor->getAttribute(L"count", L"")->getValue());
+				}
+			}
+			return true;
+		}
+		else
+			return false;
+
+	}
+
 	Vector4 getDataPosition(uint32_t index) const
 	{
 		T_ASSERT((index + 1)* stride <= data.size());
@@ -61,10 +101,26 @@ struct FloatData
 	std::wstring id;
 	std::vector< float > data;
 	int stride;
+	int count;
 };
+
+typedef std::pair< std::wstring, std::wstring > material_ref_t;
+typedef std::pair< const FloatData*, uint32_t > source_data_info_t;
 
 struct NameData
 {
+	bool read(Ref< xml::Element > source)
+	{
+		Ref< const xml::Element > nameArray = source->getSingle(L"Name_array");
+		if (nameArray)
+		{
+			id = source->getAttribute(L"id", L"")->getValue();
+			parseStringToArray(nameArray->getValue(), data);
+			return true;
+		}
+		else
+			return false;
+	}
 	std::wstring id;
 	std::vector< std::wstring > data;
 };
@@ -90,12 +146,120 @@ struct Input
 	uint32_t set;
 };
 
-struct PolygonData
+class PolygonData
 {
-	std::vector< uint32_t > vertexCounts;
-	std::vector< uint32_t > indicies; 
-	std::vector< Input > inputs;
-	std::wstring material;
+public:
+	uint32_t getPolygonCount() const { return m_vertexCounts.size(); }
+
+	uint32_t getVertexCount(int polygonIndex) const { return m_vertexCounts[polygonIndex]; }
+
+	std::wstring getMaterial() const { return m_material; }
+
+	uint32_t getAttribueIndex(int vertexIndex ,int attributeOffset) const { return m_indicies[ vertexIndex + attributeOffset ]; }
+
+	source_data_info_t findSourceData(
+		const std::wstring& semantic, 
+		int set,
+		const std::vector< FloatData >& sourceData,
+		const std::pair< std::wstring, std::wstring >& vertexTranslation
+	) const
+	{
+		std::wstring source;
+		uint32_t offset = 0;
+
+		for (uint32_t i = 0; i < m_inputs.size(); ++i)
+		{
+			if (semantic == m_inputs[i].semantic && 
+				set == m_inputs[i].set)
+			{
+				offset = m_inputs[i].offset;
+				source = m_inputs[i].source;
+				if (isReference(vertexTranslation.first, source))
+					source = vertexTranslation.second;
+				break;
+			}
+		}
+
+		for (uint32_t i = 0; i < sourceData.size(); ++i)
+		{
+			if (isReference(sourceData[i].id, source))
+				return source_data_info_t(&sourceData[i], offset);
+		}
+
+		return source_data_info_t(0, offset);
+	}
+
+	void read(xml::Element* polyList)
+	{
+		m_material = polyList->getAttribute(L"material", L"")->getValue();
+		uint32_t polyCount = parseString< uint32_t >(polyList->getAttribute(L"count", L"0")->getValue());
+
+		RefArray< xml::Element > inputs;
+		polyList->get(L"input", inputs);
+		m_inputs.resize(inputs.size());
+		uint32_t stride = 0;
+		for (size_t j = 0; j < inputs.size(); ++j)
+		{
+			m_inputs[j].read(inputs[j]);
+			stride = max(stride, m_inputs[j].offset + 1);
+		}
+		RefArray< xml::Element > polyIndexLists;
+		polyList->get(L"p", polyIndexLists);
+
+		if (polyList->getSingle(L"vcount"))
+			parseStringToArray(
+				polyList->getSingle(L"vcount")->getValue(),
+				m_vertexCounts);
+		else if (polyIndexLists.size() == 1)
+			m_vertexCounts = std::vector< uint32_t >(polyCount, 3);
+		else
+		{
+			m_vertexCounts = std::vector< uint32_t >(polyCount);
+			uint32_t oldn = 0;
+			for (size_t i = 0; i < polyCount; i++)
+			{
+				uint32_t n = Split< std::wstring, uint32_t >::any(polyIndexLists[i]->getValue(), L" ", m_indicies);
+				n /= stride;
+				m_vertexCounts[i] = n - oldn;
+				oldn = n;
+			}
+			return;
+		}
+		parseStringToArray(polyList->getSingle(L"p")->getValue(), m_indicies);
+		reEnumerateSets();
+	}
+
+private:
+	void reEnumerateSets()
+	{
+		struct SetInfo
+		{
+			SetInfo(): min(1000),max(0), count(0) {}
+			uint32_t min;
+			uint32_t max;
+			uint32_t count;
+		};
+
+		std::wstring source;
+		uint32_t offset = 0;
+		std::map< std::wstring, SetInfo > setsPerSource;
+
+		for (uint32_t i = 0; i < m_inputs.size(); ++i)
+		{
+			SetInfo& setInfo = setsPerSource[m_inputs[i].semantic];
+			setInfo.count++;
+			setInfo.min = std::min(setInfo.min, m_inputs[i].set);
+			setInfo.max = std::max(setInfo.max, m_inputs[i].set);
+		}
+		for (uint32_t i = 0; i < m_inputs.size(); ++i)
+			m_inputs[i].set -= setsPerSource[m_inputs[i].semantic].min;
+	}
+
+private:
+	std::vector< uint32_t > m_vertexCounts;
+	std::vector< uint32_t > m_indicies; 
+	std::vector< Input > m_inputs;
+	std::wstring m_material;
 };
 
 struct VertexWeightData
@@ -105,226 +269,108 @@ struct VertexWeightData
 	std::vector< Input > inputs;
 };
 
-typedef std::pair< std::wstring, std::wstring > material_ref_t;
-typedef std::pair< const FloatData*, uint32_t > source_data_info_t;
-
-template < typename ValueType >
-inline void parseStringToArray(const std::wstring& text, std::vector< ValueType >& outValueArray)
-{
-	Split< std::wstring, ValueType >::any(text, L" \n", outValueArray);
-}
-
-inline bool isReference(const std::wstring& node, const std::wstring& reference)
-{
-	return (reference[0] == '#') ? (reference.substr(1) == node) : false;
-}
-
-inline std::wstring dereference(const std::wstring& reference)
-{
-	if (reference.empty())
-		return L"";
-	return reference[0] == L'#' ? reference.substr(1) : reference;
-}
-
-uint32_t countSpace(const std::wstring& s)
-{
-	uint32_t n=0;
-	for (uint32_t i=0; i < s.size(); i++)
-		if (s[i] == L' ')
-			n++;
-	return n;
-}
-
-void fetchPolygonData(PolygonData& polygonData, xml::Element* polyList)
-{
-	polygonData.material = polyList->getAttribute(L"material", L"")->getValue();
-	uint32_t polyCount = parseString< uint32_t >(polyList->getAttribute(L"count", L"0")->getValue());
-
-	RefArray< xml::Element > inputs;
-	polyList->get(L"input", inputs);
-	polygonData.inputs.resize(inputs.size());
-	uint32_t stride = 0;
-	for (size_t j = 0; j < inputs.size(); ++j)
-	{
-		polygonData.inputs[j].read(inputs[j]);
-		stride = max(stride, polygonData.inputs[j].offset + 1);
-	}
-	RefArray< xml::Element > polyIndexLists;
-	polyList->get(L"p", polyIndexLists);
-
-	if (polyList->getSingle(L"vcount"))
-		parseStringToArray(
-			polyList->getSingle(L"vcount")->getValue(),
-			polygonData.vertexCounts);
-	else if (polyIndexLists.size() == 1)
-		polygonData.vertexCounts = std::vector< uint32_t >(polyCount, 3);
-	else
-	{
-		polygonData.vertexCounts = std::vector< uint32_t >(polyCount);
-		uint32_t oldn = 0;
-		for (size_t i = 0; i < polyCount; i++)
-		{
-			uint32_t n = Split< std::wstring, uint32_t >::any(polyIndexLists[i]->getValue(), L" ", polygonData.indicies);
-			n /= stride;
-			polygonData.vertexCounts[i] = n - oldn;
-			oldn = n;
-		}
-		return;
-	}
-	parseStringToArray(polyList->getSingle(L"p")->getValue(), polygonData.indicies);
-}
-
 void fetchVertexWeightData(VertexWeightData& vertexWeightData, xml::Element* xmlData)
 {
 	uint32_t count = parseString< uint32_t >(xmlData->getAttribute(L"count", L"0")->getValue());
 
-	RefArray< xml::Element > inputs;
-	xmlData->get(L"input", inputs);
-
-	parseStringToArray(
-		xmlData->getSingle(L"vcount")->getValue(),
-		vertexWeightData.vertexCounts);
+	// read joints-weights per vertex counts
+	parseStringToArray(xmlData->getSingle(L"vcount")->getValue(), vertexWeightData.vertexCounts);
 
 	uint32_t totalVertexCount = 0;
 	for (uint32_t i = 0; i < count; ++i)
 		totalVertexCount += vertexWeightData.vertexCounts[i];
 
+	// read indicies to joint-weight pairs
 	parseStringToArray(
 		xmlData->getSingle(L"v")->getValue(),
 		vertexWeightData.indicies);
 
+	// read the inputs (refs to joints + weights)
+	RefArray< xml::Element > inputs;
+	xmlData->get(L"input", inputs);
 	vertexWeightData.inputs.resize(inputs.size());
 	for (size_t j = 0; j < inputs.size(); ++j)
 		vertexWeightData.inputs[j].read(inputs[j]);
 }
 
-struct SetInfo
-{
-	SetInfo(): min(1000),max(0), count(0) {}
-	uint32_t min;
-	uint32_t max;
-	uint32_t count;
-};
 
-void reEnumerateSets(PolygonData& polygonData)
+struct SkinData
 {
-	std::wstring source;
-	uint32_t offset = 0;
-	std::map< std::wstring, SetInfo > setsPerSource;
-
-	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
+	void setJointInfluence(Vertex& vertex, int index)
 	{
-		SetInfo& setInfo = setsPerSource[polygonData.inputs[i].semantic];
-		setInfo.count++;
-		setInfo.min = std::min(setInfo.min, polygonData.inputs[i].set);
-		setInfo.max = std::max(setInfo.max, polygonData.inputs[i].set);
-	}
-	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
-		polygonData.inputs[i].set -= setsPerSource[polygonData.inputs[i].semantic].min;
-}
+		uint32_t* indicies = &vertexWeightData.indicies.front();
+		// Step forward to our vertex
+		for (int i = 0; i < index; i++)
+			indicies += vertexWeightData.vertexCounts[index];
 
+		// run through all joints influencing our vertex
+		int jointCount = vertexWeightData.vertexCounts[index];
+		for (int i = 0; i < jointCount; i++)
+		{	
 
-source_data_info_t findSourceData(
-	const std::wstring& semantic, 
-	int set,
-	const PolygonData& polygonData, 
-	const std::vector< FloatData >& sourceData,
-	const std::pair< std::wstring, std::wstring >& vertexTranslation
-)
-{
-	std::wstring source;
-	uint32_t offset = 0;
-
-	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
-	{
-		if (semantic == polygonData.inputs[i].semantic && 
-			set == polygonData.inputs[i].set)
-		{
-			offset = polygonData.inputs[i].offset;
-			source = polygonData.inputs[i].source;
-			if (isReference(vertexTranslation.first, source))
-				source = vertexTranslation.second;
-			break;
+//			uint32_t index = 
+//			float influence = 
+//			vertex.setBoneInfluence(index, influence);
 		}
 	}
 
-	for (uint32_t i = 0; i < sourceData.size(); ++i)
-	{
-		if (isReference(sourceData[i].id, source))
-			return source_data_info_t(&sourceData[i], offset);
-	}
 
-	return source_data_info_t(0, offset);
-}
-
-
-void createSkin(
-				xml::Element* skin,
-				Model* outModel
-				)
-{
 	std::vector< FloatData > floatData;
 	std::vector< NameData > nameData;
+	std::vector< Input > jointInputs;
+	VertexWeightData vertexWeightData;
+//	Matrix44 bindShapeMatrix;
+};
+
+void fetchSkinData(
+				xml::Element* skin,
+				SkinData& skinData
+				)
+{
+	// read sources
+	RefArray< xml::Element > sources;
+	skin->get(L"source", sources);			
+	int nameArrayCount = 0;
+	int floatArrayCount = 0;
+	for (uint32_t j = 0; j < sources.size(); ++j)
 	{
-		RefArray< xml::Element > sources;
-		skin->get(L"source", sources);
-			
-		int nameArrayCount = 0;
-		int floatArrayCount = 0;
-		for (uint32_t j = 0; j < sources.size(); ++j)
-		{
-			Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
-			if (floatArray)
-				floatArrayCount++;
-			Ref< const xml::Element > nameArray = sources[j]->getSingle(L"Name_array");
-			if (nameArray)
-				nameArrayCount++;
-		}
-
-		floatData.resize(floatArrayCount);
-		nameData.resize(nameArrayCount);
-		nameArrayCount = 0;
-		floatArrayCount = 0;
-		for (uint32_t j = 0; j < sources.size(); ++j)
-		{
-			Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
-			if (floatArray)
-			{
-				floatData[floatArrayCount].id = sources[j]->getAttribute(L"id", L"")->getValue();
-				parseStringToArray(floatArray->getValue(), floatData[floatArrayCount].data);
-				floatArrayCount++;
-			}
-			Ref< const xml::Element > nameArray = sources[j]->getSingle(L"Name_array");
-			if (nameArray)
-			{
-				nameData[nameArrayCount].id = sources[j]->getAttribute(L"id", L"")->getValue();
-				parseStringToArray(nameArray->getValue(), nameData[nameArrayCount].data);
-				nameArrayCount++;
-			}
-		}
-		Ref< xml::Element > joints = skin->getSingle(L"joints");
-		if (joints)
-		{
-			RefArray< xml::Element > inputs;
-			joints->get(L"input", inputs);
-			std::vector< Input > jointInputs;
-			jointInputs.resize(inputs.size());
-			for (uint32_t k = 0; k < inputs.size(); ++k)
-			{
-				jointInputs[k].read(inputs[k]);
-//				outModel->
-			}
-		}
-
-		Ref< xml::Element > weights = skin->getSingle(L"vertex_weights");
-		VertexWeightData vertexWeightData;
-		fetchVertexWeightData(vertexWeightData, weights);
+		if (sources[j]->getSingle(L"float_array"))
+			floatArrayCount++;
+		else if (sources[j]->getSingle(L"Name_array"))
+			nameArrayCount++;
 	}
+	skinData.floatData.resize(floatArrayCount);
+	floatArrayCount = 0;
+	skinData.nameData.resize(nameArrayCount);
+	nameArrayCount = 0;
+	for (uint32_t j = 0; j < sources.size(); ++j)
+	{
+		if (skinData.floatData[floatArrayCount].read(sources[j]))
+			floatArrayCount++;
+		else if (skinData.nameData[nameArrayCount].read(sources[j]))
+			nameArrayCount++;
+	}
+	// read joints (bindposes)
+	if (Ref< xml::Element > joints = skin->getSingle(L"joints"))
+	{
+		RefArray< xml::Element > inputs;
+		joints->get(L"input", inputs);
+		skinData.jointInputs.resize(inputs.size());
+		for (uint32_t k = 0; k < inputs.size(); ++k)
+		{
+			skinData.jointInputs[k].read(inputs[k]);
+//				outModel->
+		}
+	}
+	// read vertex weights
+	Ref< xml::Element > weights = skin->getSingle(L"vertex_weights");
+	fetchVertexWeightData(skinData.vertexWeightData, weights);
 }
 
-void createMesh(
+void createGeometry(
 	xml::Element* mesh,
 	const std::map< std::wstring, uint32_t>& materialLookUp,
+	SkinData* skinData,
 	Model* outModel
 )
 {
@@ -336,18 +382,7 @@ void createMesh(
 		vertexAttributeData.resize(sources.size());
 		for (uint32_t j = 0; j < sources.size(); ++j)
 		{
-			vertexAttributeData[j].id = sources[j]->getAttribute(L"id", L"")->getValue();
-			vertexAttributeData[j].stride = -1;
-			Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
-			if (floatArray)
-			{
-				parseStringToArray(floatArray->getValue(), vertexAttributeData[j].data);
-				if (Ref< xml::Element > techniqueCommon = sources[j]->getSingle(L"technique_common"))
-					if (Ref< const xml::Element > accessor = techniqueCommon->getSingle(L"accessor"))
-					{
-						vertexAttributeData[j].stride = parseString< int >(accessor->getAttribute(L"stride", L"")->getValue());
-					}
-			}
+			vertexAttributeData[j].read(sources[j]);
 		}
 	}
 
@@ -375,33 +410,30 @@ void createMesh(
 		
 		uint32_t p = 0;
 		for (uint32_t j = 0; j < polyLists.size(); ++j)
-			fetchPolygonData(polygonData[p++], polyLists[j]);
+			polygonData[p++].read(polyLists[j]);
 
 		for (uint32_t j = 0; j < triLists.size(); ++j)
-			fetchPolygonData(polygonData[p++], triLists[j]);
+			polygonData[p++].read(triLists[j]);
 
 		for (uint32_t j = 0; j < polygons.size(); ++j)
-			fetchPolygonData(polygonData[p++], polygons[j]);
+			polygonData[p++].read(polygons[j]);
 	}
 
 	for (uint32_t j = 0; j < polygonData.size(); ++j)
 	{
 		uint32_t materialIndex = c_InvalidIndex;
-		std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(polygonData[j].material);
+		std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(polygonData[j].getMaterial());
 		if (it != materialLookUp.end())
 			materialIndex = it->second;
-		reEnumerateSets(polygonData[j]);
-		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texcoord0DataInfo = findSourceData(L"TEXCOORD", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texcoord1DataInfo = findSourceData(L"TEXCOORD", 1, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t vcolorDataInfo = findSourceData(L"COLOR", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t biNormalDataInfo = findSourceData(L"BINORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t tangentDataInfo = findSourceData(L"TANGENT", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texBinormalDataInfo = findSourceData(L"TEXBINORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texTangentDataInfo = findSourceData(L"TEXTANGENT", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
-
-		uint32_t indexOffset = 0;
+		source_data_info_t vertexDataInfo = polygonData[j].findSourceData(L"VERTEX", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t normalDataInfo = polygonData[j].findSourceData(L"NORMAL", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texcoord0DataInfo = polygonData[j].findSourceData(L"TEXCOORD", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texcoord1DataInfo = polygonData[j].findSourceData(L"TEXCOORD", 1, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t vcolorDataInfo = polygonData[j].findSourceData(L"COLOR", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t biNormalDataInfo = polygonData[j].findSourceData(L"BINORMAL", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t tangentDataInfo = polygonData[j].findSourceData(L"TANGENT", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texBinormalDataInfo = polygonData[j].findSourceData(L"TEXBINORMAL", 0, vertexAttributeData, vertexSourceTranslation);
+		source_data_info_t texTangentDataInfo = polygonData[j].findSourceData(L"TEXTANGENT", 0, vertexAttributeData, vertexSourceTranslation);
 
 		uint32_t vertexIndexStride = max(vertexDataInfo.second, normalDataInfo.second);
 		vertexIndexStride = max(vertexIndexStride, texcoord0DataInfo.second);
@@ -413,19 +445,20 @@ void createMesh(
 		vertexIndexStride = max(vertexIndexStride, texTangentDataInfo.second);
 		vertexIndexStride += 1;
 
-		for (uint32_t k = 0; k < polygonData[j].vertexCounts.size(); ++k)
+		uint32_t indexOffset = 0;
+		for (uint32_t k = 0; k < polygonData[j].getPolygonCount(); ++k)
 		{
 			Polygon polygon;
 			polygon.setMaterial(materialIndex);
 
-			for (uint32_t l = 0; l < polygonData[j].vertexCounts[k]; ++l)
+			for (uint32_t l = 0; l < polygonData[j].getVertexCount(k); ++l)
 			{
 				Vertex vertex;
 				uint32_t vIndex = (indexOffset + l) * vertexIndexStride;
 				if (vertexDataInfo.first)
 				{
 					const source_data_info_t& dataInfo = vertexDataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex ,dataInfo.second);
 					if (index != -1)
 					{
 						Vector4 position = dataInfo.first->getDataPosition(index);
@@ -436,7 +469,7 @@ void createMesh(
 				if (normalDataInfo.first)
 				{
 					const source_data_info_t& dataInfo = normalDataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index != -1)
 					{
 						Vector4 normal = dataInfo.first->getDataNormal(index);
@@ -447,18 +480,22 @@ void createMesh(
 				if (biNormalDataInfo.first)
 				{
 					const source_data_info_t& dataInfo = biNormalDataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index != -1)
 					{
 						Vector4 binormal = dataInfo.first->getDataNormal(index);
 						vertex.setBinormal(outModel->addUniqueNormal(binormal));
+						if (skinData)
+						{
+							skinData->setJointInfluence(vertex, index);
+						}
 					}
 				}
 
 				if (tangentDataInfo.first)
 				{
 					const source_data_info_t& dataInfo = tangentDataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index!= -1)
 					{
 						Vector4 tangent = dataInfo.first->getDataNormal(index);
@@ -469,7 +506,7 @@ void createMesh(
 				if (texcoord0DataInfo.first)
 				{
 					const source_data_info_t& dataInfo = texcoord0DataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index != -1)
 					{
 						Vector2 texCoord = dataInfo.first->getTexcoord(index);
@@ -480,7 +517,7 @@ void createMesh(
 				if (texcoord1DataInfo.first)
 				{
 					const source_data_info_t& dataInfo = texcoord1DataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index != -1)
 					{
 						Vector2 texCoord = dataInfo.first->getTexcoord(index);
@@ -492,7 +529,7 @@ void createMesh(
 				if (vcolorDataInfo.first)
 				{
 					const source_data_info_t& dataInfo = vcolorDataInfo;
-					uint32_t index = polygonData[j].indicies[vIndex + dataInfo.second];
+					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
 					if (index != -1)
 					{
 						Vector4 vcolor = dataInfo.first->getDataColor(index);
@@ -504,11 +541,9 @@ void createMesh(
 					outModel->addUniqueVertex(vertex)
 				);
 			}
-
 //			polygon.flipWinding();
 			outModel->addPolygon(polygon);
-
-			indexOffset += polygonData[j].vertexCounts[k];
+			indexOffset += polygonData[j].getVertexCount(k);
 		}
 	}
 }
@@ -529,23 +564,23 @@ void createMesh(
 		Ref< xml::Element > skin = libraryControllers->getSingle(L"controller[@id=" + dereference(controllerRef) + L"]/skin");
 		if (!skin)
 			continue;
-		createSkin(skin, outModel);
+		SkinData skinData;
+		fetchSkinData(skin, skinData);
 
 		std::wstring geometryRef = skin->getAttribute(L"source", L"")->getValue();
 
-		Ref< xml::Element > mesh = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
-		if (!mesh)
+		Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
+		if (!geometry)
 			continue;
-
-		createMesh(mesh, materialRefs, outModel);
+		createGeometry(geometry, materialRefs, &skinData, outModel);
 	}
 
 	for (size_t i = 0; i < instanceGeometries.size(); ++i)
 	{
 		std::wstring geometryRef = instanceGeometries[i]->getAttribute(L"url", L"")->getValue();
 
-		Ref< xml::Element > mesh = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
-		if (!mesh)
+		Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
+		if (!geometry)
 			continue;
 /*
 		Ref< xml::Element > extra = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/extra");
@@ -559,7 +594,7 @@ void createMesh(
 
 		}
 */
-		createMesh(mesh, materialRefs, outModel);
+		createGeometry(geometry, materialRefs, 0, outModel);
 	}
 }
 
