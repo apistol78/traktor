@@ -21,6 +21,7 @@ struct FloatData
 {
 	std::wstring id;
 	std::vector< float > data;
+	int stride;
 };
 
 struct NameData
@@ -158,6 +159,32 @@ void fetchVertexWeightData(VertexWeightData& vertexWeightData, xml::Element* xml
 		vertexWeightData.inputs[j].read(inputs[j]);
 }
 
+struct SetInfo
+{
+	SetInfo(): min(1000),max(0), count(0) {}
+	uint32_t min;
+	uint32_t max;
+	uint32_t count;
+};
+
+void reEnumerateSets(PolygonData& polygonData)
+{
+	std::wstring source;
+	uint32_t offset = 0;
+	std::map< std::wstring, SetInfo > setsPerSource;
+
+	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
+	{
+		SetInfo& setInfo = setsPerSource[polygonData.inputs[i].semantic];
+		setInfo.count++;
+		setInfo.min = std::min(setInfo.min, polygonData.inputs[i].set);
+		setInfo.max = std::max(setInfo.max, polygonData.inputs[i].set);
+	}
+	for (uint32_t i = 0; i < polygonData.inputs.size(); ++i)
+		polygonData.inputs[i].set -= setsPerSource[polygonData.inputs[i].semantic].min;
+}
+
+
 source_data_info_t findSourceData(
 	const std::wstring& semantic, 
 	int set,
@@ -271,11 +298,16 @@ void createMesh(
 		for (uint32_t j = 0; j < sources.size(); ++j)
 		{
 			vertexAttributeData[j].id = sources[j]->getAttribute(L"id", L"")->getValue();
-
+			vertexAttributeData[j].stride = -1;
 			Ref< const xml::Element > floatArray = sources[j]->getSingle(L"float_array");
 			if (floatArray)
 			{
 				parseStringToArray(floatArray->getValue(), vertexAttributeData[j].data);
+				if (Ref< xml::Element > techniqueCommon = sources[j]->getSingle(L"technique_common"))
+					if (Ref< const xml::Element > accessor = techniqueCommon->getSingle(L"accessor"))
+					{
+						vertexAttributeData[j].stride = parseString< int >(accessor->getAttribute(L"stride", L"")->getValue());
+					}
 			}
 		}
 	}
@@ -319,7 +351,7 @@ void createMesh(
 		std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(polygonData[j].material);
 		if (it != materialLookUp.end())
 			materialIndex = it->second;
-
+		reEnumerateSets(polygonData[j]);
 		source_data_info_t vertexDataInfo = findSourceData(L"VERTEX", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t normalDataInfo = findSourceData(L"NORMAL", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texcoord0DataInfo = findSourceData(L"TEXCOORD", 0, polygonData[j], vertexAttributeData, vertexSourceTranslation);
@@ -365,7 +397,7 @@ void createMesh(
 					uint32_t positionIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vertexOffset];
 					if (positionIndex != -1)
 					{
-						T_ASSERT(positionIndex * 3 +2 < vertexDataInfo.first->data.size());
+						T_ASSERT(positionIndex * 3 +3 <= vertexDataInfo.first->data.size());
 						Vector4 position(
 							-vertexDataInfo.first->data[positionIndex * 3 + 0],
 							vertexDataInfo.first->data[positionIndex * 3 + 1],
@@ -381,7 +413,7 @@ void createMesh(
 					uint32_t normalIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + normalOffset];
 					if (normalIndex != -1)
 					{
-						T_ASSERT(normalIndex * 3 +2 < normalDataInfo.first->data.size());
+						T_ASSERT(normalIndex * 3 +3 <= normalDataInfo.first->data.size());
 						Vector4 normal(
 							-normalDataInfo.first->data[normalIndex * 3 + 0],
 							normalDataInfo.first->data[normalIndex * 3 + 1],
@@ -425,12 +457,15 @@ void createMesh(
 				if (texcoord0DataInfo.first)
 				{
 					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord0Offset];
+					int stride = texcoord0DataInfo.first->stride;
+					if (stride == -1)
+						stride = 2;
 					if (texCoordIndex != -1)
 					{
-						T_ASSERT(texCoordIndex * 2 + 1 < texcoord0DataInfo.first->data.size());
+						T_ASSERT(texCoordIndex * stride + stride <= texcoord0DataInfo.first->data.size());
 						Vector2 texCoord(
-							texcoord0DataInfo.first->data[texCoordIndex * 2 + 0],
-							1.0f - texcoord0DataInfo.first->data[texCoordIndex * 2 + 1]
+									texcoord0DataInfo.first->data[texCoordIndex * stride + 0],
+							 1.0f - texcoord0DataInfo.first->data[texCoordIndex * stride + 1]
 						);
 						vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
 					}
@@ -439,11 +474,14 @@ void createMesh(
 				if (texcoord1DataInfo.first)
 				{
 					uint32_t texCoordIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + texcoord1Offset];
+					int stride = texcoord1DataInfo.first->stride;
+					if (stride == -1)
+						stride = 2;
 					if (texCoordIndex != -1)
 					{
 						Vector2 texCoord(
-							texcoord1DataInfo.first->data[texCoordIndex * 2 + 0],
-							1.0f - texcoord1DataInfo.first->data[texCoordIndex * 2 + 1]
+									texcoord1DataInfo.first->data[texCoordIndex * stride + 0],
+							 1.0f - texcoord1DataInfo.first->data[texCoordIndex * stride + 1]
 						);
 						// Unsupported!
 						//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
@@ -455,12 +493,15 @@ void createMesh(
 					uint32_t vcolorIndex = polygonData[j].indicies[(indexOffset + l) * vertexIndexStride + vcolorOffset];
 					if (vcolorIndex != -1)
 					{
-						T_ASSERT(vcolorIndex * 4 + 3 < vcolorDataInfo.first->data.size());
+						int stride = vcolorDataInfo.first->stride;
+						if (stride == -1)
+							stride = 4;
+						T_ASSERT(vcolorIndex * stride <= vcolorDataInfo.first->data.size());						
 						Vector4 vcolor(
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 0],
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 1],
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 2],
-							vcolorDataInfo.first->data[vcolorIndex * 4 + 3]
+							vcolorDataInfo.first->data[vcolorIndex * stride + 0],
+							vcolorDataInfo.first->data[vcolorIndex * stride + 1],
+							vcolorDataInfo.first->data[vcolorIndex * stride + 2],
+							stride == 4 ? vcolorDataInfo.first->data[vcolorIndex * stride + 3] : 0
 							);
 						vertex.setColor(outModel->addColor(vcolor));
 					}
