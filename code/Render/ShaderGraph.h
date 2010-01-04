@@ -1,17 +1,18 @@
 #ifndef traktor_render_ShaderGraph_H
 #define traktor_render_ShaderGraph_H
 
-#include <list>
+#include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/RefSet.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -90,6 +91,43 @@ public:
 		return outNodes.size();
 	}
 
+	/*! \brief Find edge connected to input pin.
+	 *
+	 * \param inputPin Input pin.
+	 * \return Connected edge.
+	 */
+	Ref< Edge > findEdge(const InputPin* inputPin) const;
+
+	/*! \brief Find edges connected from output pin.
+	 *
+	 * \param outputPin Output pin.
+	 * \param outEdges Connected edges.
+	 * \return Number of connected edges.
+	 */
+	uint32_t findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const;
+
+	/*! \brief Find output pin connected to input pin.
+	 *
+	 * \param inputPin Input pin.
+	 * \return Connected output pin.
+	 */
+	const OutputPin* findSourcePin(const InputPin* inputPin) const;
+
+	/*! \brief Find all input pins which are connected to output pin.
+	 *
+	 * \param outputPin Output pin.
+	 * \param outDestinations Connected input pins.
+	 * \return Number of connected input pins.
+	 */
+	uint32_t findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const;
+
+	/*! \brief Get number of destination pins connected to an output pin.
+	 *
+	 * \param outputPin Output pin.
+	 * \return Number of connected destinations.
+	 */
+	uint32_t getDestinationCount(const OutputPin* outputPin) const;
+
 	/*! \brief Serialize graph. */
 	virtual bool serialize(ISerializer& s);
 
@@ -97,17 +135,21 @@ public:
 	 *
 	 * \return Array of nodes.
 	 */
-	inline const RefArray< Node >& getNodes() const { return m_nodes; }
+	const RefArray< Node >& getNodes() const { return m_nodes; }
 
 	/*! \brief Get all edges.
 	 *
 	 * \return Array of edges.
 	 */
-	inline const RefArray< Edge >& getEdges() const { return m_edges; }
+	const RefArray< Edge >& getEdges() const { return m_edges; }
 
 private:
 	RefArray< Node > m_nodes;
 	RefArray< Edge > m_edges;
+	std::map< const InputPin*, Ref< Edge > > m_inputPinEdge;
+	std::map< const OutputPin*, RefSet< Edge > > m_outputPinEdges;
+
+	void updateAdjacency();
 };
 
 	}

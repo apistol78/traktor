@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class ShaderGraph;
-class ShaderGraphAdjacency;
 class Node;
 
 /*! \brief Shader graph optimizer.
@@ -60,7 +59,6 @@ public:
 
 private:
 	Ref< ShaderGraph > m_shaderGraph;
-	Ref< ShaderGraphAdjacency > m_shaderGraphAdj;
 	std::set< const Node* > m_visited;
 	std::map< const Node*, int > m_orderComplexity;
 	int32_t m_insertedCount;

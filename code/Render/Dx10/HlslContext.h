@@ -11,7 +11,6 @@ namespace traktor
 	{
 
 class ShaderGraph;
-class ShaderGraphAdjacency;
 class InputPin;
 class OutputPin;
 class HlslVariable;
@@ -58,7 +57,6 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	Ref< ShaderGraphAdjacency > m_shaderGraphAdj;
 	HlslShader m_vertexShader;
 	HlslShader m_pixelShader;
 	HlslShader* m_currentShader;

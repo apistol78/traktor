@@ -4,7 +4,6 @@
 #include "Render/Dx10/HlslContext.h"
 #include "Render/Dx10/HlslShader.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -16,7 +15,6 @@ namespace traktor
 
 HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_vertexShader(HlslShader::StVertex)
 ,	m_pixelShader(HlslShader::StPixel)
 ,	m_currentShader(0)
@@ -55,7 +53,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 
 HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 {
-	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 

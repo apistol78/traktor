@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class ShaderGraph;
-class ShaderGraphAdjacency;
 class Node;
 
 /*! \brief Evaluate algorithmic order of a shader graph node. */
@@ -34,7 +33,7 @@ public:
 		OrNonLinear = 2		/*!< Non-linear order, i.e. cubic or higher. */
 	};
 
-	ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph, const ShaderGraphAdjacency* shaderGraphAdj);
+	ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph);
 
 	int evaluate(const Node* node, const std::wstring& inputPinName);
 
@@ -42,7 +41,6 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	Ref< const ShaderGraphAdjacency > m_shaderGraphAdj;
 	std::map< const Node*, int > m_evaluated;
 
 	int nodeDefault(const Node* node, int initialOrder);

@@ -2,7 +2,6 @@
 #include <set>
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Nodes.h"
 #include "Render/Edge.h"
 
@@ -58,7 +57,6 @@ Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 		m_shaderGraph->getNodes(),
 		m_shaderGraph->getEdges()
 	);
-	Ref< ShaderGraphAdjacency > shaderGraphAdj = new ShaderGraphAdjacency(shaderGraph);
 
 	RefArray< Branch > branches;
 	shaderGraph->findNodesOf< Branch >(branches);
@@ -74,15 +72,15 @@ Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 		const OutputPin* outputPin = (*i)->getOutputPin(/* Output */ 0);
 		T_ASSERT (outputPin);
 
-		Ref< Edge > inputEdge = shaderGraphAdj->findEdge(inputPin);
+		Ref< Edge > inputEdge = shaderGraph->findEdge(inputPin);
 		T_ASSERT (inputEdge);
 
 		shaderGraph->removeEdge(inputEdge);
 
-		RefArray< Edge > outputEdges;
-		shaderGraphAdj->findEdges(outputPin, outputEdges);
+		RefSet< Edge > outputEdges;
+		shaderGraph->findEdges(outputPin, outputEdges);
 
-		for (RefArray< Edge >::iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
+		for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
 		{
 			shaderGraph->addEdge(new Edge(
 				inputEdge->getSource(),
@@ -90,8 +88,6 @@ Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 			));
 			shaderGraph->removeEdge(*j);
 		}
-
-		shaderGraphAdj = new ShaderGraphAdjacency(shaderGraph);
 	}
 
 	return shaderGraph;

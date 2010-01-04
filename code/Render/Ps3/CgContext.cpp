@@ -2,7 +2,6 @@
 #include "Render/Ps3/CgContext.h"
 #include "Render/Ps3/CgShader.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -15,7 +14,6 @@ namespace traktor
 
 CgContext::CgContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_vertexShader(CgShader::StVertex)
 ,	m_pixelShader(CgShader::StPixel)
 ,	m_currentShader(0)
@@ -27,7 +25,7 @@ CgContext::CgContext(const ShaderGraph* shaderGraph)
 
 CgVariable* CgContext::emitInput(const InputPin* inputPin)
 {
-	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
