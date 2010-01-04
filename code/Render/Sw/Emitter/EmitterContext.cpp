@@ -2,10 +2,7 @@
 #include <algorithm>
 #include "Render/Sw/Emitter/EmitterContext.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Core/Log/Log.h"
-
-#pragma optimize("", off)
 
 namespace traktor
 {
@@ -33,7 +30,6 @@ int getVariableTypeSize(VariableType variableType)
 
 EmitterContext::EmitterContext(const ShaderGraph* shaderGraph, Parameters& parameters)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_parameters(parameters)
 ,	m_currentState(0)
 ,	m_interpolatorCount(0)
@@ -65,7 +61,7 @@ void EmitterContext::emit(Node* node)
 
 Variable* EmitterContext::emitInput(const InputPin* inputPin)
 {
-	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
@@ -101,7 +97,7 @@ Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinNa
 	T_ASSERT_M (outputPin, L"Unable to find output pin");
 
 	std::vector< const InputPin* > destinationPins;
-	m_shaderGraphAdj->findDestinationPins(outputPin, destinationPins);
+	m_shaderGraph->findDestinationPins(outputPin, destinationPins);
 	if (destinationPins.empty())
 		return 0;
 
@@ -121,7 +117,7 @@ bool EmitterContext::evaluateConstant(Node* node, const std::wstring& inputPinNa
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT_M (inputPin, L"Unable to find input pin");
 
-	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return false;
 

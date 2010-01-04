@@ -11,34 +11,6 @@ namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-#if defined(_DEBUG)
-#	define SANITY_CHECK() sanityCheck(m_nodes, m_edges)
-
-void sanityCheck(const RefArray< Node >& nodes, const RefArray< Edge >& edges)
-{
-	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
-	{
-		const OutputPin* sourcePin = (*i)->getSource();
-		T_ASSERT (sourcePin);
-
-		const Node* sourceNode = sourcePin->getNode();
-		T_ASSERT (std::find(nodes.begin(), nodes.end(), sourceNode) != nodes.end());
-
-		const InputPin* destinationPin = (*i)->getDestination();
-		T_ASSERT (destinationPin);
-
-		const Node* destinationNode = destinationPin->getNode();
-		T_ASSERT (std::find(nodes.begin(), nodes.end(), destinationNode) != nodes.end());
-	}
-}
-#else
-#	define SANITY_CHECK()
-#endif
-
-		}
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.ShaderGraph", 0, ShaderGraph, ISerializable)
 
@@ -50,7 +22,7 @@ ShaderGraph::ShaderGraph(const RefArray< Node >& nodes, const RefArray< Edge >& 
 :	m_nodes(nodes)
 ,	m_edges(edges)
 {
-	SANITY_CHECK();
+	updateAdjacency();
 }
 
 void ShaderGraph::addNode(Node* node)
@@ -70,12 +42,25 @@ void ShaderGraph::addEdge(Edge* edge)
 {
 	T_ASSERT (std::find(m_edges.begin(), m_edges.end(), edge) == m_edges.end());
 	m_edges.push_back(edge);
+	m_inputPinEdge[edge->getDestination()] = edge;
+	m_outputPinEdges[edge->getSource()].insert(edge);
 }
 
 void ShaderGraph::removeEdge(Edge* edge)
 {
 	RefArray< Edge >::iterator i = std::find(m_edges.begin(), m_edges.end(), edge);
 	T_ASSERT (i != m_edges.end());
+
+	m_inputPinEdge.erase(edge->getDestination());
+
+	std::map< const OutputPin*, RefSet< Edge > >::iterator i2 = m_outputPinEdges.find(edge->getSource());
+	T_ASSERT (i2 != m_outputPinEdges.end());
+
+	i2->second.erase(edge);
+
+	if (i2->second.empty())
+		m_outputPinEdges.erase(i2);
+
 	m_edges.erase(i);
 }
 
@@ -83,6 +68,8 @@ void ShaderGraph::removeAll()
 {
 	m_edges.resize(0);
 	m_nodes.resize(0);
+	m_inputPinEdge.clear();
+	m_outputPinEdges.clear();
 }
 
 size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outNodes) const
@@ -95,13 +82,69 @@ size_t ShaderGraph::findNodesOf(const TypeInfo& nodeType, RefArray< Node >& outN
 	return outNodes.size();
 }
 
+Ref< Edge > ShaderGraph::findEdge(const InputPin* inputPin) const
+{
+	std::map< const InputPin*, Ref< Edge > >::const_iterator i = m_inputPinEdge.find(inputPin);
+	return i != m_inputPinEdge.end() ? i->second : 0;
+}
+
+uint32_t ShaderGraph::findEdges(const OutputPin* outputPin, RefSet< Edge >& outEdges) const
+{
+	std::map< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	if (i != m_outputPinEdges.end())
+		outEdges = i->second;
+	else
+		outEdges.clear();
+	return uint32_t(outEdges.size());
+}
+
+const OutputPin* ShaderGraph::findSourcePin(const InputPin* inputPin) const
+{
+	Ref< Edge > edge = findEdge(inputPin);
+	return edge ? edge->getSource() : 0;
+}
+
+uint32_t ShaderGraph::findDestinationPins(const OutputPin* outputPin, std::vector< const InputPin* >& outDestinations) const
+{
+	RefSet< Edge > edges;
+	findEdges(outputPin, edges);
+
+	outDestinations.resize(0);
+	outDestinations.reserve(edges.size());
+	for (RefSet< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
+		outDestinations.push_back((*i)->getDestination());
+
+	return uint32_t(outDestinations.size());
+}
+
+uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
+{
+	std::map< const OutputPin*, RefSet< Edge > >::const_iterator i = m_outputPinEdges.find(outputPin);
+	return i != m_outputPinEdges.end() ? uint32_t(i->second.size()) : 0;
+}
+
 bool ShaderGraph::serialize(ISerializer& s)
 {
-	SANITY_CHECK();
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
-	SANITY_CHECK();
+
+	if (s.getDirection() == ISerializer::SdRead)
+		updateAdjacency();
+
 	return true;
+}
+
+void ShaderGraph::updateAdjacency()
+{
+	m_inputPinEdge.clear();
+	m_outputPinEdges.clear();
+
+	for (RefArray< Edge >::iterator i = m_edges.begin(); i != m_edges.end(); ++i)
+	{
+		Edge* edge = *i;
+		m_inputPinEdge[edge->getDestination()] = edge;
+		m_outputPinEdges[edge->getSource()].insert(edge);
+	}
 }
 
 	}

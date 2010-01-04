@@ -25,6 +25,17 @@ public:
 	typedef std::set< Class* > set_t;
 	typedef typename set_t::const_iterator const_iterator;
 
+	RefSet()
+	{
+	}
+
+	RefSet(const RefSet< Class >& rs)
+	:	m_items(rs.m_items)
+	{
+		for (set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
+			T_SAFE_ADDREF(*i);
+	}
+
 	virtual ~RefSet()
 	{
 		clear();
@@ -37,12 +48,31 @@ public:
 		m_items.clear();
 	}
 
+	bool empty() const
+	{
+		return m_items.empty();
+	}
+
+	size_t size() const
+	{
+		return m_items.size();
+	}
+
 	void insert(Class* item)
 	{
 		T_ASSERT (item);
 		std::pair< set_t::iterator, bool > ins = m_items.insert(item);
 		if (ins.second)
 			T_SAFE_ADDREF(item);
+	}
+
+	size_t erase(Class* item)
+	{
+		T_ASSERT (item);
+		size_t x = m_items.erase(item);
+		if (x)
+			T_SAFE_RELEASE(item);
+		return x;
 	}
 
 	const_iterator find(const Class* item) const
@@ -58,6 +88,15 @@ public:
 	const_iterator end() const
 	{
 		return m_items.end();
+	}
+
+	RefSet< Class >& operator = (const RefSet< Class >& rs)
+	{
+		clear();
+		m_items = rs.m_items;
+		for (set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
+			T_SAFE_ADDREF(*i);
+		return *this;
 	}
 
 private:

@@ -4,7 +4,6 @@
 #include <map>
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Edge.h"
 #include "Render/Nodes.h"
 #include "Render/InputPin.h"
@@ -29,8 +28,6 @@ void collectActiveNodes(const ShaderGraph* shaderGraph, std::set< const Node* >&
 			nodeStack.push(*i);
 	}
 
-	ShaderGraphAdjacency shaderGraphAdj(shaderGraph);
-
 	while (!nodeStack.empty())
 	{
 		const Node* node = nodeStack.top();
@@ -42,7 +39,7 @@ void collectActiveNodes(const ShaderGraph* shaderGraph, std::set< const Node* >&
 		for (int i = 0; i < inputPinCount; ++i)
 		{
 			const InputPin* inputPin = node->getInputPin(i);
-			const OutputPin* outputPin = shaderGraphAdj.findSourcePin(inputPin);
+			const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
 			if (outputPin)
 			{
 				const Node* sourceNode = outputPin->getNode();
@@ -127,14 +124,13 @@ class NonOptionalInputs : public Specification
 public:
 	virtual void check(Report& outReport, const ShaderGraph* shaderGraph, const std::set< const Node* >& activeNodes)
 	{
-		ShaderGraphAdjacency shaderGraphAdj(shaderGraph);
 		for (std::set< const Node* >::const_iterator i = activeNodes.begin(); i != activeNodes.end(); ++i)
 		{
 			int inputPinCount = (*i)->getInputPinCount();
 			for (int j = 0; j < inputPinCount; ++j)
 			{
 				const InputPin* inputPin = (*i)->getInputPin(j);
-				if (!inputPin->isOptional() && !shaderGraphAdj.findSourcePin(inputPin))
+				if (!inputPin->isOptional() && !shaderGraph->findSourcePin(inputPin))
 					outReport.addError(L"Input pin \"" + inputPin->getName() + L"\" not connected", *i);
 			}
 		}

@@ -2,7 +2,6 @@
 #include "Render/OpenGL/GlslContext.h"
 #include "Render/OpenGL/GlslShader.h"
 #include "Render/ShaderGraph.h"
-#include "Render/ShaderGraphAdjacency.h"
 #include "Render/Node.h"
 #include "Render/InputPin.h"
 #include "Render/OutputPin.h"
@@ -14,7 +13,6 @@ namespace traktor
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
-,	m_shaderGraphAdj(new ShaderGraphAdjacency(shaderGraph))
 ,	m_vertexShader(GlslShader::StVertex)
 ,	m_fragmentShader(GlslShader::StFragment)
 ,	m_currentShader(0)
@@ -23,7 +21,7 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 
 GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 {
-	const OutputPin* sourcePin = m_shaderGraphAdj->findSourcePin(inputPin);
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
 	if (!sourcePin)
 		return 0;
 
