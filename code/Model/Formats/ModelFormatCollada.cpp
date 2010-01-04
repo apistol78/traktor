@@ -368,6 +368,7 @@ void fetchSkinData(
 }
 
 void createGeometry(
+	const Matrix44& transform,
 	xml::Element* mesh,
 	const std::map< std::wstring, uint32_t>& materialLookUp,
 	SkinData* skinData,
@@ -461,7 +462,7 @@ void createGeometry(
 					uint32_t index = polygonData[j].getAttribueIndex(vIndex ,dataInfo.second);
 					if (index != -1)
 					{
-						Vector4 position = dataInfo.first->getDataPosition(index);
+						Vector4 position = transform * dataInfo.first->getDataPosition(index);
 						vertex.setPosition(outModel->addUniquePosition(position));
 					}
 				}
@@ -551,7 +552,7 @@ void createGeometry(
 void createMesh(
 	xml::Element* libraryGeometries,
 	xml::Element* libraryControllers,
-	const RefArray< xml::Element >& instanceGeometries,
+	const RefArray< xml::Element >& instanceGeometryNodes,
 	const RefArray< xml::Element >& instanceControllers,
 	const std::map< std::wstring, uint32_t >& materialRefs,
 	Model* outModel
@@ -572,12 +573,14 @@ void createMesh(
 		Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
 		if (!geometry)
 			continue;
-		createGeometry(geometry, materialRefs, &skinData, outModel);
+		createGeometry(Matrix44::identity(), geometry, materialRefs, &skinData, outModel);
 	}
 
-	for (size_t i = 0; i < instanceGeometries.size(); ++i)
+	for (size_t i = 0; i < instanceGeometryNodes.size(); ++i)
 	{
-		std::wstring geometryRef = instanceGeometries[i]->getAttribute(L"url", L"")->getValue();
+		Ref< xml::Element > instanceGeometry = instanceGeometryNodes[i]->getSingle(L"instance_geometry");
+
+		std::wstring geometryRef = instanceGeometry->getAttribute(L"url", L"")->getValue();
 
 		Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
 		if (!geometry)
@@ -594,7 +597,17 @@ void createMesh(
 
 		}
 */
-		createGeometry(geometry, materialRefs, 0, outModel);
+		Matrix44 transform;
+		if (Ref< xml::Element > scaleE = instanceGeometryNodes[i]->getSingle(L"scale"))
+		{
+			std::vector< float > scaleArray;
+			parseStringToArray(scaleE->getValue(), scaleArray);
+			transform = scale(scaleArray[0],scaleArray[1], scaleArray[2]);
+		}
+		else
+			transform = Matrix44::identity();
+
+		createGeometry(transform, geometry, materialRefs, 0, outModel);
 	}
 }
 
@@ -718,10 +731,9 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 		Ref< xml::Element > node = nodes.back();
 		nodes.pop_back();
 
-		Ref< xml::Element > instanceGeometry = node->getSingle(L"instance_geometry");
-		if (instanceGeometry)
+		if (Ref< xml::Element > instanceGeometry = node->getSingle(L"instance_geometry"))
 		{
-			instanceGeometries.push_back(instanceGeometry);
+			instanceGeometries.push_back(node);
 
 			RefArray< xml::Element > instanceMaterials;
 			instanceGeometry->get(L"bind_material/technique_common/instance_material", instanceMaterials);
@@ -735,8 +747,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 			}
 		}
 
-		Ref< xml::Element > instanceController = node->getSingle(L"instance_controller");
-		if (instanceController)
+		if (Ref< xml::Element > instanceController = node->getSingle(L"instance_controller"))
 		{
 			instanceControllers.push_back(instanceController);
 
@@ -772,7 +783,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 		{
 			Material m;
 			//m.setName(materialRefs[i].second);		// material
-			m.setName(materialRefs[i].first);		// sg
+			m.setName(materialRefs[i].first);			// sg
 			m.setDoubleSided(false);
 			uint32_t materialIndex = outModel->addMaterial(m);
 			materialLookUp.insert(std::make_pair(materialRefs[i].first, materialIndex));
