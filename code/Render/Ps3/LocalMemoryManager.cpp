@@ -48,7 +48,7 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (size > 0);
-	T_ASSERT (align_ > 0);
+	T_ASSERT (align > 0);
 
 	LocalMemoryObject* object = 0;
 
