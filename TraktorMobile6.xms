@@ -2377,7 +2377,7 @@
 											<project type="Project" version="1">
 												<enable>true</enable>
 												<name>Traktor.Compress.Zip</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Zip</sourcePath>
+												<sourcePath>$(TRAKTOR_HOME)/code/Compress/Zip</sourcePath>
 												<configurations>
 													<item type="Configuration">
 														<name>DebugShared</name>
