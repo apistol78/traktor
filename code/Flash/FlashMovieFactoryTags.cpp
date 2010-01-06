@@ -21,7 +21,7 @@
 #include "Flash/FlashBitmap.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionScript.h"
-#include "Zip/InflateStream.h"
+#include "Compress/Zip/InflateStream.h"
 
 namespace traktor
 {
@@ -625,7 +625,7 @@ bool FlashTagDefineBitsJpeg::read(SwfReader* swf, ReadContext& context)
 			uint32_t inflateSize = image->getWidth() * image->getHeight();
 
 			bufferStream.seek(IStream::SeekSet, offsetToAlpha);
-			zip::InflateStream inf(&bufferStream);
+			compress::InflateStream inf(&bufferStream);
 
 			AutoArrayPtr< uint8_t > alphaBuffer(new uint8_t [inflateSize]);
 			if (inf.read(alphaBuffer.ptr(), inflateSize) != inflateSize)
@@ -685,7 +685,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		std::memset(buffer.ptr(), 0, bufferSize);
 #endif
 
-		zip::InflateStream inflateStream(bs.getStream());
+		compress::InflateStream inflateStream(bs.getStream());
 		inflateStream.read(&buffer[0], int(bufferSize));
 
 		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
@@ -733,7 +733,7 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		std::memset(buffer.ptr(), 0, bufferSize);
 #endif
 
-		zip::InflateStream inflateStream(bs.getStream());
+		compress::InflateStream inflateStream(bs.getStream());
 		inflateStream.read(&buffer[0], int(bufferSize));
 
 		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);

@@ -32,7 +32,7 @@ public:
 	RefSet(const RefSet< Class >& rs)
 	:	m_items(rs.m_items)
 	{
-		for (set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
+		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
 			T_SAFE_ADDREF(*i);
 	}
 
@@ -43,7 +43,7 @@ public:
 
 	void clear()
 	{
-		for (set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
+		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
 			T_SAFE_RELEASE(*i);
 		m_items.clear();
 	}
@@ -61,7 +61,7 @@ public:
 	void insert(Class* item)
 	{
 		T_ASSERT (item);
-		std::pair< set_t::iterator, bool > ins = m_items.insert(item);
+		std::pair< typename set_t::iterator, bool > ins = m_items.insert(item);
 		if (ins.second)
 			T_SAFE_ADDREF(item);
 	}
@@ -94,7 +94,7 @@ public:
 	{
 		clear();
 		m_items = rs.m_items;
-		for (set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
+		for (typename set_t::iterator i = m_items.begin(); i != m_items.end(); ++i)
 			T_SAFE_ADDREF(*i);
 		return *this;
 	}

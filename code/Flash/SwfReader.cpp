@@ -1,10 +1,10 @@
 #include <cstdlib>
 #include <cstring>
+#include "Compress/Zip/InflateStream.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/PoolAllocator.h"
 #include "Flash/SwfReader.h"
-#include "Zip/InflateStream.h"
 
 namespace traktor
 {
@@ -59,7 +59,7 @@ SwfHeader* SwfReader::readHeader()
 
 	if (header->signature[0] == 'C')
 	{
-		m_stream = new zip::InflateStream(m_stream);
+		m_stream = new compress::InflateStream(m_stream);
 		m_bs = new BitReader(m_stream);
 	}
 

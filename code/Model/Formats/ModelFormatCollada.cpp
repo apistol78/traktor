@@ -238,16 +238,16 @@ public:
 	}
 
 private:
+	struct SetInfo
+	{
+		SetInfo(): min(1000),max(0), count(0) {}
+		uint32_t min;
+		uint32_t max;
+		uint32_t count;
+	};
+
 	void reEnumerateSets()
 	{
-		struct SetInfo
-		{
-			SetInfo(): min(1000),max(0), count(0) {}
-			uint32_t min;
-			uint32_t max;
-			uint32_t count;
-		};
-
 		std::wstring source;
 		uint32_t offset = 0;
 		std::map< std::wstring, SetInfo > setsPerSource;

@@ -1,14 +1,14 @@
+#include "Compress/Zip/InflateStream.h"
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Render/TextureFactory.h"
 #include "Render/TextureResource.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ICubeTexture.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
-#include "Zip/InflateStream.h"
-#include "Core/Misc/AutoPtr.h"
-#include "Core/Io/Reader.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -105,7 +105,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = new zip::InflateStream(stream);
+			readerStream = new compress::InflateStream(stream);
 
 		Reader readerData(readerStream);
 
@@ -154,7 +154,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 		Ref< IStream > readerStream = stream;
 		if (isCompressed)
-			readerStream = new zip::InflateStream(stream);
+			readerStream = new compress::InflateStream(stream);
 
 		Reader readerData(readerStream);
 		

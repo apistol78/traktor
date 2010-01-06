@@ -6141,8 +6141,8 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project type="Project" version="1">
 												<enable>true</enable>
-												<name>Traktor.Zip</name>
-												<sourcePath>$(TRAKTOR_HOME)/code/Zip</sourcePath>
+												<name>Traktor.Compress.Zip</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Compress/Zip</sourcePath>
 												<configurations>
 													<item type="Configuration">
 														<name>DebugShared</name>
@@ -6152,10 +6152,9 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3\contrib\minizip</item>
 														</includePaths>
 														<definitions>
-															<item>T_ZIP_EXPORT</item>
+															<item>T_COMPRESS_ZIP_EXPORT</item>
 															<item>_DEBUG</item>
 														</definitions>
 														<libraryPaths/>
@@ -6169,10 +6168,9 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3\contrib\minizip</item>
 														</includePaths>
 														<definitions>
-															<item>T_ZIP_EXPORT</item>
+															<item>T_COMPRESS_ZIP_EXPORT</item>
 															<item>NDEBUG</item>
 														</definitions>
 														<libraryPaths/>
@@ -6186,7 +6184,6 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3\contrib\minizip</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6203,7 +6200,6 @@
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
 															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
-															<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3\contrib\minizip</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6217,47 +6213,6 @@
 													<item type="File">
 														<fileName>*.*</fileName>
 														<items/>
-													</item>
-													<item type="Filter">
-														<name>MiniZip</name>
-														<items>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/crypt.h</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/mztools.c</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/mztools.h</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/unzip.c</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/unzip.h</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/zip.c</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/zip.h</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/ioapi.h</fileName>
-																<items/>
-															</item>
-															<item type="File">
-																<fileName>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3/contrib/minizip/ioapi.c</fileName>
-																<items/>
-															</item>
-														</items>
 													</item>
 												</items>
 												<dependencies>
@@ -10904,10 +10859,6 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[12]"/>
 							</item>
 							<item type="ProjectDependency" version="1">
@@ -10917,6 +10868,10 @@
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 							</item>
 						</dependencies>
 					</project>

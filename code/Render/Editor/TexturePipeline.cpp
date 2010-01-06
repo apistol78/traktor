@@ -1,5 +1,6 @@
 #include <cstring>
 #include <squish.h>
+#include "Compress/Zip/DeflateStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -18,7 +19,6 @@
 #include "Render/Types.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Render/Editor/TexturePipeline.h"
-#include "Zip/DeflateStream.h"
 
 namespace traktor
 {
@@ -434,7 +434,7 @@ bool TexturePipeline::buildOutput(
 		writer << bool(false);
 		writer << bool(true);
 
-		Ref< IStream > streamData = new zip::DeflateStream(stream);
+		Ref< IStream > streamData = new compress::DeflateStream(stream);
 		Writer writerData(streamData);
 
 		RefArray< drawing::Image > mipImages(mipCount);
@@ -558,7 +558,7 @@ bool TexturePipeline::buildOutput(
 		writer << bool(true);
 
 		// Create data writer, use deflate compression if enabled.
-		Ref< IStream > streamData = new zip::DeflateStream(stream);
+		Ref< IStream > streamData = new compress::DeflateStream(stream);
 		Writer writerData(streamData);
 
 		for (int side = 0; side < 6; ++side)

@@ -64,7 +64,6 @@
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 #include "Render/IRenderSystem.h"
-#include "Zip/Volume.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/System/OS.h"
