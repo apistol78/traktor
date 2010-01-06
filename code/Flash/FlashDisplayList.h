@@ -36,10 +36,12 @@ public:
 		uint16_t id;
 		Ref< FlashCharacterInstance > instance;
 		int32_t clipDepth;
+		bool collect;
 
 		Layer()
 		:	id(0)
 		,	clipDepth(0)
+		,	collect(false)
 		{
 		}
 	};
@@ -50,6 +52,18 @@ public:
 
 	/*! \brief Reset display list. */
 	void reset();
+
+	/*! \brief Begin update display list.
+	 *
+	 * \param reset If display list should be considered "empty"; all characters not placed are removed when update are finished.
+	 */
+	void updateBegin(bool reset);
+
+	/*! \brief End updating display list.
+	 *
+	 * Not "placed" characters are removed.
+	 */
+	void updateEnd();
 
 	/*! \brief Update display list from frame.
 	 *
