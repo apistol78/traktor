@@ -111,6 +111,7 @@ void FlashSpriteInstance::updateDisplayList()
 	// Update sprite instance's display list.
 	if (m_currentFrame < m_lastUpdateFrame)
 	{
+		m_displayList.updateBegin(true);
 		for (uint32_t i = 0; i <= m_currentFrame; ++i)
 		{
 			Ref< FlashFrame > frame = m_sprite->getFrame(i);
@@ -118,9 +119,11 @@ void FlashSpriteInstance::updateDisplayList()
 
 			m_displayList.updateFrame(this, frame);
 		}
+		m_displayList.updateEnd();
 	}
 	else if (m_currentFrame > m_lastUpdateFrame)
 	{
+		m_displayList.updateBegin(false);
 		for (uint32_t i = m_lastUpdateFrame; i <= m_currentFrame; ++i)
 		{
 			Ref< FlashFrame > frame = m_sprite->getFrame(i);
@@ -128,6 +131,7 @@ void FlashSpriteInstance::updateDisplayList()
 
 			m_displayList.updateFrame(this, frame);
 		}
+		m_displayList.updateEnd();
 	}
 
 	m_lastUpdateFrame = m_currentFrame;

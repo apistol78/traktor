@@ -37,6 +37,27 @@ void FlashDisplayList::reset()
 	m_layers.clear();
 }
 
+void FlashDisplayList::updateBegin(bool reset)
+{
+	if (reset)
+	{
+		for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			i->second.collect = true;
+	}
+}
+
+void FlashDisplayList::updateEnd()
+{
+	// Remove all layers which are still marked as "collect".
+	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
+	{
+		if (i->second.collect)
+			i = m_layers.erase(i);
+		else
+			i++;
+	}
+}
+
 void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const FlashFrame* frame)
 {
 	// Update background color.
@@ -107,6 +128,8 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			if (placeObject.hasClipDepth)
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
+
+			layer.collect = false;
 		}
 		else
 		{
