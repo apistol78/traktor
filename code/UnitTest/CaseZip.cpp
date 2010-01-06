@@ -1,7 +1,7 @@
 #include <cstring>
 #include "UnitTest/CaseZip.h"
-#include "Zip/DeflateStream.h"
-#include "Zip/InflateStream.h"
+#include "Compress/Zip/DeflateStream.h"
+#include "Compress/Zip/InflateStream.h"
 #include "Core/Io/MemoryStream.h"
 
 namespace traktor
@@ -20,7 +20,7 @@ void CaseZip::run()
 
 	// Compress source data by DeflateStream.
 	MemoryStream deflateDestinationStream(compressed, sizeof_array(compressed), false, true);
-	zip::DeflateStream deflateStream(&deflateDestinationStream);
+	compress::DeflateStream deflateStream(&deflateDestinationStream);
 	for (size_t i = 0; i < sizeof_array(source); i += 256)
 	{
 		int nwritten = deflateStream.write(&source[i], 256);
@@ -34,7 +34,7 @@ void CaseZip::run()
 
 	// Uncompress data by InflateStream.
 	MemoryStream inflateSourceStream(compressed, compressedSize, true, false);
-	zip::InflateStream inflateStream(&inflateSourceStream);
+	compress::InflateStream inflateStream(&inflateSourceStream);
 	uint8_t* destinationPtr = destination;
 	for (;;)
 	{

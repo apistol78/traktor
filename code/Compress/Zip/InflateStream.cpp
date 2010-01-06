@@ -1,13 +1,13 @@
 #include <cstring>
 #include <zlib.h>
-#include "Zip/InflateStream.h"
+#include "Compress/Zip/InflateStream.h"
 
 namespace traktor
 {
-	namespace zip
+	namespace compress
 	{
 
-class InflateImpl : public Object
+class InflateImpl : public RefCountImpl< IRefCount >
 {
 public:
 	InflateImpl(IStream* stream, uint32_t internalBufferSize)
@@ -94,7 +94,7 @@ private:
 	int m_position;
 };
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.zip.InflateStream", InflateStream, IStream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.compress.InflateStream", InflateStream, IStream)
 
 InflateStream::InflateStream(IStream* stream, uint32_t internalBufferSize)
 :	m_impl(new InflateImpl(stream, internalBufferSize))

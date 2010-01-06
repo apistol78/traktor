@@ -1,6 +1,7 @@
 #include <cmath>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Thread/Acquire.h"
 
 namespace traktor
@@ -74,7 +75,7 @@ wchar_t* ftoa__(T value, wchar_t* buf)
 	wchar_t* p = &buf[size - 1];
 	*p-- = L'\0';
 
-	int_t fm = int_t(powf(10, fractions + 1));
+	int_t fm = int_t(traktor::powf(10, fractions + 1));
 	int_t vi = int_t(un);
 	int_t vf = int_t((un - vi) * fm);
 

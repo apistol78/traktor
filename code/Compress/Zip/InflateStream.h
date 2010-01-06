@@ -1,27 +1,34 @@
-#ifndef traktor_zip_CompressedStream_H
-#define traktor_zip_CompressedStream_H
+#ifndef traktor_compress_InflateStream_H
+#define traktor_compress_InflateStream_H
 
 #include "Core/Io/IStream.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_ZIP_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#if defined(T_COMPRESS_ZIP_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
-	namespace zip
+	namespace compress
 	{
 
-class T_DLLCLASS CompressedStream : public IStream
+class InflateImpl;
+
+/*! \brief Zip inflate stream.
+ * \ingroup Compress
+ */
+class T_DLLCLASS InflateStream : public IStream
 {
 	T_RTTI_CLASS;
 
 public:
-	CompressedStream(IStream* stream);
+	InflateStream(IStream* stream, uint32_t internalBufferSize = 4096);
+
+	virtual ~InflateStream();
 
 	virtual void close();
 
@@ -44,13 +51,10 @@ public:
 	virtual void flush();
 
 private:
-	enum { CompressionBufferSize = 4096 };
-	Ref< IStream > m_stream;
-	mutable char m_buffer[CompressionBufferSize];
-	mutable char* m_bufferEnd;
+	Ref< InflateImpl > m_impl;
 };
 
 	}
 }
 
-#endif	// traktor_zip_CompressedStream_H
+#endif	// traktor_compress_InflateStream_H
