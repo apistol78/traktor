@@ -29,6 +29,8 @@ class T_DLLCLASS RenderTargetSetPs3 : public RenderTargetSet
 public:
 	RenderTargetSetPs3();
 
+	virtual ~RenderTargetSetPs3();
+
 	bool create(const RenderTargetSetCreateDesc& desc);
 
 	virtual void destroy();

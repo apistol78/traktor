@@ -19,6 +19,11 @@ RenderTargetSetPs3::RenderTargetSetPs3()
 	std::memset(&m_depthTexture, 0, sizeof(m_depthTexture));
 }
 
+RenderTargetSetPs3::~RenderTargetSetPs3()
+{
+	destroy();
+}
+
 bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 {
 	m_width = desc.width;
@@ -64,6 +69,11 @@ bool RenderTargetSetPs3::create(const RenderTargetSetCreateDesc& desc)
 
 void RenderTargetSetPs3::destroy()
 {
+	if (m_depthData)
+	{
+		LocalMemoryManager::getInstance().free(m_depthData);
+		m_depthData = 0;
+	}
 }
 
 int RenderTargetSetPs3::getWidth() const

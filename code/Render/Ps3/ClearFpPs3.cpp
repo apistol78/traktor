@@ -47,6 +47,16 @@ ClearFpPs3::ClearFpPs3()
 
 ClearFpPs3::~ClearFpPs3()
 {
+	if (m_clearFragmentProgramUcode)
+	{
+		LocalMemoryManager::getInstance().free(m_clearFragmentProgramUcode);
+		m_clearFragmentProgramUcode = 0;
+	}
+	if (m_quadBuffer)
+	{
+		LocalMemoryManager::getInstance().free(m_quadBuffer);
+		m_quadBuffer = 0;
+	}
 }
 
 void ClearFpPs3::clear(const float color[4])
