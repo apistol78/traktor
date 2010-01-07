@@ -926,7 +926,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
-		pipelineDepends.addDependency(*i, true);
+		pipelineDepends.addDependency(*i, editor::PdfBuild);
 
 	log::info << DecreaseIndent;
 

@@ -34,7 +34,7 @@ bool AssetsPipeline::buildDependencies(
 {
 	const Assets* assets = checked_type_cast< const Assets* >(sourceAsset);
 	for (std::vector< Guid >::const_iterator i = assets->m_dependencies.begin(); i != assets->m_dependencies.end(); ++i)
-		pipelineDepends->addDependency(*i, true);
+		pipelineDepends->addDependency(*i, editor::PdfBuild);
 	return true;
 }
 

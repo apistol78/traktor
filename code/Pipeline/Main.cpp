@@ -199,7 +199,7 @@ int main(int argc, const char** argv)
 				traktor::log::error << L"Invalid asset guid (" << i << L")" << Endl;
 				return 7;
 			}
-			pipelineDepends.addDependency(assetGuid, true);
+			pipelineDepends.addDependency(assetGuid, editor::PdfBuild);
 		}
 	}
 	else
@@ -208,7 +208,7 @@ int main(int argc, const char** argv)
 		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< editor::Assets >()), assetInstances);
 
 		for (RefArray< db::Instance >::iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
-			pipelineDepends.addDependency(*i, true);
+			pipelineDepends.addDependency(*i, editor::PdfBuild);
 	}
 
 	traktor::log::info << DecreaseIndent;

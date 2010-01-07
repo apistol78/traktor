@@ -174,7 +174,7 @@ bool ShaderPipeline::buildDependencies(
 	for (RefArray< External >::const_iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
 	{
 		const Guid& fragmentGuid = (*i)->getFragmentGuid();
-		pipelineDepends->addDependency(fragmentGuid, false);
+		pipelineDepends->addDependency(fragmentGuid, editor::PdfUse);
 	}
 
 	// Add external textures.
@@ -185,7 +185,7 @@ bool ShaderPipeline::buildDependencies(
 	{
 		const Guid& textureGuid = (*i)->getExternal();
 		if (textureGuid.isValid() && !textureGuid.isNull())
-			pipelineDepends->addDependency(textureGuid, true);
+			pipelineDepends->addDependency(textureGuid, editor::PdfBuild);
 	}
 
 	return true;
@@ -201,6 +201,8 @@ bool ShaderPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	// Do
+
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;

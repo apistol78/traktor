@@ -44,17 +44,17 @@ public:
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
-		bool build
+		uint32_t flags
 	);
 
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
-		bool build
+		uint32_t flags
 	);
 
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
-		bool build
+		uint32_t flags
 	);
 
 	virtual void addDependency(
@@ -108,7 +108,7 @@ private:
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
-		bool build
+		uint32_t flags
 	);
 };
 

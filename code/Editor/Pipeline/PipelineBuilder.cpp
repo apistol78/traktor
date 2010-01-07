@@ -56,22 +56,22 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			if (!m_db->get((*i)->outputGuid, hash))
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
+				(*i)->reason |= PbrSourceModified;
 			}
 			else if (hash.pipelineVersion != type_of((*i)->pipeline).getVersion())
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
+				(*i)->reason |= PbrSourceModified;
 			}
 			else if (hash.pipelineHash != (*i)->pipelineHash)
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline settings differ" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
+				(*i)->reason |= PbrSourceModified;
 			}
 			else if (hash.sourceAssetHash != (*i)->sourceAssetHash)
 			{
 				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
-				(*i)->reason |= IPipeline::BrSourceModified;
+				(*i)->reason |= PbrSourceModified;
 			}
 			else
 			{
@@ -85,21 +85,21 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
 						{
 							log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
-							(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
+							(*i)->reason |= PbrSourceModified | PbrAssetModified;
 							break;
 						}
 					}
 					else
 					{
 						log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
-						(*i)->reason |= IPipeline::BrSourceModified | IPipeline::BrAssetModified;
+						(*i)->reason |= PbrSourceModified | PbrAssetModified;
 						break;
 					}
 				}
 			}
 		}
 		else
-			(*i)->reason |= IPipeline::BrForced;
+			(*i)->reason |= PbrForced;
 	}
 
 	// Build assets which are dirty or have dirty dependency assets.
@@ -128,8 +128,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
 		}
 
-		// Skip building asset; just update hash.
-		if (!(*i)->build)
+		// Skip non-build asset; just update hash.
+		if (((*i)->flags & PdfBuild) == 0)
 		{
 			m_db->set((*i)->outputGuid, hash);
 			continue;
@@ -275,14 +275,19 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 
 bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
 {
-	if (dependency->reason != IPipeline::BrNone)
+	if (dependency->reason != PbrNone)
 		return true;
 
 	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
+		// Skip non-use dependencies; non-used dependencies are not critical for building
+		// given dependency.
+		if (((*i)->flags & PdfUse) == 0)
+			continue;
+
 		if (needBuild(*i))
 		{
-			dependency->reason |= IPipeline::BrDependencyModified;
+			dependency->reason |= PbrDependencyModified;
 			return true;
 		}
 	}

@@ -26,13 +26,13 @@ bool WeatherEntityPipeline::buildDependencies(
 ) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(skyEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(skyEntityData->getShader().getGuid(), editor::PdfBuild);
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(cloudEntityData->getParticleShader().getGuid(), true);
-		pipelineDepends->addDependency(cloudEntityData->getParticleTexture().getGuid(), true);
-		pipelineDepends->addDependency(cloudEntityData->getImpostorShader().getGuid(), true);
-		pipelineDepends->addDependency(cloudEntityData->getMask().getGuid(), true);
+		pipelineDepends->addDependency(cloudEntityData->getParticleShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getParticleTexture().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getImpostorShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getMask().getGuid(), editor::PdfBuild);
 	}
 	return true;
 }

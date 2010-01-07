@@ -29,7 +29,7 @@ bool BankPipeline::buildDependencies(
 
 	const RefArray< BankSound >& sounds = bankAsset->getSounds();
 	for (RefArray< BankSound >::const_iterator i = sounds.begin(); i != sounds.end(); ++i)
-		pipelineDepends->addDependency((*i)->getSound().getGuid(), true);
+		pipelineDepends->addDependency((*i)->getSound().getGuid(), editor::PdfBuild);
 
 	return true;
 }

@@ -30,27 +30,27 @@ bool TerrainEntityPipeline::buildDependencies(
 {
 	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(terrainEntityData->getHeightfield().getGuid(), true);
-		pipelineDepends->addDependency(terrainEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(terrainEntityData->getHeightfield().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(terrainEntityData->getShader().getGuid(), editor::PdfBuild);
 
 		const Ref< TerrainSurface >& surface = terrainEntityData->getSurface();
 		if (surface)
 		{
 			const std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
 			for (std::vector< resource::Proxy< render::Shader > >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-				pipelineDepends->addDependency(i->getGuid(), true);
+				pipelineDepends->addDependency(i->getGuid(), editor::PdfBuild);
 		}
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(oceanEntityData->getHeightfield().getGuid(), true);
-		pipelineDepends->addDependency(oceanEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(oceanEntityData->getHeightfield().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(oceanEntityData->getShader().getGuid(), editor::PdfBuild);
 	}
 	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(undergrowthEntityData->getHeightfield().getGuid(), true);
-		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask().getGuid(), true);
-		pipelineDepends->addDependency(undergrowthEntityData->getShader().getGuid(), true);
+		pipelineDepends->addDependency(undergrowthEntityData->getHeightfield().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getShader().getGuid(), editor::PdfBuild);
 	}
 	return true;
 }

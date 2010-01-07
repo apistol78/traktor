@@ -66,7 +66,7 @@ bool ScriptPipeline::buildDependencies(
 
 	const std::vector< Guid >& dependencies = sourceScript->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		pipelineDepends->addDependency(*i, false);
+		pipelineDepends->addDependency(*i, editor::PdfUse);
 
 	return true;
 }
