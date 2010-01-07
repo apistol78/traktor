@@ -44,12 +44,12 @@ bool compareSegmentsX(const Segment& ls, const Segment& rs)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Triangulator", Triangulator, Object)
 
-void Triangulator::triangulate(const AlignedVector< Segment >& segments_, AlignedVector< Triangle >& outTriangles)
+void Triangulator::triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles)
 {
-	static AlignedVector< Segment > segments; segments.resize(0);
 	std::set< float > pys;
 
-	for (AlignedVector< Segment >::const_iterator i = segments_.begin(); i != segments_.end(); ++i)
+	m_segments.resize(0);
+	for (AlignedVector< Segment >::const_iterator i = segments.begin(); i != segments.end(); ++i)
 	{
 		if (!i->fillStyle0 && !i->fillStyle1)
 			continue;
@@ -73,7 +73,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments_, Aligne
 			segment.fillStyle1 = i->fillStyle0;
 		}
 
-		segments.push_back(segment);
+		m_segments.push_back(segment);
 		pys.insert(segment.v[0].y);
 		pys.insert(segment.v[1].y);
 	}
@@ -82,7 +82,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments_, Aligne
 		return;
 
 	// Sort segments to Y.
-	std::sort(segments.begin(), segments.end(), compareSegmentsY);
+	std::sort(m_segments.begin(), m_segments.end(), compareSegmentsY);
 
 	// Create trapezoids.
 	static AlignedVector< Trapezoid > trapezoids;
@@ -94,7 +94,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments_, Aligne
 		static AlignedVector< Segment > slabs;
 		slabs.resize(0);
 
-		for (AlignedVector< Segment >::iterator j = segments.begin(); j != segments.end(); )
+		for (AlignedVector< Segment >::iterator j = m_segments.begin(); j != m_segments.end(); )
 		{
 			// As segments are sorted we can safely abort if we find one that's completely below.
 			if (j->v[0].y >= *i - FUZZY_EPSILON)
@@ -121,7 +121,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments_, Aligne
 			j->v[0] = slab.v[1];
 
 			if (std::abs(j->v[1].y - j->v[0].y) <= FUZZY_EPSILON)
-				j = segments.erase(j);
+				j = m_segments.erase(j);
 			else
 				j++;
 		}

@@ -27,6 +27,9 @@ class T_DLLCLASS Triangulator : public Object
 
 public:
 	void triangulate(const AlignedVector< Segment >& segments, AlignedVector< Triangle >& outTriangles);
+
+private:
+	AlignedVector< Segment > m_segments;
 };
 
 	}

@@ -359,12 +359,6 @@ void AccDisplayRenderer::end()
 		else
 			++i;
 	}
-
-#if defined(_DEBUG)
-	static int s_frame = 0;
-	if (s_frame++ % 100 == 0)
-		log::debug << L"Shape cache size " << uint32_t(m_shapeCache.size()) << Endl;
-#endif
 }
 
 	}
