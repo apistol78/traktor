@@ -26,9 +26,21 @@ class T_DLLCLASS CenterLayout : public Layout
 	T_RTTI_CLASS;
 
 public:
+	enum CenterAxis
+	{
+		CaHorizontal = 1,
+		CaVertical = 2,
+		CaBoth = CaHorizontal | CaVertical
+	};
+
+	CenterLayout(uint32_t centerAxis = CaBoth);
+
 	virtual bool fit(Widget* widget, const Size& bounds, Size& result);
 
 	virtual void update(Widget* widget);
+
+private:
+	uint32_t m_centerAxis;
 };
 
 		}

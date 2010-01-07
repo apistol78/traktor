@@ -64,11 +64,20 @@ void Image::eventPaint(Event* event)
 	if (m_image)
 	{
 		Canvas& canvas = static_cast< PaintEvent* >(event)->getCanvas();
+
+		if (m_transparent)
+		{
+			canvas.fillRect(
+				getInnerRect()
+			);
+		}
+
 		canvas.drawBitmap(
 			Point(0, 0),
 			Point(0, 0),
 			m_image->getSize(),
-			m_image
+			m_image,
+			m_transparent ? BmAlpha : BmNone
 		);
 	}
 }
