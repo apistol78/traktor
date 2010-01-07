@@ -159,7 +159,7 @@ bool MeshPipeline::buildDependencies(
 		return false;
 	}
 
-	pipelineDepends->addDependency(vertexShaderGuid, false);
+	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 
 	// Create material asset dependencies.
 	Guid materialGuid = combineGuids(vertexShaderGuid, sourceInstance->getGuid());
@@ -187,7 +187,7 @@ bool MeshPipeline::buildDependencies(
 			}
 
 			// Add no-build dependencies to shader fragments.
-			pipelineDepends->addDependency(materialShaderInstance->getGuid(), false);
+			pipelineDepends->addDependency(materialShaderInstance->getGuid(), editor::PdfUse);
 
 			materialShaderGraph = materialShaderInstance->getObject< render::ShaderGraph >();
 			if (!materialShaderGraph)
@@ -225,7 +225,7 @@ bool MeshPipeline::buildDependencies(
 			materialName,
 			sourceInstance->getParent()->getPath() + L"/Materials/" + materialGuid.format(),
 			materialGuid,
-			true
+			editor::PdfBuild
 		);
 
 		// Remember material information.

@@ -35,7 +35,7 @@ bool MeshEntityPipeline::buildDependencies(
 ) const
 {
 	if (const BlendMeshEntityData* blendMeshEntityData = dynamic_type_cast< const BlendMeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(blendMeshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(blendMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	if (const CompositeMeshEntityData* compositeMeshEntityData = dynamic_type_cast< const CompositeMeshEntityData* >(sourceAsset))
 	{
 		const RefArray< world::EntityInstance >& instances = compositeMeshEntityData->getInstances();
@@ -43,13 +43,13 @@ bool MeshEntityPipeline::buildDependencies(
 			pipelineDepends->addDependency(*i);
 	}
 	if (const IndoorMeshEntityData* indoorMeshEntityData = dynamic_type_cast< const IndoorMeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(indoorMeshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(indoorMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	if (const InstanceMeshEntityData* instanceMeshEntityData = dynamic_type_cast< const InstanceMeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(instanceMeshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(instanceMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	if (const SkinnedMeshEntityData* skinnedMeshEntityData = dynamic_type_cast< const SkinnedMeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(skinnedMeshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(skinnedMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	if (const StaticMeshEntityData* staticMeshEntityData = dynamic_type_cast< const StaticMeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(staticMeshEntityData->getMesh().getGuid(), true);
+		pipelineDepends->addDependency(staticMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 
 	return true;
 }

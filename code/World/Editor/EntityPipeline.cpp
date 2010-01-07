@@ -42,9 +42,9 @@ bool EntityPipeline::buildDependencies(
 	if (const EntityInstance* instance = dynamic_type_cast< const EntityInstance* >(sourceAsset))
 		pipelineDepends->addDependency(instance->getEntityData());
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(externalEntityData->getGuid(), true);
+		pipelineDepends->addDependency(externalEntityData->getGuid(), editor::PdfBuild);
 	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(externalSpatialEntityData->getGuid(), true);
+		pipelineDepends->addDependency(externalSpatialEntityData->getGuid(), editor::PdfBuild);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))
 	{
 		const RefArray< EntityInstance >& instances = groupEntityData->getInstances();
@@ -70,7 +70,7 @@ bool EntityPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	if ((reason & (BrSourceModified | BrForced)) == 0)
+	if ((reason & (editor::PbrSourceModified | editor::PbrForced)) == 0)
 		return true;
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

@@ -3,13 +3,14 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -39,15 +40,6 @@ class T_DLLCLASS IPipeline : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum BuildReason
-	{
-		BrNone = 0,					/*!< No reason, buildOutput shouldn't even be called. */
-		BrDependencyModified = 1,	/*!< Dependent resource has been modified. */
-		BrSourceModified = 2,		/*!< Source has been modified. */
-		BrAssetModified = 4,		/*!< Asset has been modified; only valid for Asset classes and are always combined with BrSourceModified. */
-		BrForced = 8,				/*!< Forced build issued, must build even if output is up-to-date. */
-	};
-
 	/*! \brief Create pipeline.
 	 *
 	 * \param settings Pipeline settings.
@@ -84,7 +76,7 @@ public:
 	 * \param buildParams User defined parameter object.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
-	 * \param reason Reason as why this asset needs to be rebuilt @sa BuildReason
+	 * \param reason Reason as why this asset needs to be rebuilt \sa PipelineBuildReason
 	 * \return True if successful.
 	 */
 	virtual bool buildOutput(

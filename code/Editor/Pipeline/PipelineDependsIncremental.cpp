@@ -75,7 +75,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, bool build)
+void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
 {
 	if (!sourceAsset)
 		return;
@@ -99,11 +99,11 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 		name,
 		outputPath,
 		outputGuid,
-		build
+		flags
 	);
 }
 
-void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance, bool build)
+void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
 {
 	if (!sourceAssetInstance)
 		return;
@@ -135,11 +135,11 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid(),
-		build
+		flags
 	);
 }
 
-void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, bool build)
+void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint32_t flags)
 {
 	if (sourceAssetGuid.isNull() || !sourceAssetGuid.isValid())
 		return;
@@ -179,7 +179,7 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, bool
 		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid(),
-		build
+		flags
 	);
 }
 
@@ -267,7 +267,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 	const std::wstring& name,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
-	bool build
+	uint32_t flags
 )
 {
 	Ref< IPipeline > pipeline;
@@ -288,8 +288,8 @@ void PipelineDependsIncremental::addUniqueDependency(
 	dependency->sourceAsset = sourceAsset;
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;
-	dependency->build = build;
-	dependency->reason = IPipeline::BrNone;
+	dependency->flags = flags;
+	dependency->reason = PbrNone;
 	dependency->parent = m_currentDependency;
 	if (m_currentDependency)
 		m_currentDependency->children.push_back(dependency);

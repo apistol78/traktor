@@ -28,7 +28,7 @@ bool StatePipeline::buildDependencies(
 ) const
 {
 	if (const State* state = dynamic_type_cast< const State* >(sourceAsset))
-		pipelineDepends->addDependency(state->getAnimation().getGuid(), true);
+		pipelineDepends->addDependency(state->getAnimation().getGuid(), editor::PdfBuild);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
 		const RefArray< State >& states = stateGraph->getStates();
@@ -36,7 +36,7 @@ bool StatePipeline::buildDependencies(
 			pipelineDepends->addDependency(*i);
 	}
 	else if (const StatePoseControllerData* controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(controllerData->getStateGraph().getGuid(), true);
+		pipelineDepends->addDependency(controllerData->getStateGraph().getGuid(), editor::PdfBuild);
 
 	return true;
 }

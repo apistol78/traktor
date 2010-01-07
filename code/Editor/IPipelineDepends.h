@@ -5,13 +5,14 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Io/Path.h"
+#include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -33,6 +34,9 @@ class Instance;
 class IPipeline;
 class PipelineDependency;
 
+/*! \brief Pipeline dependency interface.
+ * \ingroup Editor
+ */
 class T_DLLCLASS IPipelineDepends : public Object
 {
 	T_RTTI_CLASS;
@@ -47,17 +51,17 @@ public:
 		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
-		bool build
+		uint32_t flags
 	) = 0;
 
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
-		bool build
+		uint32_t flags
 	) = 0;
 
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
-		bool build
+		uint32_t flags
 	) = 0;
 
 	virtual void addDependency(

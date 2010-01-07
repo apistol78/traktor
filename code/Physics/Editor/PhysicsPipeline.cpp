@@ -37,9 +37,9 @@ bool PhysicsPipeline::buildDependencies(
 	if (const BodyDesc* bodyDesc = dynamic_type_cast< const BodyDesc* >(sourceAsset))
 	{
 		if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(bodyDesc->getShape()))
-			pipelineDepends->addDependency(meshShapeDesc->getMesh().getGuid(), true);
+			pipelineDepends->addDependency(meshShapeDesc->getMesh().getGuid(), editor::PdfBuild);
 		else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(bodyDesc->getShape()))
-			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield().getGuid(), true);
+			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield().getGuid(), editor::PdfBuild);
 	}
 	return true;
 }

@@ -54,7 +54,7 @@ bool PostProcessPipeline::buildDependencies(
 		Ref< PostProcessStep > step = ss.front(); ss.pop_front();
 
 		if (const PostProcessStepBlur* stepBlur = dynamic_type_cast< const PostProcessStepBlur* >(step))
-			pipelineDepends->addDependency(stepBlur->getShader().getGuid(), true);
+			pipelineDepends->addDependency(stepBlur->getShader().getGuid(), editor::PdfBuild);
 		else if (const PostProcessStepChain* stepChain = dynamic_type_cast< const PostProcessStepChain* >(step))
 		{
 			const RefArray< PostProcessStep >& steps = stepChain->getSteps();
@@ -62,15 +62,15 @@ bool PostProcessPipeline::buildDependencies(
 				ss.push_back(*i);
 		}
 		else if (const PostProcessStepLuminance* stepLuminance = dynamic_type_cast< const PostProcessStepLuminance* >(step))
-			pipelineDepends->addDependency(stepLuminance->getShader().getGuid(), true);
+			pipelineDepends->addDependency(stepLuminance->getShader().getGuid(), editor::PdfBuild);
 		else if (const PostProcessStepRepeat* stepRepeat = dynamic_type_cast< const PostProcessStepRepeat* >(step))
 			ss.push_back(stepRepeat->getStep());
 		else if (const PostProcessStepSimple* stepSimple = dynamic_type_cast< const PostProcessStepSimple* >(step))
-			pipelineDepends->addDependency(stepSimple->getShader().getGuid(), true);
+			pipelineDepends->addDependency(stepSimple->getShader().getGuid(), editor::PdfBuild);
 		else if (const PostProcessStepSsao* stepSsao = dynamic_type_cast< const PostProcessStepSsao* >(step))
-			pipelineDepends->addDependency(stepSsao->getShader().getGuid(), true);
+			pipelineDepends->addDependency(stepSsao->getShader().getGuid(), editor::PdfBuild);
 		else if (const PostProcessStepSmProj* stepSmProj = dynamic_type_cast< const PostProcessStepSmProj* >(step))
-			pipelineDepends->addDependency(stepSmProj->getShader().getGuid(), true);
+			pipelineDepends->addDependency(stepSmProj->getShader().getGuid(), editor::PdfBuild);
 	}
 
 	return true;

@@ -46,13 +46,13 @@ bool FlashPipeline::buildDependencies(
 	pipelineDepends->addDependency(fileName);
 
 	// Add dependencies to shaders.
-	pipelineDepends->addDependency(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"), true);	// Solid
-	pipelineDepends->addDependency(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"), true);	// Textured
-	pipelineDepends->addDependency(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"), true);	// Solid Mask
-	pipelineDepends->addDependency(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"), true);	// Textured Mask
-	pipelineDepends->addDependency(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"), true);	// Increment Mask
-	pipelineDepends->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"), true);	// Decrement Mask
-	pipelineDepends->addDependency(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"), true);	// Textured Quad
+	pipelineDepends->addDependency(Guid(L"{4F6F6CCE-97EC-624D-96B7-842F1D99D060}"), editor::PdfBuild);	// Solid
+	pipelineDepends->addDependency(Guid(L"{049F4B08-1A54-DB4C-86CC-B533BCFFC65D}"), editor::PdfBuild);	// Textured
+	pipelineDepends->addDependency(Guid(L"{D46877B9-0F90-3A42-AB2D-7346AA607233}"), editor::PdfBuild);	// Solid Mask
+	pipelineDepends->addDependency(Guid(L"{5CDDBEC8-1629-0A4E-ACE5-C8186072D694}"), editor::PdfBuild);	// Textured Mask
+	pipelineDepends->addDependency(Guid(L"{8DCBCF05-4640-884E-95AC-F090510788F4}"), editor::PdfBuild);	// Increment Mask
+	pipelineDepends->addDependency(Guid(L"{57F6F4DF-F4EE-6740-907C-027A3A2596D7}"), editor::PdfBuild);	// Decrement Mask
+	pipelineDepends->addDependency(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"), editor::PdfBuild);	// Textured Quad
 
 	return true;
 }

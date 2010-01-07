@@ -55,7 +55,7 @@ bool ScenePipeline::buildDependencies(
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings().getGuid(), true);
+	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings().getGuid(), editor::PdfBuild);
 	pipelineDepends->addDependency(sceneAsset->getInstance());
 	return true;
 }

@@ -45,11 +45,11 @@ bool EffectPipeline::buildDependencies(
 		const Emitter* emitter = (*i)->getEmitter();
 		if (emitter)
 		{
-			pipelineDepends->addDependency(emitter->getShader().getGuid(), true);
+			pipelineDepends->addDependency(emitter->getShader().getGuid(), editor::PdfBuild);
 
 			const PointSetSource* pointSetSource = dynamic_type_cast< const PointSetSource* >(emitter->getSource());
 			if (pointSetSource)
-				pipelineDepends->addDependency(pointSetSource->getPointSet().getGuid(), true);
+				pipelineDepends->addDependency(pointSetSource->getPointSet().getGuid(), editor::PdfBuild);
 		}
 	}
 
