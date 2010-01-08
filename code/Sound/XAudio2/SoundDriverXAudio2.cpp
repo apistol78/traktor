@@ -90,11 +90,13 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 	if (FAILED(hr))
 		return false;
 
-	hr = m_audio->CreateMasteringVoice(&m_masteringVoice);
+	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels);
 	if (FAILED(hr))
 		return false;
 
-	memset(&m_wfx, 0, sizeof(m_wfx));
+	m_masteringVoice->SetVolume(1.0f);
+
+	std::memset(&m_wfx, 0, sizeof(m_wfx));
 	m_wfx.cbSize = sizeof(m_wfx);
 	m_wfx.wFormatTag = WAVE_FORMAT_PCM;
 	m_wfx.nChannels = desc.hwChannels;
@@ -109,6 +111,7 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 	if (FAILED(hr))
 		return false;
 
+	m_sourceVoice->SetVolume(1.0f);
 	m_sourceVoice->Start(0, 0);
 
 	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
