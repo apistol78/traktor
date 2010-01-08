@@ -1,30 +1,31 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineReport.h"
+#include "Editor/IPipelineSettings.h"
+#include "Mesh/MeshResource.h"
+#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
 #include "Mesh/Editor/MeshPipelineParams.h"
-#include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
-#include "Mesh/MeshResource.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Database.h"
-#include "Database/Group.h"
-#include "Database/Instance.h"
-#include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/ShaderGraph.h"
+#include "Model/Formats/ModelFormat.h"
 #include "Render/External.h"
-#include "Render/Nodes.h"
 #include "Render/FragmentLinker.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Render/Nodes.h"
+#include "Render/ShaderGraph.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 
 namespace traktor
 {
@@ -392,7 +393,16 @@ bool MeshPipeline::buildOutput(
 
 	// Commit resource.
 	outputInstance->setObject(resource);
-	outputInstance->commit();
+	if (!outputInstance->commit())
+	{
+		log::error << L"Mesh pipeline failed; unable to commit output instance" << Endl;
+		return false;
+	}
+
+	// Create report.
+	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Mesh", outputGuid);
+	if (report)
+		report->set(L"type", int32_t(asset->getMeshType()));
 
 	return true;
 }
