@@ -1,3 +1,4 @@
+#include <ctime>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/ISoundBuffer.h"
@@ -24,6 +25,11 @@ struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RandomGrain", 0, RandomGrain, IGrain)
+
+RandomGrain::RandomGrain()
+:	m_random(uint32_t(clock()))
+{
+}
 
 Ref< ISoundBufferCursor > RandomGrain::createCursor(const BankBuffer* bank) const
 {

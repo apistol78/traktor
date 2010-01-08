@@ -26,6 +26,8 @@ class T_DLLCLASS RandomGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
+	RandomGrain();
+
 	virtual Ref< ISoundBufferCursor > createCursor(const BankBuffer* bank) const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
