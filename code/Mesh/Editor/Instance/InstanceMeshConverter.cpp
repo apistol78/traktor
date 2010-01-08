@@ -39,17 +39,17 @@ bool InstanceMeshConverter::convert(
 	log::info << L"Triangulating model..." << Endl;
 	model::triangulateModel(model);
 
+	log::info << L"Sorting materials..." << Endl;
+	sortMaterialsByProjectedArea(model);
+
 	log::info << L"Sorting indices..." << Endl;
 	model::sortPolygonsCacheCoherent(model);
 
 	log::info << L"Calculating tangent bases..." << Endl;
 	model::calculateModelTangents(model, true);
 
-	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model);
-
 	log::info << L"Flatten materials..." << Endl;
-	flattenDoubleSided(model);
+	model::flattenDoubleSided(model);
 
 	// Create vertex declaration.
 	log::info << L"Creating mesh..." << Endl;
