@@ -147,14 +147,8 @@ public:
 		return m_eyePosition;
 	}
 
-	inline const Vector4& getLightPosition(int index) const
-	{
-		return m_lights[index].position;
-	}
-
-	inline const Vector4& getLightDirection(int index) const
-	{
-		return m_lights[index].direction;
+	inline const Light& getLight(int index) const {
+		return m_lights[index];
 	}
 
 	inline Ref< render::ITexture > getShadowMask() const {

@@ -12,13 +12,15 @@ PointLightEntity::PointLightEntity(
 	const Vector4& sunColor,
 	const Vector4& baseColor,
 	const Vector4& shadowColor,
-	float range
+	float range,
+	float randomFlicker
 )
 :	m_transform(transform)
 ,	m_sunColor(sunColor)
 ,	m_baseColor(baseColor)
 ,	m_shadowColor(shadowColor)
 ,	m_range(range)
+,	m_randomFlicker(randomFlicker)
 {
 }
 

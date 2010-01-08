@@ -47,6 +47,35 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 	// Sort instances by ascending distance; note we're sorting caller's vector.
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());
 
+	// Calculate bounding box of all instances.
+	Aabb boundingBoxLocal = m_mesh->getBoundingBox();
+	Aabb boundingBoxWorld;
+	for (AlignedVector< instance_distance_t >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
+	{
+		Vector4 translation(
+			i->first.translation[0],
+			i->first.translation[1],
+			i->first.translation[2],
+			0.0f
+		);
+
+		Quaternion rotation(
+			i->first.rotation[0],
+			i->first.rotation[1],
+			i->first.rotation[2],
+			i->first.rotation[3]
+		);
+
+		boundingBoxWorld.contain(boundingBoxLocal.transform(Transform(
+			translation,
+			rotation
+		)));
+	}
+
+	// Transform bounding box into origo; keep translation as matrix.
+	Matrix44 boundingBoxCenter = translate(boundingBoxWorld.getCenter());
+	boundingBoxWorld.transform(Transform(-boundingBoxWorld.getCenter()));
+
 	const std::vector< render::Mesh::Part >& parts = m_mesh->getParts();
 	T_ASSERT (parts.size() == m_parts.size());
 
@@ -89,7 +118,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				reinterpret_cast< const Vector4* >(instanceBatch),
 				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 			);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams);
+			worldRenderView->setShaderParameters(renderBlock->shaderParams, boundingBoxCenter, boundingBoxCenter, boundingBoxWorld);
 			renderBlock->shaderParams->endParameters(renderContext);
 
 			renderBlock->type = render::RbtOpaque;

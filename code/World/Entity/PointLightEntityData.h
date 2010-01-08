@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -28,19 +28,22 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const Vector4& getSunColor() const { return m_sunColor; }
+	const Vector4& getSunColor() const { return m_sunColor; }
 
-	inline const Vector4& getBaseColor() const { return m_baseColor; }
+	const Vector4& getBaseColor() const { return m_baseColor; }
 
-	inline const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Vector4& getShadowColor() const { return m_shadowColor; }
 
-	inline float getRange() const { return m_range; }
+	float getRange() const { return m_range; }
+
+	float getRandomFlicker() const { return m_randomFlicker; }
 
 private:
 	Vector4 m_sunColor;
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
 	float m_range;
+	float m_randomFlicker;
 };
 
 	}
