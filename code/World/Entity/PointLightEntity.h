@@ -29,7 +29,8 @@ public:
 		const Vector4& sunColor,
 		const Vector4& baseColor,
 		const Vector4& shadowColor,
-		float range
+		float range,
+		float randomFlicker
 	);
 
 	virtual void update(const EntityUpdate* update);
@@ -40,13 +41,15 @@ public:
 
 	virtual Aabb getBoundingBox() const;
 
-	inline const Vector4& getSunColor() const { return m_sunColor; }
+	const Vector4& getSunColor() const { return m_sunColor; }
 
-	inline const Vector4& getBaseColor() const { return m_baseColor; }
+	const Vector4& getBaseColor() const { return m_baseColor; }
 
-	inline const Vector4& getShadowColor() const { return m_shadowColor; }
+	const Vector4& getShadowColor() const { return m_shadowColor; }
 
-	inline float getRange() const { return m_range; }
+	float getRange() const { return m_range; }
+
+	float getRandomFlicker() const { return m_randomFlicker; }
 
 private:
 	Transform m_transform;
@@ -54,6 +57,7 @@ private:
 	Vector4 m_baseColor;
 	Vector4 m_shadowColor;
 	float m_range;
+	float m_randomFlicker;
 };
 
 	}

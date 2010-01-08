@@ -37,7 +37,8 @@ Ref< Entity > LightEntityFactory::createEntity(IEntityBuilder* builder, const st
 			pointLightData->getSunColor(),
 			pointLightData->getBaseColor(),
 			pointLightData->getShadowColor(),
-			pointLightData->getRange()
+			pointLightData->getRange(),
+			pointLightData->getRandomFlicker()
 		);
 	}
 	return 0;

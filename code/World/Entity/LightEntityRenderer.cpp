@@ -11,6 +11,11 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightEntityRenderer", LightEntityRenderer, IEntityRenderer)
 
+LightEntityRenderer::LightEntityRenderer()
+:	m_randomFlicker(0.0f)
+{
+}
+
 const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
@@ -60,6 +65,14 @@ void LightEntityRenderer::render(
 		light.shadowColor = pointLightEntity->getShadowColor();
 		light.range = Scalar(pointLightEntity->getRange());
 
+		if (pointLightEntity->getRandomFlicker() > FUZZY_EPSILON)
+		{
+			Scalar randomFlicker(1.0f - pointLightEntity->getRandomFlicker() * m_randomFlicker);
+			light.sunColor *= randomFlicker;
+			light.baseColor *= randomFlicker;
+			light.shadowColor *= randomFlicker;
+		}
+
 		worldRenderView->addLight(light);
 	}
 }
@@ -69,6 +82,7 @@ void LightEntityRenderer::flush(
 	WorldRenderView* worldRenderView
 )
 {
+	m_randomFlicker = m_random.nextFloat() * 0.5f + m_randomFlicker * 0.5f;
 }
 
 	}

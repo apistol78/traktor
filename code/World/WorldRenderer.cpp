@@ -402,12 +402,18 @@ void WorldRenderer::flush(int frame)
 
 void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)
 {
+	const WorldRenderView::Light& light = worldRenderView.getLight(0);
+	if (light.type != WorldRenderView::LtDirectional)
+	{
+		// Only primary light as directional enables shadows; do no-shadows path instead.
+		buildNoShadows(worldRenderView, deltaTime, entity, frame);
+		return;
+	}
+
 	Frame& f = m_frames[frame];
 
 	Matrix44 projection = worldRenderView.getProjection();
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
-	Vector4 lightPosition = worldRenderView.getLightPosition(0);
-	Vector4 lightDirection = worldRenderView.getLightDirection(0);
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Frustum cullFrustum = worldRenderView.getCullFrustum();
 	
@@ -424,8 +430,8 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	calculateUniformSMProj(
 		m_settings,
 		viewInverse,
-		lightPosition,
-		lightDirection,
+		light.position,
+		light.direction,
 		shadowViewFrustum,
 		shadowLightView,
 		shadowLightProjection,
