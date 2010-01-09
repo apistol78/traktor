@@ -167,22 +167,18 @@ void PointRenderer::render(
 
 			for (int j = 0; j < 4; ++j)
 			{
-				vertex->positionAndOrientation.position[0] = point.position.x();
-				vertex->positionAndOrientation.position[1] = point.position.y();
-				vertex->positionAndOrientation.position[2] = point.position.z();
+				point.position.store(vertex->positionAndOrientation.position);
+				point.velocity.store(vertex->velocityAndRandom.velocity);
+				point.color.store(vertex->attrib2.color);
+
 				vertex->positionAndOrientation.orientation = point.orientation;
-				vertex->velocityAndRandom.velocity[0] = point.velocity.x();
-				vertex->velocityAndRandom.velocity[1] = point.velocity.y();
-				vertex->velocityAndRandom.velocity[2] = point.velocity.z();
 				vertex->velocityAndRandom.random = point.random;
 				vertex->attrib1.extent[0] = c_extents[j][0];
 				vertex->attrib1.extent[1] = c_extents[j][1];
 				vertex->attrib1.alpha = alpha;
 				vertex->attrib1.size = point.size;
-				vertex->attrib2.color[0] = point.color.x();
-				vertex->attrib2.color[1] = point.color.y();
-				vertex->attrib2.color[2] = point.color.z();
 				vertex->attrib2.age = age;
+
 				vertex++;
 			}
 
