@@ -1,14 +1,47 @@
+#include <xmmintrin.h>
+#include "Core/Memory/Alloc.h"
 #include "Render/Dx9/ParameterCache.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+bool compareEqual4(const float* ptr1, const float* ptr2, size_t count)
+{
+	T_ASSERT ((count & 3) == 0);
+
+	for (size_t i = 0; i < (count >> 2); ++i)
+	{
+		__m128 r1 = _mm_load_ps(ptr1);
+		__m128 r2 = _mm_load_ps(ptr2);
+		__m128 eq =_mm_cmpeq_ps(r1, r2);
+
+		int mm = _mm_movemask_ps(eq);
+		if (mm != 15)
+			return false;
+
+		ptr1 += 4;
+		ptr2 += 4;
+	}
+
+	return true;
+}
+
+		}
 
 ParameterCache::ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice)
 :	Unmanaged(listener)
+,	m_vertexConstantsShadow(0)
+,	m_pixelConstantsShadow(0)
 {
 	Unmanaged::addToListener();
+
+	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
+	m_pixelConstantsShadow = (float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16);
+
 	lostDevice();
 	resetDevice(d3dDevice);
 }
@@ -16,6 +49,9 @@ ParameterCache::ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3
 ParameterCache::~ParameterCache()
 {
 	Unmanaged::removeFromListener();
+
+	Alloc::freeAlign(m_pixelConstantsShadow);
+	Alloc::freeAlign(m_vertexConstantsShadow);
 }
 
 void ParameterCache::setVertexShader(IDirect3DVertexShader9* d3dVertexShader)
@@ -38,9 +74,9 @@ void ParameterCache::setPixelShader(IDirect3DPixelShader9* d3dPixelShader)
 
 void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
-	float* shadow = &m_vertexConstantsShadow[registerOffset];
+	float* shadow = &m_vertexConstantsShadow[registerOffset * 4];
 
-	if (std::memcmp(shadow, constantData, registerCount * 4 * sizeof(float)) == 0)
+	if (compareEqual4(shadow, constantData, registerCount * 4))
 		return;
 
 	m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
@@ -50,9 +86,9 @@ void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t r
 
 void ParameterCache::setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
-	float* shadow = &m_pixelConstantsShadow[registerOffset];
+	float* shadow = &m_pixelConstantsShadow[registerOffset * 4];
 
-	if (std::memcmp(shadow, constantData, registerCount * 4 * sizeof(float)) == 0)
+	if (compareEqual4(shadow, constantData, registerCount * 4))
 		return;
 
 	m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);

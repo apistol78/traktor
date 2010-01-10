@@ -51,8 +51,8 @@ private:
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
 	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
-	float m_vertexConstantsShadow[VertexConstantCount * 4];
-	float m_pixelConstantsShadow[PixelConstantCount * 4];
+	float* m_vertexConstantsShadow;
+	float* m_pixelConstantsShadow;
 	ComRef< IDirect3DBaseTexture9 > m_vertexTextureShadow[VertexTextureCount];
 	ComRef< IDirect3DBaseTexture9 > m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;
