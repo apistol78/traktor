@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
@@ -15,9 +16,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -60,8 +61,6 @@ public:
 	ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache);
 
 	virtual ~ProgramWin32();
-
-	static Ref< ProgramResourceDx9 > compile(const HlslProgram& hlslProgram, int optimize, bool validate);
 
 	bool create(
 		IDirect3DDevice9* d3dDevice,
@@ -115,7 +114,7 @@ private:
 	std::vector< Sampler > m_pixelSamplers;
 	StateBlockDx9 m_state;
 	ParameterMap m_parameterMap;
-	std::vector< float > m_uniformFloatData;
+	AlignedVector< float > m_uniformFloatData;
 	RefArray< ITexture > m_samplerTextures;
 	bool m_dirty;
 };
