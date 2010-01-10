@@ -164,7 +164,7 @@ bool ProgramWin32::create(
 			uint16_t offset = uint32_t(m_uniformFloatData.size());
 			j->second.offset = offset;
 			m_parameterMap.set(j->first, offset);
-			m_uniformFloatData.resize(offset + j->second.length);
+			m_uniformFloatData.resize(offset + std::max< uint16_t >(j->second.length, 4), 0.0f);
 		}
 		m_vertexUniforms.push_back(j->second);
 	}
@@ -180,7 +180,7 @@ bool ProgramWin32::create(
 			uint16_t offset = uint32_t(m_uniformFloatData.size());
 			j->second.offset = offset;
 			m_parameterMap.set(j->first, offset);
-			m_uniformFloatData.resize(offset + j->second.length);
+			m_uniformFloatData.resize(offset + std::max< uint16_t >(j->second.length, 4), 0.0f);
 		}
 		m_pixelUniforms.push_back(j->second);
 	}
