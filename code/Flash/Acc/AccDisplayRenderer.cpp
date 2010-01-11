@@ -23,8 +23,8 @@ namespace traktor
 
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
-const uint32_t c_maxCachedGlyphs = 16;
-const uint32_t c_cacheGlyphSize = 256;
+const uint32_t c_maxCachedGlyphs = 32;
+const uint32_t c_cacheGlyphSize = 128;
 const uint32_t c_cacheGlyphMargin = 4;
 
 		}

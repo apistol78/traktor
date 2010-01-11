@@ -20,6 +20,7 @@ namespace traktor
 	{
 
 class ContextDx9;
+class ParameterCache;
 struct RenderTargetSetCreateDesc;
 struct RenderTargetCreateDesc;
 
@@ -51,7 +52,14 @@ public:
 
 	bool resolve(IDirect3DDevice9* d3dDevice);
 
-	void clear(IDirect3DDevice9* d3dDevice, DWORD flags, const float color[4], float z, DWORD stencil);
+	void clear(
+		IDirect3DDevice9* d3dDevice,
+		ParameterCache* parameterCache,
+		DWORD flags,
+		const float color[4],
+		float z,
+		DWORD stencil
+	);
 
 	inline IDirect3DSurface9* getD3DColorSurface() const {
 		return m_d3dTargetSurface;
@@ -63,6 +71,7 @@ private:
 	int m_height;
 	ComRef< ID3DXEffect > m_d3dClearEffect;
 	D3DXHANDLE m_d3dClearTechnique;
+	D3DXHANDLE m_d3dClearColor;
 	ComRef< IDirect3DTexture9 > m_d3dTargetTexture;
 	ComRef< IDirect3DSurface9 > m_d3dTargetSurface;
 	ComRef< IDirect3DSurface9 > m_d3dResolveTargetSurface;
