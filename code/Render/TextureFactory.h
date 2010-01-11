@@ -33,7 +33,7 @@ class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	TextureFactory(db::Database* db, IRenderSystem* renderSystem);
+	TextureFactory(db::Database* db, IRenderSystem* renderSystem, int32_t skipMips);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -44,6 +44,7 @@ public:
 private:
 	Ref< db::Database > m_db;
 	Ref< IRenderSystem > m_renderSystem;
+	int32_t m_skipMips;
 };
 
 	}
