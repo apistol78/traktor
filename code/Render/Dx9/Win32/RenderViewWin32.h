@@ -21,6 +21,7 @@ namespace traktor
 	namespace render
 	{
 
+class ParameterCache;
 class RenderSystemWin32;
 class RenderTargetSetWin32;
 class RenderTargetWin32;
@@ -41,6 +42,7 @@ class T_DLLCLASS RenderViewWin32
 public:
 	RenderViewWin32(
 		ContextDx9* context,
+		ParameterCache* parameterCache,
 		const RenderViewCreateDesc& createDesc,
 		RenderSystemWin32* renderSystem,
 		const D3DPRESENT_PARAMETERS& d3dPresent,
@@ -107,6 +109,7 @@ private:
 	};
 
 	Ref< ContextDx9 > m_context;
+	ParameterCache* m_parameterCache;
 	RenderViewCreateDesc m_createDesc;
 	Ref< RenderSystemWin32 > m_renderSystem;
 	IDirect3DDevice9* m_d3dDevice;
@@ -121,12 +124,15 @@ private:
 	Ref< VertexBufferDx9 > m_currentVertexBuffer;
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
 	Ref< ProgramWin32 > m_currentProgram;
+	bool m_targetDirty;
 
 #if defined(_DEBUG)
 	LONG m_ownerThread;
 	uint32_t m_frameCount;
 	uint32_t m_drawCalls;
 #endif
+
+	void bindTargets();
 };
 
 	}

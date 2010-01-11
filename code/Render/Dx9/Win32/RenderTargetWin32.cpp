@@ -1,9 +1,10 @@
-#include "Render/Dx9/Win32/RenderTargetWin32.h"
-#include "Render/Dx9/Win32/ProgramWin32.h"
+#include "Render/Types.h"
 #include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/ContextDx9.h"
+#include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
-#include "Render/Types.h"
+#include "Render/Dx9/Win32/RenderTargetWin32.h"
+#include "Render/Dx9/Win32/ProgramWin32.h"
 
 namespace traktor
 {
@@ -42,15 +43,6 @@ const char c_clearEffect[] =
 	"{													\r\n"
 	"	pass Clear										\r\n"
 	"	{												\r\n"
-	"		AlphaBlendEnable = FALSE;					\r\n"
-	"		AlphaTestEnable = FALSE;					\r\n"
-	"		CullMode = NONE;							\r\n"
-	"		ColorWriteEnable = RED|GREEN|BLUE|ALPHA;	\r\n"
-	"		StencilEnable = FALSE;						\r\n"
-	"		ZEnable = FALSE;							\r\n"
-	"		ZFunc = ALWAYS;								\r\n"
-	"		ZWriteEnable = FALSE;						\r\n"
-
 	"		VertexShader = compile vs_2_0 vs_main();	\r\n"
 	"		PixelShader = compile ps_2_0 ps_main();		\r\n"
 	"	}												\r\n"
@@ -150,6 +142,10 @@ bool RenderTargetWin32::create(
 
 		T_ASSERT (m_d3dClearEffect);
 		m_d3dClearTechnique = m_d3dClearEffect->GetTechniqueByName("Clear");
+		m_d3dClearColor = m_d3dClearEffect->GetParameterByName(NULL, "g_ClearColor");
+
+		hr = m_d3dClearEffect->SetTechnique(m_d3dClearTechnique);
+		T_ASSERT (SUCCEEDED(hr));
 	}
 
 	return true;
@@ -201,7 +197,14 @@ bool RenderTargetWin32::resolve(IDirect3DDevice9* d3dDevice)
 	return SUCCEEDED(hr);
 }
 
-void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const float color[4], float z, DWORD stencil)
+void RenderTargetWin32::clear(
+	IDirect3DDevice9* d3dDevice,
+	ParameterCache* parameterCache,
+	DWORD flags,
+	const float color[4],
+	float z,
+	DWORD stencil
+)
 {
 	if (m_d3dClearEffect)
 	{
@@ -229,18 +232,22 @@ void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const fl
 		hr = d3dDevice->SetViewport(&d3dvp);
 		T_ASSERT (SUCCEEDED(hr));
 
-		hr = m_d3dClearEffect->SetTechnique(m_d3dClearTechnique);
-		T_ASSERT (SUCCEEDED(hr));
-
-		hr = m_d3dClearEffect->Begin(&passes, 0);
+		hr = m_d3dClearEffect->Begin(&passes, D3DXFX_DONOTSAVESTATE);
 		T_ASSERT (SUCCEEDED(hr));
 		if (FAILED(hr))
 			return;
 
-		m_d3dClearEffect->BeginPass(0);
+		// Use our own state cache to setup render states.
+		parameterCache->setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		parameterCache->setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		parameterCache->setRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		parameterCache->setRenderState(D3DRS_COLORWRITEENABLE, D3DCOLORWRITEENABLE_RED | D3DCOLORWRITEENABLE_GREEN | D3DCOLORWRITEENABLE_BLUE | D3DCOLORWRITEENABLE_ALPHA);
+		parameterCache->setRenderState(D3DRS_STENCILENABLE, FALSE);
+		parameterCache->setRenderState(D3DRS_ZENABLE, FALSE);
+		parameterCache->setRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
+		parameterCache->setRenderState(D3DRS_ZWRITEENABLE, FALSE);
 
-		D3DXHANDLE handle = m_d3dClearEffect->GetParameterByName(NULL, "g_ClearColor");
-		T_ASSERT (handle != 0);
+		m_d3dClearEffect->BeginPass(0);
 
 		D3DXVECTOR4 clearColor(
 			color[0],
@@ -248,7 +255,7 @@ void RenderTargetWin32::clear(IDirect3DDevice9* d3dDevice, DWORD flags, const fl
 			color[2],
 			color[3]
 		);
-		hr = m_d3dClearEffect->SetVector(handle, &clearColor);
+		hr = m_d3dClearEffect->SetVector(m_d3dClearColor, &clearColor);
 		T_ASSERT (SUCCEEDED(hr));
 
 		hr = d3dDevice->SetFVF(D3DFVF_XYZ);

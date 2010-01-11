@@ -24,7 +24,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
-#define T_ENABLE_NVIDIA_PERHUD 1
+#define T_ENABLE_NVIDIA_PERHUD 0
 
 namespace traktor
 {
@@ -325,6 +325,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 
 	return new RenderViewWin32(
 		m_context,
+		m_parameterCache,
 		desc,
 		this,
 		d3dPresent,
@@ -374,6 +375,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 
 	return new RenderViewWin32(
 		m_context,
+		m_parameterCache,
 		desc,
 		this,
 		d3dPresent,

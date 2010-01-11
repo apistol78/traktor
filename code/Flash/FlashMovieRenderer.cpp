@@ -237,19 +237,23 @@ void FlashMovieRenderer::renderCharacter(
 			// Render each glyph.
 			for (uint32_t j = 0; j < line.length(); ++j)
 			{
-				uint16_t glyphIndex = font->lookupIndex(line[j]);
+				wchar_t ch = line[j];
+				uint16_t glyphIndex = font->lookupIndex(ch);
 
-				const FlashShape* glyphShape = font->getShape(glyphIndex);
-				if (!glyphShape)
-					continue;
+				if (iswgraph(ch))
+				{
+					const FlashShape* glyphShape = font->getShape(glyphIndex);
+					if (!glyphShape)
+						continue;
 
-				m_displayRenderer->renderGlyph(
-					*movie,
-					transform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
-					*glyphShape,
-					color,
-					characterInstance->getColorTransform()
-				);
+					m_displayRenderer->renderGlyph(
+						*movie,
+						transform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
+						*glyphShape,
+						color,
+						characterInstance->getColorTransform()
+					);
+				}
 
 				int16_t glyphAdvance = font->getAdvance(glyphIndex);
 				if (j < line.length() - 1)
