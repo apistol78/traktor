@@ -56,7 +56,7 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new mesh::StaticMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));

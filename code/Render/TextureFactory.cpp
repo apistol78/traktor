@@ -31,9 +31,10 @@ uint32_t mipChainSize(TextureFormat format, int width, int height, int mipCount)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureFactory", TextureFactory, resource::IResourceFactory)
 
-TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem)
+TextureFactory::TextureFactory(db::Database* db, IRenderSystem* renderSystem, int32_t skipMips)
 :	m_db(db)
 ,	m_renderSystem(renderSystem)
+,	m_skipMips(skipMips)
 {
 }
 
@@ -89,11 +90,12 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	if (!isCubeMap)
 	{
-		SimpleTextureCreateDesc desc;
+		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
 
-		desc.width = imageWidth;
-		desc.height = imageHeight;
-		desc.mipCount = mipCount;
+		SimpleTextureCreateDesc desc;
+		desc.width = imageWidth >> skipMips;
+		desc.height = imageHeight >> skipMips;
+		desc.mipCount = mipCount - skipMips;
 		desc.format = (TextureFormat)texelFormat;
 		desc.immutable = true;
 
@@ -119,14 +121,24 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			uint32_t blockHeight = (mipHeight + blockDenom - 1) / blockDenom;
 			uint32_t blockCount = blockWidth * blockHeight;
 
-			desc.initialData[i].data = data;
-			desc.initialData[i].pitch = getTextureRowPitch(desc.format, mipWidth);
+			if (i >= skipMips)
+			{
+				desc.initialData[i - skipMips].data = data;
+				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
 
-			int nread = readerData.read(data, blockCount * blockSize, 1);
-			T_ASSERT (nread == blockCount * blockSize);
+				int nread = readerData.read(data, blockCount * blockSize, 1);
+				T_ASSERT (nread == blockCount * blockSize);
 
-			data += blockCount * blockSize;
-			T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
+				data += blockCount * blockSize;
+				T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
+			}
+			else
+			{
+				readerStream->seek(
+					IStream::SeekCurrent,
+					blockCount * blockSize
+				);
+			}
 		}
 
 		texture = m_renderSystem->createSimpleTexture(desc);

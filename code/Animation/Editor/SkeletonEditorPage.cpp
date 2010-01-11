@@ -118,7 +118,7 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		new render::TextureFactory(database, renderSystem)
+		new render::TextureFactory(database, renderSystem, 0)
 	);
 	m_resourceManager->addFactory(
 		new render::ShaderFactory(database, renderSystem)
