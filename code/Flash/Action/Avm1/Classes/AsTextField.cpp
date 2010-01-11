@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -51,11 +52,19 @@ ActionValue AsTextField::construct(ActionContext* context, const args_t& args)
 
 void AsTextField::TextField_get_text(CallArgs& ca)
 {
-	//Ref< FlashEditInstance > editInstance = dynamic_type_cast< FlashEditInstance* >(ca.self);
-	//if (editInstance)
-	//	ca.ret = editInstance->getText();
-	//else
-	//	log::warning << L"Cannot get text from static text fields" << Endl;
+	Ref< FlashEditInstance > editInstance = dynamic_type_cast< FlashEditInstance* >(ca.self);
+	if (editInstance)
+	{
+		StringOutputStream ss;
+
+		const FlashEditInstance::text_t& text = editInstance->getText();
+		for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
+			ss << *i << Endl;
+
+		ca.ret = ActionValue(ss.str());
+	}
+	else
+		log::warning << L"Cannot get text from static text fields" << Endl;
 }
 
 void AsTextField::TextField_set_text(CallArgs& ca)
