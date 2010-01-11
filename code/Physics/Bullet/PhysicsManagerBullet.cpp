@@ -38,6 +38,9 @@ namespace traktor
 
 uint32_t getGroup(const btCollisionObject* collisionObject)
 {
+	if (!collisionObject)
+		return ~0UL;
+
 	Body* body = static_cast< Body* >(collisionObject->getUserPointer());
 	if (!body)
 		return ~0UL;
@@ -724,8 +727,8 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	btCollisionObject* colObj0 = static_cast< btCollisionObject* >(collisionPair.m_pProxy0->m_clientObject);
 	btCollisionObject* colObj1 = static_cast< btCollisionObject* >(collisionPair.m_pProxy1->m_clientObject);
 
-	Body* body1 = static_cast< Body* >(colObj0->getUserPointer());
-	Body* body2 = static_cast< Body* >(colObj1->getUserPointer());
+	Body* body1 = colObj0 ? static_cast< Body* >(colObj0->getUserPointer()) : 0;
+	Body* body2 = colObj1 ? static_cast< Body* >(colObj1->getUserPointer()) : 0;
 	if (body1 && body2)
 	{
 		uint32_t group1 = 0, group2 = 0;
