@@ -34,6 +34,8 @@ bool compareEqual4(const float* ptr1, const float* ptr2, size_t count)
 
 ParameterCache::ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice)
 :	Unmanaged(listener)
+,	m_d3dVertexShader(0)
+,	m_d3dPixelShader(0)
 ,	m_vertexConstantsShadow(0)
 ,	m_pixelConstantsShadow(0)
 {
