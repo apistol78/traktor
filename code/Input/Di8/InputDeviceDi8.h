@@ -26,6 +26,8 @@ class T_DLLCLASS InputDeviceDi8 : public IInputDevice
 public:
 	InputDeviceDi8(IDirectInputDevice8* diDevice);
 
+	virtual ~InputDeviceDi8();
+
 	virtual std::wstring getName() const;
 
 	virtual InputCategory getCategory() const;

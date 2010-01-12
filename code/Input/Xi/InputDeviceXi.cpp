@@ -33,7 +33,7 @@ InputDeviceXi::InputDeviceXi(DWORD controller)
 
 std::wstring InputDeviceXi::getName() const
 {
-	return L"Joystick " + toString(m_controller);
+	return L"Xbox360 joypad " + toString(m_controller);
 }
 
 InputCategory InputDeviceXi::getCategory() const

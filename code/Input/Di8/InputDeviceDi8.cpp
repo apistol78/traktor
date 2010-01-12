@@ -1,6 +1,7 @@
-#include "Input/Di8/InputDeviceDi8.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Input/Di8/InputDeviceDi8.h"
+#include "Input/Di8/TypesDi8.h"
 
 namespace traktor
 {
@@ -16,16 +17,26 @@ float adjustDeadZone(float value)
 	return value;
 }
 
+bool povInRange(DWORD pov, DWORD mn, DWORD mx)
+{
+	if (LOWORD(pov) == 0xffff)
+		return false;
+	else
+		return pov >= mn && pov <= mx;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceDi8", InputDeviceDi8, IInputDevice)
 
 InputDeviceDi8::InputDeviceDi8(IDirectInputDevice8* device)
 :	m_device(device)
+,	m_state(0)
+,	m_connected(false)
 {
 	HRESULT hr;
 	
-	memset(&m_deviceDesc, 0, sizeof(DIDEVICEINSTANCE));
+	std::memset(&m_deviceDesc, 0, sizeof(DIDEVICEINSTANCE));
 	m_deviceDesc.dwSize = sizeof(DIDEVICEINSTANCE);
 
 	hr = device->GetDeviceInfo(&m_deviceDesc);
@@ -50,7 +61,12 @@ InputDeviceDi8::InputDeviceDi8(IDirectInputDevice8* device)
 	}
 
 	hr = device->Acquire();
-	T_ASSERT(SUCCEEDED(hr));
+	m_connected = SUCCEEDED(hr);
+}
+
+InputDeviceDi8::~InputDeviceDi8()
+{
+	delete m_state;
 }
 
 std::wstring InputDeviceDi8::getName() const
@@ -65,25 +81,24 @@ InputCategory InputDeviceDi8::getCategory() const
 	case DI8DEVTYPE_1STPERSON:
 	case DI8DEVTYPE_MOUSE:
 		return CtMouse;
-		break;
 
 	case DI8DEVTYPE_KEYBOARD:
 		return CtKeyboard;
-		break;
 
 	case DI8DEVTYPE_JOYSTICK:
 	case DI8DEVTYPE_GAMEPAD:
 	case DI8DEVTYPE_DRIVING:
 	case DI8DEVTYPE_FLIGHT:
-	default:
 		return CtJoystick;
-		break;
+
+	default:
+		return CtUnknown;
 	}
 }
 
 bool InputDeviceDi8::isConnected() const
 {
-	return true;
+	return m_connected;
 }
 
 int InputDeviceDi8::getControlCount()
@@ -94,7 +109,7 @@ int InputDeviceDi8::getControlCount()
 		return 0;	// TODO: Fix me
 
 	case CtKeyboard:
-		return 256;
+		return sizeof_array(c_di8ControlKeys);
 
 	case CtJoystick:
 		return 0;	// TODO: Fix me
@@ -114,7 +129,8 @@ bool InputDeviceDi8::isControlAnalogue(int control) const
 
 float InputDeviceDi8::getControlValue(int control)
 {
-#define KEYDOWN(name, key) (name[key] & 0x80)
+	if (!m_connected)
+		return 0.0f;
 
 	switch (getCategory())
 	{
@@ -123,39 +139,14 @@ float InputDeviceDi8::getControlValue(int control)
 
 	case CtKeyboard:
 		{
-			const uint8_t* state = static_cast< const uint8_t* >(m_state);
-			switch (control)
+			DWORD dik = c_di8ControlKeys[control];
+			if (dik != 0)
 			{
-			case DtUp:
-				return (state[DIK_W] & 0x80) ? 1.0f : 0.0f;
-
-			case DtDown:
-				return (state[DIK_S] & 0x80) ? 1.0f : 0.0f;
-
-			case DtLeft:
-				return (state[DIK_A] & 0x80) ? 1.0f : 0.0f;
-
-			case DtRight:
-				return (state[DIK_D] & 0x80) ? 1.0f : 0.0f;
-
-			case DtSelect:
-				return (state[DIK_RETURN] & 0x80) ? 1.0f : 0.0f;
-
-			case DtCancel:
-				return (state[DIK_ESCAPE] & 0x80) ? 1.0f : 0.0f;
-
-			case DtButton1:
-				return (state[DIK_1] & 0x80) ? 1.0f : 0.0f;
-
-			case DtButton2:
-				return (state[DIK_2] & 0x80) ? 1.0f : 0.0f;
-
-			case DtButton3:
-				return (state[DIK_3] & 0x80) ? 1.0f : 0.0f;
-
-			case DtButton4:
-				return (state[DIK_4] & 0x80) ? 1.0f : 0.0f;
+				const uint8_t* state = static_cast< const uint8_t* >(m_state);
+				return (state[dik] & 0x80) ? 1.0f : 0.0f;
 			}
+			else
+				return 0;
 		}
 		break;
 
@@ -165,22 +156,23 @@ float InputDeviceDi8::getControlValue(int control)
 			switch (control)
 			{
 			case DtUp:
-				return (state->rgbButtons[3] == 0.0f) ? 0.0f : 1.0f;
+				if (
+					povInRange(state->rgdwPOV[0], 31500, 36000) ||
+					povInRange(state->rgdwPOV[0], 0, 4500)
+				)
+					return 1.0f;
 
 			case DtDown:
-				return (state->rgbButtons[1] == 0.0f) ? 0.0f : 1.0f;
+				if (povInRange(state->rgdwPOV[0], 13500, 22500))
+					return 1.0f;
 
 			case DtLeft:
-				return (state->rgbButtons[0] == 0.0f) ? 0.0f : 1.0f;
+				if (povInRange(state->rgdwPOV[0], 22500, 31500))
+					return 1.0f;
 
 			case DtRight:
-				return (state->rgbButtons[2] == 0.0f) ? 0.0f : 1.0f;
-
-			case DtSelect:
-				return (state->rgbButtons[9] == 0.0f) ? 0.0f : 1.0f;
-
-			case DtCancel:
-				return (state->rgbButtons[10] == 0.0f) ? 0.0f : 1.0f;
+				if (povInRange(state->rgdwPOV[0], 4500, 13500))
+					return 1.0f;
 
 			case DtThumbLeftX:
 				return adjustDeadZone((state->lX - 32767.0f) / 32767.0f);
@@ -193,6 +185,36 @@ float InputDeviceDi8::getControlValue(int control)
 
 			case DtThumbRightY:
 				return adjustDeadZone((state->lRz - 32767.0f) / 32767.0f);
+
+			case DtButton1:
+				return ((state->rgbButtons[1] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtButton2:
+				return ((state->rgbButtons[2] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtButton3:
+				return ((state->rgbButtons[0] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtButton4:
+				return ((state->rgbButtons[3] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtSelect:
+				return ((state->rgbButtons[9] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtCancel:
+				return ((state->rgbButtons[8] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtTriggerLeft:
+				return ((state->rgbButtons[6] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtTriggerRight:
+				return ((state->rgbButtons[7] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtShoulderLeft:
+				return ((state->rgbButtons[4] & 0x80) != 0) ? 1.0f : 0.0f;
+
+			case DtShoulderRight:
+				return ((state->rgbButtons[5] & 0x80) != 0) ? 1.0f : 0.0f;
 			}
 		}
 		break;
@@ -215,11 +237,20 @@ void InputDeviceDi8::readState()
 {
 	HRESULT hr;
 
+	if (!m_connected)
+	{
+		hr = m_device->Acquire();
+		m_connected = SUCCEEDED(hr);
+		if (!m_connected)
+			return;
+	}
+
 	hr = m_device->Poll();
 	if (FAILED(hr))  
 	{
 		hr = m_device->Acquire();
-		if (FAILED(hr))
+		m_connected = SUCCEEDED(hr);
+		if (!m_connected)
 			return;
 	}
 
@@ -238,7 +269,7 @@ void InputDeviceDi8::readState()
 		break;
 	}
 
-	T_ASSERT(SUCCEEDED(hr));
+	m_connected = SUCCEEDED(hr);	
 }
 
 bool InputDeviceDi8::supportRumble() const
