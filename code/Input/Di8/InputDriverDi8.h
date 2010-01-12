@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_DI8_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,7 +31,7 @@ public:
 
 	virtual ~InputDriverDi8();
 
-	bool create(HWND hWnd);
+	bool create(void* nativeWindowHandle, uint32_t inputCategories);
 
 	void destroy();
 
@@ -45,6 +45,7 @@ private:
 	bool addDevice(const DIDEVICEINSTANCE* instance);
 
 	HWND m_hWnd;
+	uint32_t m_inputCategories;
 	RefArray< InputDeviceDi8 > m_devices;
 	ComRef< IDirectInput8 > m_directInput;
 };

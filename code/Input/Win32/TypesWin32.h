@@ -1,0 +1,186 @@
+#ifndef traktor_input_TypesWin32_H
+#define traktor_input_TypesWin32_H
+
+namespace traktor
+{
+	namespace input
+	{
+
+/*! \brief InputDefaultControlType to VK mapping. */
+const DWORD c_vkControlKeys[] =
+{
+	0,
+
+	'W',
+	'S',
+	'A',
+	'D',
+	VK_RETURN,
+	VK_ESCAPE,
+	0,
+	0,
+	0,
+	0,				// 10
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	'1',
+	'2',
+	'3',
+	'4',			// 20
+	0,
+	0,
+
+	VK_ESCAPE,
+	'1',
+	'2',
+	'3',
+	'4',
+	'5',
+	'6',
+	'7',			// 30
+	'8',
+	'9',
+	'0',
+	'-',
+	'=',
+	VK_BACK,
+	VK_TAB,
+	'Q',
+	'W',
+	'E',			// 40
+	'R',
+	'T',
+	'Y',
+	'U',
+	'I',
+	'O',
+	'P',
+	'[',
+	']',
+	VK_RETURN,		// 50
+	VK_LCONTROL,
+	'A',
+	'S',
+	'D',
+	'F',
+	'G',
+	'H',
+	'J',
+	'K',
+	'L',			// 60
+	';',
+	'\"',
+	'\'',
+	VK_LSHIFT,
+	'\\',
+	'Z',
+	'X',
+	'C',
+	'V',
+	'B',			// 70
+	'N',
+	'M',
+	',',
+	'.',
+	'/',
+	VK_RSHIFT,
+	VK_MULTIPLY,
+	VK_LMENU,
+	VK_SPACE,
+	VK_CAPITAL,		// 80
+	VK_F1,
+	VK_F2,
+	VK_F3,
+	VK_F4,
+	VK_F5,
+	VK_F6,
+	VK_F7,
+	VK_F8,
+	VK_F9,
+	VK_F10,			// 90
+	VK_NUMLOCK,
+	VK_SCROLL,
+	VK_NUMPAD7,
+	VK_NUMPAD8,
+	VK_NUMPAD9,
+	VK_SUBTRACT,
+	VK_NUMPAD4,
+	VK_NUMPAD5,
+	VK_NUMPAD6,
+	VK_ADD,			// 100
+	VK_NUMPAD1,
+	VK_NUMPAD2,
+	VK_NUMPAD3,
+	VK_NUMPAD0,
+	VK_DECIMAL,
+	VK_OEM_102,
+	VK_F11,
+	VK_F12,
+	VK_F13,
+	VK_F14,			// 110
+	VK_F15,
+	VK_KANA,
+	0,
+	VK_CONVERT,
+	0,
+	0,
+	0,
+	0,
+	0,
+	'@',			// 120
+	':',
+	'_',
+	VK_KANJI,
+	0,
+	0,
+	0,
+	0,
+	0,
+	VK_RCONTROL,
+	0,				// 130
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	0,
+	VK_DIVIDE,
+	0,
+	VK_RMENU,		// 140
+	VK_PAUSE,
+	VK_HOME,
+	VK_UP,
+	VK_PRIOR,
+	VK_LEFT,
+	VK_RIGHT,
+	VK_END,
+	VK_DOWN,
+	VK_NEXT,
+	VK_INSERT,		// 150
+	VK_DELETE,
+	VK_LWIN,
+	VK_RWIN,
+	VK_APPS,
+	0,
+	VK_SLEEP,
+	0,
+	0,
+	0,
+	0,				// 160
+	0,
+	0,
+	0,
+	0,
+	0,
+	0
+};
+
+	}
+}
+
+#endif	// traktor_input_TypesWin32_H

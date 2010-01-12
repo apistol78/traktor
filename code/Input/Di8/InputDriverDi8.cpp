@@ -11,6 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverDi8", InputDriverDi8, IInputDr
 InputDriverDi8::InputDriverDi8()
 :	m_directInput(0)
 ,	m_hWnd(NULL)
+,	m_inputCategories(0)
 {
 }
 
@@ -19,16 +20,21 @@ InputDriverDi8::~InputDriverDi8()
 	destroy();
 }
 
-bool InputDriverDi8::create(HWND hWnd)
+bool InputDriverDi8::create(void* nativeWindowHandle, uint32_t inputCategories)
 {
 	HRESULT hr;
 
-	if (!(m_hWnd = hWnd))
-		return false;
+	if (!(m_hWnd = (HWND)nativeWindowHandle))
+	{
+		if (!(m_hWnd = GetForegroundWindow()))
+			return false;
+	}
 
 	hr = DirectInput8Create((HINSTANCE)GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput.getAssign(), NULL); 
 	if (FAILED(hr))
 		return false;
+
+	m_inputCategories = inputCategories;
 
 	hr = m_directInput->EnumDevices(DI8DEVCLASS_ALL, enumDevicesCallback, this, DIEDFL_ATTACHEDONLY);
 	if (FAILED(hr))
@@ -72,7 +78,9 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	if (FAILED(hr)) 
 		return false;
 
-	m_devices.push_back(new input::InputDeviceDi8(device.get()));
+	Ref< input::InputDeviceDi8 > inputDevice = new input::InputDeviceDi8(device.get());
+	if ((inputDevice->getCategory() & m_inputCategories) != 0)
+		m_devices.push_back(inputDevice);
 
 	return true;
 }

@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceWin32", MouseDeviceWin32, IInp
 
 std::wstring MouseDeviceWin32::getName() const
 {
-	return L"Mouse";
+	return L"Standard Mouse";
 }
 
 InputCategory MouseDeviceWin32::getCategory() const
