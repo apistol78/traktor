@@ -9,9 +9,11 @@ namespace traktor
 		namespace
 		{
 
-bool compareEqual4(const float* ptr1, const float* ptr2, size_t count)
+bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 {
 	T_ASSERT ((count & 3) == 0);
+
+	bool equal = true;
 
 	for (size_t i = 0; i < (count >> 2); ++i)
 	{
@@ -19,15 +21,17 @@ bool compareEqual4(const float* ptr1, const float* ptr2, size_t count)
 		__m128 r2 = _mm_load_ps(ptr2);
 		__m128 eq =_mm_cmpeq_ps(r1, r2);
 
-		int mm = _mm_movemask_ps(eq);
-		if (mm != 15)
-			return false;
+		if (_mm_movemask_ps(eq) != 15)
+		{
+			_mm_store_ps(ptr1, r2);
+			equal = false;
+		}
 
 		ptr1 += 4;
 		ptr2 += 4;
 	}
 
-	return true;
+	return equal;
 }
 
 		}
@@ -77,25 +81,15 @@ void ParameterCache::setPixelShader(IDirect3DPixelShader9* d3dPixelShader)
 void ParameterCache::setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
 	float* shadow = &m_vertexConstantsShadow[registerOffset * 4];
-
-	if (compareEqual4(shadow, constantData, registerCount * 4))
-		return;
-
-	m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
-
-	std::memcpy(shadow, constantData, registerCount * 4 * sizeof(float));
+	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
+		m_d3dDevice->SetVertexShaderConstantF(registerOffset, constantData, registerCount);
 }
 
 void ParameterCache::setPixelShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
 {
 	float* shadow = &m_pixelConstantsShadow[registerOffset * 4];
-
-	if (compareEqual4(shadow, constantData, registerCount * 4))
-		return;
-
-	m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);
-
-	std::memcpy(shadow, constantData, registerCount * 4 * sizeof(float));
+	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
+		m_d3dDevice->SetPixelShaderConstantF(registerOffset, constantData, registerCount);
 }
 
 void ParameterCache::setVertexTexture(uint32_t stage, IDirect3DBaseTexture9* d3dTexture)
@@ -152,8 +146,8 @@ HRESULT ParameterCache::lostDevice()
 	m_d3dVertexShader = 0;
 	m_d3dPixelShader = 0;
 
-	std::memset(m_vertexConstantsShadow, 0, sizeof(m_vertexConstantsShadow));
-	std::memset(m_pixelConstantsShadow, 0, sizeof(m_pixelConstantsShadow));
+	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
+	std::memset(m_pixelConstantsShadow, 0, PixelConstantCount * 4 * sizeof(float));
 
 	for (int i = 0; i < sizeof_array(m_vertexTextureShadow); ++i)
 		m_vertexTextureShadow[i] = 0;
