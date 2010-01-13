@@ -78,6 +78,8 @@ public:
 
 	void setEyePosition(const Vector4& eyePosition);
 
+	void setShadowBox(const Aabb& shadowBox);
+
 	void setShadowMask(render::ITexture* shadowMask);
 
 	void setDepthMap(render::ITexture* depthMap);
@@ -151,6 +153,10 @@ public:
 		return m_lights[index];
 	}
 
+	inline const Aabb& getShadowBox() const {
+		return m_shadowBox;
+	}
+
 	inline Ref< render::ITexture > getShadowMask() const {
 		return m_shadowMask;
 	}
@@ -174,6 +180,7 @@ private:
 	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
+	Aabb m_shadowBox;
 	Ref< render::ITexture > m_shadowMask;
 	float m_shadowMapBias;
 	Ref< render::ITexture > m_depthMap;
