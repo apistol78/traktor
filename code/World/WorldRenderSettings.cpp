@@ -10,7 +10,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 4, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 5, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -18,6 +18,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	depthPassEnabled(true)
 ,	velocityPassEnable(false)
 ,	shadowsEnabled(false)
+,	shadowsProjection(SpUniform)
 ,	shadowsQuality(SqMedium)
 ,	ssaoEnabled(false)
 ,	shadowFarZ(100.0f)
@@ -28,6 +29,15 @@ WorldRenderSettings::WorldRenderSettings()
 
 bool WorldRenderSettings::serialize(ISerializer& s)
 {
+	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
+	{
+		{ L"SpBox", SpBox },
+		{ L"SpLiSP", SpLiSP },
+		{ L"SpTrapezoid", SpTrapezoid },
+		{ L"SpUniform", SpUniform },
+		{ 0 }
+	};
+
 	const MemberEnum< ShadowQuality >::Key c_ShadowQuality_Keys[] =
 	{
 		{ L"SqNoFilter", SqNoFilter },
@@ -45,6 +55,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< bool >(L"velocityPassEnable", velocityPassEnable);
 
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
+
+	if (s.getVersion() >= 5)
+		s >> MemberEnum< ShadowProjection >(L"shadowsProjection", shadowsProjection, c_ShadowProjection_Keys);
 
 	if (s.getVersion() >= 4)
 		s >> MemberEnum< ShadowQuality >(L"shadowsQuality", shadowsQuality, c_ShadowQuality_Keys);

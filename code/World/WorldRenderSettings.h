@@ -32,6 +32,14 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum ShadowProjection
+	{
+		SpBox,
+		SpLiSP,
+		SpTrapezoid,
+		SpUniform
+	};
+
 	enum ShadowQuality
 	{
 		SqNoFilter,
@@ -45,6 +53,7 @@ public:
 	bool depthPassEnabled;
 	bool velocityPassEnable;
 	bool shadowsEnabled;
+	ShadowProjection shadowsProjection;
 	ShadowQuality shadowsQuality;
 	bool ssaoEnabled;
 	float shadowFarZ;

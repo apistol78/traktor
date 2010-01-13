@@ -26,11 +26,15 @@ void calculateUniformSMProj(
 	lightAxisX = cross(lightAxisZ, -viewDirection).normalized();
 	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
+	// Adjust view frustum to shadowing far z.
+	Frustum shadowViewFrustum = viewFrustum;
+	shadowViewFrustum.setFarZ(Scalar(settings.shadowFarZ));
+
 	// Calculate bounding box of view frustum in light space.
 	Aabb viewFrustumBox;
 	for (int i = 0; i < 8; ++i)
 	{
-		Vector4 worldCorner = viewInverse * viewFrustum.corners[i];
+		Vector4 worldCorner = viewInverse * shadowViewFrustum.corners[i];
 		Vector4 lightCorner(
 			dot3(lightAxisX, worldCorner),
 			dot3(lightAxisY, worldCorner),
