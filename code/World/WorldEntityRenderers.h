@@ -34,7 +34,7 @@ public:
 
 	void remove(IEntityRenderer* entityRenderer);
 
-	Ref< IEntityRenderer > find(const TypeInfo& entityType) const;
+	IEntityRenderer* find(const TypeInfo& entityType) const;
 
 	const RefArray< IEntityRenderer >& get() const { return m_entityRenderers; }
 

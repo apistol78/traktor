@@ -17,6 +17,7 @@ WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* e
 ,	m_entityRenderers(entityRenderers)
 ,	m_renderContext(new render::RenderContext(renderView))
 ,	m_lastEntityType(0)
+,	m_lastEntityRenderer(0)
 {
 }
 

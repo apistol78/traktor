@@ -61,13 +61,16 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 	synchronize();
 
 	// Erase dead particles.
-	for (PointVector::iterator i = m_points.begin(); i != m_points.end(); )
+	size_t size = m_points.size();
+	for (size_t i = 0; i < size; )
 	{
-		if ((i->age += context.deltaTime) < i->maxAge)
+		Point& point = m_points[i];
+		if ((point.age += context.deltaTime) < point.maxAge)
 			++i;
-		else
-			i = m_points.erase(i);
+		else if (i < --size)
+			point = m_points[size];
 	}
+	m_points.resize(size);
 
 	// Emit particles.
 	if (emit)
@@ -109,7 +112,6 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 
 #if defined(T_USE_UPDATE_JOBS)
 	// Execute modifiers.
-	size_t size = m_points.size();
 	if (size >= 4)
 	{
 		size_t pivots[] =
