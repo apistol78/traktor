@@ -5,6 +5,20 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+Scalar scalarMin(const Scalar& a, const Scalar& b)
+{
+	return a < b ? a : b;
+}
+
+Scalar scalarMax(const Scalar& a, const Scalar& b)
+{
+	return a > b ? a : b;
+}
+
+		}
 
 void calculateBoxSMProj(
 	const WorldRenderSettings& settings,
@@ -39,10 +53,10 @@ void calculateBoxSMProj(
 	{
 		Scalar x = dot3(lightAxisX, shadowBoxExtents[i]);
 		Scalar y = dot3(lightAxisY, shadowBoxExtents[i]);
-		minX = min(x, minX);
-		maxX = max(x, maxX);
-		minY = min(y, minY);
-		maxY = max(y, maxY);
+		minX = scalarMin(x, minX);
+		maxX = scalarMax(x, maxX);
+		minY = scalarMin(y, minY);
+		maxY = scalarMax(y, maxY);
 	}
 
 	outLightView = Matrix44(
