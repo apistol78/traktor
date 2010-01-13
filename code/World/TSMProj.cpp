@@ -18,29 +18,8 @@ void calculateTSMProj(
 	Frustum& outShadowFrustum
 )
 {
-	Vector4 frustumWorld[8];
-	Vector2 frustumLight[8];
-	
-	// Transform view frustum corners into world space.
-	for (int i = 0; i < 8; ++i)
-		frustumWorld[i] = viewInverse * viewFrustum.corners[i];
-
-	// View direction in world space.
-	Vector4 viewDirection = viewInverse.axisZ();
-
-	Vector4 lightAxisU = cross(lightDirection, viewDirection).normalized();
-	Vector4 lightAxisV = cross(lightAxisU, lightDirection).normalized();
-
-	// Project world corners onto light axises; 2d set of frustum.
-	for (int i = 0; i < 8; ++i)
-	{
-		frustumLight[i].x = dot3(lightAxisU, frustumWorld[i]);
-		frustumLight[i].y = dot3(lightAxisV, frustumWorld[i]);
-	}
-
-
-
-
+	outLightView = Matrix44::identity();
+	outLightProjection = Matrix44::identity();
 }
 
 	}

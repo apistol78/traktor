@@ -1,24 +1,25 @@
-#include "World/WorldRenderer.h"
-#include "World/WorldRenderView.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/WorldContext.h"
-#include "World/UniformSMProj.h"
-#include "World/LiSPSMProj.h"
-#include "World/TSMProj.h"
-#include "World/Entity/IEntityRenderer.h"
-#include "World/Entity/Entity.h"
-#include "World/PostProcess/PostProcessSettings.h"
-#include "World/PostProcess/PostProcess.h"
-#include "Resource/IResourceManager.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Random.h"
+#include "Core/Math/Format.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
-#include "Core/Math/Random.h"
-#include "Core/Math/Format.h"
-#include "Core/Misc/SafeDestroy.h"
-#include "Core/Log/Log.h"
+#include "Resource/IResourceManager.h"
+#include "World/BoxSMProj.h"
+#include "World/LiSPSMProj.h"
+#include "World/TSMProj.h"
+#include "World/UniformSMProj.h"
+#include "World/WorldRenderer.h"
+#include "World/WorldRenderView.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldContext.h"
+#include "World/Entity/IEntityRenderer.h"
+#include "World/Entity/Entity.h"
+#include "World/PostProcess/PostProcessSettings.h"
+#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -423,20 +424,60 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	Matrix44 shadowLightProjection;
 	Frustum shadowFrustum;
 
-	// Adjust view frustum to shadowing far z.
-	Frustum shadowViewFrustum = viewFrustum;
-	shadowViewFrustum.setFarZ(Scalar(m_settings.shadowFarZ));
+	switch (m_settings.shadowsProjection)
+	{
+	case WorldRenderSettings::SpBox:
+		calculateBoxSMProj(
+			m_settings,
+			viewInverse,
+			light.position,
+			light.direction,
+			viewFrustum,
+			shadowLightView,
+			shadowLightProjection,
+			shadowFrustum
+		);
+		break;
 
-	calculateUniformSMProj(
-		m_settings,
-		viewInverse,
-		light.position,
-		light.direction,
-		shadowViewFrustum,
-		shadowLightView,
-		shadowLightProjection,
-		shadowFrustum
-	);
+	case WorldRenderSettings::SpLiSP:
+		calculateLiSPSMProj(
+			m_settings,
+			viewInverse,
+			light.position,
+			light.direction,
+			viewFrustum,
+			shadowLightView,
+			shadowLightProjection,
+			shadowFrustum
+		);
+		break;
+
+	case WorldRenderSettings::SpTrapezoid:
+		calculateTSMProj(
+			m_settings,
+			viewInverse,
+			light.position,
+			light.direction,
+			viewFrustum,
+			shadowLightView,
+			shadowLightProjection,
+			shadowFrustum
+		);
+		break;
+
+	case WorldRenderSettings::SpUniform:
+		calculateUniformSMProj(
+			m_settings,
+			viewInverse,
+			light.position,
+			light.direction,
+			viewFrustum,
+			shadowLightView,
+			shadowLightProjection,
+			shadowFrustum
+		);
+		break;
+	}
 
 	f.viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
 
