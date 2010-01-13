@@ -3,6 +3,7 @@
 
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Proxy.h"
+#include "World/WorldRenderSettings.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -56,7 +57,9 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
-		world::IEntityManager* entityManager
+		world::IEntityManager* entityManager,
+		world::WorldRenderSettings::ShadowQuality shadowQuality,
+		int32_t shadowMapSizeDenom
 	) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);

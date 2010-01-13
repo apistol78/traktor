@@ -11,10 +11,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IResourceFactory)
 
-SceneFactory::SceneFactory(db::Database* database, render::IRenderSystem* renderSystem, world::IEntityBuilder* entityBuilder)
+SceneFactory::SceneFactory(
+	db::Database* database,
+	render::IRenderSystem* renderSystem,
+	world::IEntityBuilder* entityBuilder,
+	world::WorldRenderSettings::ShadowQuality shadowQuality,
+	int32_t shadowMapSizeDenom
+)
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 ,	m_entityBuilder(entityBuilder)
+,	m_shadowQuality(shadowQuality)
+,	m_shadowMapSizeDenom(shadowMapSizeDenom)
 {
 }
 
@@ -41,7 +49,9 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 		resourceManager,
 		m_renderSystem,
 		m_entityBuilder,
-		entityManager
+		entityManager,
+		m_shadowQuality,
+		m_shadowMapSizeDenom
 	);
 }
 
