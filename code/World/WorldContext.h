@@ -53,7 +53,7 @@ private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
 	Ref< render::RenderContext > m_renderContext;
 	const TypeInfo* m_lastEntityType;
-	Ref< IEntityRenderer > m_lastEntityRenderer;
+	IEntityRenderer* m_lastEntityRenderer;
 };
 
 	}
