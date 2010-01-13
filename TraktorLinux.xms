@@ -5,8 +5,8 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.bullet-2.74</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.74</sourcePath>
+			<name>Extern.bullet-2.75</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.75</sourcePath>
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
@@ -14,8 +14,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -29,8 +29,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -44,8 +44,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -59,8 +59,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -10027,8 +10027,8 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -10044,8 +10044,8 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -10061,8 +10061,8 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -10078,8 +10078,8 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.74/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
