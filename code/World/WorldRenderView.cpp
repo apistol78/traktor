@@ -118,6 +118,11 @@ void WorldRenderView::setEyePosition(const Vector4& eyePosition)
 	m_eyePosition = eyePosition;
 }
 
+void WorldRenderView::setShadowBox(const Aabb& shadowBox)
+{
+	m_shadowBox = shadowBox;
+}
+
 void WorldRenderView::setShadowMask(render::ITexture* shadowMask)
 {
 	m_shadowMask = shadowMask;

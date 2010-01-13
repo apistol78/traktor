@@ -18,6 +18,7 @@ void calculateBoxSMProj(
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
+	const Aabb& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Frustum& outShadowFrustum

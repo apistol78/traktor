@@ -12,13 +12,13 @@ void calculateBoxSMProj(
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
+	const Aabb& shadowBox,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Frustum& outShadowFrustum
 )
 {
 	const static Vector4 c_axisUp(0.0f, 1.0f, 0.0f);
-	Scalar shadowBoxExtent(settings.shadowFarZ);
 	Scalar lightDistance(settings.viewFarZ);
 
 	Vector4 lightAxisX, lightAxisY, lightAxisZ;
@@ -26,25 +26,44 @@ void calculateBoxSMProj(
 	lightAxisX = cross(lightAxisZ, c_axisUp).normalized();
 	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
+	Vector4 shadowBoxExtents[8];
+	shadowBox.getExtents(shadowBoxExtents);
+
+	Scalar minX, maxX;
+	Scalar minY, maxY;
+
+	minX = maxX = dot3(lightAxisX, shadowBoxExtents[0]);
+	minY = maxY = dot3(lightAxisY, shadowBoxExtents[0]);
+
+	for (int i = 1; i < 8; ++i)
+	{
+		Scalar x = dot3(lightAxisX, shadowBoxExtents[i]);
+		Scalar y = dot3(lightAxisY, shadowBoxExtents[i]);
+		minX = min(x, minX);
+		maxX = max(x, maxX);
+		minY = min(y, minY);
+		maxY = max(y, maxY);
+	}
+
 	outLightView = Matrix44(
 		lightAxisX,
 		lightAxisY,
 		lightAxisZ,
-		Vector4::origo()
+		shadowBox.getCenter().xyz1()
 	);
 
 	outLightView = outLightView.inverseOrtho();
 
 	outLightProjection = orthoLh(
-		shadowBoxExtent * Scalar(2.0f),
-		shadowBoxExtent * Scalar(2.0f),
+		maxX - minX,
+		maxY - minY,
 		-lightDistance * Scalar(0.5f),
 		lightDistance * Scalar(0.5f)
 	);
 
 	outShadowFrustum.buildOrtho(
-		shadowBoxExtent * Scalar(2.0f),
-		shadowBoxExtent * Scalar(2.0f),
+		maxX - minX,
+		maxY - minY,
 		-lightDistance * Scalar(0.5f),
 		lightDistance * Scalar(0.5f)
 	);

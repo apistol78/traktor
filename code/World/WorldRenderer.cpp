@@ -417,6 +417,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Frustum cullFrustum = worldRenderView.getCullFrustum();
+	Aabb shadowBox = worldRenderView.getShadowBox();
 	
 	Vector4 eyePosition = viewInverse.translation();
 
@@ -433,6 +434,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 			light.position,
 			light.direction,
 			viewFrustum,
+			shadowBox,
 			shadowLightView,
 			shadowLightProjection,
 			shadowFrustum
