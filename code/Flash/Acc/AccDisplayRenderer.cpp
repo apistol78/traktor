@@ -254,6 +254,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 
 	// Calculate bounds with margin.
 	SwfRect bounds = accShape->getBounds();
+	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
+		return;
 
 	float px = c_cacheGlyphMargin * (bounds.max.x - bounds.min.x) / c_cacheGlyphSize;
 	float py = c_cacheGlyphMargin * (bounds.max.y - bounds.min.y) / c_cacheGlyphSize;
