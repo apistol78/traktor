@@ -3,14 +3,17 @@
 
 #include <cmath>
 #if defined(_XBOX)
-#include <ppcintrinsics.h>
+#	include <ppcintrinsics.h>
+#endif
+#if defined(_MSC_VER)
+#	include "Core/Math/Scalar.h"
 #endif
 
 #if defined(min)
-#undef min
+#	undef min
 #endif
 #if defined(max)
-#undef max
+#	undef max
 #endif
 
 namespace traktor
@@ -48,6 +51,30 @@ inline Type sign(Type a)
 {
 	return a >= 0 ? Type(1) : Type(-1);
 }
+
+#if defined(_MSC_VER)
+
+inline Scalar min(const Scalar& a, const Scalar& b)
+{
+	return a < b ? a : b;
+}
+
+inline Scalar max(const Scalar& a, const Scalar& b)
+{
+	return a > b ? a : b;
+}
+
+inline Scalar select(const Scalar& a, const Scalar& b, const Scalar& c)
+{
+	return a >= 0 ? b : c;
+}
+
+inline Scalar sign(const Scalar& a)
+{
+	return a >= 0 ? Scalar(1.0f) : Scalar(-1.0f);
+}
+
+#endif
 
 #if defined(_XBOX)
 
@@ -88,6 +115,15 @@ inline Type clamp(Type value, Type minLimit, Type maxLimit)
 {
 	return max(min(value, maxLimit), minLimit);
 }
+
+#if defined(_MSC_VER)
+
+inline Scalar clamp(const Scalar& value, const Scalar& minLimit, const Scalar& maxLimit)
+{
+	return max(min(value, maxLimit), minLimit);
+}
+
+#endif
 
 #if defined(_MSC_VER) || defined(_PS3)
 
