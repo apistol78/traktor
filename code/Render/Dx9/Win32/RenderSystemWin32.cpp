@@ -119,7 +119,7 @@ bool RenderSystemWin32::create()
 	d3dPresentNull.BackBufferCount = 1;
 	d3dPresentNull.BackBufferWidth = 1;
 	d3dPresentNull.BackBufferHeight = 1;
-	d3dPresentNull.MultiSampleType = (D3DMULTISAMPLE_TYPE)0;
+	d3dPresentNull.MultiSampleType = D3DMULTISAMPLE_NONE;
 	d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dPresentNull.hDeviceWindow = m_hWnd;
 	d3dPresentNull.Windowed = TRUE;
@@ -308,7 +308,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	d3dPresent.BackBufferCount = 1;
 	d3dPresent.BackBufferWidth = displayMode->getWidth();
 	d3dPresent.BackBufferHeight = displayMode->getHeight();
-	d3dPresent.MultiSampleType = (D3DMULTISAMPLE_TYPE)desc.multiSample;
+	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
 	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dPresent.hDeviceWindow = m_hWnd;
 	d3dPresent.Windowed = FALSE;
@@ -358,7 +358,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	d3dPresent.BackBufferCount = 1;
 	d3dPresent.BackBufferWidth = rcWindow.right - rcWindow.left;
 	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
-	d3dPresent.MultiSampleType = (D3DMULTISAMPLE_TYPE)desc.multiSample;
+	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
 	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	d3dPresent.hDeviceWindow = (HWND)windowHandle;
 	d3dPresent.Windowed = TRUE;
