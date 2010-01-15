@@ -1,17 +1,19 @@
+#include "Core/System/OS.h"
+#include "Online/Local/SessionLocal.h"
 #include "Online/Local/SessionManagerLocal.h"
 #include "Online/Local/UserLocal.h"
-#include "Online/Local/SessionLocal.h"
 
 namespace traktor
 {
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionManagerLocal", SessionManagerLocal, ISessionManager)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SessionManagerLocal", 0, SessionManagerLocal, ISessionManager)
 
 SessionManagerLocal::SessionManagerLocal()
-:	m_currentUser(new UserLocal(L"Local"))
 {
+	std::wstring user = OS::getInstance().getCurrentUser();
+	m_currentUser = new UserLocal(user);
 }
 
 bool SessionManagerLocal::getAvailableUsers(RefArray< IUser >& outUsers)
@@ -28,7 +30,7 @@ Ref< IUser > SessionManagerLocal::getCurrentUser()
 Ref< ISession > SessionManagerLocal::createSession(IUser* user)
 {
 	T_ASSERT (user == m_currentUser);
-	return new SessionLocal(checked_type_cast< UserLocal* >(user));
+	return new SessionLocal(checked_type_cast< UserLocal*, false >(user));
 }
 
 	}

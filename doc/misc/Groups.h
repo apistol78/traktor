@@ -45,3 +45,5 @@
 
 /*! \defgroup HTML HTML Parser */
 /*! \defgroup XML XML Parser */
+
+/*! \defgroup Online Online services */
