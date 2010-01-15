@@ -56,7 +56,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	render::RenderViewCreateDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
-	desc.multiSample = 4;
+	desc.multiSample = 0;
 	desc.waitVBlank = false;
 	desc.mipBias = 0.0f;
 
