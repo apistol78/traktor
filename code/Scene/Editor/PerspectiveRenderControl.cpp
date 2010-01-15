@@ -1,27 +1,32 @@
 #include <limits>
-#include "Scene/Editor/PerspectiveRenderControl.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/Camera.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/FrameEvent.h"
-#include "Scene/Editor/SelectEvent.h"
-#include "Scene/Scene.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Vector2.h"
+#include "Core/Math/Format.h"
+#include "Core/Misc/EnterLeave.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Scene/Scene.h"
+#include "Scene/Editor/Camera.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityRendererAdapter.h"
+#include "Scene/Editor/FrameEvent.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/PerspectiveRenderControl.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/SelectEvent.h"
+#include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 #include "World/WorldRenderSettings.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/Entity/EntityInstance.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/EntityInstance.h"
 #include "World/PostProcess/PostProcess.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
@@ -30,10 +35,6 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
-#include "Core/Misc/EnterLeave.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Format.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -646,6 +647,13 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			// Draw entity guides.
 			m_context->drawGuide(m_primitiveRenderer, *i);
 		}
+
+		// Draw controller guides.
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor)
+			controllerEditor->draw(
+				m_primitiveRenderer
+			);
 
 		// Render entities.
 		m_worldRenderView.setView(view);

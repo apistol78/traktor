@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="2">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="1">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="5">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>20</viewFarZ>
 		<depthPassEnabled>false</depthPassEnabled>
 		<velocityPassEnable>true</velocityPassEnable>
 		<shadowsEnabled>false</shadowsEnabled>
-		<shadowCascadingSlices>4</shadowCascadingSlices>
-		<shadowCascadingLambda>0.75</shadowCascadingLambda>
+		<shadowsProjection>SpUniform</shadowsProjection>
+		<shadowsQuality>SqMedium</shadowsQuality>
+		<ssaoEnabled>false</ssaoEnabled>
 		<shadowFarZ>50</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.001</shadowMapBias>
@@ -21,8 +22,8 @@
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
-							<translation>0.00292408, 2.16524, -2.08202, 0</translation>
-							<rotation>-0.00308665, -0.917948, 0.327454, 0.224112</rotation>
+							<translation>0.545021, 1.806589, -7.078728, 0</translation>
+							<rotation>-0.003087, -0.917948, 0.327454, 0.224112</rotation>
 						</transform>
 						<sunColor>1, 1, 1, 0</sunColor>
 						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
@@ -35,8 +36,8 @@
 					<name>Mesh</name>
 					<entityData type="traktor.mesh.StaticMeshEntityData">
 						<transform>
-							<translation>0, 0, 0, 0</translation>
-							<rotation>0.807962, 0.450107, -0.295962, 0.238778</rotation>
+							<translation>3.972665, 2.515692, -2.127127, 0</translation>
+							<rotation>0.197951, 0.954484, -0.208607, 0.079106</rotation>
 						</transform>
 						<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 					</entityData>
@@ -48,8 +49,9 @@
 		<instanceData/>
 		<references/>
 	</instance>
-	<controllerData type="traktor.theater.TheaterControllerData">
+	<controllerData type="traktor.theater.TheaterControllerData" version="1">
 		<duration>20</duration>
+		<loop>true</loop>
 		<trackData>
 			<item type="traktor.theater.TrackData">
 				<instance ref="/object/instance/entityData/instances/item[1]"/>
@@ -63,66 +65,73 @@
 							</value>
 						</item>
 						<item>
-							<T>3.744</T>
+							<T>3.519</T>
 							<value>
-								<position>0, 0, 0, 1</position>
-								<orientation>0, 0.708366, 0, 0.705845</orientation>
+								<position>-2.28171, 0.924057, 3.205768, 0</position>
+								<orientation>-0.000901, 0.706702, 0.000693, 0.70751</orientation>
 							</value>
 						</item>
 						<item>
-							<T>5.616</T>
+							<T>4.832</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>2.24956, 2.850871, 3.244947, 0</position>
 								<orientation>0.426284, 0.804826, -0.327808, 0.251155</orientation>
 							</value>
 						</item>
 						<item>
-							<T>7.288</T>
+							<T>6.416</T>
 							<value>
-								<position>0, 0, 0, 1</position>
-								<orientation>0, 0.999995, 0, 0.0032492</orientation>
+								<position>3.972665, 2.515692, -2.127127, 0</position>
+								<orientation>0.197951, 0.954484, -0.208607, 0.079106</orientation>
+							</value>
+						</item>
+						<item>
+							<T>7.752</T>
+							<value>
+								<position>1.824295, -1.26728, -3.09157, 0</position>
+								<orientation>0, 0.999995, 0, 0.003249</orientation>
 							</value>
 						</item>
 						<item>
 							<T>9.016</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>-3.288983, -1.227677, 2.061307, 0</position>
 								<orientation>0.84919, -0.157175, 0.309444, 0.398016</orientation>
 							</value>
 						</item>
 						<item>
 							<T>11.392</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>-2.900249, 0.052803, 2.953052, 0</position>
 								<orientation>0, -0.704674, 0, 0.709532</orientation>
 							</value>
 						</item>
 						<item>
-							<T>13.968</T>
+							<T>11.992</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>-3.064059, 0.594037, 3.658096, 0</position>
 								<orientation>-0.924225, 0.141437, -0.337544, 0.108941</orientation>
 							</value>
 						</item>
 						<item>
-							<T>16.768</T>
+							<T>14.015</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>0.779197, 1.306883, 0.527686, 0</position>
 								<orientation>0, -0.945829, 0, 0.324665</orientation>
 							</value>
 						</item>
 						<item>
-							<T>18.688</T>
+							<T>15.927</T>
 							<value>
-								<position>0, 0, 0, 1</position>
+								<position>1.341329, -0.541234, -1.882564, 0</position>
 								<orientation>0.807957, 0.450106, -0.295962, 0.23878</orientation>
 							</value>
 						</item>
 						<item>
-							<T>20</T>
+							<T>17.488001</T>
 							<value>
-								<position>0, 0, 0, 1</position>
-								<orientation>0, -0.0315873, 0, 0.999501</orientation>
+								<position>-1.328598, -0.573985, 0.551566, 0</position>
+								<orientation>0, -0.031587, 0, 0.999501</orientation>
 							</value>
 						</item>
 					</keys>

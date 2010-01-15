@@ -56,6 +56,8 @@ public:
 
 	Frame evaluate(float at, bool loop) const;
 
+	Frame evaluate(float at, float end, bool loop) const;
+
 	Key* getClosestKey(float at);
 
 	Key* getClosestPreviousKey(float at);
@@ -71,6 +73,8 @@ public:
 	inline float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
 	inline const AlignedVector< Key >& getKeys() const { return m_keys; }
+
+	inline AlignedVector< Key >& getKeys() { return m_keys; }
 
 private:
 	AlignedVector< Key > m_keys;

@@ -32,7 +32,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 		T_ASSERT (entity);
 
 		const TransformPath& path = (*i)->getPath();
-		TransformPath::Frame frame = path.evaluate(time, m_loop);
+		TransformPath::Frame frame = path.evaluate(time, m_duration, m_loop);
 		Transform transform(frame.position, frame.orientation);
 		entity->setTransform(transform);
 	}

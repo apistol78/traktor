@@ -41,36 +41,38 @@ struct HermiteDefaultAccessor
 template < typename TimeType >
 struct ClampTime
 {
-	static inline TimeType t(const TimeType& time, const TimeType& minT, const TimeType& maxT)
+	static inline TimeType t(const TimeType& Tat, const TimeType& Tfirst, const TimeType& Tlast, const TimeType& Tend)
 	{
-		TimeType T = time;
-		if (T < minT)
-			return minT;
-		if (T > maxT)
-			return maxT;
-		return T;
+		TimeType T = Tat;
+		if (T < Tfirst)
+			return Tfirst;
+		else if (T > Tlast)
+			return Tlast;
+		else
+			return T;
 	}
 
 	static inline int index(int i, int nkeys)
 	{
 		if (i < 0)
 			return 0;
-		if (i >= nkeys)
+		else if (i >= nkeys)
 			return nkeys - 1;
-		return i;
+		else
+			return i;
 	}
 };
 
 template < typename TimeType >
 struct WrapTime
 {
-	static inline TimeType t(const TimeType& time, const TimeType& minT, const TimeType& maxT)
+	static inline TimeType t(const TimeType& Tat, const TimeType& Tfirst, const TimeType& Tlast, const TimeType& Tend)
 	{
-		TimeType T = time;
-		TimeType range = maxT - minT;
-		while (T < minT)
+		TimeType T = Tat;
+		TimeType range = Tend - Tfirst;
+		while (T < Tfirst)
 			T += range;
-		while (T > maxT)
+		while (T > Tend + Tfirst)
 			T -= range;
 		return T;
 	}
@@ -94,16 +96,16 @@ template <
 >
 struct Hermite
 {
-	static ValueType evaluate(const KeyType* keys, size_t nkeys, const TimeType& time, const TimeType& stiffness = TimeType(0.5f))
+	static ValueType evaluate(const KeyType* keys, size_t nkeys, const TimeType& Tat, const TimeType& Tend = TimeType(-1.0f), const TimeType& stiffness = TimeType(0.5f))
 	{
 		T_ASSERT (nkeys >= 2);
 
-		TimeType minT(Accessor::time(keys[0]));
-		TimeType maxT(Accessor::time(keys[nkeys - 1]));
-		TimeType T = TimeControl::t(time, minT, maxT);
+		TimeType Tfirst(Accessor::time(keys[0]));
+		TimeType Tlast(Accessor::time(keys[nkeys - 1]));
+		TimeType Tcurr = TimeControl::t(Tat, Tfirst, Tlast, Tend > TimeType(0.0f) ? Tend : Tlast);
 
 		int index = 0;
-		while (index < int(nkeys - 1) && T >= Accessor::time(keys[index + 1]))
+		while (index < int(nkeys - 1) && Tcurr >= Accessor::time(keys[index + 1]))
 			++index;
 
 		int index_n1 = TimeControl::index(index - 1, int(nkeys));
@@ -119,8 +121,8 @@ struct Hermite
 		TimeType t0(Accessor::time(cp0));
 		TimeType t1(Accessor::time(cp1));
 
-		if (t0 >= t1 - FUZZY_EPSILON)
-			return v1;
+		if (t0 >= t1)
+			t1 = Tend;
 
 		const KeyType& cpp = keys[index_n1];
 		const KeyType& cpn = keys[index_2];
@@ -128,7 +130,7 @@ struct Hermite
 		ValueType vp = Accessor::value(cpp);
 		ValueType vn = Accessor::value(cpn);
 
-		TimeType t = (T - t0) / (t1 - t0);
+		TimeType t = (Tcurr - t0) / (t1 - t0);
 		TimeType t2 = t * t;
 		TimeType t3 = t2 * t;
 

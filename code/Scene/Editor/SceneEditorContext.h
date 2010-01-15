@@ -65,6 +65,7 @@ class Entity;
 	namespace scene
 	{
 
+class ISceneControllerEditor;
 class ISceneEditorProfile;
 class ISceneEditorPlugin;
 class IModifier;
@@ -110,6 +111,8 @@ public:
 	void addEditorProfile(ISceneEditorProfile* editorProfile);
 
 	void addEditorPlugin(ISceneEditorPlugin* editorPlugin);
+
+	void setControllerEditor(ISceneControllerEditor* controllerEditor);
 
 	void setInstance(db::Instance* instance);
 
@@ -235,6 +238,8 @@ public:
 
 	RefArray< ISceneEditorPlugin >& getEditorPlugins() { return m_editorPlugins; }
 
+	Ref< ISceneControllerEditor >& getControllerEditor() { return m_controllerEditor; }
+
 	Ref< SceneAsset > getSceneAsset() { return m_sceneAsset; }
 
 	Ref< Scene > getScene() { return m_scene; }
@@ -288,6 +293,7 @@ private:
 	Ref< db::Instance > m_instance;
 	RefArray< ISceneEditorProfile > m_editorProfiles;
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
+	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;

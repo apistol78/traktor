@@ -26,6 +26,11 @@ int Tick::getTime() const
 	return m_time;
 }
 
+void Tick::move(int offset)
+{
+	m_time += offset;
+}
+
 void Tick::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
 {
 	int x = sequence->clientFromTime(m_time);

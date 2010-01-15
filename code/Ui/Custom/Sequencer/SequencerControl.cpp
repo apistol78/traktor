@@ -175,6 +175,11 @@ void SequencerControl::addCursorMoveEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiCursorMove, eventHandler);
 }
 
+void SequencerControl::addKeyMoveEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiKeyMove, eventHandler);
+}
+
 void SequencerControl::addGroupVisibleEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiGroupVisible, eventHandler);
@@ -344,14 +349,34 @@ void SequencerControl::eventMouseMove(Event* e)
 
 	// Calculate current cursor display position.
 	int scrollOffsetX = m_scrollBarH->getPosition();
-	int x0 = m_separator + m_cursor / c_timeScale - scrollOffsetX;
 
-	m_cursor = (m->getPosition().x - m_separator + scrollOffsetX) * c_timeScale;
-	m_cursor = std::max< int >(m_cursor, 0);
-	m_cursor = std::min< int >(m_cursor, m_length);
+	int cursor;
+	cursor = (m->getPosition().x - m_separator + scrollOffsetX) * c_timeScale;
+	cursor = std::max< int >(cursor, 0);
+	cursor = std::min< int >(cursor, m_length);
 
-	CommandEvent cmdEvent(this, 0, Command(m_cursor));
-	raiseEvent(EiCursorMove, &cmdEvent);
+	if (cursor != m_cursor)
+	{
+		m_cursor = cursor;
+		CommandEvent cmdEvent(this, 0, Command(m_cursor));
+		raiseEvent(EiCursorMove, &cmdEvent);
+	}
+
+	// Notify track item mouse move.
+	if (m_mouseTrackItem.item)
+	{
+		m_mouseTrackItem.item->mouseMove(
+			this,
+			Point(
+				m->getPosition().x - m_mouseTrackItem.rc.left,
+				m->getPosition().y - m_mouseTrackItem.rc.top
+			),
+			m_mouseTrackItem.rc,
+			m->getButton(),
+			m_separator,
+			m_scrollBarH->getPosition()
+		);
+	}
 
 	update();
 

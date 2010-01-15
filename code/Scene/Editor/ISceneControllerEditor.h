@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class PrimitiveRenderer;
+
+	}
+
 	namespace ui
 	{
 
@@ -43,6 +50,8 @@ public:
 	virtual void propertiesChanged() = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
+
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) = 0;
 };
 
 	}

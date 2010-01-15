@@ -179,6 +179,11 @@ void SceneEditorContext::addEditorPlugin(ISceneEditorPlugin* editorPlugin)
 	m_editorPlugins.push_back(editorPlugin);
 }
 
+void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerEditor)
+{
+	m_controllerEditor = controllerEditor;
+}
+
 void SceneEditorContext::setInstance(db::Instance* instance)
 {
 	m_instance = instance;

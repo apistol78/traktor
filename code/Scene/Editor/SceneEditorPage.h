@@ -52,7 +52,6 @@ class EntityData;
 	namespace scene
 	{
 
-class ISceneControllerEditor;
 class SceneEditorContext;
 class ScenePreviewControl;
 class EntityDependencyInvestigator;
@@ -97,7 +96,6 @@ private:
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::Container > m_controllerPanel;
-	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::custom::GridView > m_instanceGrid;

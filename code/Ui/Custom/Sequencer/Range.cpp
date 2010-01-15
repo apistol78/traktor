@@ -37,6 +37,12 @@ int Range::getEnd() const
 	return m_end;
 }
 
+void Range::move(int offset)
+{
+	m_start += offset;
+	m_end += offset;
+}
+
 void Range::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
 {
 	outLeft = sequence->clientFromTime(m_start);
