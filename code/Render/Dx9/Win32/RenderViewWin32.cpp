@@ -1,14 +1,12 @@
-#include <HighLevelMonitorConfigurationAPI.h>
-
+#include "Core/Log/Log.h"
+#include "Render/Dx9/ContextDx9.h"
+#include "Render/Dx9/IndexBufferDx9.h"
+#include "Render/Dx9/VertexBufferDx9.h"
+#include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 #include "Render/Dx9/Win32/RenderSystemWin32.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
-#include "Render/Dx9/Win32/ProgramWin32.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Render/Dx9/VertexBufferDx9.h"
-#include "Render/Dx9/IndexBufferDx9.h"
-#include "Core/Log/Log.h"
 
 #define T_LOG_DRAW_CALLS 0
 

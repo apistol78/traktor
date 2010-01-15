@@ -94,7 +94,7 @@ bool RenderTargetWin32::create(
 			setDesc.width,
 			setDesc.height,
 			d3dFormat,
-			(D3DMULTISAMPLE_TYPE)setDesc.multiSample,
+			c_d3dMultiSample[setDesc.multiSample],
 			0,
 			FALSE,
 			&m_d3dTargetSurface.getAssign(),

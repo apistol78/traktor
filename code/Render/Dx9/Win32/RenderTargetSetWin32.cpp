@@ -226,7 +226,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 				d3dCaps.DeviceType,
 				d3dFormats[i],
 				TRUE,
-				(D3DMULTISAMPLE_TYPE)m_desc.multiSample,
+				c_d3dMultiSample[m_desc.multiSample],
 				NULL
 			);
 			if (FAILED(hr))
@@ -267,7 +267,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 				m_desc.width,
 				m_desc.height,
 				D3DFMT_D24S8,
-				(D3DMULTISAMPLE_TYPE)m_desc.multiSample,
+				c_d3dMultiSample[m_desc.multiSample],
 				0,
 				TRUE,
 				&m_d3dTargetDepthStencilSurface.getAssign(),
