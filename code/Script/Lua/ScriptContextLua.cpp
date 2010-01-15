@@ -280,8 +280,10 @@ void ScriptContextLua::pushAny(const Any& any)
 					lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, i->metaTableRef);
 					lua_setmetatable(m_luaState, -2);
 
-					void* data = lua_newuserdata(m_luaState, sizeof(void*));		// +1
-					*(Ref< Object >**)data = new Ref< Object >(any.getObject());
+					Object** object = reinterpret_cast< Object** >(lua_newuserdata(m_luaState, sizeof(Object*)));	// +1
+					*object = any.getObject();
+					T_SAFE_ADDREF(*object);
+
 					lua_newtable(m_luaState);										// +1
 					lua_pushcfunction(m_luaState, gcMethod);						// +1
 					lua_setfield(m_luaState, -2, "__gc");							// -1
@@ -309,13 +311,10 @@ Any ScriptContextLua::toAny(int32_t index)
 	if (lua_istable(m_luaState, index))
 	{
 		lua_getfield(m_luaState, index, "__this");
-		void* objectRefData = lua_touserdata(m_luaState, -1);
+		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, -1));
 		lua_pop(m_luaState, 1);
-		if (objectRefData)
-		{
-			Ref< Object > object = *(*(Ref< Object >**)(objectRefData));
+		if (object)
 			return Any(object);
-		}
 	}
 	return Any();
 }
@@ -361,12 +360,8 @@ int ScriptContextLua::callMethod(lua_State* luaState)
 
 	// Get object pointer.
 	lua_getfield(luaState, 1, "__this");
-	void* objectRefData = lua_touserdata(luaState, -1);
+	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
 	lua_pop(luaState, 1);
-	if (!objectRefData)
-		return 0;
-
-	Ref< Object > object = *(*(Ref< Object >**)(objectRefData));
 	if (!object)
 		return 0;
 
@@ -405,12 +400,8 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 
 	// Get object pointer.
 	lua_getfield(luaState, 1, "__this");
-	void* objectRefData = lua_touserdata(luaState, -1);
+	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, -1));
 	lua_pop(luaState, 1);
-	if (!objectRefData)
-		return 0;
-
-	Ref< Object > object = *(*(Ref< Object >**)(objectRefData));
 	if (!object)
 		return 0;
 
@@ -429,12 +420,8 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 
 int ScriptContextLua::gcMethod(lua_State* luaState)
 {
-	Ref< Object >* objectRef = *(Ref< Object >**)(lua_touserdata(luaState, 1));
-	if (objectRef)
-	{
-		*objectRef = 0;
-		delete objectRef;
-	}
+	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	T_SAFE_RELEASE(object);
 	return 0;
 }
 
