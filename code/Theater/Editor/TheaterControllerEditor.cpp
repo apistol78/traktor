@@ -1,16 +1,17 @@
-#include "Theater/Editor/TheaterControllerEditor.h"
-#include "Theater/TheaterControllerData.h"
-#include "Theater/TheaterController.h"
-#include "Theater/TrackData.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "I18N/Text.h"
+#include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneAsset.h"
-#include "World/Entity/EntityInstance.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Theater/TheaterController.h"
+#include "Theater/TheaterControllerData.h"
+#include "Theater/TrackData.h"
+#include "Theater/Editor/TheaterControllerEditor.h"
 #include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Command.h"
-#include "Ui/TableLayout.h"
 #include "Ui/Container.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -18,7 +19,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
-#include "I18N/Text.h"
+#include "World/Entity/EntityInstance.h"
 
 // Resources
 #include "Resources/Theater.h"
@@ -47,6 +48,17 @@ struct FindInstanceTrackData
 	}
 };
 
+class TransformPathKeyWrapper : public Object
+{
+public:
+	TransformPath::Key& m_key;
+
+	TransformPathKeyWrapper(TransformPath::Key& key)
+	:	m_key(key)
+	{
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterControllerEditor, scene::ISceneControllerEditor)
@@ -72,6 +84,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 		return false;
 
 	m_trackSequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerCursorMove));
+	m_trackSequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerKeyMove));
 
 	m_context = context;
 	m_context->addPostFrameEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventContextPostFrame));
@@ -142,25 +155,73 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void TheaterControllerEditor::updateSequencer()
+void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 {
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	if (!m_context->getGuideEnable())
+		return;
 
-	m_trackSequencer->removeAllSequenceItems();
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
+
+	float duration = controllerData->getDuration();
+	bool loop = controllerData->getLoop();
 
 	const RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
+		const TransformPath& path = (*i)->getPath();
+
+		int32_t steps = int32_t(duration) * 10;
+		for (int32_t i = 0; i < steps; ++i)
+		{
+			float T0 = (float(i) / steps) * duration;
+			float T1 = (float(i + 1) / steps) * duration;
+
+			TransformPath::Frame F0 = path.evaluate(T0, duration, loop);
+			TransformPath::Frame F1 = path.evaluate(T1, duration, loop);
+
+			primitiveRenderer->drawLine(
+				F0.position,
+				F1.position,
+				Color(255, 255, 0, 200)
+			);
+		}
+
+		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
+		{
+			primitiveRenderer->drawSolidPoint(
+				i->value.position,
+				8.0f,
+				Color(255, 255, 0, 255)
+			);
+		}
+	}
+}
+
+void TheaterControllerEditor::updateSequencer()
+{
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
+
+	m_trackSequencer->removeAllSequenceItems();
+
+	RefArray< TrackData >& trackData = controllerData->getTrackData();
+	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); ++i)
+	{
 		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getInstance()->getName());
 
-		const TransformPath& path = (*i)->getPath();
-		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
+		TransformPath& path = (*i)->getPath();
+		AlignedVector< TransformPath::Key >& keys = path.getKeys();
 
-		for (AlignedVector< TransformPath::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
+		for (AlignedVector< TransformPath::Key >::iterator j = keys.begin(); j != keys.end(); ++j)
 		{
 			int32_t tickTime = int32_t(j->T * 1000.0f);
-			trackSequence->addKey(new ui::custom::Tick(tickTime));
+
+			Ref< ui::custom::Tick > tick = new ui::custom::Tick(tickTime);
+			tick->setData(L"KEY", new TransformPathKeyWrapper(*j));
+
+			trackSequence->addKey(tick);
 		}
 
 		m_trackSequencer->addSequenceItem(trackSequence);
@@ -300,12 +361,29 @@ void TheaterControllerEditor::eventSequencerCursorMove(ui::Event* event)
 	m_context->setPlaying(false);
 }
 
+void TheaterControllerEditor::eventSequencerKeyMove(ui::Event* event)
+{
+	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
+	const ui::Command& command = commandEvent->getCommand();
+
+	ui::custom::Tick* tick = checked_type_cast< ui::custom::Tick*, false >(commandEvent->getItem());
+
+	TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
+	T_ASSERT (keyWrapper);
+
+	keyWrapper->m_key.T = tick->getTime() / 1000.0f;
+
+	m_context->buildEntities();
+}
+
 void TheaterControllerEditor::eventContextPostFrame(ui::Event* event)
 {
 	if (m_context->isPlaying())
 	{
 		float cursorTime = m_context->getTime();
-		int32_t cursorTick = int32_t(cursorTime * 1000.0f);
+
+		int32_t cursorTickMax = m_trackSequencer->getLength();
+		int32_t cursorTick = int32_t(cursorTime * 1000.0f) % cursorTickMax;
 
 		m_trackSequencer->setCursor(cursorTick);
 		m_trackSequencer->update();

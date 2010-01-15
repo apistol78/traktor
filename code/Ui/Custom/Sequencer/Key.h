@@ -36,6 +36,8 @@ class T_DLLCLASS Key
 	T_RTTI_CLASS;
 
 public:
+	virtual void move(int offset) = 0;
+
 	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const = 0;
 
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset) = 0;

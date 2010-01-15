@@ -39,6 +39,8 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command);
 
+	virtual void draw(render::PrimitiveRenderer* primitiveRenderer);
+
 private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::SequencerControl > m_trackSequencer;
@@ -57,6 +59,8 @@ private:
 	void eventToolBarClick(ui::Event* event);
 
 	void eventSequencerCursorMove(ui::Event* event);
+
+	void eventSequencerKeyMove(ui::Event* event);
 
 	void eventContextPostFrame(ui::Event* event);
 };

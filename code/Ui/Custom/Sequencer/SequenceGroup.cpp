@@ -116,6 +116,10 @@ void SequenceGroup::mouseUp(SequencerControl* sequencer, const Point& at, const 
 {
 }
 
+void SequenceGroup::mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
+{
+}
+
 void SequenceGroup::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
 {
 	// Select images based on the state of this group.

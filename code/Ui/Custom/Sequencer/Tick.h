@@ -32,6 +32,8 @@ public:
 
 	int getTime() const;
 
+	virtual void move(int offset);
+
 	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const;
 
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);

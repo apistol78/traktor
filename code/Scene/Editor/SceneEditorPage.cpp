@@ -163,11 +163,8 @@ void SceneEditorPage::destroy()
 	T_ASSERT (settings);
 
 	// Destroy controller editor.
-	if (m_controllerEditor)
-	{
-		m_controllerEditor->destroy();
-		m_controllerEditor = 0;
-	}
+	if (m_context->getControllerEditor())
+		m_context->getControllerEditor()->destroy();
 
 	// Destroy panels.
 	m_site->destroyAdditionalPanel(m_entityPanel);
@@ -314,8 +311,9 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		updateInstanceGrid();
 
 		// Notify controller editor as well.
-		if (m_controllerEditor)
-			m_controllerEditor->propertiesChanged();
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor)
+			controllerEditor->propertiesChanged();
 	}
 	else if (command == L"Editor.Undo")
 	{
@@ -385,8 +383,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				{
 					parentGroup->removeChild(*i);
 
-					if (m_controllerEditor)
-						m_controllerEditor->entityRemoved(*i);
+					if (m_context->getControllerEditor())
+						m_context->getControllerEditor()->entityRemoved(*i);
 				}
 			}
 		}
@@ -446,8 +444,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				parentGroup->removeChild(*i);
 				removedCount++;
 
-				if (m_controllerEditor)
-					m_controllerEditor->entityRemoved(*i);
+				if (m_context->getControllerEditor())
+					m_context->getControllerEditor()->entityRemoved(*i);
 			}
 		}
 
@@ -478,8 +476,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = false;
 
 		// Propagate command to controller editor.
-		if (!result && m_controllerEditor)
-			result = m_controllerEditor->handleCommand(command);
+		if (!result && m_context->getControllerEditor())
+			result = m_context->getControllerEditor()->handleCommand(command);
 
 		// Propagate command to editor control.
 		if (!result)
@@ -497,10 +495,10 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 
 void SceneEditorPage::createControllerEditor()
 {
-	if (m_controllerEditor)
+	if (m_context->getControllerEditor())
 	{
-		m_controllerEditor->destroy();
-		m_controllerEditor = 0;
+		m_context->getControllerEditor()->destroy();
+		m_context->setControllerEditor(0);
 	}
 
 	Ref< SceneAsset > sceneAsset = m_context->getSceneAsset();
@@ -535,7 +533,7 @@ void SceneEditorPage::createControllerEditor()
 					m_controllerPanel
 				))
 				{
-					m_controllerEditor = controllerEditor;
+					m_context->setControllerEditor(controllerEditor);
 					m_controllerPanel->update();
 				}
 				else

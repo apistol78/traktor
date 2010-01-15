@@ -35,7 +35,8 @@ public:
 	enum Events
 	{
 		EiCursorMove = EiUser,
-		EiGroupVisible = EiUser + 1
+		EiKeyMove = EiUser + 1,
+		EiGroupVisible = EiUser + 2
 	};
 
 	enum GetSequenceFlags
@@ -73,6 +74,8 @@ public:
 	void addSelectEventHandler(EventHandler* eventHandler);
 
 	void addCursorMoveEventHandler(EventHandler* eventHandler);
+
+	void addKeyMoveEventHandler(EventHandler* eventHandler);
 
 	void addGroupVisibleEventHandler(EventHandler* eventHandler);
 

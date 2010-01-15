@@ -1,7 +1,9 @@
 #include <algorithm>
-#include "Ui/Custom/Sequencer/Sequence.h"
-#include "Ui/Custom/Sequencer/Key.h"
 #include "Ui/Canvas.h"
+#include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/Sequencer/Sequence.h"
+#include "Ui/Custom/Sequencer/SequencerControl.h"
+#include "Ui/Custom/Sequencer/Key.h"
 
 namespace traktor
 {
@@ -21,6 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Sequence", Sequence, SequenceItem)
 
 Sequence::Sequence(const std::wstring& name)
 :	SequenceItem(name)
+,	m_previousPosition(0)
 {
 }
 
@@ -59,6 +62,11 @@ int Sequence::clientFromTime(int time) const
 	return time / c_timeScaleDenom;
 }
 
+int Sequence::timeFromClient(int client) const
+{
+	return client * c_timeScaleDenom;
+}
+
 void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
 	if (at.x < separator)
@@ -75,6 +83,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 
 		if (at.x >= left && at.x <= right)
 		{
+			m_previousPosition = at.x;
 			m_selectedKey = *j;
 			break;
 		}
@@ -83,6 +92,24 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::mouseUp(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
+	m_selectedKey = 0;
+	m_previousPosition = 0;
+}
+
+void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
+{
+	if (m_selectedKey)
+	{
+		int32_t offset = timeFromClient(at.x - m_previousPosition);
+		if (offset != 0)
+		{
+			m_selectedKey->move(offset);
+
+			CommandEvent cmdEvent(sequencer, m_selectedKey, Command(offset));
+			sequencer->raiseEvent(SequencerControl::EiKeyMove, &cmdEvent);
+		}
+		m_previousPosition = at.x;
+	}
 }
 
 void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
