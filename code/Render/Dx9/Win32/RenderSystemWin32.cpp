@@ -656,10 +656,12 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		renderSystem = reinterpret_cast< RenderSystemWin32* >(createStruct->lpCreateParams);
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
-	
+
+#if 0
 	case WM_KEYDOWN:
 		if (wParam != VK_ESCAPE)
 			break;
+#endif
 	
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
