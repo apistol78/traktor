@@ -16,6 +16,7 @@
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineFactory.h"
 
 namespace traktor
 {
@@ -25,205 +26,69 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilder", PipelineBuilder, IPipelineBuilder)
 
 PipelineBuilder::PipelineBuilder(
+	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
 	IPipelineDb* db,
 	IListener* listener
 )
-:	m_sourceDatabase(sourceDatabase)
+:	m_pipelineFactory(pipelineFactory)
+,	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
 ,	m_cache(cache)
 ,	m_db(db)
 ,	m_listener(listener)
-,	m_succeeded(0)
-,	m_failed(0)
 {
 }
 
 bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
-	IPipelineDb::Hash hash;
+	int32_t succeeded = 0, failed = 0;
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-	{
-		(*i)->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >((*i)->sourceAsset)).get();
-
-		// Have source asset been modified?
-		if (!rebuild)
-		{
-			if (!m_db->get((*i)->outputGuid, hash))
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; not hashed" << Endl;
-				(*i)->reason |= PbrSourceModified;
-			}
-			else if (hash.pipelineVersion != type_of((*i)->pipeline).getVersion())
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline version differ" << Endl;
-				(*i)->reason |= PbrSourceModified;
-			}
-			else if (hash.pipelineHash != (*i)->pipelineHash)
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; pipeline settings differ" << Endl;
-				(*i)->reason |= PbrSourceModified;
-			}
-			else if (hash.sourceAssetHash != (*i)->sourceAssetHash)
-			{
-				log::info << L"Asset \"" << (*i)->name << L"\" modified; source has been modified" << Endl;
-				(*i)->reason |= PbrSourceModified;
-			}
-			else
-			{
-				const std::set< Path >& files = (*i)->files;
-				for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-				{
-					std::map< Path, DateTime >::const_iterator timeStampIt = hash.timeStamps.find(*j);
-					if (timeStampIt != hash.timeStamps.end())
-					{
-						Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-						if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
-						{
-							log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
-							(*i)->reason |= PbrSourceModified | PbrAssetModified;
-							break;
-						}
-					}
-					else
-					{
-						log::info << L"Asset \"" << (*i)->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
-						(*i)->reason |= PbrSourceModified | PbrAssetModified;
-						break;
-					}
-				}
-			}
-		}
-		else
-			(*i)->reason |= PbrForced;
-	}
+		analyzeBuildReason(*i, rebuild);
 
 	// Build assets which are dirty or have dirty dependency assets.
-	m_succeeded = 0;
-	m_failed = 0;
-
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
 		// Abort if current thread has been stopped; thread are stopped by worker dialog.
 		if (ThreadManager::getInstance().getCurrentThread()->stopped())
 			break;
 
-		// Update hash entry; don't write it yet though.
-		hash.pipelineVersion = type_of((*i)->pipeline).getVersion();
-		hash.pipelineHash = (*i)->pipelineHash;
-		hash.sourceAssetHash = (*i)->sourceAssetHash;
-		hash.timeStamps.clear();
+		// Notify listener about we're beginning to build the asset.
+		if (m_listener)
+			m_listener->begunBuildingAsset(
+			(*i)->name,
+			uint32_t(std::distance(dependencies.begin(), i)),
+			uint32_t(dependencies.size())
+		);
 
-		const std::set< Path >& files = (*i)->files;
-		for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-		{
-			Ref< File > sourceFile = FileSystem::getInstance().get(*j);
-			if (sourceFile)
-				hash.timeStamps[*j] = sourceFile->getLastWriteTime();
-			else
-				log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
-		}
-
-		// Skip non-build asset; just update hash.
-		if (((*i)->flags & PdfBuild) == 0)
-		{
-			m_db->set((*i)->outputGuid, hash);
-			continue;
-		}
-
-		// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-		if (needBuild(*i))
-		{
-			ScopeIndent scopeIndent(log::info);
-			uint32_t cacheHash;
-			bool result;
-
-			log::info << L"Building asset \"" << (*i)->name << L"\" (" << type_name((*i)->pipeline) << L")..." << Endl;
-			log::info << IncreaseIndent;
-
-			// Notify listener about we're beginning to build the asset.
-			if (m_listener)
-				m_listener->begunBuildingAsset(
-					(*i)->name,
-					uint32_t(std::distance(dependencies.begin(), i)),
-					uint32_t(dependencies.size())
-				);
-
-			// Get output instances from cache.
-			if (m_cache)
-			{
-				cacheHash = dependencyCacheHash(*i);
-				result = getInstancesFromCache((*i)->outputGuid, cacheHash);
-				if (result)
-				{
-					log::info << L"Cached instance(s) used" << Endl;
-
-					m_db->set((*i)->outputGuid, hash);
-					m_succeeded++;
-				}
-			}
-			else
-				result = false;
-
-			if (!result)
-			{
-				// Build output instances; keep an array of written instances as we
-				// need them to update the cache.
-				m_builtInstances.resize(0);
-
-				result = (*i)->pipeline->buildOutput(
-					this,
-					(*i)->sourceAsset,
-					(*i)->sourceAssetHash,
-					(*i)->buildParams,
-					(*i)->outputPath,
-					(*i)->outputGuid,
-					(*i)->reason
-				);
-
-				if (result)
-				{
-					if (!m_builtInstances.empty())
-					{
-						log::info << L"Instance(s) built:" << Endl;
-						log::info << IncreaseIndent;
-
-						for (RefArray< db::Instance >::const_iterator j = m_builtInstances.begin(); j != m_builtInstances.end(); ++j)
-							log::info << L"\"" << (*j)->getPath() << L"\"" << Endl;
-
-						if (m_cache)
-							putInstancesInCache(
-								(*i)->outputGuid,
-								cacheHash,
-								m_builtInstances
-							);
-
-						log::info << DecreaseIndent;
-					}
-
-					m_db->set((*i)->outputGuid, hash);
-					m_succeeded++;
-				}
-				else
-					m_failed++;
-			}
-
-			log::info << DecreaseIndent;
-			log::info << (result ? L"Build successful" : L"Build failed") << Endl;
-		}
+		if (performBuild(*i))
+			++succeeded;
+		else
+			++failed;
 	}
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
+		log::info << L"Build finished; " << succeeded << L" succeeded, " << failed << L" failed" << Endl;
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
 	return true;
+}
+
+bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)
+{
+	Ref< IPipeline > pipeline;
+	uint32_t pipelineHash;
+
+	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+		return false;
+
+	return pipeline->buildOutput(this, sourceAsset, 0, buildParams, outputPath, outputGuid, PbrSourceModified);
 }
 
 Ref< db::Database > PipelineBuilder::getSourceDatabase() const
@@ -271,6 +136,161 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
 {
 	return m_db->createReport(name, guid);
+}
+
+void PipelineBuilder::analyzeBuildReason(PipelineDependency* dependency, bool rebuild)
+{
+	dependency->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >(dependency->sourceAsset)).get();
+
+	// Have source asset been modified?
+	if (!rebuild)
+	{
+		IPipelineDb::Hash hash;
+		if (!m_db->get(dependency->outputGuid, hash))
+		{
+			log::info << L"Asset \"" << dependency->name << L"\" modified; not hashed" << Endl;
+			dependency->reason |= PbrSourceModified;
+		}
+		else if (hash.pipelineVersion != type_of(dependency->pipeline).getVersion())
+		{
+			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline version differ" << Endl;
+			dependency->reason |= PbrSourceModified;
+		}
+		else if (hash.pipelineHash != dependency->pipelineHash)
+		{
+			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline settings differ" << Endl;
+			dependency->reason |= PbrSourceModified;
+		}
+		else if (hash.sourceAssetHash != dependency->sourceAssetHash)
+		{
+			log::info << L"Asset \"" << dependency->name << L"\" modified; source has been modified" << Endl;
+			dependency->reason |= PbrSourceModified;
+		}
+		else
+		{
+			const std::set< Path >& files = dependency->files;
+			for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
+			{
+				std::map< Path, DateTime >::const_iterator timeStampIt = hash.timeStamps.find(*j);
+				if (timeStampIt != hash.timeStamps.end())
+				{
+					Ref< File > sourceFile = FileSystem::getInstance().get(*j);
+					if (sourceFile && sourceFile->getLastWriteTime() != timeStampIt->second)
+					{
+						log::info << L"Asset \"" << dependency->name << L"\" modified; file \"" << j->getPathName() << L" has been modified" << Endl;
+						dependency->reason |= PbrSourceModified | PbrAssetModified;
+						break;
+					}
+				}
+				else
+				{
+					log::info << L"Asset \"" << dependency->name << L"\" modified; file \"" << j->getPathName() << L" has not been hashed" << Endl;
+					dependency->reason |= PbrSourceModified | PbrAssetModified;
+					break;
+				}
+			}
+		}
+	}
+	else
+		dependency->reason |= PbrForced;
+}
+
+bool PipelineBuilder::performBuild(PipelineDependency* dependency)
+{
+	IPipelineDb::Hash hash;
+	bool result = true;
+
+	// Create hash entry.
+	hash.pipelineVersion = type_of(dependency->pipeline).getVersion();
+	hash.pipelineHash = dependency->pipelineHash;
+	hash.sourceAssetHash = dependency->sourceAssetHash;
+	hash.timeStamps.clear();
+
+	const std::set< Path >& files = dependency->files;
+	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
+	{
+		Ref< File > sourceFile = FileSystem::getInstance().get(*j);
+		if (sourceFile)
+			hash.timeStamps[*j] = sourceFile->getLastWriteTime();
+		else
+			log::warning << L"Unable to read timestamp of file " << j->getPathName() << Endl;
+	}
+
+	// Skip no-build asset; just update hash.
+	if ((dependency->flags & PdfBuild) == 0)
+	{
+		m_db->set(dependency->outputGuid, hash);
+		return true;
+	}
+
+	// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
+	if (needBuild(dependency))
+	{
+		T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+		uint32_t cacheHash;
+
+		log::info << L"Building asset \"" << dependency->name << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
+		log::info << IncreaseIndent;
+
+		// Get output instances from cache.
+		if (m_cache)
+		{
+			cacheHash = dependencyCacheHash(dependency);
+			result = getInstancesFromCache(dependency->outputGuid, cacheHash);
+			if (result)
+			{
+				log::info << L"Cached instance(s) used" << Endl;
+				m_db->set(dependency->outputGuid, hash);
+			}
+		}
+		else
+			result = false;
+
+		if (!result)
+		{
+			// Build output instances; keep an array of written instances as we
+			// need them to update the cache.
+			m_builtInstances.resize(0);
+
+			result = dependency->pipeline->buildOutput(
+				this,
+				dependency->sourceAsset,
+				dependency->sourceAssetHash,
+				dependency->buildParams,
+				dependency->outputPath,
+				dependency->outputGuid,
+				dependency->reason
+			);
+
+			if (result)
+			{
+				if (!m_builtInstances.empty())
+				{
+					log::info << L"Instance(s) built:" << Endl;
+					log::info << IncreaseIndent;
+
+					for (RefArray< db::Instance >::const_iterator j = m_builtInstances.begin(); j != m_builtInstances.end(); ++j)
+						log::info << L"\"" << (*j)->getPath() << L"\"" << Endl;
+
+					if (m_cache)
+						putInstancesInCache(
+							dependency->outputGuid,
+							cacheHash,
+							m_builtInstances
+						);
+
+					log::info << DecreaseIndent;
+				}
+
+				m_db->set(dependency->outputGuid, hash);
+			}
+		}
+
+		log::info << DecreaseIndent;
+		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+	}
+
+	return result;
 }
 
 bool PipelineBuilder::needBuild(PipelineDependency* dependency) const

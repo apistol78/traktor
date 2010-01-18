@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-class Settings;
+class PipelineFactory;
 
 /*! \brief Incremental pipeline dependency walker.
  * \ingroup Editor
@@ -28,12 +28,10 @@ class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 
 public:
 	PipelineDependsIncremental(
-		Settings* settings,
+		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		uint32_t recursionDepth = ~0UL
 	);
-
-	virtual ~PipelineDependsIncremental();
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset
@@ -68,22 +66,13 @@ public:
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
+	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
-	std::vector< std::pair< Ref< IPipeline >, uint32_t > > m_pipelines;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
 	RefArray< PipelineDependency > m_dependencies;
 	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-
-	/*! \brief Find pipeline from source type.
-	 *
-	 * \param sourceType Type of source asset.
-	 * \param outPipeline Pipeline.
-	 * \param outPipelineHash Hash of pipeline settings.
-	 * \return True if pipeline found.
-	 */
-	bool findPipeline(const TypeInfo& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const;
 
 	/*! \brief Find already added dependency.
 	 *

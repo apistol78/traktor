@@ -15,7 +15,7 @@ public:
 
 	virtual bool convert(
 		const model::Model& model,
-		const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
+		const std::map< std::wstring, MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
 		MeshResource* meshResource,
 		IStream* meshResourceStream

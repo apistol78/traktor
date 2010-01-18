@@ -2,7 +2,6 @@
 #include <limits>
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/ModelOptimizations.h"
-#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Blend/BlendMeshResource.h"
 #include "Model/Utilities.h"
@@ -26,7 +25,7 @@ Ref< MeshResource > BlendMeshConverter::createResource() const
 
 bool BlendMeshConverter::convert(
 	const model::Model& sourceModel,
-	const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
+	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
@@ -110,7 +109,7 @@ bool BlendMeshConverter::convert(
 	{
 		const model::Material& material = *j;
 
-		std::map< std::wstring, MeshPipelineParams::MaterialInfo >::const_iterator materialIt = materialInfo.find(material.getName());
+		std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(material.getName());
 		if (materialIt == materialInfo.end())
 			continue;
 
@@ -154,7 +153,7 @@ bool BlendMeshConverter::convert(
 		assetParts.push_back(BlendMeshResource::Part());
 		assetParts.back().name = material.getName();
 		assetParts.back().material = materialIt->second.guid;
-		assetParts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
+		assetParts.back().opaque = materialIt->second.opaque;
 	}
 
 	baseMesh->getIndexBuffer()->unlock();
