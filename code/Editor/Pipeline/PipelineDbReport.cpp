@@ -28,8 +28,7 @@ PipelineDbReport::~PipelineDbReport()
 		return;
 
 	// Create table if it doesn't exist.
-	rs = m_connection->executeQuery(L"select count(*) from sqlite_master where name='" + m_table + L"'");
-	if (!rs || rs->getInt32(0) <= 0)
+	if (!m_connection->tableExists(m_table))
 	{
 		ss <<
 			L"create table " << m_table << L" (" <<

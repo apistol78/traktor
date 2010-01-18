@@ -13,16 +13,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, IPipelineDb)
 
 bool PipelineDb::open(const std::wstring& connectionString)
 {
-	Ref< sql::IResultSet > rs;
-
 	Ref< sql::ConnectionSqlite3 > connection = new sql::ConnectionSqlite3();
 	if (!connection->connect(connectionString))
 		return false;
 
 	// Create tables if they doesn't exist.
-	rs = connection->executeQuery(L"select count(*) from sqlite_master where name='PipelineHash'");
-	if (!rs || rs->getInt32(0) <= 0)
+	if (!connection->tableExists(L"PipelineHash"))
 	{
+		T_ASSERT_M (!connection->tableExists(L"TimeStamps"), L"TimeStamps table already exists");
+
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
 			L"id integer primary key,"

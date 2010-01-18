@@ -259,6 +259,13 @@ void PipelineDependsIncremental::addUniqueDependency(
 		// Pipeline build dependencies failed; remove dependency from array.
 		T_ASSERT (dependencyIndex < m_dependencies.size());
 		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
+
+		// Remove from current's children as well.
+		if (m_currentDependency)
+		{
+			RefArray< PipelineDependency >::iterator i = std::find(m_currentDependency->children.begin(), m_currentDependency->children.end(), dependency);
+			m_currentDependency->children.erase(i);
+		}
 	}
 }
 

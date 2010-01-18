@@ -466,7 +466,7 @@ public:
 	{
 		size_t offset = size_t(where.m_ptr - m_data);
 
-		for (size_t i = offset; i < m_size; ++i)
+		for (size_t i = offset; i < m_size - 1; ++i)
 			m_data[i] = m_data[i + 1];
 
 		Constructor::destroy(m_data[m_size - 1]);
