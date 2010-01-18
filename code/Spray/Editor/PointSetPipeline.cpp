@@ -60,18 +60,20 @@ bool PointSetPipeline::buildOutput(
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, pointSetAsset->getFileName());
 
-	// Import source model.
-	Ref< model::Model > model = model::ModelFormat::readAny(fileName, model::ModelFormat::IfMesh);
-	if (!model)
-	{
-		log::error << L"PointSet pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
-		return false;
-	}
-
 	AlignedVector< PointSet::Point > points;
 
 	if (!pointSetAsset->fromFaces())
 	{
+		Ref< model::Model > model = model::ModelFormat::readAny(
+			fileName,
+			model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices
+		);
+		if (!model)
+		{
+			log::error << L"PointSet pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
+			return false;
+		}
+
 		const std::vector< model::Vertex >& vertices = model->getVertices();
 		points.reserve(vertices.size());
 
@@ -96,6 +98,16 @@ bool PointSetPipeline::buildOutput(
 	}
 	else
 	{
+		Ref< model::Model > model = model::ModelFormat::readAny(
+			fileName,
+			model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
+		);
+		if (!model)
+		{
+			log::error << L"PointSet pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
+			return false;
+		}
+
 		const std::vector< model::Polygon >& polygons = model->getPolygons();
 		points.reserve(polygons.size());
 

@@ -505,10 +505,15 @@ public:
 	/*! \brief Erase element from array. */
 	iterator erase(iterator iter)
 	{
+		T_ASSERT (m_size > 0);
+		T_ASSERT (iter.m_item >= m_items && iter.m_item < &m_items[m_size]);
+
 		T_SAFE_RELEASE(*iter.m_item);
 
 		size_type offset = size_type(iter.m_item - m_items);
-		for (size_type i = offset; i < m_size; ++i)
+		T_ASSERT (offset < m_size);
+
+		for (size_type i = offset; i < m_size - 1; ++i)
 			m_items[i] = m_items[i + 1];
 
 		m_items[m_size - 1] = 0;
@@ -682,7 +687,7 @@ private:
 	void grow(size_t count)
 	{
 		size_t newSize = m_size + count;
-		if (newSize >= m_capacity)
+		if (newSize > m_capacity)
 		{
 			size_t capacity = (newSize & ~(ExpandSize - 1)) + ExpandSize;
 			reserve(capacity);

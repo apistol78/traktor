@@ -2,6 +2,7 @@
 #include "Core/Io/IEncoding.h"
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/IStream.h"
+#include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
@@ -20,12 +21,14 @@ public:
 private:
 	Ref< IStream > m_stream;
 	Ref< IEncoding > m_encoding;
-	std::vector< uint8_t > m_encoded;
+	AutoArrayPtr< uint8_t > m_encoded;
+	uint32_t m_encodedSize;
 };
 
 FileOutputStreamBuffer::FileOutputStreamBuffer(IStream* stream, IEncoding* encoding)
 :	m_stream(stream)
 ,	m_encoding(encoding)
+,	m_encodedSize(0)
 {
 }
 
@@ -40,13 +43,20 @@ void FileOutputStreamBuffer::close()
 
 int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
-	m_encoded.resize(count * IEncoding::MaxEncodingSize);
+	T_ASSERT (count > 0);
+
+	uint32_t maxEncodedSize = count * IEncoding::MaxEncodingSize;
+	if (maxEncodedSize > m_encodedSize)
+	{
+		m_encodedSize = maxEncodedSize;
+		m_encoded.reset(new uint8_t [m_encodedSize]);
+	}
 	
-	int encodedCount = m_encoding->translate(buffer, count, &m_encoded[0]);
+	int encodedCount = m_encoding->translate(buffer, count, m_encoded.ptr());
 	if (encodedCount < 0)
 		return -1;
 
-	if (m_stream->write(&m_encoded[0], encodedCount) != encodedCount)
+	if (m_stream->write(m_encoded.c_ptr(), encodedCount) != encodedCount)
 		return -1;
 
 	return count;

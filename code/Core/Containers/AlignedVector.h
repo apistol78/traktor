@@ -563,7 +563,7 @@ private:
 	void grow(size_t count)
 	{
 		size_t newSize = m_size + count;
-		if (newSize >= m_capacity)
+		if (newSize > m_capacity)
 		{
 			size_t capacity = (newSize & ~(ExpandSize - 1)) + ExpandSize;
 			reserve(capacity);
