@@ -119,5 +119,11 @@ int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 	return err == SQLITE_DONE ? 1 : 0;
 }
 
+bool ConnectionSqlite3::tableExists(const std::wstring& tableName)
+{
+	Ref< sql::IResultSet > rs = executeQuery(L"select count(*) from sqlite_master where name='" + tableName + L"'");
+	return (rs && rs->getInt32(0) > 0);
+}
+
 	}
 }

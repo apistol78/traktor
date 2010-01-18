@@ -49,6 +49,17 @@ public:
 	 * \return Number of rows affected, -1 if failed.
 	 */
 	virtual int32_t executeUpdate(const std::wstring& update) = 0;
+
+	/*! \brief Have table query.
+	 *
+	 * Different providers have different
+	 * ways of storing table information thus
+	 * we need a way to abstract it.
+	 *
+	 * \param tableName Name of table.
+	 * \return True if table exists.
+	 */
+	virtual bool tableExists(const std::wstring& tableName) = 0;
 };
 
 	}
