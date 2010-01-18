@@ -28,6 +28,7 @@
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineFactory.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
@@ -915,8 +916,12 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
+	// Create pipeline factory.
+	PipelineFactory pipelineFactory(m_settings);
+
+	// Build dependencies.
 	PipelineDependsIncremental pipelineDepends(
-		m_settings,
+		&pipelineFactory,
 		m_project->getSourceDatabase()
 	);
 
@@ -933,8 +938,10 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	RefArray< PipelineDependency > dependencies;
 	pipelineDepends.getDependencies(dependencies);
 
+	// Build output.
 	StatusListener listener(m_buildProgress);
 	PipelineBuilder pipelineBuilder(
+		&pipelineFactory,
 		m_project->getSourceDatabase(),
 		m_project->getOutputDatabase(),
 		pipelineCache,
@@ -1051,8 +1058,9 @@ bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t rec
 	if (!m_project)
 		return false;
 
+	PipelineFactory pipelineFactory(m_settings);
 	PipelineDependsIncremental pipelineDepends(
-		m_settings,
+		&pipelineFactory,
 		m_project->getSourceDatabase(),
 		recursionDepth
 	);

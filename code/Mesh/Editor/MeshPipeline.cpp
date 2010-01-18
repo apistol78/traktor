@@ -10,10 +10,10 @@
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Mesh/MeshResource.h"
+#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
-#include "Mesh/Editor/MeshPipelineParams.h"
-#include "Mesh/Editor/MaterialShaderGenerator.h"
+#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
@@ -34,6 +34,8 @@ namespace traktor
 		namespace
 		{
 
+const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}");
+
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
 {
 public:
@@ -51,6 +53,30 @@ private:
 	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
 };
 
+Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
+{
+	switch (meshType)
+	{
+	case MeshAsset::MtInstance:
+		return Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
+
+	case MeshAsset::MtSkinned:
+		return Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
+
+	case MeshAsset::MtBlend:
+		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
+
+	case MeshAsset::MtIndoor:
+		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
+
+	case MeshAsset::MtStatic:
+		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
+
+	default:
+		return Guid();
+	}
+}
+
 Guid combineGuids(const Guid& g1, const Guid& g2)
 {
 	uint8_t d[16];
@@ -67,21 +93,6 @@ Guid incrementGuid(const Guid& g)
 	reinterpret_cast< uint32_t& >(d[12])++;
 	return Guid(d);
 }
-
-struct PixelOutputPred
-{
-	std::wstring m_technique;
-
-	PixelOutputPred(const std::wstring& technique)
-	:	m_technique(technique)
-	{
-	}
-
-	bool operator () (const render::PixelOutput* pixelOutputNode) const
-	{
-		return pixelOutputNode->getTechnique() == m_technique;
-	}
-};
 
 		}
 
@@ -120,127 +131,24 @@ bool MeshPipeline::buildDependencies(
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	T_ASSERT (asset);
 
-	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-
 	pipelineDepends->addDependency(fileName);
 
-	// Create parameter object.
-	Ref< MeshPipelineParams > params = new MeshPipelineParams();
-
-	// Import source model.
-	params->m_model = model::ModelFormat::readAny(fileName);
-	if (!params->m_model)
-	{
-		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
-		return false;
-	}
-
 	// Determine vertex shader guid.
-	Guid vertexShaderGuid;
-	switch (asset->getMeshType())
+	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
+	if (!vertexShaderGuid.isValid())
 	{
-	case MeshAsset::MtInstance:
-		vertexShaderGuid = Guid(L"{A714A83F-8442-6F48-A2A7-6EFA95EB75F3}");
-		break;
-	case MeshAsset::MtSkinned:
-		vertexShaderGuid = Guid(L"{69A3CF2E-9B63-0440-9410-70AB4AE127CE}");
-		break;
-	case MeshAsset::MtBlend:
-		vertexShaderGuid = Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-		break;
-	case MeshAsset::MtIndoor:
-		vertexShaderGuid = Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-		break;
-	case MeshAsset::MtStatic:
-		vertexShaderGuid = Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
-		break;
-	default:
 		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
 		return false;
 	}
 
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 
-	// Create material asset dependencies.
-	Guid materialGuid = combineGuids(vertexShaderGuid, sourceInstance->getGuid());
+	// Add dependencies to "fixed" material shaders.
+	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
+	for (std::map< std::wstring, Guid >::const_iterator i = materialShaders.begin(); i != materialShaders.end(); ++i)
+		pipelineDepends->addDependency(i->second, editor::PdfUse);
 
-	MaterialShaderGenerator generator(
-		pipelineDepends->getSourceDatabase(),
-		params->m_model
-	);
-
-	const std::vector< model::Material >& materials = params->m_model->getMaterials();
-	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
-	{
-		const std::wstring& materialName = i->getName();
-		Ref< const render::ShaderGraph > materialShaderGraph;
-
-		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(materialName);
-		if (it != materialShaders.end())
-		{
-			// We've an explicit guid for this material; must exist in database.
-			Ref< db::Instance > materialShaderInstance = pipelineDepends->getSourceDatabase()->getInstance(it->second);
-			if (!materialShaderInstance)
-			{
-				log::error << L"Mesh pipeline failed; unable to get material shader \"" << materialName << L"\"" << Endl;
-				return false;
-			}
-
-			// Add no-build dependencies to shader fragments.
-			pipelineDepends->addDependency(materialShaderInstance->getGuid(), editor::PdfUse);
-
-			materialShaderGraph = materialShaderInstance->getObject< render::ShaderGraph >();
-			if (!materialShaderGraph)
-			{
-				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialName << L"\"" << Endl;
-				return false;
-			}
-		}
-		else
-		{
-			// No material shader specified; generate shader from material specification.
-			materialShaderGraph = generator.generate(*i);
-			if (!materialShaderGraph)
-			{
-				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << materialName << L"\"" << Endl;
-				return false;
-			}
-		}
-
-		// Replace vertex shader placeholder with actual implementation.
-		RefArray< render::External > externalNodes;
-		materialShaderGraph->findNodesOf< render::External >(externalNodes);
-		for (RefArray< render::External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
-		{
-			const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}");
-			if ((*i)->getFragmentGuid() == c_guidVertexInterfaceGuid)
-				(*i)->setFragmentGuid(vertexShaderGuid);
-		}
-
-		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
-		materialGuid = incrementGuid(materialGuid);
-
-		pipelineDepends->addDependency(
-			materialShaderGraph,
-			materialName,
-			sourceInstance->getParent()->getPath() + L"/Materials/" + materialGuid.format(),
-			materialGuid,
-			editor::PdfBuild
-		);
-
-		// Remember material information.
-		MeshPipelineParams::MaterialInfo materialInfo;
-		materialInfo.guid = materialGuid;
-		materialInfo.graph = materialShaderGraph;
-		params->m_materialMap.insert(std::make_pair(
-			materialName,
-			materialInfo
-		));
-	}
-
-	// Return build parameter object.
-	outBuildParams = params;
 	return true;
 }
 
@@ -255,33 +163,88 @@ bool MeshPipeline::buildOutput(
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	Ref< const MeshPipelineParams > params = checked_type_cast< const MeshPipelineParams* >(buildParams);
+	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
 
-	// Investigate which vertex elements are being used by material; need a fully qualitifed graph.
-	FragmentReaderAdapter fragmentReader(pipelineBuilder);
+	// Import source model.
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
+	Ref< model::Model > model = model::ModelFormat::readAny(fileName);
+	if (!model)
+	{
+		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
+		return false;
+	}
+
+	// Build materials.
+	const std::vector< model::Material >& materials = model->getMaterials();
+	std::map< std::wstring, MeshConverter::MaterialInfo > materialInfo;
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
-	for (std::map< std::wstring, MeshPipelineParams::MaterialInfo >::const_iterator i = params->m_materialMap.begin(); i != params->m_materialMap.end(); ++i)
+	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
+	T_ASSERT (vertexShaderGuid.isValid());
+
+	Guid materialGuid = combineGuids(vertexShaderGuid, outputGuid);
+	T_ASSERT (materialGuid.isValid());
+
+	MaterialShaderGenerator generator(
+		pipelineBuilder->getSourceDatabase(),
+		model
+	);
+
+	FragmentReaderAdapter fragmentReader(pipelineBuilder);
+
+	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
-		// Link shader fragments.
-		Ref< render::ShaderGraph > materialGraph = render::FragmentLinker(fragmentReader).resolve(i->second.graph, true);
-		if (!materialGraph)
+		const std::wstring& materialName = i->getName();
+		Ref< const render::ShaderGraph > materialShaderGraph;
+
+		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(materialName);
+		if (it != materialShaders.end())
 		{
-			log::error << L"MeshPipeline failed; unable to link shader fragments" << Endl;
-			return false;
+			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
+			if (!materialShaderGraph)
+			{
+				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialName << L"\"" << Endl;
+				return false;
+			}
+		}
+		else
+		{
+			materialShaderGraph = generator.generate(*i);
+			if (!materialShaderGraph)
+			{
+				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << materialName << L"\"" << Endl;
+				return false;
+			}
+		}
+
+		RefArray< render::External > externalNodes;
+		materialShaderGraph->findNodesOf< render::External >(externalNodes);
+		for (RefArray< render::External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
+		{
+			if ((*i)->getFragmentGuid() == c_guidVertexInterfaceGuid)
+				(*i)->setFragmentGuid(vertexShaderGuid);
 		}
 
 		// Remove unused branches from shader graph.
-		materialGraph = render::ShaderGraphOptimizer(materialGraph).removeUnusedBranches();
-		if (!materialGraph)
+		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches();
+		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to remove unused branches" << Endl;
 			return false;
 		}
 
+		// Link shader fragments.
+		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to link shader fragments" << Endl;
+			return false;
+		}
+
+		// Build vertex declaration from shader vertex inputs.
 		RefArray< render::VertexInput > vertexInputNodes;
-		materialGraph->findNodesOf< render::VertexInput >(vertexInputNodes);
+		materialShaderGraph->findNodesOf< render::VertexInput >(vertexInputNodes);
 		for (RefArray< render::VertexInput >::iterator j = vertexInputNodes.begin(); j != vertexInputNodes.end(); ++j)
 		{
 			bool elementDeclared = false;
@@ -322,6 +285,26 @@ bool MeshPipeline::buildOutput(
 				vertexElementOffset += element.getSize();
 			}
 		}
+
+		// Build material shader.
+		if (!pipelineBuilder->buildOutput(
+			materialShaderGraph,
+			0,
+			materialName,
+			outputPath + L"/Materials/" + materialName,
+			materialGuid
+		))
+		{
+			log::error << L"Mesh pipeline failed; unable to build material \"" << materialName << L"\"" << Endl;
+			return false;
+		}
+
+		// Insert into material map.
+		MeshConverter::MaterialInfo mi = { materialGuid, isOpaqueMaterial(materialShaderGraph) };
+		materialInfo.insert(std::make_pair(materialName, mi));
+
+		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
+		materialGuid = incrementGuid(materialGuid);
 	}
 
 	// Create mesh converter.
@@ -378,8 +361,8 @@ bool MeshPipeline::buildOutput(
 
 	// Convert mesh asset.
 	if (!converter->convert(
-		*params->m_model,
-		params->m_materialMap,
+		*model,
+		materialInfo,
 		vertexElements,
 		resource,
 		stream

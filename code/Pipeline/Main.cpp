@@ -19,6 +19,7 @@
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
+#include "Editor/Pipeline/PipelineFactory.h"
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
@@ -181,8 +182,12 @@ int main(int argc, const char** argv)
 		}
 	}
 
+	// Create pipeline factory.
+	editor::PipelineFactory pipelineFactory(settings);
+
+	// Collect dependencies.
 	editor::PipelineDependsIncremental pipelineDepends(
-		settings,
+		&pipelineFactory,
 		sourceDatabase
 	);
 
@@ -216,7 +221,9 @@ int main(int argc, const char** argv)
 	RefArray< editor::PipelineDependency > dependencies;
 	pipelineDepends.getDependencies(dependencies);
 
+	// Build output.
 	editor::PipelineBuilder pipelineBuilder(
+		&pipelineFactory,
 		sourceDatabase,
 		outputDatabase,
 		pipelineCache,

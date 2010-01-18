@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -32,6 +32,7 @@ class Group;
 class IPipelineCache;
 class IPipelineDb;
 class PipelineDependency;
+class PipelineFactory;
 
 /*! \brief Pipeline manager.
  * \ingroup Editor
@@ -59,6 +60,7 @@ public:
 	};
 
 	PipelineBuilder(
+		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
@@ -67,6 +69,8 @@ public:
 	);
 
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
+
+	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid);
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
@@ -79,6 +83,7 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
+	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
@@ -87,8 +92,12 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Path, uint32_t > m_externalFileHash;
 	RefArray< db::Instance > m_builtInstances;
-	int32_t m_succeeded;
-	int32_t m_failed;
+
+	/*! \brief Update build reasons. */
+	void analyzeBuildReason(PipelineDependency* dependency, bool rebuild);
+
+	/*! \brief Perform build. */
+	bool performBuild(PipelineDependency* dependency);
 
 	/*! \brief Check if dependency needs to be built. */
 	bool needBuild(PipelineDependency* dependency) const;

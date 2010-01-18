@@ -3,7 +3,6 @@
 #include <list>
 #include <map>
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
-#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Model/Model.h"
@@ -519,7 +518,7 @@ Ref< MeshResource > IndoorMeshConverter::createResource() const
 
 bool IndoorMeshConverter::convert(
 	const model::Model& model,
-	const std::map< std::wstring, MeshPipelineParams::MaterialInfo >& materialInfo,
+	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
@@ -602,7 +601,7 @@ bool IndoorMeshConverter::convert(
 
 		for (uint32_t material = 0; material < uint32_t(model.getMaterials().size()); ++material)
 		{
-			std::map< std::wstring, MeshPipelineParams::MaterialInfo >::const_iterator materialIt = materialInfo.find(model.getMaterial(material).getName());
+			std::map< std::wstring, MaterialInfo >::const_iterator materialIt = materialInfo.find(model.getMaterial(material).getName());
 			if (materialIt == materialInfo.end())
 				continue;
 
@@ -631,7 +630,7 @@ bool IndoorMeshConverter::convert(
 			assetSectors.back().parts.push_back(IndoorMeshResource::Part());
 			assetSectors.back().parts.back().material = materialIt->second.guid;
 			assetSectors.back().parts.back().meshPart = int(meshParts.size());
-			assetSectors.back().parts.back().opaque = isOpaqueMaterial(materialIt->second.graph);
+			assetSectors.back().parts.back().opaque = materialIt->second.opaque;
 
 			meshParts.push_back(render::Mesh::Part());
 			meshParts.back().name = i->name + L"_" + toString(material);
