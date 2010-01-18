@@ -25,17 +25,27 @@ namespace traktor
 	inline
 	std::wstring mbstows(const std::string& mbs)
 	{
-		std::vector< wchar_t > buf(mbs.length() + 1);
-		std::mbstowcs(&buf[0], mbs.c_str(), mbs.length());
-		return std::wstring(&buf[0], mbs.length());
+		if (!mbs.empty())
+		{
+			std::vector< wchar_t > buf(mbs.length() + 1);
+			std::mbstowcs(&buf[0], mbs.c_str(), mbs.length());
+			return std::wstring(&buf[0], mbs.length());
+		}
+		else
+			return std::wstring();
 	}
 
 	inline
 	std::string wstombs(const std::wstring& ws)
 	{
-		std::vector< char > buf(ws.length() + 1);
-		std::wcstombs(&buf[0], ws.c_str(), ws.length());
-		return std::string(&buf[0], ws.length());
+		if (!ws.empty())
+		{
+			std::vector< char > buf(ws.length() + 1);
+			std::wcstombs(&buf[0], ws.c_str(), ws.length());
+			return std::string(&buf[0], ws.length());
+		}
+		else
+			return std::string();
 	}
 
 #if defined(_UNICODE)

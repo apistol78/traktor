@@ -151,180 +151,200 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 	return true;
 }
 
-bool createMesh(const lwObject* lwo, Model* outModel)
+bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 {
+	uint32_t pointCount;
+	uint32_t polygonCount;
 	uint32_t positionBase;
 
-	// Convert positions.
-	positionBase = 0;
+	// Count number of primitives.
+	pointCount = polygonCount = 0;
 	for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 	{
-		for (int i = 0; i < layer->point.count; ++i)
+		pointCount += layer->point.count;
+		polygonCount += layer->polygon.count;
+	}
+
+	// Convert positions.
+	if (importFlags & ModelFormat::IfMeshPositions)
+	{
+		outModel->reservePositions(pointCount);
+		for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 		{
-			lwPoint* pnt = layer->point.pt + i;
-			Vector4 position(
-				pnt->pos[0],
-				pnt->pos[1],
-				pnt->pos[2],
-				1.0f
-			);
-			outModel->addPosition(position);
+			for (int i = 0; i < layer->point.count; ++i)
+			{
+				lwPoint* pnt = layer->point.pt + i;
+				Vector4 position(
+					pnt->pos[0],
+					pnt->pos[1],
+					pnt->pos[2],
+					1.0f
+				);
+				outModel->addPosition(position);
+			}
 		}
-		positionBase += layer->point.count;
 	}
 
 	// Convert blend targets.
-	positionBase = 0;
-	for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
+	if (importFlags & ModelFormat::IfMeshBlendTargets)
 	{
-		for (int i = 0; i < layer->point.count; ++i)
+		positionBase = 0;
+		for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 		{
-			lwPoint* pnt = layer->point.pt + i;
-			for (int j = 0; j < pnt->nvmaps; ++j)
+			for (int i = 0; i < layer->point.count; ++i)
 			{
-				if (pnt->vm[j].vmap->type == ID_SPOT || pnt->vm[j].vmap->type == ID_MORF)
+				lwPoint* pnt = layer->point.pt + i;
+				for (int j = 0; j < pnt->nvmaps; ++j)
 				{
-					uint32_t blendTargetIndex = outModel->addBlendTarget(mbstows(pnt->vm[j].vmap->name));
+					if (pnt->vm[j].vmap->type == ID_SPOT || pnt->vm[j].vmap->type == ID_MORF)
+					{
+						uint32_t blendTargetIndex = outModel->addBlendTarget(mbstows(pnt->vm[j].vmap->name));
 
-					Vector4 basePosition = outModel->getPosition(positionBase + i);
-					Vector4 targetPosition(
-						pnt->vm[j].vmap->val[pnt->vm[j].index][0],
-						pnt->vm[j].vmap->val[pnt->vm[j].index][1],
-						pnt->vm[j].vmap->val[pnt->vm[j].index][2],
-						1.0f
-					);
-					if (pnt->vm[j].vmap->type == ID_MORF)
-						targetPosition += basePosition.xyz0();
+						Vector4 basePosition = outModel->getPosition(positionBase + i);
+						Vector4 targetPosition(
+							pnt->vm[j].vmap->val[pnt->vm[j].index][0],
+							pnt->vm[j].vmap->val[pnt->vm[j].index][1],
+							pnt->vm[j].vmap->val[pnt->vm[j].index][2],
+							1.0f
+						);
+						if (pnt->vm[j].vmap->type == ID_MORF)
+							targetPosition += basePosition.xyz0();
 
-					outModel->setBlendTargetPosition(
-						blendTargetIndex,
-						positionBase + i,
-						targetPosition
-					);
+						outModel->setBlendTargetPosition(
+							blendTargetIndex,
+							positionBase + i,
+							targetPosition
+						);
+					}
 				}
 			}
+			positionBase += layer->point.count;
 		}
-		positionBase += layer->point.count;
 	}
 
 	// Convert polygons.
-	positionBase = 0;
-	for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
+	if (importFlags & (ModelFormat::IfMeshPolygons | ModelFormat::IfMeshVertices))
 	{
-		for (int i = 0; i < layer->polygon.count; ++i)
+		positionBase = 0;
+
+		if (importFlags & ModelFormat::IfMeshPolygons)
+			outModel->reservePolygons(polygonCount);
+
+		for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 		{
-			const lwPolygon* pol = layer->polygon.pol + i;
-
-			// Ignore all polygons which aren't plain faces.
-			if (pol->type != ID_FACE)
-				continue;
-
-			const lwSurface* surf = pol->surf;
-			const lwTexture* tex = getLwTexture(surf->color.tex);
-
-			int materialIndex = 0;
-			for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)
-				materialIndex++;
-
-			int normal = outModel->addUniqueNormal(
-				Vector4(
-					pol->norm[0],
-					pol->norm[1],
-					pol->norm[2]
-				)
-			);
-
-			Polygon polygon;
-			polygon.setMaterial(materialIndex);
-
-			for (int32_t j = pol->nverts - 1; j >= 0; --j)
+			for (int i = 0; i < layer->polygon.count; ++i)
 			{
-				lwPoint* pnt = layer->point.pt + pol->v[j].index;
+				const lwPolygon* pol = layer->polygon.pol + i;
 
-				Vertex vertex;
+				// Ignore all polygons which aren't plain faces.
+				if (pol->type != ID_FACE)
+					continue;
 
-				vertex.setPosition(positionBase + pol->v[j].index);
-				vertex.setNormal(outModel->addUniqueNormal(Vector4(
-					pol->v[j].norm[0],
-					pol->v[j].norm[1],
-					pol->v[j].norm[2]
-				)));
+				const lwSurface* surf = pol->surf;
+				const lwTexture* tex = getLwTexture(surf->color.tex);
 
-				// Vertex colors.
-				for (int32_t k = 0; k < pnt->nvmaps; ++k)
+				int materialIndex = 0;
+				for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)
+					materialIndex++;
+
+				Polygon polygon;
+				polygon.setMaterial(materialIndex);
+
+				if (importFlags & ModelFormat::IfMeshVertices)
 				{
-					const lwVMapPt* vc = &pnt->vm[k];
-					if (vc->vmap->type == ID_RGBA)
+					for (int32_t j = pol->nverts - 1; j >= 0; --j)
 					{
-						const float* color = vc->vmap->val[vc->index];
-						vertex.setColor(outModel->addUniqueColor(Vector4(
-							color[0],
-							color[1],
-							color[2],
-							color[3]
+						lwPoint* pnt = layer->point.pt + pol->v[j].index;
+
+						Vertex vertex;
+						vertex.setPosition(positionBase + pol->v[j].index);
+						vertex.setNormal(outModel->addUniqueNormal(Vector4(
+							pol->v[j].norm[0],
+							pol->v[j].norm[1],
+							pol->v[j].norm[2]
 						)));
-						break;
-					}
-					else if (vc->vmap->type == ID_RGB)
-					{
-						const float* color = vc->vmap->val[vc->index];
-						vertex.setColor(outModel->addUniqueColor(Vector4(
-							color[0],
-							color[1],
-							color[2],
-							1.0f
-						)));
-						break;
+
+						// Vertex colors.
+						for (int32_t k = 0; k < pnt->nvmaps; ++k)
+						{
+							const lwVMapPt* vc = &pnt->vm[k];
+							if (vc->vmap->type == ID_RGBA)
+							{
+								const float* color = vc->vmap->val[vc->index];
+								vertex.setColor(outModel->addUniqueColor(Vector4(
+									color[0],
+									color[1],
+									color[2],
+									color[3]
+								)));
+								break;
+							}
+							else if (vc->vmap->type == ID_RGB)
+							{
+								const float* color = vc->vmap->val[vc->index];
+								vertex.setColor(outModel->addUniqueColor(Vector4(
+									color[0],
+									color[1],
+									color[2],
+									1.0f
+								)));
+								break;
+							}
+						}
+
+						// UV maps.
+						if (tex)
+						{
+							const lwVMapPt* vpt = findLwVMapPt(pol->v[j].vm, pol->v[j].nvmaps, tex->param.imap.vmap_name);
+							if (!vpt)
+								vpt = findLwVMapPt(pnt->vm, pnt->nvmaps, tex->param.imap.vmap_name);
+
+							if (vpt)
+							{
+								float u = vpt->vmap->val[vpt->index][0];
+								float v = vpt->vmap->val[vpt->index][1];
+
+								vertex.setTexCoord(outModel->addUniqueTexCoord(Vector2(
+									u,
+									1.0f - v
+								)));
+							}
+							else
+								log::warning << L"Vertex " << j << L" doesn't exist in UV map \"" << mbstows(tex->param.imap.vmap_name) << L"\"" << Endl;
+						}
+
+						// Convert weight maps into bones and influences.
+						if (importFlags & ModelFormat::IfMeshBlendWeights)
+						{
+							// Collect weight map references for this point.
+							std::vector< lwVMapPt > weightRefs;
+							for (int i = 0; i < pnt->nvmaps; ++i)
+							{
+								if (pnt->vm[i].vmap->type == ID_WGHT)
+									weightRefs.push_back(pnt->vm[i]);
+							}
+
+							// Add weights to vertex, also allocate bone index.
+							for (std::vector< lwVMapPt >::iterator i = weightRefs.begin(); i != weightRefs.end(); ++i)
+							{
+								int boneIndex = outModel->addBone(mbstows(i->vmap->name));
+								float boneInfluence = i->vmap->val[i->index][0];
+								vertex.setBoneInfluence(boneIndex, boneInfluence);
+							}
+						}
+
+						int32_t vertexId = outModel->addUniqueVertex(vertex);
+						if (importFlags & ModelFormat::IfMeshPolygons)
+							polygon.addVertex(vertexId);
 					}
 				}
 
-				// UV maps.
-				if (tex)
-				{
-					const lwVMapPt* vpt = findLwVMapPt(pol->v[j].vm, pol->v[j].nvmaps, tex->param.imap.vmap_name);
-					if (!vpt)
-						vpt = findLwVMapPt(pnt->vm, pnt->nvmaps, tex->param.imap.vmap_name);
-
-					if (vpt)
-					{
-						float u = vpt->vmap->val[vpt->index][0];
-						float v = vpt->vmap->val[vpt->index][1];
-
-						vertex.setTexCoord(outModel->addUniqueTexCoord(Vector2(
-							u,
-							1.0f - v
-						)));
-					}
-					else
-						log::warning << L"Vertex " << j << L" doesn't exist in UV map \"" << mbstows(tex->param.imap.vmap_name) << L"\"" << Endl;
-				}
-
-				// Convert weight maps into bones and influences.
-				{
-					// Collect weight map references for this point.
-					std::vector< lwVMapPt > weightRefs;
-					for (int i = 0; i < pnt->nvmaps; ++i)
-					{
-						if (pnt->vm[i].vmap->type == ID_WGHT)
-							weightRefs.push_back(pnt->vm[i]);
-					}
-
-					// Add weights to vertex, also allocate bone index.
-					for (std::vector< lwVMapPt >::iterator i = weightRefs.begin(); i != weightRefs.end(); ++i)
-					{
-						int boneIndex = outModel->addBone(mbstows(i->vmap->name));
-						float boneInfluence = i->vmap->val[i->index][0];
-						vertex.setBoneInfluence(boneIndex, boneInfluence);
-					}
-				}
-
-				polygon.addVertex(outModel->addUniqueVertex(vertex));
+				if (importFlags & ModelFormat::IfMeshPolygons)
+					outModel->addPolygon(polygon);
 			}
 
-			outModel->addPolygon(polygon);
+			positionBase += layer->point.count;
 		}
-
-		positionBase += layer->point.count;
 	}
 
 	return true;
@@ -373,7 +393,7 @@ Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) co
 
 	if (importFlags & IfMesh)
 	{
-		if (!createMesh(lwo, md))
+		if (!createMesh(lwo, md, importFlags))
 			return 0;
 	}
 

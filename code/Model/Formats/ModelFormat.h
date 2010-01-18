@@ -32,8 +32,13 @@ class T_DLLCLASS ModelFormat : public Object
 public:
 	enum ImportFlags
 	{
-		IfMaterials = 1 << 0,
-		IfMesh = 1 << 1,
+		IfMaterials = 1,
+		IfMeshPositions = 2,
+		IfMeshVertices = 4,
+		IfMeshPolygons = 8,
+		IfMeshBlendTargets = 16,
+		IfMeshBlendWeights = 32,
+		IfMesh = (IfMeshPositions | IfMeshVertices | IfMeshPolygons | IfMeshBlendTargets | IfMeshBlendWeights),
 		IfAll = (IfMaterials | IfMesh)
 	};
 

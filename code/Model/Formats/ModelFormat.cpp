@@ -13,7 +13,7 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 	Ref< Model > md;
 
 	std::vector< const TypeInfo* > formatTypes;
-	type_of< ModelFormat >().findAllOf(formatTypes);
+	type_of< ModelFormat >().findAllOf(formatTypes, false);
 
 	for (std::vector< const TypeInfo* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
 	{

@@ -39,7 +39,7 @@ public:
 	static const uint32_t InvalidIndex = ~0U;
 
 	template < typename ItemPredicate >
-	inline uint32_t get(const ItemType& v, const ItemPredicate& predicate = ItemPredicate()) const
+	uint32_t get(const ItemType& v, const ItemPredicate& predicate = ItemPredicate()) const
 	{
 		uint32_t hash = ItemHash::calculateHash(v);
 
@@ -56,7 +56,12 @@ public:
 		return InvalidIndex;
 	}
 
-	inline uint32_t add(const ItemType& v)
+	void reserve(size_t capacity)
+	{
+		m_items.reserve(capacity);
+	}
+
+	uint32_t add(const ItemType& v)
 	{
 		uint32_t id = uint32_t(m_items.size());
 		m_items.push_back(v);
@@ -67,13 +72,13 @@ public:
 		return id;
 	}
 
-	inline void clear()
+	void clear()
 	{
 		m_indices.clear();
 		m_items.resize(0);
 	}
 
-	inline void replace(const AlignedVector< ItemType >& items)
+	void replace(const AlignedVector< ItemType >& items)
 	{
 		m_items = items;
 		m_indices.clear();
@@ -84,7 +89,7 @@ public:
 		}
 	}
 
-	inline void set(uint32_t index, const ItemType& item)
+	void set(uint32_t index, const ItemType& item)
 	{
 		uint32_t hash1 = ItemHash::calculateHash(m_items[index]);
 		m_indices[hash1].erase(index);
@@ -94,12 +99,12 @@ public:
 		m_indices[hash2].insert(index);
 	}
 
-	inline const ItemType& get(uint32_t index) const
+	const ItemType& get(uint32_t index) const
 	{
 		return m_items[index];
 	}
 
-	inline const AlignedVector< ItemType >& items() const
+	const AlignedVector< ItemType >& items() const
 	{
 		return m_items;
 	}

@@ -127,6 +127,11 @@ const std::vector< Vertex >& Model::getVertices() const
 	return m_vertices;
 }
 
+void Model::reservePolygons(uint32_t polygonCapacity)
+{
+	m_polygons.reserve(polygonCapacity);
+}
+
 uint32_t Model::addPolygon(const Polygon& polygon)
 {
 	return addId(m_polygons, polygon);
@@ -161,6 +166,11 @@ void Model::setPolygons(const std::vector< Polygon >& polygons)
 const std::vector< Polygon >& Model::getPolygons() const
 {
 	return m_polygons;
+}
+
+void Model::reservePositions(uint32_t positionCapacity)
+{
+	m_positions.reserve(positionCapacity);
 }
 
 uint32_t Model::addPosition(const Vector4& position)

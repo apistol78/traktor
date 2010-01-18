@@ -72,6 +72,8 @@ public:
 
 	const std::vector< Vertex >& getVertices() const;
 
+	void reservePolygons(uint32_t polygonCapacity);
+
 	uint32_t addPolygon(const Polygon& polygon);
 
 	uint32_t addUniquePolygon(const Polygon& polygon);
@@ -85,6 +87,8 @@ public:
 	void setPolygons(const std::vector< Polygon >& polygons);
 
 	const std::vector< Polygon >& getPolygons() const;
+
+	void reservePositions(uint32_t positionCapacity);
 
 	uint32_t addPosition(const Vector4& position);
 
