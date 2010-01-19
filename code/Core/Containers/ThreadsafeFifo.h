@@ -2,8 +2,8 @@
 #define traktor_ThreadsafeFifo_H
 
 #include <list>
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -17,13 +17,13 @@ class ThreadsafeFifo
 public:
 	void put(const ItemType& item)
 	{
-		Acquire< LockType > key(m_lock);
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
 		m_items.push_back(item);
 	}
 
 	bool get(ItemType& outItem)
 	{
-		Acquire< LockType > key(m_lock);
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
 		if (!m_items.empty())
 		{
 			outItem = m_items.front();
