@@ -169,7 +169,7 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 		m_eventQueueSignal.reset();
 	}
 	{
-		Acquire< Semaphore > __lock__(m_eventQueueLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
 		outEvent = m_eventQueue.front();
 		m_eventQueue.pop_front();
 	}
@@ -227,14 +227,26 @@ void XmlPullParserImpl::parseJob()
 
 void XmlPullParserImpl::pushCharacterData()
 {
-	if (m_cdata.empty())
+	size_t len = m_cdata.size();
+	if (!len)
 		return;
 
-	XmlPullParser::Event evt;
-	evt.type = XmlPullParser::EtText;
-	evt.value = trim(std::wstring(&m_cdata[0], m_cdata.size()));
-	if (!evt.value.empty())
+	const XML_Char* ss = &m_cdata[0];
+	const XML_Char* es = &m_cdata[len - 1];
+
+	while ((*ss == ' ' || *ss == '\t' || *ss == 10) && ss <= es)
+		++ss;
+
+	while ((*es == ' ' || *es == '\t' || *es == 10) && ss <= es)
+		--es;
+
+	if (ss <= es)
+	{
+		XmlPullParser::Event evt;
+		evt.type = XmlPullParser::EtText;
+		evt.value = std::wstring(ss, es + 1);
 		pushEvent(evt);
+	}
 
 	m_cdata.resize(0);
 }
@@ -242,7 +254,7 @@ void XmlPullParserImpl::pushCharacterData()
 void XmlPullParserImpl::pushEvent(const XmlPullParser::Event& xmlEvent)
 {
 #if T_XML_PARSER_THREAD
-	Acquire< Semaphore > __lock__(m_eventQueueLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_eventQueueLock);
 #endif
 	m_eventQueue.push_back(xmlEvent);
 #if T_XML_PARSER_THREAD
@@ -285,6 +297,7 @@ void XMLCALL XmlPullParserImpl::characterData(void* userData, const XML_Char* s,
 {
 	XmlPullParserImpl* pp = reinterpret_cast< XmlPullParserImpl* >(userData);
 	T_ASSERT (pp);
+	T_ASSERT (len > 0);
 
 	std::wstring ws = xmltows(s, &s[len]);
 	pp->m_cdata.insert(pp->m_cdata.end(), ws.begin(), ws.end());
