@@ -232,7 +232,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 	dependency->outputGuid = outputGuid;
 	dependency->flags = flags;
 	dependency->reason = PbrNone;
-	dependency->parent = m_currentDependency;
+
 	if (m_currentDependency)
 		m_currentDependency->children.push_back(dependency);
 
@@ -260,7 +260,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 		T_ASSERT (dependencyIndex < m_dependencies.size());
 		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
 
-		// Remove from current's children as well.
+		// Remove from current as well.
 		if (m_currentDependency)
 		{
 			RefArray< PipelineDependency >::iterator i = std::find(m_currentDependency->children.begin(), m_currentDependency->children.end(), dependency);

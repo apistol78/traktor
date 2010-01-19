@@ -50,7 +50,6 @@ public:
 	std::set< Path > files;						/*!< External file dependencies. */
 	uint32_t flags;								/*!< Dependency flags. \sa PipelineDependencyFlags */
 	uint32_t reason;							/*!< Build reason, updated prior to being built. \sa PipelineBuildReason */
-	PipelineDependency* parent;					/*!< Parent dependency. */
 	RefArray< PipelineDependency > children;	/*!< Child dependencies. */
 };
 

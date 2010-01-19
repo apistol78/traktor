@@ -938,6 +938,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	RefArray< PipelineDependency > dependencies;
 	pipelineDepends.getDependencies(dependencies);
 
+	double elapsedDependencies = timerBuild.getElapsedTime();
+	log::debug << L"Scanned dependencies in " << elapsedDependencies << L" second(s)" << Endl;
+
 	// Build output.
 	StatusListener listener(m_buildProgress);
 	PipelineBuilder pipelineBuilder(
@@ -963,9 +966,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	pipelineDb->close();
 
-	double elapsed = timerBuild.getElapsedTime();
+	double elapsedTotal = timerBuild.getElapsedTime();
 
-	uint32_t seconds = uint32_t(elapsed + 0.5);
+	uint32_t seconds = uint32_t(elapsedTotal + 0.5);
 	uint32_t minutes = seconds / 60; seconds %= 60;
 	uint32_t hours = minutes / 60; minutes %= 60;
 

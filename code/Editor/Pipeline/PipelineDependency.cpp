@@ -12,7 +12,6 @@ PipelineDependency::PipelineDependency()
 ,	sourceAssetHash(0)
 ,	flags(0)
 ,	reason(0)
-,	parent(0)
 {
 }
 
