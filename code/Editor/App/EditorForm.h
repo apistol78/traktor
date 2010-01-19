@@ -2,11 +2,11 @@
 #define traktor_editor_EditorForm_H
 
 #include <list>
-#include "Core/Io/Path.h"
 #include "Core/Guid.h"
+#include "Core/Io/Path.h"
 #include "Editor/IEditor.h"
-#include "Ui/Form.h"
 #include "Ui/Command.h"
+#include "Ui/Form.h"
 
 namespace traktor
 {
@@ -51,7 +51,6 @@ class PropertiesView;
 class HeapView;
 class LogView;
 class Settings;
-class Project;
 class IEditorPageFactory;
 class IEditorPage;
 class IObjectEditorFactory;
@@ -60,7 +59,6 @@ class IEditorPluginFactory;
 class IEditorPlugin;
 class IEditorTool;
 class EditorPageSite;
-class MRU;
 
 /*! \brief Main editor form.
  *
@@ -83,7 +81,9 @@ public:
 
 	virtual Ref< Settings > getSettings();
 
-	virtual Ref< IProject > getProject();
+	virtual Ref< db::Database > getSourceDatabase();
+
+	virtual Ref< db::Database > getOutputDatabase();
 
 	virtual Ref< render::IRenderSystem > getRenderSystem();
 
@@ -121,7 +121,6 @@ private:
 	Ref< ui::DockPane > m_paneAdditionalEast;
 	Ref< ui::DockPane > m_paneAdditionalSouth;
 	Ref< ui::MenuBar > m_menuBar;
-	Ref< ui::MenuItem > m_menuItemMRU;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::StatusBar > m_statusBar;
@@ -135,11 +134,10 @@ private:
 	Ref< LogView > m_logView;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
-	Path m_projectPath;
-	Ref< Project > m_project;
+	Ref< db::Database > m_sourceDatabase;
+	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
 	Ref< EditorPageSite > m_activeEditorPageSite;
-	Ref< MRU > m_mru;
 	Thread* m_threadBuild;
 
 	void setPropertyObject(Object* properties);
@@ -160,19 +158,7 @@ private:
 
 	void updateTitle();
 
-	void updateMRU();
-
 	void updateShortcutTable();
-
-	void newProject();
-
-	void openProject(const Path& path);
-
-	void openProject();
-
-	bool closeProject();
-
-	void updateProjectViews();
 
 	void saveCurrentDocument();
 
@@ -201,8 +187,6 @@ private:
 	bool anyModified();
 
 	bool handleCommand(const ui::Command& command);
-
-	bool handleMRU(const ui::Command& command, const Path& path);
 
 	/*! \name Event handlers. */
 	//@{

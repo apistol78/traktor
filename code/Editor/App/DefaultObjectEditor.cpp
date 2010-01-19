@@ -1,6 +1,5 @@
 #include "Editor/App/DefaultObjectEditor.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/ITypedAsset.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Ui/FileDialog.h"
@@ -54,10 +53,7 @@ void DefaultObjectEditor::apply()
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
-	Ref< editor::IProject > project = m_editor->getProject();
-	T_ASSERT (project);
-
-	Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(guid);
+	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
 	if (!instance)
 		return false;
 
@@ -142,10 +138,7 @@ void DefaultObjectEditor::eventPropertyCommand(ui::Event* event)
 			if (instanceGuid.isNull() || !instanceGuid.isValid())
 				return;
 
-			Ref< IProject > project = m_editor->getProject();
-			T_ASSERT (project);
-
-			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(instanceGuid);
+			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(instanceGuid);
 			if (!instance)
 				return;
 

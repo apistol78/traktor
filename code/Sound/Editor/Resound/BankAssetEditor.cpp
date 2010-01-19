@@ -2,7 +2,6 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/ISoundDriver.h"
@@ -142,7 +141,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		m_resourceManager = new resource::ResourceManager();
 		m_resourceManager->addFactory(
 			new SoundFactory(
-				m_editor->getProject()->getOutputDatabase(),
+				m_editor->getOutputDatabase(),
 				m_soundSystem
 			)
 		);
@@ -224,7 +223,7 @@ void BankAssetEditor::updateGridSounds()
 	{
 		Guid soundGuid = (*i)->getSound().getGuid();
 
-		Ref< db::Instance > soundAssetInstance = m_editor->getProject()->getSourceDatabase()->getInstance(soundGuid);
+		Ref< db::Instance > soundAssetInstance = m_editor->getSourceDatabase()->getInstance(soundGuid);
 		std::wstring soundName = soundAssetInstance ? soundAssetInstance->getName() : soundGuid.format();
 
 		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();

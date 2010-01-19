@@ -9,7 +9,6 @@
 #include "Animation/IK/IKPoseController.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/UndoStack.h"
@@ -250,8 +249,7 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 		data->picker = new VolumePicker();
 	}
 
-	Ref< editor::IProject > project = m_editor->getProject();
-	Ref< db::Database > database = project->getOutputDatabase();
+	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(

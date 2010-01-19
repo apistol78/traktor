@@ -42,12 +42,6 @@ class T_DLLCLASS IEditorPlugin : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum EditorEvent
-	{
-		EeProjectOpened,
-		EeProjectClosed
-	};
-
 	/*! \brief Create plugin.
 	 *
 	 * \param parent Parent widget.
@@ -58,12 +52,6 @@ public:
 
 	/*! \brief Destroy plugin. */
 	virtual void destroy() = 0;
-
-	/*! \brief Handle editor event.
-	 *
-	 * \param event Editor event.
-	 */
-	virtual void handleEditorEvent(EditorEvent event) = 0;
 
 	/*! \brief Handle shortcut command.
 	 *

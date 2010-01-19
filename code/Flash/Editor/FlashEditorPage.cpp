@@ -5,7 +5,6 @@
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/SwfReader.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Ui/Container.h"
 #include "Ui/Bitmap.h"
@@ -42,8 +41,7 @@ FlashEditorPage::FlashEditorPage(editor::IEditor* editor)
 bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
 	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
-	Ref< editor::IProject > project = m_editor->getProject();
-	Ref< db::Database > database = project->getOutputDatabase();
+	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(

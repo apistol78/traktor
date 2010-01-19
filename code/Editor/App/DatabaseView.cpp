@@ -8,7 +8,6 @@
 #include "Editor/Asset.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/IProject.h"
 #include "Editor/IWizardTool.h"
 #include "Editor/Settings.h"
 #include "Editor/App/DatabaseView.h"

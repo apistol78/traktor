@@ -189,19 +189,17 @@ bool OS::exploreFile(const Path& file) const
 #endif
 }
 
-Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute) const
+Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool redirect, bool mute) const
 {
-	STARTUPINFO si;
-	std::memset(&si, 0, sizeof(si));
-	si.cb = sizeof(STARTUPINFO);
-
-	PROCESS_INFORMATION pi;
-	std::memset(&pi, 0, sizeof(pi));
-
 	TCHAR cmd[32768], cwd[MAX_PATH];
+	HANDLE hStdInRead = 0, hStdInWrite = 0;
+	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
+	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
+
+	Path fileAbsolute = FileSystem::getInstance().getAbsolutePath(file);
 
 	StringOutputStream ss;
-	ss << L"\"" << file.getPathName() << L"\"";
+	ss << L"\"" << fileAbsolute.getPathName() << L"\"";
 	if (!commandLine.empty())
 		ss << L" " << commandLine;
 
@@ -212,6 +210,58 @@ Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, c
 	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
 #endif
+
+#if !defined(WINCE)
+	if (redirect)
+	{
+		// Create IO pipes.
+		SECURITY_DESCRIPTOR sd;
+		InitializeSecurityDescriptor(&sd, SECURITY_DESCRIPTOR_REVISION);
+		SetSecurityDescriptorDacl(&sd, true, NULL, false);
+	
+		SECURITY_ATTRIBUTES sa;
+		std::memset(&sa, 0, sizeof(sa));
+		sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+		sa.lpSecurityDescriptor = &sd;
+		sa.bInheritHandle = true;
+	
+		CreatePipe(
+			&hStdInRead,
+			&hStdInWrite,
+			&sa,
+			0
+		);
+	
+		CreatePipe(
+			&hStdOutRead,
+			&hStdOutWrite,
+			&sa,
+			0
+		);
+	
+		CreatePipe(
+			&hStdErrRead,
+			&hStdErrWrite,
+			&sa,
+			0
+		);
+	}
+#endif
+
+	STARTUPINFO si;
+	std::memset(&si, 0, sizeof(si));
+	si.cb = sizeof(STARTUPINFO);
+#if !defined(WINCE)
+	si.dwFlags = redirect ? STARTF_USESTDHANDLES : 0;
+#else
+	si.dwFlags = 0;
+#endif
+	si.hStdInput = hStdInRead;
+	si.hStdOutput = hStdOutWrite;
+	si.hStdError = hStdErrWrite;
+
+	PROCESS_INFORMATION pi;
+	std::memset(&pi, 0, sizeof(pi));
 
 	DWORD dwCreationFlags;
 #if !defined(WINCE)
@@ -238,7 +288,15 @@ Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, c
 		return 0;
 	}
 
-	return new ProcessWin32(pi);
+	return new ProcessWin32(
+		pi,
+		hStdInRead,
+		hStdInWrite,
+		hStdOutRead,
+		hStdOutWrite,
+		hStdErrRead,
+		hStdErrWrite
+	);
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const

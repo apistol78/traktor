@@ -32,7 +32,6 @@ class IRenderSystem;
 	{
 
 class Settings;
-class IProject;
 class IEditorPage;
 class IBrowseFilter;
 class PipelineDependency;
@@ -49,8 +48,11 @@ public:
 	/*! \brief Get editor settings. */
 	virtual Ref< Settings > getSettings() = 0;
 
-	/*! \brief Get project. */
-	virtual Ref< IProject > getProject() = 0;
+	/*! \brief Get source asset database. */
+	virtual Ref< db::Database > getSourceDatabase() = 0;
+
+	/*! \brief Get output database. */
+	virtual Ref< db::Database > getOutputDatabase() = 0;
 
 	/*! \brief Get editor render system. */
 	virtual Ref< render::IRenderSystem > getRenderSystem() = 0;
