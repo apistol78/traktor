@@ -24,16 +24,34 @@ class T_DLLCLASS ProcessWin32 : public IProcess
 	T_RTTI_CLASS;
 
 public:
-	ProcessWin32(const PROCESS_INFORMATION& pi);
+	ProcessWin32(
+		const PROCESS_INFORMATION& pi,
+		HANDLE hStdInRead,
+		HANDLE hStdInWrite,
+		HANDLE hStdOutRead,
+		HANDLE hStdOutWrite,
+		HANDLE hStdErrRead,
+		HANDLE hStdErrWrite
+	);
 
 	virtual ~ProcessWin32();
 
 	virtual bool wait(int32_t timeout);
 
+	virtual Ref< IStream > getPipeStream(StdPipe pipe);
+
 	virtual int32_t exitCode() const;
 
 private:
 	PROCESS_INFORMATION m_pi;
+	HANDLE m_hStdInRead;
+	HANDLE m_hStdInWrite;
+	HANDLE m_hStdOutRead;
+	HANDLE m_hStdOutWrite;
+	HANDLE m_hStdErrRead;
+	HANDLE m_hStdErrWrite;
+	Ref< IStream > m_pipeStdOut;
+	Ref< IStream > m_pipeStdErr;
 };
 
 }

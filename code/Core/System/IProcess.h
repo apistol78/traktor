@@ -15,6 +15,8 @@
 namespace traktor
 {
 
+class IStream;
+
 /*! \brief System process.
  * \ingroup Core
  *
@@ -28,6 +30,19 @@ class T_DLLCLASS IProcess
 	T_RTTI_CLASS;
 
 public:
+	enum StdPipe
+	{
+		SpStdIn,
+		SpStdOut,
+		SpStdErr
+	};
+
+	/*! \brief Get pipe stream.
+	 *
+	 * \return Exit code.
+	 */
+	virtual Ref< IStream > getPipeStream(StdPipe pipe) = 0;
+
 	/*! \brief Get exit code returned by process.
 	 *
 	 * \return Exit code.

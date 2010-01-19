@@ -5,7 +5,6 @@
 #include "Animation/SkeletonUtils.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/IProject.h"
 #include "Editor/UndoStack.h"
 #include "Database/Database.h"
 #include "Resource/ResourceManager.h"
@@ -113,8 +112,7 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	if (!m_renderView)
 		return false;
 
-	Ref< editor::IProject > project = m_editor->getProject();
-	Ref< db::Database > database = project->getOutputDatabase();
+	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(

@@ -5,7 +5,6 @@
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Resource/ResourceManager.h"
 #include "Physics/PhysicsManager.h"
@@ -30,9 +29,6 @@ const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 
 Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
-	Ref< editor::IProject > project = editor->getProject();
-	T_ASSERT (project);
-
 	if (!editor->getRenderSystem())
 	{
 		log::error << L"Unable to create scene editor; render system required." << Endl;
@@ -67,8 +63,8 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 	// Create editor context.
 	Ref< SceneEditorContext > context = new SceneEditorContext(
 		editor,
-		project->getOutputDatabase(),
-		project->getSourceDatabase(),
+		editor->getOutputDatabase(),
+		editor->getSourceDatabase(),
 		resourceManager,
 		editor->getRenderSystem(),
 		physicsManager

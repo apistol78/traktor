@@ -35,7 +35,6 @@ private:
 	Ref< ui::DropDown > m_dropRenderSystem;
 	Ref< ui::Edit > m_editDictionary;
 	Ref< ui::Edit > m_editAssetPath;
-	Ref< ui::CheckBox > m_checkOpenLastProject;
 	Ref< ui::CheckBox > m_checkBuildWhenSourceModified;
 	Ref< ui::CheckBox > m_checkBuildWhenAssetModified;
 };

@@ -1,6 +1,5 @@
 #include "Editor/App/ConvertDatabaseTool.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -120,8 +119,7 @@ std::wstring ConvertDatabaseTool::getDescription() const
 
 bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 {
-	Ref< editor::IProject > project = editor->getProject();
-	Ref< db::Database > sourceDb = project->getOutputDatabase();
+	Ref< db::Database > sourceDb = editor->getOutputDatabase();
 	if (!sourceDb)
 		return false;
 

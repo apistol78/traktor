@@ -1,13 +1,35 @@
-#include "Editor/Assets.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Library/Library.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
+#include "Core/Misc/EnterLeave.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/System/IProcess.h"
+#include "Core/System/OS.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Timer/Timer.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Database/Traverse.h"
+#include "Database/Compact/CompactDatabase.h"
+#include "Database/Local/LocalDatabase.h"
+#include "Database/Remote/Client/RemoteDatabase.h"
 #include "Editor/Asset.h"
+#include "Editor/Assets.h"
 #include "Editor/Settings.h"
-#include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/IObjectEditorFactory.h"
-#include "Editor/IObjectEditor.h"
-#include "Editor/IEditorPluginFactory.h"
+#include "Editor/IEditorPageFactory.h"
 #include "Editor/IEditorPlugin.h"
+#include "Editor/IEditorPluginFactory.h"
 #include "Editor/IEditorTool.h"
+#include "Editor/IObjectEditor.h"
+#include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
@@ -21,7 +43,6 @@
 #include "Editor/App/ObjectEditorDialog.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/AboutDialog.h"
-#include "Editor/App/Project.h"
 #include "Editor/App/MRU.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
@@ -29,6 +50,11 @@
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineFactory.h"
+#include "I18N/I18N.h"
+#include "I18N/Dictionary.h"
+#include "I18N/Text.h"
+#include "I18N/Format.h"
+#include "Render/IRenderSystem.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
@@ -54,33 +80,8 @@
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
 #include "Ui/Xtrme/WidgetXtrme.h"
-#include "I18N/I18N.h"
-#include "I18N/Dictionary.h"
-#include "I18N/Text.h"
-#include "I18N/Format.h"
-#include "Database/Database.h"
-#include "Database/Group.h"
-#include "Database/Instance.h"
-#include "Database/Traverse.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
-#include "Render/IRenderSystem.h"
-#include "Core/Misc/CommandLine.h"
-#include "Core/Misc/EnterLeave.h"
-#include "Core/System/OS.h"
-#include "Core/System/IProcess.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/DeepClone.h"
-#include "Core/Library/Library.h"
-#include "Core/Timer/Timer.h"
-#include "Core/System/OS.h"
-#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/TraktorSmall.h"
@@ -109,22 +110,6 @@ const wchar_t* c_title = L"Traktor Editor - Debug build";
 const wchar_t* c_title = L"Traktor Editor";
 #endif
 
-bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
-{
-	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
-	if (!shortcutGroup)
-		return false;
-
-	std::pair< int, ui::VirtualKey > key = shortcutGroup->getProperty< PropertyKey >(command);
-	if (!key.first && key.second == ui::VkNull)
-		return false;
-
-	outKeyState = key.first;
-	outVirtualKey = key.second;
-
-	return true;
-}
-
 const uint32_t c_offsetFindingPipelines = 10;
 const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
@@ -149,6 +134,63 @@ struct StatusListener : public PipelineBuilder::IListener
 	}
 };
 
+Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
+{
+	Ref< db::IProviderDatabase > providerDatabase;
+
+	if (endsWith(toLower(databaseName), L".manifest"))
+	{
+		Ref< db::LocalDatabase > localDatabase = new db::LocalDatabase();
+		if (!localDatabase->open(databaseName))
+		{
+			if (!create || !localDatabase->create(databaseName))
+				return 0;
+		}
+
+		providerDatabase = localDatabase;
+	}
+	else if (endsWith(toLower(databaseName), L".compact"))
+	{
+		Ref< db::CompactDatabase > compactDatabase = new db::CompactDatabase();
+		if (!compactDatabase->open(databaseName))
+		{
+			if (!create || !compactDatabase->create(databaseName))
+				return 0;
+		}
+
+		providerDatabase = compactDatabase;
+	}
+	else
+	{
+		Ref< db::RemoteDatabase > remoteDatabase = new db::RemoteDatabase();
+		if (!remoteDatabase->open(databaseName))
+			return 0;
+
+		providerDatabase = remoteDatabase;
+	}
+
+	T_ASSERT (providerDatabase);
+
+	Ref< db::Database > database = new db::Database();
+	return database->create(providerDatabase) ? database.ptr() : 0;
+}
+
+bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
+{
+	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
+	if (!shortcutGroup)
+		return false;
+
+	std::pair< int, ui::VirtualKey > key = shortcutGroup->getProperty< PropertyKey >(command);
+	if (!key.first && key.second == ui::VkNull)
+		return false;
+
+	outKeyState = key.first;
+	outVirtualKey = key.second;
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.EditorForm", EditorForm, ui::Form)
@@ -159,6 +201,16 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Load settings.
 	m_settings = loadSettings(L"Traktor.Editor");
+
+	// Open databases.
+	std::wstring sourceManifest = m_settings->getProperty< editor::PropertyString >(L"Editor.SourceManifest");
+	std::wstring outputManifest = m_settings->getProperty< editor::PropertyString >(L"Editor.OutputManifest");
+
+	m_sourceDatabase = openDatabase(sourceManifest, false);
+	m_outputDatabase = openDatabase(outputManifest, true);
+
+	if (!m_sourceDatabase || !m_outputDatabase)
+		return false;
 
 	// Load dictionary.
 	loadDictionary();
@@ -181,14 +233,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
-	m_menuItemMRU = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT"));
-
 	Ref< ui::MenuItem > menuFile = new ui::MenuItem(i18n::Text(L"MENU_FILE"));
-	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewProject"), i18n::Text(L"MENU_FILE_NEW_PROJECT")));
-	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenProject"), i18n::Text(L"MENU_FILE_OPEN_PROJECT")));
-	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.CloseProject"), i18n::Text(L"MENU_FILE_CLOSE_PROJECT")));
-	menuFile->add(m_menuItemMRU);
-	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
@@ -272,6 +317,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
 	m_dataBaseView->setText(i18n::Text(L"TITLE_DATABASE"));
+	m_dataBaseView->setDatabase(m_sourceDatabase);
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
 		m_dataBaseView->hide();
 
@@ -403,9 +449,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->add(menuHelp);
 
 	// Collect all shortcut commands from all editors.
-	m_shortcutCommands.push_back(ui::Command(L"Editor.NewProject"));
-	m_shortcutCommands.push_back(ui::Command(L"Editor.OpenProject"));
-	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseProject"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Save"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.SaveAll"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CloseEditor"));
@@ -441,16 +484,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Build shortcut accelerator table.
 	updateShortcutTable();
 
-	// Load MRU registry.
-	Ref< IStream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", File::FmRead);
-	if (file)
-	{
-		m_mru = xml::XmlDeserializer(file).readObject< MRU >();
-		file->close();
-	}
-	if (!m_mru)
-		m_mru = new MRU();
-
 	// Create render system.
 	const TypeInfo* renderSystemType = TypeInfo::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
 	if (renderSystemType)
@@ -485,17 +518,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (m_settings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
 		maximize();
 
-	// Open last project.
-	if (m_settings->getProperty< PropertyBoolean >(L"Editor.OpenLastProject"))
-	{
-		Path projectPath = m_settings->getProperty< PropertyString >(L"Editor.LastProjectPath");
-		openProject(projectPath);
-	}
-
-	// Ensure views are in correct state.
-	updateProjectViews();
-	updateMRU();
-
 	// Show form.
 	update();
 	show();
@@ -517,8 +539,9 @@ void EditorForm::destroy()
 		m_threadBuild = 0;
 	}
 
-	// Close opened project.
-	closeProject();
+	// Close databases.
+	m_outputDatabase->close();
+	m_sourceDatabase->close();
 
 	// Destroy all plugins.
 	for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
@@ -550,9 +573,14 @@ Ref< Settings > EditorForm::getSettings()
 	return m_settings;
 }
 
-Ref< IProject > EditorForm::getProject()
+Ref< db::Database > EditorForm::getSourceDatabase()
 {
-	return m_project;
+	return m_sourceDatabase;
+}
+
+Ref< db::Database > EditorForm::getOutputDatabase()
+{
+	return m_outputDatabase;
 }
 
 Ref< render::IRenderSystem > EditorForm::getRenderSystem()
@@ -579,15 +607,12 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 {
 	Ref< db::Instance > instance;
 
-	if (m_project)
+	BrowseInstanceDialog dlgBrowse(m_settings);
+	if (dlgBrowse.create(this, m_sourceDatabase, filter))
 	{
-		BrowseInstanceDialog dlgBrowse(m_settings);
-		if (dlgBrowse.create(this, m_project->getSourceDatabase(), filter))
-		{
-			if (dlgBrowse.showModal() == ui::DrOk)
-				instance = dlgBrowse.getInstance();
-			dlgBrowse.destroy();
-		}
+		if (dlgBrowse.showModal() == ui::DrOk)
+			instance = dlgBrowse.getInstance();
+		dlgBrowse.destroy();
 	}
 
 	return instance;
@@ -893,7 +918,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(0);
 
-	std::wstring pipelineDbConnectionStr = m_project->getSettings()->getProperty< PropertyString >(L"Project.PipelineDb");
+	std::wstring pipelineDbConnectionStr = m_settings->getProperty< PropertyString >(L"Pipeline.Db");
 
 	Ref< PipelineDb > pipelineDb = new PipelineDb();
 	if (!pipelineDb->open(pipelineDbConnectionStr))
@@ -922,7 +947,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	// Build dependencies.
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
-		m_project->getSourceDatabase()
+		m_sourceDatabase
 	);
 
 	log::info << L"Collecting dependencies..." << Endl;
@@ -945,8 +970,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	StatusListener listener(m_buildProgress);
 	PipelineBuilder pipelineBuilder(
 		&pipelineFactory,
-		m_project->getSourceDatabase(),
-		m_project->getOutputDatabase(),
+		m_sourceDatabase,
+		m_outputDatabase,
 		pipelineCache,
 		pipelineDb,
 		&listener
@@ -993,9 +1018,6 @@ void EditorForm::buildCancel()
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
 {
-	if (!m_project)
-		return;
-
 	// Stop current build if any.
 	buildCancel();
 
@@ -1029,9 +1051,6 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 
 void EditorForm::buildAssets(bool rebuild)
 {
-	if (!m_project)
-		return;
-
 	EnterLeave cursor(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
@@ -1042,7 +1061,7 @@ void EditorForm::buildAssets(bool rebuild)
 
 	RefArray< db::Instance > assetsInstances;
 	db::recursiveFindChildInstances(
-		m_project->getSourceDatabase()->getRootGroup(),
+		m_sourceDatabase->getRootGroup(),
 		db::FindInstanceByType(type_of< Assets >()),
 		assetsInstances
 	);
@@ -1058,13 +1077,10 @@ void EditorForm::buildAssets(bool rebuild)
 
 bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
 {
-	if (!m_project)
-		return false;
-
 	PipelineFactory pipelineFactory(m_settings);
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
-		m_project->getSourceDatabase(),
+		m_sourceDatabase,
 		recursionDepth
 	);
 
@@ -1082,31 +1098,9 @@ void EditorForm::updateTitle()
 	if (!targetTitle.empty())
 		ss << targetTitle << L" - ";
 
-	if (m_project)
-	{
-		std::wstring projectName = m_projectPath.getFileNameNoExtension();
-		ss << projectName << L" - ";
-	}
-
 	ss << c_title;
 
 	setText(ss.str());
-}
-
-void EditorForm::updateMRU()
-{
-	m_menuItemMRU->removeAll();
-
-	std::vector< Path > usedFiles;
-	if (!m_mru->getUsedFiles(usedFiles))
-		return;
-
-	for (std::vector< Path >::iterator i = usedFiles.begin(); i != usedFiles.end(); ++i)
-	{
-		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.MRU"), i->getPathName());
-		menuItem->setData(L"PATH", new Path(*i));
-		m_menuItemMRU->add(menuItem);
-	}
 }
 
 void EditorForm::updateShortcutTable()
@@ -1128,115 +1122,6 @@ void EditorForm::updateShortcutTable()
 
 		m_shortcutTable->addCommand(keyState, virtualKey, *i);
 	}
-}
-
-void EditorForm::newProject()
-{
-	if (!closeProject())
-		return;
-
-	// @fixme
-
-	updateProjectViews();
-}
-
-void EditorForm::openProject(const Path& path)
-{
-	if (m_project != 0 && m_projectPath == path)
-		return;
-
-	EnterLeave cursor(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
-	);
-
-	Ref< Project > project = new Project();
-	if (project->open(path))
-	{
-		if (!closeProject())
-			return;
-
-		m_projectPath = path;
-		m_project = project;
-
-		// Notify plugins about new project opened.
-		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
-			(*i)->handleEditorEvent(IEditorPlugin::EeProjectOpened);
-
-		m_mru->usedFile(path);
-	}
-
-	updateTitle();
-	updateProjectViews();
-	updateMRU();
-}
-
-void EditorForm::openProject()
-{
-	ui::FileDialog fileDialog;
-	if (!fileDialog.create(this, i18n::Text(L"EDITOR_OPEN_PROJECT"), L"Projects;*.project;All files;*.*"))
-		return;
-
-	Path projectPath;
-	if (fileDialog.showModal(projectPath) != ui::DrOk)
-	{
-		fileDialog.destroy();
-		return;
-	}
-	fileDialog.destroy();
-
-	openProject(projectPath);
-}
-
-bool EditorForm::closeProject()
-{
-	if (anyModified())
-	{
-		int result = ui::MessageBox::show(
-			this,
-			i18n::Text(L"QUERY_MESSAGE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
-			i18n::Text(L"QUERY_TITLE_INSTANCES_NOT_SAVED_CLOSE_EDITOR"),
-			ui::MbIconExclamation | ui::MbYesNo
-		);
-		if (result == ui::DrNo)
-			return false;
-	}
-
-	closeAllEditors();
-
-	if (m_project)
-	{
-		m_project->close();
-		m_project = 0;
-		m_projectPath = L"";
-
-		// Notify plugins about project closed.
-		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
-			(*i)->handleEditorEvent(IEditorPlugin::EeProjectClosed);
-	}
-
-	updateProjectViews();
-	return true;
-}
-
-void EditorForm::updateProjectViews()
-{
-	if (m_project)
-	{
-		m_dataBaseView->setDatabase(m_project->getSourceDatabase());
-		m_dataBaseView->setEnable(true);
-		m_toolBar->setEnable(true);
-		m_menuTools->setEnable(true);
-	}
-	else
-	{
-		m_dataBaseView->setDatabase(0);
-		m_dataBaseView->setEnable(false);
-		m_toolBar->setEnable(false);
-		m_menuTools->setEnable(false);
-	}
-	m_dataBaseView->update();
-	m_toolBar->update();
 }
 
 void EditorForm::saveCurrentDocument()
@@ -1628,13 +1513,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 {
 	bool result = true;
 
-	if (command == L"Editor.NewProject")
-		newProject();
-	else if (command == L"Editor.OpenProject")
-		openProject();
-	else if (command == L"Editor.CloseProject")
-		closeProject();
-	else if (command == L"Editor.Save")
+	if (command == L"Editor.Save")
 		saveCurrentDocument();
 	else if (command == L"Editor.SaveAll")
 		saveAllDocuments();
@@ -1767,32 +1646,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	return result;
 }
 
-bool EditorForm::handleMRU(const ui::Command& command, const Path& path)
-{
-	EnterLeave cursor(
-		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
-		makeFunctor(this, &EditorForm::resetCursor)
-	);
-
-	Ref< Project > project = new Project();
-	if (project->open(path))
-	{
-		if (!closeProject())
-			return false;
-
-		m_projectPath = path;
-		m_project = project;
-		m_mru->usedFile(path);
-	}
-	else
-		m_project = 0;
-
-	updateTitle();
-	updateProjectViews();
-
-	return true;
-}
-
 void EditorForm::eventShortcut(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
@@ -1803,15 +1656,7 @@ void EditorForm::eventShortcut(ui::Event* event)
 void EditorForm::eventMenuClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< const ui::MenuItem* >(event->getItem())->getCommand();
-	if (command == L"Editor.MRU")
-	{
-		Ref< Path > path = checked_type_cast< ui::MenuItem* >(event->getItem())->getData< Path >(L"PATH");
-		T_ASSERT (path);
-
-		if (handleMRU(command, *path))
-			event->consume();
-	}
-	else if (handleCommand(command))
+	if (handleCommand(command))
 		event->consume();
 }
 
@@ -1948,19 +1793,8 @@ void EditorForm::eventClose(ui::Event* event)
 	m_settings->setProperty< PropertyInteger >(L"Editor.SizeWidth", rc.getWidth());
 	m_settings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
 
-	// Save last project path.
-	m_settings->setProperty< PropertyString >(L"Editor.LastProjectPath", m_projectPath.getPathName());
-
 	// Save settings and pipeline hash.
 	saveSettings(L"Traktor.Editor");
-
-	// Save MRU.
-	Ref< IStream > file = FileSystem::getInstance().open(L"Traktor.Editor.mru", traktor::File::FmWrite);
-	if (file)
-	{
-		xml::XmlSerializer(file).writeObject(m_mru);
-		file->close();
-	}
 
 	ui::Application::getInstance()->exit(0);
 }
@@ -1974,19 +1808,10 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 	updateView = false;
 
-	if (!m_project)
-		return;
-
-	Ref< db::Database > sourceDatabase = m_project->getSourceDatabase();
-	T_ASSERT (sourceDatabase);
-
-	Ref< db::Database > outputDatabase = m_project->getOutputDatabase();
-	T_ASSERT (outputDatabase);
-
 	// Check if there is any commited instances into
 	// source database.
 	bool commited = false;
-	while (sourceDatabase->getEvent(event, eventId, remote))
+	while (m_sourceDatabase->getEvent(event, eventId, remote))
 	{
 		if (remote == false && event == db::PeCommited)
 			commited = true;
@@ -1998,7 +1823,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		buildAssets(false);
 
 	std::vector< Guid > eventIds;
-	while (outputDatabase->getEvent(event, eventId, remote))
+	while (m_outputDatabase->getEvent(event, eventId, remote))
 	{
 		if (event != db::PeCommited)
 			continue;
@@ -2041,7 +1866,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		std::vector< Guid > modifiedAssets;
 
 		RefArray< db::Instance > assetInstances;
-		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Asset >()), assetInstances);
+		db::recursiveFindChildInstances(m_sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Asset >()), assetInstances);
 
 		if (!assetInstances.empty())
 		{

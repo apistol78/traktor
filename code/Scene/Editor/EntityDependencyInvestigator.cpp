@@ -2,7 +2,6 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "World/Entity/EntityData.h"
 #include "Database/Database.h"
@@ -109,7 +108,7 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
 	Ref< editor::PipelineDependency > dependency = item->getData< editor::PipelineDependency >(L"DEPENDENCY");
 	if (dependency)
 	{
-		Ref< db::Instance > instance = m_context->getEditor()->getProject()->getSourceDatabase()->getInstance(dependency->outputGuid);
+		Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(dependency->outputGuid);
 		if (instance)
 			m_context->getEditor()->openEditor(instance);
 	}

@@ -80,10 +80,11 @@ public:
 	 * \param file Path to executable.
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
+	 * \param redirect Redirect standard IO.
 	 * \param mute Mute spawn process's output.
 	 * \return Process instance, null if unable to execute.
 	 */
-	Ref< IProcess > execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute = false) const;
+	Ref< IProcess > execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool redirect, bool mute) const;
 
 	/*! \brief Create shared memory object.
 	 *

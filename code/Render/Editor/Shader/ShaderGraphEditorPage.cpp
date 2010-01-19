@@ -15,7 +15,6 @@
 #include "Render/Edge.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
 #include "Editor/IBrowseFilter.h"
@@ -679,8 +678,7 @@ void ShaderGraphEditorPage::refreshGraph()
 		
 		if (is_a< External >(shaderNode))
 		{
-			Ref< editor::IProject > project = m_editor->getProject();
-			Ref< db::Instance > instance = project->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
+			Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(static_cast< External* >(shaderNode)->getFragmentGuid());
 			editorNode->setTitle(instance ? instance->getName() : L"{ Null reference }");
 			editorNode->setInfo(L"");
 		}
@@ -755,8 +753,7 @@ void ShaderGraphEditorPage::checkUpdatedFragments()
 
 	//for (RefArray< External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
 	//{
-	//	Ref< editor::IProject > project = m_editor->getProject();
-	//	Ref< ShaderGraph > fragmentGraph = project->getSourceDatabase()->getObjectReadOnly< ShaderGraph >((*i)->getFragmentGuid());
+	//	Ref< ShaderGraph > fragmentGraph = m_editor->getSourceDatabase()->getObjectReadOnly< ShaderGraph >((*i)->getFragmentGuid());
 	//	if (!fragmentGraph)
 	//	{
 	//		ui::MessageBox::show(i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_MESSAGE"), i18n::Text(L"SHADERGRAPH_ERROR_MISSING_FRAGMENT_CAPTION"), ui::MbIconError | ui::MbOk);

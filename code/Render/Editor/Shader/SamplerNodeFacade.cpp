@@ -2,7 +2,6 @@
 #include "Render/Editor/TextureAsset.h"
 #include "Render/Nodes.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Database/Database.h"
@@ -59,8 +58,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 	Guid textureGuid = sampler->getExternal();
 	if (!textureGuid.isNull())
 	{
-		Ref< editor::IProject > project = editor->getProject();
-		Ref< TextureAsset > textureAsset = project->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
+		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
 		if (textureAsset)
 		{
 			std::wstring assetPath = editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");

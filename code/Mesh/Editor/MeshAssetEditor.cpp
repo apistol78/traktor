@@ -3,7 +3,6 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Editor/IEditor.h"
-#include "Editor/IProject.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/Settings.h"
 #include "Database/Database.h"
@@ -208,7 +207,7 @@ void MeshAssetEditor::updateMaterialList()
 			std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->getName());
 			if (it != materialShaders.end())
 			{
-				materialShaderInstance = m_editor->getProject()->getSourceDatabase()->getInstance(it->second);
+				materialShaderInstance = m_editor->getSourceDatabase()->getInstance(it->second);
 				if (materialShaderInstance)
 					materialShader = materialShaderInstance->getName();
 			}
@@ -242,7 +241,7 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 
 	MaterialShaderGenerator generator(
-		m_editor->getProject()->getSourceDatabase(),
+		m_editor->getSourceDatabase(),
 		m_model
 	);
 	Ref< render::ShaderGraph > materialShader = generator.generate(*it);
