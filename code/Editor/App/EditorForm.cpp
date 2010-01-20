@@ -17,9 +17,6 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
-#include "Database/Compact/CompactDatabase.h"
-#include "Database/Local/LocalDatabase.h"
-#include "Database/Remote/Client/RemoteDatabase.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
 #include "Editor/Settings.h"
@@ -134,45 +131,15 @@ struct StatusListener : public PipelineBuilder::IListener
 	}
 };
 
-Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
+Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
-	Ref< db::IProviderDatabase > providerDatabase;
-
-	if (endsWith(toLower(databaseName), L".manifest"))
-	{
-		Ref< db::LocalDatabase > localDatabase = new db::LocalDatabase();
-		if (!localDatabase->open(databaseName))
-		{
-			if (!create || !localDatabase->create(databaseName))
-				return 0;
-		}
-
-		providerDatabase = localDatabase;
-	}
-	else if (endsWith(toLower(databaseName), L".compact"))
-	{
-		Ref< db::CompactDatabase > compactDatabase = new db::CompactDatabase();
-		if (!compactDatabase->open(databaseName))
-		{
-			if (!create || !compactDatabase->create(databaseName))
-				return 0;
-		}
-
-		providerDatabase = compactDatabase;
-	}
-	else
-	{
-		Ref< db::RemoteDatabase > remoteDatabase = new db::RemoteDatabase();
-		if (!remoteDatabase->open(databaseName))
-			return 0;
-
-		providerDatabase = remoteDatabase;
-	}
-
-	T_ASSERT (providerDatabase);
-
 	Ref< db::Database > database = new db::Database();
-	return database->create(providerDatabase) ? database.ptr() : 0;
+	if (!database->open(connectionString))
+	{
+		if (!create || !database->create(connectionString))
+			return 0;
+	}
+	return database;
 }
 
 bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
@@ -202,15 +169,34 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load settings.
 	m_settings = loadSettings(L"Traktor.Editor");
 
-	// Open databases.
-	std::wstring sourceManifest = m_settings->getProperty< editor::PropertyString >(L"Editor.SourceManifest");
-	std::wstring outputManifest = m_settings->getProperty< editor::PropertyString >(L"Editor.OutputManifest");
+	// Load dependent modules.
+#if !defined(T_STATIC)
+	const std::vector< std::wstring >& modules = m_settings->getProperty< PropertyStringArray >(L"Editor.Modules");
+	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	{
+		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
+		if (Library().open(*i))
+			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
+		else
+			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+	}
+#endif
 
-	m_sourceDatabase = openDatabase(sourceManifest, false);
-	m_outputDatabase = openDatabase(outputManifest, true);
+	// Open databases.
+	std::wstring sourceDatabase = m_settings->getProperty< editor::PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_settings->getProperty< editor::PropertyString >(L"Editor.OutputDatabase");
+
+	m_sourceDatabase = openDatabase(sourceDatabase, false);
+	m_outputDatabase = openDatabase(outputDatabase, true);
 
 	if (!m_sourceDatabase || !m_outputDatabase)
+	{
+		if (!m_sourceDatabase)
+			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
+		if (!m_outputDatabase)
+			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
 		return false;
+	}
 
 	// Load dictionary.
 	loadDictionary();
@@ -285,19 +271,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
-
-	// Load dependent modules.
-#if !defined(T_STATIC)
-	const std::vector< std::wstring >& modules = m_settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-	{
-		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
-		if (Library().open(*i))
-			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
-		else
-			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
-	}
-#endif
 
 	m_dock = new ui::Dock();
 	m_dock->create(this);

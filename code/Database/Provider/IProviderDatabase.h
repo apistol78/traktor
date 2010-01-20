@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -16,6 +16,7 @@ namespace traktor
 	namespace db
 	{
 
+class ConnectionString;
 class IProviderBus;
 class IProviderGroup;
 
@@ -27,6 +28,10 @@ class T_DLLCLASS IProviderDatabase : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const ConnectionString& connectionString) = 0;
+
+	virtual bool open(const ConnectionString& connectionString) = 0;
+
 	virtual void close() = 0;
 
 	virtual Ref< IProviderBus > getBus() = 0;

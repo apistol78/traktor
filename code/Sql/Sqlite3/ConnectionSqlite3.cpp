@@ -1,5 +1,6 @@
 #include <map>
 #include <sqlite3.h>
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Sql/Sqlite3/ConnectionSqlite3.h"
@@ -34,21 +35,20 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 		cs[trim(i->substr(0, p))] = i->substr(p + 1);
 	}
 
-	std::wstring fileName = cs[L"fileName"];
-	if (fileName.empty())
-		return false;
+	Path fileName = cs[L"fileName"];
+	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
 
-	log::debug << L"Using SQLite db \"" << fileName << L"\"" << Endl;
+	log::debug << L"Using SQLite db \"" << fileName.getPathName() << L"\"" << Endl;
 
 	sqlite3* db = 0;
 
 	int err = sqlite3_open(
-		wstombs(fileName).c_str(),
+		wstombs(fileName.getPathName()).c_str(),
 		&db
 	);
 	if (err != SQLITE_OK)
 	{
-		log::error << L"SQLite error:" << Endl;
+		log::error << L"SQLite error (" << fileName.getPathName() << L"):" << Endl;
 		log::error << mbstows(sqlite3_errmsg((sqlite3*)m_db)) << Endl;
 		return false;
 	}

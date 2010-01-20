@@ -1,9 +1,12 @@
 #include <signal.h>
 #include "Xml/XmlDeserializer.h"
+#include "Database/Compact/CompactDatabase.h"
+#include "Database/Local/LocalDatabase.h"
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Database/Remote/Server/Configuration.h"
 #include "Database/Remote/Server/RemoteDatabaseService.h"
 #include "Net/Network.h"
+#include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Io/FileSystem.h"
@@ -30,6 +33,9 @@ void signalAbortCallback(int signal)
 #if !defined(WINCE)
 int main(int argc, const char** argv)
 {
+	T_FORCE_LINK_REF(db::CompactDatabase);
+	T_FORCE_LINK_REF(db::LocalDatabase);
+
 	CommandLine cmdLine(argc, argv);
 #else
 int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
@@ -38,7 +44,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	CommandLine cmdLine(1, argv);
 #endif
 
-	traktor::log::info << L"Traktor Remote Database Server v1.0" << Endl;
+	traktor::log::info << L"Traktor Remote Database Server v1.0.1" << Endl;
 	if (cmdLine.hasOption('h'))
 	{
 		traktor::log::info << L"Usage: Traktor.Database.Remote.Server.App -c=[configuration] -h" << Endl;
@@ -46,7 +52,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	}
 	
 	std::wstring configurationFile = L"Traktor.Database.Remote.Server.config";
-	if (cmdLine.hasOption('s'))
+	if (cmdLine.hasOption('c'))
 		configurationFile = cmdLine.getOption('c').getString();
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(configurationFile, File::FmRead);
@@ -83,8 +89,13 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (discoveryManager->create(true))
 	{
+		RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
+		T_ASSERT (!interfaces.empty());
+
+		std::wstring host = interfaces[0]->getHostName();
+
 		Ref< db::RemoteDatabaseService > service = new db::RemoteDatabaseService(
-			L"localhost",
+			host,
 			configuration->getListenPort()
 		);
 

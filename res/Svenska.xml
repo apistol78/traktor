@@ -350,6 +350,14 @@
       <second>Skriv tillåtet</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
+      <second>Källdatabas</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
+      <second>Måldatabas</second>
+    </item>
+    <item>
 			<first>EDITOR_SETTINGS_DEPENDENT_MODULES</first>
 			<second>Moduler</second>
 		</item>

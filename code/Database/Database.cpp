@@ -33,7 +33,7 @@ void buildInstanceMap(Group* group, std::map< Guid, Ref< Instance > >& outInstan
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Database", Database, Object)
 
-bool Database::create(IProviderDatabase* providerDatabase)
+bool Database::open(IProviderDatabase* providerDatabase)
 {
 	T_ASSERT (providerDatabase);
 	T_ASSERT (!m_providerDatabase);
@@ -46,6 +46,44 @@ bool Database::create(IProviderDatabase* providerDatabase)
 		return false;
 
 	return true;
+}
+
+bool Database::open(const ConnectionString& connectionString)
+{
+	if (!connectionString.have(L"provider"))
+		return false;
+
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	if (!providerType)
+		return false;
+
+	Ref< IProviderDatabase > providerDatabase = checked_type_cast< IProviderDatabase* >(providerType->createInstance());
+	if (!providerDatabase)
+		return false;
+
+	if (!providerDatabase->open(connectionString))
+		return false;
+
+	return open(providerDatabase);
+}
+
+bool Database::create(const ConnectionString& connectionString)
+{
+	if (!connectionString.have(L"provider"))
+		return false;
+
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	if (!providerType)
+		return false;
+
+	Ref< IProviderDatabase > providerDatabase = checked_type_cast< IProviderDatabase* >(providerType->createInstance());
+	if (!providerDatabase)
+		return false;
+
+	if (!providerDatabase->create(connectionString))
+		return false;
+
+	return open(providerDatabase);
 }
 
 void Database::close()

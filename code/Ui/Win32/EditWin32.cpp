@@ -7,7 +7,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_heightMargin = 11;
+const int32_t c_heightMargin = 13;
 
 		}
 

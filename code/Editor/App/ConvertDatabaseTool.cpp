@@ -140,13 +140,13 @@ bool ConvertDatabaseTool::launch(ui::Widget* parent, IEditor* editor)
 	if (targetDatabasePath.getExtension() == L"compact")
 	{
 		Ref< db::CompactDatabase > targetCompactProvider = new db::CompactDatabase();
-		if (!targetCompactProvider->create(targetDatabasePath))
+		if (!targetCompactProvider->create(L"fileName=" + targetDatabasePath.getPathName()))
 			return false;
 		targetProvider = targetCompactProvider;
 	}
 
 	Ref< db::Database > targetDb = new db::Database();
-	if (!targetDb->create(targetProvider))
+	if (!targetDb->open(targetProvider))
 		return false;
 
 	ui::custom::BackgroundWorkerStatus status(0);

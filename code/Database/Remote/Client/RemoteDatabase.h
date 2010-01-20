@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_REMOTE_CLIENT_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,9 @@ class T_DLLCLASS RemoteDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
-	bool open(const std::wstring& connectionString);
+	virtual bool create(const ConnectionString& connectionString);
+
+	virtual bool open(const ConnectionString& connectionString);
 
 	virtual void close();
 

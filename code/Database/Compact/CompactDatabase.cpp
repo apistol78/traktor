@@ -1,24 +1,31 @@
-#include "Database/Compact/CompactDatabase.h"
-#include "Database/Compact/CompactGroup.h"
-#include "Database/Compact/CompactContext.h"
-#include "Database/Compact/CompactRegistry.h"
-#include "Database/Compact/BlockFile.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Serialization/DeepHash.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Database/ConnectionString.h"
+#include "Database/Compact/BlockFile.h"
+#include "Database/Compact/CompactContext.h"
+#include "Database/Compact/CompactDatabase.h"
+#include "Database/Compact/CompactGroup.h"
+#include "Database/Compact/CompactRegistry.h"
 
 namespace traktor
 {
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.CompactDatabase", CompactDatabase, IProviderDatabase)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.CompactDatabase", 0, CompactDatabase, IProviderDatabase)
 
-bool CompactDatabase::create(const Path& filePath)
+bool CompactDatabase::create(const ConnectionString& connectionString)
 {
+	if (!connectionString.have(L"fileName"))
+		return false;
+
+	Path fileName = connectionString.get(L"fileName");
+
 	Ref< BlockFile > blockFile = new BlockFile();
-	if (!blockFile->create(filePath))
+	if (!blockFile->create(fileName))
 		return false;
 
 	uint32_t registryBlockId = blockFile->allocBlockId();
@@ -42,11 +49,16 @@ bool CompactDatabase::create(const Path& filePath)
 	return true;
 }
 
-bool CompactDatabase::open(const Path& filePath, bool readOnly)
+bool CompactDatabase::open(const ConnectionString& connectionString)
 {
-	Ref< BlockFile > blockFile = new BlockFile();
+	if (!connectionString.have(L"fileName"))
+		return false;
 
-	if (!blockFile->open(filePath, readOnly))
+	Path fileName = connectionString.get(L"fileName");
+	bool readOnly = parseString< bool >(connectionString.get(L"readOnly"));
+
+	Ref< BlockFile > blockFile = new BlockFile();
+	if (!blockFile->open(fileName, readOnly))
 		return false;
 
 	Ref< IStream > registryStream = blockFile->readBlock(1);

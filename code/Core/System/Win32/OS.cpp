@@ -7,6 +7,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Singleton/SingletonManager.h"
@@ -189,12 +190,51 @@ bool OS::exploreFile(const Path& file) const
 #endif
 }
 
-Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool redirect, bool mute) const
+OS::envmap_t OS::getEnvironment() const
+{
+	envmap_t envmap;
+
+	LPTCH lpEnv = GetEnvironmentStrings();
+	if (lpEnv)
+	{
+		TCHAR* p = lpEnv;
+		while (*p != 0)
+		{
+			TCHAR* key = p;
+			TCHAR* sep = _tcschr(p, '=');
+			if (!sep)
+				break;
+			TCHAR* val = sep + 1;
+
+			if (key < sep)
+			{
+				envmap.insert(std::make_pair(
+					tstows(tstring(key, sep)),
+					tstows(val)
+				));
+			}
+
+			p = val + _tcslen(val) + 1;
+		}
+	}
+
+	return envmap;
+}
+
+Ref< IProcess > OS::execute(
+	const Path& file,
+	const std::wstring& commandLine,
+	const Path& workingDirectory,
+	const envmap_t* envmap,
+	bool redirect,
+	bool mute
+) const
 {
 	TCHAR cmd[32768], cwd[MAX_PATH];
 	HANDLE hStdInRead = 0, hStdInWrite = 0;
 	HANDLE hStdOutRead = 0, hStdOutWrite = 0;
 	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
+	AutoArrayPtr< wchar_t > environment;
 
 	Path fileAbsolute = FileSystem::getInstance().getAbsolutePath(file);
 
@@ -210,6 +250,30 @@ Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, c
 	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
 	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
 #endif
+
+	// Create environment variables.
+	if (envmap)
+	{
+		// Calculate how much space we need to allocate.
+		uint32_t size = 0;
+		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
+			size += i->first.length() + 1 + i->second.length() + 1;
+		size += 1;
+
+		environment.reset(new wchar_t [size]);
+
+		wchar_t* p = environment.ptr(); *p = 0;
+		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
+		{
+			wcscpy(p, i->first.c_str());
+			wcscat(p, L"=");
+			wcscat(p, i->second.c_str());
+			p += i->first.length() + 1 + i->second.length() + 1;
+		}
+		*p++ = 0;
+
+		T_ASSERT (size_t(p - environment.ptr()) == size);
+	}
 
 #if !defined(WINCE)
 	if (redirect)
@@ -270,6 +334,9 @@ Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, c
 	dwCreationFlags = mute ? 0 : CREATE_NEW_CONSOLE;
 #endif
 
+	if (environment.ptr())
+		dwCreationFlags |= CREATE_UNICODE_ENVIRONMENT;
+
 	BOOL result = CreateProcess(
 		NULL,
 		cmd,
@@ -277,7 +344,7 @@ Ref< IProcess > OS::execute(const Path& file, const std::wstring& commandLine, c
 		NULL,
 		TRUE,
 		dwCreationFlags,
-		NULL,
+		environment.ptr(),
 		(cwd[0] != L'\0' ? cwd : NULL),
 		&si,
 		&pi

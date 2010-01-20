@@ -326,6 +326,14 @@
       <second>Open last project at startup</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_SOURCE_DATABASE</first>
+      <second>Source database</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_OUTPUT_DATABASE</first>
+      <second>Output database</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_PIPELINE</first>
       <second>Pipeline</second>
     </item>
