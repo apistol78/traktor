@@ -16,6 +16,8 @@ namespace traktor
 	namespace online
 	{
 
+class UserPsn;
+
 /*! \brief PlayStation Network online session manager.
  * \ingroup Online
  */
@@ -24,11 +26,16 @@ class T_DLLCLASS SessionManagerPsn : public ISessionManager
 	T_RTTI_CLASS;
 
 public:
+	SessionManagerPsn();
+
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers);
 
 	virtual Ref< IUser > getCurrentUser();
 
 	virtual Ref< ISession > createSession(IUser* user);
+
+private:
+	Ref< UserPsn > m_user;
 };
 
 	}
