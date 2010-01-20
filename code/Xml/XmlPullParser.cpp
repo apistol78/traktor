@@ -164,7 +164,7 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 #	if T_XML_PARSER_THREAD_LOG
 		++m_getStalled;
 #	endif
-		if (!m_eventQueueSignal.wait(1000))
+		if (!m_eventQueueSignal.wait(10000))
 			return false;
 		m_eventQueueSignal.reset();
 	}

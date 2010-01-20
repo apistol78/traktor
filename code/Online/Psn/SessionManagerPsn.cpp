@@ -1,4 +1,6 @@
+#include "Online/Psn/SessionPsn.h"
 #include "Online/Psn/SessionManagerPsn.h"
+#include "Online/Psn/UserPsn.h"
 
 namespace traktor
 {
@@ -7,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SessionManagerPsn", 0, SessionManagerPsn, ISessionManager)
 
+SessionManagerPsn::SessionManagerPsn()
+:	m_user(new UserPsn(L"N/A"))
+{
+}
+
 bool SessionManagerPsn::getAvailableUsers(RefArray< IUser >& outUsers)
 {
 	return true;
@@ -14,12 +21,12 @@ bool SessionManagerPsn::getAvailableUsers(RefArray< IUser >& outUsers)
 
 Ref< IUser > SessionManagerPsn::getCurrentUser()
 {
-	return 0;
+	return m_user;
 }
 
 Ref< ISession > SessionManagerPsn::createSession(IUser* user)
 {
-	return 0;
+	return new SessionPsn(checked_type_cast< UserPsn*, false >(user));
 }
 
 	}
