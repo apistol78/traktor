@@ -289,6 +289,8 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
+	D3DMULTISAMPLE_TYPE d3dMultiSample;
+	HRESULT hr;
 
 	T_ASSERT (m_hWnd);
 	T_ASSERT (m_renderViews.empty());
@@ -303,25 +305,35 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 	UpdateWindow(m_hWnd);
 
-	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
-	d3dPresent.BackBufferFormat = D3DFMT_A8R8G8B8;
-	d3dPresent.BackBufferCount = 1;
-	d3dPresent.BackBufferWidth = displayMode->getWidth();
-	d3dPresent.BackBufferHeight = displayMode->getHeight();
-	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
-	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresent.hDeviceWindow = m_hWnd;
-	d3dPresent.Windowed = FALSE;
-	d3dPresent.EnableAutoDepthStencil = FALSE;
-	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
 	if (desc.stencilBits == 1)
 		d3dDepthStencilFormat = D3DFMT_D15S1;
 	else if (desc.stencilBits > 1)
 		d3dDepthStencilFormat = D3DFMT_D24S8;
 	else
 		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
+
+	d3dMultiSample = D3DMULTISAMPLE_NONE;
+	
+	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, FALSE, c_d3dMultiSample[desc.multiSample], NULL);
+	if (SUCCEEDED(hr))
+	{
+		hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, FALSE, c_d3dMultiSample[desc.multiSample], NULL);
+		if (SUCCEEDED(hr))
+			d3dMultiSample = c_d3dMultiSample[desc.multiSample];
+	}
+
+	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
+	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dPresent.BackBufferCount = 1;
+	d3dPresent.BackBufferWidth = displayMode->getWidth();
+	d3dPresent.BackBufferHeight = displayMode->getHeight();
+	d3dPresent.MultiSampleType = d3dMultiSample;
+	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dPresent.hDeviceWindow = m_hWnd;
+	d3dPresent.Windowed = FALSE;
+	d3dPresent.EnableAutoDepthStencil = FALSE;
+	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	return new RenderViewWin32(
 		m_context,
@@ -338,6 +350,8 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
+	D3DMULTISAMPLE_TYPE d3dMultiSample;
+	HRESULT hr;
 	RECT rcWindow;
 
 	T_ASSERT (m_hWnd);
@@ -353,25 +367,35 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	if (rcWindow.top >= rcWindow.bottom)
 		rcWindow.bottom = rcWindow.top + 10;
 
-	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
-	d3dPresent.BackBufferFormat = D3DFMT_A8R8G8B8;
-	d3dPresent.BackBufferCount = 1;
-	d3dPresent.BackBufferWidth = rcWindow.right - rcWindow.left;
-	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
-	d3dPresent.MultiSampleType = c_d3dMultiSample[desc.multiSample];
-	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresent.hDeviceWindow = (HWND)windowHandle;
-	d3dPresent.Windowed = TRUE;
-	d3dPresent.EnableAutoDepthStencil = FALSE;
-	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-
 	if (desc.stencilBits == 1)
 		d3dDepthStencilFormat = D3DFMT_D15S1;
 	else if (desc.stencilBits > 1)
 		d3dDepthStencilFormat = D3DFMT_D24S8;
 	else
 		d3dDepthStencilFormat = (desc.depthBits > 16) ? D3DFMT_D24X8 : D3DFMT_D16;
+
+	d3dMultiSample = D3DMULTISAMPLE_NONE;
+
+	hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, D3DFMT_X8R8G8B8, TRUE, c_d3dMultiSample[desc.multiSample], NULL);
+	if (SUCCEEDED(hr))
+	{
+		hr = m_d3d->CheckDeviceMultiSampleType(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, d3dDepthStencilFormat, TRUE, c_d3dMultiSample[desc.multiSample], NULL);
+		if (SUCCEEDED(hr))
+			d3dMultiSample = c_d3dMultiSample[desc.multiSample];
+	}
+
+	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
+	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dPresent.BackBufferCount = 1;
+	d3dPresent.BackBufferWidth = rcWindow.right - rcWindow.left;
+	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
+	d3dPresent.MultiSampleType = d3dMultiSample;
+	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	d3dPresent.hDeviceWindow = (HWND)windowHandle;
+	d3dPresent.Windowed = TRUE;
+	d3dPresent.EnableAutoDepthStencil = FALSE;
+	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	return new RenderViewWin32(
 		m_context,
