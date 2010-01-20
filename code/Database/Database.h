@@ -5,14 +5,15 @@
 #include "Core/Object.h"
 #include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
+#include "Database/ConnectionString.h"
 #include "Database/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -39,7 +40,14 @@ class T_DLLCLASS Database : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(IProviderDatabase* providerDatabase);
+	/*! \brief Open database from provider instance. */
+	virtual bool open(IProviderDatabase* providerDatabase);
+
+	/*! \brief Open database from connection string. */
+	virtual bool open(const ConnectionString& connectionString);
+
+	/*! \brief Create database from connection string. */
+	virtual bool create(const ConnectionString& connectionString);
 
 	virtual void close();
 

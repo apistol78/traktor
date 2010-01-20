@@ -1,11 +1,12 @@
 #ifndef traktor_String_H
 #define traktor_String_H
 
-#include <cctype>
-#include <string>
-#include <sstream>
 #include <algorithm>
+#include <cctype>
 #include <limits>
+#include <sstream>
+#include <string>
+#include "Core/Config.h"
 
 #if defined(max)
 #	undef max
@@ -189,6 +190,26 @@ inline ValueType parseString(const std::wstring& text)
 	std::wstringstream ss(text); ss >> value;
 	return value;
 }
+
+/*! \brief Convert literal to boolean.
+ * \ingroup Core
+ */
+template < >
+inline bool parseString< bool >(const std::wstring& text)
+{
+	if (compareIgnoreCase(text, L"true"))
+		return true;
+	else if (compareIgnoreCase(text, L"yes"))
+		return true;
+	else
+	{
+		int32_t number = parseString< int32_t >(text);
+		if (number > 0)
+			return true;
+	}
+	return false;
+}
+
 
 }
 

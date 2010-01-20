@@ -32,6 +32,8 @@ public:
 	virtual bool apply(Settings* settings);
 
 private:
+	Ref< ui::Edit > m_editSourceDatabase;
+	Ref< ui::Edit > m_editOutputDatabase;
 	Ref< ui::DropDown > m_dropRenderSystem;
 	Ref< ui::Edit > m_editDictionary;
 	Ref< ui::Edit > m_editAssetPath;

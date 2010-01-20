@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_COMPACT_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -30,9 +30,9 @@ class T_DLLCLASS CompactDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Path& filePath);
+	virtual bool create(const ConnectionString& connectionString);
 
-	bool open(const Path& filePath, bool readOnly = false);
+	virtual bool open(const ConnectionString& connectionString);
 
 	virtual void close();
 

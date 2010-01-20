@@ -1,19 +1,19 @@
-#include "Database/Remote/Server/DatabaseMessageListener.h"
-#include "Database/Remote/Server/Configuration.h"
-#include "Database/Remote/Server/Connection.h"
+#include "Core/Io/Path.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Database/ConnectionString.h"
+#include "Database/Provider/IProviderBus.h"
+#include "Database/Provider/IProviderDatabase.h"
+#include "Database/Provider/IProviderGroup.h"
 #include "Database/Remote/Messages/DbmOpen.h"
 #include "Database/Remote/Messages/DbmClose.h"
 #include "Database/Remote/Messages/DbmGetBus.h"
 #include "Database/Remote/Messages/DbmGetRootGroup.h"
 #include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
-#include "Database/Local/LocalDatabase.h"
-#include "Database/Compact/CompactDatabase.h"
-#include "Database/Provider/IProviderBus.h"
-#include "Database/Provider/IProviderGroup.h"
-#include "Core/Io/Path.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Database/Remote/Server/DatabaseMessageListener.h"
+#include "Database/Remote/Server/Configuration.h"
+#include "Database/Remote/Server/Connection.h"
 
 namespace traktor
 {
@@ -40,40 +40,38 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 		return true;
 	}
 
-	std::wstring manifest = m_configuration->getDatabaseManifest(message->getName());
-	if (!manifest.empty())
+	ConnectionString connectionString = m_configuration->getConnectionString(message->getName());
+
+	if (!connectionString.have(L"provider"))
 	{
-		Ref< IProviderDatabase > database;
-
-		if (endsWith(toLower(manifest), L".manifest"))
-		{
-			Ref< LocalDatabase > localDatabase = new LocalDatabase();
-			if (!localDatabase->open(manifest))
-			{
-				m_connection->sendReply(MsgStatus(StFailure));
-				return true;
-			}
-			database = localDatabase;
-		}
-		else if (endsWith(toLower(manifest), L".compact"))
-		{
-			Ref< CompactDatabase > compactDatabase = new CompactDatabase();
-			if (!compactDatabase->open(manifest))
-			{
-				m_connection->sendReply(MsgStatus(StFailure));
-				return true;
-			}
-			database = compactDatabase;
-		}
-
-		T_ASSERT (database);
-		m_connection->setDatabase(database);
-
-		log::info << L"Database \"" << message->getName() << L"\" opened successfully" << Endl;
-		m_connection->sendReply(MsgStatus(StSuccess));
-	}
-	else
 		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	const TypeInfo* providerType = TypeInfo::find(connectionString.get(L"provider"));
+	if (!providerType)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	Ref< IProviderDatabase > providerDatabase = checked_type_cast< IProviderDatabase* >(providerType->createInstance());
+	if (!providerDatabase)
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	if (!providerDatabase->open(connectionString))
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	m_connection->setDatabase(providerDatabase);
+
+	log::info << L"Database \"" << message->getName() << L"\" opened successfully" << Endl;
+	m_connection->sendReply(MsgStatus(StSuccess));
 
 	return true;
 }

@@ -1,6 +1,7 @@
 #ifndef traktor_OS_H
 #define traktor_OS_H
 
+#include <map>
 #include "Core/Ref.h"
 #include "Core/Singleton/ISingleton.h"
 
@@ -25,6 +26,8 @@ class ISharedMemory;
 class T_DLLCLASS OS : public ISingleton
 {
 public:
+	typedef std::map< std::wstring, std::wstring > envmap_t;
+
 	static OS& getInstance();
 
 	/*! \brief Get number of CPU cores.
@@ -75,16 +78,30 @@ public:
 	 */
 	bool exploreFile(const Path& file) const;
 
+	/*! \brief Get process's environment variables.
+	 *
+	 * \return Environment variables.
+	 */
+	envmap_t getEnvironment() const;
+
 	/*! \brief Execute command.
 	 *
 	 * \param file Path to executable.
 	 * \param commandLine Execute command line.
 	 * \param workingDirectory Process's initial working directory.
+	 * \param envmap Optional environment variables.
 	 * \param redirect Redirect standard IO.
 	 * \param mute Mute spawn process's output.
 	 * \return Process instance, null if unable to execute.
 	 */
-	Ref< IProcess > execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool redirect, bool mute) const;
+	Ref< IProcess > execute(
+		const Path& file,
+		const std::wstring& commandLine,
+		const Path& workingDirectory,
+		const envmap_t* envmap,
+		bool redirect,
+		bool mute
+	) const;
 
 	/*! \brief Create shared memory object.
 	 *

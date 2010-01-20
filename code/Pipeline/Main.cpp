@@ -24,37 +24,15 @@
 
 using namespace traktor;
 
-Ref< db::Database > openDatabase(const std::wstring& databaseName, bool create)
+Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
-	Ref< db::IProviderDatabase > providerDatabase;
-
-	if (endsWith(toLower(databaseName), L".manifest"))
-	{
-		Ref< db::LocalDatabase > localDatabase = new db::LocalDatabase();
-		if (!localDatabase->open(databaseName))
-		{
-			if (!create || !localDatabase->create(databaseName))
-				return 0;
-		}
-
-		providerDatabase = localDatabase;
-	}
-	else if (endsWith(toLower(databaseName), L".compact"))
-	{
-		Ref< db::CompactDatabase > compactDatabase = new db::CompactDatabase();
-		if (!compactDatabase->open(databaseName))
-		{
-			if (!create || !compactDatabase->create(databaseName))
-				return 0;
-		}
-
-		providerDatabase = compactDatabase;
-	}
-
-	T_ASSERT (providerDatabase);
-
 	Ref< db::Database > database = new db::Database();
-	return database->create(providerDatabase) ? database.ptr() : 0;
+	if (!database->open(connectionString))
+	{
+		if (!create || !database->create(connectionString))
+			return 0;
+	}
+	return database;
 }
 
 Ref< editor::Settings > loadSettings(const std::wstring& settingsFile)
@@ -127,37 +105,30 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
-	traktor::log::info << L"Loading pipeline modules..." << Endl;
-	traktor::log::info << IncreaseIndent;
-
 	std::vector< std::wstring > modules = settings->getProperty< editor::PropertyStringArray >(L"Editor.Modules");
 	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		traktor::log::info << *i << L"..." << Endl;
 		if (!Library().open(*i))
 		{
-			traktor::log::error << L"Unable to load pipeline module \"" << *i << L"\"" << Endl;
+			traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 			return 6;
 		}
 	}
 
-	traktor::log::info << DecreaseIndent;
-
-	std::wstring sourceManifest = settings->getProperty< editor::PropertyString >(L"Editor.SourceManifest");
+	std::wstring sourceDatabaseCS = settings->getProperty< editor::PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabaseCS = settings->getProperty< editor::PropertyString >(L"Editor.OutputDatabase");
 	
-	Ref< db::Database > sourceDatabase = openDatabase(sourceManifest, false);
+	Ref< db::Database > sourceDatabase = openDatabase(sourceDatabaseCS, false);
 	if (!sourceDatabase)
 	{
-		traktor::log::error << L"Unable to open source database \"" << sourceManifest << L"\"" << Endl;
+		traktor::log::error << L"Unable to open source database \"" << sourceDatabaseCS << L"\"" << Endl;
 		return 1;
 	}
 
-	std::wstring outputManifest = settings->getProperty< editor::PropertyString >(L"Editor.OutputManifest");
-	
-	Ref< db::Database > outputDatabase = openDatabase(outputManifest, true);
+	Ref< db::Database > outputDatabase = openDatabase(outputDatabaseCS, true);
 	if (!outputDatabase)
 	{
-		traktor::log::error << L"Unable to open or create output database \"" << outputManifest << L"\"" << Endl;
+		traktor::log::error << L"Unable to open or create output database \"" << outputDatabaseCS << L"\"" << Endl;
 		return 2;
 	}
 

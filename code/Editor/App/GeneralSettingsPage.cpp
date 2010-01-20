@@ -27,6 +27,18 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 	if (!containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
 		return false;
 
+	Ref< ui::Static > staticSourceDatabase = new ui::Static();
+	staticSourceDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SOURCE_DATABASE"));
+
+	m_editSourceDatabase = new ui::Edit();
+	m_editSourceDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.SourceDatabase", L""));
+
+	Ref< ui::Static > staticOutputDatabase = new ui::Static();
+	staticOutputDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_OUTPUT_DATABASE"));
+
+	m_editOutputDatabase = new ui::Edit();
+	m_editOutputDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.OutputDatabase", L""));
+
 	Ref< ui::Static > staticRenderer = new ui::Static();
 	staticRenderer->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
 

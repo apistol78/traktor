@@ -1,106 +1,70 @@
-#include "Database/Local/LocalDatabase.h"
-#include "Database/Local/LocalManifest.h"
-#include "Database/Local/Context.h"
-#include "Database/Local/LocalBus.h"
-#include "Database/Local/LocalGroup.h"
-#include "Xml/XmlSerializer.h"
-#include "Xml/XmlDeserializer.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Database/ConnectionString.h"
+#include "Database/Local/Context.h"
+#include "Database/Local/LocalBus.h"
+#include "Database/Local/LocalDatabase.h"
+#include "Database/Local/LocalGroup.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.LocalDatabase", LocalDatabase, IProviderDatabase)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalDatabase", 0, LocalDatabase, IProviderDatabase)
 
-bool LocalDatabase::create(const Path& manifestPath)
+bool LocalDatabase::create(const ConnectionString& connectionString)
 {
-	std::wstring rootGroupPath = manifestPath.getFileNameNoExtension();
+	if (!connectionString.have(L"groupPath"))
+		return false;
 
-	if (!FileSystem::getInstance().makeAllDirectories(rootGroupPath))
+	std::wstring groupPath = connectionString.get(L"groupPath");
+
+	Path groupPathA = FileSystem::getInstance().getAbsolutePath(groupPath);
+	if (!FileSystem::getInstance().makeAllDirectories(groupPathA))
 	{
-		log::error << L"Unable to create physical group at \"" << rootGroupPath << L"\"" << Endl;
+		log::error << L"Unable to create physical group at \"" << groupPath << L"\"" << Endl;
 		return false;
 	}
 
-	Ref< LocalManifest > manifest = new LocalManifest();
-
-	manifest->setRootGroupPath(L"");
-	manifest->setEventMonitorEnable(true);
-	manifest->setEventFile(L"temp/Events.xvs");
-	manifest->setUseBinary(false);
-
-	Ref< IStream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmWrite);
-	if (!manifestFile)
-	{
-		log::error << L"Unable to create manifest \"" << manifestPath.getPathName() << L"\"" << Endl;
-		return false;
-	}
-
-	bool result = xml::XmlSerializer(manifestFile).writeObject(manifest);
-
-	manifestFile->close();
-
-	if (!result)
-	{
-		log::error << L"Unable to write manifest \"" << manifestPath.getPathName() << L"\"" << Endl;
-		return false;
-	}
-
-	m_context = new Context(manifest->getUseBinary());
-
-	if (manifest->getEventMonitorEnable())
-		m_bus = new LocalBus(manifest->getEventFile());
-
-	m_rootGroup = new LocalGroup(m_context, rootGroupPath);
-	return true;
+	return open(connectionString);
 }
 
-bool LocalDatabase::open(const Path& manifestPath)
+bool LocalDatabase::open(const ConnectionString& connectionString)
 {
-	Ref< IStream > manifestFile = FileSystem::getInstance().open(manifestPath, File::FmRead);
-	if (!manifestFile)
-	{
-		log::error << L"Unable to open manifest \"" << manifestPath.getPathName() << L"\", file missing?" << Endl;
+	if (!connectionString.have(L"groupPath"))
 		return false;
-	}
 
-	Ref< LocalManifest > manifest = xml::XmlDeserializer(manifestFile).readObject< LocalManifest >();
-	
-	manifestFile->close();
+	std::wstring groupPath = connectionString.get(L"groupPath");
+	bool eventFile = connectionString.have(L"eventFile") ? parseString< bool >(connectionString.get(L"eventFile")) : true;
+	bool binary = connectionString.have(L"binary") ? parseString< bool >(connectionString.get(L"binary")) : false;
 
-	if (!manifest)
+	Path groupPathA = FileSystem::getInstance().getAbsolutePath(groupPath);
+
+	m_context = new Context(binary);
+
+	if (eventFile)
 	{
-		log::error << L"Unable to read manifest \"" << manifestPath.getPathName() << L"\", possibly corrupted" << Endl;
-		return false;
-	}
-
-	Path databasePath = FileSystem::getInstance().getAbsolutePath(manifestPath).getPathOnly();
-
-	m_context = new Context(manifest->getUseBinary());
-
-	if (manifest->getEventMonitorEnable())
-	{
-		Path eventFile = FileSystem::getInstance().getAbsolutePath(databasePath, manifest->getEventFile());
-		if (!FileSystem::getInstance().makeAllDirectories(eventFile.getPathOnly()))
+		Path eventPath = groupPathA + L"/Events.shm";
+		if (!FileSystem::getInstance().makeAllDirectories(eventPath.getPathOnly()))
 		{
 			log::error << L"Unable to ensure event file directory exist" << Endl;
 			return false;
 		}
-		m_bus = new LocalBus(eventFile.getPathName());
+		m_bus = new LocalBus(eventPath.getPathName());
 	}
 
-	Path rootPath = FileSystem::getInstance().getAbsolutePath(databasePath, manifest->getRootGroupPath());
-	if (!FileSystem::getInstance().makeAllDirectories(rootPath))
+	if (!FileSystem::getInstance().makeAllDirectories(groupPathA))
 	{
 		log::error << L"Unable to ensure root group directory exist" << Endl;
 		return false;
 	}
 
-	m_rootGroup = new LocalGroup(m_context, rootPath);
+	m_rootGroup = new LocalGroup(m_context, groupPathA);
 	return true;
 }
 

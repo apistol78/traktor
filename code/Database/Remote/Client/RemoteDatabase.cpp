@@ -1,7 +1,10 @@
-#include "Database/Remote/Client/RemoteDatabase.h"
-#include "Database/Remote/Client/RemoteBus.h"
-#include "Database/Remote/Client/RemoteGroup.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Database/ConnectionString.h"
 #include "Database/Remote/Client/Connection.h"
+#include "Database/Remote/Client/RemoteBus.h"
+#include "Database/Remote/Client/RemoteDatabase.h"
+#include "Database/Remote/Client/RemoteGroup.h"
 #include "Database/Remote/Messages/DbmOpen.h"
 #include "Database/Remote/Messages/DbmClose.h"
 #include "Database/Remote/Messages/DbmGetBus.h"
@@ -11,50 +14,54 @@
 #include "Net/Network.h"
 #include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Core/Misc/WildCompare.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
 	namespace db
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.db.RemoteDatabase", RemoteDatabase, IProviderDatabase)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.RemoteDatabase", 0, RemoteDatabase, IProviderDatabase)
 
-bool RemoteDatabase::open(const std::wstring& connectionString)
+bool RemoteDatabase::create(const ConnectionString& connectionString)
 {
+	return false;
+}
+
+bool RemoteDatabase::open(const ConnectionString& connectionString)
+{
+	if (!connectionString.have(L"host") || !connectionString.have(L"database"))
+		return false;
+
 	if (!net::Network::initialize())
 	{
 		log::error << L"Failed to open database; network initialization failed" << Endl;
 		return false;
 	}
 
-	std::vector< std::wstring > parts;
-	if (!WildCompare(L"*:*/*").match(connectionString, WildCompare::CmIgnoreCase, &parts))
-	{
-		log::error << L"Failed to open database; invalid connection string" << Endl;
-		return false;
-	}
+	std::wstring host = connectionString.get(L"host");
+	std::wstring database = connectionString.get(L"database");
+	uint16_t port = 33666;
 
-	std::wstring host = parts[0];
-	uint16_t port = parseString< uint16_t >(parts[1]);
+	size_t p = host.find(L':');
+	if (p != host.npos)
+	{
+		port = parseString< uint16_t >(host.substr(p + 1));
+		host = host.substr(0, p);
+	}
 
 	Ref< net::TcpSocket > socket = new net::TcpSocket();
 	if (!socket->connect(net::SocketAddressIPv4(host, port)))
 	{
-		log::error << L"Failed to open database; unable to connect to server at \"" << host << L"\" port " << port << Endl;
+		log::error << L"Failed to open database; unable to connect to server \"" << host << L"\" (port " << port << L")" << Endl;
 		return false;
 	}
 
 	m_connection = new Connection(socket);
 
-	std::wstring name = parts[2];
-
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpen(name));
+	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpen(database));
 	if (!result || result->getStatus() != StSuccess)
 	{
-		log::error << L"Failed to open database; unable to open server database \"" << name << L"\"" << Endl;
+		log::error << L"Failed to open database; unable to open server database \"" << database << L"\"" << Endl;
 		return false;
 	}
 

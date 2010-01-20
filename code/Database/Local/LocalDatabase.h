@@ -31,9 +31,9 @@ class T_DLLCLASS LocalDatabase : public IProviderDatabase
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Path& manifestPath); 
+	virtual bool create(const ConnectionString& connectionString);
 
-	bool open(const Path& manifestPath);
+	virtual bool open(const ConnectionString& connectionString);
 
 	virtual void close();
 
