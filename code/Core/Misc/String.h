@@ -186,7 +186,7 @@ inline ValueType parseString(const std::string& text)
 template < typename ValueType >
 inline ValueType parseString(const std::wstring& text)
 {
-	ValueType value = std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : std::numeric_limits< ValueType >::max();
+	ValueType value = std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0;
 	std::wstringstream ss(text); ss >> value;
 	return value;
 }
@@ -197,9 +197,9 @@ inline ValueType parseString(const std::wstring& text)
 template < >
 inline bool parseString< bool >(const std::wstring& text)
 {
-	if (compareIgnoreCase(text, L"true"))
+	if (compareIgnoreCase(text, L"true") == 0)
 		return true;
-	else if (compareIgnoreCase(text, L"yes"))
+	else if (compareIgnoreCase(text, L"yes") == 0)
 		return true;
 	else
 	{
