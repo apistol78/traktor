@@ -49,13 +49,15 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 
 	if (eventFile)
 	{
-		Path eventPath = groupPathA + L"/Events.shm";
+		Path eventPath = groupPathA.getPathName() + L"/Events.shm";
 		if (!FileSystem::getInstance().makeAllDirectories(eventPath.getPathOnly()))
 		{
 			log::error << L"Unable to ensure event file directory exist" << Endl;
 			return false;
 		}
+
 		m_bus = new LocalBus(eventPath.getPathName());
+		log::debug << L"Using shared event file \"" << eventPath.getPathName() << L"\"" << Endl;
 	}
 
 	if (!FileSystem::getInstance().makeAllDirectories(groupPathA))
