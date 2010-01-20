@@ -96,7 +96,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 8, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 9, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -226,19 +226,19 @@ bool MeshPipeline::buildOutput(
 				(*i)->setFragmentGuid(vertexShaderGuid);
 		}
 
-		// Remove unused branches from shader graph.
-		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches();
-		if (!materialShaderGraph)
-		{
-			log::error << L"MeshPipeline failed; unable to remove unused branches" << Endl;
-			return false;
-		}
-
 		// Link shader fragments.
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
 			log::error << L"MeshPipeline failed; unable to link shader fragments" << Endl;
+			return false;
+		}
+
+		// Remove unused branches from shader graph.
+		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches();
+		if (!materialShaderGraph)
+		{
+			log::error << L"MeshPipeline failed; unable to remove unused branches" << Endl;
 			return false;
 		}
 
