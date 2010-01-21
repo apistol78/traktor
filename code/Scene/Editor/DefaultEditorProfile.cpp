@@ -15,11 +15,9 @@
 #include "Weather/Clouds/CloudMaskFactory.h"
 
 // Entity factories
-#include "World/Entity/LightEntityFactory.h"
-#include "World/Entity/ExternalEntityFactory.h"
-#include "World/Entity/GroupEntityFactory.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
+#include "World/Entity/WorldEntityFactory.h"
 
 // Entity renderers
 #include "World/Entity/LightEntityRenderer.h"
@@ -72,9 +70,7 @@ void DefaultEditorProfile::createEntityFactories(
 	RefArray< world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new world::LightEntityFactory());
-	outEntityFactories.push_back(new world::ExternalEntityFactory(context->getSourceDatabase()));
-	outEntityFactories.push_back(new world::GroupEntityFactory());
+	outEntityFactories.push_back(new world::WorldEntityFactory(context->getSourceDatabase()));
 	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }

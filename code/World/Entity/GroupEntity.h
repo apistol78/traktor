@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -87,7 +87,7 @@ public:
 	//@}
 
 private:
-	friend class GroupEntityFactory;
+	friend class WorldEntityFactory;
 
 	RefArray< Entity > m_entities;
 	bool m_update;
