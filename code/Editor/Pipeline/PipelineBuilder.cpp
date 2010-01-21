@@ -7,6 +7,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -45,10 +46,15 @@ PipelineBuilder::PipelineBuilder(
 bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
 	int32_t succeeded = 0, failed = 0;
+	Timer timer;
+
+	timer.start();
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		analyzeBuildReason(*i, rebuild);
+
+	log::debug << L"Pipeline build; analyze " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
 	// Build assets which are dirty or have dirty dependency assets.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -70,6 +76,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		else
 			++failed;
 	}
+
+	log::debug << L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -219,7 +227,8 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
-		m_db->set(dependency->outputGuid, hash);
+		if ((dependency->reason & PbrSourceModified) != 0)
+			m_db->set(dependency->outputGuid, hash);
 		return true;
 	}
 

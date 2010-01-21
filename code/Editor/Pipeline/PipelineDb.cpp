@@ -25,7 +25,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
 			L"id integer primary key,"
-			L"guid char(37),"
+			L"guid char(37) unique,"
 			L"pipelineVersion integer,"
 			L"pipelineHash integer,"
 			L"sourceHash integer"
