@@ -51,17 +51,21 @@ public:
 
 	bool create(Widget* parent, int style = WsDoubleBuffer);
 
-	void setSeparator(int separator);
+	void setSeparator(int32_t separator);
 
-	int getSeparator() const;
+	int32_t getSeparator() const;
 
-	void setLength(int length);
+	void setTimeScale(int32_t timeScale);
 
-	int getLength() const;
+	int32_t getTimeScale() const;
 
-	void setCursor(int time);
+	void setLength(int32_t length);
 
-	int getCursor() const;
+	int32_t getLength() const;
+
+	void setCursor(int32_t time);
+
+	int32_t getCursor() const;
 
 	void addSequenceItem(SequenceItem* sequenceItem);
 
@@ -90,9 +94,10 @@ private:
 	Ref< ScrollBar > m_scrollBarH;
 	RefArray< SequenceItem > m_sequenceItems;
 	MouseTrackItem m_mouseTrackItem;
-	int m_separator;
-	int m_length;
-	int m_cursor;
+	int32_t m_separator;
+	int32_t m_timeScale;
+	int32_t m_length;
+	int32_t m_cursor;
 	
 	void updateScrollBars();
 
@@ -103,6 +108,8 @@ private:
 	void eventButtonUp(Event* e);
 
 	void eventMouseMove(Event* e);
+
+	void eventMouseWheel(Event* e);
 
 	void eventPaint(Event* e);
 

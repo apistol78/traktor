@@ -15,7 +15,6 @@ namespace traktor
 			{
 
 const int c_sequenceHeight = 22;
-const int c_timeScaleDenom = 8;
 
 			}
 
@@ -24,6 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Sequence", Sequence, SequenceItem)
 Sequence::Sequence(const std::wstring& name)
 :	SequenceItem(name)
 ,	m_previousPosition(0)
+,	m_timeScale(8)
 {
 }
 
@@ -59,12 +59,12 @@ Ref< Key > Sequence::getSelectedKey() const
 
 int Sequence::clientFromTime(int time) const
 {
-	return time / c_timeScaleDenom;
+	return time / m_timeScale;
 }
 
 int Sequence::timeFromClient(int client) const
 {
-	return client * c_timeScaleDenom;
+	return client * m_timeScale;
 }
 
 void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
@@ -114,6 +114,9 @@ void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
 {
+	// Save time scale here; it's used in client<->time conversion.
+	m_timeScale = sequencer->getTimeScale();
+
 	// Draw sequence background.
 	if (!isSelected())
 	{
@@ -153,6 +156,18 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		rc.right,
 		rc.bottom
 	));
+
+	// Draw tickers.
+	canvas.setForeground(Color(128, 128, 128));
+	int cy = (rc.top + rc.bottom) / 2;
+	for (int i = 0; i < sequencer->getLength(); i += 100)
+	{
+		int cx = separator + clientFromTime(i) - scrollOffset;
+		if (cx > rc.right)
+			break;
+		int cya = (i % 1000 == 0) ? 4 : 0;
+		canvas.drawLine(cx, cy - 2 - cya, cx, cy + 1 + cya);
+	}
 
 	for (RefArray< Key >::const_iterator j = m_keys.begin(); j != m_keys.end(); ++j)
 	{

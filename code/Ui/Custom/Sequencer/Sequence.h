@@ -59,6 +59,7 @@ private:
 	RefArray< Key > m_keys;
 	Ref< Key > m_selectedKey;
 	int32_t m_previousPosition;
+	int32_t m_timeScale;
 };
 
 		}
