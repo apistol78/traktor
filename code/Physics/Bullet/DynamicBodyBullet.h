@@ -1,15 +1,16 @@
 #ifndef traktor_physics_DynamicBodyBullet_H
 #define traktor_physics_DynamicBodyBullet_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Physics/DynamicBody.h"
 #include "Physics/Bullet/BodyBullet.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_BULLET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 // Bullet forward declarations.
@@ -30,6 +31,7 @@ class T_DLLCLASS DynamicBodyBullet : public BodyBullet< DynamicBody >
 
 public:
 	DynamicBodyBullet(
+		Semaphore& updateLock,
 		DestroyCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
@@ -82,6 +84,7 @@ public:
 	virtual bool isEnable() const;
 
 private:
+	Semaphore& m_updateLock;
 	bool m_enable;
 };
 
