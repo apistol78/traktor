@@ -274,6 +274,11 @@ Ref< Camera > SceneEditorContext::getCamera(int index) const
 	return m_cameras[index];
 }
 
+void SceneEditorContext::setFollowEntityAdapter(EntityAdapter* followEntityAdapter)
+{
+	m_followEntityAdapter = followEntityAdapter;
+}
+
 void SceneEditorContext::setPlaying(bool playing)
 {
 	m_playing = playing;
