@@ -163,6 +163,8 @@ public:
 	 */
 	Ref< Camera > getCamera(int index) const;
 
+	void setFollowEntityAdapter(EntityAdapter* followEntityAdapter);
+
 	//@}
 
 	/*! \name Time control. */
@@ -246,6 +248,8 @@ public:
 
 	Ref< EntityAdapter > getRootEntityAdapter() { return m_rootEntityAdapter; }
 
+	Ref< EntityAdapter > getFollowEntityAdapter() { return m_followEntityAdapter; }
+
 	//@}
 
 	/*! \name Events. */
@@ -309,6 +313,7 @@ private:
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< Scene > m_scene;
 	Ref< EntityAdapter > m_rootEntityAdapter;
+	Ref< EntityAdapter > m_followEntityAdapter;
 };
 
 	}

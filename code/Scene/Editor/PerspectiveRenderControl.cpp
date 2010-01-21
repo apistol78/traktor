@@ -556,6 +556,13 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
+	// Get view matrix; either from camera or currently "following" entity.
+	Matrix44 view = m_camera->getCurrentView();
+
+	Ref< EntityAdapter > followEntityAdapter = m_context->getFollowEntityAdapter();
+	if (followEntityAdapter)
+		view = followEntityAdapter->getTransform().inverse().toMatrix44();
+
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters);
@@ -573,8 +580,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			1.0f,
 			128
 		);
-
-		Matrix44 view = m_camera->getCurrentView();
 
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());

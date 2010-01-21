@@ -1,23 +1,20 @@
 #include <limits>
-#include "Scene/Editor/OrthogonalRenderControl.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/Camera.h"
-#include "Scene/Editor/CameraMesh.h"
-#include "Scene/Scene.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
-#include "World/WorldRenderer.h"
-#include "World/WorldRenderView.h"
-#include "World/WorldEntityRenderers.h"
-#include "World/Entity/EntityInstance.h"
+#include "Scene/Scene.h"
+#include "Scene/Editor/Camera.h"
+#include "Scene/Editor/CameraMesh.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityRendererAdapter.h"
+#include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IModifier.h"
+#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/OrthogonalRenderControl.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
@@ -25,6 +22,10 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldRenderer.h"
+#include "World/WorldRenderView.h"
+#include "World/Entity/EntityInstance.h"
 
 namespace traktor
 {
@@ -647,6 +648,13 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->popWorld();
 			m_primitiveRenderer->popView();
 		}
+
+		// Draw controller guides.
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor)
+			controllerEditor->draw(
+				m_primitiveRenderer
+			);
 
 		// Render entities.
 		worldRenderView.setView(view);

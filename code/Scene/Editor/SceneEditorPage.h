@@ -97,6 +97,7 @@ private:
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
+	Ref< ui::custom::ToolBarButton > m_toolFollowEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontItalic;
@@ -125,7 +126,9 @@ private:
 
 	bool moveSelectedEntityIntoView();
 
-	bool updateCameraLook();
+	bool updateLookAtEntity();
+
+	bool updateFollowEntity();
 
 	void eventEntityToolClick(ui::Event* event);
 

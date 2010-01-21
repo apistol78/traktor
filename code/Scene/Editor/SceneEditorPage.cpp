@@ -101,6 +101,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
 	m_toolLookAtEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"), ui::Command(L"Scene.Editor.LookAtEntity"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolFollowEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"), ui::Command(L"Scene.Editor.FollowEntity"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	m_entityToolBar = new ui::custom::ToolBar();
 	m_entityToolBar->create(m_entityPanel);
@@ -108,6 +109,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY"), ui::Command(L"Editor.Delete"), 2));
 	m_entityToolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_entityToolBar->addItem(m_toolLookAtEntity);
+	m_entityToolBar->addItem(m_toolFollowEntity);
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
 	m_instanceGrid = new ui::custom::GridView();
@@ -470,7 +472,9 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.MoveSelectedEntityIntoView")
 		result = moveSelectedEntityIntoView();
 	else if (command == L"Scene.Editor.LookAtEntity")
-		result = updateCameraLook();
+		result = updateLookAtEntity();
+	else if (command == L"Scene.Editor.FollowEntity")
+		result = updateFollowEntity();
 	else
 	{
 		result = false;
@@ -777,7 +781,7 @@ bool SceneEditorPage::moveSelectedEntityIntoView()
 	return true;
 }
 
-bool SceneEditorPage::updateCameraLook()
+bool SceneEditorPage::updateLookAtEntity()
 {
 	//if (m_toolLookAtEntity->isToggled())
 	//{
@@ -795,6 +799,21 @@ bool SceneEditorPage::updateCameraLook()
 	//{
 	//	m_context->getCamera()->enterFreeLook();
 	//}
+	return true;
+}
+
+bool SceneEditorPage::updateFollowEntity()
+{
+	if (m_toolFollowEntity->isToggled())
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1 && selectedEntities[0]->isSpatial())
+		{
+			m_context->setFollowEntityAdapter(selectedEntities[0]);
+			return true;
+		}
+	}
+	m_context->setFollowEntityAdapter(0);
 	return true;
 }
 
