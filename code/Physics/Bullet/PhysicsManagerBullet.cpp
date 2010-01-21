@@ -321,7 +321,14 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(this, m_dynamicsWorld, rigidBody, shape, shapeDesc->getGroup());
+		Ref< StaticBodyBullet > staticBody = new StaticBodyBullet(
+			m_lock,
+			this,
+			m_dynamicsWorld,
+			rigidBody,
+			shape,
+			shapeDesc->getGroup()
+		);
 		m_staticBodies.push_back(staticBody);
 
 		rigidBody->setUserPointer(staticBody);
@@ -360,7 +367,14 @@ Ref< Body > PhysicsManagerBullet::createBody(const BodyDesc* desc)
 		}
 
 		// Create our wrapper.
-		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(this, m_dynamicsWorld, rigidBody, shape, shapeDesc->getGroup());
+		Ref< DynamicBodyBullet > dynamicBody = new DynamicBodyBullet(
+			m_lock,
+			this,
+			m_dynamicsWorld,
+			rigidBody,
+			shape,
+			shapeDesc->getGroup()
+		);
 		m_dynamicBodies.push_back(dynamicBody);
 
 		rigidBody->setUserPointer(dynamicBody);
