@@ -1,9 +1,8 @@
 #include <limits>
 #include <sstream>
 #include <stack>
-#include "Ui/Custom/Sequencer/SequencerControl.h"
-#include "Ui/Custom/Sequencer/SequenceItem.h"
-#include "Ui/Custom/Sequencer/SequenceGroup.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/ScrollBar.h"
 #include "Ui/MethodHandler.h"
@@ -12,7 +11,9 @@
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/FocusEvent.h"
-#include "Core/Log/Log.h"
+#include "Ui/Custom/Sequencer/SequencerControl.h"
+#include "Ui/Custom/Sequencer/SequenceItem.h"
+#include "Ui/Custom/Sequencer/SequenceGroup.h"
 
 namespace traktor
 {
@@ -24,7 +25,6 @@ namespace traktor
 			{
 
 const int c_sequenceHeight = 22;
-const int c_timeScale = 8;
 const int c_endWidth = 200;
 
 			}
@@ -33,6 +33,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.SequencerControl", SequencerControl, 
 
 SequencerControl::SequencerControl()
 :	m_separator(140)
+,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)
 {
@@ -59,39 +60,51 @@ bool SequencerControl::create(Widget* parent, int style)
 	addButtonDownEventHandler(createMethodHandler(this, &SequencerControl::eventButtonDown));
 	addButtonUpEventHandler(createMethodHandler(this, &SequencerControl::eventButtonUp));
 	addMouseMoveEventHandler(createMethodHandler(this, &SequencerControl::eventMouseMove));
+	addMouseWheelEventHandler(createMethodHandler(this, &SequencerControl::eventMouseWheel));
 	addPaintEventHandler(createMethodHandler(this, &SequencerControl::eventPaint));
 
 	return true;
 }
 
-void SequencerControl::setSeparator(int separator)
+void SequencerControl::setSeparator(int32_t separator)
 {
 	m_separator = separator;
 	updateScrollBars();
 }
 
-int SequencerControl::getSeparator() const
+int32_t SequencerControl::getSeparator() const
 {
 	return m_separator;
 }
 
-void SequencerControl::setLength(int length)
+void SequencerControl::setTimeScale(int32_t timeScale)
+{
+	m_timeScale = timeScale;
+	updateScrollBars();
+}
+
+int32_t SequencerControl::getTimeScale() const
+{
+	return m_timeScale;
+}
+
+void SequencerControl::setLength(int32_t length)
 {
 	m_length = length;
 	updateScrollBars();
 }
 
-int SequencerControl::getLength() const
+int32_t SequencerControl::getLength() const
 {
 	return m_length;
 }
 
-void SequencerControl::setCursor(int cursor)
+void SequencerControl::setCursor(int32_t cursor)
 {
 	m_cursor = cursor;
 }
 
-int SequencerControl::getCursor() const
+int32_t SequencerControl::getCursor() const
 {
 	return m_cursor;
 }
@@ -218,7 +231,7 @@ void SequencerControl::updateScrollBars()
 	getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
 
 	Size sequences(
-		m_separator + m_length / c_timeScale + c_endWidth,
+		m_separator + m_length / m_timeScale + c_endWidth,
 		int(sequenceItems.size() * c_sequenceHeight) + 1
 	);
 
@@ -300,7 +313,7 @@ void SequencerControl::eventButtonDown(Event* e)
 	{
 		setCapture();
 
-		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * c_timeScale;
+		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * m_timeScale;
 		m_cursor = std::max< int >(m_cursor, 0);
 		m_cursor = std::min< int >(m_cursor, m_length);
 
@@ -351,7 +364,7 @@ void SequencerControl::eventMouseMove(Event* e)
 	int scrollOffsetX = m_scrollBarH->getPosition();
 
 	int cursor;
-	cursor = (m->getPosition().x - m_separator + scrollOffsetX) * c_timeScale;
+	cursor = (m->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
 	cursor = std::max< int >(cursor, 0);
 	cursor = std::min< int >(cursor, m_length);
 
@@ -383,6 +396,17 @@ void SequencerControl::eventMouseMove(Event* e)
 	e->consume();
 }
 
+void SequencerControl::eventMouseWheel(Event* e)
+{
+	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(e);
+	int32_t wheel = mouseEvent->getWheelRotation();
+
+	m_timeScale = clamp(m_timeScale + wheel, 1, 32);
+
+	updateScrollBars();
+	update();
+}
+
 void SequencerControl::eventPaint(Event* e)
 {
 	PaintEvent* p = static_cast< PaintEvent* >(e);
@@ -404,13 +428,22 @@ void SequencerControl::eventPaint(Event* e)
 	// Clear background.
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
+	
 	canvas.setBackground(Color(138, 137, 140));
-	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
+	canvas.setForeground(Color(118, 117, 120));
+	canvas.fillRect(Rect(rc.left + m_separator + 64, rc.top, rc.right, rc.bottom));
+	canvas.fillGradientRect(Rect(
+		rc.left + m_separator,
+		rc.top,
+		rc.left + m_separator + 64,
+		rc.bottom
+	), false);
+
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
 
 	// Right sequence edge.
-	int end = std::min(m_separator + m_length / c_timeScale - scrollOffsetX, rc.right - scrollWidth);
+	int end = std::min(m_separator + m_length / m_timeScale - scrollOffsetX, rc.right - scrollWidth);
 
 	// Draw sequences.
 	Rect rcSequence(
@@ -436,7 +469,7 @@ void SequencerControl::eventPaint(Event* e)
 	canvas.resetClipRect();
 
 	// Draw cursor.
-	int x = m_separator + m_cursor / c_timeScale - scrollOffsetX;
+	int x = m_separator + m_cursor / m_timeScale - scrollOffsetX;
 	if (x >= m_separator && x < rc.right)
 	{
 		canvas.setForeground(Color(0, 0, 0));
