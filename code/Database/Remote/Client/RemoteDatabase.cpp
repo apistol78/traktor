@@ -77,9 +77,7 @@ void RemoteDatabase::close()
 			log::warning << L"Unable to close server database" << Endl;
 
 		m_connection->destroy();
-
-		//Heap::getInstance().invalidateRefs(m_connection);
-		T_ASSERT (m_connection == 0);
+		m_connection = 0;
 
 		net::Network::finalize();
 	}

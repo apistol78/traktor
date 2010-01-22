@@ -31,7 +31,7 @@ struct FrameAccessor
 	)
 	{
 		TransformPath::Frame f;
-		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
+		f.position = (v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3).xyz1();
 		f.orientation = (v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3).normalized();
 		return f;
 	}
