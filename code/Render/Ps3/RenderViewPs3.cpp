@@ -17,8 +17,8 @@ namespace traktor
 		namespace
 		{
 
-uint8_t c_frameSyncLabelId = 128;
-uint8_t c_targetSyncLabelId = 129;
+const uint8_t c_frameSyncLabelId = 128;
+const uint8_t c_waitLabelId = 129;
 
 int32_t findResolutionId(int32_t width, int32_t height)
 {
@@ -58,10 +58,8 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 ,	m_colorPitch(0)
 ,	m_depthObject(0)
 ,	m_depthAddr(0)
-,	m_frameSyncLabelData(0)
 ,	m_frameCounter(1)
-,	m_targetSyncLabelData(0)
-,	m_targetCounter(1)
+,	m_frameSyncLabelData(0)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
@@ -153,8 +151,8 @@ bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreat
 	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
 	*m_frameSyncLabelData = m_frameCounter;
 
-	m_targetSyncLabelData = cellGcmGetLabelAddress(c_targetSyncLabelId);
-	*m_targetSyncLabelData = m_targetCounter;
+	volatile uint32_t* waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
+	*waitLabelData = 0;
 
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 	return true;
@@ -449,13 +447,7 @@ void RenderViewPs3::end()
 	if (!m_renderStateStack.empty())
 	{
 		T_ASSERT (rt);
-
-		//cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_targetCounter);
-
-		rt->finishRender(m_targetCounter);
-
-		//m_targetCounter = incrementLabel(m_targetCounter);
-
+		rt->finishRender();
 		setCurrentRenderState();
 	}
 }

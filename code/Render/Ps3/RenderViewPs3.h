@@ -94,10 +94,8 @@ private:
 	LocalMemoryObject* m_depthObject;
 	void* m_depthAddr;
 	CellGcmTexture m_depthTexture;
-	volatile uint32_t* m_frameSyncLabelData;
 	uint32_t m_frameCounter;
-	volatile uint32_t* m_targetSyncLabelData;
-	uint32_t m_targetCounter;
+	volatile uint32_t* m_frameSyncLabelData;
 	std::list< RenderState > m_renderStateStack;
 	ClearFpPs3 m_clearFp;
 	StateCachePs3 m_stateCache;

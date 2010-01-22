@@ -11,7 +11,8 @@ namespace traktor
 		namespace
 		{
 
-uint8_t c_targetSyncLabelId = 129;
+const uint8_t c_waitLabelId = 129;
+uint32_t s_waitLabelCounter = 0;
 
 		}
 
@@ -24,8 +25,10 @@ RenderTargetPs3::RenderTargetPs3()
 ,	m_colorData(0)
 ,	m_inRender(false)
 ,	m_waitLabel(0)
+,	m_waitLabelData(0)
 {
 	std::memset(&m_colorTexture, 0, sizeof(m_colorTexture));
+	m_waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
 }
 
 bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
@@ -139,26 +142,29 @@ void RenderTargetPs3::beginRender()
 	m_inRender = true;
 }
 
-void RenderTargetPs3::finishRender(uint32_t waitLabel)
+void RenderTargetPs3::finishRender()
 {
 	T_ASSERT (m_inRender == true);
-	T_ASSERT (waitLabel != 0);
-	m_waitLabel = waitLabel;
 	m_inRender = false;
+
+	// Write label at current location in command buffer.
+	m_waitLabel = ++s_waitLabelCounter;
+	cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
 }
 
 void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 {
 	T_ASSERT (!m_inRender);
 
-	// Need to flush render queue to ensure target has been
-	// properly updated.
-	//if (m_waitLabel)
-	//{
-	//	cellGcmFlush(gCellGcmCurrentContext);
-	//	cellGcmSetWaitLabel(gCellGcmCurrentContext, c_targetSyncLabelId, m_waitLabel);
-	//	m_waitLabel = 0;
-	//}
+	// Wait until label has been reached.
+	if (m_waitLabel)
+	{
+		cellGcmFlush(gCellGcmCurrentContext);
+		while (*m_waitLabelData < m_waitLabel)
+			sys_timer_usleep(100);
+
+		m_waitLabel = 0;
+	}
 
 	m_colorTexture.offset = m_colorData->getOffset();
 

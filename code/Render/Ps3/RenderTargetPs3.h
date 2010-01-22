@@ -38,7 +38,7 @@ public:
 
 	void beginRender();
 
-	void finishRender(uint32_t waitLabel);
+	void finishRender();
 
 	void bind(int stage, const SamplerState& samplerState);
 
@@ -56,6 +56,7 @@ private:
 	LocalMemoryObject* m_colorData;
 	bool m_inRender;
 	uint32_t m_waitLabel;
+	volatile uint32_t* m_waitLabelData;
 };
 
 	}
