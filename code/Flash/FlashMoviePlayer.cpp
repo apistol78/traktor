@@ -337,7 +337,7 @@ void FlashMoviePlayer::Global_setInterval(CallArgs& ca)
 	iv.target = target;
 	iv.function = function;
 
-	ca.ret = ActionValue(double(id));
+	ca.ret = ActionValue(avm_number_t(id));
 }
 
 void FlashMoviePlayer::Global_clearInterval(CallArgs& ca)

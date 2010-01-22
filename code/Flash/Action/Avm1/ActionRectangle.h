@@ -24,22 +24,22 @@ class T_DLLCLASS ActionRectangle : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	double left;
-	double top;
-	double right;
-	double bottom;
+	avm_number_t left;
+	avm_number_t top;
+	avm_number_t right;
+	avm_number_t bottom;
 
 	ActionRectangle();
 
-	ActionRectangle(double left_, double top_, double right_, double bottom_);
+	ActionRectangle(avm_number_t left_, avm_number_t top_, avm_number_t right_, avm_number_t bottom_);
 
-	bool contains(double x, double y) const;
+	bool contains(avm_number_t x, avm_number_t y) const;
 
-	void inflate(double dx, double dy);
+	void inflate(avm_number_t dx, avm_number_t dy);
 
 	bool isEmpty() const;
 
-	void offset(double dx, double dy);
+	void offset(avm_number_t dx, avm_number_t dy);
 };
 
 	}

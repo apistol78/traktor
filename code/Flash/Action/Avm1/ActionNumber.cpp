@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionNumber", ActionNumber, ActionObject)
 
-ActionNumber::ActionNumber(double value)
+ActionNumber::ActionNumber(avm_number_t value)
 :	ActionObject(AsNumber::getInstance())
 ,	m_value(value)
 {

@@ -33,11 +33,11 @@ void AsArray::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
-	prototype->setMember(L"CASEINSENSITIVE", ActionValue(0.0));
-	prototype->setMember(L"DESCENDING", ActionValue(1.0));
-	prototype->setMember(L"NUMERIC", ActionValue(2.0));
-	prototype->setMember(L"RETURNINDEXEDARRAY", ActionValue(3.0));
-	prototype->setMember(L"UNIQUESORT", ActionValue(4.0));
+	prototype->setMember(L"CASEINSENSITIVE", ActionValue(avm_number_t(0)));
+	prototype->setMember(L"DESCENDING", ActionValue(avm_number_t(1)));
+	prototype->setMember(L"NUMERIC", ActionValue(avm_number_t(2)));
+	prototype->setMember(L"RETURNINDEXEDARRAY", ActionValue(avm_number_t(3)));
+	prototype->setMember(L"UNIQUESORT", ActionValue(avm_number_t(4)));
 	prototype->setMember(L"concat", createNativeFunctionValue(this, &AsArray::Array_concat));
 	prototype->setMember(L"join", createNativeFunctionValue(this, &AsArray::Array_join));
 	prototype->setMember(L"pop", createNativeFunctionValue(this, &AsArray::Array_pop));
@@ -140,7 +140,7 @@ void AsArray::Array_unshift(CallArgs& ca)
 void AsArray::Array_get_length(CallArgs& ca)
 {
 	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
-	ca.ret = ActionValue(double(arr->length()));
+	ca.ret = ActionValue(avm_number_t(arr->length()));
 }
 
 void AsArray::Array_set_length(CallArgs& ca)

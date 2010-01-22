@@ -19,7 +19,7 @@ ActionRectangle::ActionRectangle()
 {
 }
 
-ActionRectangle::ActionRectangle(double left_, double top_, double right_, double bottom_)
+ActionRectangle::ActionRectangle(avm_number_t left_, avm_number_t top_, avm_number_t right_, avm_number_t bottom_)
 :	ActionObject(AsRectangle::getInstance())
 ,	left(left_)
 ,	top(top_)
@@ -28,12 +28,12 @@ ActionRectangle::ActionRectangle(double left_, double top_, double right_, doubl
 {
 }
 
-bool ActionRectangle::contains(double x, double y) const
+bool ActionRectangle::contains(avm_number_t x, avm_number_t y) const
 {
 	return (x >= left && y >= top && x <= right && y <= bottom);
 }
 
-void ActionRectangle::inflate(double dx, double dy)
+void ActionRectangle::inflate(avm_number_t dx, avm_number_t dy)
 {
 	left -= dx;
 	top -= dy;
@@ -43,12 +43,12 @@ void ActionRectangle::inflate(double dx, double dy)
 
 bool ActionRectangle::isEmpty() const
 {
-	double dx = right - left;
-	double dy = bottom - top;
+	avm_number_t dx = right - left;
+	avm_number_t dy = bottom - top;
 	return std::abs(dx * dy) < FUZZY_EPSILON;
 }
 
-void ActionRectangle::offset(double dx, double dy)
+void ActionRectangle::offset(avm_number_t dx, avm_number_t dy)
 {
 	left += dx;
 	top += dy;

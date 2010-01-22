@@ -80,24 +80,24 @@ void AsKey::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
-	prototype->setMember(L"BACKSPACE", ActionValue(8.0));
-	prototype->setMember(L"CAPSLOCK", ActionValue(20.0));
-	prototype->setMember(L"CONTROL", ActionValue(17.0));
-	prototype->setMember(L"DELETEKEY", ActionValue(46.0));
-	prototype->setMember(L"DOWN", ActionValue(40.0));
-	prototype->setMember(L"END", ActionValue(35.0));
-	prototype->setMember(L"ENTER", ActionValue(13.0));
-	prototype->setMember(L"ESCAPE", ActionValue(27.0));
-	prototype->setMember(L"HOME", ActionValue(36.0));
-	prototype->setMember(L"INSERT", ActionValue(45.0));
-	prototype->setMember(L"LEFT", ActionValue(37.0));
-	prototype->setMember(L"PGDN", ActionValue(34.0));
-	prototype->setMember(L"PGUP", ActionValue(33.0));
-	prototype->setMember(L"RIGHT", ActionValue(39.0));
-	prototype->setMember(L"SHIFT", ActionValue(16.0));
-	prototype->setMember(L"SPACE", ActionValue(32.0));
-	prototype->setMember(L"TAB", ActionValue(9.0));
-	prototype->setMember(L"UP", ActionValue(38.0));
+	prototype->setMember(L"BACKSPACE", ActionValue(avm_number_t(8)));
+	prototype->setMember(L"CAPSLOCK", ActionValue(avm_number_t(20)));
+	prototype->setMember(L"CONTROL", ActionValue(avm_number_t(17)));
+	prototype->setMember(L"DELETEKEY", ActionValue(avm_number_t(46)));
+	prototype->setMember(L"DOWN", ActionValue(avm_number_t(40)));
+	prototype->setMember(L"END", ActionValue(avm_number_t(35)));
+	prototype->setMember(L"ENTER", ActionValue(avm_number_t(13)));
+	prototype->setMember(L"ESCAPE", ActionValue(avm_number_t(27)));
+	prototype->setMember(L"HOME", ActionValue(avm_number_t(36)));
+	prototype->setMember(L"INSERT", ActionValue(avm_number_t(45)));
+	prototype->setMember(L"LEFT", ActionValue(avm_number_t(37)));
+	prototype->setMember(L"PGDN", ActionValue(avm_number_t(34)));
+	prototype->setMember(L"PGUP", ActionValue(avm_number_t(33)));
+	prototype->setMember(L"RIGHT", ActionValue(avm_number_t(39)));
+	prototype->setMember(L"SHIFT", ActionValue(avm_number_t(16)));
+	prototype->setMember(L"SPACE", ActionValue(avm_number_t(32)));
+	prototype->setMember(L"TAB", ActionValue(avm_number_t(9)));
+	prototype->setMember(L"UP", ActionValue(avm_number_t(38)));
 	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsKey::Key_addListener));
 	prototype->setMember(L"getAscii", createNativeFunctionValue(this, &AsKey::Key_getAscii));
 	prototype->setMember(L"getCode", createNativeFunctionValue(this, &AsKey::Key_getCode));
@@ -123,12 +123,12 @@ void AsKey::Key_addListener(CallArgs& ca)
 
 void AsKey::Key_getAscii(CallArgs& ca)
 {
-	ca.ret = ActionValue(double(m_lastKeyCode));
+	ca.ret = ActionValue(avm_number_t(m_lastKeyCode));
 }
 
 void AsKey::Key_getCode(CallArgs& ca)
 {
-	ca.ret = ActionValue(double(m_lastKeyCode));
+	ca.ret = ActionValue(avm_number_t(m_lastKeyCode));
 }
 
 void AsKey::Key_isAccessible(CallArgs& ca)

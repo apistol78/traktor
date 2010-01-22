@@ -69,19 +69,19 @@ void AsSound::Sound_attachSound(CallArgs& ca)
 void AsSound::Sound_getBytesLoaded(CallArgs& ca)
 {
 	log::warning << L"Sound.getBytesLoaded not implemented" << Endl;
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsSound::Sound_getBytesTotal(CallArgs& ca)
 {
 	log::warning << L"Sound.getBytesTotal not implemented" << Endl;
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsSound::Sound_getPan(CallArgs& ca)
 {
 	log::warning << L"Sound.getPan not implemented" << Endl;
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsSound::Sound_getTransform(CallArgs& ca)
@@ -92,7 +92,7 @@ void AsSound::Sound_getTransform(CallArgs& ca)
 void AsSound::Sound_getVolume(CallArgs& ca)
 {
 	log::warning << L"Sound.getVolume not implemented" << Endl;
-	ca.ret = ActionValue(100.0);
+	ca.ret = ActionValue(avm_number_t(100));
 }
 
 void AsSound::Sound_loadSound(CallArgs& ca)
@@ -136,7 +136,7 @@ void AsSound::Sound_set_checkPolicyFile(CallArgs& ca)
 
 void AsSound::Sound_get_duration(CallArgs& ca)
 {
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsSound::Sound_get_id3(CallArgs& ca)
@@ -146,7 +146,7 @@ void AsSound::Sound_get_id3(CallArgs& ca)
 
 void AsSound::Sound_get_position(CallArgs& ca)
 {
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 	}

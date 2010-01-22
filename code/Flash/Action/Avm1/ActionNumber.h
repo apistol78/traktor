@@ -24,12 +24,12 @@ class T_DLLCLASS ActionNumber : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	ActionNumber(double value);
+	ActionNumber(avm_number_t value);
 
-	double get() const { return m_value; }
+	avm_number_t get() const { return m_value; }
 
 private:
-	double m_value;
+	avm_number_t m_value;
 };
 
 	}

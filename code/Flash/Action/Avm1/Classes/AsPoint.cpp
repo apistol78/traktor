@@ -86,8 +86,8 @@ void AsPoint::Point_distance(CallArgs& ca)
 {
 	Ref< ActionPoint > pt1 = ca.args[0].getObject< ActionPoint >();
 	Ref< ActionPoint > pt2 = ca.args[1].getObject< ActionPoint >();
-	double dx = pt2->x - pt1->x;
-	double dy = pt2->y - pt1->y;
+	avm_number_t dx = pt2->x - pt1->x;
+	avm_number_t dy = pt2->y - pt1->y;
 	ca.ret = ActionValue(sqrtf(dx * dx + dy * dy));
 }
 
@@ -102,7 +102,7 @@ void AsPoint::Point_interpolate(CallArgs& ca)
 {
 	Ref< ActionPoint > pt1 = ca.args[0].getObject< ActionPoint >();
 	Ref< ActionPoint > pt2 = ca.args[1].getObject< ActionPoint >();
-	double f = ca.args[2].getNumberSafe();
+	avm_number_t f = ca.args[2].getNumberSafe();
 	ca.ret = ActionValue::fromObject(new ActionPoint(
 		pt1->x * (1.0f - f) + pt2->x * f,
 		pt1->y * (1.0f - f) + pt2->y * f
@@ -112,8 +112,8 @@ void AsPoint::Point_interpolate(CallArgs& ca)
 void AsPoint::Point_normalize(CallArgs& ca)
 {
 	Ref< ActionPoint > pt = checked_type_cast< ActionPoint* >(ca.self);
-	double scale = ca.args[0].getNumberSafe();
-	double ln = sqrtf(pt->x * pt->x + pt->y * pt->y);
+	avm_number_t scale = ca.args[0].getNumberSafe();
+	avm_number_t ln = sqrtf(pt->x * pt->x + pt->y * pt->y);
 	pt->x *= scale / ln;
 	pt->y *= scale / ln;
 }
@@ -127,8 +127,8 @@ void AsPoint::Point_offset(CallArgs& ca)
 
 void AsPoint::Point_polar(CallArgs& ca)
 {
-	double length = ca.args[0].getNumberSafe();
-	double angle = ca.args[1].getNumberSafe();
+	avm_number_t length = ca.args[0].getNumberSafe();
+	avm_number_t angle = ca.args[1].getNumberSafe();
 	ca.ret = ActionValue::fromObject(new ActionPoint(
 		cosf(angle) * length,
 		sinf(angle) * length

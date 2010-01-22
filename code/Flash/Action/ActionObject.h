@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include "Core/Object.h"
+#include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionValue.h"
 
 // import/export mechanism.
@@ -53,7 +54,7 @@ public:
 
 	virtual const property_map_t& getProperties() const;
 
-	virtual double valueOf() const;
+	virtual avm_number_t valueOf() const;
 
 	virtual std::wstring toString() const;
 

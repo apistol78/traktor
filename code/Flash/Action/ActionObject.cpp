@@ -192,7 +192,7 @@ const ActionObject::property_map_t& ActionObject::getProperties() const
 	return m_properties;
 }
 
-double ActionObject::valueOf() const
+avm_number_t ActionObject::valueOf() const
 {
 	return 0.0;
 }
