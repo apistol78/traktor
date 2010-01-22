@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class LocalMemoryObject;
+class StateCachePs3;
 
 /*! \brief Clear FP targets helper.
  *
@@ -23,7 +24,7 @@ public:
 
 	virtual ~ClearFpPs3();
 
-	void clear(const float color[4]);
+	void clear(StateCachePs3& stateCache, const float color[4]);
 
 private:
 	LocalMemoryObject* m_quadBuffer;

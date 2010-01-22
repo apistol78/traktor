@@ -1,6 +1,7 @@
 #include "Render/Ps3/ClearFpPs3.h"
 #include "Render/Ps3/LocalMemoryManager.h"
 #include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/StateCachePs3.h"
 
 // Resources
 #include "Resources/ClearFp_vertex.h"
@@ -59,12 +60,15 @@ ClearFpPs3::~ClearFpPs3()
 	}
 }
 
-void ClearFpPs3::clear(const float color[4])
+void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 {
 	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, "Clear FP target");
 
-	cellGcmSetVertexProgram(gCellGcmCurrentContext, m_clearVertexProgram, m_clearVertexProgramUcode);
-	cellGcmSetFragmentProgram(gCellGcmCurrentContext, m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset());
+	stateCache.setProgram(
+		m_clearVertexProgram, m_clearVertexProgramUcode,
+		m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset()
+	);
+
 	cellGcmSetVertexDataArray(
 		gCellGcmCurrentContext,
 		m_clearPositionIndex,

@@ -308,12 +308,7 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 
 void ProgramPs3::bind(StateCachePs3& stateCache)
 {
-	//if (ms_activeProgram != this)
-	{
-		cellGcmSetVertexProgram(m_vertexProgram, m_vertexShaderUCode->getPointer());
-		cellGcmSetFragmentProgram(m_pixelProgram, m_pixelShaderUCode->getOffset());
-	}
-
+	stateCache.setProgram(m_vertexProgram, m_vertexShaderUCode->getPointer(), m_pixelProgram, m_pixelShaderUCode->getOffset());
 	stateCache.setRenderState(m_renderState);
 
 	for (std::map< handle_t, Parameter >::iterator i = m_vertexParameterMap.begin(); i != m_vertexParameterMap.end(); ++i)
@@ -328,18 +323,26 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 		}
 	}
 
-	for (std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.begin(); i != m_pixelParameterMap.end(); ++i)
+	if (!m_pixelParameterMap.empty())
 	{
-		for (uint32_t j = 0; j < i->second.parameters.size(); ++j)
+		for (std::map< handle_t, Parameter >::iterator i = m_pixelParameterMap.begin(); i != m_pixelParameterMap.end(); ++i)
 		{
-			cellGcmSetFragmentProgramParameter(
-				gCellGcmCurrentContext,
-				m_pixelProgram,
-				i->second.parameters[j],
-				&m_pixelParameters[i->second.offset + j * i->second.stride],
-				m_pixelShaderUCode->getOffset()
-			);
+			for (uint32_t j = 0; j < i->second.parameters.size(); ++j)
+			{
+				cellGcmSetFragmentProgramParameter(
+					gCellGcmCurrentContext,
+					m_pixelProgram,
+					i->second.parameters[j],
+					&m_pixelParameters[i->second.offset + j * i->second.stride],
+					m_pixelShaderUCode->getOffset()
+				);
+			}
 		}
+
+		cellGcmSetUpdateFragmentProgramParameter(
+			gCellGcmCurrentContext,
+			m_pixelShaderUCode->getOffset()
+		);
 	}
 
 	for (int i = 0; i < 8; ++i)

@@ -17,11 +17,15 @@ public:
 
 	void setRenderState(const RenderState& rs);
 
+	void setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset);
+
 	void reset(bool force);
 
 private:
 	bool m_inFp32Mode;
 	RenderState m_renderState;
+	const void* m_vertexUCode;
+	uint32_t m_fragmentOffset;
 };
 
 	}

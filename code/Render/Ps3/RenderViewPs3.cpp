@@ -326,7 +326,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		else
 		{
 			m_stateCache.reset(false);
-			m_clearFp.clear(color);
+			m_clearFp.clear(m_stateCache, color);
 		}
 	}
 

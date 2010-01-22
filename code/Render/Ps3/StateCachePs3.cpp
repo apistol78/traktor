@@ -7,6 +7,8 @@ namespace traktor
 
 StateCachePs3::StateCachePs3()
 :	m_inFp32Mode(false)
+,	m_vertexUCode(0)
+,	m_fragmentOffset(0)
 {
 }
 
@@ -89,6 +91,20 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 	}
 }
 
+void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset)
+{
+	if (vertexUCode != m_vertexUCode)
+	{
+		cellGcmSetVertexProgram(gCellGcmCurrentContext, vertexProgram, vertexUCode);
+		m_vertexUCode = vertexUCode;
+	}
+	if (fragmentOffset != m_fragmentOffset)
+	{
+		cellGcmSetFragmentProgram(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
+		m_fragmentOffset = fragmentOffset;
+	}
+}
+
 void StateCachePs3::reset(bool force)
 {
 	if (!force)
@@ -115,6 +131,9 @@ void StateCachePs3::reset(bool force)
 			cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
 		}
 	}
+
+	m_vertexUCode = 0;
+	m_fragmentOffset = 0;
 }
 
 	}
