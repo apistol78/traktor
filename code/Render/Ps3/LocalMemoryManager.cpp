@@ -54,8 +54,6 @@ LocalMemoryObject* LocalMemoryManager::alloc(size_t size, size_t align, bool imm
 
 	size = alignUp(size, c_blockSize);
 
-	compact();
-
 	if (!immutable)
 	{
 		uint8_t* ptr = m_heap;

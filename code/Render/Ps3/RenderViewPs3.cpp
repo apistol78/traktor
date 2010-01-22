@@ -232,6 +232,8 @@ bool RenderViewPs3::getNativeAspectRatio(float& outAspectRatio) const
 
 bool RenderViewPs3::begin()
 {
+	LocalMemoryManager::getInstance().compact();
+
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
 
 	RenderState rs =
