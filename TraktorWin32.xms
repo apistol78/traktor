@@ -5,7 +5,7 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.Expat</name>
+			<name>Extern.expat-2.0.0</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration">
@@ -13010,7 +13010,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -13026,7 +13026,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -13042,7 +13042,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13058,7 +13058,7 @@
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13085,7 +13085,84 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[9]"/>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.LuaJIT-2.0.0-beta2</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0-beta2/src</sourcePath>
+						<configurations>
+							<item type="Configuration">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths/>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths/>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths/>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+							<item type="Configuration">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader></precompiledHeader>
+								<includePaths/>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>lj_*.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>lib_*.c</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>*.h</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>../lj_vm.obj</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -14620,5 +14697,6 @@
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[68]/dependencies/item[2]/project"/>
 	</projects>
 </object>
