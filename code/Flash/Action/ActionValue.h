@@ -90,7 +90,7 @@ public:
 	std::wstring getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
 
 	/*! \brief Get object value. */
-	Ref< ActionObject > getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return *m_value.o; }
+	Ref< ActionObject > getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return m_value.o; }
 
 	/*! \brief Get boolean value safe. */
 	bool getBooleanSafe() const;
@@ -118,7 +118,7 @@ private:
 		bool b;
 		avm_number_t n;
 		wchar_t* s;
-		Ref< ActionObject >* o;
+		ActionObject* o;
 	};
 
 	Type m_type;
