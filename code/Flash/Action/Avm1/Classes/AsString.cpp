@@ -86,9 +86,9 @@ void AsString::String_charCodeAt(CallArgs& ca)
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
 
 	if (index < st.length())
-		ca.ret = ActionValue(double(st[index]));
+		ca.ret = ActionValue(avm_number_t(st[index]));
 	else
-		ca.ret = ActionValue(std::numeric_limits< double >::signaling_NaN());
+		ca.ret = ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN());
 }
 
 void AsString::String_concat(CallArgs& ca)

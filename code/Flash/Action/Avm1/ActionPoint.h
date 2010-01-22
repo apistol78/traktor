@@ -24,12 +24,12 @@ class T_DLLCLASS ActionPoint : public ActionObject
 	T_RTTI_CLASS;
 
 public:
-	double x;
-	double y;
+	avm_number_t x;
+	avm_number_t y;
 
 	ActionPoint();
 
-	ActionPoint(double x_, double y_);
+	ActionPoint(avm_number_t x_, avm_number_t y_);
 };
 
 	}

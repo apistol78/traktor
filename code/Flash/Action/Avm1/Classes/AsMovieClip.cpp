@@ -270,12 +270,12 @@ void AsMovieClip::MovieClip_getBounds(CallArgs& ca)
 
 void AsMovieClip::MovieClip_getBytesLoaded(CallArgs& ca)
 {
-	ca.ret = ActionValue(1.0);
+	ca.ret = ActionValue(avm_number_t(1));
 }
 
 void AsMovieClip::MovieClip_getBytesTotal(CallArgs& ca)
 {
-	ca.ret = ActionValue(1.0);
+	ca.ret = ActionValue(avm_number_t(1));
 }
 
 void AsMovieClip::MovieClip_getDepth(CallArgs& ca)
@@ -283,7 +283,7 @@ void AsMovieClip::MovieClip_getDepth(CallArgs& ca)
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
 	if (parentClipInstance)
-		ca.ret = ActionValue(double(parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance)));
+		ca.ret = ActionValue(avm_number_t(parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance)));
 }
 
 void AsMovieClip::MovieClip_getInstanceAtDepth(CallArgs& ca)
@@ -293,7 +293,7 @@ void AsMovieClip::MovieClip_getInstanceAtDepth(CallArgs& ca)
 void AsMovieClip::MovieClip_getNextHighestDepth(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(double(movieClipInstance->getDisplayList().getNextHighestDepth()));
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getDisplayList().getNextHighestDepth()));
 }
 
 void AsMovieClip::MovieClip_getRect(CallArgs& ca)
@@ -357,8 +357,8 @@ void AsMovieClip::MovieClip_hitTest(CallArgs& ca)
 
 	if (ca.args.size() == 3)
 	{
-		double x = ca.args[0].getNumberSafe() * 20.0f;
-		double y = ca.args[1].getNumberSafe() * 20.0f;
+		avm_number_t x = ca.args[0].getNumberSafe() * 20.0f;
+		avm_number_t y = ca.args[1].getNumberSafe() * 20.0f;
 		bool shape = ca.args[2].getBooleanSafe();
 
 		SwfRect bounds = movieClipInstance->getBounds();
@@ -511,7 +511,7 @@ void AsMovieClip::MovieClip_set_cacheAsBitmap(CallArgs& ca)
 void AsMovieClip::MovieClip_get_currentframe(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(double(movieClipInstance->getCurrentFrame() + 1));
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getCurrentFrame() + 1));
 }
 
 void AsMovieClip::MovieClip_set_currentframe(CallArgs& ca)
@@ -574,7 +574,7 @@ void AsMovieClip::MovieClip_get_framesloaded(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
 	Ref< const FlashSprite > movieClip = movieClipInstance->getSprite();
-	ca.ret = ActionValue(double(movieClip->getFrameCount()));
+	ca.ret = ActionValue(avm_number_t(movieClip->getFrameCount()));
 }
 
 void AsMovieClip::MovieClip_set_framesloaded(CallArgs& ca)
@@ -803,7 +803,7 @@ void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 void AsMovieClip::MovieClip_get_x(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e13 / 20.0);
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e13 / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_x(CallArgs& ca)
@@ -817,7 +817,7 @@ void AsMovieClip::MovieClip_set_x(CallArgs& ca)
 void AsMovieClip::MovieClip_get_xmouse(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(double(movieClipInstance->getMouseX()));
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseX()));
 }
 
 void AsMovieClip::MovieClip_set_xmouse(CallArgs& ca)
@@ -827,7 +827,7 @@ void AsMovieClip::MovieClip_set_xmouse(CallArgs& ca)
 void AsMovieClip::MovieClip_get_xscale(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e11 * 100.0);
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e11 * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
@@ -841,7 +841,7 @@ void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
 void AsMovieClip::MovieClip_get_y(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e23 / 20.0);
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e23 / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_y(CallArgs& ca)
@@ -855,7 +855,7 @@ void AsMovieClip::MovieClip_set_y(CallArgs& ca)
 void AsMovieClip::MovieClip_get_ymouse(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(double(movieClipInstance->getMouseY()));
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseY()));
 }
 
 void AsMovieClip::MovieClip_set_ymouse(CallArgs& ca)
@@ -865,7 +865,7 @@ void AsMovieClip::MovieClip_set_ymouse(CallArgs& ca)
 void AsMovieClip::MovieClip_get_yscale(CallArgs& ca)
 {
 	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue(movieClipInstance->getTransform().e22 * 100.0);
+	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e22 * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_yscale(CallArgs& ca)

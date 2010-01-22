@@ -57,7 +57,7 @@ void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)
 void AsMovieClipLoader::MovieClipLoader_getProgress(CallArgs& ca)
 {
 	log::warning << L"MovieClipLoader.getProgress not implemented" << Endl;
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0));
 }
 
 void AsMovieClipLoader::MovieClipLoader_loadClip(CallArgs& ca)

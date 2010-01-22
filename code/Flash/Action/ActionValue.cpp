@@ -136,7 +136,7 @@ ActionValue::ActionValue(bool b)
 	m_value.b = b;
 }
 
-ActionValue::ActionValue(double n)
+ActionValue::ActionValue(avm_number_t n)
 :	m_type(AvtNumber)
 {
 	m_value.n = n;
@@ -214,16 +214,16 @@ bool ActionValue::getBooleanSafe() const
 	return false;
 }
 
-double ActionValue::getNumberSafe() const
+avm_number_t ActionValue::getNumberSafe() const
 {
 	switch (m_type)
 	{
 	case AvtBoolean:
-		return m_value.b ? 1.0 : 0.0;
+		return m_value.b ? avm_number_t(1) : avm_number_t(0);
 	case AvtNumber:
 		return m_value.n;
 	}
-	return 0.0;
+	return avm_number_t(0);
 }
 
 std::wstring ActionValue::getStringSafe() const

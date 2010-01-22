@@ -186,7 +186,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				{
 					stack.push(ActionValue(mbstows(query)));
 					stack.push(ActionValue(mbstows(url)));
-					stack.push(ActionValue(2.0));
+					stack.push(ActionValue(avm_number_t(2)));
 					function->call(this, frame, 0);
 				}
 				else
@@ -297,7 +297,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 		VM_BEGIN(AopStringLength)
 			ActionValue str = stack.pop();
-			stack.push(ActionValue(double(str.getStringSafe().length())));
+			stack.push(ActionValue(avm_number_t(str.getStringSafe().length())));
 		VM_END()
 
 		VM_BEGIN(AopStringExtract)
@@ -322,7 +322,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopInt)
 			ActionValue& number = stack.top();
 			if (number.isNumeric())
-				number = ActionValue(double(std::floor(number.getNumber())));
+				number = ActionValue(avm_number_t(std::floor(number.getNumber())));
 			else
 				number = ActionValue();
 		VM_END()
@@ -396,10 +396,10 @@ void ActionVM1::execute(ActionFrame* frame) const
 				stack.push(ActionValue(movieClip->getTransform().e22 * 100.0f));
 				break;
 			case 4:
-				stack.push(ActionValue(double(movieClip->getCurrentFrame())));
+				stack.push(ActionValue(avm_number_t(movieClip->getCurrentFrame())));
 				break;
 			case 5:
-				stack.push(ActionValue(double(movie->getFrameCount())));
+				stack.push(ActionValue(avm_number_t(movie->getFrameCount())));
 				break;
 			case 6:
 				stack.push(ActionValue(1.0f));
@@ -513,7 +513,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_BEGIN(AopStringCompare)
 			ActionValue str2 = stack.pop();
 			ActionValue str1 = stack.pop();
-			stack.push(ActionValue(double(str1.getStringSafe().compare(str2.getStringSafe()))));
+			stack.push(ActionValue(avm_number_t(str1.getStringSafe().compare(str2.getStringSafe()))));
 		VM_END()
 
 		VM_BEGIN(AopThrow)
@@ -539,7 +539,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			if (max.isNumeric())
 			{
 				int32_t rnd = std::rand() % std::max< int32_t >(int32_t(max.getNumber()), 1);
-				max = ActionValue(double(rnd));
+				max = ActionValue(avm_number_t(rnd));
 			}
 			else
 				max = ActionValue();
@@ -558,7 +558,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopGetTime)
-			double sinceStartup = m_timer.getElapsedTime() * 1000.0;
+			avm_number_t sinceStartup = avm_number_t(m_timer.getElapsedTime() * 1000.0);
 			stack.push(ActionValue(sinceStartup));
 		VM_END()
 
@@ -594,13 +594,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 				}
 				else if (type == 1)	// Number
 				{
-					value = ActionValue((double)readFloat(data));
+					value = ActionValue(avm_number_t(readFloat(data)));
 					data += sizeof(float);
 					VM_LOG(L"Push data, number " << value.getStringSafe());
 				}
 				else if (type == 2)	// Null
 				{
-					value = ActionValue(0.0);
+					value = ActionValue(avm_number_t(0));
 					VM_LOG(L"Push data, null");
 				}
 				else if (type == 3)	// Undefined
@@ -639,13 +639,13 @@ void ActionVM1::execute(ActionFrame* frame) const
 					w.b[7] = data[4];
 #endif
 					
-					value = ActionValue(w.d);
+					value = ActionValue(avm_number_t(w.d));
 					data += sizeof(double);
 					VM_LOG(L"Push data, double " << value.getStringSafe());
 				}
 				else if (type == 7)	// Integer (32bit)
 				{
-					value = ActionValue(double(readInt32(data)));
+					value = ActionValue(avm_number_t(readInt32(data)));
 					data += sizeof(int32_t);
 					VM_LOG(L"Push data, integer " << value.getStringSafe());
 				}
@@ -690,7 +690,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 					stack.push(target);
 					stack.push(url);
-					stack.push(ActionValue(2.0));
+					stack.push(ActionValue(avm_number_t(2)));
 
 					function->call(this, frame, 0);
 				}
@@ -816,7 +816,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				int n2 = int(number2.getNumber());
 				int n1 = int(number1.getNumber());
-				stack.push(ActionValue(double(n1 % n2)));
+				stack.push(ActionValue(avm_number_t(n1 % n2)));
 			}
 			else
 				stack.push(ActionValue());
@@ -940,8 +940,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue number1 = value1.toNumber();
 				if (number2.isNumeric() && number1.isNumeric())
 				{
-					double n2 = number2.getNumber();
-					double n1 = number1.getNumber();
+					avm_number_t n2 = number2.getNumber();
+					avm_number_t n1 = number1.getNumber();
 					stack.push(ActionValue(n1 + n2));
 				}
 				else
@@ -971,8 +971,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue number1 = value1.toNumber();
 				if (number2.isNumeric() && number1.isNumeric())
 				{
-					double n2 = number2.getNumber();
-					double n1 = number1.getNumber();
+					avm_number_t n2 = number2.getNumber();
+					avm_number_t n1 = number1.getNumber();
 					stack.push(ActionValue(bool(n1 < n2)));
 				}
 				else
@@ -1008,8 +1008,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue number1 = value1.toNumber();
 				if (number2.isNumeric() && number1.isNumeric())
 				{
-					double n2 = number2.getNumber();
-					double n1 = number1.getNumber();
+					avm_number_t n2 = number2.getNumber();
+					avm_number_t n1 = number1.getNumber();
 					stack.push(ActionValue(bool(n1 == n2)));
 				}
 				else
@@ -1047,7 +1047,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				Ref< ActionFunction > propertyGet;
 				if (target->getPropertyGet(memberName, propertyGet))
 				{
-					stack.push(ActionValue(0.0));
+					stack.push(ActionValue(avm_number_t(0)));
 					memberValue = propertyGet->call(this, frame, target);
 				}
 				else
@@ -1073,7 +1073,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (target->getPropertySet(memberName, propertySet))
 				{
 					stack.push(memberValue);
-					stack.push(ActionValue(1.0));
+					stack.push(ActionValue(avm_number_t(1)));
 					propertySet->call(this, frame, target);
 				}
 				else
@@ -1180,7 +1180,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				for (ActionObject::property_map_t::const_iterator i = properties.begin(); i != properties.end(); ++i)
 					stack.push(ActionValue(i->first));
 			}
-			stack.push(ActionValue(0.0));
+			stack.push(ActionValue(avm_number_t(0)));
 		VM_END()
 
 		VM_BEGIN(AopBitwiseAnd)
@@ -1190,7 +1190,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				int32_t n2 = int32_t(number2.getNumber());
 				int32_t n1 = int32_t(number1.getNumber());
-				stack.push(ActionValue(double(n1 & n2)));
+				stack.push(ActionValue(avm_number_t(n1 & n2)));
 			}
 			else
 				stack.push(ActionValue());
@@ -1203,7 +1203,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				int32_t n2 = int32_t(number2.getNumber());
 				int32_t n1 = int32_t(number1.getNumber());
-				number2 = ActionValue(double(n1 | n2));
+				number2 = ActionValue(avm_number_t(n1 | n2));
 			}
 			else
 				number2 = ActionValue();
@@ -1217,7 +1217,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 			{
 				int32_t n2 = int32_t(number2.getNumber());
 				int32_t n1 = int32_t(number1.getNumber());
-				number2 = ActionValue(double(n1 ^ n2));
+				number2 = ActionValue(avm_number_t(n1 ^ n2));
 			}
 			else
 				number2 = ActionValue();
@@ -1258,8 +1258,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue number1 = value1.toNumber();
 				if (number2.isNumeric() && number1.isNumeric())
 				{
-					double n2 = number2.getNumber();
-					double n1 = number1.getNumber();
+					avm_number_t n2 = number2.getNumber();
+					avm_number_t n1 = number1.getNumber();
 					stack.push(ActionValue(bool(n1 == n2)));
 				}
 				else
@@ -1289,8 +1289,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 				ActionValue number1 = value1.toNumber();
 				if (number2.isNumeric() && number1.isNumeric())
 				{
-					double n2 = number2.getNumber();
-					double n1 = number1.getNumber();
+					avm_number_t n2 = number2.getNumber();
+					avm_number_t n1 = number1.getNumber();
 					stack.push(ActionValue(bool(n1 > n2)));
 				}
 				else

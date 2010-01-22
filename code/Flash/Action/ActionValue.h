@@ -1,6 +1,7 @@
 #ifndef traktor_flash_ActionValue_H
 #define traktor_flash_ActionValue_H
 
+#include "Flash/Action/ActionTypes.h"
 #include "Flash/Action/ActionObject.h"
 
 // import/export mechanism.
@@ -42,7 +43,7 @@ public:
 
 	explicit ActionValue(bool b);
 
-	explicit ActionValue(double n);
+	explicit ActionValue(avm_number_t n);
 
 	explicit ActionValue(const wchar_t* s);
 
@@ -83,7 +84,7 @@ public:
 	bool getBoolean() const { T_ASSERT_M (m_type == AvtBoolean, L"Incorrect type"); return m_value.b; }
 
 	/*! \brief Get number value. */
-	double getNumber() const { T_ASSERT_M (m_type == AvtNumber, L"Incorrect type"); return m_value.n; }
+	avm_number_t getNumber() const { T_ASSERT_M (m_type == AvtNumber, L"Incorrect type"); return m_value.n; }
 
 	/*! \brief Get string value. */
 	std::wstring getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
@@ -95,7 +96,7 @@ public:
 	bool getBooleanSafe() const;
 
 	/*! \brief Get number value safe. */
-	double getNumberSafe() const;
+	avm_number_t getNumberSafe() const;
 
 	/*! \brief Get string value safe. */
 	std::wstring getStringSafe() const;
@@ -115,7 +116,7 @@ private:
 	union Value
 	{
 		bool b;
-		double n;
+		avm_number_t n;
 		wchar_t* s;
 		Ref< ActionObject >* o;
 	};

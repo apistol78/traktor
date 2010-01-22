@@ -73,12 +73,12 @@ void AsXML::XML_createTextNode(CallArgs& ca)
 
 void AsXML::XML_getBytesLoaded(CallArgs& ca)
 {
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0.0));
 }
 
 void AsXML::XML_getBytesTotal(CallArgs& ca)
 {
-	ca.ret = ActionValue(0.0);
+	ca.ret = ActionValue(avm_number_t(0.0));
 }
 
 void AsXML::XML_load(CallArgs& ca)

@@ -15,7 +15,7 @@ ActionPoint::ActionPoint()
 {
 }
 
-ActionPoint::ActionPoint(double x_, double y_)
+ActionPoint::ActionPoint(avm_number_t x_, avm_number_t y_)
 :	ActionObject(AsPoint::getInstance())
 ,	x(x_)
 ,	y(y_)

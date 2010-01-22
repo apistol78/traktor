@@ -34,11 +34,11 @@ void AsNumber::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
-	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< double >::max()));
-	prototype->setMember(L"MIN_VALUE", ActionValue(std::numeric_limits< double >::min()));
-	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< double >::signaling_NaN()));
-	prototype->setMember(L"NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< double >::infinity()));
-	prototype->setMember(L"POSITIVE_INFINITY", ActionValue(std::numeric_limits< double >::infinity()));
+	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
+	prototype->setMember(L"MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
+	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
+	prototype->setMember(L"NEGATIVE_INFINITY", ActionValue(-std::numeric_limits< avm_number_t >::infinity()));
+	prototype->setMember(L"POSITIVE_INFINITY", ActionValue(std::numeric_limits< avm_number_t >::infinity()));
 	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsNumber::Number_toString));
 	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsNumber::Number_valueOf));
 
