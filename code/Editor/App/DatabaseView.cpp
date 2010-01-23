@@ -1,5 +1,6 @@
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
@@ -15,19 +16,22 @@
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
-#include "Ui/TreeView.h"
-#include "Ui/TreeViewItem.h"
-#include "Ui/PopupMenu.h"
-#include "Ui/MenuItem.h"
-#include "Ui/TableLayout.h"
+#include "Ui/Edit.h"
 #include "Ui/FloodLayout.h"
+#include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/PopupMenu.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TreeView.h"
+#include "Ui/TreeViewItem.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/TreeViewDragEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
 #include "Resources/DatabaseView.h"
@@ -62,6 +66,32 @@ public:
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.DefaultFilter", DefaultFilter, DatabaseView::Filter)
+
+class TextFilter : public DatabaseView::Filter
+{
+	T_RTTI_CLASS;
+
+public:
+	TextFilter(const std::wstring& filter)
+	:	m_filter(filter)
+	{
+	}
+
+	virtual bool acceptInstance(const db::Instance* instance) const
+	{
+		return m_filter.match(instance->getName());
+	}
+
+	virtual bool acceptEmptyGroups() const
+	{
+		return false;
+	}
+
+private:
+	WildCompare m_filter;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.DatabaseView.TextFilter", TextFilter, DatabaseView::Filter)
 
 class TypeSetFilter : public DatabaseView::Filter
 {
@@ -128,18 +158,26 @@ bool DatabaseView::create(ui::Widget* parent)
 	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
+	m_toolSelection = new ui::custom::ToolBar();
+	if (!m_toolSelection->create(this))
+		return false;
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 1);
+
 	m_toolFilter = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
 		ui::Command(L"Database.Filter"),
 		0,
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
-
-	m_toolSelection = new ui::custom::ToolBar();
-	if (!m_toolSelection->create(this))
-		return false;
-	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 1);
 	m_toolSelection->addItem(m_toolFilter);
+
+	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
+
+	m_editFilter = new ui::Edit();
+	m_editFilter->create(m_toolSelection, L"", ui::WsNone);
+	m_editFilter->addKeyUpEventHandler(ui::createMethodHandler(this, &DatabaseView::eventFilterKey));
+	m_toolSelection->addItem(new ui::custom::ToolBarEmbed(m_editFilter, 100));
+
 	m_toolSelection->addClickEventHandler(ui::createMethodHandler(this, &DatabaseView::eventToolSelectionClicked));
 
 	m_treeDatabase = new ui::TreeView();
@@ -319,6 +357,7 @@ void DatabaseView::filterType(db::Instance* instance)
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(instance->getPrimaryType());
+	m_editFilter->setText(L"");
 	m_filter = new TypeSetFilter(typeSet);
 	m_toolFilter->setToggled(true);
 	updateView();
@@ -333,6 +372,7 @@ void DatabaseView::filterDependencies(db::Instance* instance)
 		for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 			guidSet.insert((*i)->outputGuid);
 
+		m_editFilter->setText(L"");
 		m_filter = new GuidSetFilter(guidSet);
 		m_toolFilter->setToggled(true);
 	}
@@ -351,6 +391,7 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 		{
 			TypeInfoSet typeSet;
 			typeSet.insert(filterType);
+			m_editFilter->setText(L"");
 			m_filter = new TypeSetFilter(typeSet);
 		}
 		else
@@ -358,6 +399,19 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 	}
 	if (!toolButton->isToggled())
 		m_filter = new DefaultFilter();
+
+	updateView();
+}
+
+void DatabaseView::eventFilterKey(ui::Event* event)
+{
+	std::wstring filter = m_editFilter->getText();
+	if (!filter.empty())
+		m_filter = new TextFilter(filter);
+	else
+		m_filter = new DefaultFilter();
+
+	m_toolFilter->setToggled(false);
 
 	updateView();
 }

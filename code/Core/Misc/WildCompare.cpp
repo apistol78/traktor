@@ -16,7 +16,7 @@ WildCompare::WildCompare(const std::wstring& mask)
 	}
 }
 
-bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< std::wstring >* pieces)
+bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< std::wstring >* outPieces) const
 {
 	size_t p = 0;
 	size_t i = 0;
@@ -41,8 +41,8 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 		if (f == std::wstring::npos)
 			return false;
 			
-		if (pieces)
-			pieces->push_back(str.substr(p, f - p));
+		if (outPieces)
+			outPieces->push_back(str.substr(p, f - p));
 
 		p = f + m_nowild[i].length();
 	}
@@ -52,8 +52,8 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 		if (p < str.length())
 			return false;
 	}
-	else if (pieces)
-		pieces->push_back(str.substr(p));
+	else if (outPieces)
+		outPieces->push_back(str.substr(p));
 
 	return true;
 }
