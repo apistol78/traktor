@@ -9,6 +9,7 @@ namespace traktor
 	namespace ui
 	{
 
+class Edit;
 class TreeView;
 class TreeViewItem;
 class PopupMenu;
@@ -68,6 +69,7 @@ private:
 	IEditor* m_editor;
 	Ref< ui::custom::ToolBar > m_toolSelection;
 	Ref< ui::custom::ToolBarButton > m_toolFilter;
+	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::PopupMenu > m_menuGroup;
 	Ref< ui::PopupMenu > m_menuInstance;
@@ -83,6 +85,8 @@ private:
 	void filterDependencies(db::Instance* instance);
 
 	void eventToolSelectionClicked(ui::Event* event);
+
+	void eventFilterKey(ui::Event* event);
 
 	void eventInstanceActivate(ui::Event* event);
 
