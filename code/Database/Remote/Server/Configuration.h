@@ -25,7 +25,13 @@ class T_DLLCLASS Configuration : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	Configuration();
+
+	void setListenPort(uint16_t listenPort);
+
 	uint16_t getListenPort() const;
+
+	void setConnectionString(const std::wstring& name, const std::wstring& connectionString);
 
 	std::wstring getConnectionString(const std::wstring& name) const;
 

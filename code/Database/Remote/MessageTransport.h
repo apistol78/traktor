@@ -3,25 +3,33 @@
 
 #include "Core/Object.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_DATABASE_REMOTE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace net
 	{
 
-class TcpSocket;
-class SocketStream;
+class T_DLLCLASS TcpSocket;
+class T_DLLCLASS SocketStream;
 
 	}
 
 	namespace db
 	{
 
-class IMessage;
+class T_DLLCLASS IMessage;
 
 /*! \brief Network message transportation.
  * \ingroup Database
  */
-class MessageTransport : public Object
+class T_DLLCLASS MessageTransport : public Object
 {
 	T_RTTI_CLASS;
 

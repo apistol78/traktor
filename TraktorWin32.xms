@@ -8714,7 +8714,7 @@
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
@@ -8722,13 +8722,14 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>T_DATABASE_REMOTE_EXPORT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseShared</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader></precompiledHeader>
 					<includePaths>
@@ -8736,6 +8737,7 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
+						<item>T_DATABASE_REMOTE_EXPORT</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -8790,6 +8792,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8964,14 +8970,6 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[21]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

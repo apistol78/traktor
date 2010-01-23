@@ -3,6 +3,14 @@
 
 #include "Database/Remote/IMessage.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_DATABASE_REMOTE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace db
@@ -11,7 +19,7 @@ namespace traktor
 /*! \brief Get stream status.
  * \ingroup Database
  */
-class StmGetStat : public IMessage
+class T_DLLCLASS StmGetStat : public IMessage
 {
 	T_RTTI_CLASS;
 

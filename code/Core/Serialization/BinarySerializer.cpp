@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -571,10 +572,16 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				
 				const TypeInfo* type = TypeInfo::find(typeName);
 				if (type == 0)
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"" << Endl;
 					return false;
+				}
 					
 				if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to create type \"" << typeName << L"\"" << Endl;
 					return false;
+				}
 
 				if (!read_primitive< int32_t >(m_stream, version))
 					return false;

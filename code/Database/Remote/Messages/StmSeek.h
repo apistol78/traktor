@@ -4,6 +4,14 @@
 #include "Database/Remote/IMessage.h"
 #include "Core/Io/IStream.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_DATABASE_REMOTE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace db
@@ -12,7 +20,7 @@ namespace traktor
 /*! \brief Seek stream.
  * \ingroup Database
  */
-class StmSeek : public IMessage
+class T_DLLCLASS StmSeek : public IMessage
 {
 	T_RTTI_CLASS;
 

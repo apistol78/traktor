@@ -42,6 +42,13 @@
 typedef int socklen_t;
 #	define CLOSE_SOCKET(s) closesocket(s)
 
+#	if defined(max)
+#		undef max
+#	endif
+#	if defined(min)
+#		undef min
+#endif
+
 #endif
 
 // import/export mechanism.
