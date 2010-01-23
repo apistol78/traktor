@@ -15,6 +15,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ConnectionManager", ConnectionManager, Objec
 
 bool ConnectionManager::create(const Configuration* configuration)
 {
+	if (!net::Network::initialize())
+	{
+		log::error << L"Failed to create connection managar; unable to initialize network" << Endl;
+		return false;
+	}
+
 	m_configuration = configuration;
 	if (!m_configuration)
 	{
@@ -52,6 +58,8 @@ void ConnectionManager::destroy()
 		m_serverSocket->close();
 		m_serverSocket = 0;
 	}
+
+	net::Network::finalize();
 
 	log::info << L"Connection manager destroyed" << Endl;
 }
