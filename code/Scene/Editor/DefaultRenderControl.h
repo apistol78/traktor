@@ -16,7 +16,7 @@ class Widget;
 		{
 
 class ToolBar;
-class ToolBarButton;
+class ToolBarDropDown;
 
 		}
 	}
@@ -46,7 +46,7 @@ private:
 	int32_t m_index;
 	Ref< ui::Container > m_container;
 	Ref< ui::custom::ToolBar > m_toolBar;
-	Ref< ui::custom::ToolBarButton > m_toolButtonView;
+	Ref< ui::custom::ToolBarDropDown > m_toolBarView;
 	Ref< ISceneRenderControl > m_renderControl;
 
 	void createRenderControl(int32_t type);

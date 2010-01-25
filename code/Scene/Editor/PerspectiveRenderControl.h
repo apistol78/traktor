@@ -91,6 +91,8 @@ private:
 
 	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
 
+	Matrix44 getView() const;
+
 	void eventButtonDown(ui::Event* event);
 
 	void eventButtonUp(ui::Event* event);

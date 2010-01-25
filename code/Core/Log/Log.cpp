@@ -6,9 +6,8 @@
 namespace traktor
 {
 
-LogTargetConsole::LogTargetConsole(const std::wstring& prefix, int color)
-:	m_prefix(prefix)
-,	m_color(color)
+LogTargetConsole::LogTargetConsole(int color)
+:	m_color(color)
 ,	m_defaultColorAttribs(0)
 {
 #if defined(_WIN32) && !defined(WINCE) && !defined(_XBOX)
@@ -23,7 +22,7 @@ void LogTargetConsole::log(const std::wstring& str)
 {
 #if defined(_WIN32)
 	std::wstringstream ss;
-	ss << m_prefix << str << std::endl;
+	ss << str << std::endl;
 
 	tstring tss = wstots(ss.str());
 
@@ -53,25 +52,20 @@ void LogTargetConsole::log(const std::wstring& str)
 
 #	endif
 
-	OutputDebugString(wstots(ss.str()).c_str());
+	OutputDebugString(tss.c_str());
 #else
-	std::wcout << m_prefix << str << std::endl;
+	std::wcout << str << std::endl;
 #endif
-}
-
-LogTargetDebug::LogTargetDebug(const std::wstring& prefix)
-:	m_prefix(prefix)
-{
 }
 
 void LogTargetDebug::log(const std::wstring& str)
 {
 #if defined(_WIN32)
 	std::wstringstream ss;
-	ss << m_prefix << L"(" << GetCurrentProcessId() << L") " << str << std::endl;
+	ss << L"(" << GetCurrentProcessId() << L") " << str << std::endl;
 	OutputDebugString(wstots(ss.str()).c_str());
 #else
-	std::wcout << m_prefix << str << std::endl;
+	std::wcout << L"(DEBUG) " << str << std::endl;
 #endif
 }
 
@@ -131,10 +125,10 @@ Ref< LogStreamBuffer > LogStream::getBuffer()
 	namespace log
 	{
 
-static LogTargetConsole infoTarget(L"Info    : ", 0);
-static LogTargetConsole warningTarget(L"Warning : ", 1);
-static LogTargetConsole errorTarget(L"Error   : ", 2);
-static LogTargetDebug debugTarget(L"Debug   : ");
+static LogTargetConsole infoTarget(0);
+static LogTargetConsole warningTarget(1);
+static LogTargetConsole errorTarget(2);
+static LogTargetDebug debugTarget;
 
 LogStream info(&infoTarget);
 LogStream warning(&warningTarget);

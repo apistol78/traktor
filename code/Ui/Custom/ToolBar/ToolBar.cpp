@@ -170,24 +170,28 @@ void ToolBar::eventMouseMove(Event* event)
 	if (item != m_trackItem)
 	{
 		if (m_trackItem)
+		{
 			m_trackItem->mouseLeave(this, mouseEvent);
+			m_trackItem = 0;
+		}
 
 		m_trackItem = item;
 
-		if (m_trackItem)
+		if (item && item->mouseEnter(this, mouseEvent))
 		{
-			m_trackItem->mouseEnter(this, mouseEvent);
 			setCapture();
 
 			// Update tooltip if it's visible.
 			if (m_toolTip->isVisible(false))
 			{
 				std::wstring toolTip;
-				if (m_trackItem->getToolTip(toolTip))
+				if (item->getToolTip(toolTip))
 					m_toolTip->show(mouseEvent->getPosition(), toolTip);
 				else
 					m_toolTip->hide();
 			}
+
+			m_trackItem = item;
 		}
 		else
 		{

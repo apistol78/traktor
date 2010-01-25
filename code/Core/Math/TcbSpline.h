@@ -14,13 +14,29 @@ namespace traktor
 template <
 	typename Key,
 	typename Time,
+	typename Control,
 	typename Value
 >
-struct HermiteAccessor
+struct TcbSplineAccessor
 {
 	static inline Time time(const Key& key)
 	{
 		return Time(key.T);
+	}
+
+	static inline Control tension(const Key& key)
+	{
+		return Value(key.tension);
+	}
+
+	static inline Control continuity(const Key& key)
+	{
+		return Value(key.continuity);
+	}
+
+	static inline Control bias(const Key& key)
+	{
+		return Value(key.bias);
 	}
 
 	static inline Value value(const Key& key)
@@ -39,17 +55,18 @@ struct HermiteAccessor
 	}
 };
 
-/*! \brief Hermite spline evaluator.
+/*! \brief Tension-Continuity-Bias spline evaluator.
  * \ingroup Core
  */
 template <
 	typename Key,
 	typename Time,
+	typename Control,
 	typename Value,
-	typename Accessor = HermiteAccessor< Key, Time, Value >,
+	typename Accessor = TcbSplineAccessor< Key, Time, Control, Value >,
 	typename TimeControl = ClampTime< Time >
 >
-struct Hermite
+struct TcbSpline
 {
 	static Value evaluate(const Key* keys, size_t nkeys, const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f))
 	{
@@ -69,39 +86,60 @@ struct Hermite
 		
 		const Key& cp0 = keys[index];
 		const Key& cp1 = keys[index_1];
-
-		Value v0 = Accessor::value(cp0);
-		Value v1 = Accessor::value(cp1);
-
-		Time t0(Accessor::time(cp0));
-		Time t1(Accessor::time(cp1));
-
-		if (t0 >= t1)
-			t1 = Tend;
-
 		const Key& cpp = keys[index_n1];
 		const Key& cpn = keys[index_2];
 
+		Time T0(Accessor::time(cp0));
+		Time T1(Accessor::time(cp1));
+
+		if (T0 >= T1)
+			T1 = Tend;
+
+		Control t = Accessor::tension(cp0);
+		Control c = Accessor::continuity(cp0);
+		Control b = Accessor::bias(cp0);
+
+		const static Control c_one(1);
+		const static Control c_two(2);
+
+		Control k11 = ((c_one - t) * (c_one + b) * (c_one + c)) / c_two;
+		Control k21 = ((c_one - t) * (c_one + b) * (c_one - c)) / c_two;
+		Control k12 = ((c_one - t) * (c_one - b) * (c_one - c)) / c_two;
+		Control k22 = ((c_one - t) * (c_one - b) * (c_one + c)) / c_two;
+
+		Value v0 = Accessor::value(cp0);
+		Value v1 = Accessor::value(cp1);
 		Value vp = Accessor::value(cpp);
 		Value vn = Accessor::value(cpn);
 
-		Time t = (Tcurr - t0) / (t1 - t0);
-		Time t2 = t * t;
-		Time t3 = t2 * t;
+		Value d0 = Accessor::combine(
+			v0, k11,
+			vp, -k11,
+			v1, k12,
+			v0, -k12
+		);
 
-		Time h2 = Time(3.0f) * t2 - t3 - t3;
-		Time h1 = Time(1.0f) - h2;
-		Time h4 = t3 - t2;
-		Time h3 = h4 - t2 + t;
+		Value d1 = Accessor::combine(
+			v1, k21,
+			v0, -k21,
+			vn, k22,
+			v1, -k22
+		);
 
-		h3 *= stiffness;
-		h4 *= stiffness;
+		Time T = (Tcurr - T0) / (T1 - T0);
+		Time T2 = T * T;
+		Time T3 = T2 * T;
+
+		Time h1 =  Time(2.0f) * T3 - Time(3.0f) * T2 + Time(1.0f);
+		Time h2 = -Time(2.0f) * T3 + Time(3.0f) * T2;
+		Time h3 = T3 - Time(2.0f) * T2 + T;
+		Time h4 = T3 - T2;
 
 		return Accessor::combine(
-			v0, h1 - h4,
-			v1, h2 + h3,
-			vp, -h3,
-			vn, h4
+			v0, h1,
+			v1, h2,
+			d0, h3,
+			d1, h4
 		);
 	}
 };

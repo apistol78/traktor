@@ -298,6 +298,16 @@ Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& posit
 	return m_context->queryRay(worldRayOrigin, worldRayDirection);
 }
 
+Matrix44 PerspectiveRenderControl::getView() const
+{
+	Matrix44 view = m_camera->getCurrentView();
+	Ref< EntityAdapter > followEntityAdapter = m_context->getFollowEntityAdapter();
+	if (followEntityAdapter)
+		return followEntityAdapter->getTransform().inverse().toMatrix44();
+	else
+		return m_camera->getCurrentView();
+}
+
 void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 {
 	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
@@ -452,7 +462,7 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 		Matrix44 projection = m_worldRenderView.getProjection();
 		Matrix44 projectionInverse = projection.inverse();
 
-		Matrix44 view = m_camera->getCurrentView();
+		Matrix44 view = getView();
 		Matrix44 viewInverse = view.inverse();
 
 		ui::Rect innerRect = m_renderWidget->getInnerRect();
@@ -556,12 +566,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
-	// Get view matrix; either from camera or currently "following" entity.
-	Matrix44 view = m_camera->getCurrentView();
-
-	Ref< EntityAdapter > followEntityAdapter = m_context->getFollowEntityAdapter();
-	if (followEntityAdapter)
-		view = followEntityAdapter->getTransform().inverse().toMatrix44();
+	Matrix44 view = getView();
 
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;

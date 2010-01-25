@@ -32,7 +32,7 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight);
 
-	virtual void mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent);
+	virtual bool mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent);
 
 	virtual void mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent);
 
