@@ -33,12 +33,11 @@ public:
 class T_DLLCLASS LogTargetConsole : public ILogTarget
 {
 public:
-	LogTargetConsole(const std::wstring& prefix, int color);
+	LogTargetConsole(int color);
 
 	virtual void log(const std::wstring& str);
 	
 private:
-	std::wstring m_prefix;
 	int m_color;
 	uint16_t m_defaultColorAttribs;
 };
@@ -49,12 +48,7 @@ private:
 class T_DLLCLASS LogTargetDebug : public ILogTarget
 {
 public:
-	LogTargetDebug(const std::wstring& prefix);
-
 	virtual void log(const std::wstring& str);
-	
-private:
-	std::wstring m_prefix;
 };
 
 /*! \brief Log stream buffer.

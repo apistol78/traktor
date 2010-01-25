@@ -32,8 +32,9 @@ void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitm
 	m_widget->setRect(rc);
 }
 
-void ToolBarEmbed::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarEmbed::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
 {
+	return false;
 }
 
 void ToolBarEmbed::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)

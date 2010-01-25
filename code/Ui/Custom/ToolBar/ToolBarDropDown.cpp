@@ -84,7 +84,7 @@ bool ToolBarDropDown::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarDropDown::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	return Size(m_width, imageHeight + 8);
+	return Size(m_width, imageHeight + 4);
 }
 
 void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
@@ -135,9 +135,10 @@ void ToolBarDropDown::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, B
 	m_menuPosition = Point(at.x, at.y + size.cy);
 }
 
-void ToolBarDropDown::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarDropDown::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
 {
 	m_hover = true;
+	return true;
 }
 
 void ToolBarDropDown::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)

@@ -126,9 +126,10 @@ void ToolBarButton::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bit
 	}
 }
 
-void ToolBarButton::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarButton::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
 {
 	m_state |= BstHover;
+	return true;
 }
 
 void ToolBarButton::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)

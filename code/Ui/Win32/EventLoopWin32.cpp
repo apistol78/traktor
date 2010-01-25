@@ -60,8 +60,13 @@ bool EventLoopWin32::process(EventSubject* owner)
 		bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			HWND hWndForm = msg.hwnd;
+			for (; hWndForm != NULL && GetParent(hWndForm) != NULL; hWndForm = GetParent(hWndForm));
+			if (hWndForm == NULL || !IsDialogMessage(hWndForm, &msg))
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
 		}
 	}
 
@@ -80,8 +85,13 @@ int EventLoopWin32::execute(EventSubject* owner)
 			bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				HWND hWndForm = msg.hwnd;
+				for (; hWndForm != NULL && GetParent(hWndForm) != NULL; hWndForm = GetParent(hWndForm));
+				if (hWndForm == NULL || !IsDialogMessage(hWndForm, &msg))
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
 			}
 			m_idle = false;
 			continue;

@@ -42,10 +42,12 @@ public:
 	struct Key
 	{
 		float T;
+		Vector4 tcb;
 		Frame value;
 
 		Key()
 		:	T(0.0f)
+		,	tcb(0.0f, 0.0f, 0.0f, 0.0f)
 		{
 		}
 

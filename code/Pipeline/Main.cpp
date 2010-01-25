@@ -24,6 +24,18 @@
 
 using namespace traktor;
 
+struct StatusListener : public editor::PipelineBuilder::IListener
+{
+	virtual void begunBuildingAsset(
+		const std::wstring& assetName,
+		uint32_t index,
+		uint32_t count
+	) const
+	{
+		traktor::log::info << L":" << index << L":" << count << L":" << assetName << Endl;
+	}
+};
+
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
 	Ref< db::Database > database = new db::Database();
@@ -90,6 +102,7 @@ int main(int argc, const char** argv)
 		traktor::log::info << L"Usage: Traktor.Pipeline.App (-options) \"{Asset guid}\"" << Endl;
 		traktor::log::info << L"       -f    Force rebuild" << Endl;
 		traktor::log::info << L"       -s    Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -p    Write progress to stdout" << Endl;
 		traktor::log::info << L"       -h    Show this help" << Endl;
 		return 0;
 	}
@@ -192,13 +205,18 @@ int main(int argc, const char** argv)
 	RefArray< editor::PipelineDependency > dependencies;
 	pipelineDepends.getDependencies(dependencies);
 
+	Ref< StatusListener > statusListener;
+	if (cmdLine.hasOption('p'))
+		statusListener = new StatusListener();
+
 	// Build output.
 	editor::PipelineBuilder pipelineBuilder(
 		&pipelineFactory,
 		sourceDatabase,
 		outputDatabase,
 		pipelineCache,
-		pipelineDb
+		pipelineDb,
+		statusListener
 	);
 
 	bool rebuild = cmdLine.hasOption('f');

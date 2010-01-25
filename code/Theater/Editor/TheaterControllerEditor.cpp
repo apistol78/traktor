@@ -163,12 +163,25 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
 
+	RefArray< ui::custom::SequenceItem > items;
+	m_trackSequencer->getSequenceItems(items, ui::custom::SequencerControl::GfSelectedOnly);
+
 	float duration = controllerData->getDuration();
 	bool loop = controllerData->getLoop();
 
 	const RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
+		Color pathColor(180, 180, 80, 120);
+		for (RefArray< ui::custom::SequenceItem >::const_iterator j = items.begin(); j != items.end(); ++j)
+		{
+			if ((*j)->getData(L"TRACK") == *i)
+			{
+				pathColor = Color(255, 255, 0, 200);
+				break;
+			}
+		}
+
 		const TransformPath& path = (*i)->getPath();
 
 		int32_t steps = int32_t(duration) * 10;
@@ -183,7 +196,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			primitiveRenderer->drawLine(
 				F0.position,
 				F1.position,
-				Color(255, 255, 0, 200)
+				pathColor
 			);
 		}
 
@@ -193,7 +206,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 			primitiveRenderer->drawSolidPoint(
 				i->value.position,
 				8.0f,
-				Color(255, 255, 0, 255)
+				pathColor
 			);
 		}
 	}
@@ -210,6 +223,7 @@ void TheaterControllerEditor::updateSequencer()
 	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); ++i)
 	{
 		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getInstance()->getName());
+		trackSequence->setData(L"TRACK", *i);
 
 		TransformPath& path = (*i)->getPath();
 		AlignedVector< TransformPath::Key >& keys = path.getKeys();

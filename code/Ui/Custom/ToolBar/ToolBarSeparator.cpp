@@ -26,8 +26,9 @@ void ToolBarSeparator::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, 
 	canvas.drawLine(at, at + Size(0, imageHeight));
 }
 
-void ToolBarSeparator::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
+bool ToolBarSeparator::mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent)
 {
+	return false;
 }
 
 void ToolBarSeparator::mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent)

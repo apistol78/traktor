@@ -46,7 +46,11 @@ protected:
 
 	virtual void paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight) = 0;
 
-	virtual void mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
+	/*! \brief Mouse enter item.
+	 *
+	 * \return True if tracking of item desired; false will not cause mouse to be captured.
+	 */
+	virtual bool mouseEnter(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
 
 	virtual void mouseLeave(ToolBar* toolBar, MouseEvent* mouseEvent) = 0;
 

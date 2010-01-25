@@ -57,16 +57,14 @@ Ref< IEntityEditor > createEntityEditor(
 		}
 	}
 
-	if (!entityEditorFactory)
+	if (entityEditorFactory)
 	{
-		log::debug << L"Unable to find factory supporting entity type \"" << entityDataType.getName() << L"\"" << Endl;
-		return 0;
+		Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
+		T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
+		return entityEditor;
 	}
-
-	Ref< IEntityEditor > entityEditor = entityEditorFactory->createEntityEditor(context, entityDataType);
-	T_ASSERT_M (entityEditor, L"Entity editor factory returned null");
-
-	return entityEditor;
+	else
+		return 0;
 }
 
 // Create entity editor for each adapter.

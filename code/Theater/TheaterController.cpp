@@ -1,7 +1,8 @@
+#include <limits>
+#include "Core/Math/Const.h"
 #include "Theater/TheaterController.h"
 #include "Theater/Track.h"
 #include "World/Entity/SpatialEntity.h"
-#include "Core/Math/Const.h"
 
 namespace traktor
 {
@@ -14,7 +15,7 @@ TheaterController::TheaterController(float duration, bool loop, const RefArray< 
 :	m_duration(duration)
 ,	m_loop(loop)
 ,	m_tracks(tracks)
-,	m_lastTime(0.0f)
+,	m_lastTime(-std::numeric_limits< float >::max())
 {
 }
 
