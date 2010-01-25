@@ -165,6 +165,17 @@ public:
 
 	uint32_t getAttribueIndex(int vertexIndex ,int attributeOffset) const { return m_indicies[ vertexIndex + attributeOffset ]; }
 
+	uint32_t getStride() const
+	{
+		uint32_t stride = 0;
+		for (uint32_t i = 0; i < m_inputs.size(); ++i)
+		{
+			if (m_inputs[i].offset > stride)
+				stride = m_inputs[i].offset;
+		}
+		return stride + 1;
+	}
+
 	source_data_info_t findSourceData(
 		const std::wstring& semantic, 
 		int set,
@@ -461,16 +472,7 @@ void createGeometry(
 		source_data_info_t texBinormalDataInfo = polygonData[j].findSourceData(L"TEXBINORMAL", 0, vertexAttributeData, vertexSourceTranslation);
 		source_data_info_t texTangentDataInfo = polygonData[j].findSourceData(L"TEXTANGENT", 0, vertexAttributeData, vertexSourceTranslation);
 
-		uint32_t vertexIndexStride = max(vertexDataInfo.second, normalDataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, texcoord0DataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, texcoord1DataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, vcolorDataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, biNormalDataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, tangentDataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, texBinormalDataInfo.second);
-		vertexIndexStride = max(vertexIndexStride, texTangentDataInfo.second);
-		vertexIndexStride += 1;
-
+		uint32_t vertexIndexStride = polygonData[j].getStride();
 		uint32_t indexOffset = 0;
 		for (uint32_t k = 0; k < polygonData[j].getPolygonCount(); ++k)
 		{
