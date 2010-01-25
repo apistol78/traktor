@@ -9,23 +9,6 @@ namespace traktor
 {
 	namespace video
 	{
-		namespace
-		{
-		
-uint32_t YCbCr2RGB8(uint8_t Y, uint8_t Cb, uint8_t Cr)
-{
-	float r = Y * 298.082f / 256.0f + Cr * 408.583f / 256.0f - 222.921f;
-	float g = Y * 298.082f / 256.0f - Cb * 100.291f / 256.0f - Cr * 208.120f / 256.0f + 135.576f;
-	float b = Y * 298.082f / 256.0f + Cb * 516.412f / 256.0f - 276.836f;
-
-	return
-		(uint32_t(clamp(r, 0.0f, 255.0f))) |
-		(uint32_t(clamp(g, 0.0f, 255.0f)) << 8) |
-		(uint32_t(clamp(b, 0.0f, 255.0f)) << 16);
-}
-
-		}
-
 
 class VideoDecoderTheoraImpl : public Object
 {
@@ -225,14 +208,14 @@ public:
 				const uint8_t* inU = yuv[1].data + yuv[1].stride * (y >> 1);
 				const uint8_t* inV = yuv[2].data + yuv[2].stride * (y >> 1);
 
-				uint32_t* rgba = static_cast< uint32_t* >(bits) + ((pitch * y) >> 2);
+				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
-					uint8_t Y = inY[x];
-					uint8_t Cb = inU[x >> 1];
-					uint8_t Cr = inV[x >> 1];
-					*rgba++ = YCbCr2RGB8(Y, Cb, Cr);
+					w[0] = inY[x];
+					w[1] = inU[x >> 1];
+					w[2] = inV[x >> 1];
+					w += 4;
 				}
 			}
 		}
@@ -244,14 +227,14 @@ public:
 				const uint8_t* inU = yuv[1].data + yuv[1].stride * (y >> 1);
 				const uint8_t* inV = yuv[2].data + yuv[2].stride * (y >> 1);
 
-				uint32_t* rgba = static_cast< uint32_t* >(bits) + ((pitch * y) >> 2);
+				uint8_t* w = static_cast< uint8_t* >(bits) + pitch * y;
 
 				for (uint32_t x = 0; x < m_ti.pic_width; ++x)
 				{
-					uint8_t Y = inY[x];
-					uint8_t Cb = inU[x];
-					uint8_t Cr = inV[x];
-					*rgba++ = YCbCr2RGB8(Y, Cb, Cr);
+					w[0] = inY[x];
+					w[1] = inU[x];
+					w[2] = inV[x];
+					w += 4;
 				}
 			}
 		}

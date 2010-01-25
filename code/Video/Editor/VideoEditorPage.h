@@ -3,6 +3,7 @@
 
 #include "Core/Timer/Timer.h"
 #include "Editor/IEditorPage.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,7 +26,8 @@ class IEditor;
 	{
 
 class IRenderView;
-class PrimitiveRenderer;
+class ScreenRenderer;
+class Shader;
 
 	}
 
@@ -87,7 +89,8 @@ private:
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::Shader > m_shader;
 	Ref< db::Instance > m_instance;
 	Ref< VideoAsset > m_asset;
 	Ref< Video > m_video;
