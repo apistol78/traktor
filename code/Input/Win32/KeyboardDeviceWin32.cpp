@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32, IInputDevice)
 
+KeyboardDeviceWin32::KeyboardDeviceWin32()
+:	m_connected(true)
+{
+}
+
 std::wstring KeyboardDeviceWin32::getName() const
 {
 	return L"Standard Keyboard";
@@ -21,7 +26,7 @@ InputCategory KeyboardDeviceWin32::getCategory() const
 
 bool KeyboardDeviceWin32::isConnected() const
 {
-	return true;
+	return m_connected;
 }
 
 int KeyboardDeviceWin32::getControlCount()
@@ -57,6 +62,9 @@ void KeyboardDeviceWin32::resetState()
 
 void KeyboardDeviceWin32::readState()
 {
+	HWND hWndActive = GetActiveWindow();
+	DWORD dwPID = 0; GetWindowThreadProcessId(hWndActive, &dwPID);
+	m_connected = bool(GetCurrentProcessId() == dwPID);
 }
 
 bool KeyboardDeviceWin32::supportRumble() const

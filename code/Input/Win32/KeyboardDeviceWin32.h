@@ -21,6 +21,8 @@ class T_DLLCLASS KeyboardDeviceWin32 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
+	KeyboardDeviceWin32();
+
 	virtual std::wstring getName() const;
 
 	virtual InputCategory getCategory() const;
@@ -44,6 +46,9 @@ public:
 	virtual bool supportRumble() const;
 
 	virtual void setRumble(const InputRumble& rumble);
+
+private:
+	bool m_connected;
 };
 
 	}
