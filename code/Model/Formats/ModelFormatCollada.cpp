@@ -370,25 +370,36 @@ struct SkinData
 		{
 			std::wstring sourceName = sources[j]->getAttribute(L"id", L"")->getValue();
 				if (isReference(sourceName, m_vertexWeightData.m_weightInput.source))
-				m_weights.read(sources[j]);
+					m_weights.read(sources[j]);
+				if (isReference(sourceName, m_vertexWeightData.m_jointInput.source))
+					m_jointNames.read(sources[j]);
 		}
 	}
+	void addJointNames(Model* outModel)
+	{
+		int jointCount = m_jointNames.data.size();
+		for (int i = 0; i < jointCount; i++)
+			outModel->addBone(m_jointNames.data[i]);
+	}
+
 	void setJointInfluence(Vertex& vertex, int index)
 	{
 		uint32_t* indicies = &m_vertexWeightData.m_indicies.front();
+		uint32_t offset = 0;
+		uint32_t stride = 2;
 		// Step forward to our vertex
 		for (int i = 0; i < index; i++)
-			indicies += m_vertexWeightData.m_vertexCounts[i];
+			offset += m_vertexWeightData.m_vertexCounts[i] * stride;
 
 		// Get the number of joints that influence our vertex
 		int jointCount = m_vertexWeightData.m_vertexCounts[index];
 
-		// Get wieights and inicies for all joints influencing our vertex
+		// Get weights and indicies for all joints influencing our vertex
 		for (int i = 0; i < jointCount; i++)
 		{
-			uint32_t jointIndex = indicies[m_vertexWeightData.m_jointInput.offset];
-			uint32_t weightIndex = indicies[m_vertexWeightData.m_weightInput.offset];
-			indicies += 2;
+			uint32_t jointIndex = indicies[offset + m_vertexWeightData.m_jointInput.offset];
+			uint32_t weightIndex = indicies[offset + m_vertexWeightData.m_weightInput.offset];
+			offset += stride;
 			float weight = m_weights.getDataWeight(weightIndex);
 			vertex.setBoneInfluence(jointIndex, weight);
 		}
@@ -396,6 +407,7 @@ struct SkinData
 
 private:
 	FloatData m_weights;
+	NameData m_jointNames;
 //	std::vector< FloatData > m_floatData;
 //	std::vector< NameData > m_nameData;
 	std::vector< Input > m_jointInputs;
@@ -411,6 +423,8 @@ void createGeometry(
 	Model* outModel
 )
 {
+	if (skinData)
+		skinData->addJointNames(outModel);
 	std::vector< FloatData > vertexAttributeData;
 	{
 		RefArray< xml::Element > sources;
