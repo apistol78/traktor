@@ -326,5 +326,9 @@ void RenderViewOpenGL::present()
 	m_globalContext->leave();
 }
 
+void RenderViewOpenGL::setMSAAEnable(bool msaaEnable)
+{
+}
+
 	}
 }

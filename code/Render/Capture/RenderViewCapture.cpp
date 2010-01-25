@@ -194,5 +194,10 @@ void RenderViewCapture::present()
 	m_frameCount++;
 }
 
+void RenderViewCapture::setMSAAEnable(bool msaaEnable)
+{
+	m_renderView->setMSAAEnable(msaaEnable);
+}
+
 	}
 }

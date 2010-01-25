@@ -384,5 +384,9 @@ void RenderViewDx10::present()
 	m_context->deleteResources();
 }
 
+void RenderViewDx10::setMSAAEnable(bool msaaEnable)
+{
+}
+
 	}
 }

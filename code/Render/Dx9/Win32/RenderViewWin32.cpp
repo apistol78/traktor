@@ -400,6 +400,11 @@ void RenderViewWin32::present()
 #endif
 }
 
+void RenderViewWin32::setMSAAEnable(bool msaaEnable)
+{
+	m_d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, msaaEnable ? TRUE : FALSE);
+}
+
 void RenderViewWin32::setD3DBuffers(IDirect3DSwapChain9* d3dSwapChain, IDirect3DSurface9* d3dDepthStencilSurface)
 {
 	m_d3dSwapChain = d3dSwapChain;

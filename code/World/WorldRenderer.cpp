@@ -325,7 +325,9 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
 			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
+			m_renderView->setMSAAEnable(false);
 			f.depth->getRenderContext()->render(render::RenderContext::RfOpaque);
+			m_renderView->setMSAAEnable(true);
 			m_renderView->end();
 		}
 	}

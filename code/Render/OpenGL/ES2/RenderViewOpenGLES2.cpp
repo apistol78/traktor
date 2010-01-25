@@ -359,6 +359,10 @@ void RenderViewOpenGLES2::present()
 		m_globalContext->deleteResources();
 }
 
+void RenderViewOpenGLES2::setMSAAEnable(bool msaaEnable)
+{
+}
+
 	}
 }
 
