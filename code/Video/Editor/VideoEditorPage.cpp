@@ -5,7 +5,8 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/ISimpleTexture.h"
-#include "Render/PrimitiveRenderer.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
 #include "Render/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
@@ -24,11 +25,18 @@ namespace traktor
 {
 	namespace video
 	{
+		namespace
+		{
+
+const Guid c_guidShaderMovie(L"{71682019-EB26-234C-8B48-0638F50DA662}");
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.video.VideoEditorPage", VideoEditorPage, editor::IEditorPage)
 
 VideoEditorPage::VideoEditorPage(editor::IEditor* editor)
 :	m_editor(editor)
+,	m_shader(c_guidShaderMovie)
 {
 }
 
@@ -52,13 +60,16 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	if (!m_renderView)
 		return false;
 
+	m_screenRenderer = new render::ScreenRenderer();
+	if (!m_screenRenderer->create(m_editor->getRenderSystem()))
+		return false;
+
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
 		new render::ShaderFactory(m_editor->getOutputDatabase(), m_editor->getRenderSystem())
 	);
 
-	m_primitiveRenderer = new render::PrimitiveRenderer();
-	if (!m_primitiveRenderer->create(m_resourceManager, m_editor->getRenderSystem()))
+	if (!m_resourceManager->bind(m_shader))
 		return false;
 
 	m_idleHandler = ui::createMethodHandler(this, &VideoEditorPage::eventIdle);
@@ -75,7 +86,7 @@ void VideoEditorPage::destroy()
 		m_idleHandler = 0;
 	}
 
-	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_screenRenderer);
 
 	if (m_renderView)
 	{
@@ -142,6 +153,8 @@ bool VideoEditorPage::handleCommand(const ui::Command& command)
 
 void VideoEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
+	if (m_resourceManager)
+		m_resourceManager->flush(eventId);
 }
 
 void VideoEditorPage::eventSize(ui::Event* event)
@@ -158,7 +171,7 @@ void VideoEditorPage::eventSize(ui::Event* event)
 
 void VideoEditorPage::eventPaint(ui::Event* event)
 {
-	if (!m_renderView)
+	if (!m_renderView || !m_shader.validate())
 		return;
 
 	if (m_renderView->begin())
@@ -172,22 +185,8 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 		);
 		if (m_video)
 		{
-			m_primitiveRenderer->begin(m_renderView);
-			m_primitiveRenderer->pushProjection(orthoLh(2.0f, 2.0f, -1.0f, 1.0f));
-			m_primitiveRenderer->drawTextureQuad(
-				Vector4(-1.0f,  1.0f, 0.0f, 1.0f),
-				Vector2(0.0f, 0.0f),
-				Vector4( 1.0f,  1.0f, 0.0f, 1.0f),
-				Vector2(1.0f, 0.0f),
-				Vector4( 1.0f, -1.0f, 0.0f, 1.0f),
-				Vector2(1.0f, 1.0f),
-				Vector4(-1.0f, -1.0f, 0.0f, 1.0f),
-				Vector2(0.0f, 1.0f),
-				Color(255, 255, 255),
-				m_video->getTexture()
-			);
-			m_primitiveRenderer->popProjection();
-			m_primitiveRenderer->end(m_renderView);
+			m_shader->setSamplerTexture(L"Texture", m_video->getTexture());
+			m_screenRenderer->draw(m_renderView, m_shader);
 		}
 		m_renderView->end();
 	}

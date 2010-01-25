@@ -20,6 +20,13 @@ class Database;
 
 	}
 
+	namespace render
+	{
+
+class IRenderSystem;
+
+	}
+
 	namespace video
 	{
 
@@ -31,7 +38,7 @@ class T_DLLCLASS VideoFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	VideoFactory(db::Database* database);
+	VideoFactory(db::Database* database, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -41,6 +48,7 @@ public:
 
 private:
 	Ref< db::Database > m_database;
+	Ref< render::IRenderSystem > m_renderSystem;
 };
 
 	}
