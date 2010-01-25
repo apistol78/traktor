@@ -2,6 +2,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -32,7 +33,7 @@ struct StatusListener : public editor::PipelineBuilder::IListener
 		uint32_t count
 	) const
 	{
-		traktor::log::info << L":" << index << L":" << count << L":" << assetName << Endl;
+		traktor::log::info << L":" << index << L":" << count << Endl;
 	}
 };
 
@@ -205,9 +206,9 @@ int main(int argc, const char** argv)
 	RefArray< editor::PipelineDependency > dependencies;
 	pipelineDepends.getDependencies(dependencies);
 
-	Ref< StatusListener > statusListener;
+	AutoPtr< StatusListener > statusListener;
 	if (cmdLine.hasOption('p'))
-		statusListener = new StatusListener();
+		statusListener.reset(new StatusListener());
 
 	// Build output.
 	editor::PipelineBuilder pipelineBuilder(
@@ -216,7 +217,7 @@ int main(int argc, const char** argv)
 		outputDatabase,
 		pipelineCache,
 		pipelineDb,
-		statusListener
+		statusListener.ptr()
 	);
 
 	bool rebuild = cmdLine.hasOption('f');
