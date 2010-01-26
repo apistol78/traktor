@@ -15,6 +15,7 @@ Video::Video()
 :	m_time(0.0f)
 ,	m_rate(0.0f)
 ,	m_frame(0)
+,	m_playing(false)
 {
 }
 
@@ -38,6 +39,7 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	m_time = 0.0f;
 	m_rate = info.rate;
 	m_frame = ~0UL;
+	m_playing = true;
 
 	return true;
 }
@@ -48,7 +50,7 @@ void Video::destroy()
 	m_decoder = 0;
 }
 
-void Video::update(float deltaTime)
+bool Video::update(float deltaTime)
 {
 	uint32_t frame = uint32_t(m_rate * m_time);
 	if (frame != m_frame)
@@ -56,13 +58,19 @@ void Video::update(float deltaTime)
 		render::ITexture::Lock lock;
 		if (m_texture->lock(0, lock))
 		{
-			m_decoder->decode(frame, lock.bits, lock.pitch);
+			m_playing = m_decoder->decode(frame, lock.bits, lock.pitch);
 			m_texture->unlock(0);
 
 			m_frame = frame;
 		}
 	}
 	m_time += deltaTime;
+	return m_playing;
+}
+
+bool Video::playing() const
+{
+	return m_playing;
 }
 
 render::ISimpleTexture* Video::getTexture()
