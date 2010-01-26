@@ -563,8 +563,7 @@ void createGeometry(
 					if (index != -1)
 					{
 						Vector2 texCoord = dataInfo.first->getTexcoord(index);
-						// Unsupported!
-						//vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+						vertex.setTexCoord(1, outModel->addUniqueTexCoord(texCoord));
 					}
 				}
 
