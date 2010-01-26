@@ -65,7 +65,7 @@ ParameterCache::~ParameterCache()
 
 void ParameterCache::setVertexShader(IDirect3DVertexShader9* d3dVertexShader)
 {
-	//if (m_d3dVertexShader != d3dVertexShader)
+	if (m_d3dVertexShader != d3dVertexShader)
 	{
 		m_d3dDevice->SetVertexShader(d3dVertexShader);
 		m_d3dVertexShader = d3dVertexShader;
@@ -74,7 +74,7 @@ void ParameterCache::setVertexShader(IDirect3DVertexShader9* d3dVertexShader)
 
 void ParameterCache::setPixelShader(IDirect3DPixelShader9* d3dPixelShader)
 {
-	//if (m_d3dPixelShader != d3dPixelShader)
+	if (m_d3dPixelShader != d3dPixelShader)
 	{
 		m_d3dDevice->SetPixelShader(d3dPixelShader);
 		m_d3dPixelShader = d3dPixelShader;
