@@ -441,7 +441,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 		{
 			Ref< EntityAdapter > parentGroup = (*i)->getParent();
-			if (parentGroup->isGroup())
+			if (parentGroup && parentGroup->isGroup())
 			{
 				parentGroup->removeChild(*i);
 				removedCount++;
