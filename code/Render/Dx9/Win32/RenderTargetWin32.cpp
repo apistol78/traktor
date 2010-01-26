@@ -281,6 +281,9 @@ void RenderTargetWin32::clear(
 		// Need to force to dirty as various states may have been trashed.
 		ProgramWin32::forceDirty();
 		VertexBufferDx9::forceDirty();
+
+		parameterCache->setVertexShader(0);
+		parameterCache->setPixelShader(0);
 	}
 	else
 	{
