@@ -18,16 +18,17 @@ void calculateBoxSMProj(
 	Frustum& outShadowFrustum
 )
 {
-	const static Vector4 c_axisUp(0.0f, 1.0f, 0.0f);
 	Scalar lightDistance(settings.viewFarZ);
-
-	Vector4 lightAxisX, lightAxisY, lightAxisZ;
-	lightAxisZ = -lightDirection.normalized();
-	lightAxisX = cross(lightAxisZ, c_axisUp).normalized();
-	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
 	Vector4 shadowBoxExtents[8];
 	shadowBox.getExtents(shadowBoxExtents);
+
+	Vector4 shadowBoxEdge = (shadowBoxExtents[6] - shadowBoxExtents[0]).normalized();
+
+	Vector4 lightAxisX, lightAxisY, lightAxisZ;
+	lightAxisZ = -lightDirection.normalized();
+	lightAxisX = cross(shadowBoxEdge, lightAxisZ).normalized();
+	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 
 	Scalar minX, maxX;
 	Scalar minY, maxY;
