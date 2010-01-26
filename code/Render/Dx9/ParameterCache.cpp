@@ -13,22 +13,25 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 {
 	T_ASSERT ((count & 3) == 0);
 
+	const float* src = ptr2;
+	float* dst = ptr1;
 	bool equal = true;
 
 	for (size_t i = 0; i < (count >> 2); ++i)
 	{
-		__m128 r1 = _mm_load_ps(ptr1);
-		__m128 r2 = _mm_load_ps(ptr2);
+		__m128 r1 = _mm_load_ps(dst);
+		__m128 r2 = _mm_load_ps(src);
 		__m128 eq =_mm_cmpeq_ps(r1, r2);
 
-		if (_mm_movemask_ps(eq) != 15)
+		int mask = _mm_movemask_ps(eq);
+		if (mask != 15)
 		{
-			_mm_store_ps(ptr1, r2);
+			_mm_store_ps(dst, r2);
 			equal = false;
 		}
 
-		ptr1 += 4;
-		ptr2 += 4;
+		src += 4;
+		dst += 4;
 	}
 
 	return equal;

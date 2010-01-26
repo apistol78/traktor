@@ -256,8 +256,11 @@ void ProgramWin32::destroy()
 {
 	if (ms_activeProgram == this)
 	{
-		m_d3dDevice->SetVertexShader(0);
-		m_d3dDevice->SetPixelShader(0);
+		if (m_parameterCache)
+		{
+			m_parameterCache->setVertexShader(0);
+			m_parameterCache->setPixelShader(0);
+		}
 		ms_activeProgram = 0;
 	}
 
