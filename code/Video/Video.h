@@ -40,7 +40,9 @@ public:
 
 	void destroy();
 
-	void update(float deltaTime);
+	bool update(float deltaTime);
+
+	bool playing() const;
 
 	render::ISimpleTexture* getTexture();
 
@@ -50,6 +52,7 @@ private:
 	float m_time;
 	float m_rate;
 	uint32_t m_frame;
+	bool m_playing;
 };
 
 	}
