@@ -552,7 +552,7 @@ void createGeometry(
 					if (index != -1)
 					{
 						Vector2 texCoord = dataInfo.first->getTexcoord(index);
-						vertex.setTexCoord(outModel->addUniqueTexCoord(texCoord));
+						vertex.setTexCoord(0, outModel->addUniqueTexCoord(texCoord));
 					}
 				}
 				// Second uv set

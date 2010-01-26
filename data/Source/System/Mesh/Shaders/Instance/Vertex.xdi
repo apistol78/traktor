@@ -4,7 +4,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>412</first>
+				<first>421</first>
 				<second>64</second>
 			</position>
 			<name>Position</name>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>415</first>
+				<first>425</first>
 				<second>106</second>
 			</position>
 			<name>Normal</name>
@@ -26,7 +26,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>411</first>
+				<first>418</first>
 				<second>148</second>
 			</position>
 			<name>Tangent</name>
@@ -85,7 +85,7 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>407</first>
+				<first>418</first>
 				<second>190</second>
 			</position>
 			<name>Binormal</name>
@@ -610,8 +610,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
-				<first>2035</first>
-				<second>437</second>
+				<first>2028</first>
+				<second>481</second>
 			</position>
 			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
 			<inputPins>
@@ -630,21 +630,40 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>2208</first>
-				<second>457</second>
+				<first>2201</first>
+				<second>501</second>
 			</position>
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>1871</first>
-				<second>457</second>
+				<first>1864</first>
+				<second>501</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
 			<type>DtByte4N</type>
 			<index>0</index>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>2132</first>
+				<second>425</second>
+			</position>
+			<name>TexCoord2</name>
+		</item>
+		<item type="traktor.render.VertexInput">
+			<comment></comment>
+			<position>
+				<first>1916</first>
+				<second>425</second>
+			</position>
+			<name>TexCoord2</name>
+			<usage>DuCustom</usage>
+			<type>DtFloat2</type>
+			<index>1</index>
 		</item>
 	</nodes>
 	<edges>
@@ -1395,6 +1414,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[67]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[70]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[69]"/>
 				<name>Input</name>
 			</destination>
 		</item>

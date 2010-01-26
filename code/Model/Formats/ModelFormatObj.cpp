@@ -98,7 +98,7 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 						Vertex vertex;
 						vertex.setPosition(indices[0] - 1);
 						if (indices.size() > 1 && indices[1] > 0)
-							vertex.setTexCoord(indices[1] - 1);
+							vertex.setTexCoord(0, indices[1] - 1);
 						if (indices.size() > 2 && indices[2] > 0)
 							vertex.setNormal(indices[2] - 1);
 						polygon.addVertex(md->addUniqueVertex(vertex));
@@ -184,8 +184,8 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 				const Vertex& vertex = model->getVertex(*j);
 
 				s << L" " << vertex.getPosition() + 1;
-				if (vertex.getTexCoord() != c_InvalidIndex)
-					s << L"/" << vertex.getTexCoord() + 1;
+				if (vertex.getTexCoord(0) != c_InvalidIndex)
+					s << L"/" << vertex.getTexCoord(0) + 1;
 				if (vertex.getNormal() != c_InvalidIndex)
 					s << L"/" << vertex.getNormal() + 1;
 			}

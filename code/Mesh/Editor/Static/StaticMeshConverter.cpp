@@ -83,8 +83,10 @@ bool StaticMeshConverter::convert(
 			writeVertexData(vertexElements, vertex, render::DuBinormal, 0, model.getNormal(i->getBinormal()));
 		if (i->getColor() != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DuColor, 0, model.getColor(i->getColor()));
-		if (i->getTexCoord() != model::c_InvalidIndex)
-			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord()));
+		if (i->getTexCoord(0) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 0, model.getTexCoord(i->getTexCoord(0)));
+		if (i->getTexCoord(1) != model::c_InvalidIndex)
+			writeVertexData(vertexElements, vertex, render::DuCustom, 1, model.getTexCoord(i->getTexCoord(1)));
 
 		vertex += vertexSize;
 	}

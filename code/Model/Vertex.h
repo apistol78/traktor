@@ -48,9 +48,11 @@ public:
 
 	uint32_t getBinormal() const;
 
-	void setTexCoord(uint32_t texCoord);
+	void clearTexCoords();
 
-	uint32_t getTexCoord() const;
+	void setTexCoord(uint32_t channel, uint32_t texCoord);
+
+	uint32_t getTexCoord(uint32_t channel) const;
 
 	void clearBoneInfluences();
 
@@ -68,7 +70,7 @@ private:
 	uint32_t m_normal;
 	uint32_t m_tangent;
 	uint32_t m_binormal;
-	uint32_t m_texCoord;
+	std::vector< uint32_t > m_texCoords;
 	std::vector< float > m_boneInfluences;
 };
 

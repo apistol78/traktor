@@ -13,7 +13,6 @@ Vertex::Vertex()
 ,	m_normal(c_InvalidIndex)
 ,	m_tangent(c_InvalidIndex)
 ,	m_binormal(c_InvalidIndex)
-,	m_texCoord(c_InvalidIndex)
 {
 }
 
@@ -23,7 +22,6 @@ Vertex::Vertex(uint32_t position)
 ,	m_normal(c_InvalidIndex)
 ,	m_tangent(c_InvalidIndex)
 ,	m_binormal(c_InvalidIndex)
-,	m_texCoord(c_InvalidIndex)
 {
 }
 
@@ -77,14 +75,24 @@ uint32_t Vertex::getBinormal() const
 	return m_binormal;
 }
 
-void Vertex::setTexCoord(uint32_t texCoord)
+void Vertex::clearTexCoords()
 {
-	m_texCoord = texCoord;
+	m_texCoords.resize(0);
 }
 
-uint32_t Vertex::getTexCoord() const
+void Vertex::setTexCoord(uint32_t channel, uint32_t texCoord)
 {
-	return m_texCoord;
+	while (channel >= uint32_t(m_texCoords.size()))
+		m_texCoords.push_back(c_InvalidIndex);
+	m_texCoords[channel] = texCoord;
+}
+
+uint32_t Vertex::getTexCoord(uint32_t channel) const
+{
+	if (channel < uint32_t(m_texCoords.size()))
+		return m_texCoords[channel];
+	else
+		return c_InvalidIndex;
 }
 
 void Vertex::clearBoneInfluences()
@@ -101,10 +109,10 @@ void Vertex::setBoneInfluence(uint32_t boneIndex, float influence)
 
 float Vertex::getBoneInfluence(uint32_t boneIndex) const
 {
-	if (boneIndex < 0 || boneIndex >= uint32_t(m_boneInfluences.size()))
+	if (boneIndex < uint32_t(m_boneInfluences.size()))
+		return m_boneInfluences[boneIndex];
+	else
 		return 0.0f;
-
-	return m_boneInfluences[boneIndex];
 }
 
 uint32_t Vertex::getHash() const
@@ -117,7 +125,8 @@ uint32_t Vertex::getHash() const
 	adler.feed(&m_normal, sizeof(m_normal));
 	adler.feed(&m_tangent, sizeof(m_tangent));
 	adler.feed(&m_binormal, sizeof(m_binormal));
-	adler.feed(&m_texCoord, sizeof(m_texCoord));
+	if (!m_texCoords.empty())
+		adler.feed(&m_texCoords[0], m_texCoords.size() * sizeof(uint32_t));
 	if (!m_boneInfluences.empty())
 		adler.feed(&m_boneInfluences[0], m_boneInfluences.size() * sizeof(float));
 	adler.end();
@@ -137,13 +146,19 @@ bool Vertex::operator == (const Vertex& r) const
 		return false;
 	if (m_binormal != r.m_binormal)
 		return false;
-	if (m_texCoord != r.m_texCoord)
+	if (m_texCoords.size() != m_texCoords.size())
 		return false;
 	if (m_boneInfluences.size() != r.m_boneInfluences.size())
 		return false;
+
+	for (size_t i = 0; i < m_texCoords.size(); ++i)
+		if (m_texCoords[i] != r.m_texCoords[i])
+			return false;
+
 	for (size_t i = 0; i < m_boneInfluences.size(); ++i)
 		if (std::fabs(m_boneInfluences[i] - r.m_boneInfluences[i]) > 0.0001f)
 			return false;
+
 	return true;
 }
 

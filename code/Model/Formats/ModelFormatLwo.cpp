@@ -241,7 +241,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 					continue;
 
 				const lwSurface* surf = pol->surf;
-				const lwTexture* tex = getLwTexture(surf->color.tex);
+				const lwTexture* texDiffuse = getLwTexture(surf->color.tex);
 
 				int materialIndex = 0;
 				for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)
@@ -293,7 +293,8 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 						}
 
 						// UV maps.
-						if (tex)
+						uint32_t channel = 0;
+						for (const lwTexture* tex = texDiffuse; tex; tex = tex->next)
 						{
 							const lwVMapPt* vpt = findLwVMapPt(pol->v[j].vm, pol->v[j].nvmaps, tex->param.imap.vmap_name);
 							if (!vpt)
@@ -304,13 +305,15 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 								float u = vpt->vmap->val[vpt->index][0];
 								float v = vpt->vmap->val[vpt->index][1];
 
-								vertex.setTexCoord(outModel->addUniqueTexCoord(Vector2(
+								vertex.setTexCoord(channel, outModel->addUniqueTexCoord(Vector2(
 									u,
 									1.0f - v
 								)));
 							}
 							else
 								log::warning << L"Vertex " << j << L" doesn't exist in UV map \"" << mbstows(tex->param.imap.vmap_name) << L"\"" << Endl;
+
+							++channel;
 						}
 
 						// Convert weight maps into bones and influences.

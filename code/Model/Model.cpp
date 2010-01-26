@@ -45,7 +45,7 @@ void Model::clear(uint32_t clearFlags)
 			i->setBinormal(c_InvalidIndex);
 		}
 		if (clearFlags & CfTexCoords)
-			i->setTexCoord(c_InvalidIndex);
+			i->clearTexCoords();
 		if (clearFlags & CfBones)
 			i->clearBoneInfluences();
 	}

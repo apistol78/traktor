@@ -130,8 +130,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>-104</first>
-				<second>858</second>
+				<first>-106</first>
+				<second>805</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -141,8 +141,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>87</first>
-				<second>858</second>
+				<first>85</first>
+				<second>805</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
@@ -503,6 +503,25 @@
 			<usage>DuColor</usage>
 			<type>DtByte4N</type>
 			<index>0</index>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>84</first>
+				<second>843</second>
+			</position>
+			<name>TexCoord2</name>
+		</item>
+		<item type="traktor.render.VertexInput">
+			<comment></comment>
+			<position>
+				<first>-107</first>
+				<second>843</second>
+			</position>
+			<name>TexCoord2</name>
+			<usage>DuCustom</usage>
+			<type>DtFloat2</type>
+			<index>3</index>
 		</item>
 	</nodes>
 	<edges>
@@ -1033,6 +1052,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Input</name>
 			</destination>
 		</item>

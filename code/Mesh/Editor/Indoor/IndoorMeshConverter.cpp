@@ -292,7 +292,7 @@ void createSectors(
 			Vertex v;
 			v.position = model.getPosition(mv.getPosition());
 			v.normal = mv.getNormal() != model::c_InvalidIndex ? model.getNormal(mv.getNormal()) : Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-			v.texCoord = mv.getTexCoord() != model::c_InvalidIndex ? model.getTexCoord(mv.getTexCoord()) : Vector2(0.0f, 0.0f);
+			v.texCoord = mv.getTexCoord(0) != model::c_InvalidIndex ? model.getTexCoord(mv.getTexCoord(0)) : Vector2(0.0f, 0.0f);
 
 			AlignedVector< Vertex >::iterator it = pushUnique(vertices, v);
 			polygons.back().indices.push_back(uint32_t(std::distance(vertices.begin(), it)));
