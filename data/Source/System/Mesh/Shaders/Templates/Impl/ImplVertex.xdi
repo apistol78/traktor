@@ -1,56 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment></comment>
-			<position>
-				<first>561</first>
-				<second>397</second>
-			</position>
-			<fragmentGuid>{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}</fragmentGuid>
-			<inputPins/>
-			<outputPins>
-				<item>
-					<name>TexCoord</name>
-				</item>
-				<item>
-					<name>ViewPosition</name>
-				</item>
-				<item>
-					<name>ViewNormal</name>
-				</item>
-				<item>
-					<name>UserParameter</name>
-				</item>
-				<item>
-					<name>ViewBinormal</name>
-				</item>
-				<item>
-					<name>ViewTangent</name>
-				</item>
-				<item>
-					<name>WorldBinormal</name>
-				</item>
-				<item>
-					<name>WorldTangent</name>
-				</item>
-				<item>
-					<name>WorldNormal</name>
-				</item>
-				<item>
-					<name>WorldPosition</name>
-				</item>
-				<item>
-					<name>WorldEyeDirection</name>
-				</item>
-				<item>
-					<name>Color</name>
-				</item>
-				<item>
-					<name>Velocity</name>
-				</item>
-			</outputPins>
-		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
@@ -147,12 +97,66 @@
 			</position>
 			<name>T_Velocity</name>
 		</item>
+		<item type="traktor.render.External" version="1">
+			<comment></comment>
+			<position>
+				<first>570</first>
+				<second>387</second>
+			</position>
+			<fragmentGuid>{0A9BE5B4-4B45-B84A-AE16-57F6483436FC}</fragmentGuid>
+			<inputPins/>
+			<outputPins>
+				<item>
+					<name>Color</name>
+				</item>
+				<item>
+					<name>TexCoord</name>
+				</item>
+				<item>
+					<name>TexCoord2</name>
+				</item>
+				<item>
+					<name>UserParameter</name>
+				</item>
+				<item>
+					<name>Velocity</name>
+				</item>
+				<item>
+					<name>ViewBinormal</name>
+				</item>
+				<item>
+					<name>ViewNormal</name>
+				</item>
+				<item>
+					<name>ViewPosition</name>
+				</item>
+				<item>
+					<name>ViewTangent</name>
+				</item>
+				<item>
+					<name>WorldBinormal</name>
+				</item>
+				<item>
+					<name>WorldEyeDirection</name>
+				</item>
+				<item>
+					<name>WorldNormal</name>
+				</item>
+				<item>
+					<name>WorldPosition</name>
+				</item>
+				<item>
+					<name>WorldTangent</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>TexCoord</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Color</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
@@ -161,88 +165,8 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewBinormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>ViewTangent</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>WorldBinormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>WorldTangent</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>WorldNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>WorldPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>WorldEyeDirection</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>TexCoord</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
@@ -251,8 +175,8 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Color</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Velocity</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
@@ -261,11 +185,91 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Velocity</name>
+				<node ref="/object/nodes/item[12]"/>
+				<name>ViewBinormal</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[12]"/>
+				<name>ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>ViewTangent</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>WorldBinormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>WorldEyeDirection</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>WorldNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>WorldPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>WorldTangent</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
 			</destination>
 		</item>

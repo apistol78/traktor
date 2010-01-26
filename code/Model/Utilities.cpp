@@ -130,13 +130,13 @@ void calculateModelTangents(Model& mdl, bool binormals)
 		T_ASSERT (tb.normal.length() > FUZZY_EPSILON);
 		tb.normal = tb.normal.normalized();
 		
-		if (v[0]->getTexCoord() != c_InvalidIndex && v[1]->getTexCoord() != c_InvalidIndex && v[2]->getTexCoord() != c_InvalidIndex)
+		if (v[0]->getTexCoord(0) != c_InvalidIndex && v[1]->getTexCoord(0) != c_InvalidIndex && v[2]->getTexCoord(0) != c_InvalidIndex)
 		{
 			Vector2 tc[] =
 			{
-				mdl.getTexCoord(v[0]->getTexCoord()),
-				mdl.getTexCoord(v[1]->getTexCoord()),
-				mdl.getTexCoord(v[2]->getTexCoord())
+				mdl.getTexCoord(v[0]->getTexCoord(0)),
+				mdl.getTexCoord(v[1]->getTexCoord(0)),
+				mdl.getTexCoord(v[2]->getTexCoord(0))
 			};
 
 			Vector2 etc[] = { tc[2] - tc[0], tc[1] - tc[0] };

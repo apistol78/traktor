@@ -5,7 +5,7 @@
 			<comment></comment>
 			<position>
 				<first>148</first>
-				<second>583</second>
+				<second>677</second>
 			</position>
 			<name>UserParameter</name>
 		</item>
@@ -93,7 +93,7 @@
 			<comment></comment>
 			<position>
 				<first>148</first>
-				<second>510</second>
+				<second>522</second>
 			</position>
 			<name>WorldEyeDirection</name>
 		</item>
@@ -101,7 +101,7 @@
 			<comment></comment>
 			<position>
 				<first>148</first>
-				<second>631</second>
+				<second>725</second>
 			</position>
 			<name>Color</name>
 		</item>
@@ -109,9 +109,17 @@
 			<comment></comment>
 			<position>
 				<first>148</first>
-				<second>660</second>
+				<second>754</second>
 			</position>
 			<name>Velocity</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment></comment>
+			<position>
+				<first>148</first>
+				<second>580</second>
+			</position>
+			<name>TexCoord2</name>
 		</item>
 	</nodes>
 	<edges>
@@ -242,6 +250,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
 				<name>Input</name>
 			</destination>
 		</item>
