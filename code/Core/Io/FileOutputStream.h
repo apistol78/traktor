@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-	class IEncoding;
+class IEncoding;
 class IStream;
 
 /*! \brief File output stream.

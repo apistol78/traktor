@@ -166,6 +166,16 @@ void RenderViewWin32::resize(int32_t width, int32_t height)
 	}
 }
 
+int RenderViewWin32::getWidth() const
+{
+	return m_d3dPresent.BackBufferWidth;
+}
+
+int RenderViewWin32::getHeight() const
+{
+	return m_d3dPresent.BackBufferHeight;
+}
+
 void RenderViewWin32::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())
@@ -328,12 +338,11 @@ void RenderViewWin32::draw(const Primitives& primitives)
 	T_ASSERT (m_currentVertexBuffer);
 
 	const RenderState& rs = m_renderStateStack.back();
+	if (m_targetDirty)
+		bindTargets();
 
 	if (!m_currentProgram->activate())
 		return;
-
-	if (m_targetDirty)
-		bindTargets();
 
 	VertexBufferDx9::activate(m_d3dDevice, m_currentVertexBuffer);
 	IndexBufferDx9::activate(m_d3dDevice, m_currentIndexBuffer);
@@ -435,12 +444,18 @@ void RenderViewWin32::bindTargets()
 {
 	T_ASSERT (m_targetDirty);
 	T_ASSERT (!m_renderStateStack.empty());
+	HRESULT hr;
 
 	const RenderState& rs = m_renderStateStack.back();
 
-	m_d3dDevice->SetRenderTarget(0, rs.d3dBackBuffer);
-	m_d3dDevice->SetDepthStencilSurface(rs.d3dDepthStencilSurface);
-	m_d3dDevice->SetViewport(&rs.d3dViewport);
+	hr = m_d3dDevice->SetRenderTarget(0, rs.d3dBackBuffer);
+	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetRenderTarget failed");
+
+	hr = m_d3dDevice->SetDepthStencilSurface(rs.d3dDepthStencilSurface);
+	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetDepthStencilSurface failed");
+
+	hr = m_d3dDevice->SetViewport(&rs.d3dViewport);
+	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetViewport failed");
 
 	m_targetDirty = false;
 }

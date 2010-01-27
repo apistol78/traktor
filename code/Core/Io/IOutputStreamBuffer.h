@@ -3,13 +3,21 @@
 
 #include "Core/Object.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_CORE_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
 /*! \brief Buffer used by output streams.
  * \ingroup Core
  */
-class IOutputStreamBuffer : public Object
+class T_DLLCLASS IOutputStreamBuffer : public Object
 {
 	T_RTTI_CLASS;
 

@@ -12,24 +12,49 @@ namespace traktor
 		namespace
 		{
 
-D3DFORMAT c_formatPromote[][2] =
+struct
 {
-	{ D3DFMT_L8, D3DFMT_A8R8G8B8 },
-	{ D3DFMT_R16F, D3DFMT_R32F },
-	{ D3DFMT_G16R16F, D3DFMT_G32R32F },
-	{ D3DFMT_A16B16G16R16F, D3DFMT_A32B32G32R32F },
-	{ D3DFMT_R32F, D3DFMT_G32R32F },
-	{ D3DFMT_G32R32F, D3DFMT_A32B32G32R32F }
+	const wchar_t* const name;
+	D3DFORMAT d3dFormat;
+	D3DFORMAT d3dFormatPromote;
+}
+c_d3dFormatPromo[] =
+{
+	{ L"D3DFMT_L8", D3DFMT_L8, D3DFMT_A8R8G8B8 },
+	{ L"D3DFMT_R16F", D3DFMT_R16F, D3DFMT_R32F },
+	{ L"D3DFMT_G16R16F", D3DFMT_G16R16F, D3DFMT_G32R32F },
+	{ L"D3DFMT_A16B16G16R16F", D3DFMT_A16B16G16R16F, D3DFMT_A32B32G32R32F },
+	{ L"D3DFMT_R32F", D3DFMT_R32F, D3DFMT_G32R32F },
+	{ L"D3DFMT_G32R32F", D3DFMT_G32R32F, D3DFMT_A32B32G32R32F },
+
+	// Unpromotable
+	{ L"D3DFMT_A8R8G8B8", D3DFMT_A8R8G8B8, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_A32B32G32R32F", D3DFMT_A32B32G32R32F, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_DXT1", D3DFMT_DXT1, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_DXT2", D3DFMT_DXT2, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_DXT3", D3DFMT_DXT3, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_DXT4", D3DFMT_DXT4, D3DFMT_UNKNOWN },
+	{ L"D3DFMT_DXT5", D3DFMT_DXT5, D3DFMT_UNKNOWN }
 };
 
-D3DFORMAT tryPromoteFormat(D3DFORMAT format)
+const wchar_t* const getD3DFormatName(D3DFORMAT d3dFormat)
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < sizeof_array(c_d3dFormatPromo); ++i)
 	{
-		if (c_formatPromote[i][0] == format)
-			return c_formatPromote[i][1];
+		if (c_d3dFormatPromo[i].d3dFormat == d3dFormat)
+			return c_d3dFormatPromo[i].name;
 	}
-	return format;
+	return L"D3DFMT_???";
+}
+
+D3DFORMAT getD3DFormatPromoted(D3DFORMAT d3dFormat)
+{
+	for (int i = 0; i < sizeof_array(c_d3dFormatPromo); ++i)
+	{
+		if (c_d3dFormatPromo[i].d3dFormat == d3dFormat)
+			return c_d3dFormatPromo[i].d3dFormatPromote;
+	}
+	return D3DFMT_UNKNOWN;
 }
 
 		}
@@ -204,19 +229,20 @@ LRESULT RenderTargetSetWin32::internalCreate()
 				break;
 			else
 			{
-				log::debug << L"Unsupported format, trying with promotion" << Endl;
-				D3DFORMAT promotedFormat = tryPromoteFormat(d3dFormats[i]);
-				if (promotedFormat == d3dFormats[i])
+				D3DFORMAT promotedFormat = getD3DFormatPromoted(d3dFormats[i]);
+				if (promotedFormat == D3DFMT_UNKNOWN)
 				{
-					log::error << L"Device doesn't support target format" << Endl;
+					log::error << L"Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"" << Endl;
 					return hr;
 				}
+
+				log::debug << L"Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"; trying with \"" << getD3DFormatName(promotedFormat) << L"\"" << Endl;
 				d3dFormats[i] = promotedFormat;
 			}
 		}
 	}
 
-	// Ensure multisample works with all target formats.
+	// Ensure multi-sample works with all target formats.
 	if (m_desc.multiSample)
 	{
 		for (int i = 0; i < m_desc.count; ++i)
@@ -261,13 +287,14 @@ LRESULT RenderTargetSetWin32::internalCreate()
 		if (FAILED(hr))
 			return hr;
 
-		if (m_desc.multiSample > 0)
+		D3DMULTISAMPLE_TYPE d3dMultiSample = c_d3dMultiSample[m_desc.multiSample];
+		if (d3dMultiSample != D3DMULTISAMPLE_NONE)
 		{
 			hr = m_d3dDevice->CreateDepthStencilSurface(
 				m_desc.width,
 				m_desc.height,
 				D3DFMT_D24S8,
-				c_d3dMultiSample[m_desc.multiSample],
+				d3dMultiSample,
 				0,
 				TRUE,
 				&m_d3dTargetDepthStencilSurface.getAssign(),

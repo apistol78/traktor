@@ -177,6 +177,11 @@ IOutputStreamBuffer* OutputStream::getBuffer() const
 	return m_buffer;
 }
 
+void OutputStream::setLineEnd(LineEnd lineEnd)
+{
+	m_lineEnd = lineEnd;
+}
+
 OutputStream::LineEnd OutputStream::getLineEnd() const
 {
 	return m_lineEnd;

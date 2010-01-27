@@ -80,11 +80,6 @@ public:
 	LogStream(ILogTarget* target);
 
 	virtual ~LogStream();
-
-	Ref< LogStreamBuffer > getBuffer();
-
-private:
-	Ref< LogStreamBuffer > m_streamBuffer;
 };
 	
 	namespace log

@@ -115,8 +115,8 @@
 		<item type="traktor.render.Sampler">
 			<comment></comment>
 			<position>
-				<first>497</first>
-				<second>159</second>
+				<first>437</first>
+				<second>143</second>
 			</position>
 			<parameterName>Depth</parameterName>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
@@ -131,8 +131,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment></comment>
 			<position>
-				<first>315</first>
-				<second>272</second>
+				<first>247</first>
+				<second>193</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
 			<inputPins/>
@@ -239,26 +239,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -389,6 +369,26 @@
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>TexCoord</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

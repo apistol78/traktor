@@ -37,6 +37,16 @@ void RenderViewCapture::resize(int32_t width, int32_t height)
 	m_renderView->resize(width, height);
 }
 
+int RenderViewCapture::getWidth() const
+{
+	return m_renderView->getWidth();
+}
+
+int RenderViewCapture::getHeight() const
+{
+	return m_renderView->getHeight();
+}
+
 void RenderViewCapture::setViewport(const Viewport& viewport)
 {
 	m_renderView->setViewport(viewport);

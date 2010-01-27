@@ -56,6 +56,10 @@ public:
 
 	virtual void resize(int32_t width, int32_t height);
 
+	virtual int getWidth() const;
+
+	virtual int getHeight() const;
+
 	virtual void setViewport(const Viewport& viewport);
 
 	virtual Viewport getViewport();

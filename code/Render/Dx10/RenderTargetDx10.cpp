@@ -28,6 +28,7 @@ RenderTargetDx10::~RenderTargetDx10()
 bool RenderTargetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
 	D3D10_TEXTURE2D_DESC dtd;
+	D3D10_SHADER_RESOURCE_VIEW_DESC dsrvd;
 	HRESULT hr;
 
 	dtd.Width = setDesc.width;
@@ -63,7 +64,12 @@ bool RenderTargetDx10::create(ID3D10Device* d3dDevice, const RenderTargetSetCrea
 		return false;
 	}
 
-	hr = d3dDevice->CreateShaderResourceView(m_d3dTexture, NULL, &m_d3dTextureResourceView.getAssign());
+	dsrvd.Format = dtd.Format;
+	dsrvd.ViewDimension = dtd.SampleDesc.Count > 1 ? D3D10_SRV_DIMENSION_TEXTURE2DMS : D3D10_SRV_DIMENSION_TEXTURE2D;
+	dsrvd.Texture2D.MostDetailedMip = 0;
+	dsrvd.Texture2D.MipLevels = 1;
+
+	hr = d3dDevice->CreateShaderResourceView(m_d3dTexture, &dsrvd, &m_d3dTextureResourceView.getAssign());
 	if (FAILED(hr))
 	{
 		log::error << L"Unable to create render target, failed to create shader resource view" << Endl;

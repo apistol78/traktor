@@ -102,10 +102,8 @@ int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 }
 
 LogStream::LogStream(ILogTarget* target)
-:	m_streamBuffer(new LogStreamBuffer(target))
-,	OutputStream(0, LeUnix)
+:	OutputStream(new LogStreamBuffer(target), LeUnix)
 {
-	setBuffer(m_streamBuffer);
 }
 
 LogStream::~LogStream()
@@ -115,11 +113,6 @@ LogStream::~LogStream()
 	setBuffer(0);
 
 	T_EXCEPTION_GUARD_END
-}
-
-Ref< LogStreamBuffer > LogStream::getBuffer()
-{
-	return m_streamBuffer;
 }
 
 	namespace log

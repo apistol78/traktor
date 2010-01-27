@@ -41,7 +41,11 @@ public:
 	virtual void close() = 0;
 
 	virtual void resize(int32_t width, int32_t height) = 0;
-	
+
+	virtual int getWidth() const = 0;
+
+	virtual int getHeight() const = 0;
+
 	virtual void setViewport(const Viewport& viewport) = 0;
 
 	virtual Viewport getViewport() = 0;
