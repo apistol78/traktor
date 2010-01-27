@@ -65,12 +65,14 @@ void ScreenRenderer::destroy()
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
-	Viewport viewport = renderView->getViewport();
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
+
 	shader->setVectorParameter(m_handleTargetSize, Vector4(
-		float(viewport.width),
-		float(viewport.height),
 		0.0f,
-		0.0f
+		0.0f,
+		float(width),
+		float(height)
 	));
 
 	renderView->setVertexBuffer(m_vertexBuffer);
@@ -79,17 +81,22 @@ void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 
 void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
+	int32_t width = renderTargetSet->getWidth();
+	int32_t height = renderTargetSet->getHeight();
+
 	shader->setVectorParameter(m_handleTargetSize, Vector4(
-		float(renderTargetSet->getWidth()),
-		float(renderTargetSet->getHeight()),
 		0.0f,
-		0.0f
+		0.0f,
+		float(width),
+		float(height)
 	));
 
-	renderView->begin(renderTargetSet, renderTarget, false);
-	renderView->setVertexBuffer(m_vertexBuffer);
-	shader->draw(renderView, m_primitives);
-	renderView->end();
+	if (renderView->begin(renderTargetSet, renderTarget, false))
+	{
+		renderView->setVertexBuffer(m_vertexBuffer);
+		shader->draw(renderView, m_primitives);
+		renderView->end();
+	}
 }
 
 	}

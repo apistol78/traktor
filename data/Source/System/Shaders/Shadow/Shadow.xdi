@@ -54,7 +54,7 @@
 				<first>686</first>
 				<second>989</second>
 			</position>
-			<parameterName>ViewSize</parameterName>
+			<parameterName>TargetSize</parameterName>
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">

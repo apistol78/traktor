@@ -150,6 +150,20 @@ void RenderViewDx10::resize(int32_t width, int32_t height)
 	m_d3dViewport.MaxDepth = 1.0f;
 }
 
+int RenderViewDx10::getWidth() const
+{
+	DXGI_SWAP_CHAIN_DESC desc;
+	m_d3dSwapChain->GetDesc(&desc);
+	return int(desc.BufferDesc.Width);
+}
+
+int RenderViewDx10::getHeight() const
+{
+	DXGI_SWAP_CHAIN_DESC desc;
+	m_d3dSwapChain->GetDesc(&desc);
+	return int(desc.BufferDesc.Height);
+}
+
 void RenderViewDx10::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())

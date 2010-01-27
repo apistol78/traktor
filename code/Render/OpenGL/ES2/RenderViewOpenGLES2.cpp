@@ -74,6 +74,18 @@ void RenderViewOpenGLES2::resize(int32_t width, int32_t height)
 #	endif
 }
 
+int RenderViewOpenGLES2::getWidth() const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
+int RenderViewOpenGLES2::getHeight() const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 {
 #	if TARGET_OS_IPHONE

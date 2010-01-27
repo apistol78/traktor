@@ -69,7 +69,8 @@ bool RenderTargetWin32::create(
 {
 	HRESULT hr;
 
-	if (!setDesc.multiSample)
+	D3DMULTISAMPLE_TYPE d3dMultiSample = c_d3dMultiSample[setDesc.multiSample];
+	if (d3dMultiSample == D3DMULTISAMPLE_NONE)
 	{
 		hr = d3dDevice->CreateTexture(
 			setDesc.width,
@@ -94,7 +95,7 @@ bool RenderTargetWin32::create(
 			setDesc.width,
 			setDesc.height,
 			d3dFormat,
-			c_d3dMultiSample[setDesc.multiSample],
+			d3dMultiSample,
 			0,
 			FALSE,
 			&m_d3dTargetSurface.getAssign(),

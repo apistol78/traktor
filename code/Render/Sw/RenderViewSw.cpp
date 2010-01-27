@@ -145,6 +145,16 @@ void RenderViewSw::resize(int32_t width, int32_t height)
 	m_dirty[3] = m_frameBufferSurfaceDesc.height;
 }
 
+int RenderViewSw::getWidth() const
+{
+	return m_frameBufferSurfaceDesc.width;
+}
+
+int RenderViewSw::getHeight() const
+{
+	return m_frameBufferSurfaceDesc.height;
+}
+
 void RenderViewSw::setViewport(const Viewport& viewport)
 {
 	m_viewPort.left = viewport.left / c_targetScale;

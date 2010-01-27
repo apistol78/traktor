@@ -69,7 +69,8 @@ bool WorldRenderer::create(
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
-	render::Viewport viewPort = renderView->getViewport();
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
@@ -77,8 +78,8 @@ bool WorldRenderer::create(
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 1;
-		desc.width = viewPort.width;
-		desc.height = viewPort.height;
+		desc.width = width;
+		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR16F;
@@ -97,8 +98,8 @@ bool WorldRenderer::create(
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 2;
-		desc.width = viewPort.width;
-		desc.height = viewPort.height;
+		desc.width = width;
+		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.depthStencil = false;
 		desc.targets[0].format = render::TfR16G16B16A16F;
@@ -127,8 +128,8 @@ bool WorldRenderer::create(
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Create shadow mask target.
-		int32_t shadowMaskWidth = viewPort.width / 2;
-		int32_t shadowMaskHeight = viewPort.height / 2;
+		int32_t shadowMaskWidth = width / 2;
+		int32_t shadowMaskHeight = height / 2;
 
 		desc.count = 1;
 		desc.width = shadowMaskWidth;
@@ -242,12 +243,16 @@ void WorldRenderer::destroy()
 
 void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, WorldRenderView& outRenderView) const
 {
+	int32_t width = m_renderView->getWidth();
+	int32_t height = m_renderView->getHeight();
+
 	float viewNearZ = m_settings.viewNearZ;
 	float viewFarZ = m_settings.viewFarZ;
 
 	Frustum viewFrustum;
 	viewFrustum.buildPerspective(worldView.fov, worldView.aspect, viewNearZ, viewFarZ);
 
+	outRenderView.setTargetSize(Vector2(float(width), float(height)));
 	outRenderView.setViewSize(Vector2(float(worldView.width), float(worldView.height)));
 	outRenderView.setViewFrustum(viewFrustum);
 	outRenderView.setCullFrustum(viewFrustum);
@@ -256,11 +261,15 @@ void WorldRenderer::createRenderView(const WorldViewPerspective& worldView, Worl
 
 void WorldRenderer::createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const
 {
+	int32_t width = m_renderView->getWidth();
+	int32_t height = m_renderView->getHeight();
+
 	float viewFarZ = m_settings.viewFarZ;
 
 	Frustum viewFrustum;
 	viewFrustum.buildOrtho(worldView.width, worldView.height, -viewFarZ, viewFarZ);
 
+	outRenderView.setTargetSize(Vector2(float(width), float(height)));
 	outRenderView.setViewSize(Vector2(worldView.width, worldView.height));
 	outRenderView.setViewFrustum(viewFrustum);
 	outRenderView.setCullFrustum(viewFrustum);
@@ -325,9 +334,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
 			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			m_renderView->setMSAAEnable(false);
 			f.depth->getRenderContext()->render(render::RenderContext::RfOpaque);
-			m_renderView->setMSAAEnable(true);
 			m_renderView->end();
 		}
 	}

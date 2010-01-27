@@ -82,6 +82,18 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 	m_context->update();
 }
 
+int RenderViewOpenGL::getWidth() const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
+int RenderViewOpenGL::getHeight() const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
 	T_CONTEXT_SCOPE(m_context)

@@ -44,6 +44,8 @@ public:
 
 	IOutputStreamBuffer* getBuffer() const;
 
+	void setLineEnd(LineEnd lineEnd);
+
 	LineEnd getLineEnd() const;
 
 	OutputStream& operator << (manipulator_t m);
