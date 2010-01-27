@@ -472,6 +472,10 @@ void RenderViewPs3::present()
 	m_frameCounter = incrementLabel(m_frameCounter);
 }
 
+void RenderViewPs3::setMSAAEnable(bool msaaEnable)
+{
+}
+
 void RenderViewPs3::setCurrentRenderState()
 {
 	const RenderState& rs = m_renderStateStack.back();

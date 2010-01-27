@@ -66,6 +66,8 @@ public:
 
 	virtual void present();
 
+	virtual void setMSAAEnable(bool msaaEnable);
+
 private:
 	struct RenderState
 	{
