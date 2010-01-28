@@ -27,7 +27,6 @@ class Button;
 		{
 
 class ProgressBar;
-class BackgroundWorkerStatus;
 
 /*! \brief Background worker thread progress dialog.
  * \ingroup UIC
@@ -42,17 +41,22 @@ public:
 		WsAbortButton = WsUser << 1
 	};
 
+	struct IWorkerStatus : public IRefCount
+	{
+		virtual bool read(int32_t& outStep, std::wstring& outStatus) = 0;
+	};
+
 	BackgroundWorkerDialog();
 
 	bool create(Widget* parent, const std::wstring& title, const std::wstring& message, int style = WsDefaultFixed);
 
-	bool execute(IWaitable* waitable, BackgroundWorkerStatus* status);
+	bool execute(IWaitable* waitable, IWorkerStatus* status);
 
-	bool execute(const std::vector< IWaitable* >& waitables, BackgroundWorkerStatus* status);
+	bool execute(const std::vector< IWaitable* >& waitables, IWorkerStatus* status);
 
 private:
 	std::vector< IWaitable* > m_waitables;
-	Ref< BackgroundWorkerStatus > m_status;
+	Ref< IWorkerStatus > m_status;
 	Ref< Static > m_labelMessage;
 	Ref< Static > m_labelStatus;
 	Ref< ProgressBar > m_progressBar;

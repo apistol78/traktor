@@ -1,5 +1,5 @@
-#include "Ui/Custom/BackgroundWorkerStatus.h"
 #include "Core/Thread/Acquire.h"
+#include "Ui/Custom/BackgroundWorkerStatus.h"
 
 namespace traktor
 {
@@ -8,37 +8,29 @@ namespace traktor
 		namespace custom
 		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.BackgroundWorkerStatus", BackgroundWorkerStatus, Object)
-
-BackgroundWorkerStatus::BackgroundWorkerStatus(uint32_t steps)
+BackgroundWorkerStatus::BackgroundWorkerStatus(int32_t steps)
 :	m_steps(steps)
 {
 }
 
-void BackgroundWorkerStatus::notify(uint32_t step, const std::wstring& status)
+void BackgroundWorkerStatus::notify(int32_t step, const std::wstring& status)
 {
-	Acquire< Semaphore > scope(m_lock);
-
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Notification notification = { step, status };
 	m_notifications.push_back(notification);
 }
 
-bool BackgroundWorkerStatus::readNotification(Notification& outNotification)
+bool BackgroundWorkerStatus::read(int32_t& outStep, std::wstring& outStatus)
 {
-	Acquire< Semaphore > scope(m_lock);
-
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_notifications.empty())
 		return false;
 
-	outNotification = m_notifications.front();
+	outStep = m_steps > 0 ? int32_t(100 * m_notifications.front().step) / m_steps : -1;
+	outStatus = m_notifications.front().status;
 	m_notifications.pop_front();
 
 	return true;
-}
-
-uint32_t BackgroundWorkerStatus::getSteps() const
-{
-	return m_steps;
 }
 
 		}

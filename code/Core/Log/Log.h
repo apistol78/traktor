@@ -39,7 +39,6 @@ public:
 	
 private:
 	int m_color;
-	uint16_t m_defaultColorAttribs;
 };
 
 /*! \brief Debugger log target.

@@ -236,19 +236,20 @@ Ref< IProcess > OS::execute(
 	HANDLE hStdErrRead = 0, hStdErrWrite = 0;
 	AutoArrayPtr< wchar_t > environment;
 
-	Path fileAbsolute = FileSystem::getInstance().getAbsolutePath(file);
+	Path fileAbs = FileSystem::getInstance().getAbsolutePath(file);
+	Path workingDirectoryAbs = FileSystem::getInstance().getAbsolutePath(workingDirectory);
 
 	StringOutputStream ss;
-	ss << L"\"" << fileAbsolute.getPathName() << L"\"";
+	ss << L"\"" << fileAbs.getPathName() << L"\"";
 	if (!commandLine.empty())
 		ss << L" " << commandLine;
 
 #if !defined(WINCE)
 	_tcscpy_s(cmd, wstots(ss.str()).c_str());
-	_tcscpy_s(cwd, wstots(workingDirectory.getPathName()).c_str());
+	_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
 #else
 	_tcscpy_s(cmd, sizeof_array(cmd), wstots(ss.str()).c_str());
-	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectory.getPathName()).c_str());
+	_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
 #endif
 
 	// Create environment variables.

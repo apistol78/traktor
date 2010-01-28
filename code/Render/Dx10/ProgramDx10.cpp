@@ -471,9 +471,12 @@ bool ProgramDx10::createState(
 			if (it == d3dSamplers.end())
 				return false;
 
+			D3D10_SAMPLER_DESC dsd = it->second;
+			dsd.MipLODBias = -0.5f;
+
 			ID3D10SamplerState* d3dSamplerState;
 
-			hr = d3dDevice->CreateSamplerState(&it->second, &d3dSamplerState);
+			hr = d3dDevice->CreateSamplerState(&dsd, &d3dSamplerState);
 			if (FAILED(hr))
 				return false;
 

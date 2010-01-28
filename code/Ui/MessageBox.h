@@ -4,10 +4,23 @@
 #include "Core/Object.h"
 #include "Ui/EventSubject.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_UI_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace ui
 	{
+
+// Remove MS definition.
+#if defined(MessageBox)
+#	undef MessageBox
+#endif
 
 class Widget;
 class IMessageBox;

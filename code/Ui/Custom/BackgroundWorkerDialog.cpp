@@ -1,11 +1,10 @@
-#include "Ui/Custom/BackgroundWorkerDialog.h"
-#include "Ui/Custom/BackgroundWorkerStatus.h"
-#include "Ui/Custom/ProgressBar.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Static.h"
-#include "Ui/Button.h"
 #include "Core/Thread/IWaitable.h"
+#include "Ui/Button.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Custom/BackgroundWorkerDialog.h"
+#include "Ui/Custom/ProgressBar.h"
 
 namespace traktor
 {
@@ -49,15 +48,9 @@ bool BackgroundWorkerDialog::create(ui::Widget* parent, const std::wstring& titl
 	return true;
 }
 
-bool BackgroundWorkerDialog::execute(IWaitable* waitable, BackgroundWorkerStatus* status)
+bool BackgroundWorkerDialog::execute(IWaitable* waitable, IWorkerStatus* status)
 {
 	m_status = status;
-
-	if (m_status)
-		m_progressBar->setRange(0, m_status->getSteps());
-	else
-		m_progressBar->setRange(0, 0);
-
 	m_waitables.push_back(waitable);
 
 	showModal();
@@ -67,15 +60,9 @@ bool BackgroundWorkerDialog::execute(IWaitable* waitable, BackgroundWorkerStatus
 	return true;
 }
 
-bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables, BackgroundWorkerStatus* status)
+bool BackgroundWorkerDialog::execute(const std::vector< IWaitable* >& waitables, IWorkerStatus* status)
 {
 	m_status = status;
-
-	if (m_status)
-		m_progressBar->setRange(0, m_status->getSteps());
-	else
-		m_progressBar->setRange(0, 0);
-
 	m_waitables = waitables;
 
 	showModal();
@@ -109,12 +96,21 @@ void BackgroundWorkerDialog::eventTimer(Event* event)
 	// Update progression status.
 	if (m_status)
 	{
-		BackgroundWorkerStatus::Notification notification;
-		if (m_status->readNotification(notification))
+		std::wstring status = L"";
+		int32_t step = -1;
+		
+		if (m_status->read(step, status))
 		{
-			m_labelStatus->setText(notification.status);
-			if (m_status->getSteps() > 0)
-				m_progressBar->setProgress(notification.step);
+			m_labelStatus->setText(status);
+
+			if (step >= 0)
+			{
+				m_progressBar->setRange(0, 100);
+				m_progressBar->setProgress(step);
+			}
+			else
+				m_progressBar->setRange(0, 0);
+
 			update(0, true);
 		}
 	}
