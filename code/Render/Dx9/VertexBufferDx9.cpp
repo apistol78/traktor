@@ -68,6 +68,8 @@ bool VertexBufferDx9::create(IDirect3DDevice9* d3dDevice, const std::vector< Ver
 
 void VertexBufferDx9::activate(IDirect3DDevice9* d3dDevice, VertexBufferDx9* vertexBuffer)
 {
+	T_ASSERT (!vertexBuffer->m_locked);
+
 	if (ms_activeVertexBuffer == vertexBuffer)
 		return;
 

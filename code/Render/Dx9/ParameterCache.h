@@ -13,6 +13,15 @@ namespace traktor
 class ParameterCache : public Unmanaged
 {
 public:
+	enum
+	{
+		VertexConstantCount = 256,
+		PixelConstantCount = 224,
+		VertexTextureCount = 8,
+		PixelTextureCount = 8,
+		MaxTextureCount = 8
+	};
+
 	ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice);
 
 	virtual ~ParameterCache();
@@ -39,15 +48,6 @@ protected:
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
 private:
-	enum
-	{
-		VertexConstantCount = 256,
-		PixelConstantCount = 224,
-		VertexTextureCount = 8,
-		PixelTextureCount = 8,
-		MaxTextureCount = 8
-	};
-
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	IDirect3DVertexShader9* m_d3dVertexShader;
 	IDirect3DPixelShader9* m_d3dPixelShader;
