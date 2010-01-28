@@ -236,7 +236,6 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 		desc.stencilBits = 0;
 		desc.multiSample = 4;
 		desc.waitVBlank = false;
-		desc.mipBias = 0.0f;
 
 		data->orthogonal = i > 0;
 		data->cameraAngleX = c_cameraAngles[i][0];

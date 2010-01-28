@@ -42,7 +42,7 @@ class T_DLLCLASS RenderSystemWin32
 public:
 	RenderSystemWin32();
 
-	virtual bool create();
+	virtual bool create(const RenderSystemCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -106,7 +106,6 @@ public:
 	//@}
 
 private:
-	static uint32_t ms_instances;
 	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
@@ -118,6 +117,7 @@ private:
 	HWND m_hWnd;
 	Semaphore m_unmanagedLock;
 	std::list< Unmanaged* > m_unmanagedList;
+	float m_mipBias;
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

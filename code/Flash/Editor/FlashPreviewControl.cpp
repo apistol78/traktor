@@ -58,7 +58,6 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 	desc.stencilBits = 8;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
-	desc.mipBias = 0.0f;
 
 	m_renderSystem = renderSystem;
 	m_renderView = renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);

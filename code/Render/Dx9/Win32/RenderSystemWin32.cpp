@@ -24,8 +24,6 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 
-#define T_ENABLE_NVIDIA_PERHUD 0
-
 namespace traktor
 {
 	namespace render
@@ -39,16 +37,15 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", 0, RenderSystemWin32, IRenderSystem)
 
-uint32_t RenderSystemWin32::ms_instances = 0;
-
 RenderSystemWin32::RenderSystemWin32()
 :	m_parameterCache(0)
 ,	m_vertexDeclCache(0)
 ,	m_hWnd(0)
+,	m_mipBias(0.0f)
 {
 }
 
-bool RenderSystemWin32::create()
+bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 {
 	HRESULT hr;
 
@@ -88,22 +85,6 @@ bool RenderSystemWin32::create()
 
 	UINT d3dAdapter = D3DADAPTER_DEFAULT;
 	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
-
-#if T_ENABLE_NVIDIA_PERHUD
-	for (UINT adapter = 0; adapter < m_d3d->GetAdapterCount(); ++adapter)
-	{
-		D3DADAPTER_IDENTIFIER9 d3did;
-		
-		hr = m_d3d->GetAdapterIdentifier(adapter, 0, &d3did);
-		if (strstr(d3did.Description, "PerfHUD") != 0)
-		{
-			log::debug << L"Found PerfHUD device!" << Endl;
-			d3dAdapter = adapter;
-			d3dDevType = D3DDEVTYPE_REF;
-			break;
-		}
-	}
-#endif
 
 	// Create "resource" device.
 	DWORD dwBehaviour =
@@ -177,24 +158,14 @@ bool RenderSystemWin32::create()
 	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
 
 	m_context = new ContextDx9();
-	ms_instances++;
+	m_mipBias = desc.mipBias;
+
 	return true;
 }
 
 void RenderSystemWin32::destroy()
 {
 	T_ASSERT (m_renderViews.empty());
-
-	// Ensure all DX9 objects are properly collected.
-	if (--ms_instances == 0)
-	{
-		//Heap::collectAllOf(type_of< ProgramWin32 >());
-		//Heap::collectAllOf(type_of< VertexBufferDx9 >());
-		//Heap::collectAllOf(type_of< IndexBufferDx9 >());
-		//Heap::collectAllOf(type_of< SimpleTextureDx9 >());
-		//Heap::collectAllOf(type_of< CubeTextureDx9 >());
-		//Heap::collectAllOf(type_of< VolumeTextureDx9 >());
-	}
 
 	// In case there are any unmanaged resources still lingering we tell them to get lost.
 	for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
@@ -504,7 +475,7 @@ HRESULT RenderSystemWin32::resetDevice()
 
 	// Release all unmanaged resources.
 	{
-		Acquire< Semaphore > lock(m_unmanagedLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
 		for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
 			(*i)->lostDevice();
 	}
@@ -625,17 +596,14 @@ HRESULT RenderSystemWin32::resetDevice()
 
 		// Reset unmanaged resources.
 		{
-			Acquire< Semaphore > lock(m_unmanagedLock);
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
 			for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
 				(*i)->resetDevice(m_d3dDevice);
 		}
 
-		// Set default mip bias.
-		for (int i = 0; i < 8; ++i)
-		{
-			const float c_mipBias = -1.0f;
-			m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&c_mipBias);
-		}
+		// Set global mipmap bias.
+		for (int i = 0; i < ParameterCache::MaxTextureCount; ++i)
+			m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
 	}
 
 	return hr;
@@ -657,13 +625,13 @@ void RenderSystemWin32::removeRenderView(RenderViewWin32* renderView)
 
 void RenderSystemWin32::addUnmanaged(Unmanaged* unmanaged)
 {
-	Acquire< Semaphore > lock(m_unmanagedLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
 	m_unmanagedList.push_back(unmanaged);
 }
 
 void RenderSystemWin32::removeUnmanaged(Unmanaged* unmanaged)
 {
-	Acquire< Semaphore > lock(m_unmanagedLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
 	m_unmanagedList.remove(unmanaged);
 }
 

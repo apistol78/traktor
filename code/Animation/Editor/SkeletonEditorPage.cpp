@@ -106,7 +106,6 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
-	desc.mipBias = 0.0f;
 
 	m_renderView = renderSystem->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)

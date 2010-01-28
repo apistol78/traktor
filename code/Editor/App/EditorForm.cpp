@@ -393,13 +393,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Load tools and populate tool menu.
-	m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
-
 	std::vector< const TypeInfo* > toolTypes;
-	type_of< IEditorTool >().findAllOf(toolTypes);
+	type_of< IEditorTool >().findAllOf(toolTypes, false);
 	if (!toolTypes.empty())
 	{
-		int toolId = 0;
+		m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
+
+		int32_t toolId = 0;
 		for (std::vector< const TypeInfo* >::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
 			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->createInstance());
@@ -412,10 +412,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			m_menuTools->add(new ui::MenuItem(ui::Command(toolId++), desc));
 			m_editorTools.push_back(tool);
 		}
-	}
 
-	m_menuTools->setEnable(false);
-	m_menuBar->add(m_menuTools);
+		if (!m_editorTools.empty())
+			m_menuBar->add(m_menuTools);
+		else
+			m_menuTools = 0;
+	}
 
 	Ref< ui::MenuItem > menuHelp = new ui::MenuItem(i18n::Text(L"MENU_HELP"));
 	menuHelp->add(new ui::MenuItem(ui::Command(L"Editor.About"), i18n::Text(L"MENU_HELP_ABOUT")));
@@ -469,7 +471,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		m_renderSystem = new render::RenderSystemCapture(m_renderSystem);
 #endif
 
-		if (!m_renderSystem->create())
+		render::RenderSystemCreateDesc desc;
+		desc.mipBias = 0.0f;
+
+		if (!m_renderSystem->create(desc))
 		{
 			log::warning << L"Unable to create render system" << Endl;
 			m_renderSystem = 0;
