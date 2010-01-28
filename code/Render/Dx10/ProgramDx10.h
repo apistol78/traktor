@@ -37,7 +37,7 @@ public:
 
 	static Ref< ProgramResourceDx10 > compile(const HlslProgram& hlslProgram);
 
-	bool create(ID3D10Device* d3dDevice, const ProgramResourceDx10* resource);
+	bool create(ID3D10Device* d3dDevice, const ProgramResourceDx10* resource, float mipBias);
 
 	virtual void destroy();
 
@@ -115,6 +115,7 @@ private:
 
 	bool createState(
 		ID3D10Device* d3dDevice,
+		float mipBias,
 		ID3D10Blob* d3dShaderBlob,
 		const std::map< std::wstring, D3D10_SAMPLER_DESC >& d3dSamplers,
 		State& outState

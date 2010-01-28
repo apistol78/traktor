@@ -80,7 +80,6 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
-	desc.mipBias = -1.0f;
 
 	m_renderView = m_context->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)

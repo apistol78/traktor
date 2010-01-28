@@ -38,7 +38,7 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 {
 }
 
-bool RenderSystemOpenGL::create()
+bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 {
 #if defined(_WIN32)
 

@@ -36,7 +36,7 @@ class T_DLLCLASS RenderSystemSw : public IRenderSystem
 public:
 	RenderSystemSw();
 
-	virtual bool create();
+	virtual bool create(const RenderSystemCreateDesc& desc);
 
 	virtual void destroy();
 

@@ -29,7 +29,12 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx10", 0, RenderSystemDx10, IRenderSystem)
 
-bool RenderSystemDx10::create()
+RenderSystemDx10::RenderSystemDx10()
+:	m_mipBias(0.0f)
+{
+}
+
+bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
 {
 	ComRef< IDXGIDevice > dxgiDevice;
 	ComRef< IDXGIAdapter > dxgiAdapter;
@@ -129,6 +134,8 @@ bool RenderSystemDx10::create()
 		return false;
 
 	m_context = new ContextDx10();
+	m_mipBias = desc.mipBias;
+
 	return true;
 }
 
@@ -381,7 +388,7 @@ Ref< IProgram > RenderSystemDx10::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx10 > program = new ProgramDx10(m_context);
-	if (!program->create(m_d3dDevice, resource))
+	if (!program->create(m_d3dDevice, resource, m_mipBias))
 		return 0;
 
 	return program;

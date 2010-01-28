@@ -86,7 +86,6 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
-	desc.mipBias = 0.0f;
 
 	m_renderView = renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)

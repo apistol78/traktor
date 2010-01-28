@@ -37,7 +37,7 @@ RenderSystemOpenGLES2::RenderSystemOpenGLES2()
 {
 }
 
-bool RenderSystemOpenGLES2::create()
+bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 {
 #if defined(_WIN32)
 	WNDCLASS wc;

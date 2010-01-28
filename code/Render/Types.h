@@ -148,6 +148,12 @@ struct Viewport
 /*! \brief Descriptor for render system. */
 struct RenderSystemCreateDesc
 {
+	float mipBias;
+
+	RenderSystemCreateDesc()
+	:	mipBias(0.0f)
+	{
+	}
 };
 
 /*! \brief Descriptor for render views. */
@@ -157,14 +163,12 @@ struct RenderViewCreateDesc
 	uint16_t stencilBits;
 	uint32_t multiSample;
 	bool waitVBlank;
-	float mipBias;
 
 	RenderViewCreateDesc()
 	:	depthBits(0)
 	,	stencilBits(0)
 	,	multiSample(0)
 	,	waitVBlank(false)
-	,	mipBias(0.0f)
 	{
 	}
 };

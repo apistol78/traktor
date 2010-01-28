@@ -32,7 +32,9 @@ class T_DLLCLASS RenderSystemDx10 : public IRenderSystem
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create();
+	RenderSystemDx10();
+
+	virtual bool create(const RenderSystemCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -71,6 +73,7 @@ private:
 	AutoArrayPtr< DXGI_MODE_DESC > m_dxgiDisplayModes;
 	RefArray< DisplayMode > m_displayModes;
 	HWND m_hWnd;
+	float m_mipBias;
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

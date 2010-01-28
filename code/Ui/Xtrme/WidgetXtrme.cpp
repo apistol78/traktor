@@ -32,7 +32,6 @@ bool WidgetXtrme::create(Widget* parent, int style)
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
-	desc.mipBias = 0.0f;
 
 	m_renderView = ms_renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)

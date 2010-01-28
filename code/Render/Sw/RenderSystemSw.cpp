@@ -56,7 +56,7 @@ RenderSystemSw::RenderSystemSw()
 	m_processor = new ProcessorImpl();
 }
 
-bool RenderSystemSw::create()
+bool RenderSystemSw::create(const RenderSystemCreateDesc& desc)
 {
 #if defined(_WIN32)
 

@@ -54,7 +54,6 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
-	desc.mipBias = 0.0f;
 
 	m_renderView = m_editor->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
 	if (!m_renderView)

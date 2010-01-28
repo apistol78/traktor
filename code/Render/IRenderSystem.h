@@ -48,9 +48,10 @@ public:
 
 	/*! \brief Create render system.
 	 *
+	 * \param desc Create description.
 	 * \return True if successfully created.
 	 */
-	virtual bool create() = 0;
+	virtual bool create(const RenderSystemCreateDesc& desc) = 0;
 
 	/*! \brief Destroy render system. */
 	virtual void destroy() = 0;
