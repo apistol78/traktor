@@ -176,6 +176,16 @@ void RenderViewPs3::resize(int width, int height)
 {
 }
 
+int RenderViewPs3::getWidth() const
+{
+	return m_width;
+}
+
+int RenderViewPs3::getHeight() const
+{
+	return m_height;
+}
+
 void RenderViewPs3::setViewport(const Viewport& viewport)
 {
 	if (m_renderStateStack.empty())

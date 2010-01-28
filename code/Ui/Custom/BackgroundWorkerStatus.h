@@ -2,15 +2,15 @@
 #define traktor_ui_custom_BackgroundWorkerStatus_H
 
 #include <list>
-#include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
+#include "Ui/Custom/BackgroundWorkerDialog.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,27 +23,23 @@ namespace traktor
 /*! \brief Background worker status report.
  * \ingroup UIC
  */
-class T_DLLCLASS BackgroundWorkerStatus : public Object
+class T_DLLCLASS BackgroundWorkerStatus : public RefCountImpl< BackgroundWorkerDialog::IWorkerStatus >
 {
-	T_RTTI_CLASS;
-
 public:
+	BackgroundWorkerStatus(int32_t steps);
+
+	void notify(int32_t step, const std::wstring& status);
+
+	virtual bool read(int32_t& outStep, std::wstring& outStatus);
+
+private:
 	struct Notification
 	{
-		uint32_t step;
+		int32_t step;
 		std::wstring status;
 	};
 
-	BackgroundWorkerStatus(uint32_t steps);
-
-	virtual void notify(uint32_t step, const std::wstring& status);
-
-	virtual bool readNotification(Notification& outNotification);
-
-	virtual uint32_t getSteps() const;
-
-private:
-	uint32_t m_steps;
+	int32_t m_steps;
 	Semaphore m_lock;
 	std::list< Notification > m_notifications;
 };

@@ -54,8 +54,18 @@ public:
 
 	virtual int read(void* block, int nbytes)
 	{
+		int navail = available();
+		if (navail < 0)
+			return -1;
+
+		int nread = std::min< int >(nbytes, navail);
+		if (nread == 0)
+			return 0;
+
 		DWORD dwRead = 0;
-		ReadFile(m_hPipe, block, nbytes, &dwRead, NULL);
+		if (!ReadFile(m_hPipe, block, nread, &dwRead, NULL))
+			return -1;
+
 		return int(dwRead);
 	}
 
