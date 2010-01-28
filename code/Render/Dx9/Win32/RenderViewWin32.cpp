@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/IndexBufferDx9.h"
+#include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
 #include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/Win32/RenderViewWin32.h"
@@ -445,6 +446,13 @@ void RenderViewWin32::bindTargets()
 	T_ASSERT (m_targetDirty);
 	T_ASSERT (!m_renderStateStack.empty());
 	HRESULT hr;
+
+	// Ensure RT texture isn't bound to any sampler.
+	for (int32_t i = 0; i < ParameterCache::MaxTextureCount; ++i)
+	{
+		m_parameterCache->setVertexTexture(i, 0);
+		m_parameterCache->setPixelTexture(i, 0);
+	}
 
 	const RenderState& rs = m_renderStateStack.back();
 
