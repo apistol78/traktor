@@ -305,7 +305,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const DisplayMode* displ
 	UpdateWindow(m_hWnd);
 
 	DEVMODE dm;
-	memset(&dm, 0, sizeof(dm));
+	std::memset(&dm, 0, sizeof(dm));
 	dm.dmSize = sizeof(dm);
 
 	if (!EnumDisplaySettings(NULL, displayMode->getIndex(), &dm))

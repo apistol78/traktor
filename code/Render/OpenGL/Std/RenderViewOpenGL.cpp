@@ -26,20 +26,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_context(context)
 ,	m_globalContext(globalContext)
 ,	m_currentDirty(true)
-{
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-
-	Viewport viewport;
-	viewport.left = 0;
-	viewport.top = 0;
-	viewport.width = rc.right - rc.left;
-	viewport.height = rc.bottom - rc.top;
-	viewport.nearZ = 0.0f;
-	viewport.farZ = 1.0f;
-
-	setViewport(viewport);
-}
 
 #elif defined(__APPLE__)
 
@@ -50,8 +36,6 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_context(context)
 ,	m_globalContext(globalContext)
 ,	m_currentDirty(true)
-{
-}
 
 #else
 
@@ -62,10 +46,18 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_context(context)
 ,	m_globalContext(globalContext)
 ,	m_currentDirty(true)
-{
-}
 
 #endif
+{
+	Viewport viewport;
+	viewport.left = 0;
+	viewport.top = 0;
+	viewport.width = m_context->getWidth();
+	viewport.height = m_context->getHeight();
+	viewport.nearZ = 0.0f;
+	viewport.farZ = 1.0f;
+	setViewport(viewport);
+}
 
 RenderViewOpenGL::~RenderViewOpenGL()
 {
@@ -84,14 +76,12 @@ void RenderViewOpenGL::resize(int32_t width, int32_t height)
 
 int RenderViewOpenGL::getWidth() const
 {
-	T_FATAL_ERROR;
-	return 0;
+	return m_context->getWidth();
 }
 
 int RenderViewOpenGL::getHeight() const
 {
-	T_FATAL_ERROR;
-	return 0;
+	return m_context->getHeight();
 }
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
@@ -156,7 +146,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget,
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 	
-	rt->bind();
+	rt->bind(keepDepthStencil);
 	rt->enter(keepDepthStencil);
 
 	m_renderTargetStack.push(rt);
@@ -319,7 +309,7 @@ void RenderViewOpenGL::end()
 		m_renderTargetStack.pop();
 
 		if (!m_renderTargetStack.empty())
-			m_renderTargetStack.top()->bind();
+			m_renderTargetStack.top()->bind(false);
 		else
 			T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
 	}
