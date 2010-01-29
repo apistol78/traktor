@@ -53,6 +53,7 @@ PFNGLRENDERBUFFERSTORAGEEXTPROC glRenderbufferStorageEXT = 0;
 PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC glFramebufferRenderbufferEXT = 0;
 PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2DEXT = 0;
 PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC glCheckFramebufferStatusEXT = 0;
+PFNGLGETFRAMEBUFFERATTACHMENTPARAMETERIVEXTPROC glGetFramebufferAttachmentParameterivEXT = 0;
 
 // GL_???
 PFNGLACTIVETEXTUREPROC glActiveTexture = 0;
@@ -127,6 +128,7 @@ bool opengl_initialize_extensions()
 	RESOLVE(glFramebufferRenderbufferEXT);
 	RESOLVE(glFramebufferTexture2DEXT);
 	RESOLVE(glCheckFramebufferStatusEXT);
+	RESOLVE(glGetFramebufferAttachmentParameterivEXT);
 
 	// GL_???
 	RESOLVE(glActiveTexture);

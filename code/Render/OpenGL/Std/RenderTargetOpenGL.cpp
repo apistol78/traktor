@@ -248,9 +248,44 @@ int RenderTargetOpenGL::getDepth() const
 	return 0;
 }
 
-void RenderTargetOpenGL::bind()
+void RenderTargetOpenGL::bind(bool keepDepthStencil)
 {
+	GLuint currentDepthBuffer;
+
+	if (keepDepthStencil)
+	{
+		GLuint currentFBO;
+		T_OGL_SAFE(glGetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, (GLint*)&currentFBO));
+
+		// Get currently bound depth object.
+		if (currentFBO != 0)
+		{
+			T_OGL_SAFE(glGetFramebufferAttachmentParameterivEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_DEPTH_ATTACHMENT_EXT,
+				GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME_EXT,
+				(GLint*)&currentDepthBuffer
+			));
+		}
+		else
+		{
+			// No FBO is currently bound; cannot get "master" depth buffer as object.
+			keepDepthStencil = false;
+		}
+	}
+
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_frameBufferObject));
+
+	if (keepDepthStencil)
+	{
+		// Get currently bound depth object and reuse with this FBO.
+		T_OGL_SAFE(glFramebufferRenderbufferEXT(
+			GL_FRAMEBUFFER_EXT,
+			GL_DEPTH_ATTACHMENT_EXT,
+			GL_RENDERBUFFER_EXT,
+			currentDepthBuffer
+		));
+	}
 }
 
 void RenderTargetOpenGL::enter(bool keepDepthStencil)

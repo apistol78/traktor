@@ -42,7 +42,7 @@ public:
 	
 	virtual int getDepth() const;
 
-	void bind();
+	void bind(bool keepDepthStencil);
 
 	void enter(bool keepDepthStencil);
 	

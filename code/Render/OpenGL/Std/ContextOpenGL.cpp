@@ -30,12 +30,16 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_hDC(hDC)
 ,	m_hRC(hRC)
 ,	m_currentStateList(0)
+,	m_width(0)
+,	m_height(0)
 
 #elif defined(__APPLE__)
 
 ContextOpenGL::ContextOpenGL(void* context)
 :	m_context(context)
 ,	m_currentStateList(0)
+,	m_width(0)
+,	m_height(0)
 
 #else	// LINUX
 
@@ -44,9 +48,12 @@ ContextOpenGL::ContextOpenGL(Display* display, Window window, GLXContext context
 ,	m_window(window)
 ,	m_context(context)
 ,	m_currentStateList(0)
+,	m_width(0)
+,	m_height(0)
 
 #endif
 {
+	update();
 }
 
 ContextOpenGL::~ContextOpenGL()
@@ -70,7 +77,12 @@ void ContextOpenGL::share(ContextOpenGL* context)
 
 void ContextOpenGL::update()
 {
-#if defined(__APPLE__)
+#if defined(_WIN32)
+	RECT rc;
+	GetClientRect(m_hWnd, &rc);
+	m_width = int32_t(rc.right - rc.left);
+	m_height = int32_t(rc.bottom - rc.top);
+#elif defined(__APPLE__)
 	cglwUpdate(m_context);
 #endif
 }
@@ -116,6 +128,16 @@ void ContextOpenGL::destroy()
 	}
 
 #endif
+}
+
+int32_t ContextOpenGL::getWidth() const
+{
+	return m_width;
+}
+
+int32_t ContextOpenGL::getHeight() const
+{
+	return m_height;
 }
 
 bool ContextOpenGL::enter()

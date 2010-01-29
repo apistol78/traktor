@@ -47,6 +47,10 @@ public:
 	
 	void callStateList(GLuint stateList);
 
+	int32_t getWidth() const;
+
+	int32_t getHeight() const;
+
 	virtual bool enter();
 
 	virtual void leave();
@@ -79,6 +83,8 @@ private:
 	std::map< uint32_t, GLuint > m_stateLists;
 	GLuint m_currentStateList;
 	std::vector< IDeleteCallback* > m_deleteResources;
+	int32_t m_width;
+	int32_t m_height;
 };
 
 	}
