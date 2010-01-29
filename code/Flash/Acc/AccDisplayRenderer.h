@@ -61,7 +61,12 @@ public:
 
 	void destroy();
 
-	void beginRender(render::IRenderView* renderView);
+	/*! \brief Begin rendering Flash movie.
+	 *
+	 * \param renderView Output render view.
+	 * \param correctAspectRatio Render movie with correct aspect ratio.
+	 */
+	void beginRender(render::IRenderView* renderView, bool correctAspectRatio);
 
 	void endRender();
 
@@ -95,6 +100,8 @@ private:
 	std::map< uint32_t, CacheEntry > m_shapeCache;
 	std::map< uint32_t, render::RenderTargetSet* > m_glyphCache;
 	Vector4 m_frameSize;
+	float m_aspectRatio;
+	float m_scaleX;
 	bool m_clearBackground;
 	bool m_maskWrite;
 	bool m_maskIncrement;

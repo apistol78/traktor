@@ -56,6 +56,7 @@ public:
 		render::IRenderView* renderView,
 		const FlashShape& shape,
 		const Vector4& frameSize,
+		float scaleX,
 		const Matrix33& transform,
 		const SwfCxTransform& cxform,
 		bool maskWrite,

@@ -48,6 +48,7 @@ render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
 render::handle_t s_handleTextureMatrix;
 render::handle_t s_handleViewSize;
+render::handle_t s_handleScaleX;
 
 		}
 
@@ -68,6 +69,7 @@ bool AccShape::create(
 		s_handleTexture = render::getParameterHandle(L"Texture");
 		s_handleTextureMatrix = render::getParameterHandle(L"TextureMatrix");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
+		s_handleScaleX = render::getParameterHandle(L"ScaleX");
 		s_handleInitialized = true;
 	}
 
@@ -290,6 +292,7 @@ void AccShape::render(
 	render::IRenderView* renderView,
 	const FlashShape& shape,
 	const Vector4& frameSize,
+	float scaleX,
 	const Matrix33& transform,
 	const SwfCxTransform& cxform,
 	bool maskWrite,
@@ -344,6 +347,7 @@ void AccShape::render(
 	shaderSolid->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	shaderSolid->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 	shaderSolid->setVectorParameter(s_handleViewSize, viewSize);
+	shaderSolid->setFloatParameter(s_handleScaleX, scaleX);
 	shaderSolid->setStencilReference(maskReference);
 
 	if (shaderTextured)
@@ -353,6 +357,7 @@ void AccShape::render(
 		shaderTextured->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 		shaderTextured->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 		shaderTextured->setVectorParameter(s_handleViewSize, viewSize);
+		shaderTextured->setFloatParameter(s_handleScaleX, scaleX);
 		shaderTextured->setStencilReference(maskReference);
 	}
 

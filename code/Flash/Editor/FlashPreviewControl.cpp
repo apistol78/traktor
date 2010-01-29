@@ -237,7 +237,7 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 		);
 		if (m_movie)
 		{
-			m_displayRenderer->beginRender(m_renderView);
+			m_displayRenderer->beginRender(m_renderView, true);
 			m_moviePlayer->renderFrame();
 			m_displayRenderer->endRender();
 		}

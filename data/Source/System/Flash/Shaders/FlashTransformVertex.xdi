@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment></comment>
 			<position>
-				<first>-300</first>
-				<second>201</second>
+				<first>-367</first>
+				<second>165</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>-73</first>
-				<second>344</second>
+				<first>-140</first>
+				<second>308</second>
 			</position>
 			<parameterName>FrameSize</parameterName>
 			<type>PtVector</type>
@@ -24,45 +24,45 @@
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>128</first>
-				<second>311</second>
+				<first>61</first>
+				<second>275</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>127</first>
-				<second>377</second>
+				<first>60</first>
+				<second>341</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment></comment>
 			<position>
-				<first>299</first>
-				<second>330</second>
+				<first>232</first>
+				<second>294</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
 			<comment></comment>
 			<position>
-				<first>448</first>
-				<second>273</second>
+				<first>381</first>
+				<second>237</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment></comment>
 			<position>
-				<first>301</first>
-				<second>253</second>
+				<first>234</first>
+				<second>217</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>-259</first>
-				<second>266</second>
+				<first>-326</first>
+				<second>230</second>
 			</position>
 			<parameterName>Transform</parameterName>
 			<type>PtMatrix</type>
@@ -70,54 +70,54 @@
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>-90</first>
-				<second>212</second>
+				<first>-157</first>
+				<second>176</second>
 			</position>
 			<swizzle>xy10</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment></comment>
 			<position>
-				<first>34</first>
-				<second>205</second>
+				<first>-33</first>
+				<second>169</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment></comment>
 			<position>
-				<first>1248</first>
-				<second>190</second>
+				<first>1522</first>
+				<second>172</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>1143</first>
-				<second>190</second>
+				<first>1417</first>
+				<second>172</second>
 			</position>
 			<swizzle>xy01</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment></comment>
 			<position>
-				<first>634</first>
-				<second>331</second>
+				<first>667</first>
+				<second>319</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment></comment>
 			<position>
-				<first>457</first>
-				<second>358</second>
+				<first>490</first>
+				<second>346</second>
 			</position>
 			<value>2, -2, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment></comment>
 			<position>
-				<first>456</first>
-				<second>387</second>
+				<first>489</first>
+				<second>375</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
@@ -143,8 +143,8 @@
 		<item type="traktor.render.Uniform">
 			<comment></comment>
 			<position>
-				<first>532</first>
-				<second>206</second>
+				<first>773</first>
+				<second>199</second>
 			</position>
 			<parameterName>ViewSize</parameterName>
 			<type>PtVector</type>
@@ -152,31 +152,31 @@
 		<item type="traktor.render.Swizzle">
 			<comment></comment>
 			<position>
-				<first>682</first>
-				<second>206</second>
+				<first>956</first>
+				<second>188</second>
 			</position>
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment></comment>
 			<position>
-				<first>618</first>
-				<second>161</second>
+				<first>892</first>
+				<second>143</second>
 			</position>
 			<value>-1, 1, 0, 0</value>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment></comment>
 			<position>
-				<first>813</first>
-				<second>153</second>
+				<first>1087</first>
+				<second>135</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment></comment>
 			<position>
-				<first>973</first>
-				<second>170</second>
+				<first>1247</first>
+				<second>152</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -198,6 +198,30 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment></comment>
+			<position>
+				<first>808</first>
+				<second>257</second>
+			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment></comment>
+			<position>
+				<first>720</first>
+				<second>260</second>
+			</position>
+			<swizzle>x1</swizzle>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment></comment>
+			<position>
+				<first>562</first>
+				<second>239</second>
+			</position>
+			<parameterName>ScaleX</parameterName>
+			<type>PtScalar</type>
 		</item>
 	</nodes>
 	<edges>
@@ -323,16 +347,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[11]"/>
 				<name>Output</name>
 			</source>
@@ -383,16 +397,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Input3</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
@@ -413,16 +417,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[21]"/>
-				<name>Other</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
@@ -438,6 +432,66 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -33,6 +33,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, 
 
 AccDisplayRenderer::AccDisplayRenderer()
 :	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_aspectRatio(1.0f)
+,	m_scaleX(1.0f)
 ,	m_clearBackground(false)
 ,	m_maskWrite(false)
 ,	m_maskIncrement(false)
@@ -107,10 +109,20 @@ void AccDisplayRenderer::destroy()
 	m_shapeCache.clear();
 }
 
-void AccDisplayRenderer::beginRender(render::IRenderView* renderView)
+void AccDisplayRenderer::beginRender(render::IRenderView* renderView, bool correctAspectRatio)
 {
 	T_ASSERT (m_renderView == 0);
 	m_renderView = renderView;
+
+	if (correctAspectRatio)
+	{
+		render::Viewport viewport = m_renderView->getViewport();
+		m_aspectRatio = float(viewport.width) / viewport.height;
+	}
+	else
+		m_aspectRatio = 0.0f;
+
+	m_scaleX = 1.0f;
 }
 
 void AccDisplayRenderer::endRender()
@@ -129,6 +141,13 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 		bounds.max.x,
 		bounds.max.y
 	);
+
+	// Calculate horizontal scale factor to match aspect ratios.
+	if (m_aspectRatio > FUZZY_EPSILON)
+	{
+		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+		m_scaleX = frameAspect / m_aspectRatio;
+	}
 
 	const float clearColor[] =
 	{
@@ -213,6 +232,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 		m_renderView,
 		shape,
 		m_frameSize,
+		m_scaleX,
 		transform,
 		cxform,
 		m_maskWrite,
@@ -307,6 +327,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 				bounds.max.x,
 				bounds.max.y
 			),
+			1.0f,
 			Matrix33::identity(),
 			cxfi,
 			false,
@@ -332,6 +353,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	m_quad->render(
 		m_renderView,
 		m_frameSize,
+		m_scaleX,
 		transform,
 		bounds,
 		cxf,
