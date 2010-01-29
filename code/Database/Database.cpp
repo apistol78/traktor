@@ -1,12 +1,12 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/Split.h"
+#include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderDatabase.h"
 #include "Database/Provider/IProviderBus.h"
-#include "Core/Log/Log.h"
-#include "Core/Misc/Split.h"
-#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -41,7 +41,7 @@ bool Database::open(IProviderDatabase* providerDatabase)
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
 
-	m_rootGroup = new Group(m_providerBus);
+	m_rootGroup = new Group(this, m_providerBus);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
 
@@ -115,7 +115,7 @@ Ref< Group > Database::getRootGroup()
 Ref< Group > Database::getGroup(const std::wstring& groupPath)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::vector< std::wstring > pathElements;
 	Split< std::wstring >::any(groupPath, L"/", pathElements);
@@ -133,7 +133,7 @@ Ref< Group > Database::getGroup(const std::wstring& groupPath)
 Ref< Group > Database::createGroup(const std::wstring& groupPath)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::vector< std::wstring > groupNames;
 	Split< std::wstring >::any(groupPath, L"/", groupNames);
@@ -164,7 +164,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 	if (instanceGuid.isNull() || !instanceGuid.isValid())
 		return 0;
 
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(instanceGuid);
 	
 	// In case no instance was found or reference has been invalidated we need to rebuild instance map.
@@ -185,7 +185,7 @@ Ref< Instance > Database::getInstance(const Guid& instanceGuid)
 Ref< Instance > Database::getInstance(const std::wstring& instancePath, const TypeInfo* primaryType)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::wstring instanceName = instancePath;
 	Ref< Group > group = m_rootGroup;
@@ -206,7 +206,7 @@ Ref< Instance > Database::getInstance(const std::wstring& instancePath, const Ty
 Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint32_t flags, const Guid* guid)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::wstring instanceName;
 	Ref< Group > group;
@@ -237,7 +237,7 @@ Ref< Instance > Database::createInstance(const std::wstring& instancePath, uint3
 Ref< ISerializable > Database::getObjectReadOnly(const Guid& guid)
 {
 	T_ASSERT (m_providerDatabase);
-	Acquire< Semaphore > scopeLock(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	Ref< Instance > instance = getInstance(guid);
 	return instance ? instance->getObject() : 0;
@@ -256,7 +256,7 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	// Need to reset states as database has been remotely modified.
 	if (outRemote && (outEvent == PeCommited || outEvent == PeRenamed || outEvent == PeRemoved))
 	{
-		Acquire< Semaphore > scopeLock(m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		// Remove from instance map if removed.
 		if (outEvent == PeRemoved)
@@ -281,6 +281,12 @@ bool Database::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	}
 
 	return true;
+}
+
+void Database::flushInstanceMap()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_instanceMap.clear();
 }
 
 	}

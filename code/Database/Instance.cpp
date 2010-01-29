@@ -1,14 +1,15 @@
-#include "Database/Instance.h"
-#include "Database/Group.h"
-#include "Database/Provider/IProviderInstance.h"
-#include "Database/Provider/IProviderBus.h"
-#include "Xml/XmlSerializer.h"
-#include "Xml/XmlDeserializer.h"
-#include "Core/Log/Log.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
+#include "Database/Database.h"
+#include "Database/Group.h"
+#include "Database/Instance.h"
+#include "Database/Provider/IProviderBus.h"
+#include "Database/Provider/IProviderInstance.h"
+#include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
@@ -28,8 +29,9 @@ enum
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Instance", Instance, Object)
 
-Instance::Instance()
-:	m_providerBus(0)
+Instance::Instance(Database* database)
+:	m_database(database)
+,	m_providerBus(0)
 ,	m_renamed(false)
 ,	m_removed(false)
 #if T_INSTANCE_CACHE_NAME || T_INSTANCE_CACHE_GUID || T_INSTANCE_CACHE_PRIMARY_TYPE
@@ -191,6 +193,10 @@ bool Instance::commit(uint32_t flags)
 	{
 		if (m_parent)
 			m_parent->removeChildInstance(this);
+		
+		if (m_database)
+			m_database->flushInstanceMap();
+
 		internalDestroy();
 	}
 

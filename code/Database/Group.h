@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,6 +24,7 @@ class Guid;
 class IProviderBus;
 class IProviderGroup;
 
+class Database;
 class Instance;
 
 /*! \brief Database group.
@@ -37,7 +38,7 @@ class T_DLLCLASS Group : public Object
 	T_RTTI_CLASS;
 
 public:
-	Group(IProviderBus* providerBus);
+	Group(Database* database, IProviderBus* providerBus);
 
 	bool internalCreate(IProviderGroup* providerGroup, Group* parent);
 
@@ -76,6 +77,7 @@ public:
 	void removeChildGroup(Group* childGroup);
 
 private:
+	Database* m_database;
 	IProviderBus* m_providerBus;
 	Ref< IProviderGroup > m_providerGroup;
 	Ref< Group > m_parent;
