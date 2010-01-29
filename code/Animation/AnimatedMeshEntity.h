@@ -72,7 +72,7 @@ private:
 	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	mutable resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	std::vector< int > m_boneRemap;
+	std::vector< int32_t > m_boneRemap;
 	AlignedVector< Transform > m_boneTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Matrix44 > m_skinTransforms;

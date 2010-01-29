@@ -19,6 +19,7 @@ render::handle_t s_handleUserParameter = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, Object)
 
 SkinnedMesh::SkinnedMesh()
+:	m_boneCount(0)
 {
 	if (!s_handleBones)
 		s_handleBones = render::getParameterHandle(L"Bones");
@@ -76,6 +77,11 @@ void SkinnedMesh::render(
 
 		renderContext->draw(renderBlock);
 	}
+}
+
+int32_t SkinnedMesh::getBoneCount() const
+{
+	return m_boneCount;
 }
 
 const std::map< std::wstring, int >& SkinnedMesh::getBoneMap() const

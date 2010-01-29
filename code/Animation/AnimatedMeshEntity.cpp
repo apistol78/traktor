@@ -9,7 +9,7 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/EntityUpdate.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
@@ -182,28 +182,28 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			m_updateController
 		);
 
-		size_t size = m_boneTransforms.size();
+		size_t skeletonBoneCount = m_boneTransforms.size();
+		size_t skinBoneCount = m_mesh->getBoneCount();
 
-		while (m_poseTransforms.size() < size)
+		while (m_poseTransforms.size() < skeletonBoneCount)
 			m_poseTransforms.push_back(Transform::identity());
 
-		m_skinTransforms.resize(size);
-
-		for (size_t i = 0; i < size; ++i)
+		m_skinTransforms.resize(skinBoneCount);
+		for (size_t i = 0; i < skinBoneCount; ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 
-		for (size_t i = 0; i < size; ++i)
+		for (size_t i = 0; i < skeletonBoneCount; ++i)
 		{
-			int boneIndex = m_boneRemap[i];
-			if (boneIndex >= 0 && boneIndex < size)
+			int32_t boneIndex = m_boneRemap[i];
+			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
 				m_skinTransforms[boneIndex] = (m_poseTransforms[i] * m_boneTransforms[i].inverse()).toMatrix44();
 		}
 	}
 	else
 	{
-		size_t boneCount = m_skeleton->getBoneCount();
-		m_skinTransforms.resize(boneCount);
-		for (size_t i = 0; i < boneCount; ++i)
+		size_t skinBoneCount = m_mesh->getBoneCount();
+		m_skinTransforms.resize(skinBoneCount);
+		for (size_t i = 0; i < skinBoneCount; ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 	}
 }
