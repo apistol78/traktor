@@ -1,40 +1,42 @@
-#include "Scene/Editor/SceneEditorPage.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/ScenePreviewControl.h"
-#include "Scene/Editor/EntityDependencyInvestigator.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/ISceneControllerEditorFactory.h"
-#include "Scene/Editor/ISceneControllerEditor.h"
-#include "Scene/Editor/EntityClipboardData.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/SelectEvent.h"
-#include "Scene/Editor/SceneAsset.h"
-#include "Scene/Scene.h"
-#include "Scene/ISceneControllerData.h"
-#include "Scene/ISceneController.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/EnterLeave.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/Settings.h"
 #include "Editor/UndoStack.h"
-#include "Database/Database.h"
+#include "I18N/Text.h"
 #include "Physics/PhysicsManager.h"
-#include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityInstance.h"
-#include "World/Entity/SpatialEntity.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/GroupEntityData.h"
-#include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
+#include "Scene/ISceneController.h"
+#include "Scene/ISceneControllerData.h"
+#include "Scene/Scene.h"
+#include "Scene/Editor/Camera.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityClipboardData.h"
+#include "Scene/Editor/EntityDependencyInvestigator.h"
+#include "Scene/Editor/ISceneControllerEditorFactory.h"
+#include "Scene/Editor/ISceneControllerEditor.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/SceneAsset.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/SceneEditorPage.h"
+#include "Scene/Editor/ScenePreviewControl.h"
+#include "Scene/Editor/SelectEvent.h"
 #include "Resource/IResourceManager.h"
 #include "Ui/Application.h"
-#include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
-#include "Ui/TableLayout.h"
-#include "Ui/FloodLayout.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Container.h"
-#include "Ui/PopupMenu.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/PopupMenu.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -45,14 +47,13 @@
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/InputDialog.h"
-#include "I18N/Text.h"
-#include "Database/Instance.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Core/Misc/EnterLeave.h"
-#include "Core/Log/Log.h"
+#include "World/WorldRenderSettings.h"
+#include "World/Entity/EntityInstance.h"
+#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/GroupEntityData.h"
+#include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/ExternalSpatialEntityData.h"
 
 // Resources
 #include "Resources/EntityEdit.h"
@@ -783,22 +784,19 @@ bool SceneEditorPage::moveSelectedEntityIntoView()
 
 bool SceneEditorPage::updateLookAtEntity()
 {
-	//if (m_toolLookAtEntity->isToggled())
-	//{
-	//	RefArray< EntityAdapter > selectedEntities;
-	//	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1 || !selectedEntities[0]->isSpatial())
-	//	{
-	//		m_toolLookAtEntity->setToggled(false);
-	//		m_entityToolBar->update();
-	//		return false;
-	//	}
-
-	//	m_context->getCamera()->enterLookAt(selectedEntities[0]->getTransform().translation());
-	//}
-	//else
-	//{
-	//	m_context->getCamera()->enterFreeLook();
-	//}
+	if (m_toolLookAtEntity->isToggled())
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1 && selectedEntities[0]->isSpatial())
+		{
+			Vector4 lookAtPosition = selectedEntities[0]->getTransform().translation().xyz1();
+			for (int32_t i = 0; i < 4; ++i)
+				m_context->getCamera(i)->enterLookAt(lookAtPosition);
+			return true;
+		}
+	}
+	for (int32_t i = 0; i < 4; ++i)
+		m_context->getCamera(i)->enterFreeLook();
 	return true;
 }
 

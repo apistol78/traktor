@@ -48,7 +48,7 @@ void Camera::enterLookAt(const Vector4& lookAtPosition)
 	m_lookAtPosition = lookAtPosition;
 	m_lookAtDistance = (lookAtPosition - m_target.position).length();
 	m_lookMode = LmLookAt;
-	m_target.orientation = Quaternion(lookAt(m_target.position, m_lookAtPosition).inverseOrtho());
+	m_target.orientation = Quaternion(lookAt(m_target.position, m_lookAtPosition));
 }
 
 void Camera::move(const Vector4& direction)
@@ -67,7 +67,7 @@ void Camera::move(const Vector4& direction)
 
 			m_target.position += m_target.orientation.inverse() * direction;
 			m_target.position = m_lookAtPosition + (m_target.position - m_lookAtPosition).normalized() * m_lookAtDistance;
-			m_target.orientation = Quaternion(lookAt(m_target.position, m_lookAtPosition).inverseOrtho());
+			m_target.orientation = Quaternion(lookAt(m_target.position, m_lookAtPosition));
 		}
 		break;
 	}
