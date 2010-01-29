@@ -47,6 +47,7 @@ public:
 	void render(
 		render::IRenderView* renderView,
 		const Vector4& frameSize,
+		float scaleX,
 		const Matrix33& transform,
 		const SwfRect& bounds,
 		const SwfCxTransform& cxform,

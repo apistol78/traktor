@@ -30,6 +30,7 @@ render::handle_t s_handleCxFormMul;
 render::handle_t s_handleCxFormAdd;
 render::handle_t s_handleTexture;
 render::handle_t s_handleViewSize;
+render::handle_t s_handleScaleX;
 render::handle_t s_handleStepSize;
 
 		}
@@ -47,6 +48,7 @@ bool AccQuad::create(
 		s_handleCxFormAdd = render::getParameterHandle(L"CxFormAdd");
 		s_handleTexture = render::getParameterHandle(L"Texture");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
+		s_handleScaleX = render::getParameterHandle(L"ScaleX");
 		s_handleStepSize = render::getParameterHandle(L"StepSize");
 		s_handleInitialized = true;
 	}
@@ -82,6 +84,7 @@ void AccQuad::destroy()
 void AccQuad::render(
 	render::IRenderView* renderView,
 	const Vector4& frameSize,
+	float scaleX,
 	const Matrix33& transform,
 	const SwfRect& bounds,
 	const SwfCxTransform& cxform,
@@ -125,6 +128,7 @@ void AccQuad::render(
 	m_shaderTextured->setMatrixParameter(s_handleTransform, m);
 	m_shaderTextured->setVectorParameter(s_handleFrameSize, frameSize);
 	m_shaderTextured->setVectorParameter(s_handleViewSize, viewSize);
+	m_shaderTextured->setFloatParameter(s_handleScaleX, scaleX);
 	m_shaderTextured->setVectorParameter(s_handleStepSize, stepSize);
 	m_shaderTextured->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	m_shaderTextured->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
