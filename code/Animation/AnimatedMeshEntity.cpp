@@ -182,25 +182,28 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			m_updateController
 		);
 
-		while (m_poseTransforms.size() < m_boneTransforms.size())
+		size_t size = m_boneTransforms.size();
+
+		while (m_poseTransforms.size() < size)
 			m_poseTransforms.push_back(Transform::identity());
 
-		m_skinTransforms.resize(m_boneTransforms.size());
+		m_skinTransforms.resize(size);
 
-		for (size_t i = 0; i < m_boneTransforms.size(); ++i)
+		for (size_t i = 0; i < size; ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 
-		for (size_t i = 0; i < m_boneTransforms.size(); ++i)
+		for (size_t i = 0; i < size; ++i)
 		{
 			int boneIndex = m_boneRemap[i];
-			if (boneIndex >= 0)
+			if (boneIndex >= 0 && boneIndex < size)
 				m_skinTransforms[boneIndex] = (m_poseTransforms[i] * m_boneTransforms[i].inverse()).toMatrix44();
 		}
 	}
 	else
 	{
-		m_skinTransforms.resize(m_skeleton->getBoneCount());
-		for (size_t i = 0; i < m_skinTransforms.size(); ++i)
+		size_t boneCount = m_skeleton->getBoneCount();
+		m_skinTransforms.resize(boneCount);
+		for (size_t i = 0; i < boneCount; ++i)
 			m_skinTransforms[i] = Matrix44::identity();
 	}
 }
