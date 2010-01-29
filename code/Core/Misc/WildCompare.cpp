@@ -1,5 +1,6 @@
 #include "Core/Misc/WildCompare.h"
 #include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -23,12 +24,15 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 
 	if (!m_nowild.size())
 		return m_beginWild;
+
+	std::wstring chk = (mode == CmIgnoreCase) ? toLower(str) : str;
 	
 	if (!m_beginWild)
 	{
 		size_t ln = m_nowild[0].length();
 
-		if (str.compare(0, ln, m_nowild[0]) != 0)
+		int res = (mode == CmIgnoreCase) ? chk.compare(0, ln, toLower(m_nowild[0])) : chk.compare(0, ln, m_nowild[0]);
+		if (res != 0)
 			return false;
 
 		p = ln;
@@ -37,7 +41,7 @@ bool WildCompare::match(const std::wstring& str, CompareMode mode, std::vector< 
 
 	for (; i < m_nowild.size(); ++i)
 	{
-		size_t f = str.find(m_nowild[i], p);
+		size_t f = (mode == CmIgnoreCase) ? chk.find(toLower(m_nowild[i]), p) : chk.find(m_nowild[i], p);
 		if (f == std::wstring::npos)
 			return false;
 			
