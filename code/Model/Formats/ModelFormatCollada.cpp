@@ -384,7 +384,6 @@ struct SkinData
 
 	void setJointInfluence(Vertex& vertex, int index)
 	{
-		uint32_t* indicies = &m_vertexWeightData.m_indicies.front();
 		uint32_t offset = 0;
 		uint32_t stride = 2;
 		// Step forward to our vertex
@@ -397,8 +396,8 @@ struct SkinData
 		// Get weights and indicies for all joints influencing our vertex
 		for (int i = 0; i < jointCount; i++)
 		{
-			uint32_t jointIndex = indicies[offset + m_vertexWeightData.m_jointInput.offset];
-			uint32_t weightIndex = indicies[offset + m_vertexWeightData.m_weightInput.offset];
+			uint32_t jointIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_jointInput.offset];
+			uint32_t weightIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_weightInput.offset];
 			offset += stride;
 			float weight = m_weights.getDataWeight(weightIndex);
 			vertex.setBoneInfluence(jointIndex, weight);
