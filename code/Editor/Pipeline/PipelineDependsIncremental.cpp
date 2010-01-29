@@ -163,8 +163,8 @@ void PipelineDependsIncremental::addDependency(
 	const Path& fileName
 )
 {
-	T_ASSERT (m_currentDependency);
-	m_currentDependency->files.insert(fileName);
+	if (m_currentDependency)
+		m_currentDependency->files.insert(fileName);
 }
 
 void PipelineDependsIncremental::getDependencies(RefArray< PipelineDependency >& outDependencies) const

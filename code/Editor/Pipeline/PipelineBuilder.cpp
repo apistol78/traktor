@@ -111,7 +111,25 @@ Ref< db::Database > PipelineBuilder::getOutputDatabase() const
 
 Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid)
 {
-	Ref< db::Instance > instance = m_outputDatabase->createInstance(
+	Ref< db::Instance > instance;
+
+	instance = m_outputDatabase->getInstance(instanceGuid);
+	if (instance)
+	{
+		bool result = false;
+
+		// Existing instance with same guid already exists; remove existing instance.
+		if (instance->checkout())
+		{
+			result = instance->remove();
+			result &= instance->commit();
+		}
+
+		if (!result)
+			return 0;
+	}
+
+	instance = m_outputDatabase->createInstance(
 		instancePath,
 		db::CifReplaceExisting,
 		&instanceGuid
