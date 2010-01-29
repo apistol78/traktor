@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_DATABASE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,6 +26,7 @@ class IStream;
 class IProviderBus;
 class IProviderInstance;
 
+class Database;
 class Group;
 
 /*! \brief Database instance.
@@ -41,7 +42,7 @@ class T_DLLCLASS Instance : public Object
 	T_RTTI_CLASS;
 
 public:
-	Instance();
+	Instance(Database* database);
 
 	bool internalCreate(IProviderBus* providerBus, IProviderInstance* providerInstance, Group* parent);
 
@@ -88,6 +89,7 @@ public:
 	}
 
 private:
+	Database* m_database;
 	IProviderBus* m_providerBus;
 	Ref< IProviderInstance > m_providerInstance;
 	Ref< Group > m_parent;

@@ -120,11 +120,20 @@ public:
 	virtual bool getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemote);
 
 private:
+	friend class Instance;
+
 	Ref< IProviderDatabase > m_providerDatabase;
 	Ref< IProviderBus > m_providerBus;
 	Ref< Group > m_rootGroup;
 	Semaphore m_lock;
 	std::map< Guid, Ref< Instance > > m_instanceMap;
+
+	/*! \brief Flush instance map.
+	 *
+	 * Next instance access will cause a rebuild
+	 * of the instance map.
+	 */
+	void flushInstanceMap();
 };
 
 	}

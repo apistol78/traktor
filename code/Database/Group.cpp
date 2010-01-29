@@ -12,8 +12,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Group", Group, Object)
 
-Group::Group(IProviderBus* providerBus)
-:	m_providerBus(providerBus)
+Group::Group(Database* database, IProviderBus* providerBus)
+:	m_database(database)
+,	m_providerBus(providerBus)
 {
 }
 
@@ -53,7 +54,7 @@ bool Group::internalReset()
 
 	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
 	{
-		Ref< Group > childGroup = new Group(m_providerBus);
+		Ref< Group > childGroup = new Group(m_database, m_providerBus);
 		if (!childGroup->internalCreate(*i, this))
 			return false;
 
@@ -65,7 +66,7 @@ bool Group::internalReset()
 
 	for (RefArray< IProviderInstance >::iterator i = providerChildInstances.begin(); i != providerChildInstances.end(); ++i)
 	{
-		Ref< Instance > childInstance = new Instance();
+		Ref< Instance > childInstance = new Instance(m_database);
 		if (!childInstance->internalCreate(m_providerBus, *i, this))
 			return false;
 
@@ -155,7 +156,7 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 	if (!providerGroup)
 		return 0;
 
-	group = new Group(m_providerBus);
+	group = new Group(m_database, m_providerBus);
 	if (!group->internalCreate(providerGroup, this))
 		return 0;
 
@@ -212,7 +213,7 @@ Ref< Instance > Group::createInstance(const std::wstring& instanceName, uint32_t
 
 	// Create instance object.
 	if (!instance)
-		instance = new Instance();
+		instance = new Instance(m_database);
 
 	if (!instance->internalCreate(m_providerBus, providerInstance, this))
 		return 0;
