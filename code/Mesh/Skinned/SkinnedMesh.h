@@ -63,7 +63,9 @@ public:
 		const IMeshParameterCallback* parameterCallback
 	);
 
-	const std::map< std::wstring, int >& getBoneMap() const;
+	int32_t getBoneCount() const;
+
+	const std::map< std::wstring, int32_t >& getBoneMap() const;
 
 private:
 	friend class SkinnedMeshFactory;
@@ -76,7 +78,8 @@ private:
 
 	Ref< render::Mesh > m_mesh;
 	std::vector< Part > m_parts;
-	std::map< std::wstring, int > m_boneMap;
+	std::map< std::wstring, int32_t > m_boneMap;
+	int32_t m_boneCount;
 };
 
 	}

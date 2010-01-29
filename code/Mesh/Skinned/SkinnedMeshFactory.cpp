@@ -88,7 +88,14 @@ Ref< Object > SkinnedMeshFactory::create(resource::IResourceManager* resourceMan
 			return 0;
 	}
 
-	skinnedMesh->m_boneMap = resource->getBoneMap();
+	const std::map< std::wstring, int >& boneMap = resource->getBoneMap();
+
+	int32_t boneMaxIndex = -1;
+	for (std::map< std::wstring, int >::const_iterator i = boneMap.begin(); i != boneMap.end(); ++i)
+		boneMaxIndex = max< int32_t >(boneMaxIndex, i->second);
+
+	skinnedMesh->m_boneMap = boneMap;
+	skinnedMesh->m_boneCount = boneMaxIndex + 1;
 
 	return skinnedMesh;
 }
