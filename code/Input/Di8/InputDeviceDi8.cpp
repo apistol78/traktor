@@ -161,18 +161,26 @@ float InputDeviceDi8::getControlValue(int control)
 					povInRange(state->rgdwPOV[0], 0, 4500)
 				)
 					return 1.0f;
+				else
+					return 0.0f;
 
 			case DtDown:
 				if (povInRange(state->rgdwPOV[0], 13500, 22500))
 					return 1.0f;
+				else
+					return 0.0f;
 
 			case DtLeft:
 				if (povInRange(state->rgdwPOV[0], 22500, 31500))
 					return 1.0f;
+				else
+					return 0.0f;
 
 			case DtRight:
 				if (povInRange(state->rgdwPOV[0], 4500, 13500))
 					return 1.0f;
+				else
+					return 0.0f;
 
 			case DtThumbLeftX:
 				return adjustDeadZone((state->lX - 32767.0f) / 32767.0f);
