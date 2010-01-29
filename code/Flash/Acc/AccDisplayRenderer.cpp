@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
