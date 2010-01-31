@@ -9,7 +9,6 @@
 #include "Xml/XmlPullParser.h"
 
 #if T_XML_PARSER_THREAD
-#	include "Core/Thread/Atomic.h"
 #	include "Core/Thread/JobManager.h"
 #	include "Core/Thread/Signal.h"
 #	include "Core/Thread/ThreadManager.h"
@@ -79,11 +78,12 @@ public:
 private:
 	Ref< IStream > m_stream;
 	XML_Parser m_parser;
+	uint8_t m_buf[4096];
 	bool m_done;
 	std::vector< wchar_t > m_cdata;
 	XmlPullParser::Event m_eventQueue[1024];
-	uint32_t m_eventQueueHead;
-	uint32_t m_eventQueueTail;
+	volatile uint32_t m_eventQueueHead;
+	volatile uint32_t m_eventQueueTail;
 
 #if T_XML_PARSER_THREAD
 	Job m_parseJob;
@@ -162,7 +162,7 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 	}
 
 	outEvent = m_eventQueue[m_eventQueueHead];
-	Atomic::exchange(m_eventQueueHead, (m_eventQueueHead + 1) % sizeof_array(m_eventQueue));
+	m_eventQueueHead = (m_eventQueueHead + 1) % sizeof_array(m_eventQueue);
 
 #else
 	while (m_eventQueueHead == m_eventQueueTail)
@@ -180,13 +180,11 @@ bool XmlPullParserImpl::parse()
 {
 	if (!m_done)
 	{
-		uint8_t buf[4096];
-
-		int nread = m_stream->read(buf, sizeof(buf));
+		int nread = m_stream->read(m_buf, sizeof(m_buf));
 		T_ASSERT_M (nread >= 0, L"Unexpected out-of-data");
 
-		m_done = nread < sizeof(buf);
-		if (XML_Parse(m_parser, (const char*)buf, nread, m_done) == XML_STATUS_ERROR)
+		m_done = nread < sizeof(m_buf);
+		if (XML_Parse(m_parser, (const char*)m_buf, nread, m_done) == XML_STATUS_ERROR)
 		{
 			log::error << L"XML parse error" << Endl;
 			return false;
@@ -238,7 +236,7 @@ XmlPullParser::Event& XmlPullParserImpl::allocEvent()
 void XmlPullParserImpl::pushEvent()
 {
 #if T_XML_PARSER_THREAD
-	Atomic::exchange(m_eventQueueTail, (m_eventQueueTail + 1) % sizeof_array(m_eventQueue));
+	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
 	m_eventQueueSignal.set();
 #else
 	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
