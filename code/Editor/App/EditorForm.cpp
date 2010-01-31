@@ -600,7 +600,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 {
 	T_ASSERT (instance);
 
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
@@ -999,6 +999,9 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	// Stop current build if any.
 	buildCancel();
 
+	// Save all open instances.
+	saveAllDocuments();
+
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
 		makeFunctor< 
@@ -1029,7 +1032,7 @@ void EditorForm::buildAsset(const Guid& assetGuid, bool rebuild)
 
 void EditorForm::buildAssets(bool rebuild)
 {
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
@@ -1104,7 +1107,7 @@ void EditorForm::updateShortcutTable()
 
 void EditorForm::saveCurrentDocument()
 {
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
@@ -1167,7 +1170,7 @@ void EditorForm::saveCurrentDocument()
 
 void EditorForm::saveAllDocuments()
 {
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
