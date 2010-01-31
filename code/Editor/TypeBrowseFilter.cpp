@@ -18,8 +18,10 @@ TypeBrowseFilter::TypeBrowseFilter(const TypeInfo& typeInfo)
 
 bool TypeBrowseFilter::acceptable(db::Instance* instance) const
 {
-	T_ASSERT (instance);
-	T_ASSERT (instance->getPrimaryType());
+	// This could happen if database contains instances which
+	// can't be loaded with current set of loaded modules.
+	if (!instance || !instance->getPrimaryType())
+		return false;
 
 	for (TypeInfoSet::const_iterator i = m_typeSet.begin(); i != m_typeSet.end(); ++i)
 	{
