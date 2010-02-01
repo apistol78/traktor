@@ -173,10 +173,31 @@ inline std::wstring toString(ValueType value)
  * \ingroup Core
  */
 template < typename ValueType >
+inline ValueType parseString(const std::string& text, const ValueType& defaultValue)
+{
+	ValueType value = defaultValue;
+	std::stringstream ss(text); ss >> value;
+	return value;
+}
+
+/*! \brief Convert literal to value.
+ * \ingroup Core
+ */
+template < typename ValueType >
 inline ValueType parseString(const std::string& text)
 {
-	ValueType value = std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : std::numeric_limits< ValueType >::max();
-	std::stringstream ss(text); ss >> value;
+	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
+}
+
+
+/*! \brief Convert literal to value.
+ * \ingroup Core
+ */
+template < typename ValueType >
+inline ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
+{
+	ValueType value = defaultValue;
+	std::wstringstream ss(text); ss >> value;
 	return value;
 }
 
@@ -186,9 +207,7 @@ inline ValueType parseString(const std::string& text)
 template < typename ValueType >
 inline ValueType parseString(const std::wstring& text)
 {
-	ValueType value = std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0;
-	std::wstringstream ss(text); ss >> value;
-	return value;
+	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }
 
 /*! \brief Convert literal to boolean.

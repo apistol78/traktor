@@ -62,7 +62,7 @@ uint32_t ActionArray::length() const
 
 void ActionArray::setMember(const std::wstring& memberName, const ActionValue& memberValue)
 {
-	int32_t index = parseString< int32_t >(memberName);
+	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
 		m_values[index] = memberValue;
 	else
@@ -71,7 +71,7 @@ void ActionArray::setMember(const std::wstring& memberName, const ActionValue& m
 
 bool ActionArray::getMember(const std::wstring& memberName, ActionValue& outMemberValue) const
 {
-	int32_t index = parseString< int32_t >(memberName);
+	int32_t index = parseString< int32_t >(memberName, -1);
 	if (index >= 0 && index < int32_t(m_values.size()))
 	{
 		outMemberValue = m_values[index];

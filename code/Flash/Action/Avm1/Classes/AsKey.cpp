@@ -28,6 +28,10 @@ AsKey::AsKey()
 	std::memset(m_keyState, 0, sizeof(m_keyState));
 }
 
+AsKey::~AsKey()
+{
+}
+
 void AsKey::eventKeyDown(IActionVM* actionVM, ActionContext* context, int keyCode)
 {
 	m_keyState[keyCode] = true;

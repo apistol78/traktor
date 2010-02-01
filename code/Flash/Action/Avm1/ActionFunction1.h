@@ -26,9 +26,10 @@ class T_DLLCLASS ActionFunction1 : public ActionFunction
 	T_RTTI_CLASS;
 
 public:
+	typedef std::vector< ActionValue > args_t;
+
 	ActionFunction1(
 		const std::wstring& name,
-		const std::vector< std::wstring >& arguments,
 		const uint8_t* code,
 		uint16_t codeSize,
 		ActionDictionary* dictionary
@@ -37,7 +38,6 @@ public:
 	virtual ActionValue call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self);
 
 private:
-	std::vector< std::wstring > m_arguments;
 	const uint8_t* m_code;
 	uint16_t m_codeSize;
 	Ref< ActionDictionary > m_dictionary;

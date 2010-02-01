@@ -39,6 +39,8 @@ public:
 		AffPreloadGlobal		= 0x100
 	};
 
+	typedef std::vector< ActionValue > args_t;
+
 	ActionFunction2(
 		const std::wstring& name,
 		const uint8_t* code,
