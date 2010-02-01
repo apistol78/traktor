@@ -1,5 +1,8 @@
+#include "Online/Local/AchievementLocal.h"
 #include "Online/Local/SessionLocal.h"
 #include "Online/Local/UserLocal.h"
+#include "Sql/IConnection.h"
+#include "Sql/IResultSet.h"
 
 namespace traktor
 {
@@ -8,8 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionLocal", SessionLocal, ISession)
 
-SessionLocal::SessionLocal(UserLocal* user)
-:	m_user(user)
+SessionLocal::SessionLocal(sql::IConnection* db, UserLocal* user)
+:	m_db(db)
+,	m_user(user)
 {
 }
 
@@ -19,7 +23,7 @@ void SessionLocal::destroy()
 
 bool SessionLocal::isConnected() const
 {
-	return false;
+	return true;
 }
 
 Ref< IUser > SessionLocal::getUser()
@@ -29,6 +33,13 @@ Ref< IUser > SessionLocal::getUser()
 
 bool SessionLocal::getAvailableAchievements(RefArray< IAchievement >& outAchievements) const
 {
+	Ref< sql::IResultSet > rs = m_db->executeQuery(L"select id from Achievements");
+	if (!rs)
+		return false;
+
+	while (rs->next())
+		outAchievements.push_back(new AchievementLocal(m_db, rs->getInt32(0)));
+
 	return true;
 }
 

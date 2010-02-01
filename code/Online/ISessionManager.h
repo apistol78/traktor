@@ -28,6 +28,15 @@ class T_DLLCLASS ISessionManager : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Create session manager.
+	 *
+	 * \return True if successfully created.
+	 */
+	virtual bool create() = 0;
+
+	/*! \brief Destroy session manager. */
+	virtual void destroy() = 0;
+
 	/*! \brief Get available "playable" users.
 	 *
 	 * \param outUser Array of users.

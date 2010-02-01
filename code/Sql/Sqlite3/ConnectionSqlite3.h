@@ -39,6 +39,8 @@ public:
 
 	virtual int32_t executeUpdate(const std::wstring& update);
 
+	virtual int32_t lastInsertId();
+
 	virtual bool tableExists(const std::wstring& tableName);
 
 private:

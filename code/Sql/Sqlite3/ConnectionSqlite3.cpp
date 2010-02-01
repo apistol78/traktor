@@ -84,13 +84,6 @@ Ref< IResultSet > ConnectionSqlite3::executeQuery(const std::wstring& query)
 		return 0;
 	}
 
-	err = sqlite3_step((sqlite3_stmt*)stmt);
-	if (err != SQLITE_ROW)
-	{
-		sqlite3_finalize((sqlite3_stmt*)stmt);
-		return 0;
-	}
-
 	return new ResultSetSqlite3((void*)stmt);
 }
 
@@ -119,10 +112,16 @@ int32_t ConnectionSqlite3::executeUpdate(const std::wstring& update)
 	return err == SQLITE_DONE ? 1 : 0;
 }
 
+int32_t ConnectionSqlite3::lastInsertId()
+{
+	Ref< sql::IResultSet > rs = executeQuery(L"select last_insert_rowid() as id");
+	return (rs && rs->next()) ? rs->getInt32(0) : - 1;
+}
+
 bool ConnectionSqlite3::tableExists(const std::wstring& tableName)
 {
 	Ref< sql::IResultSet > rs = executeQuery(L"select count(*) from sqlite_master where name='" + tableName + L"'");
-	return (rs && rs->getInt32(0) > 0);
+	return (rs && rs->next()) ? (rs->getInt32(0) > 0) : false;
 }
 
 	}

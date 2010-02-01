@@ -65,7 +65,7 @@ void PipelineDb::set(const Guid& guid, const Hash& hash)
 	// Remove existing records.
 	ss << L"select id from PipelineHash where guid='" << guid.format() << L"'";
 	rs = m_connection->executeQuery(ss.str());
-	if (rs)
+	if (rs && rs->next())
 	{
 		int32_t hashId = rs->getInt32(0);
 
@@ -93,22 +93,18 @@ void PipelineDb::set(const Guid& guid, const Hash& hash)
 	// Insert time stamps.
 	if (!hash.timeStamps.empty())
 	{
-		rs = m_connection->executeQuery(L"select last_insert_rowid() as id");
-		if (rs)
+		int32_t hashId = m_connection->lastInsertId();
+		for (std::map< Path, DateTime >::const_iterator i = hash.timeStamps.begin(); i != hash.timeStamps.end(); ++i)
 		{
-			int32_t hashId = rs->getInt32(0);
-			for (std::map< Path, DateTime >::const_iterator i = hash.timeStamps.begin(); i != hash.timeStamps.end(); ++i)
-			{
-				ss.reset();
-				ss <<
-					L"insert into TimeStamps (hashId, path, epoch) "
-					L"values (" <<
-					hashId << L"," <<
-					L"'" << i->first.getPathName() << L"'," <<
-					i->second.getSecondsSinceEpoch() <<
-					L")";
-				m_connection->executeUpdate(ss.str());
-			}
+			ss.reset();
+			ss <<
+				L"insert into TimeStamps (hashId, path, epoch) "
+				L"values (" <<
+				hashId << L"," <<
+				L"'" << i->first.getPathName() << L"'," <<
+				i->second.getSecondsSinceEpoch() <<
+				L")";
+			m_connection->executeUpdate(ss.str());
 		}
 	}
 }
@@ -121,7 +117,7 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	// Get hash record.
 	ss << L"select * from PipelineHash where guid='" << guid.format() << L"'";
 	rs = m_connection->executeQuery(ss.str());
-	if (!rs)
+	if (!rs || !rs->next())
 		return false;
 
 	int32_t id = rs->getInt32(L"id");
@@ -136,7 +132,7 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 	rs = m_connection->executeQuery(ss.str());
 	if (rs)
 	{
-		do 
+		while (rs->next())
 		{
 			std::wstring path = rs->getString(L"path");
 			int64_t epoch = rs->getInt64(L"epoch");
@@ -145,7 +141,6 @@ bool PipelineDb::get(const Guid& guid, Hash& outHash) const
 				DateTime(epoch)
 			));
 		}
-		while (rs->next());
 	}
 
 	return true;
