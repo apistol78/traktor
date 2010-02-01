@@ -6,13 +6,20 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ONLINE_LOCAL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif 
 
 namespace traktor
 {
+	namespace sql
+	{
+
+class IConnection;
+
+	}
+
 	namespace online
 	{
 
@@ -23,7 +30,7 @@ class T_DLLCLASS SessionLocal : public ISession
 	T_RTTI_CLASS;
 
 public:
-	SessionLocal(UserLocal* user);
+	SessionLocal(sql::IConnection* db, UserLocal* user);
 
 	virtual void destroy();
 
@@ -38,6 +45,7 @@ public:
 	virtual bool getAvailableSaveGames(RefArray< ISaveGame >& outSaveGames) const;
 
 private:
+	Ref< sql::IConnection > m_db;
 	Ref< UserLocal > m_user;
 };
 

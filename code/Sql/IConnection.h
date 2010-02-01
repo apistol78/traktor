@@ -50,6 +50,12 @@ public:
 	 */
 	virtual int32_t executeUpdate(const std::wstring& update) = 0;
 
+	/*! \brief Get last auto-generated id used with insert.
+	 *
+	 * \return Last insert id.
+	 */
+	virtual int32_t lastInsertId() = 0;
+
 	/*! \brief Have table query.
 	 *
 	 * Different providers have different
