@@ -1186,34 +1186,39 @@ void EditorForm::saveAllDocuments()
 		Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"INSTANCE");
 		T_ASSERT (instance);
 
-		bool result = false;
+		Ref< DeepHash > objectHash = tabPage->getData< DeepHash >(L"HASH");
+		T_ASSERT (objectHash);
 
 		Ref< ISerializable > object = checked_type_cast< ISerializable* >(editorPage->getDataObject());
 		T_ASSERT (object);
 
-		if (instance->setObject(object))
+		if (*objectHash != object)
 		{
-			if (instance->commit(db::CfKeepCheckedOut))
+			bool result = false;
+			if (instance->setObject(object))
 			{
-				tabPage->setData(L"HASH", new DeepHash(object));
-				result = true;
+				if (instance->commit(db::CfKeepCheckedOut))
+				{
+					tabPage->setData(L"HASH", new DeepHash(object));
+					result = true;
+				}
 			}
-		}
 
-		if (result)
-		{
-			m_statusBar->setText(L"Instance " + instance->getName() + L" saved successfully");
-			log::info << L"Instance " << instance->getName() << L" saved successfully" << Endl;
-		}
-		else
-		{
-			ui::MessageBox::show(
-				this,
-				i18n::Format(L"ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE", instance->getName()),
-				i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE"),
-				ui::MbOk | ui::MbIconExclamation
-			);
-			log::error << L"Unable to save instance \"" << instance->getName() << L"\"!" << Endl;
+			if (result)
+			{
+				m_statusBar->setText(L"Instance " + instance->getName() + L" saved successfully");
+				log::info << L"Instance " << instance->getName() << L" saved successfully" << Endl;
+			}
+			else
+			{
+				ui::MessageBox::show(
+					this,
+					i18n::Format(L"ERROR_MESSAGE_UNABLE_TO_SAVE_INSTANCE", instance->getName()),
+					i18n::Text(L"ERROR_TITLE_UNABLE_TO_SAVE_INSTANCE"),
+					ui::MbOk | ui::MbIconExclamation
+				);
+				log::error << L"Unable to save instance \"" << instance->getName() << L"\"!" << Endl;
+			}
 		}
 	}
 
