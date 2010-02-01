@@ -43,10 +43,10 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 	Ref< ActionContext > context = callerFrame->getContext();
 
 	ActionValueStack& callerStack = callerFrame->getStack();
-	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 	
-	std::vector< ActionValue > args(argCount);
-	for (int i = 0; i < argCount; ++i)
+	args_t args(argCount);
+	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
 	ActionFrame callFrame(

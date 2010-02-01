@@ -17,10 +17,10 @@ ActionClass::ActionClass(const std::wstring& name)
 ActionValue ActionClass::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
-	int argCount = !callerStack.empty() ? int(callerStack.pop().getNumber()) : 0;
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
 
 	args_t args(argCount);
-	for (int i = 0; i < argCount; ++i)
+	for (int32_t i = 0; i < argCount; ++i)
 		args[i] = callerStack.pop();
 
 	return construct(callerFrame->getContext(), args);

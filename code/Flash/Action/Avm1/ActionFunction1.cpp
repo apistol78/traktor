@@ -13,13 +13,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionFunction1", ActionFunction1, Action
 
 ActionFunction1::ActionFunction1(
 	const std::wstring& name,
-	const std::vector< std::wstring >& arguments,
 	const uint8_t* code,
 	uint16_t codeSize,
 	ActionDictionary* dictionary
 )
 :	ActionFunction(name)
-,	m_arguments(arguments)
 ,	m_code(code)
 ,	m_codeSize(codeSize)
 ,	m_dictionary(dictionary)
@@ -33,6 +31,11 @@ ActionFunction1::ActionFunction1(
 ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame, ActionObject* self)
 {
 	ActionValueStack& callerStack = callerFrame->getStack();
+	int32_t argCount = !callerStack.empty() ? int32_t(callerStack.pop().getNumber()) : 0;
+
+	args_t args(argCount);
+	for (int32_t i = 0; i < argCount; ++i)
+		args[i] = callerStack.pop();
 
 	ActionFrame callFrame(
 		callerFrame->getContext(),
@@ -44,8 +47,11 @@ ActionValue ActionFunction1::call(const IActionVM* vm, ActionFrame* callerFrame,
 		this
 	);
 
-	for (std::vector< std::wstring >::const_iterator i = m_arguments.begin(); i != m_arguments.end(); ++i)
-		callFrame.setVariable(*i, callerStack.pop());
+	//for (std::vector< std::wstring >::const_iterator i = m_arguments.begin(); i != m_arguments.end(); ++i)
+	//	callFrame.setVariable(*i, callerStack.pop());
+
+	for (int32_t i = 0; i < argCount; ++i)
+		callFrame.getStack().push(args[i]);
 
 #if defined(_DEBUG)
 	log::debug << L"ActionFunction1, enter VM" << Endl << IncreaseIndent;

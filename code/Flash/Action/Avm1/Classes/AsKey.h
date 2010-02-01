@@ -25,6 +25,8 @@ public:
 
 	AsKey();
 
+	virtual ~AsKey();
+
 	void eventKeyDown(IActionVM* actionVM, ActionContext* context, int keyCode);
 
 	void eventKeyUp(IActionVM* actionVM, ActionContext* context, int keyCode);

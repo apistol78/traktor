@@ -16,7 +16,7 @@
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
-#define VM_TRACE_ENABLE 0
+#define VM_TRACE_ENABLE 1
 
 #if VM_TRACE_ENABLE
 #	define T_WIDEN_X(x) L ## x
@@ -819,33 +819,40 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopNew)
-			std::wstring className = stack.pop().getStringSafe();
-			ActionValue classValue;
-			context->getGlobal()->getMember(className, classValue);
-			if (classValue.isObject())
+			ActionValue classFunction = stack.pop();
+			Ref< ActionFunction > classConstructor;
+			
+			if (classFunction.isObject())
+				classConstructor = classFunction.getObject< ActionFunction >();
+			else
 			{
-				Ref< ActionFunction > classObject = classValue.getObject< ActionFunction >();
-				if (classObject)
-				{
-					// Create instance of class.
-					Ref< ActionObject > self = new ActionObject(classObject);
+				std::wstring classConstructorName = classFunction.getStringSafe();
+				context->getGlobal()->getMember(classConstructorName, classFunction);
+				if (classFunction.isObject())
+					classConstructor = classFunction.getObject< ActionFunction >();
+			}
 
-					// Call constructor.
-					ActionValue object = classObject->call(this, frame, self);
-					if (object.isObject())
-						stack.push(object);
-					else
-						stack.push(ActionValue::fromObject(self.ptr()));
+			if (classConstructor)
+			{
+				// Create instance of class.
+				Ref< ActionObject > self = new ActionObject(classConstructor);
+
+				// Call constructor.
+				ActionValue object = classConstructor->call(this, frame, self);
+				if (object.isObject())
+				{
+					VM_LOG(L"Got product " << object.getStringSafe());
+					stack.push(object);
 				}
 				else
 				{
-					VM_LOG(L"Not a class object");
-					stack.push(ActionValue());
+					VM_LOG(L"New product " << self->toString());
+					stack.push(ActionValue::fromObject(self.ptr()));
 				}
 			}
 			else
 			{
-				VM_LOG(L"Undefined constructor");
+				VM_LOG(L"Not a class object");
 				stack.push(ActionValue());
 			}
 		VM_END()
@@ -1073,7 +1080,10 @@ void ActionVM1::execute(ActionFrame* frame) const
 					propertySet->call(this, frame, target);
 				}
 				else
+				{
+					VM_LOG(L"on target " << target->toString());
 					target->setMember(memberName, memberValue);
+				}
 			}
 			else
 				VM_LOG(L"Target undefined");
@@ -1398,13 +1408,12 @@ void ActionVM1::execute(ActionFrame* frame) const
 			uint16_t argumentCount = readUInt16(data);
 			data += sizeof(uint16_t);
 
-			std::vector< std::wstring > arguments(argumentCount);
+			//std::vector< std::wstring > arguments(argumentCount);
 			for (int i = 0; i  < argumentCount; ++i)
 			{
 				const char T_UNALIGNED * argumentName = reinterpret_cast< const char T_UNALIGNED * >(data);
 				data += strlen(argumentName) + 1;
-
-				arguments[i] = mbstows(argumentName);
+				//arguments[i] = mbstows(argumentName);
 			}
 
 			uint16_t codeSize = readUInt16(data);
@@ -1412,7 +1421,6 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			Ref< ActionFunction > function = new ActionFunction1(
 				mbstows(functionName),
-				arguments,
 				npc,
 				codeSize,
 				frame->getDictionary()
