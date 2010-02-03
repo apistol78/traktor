@@ -98,14 +98,16 @@ RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
 
 	LPHOSTENT host;
 	host = gethostbyname(hostName);
+	if (host && host->h_addr)
+	{
+		in_addr* ptr = (in_addr*)host->h_addr;
 
-	in_addr* ptr = (in_addr*)host->h_addr;
+		sockaddr_in addr;
+		addr.sin_port = 0;
+		addr.sin_addr = *ptr;
 
-	sockaddr_in addr;
-	addr.sin_port = 0;
-	addr.sin_addr = *ptr;
-
-	interfaces.push_back(new SocketAddressIPv4(addr));
+		interfaces.push_back(new SocketAddressIPv4(addr));
+	}
 #endif
 
 	return interfaces;
