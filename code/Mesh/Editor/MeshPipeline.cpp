@@ -96,7 +96,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 9, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 10, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -287,11 +287,12 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Build material shader.
+		std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + materialName;
 		if (!pipelineBuilder->buildOutput(
 			materialShaderGraph,
 			0,
 			materialName,
-			outputPath + L"/Materials/" + materialName,
+			materialPath,
 			materialGuid
 		))
 		{
