@@ -147,7 +147,7 @@ void AsMovieClip::MovieClip_attachBitmap(CallArgs& ca)
 
 void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	if (ca.args.size() < 3)
 	{
 		log::error << L"MovieClip.attachMovie, incorrect number of arguments" << Endl;
@@ -206,7 +206,7 @@ void AsMovieClip::MovieClip_clear(CallArgs& ca)
 
 void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	if (ca.args.size() < 2)
 	{
 		log::error << L"MovieClip.createEmptyMovieClip, incorrect number of arguments" << Endl;
@@ -247,7 +247,7 @@ void AsMovieClip::MovieClip_curveTo(CallArgs& ca)
 
 void AsMovieClip::MovieClip_duplicateMovieClip(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
 
 	Ref< FlashSpriteInstance > cloneClipInstance = movieClipInstance->clone();
@@ -280,7 +280,7 @@ void AsMovieClip::MovieClip_getBytesTotal(CallArgs& ca)
 
 void AsMovieClip::MovieClip_getDepth(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
 	if (parentClipInstance)
 		ca.ret = ActionValue(avm_number_t(parentClipInstance->getDisplayList().getObjectDepth(movieClipInstance)));
@@ -292,7 +292,7 @@ void AsMovieClip::MovieClip_getInstanceAtDepth(CallArgs& ca)
 
 void AsMovieClip::MovieClip_getNextHighestDepth(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getDisplayList().getNextHighestDepth()));
 }
 
@@ -319,7 +319,7 @@ void AsMovieClip::MovieClip_globalToLocal(CallArgs& ca)
 
 void AsMovieClip::MovieClip_gotoAndPlay(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	if (ca.args[0].isNumeric())
 		movieClipInstance->gotoFrame(uint32_t(ca.args[0].getNumber() - 1));
 	else if (ca.args[0].isString())
@@ -335,7 +335,7 @@ void AsMovieClip::MovieClip_gotoAndPlay(CallArgs& ca)
 
 void AsMovieClip::MovieClip_gotoAndStop(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	if (ca.args[0].isNumeric())
 	{
 		int32_t frame = int32_t(ca.args[0].getNumber());
@@ -354,7 +354,7 @@ void AsMovieClip::MovieClip_gotoAndStop(CallArgs& ca)
 
 void AsMovieClip::MovieClip_hitTest(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 
 	if (ca.args.size() == 3)
 	{
@@ -418,25 +418,25 @@ void AsMovieClip::MovieClip_moveTo(CallArgs& ca)
 
 void AsMovieClip::MovieClip_nextFrame(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->gotoNext();
 }
 
 void AsMovieClip::MovieClip_play(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->setPlaying(true);
 }
 
 void AsMovieClip::MovieClip_prevFrame(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->gotoPrevious();
 }
 
 void AsMovieClip::MovieClip_removeMovieClip(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
 	FlashDisplayList& displayList = parentClipInstance->getDisplayList();
 	displayList.removeObject(movieClipInstance);
@@ -452,7 +452,7 @@ void AsMovieClip::MovieClip_startDrag(CallArgs& ca)
 
 void AsMovieClip::MovieClip_stop(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->setPlaying(false);
 }
 
@@ -462,7 +462,7 @@ void AsMovieClip::MovieClip_stopDrag(CallArgs& ca)
 
 void AsMovieClip::MovieClip_swapDepths(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Ref< FlashSpriteInstance > parentClipInstance = checked_type_cast< FlashSpriteInstance* >(movieClipInstance->getParent());
 
 	// Get my own current depth.
@@ -512,13 +512,13 @@ void AsMovieClip::MovieClip_set_cacheAsBitmap(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_currentframe(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getCurrentFrame() + 1));
 }
 
 void AsMovieClip::MovieClip_set_currentframe(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	uint32_t frame = uint32_t(ca.args[0].getNumberSafe());
 	if (frame > 0)
 		movieClipInstance->gotoFrame(frame - 1);
@@ -574,7 +574,7 @@ void AsMovieClip::MovieClip_set_forceSmoothing(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_framesloaded(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Ref< const FlashSprite > movieClip = movieClipInstance->getSprite();
 	ca.ret = ActionValue(avm_number_t(movieClip->getFrameCount()));
 }
@@ -585,12 +585,24 @@ void AsMovieClip::MovieClip_set_framesloaded(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_height(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue((movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+
+	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
+	Matrix33 transform = movieClipInstance->getTransform();
+
+	ca.ret = ActionValue(transform.e22 * extent);
 }
 
 void AsMovieClip::MovieClip_set_height(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	
+	float extent = (movieClipInstance->getBounds().max.y - movieClipInstance->getBounds().min.y) / 20.0f;
+	Matrix33 transform = movieClipInstance->getTransform();
+
+	transform.e22 = float(ca.args[0].getNumberSafe()) / extent;
+
+	movieClipInstance->setTransform(transform);
 }
 
 void AsMovieClip::MovieClip_get_highquality(CallArgs& ca)
@@ -627,13 +639,13 @@ void AsMovieClip::MovieClip_set_menu(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_name(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(movieClipInstance->getName());
 }
 
 void AsMovieClip::MovieClip_set_name(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->setName(ca.args[0].getStringSafe());
 }
 
@@ -647,7 +659,7 @@ void AsMovieClip::MovieClip_set_opaqueBackground(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_parent(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue::fromObject(movieClipInstance->getParent());
 }
 
@@ -666,7 +678,7 @@ void AsMovieClip::MovieClip_set_quality(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	float x = transform.e11;
 	float y = transform.e21;
@@ -676,7 +688,7 @@ void AsMovieClip::MovieClip_get_rotation(CallArgs& ca)
 
 void AsMovieClip::MovieClip_set_rotation(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	movieClipInstance->setTransform(
 		rotate(deg2rad(float(ca.args[0].getNumberSafe()))) *
@@ -782,35 +794,47 @@ void AsMovieClip::MovieClip_set_useHandCursor(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_visible(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(movieClipInstance->isVisible());
 }
 
 void AsMovieClip::MovieClip_set_visible(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	movieClipInstance->setVisible(ca.args[0].toBoolean().getBoolean());
 }
 
 void AsMovieClip::MovieClip_get_width(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
-	ca.ret = ActionValue((movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+	
+	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
+	Matrix33 transform = movieClipInstance->getTransform();
+
+	ca.ret = ActionValue(transform.e11 * extent);
 }
 
 void AsMovieClip::MovieClip_set_width(CallArgs& ca)
 {
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
+
+	float extent = (movieClipInstance->getBounds().max.x - movieClipInstance->getBounds().min.x) / 20.0f;
+	Matrix33 transform = movieClipInstance->getTransform();
+
+	transform.e11 = float(ca.args[0].getNumberSafe()) / extent;
+
+	movieClipInstance->setTransform(transform);
 }
 
 void AsMovieClip::MovieClip_get_x(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e13 / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_x(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	transform.e13 = float(ca.args[0].getNumberSafe() * 20.0);
 	movieClipInstance->setTransform(transform);
@@ -818,7 +842,7 @@ void AsMovieClip::MovieClip_set_x(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_xmouse(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseX()));
 }
 
@@ -828,13 +852,13 @@ void AsMovieClip::MovieClip_set_xmouse(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_xscale(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e11 * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	transform.e11 = float(ca.args[0].getNumberSafe() / 100.0);
 	movieClipInstance->setTransform(transform);
@@ -842,13 +866,13 @@ void AsMovieClip::MovieClip_set_xscale(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_y(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e23 / 20.0));
 }
 
 void AsMovieClip::MovieClip_set_y(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	transform.e23 = float(ca.args[0].getNumberSafe() * 20.0);
 	movieClipInstance->setTransform(transform);
@@ -856,7 +880,7 @@ void AsMovieClip::MovieClip_set_y(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_ymouse(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getMouseY()));
 }
 
@@ -866,13 +890,13 @@ void AsMovieClip::MovieClip_set_ymouse(CallArgs& ca)
 
 void AsMovieClip::MovieClip_get_yscale(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	ca.ret = ActionValue(avm_number_t(movieClipInstance->getTransform().e22 * 100.0));
 }
 
 void AsMovieClip::MovieClip_set_yscale(CallArgs& ca)
 {
-	Ref< FlashSpriteInstance > movieClipInstance = checked_type_cast< FlashSpriteInstance* >(ca.self);
+	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
 	Matrix33 transform = movieClipInstance->getTransform();
 	transform.e22 = float(ca.args[0].getNumberSafe() / 100.0);
 	movieClipInstance->setTransform(transform);
