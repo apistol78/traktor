@@ -840,15 +840,9 @@ void ActionVM1::execute(ActionFrame* frame) const
 				// Call constructor.
 				ActionValue object = classConstructor->call(this, frame, self);
 				if (object.isObject())
-				{
-					VM_LOG(L"Got product " << object.getStringSafe());
 					stack.push(object);
-				}
 				else
-				{
-					VM_LOG(L"New product " << self->toString());
 					stack.push(ActionValue::fromObject(self.ptr()));
-				}
 			}
 			else
 			{
@@ -1115,7 +1109,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopCallMethod)
-			ActionValue methodName = stack.pop();
+			ActionValue classConstructorName = stack.pop();
 			ActionValue targetValue = stack.pop();
 			ActionValue returnValue;
 
@@ -1124,10 +1118,10 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			if (target)
 			{
-				if (methodName.isString())
+				if (classConstructorName.isString())
 				{
 					ActionValue memberValue;
-					if (target->getMember(methodName.getString(), memberValue))
+					if (target->getMember(classConstructorName.getString(), memberValue))
 						method = dynamic_type_cast< ActionFunction* >(memberValue.getObjectSafe());
 				}
 				else
@@ -1138,7 +1132,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				returnValue = method->call(this, frame, target);
 			else
 			{
-				log::warning << L"Undefined method \"" << methodName.getStringSafe() << L"\"" << Endl;
+				log::warning << L"Undefined method \"" << classConstructorName.getStringSafe() << L"\"" << Endl;
 				int argCount = int(stack.pop().getNumber());
 				stack.drop(argCount);
 			}
@@ -1147,30 +1141,36 @@ void ActionVM1::execute(ActionFrame* frame) const
 		VM_END()
 
 		VM_BEGIN(AopNewMethod)
-			std::wstring methodName = stack.pop().getStringSafe();
-			Ref< ActionObject > object = stack.pop().getObject();
+			std::wstring classConstructorName = stack.pop().getStringSafe();
+			Ref< ActionObject > classConstructorObject = stack.pop().getObject();
+			Ref< ActionFunction > classConstructor;
 
-			Ref< ActionFunction > constructorFnc;
-			if (!methodName.empty())
+			if (classConstructorName.empty())
+				classConstructor = dynamic_type_cast< ActionFunction* >(classConstructorObject);
+			else
 			{
 				ActionValue methodValue;
-				object->getMember(methodName, methodValue);
-				constructorFnc = methodValue.getObject< ActionFunction >();
+				classConstructorObject->getMember(classConstructorName, methodValue);
+				classConstructor = methodValue.getObject< ActionFunction >();
 			}
-			else
-				constructorFnc = dynamic_type_cast< ActionFunction* >(object);
 
-			ActionValue ret;
-			if (constructorFnc)
-				ret = constructorFnc->call(this, frame, object);
+			if (classConstructor)
+			{
+				// Create instance of class.
+				Ref< ActionObject > self = new ActionObject(classConstructor);
+
+				// Call constructor.
+				ActionValue object = classConstructor->call(this, frame, self);
+				if (object.isObject())
+					stack.push(object);
+				else
+					stack.push(ActionValue::fromObject(self.ptr()));
+			}
 			else
 			{
-				log::warning << L"Undefined constructor \"" << methodName << L"\"" << Endl;
-				int argCount = int(stack.pop().getNumber());
-				stack.drop(argCount);
+				VM_LOG(L"Not a class object");
+				stack.push(ActionValue());
 			}
-
-			stack.push(ActionValue::fromObject(object));
 		VM_END()
 
 		VM_BEGIN(AopInstanceOf)

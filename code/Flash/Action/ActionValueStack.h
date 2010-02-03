@@ -25,13 +25,19 @@ class T_DLLCLASS ActionValueStack : public Object
 	T_RTTI_CLASS;
 
 public:
+	ActionValueStack()
+	:	m_index(0)
+	{
+	}
+
 	/*! \brief Push value onto stack.
 	 *
 	 * \param value Value to push.
 	 */
 	inline void push(const ActionValue& value)
 	{
-		m_stack.push_back(value);
+		T_ASSERT (m_index < MaxStackDepth);
+		m_stack[m_index++] = value;
 	}
 
 	/*! \brief Pop value of stack.
@@ -40,9 +46,8 @@ public:
 	 */
 	inline ActionValue pop()
 	{
-		ActionValue value = m_stack.back();
-		m_stack.pop_back();
-		return value;
+		T_ASSERT (m_index > 0);
+		return m_stack[--m_index];
 	}
 
 	/*! \brief Peek at value on top of stack.
@@ -50,9 +55,9 @@ public:
 	 * \param offset Offset from top of stack.
 	 * \return Value.
 	 */
-	inline ActionValue& top(int offset = 0)
+	inline ActionValue& top(int32_t offset = 0)
 	{
-		return m_stack[m_stack.size() + offset - 1];
+		return m_stack[m_index + offset - 1];
 	}
 
 	/*! \brief Stack empty.
@@ -61,41 +66,42 @@ public:
 	 */
 	inline bool empty() const
 	{
-		return m_stack.empty();
+		return m_index <= 0;
 	}
 
 	/*! \brief Ensure stack contains given number of values.
 	 *
 	 * \param ensureCount Number of values.
 	 */
-	inline void ensure(int ensureCount)
+	inline void ensure(int32_t ensureCount)
 	{
-		while (int(m_stack.size()) < ensureCount)
-			m_stack.push_back(ActionValue());
+		while (m_index < ensureCount)
+			m_stack[m_index++] = ActionValue();
 	}
 
 	/*! \brief Drop values from stack.
 	 *
 	 * \param dropCount Number of values to drop.
 	 */
-	inline void drop(int dropCount)
+	inline void drop(int32_t dropCount)
 	{
-		int newSize = int(m_stack.size() - dropCount);
-		newSize = std::max(newSize, 0);
-		m_stack.resize(newSize);
+		m_index -= dropCount;
+		m_index = std::max(m_index, 0);
 	}
 
 	/*! \brief Stack depth.
 	 *
 	 * \return Depth of stack.
 	 */
-	inline uint32_t depth() const
+	inline int32_t depth() const
 	{
-		return uint32_t(m_stack.size());
+		return m_index;
 	}
 
 private:
-	std::vector< ActionValue > m_stack;
+	enum { MaxStackDepth = 64 };
+	ActionValue m_stack[MaxStackDepth];
+	int32_t m_index;
 };
 
 	}

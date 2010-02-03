@@ -314,6 +314,7 @@ void AsMovieClip::MovieClip_getURL(CallArgs& ca)
 
 void AsMovieClip::MovieClip_globalToLocal(CallArgs& ca)
 {
+	T_FATAL_ERROR;
 }
 
 void AsMovieClip::MovieClip_gotoAndPlay(CallArgs& ca)
@@ -408,6 +409,7 @@ void AsMovieClip::MovieClip_loadVariables(CallArgs& ca)
 
 void AsMovieClip::MovieClip_localToGlobal(CallArgs& ca)
 {
+	T_FATAL_ERROR;
 }
 
 void AsMovieClip::MovieClip_moveTo(CallArgs& ca)
