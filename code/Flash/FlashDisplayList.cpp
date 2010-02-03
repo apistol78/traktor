@@ -175,7 +175,7 @@ int32_t FlashDisplayList::getNextHighestDepth() const
 {
 	int32_t depth = 0;
 	for (layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		depth = max(depth, i->first);
+		depth = max(depth, i->first + 1);
 	return depth;
 }
 

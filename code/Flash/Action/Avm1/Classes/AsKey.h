@@ -21,6 +21,28 @@ class AsKey : public ActionClass
 	T_RTTI_CLASS;
 
 public:
+	enum AsKeyEnum
+	{
+		AkBackspace = 8,
+		AkCapsLock = 20,
+		AkControl = 17,
+		AkDeleteKey = 46,
+		AkDown = 40,
+		AkEnd = 35,
+		AkEnter = 13,
+		AkEscape = 27,
+		AkHome = 36,
+		AkInsert = 45,
+		AkLeft = 37,
+		AkPgDn = 34,
+		AkPgUp = 33,
+		AkRight = 39,
+		AkShift = 16,
+		AkSpace = 32,
+		AkTab = 9,
+		AkUp = 38
+	};
+
 	static Ref< AsKey > createInstance();
 
 	AsKey();

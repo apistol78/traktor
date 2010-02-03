@@ -3,6 +3,7 @@
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashSprite.h"
+#include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
 #include "Ui/Itf/IWidget.h"
@@ -36,6 +37,43 @@ namespace traktor
 		{
 
 const int c_updateInterval = 30;
+
+const struct
+{
+	ui::VirtualKey vk;
+	AsKey::AsKeyEnum ak;
+}
+c_askeys[] =
+{
+	{ ui::VkBackSpace, AsKey::AkBackspace },
+	//{ ui::VkNull, AsKey::AkCapsLock },
+	{ ui::VkControl, AsKey::AkControl },
+	{ ui::VkDelete, AsKey::AkDeleteKey },
+	{ ui::VkDown, AsKey::AkDown },
+	{ ui::VkEnd, AsKey::AkEnd },
+	{ ui::VkReturn, AsKey::AkEnter },
+	{ ui::VkEscape, AsKey::AkEscape },
+	{ ui::VkHome, AsKey::AkHome },
+	{ ui::VkInsert, AsKey::AkInsert },
+	{ ui::VkLeft, AsKey::AkLeft },
+	{ ui::VkPageDown, AsKey::AkPgDn },
+	{ ui::VkPageUp, AsKey::AkPgUp },
+	{ ui::VkRight, AsKey::AkRight },
+	{ ui::VkShift, AsKey::AkShift },
+	{ ui::VkSpace, AsKey::AkSpace },
+	{ ui::VkTab, AsKey::AkTab },
+	{ ui::VkUp, AsKey::AkUp }
+};
+
+int32_t translateVirtualKey(ui::VirtualKey vk)
+{
+	for (int i = 0; i < sizeof_array(c_askeys); ++i)
+	{
+		if (vk == c_askeys[i].vk)
+			return c_askeys[i].ak;
+	}
+	return 0;
+}
 
 		}
 
@@ -302,14 +340,22 @@ void FlashPreviewControl::eventKeyDown(ui::Event* event)
 {
 	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
-		m_moviePlayer->postKeyDown((int32_t)keyEvent->getVirtualKey());
+	{
+		int32_t ak = translateVirtualKey(keyEvent->getVirtualKey());
+		if (ak > 0)
+			m_moviePlayer->postKeyDown(ak);
+	}
 }
 
 void FlashPreviewControl::eventKeyUp(ui::Event* event)
 {
 	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
 	if (m_moviePlayer)
-		m_moviePlayer->postKeyUp((int32_t)keyEvent->getVirtualKey());
+	{
+		int32_t ak = translateVirtualKey(keyEvent->getVirtualKey());
+		if (ak > 0)
+			m_moviePlayer->postKeyUp(ak);
+	}
 }
 
 void FlashPreviewControl::eventButtonDown(ui::Event* event)

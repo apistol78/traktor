@@ -8,6 +8,8 @@ namespace traktor
 	namespace flash
 	{
 
+struct CallArgs;
+
 /*! \brief Function class.
  * \ingroup Flash
  */
@@ -24,6 +26,8 @@ private:
 	void createPrototype();
 
 	virtual ActionValue construct(ActionContext* context, const args_t& args);
+
+	void Function_call(CallArgs& ca);
 };
 
 	}

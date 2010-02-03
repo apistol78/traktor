@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
 #include "Flash/Action/Avm1/Classes/AsObject.h"
@@ -31,6 +33,9 @@ void AsFunction::createPrototype()
 	Ref< ActionObject > prototype = new ActionObject();
 
 	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"call", createNativeFunctionValue(this, &AsFunction::Function_call));
+
+	prototype->setReadOnly();
 
 	setMember(L"prototype", ActionValue::fromObject(prototype));
 }
@@ -38,6 +43,42 @@ void AsFunction::createPrototype()
 ActionValue AsFunction::construct(ActionContext* context, const args_t& args)
 {
 	return ActionValue();
+}
+
+void AsFunction::Function_call(CallArgs& ca)
+{
+	if (ca.args.size() < 1)
+	{
+		log::error << L"Function.call, incorrect number of arguments" << Endl;
+		return;
+	}
+
+	ActionFunction* function = checked_type_cast< ActionFunction*, false >(ca.self);
+
+	Ref< ActionObject > self = ca.args[0].getObjectSafe();
+
+	ActionFrame frame(
+		ca.context,
+		ca.self,
+		0,
+		0,
+		0,
+		0,
+		function
+	);
+
+	ActionValueStack& stack = frame.getStack();
+	for (size_t i = 1; i < ca.args.size(); ++i)
+		stack.push(ca.args[i]);
+
+	function->call(
+		ca.vm,
+		&frame,
+		self
+	);
+
+	if (stack.depth() > 0)
+		ca.ret = stack.pop();
 }
 
 	}
