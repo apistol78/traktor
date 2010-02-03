@@ -26,6 +26,7 @@
 #include "Flash/Action/Avm1/Classes/AsString.h"
 #include "Flash/Action/Avm1/Classes/AsSystem.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
+#include "Flash/Action/Avm1/Classes/AsTween.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
 
@@ -72,23 +73,35 @@ ActionGlobal::ActionGlobal()
 	// flash.
 	Ref< ActionObject > flash = new ActionObject(AsObject::getInstance());
 	{
-		//// flash.external.
-		//Ref< ActionObject > external = new ActionObject(AsObject::getInstance());
-		//{
-		//	external->setMember(L"ExternalInterface", AsExternalInterface::getInstance());
-		//}
-		//flash->setMember(L"external", external);
-
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject(AsObject::getInstance());
 		{
-			//geom->setMember(L"Matrix", AsMatrix::getInstance());
 			geom->setMember(L"Point", ActionValue::fromObject(AsPoint::getInstance()));
 			geom->setMember(L"Rectangle", ActionValue::fromObject(AsRectangle::getInstance()));
 		}
 		flash->setMember(L"geom", ActionValue::fromObject(geom));
 	}
 	setMember(L"flash", ActionValue::fromObject(flash));
+
+	// mx.
+	Ref< ActionObject > mx = new ActionObject(AsObject::getInstance());
+	{
+		// mx.transitions.
+		Ref< ActionObject > transitions = new ActionObject(AsObject::getInstance());
+		if (transitions)
+		{
+			transitions->setMember(L"Tween", ActionValue::fromObject(AsTween::getInstance()));
+
+			// mx.transitions.easing
+			Ref< ActionObject > easing = new ActionObject(AsObject::getInstance());
+			if (easing)
+			{
+				transitions->setMember(L"easing", ActionValue::fromObject(easing));
+			}
+		}
+		mx->setMember(L"transitions", ActionValue::fromObject(transitions));
+	}
+	setMember(L"mx", ActionValue::fromObject(mx));
 }
 
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)
