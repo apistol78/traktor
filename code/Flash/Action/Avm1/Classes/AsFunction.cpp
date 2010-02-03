@@ -71,6 +71,8 @@ void AsFunction::Function_call(CallArgs& ca)
 	for (size_t i = 1; i < ca.args.size(); ++i)
 		stack.push(ca.args[i]);
 
+	stack.push(ActionValue(avm_number_t(ca.args.size() - 1)));
+
 	function->call(
 		ca.vm,
 		&frame,
