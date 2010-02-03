@@ -174,8 +174,15 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	// Build materials.
+	// Validate model.
 	const std::vector< model::Material >& materials = model->getMaterials();
+	if (model->getMaterials().empty())
+	{
+		log::error << L"Mesh pipeline failed; no materials in source model (" << fileName.getPathName() << L")" << Endl;
+		return false;
+	}
+
+	// Build materials.
 	std::map< std::wstring, MeshConverter::MaterialInfo > materialInfo;
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
