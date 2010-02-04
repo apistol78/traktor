@@ -25,6 +25,7 @@ const NodeCategory c_nodeCateogories[] =
 	{ type_of< Branch >(), L"SHADERGRAPH_PERMUTATION", L"Static branch permutation" },
 	{ type_of< Clamp >(), L"SHADERGRAPH_CONDITIONAL", L"Clamp values within range" },
 	{ type_of< Color >(), L"SHADERGRAPH_VALUE", L"Color constant" },
+	{ type_of< Comment >(), L"SHADERGRAPH_MISCELLANEOUS", L"Comment" },
 	{ type_of< Conditional >(), L"SHADERGRAPH_CONDITIONAL", L"Evaluate different branches based on condition" },
 	{ type_of< Cos >(), L"SHADERGRAPH_TRIGONOMETRY", L"Cosine" },
 	{ type_of< Cross >(), L"SHADERGRAPH_ALGEBRA", L"Cross product of two vectors" },

@@ -2,35 +2,66 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>789</first>
 				<second>401</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>511</first>
 				<second>409</second>
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>631</first>
 				<second>451</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>960</first>
 				<second>428</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Calculate light intensity of RGB color.
+
+			]]>
+			</comment>
+			<position>
+				<first>266</first>
+				<second>279</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>

@@ -25,6 +25,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
+#include "Ui/TreeViewState.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/TreeViewDragEvent.h"
@@ -272,24 +273,19 @@ void DatabaseView::setDatabase(db::Database* db)
 void DatabaseView::updateView()
 {
 	Ref< ui::TreeViewState > treeState = m_treeDatabase->captureState();
+	m_treeState = m_treeState ? m_treeState->merge(treeState) : treeState;
 
 	m_treeDatabase->removeAllItems();
 
 	if (m_db)
 	{
-		Ref< ui::TreeViewItem > rootItem = buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
-		if (rootItem)
-			rootItem->expand();
-
+		buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
 		m_treeDatabase->setEnable(true);
 	}
 	else
-	{
-		m_treeDatabase->setData(L"DOMAIN", 0);
 		m_treeDatabase->setEnable(false);
-	}
 
-	m_treeDatabase->applyState(treeState);
+	m_treeDatabase->applyState(m_treeState);
 	m_treeDatabase->update();
 }
 

@@ -94,7 +94,7 @@ struct ConvertPolicy< std::wstring, float >
 template < typename String, typename Value = String, typename _CP = ConvertPolicy< String, Value > >
 struct Split
 {
-	static size_t any(const String& str, const String& delimiters, std::vector< Value >& out, size_t max = ~0UL)
+	static size_t any(const String& str, const String& delimiters, std::vector< Value >& out, bool keepEmpty = false, size_t max = ~0UL)
 	{
 		typename String::size_type n = str.length();
 		typename String::size_type start, stop;
@@ -106,8 +106,9 @@ struct Split
 			if (stop < 0 || stop > n)
 				stop = n;
 
-			out.push_back(_CP::convert(str.substr(start, stop - start)));
-			start = str.find_first_not_of(delimiters, stop + 1);
+			if (stop > start || keepEmpty)
+				out.push_back(_CP::convert(str.substr(start, stop - start)));
+			start = stop + 1;
 
 			if (out.size() >= max)
 			{

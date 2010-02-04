@@ -1,24 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>-11</first>
 				<second>282</second>
 			</position>
 			<name>Input1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>-11</first>
 				<second>333</second>
 			</position>
 			<name>Input2</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>117</second>
@@ -26,7 +44,11 @@
 			<swizzle>wwww</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>199</second>
@@ -34,14 +56,22 @@
 			<swizzle>xyzw</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>309</first>
 				<second>134</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>267</second>
@@ -49,14 +79,22 @@
 			<swizzle>xyzx</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>309</first>
 				<second>263</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>289</first>
 				<second>449</second>
@@ -64,7 +102,11 @@
 			<value>1, 1, 1, -1</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>303</second>
@@ -72,14 +114,22 @@
 			<swizzle>wwwx</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>309</first>
 				<second>367</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>371</second>
@@ -87,7 +137,11 @@
 			<swizzle>yzxy</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>407</second>
@@ -95,14 +149,22 @@
 			<swizzle>zxyy</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>309</first>
 				<second>490</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>494</second>
@@ -110,7 +172,11 @@
 			<swizzle>zxyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>202</first>
 				<second>531</second>
@@ -118,47 +184,83 @@
 			<swizzle>yzxz</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>471</first>
 				<second>296</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>471</first>
 				<second>393</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>614</first>
 				<second>218</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>735</first>
 				<second>308</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>863</first>
 				<second>373</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>1023</first>
 				<second>406</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Quaternion multiply fragment.
+
+			]]>
+			</comment>
+			<position>
+				<first>-41</first>
+				<second>79</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>

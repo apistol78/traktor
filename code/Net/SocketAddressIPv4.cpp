@@ -1,6 +1,7 @@
 #include <cstring>
-#include "Net/SocketAddressIPv4.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Net/SocketAddressIPv4.h"
 
 namespace traktor
 {
@@ -94,19 +95,28 @@ RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
 
 #if defined(_WIN32)
 	char hostName[200];
-	gethostname(hostName, sizeof(hostName));
-
-	LPHOSTENT host;
-	host = gethostbyname(hostName);
-	if (host && host->h_addr)
+	if (gethostname(hostName, sizeof(hostName)) == 0)
 	{
-		in_addr* ptr = (in_addr*)host->h_addr;
+		LPHOSTENT host;
+		host = gethostbyname(hostName);
+		if (host && host->h_addr)
+		{
+			in_addr* ptr = (in_addr*)host->h_addr;
 
-		sockaddr_in addr;
-		addr.sin_port = 0;
-		addr.sin_addr = *ptr;
+			sockaddr_in addr;
+			addr.sin_port = 0;
+			addr.sin_addr = *ptr;
 
-		interfaces.push_back(new SocketAddressIPv4(addr));
+			interfaces.push_back(new SocketAddressIPv4(addr));
+		}
+		else
+		{
+			log::error << L"Unable to get network interface(s); gethostbyname failed (" << WSAGetLastError() << L")" << Endl;
+		}
+	}
+	else
+	{
+		log::error << L"Unable to get network interface(s); gethostname failed (" << WSAGetLastError() << L")" << Endl;
 	}
 #endif
 

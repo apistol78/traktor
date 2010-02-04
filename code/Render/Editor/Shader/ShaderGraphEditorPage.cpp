@@ -3,6 +3,7 @@
 #include "Render/Editor/Shader/NodeFacade.h"
 #include "Render/Editor/Shader/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/ColorNodeFacade.h"
+#include "Render/Editor/Shader/CommentNodeFacade.h"
 #include "Render/Editor/Shader/InterpolatorNodeFacade.h"
 #include "Render/Editor/Shader/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/SwizzleNodeFacade.h"
@@ -171,6 +172,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 		m_nodeFacades[*i] = new DefaultNodeFacade(m_editorGraph);
 
 	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
 	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);

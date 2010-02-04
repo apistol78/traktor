@@ -6,12 +6,15 @@ namespace traktor
 	namespace net
 	{
 
-bool Network::ms_initialized = false;
+int32_t Network::ms_initialized = 0;
 
 bool Network::initialize()
 {
-	if (ms_initialized)
+	if (ms_initialized > 0)
+	{
+		ms_initialized++;
 		return true;
+	}
 
 #if defined(_XBOX)
 
@@ -75,13 +78,15 @@ bool Network::initialize()
 
 #endif
 
-	ms_initialized = true;
+	ms_initialized++;
 	return true;
 }
 
 void Network::finalize()
 {
-	if (!ms_initialized)
+	T_ASSERT_M (ms_initialized > 0, L"Network not initialized");
+
+	if (--ms_initialized > 0)
 		return;
 
 #if defined(_WIN32)
@@ -99,8 +104,6 @@ void Network::finalize()
 	XNetCleanup();
 
 #endif
-
-	ms_initialized = false;
 }
 
 	}

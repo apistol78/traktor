@@ -262,6 +262,10 @@
       <second>Asset path</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_AUTOSAVE</first>
+      <second>Auto-save opened instances before build</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
       <second>Build asset before editing</second>
     </item>
@@ -1304,6 +1308,10 @@
     <item>
       <first>SHADERGRAPH_NODE_COLOR</first>
       <second>Color</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COMMENT</first>
+      <second>Comment</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_CONDITIONAL</first>

@@ -206,8 +206,8 @@ bool XmlDeserializer::operator >> (const Member< Color >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
+	m_values.resize(0); m_values.reserve(4);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
 
 	m->r = uint8_t(m_values[0]);
@@ -234,8 +234,8 @@ bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 	
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 2)
+	m_values.resize(0); m_values.reserve(2);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 2) != 2)
 		return false;
 		
 	m->x = m_values[0];
@@ -250,8 +250,8 @@ bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
+	m_values.resize(0); m_values.reserve(4);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
 		
 	m->set(
@@ -270,8 +270,8 @@ bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 		
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 3 * 3)
+	m_values.resize(0); m_values.reserve(3 * 3);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 3 * 3) != 3 * 3)
 		return false;
 
 	for (int r = 0; r < 3; ++r)
@@ -291,8 +291,8 @@ bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 4 * 4)
+	m_values.resize(0); m_values.reserve(4 * 4);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4 * 4) != 4 * 4)
 		return false;
 
 	for (int r = 0; r < 4; ++r)
@@ -310,8 +310,8 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	if (!nextElementValue(m.getName(), value))
 		return false;
 
-	m_values.resize(0);
-	if (Split< std::wstring, float >::any(value, L",", m_values) != 4)
+	m_values.resize(0); m_values.reserve(4);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
 		
 	m->x = m_values[0];

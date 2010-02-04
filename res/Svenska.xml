@@ -270,6 +270,10 @@
       <second>Sökväg källmaterial</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_AUTOSAVE</first>
+      <second>Spara automatiskt öppna instancer</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_BUILD_AT_EDIT_INSTANCE</first>
       <second>Bygg tillgångar innan redigering</second>
     </item>
@@ -1296,6 +1300,10 @@
     <item>
       <first>SHADERGRAPH_NODE_COLOR</first>
       <second>Färg</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_COMMENT</first>
+      <second>Kommentar</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_CONDITIONAL</first>

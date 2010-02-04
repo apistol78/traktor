@@ -31,6 +31,17 @@ public:
 
 	bool getSelected(const std::wstring& path) const;
 
+	/*! \brief Merge tree states.
+	 *
+	 * Right-hand state override existing states;
+	 * thus if a state exist in both left- and right-hand
+	 * state right-hand is used.
+	 *
+	 * \param state Right hand state.
+	 * \return Merged state.
+	 */
+	Ref< TreeViewState > merge(const TreeViewState* state) const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:

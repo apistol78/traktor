@@ -1,32 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>-19</first>
 				<second>309</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment>As quaternion</comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+As quaternion
+			]]>
+			</comment>
 			<position>
 				<first>13</first>
 				<second>419</second>
 			</position>
 			<name>Rotation</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>538</first>
 				<second>294</second>
 			</position>
 			<name>Translation</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>247</first>
 				<second>427</second>
@@ -35,6 +60,7 @@
 			<inputPins>
 				<item>
 					<name>Input</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -42,9 +68,14 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>156</first>
 				<second>323</second>
@@ -52,7 +83,11 @@
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>858</first>
 				<second>307</second>
@@ -60,15 +95,23 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>582</first>
 				<second>363</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>309</first>
 				<second>309</second>
@@ -77,9 +120,11 @@
 			<inputPins>
 				<item>
 					<name>Input1</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input2</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -87,9 +132,14 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>456</first>
 				<second>343</second>
@@ -98,9 +148,11 @@
 			<inputPins>
 				<item>
 					<name>Input1</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input2</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -108,12 +160,28 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>690</first>
 				<second>307</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Transform vector by a quaternion.
+			]]>
+			</comment>
+			<position>
+				<first>-75</first>
+				<second>187</second>
 			</position>
 		</item>
 	</nodes>
