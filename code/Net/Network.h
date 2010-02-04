@@ -72,7 +72,7 @@ public:
 	static void finalize();
 
 private:
-	static bool ms_initialized;
+	static int32_t ms_initialized;
 };
 
 	}

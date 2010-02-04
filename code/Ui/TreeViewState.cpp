@@ -33,6 +33,18 @@ bool TreeViewState::getSelected(const std::wstring& path) const
 	return i != m_states.end() ? i->second.second : false;
 }
 
+Ref< TreeViewState > TreeViewState::merge(const TreeViewState* state) const
+{
+	Ref< TreeViewState > merged = new TreeViewState();
+
+	merged->m_states = m_states;
+
+	for (std::map< std::wstring, std::pair< bool, bool > >::const_iterator i = state->m_states.begin(); i != state->m_states.end(); ++i)
+		merged->addState(i->first, i->second.first, i->second.second);
+
+	return merged;
+}
+
 bool TreeViewState::serialize(ISerializer& s)
 {
 	return s >> MemberStlMap< 

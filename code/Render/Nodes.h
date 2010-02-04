@@ -132,6 +132,15 @@ private:
 	traktor::Color m_color;
 };
 
+/*! \brief Comment node. */
+class T_DLLCLASS Comment : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Comment();
+};
+
 /*! \brief Conditional selection. */
 class T_DLLCLASS Conditional : public ImmutableNode
 {

@@ -999,8 +999,9 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	// Stop current build if any.
 	buildCancel();
 
-	// Save all open instances.
-	saveAllDocuments();
+	// Automatically save all opened instances.
+	if (m_settings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
+		saveAllDocuments();
 
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(

@@ -191,6 +191,18 @@ bool Color::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Comment", 0, Comment, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Comment_i[] = { 0 };
+const ImmutableNode::OutputPinDesc c_Comment_o[] = { 0 };
+
+Comment::Comment()
+:	ImmutableNode(c_Comment_i, c_Comment_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Conditional", 1, Conditional, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Conditional_i[] = { { L"Input", false }, { L"Reference", false }, { L"CaseTrue", false }, { L"CaseFalse", false }, 0 };

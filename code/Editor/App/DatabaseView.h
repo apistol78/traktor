@@ -12,6 +12,7 @@ namespace traktor
 class Edit;
 class TreeView;
 class TreeViewItem;
+class TreeViewState;
 class PopupMenu;
 
 		namespace custom
@@ -71,6 +72,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolFilter;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
+	Ref< ui::TreeViewState > m_treeState;
 	Ref< ui::PopupMenu > m_menuGroup;
 	Ref< ui::PopupMenu > m_menuInstance;
 	Ref< ui::PopupMenu > m_menuInstanceAsset;

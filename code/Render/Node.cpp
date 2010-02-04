@@ -71,7 +71,7 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 
 bool Node::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"comment", m_comment);
+	s >> Member< std::wstring >(L"comment", m_comment, true);
 	s >> MemberStlPair< int, int >(L"position", m_position);
 	return true;
 }

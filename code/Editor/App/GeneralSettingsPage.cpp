@@ -71,6 +71,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 	m_editDictionary = new ui::Edit();
 	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
 
+	m_checkAutoSave = new ui::CheckBox();
+	m_checkAutoSave->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOSAVE"));
+	m_checkAutoSave->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoSave"));
+
 	m_checkBuildWhenSourceModified = new ui::CheckBox();
 	m_checkBuildWhenSourceModified->create(container, i18n::Text(L"EDITOR_SETTINGS_BUILD_WHEN_SOURCE_MODIFIED"));
 	m_checkBuildWhenSourceModified->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"));
@@ -92,6 +96,7 @@ bool GeneralSettingsPage::apply(Settings* settings)
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());
+	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());
 	return true;

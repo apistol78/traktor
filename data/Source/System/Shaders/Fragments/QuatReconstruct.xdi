@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>314</first>
 				<second>401</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>1105</first>
 				<second>460</second>
@@ -18,14 +29,22 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>585</first>
 				<second>464</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>489</first>
 				<second>413</second>
@@ -33,14 +52,22 @@
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Sqrt">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>722</first>
 				<second>474</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>860</first>
 				<second>487</second>
@@ -48,10 +75,25 @@
 			<swizzle>000x</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment>
+			<![CDATA[
+
+			]]>
+			</comment>
 			<position>
 				<first>952</first>
 				<second>428</second>
+			</position>
+		</item>
+		<item type="traktor.render.Comment">
+			<comment>
+			<![CDATA[
+Reconstruct normalized quaternion from 3-scalars.
+			]]>
+			</comment>
+			<position>
+				<first>152</first>
+				<second>285</second>
 			</position>
 		</item>
 	</nodes>
