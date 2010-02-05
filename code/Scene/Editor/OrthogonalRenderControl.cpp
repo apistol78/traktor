@@ -37,6 +37,20 @@ namespace traktor
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_minMagnification = 0.01f;
 
+uint32_t nearestLog2(uint32_t num)
+{
+	uint32_t n = num > 0 ? num - 1 : 0;
+
+	n |= n >> 1;
+	n |= n >> 2;
+	n |= n >> 4;
+	n |= n >> 8;
+	n |= n >> 16;
+	n++;
+
+	return n;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
@@ -539,33 +553,48 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushProjection(worldRenderView.getProjection());
 
 		// Render grid.
-		float unitsPerStep = 1.0f / 5.0f;
-		int steps = int32_t(m_magnification / unitsPerStep);
-		while (steps > 40)
 		{
-			unitsPerStep *= 2.0f;
-			steps = int32_t(m_magnification / unitsPerStep);
-		}
+			float hx = worldView.width * 0.5f;
+			float hy = worldView.height * 0.5f;
 
-		for (int i = -1; i <= steps + 1; ++i)
-		{
-			float fx = float(i - steps / 2.0f) * unitsPerStep + fmod(m_cameraX, unitsPerStep);
-			float fy = float(i - steps / 2.0f) * unitsPerStep + fmod(m_cameraY, unitsPerStep);
-			float fz = m_magnification;
+			Vector2 cp(m_cameraX, m_cameraY);
+			Vector2 vtl(-hx, -hy), vbr(hx, hy);
+			Vector2 tl = vtl - cp, br = vbr - cp;
 
-			m_primitiveRenderer->drawLine(
-				Vector4(fx, -fz, 0.0f, 1.0f),
-				Vector4(fx, fz, 0.0f, 1.0f),
-				0.0f,
-				m_colorGrid
-			);
+			int32_t lx = int32_t(floorf(tl.x));
+			int32_t rx = int32_t(ceilf(br.x));
+			int32_t ty = int32_t(floorf(tl.y));
+			int32_t by = int32_t(ceilf(br.y));
 
-			m_primitiveRenderer->drawLine(
-				Vector4(-fz, fy, 0.0f, 1.0f),
-				Vector4(fz, fy, 0.0f, 1.0f),
-				0.0f,
-				m_colorGrid
-			);
+			int32_t step = nearestLog2(std::max((rx - lx) / 20, (by - ty) / 20));
+			step = std::max(1, step);
+
+			lx += abs(lx) % step;
+			ty += abs(ty) % step;
+
+			for (int32_t x = lx; x <= rx; x += step)
+			{
+				float fx = x + m_cameraX;
+
+				m_primitiveRenderer->drawLine(
+					Vector4(fx, vtl.y, 0.0f, 1.0f),
+					Vector4(fx, vbr.y, 0.0f, 1.0f),
+					(x == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+			}
+
+			for (int32_t y = ty; y <= by; y += step)
+			{
+				float fy = y + m_cameraY;
+
+				m_primitiveRenderer->drawLine(
+					Vector4(vtl.x, fy, 1.0f),
+					Vector4(vbr.x, fy, 1.0f),
+					(y == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+			}
 		}
 
 		// @hack Translate a bit as default entity editor uses distance to calculate snap guide sizes.
