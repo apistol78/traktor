@@ -1,7 +1,8 @@
 #include "Database/Local/ActionSetGuid.h"
 #include "Database/Local/Context.h"
-#include "Database/Local/PhysicalAccess.h"
+#include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstanceMeta.h"
+#include "Database/Local/PhysicalAccess.h"
 #include "Core/Io/FileSystem.h"
 
 namespace traktor
@@ -15,14 +16,14 @@ ActionSetGuid::ActionSetGuid(const Path& instancePath, const Guid& newGuid, bool
 :	m_instancePath(instancePath)
 ,	m_newGuid(newGuid)
 ,	m_create(create)
-,	m_renamedMeta(false)
+,	m_editMeta(false)
 {
 }
 
 bool ActionSetGuid::execute(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-
 	Ref< LocalInstanceMeta > instanceMeta;
 	
 	if (!m_create)
@@ -31,12 +32,8 @@ bool ActionSetGuid::execute(Context* context)
 		if (!instanceMeta)
 			return false;
 
-		m_renamedMeta = FileSystem::getInstance().move(
-			instanceMetaPath.getPathName() + L"~",
-			instanceMetaPath,
-			true
-		);
-		if (!m_renamedMeta)
+		m_editMeta = fileStore->edit(instanceMetaPath);
+		if (!m_editMeta)
 			return false;
 	}
 	else
@@ -47,22 +44,21 @@ bool ActionSetGuid::execute(Context* context)
 	if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
 		return false;
 
+	if (m_create)
+		fileStore->add(instanceMetaPath);
+
 	return true;
 }
 
 bool ActionSetGuid::undo(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-	if (m_renamedMeta)
-	{
-		if (!FileSystem::getInstance().move(
-			instanceMetaPath,
-			instanceMetaPath.getPathName() + L"~",
-			true
-		))
-			return false;
 
-		m_renamedMeta = false;
+	if (m_editMeta)
+	{
+		fileStore->rollback(instanceMetaPath);
+		m_editMeta = false;
 	}
 	else if (m_create)
 	{
@@ -70,18 +66,17 @@ bool ActionSetGuid::undo(Context* context)
 			instanceMetaPath
 		);
 	}
+
 	return true;
 }
 
 void ActionSetGuid::clean(Context* context)
 {
-	if (m_renamedMeta)
-	{
-		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-		FileSystem::getInstance().remove(
-			instanceMetaPath.getPathName() + L"~"
-		);
-	}
+	Ref< IFileStore > fileStore = context->getFileStore();
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+
+	if (m_editMeta)
+		fileStore->clean(instanceMetaPath);
 }
 
 	}

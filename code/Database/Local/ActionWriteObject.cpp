@@ -1,9 +1,10 @@
-#include "Database/Local/ActionWriteObject.h"
-#include "Database/Local/Context.h"
-#include "Database/Local/PhysicalAccess.h"
-#include "Database/Local/LocalInstanceMeta.h"
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
+#include "Database/Local/ActionWriteObject.h"
+#include "Database/Local/Context.h"
+#include "Database/Local/IFileStore.h"
+#include "Database/Local/LocalInstanceMeta.h"
+#include "Database/Local/PhysicalAccess.h"
 
 namespace traktor
 {
@@ -16,26 +17,20 @@ ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstrin
 :	m_instancePath(instancePath)
 ,	m_primaryTypeName(primaryTypeName)
 ,	m_objectStream(objectStream)
-,	m_oldObjectRenamed(false)
-,	m_oldMetaRenamed(false)
+,	m_editObject(false)
+,	m_editMeta(false)
 {
 }
 
 bool ActionWriteObject::execute(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
-	if (FileSystem::getInstance().exist(instanceObjectPath))
-	{
-		m_oldObjectRenamed = FileSystem::getInstance().move(
-			instanceObjectPath.getPathName() + L"~",
-			instanceObjectPath,
-			true
-		);
-		if (!m_oldObjectRenamed)
-			return false;
-	}
+	m_editObject = fileStore->edit(instanceObjectPath);
+	if (!m_editObject)
+		return false;
 
 	Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
 	if (!instanceMeta)
@@ -54,15 +49,10 @@ bool ActionWriteObject::execute(Context* context)
 
 	instanceStream->close();
 
-	// Update meta data if primary type has changed.
 	if (instanceMeta->getPrimaryType() != m_primaryTypeName)
 	{
-		m_oldMetaRenamed = FileSystem::getInstance().move(
-			instanceMetaPath.getPathName() + L"~",
-			instanceMetaPath,
-			true
-		);
-		if (!m_oldMetaRenamed)
+		m_editMeta = fileStore->edit(instanceMetaPath);
+		if (!m_editMeta)
 			return false;
 
 		instanceMeta->setPrimaryType(m_primaryTypeName);
@@ -76,46 +66,31 @@ bool ActionWriteObject::execute(Context* context)
 
 bool ActionWriteObject::undo(Context* context)
 {
-	if (m_oldObjectRenamed)
-	{
-		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-		if (!FileSystem::getInstance().move(
-			instanceObjectPath,
-			instanceObjectPath.getPathName() + L"~",
-			true
-		))
-			return false;
+	Ref< IFileStore > fileStore = context->getFileStore();
+	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
-		m_oldObjectRenamed = false;
-	}
-	if (m_oldMetaRenamed)
-	{
-		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-		if (!FileSystem::getInstance().move(
-			instanceMetaPath,
-			instanceMetaPath.getPathName() + L"~",
-			true
-		))
-			return false;
+	if (m_editObject)
+		fileStore->rollback(instanceObjectPath);
+	if (m_editMeta)
+		fileStore->rollback(instanceMetaPath);
 
-		m_oldMetaRenamed = false;
-	}
+	m_editObject =
+	m_editMeta = false;
 
 	return true;
 }
 
 void ActionWriteObject::clean(Context* context)
 {
-	if (m_oldObjectRenamed)
-	{
-		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
-		FileSystem::getInstance().remove(instanceObjectPath.getPathName() + L"~");
-	}
-	if (m_oldMetaRenamed)
-	{
-		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-		FileSystem::getInstance().remove(instanceMetaPath.getPathName() + L"~");
-	}
+	Ref< IFileStore > fileStore = context->getFileStore();
+	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+
+	if (m_editObject)
+		fileStore->clean(instanceObjectPath);
+	if (m_editMeta)
+		fileStore->clean(instanceMetaPath);
 }
 
 	}

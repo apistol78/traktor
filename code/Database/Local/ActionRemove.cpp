@@ -1,7 +1,8 @@
 #include "Database/Local/ActionRemove.h"
 #include "Database/Local/Context.h"
-#include "Database/Local/PhysicalAccess.h"
+#include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstanceMeta.h"
+#include "Database/Local/PhysicalAccess.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 
@@ -19,6 +20,7 @@ ActionRemove::ActionRemove(const Path& instancePath)
 
 bool ActionRemove::execute(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 
@@ -33,40 +35,28 @@ bool ActionRemove::execute(Context* context)
 	for (std::vector< std::wstring >::const_iterator i = blobs.begin(); i != blobs.end(); ++i)
 	{
 		Path instanceDataPath = getInstanceDataPath(m_instancePath, *i);
-		if (FileSystem::getInstance().move(
-			instanceDataPath.getPathName() + L"~",
-			instanceDataPath,
-			true
-		))
+		if (fileStore->remove(*i))
 			m_renamedFiles.push_back(instanceDataPath.getPathName());
 		else
 		{
-			log::error << L"Action remove failed; unable to move \"" << instanceDataPath.getPathName() << L"\"" << Endl;
+			log::error << L"Action remove failed; unable to remove \"" << instanceDataPath.getPathName() << L"\"" << Endl;
 			return false;
 		}
 	}
 
-	if (FileSystem::getInstance().move(
-		instanceObjectPath.getPathName() + L"~",
-		instanceObjectPath,
-		true
-	))
+	if (fileStore->remove(instanceObjectPath))
 		m_renamedFiles.push_back(instanceObjectPath.getPathName());
 	else
 	{
-		log::error << L"Action remove failed; unable to move \"" << instanceObjectPath.getPathName() << L"~\"" << Endl;
+		log::error << L"Action remove failed; unable to remove \"" << instanceObjectPath.getPathName() << L"~\"" << Endl;
 		return false;
 	}
 
-	if (FileSystem::getInstance().move(
-		instanceMetaPath.getPathName() + L"~",
-		instanceMetaPath,
-		true
-	))
+	if (fileStore->remove(instanceMetaPath))
 		m_renamedFiles.push_back(instanceMetaPath.getPathName());
 	else
 	{
-		log::error << L"Action remove failed; unable to move \"" << instanceMetaPath.getPathName() << L"~\"" << Endl;
+		log::error << L"Action remove failed; unable to remove \"" << instanceMetaPath.getPathName() << L"~\"" << Endl;
 		return false;
 	}
 
@@ -75,13 +65,11 @@ bool ActionRemove::execute(Context* context)
 
 bool ActionRemove::undo(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
+
 	for (std::vector< std::wstring >::const_iterator i = m_renamedFiles.begin(); i != m_renamedFiles.end(); ++i)
 	{
-		if (!FileSystem::getInstance().move(
-			*i,
-			*i + L"~",
-			true
-		))
+		if (!fileStore->rollback(*i))
 			return false;
 	}
 
@@ -91,8 +79,9 @@ bool ActionRemove::undo(Context* context)
 
 void ActionRemove::clean(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	for (std::vector< std::wstring >::const_iterator i = m_renamedFiles.begin(); i != m_renamedFiles.end(); ++i)
-		FileSystem::getInstance().remove(*i + L"~");
+		fileStore->clean(*i);
 }
 
 	}

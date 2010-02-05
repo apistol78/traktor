@@ -1,9 +1,10 @@
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/FileSystem.h"
 #include "Database/Local/ActionWriteData.h"
 #include "Database/Local/Context.h"
-#include "Database/Local/PhysicalAccess.h"
+#include "Database/Local/IFileStore.h"
 #include "Database/Local/LocalInstanceMeta.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Database/Local/PhysicalAccess.h"
 
 namespace traktor
 {
@@ -26,6 +27,7 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 
 bool ActionWriteData::execute(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
 	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
 	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
 
@@ -35,18 +37,12 @@ bool ActionWriteData::execute(Context* context)
 
 	m_existingBlob = instanceMeta->haveBlob(m_dataName);
 
-	// Rename existing blob if we need to undo this operation.
 	if (m_existingBlob)
 	{
-		if (!FileSystem::getInstance().move(
-			instanceDataPath.getPathName() + L"~",
-			instanceDataPath,
-			true
-		))
+		if (!fileStore->edit(instanceDataPath))
 			return false;
 	}
 
-	// Write blob content.
 	int dataBufferSize = int(m_dataBuffer.size());
 	if (dataBufferSize > 0)
 	{
@@ -61,11 +57,16 @@ bool ActionWriteData::execute(Context* context)
 		writeStream = 0;
 	}
 
-	// New blob; add to meta data.
 	if (!m_existingBlob)
 	{
+		if (!fileStore->edit(instanceMetaPath))
+			return false;
+
 		instanceMeta->addBlob(m_dataName);
 		if (!writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary()))
+			return false;
+
+		if (!fileStore->add(instanceDataPath))
 			return false;
 	}
 
@@ -74,37 +75,35 @@ bool ActionWriteData::execute(Context* context)
 
 bool ActionWriteData::undo(Context* context)
 {
+	Ref< IFileStore > fileStore = context->getFileStore();
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
+
 	if (m_existingBlob)
 	{
-		// Restore old blob.
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
-		return FileSystem::getInstance().move(
-			instanceDataPath,
-			instanceDataPath.getPathName() + L"~",
-			true
-		);
-
-		m_existingBlob = false;
+		fileStore->rollback(instanceDataPath);
 	}
 	else
 	{
-		// Remove blob from meta data.
-		Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
-		Ref< LocalInstanceMeta > instanceMeta = readPhysicalObject< LocalInstanceMeta >(instanceMetaPath);
-		if (!instanceMeta)
-			return false;
-		instanceMeta->removeBlob(m_dataName);
-		return writePhysicalObject(instanceMetaPath, instanceMeta, context->preferBinary());
+		fileStore->rollback(instanceMetaPath);
 	}
+
+	return true;
 }
 
 void ActionWriteData::clean(Context* context)
 {
-	// Remove old, temporary, blob.
+	Ref< IFileStore > fileStore = context->getFileStore();
+	Path instanceMetaPath = getInstanceMetaPath(m_instancePath);
+	Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
+
 	if (m_existingBlob)
 	{
-		Path instanceDataPath = getInstanceDataPath(m_instancePath, m_dataName);
-		FileSystem::getInstance().remove(instanceDataPath.getPathName() + L"~");
+		fileStore->clean(instanceDataPath);
+	}
+	else
+	{
+		fileStore->clean(instanceMetaPath);
 	}
 }
 

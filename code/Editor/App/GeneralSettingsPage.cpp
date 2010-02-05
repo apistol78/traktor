@@ -93,6 +93,8 @@ void GeneralSettingsPage::destroy()
 
 bool GeneralSettingsPage::apply(Settings* settings)
 {
+	settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());
+	settings->setProperty< PropertyString >(L"Editor.OutputDatabase", m_editOutputDatabase->getText());
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());

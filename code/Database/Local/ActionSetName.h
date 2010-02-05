@@ -27,9 +27,9 @@ public:
 
 private:
 	Path m_instancePath;
-	std::wstring m_newName;
-	bool m_renamedMeta;
-	bool m_renamedObject;
+	Path m_instancePathNew;
+	bool m_removedMeta;
+	bool m_removedObject;
 };
 
 	}

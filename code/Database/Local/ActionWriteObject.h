@@ -32,8 +32,8 @@ private:
 	Path m_instancePath;
 	std::wstring m_primaryTypeName;
 	Ref< DynamicMemoryStream > m_objectStream;
-	bool m_oldObjectRenamed;
-	bool m_oldMetaRenamed;
+	bool m_editObject;
+	bool m_editMeta;
 };
 
 	}
