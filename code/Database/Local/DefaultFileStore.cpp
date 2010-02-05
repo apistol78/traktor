@@ -19,25 +19,47 @@ void DefaultFileStore::destroy()
 
 bool DefaultFileStore::add(const Path& filePath)
 {
-	// Cannot add already existing file.
 	if (FileSystem::getInstance().exist(filePath))
+		return true;
+	else
+	{
+		// File doesn't exist.
 		return false;
-
-	return true;
+	}
 }
 
 bool DefaultFileStore::remove(const Path& filePath)
 {
 	Path filePathAlt = filePath.getPathName() + L"~";
-	return FileSystem::getInstance().move(filePathAlt, filePath, true);
+	if (FileSystem::getInstance().exist(filePathAlt))
+	{
+		return FileSystem::getInstance().move(
+			filePathAlt,
+			filePath,
+			true
+		);
+	}
+	else
+	{
+		// File doesn't exist.
+		return true;
+	}
 }
 
 bool DefaultFileStore::edit(const Path& filePath)
 {
-	// Ensure file is not read-only; cannot edit those.
 	Ref< File > file = FileSystem::getInstance().get(filePath);
-	if (!file || file->isReadOnly())
+	if (!file)
+	{
+		// File doesn't exist; no need to take snapshot.
+		return true;
+	}
+
+	if (file->isReadOnly())
+	{
+		// Read-only file; not allowed to edit those.
 		return false;
+	}
 
 	Path filePathAlt = filePath.getPathName() + L"~";
 	return FileSystem::getInstance().copy(filePathAlt, filePath, true);
