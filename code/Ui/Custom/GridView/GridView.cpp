@@ -28,6 +28,7 @@ namespace traktor
 
 const int32_t c_itemHeight = 18;
 const int32_t c_columnsHeight = 25;
+const int32_t c_leftMargin = 16;
 const int32_t c_indentWidth = 16;
 const int32_t c_imageMargin = 4;
 const int32_t c_imageSize = 12;
@@ -221,7 +222,7 @@ void GridView::updateScrollBars()
 
 void GridView::getColumnPositions(std::vector< int32_t >& outColumnPos) const
 {
-	int32_t left = 16;
+	int32_t left = c_leftMargin;
 	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 	{
 		outColumnPos.push_back(left);
@@ -232,11 +233,11 @@ void GridView::getColumnPositions(std::vector< int32_t >& outColumnPos) const
 
 void GridView::getColumnSplits(std::vector< int32_t >& outColumnSplits) const
 {
-	int32_t left = 16;
+	int32_t left = c_leftMargin;
 	for (RefArray< GridColumn >::const_iterator i = m_columns.begin(); i != m_columns.end(); ++i)
 	{
-		outColumnSplits.push_back(left);
 		left += (*i)->getWidth();
+		outColumnSplits.push_back(left);
 	}
 	if (!outColumnSplits.empty())
 		outColumnSplits.pop_back();
@@ -272,12 +273,13 @@ void GridView::eventButtonDown(Event* event)
 		std::vector< int32_t > splits;
 		getColumnSplits(splits);
 
-		for (std::vector< int32_t >::iterator i = splits.begin(); i != splits.end(); ++i)
+		for (int32_t i = 0; i < int32_t(splits.size()); ++i)
 		{
-			if (pos.x - 3 < *i && pos.x + 3 > *i)
+			int sx = splits[i];
+			if (pos.x - 3 < sx && pos.x + 3 > sx)
 			{
-				m_resizeColumn = *(m_columns.begin() + std::distance(splits.begin(), i));
-				m_resizeColumnLeft = *i;
+				m_resizeColumn = m_columns[i];
+				m_resizeColumnLeft = (i > 0) ? splits[i - 1] : 0;
 				setCapture();
 				setCursor(CrSizeWE);
 				break;
@@ -415,7 +417,7 @@ void GridView::eventMouseMove(Event* event)
 
 	if (m_resizeColumn)
 	{
-		int32_t width = std::max(0, pos.x - m_resizeColumnLeft);
+		int32_t width = std::max(16, pos.x - m_resizeColumnLeft - c_leftMargin);
 		m_resizeColumn->setWidth(width);
 
 		setCursor(CrSizeWE);
@@ -488,7 +490,7 @@ void GridView::eventPaint(Event* event)
 				canvas.drawLine(left, rc.top + 4, left, rc.top + c_columnsHeight - 4);
 			}
 			else
-				left += 16;
+				left += c_leftMargin;
 
 			left += width;
 		}
@@ -540,8 +542,8 @@ void GridView::eventPaint(Event* event)
 
 			const RefArray< GridItem >& items = rw->getItems();
 
-			int32_t left = 16 + depth * c_indentWidth;
-			int32_t right = 16 + m_columns[0]->getWidth();
+			int32_t left = c_leftMargin + depth * c_indentWidth;
+			int32_t right = c_leftMargin + m_columns[0]->getWidth();
 
 			for (uint32_t j = 0; j < uint32_t(m_columns.size()); ++j)
 			{
