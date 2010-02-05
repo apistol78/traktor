@@ -15003,5 +15003,124 @@
 				</item>
 			</dependencies>
 		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Local.P4</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local/Perforce</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader></precompiledHeader>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[21]"/>
+				</item>
+			</dependencies>
+		</item>
 	</projects>
 </object>

@@ -7,9 +7,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Context", Context, Object)
 
-Context::Context(bool preferBinary)
+Context::Context(bool preferBinary, IFileStore* fileStore)
 :	m_sessionGuid(Guid::create())
 ,	m_preferBinary(preferBinary)
+,	m_fileStore(fileStore)
 {
 }
 
@@ -21,6 +22,11 @@ const Guid& Context::getSessionGuid() const
 bool Context::preferBinary() const
 {
 	return m_preferBinary;
+}
+
+IFileStore* Context::getFileStore() const
+{
+	return m_fileStore;
 }
 
 	}

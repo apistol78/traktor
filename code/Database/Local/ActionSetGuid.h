@@ -30,7 +30,7 @@ private:
 	Path m_instancePath;
 	Guid m_newGuid;
 	bool m_create;
-	bool m_renamedMeta;
+	bool m_editMeta;
 };
 
 	}
