@@ -175,7 +175,7 @@ bool OS::editFile(const Path& file) const
 bool OS::exploreFile(const Path& file) const
 {
 #if !defined(WINCE)
-	Path absoluteFile = FileSystem::getInstance().getAbsolutePath(file);
+	Path absoluteFile = FileSystem::getInstance().getAbsolutePath(file.getPathOnly());
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("explore"),
