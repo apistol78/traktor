@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Database/Local/ActionSetName.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
@@ -28,6 +29,12 @@ bool ActionSetName::execute(Context* context)
 
 	Path newInstanceMetaPath = getInstanceMetaPath(m_instancePathNew);
 	Path newInstanceObjectPath = getInstanceObjectPath(m_instancePathNew);
+
+	if (!FileSystem::getInstance().copy(newInstanceMetaPath, oldInstanceMetaPath))
+		return false;
+
+	if (!FileSystem::getInstance().copy(newInstanceObjectPath, oldInstanceObjectPath))
+		return false;
 
 	if (!fileStore->add(newInstanceMetaPath) || !fileStore->add(newInstanceObjectPath))
 		return false;
