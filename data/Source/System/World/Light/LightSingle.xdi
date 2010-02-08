@@ -1,72 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>41</first>
-				<second>608</second>
+				<first>-326</first>
+				<second>652</second>
 			</position>
 			<name>EyeDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>71</first>
-				<second>353</second>
+				<first>-40</first>
+				<second>241</second>
 			</position>
 			<name>LightDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>104</first>
-				<second>414</second>
+				<first>-7</first>
+				<second>302</second>
 			</position>
 			<name>Normal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>303</first>
-				<second>359</second>
+				<first>192</first>
+				<second>247</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>481</first>
-				<second>393</second>
+				<first>663</first>
+				<second>267</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>834</first>
-				<second>528</second>
+				<first>828</first>
+				<second>503</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>582</first>
-				<second>573</second>
+				<first>268</first>
+				<second>567</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
-				<first>317</first>
-				<second>609</second>
+				<first>-50</first>
+				<second>653</second>
 			</position>
 			<fragmentGuid>{A3FDEEFB-60E9-924E-89C4-322C12BC33A1}</fragmentGuid>
 			<inputPins>
 				<item>
 					<name>ViewDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>LightDirection</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -74,45 +85,85 @@
 					<name>HalfAngleVector</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>462</first>
-				<second>458</second>
+				<first>443</first>
+				<second>464</second>
 			</position>
 			<name>SpecularRoughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1010</first>
-				<second>525</second>
+				<first>991</first>
+				<second>531</second>
 			</position>
 			<name>Specular</name>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>690</first>
-				<second>464</second>
+				<first>671</first>
+				<second>470</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>575</first>
-				<second>513</second>
+				<first>556</first>
+				<second>519</second>
 			</position>
 			<value>16</value>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>708</first>
-				<second>542</second>
+				<first>416</first>
+				<second>551</second>
 			</position>
 			<min>0</min>
+			<max>1</max>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>166</first>
+				<second>192</second>
+			</position>
+			<name>Shadow</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>515</first>
+				<second>247</second>
+			</position>
+		</item>
+		<item type="traktor.render.Clamp">
+			<comment/>
+			<position>
+				<first>349</first>
+				<second>247</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
+		</item>
+		<item type="traktor.render.Clamp">
+			<comment/>
+			<position>
+				<first>349</first>
+				<second>156</second>
+			</position>
+			<min>0.25</min>
 			<max>1</max>
 		</item>
 	</nodes>
@@ -164,16 +215,6 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -239,12 +280,62 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>
