@@ -380,7 +380,7 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
 	const char* fragmentShaderPtr = fragmentShader.c_str();
 
-	GLchar errorBuf[32000];
+	char errorBuf[32000];
 	GLint status;
 
 	m_program = glCreateProgram();
