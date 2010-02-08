@@ -14,6 +14,15 @@ SessionManagerPsn::SessionManagerPsn()
 {
 }
 
+bool SessionManagerPsn::create()
+{
+	return true;
+}
+
+void SessionManagerPsn::destroy()
+{
+}
+
 bool SessionManagerPsn::getAvailableUsers(RefArray< IUser >& outUsers)
 {
 	return true;

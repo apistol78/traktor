@@ -28,6 +28,10 @@ class T_DLLCLASS SessionManagerPsn : public ISessionManager
 public:
 	SessionManagerPsn();
 
+	virtual bool create();
+
+	virtual void destroy();
+
 	virtual bool getAvailableUsers(RefArray< IUser >& outUsers);
 
 	virtual Ref< IUser > getCurrentUser();
