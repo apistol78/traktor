@@ -12,7 +12,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -28,7 +28,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -44,7 +44,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -60,7 +60,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -102,7 +102,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
@@ -118,7 +118,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
@@ -134,7 +134,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
@@ -150,7 +150,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/src</item>
@@ -298,7 +298,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -315,7 +315,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -332,7 +332,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -349,7 +349,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -384,7 +384,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
@@ -403,7 +403,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
@@ -422,7 +422,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
@@ -441,7 +441,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/src/libFLAC/include</item>
@@ -561,7 +561,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
@@ -580,7 +580,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
@@ -599,7 +599,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
@@ -618,7 +618,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b</item>
@@ -752,7 +752,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
@@ -768,7 +768,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
@@ -784,7 +784,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
@@ -800,7 +800,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
@@ -834,7 +834,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.3/lib</item>
@@ -852,7 +852,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.3/lib</item>
@@ -870,7 +870,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.3/lib</item>
@@ -888,7 +888,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.2.3/lib</item>
@@ -1189,7 +1189,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
@@ -1205,7 +1205,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
@@ -1221,7 +1221,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
@@ -1238,7 +1238,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
@@ -1273,7 +1273,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
@@ -1287,7 +1287,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
@@ -1301,7 +1301,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
@@ -1315,7 +1315,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
@@ -1555,7 +1555,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -1572,7 +1572,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -1588,7 +1588,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -1606,7 +1606,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/ode/src</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -1662,7 +1662,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
@@ -1678,7 +1678,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
@@ -1694,7 +1694,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
@@ -1710,7 +1710,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
 					</includePaths>
@@ -1744,7 +1744,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
@@ -1759,7 +1759,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
@@ -1774,7 +1774,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
@@ -1790,7 +1790,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/zlib-1.2.3</item>
 					</includePaths>
@@ -1824,7 +1824,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1839,7 +1839,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1854,7 +1854,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1869,7 +1869,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1934,7 +1934,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1954,7 +1954,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1974,7 +1974,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -1994,7 +1994,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2253,7 +2253,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2268,7 +2268,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2283,7 +2283,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2298,7 +2298,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2341,7 +2341,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2356,7 +2356,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2371,7 +2371,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2386,7 +2386,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2424,7 +2424,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2439,7 +2439,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2454,7 +2454,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2469,7 +2469,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2507,7 +2507,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2521,7 +2521,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2535,7 +2535,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2550,7 +2550,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2593,7 +2593,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2608,7 +2608,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2623,7 +2623,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2638,7 +2638,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2680,7 +2680,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
@@ -2699,7 +2699,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
@@ -2718,7 +2718,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
@@ -2737,7 +2737,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lpng128</item>
@@ -2805,7 +2805,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2820,7 +2820,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2835,7 +2835,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2850,7 +2850,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2955,7 +2955,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2970,7 +2970,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -2985,7 +2985,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3000,7 +3000,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3034,7 +3034,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3049,7 +3049,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3064,7 +3064,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3079,7 +3079,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3113,7 +3113,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3128,7 +3128,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3143,7 +3143,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3158,7 +3158,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3192,7 +3192,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3207,7 +3207,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3222,7 +3222,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3237,7 +3237,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3271,7 +3271,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3286,7 +3286,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3301,7 +3301,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3316,7 +3316,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3387,6 +3387,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Stream</name>
+					<items>
+						<item type="File">
+							<fileName>Stream/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -3404,7 +3413,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
@@ -3420,7 +3429,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
@@ -3436,7 +3445,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
@@ -3452,7 +3461,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
@@ -3496,7 +3505,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3515,7 +3524,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3534,7 +3543,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3553,7 +3562,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3636,7 +3645,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3651,7 +3660,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3666,7 +3675,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3681,7 +3690,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3715,7 +3724,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3730,7 +3739,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3745,7 +3754,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3760,7 +3769,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -3807,7 +3816,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
@@ -3824,7 +3833,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
@@ -3841,7 +3850,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
@@ -3858,7 +3867,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.75/include</item>
@@ -3902,7 +3911,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -3919,7 +3928,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -3936,7 +3945,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -3953,7 +3962,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/ode-0.9/include</item>
@@ -3997,7 +4006,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4012,7 +4021,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4027,7 +4036,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4042,7 +4051,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4103,7 +4112,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4124,7 +4133,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4145,7 +4154,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4166,7 +4175,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4218,7 +4227,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4233,7 +4242,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4248,7 +4257,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4263,7 +4272,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4297,7 +4306,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4312,7 +4321,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4327,7 +4336,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4342,7 +4351,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4380,7 +4389,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4395,7 +4404,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4410,7 +4419,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4425,7 +4434,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4463,7 +4472,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
@@ -4479,7 +4488,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
@@ -4495,7 +4504,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
@@ -4511,7 +4520,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
@@ -4554,7 +4563,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
@@ -4574,7 +4583,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
@@ -4594,7 +4603,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
@@ -4614,7 +4623,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
@@ -4700,7 +4709,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4715,7 +4724,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4730,7 +4739,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4745,7 +4754,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4809,7 +4818,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4824,7 +4833,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4839,7 +4848,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4854,7 +4863,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4896,7 +4905,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4911,7 +4920,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4926,7 +4935,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4941,7 +4950,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4979,7 +4988,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -4994,7 +5003,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5009,7 +5018,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5024,7 +5033,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5084,7 +5093,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5099,7 +5108,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5114,7 +5123,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5129,7 +5138,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5193,7 +5202,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
@@ -5209,7 +5218,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
@@ -5225,7 +5234,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
@@ -5241,7 +5250,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
@@ -5280,7 +5289,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
@@ -5296,7 +5305,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
@@ -5312,7 +5321,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
@@ -5328,7 +5337,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)\3rdp\zlib-1.2.3</item>
@@ -5367,7 +5376,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5382,7 +5391,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5397,7 +5406,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5412,7 +5421,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5450,7 +5459,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5465,7 +5474,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5480,7 +5489,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5496,7 +5505,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5551,7 +5560,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5569,7 +5578,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5587,7 +5596,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5605,7 +5614,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5646,7 +5655,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5661,7 +5670,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5676,7 +5685,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5691,7 +5700,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 					</includePaths>
@@ -5729,7 +5738,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5745,7 +5754,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5761,7 +5770,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5777,7 +5786,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5820,7 +5829,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5837,7 +5846,7 @@
 					<name>ReleaseShared</name>
 					<targetFormat>TfSharedLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5854,7 +5863,7 @@
 					<name>DebugStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
@@ -5871,7 +5880,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfStaticLibrary</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>

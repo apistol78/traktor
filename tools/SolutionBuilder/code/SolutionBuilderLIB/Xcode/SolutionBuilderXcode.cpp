@@ -342,10 +342,22 @@ bool SolutionBuilderXcode::create(const CommandLine& cmdLine)
 	if (cmdLine.hasOption('i'))
 	{
 		m_iphone = true;
-		m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-iphone.inc";
-		m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-iphone.inc";
-		m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-iphone.inc";
-		m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-iphone.inc";
+
+		std::wstring ip = cmdLine.getOption('i').getString();
+		if (!ip.empty())
+		{
+			m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-" + ip + L".inc";
+			m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-" + ip + L".inc";
+			m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-" + ip + L".inc";
+			m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-" + ip + L".inc";
+		}
+		else
+		{
+			m_projectConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-project-debug-iphone.inc";
+			m_projectConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-project-release-iphone.inc";
+			m_targetConfigurationFileDebug = L"$(TRAKTOR_HOME)/bin/xcode-target-debug-iphone.inc";
+			m_targetConfigurationFileRelease = L"$(TRAKTOR_HOME)/bin/xcode-target-release-iphone.inc";
+		}
 	}
 	else
 	{
@@ -463,6 +475,7 @@ void SolutionBuilderXcode::showOptions() const
 {
 	log::info << L"\t-d = Debug configuration" << Endl;
 	log::info << L"\t-r = Release configuration" << Endl;
+	log::info << L"\t-i = iPhone OS (iphone, ipad)" << Endl;
 }
 
 void SolutionBuilderXcode::generatePBXBuildFileSection(OutputStream& s, const Solution* solution, const RefArray< Project >& projects) const
