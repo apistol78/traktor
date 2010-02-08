@@ -22,7 +22,6 @@ class ShaderGraph;
 	namespace model
 	{
 
-class Model;
 class Material;
 
 	}
@@ -35,13 +34,12 @@ class MaterialShaderGenerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	MaterialShaderGenerator(db::Database* database, const model::Model* model);
+	MaterialShaderGenerator(db::Database* database);
 
 	Ref< render::ShaderGraph > generate(const model::Material& material) const;
 
 private:
 	Ref< db::Database > m_database;
-	Ref< const model::Model > m_model;
 };
 
 	}

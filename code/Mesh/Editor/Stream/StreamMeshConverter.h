@@ -1,5 +1,5 @@
-#ifndef traktor_mesh_InstanceMeshConverter_H
-#define traktor_mesh_InstanceMeshConverter_H
+#ifndef traktor_mesh_StreamMeshConverter_H
+#define traktor_mesh_StreamMeshConverter_H
 
 #include "Mesh/Editor/MeshConverter.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class InstanceMeshConverter : public MeshConverter
+class StreamMeshConverter : public MeshConverter
 {
 public:
 	virtual Ref< MeshResource > createResource() const;
@@ -25,4 +25,4 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_InstanceMeshConverter_H
+#endif	// traktor_mesh_StreamMeshConverter_H

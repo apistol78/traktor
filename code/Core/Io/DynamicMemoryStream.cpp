@@ -45,7 +45,12 @@ bool DynamicMemoryStream::canSeek() const
 
 int DynamicMemoryStream::tell() const
 {
-	return 0;
+	if (m_readAllowed)
+		return int(std::distance(m_buffer.begin(), m_bufferIter));
+	else if (m_writeAllowed)
+		return int(m_buffer.size());
+	else
+		return 0;
 }
 
 int DynamicMemoryStream::available() const

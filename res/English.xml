@@ -790,6 +790,10 @@
       <second>Static</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_STREAM</first>
+      <second>Stream</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_CREATE_SHADER</first>
       <second>Create shader</second>
     </item>

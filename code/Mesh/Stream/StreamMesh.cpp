@@ -1,0 +1,99 @@
+#include "Core/Io/IStream.h"
+#include "Mesh/IMeshParameterCallback.h"
+#include "Mesh/Stream/StreamMesh.h"
+#include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Mesh/MeshReader.h"
+#include "World/WorldRenderView.h"
+
+namespace traktor
+{
+	namespace mesh
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMesh", StreamMesh, Object)
+
+StreamMesh::StreamMesh()
+{
+}
+
+const Aabb& StreamMesh::getBoundingBox() const
+{
+	return m_boundingBox;
+}
+
+uint32_t StreamMesh::getFrameCount() const
+{
+	return m_frameOffsets.size();
+}
+
+Ref< StreamMesh::Instance > StreamMesh::createInstance() const
+{
+	Ref< Instance > instance = new Instance();
+	instance->frame = ~0UL;
+	instance->mesh = 0;
+	return instance;
+}
+
+void StreamMesh::render(
+	render::RenderContext* renderContext,
+	const world::WorldRenderView* worldRenderView,
+	const Transform& worldTransform,
+	const Transform& worldTransformPrevious,
+	Instance* instance,
+	uint32_t frame,
+	float distance,
+	const IMeshParameterCallback* parameterCallback
+)
+{
+	// Load mesh frame if different from instance's cached frame.
+	if (instance->frame != frame || !instance->mesh)
+	{
+		m_stream->seek(IStream::SeekSet, m_frameOffsets[frame]);
+		instance->mesh = m_meshReader->read(m_stream);
+		instance->frame = frame;
+	}
+
+	if (!instance->mesh)
+		return;
+
+	const std::vector< render::Mesh::Part >& parts = instance->mesh->getParts();
+	for (size_t i = 0; i < parts.size(); ++i)
+	{
+		std::map< std::wstring, Part >::iterator it = m_parts.find(parts[i].name);
+		if (it == m_parts.end())
+			continue;
+
+		if (!it->second.material.validate())
+			continue;
+		if (!it->second.material->hasTechnique(worldRenderView->getTechnique()))
+			continue;
+
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+
+		renderBlock->distance = distance;
+		renderBlock->shader = it->second.material;
+		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
+		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
+		renderBlock->primitives = &parts[i].primitives;
+
+		renderBlock->shaderParams->beginParameters(renderContext);
+		if (parameterCallback)
+			parameterCallback->setParameters(renderBlock->shaderParams);
+		worldRenderView->setShaderParameters(
+			renderBlock->shaderParams,
+			worldTransform.toMatrix44(),
+			worldTransformPrevious.toMatrix44(),
+			getBoundingBox()
+		);
+		renderBlock->shaderParams->endParameters(renderContext);
+
+		renderBlock->type = it->second.opaque ? render::RbtOpaque : render::RbtAlphaBlend;
+
+		renderContext->draw(renderBlock);
+	}
+}
+
+	}
+}

@@ -14,7 +14,7 @@ public:
 	virtual Ref< MeshResource > createResource() const;
 
 	virtual bool convert(
-		const model::Model& model,
+		const RefArray< model::Model >& models,
 		const std::map< std::wstring, MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
 		MeshResource* meshResource,

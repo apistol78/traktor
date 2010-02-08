@@ -109,6 +109,7 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_INSTANCE"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_SKINNED"));
 	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STATIC"));
+	m_dropMeshType->add(i18n::Text(L"MESHASSET_EDITOR_MESH_TYPE_STREAM"));
 
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -241,8 +242,7 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 
 	MaterialShaderGenerator generator(
-		m_editor->getSourceDatabase(),
-		m_model
+		m_editor->getSourceDatabase()
 	);
 	Ref< render::ShaderGraph > materialShader = generator.generate(*it);
 	if (materialShader)

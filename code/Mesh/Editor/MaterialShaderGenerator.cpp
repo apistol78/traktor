@@ -1,10 +1,10 @@
-#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Database/Database.h"
+#include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
-#include "Render/ShaderGraph.h"
 #include "Render/External.h"
-#include "Render/Nodes.h"
 #include "Render/FragmentLinker.h"
+#include "Render/Nodes.h"
+#include "Render/ShaderGraph.h"
 
 namespace traktor
 {
@@ -49,9 +49,8 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
-MaterialShaderGenerator::MaterialShaderGenerator(db::Database* database, const model::Model* model)
+MaterialShaderGenerator::MaterialShaderGenerator(db::Database* database)
 :	m_database(database)
-,	m_model(model)
 {
 }
 

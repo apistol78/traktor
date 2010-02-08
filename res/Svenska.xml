@@ -818,6 +818,10 @@
       <second>Statisk</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_STREAM</first>
+      <second>Ström</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_CREATE_SHADER</first>
       <second>Skapa shader</second>
     </item>

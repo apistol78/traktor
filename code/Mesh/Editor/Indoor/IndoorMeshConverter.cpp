@@ -517,13 +517,14 @@ Ref< MeshResource > IndoorMeshConverter::createResource() const
 }
 
 bool IndoorMeshConverter::convert(
-	const model::Model& model,
+	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
+	const model::Model& model = *models[0];
 	std::map< std::wstring, Hull > hulls;
 	AlignedVector< Sector > sectors;
 	AlignedVector< Portal > portals;

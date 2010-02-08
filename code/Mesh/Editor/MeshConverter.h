@@ -3,6 +3,7 @@
 
 #include <map>
 #include "Core/Guid.h"
+#include "Core/RefArray.h"
 #include "Render/VertexElement.h"
 
 namespace traktor
@@ -34,7 +35,7 @@ public:
 	virtual Ref< MeshResource > createResource() const = 0;
 
 	virtual bool convert(
-		const model::Model& model,
+		const RefArray< model::Model >& models,
 		const std::map< std::wstring, MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
 		MeshResource* meshResource,

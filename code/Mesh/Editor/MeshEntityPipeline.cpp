@@ -1,3 +1,4 @@
+#include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/MeshEntityPipeline.h"
 #include "Mesh/Blend/BlendMeshEntityData.h"
 #include "Mesh/Composite/CompositeMeshEntityData.h"
@@ -5,8 +6,8 @@
 #include "Mesh/Instance/InstanceMeshEntityData.h"
 #include "Mesh/Skinned/SkinnedMeshEntityData.h"
 #include "Mesh/Static/StaticMeshEntityData.h"
+#include "Mesh/Stream/StreamMeshEntityData.h"
 #include "World/Entity/EntityInstance.h"
-#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -24,6 +25,7 @@ TypeInfoSet MeshEntityPipeline::getAssetTypes() const
 	typeSet.insert(&type_of< InstanceMeshEntityData >());
 	typeSet.insert(&type_of< SkinnedMeshEntityData >());
 	typeSet.insert(&type_of< StaticMeshEntityData >());
+	typeSet.insert(&type_of< StreamMeshEntityData >());
 	return typeSet;
 }
 
@@ -50,6 +52,8 @@ bool MeshEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(skinnedMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 	if (const StaticMeshEntityData* staticMeshEntityData = dynamic_type_cast< const StaticMeshEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(staticMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
+	if (const StreamMeshEntityData* streamMeshEntityData = dynamic_type_cast< const StreamMeshEntityData* >(sourceAsset))
+		pipelineDepends->addDependency(streamMeshEntityData->getMesh().getGuid(), editor::PdfBuild);
 
 	return true;
 }
