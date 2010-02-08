@@ -249,8 +249,8 @@ void XmlPullParserImpl::pushCharacterData()
 	if (!len)
 		return;
 
-	const XML_Char* ss = &m_cdata[0];
-	const XML_Char* es = &m_cdata[len - 1];
+	const wchar_t* ss = &m_cdata[0];
+	const wchar_t* es = &m_cdata[len - 1];
 
 	while ((*ss == ' ' || *ss == '\t' || *ss == 10) && ss <= es)
 		++ss;
