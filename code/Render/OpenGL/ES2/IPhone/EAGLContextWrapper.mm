@@ -64,6 +64,7 @@ void EAGLContextWrapper::setCurrent()
 {
 	EAGLContext* context = (EAGLContext*)m_context;
 	[EAGLContext setCurrentContext:context];
+	glBindFramebuffer(GL_FRAMEBUFFER, m_frameBuffer);
 }
 
 void EAGLContextWrapper::swapBuffers()
@@ -107,7 +108,7 @@ void EAGLContextWrapper::createFrameBuffer()
 	
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
-	}
+}
 
 void EAGLContextWrapper::destroyFrameBuffer()
 {
