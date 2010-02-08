@@ -111,6 +111,12 @@ void PointRenderer::render(
 	float middleAge
 )
 {
+#if TARGET_OS_IPHONE
+	// @fixme iPhone doesn't support partial update of vertex buffers
+	// need to lock entire buffer at once.
+	return;
+#endif
+
 	uint32_t pointOffset = m_vertexOffset >> 2;
 
 	uint32_t size = uint32_t(points.size());

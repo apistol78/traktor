@@ -81,10 +81,10 @@ bool FlashBitmap::create(drawing::Image* image)
 	uint32_t log2Height = previousLog2(clone->getHeight());
 	
 	// Clamp size; we cannot afford too big bitmaps.
-	if (log2Width > 512)
-		log2Width = 512;
-	if (log2Height > 512)
-		log2Height = 512;
+	if (log2Width > 64)
+		log2Width = 64;
+	if (log2Height > 64)
+		log2Height = 64;
 	
 	if (log2Width != clone->getWidth() || log2Height != clone->getHeight())
 	{

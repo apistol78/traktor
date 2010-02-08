@@ -18,7 +18,13 @@ namespace traktor
 		{
 
 const float c_warmUpDeltaTime = 1.0f / 10.0f;
-const int c_maxEmitPerUpdate = 8;
+#if !TARGET_OS_IPHONE
+const uint32_t c_maxEmitPerUpdate = 8;
+const uint32_t c_maxEmitSingleShot = 3000;
+#else
+const uint32_t c_maxEmitPerUpdate = 4;
+const uint32_t c_maxEmitSingleShot = 10;
+#endif
 
 		}
 
@@ -90,10 +96,11 @@ void EmitterInstance::update(EmitterUpdateContext& context, const Transform& tra
 			else
 			{
 				// Single shot emit; emit all particles in one frame and then no more.
+				uint32_t emitCount = std::min< uint32_t >(uint32_t(source->getRate()), c_maxEmitSingleShot);
 				source->emit(
 					context,
 					transform,
-					uint32_t(source->getRate()),
+					emitCount,
 					*this
 				);
 			}

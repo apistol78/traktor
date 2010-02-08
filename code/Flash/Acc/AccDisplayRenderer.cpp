@@ -25,7 +25,11 @@ namespace traktor
 const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 const uint32_t c_maxCachedGlyphs = 32;
+#if !defined(TARGET_OS_IPHONE)
 const uint32_t c_cacheGlyphSize = 128;
+#else
+const uint32_t c_cacheGlyphSize = 32;
+#endif
 const uint32_t c_cacheGlyphMargin = 4;
 
 		}
@@ -77,7 +81,7 @@ bool AccDisplayRenderer::create(
 		rtscd.height = c_cacheGlyphSize;
 		rtscd.multiSample = 0;
 		rtscd.depthStencil = false;
-#if !defined(_PS3)
+#if !defined(_PS3) && !defined(TARGET_OS_IPHONE)
 		rtscd.targets[0].format = render::TfR8;
 #else
 		rtscd.targets[0].format = render::TfR8G8B8A8;

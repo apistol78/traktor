@@ -380,8 +380,7 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	std::string fragmentShader = wstombs(resourceOpenGL->getFragmentShader());
 	const char* fragmentShaderPtr = fragmentShader.c_str();
 
-	char errorBuf[32000];
-	GLsizei errorBufLen;
+	GLchar errorBuf[32000];
 	GLint status;
 
 	m_program = glCreateProgram();
@@ -392,33 +391,27 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	T_OGL_SAFE(glShaderSource(vertexObject, 1, &vertexShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShader(vertexObject));
 	T_OGL_SAFE(glGetShaderiv(vertexObject, GL_COMPILE_STATUS, &status));
-	if (status != 1)
+	if (status == 0)
 	{
-		T_OGL_SAFE(glGetShaderInfoLog(vertexObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL vertex shader compile failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			log::error << Endl;
-			FormatMultipleLines(log::error, resourceOpenGL->getVertexShader());
-			return false;
-		}
+		T_OGL_SAFE(glGetShaderInfoLog(vertexObject, sizeof(errorBuf), 0, errorBuf));
+		log::error << L"GLSL vertex shader compile failed :" << Endl;
+		log::error << mbstows(errorBuf) << Endl;
+		log::error << Endl;
+		FormatMultipleLines(log::error, resourceOpenGL->getVertexShader());
+		return false;
 	}
-	
+
 	T_OGL_SAFE(glShaderSource(fragmentObject, 1, &fragmentShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShader(fragmentObject));
 	T_OGL_SAFE(glGetShaderiv(fragmentObject, GL_COMPILE_STATUS, &status));
-	if (status != 1)
+	if (status == 0)
 	{
-		T_OGL_SAFE(glGetShaderInfoLog(fragmentObject, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL fragment shader compile failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			log::error << Endl;
-			FormatMultipleLines(log::error, resourceOpenGL->getFragmentShader());
-			return false;
-		}
+		T_OGL_SAFE(glGetShaderInfoLog(fragmentObject, sizeof(errorBuf), 0, errorBuf));
+		log::error << L"GLSL fragment shader compile failed :" << Endl;
+		log::error << mbstows(errorBuf) << Endl;
+		log::error << Endl;
+		FormatMultipleLines(log::error, resourceOpenGL->getFragmentShader());
+		return false;
 	}
 
 	T_OGL_SAFE(glAttachShader(m_program, vertexObject));
@@ -427,15 +420,12 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	T_OGL_SAFE(glLinkProgram(m_program));
 
 	T_OGL_SAFE(glGetProgramiv(m_program, GL_LINK_STATUS, &status));
-	if (status != GL_TRUE)
+	if (status == 0)
 	{
-		T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
-		if (errorBufLen > 0)
-		{
-			log::error << L"GLSL program link failed :" << Endl;
-			log::error << mbstows(errorBuf) << Endl;
-			return false;
-		}
+		T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), 0, errorBuf));
+		log::error << L"GLSL program link failed :" << Endl;
+		log::error << mbstows(errorBuf) << Endl;
+		return false;
 	}
 
 	// Get post orientation uniform.
@@ -490,6 +480,9 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 			size_t p = uniformNameW.find('[');
 			if (p != uniformNameW.npos)
 				uniformNameW = uniformNameW.substr(0, p);
+				
+			if (uniformNameW.empty())
+				continue;
 
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
@@ -510,7 +503,7 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 					break;
 
 				default:
-					log::error << L"Invalid uniform type " << uint32_t(uniformType) << Endl;
+					log::error << L"Invalid uniform \"" << uniformNameW << L"\", type " << uint32_t(uniformType) << L" not supported" << Endl;
 					return false;
 				}
 
