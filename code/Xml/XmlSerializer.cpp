@@ -119,21 +119,31 @@ bool XmlSerializer::operator >> (const Member< double >& m)
 
 bool XmlSerializer::operator >> (const Member< std::string >& m)
 {
-	m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(mbstows(m)) << L"</" << m.getName() << L">" << Endl;
+	if (!m->empty())
+		m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(mbstows(m)) << L"</" << m.getName() << L">" << Endl;
+	else
+		m_xml << m_indent << L"<" << m.getName() << L"/>" << Endl;
 	return true;
 }
 
 bool XmlSerializer::operator >> (const Member< std::wstring >& m)
 {
-	if (!m.isMultiLine())
-		m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(m) << L"</" << m.getName() << L">" << Endl;
+	if (!m->empty())
+	{
+		if (!m.isMultiLine())
+			m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(m) << L"</" << m.getName() << L">" << Endl;
+		else
+		{
+			m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
+			m_xml << m_indent << L"<![CDATA[" << Endl;
+			m_xml << m << Endl;
+			m_xml << m_indent << L"]]>" << Endl;
+			m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
+		}
+	}
 	else
 	{
-		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
-		m_xml << m_indent << L"<![CDATA[" << Endl;
-		m_xml << m << Endl;
-		m_xml << m_indent << L"]]>" << Endl;
-		m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
+		m_xml << m_indent << L"<" << m.getName() << L"/>" << Endl;
 	}
 	return true;
 }
