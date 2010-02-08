@@ -382,9 +382,16 @@ struct DisabledProjectPred
 bool SolutionBuilderXcode::generate(Solution* solution)
 {
 	// Get projects; remove disabled projects.
-	RefArray< Project > unsorted = solution->getProjects();
-	RefArray< Project >::iterator i = std::remove_if(unsorted.begin(), unsorted.end(), DisabledProjectPred());
-	unsorted.erase(i, unsorted.end());
+	RefArray< Project > unsorted = solution->getProjects();	
+	for (RefArray< Project >::iterator i = unsorted.begin(); i != unsorted.end(); )
+	{
+		if (!(*i)->getEnable())
+		{
+			i = unsorted.erase(i);
+			continue;
+		}
+		++i;
+	}
 
 	// Sort projects by their dependencies.
 	RefArray< Project > projects;
