@@ -30,7 +30,8 @@ public:
 		MtIndoor,
 		MtInstance,
 		MtSkinned,
-		MtStatic
+		MtStatic,
+		MtStream
 	};
 
 	MeshAsset();

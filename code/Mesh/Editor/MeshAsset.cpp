@@ -31,6 +31,7 @@ bool MeshAsset::serialize(ISerializer& s)
 		{ L"MtInstance", MtInstance },
 		{ L"MtSkinned", MtSkinned },
 		{ L"MtStatic", MtStatic },
+		{ L"MtStream", MtStream },
 		{ 0 }
 	};
 

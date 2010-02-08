@@ -38,15 +38,15 @@ Ref< MeshResource > SkinnedMeshConverter::createResource() const
 }
 
 bool SkinnedMeshConverter::convert(
-	const model::Model& sourceModel,
+	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
 	MeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
-	// Create a copy of the source model and triangulate it.
-	model::Model model = sourceModel;
+	// Create a copy of the first source model and triangulate it.
+	model::Model model = *models[0];
 
 	log::info << L"Triangulating model..." << Endl;
 	model::triangulateModel(model);

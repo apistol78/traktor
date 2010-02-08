@@ -6534,6 +6534,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Stream</name>
+								<items>
+									<item type="File">
+										<fileName>Stream/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -10578,6 +10587,15 @@
 					<items>
 						<item type="File">
 							<fileName>Blend/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Stream</name>
+					<items>
+						<item type="File">
+							<fileName>Stream/*.*</fileName>
 							<items/>
 						</item>
 					</items>

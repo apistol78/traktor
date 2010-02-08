@@ -7,11 +7,12 @@
 #include "Render/TextureFactory.h"
 #include "Render/ShaderFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
-#include "Mesh/Static/StaticMeshFactory.h"
-#include "Mesh/Skinned/SkinnedMeshFactory.h"
+#include "Mesh/Blend/BlendMeshFactory.h"
 #include "Mesh/Indoor/IndoorMeshFactory.h"
 #include "Mesh/Instance/InstanceMeshFactory.h"
-#include "Mesh/Blend/BlendMeshFactory.h"
+#include "Mesh/Skinned/SkinnedMeshFactory.h"
+#include "Mesh/Static/StaticMeshFactory.h"
+#include "Mesh/Stream/StreamMeshFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
 
 // Entity factories
@@ -57,11 +58,12 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new mesh::StaticMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::SkinnedMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::BlendMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new mesh::IndoorMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new mesh::InstanceMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::BlendMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::SkinnedMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::StaticMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new mesh::StreamMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
 }
 

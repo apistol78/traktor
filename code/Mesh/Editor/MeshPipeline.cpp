@@ -19,6 +19,7 @@
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
 #include "Mesh/Editor/Skinned/SkinnedMeshConverter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
+#include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Render/External.h"
@@ -70,6 +71,9 @@ Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	case MeshAsset::MtStatic:
+		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
+
+	case MeshAsset::MtStream:
 		return Guid(L"{14AE48E1-723D-0944-821C-4B73AC942437}");
 
 	default:
@@ -132,7 +136,22 @@ bool MeshPipeline::buildDependencies(
 	T_ASSERT (asset);
 
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-	pipelineDepends->addDependency(fileName);
+
+	if (asset->getMeshType() != MeshAsset::MtStream)
+		pipelineDepends->addDependency(fileName);
+	else
+	{
+		// Stream meshes use many source models.
+		RefArray< File > files;
+		if (!FileSystem::getInstance().find(fileName, files))
+		{
+			log::error << L"Mesh pipeline failed; no models found" << Endl;
+			return false;
+		}
+
+		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+			pipelineDepends->addDependency((*i)->getPath());
+	}
 
 	// Determine vertex shader guid.
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
@@ -164,22 +183,44 @@ bool MeshPipeline::buildOutput(
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
+	std::map< std::wstring, model::Material > materials;
+	RefArray< model::Model > models;
 
-	// Import source model.
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-	Ref< model::Model > model = model::ModelFormat::readAny(fileName);
-	if (!model)
+	
+	// Locate source model(s).
+	RefArray< File > files;
+	if (!FileSystem::getInstance().find(fileName, files))
 	{
-		log::error << L"Mesh pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
+		log::error << L"Mesh pipeline failed; unable to locate source model(s) (" << fileName.getPathName() << L")" << Endl;
 		return false;
 	}
 
-	// Validate model.
-	const std::vector< model::Material >& materials = model->getMaterials();
-	if (model->getMaterials().empty())
+	// Import source model(s); merge all materials into a single list (duplicates will be overridden).
+	for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
 	{
-		log::error << L"Mesh pipeline failed; no materials in source model (" << fileName.getPathName() << L")" << Endl;
-		return false;
+		Path path = (*i)->getPath();
+
+		log::info << L"Loading model \"" << path.getFileName() << L"\"..." << Endl;
+
+		Ref< model::Model > model = model::ModelFormat::readAny(path);
+		if (!model)
+		{
+			log::error << L"Mesh pipeline failed; unable to read source model (" << path.getPathName() << L")" << Endl;
+			return false;
+		}
+
+		const std::vector< model::Material >& modelMaterials = model->getMaterials();
+		if (model->getMaterials().empty())
+		{
+			log::error << L"Mesh pipeline failed; no materials in source model (" << path.getPathName() << L")" << Endl;
+			return false;
+		}
+
+		for (std::vector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
+			materials[j->getName()] = *j;
+
+		models.push_back(model);
 	}
 
 	// Build materials.
@@ -194,50 +235,49 @@ bool MeshPipeline::buildOutput(
 	T_ASSERT (materialGuid.isValid());
 
 	MaterialShaderGenerator generator(
-		pipelineBuilder->getSourceDatabase(),
-		model
+		pipelineBuilder->getSourceDatabase()
 	);
 
 	FragmentReaderAdapter fragmentReader(pipelineBuilder);
 
-	for (std::vector< model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
+	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
-		const std::wstring& materialName = i->getName();
 		Ref< const render::ShaderGraph > materialShaderGraph;
 
-		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(materialName);
+		std::map< std::wstring, Guid >::const_iterator it = materialShaders.find(i->first);
 		if (it != materialShaders.end())
 		{
 			materialShaderGraph = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(it->second);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to read material shader \"" << materialName << L"\"" << Endl;
+				log::error << L"Mesh pipeline failed; unable to read material shader \"" << i->first << L"\"" << Endl;
 				return false;
 			}
 		}
 		else
 		{
-			materialShaderGraph = generator.generate(*i);
+			materialShaderGraph = generator.generate(i->second);
 			if (!materialShaderGraph)
 			{
-				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << materialName << L"\"" << Endl;
+				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"" << Endl;
 				return false;
 			}
 		}
 
+		// Replace place-holder vertex fragments with actual implementation.
 		RefArray< render::External > externalNodes;
 		materialShaderGraph->findNodesOf< render::External >(externalNodes);
-		for (RefArray< render::External >::iterator i = externalNodes.begin(); i != externalNodes.end(); ++i)
+		for (RefArray< render::External >::iterator j = externalNodes.begin(); j != externalNodes.end(); ++j)
 		{
-			if ((*i)->getFragmentGuid() == c_guidVertexInterfaceGuid)
-				(*i)->setFragmentGuid(vertexShaderGuid);
+			if ((*j)->getFragmentGuid() == c_guidVertexInterfaceGuid)
+				(*j)->setFragmentGuid(vertexShaderGuid);
 		}
 
 		// Link shader fragments.
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to link shader fragments" << Endl;
+			log::error << L"MeshPipeline failed; unable to link shader fragments, material shader \"" << i->first << L"\"" << Endl;
 			return false;
 		}
 
@@ -245,7 +285,7 @@ bool MeshPipeline::buildOutput(
 		materialShaderGraph = render::ShaderGraphOptimizer(materialShaderGraph).removeUnusedBranches();
 		if (!materialShaderGraph)
 		{
-			log::error << L"MeshPipeline failed; unable to remove unused branches" << Endl;
+			log::error << L"MeshPipeline failed; unable to remove unused branches, material shader \"" << i->first << L"\"" << Endl;
 			return false;
 		}
 
@@ -294,22 +334,22 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Build material shader.
-		std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + materialName;
+		std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/" + i->first;
 		if (!pipelineBuilder->buildOutput(
 			materialShaderGraph,
 			0,
-			materialName,
+			i->first,
 			materialPath,
 			materialGuid
 		))
 		{
-			log::error << L"Mesh pipeline failed; unable to build material \"" << materialName << L"\"" << Endl;
+			log::error << L"Mesh pipeline failed; unable to build material \"" << i->first << L"\"" << Endl;
 			return false;
 		}
 
 		// Insert into material map.
 		MeshConverter::MaterialInfo mi = { materialGuid, isOpaqueMaterial(materialShaderGraph) };
-		materialInfo.insert(std::make_pair(materialName, mi));
+		materialInfo.insert(std::make_pair(i->first, mi));
 
 		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
 		materialGuid = incrementGuid(materialGuid);
@@ -333,6 +373,9 @@ bool MeshPipeline::buildOutput(
 		break;
 	case MeshAsset::MtStatic:
 		converter = new StaticMeshConverter();
+		break;
+	case MeshAsset::MtStream:
+		converter = new StreamMeshConverter();
 		break;
 	default:
 		log::error << L"Mesh pipeline failed; unknown mesh asset type" << Endl;
@@ -369,7 +412,7 @@ bool MeshPipeline::buildOutput(
 
 	// Convert mesh asset.
 	if (!converter->convert(
-		*model,
+		models,
 		materialInfo,
 		vertexElements,
 		resource,
