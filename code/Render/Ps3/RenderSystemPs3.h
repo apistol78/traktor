@@ -25,7 +25,7 @@ public:
 
 	virtual ~RenderSystemPs3();
 
-	virtual bool create();
+	virtual bool create(const RenderSystemCreateDesc& desc);
 
 	virtual void destroy();
 

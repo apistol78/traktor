@@ -37,7 +37,7 @@ RenderSystemPs3::~RenderSystemPs3()
 {
 }
 
-bool RenderSystemPs3::create()
+bool RenderSystemPs3::create(const RenderSystemCreateDesc& desc)
 {
 	void* hostAddr = std::memalign(1024 * 1024, c_hostSize);
 	if (cellGcmInit(c_cbSize, c_hostSize, hostAddr) != CELL_OK)
