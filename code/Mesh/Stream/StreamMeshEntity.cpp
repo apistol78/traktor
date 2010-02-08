@@ -59,11 +59,6 @@ void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 
 void StreamMeshEntity::update(const world::EntityUpdate* update)
 {
-	if (!validate())
-		return;
-
-	static float s_time = 0.0f; s_time += update->getDeltaTime();
-	m_frame = uint32_t(s_time * 30.0f) % m_mesh->getFrameCount();
 }
 
 bool StreamMeshEntity::validate() const

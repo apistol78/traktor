@@ -52,7 +52,7 @@ public:
 	struct Instance : public Object
 	{
 		uint32_t frame;
-		Ref< render::Mesh > mesh;
+		Ref< render::Mesh > mesh[2];
 	};
 
 	StreamMesh();

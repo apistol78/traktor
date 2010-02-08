@@ -31,7 +31,6 @@ Ref< StreamMesh::Instance > StreamMesh::createInstance() const
 {
 	Ref< Instance > instance = new Instance();
 	instance->frame = ~0UL;
-	instance->mesh = 0;
 	return instance;
 }
 
@@ -50,14 +49,15 @@ void StreamMesh::render(
 	if (instance->frame != frame || !instance->mesh)
 	{
 		m_stream->seek(IStream::SeekSet, m_frameOffsets[frame]);
-		instance->mesh = m_meshReader->read(m_stream);
+		instance->mesh[1] = instance->mesh[0];
+		instance->mesh[0] = m_meshReader->read(m_stream);
 		instance->frame = frame;
 	}
 
-	if (!instance->mesh)
+	if (!instance->mesh[0])
 		return;
 
-	const std::vector< render::Mesh::Part >& parts = instance->mesh->getParts();
+	const std::vector< render::Mesh::Part >& parts = instance->mesh[0]->getParts();
 	for (size_t i = 0; i < parts.size(); ++i)
 	{
 		std::map< std::wstring, Part >::iterator it = m_parts.find(parts[i].name);
@@ -74,8 +74,8 @@ void StreamMesh::render(
 		renderBlock->distance = distance;
 		renderBlock->shader = it->second.material;
 		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-		renderBlock->indexBuffer = instance->mesh->getIndexBuffer();
-		renderBlock->vertexBuffer = instance->mesh->getVertexBuffer();
+		renderBlock->indexBuffer = instance->mesh[0]->getIndexBuffer();
+		renderBlock->vertexBuffer = instance->mesh[0]->getVertexBuffer();
 		renderBlock->primitives = &parts[i].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
