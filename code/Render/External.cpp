@@ -94,10 +94,23 @@ private:
 	value_type& m_pin;
 };
 
-template < typename PinType >
-struct SortPinPredicate
+struct SortInputPinPredicate
 {
-	bool operator () (const PinType* pl, const PinType* pr) const
+	bool operator () (const InputPin* pl, const InputPin* pr) const
+	{
+		if (!pl->isOptional() && pr->isOptional())
+			return true;
+
+		if (pl->isOptional() && !pr->isOptional())
+			return false;
+
+		return pl->getName().compare(pr->getName()) < 0;
+	}
+};
+
+struct SortOutputPinPredicate
+{
+	bool operator () (const OutputPin* pl, const OutputPin* pr) const
 	{
 		return pl->getName().compare(pr->getName()) < 0;
 	}
@@ -145,8 +158,8 @@ External::External(const Guid& fragmentGuid, ShaderGraph* fragmentGraph)
 	}
 
 	// Sort pins lexicographically.
-	std::sort(m_inputPins.begin(), m_inputPins.end(), SortPinPredicate< InputPin >());
-	std::sort(m_outputPins.begin(), m_outputPins.end(), SortPinPredicate< OutputPin >());
+	std::sort(m_inputPins.begin(), m_inputPins.end(), SortInputPinPredicate());
+	std::sort(m_outputPins.begin(), m_outputPins.end(), SortOutputPinPredicate());
 }
 
 void External::setFragmentGuid(const Guid& fragmentGuid)

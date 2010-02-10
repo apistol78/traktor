@@ -40,18 +40,23 @@ const static Guid c_guidVertexInterfaceGuid(L"{0A9BE5B4-4B45-B84A-AE16-57F648343
 class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
+	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const Guid& vertexFragmentGuid)
 	:	m_pipelineBuilder(pipelineBuilder)
+	,	m_vertexFragmentGuid(vertexFragmentGuid)
 	{
 	}
 
 	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
 	{
-		return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+		if (fragmentGuid == c_guidVertexInterfaceGuid)
+			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(m_vertexFragmentGuid);
+		else
+			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
 	}
 
 private:
 	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
+	Guid m_vertexFragmentGuid;
 };
 
 Guid getVertexShaderGuid(MeshAsset::MeshType meshType)
@@ -238,8 +243,6 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getSourceDatabase()
 	);
 
-	FragmentReaderAdapter fragmentReader(pipelineBuilder);
-
 	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
 		Ref< const render::ShaderGraph > materialShaderGraph;
@@ -264,16 +267,8 @@ bool MeshPipeline::buildOutput(
 			}
 		}
 
-		// Replace place-holder vertex fragments with actual implementation.
-		RefArray< render::External > externalNodes;
-		materialShaderGraph->findNodesOf< render::External >(externalNodes);
-		for (RefArray< render::External >::iterator j = externalNodes.begin(); j != externalNodes.end(); ++j)
-		{
-			if ((*j)->getFragmentGuid() == c_guidVertexInterfaceGuid)
-				(*j)->setFragmentGuid(vertexShaderGuid);
-		}
-
-		// Link shader fragments.
+		// Link shader fragments, also replace abstract vertex fragments with real implementation.
+		FragmentReaderAdapter fragmentReader(pipelineBuilder, vertexShaderGuid);
 		materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, true);
 		if (!materialShaderGraph)
 		{
