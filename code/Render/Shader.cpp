@@ -135,7 +135,7 @@ void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int
 	}
 }
 
-void Shader::setSamplerTexture(handle_t handle, const resource::Proxy< ITexture >& texture)
+void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
 {
 	m_textures[handle] = texture;
 }
@@ -161,9 +161,9 @@ void Shader::draw(IRenderView* renderView, const Primitives& primitives)
 	for (std::map< handle_t, resource::Proxy< ITexture > >::iterator i = m_textures.begin(); i != m_textures.end(); ++i)
 	{
 		if (i->second.validate())
-			m_currentProgram->setSamplerTexture(i->first, i->second);
+			m_currentProgram->setTextureParameter(i->first, i->second);
 		else
-			m_currentProgram->setSamplerTexture(i->first, 0);
+			m_currentProgram->setTextureParameter(i->first, 0);
 	}
 
 	renderView->setProgram(m_currentProgram);

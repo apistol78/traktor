@@ -93,7 +93,7 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 		0.5f / source->getHeight()
 	);
 
-	shader->setSamplerTexture(L"SourceTexture", source->getColorTexture(0));
+	shader->setTextureParameter(L"SourceTexture", source->getColorTexture(0));
 	shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
 	shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
 

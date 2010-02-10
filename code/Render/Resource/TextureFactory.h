@@ -1,14 +1,14 @@
-#ifndef traktor_render_ShaderFactory_H
-#define traktor_render_ShaderFactory_H
+#ifndef traktor_render_TextureFactory_H
+#define traktor_render_TextureFactory_H
 
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,18 +25,15 @@ class Database;
 
 class IRenderSystem;
 
-/*! \brief Shader resource factory.
+/*! \brief Texture resource factory.
  * \ingroup Render
  */
-class T_DLLCLASS ShaderFactory : public resource::IResourceFactory
+class T_DLLCLASS TextureFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	ShaderFactory(
-		db::Database* database,
-		IRenderSystem* renderSystem
-	);
+	TextureFactory(db::Database* db, IRenderSystem* renderSystem, int32_t skipMips);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -45,11 +42,12 @@ public:
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid);
 
 private:
-	Ref< db::Database > m_database;
+	Ref< db::Database > m_db;
 	Ref< IRenderSystem > m_renderSystem;
+	int32_t m_skipMips;
 };
 
 	}
 }
 
-#endif	// traktor_render_ShaderFactory_H
+#endif	// traktor_render_TextureFactory_H

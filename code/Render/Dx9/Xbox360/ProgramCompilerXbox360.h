@@ -8,8 +8,6 @@ namespace traktor
 	namespace render
 	{
 
-class HlslProgram;
-
 /*! \brief Xbox360 program compiler.
  * \ingroup Render
  */
@@ -19,9 +17,6 @@ class ProgramCompilerXbox360 : public IProgramCompiler
 
 public:
 	virtual Ref< ProgramResource > compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const;
-
-private:
-	Ref< ProgramResource > compile(const HlslProgram& hlslProgram, int32_t optimize, bool validate) const;
 };
 
 	}

@@ -132,7 +132,7 @@ void AccQuad::render(
 	m_shaderTextured->setVectorParameter(s_handleStepSize, stepSize);
 	m_shaderTextured->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
 	m_shaderTextured->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	m_shaderTextured->setSamplerTexture(s_handleTexture, texture);
+	m_shaderTextured->setTextureParameter(s_handleTexture, texture);
 
 	m_shaderTextured->draw(
 		renderView,

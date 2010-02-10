@@ -2,7 +2,7 @@
 #define traktor_render_ProgramResourceDx10_H
 
 #include "Render/Ps3/TypesPs3.h"
-#include "Render/ProgramResource.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {
@@ -26,22 +26,14 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
-	struct Sampler
-	{
-		std::wstring name;
-		uint32_t stage;
-
-		bool serialize(ISerializer& s);
-	};
-
 	ProgramResourcePs3();
 
 	ProgramResourcePs3(
 		CGCbin* vertexShaderBin,
 		CGCbin* pixelShaderBin,
 		const std::vector< Parameter >& parameters,
-		const std::vector< Sampler >& vertexSamplers,
-		const std::vector< Sampler >& pixelSamplers,
+		const std::vector< std::wstring >& vertexTextures,
+		const std::vector< std::wstring >& pixelTextures,
 		const RenderState& renderState
 	);
 
@@ -61,12 +53,12 @@ public:
 		return m_parameters;
 	}
 
-	const std::vector< Sampler >& getVertexSamplers() const {
-		return m_vertexSamplers;
+	const std::vector< std::wstring >& getVertexTextures() const {
+		return m_vertexTextures;
 	}
 
-	const std::vector< Sampler >& getPixelSamplers() const {
-		return m_pixelSamplers;
+	const std::vector< std::wstring >& getPixelTextures() const {
+		return m_pixelTextures;
 	}
 
 	const RenderState& getRenderState() const {
@@ -77,8 +69,8 @@ private:
 	CGCbin* m_vertexShaderBin;
 	CGCbin* m_pixelShaderBin;
 	std::vector< Parameter > m_parameters;
-	std::vector< Sampler > m_vertexSamplers;
-	std::vector< Sampler > m_pixelSamplers;
+	std::vector< std::wstring > m_vertexTextures;
+	std::vector< std::wstring > m_pixelTextures;
 	RenderState m_renderState;
 };
 

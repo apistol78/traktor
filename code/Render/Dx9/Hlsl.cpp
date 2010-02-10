@@ -45,6 +45,8 @@ bool Hlsl::generate(
 	outProgram = HlslProgram(
 		cx.getVertexShader().getGeneratedShader(cx.needVPos()),
 		cx.getPixelShader().getGeneratedShader(cx.needVPos()),
+		cx.getVertexShader().getSamplerTextures(),
+		cx.getPixelShader().getSamplerTextures(),
 		cx.getState()
 	);
 

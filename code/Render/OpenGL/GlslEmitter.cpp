@@ -746,28 +746,34 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	GlslVariable* texture = cx.emitInput(node, L"Texture");
+	if (!texture || texture->getType() != GtTexture)
+		return;
+
 	GlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
+	if (!texCoord)
+		return;
+
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 
-	// Transform texture coordinate by "origin & scale" uniform.
-	std::wstring originScale = L"t_internal_" + node->getParameterName() + L"_OriginScale";
-	std::wstring samplerTexCoord = out->getName() + L"_texCoord";
-	f << L"vec2 " << samplerTexCoord << L" = " << texCoord->cast(GtFloat2) << L" * " << originScale << L".zw + " << originScale << L".xy;" << Endl;
+	std::wstring textureName = texture->getName();
+	std::wstring samplerName = out->getName() + L"_samplerState";
 
 	if (cx.inFragment())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2D(" << node->getParameterName() << L", " << samplerTexCoord << L");" << Endl;
+			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"textureCube(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
+			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"texture3D(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
+			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
 	}
@@ -776,70 +782,63 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"texture2DLod(" << node->getParameterName() << L", " << samplerTexCoord << L", 0.0);" << Endl;
+			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"textureCubeLod(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
+			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"texture3DLod(" << node->getParameterName() << L", vec3(" << samplerTexCoord << L".xy, 0.0));" << Endl;
+			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
 	}
 
-	const std::set< std::wstring >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(node->getParameterName()) == samplers.end())
+	uint32_t stage = cx.addSamplerTexture(samplerName, textureName);
+
+	StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+	switch (node->getLookup())
 	{
-		int sampler = int(samplers.size());
+	case Sampler::LuSimple:
+		fu << L"uniform sampler2D " << samplerName << L";" << Endl;
+		break;
 
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		switch (node->getLookup())
-		{
-		case Sampler::LuSimple:
-			fu << L"uniform sampler2D " << node->getParameterName() << L";" << Endl;
-			break;
+	case Sampler::LuCube:
+		fu << L"uniform samplerCube " << samplerName << L";" << Endl;
+		break;
 
-		case Sampler::LuCube:
-			fu << L"uniform samplerCube " << node->getParameterName() << L";" << Endl;
-			break;
+	case Sampler::LuVolume:
+		fu << L"uniform sampler3D " << samplerName << L";" << Endl;
+		break;
+	}
 
-		case Sampler::LuVolume:
-			fu << L"uniform sampler3D " << node->getParameterName() << L";" << Endl;
-			break;
-		}
-		fu << L"uniform vec4 " << originScale << L";" << Endl;
+	RenderState& rs = cx.getRenderState();
 
-		RenderState& rs = cx.getRenderState();
+	if (cx.inFragment())
+	{
+		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
 
-		if (cx.inFragment())
-		{
-			bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-			bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
-
-			if (!minLinear && !mipLinear)
-				rs.samplerStates[sampler].minFilter = GL_NEAREST;
-			else if (!minLinear && mipLinear)
-				rs.samplerStates[sampler].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-			else if (minLinear && !mipLinear)
-				rs.samplerStates[sampler].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-			else
-				rs.samplerStates[sampler].minFilter = GL_LINEAR_MIPMAP_LINEAR;
-
-			rs.samplerStates[sampler].magFilter = c_glFilter[node->getMagFilter()];
-			rs.samplerStates[sampler].wrapS = c_glWrap[node->getAddressU()];
-			rs.samplerStates[sampler].wrapT = c_glWrap[node->getAddressV()];
-		}
+		if (!minLinear && !mipLinear)
+			rs.samplerStates[stage].minFilter = GL_NEAREST;
+		else if (!minLinear && mipLinear)
+			rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
+		else if (minLinear && !mipLinear)
+			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
 		else
-		{
-			rs.samplerStates[sampler].minFilter = GL_NEAREST;
-			rs.samplerStates[sampler].magFilter = GL_NEAREST;
-			rs.samplerStates[sampler].wrapS = GL_REPEAT;
-			rs.samplerStates[sampler].wrapT = GL_REPEAT;
-		}
+			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
 
-		cx.getShader().addSampler(node->getParameterName());
+		rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
+		rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
+		rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
+	}
+	else
+	{
+		rs.samplerStates[stage].minFilter = GL_NEAREST;
+		rs.samplerStates[stage].magFilter = GL_NEAREST;
+		rs.samplerStates[stage].wrapS = GL_REPEAT;
+		rs.samplerStates[stage].wrapT = GL_REPEAT;
 	}
 }
 
@@ -1068,6 +1067,16 @@ void emitTan(GlslContext& cx, Tan* node)
 	assign(f, out) << L"tan(" << theta->getName() << L");" << Endl;
 }
 
+void emitTexture(GlslContext& cx, Texture* node)
+{
+	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		parameterName,
+		GtTexture
+	);
+}
+
 void emitTransform(GlslContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1091,19 +1100,22 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 
 void emitUniform(GlslContext& cx, Uniform* node)
 {
-	const GlslType c_parameterType[] = { GtFloat, GtFloat4, GtFloat4x4 };
+	const GlslType c_parameterType[] = { GtFloat, GtFloat4, GtFloat4x4, GtTexture };
 	GlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		c_parameterType[node->getParameterType()]
 	);
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	if (out->getType() != GtTexture)
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
-		cx.getShader().addUniform(node->getParameterName());
+		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+			fu << L"uniform " << glsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
+			cx.getShader().addUniform(node->getParameterName());
+		}
 	}
 }
 
@@ -1336,6 +1348,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

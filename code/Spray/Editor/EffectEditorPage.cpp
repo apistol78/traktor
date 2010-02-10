@@ -20,8 +20,8 @@
 #include "Ui/Custom/Sequencer/Range.h"
 #include "Ui/Custom/Splitter.h"
 #include "I18N/Text.h"
-#include "Render/TextureFactory.h"
-#include "Render/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Core/Io/StringOutputStream.h"
 

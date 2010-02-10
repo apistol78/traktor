@@ -40,7 +40,8 @@ std::wstring cg_type_name(CgType type)
 		L"float2",
 		L"float3",
 		L"float4",
-		L"float4x4"
+		L"float4x4",
+		L"texture"
 	};
 	return c[type];
 }

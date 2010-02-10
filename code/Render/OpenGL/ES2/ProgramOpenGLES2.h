@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_ES2_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -53,7 +53,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -73,30 +73,33 @@ private:
 	struct Sampler
 	{
 		GLint location;
-		GLint locationOriginScale;
 		uint32_t texture;
-		uint32_t unit;
+		uint32_t stage;
 	};
 
-	struct SamplerTexture
+	struct TextureData
 	{
 		GLenum target;
 		GLuint name;
-		Vector4 originScale;
-		uint32_t mipCount;
 	};
 
 	Ref< IContext > m_context;
 	GLuint m_program;
+	RenderState m_renderState;
+	
 	GLint m_postOrientationCoeffs;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];
+
+	std::map< handle_t, uint32_t > m_parameterMap;
+
 	std::vector< Uniform > m_uniforms;
 	std::vector< Sampler > m_samplers;
-	RenderState m_renderState;
-	std::map< handle_t, uint32_t > m_parameterMap;
+	
 	AlignedVector< float > m_uniformData;
 	std::vector< bool > m_uniformDataDirty;
-	AlignedVector< SamplerTexture > m_samplerTextures;
+
+	AlignedVector< TextureData > m_textureData;
+
 	static ProgramOpenGLES2* ms_activeProgram;
 	bool m_dirty;
 

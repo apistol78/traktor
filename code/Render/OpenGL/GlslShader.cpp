@@ -96,16 +96,6 @@ int32_t GlslShader::allocateInterpolator()
 	return m_interpolatorCount++;
 }
 
-void GlslShader::addSampler(const std::wstring& sampler)
-{
-	m_samplers.insert(sampler);
-}
-
-const std::set< std::wstring >& GlslShader::getSamplers() const
-{
-	return m_samplers;
-}
-
 void GlslShader::addUniform(const std::wstring& uniform)
 {
 	m_uniforms.insert(uniform);

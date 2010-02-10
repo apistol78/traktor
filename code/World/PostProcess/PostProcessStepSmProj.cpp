@@ -147,10 +147,10 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
 
-	shader->setSamplerTexture(L"ShadowMap", sourceShMap->getColorTexture(0));
-	shader->setSamplerTexture(L"ShadowMapDiscRotation", m_shadowMapDiscRotation[m_frame & 1]);
+	shader->setTextureParameter(L"ShadowMap", sourceShMap->getColorTexture(0));
+	shader->setTextureParameter(L"ShadowMapDiscRotation", m_shadowMapDiscRotation[m_frame & 1]);
 	shader->setVectorParameter(L"ShadowMapSizeAndBias", shadowMapSizeAndBias);
-	shader->setSamplerTexture(L"Depth", sourceDepth->getColorTexture(0));
+	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
 	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
 	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
 	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);

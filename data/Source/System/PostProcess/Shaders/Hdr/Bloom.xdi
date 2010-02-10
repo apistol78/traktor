@@ -1,22 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>160</first>
 				<second>318</second>
 			</position>
 			<name>TexCoord</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>353</first>
 				<second>296</second>
 			</position>
-			<parameterName>BlurredTexture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -26,7 +27,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>927</first>
 				<second>316</second>
@@ -34,7 +35,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>382</first>
 				<second>245</second>
@@ -42,26 +43,35 @@
 			<value>0.2125, 0.7154, 0.0721, 0</value>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>611</first>
 				<second>237</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>776</first>
 				<second>306</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>637</first>
 				<second>379</second>
 			</position>
 			<value>0.5</value>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>162</first>
+				<second>256</second>
+			</position>
+			<parameterName>BlurredTexture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -133,6 +143,16 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

@@ -20,7 +20,8 @@ enum CgType
 	CtFloat2,
 	CtFloat3,
 	CtFloat4,
-	CtFloat4x4
+	CtFloat4x4,
+	CtTexture
 };
 
 int32_t cg_attr_index(DataUsage usage, int32_t index);

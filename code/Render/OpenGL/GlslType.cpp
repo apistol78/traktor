@@ -15,7 +15,8 @@ std::wstring glsl_vertex_attr_name(DataUsage usage, int index)
 		L"Tangent",
 		L"Binormal",
 		L"Color",
-		L"Custom"
+		L"Custom",
+		L""
 	};
 	std::wstringstream ss;
 	ss << L"in_" << s[usage] << index;
@@ -31,7 +32,8 @@ std::wstring glsl_type_name(GlslType type)
 		L"vec2",
 		L"vec3",
 		L"vec4",
-		L"mat4"
+		L"mat4",
+		L"tex"
 	};
 	return c[type];
 }

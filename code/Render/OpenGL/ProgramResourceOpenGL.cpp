@@ -7,6 +7,30 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+class MemberSamplerTexture : public MemberComplex
+{
+public:
+	MemberSamplerTexture(const std::wstring& name, SamplerTexture& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< std::wstring >(L"sampler", m_ref.sampler);
+		s >> Member< std::wstring >(L"texture", m_ref.texture);
+		return true;
+	}
+
+private:
+	SamplerTexture& m_ref;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 0, ProgramResourceOpenGL, ProgramResource)
 
@@ -17,14 +41,12 @@ ProgramResourceOpenGL::ProgramResourceOpenGL()
 ProgramResourceOpenGL::ProgramResourceOpenGL(
 	const std::wstring& vertexShader,
 	const std::wstring& fragmentShader,
-	const std::set< std::wstring >& vertexSamplers,
-	const std::set< std::wstring >& fragmentSamplers,
+	const std::vector< SamplerTexture >& samplerTextures,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
-,	m_vertexSamplers(vertexSamplers)
-,	m_fragmentSamplers(fragmentSamplers)
+,	m_samplerTextures(samplerTextures)
 ,	m_renderState(renderState)
 {
 }
@@ -35,8 +57,7 @@ bool ProgramResourceOpenGL::serialize(ISerializer& s)
 
 	s >> Member< std::wstring >(L"vertexShader", m_vertexShader);
 	s >> Member< std::wstring >(L"fragmentShader", m_fragmentShader);
-	s >> MemberStlSet< std::wstring >(L"vertexSamplers", m_vertexSamplers);
-	s >> MemberStlSet< std::wstring >(L"fragmentSamplers", m_fragmentSamplers);
+	s >> MemberStlVector< SamplerTexture, MemberSamplerTexture >(L"samplerTextures", m_samplerTextures);
 	s >> Member< void* >(L"renderState", &m_renderState, renderStateSize);
 
 	return true;

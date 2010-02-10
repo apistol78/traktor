@@ -960,25 +960,33 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	HlslVariable* texture = cx.emitInput(node, L"Texture");
+	if (!texture || texture->getType() != HtTexture)
+		return false;
+
 	HlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
 	if (!texCoord)
 		return false;
+
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+
+	std::wstring samplerName = out->getName() + L"_sampler";
 
 	if (cx.inPixel())
 	{
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"tex2D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"tex2D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"texCUBE(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"tex3D(" << node->getParameterName() << L", " << texCoord->getName() << L");" << Endl;
+			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 		}
 	}
@@ -987,38 +995,33 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
-			assign(f, out) << L"tex2Dlod(" << node->getParameterName() << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
+			assign(f, out) << L"tex2Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuCube:
-			assign(f, out) << L"texCUBElod(" << node->getParameterName() << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
+			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 
 		case Sampler::LuVolume:
-			assign(f, out) << L"tex3Dlod(" << node->getParameterName() << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
+			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 		}
 	}
-	const std::set< std::wstring >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(node->getParameterName()) == samplers.end())
-	{
-		int32_t sampler = int32_t(samplers.size());
 
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"sampler " << node->getParameterName() << L" : register(s" << sampler << L");" << Endl;
-		
-		StateBlockDx9& state = cx.getState();
-		state.setSamplerState(sampler, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
-		state.setSamplerState(sampler, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
-		state.setSamplerState(sampler, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
-		state.setSamplerState(sampler, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
-		state.setSamplerState(sampler, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
-		state.setSamplerState(sampler, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
-		state.setSamplerState(sampler, D3DSAMP_BORDERCOLOR, 0xffffffff);
-		
-		cx.getShader().addSampler(node->getParameterName());
-	}
+	uint32_t stage = cx.getShader().addSamplerTexture(texture->getName());
 
+	StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+	fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+	
+	StateBlockDx9& state = cx.getState();
+	state.setSamplerState(stage, D3DSAMP_MINFILTER, d3dFilter[node->getMinFilter()]);
+	state.setSamplerState(stage, D3DSAMP_MIPFILTER, d3dFilter[node->getMipFilter()]);
+	state.setSamplerState(stage, D3DSAMP_MAGFILTER, d3dFilter[node->getMagFilter()]);
+	state.setSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
+	state.setSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
+	state.setSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+	state.setSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
+	
 	return true;
 }
 
@@ -1273,6 +1276,17 @@ bool emitTan(HlslContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTexture(HlslContext& cx, Texture* node)
+{
+	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		parameterName,
+		HtTexture
+	);
+	return true;
+}
+
 bool emitTransform(HlslContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1298,19 +1312,22 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 
 bool emitUniform(HlslContext& cx, Uniform* node)
 {
-	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4 };
+	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4, HtTexture };
 	HlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		c_parameterType[node->getParameterType()]
 	);
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	if (out->getType() != HtTexture)
 	{
-		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
+		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		{
+			uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
+		}
 	}
 
 	return true;
@@ -1515,6 +1532,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

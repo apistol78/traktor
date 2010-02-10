@@ -92,14 +92,15 @@ void CgShader::popScope()
 	m_variables.pop_back();
 }
 
-void CgShader::addSampler(const std::wstring& sampler, uint32_t stage)
+uint32_t CgShader::addSamplerTexture(const std::wstring& textureName)
 {
-	m_samplers.insert(std::make_pair(sampler, stage));
+	m_samplerTextures.push_back(textureName);
+	return uint32_t(m_samplerTextures.size() - 1);
 }
 
-const std::map< std::wstring, uint32_t >& CgShader::getSamplers() const
+const std::vector< std::wstring >& CgShader::getSamplerTextures() const
 {
-	return m_samplers;
+	return m_samplerTextures;
 }
 
 uint32_t CgShader::addUniform(const std::wstring& uniform, CgType type, uint32_t count)

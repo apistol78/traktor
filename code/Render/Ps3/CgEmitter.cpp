@@ -907,12 +907,19 @@ bool emitSampler(CgContext& cx, Sampler* node)
 	};
 
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+
+	CgVariable* texture = cx.emitInput(node, L"Texture");
+	if (!texture || texture->getType() != CtTexture)
+		return false;
+
 	CgVariable* texCoord = cx.emitInput(node, L"TexCoord");
 	if (!texCoord)
 		return false;
+
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat4);
 
-	std::wstring samplerName = L"sampler_" + node->getParameterName();
+	std::wstring samplerName = out->getName() + L"_sampler";
+	std::wstring textureName = texture->getName();
 
 	if (cx.inPixel())
 	{
@@ -949,36 +956,30 @@ bool emitSampler(CgContext& cx, Sampler* node)
 		}
 	}
 
-	const std::map< std::wstring, uint32_t >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(node->getParameterName()) == samplers.end())
-	{
-		uint32_t sampler = uint32_t(samplers.size());
+	uint32_t stage = cx.getShader().addSamplerTexture(textureName);
 
-		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
-		fu << L"sampler " << samplerName << L" : register(s" << sampler << L");" << Endl;
-		
-		RenderState& rs = cx.getRenderState();
-		SamplerState& ss = rs.samplerStates[sampler];
+	StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+	fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
+	
+	RenderState& rs = cx.getRenderState();
+	SamplerState& ss = rs.samplerStates[stage];
 
-		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+	bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+	bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
 
-		if (!minLinear && !mipLinear)
-			ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
-		else if (!minLinear && mipLinear)
-			ss.minFilter = CELL_GCM_TEXTURE_NEAREST_LINEAR;
-		else if (minLinear && !mipLinear)
-			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_NEAREST;
-		else
-			ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
+	if (!minLinear && !mipLinear)
+		ss.minFilter = CELL_GCM_TEXTURE_NEAREST;
+	else if (!minLinear && mipLinear)
+		ss.minFilter = CELL_GCM_TEXTURE_NEAREST_LINEAR;
+	else if (minLinear && !mipLinear)
+		ss.minFilter = CELL_GCM_TEXTURE_LINEAR_NEAREST;
+	else
+		ss.minFilter = CELL_GCM_TEXTURE_LINEAR_LINEAR;
 
-		ss.magFilter = gcmFilter[node->getMagFilter()];
-		ss.wrapU = gcmAddress[node->getAddressU()];
-		ss.wrapV = gcmAddress[node->getAddressV()];
-		ss.wrapW = gcmAddress[node->getAddressW()];
-		
-		cx.getShader().addSampler(node->getParameterName(), sampler);
-	}
+	ss.magFilter = gcmFilter[node->getMagFilter()];
+	ss.wrapU = gcmAddress[node->getAddressU()];
+	ss.wrapV = gcmAddress[node->getAddressV()];
+	ss.wrapW = gcmAddress[node->getAddressW()];
 
 	return true;
 }
@@ -1232,6 +1233,17 @@ bool emitTan(CgContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTexture(CgContext& cx, Texture* node)
+{
+	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		parameterName,
+		CtTexture
+	);
+	return true;
+}
+
 bool emitTransform(CgContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1257,19 +1269,22 @@ bool emitTranspose(CgContext& cx, Transpose* node)
 
 bool emitUniform(CgContext& cx, Uniform* node)
 {
-	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4 };
+	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4, CtTexture };
 	CgVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		c_parameterType[node->getParameterType()]
 	);
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	if (out->getType() != CtTexture)
 	{
-		uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
-		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
-		fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
+		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		{
+			uint32_t registerIndex = cx.getShader().addUniform(node->getParameterName(), out->getType(), 1);
+			StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
+			fu << L"uniform " << cg_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
+		}
 	}
 
 	return true;
@@ -1474,6 +1489,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

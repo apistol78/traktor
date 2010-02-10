@@ -57,7 +57,7 @@ public:
 
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	void setSamplerTexture(handle_t handle, ITexture* texture);
+	void setTextureParameter(handle_t handle, ITexture* texture);
 
 	void fixup(Shader* shader) const;
 
@@ -86,7 +86,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setSamplerTexture(const std::wstring& name, ITexture* texture) { setSamplerTexture(getParameterHandle(name), texture); }
+	inline void setTextureParameter(const std::wstring& name, ITexture* texture) { setTextureParameter(getParameterHandle(name), texture); }
 
 	//@}
 

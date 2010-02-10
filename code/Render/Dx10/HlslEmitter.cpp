@@ -851,20 +851,30 @@ bool emitReflect(HlslContext& cx, Reflect* node)
 bool emitSampler(HlslContext& cx, Sampler* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	HlslVariable* texture = cx.emitInput(node, L"Texture");
+	if (!texture || texture->getType() != HtTexture)
+		return false;
+
 	HlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
+	if (!texCoord)
+		return false;
+
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
-	std::wstring samplerName = L"c_" + node->getParameterName() + L"_samplerState";
+	std::wstring textureName = texture->getName();
+	std::wstring samplerName = out->getName() + L"_samplerState";
 
 	if (cx.inPixel())
 	{
-		assign(f, out) << node->getParameterName() << L".Sample(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		assign(f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 	}
 	if (cx.inVertex())
 	{
-		assign(f, out) << node->getParameterName() << L".SampleLevel(" << samplerName << L", " << texCoord->getName() << L", 0.0f);" << Endl;
+		assign(f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->getName() << L", 0.0f);" << Endl;
 	}
 
+	// Define sampler class.
 	const std::map< std::wstring, D3D10_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
 	if (samplers.find(samplerName) == samplers.end())
 	{
@@ -925,21 +935,27 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
 
-		switch (node->getLookup())
+		// Add texture uniform.
+		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+		if (uniforms.find(textureName) == uniforms.end())
 		{
-		case Sampler::LuSimple:
-			fu << L"Texture2D " << node->getParameterName() << L";" << Endl;
-			break;
+			switch (node->getLookup())
+			{
+			case Sampler::LuSimple:
+				fu << L"Texture2D " << textureName << L";" << Endl;
+				break;
 
-		case Sampler::LuCube:
-			fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
-			break;
+			case Sampler::LuCube:
+				fu << L"TextureCube " << textureName << L";" << Endl;
+				break;
 
-		case Sampler::LuVolume:
-			fu << L"Texture3D " << node->getParameterName() << L";" << Endl;
-			break;
+			case Sampler::LuVolume:
+				fu << L"Texture3D " << textureName << L";" << Endl;
+				break;
+			}
+			fu << Endl;
+			cx.getShader().addUniform(textureName);
 		}
-		fu << Endl;
 
 		fu << L"SamplerState " << samplerName << L";" << Endl;
 		
@@ -1195,6 +1211,17 @@ bool emitTan(HlslContext& cx, Tan* node)
 	return true;
 }
 
+bool emitTexture(HlslContext& cx, Texture* node)
+{
+	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		parameterName,
+		HtTexture
+	);
+	return true;
+}
+
 bool emitTransform(HlslContext& cx, Transform* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1220,19 +1247,22 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 
 bool emitUniform(HlslContext& cx, Uniform* node)
 {
-	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4 };
+	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4, HtTexture };
 	HlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
 		c_parameterType[node->getParameterType()]
 	);
 
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
+	if (out->getType() != HtTexture)
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
-		cx.getShader().addUniform(node->getParameterName());
+		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+		if (uniforms.find(node->getParameterName()) == uniforms.end())
+		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
+			cx.getShader().addUniform(node->getParameterName());
+		}
 	}
 
 	return true;
@@ -1436,6 +1466,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

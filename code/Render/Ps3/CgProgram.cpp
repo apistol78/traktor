@@ -12,14 +12,14 @@ CgProgram::CgProgram()
 CgProgram::CgProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& pixelShader,
-	const std::map< std::wstring, uint32_t >& vertexSamplers,
-	const std::map< std::wstring, uint32_t >& pixelSamplers,
+	const std::vector< std::wstring >& vertexTextures,
+	const std::vector< std::wstring >& pixelTextures,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_pixelShader(pixelShader)
-,	m_vertexSamplers(vertexSamplers)
-,	m_pixelSamplers(pixelSamplers)
+,	m_vertexTextures(vertexTextures)
+,	m_pixelTextures(pixelTextures)
 ,	m_renderState(renderState)
 {
 }
@@ -34,14 +34,14 @@ const std::wstring& CgProgram::getPixelShader() const
 	return m_pixelShader;
 }
 
-const std::map< std::wstring, uint32_t >& CgProgram::getVertexSamplers() const
+const std::vector< std::wstring >& CgProgram::getVertexTextures() const
 {
-	return m_vertexSamplers;
+	return m_vertexTextures;
 }
 
-const std::map< std::wstring, uint32_t >& CgProgram::getPixelSamplers() const
+const std::vector< std::wstring >& CgProgram::getPixelTextures() const
 {
-	return m_pixelSamplers;
+	return m_pixelTextures;
 }
 
 const RenderState& CgProgram::getRenderState() const

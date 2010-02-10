@@ -157,7 +157,7 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 	{
 		renderBlock->shaderParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
 		renderBlock->shaderParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
-		renderBlock->shaderParams->setSamplerTexture(L"Heightfield", m_heightfield->getHeightTexture());
+		renderBlock->shaderParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
 	}
 
 	renderBlock->shaderParams->endParameters(renderContext);

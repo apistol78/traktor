@@ -61,10 +61,6 @@ public:
 
 	int32_t allocateInterpolator();
 
-	void addSampler(const std::wstring& sampler);
-
-	const std::set< std::wstring >& getSamplers() const;
-
 	void addUniform(const std::wstring& uniform);
 
 	const std::set< std::wstring >& getUniforms() const;
@@ -84,7 +80,6 @@ private:
 	std::map< std::wstring, GlslVariable* > m_inputVariables;
 	std::list< scope_t > m_variables;
 	int32_t m_interpolatorCount;
-	std::set< std::wstring > m_samplers;
 	std::set< std::wstring > m_uniforms;
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];

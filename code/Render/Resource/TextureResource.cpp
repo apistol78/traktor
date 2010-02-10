@@ -1,4 +1,4 @@
-#include "Render/TextureResource.h"
+#include "Render/Resource/TextureResource.h"
 
 namespace traktor
 {

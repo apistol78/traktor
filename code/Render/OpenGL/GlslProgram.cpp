@@ -12,14 +12,12 @@ GlslProgram::GlslProgram()
 GlslProgram::GlslProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& fragmentShader,
-	const std::set< std::wstring >& vertexSamplers,
-	const std::set< std::wstring >& fragmentSamplers,
+	const std::vector< SamplerTexture >& samplerTextures,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
-,	m_vertexSamplers(vertexSamplers)
-,	m_fragmentSamplers(fragmentSamplers)
+,	m_samplerTextures(samplerTextures)
 ,	m_renderState(renderState)
 {
 }
@@ -34,14 +32,9 @@ const std::wstring& GlslProgram::getFragmentShader() const
 	return m_fragmentShader;
 }
 
-const std::set< std::wstring >& GlslProgram::getVertexSamplers() const
+const std::vector< SamplerTexture >& GlslProgram::getSamplerTextures() const
 {
-	return m_vertexSamplers;
-}
-
-const std::set< std::wstring >& GlslProgram::getFragmentSamplers() const
-{
-	return m_fragmentSamplers;
+	return m_samplerTextures;
 }
 
 const RenderState& GlslProgram::getRenderState() const

@@ -19,7 +19,8 @@ enum GlslType
 	GtFloat2,
 	GtFloat3,
 	GtFloat4,
-	GtFloat4x4
+	GtFloat4x4,
+	GtTexture
 };
 
 std::wstring glsl_vertex_attr_name(DataUsage usage, int index);

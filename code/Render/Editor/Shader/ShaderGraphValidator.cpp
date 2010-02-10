@@ -174,9 +174,7 @@ public:
 		{
 			std::wstring parameterName;
 
-			if (is_a< Sampler >(*i))
-				parameterName = static_cast< const Sampler* >(*i)->getParameterName();
-			else if (is_a< Uniform >(*i))
+			if (is_a< Uniform >(*i))
 				parameterName = static_cast< const Uniform* >(*i)->getParameterName();
 			else if (is_a< IndexedUniform >(*i))
 				parameterName = static_cast< const IndexedUniform* >(*i)->getParameterName();

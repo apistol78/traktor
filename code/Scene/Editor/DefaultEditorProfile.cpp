@@ -4,8 +4,8 @@
 #include "Ui/Command.h"
 
 // Resource factories
-#include "Render/TextureFactory.h"
-#include "Render/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
 #include "Mesh/Blend/BlendMeshFactory.h"
 #include "Mesh/Indoor/IndoorMeshFactory.h"

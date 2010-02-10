@@ -2,14 +2,14 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>402</first>
 				<second>306</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>316</first>
 				<second>353</second>
@@ -17,7 +17,7 @@
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>132</first>
 				<second>370</second>
@@ -26,20 +26,18 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.FragmentPosition">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>207</first>
 				<second>311</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>540</first>
 				<second>282</second>
 			</position>
-			<parameterName>DepthMap</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -49,12 +47,21 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>695</first>
 				<second>308</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>369</first>
+				<second>265</second>
+			</position>
+			<parameterName>DepthMap</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -106,6 +113,16 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

@@ -54,6 +54,20 @@ const D3DMULTISAMPLE_TYPE c_d3dMultiSample[] =
 #endif
 };
 
+struct ProgramScalar
+{
+	uint16_t registerIndex;
+	uint16_t registerCount;
+	uint16_t offset;
+	uint16_t length;
+};
+
+struct ProgramSampler
+{
+	uint16_t stage;
+	uint16_t texture;
+};
+
 //@}
 
 /*! \brief Copy source texture into locked destination texture memory.

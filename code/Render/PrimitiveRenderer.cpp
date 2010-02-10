@@ -965,7 +965,7 @@ void PrimitiveRenderer::end(IRenderView* renderView)
 		{
 			m_shader->setTechnique(s_handles[i->shaderId]);
 			if (i->texture)
-				m_shader->setSamplerTexture(s_textureHandle, i->texture);
+				m_shader->setTextureParameter(s_textureHandle, i->texture);
 			m_shader->draw(renderView, i->primitives);
 		}
 	}

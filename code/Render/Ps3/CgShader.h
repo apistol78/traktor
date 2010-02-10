@@ -59,9 +59,9 @@ public:
 
 	void popScope();
 
-	void addSampler(const std::wstring& sampler, uint32_t stage);
+	uint32_t addSamplerTexture(const std::wstring& textureName);
 
-	const std::map< std::wstring, uint32_t >& getSamplers() const;
+	const std::vector< std::wstring >& getSamplerTextures() const;
 
 	uint32_t addUniform(const std::wstring& uniform, CgType type, uint32_t count);
 
@@ -81,7 +81,7 @@ private:
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;
 	std::list< scope_t > m_variables;
-	std::map< std::wstring, uint32_t > m_samplers;
+	std::vector< std::wstring > m_samplerTextures;
 	std::set< std::wstring > m_uniforms;
 	std::vector< bool > m_uniformAllocated;
 	int32_t m_nextTemporaryVariable;

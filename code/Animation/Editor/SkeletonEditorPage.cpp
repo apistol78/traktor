@@ -25,9 +25,9 @@
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/TextureFactory.h"
-#include "Render/ShaderFactory.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
 

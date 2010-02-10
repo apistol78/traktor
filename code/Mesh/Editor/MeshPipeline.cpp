@@ -23,9 +23,9 @@
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Render/External.h"
-#include "Render/FragmentLinker.h"
 #include "Render/Nodes.h"
 #include "Render/ShaderGraph.h"
+#include "Render/Resource/FragmentLinker.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 
 namespace traktor

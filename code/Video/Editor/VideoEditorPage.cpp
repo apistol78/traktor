@@ -7,7 +7,7 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/ShaderFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Application.h"
 #include "Ui/Container.h"
@@ -184,7 +184,7 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 		);
 		if (m_video)
 		{
-			m_shader->setSamplerTexture(L"Texture", m_video->getTexture());
+			m_shader->setTextureParameter(L"Texture", m_video->getTexture());
 			m_screenRenderer->draw(m_renderView, m_shader);
 		}
 		m_renderView->end();

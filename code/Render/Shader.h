@@ -11,9 +11,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -61,7 +61,7 @@ public:
 
 	void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	void setSamplerTexture(handle_t handle, const resource::Proxy< ITexture >& texture);
+	void setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture);
 
 	void setStencilReference(uint32_t stencilReference);
 
@@ -97,7 +97,7 @@ public:
 
 	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setSamplerTexture(const std::wstring& name, const resource::Proxy< ITexture >& texture) { setSamplerTexture(getParameterHandle(name), texture); }
+	inline void setTextureParameter(const std::wstring& name, const resource::Proxy< ITexture >& texture) { setTextureParameter(getParameterHandle(name), texture); }
 
 	//@}
 

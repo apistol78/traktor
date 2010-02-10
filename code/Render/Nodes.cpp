@@ -1,5 +1,5 @@
 #include "Render/Nodes.h"
-#include "Render/TextureResource.h"
+#include "Render/Resource/TextureResource.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberBitMask.h"
@@ -1247,12 +1247,10 @@ Reflect::Reflect()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 0, Sampler, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"TexCoord", false }, 0 };
+const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
 
 Sampler::Sampler(
-	const std::wstring& parameterName,
-	const Guid& external,
 	Lookup lookup,
 	Filter minFilter,
 	Filter mipFilter,
@@ -1262,8 +1260,6 @@ Sampler::Sampler(
 	Address addressW
 )
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
-,	m_parameterName(parameterName)
-,	m_external(external)
 ,	m_lookup(lookup)
 ,	m_minFilter(minFilter)
 ,	m_mipFilter(mipFilter)
@@ -1272,26 +1268,6 @@ Sampler::Sampler(
 ,	m_addressV(addressV)
 ,	m_addressW(addressW)
 {
-}
-
-void Sampler::setParameterName(const std::wstring& parameterName)
-{
-	m_parameterName = parameterName;
-}
-
-const std::wstring& Sampler::getParameterName() const
-{
-	return m_parameterName;
-}
-
-void Sampler::setExternal(const Guid& external)
-{
-	m_external = external;
-}
-
-const Guid& Sampler::getExternal() const
-{
-	return m_external;
 }
 
 void Sampler::setLookup(Lookup lookup)
@@ -1364,11 +1340,6 @@ Sampler::Address Sampler::getAddressW()
 	return m_addressW;
 }
 
-std::wstring Sampler::getInformation() const
-{
-	return m_parameterName;
-}
-
 bool Sampler::serialize(ISerializer& s)
 {
 	const MemberEnum< Lookup >::Key kLookup[] =
@@ -1399,8 +1370,6 @@ bool Sampler::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-	s >> Member< Guid >(L"external", m_external, &type_of< render::TextureResource >());
 	s >> MemberEnum< Lookup >(L"lookup", m_lookup, kLookup);
 	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
 	s >> MemberEnum< Filter >(L"mipFilter", m_mipFilter, kFilter);
@@ -1679,6 +1648,38 @@ Tan::Tan()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 0, Texture, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Texture_i[] = { 0 };
+const ImmutableNode::OutputPinDesc c_Texture_o[] = { L"Output", 0 };
+
+Texture::Texture(const Guid& external)
+:	ImmutableNode(c_Texture_i, c_Texture_o)
+,	m_external(external)
+{
+}
+
+void Texture::setExternal(const Guid& external)
+{
+	m_external = external;
+}
+
+const Guid& Texture::getExternal() const
+{
+	return m_external;
+}
+
+bool Texture::serialize(ISerializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> Member< Guid >(L"external", m_external, &type_of< render::TextureResource >());
+	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Transform", 0, Transform, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Transform_i[] = { { L"Input", false }, { L"Transform", false }, 0 };
@@ -1749,6 +1750,7 @@ bool Uniform::serialize(ISerializer& s)
 		{ L"PtScalar", PtScalar },
 		{ L"PtVector", PtVector },
 		{ L"PtMatrix", PtMatrix },
+		{ L"PtTexture", PtTexture },
 		{ 0, 0 }
 	};
 

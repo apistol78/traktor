@@ -2,9 +2,9 @@
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
 #include "Render/External.h"
-#include "Render/FragmentLinker.h"
 #include "Render/Nodes.h"
 #include "Render/ShaderGraph.h"
+#include "Render/Resource/FragmentLinker.h"
 
 namespace traktor
 {

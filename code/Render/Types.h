@@ -2,14 +2,15 @@
 #define traktor_render_Types_H
 
 #include "Core/Config.h"
+#include "Core/Guid.h"
 #include "Core/Io/Path.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -335,6 +336,13 @@ typedef uint32_t handle_t;
  * \return Parameter handle.
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
+
+/*! \brief Synthesize parameter name from guid.
+ *
+ * \param guid Guid to generate parameter name from.
+ * \return Parameter name.
+ */
+std::wstring T_DLLCLASS getParameterNameFromGuid(const Guid& guid);
 
 /*! \brief Return human readable description of data usage. */
 std::wstring T_DLLCLASS getDataUsageName(DataUsage usage);

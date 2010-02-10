@@ -92,22 +92,24 @@ void HlslShader::popScope()
 	m_variables.pop_back();
 }
 
-void HlslShader::addSampler(const std::wstring& sampler)
+uint32_t HlslShader::addSamplerTexture(const std::wstring& textureName)
 {
-	m_samplers.insert(sampler);
+	m_samplerTextures.push_back(textureName);
+	return uint32_t(m_samplerTextures.size() - 1);
 }
 
-const std::set< std::wstring >& HlslShader::getSamplers() const
+const std::vector< std::wstring >& HlslShader::getSamplerTextures() const
 {
-	return m_samplers;
+	return m_samplerTextures;
 }
 
 uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint32_t count)
 {
-	const int32_t c_elementCounts[] = { 0, 0, 1, 1, 1, 1, 4 };
+	const int32_t c_elementCounts[] = { 0, 0, 1, 1, 1, 1, 4, 0 };
 	int32_t elementCount = c_elementCounts[int(type)] * count;
 	int32_t index = 0;
 
+	// Allocate register with float uniforms.
 	if (elementCount > 0)
 	{
 		int32_t fromIndex, toIndex;

@@ -15,10 +15,10 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
-#include "Render/TextureResource.h"
 #include "Render/Types.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Render/Editor/TexturePipeline.h"
+#include "Render/Resource/TextureResource.h"
 
 namespace traktor
 {

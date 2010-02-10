@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>436</first>
 				<second>326</second>
@@ -13,7 +13,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>435</first>
 				<second>300</second>
@@ -21,7 +21,7 @@
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>139</first>
 				<second>156</second>
@@ -32,21 +32,21 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>669</first>
 				<second>249</second>
 			</position>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>376</first>
 				<second>146</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>167</first>
 				<second>194</second>
@@ -54,7 +54,7 @@
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>167</first>
 				<second>223</second>
@@ -62,7 +62,7 @@
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1131</first>
 				<second>254</second>
@@ -70,7 +70,7 @@
 			<name>Alpha</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1003</first>
 				<second>276</second>
@@ -78,7 +78,7 @@
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1002</first>
 				<second>324</second>
@@ -86,7 +86,7 @@
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1301</first>
 				<second>392</second>
@@ -94,7 +94,7 @@
 			<name>Normal</name>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1126</first>
 				<second>340</second>
@@ -114,13 +114,11 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>822</first>
 				<second>265</second>
 			</position>
-			<parameterName>ParticleTexture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -128,6 +126,15 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>606</first>
+				<second>192</second>
+			</position>
+			<parameterName>ParticleTexture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -249,6 +256,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

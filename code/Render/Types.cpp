@@ -1,7 +1,8 @@
 #include <map>
-#include "Render/Types.h"
-#include "Core/Singleton/SingletonManager.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Singleton/ISingleton.h"
+#include "Core/Singleton/SingletonManager.h"
+#include "Render/Types.h"
 
 namespace traktor
 {
@@ -57,6 +58,22 @@ private:
 handle_t getParameterHandle(const std::wstring& name)
 {
 	return HandleRegistry::getInstance().getHandle(name);
+}
+
+std::wstring getParameterNameFromGuid(const Guid& guid)
+{
+	const wchar_t hex[] = { L"0123456789ABCDEF" };
+
+	StringOutputStream ss;
+	ss << L"pmg_";
+
+	for (int i = 0; i < 16; ++i)
+	{
+		ss.put(hex[guid[i] >> 4]);
+		ss.put(hex[guid[i] & 0x0f]);
+	}
+
+	return ss.str();
 }
 
 std::wstring getDataUsageName(DataUsage usage)

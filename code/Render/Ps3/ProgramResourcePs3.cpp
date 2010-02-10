@@ -125,15 +125,15 @@ ProgramResourcePs3::ProgramResourcePs3(
 	CGCbin* vertexShaderBin,
 	CGCbin* pixelShaderBin,
 	const std::vector< Parameter >& parameters,
-	const std::vector< Sampler >& vertexSamplers,
-	const std::vector< Sampler >& pixelSamplers,
+	const std::vector< std::wstring >& vertexTextures,
+	const std::vector< std::wstring >& pixelTextures,
 	const RenderState& renderState
 )
 :	m_vertexShaderBin(vertexShaderBin)
 ,	m_pixelShaderBin(pixelShaderBin)
 ,	m_parameters(parameters)
-,	m_vertexSamplers(vertexSamplers)
-,	m_pixelSamplers(pixelSamplers)
+,	m_vertexTextures(vertexTextures)
+,	m_pixelTextures(pixelTextures)
 ,	m_renderState(renderState)
 {
 }
@@ -151,8 +151,8 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< Parameter, MemberComposite< Parameter > >(L"parameters", m_parameters);
-	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"vertexSamplers", m_vertexSamplers);
-	s >> MemberStlVector< Sampler, MemberComposite< Sampler > >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberStlVector< std::wstring >(L"vertexSamplers", m_vertexTextures);
+	s >> MemberStlVector< std::wstring >(L"pixelSamplers", m_pixelTextures);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	return true;
 }
@@ -162,13 +162,6 @@ bool ProgramResourcePs3::Parameter::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< int32_t >(L"size", size);
 	s >> Member< int32_t >(L"count", count);
-	return true;
-}
-
-bool ProgramResourcePs3::Sampler::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"stage", stage);
 	return true;
 }
 

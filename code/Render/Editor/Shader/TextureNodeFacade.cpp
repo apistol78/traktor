@@ -1,50 +1,50 @@
-#include "Render/Editor/Shader/SamplerNodeFacade.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Render/Nodes.h"
-#include "Editor/IEditor.h"
-#include "Editor/Settings.h"
-#include "Editor/TypeBrowseFilter.h"
+#include "Core/Io/FileSystem.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Custom/Graph/Node.h"
-#include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Editor/IEditor.h"
+#include "Editor/Settings.h"
+#include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Core/Io/FileSystem.h"
+#include "Render/Nodes.h"
+#include "Render/Editor/TextureAsset.h"
+#include "Render/Editor/Shader/TextureNodeFacade.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Custom/Graph/DefaultNodeShape.h"
+#include "Ui/Custom/Graph/Node.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SamplerNodeFacade", SamplerNodeFacade, NodeFacade)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.render.TextureNodeFacade", TextureNodeFacade, NodeFacade)
 
-SamplerNodeFacade::SamplerNodeFacade(ui::custom::GraphControl* graphControl)
+TextureNodeFacade::TextureNodeFacade(ui::custom::GraphControl* graphControl)
 {
 	m_nodeShape = new ui::custom::DefaultNodeShape(graphControl);
 }
 
-Ref< Node > SamplerNodeFacade::createShaderNode(
+Ref< Node > TextureNodeFacade::createShaderNode(
 	const TypeInfo* nodeType,
 	editor::IEditor* editor
 )
 {
-	return new Sampler();
+	return new Texture();
 }
 
-Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
+Ref< ui::custom::Node > TextureNodeFacade::createEditorNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
 )
 {
-	Sampler* sampler = checked_type_cast< Sampler* >(shaderNode);
+	Texture* texture = checked_type_cast< Texture* >(shaderNode);
 
 	Ref< ui::custom::Node > editorNode = new ui::custom::Node(
-		i18n::Text(L"SHADERGRAPH_NODE_SAMPLER"),
+		i18n::Text(L"SHADERGRAPH_NODE_TEXTURE"),
 		shaderNode->getInformation(),
 		ui::Point(
 			shaderNode->getPosition().first,
@@ -55,7 +55,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 
 	editorNode->setColor(traktor::Color(255, 255, 200));
 
-	Guid textureGuid = sampler->getExternal();
+	Guid textureGuid = texture->getExternal();
 	if (!textureGuid.isNull())
 	{
 		Ref< TextureAsset > textureAsset = editor->getSourceDatabase()->getObjectReadOnly< TextureAsset >(textureGuid);
@@ -124,7 +124,7 @@ Ref< ui::custom::Node > SamplerNodeFacade::createEditorNode(
 	return editorNode;
 }
 
-void SamplerNodeFacade::editShaderNode(
+void TextureNodeFacade::editShaderNode(
 	editor::IEditor* editor,
 	ui::custom::GraphControl* graphControl,
 	Node* shaderNode
@@ -133,10 +133,10 @@ void SamplerNodeFacade::editShaderNode(
 	editor::TypeBrowseFilter filter(type_of< TextureAsset >());
 	Ref< db::Instance > instance = editor->browseInstance(&filter);
 	if (instance)
-		checked_type_cast< Sampler* >(shaderNode)->setExternal(instance->getGuid());
+		checked_type_cast< Texture*, false >(shaderNode)->setExternal(instance->getGuid());
 }
 
-void SamplerNodeFacade::setValidationIndicator(
+void TextureNodeFacade::setValidationIndicator(
 	ui::custom::Node* editorNode,
 	bool validationSucceeded
 )

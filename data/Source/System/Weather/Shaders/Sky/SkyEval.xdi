@@ -2,21 +2,25 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>766</first>
 				<second>164</second>
 			</position>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>620</first>
 				<second>48</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Sun</comment>
+			<comment>
+			<![CDATA[
+Sun
+			]]>
+			</comment>
 			<position>
 				<first>424</first>
 				<second>19</second>
@@ -24,39 +28,49 @@
 			<color>255, 227, 158, 255</color>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Sky horizon</comment>
+			<comment>
+			<![CDATA[
+Sky horizon
+			]]>
+			</comment>
 			<position>
 				<first>286</first>
 				<second>55</second>
 			</position>
 			<color>122, 174, 221, 253</color>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>121</first>
-				<second>169</second>
+				<first>72</first>
+				<second>175</second>
 			</position>
 			<name>SkyDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>120</first>
-				<second>198</second>
+				<first>71</first>
+				<second>204</second>
 			</position>
 			<name>SunDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1046</first>
 				<second>205</second>
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>310</first>
 				<second>298</second>
@@ -65,12 +79,15 @@
 			<inputPins>
 				<item>
 					<name>UVOffset</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Height</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>SkyDomePosition</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -78,9 +95,10 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>179</first>
 				<second>340</second>
@@ -88,14 +106,14 @@
 			<value>0.2</value>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>913</first>
 				<second>215</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>607</first>
 				<second>334</second>
@@ -103,7 +121,7 @@
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-73</first>
 				<second>267</second>
@@ -111,14 +129,14 @@
 			<value>0, 0.005, 0, 0</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>117</first>
 				<second>264</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-26</first>
 				<second>310</second>
@@ -126,8 +144,8 @@
 			<parameterName>Time</parameterName>
 			<type>PtScalar</type>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>289</first>
 				<second>184</second>
@@ -136,9 +154,11 @@
 			<inputPins>
 				<item>
 					<name>SkyDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>SunDirection</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -152,16 +172,21 @@
 					<name>HorizonBlend</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>473</first>
 				<second>71</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Sky</comment>
+			<comment>
+			<![CDATA[
+Sky
+			]]>
+			</comment>
 			<position>
 				<first>283</first>
 				<second>113</second>
@@ -169,14 +194,14 @@
 			<color>13, 51, 114, 253</color>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>796</first>
 				<second>285</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>484</first>
 				<second>269</second>
@@ -184,14 +209,14 @@
 			<value>4</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>582</first>
 				<second>224</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>693</first>
 				<second>236</second>

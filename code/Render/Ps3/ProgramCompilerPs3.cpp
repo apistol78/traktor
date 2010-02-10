@@ -103,8 +103,6 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGrap
 	// Collect information about parameters which are hard to extract
 	// through CG reflection.
 	std::set< ProgramResourcePs3::Parameter, ParameterLess > parameters;
-	std::vector< ProgramResourcePs3::Sampler > vertexSamplers;
-	std::vector< ProgramResourcePs3::Sampler > pixelSamplers;
 
 	RefArray< Uniform > uniformNodes;
 	RefArray< IndexedUniform > indexedUniformNodes;
@@ -114,6 +112,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGrap
 
 	for (RefArray< Uniform >::const_iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
 	{
+		if ((*i)->getParameterType() == PtTexture)
+			continue;
+
 		struct ProgramResourcePs3::Parameter param =
 		{
 			(*i)->getParameterName(),
@@ -172,34 +173,12 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGrap
 		parameters.insert(param);
 	}
 
-	const std::map< std::wstring, uint32_t >& cgVertexSamplers = cgProgram.getVertexSamplers();
-	for (std::map< std::wstring, uint32_t >::const_iterator i = cgVertexSamplers.begin(); i != cgVertexSamplers.end(); ++i)
-	{
-		ProgramResourcePs3::Sampler sampler =
-		{
-			i->first,
-			i->second
-		};
-		vertexSamplers.push_back(sampler);
-	}
-
-	const std::map< std::wstring, uint32_t >& cgPixelSamplers = cgProgram.getPixelSamplers();
-	for (std::map< std::wstring, uint32_t >::const_iterator i = cgPixelSamplers.begin(); i != cgPixelSamplers.end(); ++i)
-	{
-		ProgramResourcePs3::Sampler sampler =
-		{
-			i->first,
-			i->second
-		};
-		pixelSamplers.push_back(sampler);
-	}
-
 	return new ProgramResourcePs3(
 		vertexShaderBin,
 		pixelShaderBin,
 		std::vector< ProgramResourcePs3::Parameter >(parameters.begin(), parameters.end()),
-		vertexSamplers,
-		pixelSamplers,
+		cgProgram.getVertexTextures(),
+		cgProgram.getPixelTextures(),
 		cgProgram.getRenderState()
 	);
 }

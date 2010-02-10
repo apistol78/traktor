@@ -2,13 +2,11 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>153</first>
 				<second>150</second>
 			</position>
-			<parameterName>ShadowMap</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -18,7 +16,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>323</first>
 				<second>186</second>
@@ -26,7 +24,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-53</first>
 				<second>186</second>
@@ -37,7 +35,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>324</first>
 				<second>406</second>
@@ -48,7 +46,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>967</first>
 				<second>433</second>
@@ -56,7 +54,7 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>179</first>
 				<second>467</second>
@@ -65,7 +63,11 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment>Constant bias</comment>
+			<comment>
+			<![CDATA[
+Constant bias
+			]]>
+			</comment>
 			<position>
 				<first>419</first>
 				<second>467</second>
@@ -73,7 +75,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>645</first>
 				<second>510</second>
@@ -81,7 +83,7 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>786</first>
 				<second>417</second>
@@ -90,7 +92,7 @@
 			<operator>CoGreaterEqual</operator>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>645</first>
 				<second>540</second>
@@ -98,14 +100,18 @@
 			<value>0</value>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>542</first>
 				<second>408</second>
 			</position>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
-			<comment>Some renderers are unable to set FP border color thus we remap 0 to infinity</comment>
+			<comment>
+			<![CDATA[
+Some renderers are unable to set FP border color thus we remap 0 to infinity
+			]]>
+			</comment>
 			<position>
 				<first>519</first>
 				<second>178</second>
@@ -114,7 +120,7 @@
 			<operator>CoGreater</operator>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>271</first>
 				<second>244</second>
@@ -122,12 +128,25 @@
 			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Infinity</comment>
+			<comment>
+			<![CDATA[
+Infinity
+			]]>
+			</comment>
 			<position>
 				<first>258</first>
 				<second>305</second>
 			</position>
-			<value>1e+006</value>
+			<value>1000000</value>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>-28</first>
+				<second>153</second>
+			</position>
+			<parameterName>ShadowMap</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -269,6 +288,16 @@
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
 				<name>CaseFalse</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

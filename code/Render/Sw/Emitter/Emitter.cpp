@@ -609,10 +609,13 @@ void emitPow(EmitterContext& cx, Pow* node)
 
 void emitSampler(EmitterContext& cx, Sampler* node)
 {
+	Variable* texture = cx.emitInput(node, L"Texture");
 	Variable* texCoord = cx.emitInput(node, L"TexCoord");
 	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+
+	std::wstring samplerName = L"FIXME";
 	
-	int samplerIndex = cx.allocSampler(node->getParameterName());
+	int samplerIndex = cx.allocSampler(samplerName);
 
 	Instruction inst(OpSampler, out->reg, texCoord->reg, samplerIndex, 0, 0);
 	cx.emitInstruction(inst);
