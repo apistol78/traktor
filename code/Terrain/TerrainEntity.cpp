@@ -456,10 +456,10 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 
 		renderBlock->shaderParams->beginParameters(renderContext);
 
-		renderBlock->shaderParams->setSamplerTexture(m_handleSurface, surface);
-		renderBlock->shaderParams->setSamplerTexture(m_handleHeightfield, m_heightfield->getHeightTexture());
+		renderBlock->shaderParams->setTextureParameter(m_handleSurface, surface);
+		renderBlock->shaderParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
 		renderBlock->shaderParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightfield->getHeightTexture()->getWidth()));
-		renderBlock->shaderParams->setSamplerTexture(m_handleNormals, m_heightfield->getNormalTexture());
+		renderBlock->shaderParams->setTextureParameter(m_handleNormals, m_heightfield->getNormalTexture());
 		renderBlock->shaderParams->setFloatParameter(m_handleNormalsSize, float(m_heightfield->getNormalTexture()->getWidth()));
 		renderBlock->shaderParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->shaderParams->setVectorParameter(m_handleWorldExtent, worldExtent);

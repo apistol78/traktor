@@ -16,7 +16,8 @@ enum VariableType
 	VtFloat2,
 	VtFloat3,
 	VtFloat4,
-	VtFloat4x4
+	VtFloat4x4,
+	VtTexture
 };
 
 struct Variable

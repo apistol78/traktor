@@ -4,11 +4,11 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Render/TextureFactory.h"
-#include "Render/TextureResource.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ICubeTexture.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/TextureResource.h"
 
 namespace traktor
 {

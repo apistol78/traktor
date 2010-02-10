@@ -1,15 +1,15 @@
-#include "Render/ShaderResource.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Render/Resource/ShaderResource.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 1, ShaderResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 0, ShaderResource, ISerializable)
 
 const std::map< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
 {
@@ -21,12 +21,12 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 	return m_techniques;
 }
 
-void ShaderResource::addTexture(const std::wstring& parameterName, const Guid& guid)
+void ShaderResource::addTexture(const Guid& guid)
 {
-	m_textures.push_back(std::make_pair(parameterName, guid));
+	m_textures.push_back(guid);
 }
 
-const std::vector< std::pair< std::wstring, Guid > >& ShaderResource::getTextures() const
+const std::vector< Guid >& ShaderResource::getTextures() const
 {
 	return m_textures;
 }
@@ -35,8 +35,7 @@ bool ShaderResource::serialize(ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
-	if (s.getVersion() >= 1)
-		s >> MemberStlVector< std::pair< std::wstring, Guid >, MemberStlPair< std::wstring, Guid > >(L"textures", m_textures);
+	s >> MemberStlVector< Guid >(L"textures", m_textures);
 	return true;
 }
 

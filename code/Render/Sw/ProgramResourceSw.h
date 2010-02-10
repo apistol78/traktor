@@ -1,7 +1,7 @@
 #ifndef traktor_render_ProgramResourceSw_H
 #define traktor_render_ProgramResourceSw_H
 
-#include "Render/ProgramResource.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {

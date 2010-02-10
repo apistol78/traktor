@@ -2,13 +2,11 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>546</first>
 				<second>895</second>
 			</position>
-			<parameterName>Heightfield</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -18,14 +16,14 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>113</first>
 				<second>895</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>98</first>
 				<second>1007</second>
@@ -33,7 +31,7 @@
 			<value>-1, 0, -1, 0</value>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-243</first>
 				<second>1006</second>
@@ -42,7 +40,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-239</first>
 				<second>930</second>
@@ -51,7 +49,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>718</first>
 				<second>915</second>
@@ -59,7 +57,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>429</first>
 				<second>915</second>
@@ -67,29 +65,32 @@
 			<swizzle>xz</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>272</first>
 				<second>895</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-46</first>
 				<second>895</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-258</first>
 				<second>968</second>
 			</position>
 			<name>WorldPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>699</first>
 				<second>1022</second>
@@ -97,7 +98,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>699</first>
 				<second>1047</second>
@@ -105,19 +106,28 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>840</first>
 				<second>925</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1001</first>
 				<second>953</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>362</first>
+				<second>841</second>
+			</position>
+			<parameterName>Heightfield</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -269,6 +279,16 @@
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

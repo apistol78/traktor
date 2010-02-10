@@ -20,7 +20,8 @@ enum HlslType
 	HtFloat2,
 	HtFloat3,
 	HtFloat4,
-	HtFloat4x4
+	HtFloat4x4,
+	HtTexture
 };
 
 std::wstring hlsl_semantic(DataUsage usage, int index);

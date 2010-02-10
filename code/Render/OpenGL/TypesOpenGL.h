@@ -12,6 +12,12 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
+struct SamplerTexture
+{
+	std::wstring sampler;
+	std::wstring texture;
+};
+
 struct SamplerState
 {
 	GLenum minFilter;

@@ -115,7 +115,7 @@ void ProgramSw::setMatrixArrayParameter(handle_t handle, const Matrix44* param, 
 	}
 }
 
-void ProgramSw::setSamplerTexture(handle_t handle, ITexture* texture)
+void ProgramSw::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, int >::const_iterator i = m_samplerMap.find(handle);
 	if (i != m_samplerMap.end())

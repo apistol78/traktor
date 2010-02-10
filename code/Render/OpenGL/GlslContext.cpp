@@ -101,5 +101,17 @@ RenderState& GlslContext::getRenderState()
 	return m_renderState;
 }
 
+uint32_t GlslContext::addSamplerTexture(const std::wstring& samplerName, const std::wstring& textureName)
+{
+	SamplerTexture st = { samplerName, textureName };
+	m_samplerTextures.push_back(st);
+	return uint32_t(m_samplerTextures.size() - 1);
+}
+
+const std::vector< SamplerTexture >& GlslContext::getSamplerTextures() const
+{
+	return m_samplerTextures;
+}
+
 	}
 }

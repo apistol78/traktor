@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>473</first>
 				<second>347</second>
@@ -10,7 +10,7 @@
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>412</first>
 				<second>406</second>
@@ -19,14 +19,14 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>598</first>
 				<second>351</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>247</first>
 				<second>521</second>
@@ -44,20 +44,18 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>763</first>
 				<second>303</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1186</first>
 				<second>335</second>
 			</position>
-			<parameterName>Source</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -67,7 +65,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>894</first>
 				<second>619</second>
@@ -75,7 +73,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>893</first>
 				<second>587</second>
@@ -83,14 +81,14 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1350</first>
 				<second>351</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>586</first>
 				<second>307</second>
@@ -99,14 +97,14 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>958</first>
 				<second>351</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sum">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>528</first>
 				<second>656</second>
@@ -115,7 +113,7 @@
 			<to>14</to>
 		</item>
 		<item type="traktor.render.IndexedUniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>671</first>
 				<second>561</second>
@@ -125,7 +123,7 @@
 			<length>15</length>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>751</first>
 				<second>740</second>
@@ -156,6 +154,15 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>1020</first>
+				<second>285</second>
+			</position>
+			<parameterName>Source</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -307,6 +314,16 @@
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

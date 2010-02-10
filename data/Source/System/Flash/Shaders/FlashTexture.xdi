@@ -2,10 +2,10 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>-120</first>
-				<second>88</second>
+				<first>-100</first>
+				<second>181</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -13,7 +13,7 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>524</first>
 				<second>-3</second>
@@ -21,7 +21,7 @@
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>972</first>
 				<second>134</second>
@@ -54,13 +54,11 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>399</first>
 				<second>113</second>
 			</position>
-			<parameterName>Texture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -70,38 +68,38 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>580</first>
 				<second>82</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>74</first>
-				<second>106</second>
+				<first>85</first>
+				<second>181</second>
 			</position>
 			<swizzle>xy10</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>14</first>
-				<second>184</second>
+				<first>-5</first>
+				<second>217</second>
 			</position>
 			<parameterName>TextureMatrix</parameterName>
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>215</first>
-				<second>140</second>
+				<first>196</first>
+				<second>173</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>296</first>
 				<second>8</second>
@@ -119,7 +117,7 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>557</first>
 				<second>173</second>
@@ -128,7 +126,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>557</first>
 				<second>215</second>
@@ -137,11 +135,20 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>738</first>
 				<second>138</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>212</first>
+				<second>117</second>
+			</position>
+			<parameterName>Texture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -253,6 +260,16 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

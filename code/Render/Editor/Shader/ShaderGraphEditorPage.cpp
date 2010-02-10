@@ -8,7 +8,7 @@
 #include "Render/Editor/Shader/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/ExternalNodeFacade.h"
-#include "Render/Editor/Shader/SamplerNodeFacade.h"
+#include "Render/Editor/Shader/TextureNodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/TextureAsset.h"
@@ -177,7 +177,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);
-	m_nodeFacades[&type_of< Sampler >()] = new SamplerNodeFacade(m_editorGraph);
+	m_nodeFacades[&type_of< Texture >()] = new TextureNodeFacade(m_editorGraph);
 
 	m_undoStack = new editor::UndoStack();
 	m_lastValidationResult = true;
@@ -243,13 +243,10 @@ bool ShaderGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point
 	const TypeInfo* primaryType = instance->getPrimaryType();
 	T_ASSERT (primaryType);
 
-	// Create sampler node in case of a TextureAsset.
+	// Create texture node in case of a TextureAsset.
 	if (is_type_of< TextureAsset >(*primaryType))
 	{
-		Ref< Sampler > shaderNode = new Sampler(
-			instance->getName(),
-			instance->getGuid()
-		);
+		Ref< Texture > shaderNode = new Texture(instance->getGuid());
 		m_shaderGraph->addNode(shaderNode);
 
 		ui::Point absolutePosition = m_editorGraph->screenToClient(position) - m_editorGraph->getOffset();

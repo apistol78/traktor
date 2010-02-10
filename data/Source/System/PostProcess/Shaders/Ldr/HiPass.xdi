@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>294</first>
 				<second>395</second>
@@ -20,7 +20,7 @@
 			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1156</first>
 				<second>451</second>
@@ -53,13 +53,11 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>473</first>
 				<second>377</second>
 			</position>
-			<parameterName>Source</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -69,14 +67,14 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>874</first>
 				<second>404</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1014</first>
 				<second>408</second>
@@ -85,7 +83,7 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>749</first>
 				<second>462</second>
@@ -93,7 +91,7 @@
 			<value>2.3</value>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>748</first>
 				<second>492</second>
@@ -101,19 +99,28 @@
 			<value>-2.1</value>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>708</first>
 				<second>334</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>435</first>
 				<second>312</second>
 			</position>
 			<value>0.2125, 0.7154, 0.0721, 0</value>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>304</first>
+				<second>354</second>
+			</position>
+			<parameterName>Source</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -195,6 +202,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

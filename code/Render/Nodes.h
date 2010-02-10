@@ -3,17 +3,17 @@
 
 #include <string>
 #include "Core/Guid.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Math/Color.h"
+#include "Core/Math/Vector4.h"
 #include "Render/ImmutableNode.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -760,8 +760,6 @@ public:
 	};
 
 	Sampler(
-		const std::wstring& parameterName = L"",
-		const Guid& external = Guid(),
 		Lookup lookup = LuSimple,
 		Filter minFilter = FtLinear,
 		Filter mipFilter = FtLinear,
@@ -770,14 +768,6 @@ public:
 		Address addressV = AdWrap,
 		Address addressW = AdWrap
 	);
-
-	void setParameterName(const std::wstring& parameterName);
-
-	const std::wstring& getParameterName() const;
-
-	void setExternal(const Guid& external);
-
-	const Guid& getExternal() const;
 
 	void setLookup(Lookup lookup);
 
@@ -807,13 +797,9 @@ public:
 
 	Address getAddressW();
 
-	virtual std::wstring getInformation() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::wstring m_parameterName;
-	Guid m_external;
 	Lookup m_lookup;
 	Filter m_minFilter;
 	Filter m_mipFilter;
@@ -971,6 +957,24 @@ class T_DLLCLASS Transform : public ImmutableNode
 
 public:
 	Transform();
+};
+
+/*! \brief Texture constant. */
+class T_DLLCLASS Texture : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Texture(const Guid& external = Guid());
+
+	void setExternal(const Guid& external);
+
+	const Guid& getExternal() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	Guid m_external;
 };
 
 /*! \brief Transpose matrix. */

@@ -1,5 +1,5 @@
-#ifndef traktor_render_SamplerNodeFacade_H
-#define traktor_render_SamplerNodeFacade_H
+#ifndef traktor_render_TextureNodeFacade_H
+#define traktor_render_TextureNodeFacade_H
 
 #include "Render/Editor/Shader/NodeFacade.h"
 
@@ -19,12 +19,12 @@ class NodeShape;
 	namespace render
 	{
 
-class SamplerNodeFacade : public NodeFacade
+class TextureNodeFacade : public NodeFacade
 {
 	T_RTTI_CLASS;
 
 public:
-	SamplerNodeFacade(ui::custom::GraphControl* graphControl);
+	TextureNodeFacade(ui::custom::GraphControl* graphControl);
 
 	virtual Ref< Node > createShaderNode(
 		const TypeInfo* nodeType,
@@ -55,4 +55,4 @@ private:
 	}
 }
 
-#endif	// traktor_render_SamplerNodeFacade_H
+#endif	// traktor_render_TextureNodeFacade_H

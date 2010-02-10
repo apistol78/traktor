@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>295</first>
 				<second>380</second>
@@ -20,7 +20,7 @@
 			<values/>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>2134</first>
 				<second>347</second>
@@ -53,13 +53,11 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1050</first>
 				<second>292</second>
 			</position>
-			<parameterName>Frame</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -69,13 +67,11 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>569</first>
 				<second>551</second>
 			</position>
-			<parameterName>Depth</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -85,13 +81,11 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1050</first>
 				<second>366</second>
 			</position>
-			<parameterName>BlurLow</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -101,7 +95,11 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Focal distance</comment>
+			<comment>
+			<![CDATA[
+Focal distance
+			]]>
+			</comment>
 			<position>
 				<first>691</first>
 				<second>678</second>
@@ -109,28 +107,32 @@
 			<value>10</value>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>827</first>
 				<second>608</second>
 			</position>
 		</item>
 		<item type="traktor.render.Abs">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>959</first>
 				<second>595</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1300</first>
 				<second>597</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Focal length</comment>
+			<comment>
+			<![CDATA[
+Focal length
+			]]>
+			</comment>
 			<position>
 				<first>975</first>
 				<second>684</second>
@@ -138,7 +140,7 @@
 			<value>0.4</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>725</first>
 				<second>606</second>
@@ -146,7 +148,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1452</first>
 				<second>551</second>
@@ -155,21 +157,25 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>2008</first>
 				<second>343</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1108</first>
 				<second>619</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Focal ratio</comment>
+			<comment>
+			<![CDATA[
+Focal ratio
+			]]>
+			</comment>
 			<position>
 				<first>1173</first>
 				<second>707</second>
@@ -177,13 +183,11 @@
 			<value>4</value>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1050</first>
 				<second>442</second>
 			</position>
-			<parameterName>BlurHigh</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -193,21 +197,21 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Lerp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1770</first>
 				<second>428</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1456</first>
 				<second>641</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1323</first>
 				<second>706</second>
@@ -215,13 +219,49 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1589</first>
 				<second>609</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>407</first>
+				<second>517</second>
+			</position>
+			<parameterName>Depth</parameterName>
+			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>714</first>
+				<second>144</second>
+			</position>
+			<parameterName>Frame</parameterName>
+			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>722</first>
+				<second>183</second>
+			</position>
+			<parameterName>BlurLow</parameterName>
+			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>738</first>
+				<second>221</second>
+			</position>
+			<parameterName>BlurHigh</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -453,6 +493,46 @@
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

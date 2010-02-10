@@ -190,7 +190,7 @@ void ShaderParameters::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	write< Matrix44 >(m_parameterLast, param, length);
 }
 
-void ShaderParameters::setSamplerTexture(handle_t handle, ITexture* texture)
+void ShaderParameters::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
@@ -255,7 +255,7 @@ void ShaderParameters::fixup(Shader* shader) const
 			break;
 
 		case PmtTexture:
-			shader->setSamplerTexture(handle, read< ITexture* >(parameter));
+			shader->setTextureParameter(handle, read< ITexture* >(parameter));
 			break;
 		}
 	}

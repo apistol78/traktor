@@ -15,7 +15,8 @@ std::wstring hlsl_semantic(DataUsage usage, int index)
 		L"TANGENT",
 		L"BINORMAL",
 		L"COLOR",
-		L"TEXCOORD"
+		L"TEXCOORD",
+		L""
 	};
 	std::wstringstream ss;
 	ss << s[usage] << index;
@@ -32,7 +33,8 @@ std::wstring hlsl_type_name(HlslType type)
 		L"float2",
 		L"float3",
 		L"float4",
-		L"float4x4"
+		L"float4x4",
+		L"texture"
 	};
 	return c[type];
 }
@@ -52,7 +54,7 @@ HlslType hlsl_from_data_type(DataType type)
 		HtFloat2,
 		HtFloat4,
 		HtFloat2,
-		HtFloat4		
+		HtFloat4
 	};
 	return c[type];
 }

@@ -54,7 +54,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 

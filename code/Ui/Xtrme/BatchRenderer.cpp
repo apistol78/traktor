@@ -171,7 +171,7 @@ void BatchRenderer::end(const Size& size)
 
 			if (i->texture)
 			{
-				i->program->setSamplerTexture(L"Texture", i->texture);
+				i->program->setTextureParameter(L"Texture", i->texture);
 				i->program->setVectorParameter(L"TextureSize", Vector4(float(i->texture->getWidth()), float(i->texture->getHeight()), 0.0f, 0.0f));
 			}
 

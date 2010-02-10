@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -51,9 +51,9 @@ public:
 
 	const std::vector< Technique >& getTechniques() const;
 
-	void addTexture(const std::wstring& parameterName, const Guid& guid);
+	void addTexture(const Guid& guid);
 
-	const std::vector< std::pair< std::wstring, Guid > >& getTextures() const;
+	const std::vector< Guid >& getTextures() const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -62,7 +62,7 @@ private:
 
 	std::map< std::wstring, uint32_t > m_parameterBits;
 	std::vector< Technique > m_techniques;
-	std::vector< std::pair< std::wstring, Guid > > m_textures;
+	std::vector< Guid > m_textures;
 };
 
 	}

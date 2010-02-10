@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>-78</first>
 				<second>84</second>
@@ -23,9 +23,10 @@
 					<name>WorldTexCoord</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.PixelOutput">
-			<comment></comment>
+		<item type="traktor.render.PixelOutput" version="2">
+			<comment/>
 			<position>
 				<first>577</first>
 				<second>-74</second>
@@ -48,15 +49,21 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>286</first>
 				<second>272</second>
 			</position>
-			<parameterName>Noise</parameterName>
-			<external>{77BCAD81-66F8-A441-89DD-A789E264416C}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -66,7 +73,7 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Sum">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>278</first>
 				<second>2</second>
@@ -75,14 +82,18 @@
 			<to>7</to>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment>Frequency</comment>
+			<comment>
+			<![CDATA[
+Frequency
+			]]>
+			</comment>
 			<position>
 				<first>563</first>
 				<second>49</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>456</first>
 				<second>103</second>
@@ -90,14 +101,22 @@
 			<value>2</value>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment>Amplitude</comment>
+			<comment>
+			<![CDATA[
+Amplitude
+			]]>
+			</comment>
 			<position>
 				<first>563</first>
 				<second>148</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Persistence</comment>
+			<comment>
+			<![CDATA[
+Persistence
+			]]>
+			</comment>
 			<position>
 				<first>446</first>
 				<second>202</second>
@@ -105,21 +124,21 @@
 			<value>0.8</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>144</first>
 				<second>176</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>461</first>
 				<second>272</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>293</first>
 				<second>-105</second>
@@ -127,14 +146,14 @@
 			<value>0.2</value>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>443</first>
 				<second>-98</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>290</first>
 				<second>-61</second>

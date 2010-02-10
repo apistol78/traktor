@@ -1,4 +1,4 @@
-#include "Render/ProgramResource.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {

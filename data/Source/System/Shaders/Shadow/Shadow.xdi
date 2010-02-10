@@ -2,44 +2,42 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1820</first>
-				<second>974</second>
+				<first>1872</first>
+				<second>846</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Branch">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1682</first>
-				<second>947</second>
+				<first>1734</first>
+				<second>819</second>
 			</position>
 			<parameterName>ShadowEnable</parameterName>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1539</first>
-				<second>1029</second>
+				<first>1591</first>
+				<second>901</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.FragmentPosition">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>677</first>
 				<second>929</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1405</first>
-				<second>917</second>
+				<first>1457</first>
+				<second>789</second>
 			</position>
-			<parameterName>ShadowMask</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -49,7 +47,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>686</first>
 				<second>989</second>
@@ -58,7 +56,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>849</first>
 				<second>980</second>
@@ -66,22 +64,22 @@
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>942</first>
 				<second>933</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1569</first>
-				<second>953</second>
+				<first>1621</first>
+				<second>825</second>
 			</position>
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>849</first>
 				<second>941</second>
@@ -89,14 +87,14 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Platform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1220</first>
 				<second>805</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>927</first>
 				<second>855</second>
@@ -104,19 +102,28 @@
 			<value>1, -1, 0, 0</value>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1088</first>
 				<second>844</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>931</first>
 				<second>888</second>
 			</position>
 			<value>0, 1, 0, 0</value>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>1247</first>
+				<second>758</second>
+			</position>
+			<parameterName>ShadowMask</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -258,6 +265,16 @@
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

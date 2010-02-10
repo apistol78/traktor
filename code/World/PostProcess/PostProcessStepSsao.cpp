@@ -128,8 +128,8 @@ void PostProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = viewFrustum.corners[6];
 
-	shader->setSamplerTexture(L"Frame", sourceColor->getColorTexture(0));
-	shader->setSamplerTexture(L"Depth", sourceDepth->getColorTexture(0));
+	shader->setTextureParameter(L"Frame", sourceColor->getColorTexture(0));
+	shader->setTextureParameter(L"Depth", sourceDepth->getColorTexture(0));
 	shader->setVectorParameter(L"Frame_Size", sourceColorSize);
 	shader->setVectorParameter(L"Depth_Size", sourceDepthSize);
 	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
@@ -138,7 +138,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 	shader->setMatrixParameter(L"Projection", projection);
 	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
-	shader->setSamplerTexture(L"RandomNormals", m_randomNormals);
+	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
 
 	screenRenderer->draw(renderView, shader);
 }

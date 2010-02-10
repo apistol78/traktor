@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-68</first>
 				<second>-152</second>
@@ -13,7 +13,7 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-209</first>
 				<second>100</second>
@@ -24,7 +24,7 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-247</second>
@@ -32,7 +32,7 @@
 			<technique>Wire</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>28</second>
@@ -65,7 +65,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>60</second>
@@ -98,7 +98,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-213</second>
@@ -106,7 +106,7 @@
 			<technique>Solid</technique>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-111</second>
@@ -114,7 +114,7 @@
 			<technique>SolidDepth</technique>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-145</second>
@@ -122,7 +122,7 @@
 			<technique>WireDepth</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>92</second>
@@ -155,7 +155,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>124</second>
@@ -188,10 +188,10 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>-215</first>
-				<second>281</second>
+				<first>-204</first>
+				<second>324</second>
 			</position>
 			<name>TexCoord</name>
 			<usage>DuCustom</usage>
@@ -199,13 +199,11 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>8</first>
 				<second>273</second>
 			</position>
-			<parameterName>Texture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -215,7 +213,7 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-77</second>
@@ -223,7 +221,7 @@
 			<technique>TextureDepth</technique>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>148</first>
 				<second>-179</second>
@@ -231,7 +229,7 @@
 			<technique>Texture</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>415</first>
 				<second>223</second>
@@ -264,7 +262,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>415</first>
 				<second>251</second>
@@ -297,14 +295,14 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>229</first>
 				<second>231</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-47</first>
 				<second>89</second>
@@ -322,6 +320,15 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>-167</first>
+				<second>286</second>
+			</position>
+			<parameterName>Texture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -483,6 +490,16 @@
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

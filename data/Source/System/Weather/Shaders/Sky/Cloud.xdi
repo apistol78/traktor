@@ -2,20 +2,18 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.MixOut">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>226</first>
 				<second>139</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>644</first>
 				<second>268</second>
 			</position>
-			<parameterName>c_CloudLayer</parameterName>
-			<external>{2AC75579-C6AC-894A-A2C6-D9726E8C8D6F}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -25,67 +23,76 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>358</first>
 				<second>146</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>209</first>
 				<second>251</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>354</first>
 				<second>250</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>498</first>
 				<second>279</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>312</first>
 				<second>334</second>
 			</position>
 			<name>UVOffset</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1392</first>
 				<second>304</second>
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>44</first>
 				<second>250</second>
 			</position>
 			<name>Height</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>1</first>
 				<second>125</second>
 			</position>
 			<name>SkyDomePosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1130</first>
 				<second>257</second>
@@ -93,7 +100,7 @@
 			<swizzle>000x</swizzle>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>792</first>
 				<second>186</second>
@@ -102,14 +109,14 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>928</first>
 				<second>215</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>999</first>
 				<second>388</second>
@@ -118,15 +125,19 @@
 			<inputPins>
 				<item>
 					<name>Input1</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input2</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input3</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Blend</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -134,9 +145,10 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>786</first>
 				<second>420</second>
@@ -144,7 +156,11 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Cloud rim</comment>
+			<comment>
+			<![CDATA[
+Cloud rim
+			]]>
+			</comment>
 			<position>
 				<first>825</first>
 				<second>295</second>
@@ -152,7 +168,11 @@
 			<color>255, 255, 255, 255</color>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Cloud</comment>
+			<comment>
+			<![CDATA[
+Cloud
+			]]>
+			</comment>
 			<position>
 				<first>825</first>
 				<second>342</second>
@@ -160,7 +180,11 @@
 			<color>219, 219, 219, 255</color>
 		</item>
 		<item type="traktor.render.Color">
-			<comment>Cloud dark</comment>
+			<comment>
+			<![CDATA[
+Cloud dark
+			]]>
+			</comment>
 			<position>
 				<first>825</first>
 				<second>389</second>
@@ -168,14 +192,14 @@
 			<color>151, 161, 169, 255</color>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1227</first>
 				<second>317</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1137</first>
 				<second>380</second>
@@ -183,14 +207,14 @@
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>867</first>
 				<second>469</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>759</first>
 				<second>475</second>

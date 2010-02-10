@@ -19,14 +19,15 @@ GlslVariable::GlslVariable(const std::wstring& name, GlslType type)
 
 std::wstring GlslVariable::cast(GlslType to) const
 {
-	const wchar_t* c[6][6] =
+	const wchar_t* c[7][7] =
 	{
-		{ 0, 0, 0, 0, 0, 0 },
-		{ 0, L"%", L"vec2(%, %)", L"vec3(%, %, %)", L"vec4(%, %, %, %)", 0 },
-		{ 0, L"%.x", L"%", L"vec3(%.xy, 0.0)", L"vec4(%.xy, 0.0, 0.0)", 0 },
-		{ 0, L"%.x", L"%.xy", L"%", L"vec4(%.xyz, 0.0)", 0 },
-		{ 0, L"%.x", L"%.xy", L"%.xyz", L"%", 0 },
-		{ 0, 0, 0, 0, 0, L"%" }
+		{ 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, L"%", L"vec2(%, %)", L"vec3(%, %, %)", L"vec4(%, %, %, %)", 0, 0 },
+		{ 0, L"%.x", L"%", L"vec3(%.xy, 0.0)", L"vec4(%.xy, 0.0, 0.0)", 0, 0 },
+		{ 0, L"%.x", L"%.xy", L"%", L"vec4(%.xyz, 0.0)", 0, 0 },
+		{ 0, L"%.x", L"%.xy", L"%.xyz", L"%", 0, 0 },
+		{ 0, 0, 0, 0, 0, L"%", 0 },
+		{ 0, 0, 0, 0, 0, 0, L"%" }
 	};
 	
 	const wchar_t* f = c[m_type][to];

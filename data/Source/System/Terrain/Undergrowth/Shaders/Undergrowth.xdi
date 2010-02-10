@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>54</first>
 				<second>167</second>
@@ -11,7 +11,7 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>560</first>
 				<second>-57</second>
@@ -20,14 +20,14 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>735</first>
 				<second>-105</second>
 			</position>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>912</first>
 				<second>-125</second>
@@ -35,7 +35,7 @@
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>10</first>
 				<second>85</second>
@@ -46,14 +46,14 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>214</first>
 				<second>89</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="1">
-			<comment></comment>
+		<item type="traktor.render.PixelOutput" version="2">
+			<comment/>
 			<position>
 				<first>1307</first>
 				<second>189</second>
@@ -77,15 +77,20 @@
 			<alphaTestFunction>CfGreater</alphaTestFunction>
 			<alphaTestReference>80</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>311</first>
 				<second>276</second>
 			</position>
-			<parameterName>Texture</parameterName>
-			<external>{EE7B797B-79B4-824E-8117-B89885C4F7C3}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -95,7 +100,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-241</first>
 				<second>235</second>
@@ -106,14 +111,14 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>601</first>
 				<second>246</second>
 			</position>
 		</item>
 		<item type="traktor.render.Color">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>426</first>
 				<second>245</second>
@@ -121,14 +126,14 @@
 			<color>242, 230, 204, 255</color>
 		</item>
 		<item type="traktor.render.Sin">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-49</first>
 				<second>-131</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-186</first>
 				<second>-134</second>
@@ -137,7 +142,7 @@
 			<type>PtScalar</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>293</first>
 				<second>-24</second>
@@ -145,14 +150,14 @@
 			<swizzle>x000</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>376</first>
 				<second>3</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-28</first>
 				<second>49</second>
@@ -160,21 +165,21 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>178</first>
 				<second>-49</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>62</first>
 				<second>-1</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-35</first>
 				<second>2</second>
@@ -182,7 +187,7 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-814</first>
 				<second>622</second>
@@ -193,21 +198,21 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>59</first>
 				<second>577</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>735</first>
 				<second>303</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>635</first>
 				<second>381</second>
@@ -215,7 +220,7 @@
 			<swizzle>xyz1</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>504</first>
 				<second>147</second>
@@ -223,7 +228,7 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1073</first>
 				<second>166</second>
@@ -231,7 +236,7 @@
 			<swizzle>111x</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>564</first>
 				<second>42</second>
@@ -239,21 +244,21 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>810</first>
 				<second>32</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>692</first>
 				<second>74</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>942</first>
 				<second>33</second>
@@ -262,14 +267,14 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1165</first>
 				<second>156</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>517</first>
 				<second>186</second>
@@ -278,7 +283,7 @@
 			<type>PtScalar</type>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>233</first>
 				<second>522</second>
@@ -286,8 +291,8 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>349</first>
 				<second>454</second>
@@ -296,15 +301,19 @@
 			<inputPins>
 				<item>
 					<name>Input1</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input2</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input3</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Blend</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -312,17 +321,18 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-262</first>
 				<second>407</second>
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>-151</first>
 				<second>387</second>
@@ -331,6 +341,7 @@
 			<inputPins>
 				<item>
 					<name>Index</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -356,9 +367,10 @@
 					<name>Position</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-489</first>
 				<second>588</second>
@@ -366,7 +378,7 @@
 			<swizzle>x0y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-638</first>
 				<second>701</second>
@@ -374,7 +386,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-638</first>
 				<second>734</second>
@@ -382,14 +394,14 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-407</first>
 				<second>653</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-501</first>
 				<second>658</second>
@@ -397,14 +409,14 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-294</first>
 				<second>672</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-173</first>
 				<second>683</second>
@@ -412,35 +424,39 @@
 			<swizzle>0x0</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-87</first>
 				<second>616</second>
 			</position>
 		</item>
 		<item type="traktor.render.Abs">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-541</first>
 				<second>690</second>
 			</position>
 		</item>
 		<item type="traktor.render.Abs">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-541</first>
 				<second>745</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>66</first>
 				<second>-98</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Wave magnitude</comment>
+			<comment>
+			<![CDATA[
+Wave magnitude
+			]]>
+			</comment>
 			<position>
 				<first>-47</first>
 				<second>-38</second>

@@ -52,6 +52,21 @@ struct DeleteListCallback : public IContext::IDeleteCallback
 	}
 };
 
+struct FindSamplerTexture
+{
+	std::wstring m_sampler;
+
+	FindSamplerTexture(const std::wstring& sampler)
+	:	m_sampler(sampler)
+	{
+	}
+
+	bool operator () (const SamplerTexture& st) const
+	{
+		return st.sampler == m_sampler;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
@@ -78,8 +93,7 @@ Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, in
 	resource = new ProgramResourceOpenGL(
 		glslProgram.getVertexShader(),
 		glslProgram.getFragmentShader(),
-		glslProgram.getVertexSamplers(),
-		glslProgram.getFragmentSamplers(),
+		glslProgram.getSamplerTextures(),
 		glslProgram.getRenderState()
 	);
 
@@ -155,13 +169,24 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		}
 	}
 
+	// Map texture parameters.
+	const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::vector< SamplerTexture >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->texture);
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle].offset = m_textureData.size();
+
+			m_textureData.push_back(TextureData());
+			m_textureData.back().target = 0;
+			m_textureData.back().name = 0;
+		}
+	}
+
+	// Map samplers and uniforms.
 	GLint uniformCount;
 	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniformCount));
-
-	// Merge samplers.
-	std::set< std::wstring > samplers;
-	samplers.insert(resourceOpenGL->getVertexSamplers().begin(), resourceOpenGL->getVertexSamplers().end());
-	samplers.insert(resourceOpenGL->getFragmentSamplers().begin(), resourceOpenGL->getFragmentSamplers().end());
 
 	for (GLint j = 0; j < uniformCount; ++j)
 	{
@@ -170,43 +195,29 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 		GLcharARB uniformName[256];
 
 		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
-		
 		std::wstring uniformNameW = mbstows(uniformName);
+
+		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
 		size_t p = uniformNameW.find('[');
 		if (p != uniformNameW.npos)
 			uniformNameW = uniformNameW.substr(0, p);
 
 		if (uniformType == GL_SAMPLER_2D_ARB)
 		{
-			std::set< std::wstring >::iterator it = samplers.find(uniformNameW);
-			T_ASSERT (it != samplers.end());
+			const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
 
-			uint32_t unit = uint32_t(std::distance(samplers.begin(), it));
-			handle_t handle = getParameterHandle(mbstows(uniformName));
+			std::vector< SamplerTexture >::const_iterator it = std::find_if(samplerTextures.begin(), samplerTextures.end(), FindSamplerTexture(uniformNameW));
+			T_ASSERT (it != samplerTextures.end());
 
-			if (m_parameterMap.find(handle) == m_parameterMap.end())
-			{
-				uint32_t texture = uint32_t(m_samplerTextures.size());
-				m_parameterMap[handle].offset = texture;
-				m_parameterMap[handle].length = 0;
+			Sampler sampler;
+			sampler.location = glGetUniformLocationARB(m_program, uniformName);
+			sampler.texture = m_parameterMap[getParameterHandle(it->texture)].offset;
+			sampler.stage = uint32_t(std::distance(samplerTextures.begin(), it));
 
-				SamplerTexture st = { 0, 0, Vector4(0.0f, 0.0f, 1.0f, 1.0f) };
-				m_samplerTextures.push_back(st);
-			}
-
-			m_samplers.push_back(Sampler());
-			m_samplers.back().location = glGetUniformLocationARB(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocationARB(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
-			m_samplers.back().texture = m_parameterMap[handle].offset;
-			m_samplers.back().unit = unit;
+			m_samplers.push_back(sampler);
 		}
 		else
 		{
-			// Skip private uniforms of format "t_internal_*".
-			std::wstring uniforNameW = mbstows(uniformName);
-			if (startsWith(uniforNameW, L"t_internal_"))
-				continue;
-
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{
@@ -235,16 +246,13 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 				m_parameterMap[handle].length = uniformSize;
 
 				m_uniformData.resize(offset + allocSize, 0.0f);
+				
+				m_uniforms.push_back(Uniform());
+				m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
+				m_uniforms.back().type = uniformType;
+				m_uniforms.back().offset = m_parameterMap[handle].offset;
+				m_uniforms.back().length = m_parameterMap[handle].length;
 			}
-			
-			m_uniforms.push_back(Uniform());
-#if defined(_DEBUG)
-			m_uniforms.back().name = uniformName;
-#endif
-			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
-			m_uniforms.back().type = uniformType;
-			m_uniforms.back().offset = m_parameterMap[handle].offset;
-			m_uniforms.back().length = m_parameterMap[handle].length;
 		}
 	}
 
@@ -350,7 +358,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	m_dirty = true;
 }
 
-void ProgramOpenGL::setSamplerTexture(handle_t handle, ITexture* texture)
+void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
@@ -358,35 +366,27 @@ void ProgramOpenGL::setSamplerTexture(handle_t handle, ITexture* texture)
 
 	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second.offset].target = GL_TEXTURE_2D;
-		m_samplerTextures[i->second.offset].name = st->getTextureName();
-		m_samplerTextures[i->second.offset].originScale = st->getTextureOriginAndScale();
-		m_samplerTextures[i->second.offset].mipCount = st->getMipCount();
+		m_textureData[i->second.offset].target = GL_TEXTURE_2D;
+		m_textureData[i->second.offset].name = st->getTextureName();
 	}
 	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
 	{
 #if !defined(__APPLE__)
-		m_samplerTextures[i->second.offset].target = GL_TEXTURE_CUBE_MAP_EXT;
+		m_textureData[i->second.offset].target = GL_TEXTURE_CUBE_MAP_EXT;
 #else
-		m_samplerTextures[i->second.offset].target = GL_TEXTURE_CUBE_MAP_ARB;
+		m_textureData[i->second.offset].target = GL_TEXTURE_CUBE_MAP_ARB;
 #endif
-		m_samplerTextures[i->second.offset].name = ct->getTextureName();
-		m_samplerTextures[i->second.offset].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-		m_samplerTextures[i->second.offset].mipCount = 1;
+		m_textureData[i->second.offset].name = ct->getTextureName();
 	}
 	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second.offset].target = GL_TEXTURE_3D;
-		m_samplerTextures[i->second.offset].name = vt->getTextureName();
-		m_samplerTextures[i->second.offset].originScale = Vector4(0.0f, 0.0f, 1.0f, 1.0f);
-		m_samplerTextures[i->second.offset].mipCount = 1;
+		m_textureData[i->second.offset].target = GL_TEXTURE_3D;
+		m_textureData[i->second.offset].name = vt->getTextureName();
 	}
 	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
 	{
-		m_samplerTextures[i->second.offset].target = rt->getTextureTarget();
-		m_samplerTextures[i->second.offset].name = rt->getTextureName();
-		m_samplerTextures[i->second.offset].originScale = rt->getTextureOriginAndScale();
-		m_samplerTextures[i->second.offset].mipCount = 1;
+		m_textureData[i->second.offset].target = rt->getTextureTarget();
+		m_textureData[i->second.offset].name = rt->getTextureName();
 	}
 
 	m_dirty = true;
@@ -457,44 +457,21 @@ bool ProgramOpenGL::activate()
 		}
 	}
 
-	if (!m_samplers.empty())
+	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{
-		for (std::vector< Sampler >::iterator i = m_samplers.begin(); i != m_samplers.end(); ++i)
-		{
-			const SamplerTexture& st = m_samplerTextures[i->texture];
-			if (!st.target)
-				continue;
-				
-			m_context->enable(st.target);
+		const Sampler& sampler = m_samplers[i];
+		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
+		const TextureData& td = m_textureData[sampler.texture];
+			
+		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
+		T_OGL_SAFE(glBindTexture(td.target, td.name));
 
-			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i->unit));
-			T_OGL_SAFE(glBindTexture(st.target, st.name));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 
-			if (st.mipCount > 1)
-			{
-				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, m_renderState.samplerStates[i->unit].minFilter));
-			}
-			else
-			{
-				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-			}
-
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MAG_FILTER, m_renderState.samplerStates[i->unit].magFilter));
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_S, m_renderState.samplerStates[i->unit].wrapS));
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_T, m_renderState.samplerStates[i->unit].wrapT));
-
-			T_OGL_SAFE(glUniform1iARB(i->location, i->unit));
-			T_OGL_SAFE(glUniform4fARB(i->locationOriginScale, st.originScale.x(), st.originScale.y(), st.originScale.z(), st.originScale.w()));
-		}
-	}
-	else
-	{
-		m_context->disable(GL_TEXTURE_2D);
-#if !defined(__APPLE__)
-		m_context->disable(GL_TEXTURE_CUBE_MAP_EXT);
-#else
-		m_context->disable(GL_TEXTURE_CUBE_MAP_ARB);
-#endif
+		T_OGL_SAFE(glUniform1iARB(sampler.location, i));
 	}
 
 	ms_activeProgram = this;

@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>177</first>
 				<second>224</second>
@@ -20,13 +20,11 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>352</first>
 				<second>224</second>
 			</position>
-			<parameterName>Texture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -36,10 +34,10 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>636</first>
-				<second>260</second>
+				<first>659</first>
+				<second>244</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmCounterClockWise</cullMode>
@@ -69,10 +67,10 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>492</first>
-				<second>240</second>
+				<first>515</first>
+				<second>224</second>
 			</position>
 			<fragmentGuid>{EDEF02B3-E358-D640-9948-E2338C73D8CD}</fragmentGuid>
 			<inputPins>
@@ -87,6 +85,15 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>178</first>
+				<second>187</second>
+			</position>
+			<parameterName>Texture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -118,6 +125,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

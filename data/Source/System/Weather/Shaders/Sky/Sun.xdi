@@ -2,28 +2,28 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Normalize">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>436</first>
 				<second>280</second>
 			</position>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>598</first>
 				<second>300</second>
 			</position>
 		</item>
 		<item type="traktor.render.Pow">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1086</first>
 				<second>302</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>967</first>
 				<second>252</second>
@@ -31,7 +31,7 @@
 			<value>2</value>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>947</first>
 				<second>294</second>
@@ -40,30 +40,36 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Normalize">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>436</first>
 				<second>334</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>225</first>
 				<second>264</second>
 			</position>
 			<name>SkyDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>224</first>
 				<second>377</second>
 			</position>
 			<name>SunDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1258</first>
 				<second>319</second>
@@ -71,7 +77,7 @@
 			<name>SunIntensity</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>602</first>
 				<second>492</second>
@@ -79,7 +85,7 @@
 			<swizzle>xz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>602</first>
 				<second>522</second>
@@ -87,14 +93,14 @@
 			<swizzle>xz</swizzle>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>716</first>
 				<second>477</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>885</first>
 				<second>446</second>
@@ -103,7 +109,7 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1054</first>
 				<second>469</second>
@@ -111,7 +117,7 @@
 			<name>SunBlend</name>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>666</first>
 				<second>376</second>
@@ -119,14 +125,14 @@
 			<value>4</value>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>792</first>
 				<second>302</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>662</first>
 				<second>400</second>
@@ -134,7 +140,7 @@
 			<value>-3.5</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>602</first>
 				<second>552</second>
@@ -142,7 +148,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1054</first>
 				<second>530</second>
@@ -150,7 +156,7 @@
 			<name>HorizonBlend</name>
 		</item>
 		<item type="traktor.render.Abs">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>885</first>
 				<second>557</second>

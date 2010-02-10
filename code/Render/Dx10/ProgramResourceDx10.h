@@ -3,8 +3,8 @@
 
 #include <map>
 #include "Core/Misc/ComRef.h"
-#include "Render/ProgramResource.h"
 #include "Render/Dx10/Platform.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {

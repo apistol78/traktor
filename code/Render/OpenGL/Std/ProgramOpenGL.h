@@ -9,9 +9,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -53,7 +53,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -70,42 +70,40 @@ private:
 
 	struct Uniform
 	{
-#if defined(_DEBUG)
-		std::string name;
-#endif
 		GLint location;
 		GLenum type;
 		uint32_t offset;
 		uint32_t length;
 	};
-	
+
 	struct Sampler
 	{
 		GLint location;
-		GLint locationOriginScale;
 		uint32_t texture;
-		uint32_t unit;
+		uint32_t stage;
 	};
 
-	struct SamplerTexture
+	struct TextureData
 	{
 		GLenum target;
 		GLuint name;
-		Vector4 originScale;
-		uint32_t mipCount;
 	};
 
 	Ref< ContextOpenGL > m_context;
 
 	GLhandleARB m_program;
-	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];
-	std::vector< Uniform > m_uniforms;
-	std::vector< Sampler > m_samplers;
 	RenderState m_renderState;
 	GLuint m_state;
-	std::map< handle_t, Parameter > m_parameterMap;
-	AlignedVector< float > m_uniformData;
-	AlignedVector< SamplerTexture > m_samplerTextures;
+
+	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];		//!< Vertex attribute locations.
+
+	std::map< handle_t, Parameter > m_parameterMap;		//!< Parameter to data map.
+
+	std::vector< Uniform > m_uniforms;					//!< Scalar uniforms.
+	std::vector< Sampler > m_samplers;					//!< Samplers.
+
+	AlignedVector< float > m_uniformData;				//!< Scalar uniform data.
+	AlignedVector< TextureData > m_textureData;			//!< Texture data.
 
 	static ProgramOpenGL* ms_activeProgram;
 	bool m_dirty;

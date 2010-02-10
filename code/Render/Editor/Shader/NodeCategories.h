@@ -67,6 +67,7 @@ const NodeCategory c_nodeCateogories[] =
 	{ type_of< Switch >(), L"SHADERGRAPH_CONDITIONAL", L"Switch" },
 	{ type_of< Swizzle >(), L"SHADERGRAPH_MISCELLANEOUS", L"Swizzle elements of a vector" },
 	{ type_of< Tan >(), L"SHADERGRAPH_TRIGONOMETRY", L"Tangent" },
+	{ type_of< Texture >(), L"SHADERGRAPH_VALUE", L"Texture" },
 	{ type_of< Transform >(), L"SHADERGRAPH_ALGEBRA", L"Transform vector by a matrix" },
 	{ type_of< Transpose >(), L"SHADERGRAPH_ALGEBRA", L"Transpose matrix, swapping rows and columns" },
 	{ type_of< Uniform >(), L"SHADERGRAPH_VALUE", L"Uniform" },

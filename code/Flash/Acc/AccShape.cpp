@@ -374,7 +374,7 @@ void AccShape::render(
 				0.0f, 0.0f, 0.0, 0.0f
 			);
 
-			shaderTextured->setSamplerTexture(s_handleTexture, i->texture);
+			shaderTextured->setTextureParameter(s_handleTexture, i->texture);
 			shaderTextured->setMatrixParameter(s_handleTextureMatrix, textureMatrix);
 			shaderTextured->draw(renderView, i->primitives);
 		}

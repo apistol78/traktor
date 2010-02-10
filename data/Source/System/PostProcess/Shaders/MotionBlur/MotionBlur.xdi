@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1765</first>
 				<second>389</second>
@@ -35,7 +35,7 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>443</first>
 				<second>442</second>
@@ -53,13 +53,11 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>746</first>
 				<second>685</second>
 			</position>
-			<parameterName>Velocity</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -69,7 +67,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>908</first>
 				<second>736</second>
@@ -77,13 +75,11 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1151</first>
 				<second>367</second>
 			</position>
-			<parameterName>Source</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -93,14 +89,14 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>1018</first>
-				<second>368</second>
+				<first>967</first>
+				<second>424</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sum">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1375</first>
 				<second>385</second>
@@ -109,21 +105,21 @@
 			<to>15</to>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1652</first>
 				<second>649</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1653</first>
 				<second>769</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1538</first>
 				<second>856</second>
@@ -131,14 +127,14 @@
 			<value>12</value>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1630</first>
 				<second>354</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1441</first>
 				<second>509</second>
@@ -146,7 +142,7 @@
 			<value>16</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1357</first>
 				<second>750</second>
@@ -154,20 +150,18 @@
 			<value>-1, 1, 0, 0</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1508</first>
 				<second>703</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>740</first>
 				<second>828</second>
 			</position>
-			<parameterName>VelocityPrevious</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -177,7 +171,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>902</first>
 				<second>876</second>
@@ -185,27 +179,54 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Length">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1014</first>
 				<second>760</second>
 			</position>
 		</item>
 		<item type="traktor.render.Length">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1014</first>
 				<second>813</second>
 			</position>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1205</first>
 				<second>770</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>543</first>
+				<second>766</second>
+			</position>
+			<parameterName>Velocity</parameterName>
+			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>957</first>
+				<second>335</second>
+			</position>
+			<parameterName>Source</parameterName>
+			<type>PtTexture</type>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>512</first>
+				<second>824</second>
+			</position>
+			<parameterName>VelocityPrevious</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -437,6 +458,36 @@
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[21]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

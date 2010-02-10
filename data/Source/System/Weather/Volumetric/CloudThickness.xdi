@@ -1,15 +1,15 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Normalize">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>354</first>
 				<second>139</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-137</first>
 				<second>281</second>
@@ -17,7 +17,7 @@
 			<swizzle>xz</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-286</first>
 				<second>375</second>
@@ -25,22 +25,25 @@
 			<value>0.02</value>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>970</first>
 				<second>323</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-562</first>
 				<second>184</second>
 			</position>
 			<name>ViewDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1135</first>
 				<second>316</second>
@@ -48,14 +51,14 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>646</first>
 				<second>320</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>320</first>
 				<second>426</second>
@@ -63,20 +66,22 @@
 			<value>-1, 1, -1, 0</value>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment>Opposite direction</comment>
+			<comment>
+			<![CDATA[
+Opposite direction
+			]]>
+			</comment>
 			<position>
 				<first>502</first>
 				<second>365</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>163</first>
 				<second>235</second>
 			</position>
-			<parameterName>ParametericClouds</parameterName>
-			<external>{690410E1-FE1D-704D-A6C6-A45B4BBF3D36}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -86,7 +91,7 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>227</first>
 				<second>362</second>
@@ -94,7 +99,7 @@
 			<value>-1</value>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>226</first>
 				<second>331</second>
@@ -102,14 +107,14 @@
 			<value>2</value>
 		</item>
 		<item type="traktor.render.Dot">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>645</first>
 				<second>232</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>501</first>
 				<second>255</second>
@@ -117,7 +122,7 @@
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>823</first>
 				<second>390</second>
@@ -125,36 +130,39 @@
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>343</first>
 				<second>278</second>
 			</position>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>-340</first>
 				<second>405</second>
 			</position>
 			<name>UVOffset</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>22</first>
 				<second>286</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>815</first>
 				<second>268</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>669</first>
 				<second>567</second>

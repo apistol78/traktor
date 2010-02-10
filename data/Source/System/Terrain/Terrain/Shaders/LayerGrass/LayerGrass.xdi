@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="1">
-			<comment></comment>
+		<item type="traktor.render.PixelOutput" version="2">
+			<comment/>
 			<position>
 				<first>838</first>
 				<second>413</second>
@@ -26,9 +26,16 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>6</first>
 				<second>245</second>
@@ -49,15 +56,14 @@
 					<name>WorldTexCoord</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>434</first>
 				<second>275</second>
 			</position>
-			<parameterName>Grass1</parameterName>
-			<external>{BCC53FF0-E6FB-9F45-94A7-2530ECCF8EAA}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -67,14 +73,14 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>266</first>
 				<second>265</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>152</first>
 				<second>242</second>
@@ -82,13 +88,11 @@
 			<value>4</value>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>434</first>
 				<second>414</second>
 			</position>
-			<parameterName>Mountain</parameterName>
-			<external>{146E83F1-B501-DB42-9888-F1A3DD679925}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -98,13 +102,11 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>434</first>
 				<second>344</second>
 			</position>
-			<parameterName>Grass2</parameterName>
-			<external>{FD65BF9E-294E-4845-A781-694FB1A3E737}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -113,8 +115,8 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>652</first>
 				<second>357</second>
@@ -123,15 +125,19 @@
 			<inputPins>
 				<item>
 					<name>Input1</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input2</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Input3</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Blend</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -139,6 +145,7 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>

@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>769</first>
 				<second>243</second>
@@ -10,7 +10,7 @@
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>92</first>
 				<second>170</second>
@@ -21,21 +21,21 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>338</first>
 				<second>182</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>555</first>
 				<second>212</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>363</first>
 				<second>271</second>
@@ -44,7 +44,7 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>147</first>
 				<second>246</second>
@@ -53,20 +53,18 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>426</first>
 				<second>356</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>709</first>
-				<second>377</second>
+				<first>784</first>
+				<second>340</second>
 			</position>
-			<parameterName>ImpostorTarget</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -76,7 +74,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1431</first>
 				<second>424</second>
@@ -109,7 +107,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>189</first>
 				<second>346</second>
@@ -117,7 +115,7 @@
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>192</first>
 				<second>373</second>
@@ -125,7 +123,7 @@
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>602</first>
 				<second>578</second>
@@ -133,14 +131,14 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1139</first>
 				<second>469</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>633</first>
 				<second>517</second>
@@ -148,7 +146,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>468</first>
 				<second>487</second>
@@ -163,14 +161,14 @@
 			<values/>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>728</first>
 				<second>514</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>975</first>
 				<second>488</second>
@@ -179,7 +177,7 @@
 			<max>1</max>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>645</first>
 				<second>619</second>
@@ -188,14 +186,14 @@
 			<type>PtScalar</type>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>851</first>
 				<second>514</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1156</first>
 				<second>380</second>
@@ -203,7 +201,7 @@
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1033</first>
 				<second>455</second>
@@ -211,11 +209,20 @@
 			<swizzle>000w</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1280</first>
 				<second>404</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>564</first>
+				<second>340</second>
+			</position>
+			<parameterName>ImpostorTarget</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -447,6 +454,16 @@
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

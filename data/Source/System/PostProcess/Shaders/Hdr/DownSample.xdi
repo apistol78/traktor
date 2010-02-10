@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>916</first>
 				<second>79</second>
@@ -35,13 +35,11 @@
 			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>698</first>
 				<second>280</second>
 			</position>
-			<parameterName>SourceTexture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -51,7 +49,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Sum">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>544</first>
 				<second>77</second>
@@ -60,7 +58,7 @@
 			<to>15</to>
 		</item>
 		<item type="traktor.render.IndexedUniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>217</first>
 				<second>243</second>
@@ -70,21 +68,21 @@
 			<length>16</length>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>544</first>
 				<second>314</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>783</first>
 				<second>70</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>664</first>
 				<second>153</second>
@@ -92,7 +90,7 @@
 			<value>16</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>852</first>
 				<second>296</second>
@@ -100,7 +98,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>674</first>
 				<second>110</second>
@@ -108,7 +106,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>49</first>
 				<second>324</second>
@@ -117,7 +115,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>273</first>
 				<second>349</second>
@@ -125,7 +123,7 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>404</first>
 				<second>308</second>
@@ -133,7 +131,7 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>235</first>
 				<second>427</second>
@@ -149,6 +147,15 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>521</first>
+				<second>226</second>
+			</position>
+			<parameterName>Source</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -280,6 +287,16 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

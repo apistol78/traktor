@@ -2,21 +2,21 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1070</first>
 				<second>449</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1070</first>
 				<second>524</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1212</first>
 				<second>466</second>
@@ -24,7 +24,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1212</first>
 				<second>491</second>
@@ -32,7 +32,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1212</first>
 				<second>516</second>
@@ -40,7 +40,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1212</first>
 				<second>541</second>
@@ -48,28 +48,28 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1336</first>
 				<second>450</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1336</first>
 				<second>524</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1477</first>
 				<second>492</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>915</first>
 				<second>615</second>
@@ -77,7 +77,7 @@
 			<swizzle>zw</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>915</first>
 				<second>582</second>
@@ -85,7 +85,7 @@
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>580</first>
 				<second>509</second>
@@ -93,7 +93,7 @@
 			<value>-1</value>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>584</first>
 				<second>479</second>
@@ -101,36 +101,40 @@
 			<value>2</value>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>742</first>
 				<second>408</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>352</first>
-				<second>403</second>
+				<first>322</first>
+				<second>443</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>212</first>
-				<second>464</second>
+				<first>182</first>
+				<second>504</second>
 			</position>
 			<value>128</value>
 		</item>
 		<item type="traktor.render.FragmentPosition">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>138</first>
-				<second>380</second>
+				<first>140</first>
+				<second>446</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment>Sin</comment>
+			<comment>
+			<![CDATA[
+Sin
+			]]>
+			</comment>
 			<position>
 				<first>927</first>
 				<second>454</second>
@@ -138,7 +142,11 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment>Cos</comment>
+			<comment>
+			<![CDATA[
+Cos
+			]]>
+			</comment>
 			<position>
 				<first>927</first>
 				<second>404</second>
@@ -146,42 +154,42 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1070</first>
 				<second>362</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1070</first>
 				<second>287</second>
 			</position>
 		</item>
 		<item type="traktor.render.MixIn">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1477</first>
 				<second>330</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1336</first>
 				<second>362</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1336</first>
 				<second>288</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1211</first>
 				<second>379</second>
@@ -189,7 +197,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1211</first>
 				<second>354</second>
@@ -197,7 +205,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1211</first>
 				<second>329</second>
@@ -205,7 +213,7 @@
 			<swizzle>y</swizzle>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1211</first>
 				<second>304</second>
@@ -213,13 +221,11 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>477</first>
 				<second>400</second>
 			</position>
-			<parameterName>ShadowMapDiscRotation</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -229,7 +235,7 @@
 			<addressW>AdWrap</addressW>
 		</item>
 		<item type="traktor.render.IndexedUniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>712</first>
 				<second>561</second>
@@ -238,16 +244,19 @@
 			<type>PtVector</type>
 			<length>6</length>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>538</first>
 				<second>624</second>
 			</position>
 			<name>Index</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1832</first>
 				<second>438</second>
@@ -255,34 +264,46 @@
 			<name>Offset 1</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1832</first>
 				<second>471</second>
 			</position>
 			<name>Offset 2</name>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>1524</first>
 				<second>460</second>
 			</position>
 			<name>Size</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1662</first>
 				<second>476</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1662</first>
 				<second>390</second>
 			</position>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>211</first>
+				<second>380</second>
+			</position>
+			<parameterName>ShadowMapDiscRotation</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -734,6 +755,16 @@
 			<destination>
 				<node ref="/object/nodes/item[32]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

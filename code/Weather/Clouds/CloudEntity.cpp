@@ -455,7 +455,7 @@ void CloudEntity::renderCluster(
 					particleRenderBlock->shaderParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
 					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
 					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-					particleRenderBlock->shaderParams->setSamplerTexture(L"ParticleTexture", m_particleTexture);
+					particleRenderBlock->shaderParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
 					particleRenderBlock->shaderParams->endParameters(renderContext);
 
 					render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
@@ -521,7 +521,7 @@ void CloudEntity::renderCluster(
 		worldRenderView->setShaderParameters(renderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
 		renderBlock->shaderParams->setMatrixParameter(L"View", billboardView);
 		renderBlock->shaderParams->setFloatParameter(L"SliceDistance", sliceDistance);
-		renderBlock->shaderParams->setSamplerTexture(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
+		renderBlock->shaderParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(renderBlock);

@@ -35,8 +35,7 @@ bool Glsl::generate(
 	outProgram = GlslProgram(
 		cx.getVertexShader().getGeneratedShader(),
 		cx.getFragmentShader().getGeneratedShader(),
-		cx.getVertexShader().getSamplers(),
-		cx.getFragmentShader().getSamplers(),
+		cx.getSamplerTextures(),
 		cx.getRenderState()
 	);
 

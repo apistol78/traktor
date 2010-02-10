@@ -1,26 +1,26 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Thread/JobManager.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Render/External.h"
+#include "Render/IProgramCompiler.h"
+#include "Render/Nodes.h"
+#include "Render/ShaderGraph.h"
+#include "Render/Resource/FragmentLinker.h"
+#include "Render/Resource/ProgramResource.h"
+#include "Render/Resource/ShaderResource.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/IProgramCompiler.h"
-#include "Render/ShaderGraph.h"
-#include "Render/ShaderResource.h"
-#include "Render/Nodes.h"
-#include "Render/External.h"
-#include "Render/FragmentLinker.h"
-#include "Render/ProgramResource.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
 #include "Xml/XmlSerializer.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Thread/JobManager.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -87,6 +87,7 @@ struct BuildCombinationTask
 			return;
 		}
 
+		// Compile shader program.
 		if (programCompiler)
 		{
 			Ref< ProgramResource > programResource = programCompiler->compile(shaderGraphCombination, optimize, validate);
@@ -107,7 +108,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 7, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 8, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -178,10 +179,10 @@ bool ShaderPipeline::buildDependencies(
 	}
 
 	// Add external textures.
-	RefArray< Sampler > samplerNodes;
-	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+	RefArray< Texture > textureNodes;
+	shaderGraph->findNodesOf< Texture >(textureNodes);
 
-	for (RefArray< Sampler >::const_iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+	for (RefArray< Texture >::const_iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
 	{
 		const Guid& textureGuid = (*i)->getExternal();
 		if (textureGuid.isValid() && !textureGuid.isNull())
@@ -201,8 +202,6 @@ bool ShaderPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	// Do
-
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
 	Ref< ShaderResource > shaderResource = new ShaderResource();
 	uint32_t parameterBit = 1;
@@ -327,19 +326,14 @@ bool ShaderPipeline::buildOutput(
 		return false;
 	}
 
-	RefArray< Sampler > samplerNodes;
-	shaderGraph->findNodesOf< Sampler >(samplerNodes);
+	RefArray< Texture > textureNodes;
+	shaderGraph->findNodesOf< Texture >(textureNodes);
 
-	for (RefArray< Sampler >::iterator i = samplerNodes.begin(); i != samplerNodes.end(); ++i)
+	for (RefArray< Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
 	{
 		const Guid& textureGuid = (*i)->getExternal();
 		if (!textureGuid.isNull() && textureGuid.isValid())
-		{
-			shaderResource->addTexture(
-				(*i)->getParameterName(),
-				textureGuid
-			);
-		}
+			shaderResource->addTexture(textureGuid);
 	}
 
 	// Create output instance.

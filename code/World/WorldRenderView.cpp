@@ -319,7 +319,7 @@ void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* sha
 	if (m_shadowMask)
 	{
 		shaderParams->setBooleanParameter(s_handleShadowEnable, true);
-		shaderParams->setSamplerTexture(s_handleShadowMask, m_shadowMask);
+		shaderParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
 	}
 	else
 		shaderParams->setBooleanParameter(s_handleShadowEnable, false);
@@ -330,7 +330,7 @@ void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shad
 	if (m_depthMap)
 	{
 		shaderParams->setBooleanParameter(s_handleDepthEnable, true);
-		shaderParams->setSamplerTexture(s_handleDepthMap, m_depthMap);
+		shaderParams->setTextureParameter(s_handleDepthMap, m_depthMap);
 	}
 	else
 		shaderParams->setBooleanParameter(s_handleDepthEnable, false);

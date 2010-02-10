@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="1">
-			<comment></comment>
+		<item type="traktor.render.PixelOutput" version="2">
+			<comment/>
 			<position>
 				<first>561</first>
 				<second>49</second>
@@ -26,9 +26,16 @@
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
 			<wireframe>false</wireframe>
+			<stencilEnable>false</stencilEnable>
+			<stencilFail>SoKeep</stencilFail>
+			<stencilZFail>SoKeep</stencilZFail>
+			<stencilPass>SoKeep</stencilPass>
+			<stencilFunction>CfAlways</stencilFunction>
+			<stencilReference>0</stencilReference>
+			<stencilMask>4294967295</stencilMask>
 		</item>
 		<item type="traktor.render.VertexInput">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-494</first>
 				<second>-62</second>
@@ -39,7 +46,7 @@
 			<index>0</index>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>656</first>
 				<second>-55</second>
@@ -47,14 +54,14 @@
 			<technique>Default</technique>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>495</first>
 				<second>-75</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>324</first>
 				<second>-117</second>
@@ -63,14 +70,14 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>204</first>
 				<second>-81</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>64</first>
 				<second>-118</second>
@@ -79,7 +86,7 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-185</first>
 				<second>10</second>
@@ -88,22 +95,26 @@
 			<type>PtScalar</type>
 		</item>
 		<item type="traktor.render.Interpolator">
-			<comment>Cartesian</comment>
+			<comment>
+			<![CDATA[
+Cartesian
+			]]>
+			</comment>
 			<position>
 				<first>227</first>
 				<second>15</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>375</first>
 				<second>-61</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>7</first>
 				<second>-72</second>
@@ -112,12 +123,15 @@
 			<inputPins>
 				<item>
 					<name>Phi</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Theta</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>Radius</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -125,16 +139,17 @@
 					<name>Cartesian</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.MixOut">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-314</first>
 				<second>-103</second>
 			</position>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>-174</first>
 				<second>-118</second>
@@ -143,9 +158,11 @@
 			<inputPins>
 				<item>
 					<name>PhiNorm</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>ThetaNorm</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -156,9 +173,10 @@
 					<name>Theta</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>387</first>
 				<second>18</second>
@@ -167,9 +185,11 @@
 			<inputPins>
 				<item>
 					<name>SkyDirection</name>
+					<optional>false</optional>
 				</item>
 				<item>
 					<name>SunDirection</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -177,9 +197,10 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>196</first>
 				<second>88</second>
@@ -188,6 +209,7 @@
 			<inputPins>
 				<item>
 					<name>Index</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -213,9 +235,10 @@
 					<name>Position</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>84</first>
 				<second>109</second>

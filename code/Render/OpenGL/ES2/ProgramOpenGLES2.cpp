@@ -1,3 +1,6 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/GlslType.h"
@@ -7,9 +10,6 @@
 #include "Render/OpenGL/ES2/ProgramResourceOpenGLES2.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
-#include "Core/Misc/String.h"
-#include "Core/Misc/TString.h"
-#include "Core/Log/Log.h"
 
 #define T_COMPILE_BINARY_PROGRAMS 0
 
@@ -37,6 +37,21 @@ struct DeleteProgramCallback : public IContext::IDeleteCallback
 	{
 		T_OGL_SAFE(glDeleteProgram(m_program));
 		delete this;
+	}
+};
+
+struct FindSamplerTexture
+{
+	std::wstring m_sampler;
+
+	FindSamplerTexture(const std::wstring& sampler)
+		:	m_sampler(sampler)
+	{
+	}
+
+	bool operator () (const SamplerTexture& st) const
+	{
+		return st.sampler == m_sampler;
 	}
 };
 
@@ -85,8 +100,7 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource = new ProgramResourceOpenGLES2(
 		buffer,
 		bufferSize,
-		glslProgram.getVertexSamplers(),
-		glslProgram.getFragmentSamplers(),
+		glslProgram.getSamplerTextures(),
 		glslProgram.getRenderState()
 	);
 
@@ -97,8 +111,7 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource = new ProgramResourceOpenGL(
 		glslProgram.getVertexShader(),
 		glslProgram.getFragmentShader(),
-		glslProgram.getVertexSamplers(),
-		glslProgram.getFragmentSamplers(),
+		glslProgram.getSamplerTextures(),
 		glslProgram.getRenderState()
 	);
 
@@ -170,7 +183,7 @@ void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
 }
 
-void ProgramOpenGLES2::setSamplerTexture(handle_t handle, ITexture* texture)
+void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
@@ -180,17 +193,13 @@ void ProgramOpenGLES2::setSamplerTexture(handle_t handle, ITexture* texture)
 
 	if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(texture))
 	{
-		m_samplerTextures[i->second].target = GL_TEXTURE_2D;
-		m_samplerTextures[i->second].name = st->getTextureName();
-		m_samplerTextures[i->second].originScale = st->getTextureOriginAndScale();
-		m_samplerTextures[i->second].mipCount = st->getMipCount();
+		m_textureData[i->second].target = GL_TEXTURE_2D;
+		m_textureData[i->second].name = st->getTextureName();
 	}
 	else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(texture))
 	{
-		m_samplerTextures[i->second].target = rt->getTextureTarget();
-		m_samplerTextures[i->second].name = rt->getTextureName();
-		m_samplerTextures[i->second].originScale = rt->getTextureOriginAndScale();
-		m_samplerTextures[i->second].mipCount = 1;
+		m_textureData[i->second].target = rt->getTextureTarget();
+		m_textureData[i->second].name = rt->getTextureName();
 	}
 
 #endif
@@ -316,47 +325,21 @@ bool ProgramOpenGLES2::activate(bool landspace)
 		}
 	}
 
-	if (!m_samplers.empty())
+	for (uint32_t i = 0; i < m_samplers.size(); ++i)
 	{
-		for (std::vector< Sampler >::iterator i = m_samplers.begin(); i != m_samplers.end(); ++i)
-		{
-			const SamplerTexture& st = m_samplerTextures[i->texture];
-			if (!st.target)
-				continue;
+		const Sampler& sampler = m_samplers[i];
+		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
+		const TextureData& td = m_textureData[sampler.texture];
 
-			//T_OGL_SAFE(glEnable(st.target));
-			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i->unit));
-			T_OGL_SAFE(glBindTexture(st.target, st.name));
+		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
+		T_OGL_SAFE(glBindTexture(td.target, td.name));
 
-			if (st.mipCount > 1)
-			{
-				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, m_renderState.samplerStates[i->unit].minFilter));
-			}
-			else
-			{
-				T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-			}
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glTexParameteri(td.target, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 
-			T_OGL_SAFE(glTexParameteri(
-				st.target,
-				GL_TEXTURE_MIN_FILTER,
-				m_renderState.samplerStates[i->unit].magFilter
-			));
-			T_OGL_SAFE(glTexParameteri(
-				st.target,
-				GL_TEXTURE_MAG_FILTER,
-				m_renderState.samplerStates[i->unit].magFilter
-			));
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_S, m_renderState.samplerStates[i->unit].wrapS));
-			//T_OGL_SAFE(glTexParameteri(st.target, GL_TEXTURE_WRAP_T, m_renderState.samplerStates[i->unit].wrapT));
-
-			T_OGL_SAFE(glUniform1i(i->location, i->unit));
-			T_OGL_SAFE(glUniform4f(i->locationOriginScale, st.originScale.x(), st.originScale.y(), st.originScale.z(), st.originScale.w()));
-		}
-	}
-	else
-	{
-		//T_OGL_SAFE(glDisable(GL_TEXTURE_2D));
+		T_OGL_SAFE(glUniform1i(sampler.location, i));
 	}
 
 	ms_activeProgram = this;
@@ -431,13 +414,24 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 	// Get post orientation uniform.
 	m_postOrientationCoeffs = glGetUniformLocation(m_program, "t_internal_postOrientationCoeffs");
 
+	// Map texture parameters.
+	const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::vector< SamplerTexture >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->texture);
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textureData.size();
+
+			m_textureData.push_back(TextureData());
+			m_textureData.back().target = 0;
+			m_textureData.back().name = 0;
+		}
+	}
+
+	// Map samplers and uniforms.
 	GLint uniformCount;
 	T_OGL_SAFE(glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniformCount));
-
-	// Merge samplers.
-	std::set< std::wstring > samplers;
-	samplers.insert(resourceOpenGL->getVertexSamplers().begin(), resourceOpenGL->getVertexSamplers().end());
-	samplers.insert(resourceOpenGL->getFragmentSamplers().begin(), resourceOpenGL->getFragmentSamplers().end());
 
 	for (GLint j = 0; j < uniformCount; ++j)
 	{
@@ -446,44 +440,31 @@ bool ProgramOpenGLES2::createFromSource(const ProgramResource* resource)
 		char uniformName[256];
 
 		T_OGL_SAFE(glGetActiveUniform(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
+		std::wstring uniformNameW = mbstows(uniformName);
+
+		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
+		size_t p = uniformNameW.find('[');
+		if (p != uniformNameW.npos)
+			uniformNameW = uniformNameW.substr(0, p);
+		if (uniformNameW.empty())
+			continue;
 
 		if (uniformType == GL_SAMPLER_2D)
 		{
-			std::set< std::wstring >::iterator it = samplers.find(mbstows(uniformName));
-			T_ASSERT (it != samplers.end());
+			const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
 
-			uint32_t unit = uint32_t(std::distance(samplers.begin(), it));
-			handle_t handle = getParameterHandle(mbstows(uniformName));
+			std::vector< SamplerTexture >::const_iterator it = std::find_if(samplerTextures.begin(), samplerTextures.end(), FindSamplerTexture(uniformNameW));
+			T_ASSERT (it != samplerTextures.end());
 
-			if (m_parameterMap.find(handle) == m_parameterMap.end())
-			{
-				uint32_t texture = uint32_t(m_samplerTextures.size());
-				m_parameterMap[handle] = texture;
+			Sampler sampler;
+			sampler.location = glGetUniformLocation(m_program, uniformName);
+			sampler.texture = m_parameterMap[getParameterHandle(it->texture)];
+			sampler.stage = uint32_t(std::distance(samplerTextures.begin(), it));
 
-				SamplerTexture st = { 0, 0, Vector4(0.0f, 0.0f, 1.0f, 1.0f) };
-				m_samplerTextures.push_back(st);
-			}
-
-			m_samplers.push_back(Sampler());
-			m_samplers.back().location = glGetUniformLocation(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
-			m_samplers.back().texture = m_parameterMap[handle];
-			m_samplers.back().unit = unit;
+			m_samplers.push_back(sampler);
 		}
 		else
 		{
-			// Skip private uniforms of format "t_internal_*".
-			std::wstring uniformNameW = mbstows(uniformName);
-			if (startsWith(uniformNameW, L"t_internal_"))
-				continue;
-
-			size_t p = uniformNameW.find('[');
-			if (p != uniformNameW.npos)
-				uniformNameW = uniformNameW.substr(0, p);
-				
-			if (uniformNameW.empty())
-				continue;
-
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{
@@ -582,13 +563,24 @@ bool ProgramOpenGLES2::createFromBinary(const ProgramResource* resource)
 		}
 	}
 
+	// Map texture parameters.
+	const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
+	for (std::vector< SamplerTexture >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	{
+		handle_t handle = getParameterHandle(i->texture);
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textureData.size();
+
+			m_textureData.push_back(TextureData());
+			m_textureData.back().target = 0;
+			m_textureData.back().name = 0;
+		}
+	}
+
+	// Map samplers and uniforms.
 	GLint uniformCount;
 	T_OGL_SAFE(glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniformCount));
-
-	// Merge samplers.
-	std::set< std::wstring > samplers;
-	samplers.insert(resourceOpenGL->getVertexSamplers().begin(), resourceOpenGL->getVertexSamplers().end());
-	samplers.insert(resourceOpenGL->getFragmentSamplers().begin(), resourceOpenGL->getFragmentSamplers().end());
 
 	for (GLint j = 0; j < uniformCount; ++j)
 	{
@@ -597,41 +589,31 @@ bool ProgramOpenGLES2::createFromBinary(const ProgramResource* resource)
 		char uniformName[256];
 
 		T_OGL_SAFE(glGetActiveUniform(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
+		std::wstring uniformNameW = mbstows(uniformName);
+
+		// Trim indexed uniforms; seems to vary dependending on OGL implementation.
+		size_t p = uniformNameW.find('[');
+		if (p != uniformNameW.npos)
+			uniformNameW = uniformNameW.substr(0, p);
+		if (uniformNameW.empty())
+			continue;
 
 		if (uniformType == GL_SAMPLER_2D)
 		{
-			std::set< std::wstring >::iterator it = samplers.find(mbstows(uniformName));
-			T_ASSERT (it != samplers.end());
+			const std::vector< SamplerTexture >& samplerTextures = resourceOpenGL->getSamplerTextures();
 
-			uint32_t unit = uint32_t(std::distance(samplers.begin(), it));
-			handle_t handle = getParameterHandle(mbstows(uniformName));
+			std::vector< SamplerTexture >::const_iterator it = std::find_if(samplerTextures.begin(), samplerTextures.end(), FindSamplerTexture(uniformNameW));
+			T_ASSERT (it != samplerTextures.end());
 
-			if (m_parameterMap.find(handle) == m_parameterMap.end())
-			{
-				uint32_t texture = uint32_t(m_samplerTextures.size());
-				m_parameterMap[handle] = texture;
+			Sampler sampler;
+			sampler.location = glGetUniformLocation(m_program, uniformName);
+			sampler.texture = m_parameterMap[getParameterHandle(it->texture)];
+			sampler.stage = uint32_t(std::distance(samplerTextures.begin(), it));
 
-				SamplerTexture st = { 0, 0, Vector4(0.0f, 0.0f, 1.0f, 1.0f) };
-				m_samplerTextures.push_back(st);
-			}
-
-			m_samplers.push_back(Sampler());
-			m_samplers.back().location = glGetUniformLocation(m_program, uniformName);
-			m_samplers.back().locationOriginScale = glGetUniformLocation(m_program, ("t_internal_" + std::string(uniformName) + "_OriginScale").c_str());
-			m_samplers.back().texture = m_parameterMap[handle];
-			m_samplers.back().unit = unit;
+			m_samplers.push_back(sampler);
 		}
 		else
 		{
-			// Skip private uniform of format "t_internal_*".
-			std::wstring uniformNameW = mbstows(uniformName);
-			if (startsWith(uniformNameW, L"t_internal_"))
-				continue;
-				
-			size_t p = uniformNameW.find('[');
-			if (p != uniformNameW.npos)
-				uniformNameW = uniformNameW.substr(0, p);				
-
 			handle_t handle = getParameterHandle(uniformNameW);
 			if (m_parameterMap.find(handle) == m_parameterMap.end())
 			{

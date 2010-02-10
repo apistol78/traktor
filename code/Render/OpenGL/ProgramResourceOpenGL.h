@@ -1,8 +1,8 @@
 #ifndef traktor_render_ProgramResourceOpenGL_H
 #define traktor_render_ProgramResourceOpenGL_H
 
-#include "Render/ProgramResource.h"
 #include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {
@@ -22,8 +22,7 @@ public:
 	ProgramResourceOpenGL(
 		const std::wstring& vertexShader,
 		const std::wstring& fragmentShader,
-		const std::set< std::wstring >& vertexSamplers,
-		const std::set< std::wstring >& fragmentSamplers,
+		const std::vector< SamplerTexture >& samplerTextures,
 		const RenderState& renderState
 	);
 
@@ -31,9 +30,7 @@ public:
 
 	const std::wstring& getFragmentShader() const { return m_fragmentShader; }
 
-	const std::set< std::wstring >& getVertexSamplers() const { return m_vertexSamplers; }
-
-	const std::set< std::wstring >& getFragmentSamplers() const { return m_fragmentSamplers; }
+	const std::vector< SamplerTexture >& getSamplerTextures() const { return m_samplerTextures; }
 
 	const RenderState& getRenderState() const { return m_renderState; }
 
@@ -42,8 +39,7 @@ public:
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_fragmentShader;
-	std::set< std::wstring > m_vertexSamplers;
-	std::set< std::wstring > m_fragmentSamplers;
+	std::vector< SamplerTexture > m_samplerTextures;
 	RenderState m_renderState;
 };
 

@@ -2,8 +2,8 @@
 #define traktor_render_ProgramResourceOpenGLES2_H
 
 #include "Core/Misc/AutoPtr.h"
-#include "Render/ProgramResource.h"
 #include "Render/OpenGL/TypesOpenGL.h"
+#include "Render/Resource/ProgramResource.h"
 
 namespace traktor
 {
@@ -23,8 +23,7 @@ public:
 	ProgramResourceOpenGLES2(
 		const void* buffer,
 		uint32_t bufferSize,
-		const std::set< std::wstring >& vertexSamplers,
-		const std::set< std::wstring >& fragmentSamplers,
+		const std::vector< SamplerTexture >& samplerTextures,
 		const RenderState& renderState
 	);
 
@@ -32,9 +31,7 @@ public:
 
 	const uint8_t* getBuffer() const { return m_buffer.c_ptr(); }
 
-	const std::set< std::wstring >& getVertexSamplers() const { return m_vertexSamplers; }
-
-	const std::set< std::wstring >& getFragmentSamplers() const { return m_fragmentSamplers; }
+	const std::vector< SamplerTexture >& getSamplerTextures() const { return m_samplerTextures; }
 
 	const RenderState& getRenderState() const { return m_renderState; }
 
@@ -43,8 +40,7 @@ public:
 private:
 	uint32_t m_bufferSize;
 	AutoArrayPtr< uint8_t > m_buffer;
-	std::set< std::wstring > m_vertexSamplers;
-	std::set< std::wstring > m_fragmentSamplers;
+	std::vector< SamplerTexture > m_samplerTextures;
 	RenderState m_renderState;
 };
 

@@ -122,7 +122,7 @@ void PostProcessStepBlur::InstanceBlur::render(
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
 		{
-			shader->setSamplerTexture(i->param, source->getColorTexture(i->index));
+			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
 			shader->setVectorParameter(i->param + L"_Size", Vector4(
 				float(source->getWidth()),
 				float(source->getHeight()),

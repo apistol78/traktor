@@ -2,13 +2,11 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-3</first>
 				<second>62</second>
 			</position>
-			<parameterName>IllumTexture</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -18,15 +16,15 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>-155</first>
-				<second>74</second>
+				<first>-148</first>
+				<second>134</second>
 			</position>
 			<value>0.5</value>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>144</first>
 				<second>114</second>
@@ -34,21 +32,21 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>835</first>
 				<second>15</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>399</first>
 				<second>72</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>94</first>
 				<second>175</second>
@@ -56,30 +54,37 @@
 			<value>0.001</value>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>252</first>
 				<second>118</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Middle gray</comment>
+			<comment>
+			<![CDATA[
+Middle gray
+			]]>
+			</comment>
 			<position>
 				<first>274</first>
 				<second>70</second>
 			</position>
 			<value>0.55</value>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
 				<first>629</first>
 				<second>-1</second>
 			</position>
 			<name>Input</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1084</first>
 				<second>24</second>
@@ -87,14 +92,14 @@
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>956</first>
 				<second>109</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>824</first>
 				<second>162</second>
@@ -102,14 +107,14 @@
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1077</first>
 				<second>61</second>
 			</position>
 		</item>
 		<item type="traktor.render.Clamp">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>692</first>
 				<second>49</second>
@@ -118,19 +123,28 @@
 			<max>1.5</max>
 		</item>
 		<item type="traktor.render.Add">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>550</first>
 				<second>81</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>411</first>
 				<second>164</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>-207</first>
+				<second>60</second>
+			</position>
+			<parameterName>IllumTexture</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -282,6 +296,16 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

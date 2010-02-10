@@ -9,9 +9,9 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
-#include "Render/Dx9/Unmanaged.h"
 #include "Render/Dx9/StateBlockDx9.h"
-#include "Render/Dx9/ParameterMap.h"
+#include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/Unmanaged.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,10 +28,10 @@ namespace traktor
 
 class ContextDx9;
 class HlslProgram;
-class TextureBaseDx9;
+class ParameterCache;
 class ProgramResourceDx9;
 class ShaderCache;
-class ParameterCache;
+class TextureBaseDx9;
 
 /*!
  * \ingroup DX9
@@ -43,21 +43,6 @@ class T_DLLCLASS ProgramWin32
 	T_RTTI_CLASS;
 
 public:
-	struct Uniform
-	{
-		uint16_t registerIndex;
-		uint16_t registerCount;
-		uint16_t offset;
-		uint16_t length;
-	};
-
-	struct Sampler
-	{
-		uint16_t parameter;
-		uint16_t stage;
-		uint16_t texture;
-	};
-
 	ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache);
 
 	virtual ~ProgramWin32();
@@ -83,7 +68,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -104,18 +89,19 @@ private:
 
 	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
-	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
 	Ref< ShaderCache > m_shaderCache;
 	ParameterCache* m_parameterCache;
-	std::vector< Uniform > m_vertexUniforms;
-	std::vector< Uniform > m_pixelUniforms;
-	std::vector< Sampler > m_vertexSamplers;
-	std::vector< Sampler > m_pixelSamplers;
+	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
+	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
 	StateBlockDx9 m_state;
-	ParameterMap m_parameterMap;
-	AlignedVector< float > m_uniformFloatData;
-	RefArray< ITexture > m_samplerTextures;
+	std::vector< ProgramScalar > m_vertexScalars;
+	std::vector< ProgramScalar > m_pixelScalars;
+	std::vector< ProgramSampler > m_vertexSamplers;
+	std::vector< ProgramSampler > m_pixelSamplers;
+	std::map< handle_t, uint32_t > m_scalarParameterMap;
+	std::map< handle_t, uint32_t > m_textureParameterMap;
+	AlignedVector< float > m_scalarParameterData;
+	RefArray< ITexture > m_textureParameterData;
 	bool m_dirty;
 };
 

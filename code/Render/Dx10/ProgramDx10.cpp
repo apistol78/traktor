@@ -227,7 +227,7 @@ void ProgramDx10::setMatrixArrayParameter(handle_t handle, const Matrix44* param
 	setFloatArrayParameter(handle, reinterpret_cast< const float* >(param), length * 16);
 }
 
-void ProgramDx10::setSamplerTexture(handle_t handle, ITexture* texture)
+void ProgramDx10::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
@@ -445,7 +445,7 @@ bool ProgramDx10::createState(
 		}
 	}
 
-	// Sampler parameters.
+	// Texture/sampler parameters.
 	for (UINT i = 0; i < dsd.BoundResources; ++i)
 	{
 		d3dShaderReflection->GetResourceBindingDesc(i, &dsibd);

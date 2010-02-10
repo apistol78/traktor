@@ -1474,6 +1474,10 @@
       <second>Tangens</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_TEXTURE</first>
+      <second>Texture</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_TRANSFORM</first>
       <second>Transformera</second>
     </item>

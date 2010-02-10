@@ -1,6 +1,7 @@
-#include "Render/Dx9/ProgramResourceDx9.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Render/Dx9/ProgramResourceDx9.h"
 
 namespace traktor
 {
@@ -59,6 +60,48 @@ private:
 	ComRef< ID3DXBuffer >& m_ref;
 };
 
+class MemberProgramScalar : public MemberComplex
+{
+public:
+	MemberProgramScalar(const std::wstring& name, ProgramScalar& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint16_t >(L"registerIndex", m_ref.registerIndex);
+		s >> Member< uint16_t >(L"registerCount", m_ref.registerCount);
+		s >> Member< uint16_t >(L"offset", m_ref.offset);
+		s >> Member< uint16_t >(L"length", m_ref.length);
+		return true;
+	}
+
+private:
+	ProgramScalar& m_ref;
+};
+
+class MemberProgramSampler : public MemberComplex
+{
+public:
+	MemberProgramSampler(const std::wstring& name, ProgramSampler& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint16_t >(L"stage", m_ref.stage);
+		s >> Member< uint16_t >(L"texture", m_ref.texture);
+		return true;
+	}
+
+private:
+	ProgramSampler& m_ref;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx9", 0, ProgramResourceDx9, ProgramResource)
@@ -75,6 +118,14 @@ bool ProgramResourceDx9::serialize(ISerializer& s)
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
 	s >> Member< uint32_t >(L"vertexShaderHash", m_vertexShaderHash);
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
+	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
+	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
+	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberStlMap< std::wstring, uint32_t >(L"scalarParameterMap", m_scalarParameterMap);
+	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
+	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
+	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
 	s >> MemberComposite< StateBlockDx9 >(L"state", m_state);
 	return true;
 }
