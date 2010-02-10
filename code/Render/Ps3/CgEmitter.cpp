@@ -1267,6 +1267,49 @@ bool emitTranspose(CgContext& cx, Transpose* node)
 	return true;
 }
 
+bool emitType(CgContext& cx, Type* node)
+{
+	CgVariable* in = cx.emitInput(node, L"Type");
+	if (!in)
+		return false;
+
+	switch (in->getType())
+	{
+	case CtFloat:
+		in = cx.emitInput(node, L"Scalar");
+		break;
+
+	case CtFloat2:
+	case CtFloat3:
+	case CtFloat4:
+		in = cx.emitInput(node, L"Vector");
+		break;
+
+	case CtFloat4x4:
+		in = cx.emitInput(node, L"Matrix");
+		break;
+
+	case CtTexture:
+		in = cx.emitInput(node, L"Texture");
+		break;
+
+	default:
+		in = 0;
+	}
+
+	if (!in)
+		in = cx.emitInput(node, L"Default");
+
+	if (!in)
+		return false;
+
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << in->getName() << L";" << Endl;
+
+	return true;
+}
+
 bool emitUniform(CgContext& cx, Uniform* node)
 {
 	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4, CtTexture };
@@ -1492,6 +1535,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Type >()] = new EmitterCast< Type >(emitType);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);

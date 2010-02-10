@@ -1494,6 +1494,10 @@
       <second>Transpose</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_UNIFORM</first>
       <second>Uniform</second>
     </item>

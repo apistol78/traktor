@@ -986,6 +986,15 @@ public:
 	Transpose();
 };
 
+/*! \brief Type switch. */
+class T_DLLCLASS Type : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Type();
+};
+
 /*! \brief Fetch parameter value. */
 class T_DLLCLASS Uniform : public ImmutableNode
 {
