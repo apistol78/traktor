@@ -1486,6 +1486,10 @@
       <second>Transponera</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_TYPE</first>
+      <second>Typ</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_UNIFORM</first>
       <second>Uniform</second>
     </item>

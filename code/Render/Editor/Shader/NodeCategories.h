@@ -70,6 +70,7 @@ const NodeCategory c_nodeCateogories[] =
 	{ type_of< Texture >(), L"SHADERGRAPH_VALUE", L"Texture" },
 	{ type_of< Transform >(), L"SHADERGRAPH_ALGEBRA", L"Transform vector by a matrix" },
 	{ type_of< Transpose >(), L"SHADERGRAPH_ALGEBRA", L"Transpose matrix, swapping rows and columns" },
+	{ type_of< Type >(), L"SHADERGRAPH_CONDITIONAL", L"Static type switch" },
 	{ type_of< Uniform >(), L"SHADERGRAPH_VALUE", L"Uniform" },
 	{ type_of< Vector >(), L"SHADERGRAPH_VALUE", L"Vector constant" },
 	{ type_of< VertexInput >(), L"SHADERGRAPH_VALUE", L"Read value from vertex stream" },

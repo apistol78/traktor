@@ -1704,6 +1704,18 @@ Transpose::Transpose()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Type", 0, Type, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", false }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"Default", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Type_o[] = { L"Output", 0 };
+
+Type::Type()
+:	ImmutableNode(c_Type_i, c_Type_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Uniform", 0, Uniform, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_Uniform_o[] = { L"Output", 0 };

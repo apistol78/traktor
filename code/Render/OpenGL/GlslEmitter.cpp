@@ -1098,6 +1098,42 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 //#endif
 }
 
+void emitType(GlslContext& cx, Type* node)
+{
+	GlslVariable* in = cx.emitInput(node, L"Type");
+
+	switch (in->getType())
+	{
+	case GtFloat:
+		in = cx.emitInput(node, L"Scalar");
+		break;
+
+	case GtFloat2:
+	case GtFloat3:
+	case GtFloat4:
+		in = cx.emitInput(node, L"Vector");
+		break;
+
+	case GtFloat4x4:
+		in = cx.emitInput(node, L"Matrix");
+		break;
+
+	case GtTexture:
+		in = cx.emitInput(node, L"Texture");
+		break;
+
+	default:
+		in = 0;
+	}
+
+	if (!in)
+		in = cx.emitInput(node, L"Default");
+
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << in->getName() << L";" << Endl;
+}
+
 void emitUniform(GlslContext& cx, Uniform* node)
 {
 	const GlslType c_parameterType[] = { GtFloat, GtFloat4, GtFloat4x4, GtTexture };
@@ -1351,6 +1387,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Type >()] = new EmitterCast< Type >(emitType);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);
