@@ -3,6 +3,7 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 
 namespace traktor
@@ -13,8 +14,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphCombinations", ShaderGraphCombinations, Object)
 
 ShaderGraphCombinations::ShaderGraphCombinations(const ShaderGraph* shaderGraph)
-:	m_shaderGraph(shaderGraph)
 {
+	m_shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+
 	RefArray< Branch > branchNodes;
 	m_shaderGraph->findNodesOf< Branch >(branchNodes);
 
@@ -72,25 +74,24 @@ Ref< ShaderGraph > ShaderGraphCombinations::generate(uint32_t combination) const
 		const OutputPin* outputPin = (*i)->getOutputPin(/* Output */ 0);
 		T_ASSERT (outputPin);
 
-		Ref< Edge > inputEdge = shaderGraph->findEdge(inputPin);
-		T_ASSERT (inputEdge);
+		Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
+		T_ASSERT (sourceEdge);
 
-		shaderGraph->removeEdge(inputEdge);
+		RefSet< Edge > destinationEdges;
+		shaderGraph->findEdges(outputPin, destinationEdges);
 
-		RefSet< Edge > outputEdges;
-		shaderGraph->findEdges(outputPin, outputEdges);
-
-		for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
+		shaderGraph->removeEdge(sourceEdge);
+		for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
 		{
+			shaderGraph->removeEdge(*j);
 			shaderGraph->addEdge(new Edge(
-				inputEdge->getSource(),
+				sourceEdge->getSource(),
 				(*j)->getDestination()
 			));
-			shaderGraph->removeEdge(*j);
 		}
 	}
 
-	return shaderGraph;
+	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 }
 
 	}

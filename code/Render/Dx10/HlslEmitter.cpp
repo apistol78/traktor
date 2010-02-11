@@ -774,24 +774,6 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	return true;
 }
 
-bool emitPlatform(HlslContext& cx, Platform* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
-
-	HlslVariable* input = cx.emitInput(node, L"DX10");
-	if (!input)
-	{
-		input = cx.emitInput(node, L"Other");
-		if (!input)
-			return false;
-	}
-
-	HlslVariable* out = cx.emitOutput(node, L"Output", input->getType());
-	assign(f, out) << input->getName() << L";" << Endl;
-
-	return true;
-}
-
 bool emitPolynomial(HlslContext& cx, Polynomial* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1498,7 +1480,6 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< Platform >()] = new EmitterCast< Platform >(emitPlatform);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);

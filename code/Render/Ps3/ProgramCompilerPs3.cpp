@@ -3,12 +3,14 @@
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/Nodes.h"
 #include "Render/Ps3/Cg.h"
 #include "Render/Ps3/CgProgram.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/ProgramCompilerPs3.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphOptimizer.h"
+#include "Render/Shader/ShaderGraphStatic.h"
 
 namespace traktor
 {
@@ -31,8 +33,35 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramC
 
 Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
 {
+	Ref< ShaderGraph > programGraph;
+
+	// Extract platform permutation.
+	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"GCM");
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerOpenGL failed; unable to get platform permutation" << Endl;
+		return 0;
+	}
+
+	// Merge identical branches.
+	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerOpenGL failed; unable to merge branches" << Endl;
+		return 0;
+	}
+
+	// Insert interpolation nodes at optimal locations.
+	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerOpenGL failed; unable to optimize shader graph" << Endl;
+		return 0;
+	}
+
+	// Generate CG shaders.
 	CgProgram cgProgram;
-	if (!Cg().generate(shaderGraph, cgProgram))
+	if (!Cg().generate(programGraph, cgProgram))
 		return false;
 
 	static Semaphore s_globalLock;

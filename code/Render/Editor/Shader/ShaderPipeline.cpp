@@ -71,22 +71,6 @@ struct BuildCombinationTask
 		Ref< ShaderGraph > shaderGraphCombination = combinations->generate(combination);
 		T_ASSERT (shaderGraphCombination);
 
-		// Merge identical branches.
-		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).mergeBranches();
-		if (!shaderGraphCombination)
-		{
-			log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
-			return;
-		}
-
-		// Insert interpolation nodes at optimal locations.
-		shaderGraphCombination = ShaderGraphOptimizer(shaderGraphCombination).insertInterpolators();
-		if (!shaderGraphCombination)
-		{
-			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
-			return;
-		}
-
 		// Compile shader program.
 		if (programCompiler)
 		{

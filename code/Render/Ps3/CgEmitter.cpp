@@ -815,24 +815,6 @@ bool emitPixelOutput(CgContext& cx, PixelOutput* node)
 	return true;
 }
 
-bool emitPlatform(CgContext& cx, Platform* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
-
-	CgVariable* input = cx.emitInput(node, L"GCM");
-	if (!input)
-	{
-		input = cx.emitInput(node, L"Other");
-		if (!input)
-			return false;
-	}
-
-	CgVariable* out = cx.emitOutput(node, L"Output", input->getType());
-	assign(f, out) << input->getName() << L";" << Endl;
-
-	return true;
-}
-
 bool emitPolynomial(CgContext& cx, Polynomial* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1521,7 +1503,6 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< Platform >()] = new EmitterCast< Platform >(emitPlatform);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
