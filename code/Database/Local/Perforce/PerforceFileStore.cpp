@@ -74,21 +74,33 @@ bool PerforceFileStore::remove(const Path& filePath)
 	if (m_p4client->isOpened(localFile, pa))
 	{
 		if (pa == AtAdd)
-			return m_p4client->revertFile(m_p4changeList, localFile);
-		else if (pa == AtEdit)
 		{
+			// File has been added; revert in change list then remove local.
 			if (!m_p4client->revertFile(m_p4changeList, localFile))
 				return false;
-			// Fall through to open-for-delete.
+
+			return FileSystem::getInstance().remove(localFile);
+		}
+		else if (pa == AtEdit)
+		{
+			// File has been opened for edit; revert in change list then open for delete.
+			if (!m_p4client->revertFile(m_p4changeList, localFile))
+				return false;
+			
+			return m_p4client->openForDelete(m_p4changeList, localFile);
 		}
 		else if (pa == AtDelete)
+		{
+			// File has already been opened for delete.
 			return true;
+		}
 
+		// File not opened but exist in perforce; open for delete.
 		return m_p4client->openForDelete(m_p4changeList, localFile);
 	}
 	else
 	{
-		// File doesn't exist in P4; delete local file.
+		// File not in perforce; delete local file.
 		return FileSystem::getInstance().remove(localFile);
 	}
 }
