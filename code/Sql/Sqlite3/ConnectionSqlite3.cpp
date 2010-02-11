@@ -35,7 +35,7 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 		cs[trim(i->substr(0, p))] = i->substr(p + 1);
 	}
 
-	Path fileName = cs[L"fileName"];
+	Path fileName = FileSystem::getInstance().getAbsolutePath(cs[L"fileName"]);
 	FileSystem::getInstance().makeAllDirectories(fileName.getPathOnly());
 
 	log::debug << L"Using SQLite db \"" << fileName.getPathName() << L"\"" << Endl;
