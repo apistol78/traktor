@@ -1,10 +1,10 @@
 #include "Database/Database.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
-#include "Render/External.h"
-#include "Render/Nodes.h"
-#include "Render/ShaderGraph.h"
 #include "Render/Resource/FragmentLinker.h"
+#include "Render/Shader/External.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
 {

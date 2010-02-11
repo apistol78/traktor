@@ -1,6 +1,6 @@
-#include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphOrderEvaluator.h"
 
 namespace traktor
 {
@@ -14,7 +14,7 @@ ShaderGraphOrderEvaluator::ShaderGraphOrderEvaluator(const ShaderGraph* shaderGr
 {
 }
 
-int ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName)
+int ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& inputPinName) const
 {
 	const InputPin* inputPin = node->findInputPin(inputPinName);
 	T_ASSERT (inputPin);
@@ -26,7 +26,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node, const std::wstring& in
 	return evaluate(sourceOutputPin->getNode());
 }
 
-int ShaderGraphOrderEvaluator::evaluate(const Node* node)
+int ShaderGraphOrderEvaluator::evaluate(const Node* node) const
 {
 	std::map< const Node*, int >::iterator i = m_evaluated.find(node);
 	if (i != m_evaluated.end())
@@ -100,7 +100,7 @@ int ShaderGraphOrderEvaluator::evaluate(const Node* node)
 	return order;
 }
 
-int ShaderGraphOrderEvaluator::nodeDefault(const Node* node, int initialOrder)
+int ShaderGraphOrderEvaluator::nodeDefault(const Node* node, int initialOrder) const
 {
 	int order = initialOrder;
 	for (int i = 0; i < node->getInputPinCount(); ++i)
@@ -112,7 +112,7 @@ int ShaderGraphOrderEvaluator::nodeDefault(const Node* node, int initialOrder)
 	return order;
 }
 
-int ShaderGraphOrderEvaluator::nodeConstantOrNonLinear(const Node* node)
+int ShaderGraphOrderEvaluator::nodeConstantOrNonLinear(const Node* node) const
 {
 	for (int i = 0; i < node->getInputPinCount(); ++i)
 	{
@@ -124,14 +124,14 @@ int ShaderGraphOrderEvaluator::nodeConstantOrNonLinear(const Node* node)
 	return OrConstant;
 }
 
-int ShaderGraphOrderEvaluator::nodeMulOrDiv(const Node* node)
+int ShaderGraphOrderEvaluator::nodeMulOrDiv(const Node* node) const
 {
 	int order1 = evaluate(node, L"Input1");
 	int order2 = evaluate(node, L"Input2");
 	return order1 + order2;
 }
 
-int ShaderGraphOrderEvaluator::nodeMulAdd(const Node* node)
+int ShaderGraphOrderEvaluator::nodeMulAdd(const Node* node) const
 {
 	int order1 = evaluate(node, L"Input1");
 	int order2 = evaluate(node, L"Input2");
@@ -139,25 +139,25 @@ int ShaderGraphOrderEvaluator::nodeMulAdd(const Node* node)
 	return std::max(order1 + order2, order3);
 }
 
-int ShaderGraphOrderEvaluator::nodeTrig(const Node* node)
+int ShaderGraphOrderEvaluator::nodeTrig(const Node* node) const
 {
 	int order = evaluate(node, L"Theta");
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 
-int ShaderGraphOrderEvaluator::nodeArcusTan(const Node* node)
+int ShaderGraphOrderEvaluator::nodeArcusTan(const Node* node) const
 {
 	int order = evaluate(node, L"XY");
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 
-int ShaderGraphOrderEvaluator::nodeIndexedUniform(const Node* node)
+int ShaderGraphOrderEvaluator::nodeIndexedUniform(const Node* node) const
 {
 	int order = evaluate(node, L"Index");
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 
-int ShaderGraphOrderEvaluator::nodeMatrix(const Node* node)
+int ShaderGraphOrderEvaluator::nodeMatrix(const Node* node) const
 {
 	int order1 = evaluate(node, L"XAxis");
 	int order2 = evaluate(node, L"YAxis");
@@ -171,7 +171,7 @@ int ShaderGraphOrderEvaluator::nodeMatrix(const Node* node)
 	return order <= 0 ? OrConstant : OrNonLinear;
 }
 
-int ShaderGraphOrderEvaluator::nodeLerp(const Node* node)
+int ShaderGraphOrderEvaluator::nodeLerp(const Node* node) const
 {
 	int order1 = evaluate(node, L"Input1");
 	int order2 = evaluate(node, L"Input2");

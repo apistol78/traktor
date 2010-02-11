@@ -1,7 +1,7 @@
 #include "Ui/Xtrme/BatchRenderer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/IProgram.h"
 #include "Render/IProgramCompiler.h"
 #include "Render/VertexElement.h"

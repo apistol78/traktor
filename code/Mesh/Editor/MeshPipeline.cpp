@@ -22,11 +22,11 @@
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormat.h"
-#include "Render/External.h"
-#include "Render/Nodes.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/External.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphOptimizer.h"
 #include "Render/Resource/FragmentLinker.h"
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 
 namespace traktor
 {

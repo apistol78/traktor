@@ -1,14 +1,15 @@
 #include <algorithm>
 #include <stack>
-#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
-#include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
-#include "Render/Edge.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Log/Log.h"
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphOptimizer.h"
+#include "Render/Shader/ShaderGraphOrderEvaluator.h"
+#include "Render/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
@@ -17,6 +18,19 @@ namespace traktor
 		namespace
 		{
 
+struct CopyVisitor
+{
+	Ref< ShaderGraph > m_shaderGraph;
+
+	void operator () (Node* node) {
+		m_shaderGraph->addNode(node);
+	}
+
+	void operator () (Edge* edge) {
+		m_shaderGraph->addEdge(edge);
+	}
+};
+
 Semaphore s_calculateNodeHashLock;
 
 uint32_t calculateNodeHash(Node* node)
@@ -24,7 +38,7 @@ uint32_t calculateNodeHash(Node* node)
 	// Need to make sure only one thread at a time modifies the
 	// node; we can possible let the DeepHash run concurrently but
 	// we choose not to at the moment.
-	Acquire< Semaphore > scope(s_calculateNodeHashLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_calculateNodeHashLock);
 
 	std::pair< int, int > position = node->getPosition();
 	std::wstring comment = node->getComment();
@@ -45,73 +59,43 @@ uint32_t calculateNodeHash(Node* node)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphOptimizer", ShaderGraphOptimizer, Object)
 
 ShaderGraphOptimizer::ShaderGraphOptimizer(const ShaderGraph* shaderGraph)
-:	m_insertedCount(0)
+:	m_shaderGraph(shaderGraph)
+,	m_insertedCount(0)
 {
-	m_shaderGraph = new ShaderGraph(
-		shaderGraph->getNodes(),
-		shaderGraph->getEdges()
-	);
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches()
+Ref< ShaderGraph > ShaderGraphOptimizer::removeUnusedBranches() const
 {
-	RefArray< Node > nodeStack;
+	RefArray< Node > roots;
 
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i))
-			nodeStack.push_back(*i);
+			roots.push_back(*i);
 	}
 
-	RefArray< Node > usedNodes;
-	RefArray< Edge > usedEdges;
+	CopyVisitor visitor;
+	visitor.m_shaderGraph = new ShaderGraph();
+	shaderGraphTraverse(m_shaderGraph, roots, visitor);
 
-	while (!nodeStack.empty())
-	{
-		Ref< Node > node = nodeStack.back();
-		nodeStack.pop_back();
-
-		if (std::find(usedNodes.begin(), usedNodes.end(), node) != usedNodes.end())
-			continue;
-
-		usedNodes.push_back(node);
-
-		int inputPinCount = node->getInputPinCount();
-		for (int i = 0; i < inputPinCount; ++i)
-		{
-			const InputPin* inputPin = node->getInputPin(i);
-			Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
-			if (edge)
-			{
-				const OutputPin* outputPin = edge->getSource();
-				if (outputPin)
-				{
-					usedEdges.push_back(edge);
-					nodeStack.push_back(outputPin->getNode());
-				}
-			}
-		}
-	}
-
-	m_shaderGraph->removeAll();
-	for (RefArray< Node >::iterator i = usedNodes.begin(); i != usedNodes.end(); ++i)
-		m_shaderGraph->addNode(*i);
-	for (RefArray< Edge >::iterator i = usedEdges.begin(); i != usedEdges.end(); ++i)
-		m_shaderGraph->addEdge(*i);
-
-	return m_shaderGraph;
+	return visitor.m_shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
+Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 {
 	uint32_t mergedNodes = 0;
 
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
+
 	// Keep reference to array as we assume it will shrink
 	// when we remove nodes.
-	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	if (nodes.empty())
-		return m_shaderGraph;
+		return shaderGraph;
 
 	// Calculate node hashes.
 	std::map< const Node*, uint32_t > hash;
@@ -140,7 +124,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 
 			// Identical nodes found; rewire edges.
 			RefSet< Edge > edges;
-			if (m_shaderGraph->findEdges(nodes[j]->getOutputPin(0), edges) > 0)
+			if (shaderGraph->findEdges(nodes[j]->getOutputPin(0), edges) > 0)
 			{
 				for (RefSet< Edge >::const_iterator k = edges.begin(); k != edges.end(); ++k)
 				{
@@ -149,15 +133,15 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 						(*k)->getDestination()
 					);
 
-					m_shaderGraph->removeEdge(*k);
-					m_shaderGraph->addEdge(edge);
+					shaderGraph->removeEdge(*k);
+					shaderGraph->addEdge(edge);
 				}
 			}
 
 			// Remove redundant node.
 			T_ASSERT (nodes[j]->getInputPinCount() == 0);
 			T_ASSERT (nodes[j]->getOutputPinCount() == 1);
-			m_shaderGraph->removeNode(nodes[j]);
+			shaderGraph->removeNode(nodes[j]);
 			mergedNodes++;
 		}
 	}
@@ -189,8 +173,8 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 				bool wiredIdentical = true;
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					const OutputPin* sourcePin1 = m_shaderGraph->findSourcePin(nodes[i]->getInputPin(k));
-					const OutputPin* sourcePin2 = m_shaderGraph->findSourcePin(nodes[j]->getInputPin(k));
+					const OutputPin* sourcePin1 = shaderGraph->findSourcePin(nodes[i]->getInputPin(k));
+					const OutputPin* sourcePin2 = shaderGraph->findSourcePin(nodes[j]->getInputPin(k));
 					if (sourcePin1 != sourcePin2)
 					{
 						wiredIdentical = false;
@@ -207,28 +191,28 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 				for (int k = 0; k < outputPinCount; ++k)
 				{
 					RefSet< Edge > edges;
-					m_shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
+					shaderGraph->findEdges(nodes[j]->getOutputPin(k), edges);
 					for (RefSet< Edge >::const_iterator m = edges.begin(); m != edges.end(); ++m)
 					{
 						Ref< Edge > edge = new Edge(
 							nodes[i]->getOutputPin(k),
 							(*m)->getDestination()
 						);
-						m_shaderGraph->removeEdge(*m);
-						m_shaderGraph->addEdge(edge);
+						shaderGraph->removeEdge(*m);
+						shaderGraph->addEdge(edge);
 					}
 				}
 
 				// Remove input edges.
 				for (int k = 0; k < inputPinCount; ++k)
 				{
-					Ref< Edge > edge = m_shaderGraph->findEdge(nodes[j]->getInputPin(k));
+					Ref< Edge > edge = shaderGraph->findEdge(nodes[j]->getInputPin(k));
 					if (edge)
-						m_shaderGraph->removeEdge(edge);
+						shaderGraph->removeEdge(edge);
 				}
 
 				// Remove node; should be completely disconnected now.
-				m_shaderGraph->removeNode(nodes[j]);
+				shaderGraph->removeNode(nodes[j]);
 
 				merged = true;
 				mergedNodes++;
@@ -240,25 +224,30 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches()
 	}
 
 	log::debug << L"Merged " << mergedNodes << L" node(s)" << Endl;
-	return m_shaderGraph;
+	return shaderGraph;
 }
 
-Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators()
+Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators() const
 {
+	Ref< ShaderGraph > shaderGraph = new ShaderGraph(
+		m_shaderGraph->getNodes(),
+		m_shaderGraph->getEdges()
+	);
+
 	m_insertedCount = 0;
-	updateOrderComplexity();
+	updateOrderComplexity(shaderGraph);
 
 	RefArray< PixelOutput > pixelOutputNodes;
-	m_shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
+	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
 	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
-		insertInterpolators(*i);
+		insertInterpolators(shaderGraph, *i);
 	
 	log::debug << L"Inserted " << m_insertedCount << L" interpolator(s)" << Endl;
-	return m_shaderGraph;
+	return shaderGraph;
 }
 
-void ShaderGraphOptimizer::insertInterpolators(Node* node)
+void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* node) const
 {
 	// If we've reached an (manually placed) interpolator
 	// then stop even if order to high.
@@ -277,7 +266,7 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 		const InputPin* inputPin = node->getInputPin(i);
 		T_ASSERT (inputPin);
 
-		const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+		const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
 		if (!sourceOutputPin)
 			continue;
 
@@ -291,15 +280,15 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 			if (inputOrder == ShaderGraphOrderEvaluator::OrLinear)
 			{
 				// Remove edge; replace with interpolator.
-				Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
+				Ref< Edge > edge = shaderGraph->findEdge(inputPin);
 				T_ASSERT (edge);
 
-				m_shaderGraph->removeEdge(edge);
+				shaderGraph->removeEdge(edge);
 				edge = 0;
 
 				// If this output pin already connected to an interpolator node then we reuse it.
 				RefSet< Edge > outputEdges;
-				m_shaderGraph->findEdges(sourceOutputPin, outputEdges);
+				shaderGraph->findEdges(sourceOutputPin, outputEdges);
 				for (RefSet< Edge >::const_iterator i = outputEdges.begin(); i != outputEdges.end(); ++i)
 				{
 					Ref< Node > targetNode = (*i)->getDestination()->getNode();
@@ -311,40 +300,40 @@ void ShaderGraphOptimizer::insertInterpolators(Node* node)
 				}
 
 				if (edge)
-					m_shaderGraph->addEdge(edge);
+					shaderGraph->addEdge(edge);
 				else
 				{
 					// Create new interpolator node.
 					Ref< Interpolator > interpolator = new Interpolator();
 					std::pair< int, int > position = sourceNode->getPosition(); position.first += 64;
 					interpolator->setPosition(position);
-					m_shaderGraph->addNode(interpolator);
+					shaderGraph->addNode(interpolator);
 
 					// Create new edges.
 					edge = new Edge(sourceOutputPin, interpolator->getInputPin(0));
-					m_shaderGraph->addEdge(edge);
+					shaderGraph->addEdge(edge);
 
 					edge = new Edge(interpolator->getOutputPin(0), inputPin);
-					m_shaderGraph->addEdge(edge);
+					shaderGraph->addEdge(edge);
 
 					m_insertedCount++;
 				}
 
-				updateOrderComplexity();
+				updateOrderComplexity(shaderGraph);
 			}
 		}
 		else
 		{
 			// Input still have too high order; need to keep in pixel shader.
-			insertInterpolators(sourceNode);
+			insertInterpolators(shaderGraph, sourceNode);
 		}
 	}
 }
 
-void ShaderGraphOptimizer::updateOrderComplexity()
+void ShaderGraphOptimizer::updateOrderComplexity(ShaderGraph* shaderGraph) const
 {
-	ShaderGraphOrderEvaluator evaluator(m_shaderGraph);
-	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	ShaderGraphOrderEvaluator evaluator(shaderGraph);
+	const RefArray< Node >& nodes = shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		m_orderComplexity[*i] = evaluator.evaluate(*i);
 }

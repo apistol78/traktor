@@ -6,7 +6,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EDITOR_EXPORT)
+#if defined(T_RENDER_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -20,7 +20,9 @@ namespace traktor
 class ShaderGraph;
 class Node;
 
-/*! \brief Evaluate algorithmic order of a shader graph node. */
+/*! \brief Evaluate algorithmic order of a shader graph node.
+ * \ingroup Render
+ */
 class T_DLLCLASS ShaderGraphOrderEvaluator : public Object
 {
 	T_RTTI_CLASS;
@@ -35,31 +37,31 @@ public:
 
 	ShaderGraphOrderEvaluator(const ShaderGraph* shaderGraph);
 
-	int evaluate(const Node* node, const std::wstring& inputPinName);
+	int evaluate(const Node* node, const std::wstring& inputPinName) const;
 
-	int evaluate(const Node* node);
+	int evaluate(const Node* node) const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	std::map< const Node*, int > m_evaluated;
+	mutable std::map< const Node*, int > m_evaluated;
 
-	int nodeDefault(const Node* node, int initialOrder);
+	int nodeDefault(const Node* node, int initialOrder) const;
 
-	int nodeConstantOrNonLinear(const Node* node);
+	int nodeConstantOrNonLinear(const Node* node) const;
 
-	int nodeMulOrDiv(const Node* node);
+	int nodeMulOrDiv(const Node* node) const;
 
-	int nodeMulAdd(const Node* node);
+	int nodeMulAdd(const Node* node) const;
 
-	int nodeTrig(const Node* node);
+	int nodeTrig(const Node* node) const;
 
-	int nodeArcusTan(const Node* node);
+	int nodeArcusTan(const Node* node) const;
 
-	int nodeIndexedUniform(const Node* node);
+	int nodeIndexedUniform(const Node* node) const;
 
-	int nodeMatrix(const Node* node);
+	int nodeMatrix(const Node* node) const;
 
-	int nodeLerp(const Node* node);
+	int nodeLerp(const Node* node) const;
 };
 
 	}

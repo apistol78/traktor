@@ -1,8 +1,8 @@
 #include "Render/OpenGL/Glsl.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/GlslContext.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

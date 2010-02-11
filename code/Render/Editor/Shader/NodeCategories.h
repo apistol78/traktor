@@ -1,8 +1,8 @@
 #ifndef traktor_render_NodeCategories_H
 #define traktor_render_NodeCategories_H
 
-#include "Render/Nodes.h"
-#include "Render/External.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/External.h"
 
 namespace traktor
 {

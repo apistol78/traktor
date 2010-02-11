@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <map>
 #include "Core/Serialization/DeepClone.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Node.h"
-#include "Render/Nodes.h"
-#include "Render/External.h"
-#include "Render/Edge.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/External.h"
+#include "Render/Shader/Edge.h"
 #include "Render/Resource/FragmentLinker.h"
 
 namespace traktor

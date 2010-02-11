@@ -1,10 +1,10 @@
 #include <sstream>
 #include "Render/Ps3/CgContext.h"
 #include "Render/Ps3/CgShader.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Node.h"
-#include "Render/InputPin.h"
-#include "Render/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/OutputPin.h"
 #include "Core/Misc/String.h"
 
 namespace traktor

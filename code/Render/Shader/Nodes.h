@@ -5,8 +5,8 @@
 #include "Core/Guid.h"
 #include "Core/Math/Color.h"
 #include "Core/Math/Vector4.h"
-#include "Render/ImmutableNode.h"
 #include "Render/Types.h"
+#include "Render/Shader/ImmutableNode.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -1,9 +1,9 @@
 #include <algorithm>
 #include <set>
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
-#include "Render/Edge.h"
 
 namespace traktor
 {

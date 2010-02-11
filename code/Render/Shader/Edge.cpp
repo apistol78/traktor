@@ -1,9 +1,9 @@
-#include "Render/Edge.h"
-#include "Render/Node.h"
-#include "Render/OutputPin.h"
-#include "Render/InputPin.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
 
 namespace traktor
 {

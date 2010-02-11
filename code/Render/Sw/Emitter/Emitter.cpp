@@ -3,7 +3,7 @@
 #include "Render/Sw/Core/Types.h"
 #include "Render/Sw/VaryingUtils.h"
 #include "Render/VertexElement.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Log/Log.h"
 
 #pragma optimize("", off)

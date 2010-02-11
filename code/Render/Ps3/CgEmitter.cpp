@@ -1,7 +1,7 @@
 #include "Render/Ps3/CgEmitter.h"
 #include "Render/Ps3/CgContext.h"
 #include "Render/VertexElement.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

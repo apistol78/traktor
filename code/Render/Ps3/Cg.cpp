@@ -1,8 +1,8 @@
 #include "Render/Ps3/Cg.h"
 #include "Render/Ps3/CgProgram.h"
 #include "Render/Ps3/CgContext.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

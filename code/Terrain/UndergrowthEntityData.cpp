@@ -8,7 +8,7 @@
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Core/Serialization/ISerializer.h"

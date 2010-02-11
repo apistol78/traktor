@@ -8,7 +8,7 @@
 #include "Editor/Settings.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Render/Editor/TextureAsset.h"
 #include "Render/Editor/Shader/TextureNodeFacade.h"
 #include "Ui/Bitmap.h"

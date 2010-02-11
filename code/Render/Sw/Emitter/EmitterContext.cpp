@@ -1,7 +1,7 @@
 #include <limits>
 #include <algorithm>
 #include "Render/Sw/Emitter/EmitterContext.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Core/Log/Log.h"
 
 namespace traktor

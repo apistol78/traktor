@@ -1,4 +1,4 @@
-#include "Render/Node.h"
+#include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/CommentNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/CommentNodeShape.h"

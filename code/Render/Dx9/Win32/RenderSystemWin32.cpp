@@ -16,7 +16,7 @@
 #include "Render/Dx9/Unmanaged.h"
 #include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"

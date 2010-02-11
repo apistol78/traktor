@@ -1,11 +1,11 @@
-#include "Render/Nodes.h"
-#include "Render/Resource/TextureResource.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Math/Format.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Math/Format.h"
+#include "Render/Resource/TextureResource.h"
+#include "Render/Shader/Nodes.h"
 
 namespace traktor
 {

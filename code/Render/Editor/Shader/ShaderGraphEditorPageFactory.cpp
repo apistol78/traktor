@@ -1,6 +1,6 @@
 #include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Ui/Command.h"
 
 namespace traktor
