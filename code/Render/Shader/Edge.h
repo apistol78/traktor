@@ -16,8 +16,8 @@ namespace traktor
 	namespace render
 	{
 
-class OutputPin;
 class InputPin;
+class OutputPin;
 
 /*! \brief Shader graph edge.
  * \ingroup Render

@@ -19,7 +19,9 @@ namespace traktor
 
 class ShaderGraph;
 
-/*! \brief Shader graph combination generator. */
+/*! \brief Shader graph combination generator.
+ * \ingroup Render
+ */
 class T_DLLCLASS ShaderGraphCombinations : public Object
 {
 	T_RTTI_CLASS;

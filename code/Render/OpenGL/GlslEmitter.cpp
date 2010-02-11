@@ -2,7 +2,7 @@
 #include "Render/OpenGL/GlslEmitter.h"
 #include "Render/OpenGL/GlslContext.h"
 #include "Render/VertexElement.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

@@ -1,14 +1,15 @@
-#include <cctype>
 #include <algorithm>
-#include <stack>
+#include <cctype>
 #include <map>
-#include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Edge.h"
-#include "Render/Nodes.h"
-#include "Render/InputPin.h"
-#include "Render/OutputPin.h"
+#include <stack>
 #include "Core/Log/Log.h"
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphUtilities.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor
 {
@@ -17,38 +18,17 @@ namespace traktor
 		namespace
 		{
 
-void collectActiveNodes(const ShaderGraph* shaderGraph, std::set< const Node* >& outActiveNodes)
+struct CollectVisitor
 {
-	std::stack< const Node* > nodeStack;
+	std::set< const Node* > m_nodes;
 
-	const RefArray< Node >& nodes = shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-	{
-		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i) || is_a< OutputPort >(*i))
-			nodeStack.push(*i);
+	void operator () (Node* node) {
+		m_nodes.insert(node);
 	}
 
-	while (!nodeStack.empty())
-	{
-		const Node* node = nodeStack.top();
-		nodeStack.pop();
-
-		outActiveNodes.insert(node);
-
-		int inputPinCount = node->getInputPinCount();
-		for (int i = 0; i < inputPinCount; ++i)
-		{
-			const InputPin* inputPin = node->getInputPin(i);
-			const OutputPin* outputPin = shaderGraph->findSourcePin(inputPin);
-			if (outputPin)
-			{
-				const Node* sourceNode = outputPin->getNode();
-				if (outActiveNodes.find(sourceNode) == outActiveNodes.end())
-					nodeStack.push(sourceNode);
-			}
-		}
+	void operator () (Edge* edge) {
 	}
-}
+};
 
 class Report
 {
@@ -263,23 +243,32 @@ ShaderGraphValidator::ShaderGraphValidator(const ShaderGraph* shaderGraph)
 
 bool ShaderGraphValidator::validate(ShaderGraphType type, std::vector< const Node* >* outErrorNodes) const
 {
+	RefArray< Node > roots;
+
+	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
+	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		if (is_a< VertexOutput >(*i) || is_a< PixelOutput >(*i) || is_a< OutputPort >(*i))
+			roots.push_back(*i);
+	}
+
+	CollectVisitor visitor;
+	shaderGraphTraverse(m_shaderGraph, roots, visitor);
+
 	Report report(outErrorNodes);
 
-	std::set< const Node* > activeNodes;
-	collectActiveNodes(m_shaderGraph, activeNodes);
-
-	EdgeNodes().check(report, m_shaderGraph, activeNodes);
-	UniqueTechniques().check(report, m_shaderGraph, activeNodes);
-	NonOptionalInputs().check(report, m_shaderGraph, activeNodes);
-	SwizzlePatterns().check(report, m_shaderGraph, activeNodes);
-	ParameterNames().check(report, m_shaderGraph, activeNodes);
+	EdgeNodes().check(report, m_shaderGraph, visitor.m_nodes);
+	UniqueTechniques().check(report, m_shaderGraph, visitor.m_nodes);
+	NonOptionalInputs().check(report, m_shaderGraph, visitor.m_nodes);
+	SwizzlePatterns().check(report, m_shaderGraph, visitor.m_nodes);
+	ParameterNames().check(report, m_shaderGraph, visitor.m_nodes);
 	if (type == SgtFragment)
-		PortNames().check(report, m_shaderGraph, activeNodes);
+		PortNames().check(report, m_shaderGraph, visitor.m_nodes);
 	else
 	{
-		NoPorts().check(report, m_shaderGraph, activeNodes);
+		NoPorts().check(report, m_shaderGraph, visitor.m_nodes);
 		if (type == SgtProgram)
-			NoMetaNodes().check(report, m_shaderGraph, activeNodes);
+			NoMetaNodes().check(report, m_shaderGraph, visitor.m_nodes);
 	}
 
 	return bool(report.getErrorCount() == 0);

@@ -10,7 +10,7 @@
 #include "Render/Sw/Emitter/Emitter.h"
 #include "Render/Sw/Emitter/EmitterContext.h"
 #include "Render/DisplayMode.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/VertexElement.h"
 #include "Graphics/IGraphicsSystem.h"
 #include "Core/Misc/String.h"

@@ -1,13 +1,31 @@
 #include <stack>
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphUtilities.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Nodes.h"
-#include "Render/Edge.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct CopyVisitor
+{
+	Ref< ShaderGraph > m_shaderGraph;
+
+	void operator () (Node* node) {
+		m_shaderGraph->addNode(node);
+	}
+
+	void operator () (Edge* edge) {
+		m_shaderGraph->addEdge(edge);
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderGraphTechniques", ShaderGraphTechniques, Object)
 
@@ -34,56 +52,28 @@ std::set< std::wstring > ShaderGraphTechniques::getNames() const
 
 Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) const
 {
-	Ref< ShaderGraph > shaderGraph = new ShaderGraph();
-	std::stack< Ref< Node > > nodeStack;
-	std::set< Ref< Node > > nodeVisited;
+	RefArray< Node > roots;
 
-	// Get initial nodes.
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		if (VertexOutput* vertexOutput = dynamic_type_cast< VertexOutput* >(*i))
 		{
 			if (vertexOutput->getTechnique() == name)
-				nodeStack.push(vertexOutput);
+				roots.push_back(vertexOutput);
 		}
 		else if (PixelOutput* pixelOutput = dynamic_type_cast< PixelOutput* >(*i))
 		{
 			if (pixelOutput->getTechnique() == name)
-				nodeStack.push(pixelOutput);
+				roots.push_back(pixelOutput);
 		}
 	}
 
-	// Traverse graph; copy branches which we can reach.
-	while (!nodeStack.empty())
-	{
-		Ref< Node > node = nodeStack.top();
-		nodeStack.pop();
+	CopyVisitor visitor;
+	visitor.m_shaderGraph = new ShaderGraph();
+	shaderGraphTraverse(m_shaderGraph, roots, visitor);
 
-		// Already visited this node?
-		if (nodeVisited.find(node) != nodeVisited.end())
-			continue;
-
-		nodeVisited.insert(node);
-
-		shaderGraph->addNode(node);
-
-		int inputPinCount = node->getInputPinCount();
-		for (int i = 0; i < inputPinCount; ++i)
-		{
-			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
-
-			Ref< Edge > edge = m_shaderGraph->findEdge(inputPin);
-			if (edge)
-			{
-				shaderGraph->addEdge(edge);
-				nodeStack.push(edge->getSource()->getNode());
-			}
-		}
-	}
-
-	return shaderGraph;
+	return visitor.m_shaderGraph;
 }
 
 	}

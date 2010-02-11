@@ -5,7 +5,7 @@
 #include "Resource/IResourceManager.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Resource/TextureResource.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"

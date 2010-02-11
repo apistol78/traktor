@@ -7,7 +7,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EDITOR_EXPORT)
+#if defined(T_RENDER_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -18,13 +18,14 @@ namespace traktor
 	namespace render
 	{
 
-class ShaderGraph;
 class Node;
+class ShaderGraph;
 
 /*! \brief Shader graph optimizer.
+ * \ingroup Render
  *
  * \note The shader graph optimizer only works on
- *       fully resolved shader graphs, ie. no fragments.
+ *       fully resolved shader graphs, i.e. no fragments.
  */
 class T_DLLCLASS ShaderGraphOptimizer : public Object
 {
@@ -37,13 +38,13 @@ public:
 	 *
 	 * \return Shader graph with removed unused branches.
 	 */
-	Ref< ShaderGraph > removeUnusedBranches();
+	Ref< ShaderGraph > removeUnusedBranches() const;
 
 	/*! \brief Merge duplicated branches.
 	 *
 	 * \return Shader graph with removed duplicated branches.
 	 */
-	Ref< ShaderGraph > mergeBranches();
+	Ref< ShaderGraph > mergeBranches() const;
 
 	/*! \brief Insert interpolator nodes where appropriate.
 	 *
@@ -55,17 +56,17 @@ public:
 	 * \param shaderGraph Source shader graph.
 	 * \return Shader graph with inserted interpolators.
 	 */
-	Ref< ShaderGraph > insertInterpolators();
+	Ref< ShaderGraph > insertInterpolators() const;
 
 private:
-	Ref< ShaderGraph > m_shaderGraph;
-	std::set< const Node* > m_visited;
-	std::map< const Node*, int > m_orderComplexity;
-	int32_t m_insertedCount;
+	Ref< const ShaderGraph > m_shaderGraph;
+	mutable std::set< const Node* > m_visited;
+	mutable std::map< const Node*, int > m_orderComplexity;
+	mutable int32_t m_insertedCount;
 
-	void insertInterpolators(Node* node);
+	void insertInterpolators(ShaderGraph* shaderGraph, Node* node) const;
 
-	void updateOrderComplexity();
+	void updateOrderComplexity(ShaderGraph* shaderGraph) const;
 };
 
 	}

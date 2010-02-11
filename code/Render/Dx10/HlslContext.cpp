@@ -3,10 +3,10 @@
 #include "Render/Dx10/Platform.h"
 #include "Render/Dx10/HlslContext.h"
 #include "Render/Dx10/HlslShader.h"
-#include "Render/ShaderGraph.h"
-#include "Render/Node.h"
-#include "Render/InputPin.h"
-#include "Render/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/OutputPin.h"
 
 namespace traktor
 {

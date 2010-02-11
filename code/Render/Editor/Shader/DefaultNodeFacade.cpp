@@ -1,5 +1,5 @@
 #include "Render/Editor/Shader/DefaultNodeFacade.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/InputNodeShape.h"

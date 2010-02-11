@@ -1,7 +1,7 @@
 #include "Render/Dx9/HlslEmitter.h"
 #include "Render/Dx9/HlslContext.h"
 #include "Render/VertexElement.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

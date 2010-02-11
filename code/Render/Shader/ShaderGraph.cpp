@@ -1,11 +1,11 @@
 #include <algorithm>
-#include "Render/ShaderGraph.h"
-#include "Render/Node.h"
-#include "Render/Edge.h"
-#include "Render/OutputPin.h"
-#include "Render/InputPin.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Render/Shader/Edge.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
 {

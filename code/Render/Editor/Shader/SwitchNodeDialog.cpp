@@ -1,5 +1,5 @@
 #include "Render/Editor/Shader/SwitchNodeDialog.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/GridView/GridColumn.h"

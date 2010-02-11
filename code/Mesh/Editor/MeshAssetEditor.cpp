@@ -10,7 +10,7 @@
 #include "Database/Group.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "I18N/Text.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"

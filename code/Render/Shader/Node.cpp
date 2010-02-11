@@ -1,8 +1,8 @@
-#include "Render/Node.h"
-#include "Render/InputPin.h"
-#include "Render/OutputPin.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
 
 namespace traktor
 {

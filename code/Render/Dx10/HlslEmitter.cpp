@@ -2,7 +2,7 @@
 #include "Render/Dx10/HlslEmitter.h"
 #include "Render/Dx10/HlslContext.h"
 #include "Render/VertexElement.h"
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
 

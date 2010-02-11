@@ -20,7 +20,9 @@ namespace traktor
 class ShaderGraph;
 class Node;
 
-/*! \brief Shader graph technique generator. */
+/*! \brief Shader graph technique generator.
+ * \ingroup Render
+ */
 class T_DLLCLASS ShaderGraphTechniques : public Object
 {
 	T_RTTI_CLASS;

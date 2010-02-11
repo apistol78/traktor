@@ -1,5 +1,5 @@
 #include "Render/Editor/Shader/SwizzleNodeFacade.h"
-#include "Render/Node.h"
+#include "Render/Shader/Node.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/InOutNodeShape.h"
 

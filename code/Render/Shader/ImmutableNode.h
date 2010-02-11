@@ -1,9 +1,9 @@
 #ifndef traktor_render_ImmutableNode_H
 #define traktor_render_ImmutableNode_H
 
-#include "Render/Node.h"
-#include "Render/InputPin.h"
-#include "Render/OutputPin.h"
+#include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

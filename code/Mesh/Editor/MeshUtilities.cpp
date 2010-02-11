@@ -1,6 +1,6 @@
 #include "Mesh/Editor/MeshUtilities.h"
-#include "Render/Nodes.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
 {

@@ -1,7 +1,7 @@
 #ifndef traktor_render_RenderStateDesc_H
 #define traktor_render_RenderStateDesc_H
 
-#include "Render/Nodes.h"
+#include "Render/Shader/Nodes.h"
 
 namespace traktor
 {

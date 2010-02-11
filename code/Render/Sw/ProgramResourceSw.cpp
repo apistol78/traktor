@@ -1,5 +1,5 @@
 #include "Render/Sw/ProgramResourceSw.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 

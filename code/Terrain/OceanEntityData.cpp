@@ -2,7 +2,7 @@
 #include "Terrain/Heightfield.h"
 #include "Terrain/HeightfieldResource.h"
 #include "Render/Shader.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberComposite.h"

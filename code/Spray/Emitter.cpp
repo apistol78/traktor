@@ -3,7 +3,7 @@
 #include "Spray/Source.h"
 #include "Spray/Modifier.h"
 #include "Render/Shader.h"
-#include "Render/ShaderGraph.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
