@@ -505,17 +505,6 @@ void emitNormalize(EmitterContext& cx, Normalize* node)
 	cx.emitInstruction(OpNormalize, out, in);
 }
 
-void emitPlatform(EmitterContext& cx, Platform* node)
-{
-	Variable* in = cx.emitInput(node, L"Software");
-	if (!in)
-		in = cx.emitInput(node, L"Other");
-	T_ASSERT (in);
-
-	Variable* out = cx.emitOutput(node, L"Output", in->type);
-	cx.emitInstruction(OpMove, out, in);
-}
-
 void emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 {
 	cx.enterPixel();
@@ -958,7 +947,6 @@ Emitter::Emitter()
 	m_emitters[&type_of< MulAdd >()] = new EmitterCast< MulAdd >(emitMulAdd);
 	m_emitters[&type_of< Neg >()] = new EmitterCast< Neg >(emitNeg);
 	m_emitters[&type_of< Normalize >()] = new EmitterCast< Normalize >(emitNormalize);
-	m_emitters[&type_of< Platform >()] = new EmitterCast< Platform >(emitPlatform);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);

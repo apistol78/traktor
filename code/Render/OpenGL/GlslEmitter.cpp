@@ -659,24 +659,6 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rs.alphaRef = GLclampf(node->getAlphaTestReference() / 255.0f);
 }
 
-void emitPlatform(GlslContext& cx, Platform* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
-
-#if defined(T_OPENGL_STD)
-	GlslVariable* input = cx.emitInput(node, L"OpenGL");
-#elif defined(T_OPENGL_ES2)
-	GlslVariable* input = cx.emitInput(node, L"OpenGL ES2");
-#endif
-	if (!input)
-		input = cx.emitInput(node, L"Other");
-
-	T_ASSERT (input);
-
-	GlslVariable* out = cx.emitOutput(node, L"Output", input->getType());
-	assign(f, out) << input->getName() << L";" << Endl;
-}
-
 void emitPolynomial(GlslContext& cx, Polynomial* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1373,7 +1355,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Polynomial >()] = new EmitterCast< Polynomial >(emitPolynomial);
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
-	m_emitters[&type_of< Platform >()] = new EmitterCast< Platform >(emitPlatform);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);

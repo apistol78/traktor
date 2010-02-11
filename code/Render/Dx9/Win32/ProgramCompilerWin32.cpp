@@ -7,6 +7,8 @@
 #include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/Win32/ProgramCompilerWin32.h"
+#include "Render/Shader/ShaderGraphOptimizer.h"
+#include "Render/Shader/ShaderGraphStatic.h"
 
 namespace traktor
 {
@@ -154,18 +156,46 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGr
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;
 	ComRef< ID3DXConstantTable > d3dPixelConstantTable;
+	Ref< ShaderGraph > programGraph;
 
-	Ref< ProgramResourceDx9 > resource = new ProgramResourceDx9();
+	// Extract platform permutation.
+	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"DX9");
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to get platform permutation" << Endl;
+		return 0;
+	}
+
+	// Merge identical branches.
+	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to merge branches" << Endl;
+		return 0;
+	}
+
+	// Insert interpolation nodes at optimal locations.
+	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to optimize shader graph" << Endl;
+		return 0;
+	}
 
 	// Generate HLSL shaders.
 	HlslProgram program;
-	if (!Hlsl().generate(shaderGraph, program))
+	if (!Hlsl().generate(programGraph, program))
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to generate HLSL" << Endl;
 		return 0;
+	}
 
 	// Compile shaders.
 	DWORD flags = c_optimizationLevels[clamp(optimize, 0, 4)];
 	if (!validate)
 		flags |= D3DXSHADER_SKIPVALIDATION;
+
+	Ref< ProgramResourceDx9 > resource = new ProgramResourceDx9();
 
 	if (!compileShader(
 		program.getVertexShader(),
@@ -175,7 +205,10 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGr
 		resource->m_vertexShader,
 		resource->m_vertexShaderHash
 	))
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to compile vertex shader" << Endl;
 		return 0;
+	}
 
 	if (!compileShader(
 		program.getPixelShader(),
@@ -185,7 +218,10 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGr
 		resource->m_pixelShader,
 		resource->m_pixelShaderHash
 	))
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to compile pixel shader" << Endl;
 		return 0;
+	}
 
 	D3DXGetShaderConstantTable((const DWORD *)resource->m_vertexShader->GetBufferPointer(), &d3dVertexConstantTable.getAssign());
 	D3DXGetShaderConstantTable((const DWORD *)resource->m_pixelShader->GetBufferPointer(), &d3dPixelConstantTable.getAssign());
