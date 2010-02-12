@@ -31,6 +31,8 @@ public:
 
 	Ref< ShaderGraph > getPlatformPermutation(const std::wstring& platform) const;
 
+	Ref< ShaderGraph > getTypePermutation() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

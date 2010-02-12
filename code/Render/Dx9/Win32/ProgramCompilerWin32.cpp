@@ -166,6 +166,14 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGr
 		return 0;
 	}
 
+	// Freeze type permutation.
+	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerWin32 failed; unable to get type permutation" << Endl;
+		return 0;
+	}
+
 	// Merge identical branches.
 	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 	if (!programGraph)
