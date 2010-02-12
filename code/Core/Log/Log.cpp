@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Core/Platform.h"
 #include "Core/Log/Log.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
@@ -28,8 +29,8 @@ void LogTargetConsole::log(const std::wstring& str)
 void LogTargetDebug::log(const std::wstring& str)
 {
 #if defined(_WIN32)
-	std::wstringstream ss;
-	ss << L"(" << GetCurrentThreadId() << L") " << str << std::endl;
+	StringOutputStream ss;
+	ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 	OutputDebugString(wstots(ss.str()).c_str());
 #else
 	std::wcout << L"(DEBUG) " << str << std::endl;
@@ -53,18 +54,26 @@ void LogStreamBuffer::setTarget(ILogTarget* target)
 
 int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
+	StringOutputStream* ss = static_cast< StringOutputStream* >(m_buffers.get());
+	if (!ss)
+	{
+		ss = new StringOutputStream();
+		m_buffers.set(ss);
+	}
+
 	for (int i = 0; i < count; ++i)
 	{
 		wchar_t c = buffer[i];
 		if (c == L'\n')
 		{
 			if (m_target)
-				m_target->log(m_ss.str());
-			m_ss.str(L"");
+				m_target->log(ss->str());
+			ss->reset();
 		}
 		else if (c != L'\r')
-			m_ss << c;
+			(*ss) << c;
 	}
+
 	return count;
 }
 
