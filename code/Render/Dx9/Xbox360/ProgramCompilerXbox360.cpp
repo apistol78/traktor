@@ -152,7 +152,15 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(const ShaderGraph* shader
 	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"DX9 Xbox360");
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerWin32 failed; unable to get platform permutation" << Endl;
+		log::error << L"ProgramCompilerXbox360 failed; unable to get platform permutation" << Endl;
+		return 0;
+	}
+
+	// Freeze type permutation.
+	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerXbox360 failed; unable to get type permutation" << Endl;
 		return 0;
 	}
 
@@ -160,7 +168,7 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(const ShaderGraph* shader
 	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerWin32 failed; unable to merge branches" << Endl;
+		log::error << L"ProgramCompilerXbox360 failed; unable to merge branches" << Endl;
 		return 0;
 	}
 
@@ -168,7 +176,7 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(const ShaderGraph* shader
 	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerWin32 failed; unable to optimize shader graph" << Endl;
+		log::error << L"ProgramCompilerXbox360 failed; unable to optimize shader graph" << Endl;
 		return 0;
 	}
 

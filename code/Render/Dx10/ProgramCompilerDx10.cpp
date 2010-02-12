@@ -26,6 +26,14 @@ Ref< ProgramResource > ProgramCompilerDx10::compile(const ShaderGraph* shaderGra
 		return 0;
 	}
 
+	// Freeze type permutation.
+	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerDx10 failed; unable to get type permutation" << Endl;
+		return 0;
+	}
+
 	// Merge identical branches.
 	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 	if (!programGraph)

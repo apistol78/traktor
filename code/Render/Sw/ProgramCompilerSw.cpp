@@ -19,7 +19,15 @@ Ref< ProgramResource > ProgramCompilerSw::compile(const ShaderGraph* shaderGraph
 	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"Software");
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerOpenGL failed; unable to get platform permutation" << Endl;
+		log::error << L"ProgramCompilerSw failed; unable to get platform permutation" << Endl;
+		return 0;
+	}
+
+	// Freeze type permutation.
+	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerSw failed; unable to get type permutation" << Endl;
 		return 0;
 	}
 
@@ -27,7 +35,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(const ShaderGraph* shaderGraph
 	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerOpenGL failed; unable to merge branches" << Endl;
+		log::error << L"ProgramCompilerSw failed; unable to merge branches" << Endl;
 		return 0;
 	}
 
@@ -35,7 +43,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(const ShaderGraph* shaderGraph
 	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
 	if (!programGraph)
 	{
-		log::error << L"ProgramCompilerOpenGL failed; unable to optimize shader graph" << Endl;
+		log::error << L"ProgramCompilerSw failed; unable to optimize shader graph" << Endl;
 		return 0;
 	}
 

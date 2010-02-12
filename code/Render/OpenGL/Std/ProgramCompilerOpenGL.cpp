@@ -25,6 +25,14 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(const ShaderGraph* shaderG
 		return 0;
 	}
 
+	// Freeze type permutation.
+	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+	if (!programGraph)
+	{
+		log::error << L"ProgramCompilerOpenGL failed; unable to get type permutation" << Endl;
+		return 0;
+	}
+
 	// Merge identical branches.
 	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 	if (!programGraph)
