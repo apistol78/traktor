@@ -3,9 +3,9 @@
 
 #include <vector>
 #include <string>
-#include <sstream>
 #include "Core/Io/IOutputStreamBuffer.h"
 #include "Core/Io/OutputStream.h"
+#include "Core/Thread/ThreadLocal.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -66,8 +66,8 @@ protected:
 	virtual int overflow(const wchar_t* buffer, int count);
 	
 private:
+	ThreadLocal m_buffers;
 	ILogTarget* m_target;
-	std::wstringstream m_ss;
 };
 
 /*! \brief Log stream.
