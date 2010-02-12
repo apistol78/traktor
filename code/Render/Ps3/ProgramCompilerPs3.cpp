@@ -1,5 +1,7 @@
 #include "Render/Ps3/PlatformPs3.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -19,13 +21,188 @@ namespace traktor
 		namespace
 		{
 
-struct ParameterLess
+bool collectScalarParameters(
+	const ShaderGraph* shaderGraph,
+	CGCbin* shaderBin,
+	bool isFragmentProfile,
+	std::vector< ProgramScalar >& outScalars,
+	std::map< std::wstring, uint32_t >& outScalarParameterMap,
+	uint32_t& outOffset
+)
 {
-	bool operator () (const ProgramResourcePs3::Parameter& p1, const ProgramResourcePs3::Parameter& p2) const
+	size_t shaderBinSize = sceCgcGetBinSize(shaderBin);
+	if (!shaderBinSize)
 	{
-		return p1.name < p2.name;
+		log::error << L"Invalid shader image" << Endl;
+		return false;
 	}
-};
+
+	// Create a copy of program; we don't want to modify source bin.
+	AutoArrayPtr< uint8_t > programNV(new uint8_t [shaderBinSize]);
+	std::memcpy(programNV.ptr(), sceCgcGetBinData(shaderBin), shaderBinSize);
+
+	CGprogram program = (CGprogram)programNV.ptr();
+	cellGcmCgInitProgram(program);
+
+	const RefArray< Node >& nodes = shaderGraph->getNodes();
+	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		std::wstring parameterName;
+		int32_t parameterSize = -1;
+		int32_t parameterCount = -1;
+
+		if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(*i))
+		{
+			parameterName = uniformNode->getParameterName();
+			switch (uniformNode->getParameterType())
+			{
+			case PtScalar:
+				parameterSize = 1;
+				parameterCount = 1;
+				break;
+
+			case PtVector:
+				parameterSize = 4;
+				parameterCount = 1;
+				break;
+
+			case PtMatrix:
+				parameterSize = 16;
+				parameterCount = 1;
+				break;
+			}
+		}
+		else if (const IndexedUniform* indexedUniformNode = dynamic_type_cast< const IndexedUniform* >(*i))
+		{
+			parameterName = indexedUniformNode->getParameterName();
+			switch (indexedUniformNode->getParameterType())
+			{
+			case PtScalar:
+				parameterSize = 1;
+				parameterCount = indexedUniformNode->getLength();
+				break;
+
+			case PtVector:
+				parameterSize = 4;
+				parameterCount = indexedUniformNode->getLength();
+				break;
+
+			case PtMatrix:
+				parameterSize = 16;
+				parameterCount = indexedUniformNode->getLength();
+				break;
+			}
+		}
+
+		if (parameterSize > 0)
+		{
+			log::debug << L"Parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << Endl;
+
+			uint32_t quadCount = (parameterSize * parameterCount + 3) / 4;
+
+			ProgramScalar scalar;
+			scalar.vertexRegisterIndex = 0;
+			scalar.vertexRegisterCount = 0;
+			scalar.offset = outOffset;
+			scalar.length = parameterSize * parameterCount;
+
+			bool scalarUsed = false;
+
+			if (!isFragmentProfile)
+			{
+				std::string tmp = wstombs(parameterName);
+				CGparameter parameter = cellGcmCgGetNamedParameter(program, tmp.c_str());
+
+				if (parameter)
+				{
+					uint32_t resourceIndex = cellGcmCgGetParameterResourceIndex(program, parameter);
+
+					scalar.vertexRegisterIndex = resourceIndex;
+					scalar.vertexRegisterCount = quadCount;
+
+					log::debug << L"\tvertex register index " << scalar.vertexRegisterIndex << Endl;
+					log::debug << L"\tvertex register count " << scalar.vertexRegisterCount << Endl;
+
+					scalarUsed = true;
+				}
+			}
+			else
+			{
+				for (int32_t j = 0; j < quadCount; ++j)
+				{
+					CGparameter parameter;
+					if (quadCount > 1)
+						parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName + L"[" + toString(j) + L"]").c_str());
+					else
+						parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName).c_str());
+					
+					if (parameter)
+					{
+						uint32_t constantCount = cellGcmCgGetEmbeddedConstantCount(program, parameter);
+						for (uint32_t k = 0; k < constantCount; ++k)
+						{
+							uint32_t constantOffset = cellGcmCgGetEmbeddedConstantOffset(program, parameter, k);
+
+							FragmentOffset fragmentOffset;
+							fragmentOffset.ucodeOffset = constantOffset;
+							fragmentOffset.parameterOffset = j * 4;
+
+							scalar.fragmentOffsets.push_back(fragmentOffset);
+
+							log::debug << L"\tfragment ucode offset " << fragmentOffset.ucodeOffset << Endl;
+							log::debug << L"\tfragment parameter offset " << fragmentOffset.parameterOffset << Endl;
+						}
+
+						scalarUsed = true;
+					}
+				}
+			}
+
+			if (scalarUsed)
+			{
+				std::map< std::wstring, uint32_t >::iterator j = outScalarParameterMap.find(parameterName);
+				if (j != outScalarParameterMap.end())
+					scalar.offset = j->second;
+				else
+				{
+					outScalarParameterMap[parameterName] = outOffset;
+					outOffset += quadCount * 4;
+				}
+
+				outScalars.push_back(scalar);
+			}
+		}
+	}
+
+	return true;
+}
+
+bool collectSamplerParameters(
+	const std::vector< std::wstring >& samplerTextures,
+	std::vector< ProgramSampler >& outSamplers,
+	std::map< std::wstring, uint32_t >& outTextureParameterMap,
+	uint32_t& outOffset
+)
+{
+	for (uint32_t i = 0; i < uint32_t(samplerTextures.size()); ++i)
+	{
+		const std::wstring& texture = samplerTextures[i];
+
+		ProgramSampler sampler;
+		sampler.stage = i;
+		sampler.texture = outOffset;
+
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(texture);
+		if (j != outTextureParameterMap.end())
+			sampler.texture = j->second;
+		else
+			outTextureParameterMap[texture] = outOffset++;
+
+		outSamplers.push_back(sampler);
+	}
+
+	return true;
+}
 
 		}
 
@@ -64,152 +241,120 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGrap
 	if (!Cg().generate(programGraph, cgProgram))
 		return false;
 
-	static Semaphore s_globalLock;
-
-	const char* argv[] = { "-O3", "--fastmath"/*, "--fastprecision"*/, 0 };
-	CGCstatus status;
-
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_globalLock);
-	
-	const std::wstring& vertexShader = cgProgram.getVertexShader();
-	const std::wstring& pixelShader = cgProgram.getPixelShader();
-
-	CGCcontext* cgc = sceCgcNewContext();
-	if (!cgc)
-		return 0;
-
-	CGCbin* msg = sceCgcNewBin();
-	if (!msg)
-		return 0;
-
-	CGCbin* vertexShaderBin = sceCgcNewBin();
-	if (!vertexShaderBin)
-		return 0;
-
-	status = sceCgcCompileString(
-		cgc,
-		wstombs(vertexShader).c_str(),
-		"sce_vp_rsx",
-		"main",
-		argv,
-		vertexShaderBin,
-		msg
-	);
-	if (status != SCECGC_OK)
+	// Compile shaders.
+	Ref< ProgramResourcePs3 > resource = new ProgramResourcePs3();
 	{
-		log::error << L"Compile CG vertex shader failed" << Endl;
-		if (sceCgcGetBinSize(msg) > 1)
-			log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
-		FormatMultipleLines(log::error, vertexShader);
-		return 0;
-	}
+		static Semaphore s_globalLock;
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_globalLock);
 
-	CGCbin* pixelShaderBin = sceCgcNewBin();
-	if (!pixelShaderBin)
-		return 0;
+		CGCcontext* cgc = sceCgcNewContext();
+		if (!cgc)
+			return 0;
 
-	status = sceCgcCompileString(
-		cgc,
-		wstombs(pixelShader).c_str(),
-		"sce_fp_rsx",
-		"main",
-		argv,
-		pixelShaderBin,
-		msg
-	);
-	if (status != SCECGC_OK)
-	{
-		log::error << L"Compile CG fragment shader failed" << Endl;
-		if (sceCgcGetBinSize(msg) > 1)
-			log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
-		FormatMultipleLines(log::error, pixelShader);
-		return 0;
-	}
+		const char* argv[] = { "-O3", "--fastmath", 0 };
+		CGCstatus status;
 
-	sceCgcDeleteContext(cgc);
-	sceCgcDeleteBin(msg);
+		const std::wstring& vertexShader = cgProgram.getVertexShader();
+		const std::wstring& pixelShader = cgProgram.getPixelShader();
 
-	// Collect information about parameters which are hard to extract
-	// through CG reflection.
-	std::set< ProgramResourcePs3::Parameter, ParameterLess > parameters;
+		CGCbin* msg = sceCgcNewBin();
+		if (!msg)
+			return 0;
 
-	RefArray< Uniform > uniformNodes;
-	RefArray< IndexedUniform > indexedUniformNodes;
+		resource->m_vertexShaderBin = sceCgcNewBin();
+		if (!resource->m_vertexShaderBin)
+			return 0;
 
-	shaderGraph->findNodesOf< Uniform >(uniformNodes);
-	shaderGraph->findNodesOf< IndexedUniform >(indexedUniformNodes);
-
-	for (RefArray< Uniform >::const_iterator i = uniformNodes.begin(); i != uniformNodes.end(); ++i)
-	{
-		if ((*i)->getParameterType() == PtTexture)
-			continue;
-
-		struct ProgramResourcePs3::Parameter param =
+		status = sceCgcCompileString(
+			cgc,
+			wstombs(vertexShader).c_str(),
+			"sce_vp_rsx",
+			"main",
+			argv,
+			resource->m_vertexShaderBin,
+			msg
+		);
+		if (status != SCECGC_OK)
 		{
-			(*i)->getParameterName(),
-			0,
-			1
-		};
-
-		switch ((*i)->getParameterType())
-		{
-		case PtScalar:
-			param.size = 1;
-			break;
-
-		case PtVector:
-			param.size = 4;
-			break;
-
-		case PtMatrix:
-			param.size = 16;
-			break;
-
-		default:
-			T_FATAL_ERROR;
+			log::error << L"Compile CG vertex shader failed" << Endl;
+			if (sceCgcGetBinSize(msg) > 1)
+				log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
+			FormatMultipleLines(log::error, vertexShader);
+			return 0;
 		}
 
-		parameters.insert(param);
-	}
+		resource->m_pixelShaderBin = sceCgcNewBin();
+		if (!resource->m_pixelShaderBin)
+			return 0;
 
-	for (RefArray< IndexedUniform >::const_iterator i = indexedUniformNodes.begin(); i != indexedUniformNodes.end(); ++i)
-	{
-		struct ProgramResourcePs3::Parameter param =
+		status = sceCgcCompileString(
+			cgc,
+			wstombs(pixelShader).c_str(),
+			"sce_fp_rsx",
+			"main",
+			argv,
+			resource->m_pixelShaderBin,
+			msg
+		);
+		if (status != SCECGC_OK)
 		{
-			(*i)->getParameterName(),
-			0,
-			(*i)->getLength()
-		};
-
-		switch ((*i)->getParameterType())
-		{
-		case PtScalar:
-			param.size = 1;
-			break;
-
-		case PtVector:
-			param.size = 4;
-			break;
-
-		case PtMatrix:
-			param.size = 16;
-			break;
-
-		default:
-			T_FATAL_ERROR;
+			log::error << L"Compile CG fragment shader failed" << Endl;
+			if (sceCgcGetBinSize(msg) > 1)
+				log::error << mbstows((char*)sceCgcGetBinData(msg)) << Endl;
+			FormatMultipleLines(log::error, pixelShader);
+			return 0;
 		}
 
-		parameters.insert(param);
+		sceCgcDeleteBin(msg);
+
+		// Create scalar parameters.
+		resource->m_scalarParameterDataSize = 0;
+
+		if (!collectScalarParameters(
+			programGraph,
+			resource->m_vertexShaderBin,
+			false,
+			resource->m_vertexScalars,
+			resource->m_scalarParameterMap,
+			resource->m_scalarParameterDataSize
+		))
+			return 0;
+
+		if (!collectScalarParameters(
+			programGraph,
+			resource->m_pixelShaderBin,
+			true,
+			resource->m_pixelScalars,
+			resource->m_scalarParameterMap,
+			resource->m_scalarParameterDataSize
+		))
+			return 0;
+
+		// Create texture parameters.
+		resource->m_textureParameterDataSize = 0;
+
+		if (!collectSamplerParameters(
+			cgProgram.getVertexTextures(),
+			resource->m_vertexSamplers,
+			resource->m_textureParameterMap,
+			resource->m_textureParameterDataSize
+		))
+			return 0;
+
+		if (!collectSamplerParameters(
+			cgProgram.getPixelTextures(),
+			resource->m_pixelSamplers,
+			resource->m_textureParameterMap,
+			resource->m_textureParameterDataSize
+		))
+			return 0;
+
+		resource->m_renderState = cgProgram.getRenderState();
+
+		sceCgcDeleteContext(cgc);
 	}
 
-	return new ProgramResourcePs3(
-		vertexShaderBin,
-		pixelShaderBin,
-		std::vector< ProgramResourcePs3::Parameter >(parameters.begin(), parameters.end()),
-		cgProgram.getVertexTextures(),
-		cgProgram.getPixelTextures(),
-		cgProgram.getRenderState()
-	);
+	return resource;
 }
 
 	}

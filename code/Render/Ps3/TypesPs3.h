@@ -62,6 +62,27 @@ struct RenderState
 	}
 };
 
+struct FragmentOffset
+{
+	uint32_t ucodeOffset;
+	uint32_t parameterOffset;
+};
+
+struct ProgramScalar
+{
+	uint16_t vertexRegisterIndex;
+	uint16_t vertexRegisterCount;
+	std::vector< FragmentOffset > fragmentOffsets;
+	uint16_t offset;
+	uint16_t length;
+};
+
+struct ProgramSampler
+{
+	uint16_t stage;
+	uint16_t texture;
+};
+
 bool getGcmTextureInfo(TextureFormat textureFormat, uint8_t& outGcmFormat);
 
 void cellUtilConvertLinearToSwizzle(

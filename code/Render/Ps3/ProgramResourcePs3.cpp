@@ -56,6 +56,69 @@ private:
 	CGCbin*& m_ref;
 };
 
+class MemberFragmentOffset : public MemberComplex
+{
+public:
+	MemberFragmentOffset(const std::wstring& name, FragmentOffset& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint32_t >(L"ucodeOffset", m_ref.ucodeOffset);
+		s >> Member< uint32_t >(L"parameterOffset", m_ref.parameterOffset);
+		return true;
+	}
+
+private:
+	FragmentOffset& m_ref;
+};
+
+class MemberProgramScalar : public MemberComplex
+{
+public:
+	MemberProgramScalar(const std::wstring& name, ProgramScalar& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint16_t >(L"vertexRegisterIndex", m_ref.vertexRegisterIndex);
+		s >> Member< uint16_t >(L"vertexRegisterCount", m_ref.vertexRegisterCount);
+		s >> MemberStlVector< FragmentOffset, MemberFragmentOffset >(L"fragmentOffsets", m_ref.fragmentOffsets);
+		s >> Member< uint16_t >(L"offset", m_ref.offset);
+		s >> Member< uint16_t >(L"length", m_ref.length);
+		return true;
+	}
+
+private:
+	ProgramScalar& m_ref;
+};
+
+class MemberProgramSampler : public MemberComplex
+{
+public:
+	MemberProgramSampler(const std::wstring& name, ProgramSampler& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint16_t >(L"stage", m_ref.stage);
+		s >> Member< uint16_t >(L"texture", m_ref.texture);
+		return true;
+	}
+
+private:
+	ProgramSampler& m_ref;
+};
+
 class MemberSamplerState : public MemberComplex
 {
 public:
@@ -121,23 +184,6 @@ ProgramResourcePs3::ProgramResourcePs3()
 {
 }
 
-ProgramResourcePs3::ProgramResourcePs3(
-	CGCbin* vertexShaderBin,
-	CGCbin* pixelShaderBin,
-	const std::vector< Parameter >& parameters,
-	const std::vector< std::wstring >& vertexTextures,
-	const std::vector< std::wstring >& pixelTextures,
-	const RenderState& renderState
-)
-:	m_vertexShaderBin(vertexShaderBin)
-,	m_pixelShaderBin(pixelShaderBin)
-,	m_parameters(parameters)
-,	m_vertexTextures(vertexTextures)
-,	m_pixelTextures(pixelTextures)
-,	m_renderState(renderState)
-{
-}
-
 ProgramResourcePs3::~ProgramResourcePs3()
 {
 	if (m_vertexShaderBin)
@@ -150,18 +196,15 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 {
 	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
-	s >> MemberStlVector< Parameter, MemberComposite< Parameter > >(L"parameters", m_parameters);
-	s >> MemberStlVector< std::wstring >(L"vertexSamplers", m_vertexTextures);
-	s >> MemberStlVector< std::wstring >(L"pixelSamplers", m_pixelTextures);
+	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
+	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
+	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
+	s >> MemberStlVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
+	s >> MemberStlMap< std::wstring, uint32_t >(L"scalarParameterMap", m_scalarParameterMap);
+	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
+	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
+	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
 	s >> MemberRenderState(L"renderState", m_renderState);
-	return true;
-}
-
-bool ProgramResourcePs3::Parameter::serialize(ISerializer& s)
-{
-	s >> Member< std::wstring >(L"name", name);
-	s >> Member< int32_t >(L"size", size);
-	s >> Member< int32_t >(L"count", count);
 	return true;
 }
 

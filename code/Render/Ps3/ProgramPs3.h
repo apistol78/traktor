@@ -3,6 +3,8 @@
 
 #include <map>
 #include <vector>
+#include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Render/IProgram.h"
 #include "Render/Ps3/TypesPs3.h"
 
@@ -28,18 +30,6 @@ class T_DLLCLASS ProgramPs3 : public IProgram
 	T_RTTI_CLASS;
 
 public:
-	struct Parameter
-	{
-		std::vector< CGparameter > parameters;
-		uint32_t offset;
-		uint32_t stride;
-	};
-
-	struct Sampler
-	{
-		uint32_t stage;
-	};
-
 	ProgramPs3();
 
 	virtual ~ProgramPs3();
@@ -60,7 +50,7 @@ public:
 
 	virtual void setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length);
 
-	virtual void setSamplerTexture(handle_t handle, ITexture* texture);
+	virtual void setTextureParameter(handle_t handle, ITexture* texture);
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
@@ -68,18 +58,21 @@ public:
 
 private:
 	static ProgramPs3* ms_activeProgram;
+
 	Ref< const ProgramResourcePs3 > m_resource;
 	CGprogram m_vertexProgram;
 	CGprogram m_pixelProgram;
 	LocalMemoryObject* m_vertexShaderUCode;
 	LocalMemoryObject* m_pixelShaderUCode;
-	std::map< handle_t, Parameter > m_vertexParameterMap;
-	std::vector< float > m_vertexParameters;
-	std::map< handle_t, Parameter > m_pixelParameterMap;
-	std::vector< float > m_pixelParameters;
-	std::map< handle_t, Sampler > m_pixelSamplerMap;
-	ITexture* m_pixelTextures[8];
 	RenderState m_renderState;
+	std::vector< ProgramScalar > m_vertexScalars;
+	std::vector< ProgramScalar > m_pixelScalars;
+	std::vector< ProgramSampler > m_vertexSamplers;
+	std::vector< ProgramSampler > m_pixelSamplers;
+	std::map< handle_t, uint32_t > m_scalarParameterMap;
+	std::map< handle_t, uint32_t > m_textureParameterMap;
+	AlignedVector< float > m_scalarParameterData;
+	RefArray< ITexture > m_textureParameterData;
 };
 
 	}
