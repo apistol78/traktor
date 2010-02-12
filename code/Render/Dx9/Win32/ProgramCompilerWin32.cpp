@@ -152,7 +152,12 @@ bool collectSamplerParameters(
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerWin32", 0, ProgramCompilerWin32, IProgramCompiler)
 
-Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
+Ref< ProgramResource > ProgramCompilerWin32::compile(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	bool validate,
+	uint32_t* outCostEstimate
+) const
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;
 	ComRef< ID3DXConstantTable > d3dPixelConstantTable;
@@ -274,6 +279,14 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(const ShaderGraph* shaderGr
 
 	// Copy render state.
 	resource->m_state = program.getState();
+
+	// Estimate cost from number of bytes in shaders.
+	if (outCostEstimate)
+	{
+		UINT vertexShaderSize = D3DXGetShaderSize((const DWORD *)resource->m_vertexShader->GetBufferPointer());
+		UINT pixelShaderSize = D3DXGetShaderSize((const DWORD *)resource->m_pixelShader->GetBufferPointer());
+		*outCostEstimate = vertexShaderSize + pixelShaderSize;
+	}
 
 	return resource;
 }

@@ -16,7 +16,12 @@ class ProgramCompilerOpenGL : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ProgramResource > compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const;
+	virtual Ref< ProgramResource > compile(
+		const ShaderGraph* shaderGraph,
+		int32_t optimize,
+		bool validate,
+		uint32_t* outCostEstimate
+	) const;
 };
 
 	}

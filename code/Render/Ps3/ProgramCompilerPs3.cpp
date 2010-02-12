@@ -208,7 +208,12 @@ bool collectSamplerParameters(
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramCompilerPs3, IProgramCompiler)
 
-Ref< ProgramResource > ProgramCompilerPs3::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
+Ref< ProgramResource > ProgramCompilerPs3::compile(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	bool validate,
+	uint32_t* outCostEstimate
+) const
 {
 	Ref< ShaderGraph > programGraph;
 

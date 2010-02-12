@@ -142,7 +142,12 @@ bool collectSamplerParameters(
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerXbox360", 0, ProgramCompilerXbox360, IProgramCompiler)
 
-Ref< ProgramResource > ProgramCompilerXbox360::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
+Ref< ProgramResource > ProgramCompilerXbox360::compile(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	bool validate,
+	uint32_t* outCostEstimate
+) const
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;
 	ComRef< ID3DXConstantTable > d3dPixelConstantTable;
