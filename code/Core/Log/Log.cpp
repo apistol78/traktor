@@ -29,7 +29,7 @@ void LogTargetDebug::log(const std::wstring& str)
 {
 #if defined(_WIN32)
 	std::wstringstream ss;
-	ss << L"(" << GetCurrentProcessId() << L") " << str << std::endl;
+	ss << L"(" << GetCurrentThreadId() << L") " << str << std::endl;
 	OutputDebugString(wstots(ss.str()).c_str());
 #else
 	std::wcout << L"(DEBUG) " << str << std::endl;
