@@ -13,7 +13,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerOpenGLES2", 0, ProgramCompilerOpenGLES2, IProgramCompiler)
 
-Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
+Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	bool validate,
+	uint32_t* outCostEstimate
+) const
 {
 	Ref< ShaderGraph > programGraph;
 

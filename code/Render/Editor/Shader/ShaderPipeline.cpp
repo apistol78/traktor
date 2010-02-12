@@ -7,6 +7,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
 #include "Render/IProgramCompiler.h"
 #include "Render/Resource/FragmentLinker.h"
@@ -57,6 +58,7 @@ struct BuildCombinationTask
 	int optimize;
 	bool validate;
 	bool result;
+	uint32_t cost;
 
 	void execute()
 	{
@@ -74,7 +76,12 @@ struct BuildCombinationTask
 		// Compile shader program.
 		if (programCompiler)
 		{
-			Ref< ProgramResource > programResource = programCompiler->compile(shaderGraphCombination, optimize, validate);
+			Ref< ProgramResource > programResource = programCompiler->compile(
+				shaderGraphCombination,
+				optimize,
+				validate,
+				&cost
+			);
 			if (!programResource)
 			{
 				log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
@@ -261,6 +268,7 @@ bool ShaderPipeline::buildOutput(
 			task->optimize = m_optimize;
 			task->validate = m_validate;
 			task->result = false;
+			task->cost = 0;
 
 			Job* job = new Job(makeFunctor(task, &BuildCombinationTask::execute));
 			JobManager::getInstance().add(*job);
@@ -275,6 +283,8 @@ bool ShaderPipeline::buildOutput(
 	log::info << L"Collecting task(s)..." << Endl;
 
 	uint32_t failed = 0;
+	uint32_t cost = 0;
+
 	for (size_t i = 0; i < jobs.size(); ++i)
 	{
 		jobs[i]->wait();
@@ -284,6 +294,8 @@ bool ShaderPipeline::buildOutput(
 			ShaderResource::Technique* technique = tasks[i]->shaderResourceTechnique;
 			ShaderResource::Combination* combination = tasks[i]->shaderResourceCombination;
 			technique->combinations.push_back(*combination);
+
+			cost += tasks[i]->cost;
 		}
 		else
 			++failed;
@@ -339,6 +351,11 @@ bool ShaderPipeline::buildOutput(
 		outputInstance->revert();
 		return false;
 	}
+
+	// Create report.
+	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Shader", outputGuid);
+	if (report)
+		report->set(L"cost", cost);
 
 	return true;
 }

@@ -32,9 +32,15 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param validate Validate compiled program.
+	 * \param outCostEstimate Estimated cost; returned value is compiler dependent and thus only relative values are of interest.
 	 * \return Compiled program resource.
 	 */
-	virtual Ref< ProgramResource > compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const = 0;
+	virtual Ref< ProgramResource > compile(
+		const ShaderGraph* shaderGraph,
+		int32_t optimize,
+		bool validate,
+		uint32_t* outCostEstimate = 0
+	) const = 0;
 };
 
 	}

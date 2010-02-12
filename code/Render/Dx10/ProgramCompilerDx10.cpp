@@ -14,7 +14,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerDx10", 0, ProgramCompilerDx10, IProgramCompiler)
 
-Ref< ProgramResource > ProgramCompilerDx10::compile(const ShaderGraph* shaderGraph, int32_t optimize, bool validate) const
+Ref< ProgramResource > ProgramCompilerDx10::compile(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	bool validate,
+	uint32_t* outCostEstimate
+) const
 {
 	Ref< ShaderGraph > programGraph;
 
