@@ -60,6 +60,10 @@ public:
 			return false;
 
 	}
+	Matrix44 getMatrix(uint32_t index) const
+	{
+		return Matrix44::identity();
+	}
 
 	float getDataWeight(uint32_t index) const
 	{
@@ -281,6 +285,60 @@ private:
 	std::wstring m_material;
 };
 
+class MorphTargetData
+{
+public:
+	void read(xml::Element* xmlData)
+	{
+		// read the inputs (refs to joints + inverse bind matricies)
+		RefArray< xml::Element > inputs;
+		xmlData->get(L"input", inputs);
+		for (size_t j = 0; j < inputs.size(); ++j)
+		{
+			if (inputs[j]->getAttribute(L"semantic")->getValue() == L"MORPH_TARGET")
+				m_morphTargets.read(inputs[j]);
+			if (inputs[j]->getAttribute(L"semantic")->getValue() == L"MORPH_WEIGHT")
+				m_morphWeights.read(inputs[j]);
+		}
+	}
+	Input m_morphTargets;
+	Input m_morphWeights;
+};
+
+
+class MorphData
+{
+public:
+	std::wstring getMorphSource() const { return m_morphSource; }
+
+	std::wstring getMorphTarget(size_t index) const { return m_morphTargets.data[index]; }
+
+	size_t getMorphTargetCount() const { return m_morphTargets.data.size(); }
+
+	void read(xml::Element* morph)
+	{
+		m_morphSource = morph->getAttribute(L"source", L"")->getValue();
+
+		Ref< xml::Element > targets = morph->getSingle(L"targets");
+		m_morphTargetData.read(targets);
+
+		RefArray< xml::Element > sources;
+		morph->get(L"source", sources);	
+
+		for (uint32_t j = 0; j < sources.size(); ++j)
+		{
+			std::wstring sourceName = sources[j]->getAttribute(L"id", L"")->getValue();
+			if (isReference(sourceName, m_morphTargetData.m_morphTargets.source))
+				m_morphTargets.read(sources[j]);
+		}
+	}
+
+private:
+	std::wstring m_morphSource;
+	NameData m_morphTargets;
+	MorphTargetData m_morphTargetData;
+};
+
 class VertexWeightData
 {
 public:
@@ -318,54 +376,58 @@ public:
 	Input m_jointInput;
 };
 
-
-struct SkinData
+class JointData
 {
+public:
+	void read(xml::Element* xmlData)
+	{
+		// read the inputs (refs to joints + inverse bind matricies)
+		RefArray< xml::Element > inputs;
+		xmlData->get(L"input", inputs);
+		for (size_t j = 0; j < inputs.size(); ++j)
+		{
+			if (inputs[j]->getAttribute(L"semantic")->getValue() == L"INV_BIND_MATRIX")
+				m_invBindMatrixInput.read(inputs[j]);
+			if (inputs[j]->getAttribute(L"semantic")->getValue() == L"JOINT")
+				m_jointInput.read(inputs[j]);
+		}
+	}
+	Input m_invBindMatrixInput;
+	Input m_jointInput;
+};
+
+class SkinData
+{
+public:
+	std::wstring getSkinSource() const { return m_skinSource; }
+
 	void read(xml::Element* skin)
 	{
-		// read sources
-/*
+		m_skinSource = skin->getAttribute(L"source", L"")->getValue();
+
+		// read bind shape matrix
+		m_bindShapeMatrix = Matrix44::identity();
+		if (Ref< xml::Element > bindShapeMatrix = skin->getSingle(L"bind_shape_matrix"))
+		{
+			std::vector< float > floatArray;
+			parseStringToArray(bindShapeMatrix->getValue(), floatArray);
+			if (floatArray.size() == 16)
+				m_bindShapeMatrix = Matrix44(
+					floatArray[ 0], floatArray[ 1], floatArray[ 2], floatArray[ 3],
+					floatArray[ 4], floatArray[ 5], floatArray[ 6], floatArray[ 7],
+					floatArray[ 8], floatArray[ 9], floatArray[10], floatArray[11],
+					floatArray[12], floatArray[13], floatArray[14], floatArray[15]);
+		}
+
+		// read all sources
 		RefArray< xml::Element > sources;
 		skin->get(L"source", sources);			
-		int nameArrayCount = 0;
-		int floatArrayCount = 0;
-		for (uint32_t j = 0; j < sources.size(); ++j)
-		{
-			if (sources[j]->getSingle(L"float_array"))
-				floatArrayCount++;
-			else if (sources[j]->getSingle(L"Name_array"))
-				nameArrayCount++;
-		}
-		m_floatData.resize(floatArrayCount);
-		floatArrayCount = 0;
-		m_nameData.resize(nameArrayCount);
-		nameArrayCount = 0;
-		for (uint32_t j = 0; j < sources.size(); ++j)
-		{
-			if (m_floatData[floatArrayCount].read(sources[j]))
-				floatArrayCount++;
-			else if (m_nameData[nameArrayCount].read(sources[j]))
-				nameArrayCount++;
-		}
-		// read joints (bindposes)
-		if (Ref< xml::Element > joints = skin->getSingle(L"joints"))
-		{
-			RefArray< xml::Element > inputs;
-			joints->get(L"input", inputs);
-			m_jointInputs.resize(inputs.size());
-			for (uint32_t k = 0; k < inputs.size(); ++k)
-			{
-				m_jointInputs[k].read(inputs[k]);
-	//				outModel->
-			}
-		}
-*/
+
 		// read indicies to vertex weights 
 		Ref< xml::Element > weights = skin->getSingle(L"vertex_weights");
 		m_vertexWeightData.read(weights);
 
-		RefArray< xml::Element > sources;
-		skin->get(L"source", sources);			
+		// read vertex weightmap
 		for (uint32_t j = 0; j < sources.size(); ++j)
 		{
 			std::wstring sourceName = sources[j]->getAttribute(L"id", L"")->getValue();
@@ -374,8 +436,21 @@ struct SkinData
 				if (isReference(sourceName, m_vertexWeightData.m_jointInput.source))
 					m_jointNames.read(sources[j]);
 		}
+
+		// read joints
+		Ref< xml::Element > joints = skin->getSingle(L"joints");
+		m_jointData.read(joints);
+
+		// read inverse bind matricies
+		for (uint32_t j = 0; j < sources.size(); ++j)
+		{
+			std::wstring sourceName = sources[j]->getAttribute(L"id", L"")->getValue();
+			if (isReference(sourceName, m_jointData.m_invBindMatrixInput.source))
+				m_invBindMatricies.read(sources[j]);
+		}
 	}
-	void addJointNames(Model* outModel)
+
+	void writeJointNames(Model* outModel)
 	{
 		int jointCount = m_jointNames.data.size();
 		for (int i = 0; i < jointCount; i++)
@@ -406,13 +481,203 @@ struct SkinData
 
 private:
 	FloatData m_weights;
+	FloatData m_invBindMatricies;
 	NameData m_jointNames;
-//	std::vector< FloatData > m_floatData;
-//	std::vector< NameData > m_nameData;
 	std::vector< Input > m_jointInputs;
 	VertexWeightData m_vertexWeightData;
-//	Matrix44 bindShapeMatrix;
+	JointData m_jointData;
+	Matrix44 m_bindShapeMatrix;
+	std::wstring m_skinSource;
 };
+struct Meshdata 
+{
+	bool read(xml::Element* mesh)
+	{
+		{
+			RefArray< xml::Element > sources;
+			mesh->get(L"source", sources);
+
+			m_vertexAttributeData.resize(sources.size());
+			for (uint32_t j = 0; j < sources.size(); ++j)
+			{
+				m_vertexAttributeData[j].read(sources[j]);
+			}
+		}
+
+		Ref< xml::Element > vertices = mesh->getSingle(L"vertices");
+		if (!vertices)
+			return false;
+
+		m_vertexSourceTranslation.first = vertices->getAttribute(L"id", L"")->getValue();
+		m_vertexSourceTranslation.second = vertices->getSingle(L"input")->getAttribute(L"source", L"")->getValue();
+
+		// Fetch polygon data.
+		{
+			RefArray< xml::Element > polyLists;
+			mesh->get(L"polylist", polyLists);
+
+			RefArray< xml::Element > triLists;
+			mesh->get(L"triangles", triLists);
+
+			RefArray< xml::Element > polygons;
+			mesh->get(L"polygons", polygons);
+
+			m_polygonData.resize(polyLists.size() + triLists.size() + polygons.size());
+
+			uint32_t p = 0;
+			for (uint32_t j = 0; j < polyLists.size(); ++j)
+				m_polygonData[p++].read(polyLists[j]);
+
+			for (uint32_t j = 0; j < triLists.size(); ++j)
+				m_polygonData[p++].read(triLists[j]);
+
+			for (uint32_t j = 0; j < polygons.size(); ++j)
+				m_polygonData[p++].read(polygons[j]);
+		}
+		return true;
+	}
+	void addToModel(const Matrix44& transform,
+			const std::map< std::wstring, uint32_t>& materialLookUp,
+			SkinData* skinData,
+			Model* outModel)
+
+	{
+		for (uint32_t j = 0; j < m_polygonData.size(); ++j)
+		{
+			uint32_t materialIndex = c_InvalidIndex;
+			std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(m_polygonData[j].getMaterial());
+			if (it != materialLookUp.end())
+				materialIndex = it->second;
+			source_data_info_t vertexDataInfo = m_polygonData[j].findSourceData(L"VERTEX", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t normalDataInfo = m_polygonData[j].findSourceData(L"NORMAL", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t texcoord0DataInfo = m_polygonData[j].findSourceData(L"TEXCOORD", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t texcoord1DataInfo = m_polygonData[j].findSourceData(L"TEXCOORD", 1, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t vcolorDataInfo = m_polygonData[j].findSourceData(L"COLOR", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t biNormalDataInfo = m_polygonData[j].findSourceData(L"BINORMAL", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t tangentDataInfo = m_polygonData[j].findSourceData(L"TANGENT", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t texBinormalDataInfo = m_polygonData[j].findSourceData(L"TEXBINORMAL", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+			source_data_info_t texTangentDataInfo = m_polygonData[j].findSourceData(L"TEXTANGENT", 0, m_vertexAttributeData, m_vertexSourceTranslation);
+
+			uint32_t vertexIndexStride = m_polygonData[j].getStride();
+			uint32_t indexOffset = 0;
+			for (uint32_t k = 0; k < m_polygonData[j].getPolygonCount(); ++k)
+			{
+				Polygon polygon;
+				polygon.setMaterial(materialIndex);
+
+				for (uint32_t l = 0; l < m_polygonData[j].getVertexCount(k); ++l)
+				{
+					Vertex vertex;
+					uint32_t vIndex = (indexOffset + l) * vertexIndexStride;
+					if (vertexDataInfo.first)
+					{
+						const source_data_info_t& dataInfo = vertexDataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex ,dataInfo.second);
+						if (index != -1)
+						{
+							Vector4 position = transform * dataInfo.first->getDataPosition(index);
+							uint32_t positionIndex = outModel->addUniquePosition(position);
+							vertex.setPosition(positionIndex);
+//							if (morphdata)
+							//				outModel->setBlendTargetPosition(, positionIndex,)
+							if (skinData)
+							{
+								skinData->setJointInfluence(vertex, index);
+							}
+						}
+					}
+
+					if (normalDataInfo.first)
+					{
+						const source_data_info_t& dataInfo = normalDataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index != -1)
+						{
+							Vector4 normal = dataInfo.first->getDataNormal(index);
+							vertex.setNormal(outModel->addUniqueNormal(normal));
+						}
+					}
+
+					if (biNormalDataInfo.first)
+					{
+						const source_data_info_t& dataInfo = biNormalDataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index != -1)
+						{
+							Vector4 binormal = dataInfo.first->getDataNormal(index);
+							vertex.setBinormal(outModel->addUniqueNormal(binormal));
+						}
+					}
+
+					if (tangentDataInfo.first)
+					{
+						const source_data_info_t& dataInfo = tangentDataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index!= -1)
+						{
+							Vector4 tangent = dataInfo.first->getDataNormal(index);
+							vertex.setBinormal(outModel->addUniqueNormal(tangent));
+						}
+					}
+
+					if (texcoord0DataInfo.first)
+					{
+						const source_data_info_t& dataInfo = texcoord0DataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index != -1)
+						{
+							Vector2 texCoord = dataInfo.first->getTexcoord(index);
+							vertex.setTexCoord(0, outModel->addUniqueTexCoord(texCoord));
+						}
+					}
+					// Second uv set
+					if (texcoord1DataInfo.first)
+					{
+						const source_data_info_t& dataInfo = texcoord1DataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index != -1)
+						{
+							Vector2 texCoord = dataInfo.first->getTexcoord(index);
+							vertex.setTexCoord(1, outModel->addUniqueTexCoord(texCoord));
+						}
+					}
+
+					if (vcolorDataInfo.first)
+					{
+						const source_data_info_t& dataInfo = vcolorDataInfo;
+						uint32_t index = m_polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
+						if (index != -1)
+						{
+							Vector4 vcolor = dataInfo.first->getDataColor(index);
+							vertex.setColor(outModel->addColor(vcolor));
+						}
+					}
+					polygon.addVertex(outModel->addUniqueVertex(vertex));
+				}
+				//			polygon.flipWinding();
+				outModel->addPolygon(polygon);
+				indexOffset += m_polygonData[j].getVertexCount(k);
+			}
+		}
+	}
+
+private:
+	std::vector< FloatData > m_vertexAttributeData;
+	std::vector< PolygonData > m_polygonData;
+	std::pair< std::wstring, std::wstring > m_vertexSourceTranslation;
+};
+
+void createMorphTarget(
+	const Matrix44& transform,
+	xml::Element* baseMesh,
+	xml::Element* morphTarget,
+	int morphTargetIndex,
+	const std::map< std::wstring, uint32_t>& materialLookUp,
+	Model* outModel
+)
+{
+
+}
 
 void createGeometry(
 	const Matrix44& transform,
@@ -422,170 +687,10 @@ void createGeometry(
 	Model* outModel
 )
 {
-	if (skinData)
-		skinData->addJointNames(outModel);
-	std::vector< FloatData > vertexAttributeData;
-	{
-		RefArray< xml::Element > sources;
-		mesh->get(L"source", sources);
-
-		vertexAttributeData.resize(sources.size());
-		for (uint32_t j = 0; j < sources.size(); ++j)
-		{
-			vertexAttributeData[j].read(sources[j]);
-		}
-	}
-
-	Ref< xml::Element > vertices = mesh->getSingle(L"vertices");
-	if (!vertices)
+	Meshdata meshData;
+	if (!meshData.read(mesh))
 		return;
-
-	std::pair< std::wstring, std::wstring > vertexSourceTranslation;
-	vertexSourceTranslation.first = vertices->getAttribute(L"id", L"")->getValue();
-	vertexSourceTranslation.second = vertices->getSingle(L"input")->getAttribute(L"source", L"")->getValue();
-
-	// Fetch polygon data.
-	std::vector< PolygonData > polygonData;
-	{
-		RefArray< xml::Element > polyLists;
-		mesh->get(L"polylist", polyLists);
-
-		RefArray< xml::Element > triLists;
-		mesh->get(L"triangles", triLists);
-
-		RefArray< xml::Element > polygons;
-		mesh->get(L"polygons", polygons);
-
-		polygonData.resize(polyLists.size() + triLists.size() + polygons.size());
-		
-		uint32_t p = 0;
-		for (uint32_t j = 0; j < polyLists.size(); ++j)
-			polygonData[p++].read(polyLists[j]);
-
-		for (uint32_t j = 0; j < triLists.size(); ++j)
-			polygonData[p++].read(triLists[j]);
-
-		for (uint32_t j = 0; j < polygons.size(); ++j)
-			polygonData[p++].read(polygons[j]);
-	}
-
-	for (uint32_t j = 0; j < polygonData.size(); ++j)
-	{
-		uint32_t materialIndex = c_InvalidIndex;
-		std::map<std::wstring, uint32_t>::const_iterator it = materialLookUp.find(polygonData[j].getMaterial());
-		if (it != materialLookUp.end())
-			materialIndex = it->second;
-		source_data_info_t vertexDataInfo = polygonData[j].findSourceData(L"VERTEX", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t normalDataInfo = polygonData[j].findSourceData(L"NORMAL", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texcoord0DataInfo = polygonData[j].findSourceData(L"TEXCOORD", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texcoord1DataInfo = polygonData[j].findSourceData(L"TEXCOORD", 1, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t vcolorDataInfo = polygonData[j].findSourceData(L"COLOR", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t biNormalDataInfo = polygonData[j].findSourceData(L"BINORMAL", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t tangentDataInfo = polygonData[j].findSourceData(L"TANGENT", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texBinormalDataInfo = polygonData[j].findSourceData(L"TEXBINORMAL", 0, vertexAttributeData, vertexSourceTranslation);
-		source_data_info_t texTangentDataInfo = polygonData[j].findSourceData(L"TEXTANGENT", 0, vertexAttributeData, vertexSourceTranslation);
-
-		uint32_t vertexIndexStride = polygonData[j].getStride();
-		uint32_t indexOffset = 0;
-		for (uint32_t k = 0; k < polygonData[j].getPolygonCount(); ++k)
-		{
-			Polygon polygon;
-			polygon.setMaterial(materialIndex);
-
-			for (uint32_t l = 0; l < polygonData[j].getVertexCount(k); ++l)
-			{
-				Vertex vertex;
-				uint32_t vIndex = (indexOffset + l) * vertexIndexStride;
-				if (vertexDataInfo.first)
-				{
-					const source_data_info_t& dataInfo = vertexDataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex ,dataInfo.second);
-					if (index != -1)
-					{
-						Vector4 position = transform * dataInfo.first->getDataPosition(index);
-						vertex.setPosition(outModel->addUniquePosition(position));
-						if (skinData)
-						{
-							skinData->setJointInfluence(vertex, index);
-						}
-					}
-				}
-
-				if (normalDataInfo.first)
-				{
-					const source_data_info_t& dataInfo = normalDataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index != -1)
-					{
-						Vector4 normal = dataInfo.first->getDataNormal(index);
-						vertex.setNormal(outModel->addUniqueNormal(normal));
-					}
-				}
-
-				if (biNormalDataInfo.first)
-				{
-					const source_data_info_t& dataInfo = biNormalDataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index != -1)
-					{
-						Vector4 binormal = dataInfo.first->getDataNormal(index);
-						vertex.setBinormal(outModel->addUniqueNormal(binormal));
-					}
-				}
-
-				if (tangentDataInfo.first)
-				{
-					const source_data_info_t& dataInfo = tangentDataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index!= -1)
-					{
-						Vector4 tangent = dataInfo.first->getDataNormal(index);
-						vertex.setBinormal(outModel->addUniqueNormal(tangent));
-					}
-				}
-
-				if (texcoord0DataInfo.first)
-				{
-					const source_data_info_t& dataInfo = texcoord0DataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index != -1)
-					{
-						Vector2 texCoord = dataInfo.first->getTexcoord(index);
-						vertex.setTexCoord(0, outModel->addUniqueTexCoord(texCoord));
-					}
-				}
-				// Second uv set
-				if (texcoord1DataInfo.first)
-				{
-					const source_data_info_t& dataInfo = texcoord1DataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index != -1)
-					{
-						Vector2 texCoord = dataInfo.first->getTexcoord(index);
-						vertex.setTexCoord(1, outModel->addUniqueTexCoord(texCoord));
-					}
-				}
-
-				if (vcolorDataInfo.first)
-				{
-					const source_data_info_t& dataInfo = vcolorDataInfo;
-					uint32_t index = polygonData[j].getAttribueIndex(vIndex, dataInfo.second);
-					if (index != -1)
-					{
-						Vector4 vcolor = dataInfo.first->getDataColor(index);
-						vertex.setColor(outModel->addColor(vcolor));
-					}
-				}
-
-				polygon.addVertex(
-					outModel->addUniqueVertex(vertex)
-				);
-			}
-//			polygon.flipWinding();
-			outModel->addPolygon(polygon);
-			indexOffset += polygonData[j].getVertexCount(k);
-		}
-	}
+	meshData.addToModel(transform, materialLookUp, skinData, outModel);
 }
 
 void createMesh(
@@ -602,17 +707,37 @@ void createMesh(
 		std::wstring controllerRef = instanceControllers[i]->getAttribute(L"url", L"")->getValue();
 
 		Ref< xml::Element > skin = libraryControllers->getSingle(L"controller[@id=" + dereference(controllerRef) + L"]/skin");
-		if (!skin)
-			continue;
 		SkinData skinData;
-		skinData.read(skin);
+		if (skin)
+		{
+			skinData.read(skin);
+			skinData.writeJointNames(outModel);
+			Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(skinData.getSkinSource()) + L"]/mesh");
+			if (!geometry)
+				continue;
+			createGeometry(Matrix44::identity(), geometry, materialRefs, &skinData, outModel);
+		}
 
-		std::wstring geometryRef = skin->getAttribute(L"source", L"")->getValue();
+		MorphData morphData;
+		Ref< xml::Element > morph = libraryControllers->getSingle(L"controller[@id=" + dereference(controllerRef) + L"]/morph");
+		if (morph)
+		{
+			morphData.read(morph);
+			Ref< xml::Element > baseGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphData.getMorphSource()) + L"]/mesh");
+			if (!baseGeometry)
+				continue;
+			createGeometry(Matrix44::identity(), baseGeometry, materialRefs, 0, outModel);
+			for (size_t j = 0; j < morphData.getMorphTargetCount(); j++)
+			{
+				std::wstring morphTargetGeometry = morphData.getMorphTarget(j);
+				Ref< xml::Element > morphGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphTargetGeometry) + L"]/mesh");
+				outModel->addBlendTarget(morphTargetGeometry);
+//				createMorphTarget();
+//					outModel->setBlendTargetPosition()
+//					
+			}
 
-		Ref< xml::Element > geometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(geometryRef) + L"]/mesh");
-		if (!geometry)
-			continue;
-		createGeometry(Matrix44::identity(), geometry, materialRefs, &skinData, outModel);
+		}
 	}
 
 	for (size_t i = 0; i < instanceGeometryNodes.size(); ++i)
