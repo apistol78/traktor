@@ -230,13 +230,12 @@ public:
 		polyList->get(L"p", polyIndexLists);
 
 		if (polyList->getSingle(L"vcount"))
-			parseStringToArray(
-				polyList->getSingle(L"vcount")->getValue(),
-				m_vertexCounts);
+			parseStringToArray(polyList->getSingle(L"vcount")->getValue(), m_vertexCounts);
 		else if (polyIndexLists.size() == 1)
 			m_vertexCounts = std::vector< uint32_t >(polyCount, 3);
 		else
 		{
+			polyCount = polyIndexLists.size(); // to make sure we don't crash if there are polygons with holes.
 			m_vertexCounts = std::vector< uint32_t >(polyCount);
 			uint32_t oldn = 0;
 			for (size_t i = 0; i < polyCount; i++)
@@ -246,6 +245,7 @@ public:
 				m_vertexCounts[i] = n - oldn;
 				oldn = n;
 			}
+		
 			return;
 		}
 		parseStringToArray(polyList->getSingle(L"p")->getValue(), m_indicies);
