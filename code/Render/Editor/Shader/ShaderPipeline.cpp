@@ -16,10 +16,11 @@
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderPipeline.h"
-#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Xml/XmlSerializer.h"
 
@@ -70,29 +71,66 @@ struct BuildCombinationTask
 			shaderResourceCombination->parameterValue |= parameterBits.find(*j)->second;
 
 		// Generate combination shader graph.
-		Ref< ShaderGraph > shaderGraphCombination = combinations->generate(combination);
-		T_ASSERT (shaderGraphCombination);
+		Ref< ShaderGraph > programGraph = combinations->generate(combination);
+		T_ASSERT (programGraph);
+
+		// Extract platform permutation.
+		const wchar_t* platformSignature = programCompiler->getPlatformSignature();
+		T_ASSERT (platformSignature);
+
+		programGraph = ShaderGraphStatic(programGraph).getPlatformPermutation(platformSignature);
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
+			return;
+		}
+
+		// Freeze type permutation.
+		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to get type permutation" << Endl;
+			return;
+		}
+
+		// Merge identical branches.
+		programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
+			return;
+		}
+
+		// Insert interpolation nodes at optimal locations.
+		programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
+			return;
+		}
+
+		// Create swizzle nodes in order to improve compiler optimizing.
+		programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
+			return;
+		}
 
 		// Compile shader program.
-		if (programCompiler)
+		Ref< ProgramResource > programResource = programCompiler->compile(
+			programGraph,
+			optimize,
+			validate,
+			&cost
+		);
+		if (!programResource)
 		{
-			Ref< ProgramResource > programResource = programCompiler->compile(
-				shaderGraphCombination,
-				optimize,
-				validate,
-				&cost
-			);
-			if (!programResource)
-			{
-				log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
-				return;
-			}
-
-			shaderResourceCombination->program = programResource;
+			log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
+			return;
 		}
-		else
-			shaderResourceCombination->program = shaderGraphCombination;
 
+		shaderResourceCombination->program = programResource;
 		result = true;
 	}
 };
@@ -110,23 +148,20 @@ ShaderPipeline::ShaderPipeline()
 
 bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 {
-	if (settings->getProperty< editor::PropertyBoolean >(L"ShaderPipeline.CompileShaders", false))
+	std::wstring programCompilerTypeName = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.ProgramCompiler");
+
+	const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
+	if (!programCompilerType)
 	{
-		std::wstring programCompilerTypeName = settings->getProperty< editor::PropertyString >(L"ShaderPipeline.ProgramCompiler");
+		log::error << L"Shader pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
+		return false;
+	}
 
-		const TypeInfo* programCompilerType = TypeInfo::find(programCompilerTypeName);
-		if (!programCompilerType)
-		{
-			log::error << L"Shader pipeline; unable to find program compiler type \"" << programCompilerTypeName << L"\"" << Endl;
-			return false;
-		}
-
-		m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
-		if (!m_programCompiler)
-		{
-			log::error << L"Shader pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
-			return false;
-		}
+	m_programCompiler = dynamic_type_cast< IProgramCompiler* >(programCompilerType->createInstance());
+	if (!m_programCompiler)
+	{
+		log::error << L"Shader pipeline; unable to instanciate program compiler \"" << programCompilerTypeName << L"\"" << Endl;
+		return false;
 	}
 
 	m_optimize = settings->getProperty< editor::PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);

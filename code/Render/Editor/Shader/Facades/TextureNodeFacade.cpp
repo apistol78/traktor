@@ -10,7 +10,7 @@
 #include "I18N/Text.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/TextureAsset.h"
-#include "Render/Editor/Shader/TextureNodeFacade.h"
+#include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"

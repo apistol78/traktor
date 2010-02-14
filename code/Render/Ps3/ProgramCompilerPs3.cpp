@@ -11,8 +11,6 @@
 #include "Render/Ps3/ProgramCompilerPs3.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
-#include "Render/Shader/ShaderGraphStatic.h"
 
 namespace traktor
 {
@@ -208,6 +206,11 @@ bool collectSamplerParameters(
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramCompilerPs3, IProgramCompiler)
 
+const wchar_t* ProgramCompilerPs3::getPlatformSignature() const
+{
+	return L"GCM";
+}
+
 Ref< ProgramResource > ProgramCompilerPs3::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
@@ -215,43 +218,9 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 	uint32_t* outCostEstimate
 ) const
 {
-	Ref< ShaderGraph > programGraph;
-
-	// Extract platform permutation.
-	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"GCM");
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerPs3 failed; unable to get platform permutation" << Endl;
-		return 0;
-	}
-
-	// Freeze type permutation.
-	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerPs3 failed; unable to get type permutation" << Endl;
-		return 0;
-	}
-
-	// Merge identical branches.
-	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerPs3 failed; unable to merge branches" << Endl;
-		return 0;
-	}
-
-	// Insert interpolation nodes at optimal locations.
-	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerPs3 failed; unable to optimize shader graph" << Endl;
-		return 0;
-	}
-
 	// Generate CG shaders.
 	CgProgram cgProgram;
-	if (!Cg().generate(programGraph, cgProgram))
+	if (!Cg().generate(shaderGraph, cgProgram))
 		return false;
 
 	// Compile shaders.
@@ -324,7 +293,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		resource->m_scalarParameterDataSize = 0;
 
 		if (!collectScalarParameters(
-			programGraph,
+			shaderGraph,
 			resource->m_vertexShaderBin,
 			false,
 			resource->m_vertexScalars,
@@ -334,7 +303,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 			return 0;
 
 		if (!collectScalarParameters(
-			programGraph,
+			shaderGraph,
 			resource->m_pixelShaderBin,
 			true,
 			resource->m_pixelScalars,

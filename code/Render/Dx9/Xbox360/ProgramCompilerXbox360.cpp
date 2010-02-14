@@ -6,8 +6,6 @@
 #include "Render/Dx9/HlslProgram.h"
 #include "Render/Dx9/ProgramResourceDx9.h"
 #include "Render/Dx9/Xbox360/ProgramCompilerXbox360.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
-#include "Render/Shader/ShaderGraphStatic.h"
 
 namespace traktor
 {
@@ -142,6 +140,11 @@ bool collectSamplerParameters(
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerXbox360", 0, ProgramCompilerXbox360, IProgramCompiler)
 
+const wchar_t* ProgramCompilerXbox360::getPlatformSignature() const
+{
+	return L"DX9 Xbox360";
+}
+
 Ref< ProgramResource > ProgramCompilerXbox360::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
@@ -151,43 +154,10 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;
 	ComRef< ID3DXConstantTable > d3dPixelConstantTable;
-	Ref< ShaderGraph > programGraph;
-
-	// Extract platform permutation.
-	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"DX9 Xbox360");
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerXbox360 failed; unable to get platform permutation" << Endl;
-		return 0;
-	}
-
-	// Freeze type permutation.
-	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerXbox360 failed; unable to get type permutation" << Endl;
-		return 0;
-	}
-
-	// Merge identical branches.
-	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerXbox360 failed; unable to merge branches" << Endl;
-		return 0;
-	}
-
-	// Insert interpolation nodes at optimal locations.
-	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerXbox360 failed; unable to optimize shader graph" << Endl;
-		return 0;
-	}
 
 	// Generate HLSL shaders.
 	HlslProgram program;
-	if (!Hlsl().generate(programGraph, program))
+	if (!Hlsl().generate(shaderGraph, program))
 		return 0;
 
 	// Compile shaders.

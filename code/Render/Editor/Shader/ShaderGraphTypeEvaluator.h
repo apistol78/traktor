@@ -4,11 +4,11 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
-#include "Render/Shader/PinType.h"
+#include "Render/Editor/Shader/PinType.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_RENDER_EXPORT)
+#if defined(T_RENDER_EDITOR_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT

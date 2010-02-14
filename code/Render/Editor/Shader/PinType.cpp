@@ -1,4 +1,4 @@
-#include "Render/Shader/PinType.h"
+#include "Render/Editor/Shader/PinType.h"
 
 namespace traktor
 {

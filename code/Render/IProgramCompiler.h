@@ -27,6 +27,12 @@ class T_DLLCLASS IProgramCompiler : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Get platform signature.
+	 *
+	 * \return Platform signature.
+	 */
+	virtual const wchar_t* getPlatformSignature() const = 0;
+
 	/*! \brief Compile program.
 	 *
 	 * \param shaderGraph Program shader graph.
