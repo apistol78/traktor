@@ -109,13 +109,13 @@ struct BuildCombinationTask
 			return;
 		}
 
-		// Create swizzle nodes in order to improve compiler optimizing.
-		programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
-		if (!programGraph)
-		{
-			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
-			return;
-		}
+		//// Create swizzle nodes in order to improve compiler optimizing.
+		//programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+		//if (!programGraph)
+		//{
+		//	log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
+		//	return;
+		//}
 
 		// Compile shader program.
 		Ref< ProgramResource > programResource = programCompiler->compile(

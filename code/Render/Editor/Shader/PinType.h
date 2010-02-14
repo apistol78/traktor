@@ -3,72 +3,44 @@
 
 #include "Core/Object.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_EDITOR_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
 	{
 
-/*! \brief Pin type class.
+/*! \brief Pin types.
  * \ingroup Render
+ *
+ * \note Ordered in predecence; higher number is higher predecence.
  */
-enum PinTypeClass
+enum PinType
 {
-	PtcVoid,
-	PtcScalar,
-	PtcMatrix,
-	PtcTexture
+	PntVoid		= 0,
+	PntScalar1	= 1,
+	PntScalar2	= 2,
+	PntScalar3	= 3,
+	PntScalar4	= 4,
+	PntMatrix	= 5,
+	PntTexture	= 6,
+
+	PntAny		= (PntTexture)
 };
 
-/*! \brief Pin type.
+/*! \brief Return true if type is a scalar.
  * \ingroup Render
  */
-class T_DLLCLASS PinType : public Object
+inline bool isPinTypeScalar(PinType pinType)
 {
-	T_RTTI_CLASS;
+	return pinType >= PntScalar1 && pinType <= PntScalar4;
+}
 
-public:
-	/*! \brief Construct void pin type. */
-	PinType();
-
-	/*! \brief Construct pin type.
-	 *
-	 * \param ptc Pin type class.
-	 * \param width Width of type; only reasonable for scalar class.
-	 */
-	PinType(PinTypeClass class_, int32_t width = 1);
-
-	/*! \brief Pin type class.
-	 *
-	 * \return Pin type class.
-	 */
-	PinTypeClass getClass() const;
-
-	/*! \brief Width of type.
-	 *
-	 * \return Width of type.
-	 */
-	int32_t getWidth() const;
-
-	/*! \brief Return type with highest precedence.
-	 *
-	 * \param type1 First type.
-	 * \param type2 Second type.
-	 * \return Type with highest precedence.
-	 */
-	static PinType maxPrecedence(const PinType& type1, const PinType& type2);
-
-private:
-	PinTypeClass m_class;
-	int32_t m_width;
-};
+/*! \brief Get width of scalar type.
+ * \ingroup Render
+ */
+inline int32_t getPinTypeWidth(PinType pinType)
+{
+	return isPinTypeScalar(pinType) ? int32_t(pinType) : 0;
+}
 
 	}
 }
