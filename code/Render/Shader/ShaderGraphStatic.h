@@ -33,6 +33,8 @@ public:
 
 	Ref< ShaderGraph > getTypePermutation() const;
 
+	Ref< ShaderGraph > getSwizzledPermutation() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

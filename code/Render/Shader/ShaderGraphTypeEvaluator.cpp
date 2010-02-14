@@ -116,6 +116,18 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	{
 		outputPinType = PinType(PtcScalar, 4);
 	}
+	else if (is_a< Iterate >(node) || is_a< Sum >(node))
+	{
+		if (outputPin == node->findOutputPin(L"N"))
+			outputPinType = PinType(PtcScalar, 1);
+		else
+		{
+			const InputPin* inputPin = node->findInputPin(L"Input");
+			T_ASSERT (inputPin);
+
+			outputPinType = evaluate(inputPin);
+		}
+	}
 	else if (is_a< Texture >(node))
 	{
 		outputPinType = PinType(PtcTexture);
