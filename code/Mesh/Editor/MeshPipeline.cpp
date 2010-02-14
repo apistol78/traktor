@@ -25,7 +25,7 @@
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Resource/FragmentLinker.h"
 
 namespace traktor

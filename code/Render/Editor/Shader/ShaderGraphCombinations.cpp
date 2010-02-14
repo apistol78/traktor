@@ -3,8 +3,8 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 
 namespace traktor
 {

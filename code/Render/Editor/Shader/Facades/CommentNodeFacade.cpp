@@ -1,5 +1,5 @@
 #include "Render/Shader/Node.h"
-#include "Render/Editor/Shader/CommentNodeFacade.h"
+#include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/CommentNodeShape.h"
 

@@ -1,5 +1,5 @@
-#include "Render/Editor/Shader/InterpolatorNodeFacade.h"
 #include "Render/Shader/Node.h"
+#include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/IpolNodeShape.h"
 

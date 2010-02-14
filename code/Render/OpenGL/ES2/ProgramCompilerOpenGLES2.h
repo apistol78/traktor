@@ -16,6 +16,8 @@ class ProgramCompilerOpenGLES2 : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
+	virtual const wchar_t* getPlatformSignature() const;
+
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		int32_t optimize,

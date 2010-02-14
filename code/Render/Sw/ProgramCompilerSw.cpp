@@ -1,6 +1,4 @@
 #include "Core/Log/Log.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
-#include "Render/Shader/ShaderGraphStatic.h"
 #include "Render/Sw/ProgramCompilerSw.h"
 #include "Render/Sw/ProgramResourceSw.h"
 
@@ -11,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerSw", 0, ProgramCompilerSw, IProgramCompiler)
 
+const wchar_t* ProgramCompilerSw::getPlatformSignature() const
+{
+	return L"Software";
+}
+
 Ref< ProgramResource > ProgramCompilerSw::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
@@ -18,41 +21,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(
 	uint32_t* outCostEstimate
 ) const
 {
-	Ref< ShaderGraph > programGraph;
-
-	// Extract platform permutation.
-	programGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(L"Software");
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerSw failed; unable to get platform permutation" << Endl;
-		return 0;
-	}
-
-	// Freeze type permutation.
-	programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerSw failed; unable to get type permutation" << Endl;
-		return 0;
-	}
-
-	// Merge identical branches.
-	programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerSw failed; unable to merge branches" << Endl;
-		return 0;
-	}
-
-	// Insert interpolation nodes at optimal locations.
-	programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators();
-	if (!programGraph)
-	{
-		log::error << L"ProgramCompilerSw failed; unable to optimize shader graph" << Endl;
-		return 0;
-	}
-
-	return new ProgramResourceSw(programGraph);
+	return new ProgramResourceSw(shaderGraph);
 }
 
 	}
