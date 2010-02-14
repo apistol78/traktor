@@ -1,0 +1,48 @@
+#include "Render/Shader/Nodes.h"
+#include "Render/Editor/Shader/Traits/SwitchNodeTraits.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SwitchNodeTraits", 0, SwitchNodeTraits, INodeTraits)
+
+TypeInfoSet SwitchNodeTraits::getNodeTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< Switch >());
+	return typeSet;
+}
+
+PinType SwitchNodeTraits::getOutputPinType(
+	const Node* node,
+	const PinType* inputPinTypes,
+	const OutputPin* outputPin
+) const
+{
+	PinType outputType = PntVoid;
+
+	uint32_t inputPinCount = node->getInputPinCount();
+	for (uint32_t i = 1; i < inputPinCount; ++i)
+		outputType = std::max< PinType >(
+			outputType,
+			inputPinTypes[i]
+		);
+
+	return outputType;
+}
+
+PinType SwitchNodeTraits::getAcceptableInputPinType(
+	const Node* node,
+	const InputPin* inputPin
+) const
+{
+	if (inputPin->getName() == L"Select")
+		return PntScalar1;
+	else
+		return PntAny;
+}
+
+	}
+}

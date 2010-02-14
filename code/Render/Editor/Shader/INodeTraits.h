@@ -1,0 +1,57 @@
+#ifndef traktor_render_INodeTraits_H
+#define traktor_render_INodeTraits_H
+
+#include "Core/Object.h"
+#include "Render/Editor/Shader/PinType.h"
+
+namespace traktor
+{
+	namespace render
+	{
+
+class InputPin;
+class Node;
+class OutputPin;
+
+/*! \brief Shader graph node traits.
+ * \ingroup Render
+ *
+ * Node traits define behaviour of nodes
+ * such as type conversions etc.
+ *
+ * These are used by optimizing steps in
+ * order to have those steps independent
+ * of node types.
+ */
+class INodeTraits : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual TypeInfoSet getNodeTypes() const = 0;
+
+	/*! \brief Determine type of output pin from given types of all input pins.
+	 */
+	virtual PinType getOutputPinType(
+		const Node* node,
+		const PinType* inputPinTypes,
+		const OutputPin* outputPin
+	) const = 0;
+	
+	/*! \brief Get type of input pin if predefined.
+	 */
+	virtual PinType getAcceptableInputPinType(
+		const Node* node,
+		const InputPin* inputPin
+	) const = 0;
+};
+
+/*! \brief Get node traits.
+ * \ingroup Render
+ */
+const INodeTraits* findNodeTraits(const Node* node);
+
+	}
+}
+
+#endif	// traktor_render_INodeTraits_H

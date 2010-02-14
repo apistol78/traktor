@@ -97,18 +97,18 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 
 		const InputPin* inputPin = 0;
 
-		if (inputType.getClass() == PtcScalar)
+		if (isPinTypeScalar(inputType))
 		{
-			if (inputType.getWidth() <= 1)
+			if (getPinTypeWidth(inputType) <= 1)
 				inputPin = (*i)->findInputPin(L"Scalar");
 			else
 				inputPin = (*i)->findInputPin(L"Vector");
 		}
-		else if (inputType.getClass() == PtcMatrix)
+		else if (inputType == PntMatrix)
 		{
 			inputPin = (*i)->findInputPin(L"Matrix");
 		}
-		else if (inputType.getClass() == PtcTexture)
+		else if (inputType == PntTexture)
 		{
 			inputPin = (*i)->findInputPin(L"Texture");
 		}
@@ -178,6 +178,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 		for (RefArray< Node >::iterator i = parents.begin(); i != parents.end(); ++i)
 		{
 			// Determine input widths.
+			// \fixme Use traits!
 			if (const Lerp* lerpNode = dynamic_type_cast< const Lerp* >(*i))
 			{
 				const OutputPin* outputPin = lerpNode->getOutputPin(0);
@@ -333,12 +334,8 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 		for (uint32_t j = 0; j < outputPinCount; ++j)
 		{
 			const OutputPin* outputPin = (*i)->getOutputPin(j);
-			
 			PinType pinType = typeEvaluator.evaluate(outputPin);
-			if (pinType.getClass() == PtcScalar)
-				outputWidths[outputPin].width = pinType.getWidth();
-			else
-				outputWidths[outputPin].width = 0;
+			outputWidths[outputPin].width = getPinTypeWidth(pinType);
 		}
 	}
 
