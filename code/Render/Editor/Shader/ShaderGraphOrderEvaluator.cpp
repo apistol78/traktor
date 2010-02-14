@@ -1,6 +1,6 @@
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOrderEvaluator.h"
+#include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
 
 namespace traktor
 {

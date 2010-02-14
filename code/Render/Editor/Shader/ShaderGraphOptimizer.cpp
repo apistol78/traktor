@@ -7,9 +7,9 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/ShaderGraphOptimizer.h"
-#include "Render/Shader/ShaderGraphOrderEvaluator.h"
-#include "Render/Shader/ShaderGraphUtilities.h"
+#include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
+#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
