@@ -1234,7 +1234,7 @@ bool emitTransform(CgContext& cx, Transform* node)
 	if (!in || !transform)
 		return false;
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"columnMajorMul(" << transform->getName() << L", " << in->getName() << L");" << Endl;
+	assign(f, out) << L"columnMajorMul(" << transform->getName() << L", " << in->cast(CtFloat4) << L");" << Endl;
 	return true;
 }
 

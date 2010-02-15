@@ -46,48 +46,44 @@ bool collectScalarParameters(
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
 		std::wstring parameterName;
+		int32_t parameterCount;
 		int32_t parameterSize = -1;
-		int32_t parameterCount = -1;
 
 		if (const Uniform* uniformNode = dynamic_type_cast< const Uniform* >(*i))
 		{
 			parameterName = uniformNode->getParameterName();
+			parameterCount = 1;
 			switch (uniformNode->getParameterType())
 			{
 			case PtScalar:
 				parameterSize = 1;
-				parameterCount = 1;
 				break;
 
 			case PtVector:
 				parameterSize = 4;
-				parameterCount = 1;
 				break;
 
 			case PtMatrix:
 				parameterSize = 16;
-				parameterCount = 1;
 				break;
 			}
 		}
 		else if (const IndexedUniform* indexedUniformNode = dynamic_type_cast< const IndexedUniform* >(*i))
 		{
 			parameterName = indexedUniformNode->getParameterName();
+			parameterCount = indexedUniformNode->getLength();
 			switch (indexedUniformNode->getParameterType())
 			{
 			case PtScalar:
 				parameterSize = 1;
-				parameterCount = indexedUniformNode->getLength();
 				break;
 
 			case PtVector:
 				parameterSize = 4;
-				parameterCount = indexedUniformNode->getLength();
 				break;
 
 			case PtMatrix:
 				parameterSize = 16;
-				parameterCount = indexedUniformNode->getLength();
 				break;
 			}
 		}
@@ -96,13 +92,12 @@ bool collectScalarParameters(
 		{
 			log::debug << L"Parameter \"" << parameterName << L"\", size = " << parameterSize << L", count = " << parameterCount << Endl;
 
-			uint32_t quadCount = (parameterSize * parameterCount + 3) / 4;
+			uint32_t quadCount = ((parameterSize + 3) / 4) * parameterCount;
 
 			ProgramScalar scalar;
 			scalar.vertexRegisterIndex = 0;
 			scalar.vertexRegisterCount = 0;
 			scalar.offset = outOffset;
-			scalar.length = parameterSize * parameterCount;
 
 			bool scalarUsed = false;
 
@@ -233,7 +228,7 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 		if (!cgc)
 			return 0;
 
-		const char* argv[] = { "-O3", "--fastmath", 0 };
+		const char* argv[] = { "-O1", "--fastmath", 0 };
 		CGCstatus status;
 
 		const std::wstring& vertexShader = cgProgram.getVertexShader();

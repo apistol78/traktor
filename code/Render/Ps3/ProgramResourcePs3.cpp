@@ -91,7 +91,6 @@ public:
 		s >> Member< uint16_t >(L"vertexRegisterCount", m_ref.vertexRegisterCount);
 		s >> MemberStlVector< FragmentOffset, MemberFragmentOffset >(L"fragmentOffsets", m_ref.fragmentOffsets);
 		s >> Member< uint16_t >(L"offset", m_ref.offset);
-		s >> Member< uint16_t >(L"length", m_ref.length);
 		return true;
 	}
 

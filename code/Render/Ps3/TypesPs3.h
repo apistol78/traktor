@@ -74,7 +74,6 @@ struct ProgramScalar
 	uint16_t vertexRegisterCount;
 	std::vector< FragmentOffset > fragmentOffsets;
 	uint16_t offset;
-	uint16_t length;
 };
 
 struct ProgramSampler

@@ -39,18 +39,27 @@ void threadEntry(uint64_t data)
 bool Thread::start(Priority priority)
 {
 	const uint32_t c_stackSize = 4 * 1024 * 1024;
+	int res;
 
 	Internal* in = new Internal();
-
-	m_handle = in;
-
 	in->functor = m_functor;
 	in->finished = false;
 
-	sys_mutex_create(&in->mutex, 0);
-	sys_cond_create(&in->cond, in->mutex, 0);
+	sys_mutex_attribute_t attr;
+	sys_mutex_attribute_initialize(attr);
 
-	int rc = sys_ppu_thread_create(
+	res = sys_mutex_create(&in->mutex, &attr);
+	if (res != CELL_OK)
+		return false;
+
+	sys_cond_attribute_t attr2;
+	sys_cond_attribute_initialize(attr2);
+
+	res = sys_cond_create(&in->cond, in->mutex, &attr2);
+	if (res != CELL_OK)
+		return false;
+
+	res = sys_ppu_thread_create(
 		&in->thread,
 		threadEntry,
 		(uint64_t)in,
@@ -59,14 +68,13 @@ bool Thread::start(Priority priority)
 		SYS_PPU_THREAD_CREATE_JOINABLE,
 		m_name.c_str()
 	);
-
-	if (rc != CELL_OK)
+	if (res != CELL_OK)
 	{
 		delete in;
-		m_handle = 0;
 		return false;
 	}
 
+	m_handle = in;
 	return true;
 }
 
