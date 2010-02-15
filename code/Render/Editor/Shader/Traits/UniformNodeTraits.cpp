@@ -18,8 +18,8 @@ TypeInfoSet UniformNodeTraits::getNodeTypes() const
 
 PinType UniformNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	ParameterType parameterType;
@@ -46,9 +46,10 @@ PinType UniformNodeTraits::getOutputPinType(
 	}
 }
 
-PinType UniformNodeTraits::getAcceptableInputPinType(
+PinType UniformNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	if (is_a< IndexedUniform >(node))

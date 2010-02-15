@@ -18,22 +18,30 @@ TypeInfoSet IterativeNodeTraits::getNodeTypes() const
 
 PinType IterativeNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	if (outputPin->getName() == L"N")
 		return PntScalar1;
+	else if (is_a< Iterate >(node))
+	{
+		return std::max< PinType >(
+			inputPinTypes[0],			// Input
+			inputPinTypes[1]			// Initial
+		);
+	}
 	else
 		return inputPinTypes[0];
 }
 
-PinType IterativeNodeTraits::getAcceptableInputPinType(
+PinType IterativeNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	return outputPinTypes[1];	// Output
 }
 
 	}

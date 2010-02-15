@@ -17,16 +17,17 @@ TypeInfoSet DotNodeTraits::getNodeTypes() const
 
 PinType DotNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	return PntScalar1;
 }
 
-PinType DotNodeTraits::getAcceptableInputPinType(
-	const Node* node,
-	const InputPin* inputPin
+PinType DotNodeTraits::getInputPinType(
+   const Node* node,
+   const InputPin* inputPin,
+   const PinType* outputPinTypes
 ) const
 {
 	return PntScalar4;

@@ -17,8 +17,8 @@ TypeInfoSet SwitchNodeTraits::getNodeTypes() const
 
 PinType SwitchNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	PinType outputType = PntVoid;
@@ -33,15 +33,16 @@ PinType SwitchNodeTraits::getOutputPinType(
 	return outputType;
 }
 
-PinType SwitchNodeTraits::getAcceptableInputPinType(
+PinType SwitchNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	if (inputPin->getName() == L"Select")
 		return PntScalar1;
 	else
-		return PntAny;
+		return outputPinTypes[0];
 }
 
 	}

@@ -18,8 +18,8 @@ TypeInfoSet VertexNodeTraits::getNodeTypes() const
 
 PinType VertexNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	if (const VertexInput* vertexInputNode = dynamic_type_cast< const VertexInput* >(node))
@@ -51,9 +51,10 @@ PinType VertexNodeTraits::getOutputPinType(
 	return PntVoid;
 }
 
-PinType VertexNodeTraits::getAcceptableInputPinType(
+PinType VertexNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	if (is_a< VertexOutput >(node))

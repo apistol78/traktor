@@ -109,13 +109,13 @@ struct BuildCombinationTask
 			return;
 		}
 
-		//// Create swizzle nodes in order to improve compiler optimizing.
-		//programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
-		//if (!programGraph)
-		//{
-		//	log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
-		//	return;
-		//}
+		// Create swizzle nodes in order to improve compiler optimizing.
+		programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
+			return;
+		}
 
 		// Compile shader program.
 		Ref< ProgramResource > programResource = programCompiler->compile(
@@ -137,7 +137,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 8, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 9, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)

@@ -17,8 +17,8 @@ TypeInfoSet LerpNodeTraits::getNodeTypes() const
 
 PinType LerpNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	return std::max< PinType >(
@@ -27,15 +27,16 @@ PinType LerpNodeTraits::getOutputPinType(
 	);
 }
 
-PinType LerpNodeTraits::getAcceptableInputPinType(
+PinType LerpNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	if (inputPin->getName() == L"Blend")
 		return PntScalar1;
 	else
-		return PntScalar4;
+		return outputPinTypes[0];
 }
 
 	}

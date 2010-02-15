@@ -17,16 +17,17 @@ TypeInfoSet TransposeNodeTraits::getNodeTypes() const
 
 PinType TransposeNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
-	return inputPinTypes[0];
+	return PntMatrix;
 }
 
-PinType TransposeNodeTraits::getAcceptableInputPinType(
+PinType TransposeNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	return PntMatrix;
