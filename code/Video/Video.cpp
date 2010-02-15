@@ -15,6 +15,7 @@ Video::Video()
 :	m_time(0.0f)
 ,	m_rate(0.0f)
 ,	m_frame(0)
+,	m_current(0)
 ,	m_playing(false)
 {
 }
@@ -31,14 +32,18 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = false;
 
-	m_texture = renderSystem->createSimpleTexture(desc);
-	if (!m_texture)
-		return false;
+	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
+	{
+		m_textures[i] = renderSystem->createSimpleTexture(desc);
+		if (!m_textures[i])
+			return false;
+	}
 
 	m_decoder = decoder;
 	m_time = 0.0f;
 	m_rate = info.rate;
 	m_frame = ~0UL;
+	m_current = 0;
 	m_playing = true;
 
 	return true;
@@ -46,7 +51,8 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 
 void Video::destroy()
 {
-	safeDestroy(m_texture);
+	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
+		safeDestroy(m_textures[i]);
 	m_decoder = 0;
 }
 
@@ -55,13 +61,17 @@ bool Video::update(float deltaTime)
 	uint32_t frame = uint32_t(m_rate * m_time);
 	if (frame != m_frame)
 	{
+		uint32_t next = (m_current + 1) % sizeof_array(m_textures);
+		render::ISimpleTexture* texture = m_textures[next];
+
 		render::ITexture::Lock lock;
-		if (m_texture->lock(0, lock))
+		if (texture->lock(0, lock))
 		{
 			m_playing = m_decoder->decode(frame, lock.bits, lock.pitch);
-			m_texture->unlock(0);
+			texture->unlock(0);
 
 			m_frame = frame;
+			m_current = next;
 		}
 	}
 	m_time += deltaTime;
@@ -75,7 +85,7 @@ bool Video::playing() const
 
 render::ISimpleTexture* Video::getTexture()
 {
-	return m_texture;
+	return m_textures[m_current];
 }
 
 	}
