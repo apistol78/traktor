@@ -438,8 +438,13 @@ HRESULT RenderViewWin32::lostDevice()
 	m_currentIndexBuffer = 0;
 	m_currentProgram = 0;
 
-	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-		m_d3dSyncQueries[i].release();
+#if T_SYNCHRONIZE_CPU_GPU
+	if (!m_d3dPresent.Windowed)
+	{
+		for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+			m_d3dSyncQueries[i].release();
+	}
+#endif
 
 	return S_OK;
 }
@@ -448,11 +453,16 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	m_d3dDevice = d3dDevice;
 
-	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-		m_d3dDevice->CreateQuery(
+#if T_SYNCHRONIZE_CPU_GPU
+	if (!m_d3dPresent.Windowed)
+	{
+		for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+			m_d3dDevice->CreateQuery(
 			D3DQUERYTYPE_EVENT,
 			&m_d3dSyncQueries[i].getAssign()
 		);
+	}
+#endif
 
 	return S_OK;
 }
