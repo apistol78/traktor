@@ -48,10 +48,11 @@ public:
 
 private:
 	Ref< IVideoDecoder > m_decoder;
-	Ref< render::ISimpleTexture > m_texture;
+	Ref< render::ISimpleTexture > m_textures[2];
 	float m_time;
 	float m_rate;
 	uint32_t m_frame;
+	uint32_t m_current;
 	bool m_playing;
 };
 
