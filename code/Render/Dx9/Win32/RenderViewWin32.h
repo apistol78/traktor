@@ -132,10 +132,11 @@ private:
 	Ref< ProgramWin32 > m_currentProgram;
 	bool m_targetDirty;
 
+	uint32_t m_frameCount;
+	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[3];
+
 #if defined(_DEBUG)
 	LONG m_ownerThread;
-	uint32_t m_frameCount;
-	uint32_t m_drawCalls;
 #endif
 
 	void bindTargets();
