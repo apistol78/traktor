@@ -1,3 +1,4 @@
+#include <cctype>
 #include "Render/Shader/Nodes.h"
 #include "Render/Editor/Shader/Traits/SwizzleNodeTraits.h"
 
@@ -17,8 +18,8 @@ TypeInfoSet SwizzleNodeTraits::getNodeTypes() const
 
 PinType SwizzleNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
@@ -37,12 +38,35 @@ PinType SwizzleNodeTraits::getOutputPinType(
 	}
 }
 
-PinType SwizzleNodeTraits::getAcceptableInputPinType(
+PinType SwizzleNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	const std::wstring& pattern = checked_type_cast< const Swizzle* >(node)->get();
+	
+	PinType inputPinType = PntVoid;
+	for (size_t i = 0; i < pattern.length(); ++i)
+	{
+		switch (std::tolower(pattern[i]))
+		{
+		case L'x':
+			inputPinType = std::max< PinType >(inputPinType, PntScalar1);
+			break;
+		case L'y':
+			inputPinType = std::max< PinType >(inputPinType, PntScalar2);
+			break;
+		case L'z':
+			inputPinType = std::max< PinType >(inputPinType, PntScalar3);
+			break;
+		case L'w':
+			inputPinType = std::max< PinType >(inputPinType, PntScalar4);
+			break;
+		}
+	}
+
+	return inputPinType;
 }
 
 	}

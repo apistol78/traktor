@@ -34,15 +34,16 @@ public:
 	 */
 	virtual PinType getOutputPinType(
 		const Node* node,
-		const PinType* inputPinTypes,
-		const OutputPin* outputPin
+		const OutputPin* outputPin,
+		const PinType* inputPinTypes
 	) const = 0;
 	
-	/*! \brief Get type of input pin if predefined.
+	/*! \brief Get type of input pin.
 	 */
-	virtual PinType getAcceptableInputPinType(
+	virtual PinType getInputPinType(
 		const Node* node,
-		const InputPin* inputPin
+		const InputPin* inputPin,
+		const PinType* outputPinTypes
 	) const = 0;
 };
 

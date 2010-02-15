@@ -41,8 +41,8 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 
 PinType MathNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	PinType outputPinType = PntVoid;
@@ -57,12 +57,13 @@ PinType MathNodeTraits::getOutputPinType(
 	return outputPinType;
 }
 
-PinType MathNodeTraits::getAcceptableInputPinType(
+PinType MathNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
-	return PntScalar4;
+	return outputPinTypes[0];
 }
 
 	}

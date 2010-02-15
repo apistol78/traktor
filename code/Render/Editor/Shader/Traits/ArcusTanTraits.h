@@ -1,5 +1,5 @@
-#ifndef traktor_render_TransformNodeTraits_H
-#define traktor_render_TransformNodeTraits_H
+#ifndef traktor_render_ArcusTanTraits_H
+#define traktor_render_ArcusTanTraits_H
 
 #include "Render/Editor/Shader/INodeTraits.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-class TransformNodeTraits : public INodeTraits
+class ArcusTanTraits : public INodeTraits
 {
 	T_RTTI_CLASS;
 
@@ -31,4 +31,4 @@ public:
 	}
 }
 
-#endif	// traktor_render_TransformNodeTraits_H
+#endif	// traktor_render_ArcusTanTraits_H

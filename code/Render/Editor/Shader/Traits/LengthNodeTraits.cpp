@@ -17,16 +17,17 @@ TypeInfoSet LengthNodeTraits::getNodeTypes() const
 
 PinType LengthNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	return PntScalar1;
 }
 
-PinType LengthNodeTraits::getAcceptableInputPinType(
+PinType LengthNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	return PntScalar4;

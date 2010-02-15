@@ -17,13 +17,14 @@ public:
 
 	virtual PinType getOutputPinType(
 		const Node* node,
-		const PinType* inputPinTypes,
-		const OutputPin* outputPin
+		const OutputPin* outputPin,
+		const PinType* inputPinTypes
 	) const;
 	
-	virtual PinType getAcceptableInputPinType(
+	virtual PinType getInputPinType(
 		const Node* node,
-		const InputPin* inputPin
+		const InputPin* inputPin,
+		const PinType* outputPinTypes
 	) const;
 };
 

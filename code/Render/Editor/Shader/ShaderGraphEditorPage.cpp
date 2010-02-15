@@ -2,6 +2,7 @@
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/NodeFacade.h"
 #include "Render/Editor/Shader/NodeCategories.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
@@ -223,7 +224,8 @@ bool ShaderGraphEditorPage::setDataObject(db::Instance* instance, Object* data)
 	m_site->setPropertyObject(0);
 	m_undoStack = new editor::UndoStack();
 
-	m_fragmentGuid = instance->getGuid();
+	if (instance)
+		m_fragmentGuid = instance->getGuid();
 
 	return true;
 }
@@ -525,7 +527,10 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ShaderGraph.Editor.Center")
 	{
 		// Center graph view.
-		m_editorGraph->center();
+		//m_editorGraph->center();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getSwizzledPermutation();
+		setDataObject(0, m_shaderGraph);
 	}
 	else
 		return false;

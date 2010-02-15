@@ -17,8 +17,8 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 
 PinType ConditionalNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	return std::max< PinType >(
@@ -27,15 +27,16 @@ PinType ConditionalNodeTraits::getOutputPinType(
 	);
 }
 
-PinType ConditionalNodeTraits::getAcceptableInputPinType(
+PinType ConditionalNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	if (inputPin->getName() == L"Input" || inputPin->getName() == L"Reference")
 		return PntScalar1;
 	else
-		return PntScalar4;
+		return outputPinTypes[0];
 }
 
 	}

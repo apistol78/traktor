@@ -21,8 +21,8 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 
 PinType ConstantNodeTraits::getOutputPinType(
 	const Node* node,
-	const PinType* inputPinTypes,
-	const OutputPin* outputPin
+	const OutputPin* outputPin,
+	const PinType* inputPinTypes
 ) const
 {
 	if (is_a< Color >(node) || is_a< FragmentPosition >(node) || is_a< Vector >(node))
@@ -35,9 +35,10 @@ PinType ConstantNodeTraits::getOutputPinType(
 		return PntVoid;
 }
 
-PinType ConstantNodeTraits::getAcceptableInputPinType(
+PinType ConstantNodeTraits::getInputPinType(
 	const Node* node,
-	const InputPin* inputPin
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	return PntVoid;
