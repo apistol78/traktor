@@ -9,7 +9,7 @@
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
 
-#define T_LOG_DRAW_CALLS 0
+#define T_SYNCHRONIZE_CPU_GPU 1
 
 namespace traktor
 {
@@ -62,10 +62,9 @@ RenderViewWin32::RenderViewWin32(
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
 ,	m_nativeAspectRatio(nativeAspectRatio)
 ,	m_targetDirty(false)
+,	m_frameCount(0)
 #if defined(_DEBUG)
 ,	m_ownerThread(-1)
-,	m_frameCount(0)
-,	m_drawCalls(0)
 #endif
 {
 	m_d3dViewport.X = 0;
@@ -367,10 +366,6 @@ void RenderViewWin32::draw(const Primitives& primitives)
 			primitives.count
 		);
 	}
-
-#if defined(_DEBUG) && T_LOG_DRAW_CALLS
-	m_drawCalls++;
-#endif
 }
 
 void RenderViewWin32::end()
@@ -400,14 +395,21 @@ void RenderViewWin32::present()
 	if (m_context)
 		m_context->deleteResources();
 
-#if defined(_DEBUG) && T_LOG_DRAW_CALLS
-	if ((++m_frameCount & 63) == 0)
+	// Synchronize GPU; don't want CPU to overrun GPU.
+#if T_SYNCHRONIZE_CPU_GPU
+	if (!m_d3dPresent.Windowed)
 	{
-		uint32_t drawCallsPerFrame = m_drawCalls / 64;
-		log::debug << drawCallsPerFrame << L" draw calls / frame" << Endl;
-		m_drawCalls = 0;
+		uint32_t previousQuery = (m_frameCount + 1) % sizeof_array(m_d3dSyncQueries);
+		uint32_t currentQuery = m_frameCount % sizeof_array(m_d3dSyncQueries);
+
+		m_d3dSyncQueries[currentQuery].get()->Issue(D3DISSUE_END);
+
+		while (m_d3dSyncQueries[previousQuery]->GetData(NULL, 0, D3DGETDATA_FLUSH) == S_FALSE)
+			;
 	}
 #endif
+
+	m_frameCount++;
 }
 
 void RenderViewWin32::setMSAAEnable(bool msaaEnable)
@@ -425,19 +427,33 @@ void RenderViewWin32::setD3DBuffers(IDirect3DSwapChain9* d3dSwapChain, IDirect3D
 HRESULT RenderViewWin32::lostDevice()
 {
 	m_d3dDevice = 0;
+
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
+
 	m_renderStateStack.clear();
+
 	m_currentVertexBuffer = 0;
 	m_currentIndexBuffer = 0;
 	m_currentProgram = 0;
+
+	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+		m_d3dSyncQueries[i].release();
+
 	return S_OK;
 }
 
 HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	m_d3dDevice = d3dDevice;
+
+	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+		m_d3dDevice->CreateQuery(
+			D3DQUERYTYPE_EVENT,
+			&m_d3dSyncQueries[i].getAssign()
+		);
+
 	return S_OK;
 }
 
