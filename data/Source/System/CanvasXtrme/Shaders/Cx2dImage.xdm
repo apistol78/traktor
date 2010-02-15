@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object type="traktor.db.LocalInstanceMeta">
-	<guid>{6BB5B629-8C5B-4C42-8EB5-20EE9C57EF3B}</guid>
+	<guid>{7B64DCCE-0C7B-4d39-B12F-A76A4B060591}</guid>
 	<primaryType>traktor.render.ShaderGraph</primaryType>
 	<blobs/>
 </object>
