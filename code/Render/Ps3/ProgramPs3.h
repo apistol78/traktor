@@ -73,6 +73,7 @@ private:
 	std::map< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
+	bool m_dirty;
 };
 
 	}

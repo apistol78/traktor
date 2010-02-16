@@ -124,7 +124,7 @@ bool SimpleTexturePs3::create(const SimpleTextureCreateDesc& desc)
 
 			if (dxtn || linear)
 			{
-				uint32_t blockRows = mipHeight / blockDenom;
+				uint32_t blockRows = std::max< uint32_t >(mipHeight / blockDenom, 1);
 				for (uint32_t y = 0; y < blockRows; ++y)
 				{
 					std::memcpy(dest, src, desc.initialData[i].pitch);
