@@ -60,7 +60,7 @@ void EditorPageSite::createAdditionalPanel(ui::Widget* widget, int size, bool so
 	if (!m_active)
 		widget->hide();
 
-	m_editor->createAdditionalPanel(widget, size, south);
+	m_editor->createAdditionalPanel(widget, size, south ? 0 : 1);
 }
 
 void EditorPageSite::destroyAdditionalPanel(ui::Widget* widget)

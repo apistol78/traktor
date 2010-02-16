@@ -48,7 +48,6 @@ class Database;
 
 class DatabaseView;
 class PropertiesView;
-class HeapView;
 class LogView;
 class Settings;
 class IEditorPageFactory;
@@ -56,9 +55,9 @@ class IEditorPage;
 class IObjectEditorFactory;
 class IObjectEditor;
 class IEditorPluginFactory;
-class IEditorPlugin;
 class IEditorTool;
 class EditorPageSite;
+class EditorPluginSite;
 
 /*! \brief Main editor form.
  *
@@ -109,17 +108,19 @@ public:
 
 private:
 	friend class EditorPageSite;
+	friend class EditorPluginSite;
 
 	RefArray< IEditorPageFactory > m_editorPageFactories;
 	RefArray< IObjectEditorFactory > m_objectEditorFactories;
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
-	RefArray< IEditorPlugin > m_editorPlugins;
 	RefArray< IEditorTool > m_editorTools;
+	RefArray< EditorPluginSite > m_editorPluginSites;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;
 	Ref< ui::Dock > m_dock;
-	Ref< ui::DockPane > m_paneAdditionalEast;
-	Ref< ui::DockPane > m_paneAdditionalSouth;
+	Ref< ui::DockPane > m_paneWest;
+	Ref< ui::DockPane > m_paneEast;
+	Ref< ui::DockPane > m_paneSouth;
 	Ref< ui::MenuBar > m_menuBar;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::custom::ToolBar > m_toolBar;
@@ -130,7 +131,6 @@ private:
 	Ref< ui::MenuItem > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
-	Ref< HeapView > m_heapView;
 	Ref< LogView > m_logView;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
@@ -142,7 +142,7 @@ private:
 
 	void setPropertyObject(Object* properties);
 
-	void createAdditionalPanel(ui::Widget* widget, int size, bool south);
+	void createAdditionalPanel(ui::Widget* widget, int size, int32_t direction);
 
 	void destroyAdditionalPanel(ui::Widget* widget);
 

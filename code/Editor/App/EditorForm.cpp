@@ -30,9 +30,9 @@
 #include "Editor/IPipeline.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
+#include "Editor/App/EditorPluginSite.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/PropertiesView.h"
-#include "Editor/App/HeapView.h"
 #include "Editor/App/LogView.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
@@ -242,7 +242,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewDatabase"), i18n::Text(L"MENU_VIEW_DATABASE")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewProperties"), i18n::Text(L"MENU_VIEW_PROPERTIES")));
 	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewLog"), i18n::Text(L"MENU_VIEW_LOG")));
-	menuView->add(new ui::MenuItem(ui::Command(L"Editor.ViewHeap"), i18n::Text(L"MENU_VIEW_HEAP")));
 	menuView->add(new ui::MenuItem(L"-"));
 	m_menuItemOtherPanels = new ui::MenuItem(i18n::Text(L"MENU_VIEW_OTHER"));
 	menuView->add(m_menuItemOtherPanels);
@@ -281,10 +280,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > paneTop, paneLog;
 	pane->split(true, -140, paneTop, paneLog);
 	
-	Ref< ui::DockPane > paneWork, paneCenter;
-	paneTop->split(false, 250, paneWork, paneCenter);
-	paneCenter->split(false, -250, paneCenter, m_paneAdditionalEast);
-	paneCenter->split(true, -200, paneCenter, m_paneAdditionalSouth);
+	Ref< ui::DockPane > paneCenter;
+	paneTop->split(false, 250, m_paneWest, paneCenter);
+	paneCenter->split(false, -250, paneCenter, m_paneEast);
+	paneCenter->split(true, -200, paneCenter, m_paneSouth);
 	
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
@@ -294,7 +293,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
 		m_dataBaseView->hide();
 
-	paneWork->dock(m_dataBaseView, true);
+	m_paneWest->dock(m_dataBaseView, true);
 
 	m_propertiesView = new PropertiesView(this);
 	m_propertiesView->create(m_dock);
@@ -302,15 +301,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
-	paneWork->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
-
-	m_heapView = new HeapView();
-	m_heapView->create(m_dock);
-	m_heapView->setText(i18n::Text(L"TITLE_HEAP"));
-	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.HeapVisible"))
-		m_heapView->hide();
-
-	paneWork->dock(m_heapView, true, ui::DockPane::DrSouth, 200);
+	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
 
 	m_logView = new LogView();
 	m_logView->create(m_dock);
@@ -388,8 +379,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	for (RefArray< IEditorPluginFactory >::iterator i = m_editorPluginFactories.begin(); i != m_editorPluginFactories.end(); ++i)
 	{
 		Ref< IEditorPlugin > editorPlugin = (*i)->createEditorPlugin(this);
-		if (editorPlugin && editorPlugin->create(this, m_toolBar))
-			m_editorPlugins.push_back(editorPlugin);
+		if (!editorPlugin)
+			continue;
+
+		Ref< EditorPluginSite > site = new EditorPluginSite(this, editorPlugin);
+		if (site->create(this))
+			m_editorPluginSites.push_back(site);
 	}
 
 	// Load tools and populate tool menu.
@@ -522,9 +517,9 @@ void EditorForm::destroy()
 	m_sourceDatabase->close();
 
 	// Destroy all plugins.
-	for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->destroy();
-	m_editorPlugins.resize(0);
+	m_editorPluginSites.resize(0);
 
 	// Destroy shortcut table.
 	m_shortcutTable->destroy();
@@ -822,15 +817,24 @@ void EditorForm::setPropertyObject(Object* properties)
 	m_dock->update();
 }
 
-void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, bool south)
+void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
 {
 	T_ASSERT (widget);
 	
 	widget->setParent(m_dock);
 
-	if (!south)
+	if (direction == -1)
 	{
-		m_paneAdditionalEast->dock(
+		m_paneWest->dock(
+			widget,
+			true,
+			ui::DockPane::DrSouth,
+			size
+		);
+	}
+	else if (direction == 1)
+	{
+		m_paneEast->dock(
 			widget,
 			true,
 			ui::DockPane::DrSouth,
@@ -839,7 +843,7 @@ void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, bool south)
 	}
 	else
 	{
-		m_paneAdditionalSouth->dock(
+		m_paneSouth->dock(
 			widget,
 			true,
 			ui::DockPane::DrEast,
@@ -852,8 +856,8 @@ void EditorForm::destroyAdditionalPanel(ui::Widget* widget)
 {
 	T_ASSERT (widget);
 
-	m_paneAdditionalEast->undock(widget);
-	m_paneAdditionalSouth->undock(widget);
+	m_paneEast->undock(widget);
+	m_paneSouth->undock(widget);
 }
 
 void EditorForm::showAdditionalPanel(ui::Widget* widget)
@@ -1556,11 +1560,6 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		m_logView->show();
 		m_dock->update();
 	}
-	else if (command == L"Editor.ViewHeap")
-	{
-		m_heapView->show();
-		m_dock->update();
-	}
 	else if (command == L"Editor.ViewOther")
 	{
 		Ref< ui::Widget > panelWidget = checked_type_cast< ui::Widget* >(command.getData());
@@ -1593,7 +1592,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		result = false;
 
 		// Propagate command to plugins.
-		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		{
 			result = (*i)->handleCommand(command);
 			if (result)
@@ -1721,8 +1720,6 @@ void EditorForm::eventTabClose(ui::Event* event)
 
 	setPropertyObject(0);
 
-	//Heap::getInstance().collect();
-
 	tabPage = m_tab->getActivePage();
 	if (tabPage)
 	{
@@ -1769,7 +1766,6 @@ void EditorForm::eventClose(ui::Event* event)
 	// Save panes visible.
 	m_settings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
 	m_settings->setProperty< PropertyBoolean >(L"Editor.PropertiesVisible", m_propertiesView->isVisible(false));
-	m_settings->setProperty< PropertyBoolean >(L"Editor.HeapVisible", m_heapView->isVisible(false));
 	m_settings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_logView->isVisible(false));
 
 	// Save form placement.
@@ -1838,7 +1834,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		}
 
 		// Propagate database event to editor plugins.
-		for (RefArray< IEditorPlugin >::iterator i = m_editorPlugins.begin(); i != m_editorPlugins.end(); ++i)
+		for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		{
 			for (std::vector< Guid >::iterator j = eventIds.begin(); j != eventIds.end(); ++j)
 				(*i)->handleDatabaseEvent(*j);
