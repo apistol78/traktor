@@ -103,8 +103,11 @@ bool collectScalarParameters(
 
 			if (!isFragmentProfile)
 			{
-				std::string tmp = wstombs(parameterName);
-				CGparameter parameter = cellGcmCgGetNamedParameter(program, tmp.c_str());
+				CGparameter parameter;
+				if (quadCount > 1)
+					parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName + L"[0]").c_str());
+				else
+					parameter = cellGcmCgGetNamedParameter(program, wstombs(parameterName).c_str());
 
 				if (parameter)
 				{
