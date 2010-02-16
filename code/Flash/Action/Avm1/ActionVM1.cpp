@@ -339,14 +339,14 @@ void ActionVM1::execute(ActionFrame* frame) const
 				stack.push(value);
 			else if (variableName == L"_global")
 			{
-				value = ActionValue::fromObject(context->getGlobal());
+				value = ActionValue(context->getGlobal());
 				stack.push(value);
 			}
 			else
 			{
 				FlashDisplayList::layer_map_t::const_iterator i = movieClip->getDisplayList().findLayer(variableName);
 				if (i != movieClip->getDisplayList().getLayers().end())
-					value = ActionValue::fromObject(i->second.instance);
+					value = ActionValue(i->second.instance);
 				stack.push(value);
 			}
 
@@ -844,7 +844,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (object.isObject())
 					stack.push(object);
 				else
-					stack.push(ActionValue::fromObject(self.ptr()));
+					stack.push(ActionValue(self.ptr()));
 			}
 			else
 			{
@@ -878,7 +878,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				VM_LOG(L"Initial property " << i << L" \"" << name.getStringSafe() << L"\" = " << value.getStringSafe());
 			}
 
-			stack.push(ActionValue::fromObject(scriptObject));
+			stack.push(ActionValue(scriptObject));
 		VM_END()
 
 		VM_BEGIN(AopTypeOf)
@@ -1166,7 +1166,7 @@ void ActionVM1::execute(ActionFrame* frame) const
 				if (object.isObject())
 					stack.push(object);
 				else
-					stack.push(ActionValue::fromObject(self.ptr()));
+					stack.push(ActionValue(self.ptr()));
 			}
 			else
 			{
@@ -1323,9 +1323,9 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			Ref< ActionObject > prototype = new ActionObject();
 			prototype->setMember(L"__proto__", superPrototype);
-			prototype->setMember(L"__constructor__", ActionValue::fromObject(superClass.getObject()));
+			prototype->setMember(L"__constructor__", ActionValue(superClass.getObject()));
 
-			subClass.getObject()->setMember(L"prototype", ActionValue::fromObject(prototype));
+			subClass.getObject()->setMember(L"prototype", ActionValue(prototype));
 		VM_END()
 
 		VM_BEGIN(AopConstantPool)
@@ -1379,17 +1379,17 @@ void ActionVM1::execute(ActionFrame* frame) const
 
 			// Create our own prototype member as it will probably be filled with additional members.
 			// Default extends the Object class.
-			function->setMember(L"prototype", ActionValue::fromObject(new ActionObject(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue(new ActionObject(AsObject::getInstance())));
 
 			if (*functionName != 0)
 			{
 				// Assign function object into variable with the same name as the function.
-				movieClip->setMember(mbstows(functionName), ActionValue::fromObject(function));
+				movieClip->setMember(mbstows(functionName), ActionValue(function));
 			}
 			else
 			{
 				// Push function object onto stack.
-				stack.push(ActionValue::fromObject(function));
+				stack.push(ActionValue(function));
 			}
 
 			npc += codeSize;
@@ -1429,17 +1429,17 @@ void ActionVM1::execute(ActionFrame* frame) const
 			);
 
 			// Create our own prototype member as it will probably be filled with additional members.
-			function->setMember(L"prototype", ActionValue::fromObject(new ActionObject(AsObject::getInstance())));
+			function->setMember(L"prototype", ActionValue(new ActionObject(AsObject::getInstance())));
 
 			if (*functionName != 0)
 			{
 				// Assign function object into variable with the same name as the function.
-				movieClip->setMember(mbstows(functionName), ActionValue::fromObject(function));
+				movieClip->setMember(mbstows(functionName), ActionValue(function));
 			}
 			else
 			{
 				// Push function object onto stack.
-				stack.push(ActionValue::fromObject(function));
+				stack.push(ActionValue(function));
 			}
 
 			npc += codeSize;

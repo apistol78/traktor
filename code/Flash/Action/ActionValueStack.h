@@ -2,6 +2,7 @@
 #define traktor_flash_ActionValueStack_H
 
 #include <vector>
+#include "Core/Misc/AutoPtr.h"
 #include "Flash/Action/ActionValue.h"
 
 // import/export mechanism.
@@ -26,7 +27,8 @@ class T_DLLCLASS ActionValueStack : public Object
 
 public:
 	ActionValueStack()
-	:	m_index(0)
+	:	m_stack(new ActionValue [MaxStackDepth])
+	,	m_index(0)
 	{
 	}
 
@@ -57,7 +59,9 @@ public:
 	 */
 	inline ActionValue& top(int32_t offset = 0)
 	{
-		return m_stack[m_index + offset - 1];
+		int index = m_index + offset - 1;
+		T_ASSERT (index >= 0 && index < MaxStackDepth);
+		return m_stack[index];
 	}
 
 	/*! \brief Stack empty.
@@ -75,6 +79,7 @@ public:
 	 */
 	inline void ensure(int32_t ensureCount)
 	{
+		T_ASSERT (ensureCount < MaxStackDepth);
 		while (m_index < ensureCount)
 			m_stack[m_index++] = ActionValue();
 	}
@@ -85,8 +90,8 @@ public:
 	 */
 	inline void drop(int32_t dropCount)
 	{
-		m_index -= dropCount;
-		m_index = std::max(m_index, 0);
+		if ((m_index -= dropCount) < 0)
+			m_index = 0;
 	}
 
 	/*! \brief Stack depth.
@@ -99,8 +104,8 @@ public:
 	}
 
 private:
-	enum { MaxStackDepth = 64 };
-	ActionValue m_stack[MaxStackDepth];
+	enum { MaxStackDepth = 128 };
+	AutoArrayPtr< ActionValue > m_stack;
 	int32_t m_index;
 };
 

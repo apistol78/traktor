@@ -32,14 +32,14 @@ void AsSecurity::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"allowDomain", createNativeFunctionValue(this, &AsSecurity::Security_allowDomain));
 	prototype->setMember(L"allowInsecureDomain", createNativeFunctionValue(this, &AsSecurity::Security_allowInsecureDomain));
 	prototype->setMember(L"loadPolicyFile", createNativeFunctionValue(this, &AsSecurity::Security_loadPolicyFile));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsSecurity::construct(ActionContext* context, const args_t& args)

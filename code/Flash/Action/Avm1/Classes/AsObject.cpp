@@ -43,12 +43,12 @@ void AsObject::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsObject::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionObject(this));
+	return ActionValue(new ActionObject(this));
 }
 
 void AsObject::Object_addProperty(CallArgs& ca)

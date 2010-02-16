@@ -49,10 +49,9 @@ public:
 
 	explicit ActionValue(const std::wstring& s);
 
-	virtual ~ActionValue();
+	explicit ActionValue(ActionObject* o);
 
-	/*! \brief Wrap object as value. */
-	static ActionValue fromObject(ActionObject* const o);
+	virtual ~ActionValue();
 
 	/*! \brief Cast to boolean. */
 	ActionValue toBoolean() const;
@@ -90,7 +89,7 @@ public:
 	std::wstring getString() const { T_ASSERT_M (m_type == AvtString, L"Incorrect type"); return m_value.s; }
 
 	/*! \brief Get object value. */
-	Ref< ActionObject > getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return m_value.o; }
+	ActionObject* getObject() const { T_ASSERT_M (m_type == AvtObject, L"Incorrect type"); return m_value.o; }
 
 	/*! \brief Get boolean value safe. */
 	bool getBooleanSafe() const;
@@ -107,7 +106,7 @@ public:
 	ActionValue& operator = (const ActionValue& v);
 
 	template < typename ObjectType >
-	Ref< ObjectType > getObject() const
+	ObjectType* getObject() const
 	{
 		return dynamic_type_cast< ObjectType* >(getObject());
 	}

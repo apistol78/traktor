@@ -35,14 +35,14 @@ void AsTextField::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
-	prototype->setMember(L"StyleSheet", ActionValue::fromObject(AsTextField_StyleSheet::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
+	prototype->setMember(L"StyleSheet", ActionValue(AsTextField_StyleSheet::getInstance()));
 
 	prototype->addProperty(L"text", createNativeFunction(this, &AsTextField::TextField_get_text), createNativeFunction(this, &AsTextField::TextField_set_text));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsTextField::construct(ActionContext* context, const args_t& args)

@@ -44,31 +44,31 @@ ActionGlobal::ActionGlobal()
 	setMember(L"escape", createNativeFunctionValue(this, &ActionGlobal::Global_escape));
 
 	// Create prototypes.
-	setMember(L"Object", ActionValue::fromObject(AsObject::getInstance()));
-	setMember(L"Accessibility", ActionValue::fromObject(AsAccessibility::getInstance()));
-	setMember(L"Array", ActionValue::fromObject(AsArray::getInstance()));
-	setMember(L"Boolean", ActionValue::fromObject(AsBoolean::getInstance()));
-	setMember(L"Button", ActionValue::fromObject(AsButton::getInstance()));
-	setMember(L"Date", ActionValue::fromObject(AsDate::getInstance()));
-	setMember(L"Error", ActionValue::fromObject(AsError::getInstance()));
-	setMember(L"Function", ActionValue::fromObject(AsFunction::getInstance()));
-	setMember(L"I18N", ActionValue::fromObject(AsI18N::getInstance()));
-	setMember(L"Key", ActionValue::fromObject(AsKey::createInstance()));
-	setMember(L"LoadVars", ActionValue::fromObject(AsLoadVars::getInstance()));
-	setMember(L"LocalConnection", ActionValue::fromObject(AsLocalConnection::getInstance()));
-	setMember(L"Math", ActionValue::fromObject(AsMath::getInstance()));
-	setMember(L"Mouse", ActionValue::fromObject(AsMouse::createInstance()));
-	setMember(L"MovieClip", ActionValue::fromObject(AsMovieClip::getInstance()));
-	setMember(L"MovieClipLoader", ActionValue::fromObject(AsMovieClipLoader::getInstance()));
-	setMember(L"Number", ActionValue::fromObject(AsMath::getInstance()));
-	setMember(L"Security", ActionValue::fromObject(AsSecurity::getInstance()));
-	setMember(L"Sound", ActionValue::fromObject(AsSound::getInstance()));
-	setMember(L"Stage", ActionValue::fromObject(AsStage::getInstance()));
-	setMember(L"String", ActionValue::fromObject(AsString::getInstance()));
-	setMember(L"System", ActionValue::fromObject(AsSystem::getInstance()));
-	setMember(L"TextField", ActionValue::fromObject(AsTextField::getInstance()));
-	setMember(L"XML", ActionValue::fromObject(AsXML::getInstance()));
-	setMember(L"XMLNode", ActionValue::fromObject(AsXMLNode::getInstance()));
+	setMember(L"Object", ActionValue(AsObject::getInstance()));
+	setMember(L"Accessibility", ActionValue(AsAccessibility::getInstance()));
+	setMember(L"Array", ActionValue(AsArray::getInstance()));
+	setMember(L"Boolean", ActionValue(AsBoolean::getInstance()));
+	setMember(L"Button", ActionValue(AsButton::getInstance()));
+	setMember(L"Date", ActionValue(AsDate::getInstance()));
+	setMember(L"Error", ActionValue(AsError::getInstance()));
+	setMember(L"Function", ActionValue(AsFunction::getInstance()));
+	setMember(L"I18N", ActionValue(AsI18N::getInstance()));
+	setMember(L"Key", ActionValue(AsKey::createInstance()));
+	setMember(L"LoadVars", ActionValue(AsLoadVars::getInstance()));
+	setMember(L"LocalConnection", ActionValue(AsLocalConnection::getInstance()));
+	setMember(L"Math", ActionValue(AsMath::getInstance()));
+	setMember(L"Mouse", ActionValue(AsMouse::createInstance()));
+	setMember(L"MovieClip", ActionValue(AsMovieClip::getInstance()));
+	setMember(L"MovieClipLoader", ActionValue(AsMovieClipLoader::getInstance()));
+	setMember(L"Number", ActionValue(AsMath::getInstance()));
+	setMember(L"Security", ActionValue(AsSecurity::getInstance()));
+	setMember(L"Sound", ActionValue(AsSound::getInstance()));
+	setMember(L"Stage", ActionValue(AsStage::getInstance()));
+	setMember(L"String", ActionValue(AsString::getInstance()));
+	setMember(L"System", ActionValue(AsSystem::getInstance()));
+	setMember(L"TextField", ActionValue(AsTextField::getInstance()));
+	setMember(L"XML", ActionValue(AsXML::getInstance()));
+	setMember(L"XMLNode", ActionValue(AsXMLNode::getInstance()));
 
 	// flash.
 	Ref< ActionObject > flash = new ActionObject(AsObject::getInstance());
@@ -76,12 +76,12 @@ ActionGlobal::ActionGlobal()
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject(AsObject::getInstance());
 		{
-			geom->setMember(L"Point", ActionValue::fromObject(AsPoint::getInstance()));
-			geom->setMember(L"Rectangle", ActionValue::fromObject(AsRectangle::getInstance()));
+			geom->setMember(L"Point", ActionValue(AsPoint::getInstance()));
+			geom->setMember(L"Rectangle", ActionValue(AsRectangle::getInstance()));
 		}
-		flash->setMember(L"geom", ActionValue::fromObject(geom));
+		flash->setMember(L"geom", ActionValue(geom));
 	}
-	setMember(L"flash", ActionValue::fromObject(flash));
+	setMember(L"flash", ActionValue(flash));
 
 	// mx.
 	Ref< ActionObject > mx = new ActionObject(AsObject::getInstance());
@@ -90,18 +90,18 @@ ActionGlobal::ActionGlobal()
 		Ref< ActionObject > transitions = new ActionObject(AsObject::getInstance());
 		if (transitions)
 		{
-			transitions->setMember(L"Tween", ActionValue::fromObject(AsTween::getInstance()));
+			transitions->setMember(L"Tween", ActionValue(AsTween::getInstance()));
 
 			// mx.transitions.easing
 			Ref< ActionObject > easing = new ActionObject(AsObject::getInstance());
 			if (easing)
 			{
-				transitions->setMember(L"easing", ActionValue::fromObject(easing));
+				transitions->setMember(L"easing", ActionValue(easing));
 			}
 		}
-		mx->setMember(L"transitions", ActionValue::fromObject(transitions));
+		mx->setMember(L"transitions", ActionValue(transitions));
 	}
-	setMember(L"mx", ActionValue::fromObject(mx));
+	setMember(L"mx", ActionValue(mx));
 }
 
 void ActionGlobal::Global_ASSetPropFlags(CallArgs& ca)

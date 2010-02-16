@@ -37,7 +37,7 @@ void AsMovieClip::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"attachAudio", createNativeFunctionValue(this, &AsMovieClip::MovieClip_attachAudio));
 	prototype->setMember(L"attachBitmap", createNativeFunctionValue(this, &AsMovieClip::MovieClip_attachBitmap));
 	prototype->setMember(L"attachMovie", createNativeFunctionValue(this, &AsMovieClip::MovieClip_attachMovie));
@@ -126,7 +126,7 @@ void AsMovieClip::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsMovieClip::construct(ActionContext* context, const args_t& args)
@@ -134,7 +134,7 @@ ActionValue AsMovieClip::construct(ActionContext* context, const args_t& args)
 	// Create a fake sprite character for this instance.
 	Ref< FlashSprite > sprite = new FlashSprite(0, 0);
 	sprite->addFrame(new FlashFrame());
-	return ActionValue::fromObject(sprite->createInstance(context, 0));
+	return ActionValue(sprite->createInstance(context, 0));
 }
 
 void AsMovieClip::MovieClip_attachAudio(CallArgs& ca)
@@ -185,7 +185,7 @@ void AsMovieClip::MovieClip_attachMovie(CallArgs& ca)
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
 	displayList.showObject(depth, attachClipId, attachClipInstance);
 
-	ca.ret = ActionValue::fromObject(attachClipInstance.ptr());
+	ca.ret = ActionValue(attachClipInstance.ptr());
 }
 
 void AsMovieClip::MovieClip_beginBitmapFill(CallArgs& ca)
@@ -234,7 +234,7 @@ void AsMovieClip::MovieClip_createEmptyMovieClip(CallArgs& ca)
 	FlashDisplayList& displayList = movieClipInstance->getDisplayList();
 	displayList.showObject(depth, emptyClipId, emptyClipInstance);
 
-	ca.ret = ActionValue::fromObject(emptyClipInstance.ptr());
+	ca.ret = ActionValue(emptyClipInstance.ptr());
 }
 
 void AsMovieClip::MovieClip_createTextField(CallArgs& ca)
@@ -660,7 +660,7 @@ void AsMovieClip::MovieClip_set_opaqueBackground(CallArgs& ca)
 void AsMovieClip::MovieClip_get_parent(CallArgs& ca)
 {
 	FlashSpriteInstance* movieClipInstance = checked_type_cast< FlashSpriteInstance*, false >(ca.self);
-	ca.ret = ActionValue::fromObject(movieClipInstance->getParent());
+	ca.ret = ActionValue(movieClipInstance->getParent());
 }
 
 void AsMovieClip::MovieClip_set_parent(CallArgs& ca)

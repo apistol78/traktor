@@ -32,7 +32,7 @@ void AsButton::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 
 	prototype->addProperty(L"_alpha", createNativeFunction(this, &AsButton::Button_get_alpha), createNativeFunction(this, &AsButton::Button_set_alpha));
 	prototype->addProperty(L"blendMode", createNativeFunction(this, &AsButton::Button_get_blendMode), createNativeFunction(this, &AsButton::Button_set_blendMode));
@@ -66,7 +66,7 @@ void AsButton::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsButton::construct(ActionContext* context, const args_t& args)

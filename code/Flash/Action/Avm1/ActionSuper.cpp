@@ -29,7 +29,7 @@ ActionSuper::ActionSuper(ActionObject* object)
 		m_superClass = dynamic_type_cast< ActionFunction* >(m_superPrototype);
 
 	// Set super prototype as our __proto__.
-	setMember(L"__proto__", ActionValue::fromObject(m_superPrototype));
+	setMember(L"__proto__", ActionValue(m_superPrototype));
 	setReadOnly();
 
 	if (m_superClass)

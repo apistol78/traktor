@@ -68,8 +68,8 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 
 	if (!parent)
 	{
-		global->setMember(L"_root", ActionValue::fromObject(spriteInstance));
-		global->setMember(L"_level0", ActionValue::fromObject(spriteInstance));
+		global->setMember(L"_root", ActionValue(spriteInstance));
+		global->setMember(L"_level0", ActionValue(spriteInstance));
 	}
 
 	// See if MovieClip has another class registered.

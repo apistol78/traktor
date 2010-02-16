@@ -92,7 +92,7 @@ void AsMouse::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsMouse::Mouse_addListener));
 	prototype->setMember(L"removeListener", createNativeFunctionValue(this, &AsMouse::Mouse_removeListener));
 	prototype->setMember(L"show", createNativeFunctionValue(this, &AsMouse::Mouse_show));
@@ -100,7 +100,7 @@ void AsMouse::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsMouse::construct(ActionContext* context, const args_t& args)

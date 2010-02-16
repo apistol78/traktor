@@ -32,7 +32,7 @@ void AsSound::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"attachSound", createNativeFunctionValue(this, &AsSound::Sound_attachSound));
 	prototype->setMember(L"getBytesLoaded", createNativeFunctionValue(this, &AsSound::Sound_getBytesLoaded));
 	prototype->setMember(L"getBytesTotal", createNativeFunctionValue(this, &AsSound::Sound_getBytesTotal));
@@ -53,7 +53,7 @@ void AsSound::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsSound::construct(ActionContext* context, const args_t& args)

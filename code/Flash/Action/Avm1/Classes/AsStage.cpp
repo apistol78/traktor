@@ -34,14 +34,14 @@ void AsStage::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 
 	prototype->addProperty(L"width", createNativeFunction(this, &AsStage::Stage_get_width), createNativeFunction(this, &AsStage::Stage_set_width));
 	prototype->addProperty(L"height", createNativeFunction(this, &AsStage::Stage_get_height), createNativeFunction(this, &AsStage::Stage_set_height));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsStage::construct(ActionContext* context, const args_t& args)
