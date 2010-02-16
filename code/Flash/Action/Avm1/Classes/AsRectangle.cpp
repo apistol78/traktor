@@ -33,7 +33,7 @@ void AsRectangle::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"clone", createNativeFunctionValue(this, &AsRectangle::Rectangle_clone));
 	prototype->setMember(L"contains", createNativeFunctionValue(this, &AsRectangle::Rectangle_contains));
 	prototype->setMember(L"containsPoint", createNativeFunctionValue(this, &AsRectangle::Rectangle_containsPoint));
@@ -64,7 +64,7 @@ void AsRectangle::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsRectangle::construct(ActionContext* context, const args_t& args)
@@ -79,13 +79,13 @@ ActionValue AsRectangle::construct(ActionContext* context, const args_t& args)
 		rc->bottom = rc->top + args[3].getNumberSafe();
 	}
 
-	return ActionValue::fromObject(rc);
+	return ActionValue(rc);
 }
 
 void AsRectangle::Rectangle_clone(CallArgs& ca)
 {
 	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue::fromObject(new ActionRectangle(
+	ca.ret = ActionValue(new ActionRectangle(
 		rc->left,
 		rc->top,
 		rc->right,
@@ -213,7 +213,7 @@ void AsRectangle::Rectangle_set_bottom(CallArgs& ca)
 void AsRectangle::Rectangle_get_bottomRight(CallArgs& ca)
 {
 	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue::fromObject(new ActionPoint(rc->right, rc->bottom));
+	ca.ret = ActionValue(new ActionPoint(rc->right, rc->bottom));
 }
 
 void AsRectangle::Rectangle_set_bottomRight(CallArgs& ca)
@@ -263,7 +263,7 @@ void AsRectangle::Rectangle_set_right(CallArgs& ca)
 void AsRectangle::Rectangle_get_size(CallArgs& ca)
 {
 	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue::fromObject(new ActionPoint(rc->right - rc->left, rc->bottom - rc->top));
+	ca.ret = ActionValue(new ActionPoint(rc->right - rc->left, rc->bottom - rc->top));
 }
 
 void AsRectangle::Rectangle_set_size(CallArgs& ca)
@@ -289,7 +289,7 @@ void AsRectangle::Rectangle_set_top(CallArgs& ca)
 void AsRectangle::Rectangle_get_topLeft(CallArgs& ca)
 {
 	Ref< ActionRectangle > rc = checked_type_cast< ActionRectangle* >(ca.self);
-	ca.ret = ActionValue::fromObject(new ActionPoint(rc->left, rc->top));
+	ca.ret = ActionValue(new ActionPoint(rc->left, rc->top));
 }
 
 void AsRectangle::Rectangle_set_topLeft(CallArgs& ca)

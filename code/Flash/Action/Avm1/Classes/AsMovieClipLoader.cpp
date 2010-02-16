@@ -31,7 +31,7 @@ void AsMovieClipLoader::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"addListener", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_addListener));
 	prototype->setMember(L"getProgress", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_getProgress));
 	prototype->setMember(L"loadClip", createNativeFunctionValue(this, &AsMovieClipLoader::MovieClipLoader_loadClip));
@@ -40,12 +40,12 @@ void AsMovieClipLoader::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsMovieClipLoader::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionObject(this));
+	return ActionValue(new ActionObject(this));
 }
 
 void AsMovieClipLoader::MovieClipLoader_addListener(CallArgs& ca)

@@ -32,11 +32,11 @@ void AsSystem::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"security", ActionValue::fromObject(AsSecurity::getInstance()));
+	prototype->setMember(L"security", ActionValue(AsSecurity::getInstance()));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsSystem::construct(ActionContext* context, const args_t& args)

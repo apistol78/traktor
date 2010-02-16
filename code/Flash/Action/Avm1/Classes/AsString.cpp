@@ -36,7 +36,7 @@ void AsString::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"charAt", createNativeFunctionValue(this, &AsString::String_charAt));
 	prototype->setMember(L"charCodeAt", createNativeFunctionValue(this, &AsString::String_charCodeAt));
 	prototype->setMember(L"concat", createNativeFunctionValue(this, &AsString::String_concat));
@@ -54,15 +54,15 @@ void AsString::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsString::construct(ActionContext* context, const args_t& args)
 {
 	if (args.size() > 0)
-		return ActionValue::fromObject(new ActionString(args[0].getString()));
+		return ActionValue(new ActionString(args[0].getString()));
 	else
-		return ActionValue::fromObject(new ActionString());
+		return ActionValue(new ActionString());
 }
 
 void AsString::String_charAt(CallArgs& ca)
@@ -73,9 +73,9 @@ void AsString::String_charAt(CallArgs& ca)
 	uint32_t index = uint32_t(ca.args[0].getNumberSafe());
 
 	if (index < st.length())
-		ca.ret = ActionValue::fromObject(new ActionString(st[index]));
+		ca.ret = ActionValue(new ActionString(st[index]));
 	else
-		ca.ret = ActionValue::fromObject(new ActionString());
+		ca.ret = ActionValue(new ActionString());
 }
 
 void AsString::String_charCodeAt(CallArgs& ca)
@@ -107,7 +107,7 @@ void AsString::String_concat(CallArgs& ca)
 void AsString::String_fromCharCode(CallArgs& ca)
 {
 	wchar_t charCode = wchar_t(ca.args[0].getNumberSafe());
-	ca.ret = ActionValue::fromObject(new ActionString(charCode));
+	ca.ret = ActionValue(new ActionString(charCode));
 }
 
 void AsString::String_indexOf(CallArgs& ca)
@@ -158,7 +158,7 @@ void AsString::String_split(CallArgs& ca)
 	for (std::vector< std::wstring >::const_iterator i = words.begin(); i != words.end(); ++i)
 		arr->push(ActionValue(*i));
 
-	ca.ret = ActionValue::fromObject(arr);
+	ca.ret = ActionValue(arr);
 }
 
 void AsString::String_substr(CallArgs& ca)
@@ -187,19 +187,19 @@ void AsString::String_toLowerCase(CallArgs& ca)
 {
 	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue::fromObject(new ActionString(toLower(st)));
+	ca.ret = ActionValue(new ActionString(toLower(st)));
 }
 
 void AsString::String_toString(CallArgs& ca)
 {
-	ca.ret = ActionValue::fromObject(ca.self);
+	ca.ret = ActionValue(ca.self);
 }
 
 void AsString::String_toUpperCase(CallArgs& ca)
 {
 	Ref< ActionString > self = checked_type_cast< ActionString* >(ca.self);
 	const std::wstring& st = self->get();
-	ca.ret = ActionValue::fromObject(new ActionString(toUpper(st)));
+	ca.ret = ActionValue(new ActionString(toUpper(st)));
 }
 
 void AsString::String_valueOf(CallArgs& ca)

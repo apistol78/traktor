@@ -30,7 +30,7 @@ void AsXML::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsXMLNode::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsXMLNode::getInstance()));
 	prototype->setMember(L"addRequestHeader", createNativeFunctionValue(this, &AsXML::XML_addRequestHeader));
 	prototype->setMember(L"createElement", createNativeFunctionValue(this, &AsXML::XML_createElement));
 	prototype->setMember(L"createTextNode", createNativeFunctionValue(this, &AsXML::XML_createTextNode));
@@ -51,12 +51,12 @@ void AsXML::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsXML::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionObject(this));
+	return ActionValue(new ActionObject(this));
 }
 
 void AsXML::XML_addRequestHeader(CallArgs& ca)

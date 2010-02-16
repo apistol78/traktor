@@ -83,7 +83,7 @@ void AsKey::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"BACKSPACE", ActionValue(avm_number_t(AkBackspace)));
 	prototype->setMember(L"CAPSLOCK", ActionValue(avm_number_t(AkCapsLock)));
 	prototype->setMember(L"CONTROL", ActionValue(avm_number_t(AkControl)));
@@ -112,7 +112,7 @@ void AsKey::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsKey::construct(ActionContext* context, const args_t& args)

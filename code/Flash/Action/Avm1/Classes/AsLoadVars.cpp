@@ -31,7 +31,7 @@ void AsLoadVars::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"addRequestHeader", createNativeFunctionValue(this, &AsLoadVars::LoadVars_addRequestHeader));
 	prototype->setMember(L"decode", createNativeFunctionValue(this, &AsLoadVars::LoadVars_decode));
 	prototype->setMember(L"getBytesLoaded", createNativeFunctionValue(this, &AsLoadVars::LoadVars_getBytesLoaded));
@@ -46,12 +46,12 @@ void AsLoadVars::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsLoadVars::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionObject(this));
+	return ActionValue(new ActionObject(this));
 }
 
 void AsLoadVars::LoadVars_addRequestHeader(CallArgs& ca)

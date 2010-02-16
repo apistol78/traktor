@@ -16,6 +16,7 @@ namespace traktor
 wchar_t* refStringCreate(const wchar_t* s)
 {
 	uint32_t len = wcslen(s);
+	T_ASSERT (len < 4096);
 	
 	void* ptr = Alloc::acquire(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t));
 	if (!ptr)
@@ -54,12 +55,13 @@ wchar_t* refStringDec(wchar_t* s)
 ActionValue::ActionValue()
 :	m_type(AvtUndefined)
 {
-	m_value.n = 0;
+	m_value.o = 0;
 }
 
 ActionValue::ActionValue(const ActionValue& v)
 :	m_type(v.m_type)
 {
+	m_value.o = 0;
 	if (m_type == AvtString)
 		m_value.s = refStringInc(v.m_value.s);
 	else if (m_type == AvtObject)
@@ -74,12 +76,14 @@ ActionValue::ActionValue(const ActionValue& v)
 ActionValue::ActionValue(bool b)
 :	m_type(AvtBoolean)
 {
+	m_value.o = 0;
 	m_value.b = b;
 }
 
 ActionValue::ActionValue(avm_number_t n)
 :	m_type(AvtNumber)
 {
+	m_value.o = 0;
 	m_value.n = n;
 }
 
@@ -95,6 +99,13 @@ ActionValue::ActionValue(const std::wstring& s)
 	m_value.s = refStringCreate(s.c_str());
 }
 
+ActionValue::ActionValue(ActionObject* o)
+:	m_type(AvtObject)
+{
+	T_SAFE_ADDREF(o);
+	m_value.o = o;
+}
+
 ActionValue::~ActionValue()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -105,17 +116,6 @@ ActionValue::~ActionValue()
 		T_SAFE_RELEASE (m_value.o);
 
 	T_EXCEPTION_GUARD_END
-}
-
-ActionValue ActionValue::fromObject(ActionObject* const o)
-{
-	T_SAFE_ADDREF(o);
-
-	ActionValue value;
-	value.m_type = AvtObject;
-	value.m_value.o = o;
-
-	return value;
 }
 
 ActionValue ActionValue::toBoolean() const

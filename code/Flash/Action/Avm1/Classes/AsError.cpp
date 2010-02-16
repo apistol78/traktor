@@ -31,13 +31,13 @@ void AsError::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"message", ActionValue(L""));
 	prototype->setMember(L"name", ActionValue(L""));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsError::construct(ActionContext* context, const args_t& args)
@@ -47,7 +47,7 @@ ActionValue AsError::construct(ActionContext* context, const args_t& args)
 	if (args.size() > 0)
 		errorObject->setMember(L"message", args[0]);
 
-	return ActionValue::fromObject(errorObject);
+	return ActionValue(errorObject);
 }
 
 	}

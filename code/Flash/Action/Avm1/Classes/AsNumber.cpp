@@ -33,7 +33,7 @@ void AsNumber::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"MAX_VALUE", ActionValue(std::numeric_limits< avm_number_t >::max()));
 	prototype->setMember(L"MIN_VALUE", ActionValue(std::numeric_limits< avm_number_t >::min()));
 	prototype->setMember(L"NaN", ActionValue(std::numeric_limits< avm_number_t >::signaling_NaN()));
@@ -44,15 +44,15 @@ void AsNumber::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsNumber::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue::fromObject(new ActionNumber(0.0));
+		return ActionValue(new ActionNumber(0.0));
 	else
-		return ActionValue::fromObject(new ActionNumber(args[0].getNumberSafe()));
+		return ActionValue(new ActionNumber(args[0].getNumberSafe()));
 }
 
 void AsNumber::Number_toString(CallArgs& ca)

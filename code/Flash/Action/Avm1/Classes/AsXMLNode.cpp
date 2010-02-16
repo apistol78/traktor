@@ -30,7 +30,7 @@ void AsXMLNode::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"appendChild", createNativeFunctionValue(this, &AsXMLNode::XMLNode_appendChild));
 	prototype->setMember(L"cloneNode", createNativeFunctionValue(this, &AsXMLNode::XMLNode_cloneNode));
 	prototype->setMember(L"getNamespaceForPrefix", createNativeFunctionValue(this, &AsXMLNode::XMLNode_getNamespaceForPrefix));
@@ -42,12 +42,12 @@ void AsXMLNode::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsXMLNode::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionObject(this));
+	return ActionValue(new ActionObject(this));
 }
 
 void AsXMLNode::XMLNode_appendChild(CallArgs& ca)

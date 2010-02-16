@@ -24,7 +24,7 @@ ActionFrame::ActionFrame(
 ,	m_dictionary(dictionary)
 ,	m_callee(callee)
 {
-	setVariable(L"this", ActionValue::fromObject(self));
+	setVariable(L"this", ActionValue(self));
 }
 
 void ActionFrame::setRegister(uint16_t index, const ActionValue& value)

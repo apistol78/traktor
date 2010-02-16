@@ -121,7 +121,7 @@ inline Ref< ActionFunctionNative > createNativeFunction(FunctionFnc::F function)
  */
 inline ActionValue createNativeFunctionValue(FunctionFnc::F function)
 {
-	return ActionValue::fromObject(createNativeFunction(function));
+	return ActionValue(createNativeFunction(function));
 }
 
 /*! \brief Create native function.
@@ -139,7 +139,7 @@ inline ActionFunctionNative* createNativeFunction(TargetType* object, typename M
 template < typename TargetType >
 inline ActionValue createNativeFunctionValue(TargetType* object, typename MethodFnc< TargetType >::M method)
 {
-	return ActionValue::fromObject(createNativeFunction(object, method));
+	return ActionValue(createNativeFunction(object, method));
 }
 
 	}

@@ -65,7 +65,7 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 #if defined(_DEBUG)
 		log::debug << L"AffPreloadThis (" << int32_t(preloadRegister) << L")" << Endl;
 #endif
-		callFrame.setRegister(preloadRegister++, ActionValue::fromObject(self));
+		callFrame.setRegister(preloadRegister++, ActionValue(self));
 	}
 	if (!(m_flags & AffSuppressThis))
 	{
@@ -84,14 +84,14 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 #if defined(_DEBUG)
 			log::debug << L"AffPreloadArguments (" << int32_t(preloadRegister) << L")" << Endl;
 #endif
-			callFrame.setRegister(preloadRegister++, ActionValue::fromObject(argumentArray));
+			callFrame.setRegister(preloadRegister++, ActionValue(argumentArray));
 		}
 		if (!(m_flags & AffSuppressArguments))
 		{
 #if defined(_DEBUG)
 			log::debug << L"!AffSuppressArguments" << Endl;
 #endif
-			callFrame.setVariable(L"arguments", ActionValue::fromObject(argumentArray));
+			callFrame.setVariable(L"arguments", ActionValue(argumentArray));
 		}
 	}
 
@@ -103,14 +103,14 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 #if defined(_DEBUG)
 			log::debug << L"AffPreloadSuper (" << int32_t(preloadRegister) << L")" << Endl;
 #endif
-			callFrame.setRegister(preloadRegister++, ActionValue::fromObject(super));
+			callFrame.setRegister(preloadRegister++, ActionValue(super));
 		}
 		if (!(m_flags & AffSuppressSuper))
 		{
 #if defined(_DEBUG)
 			log::debug << L"!AffSuppressSuper" << Endl;
 #endif
-			callFrame.setVariable(L"super", ActionValue::fromObject(super));
+			callFrame.setVariable(L"super", ActionValue(super));
 		}
 	}
 
@@ -130,14 +130,14 @@ ActionValue ActionFunction2::call(const IActionVM* vm, ActionFrame* callerFrame,
 #endif
 		FlashCharacterInstance* characterInstance = checked_type_cast< FlashCharacterInstance* >(self);
 		T_ASSERT (characterInstance);
-		callFrame.setRegister(preloadRegister++, ActionValue::fromObject(characterInstance->getParent()));
+		callFrame.setRegister(preloadRegister++, ActionValue(characterInstance->getParent()));
 	}
 	if (m_flags & AffPreloadGlobal)
 	{
 #if defined(_DEBUG)
 		log::info << L"AffPreloadGlobal (" << int32_t(preloadRegister) << L")" << Endl;
 #endif
-		callFrame.setRegister(preloadRegister++, ActionValue::fromObject(context->getGlobal()));
+		callFrame.setRegister(preloadRegister++, ActionValue(context->getGlobal()));
 	}
 
 	int argumentPassed = 0;

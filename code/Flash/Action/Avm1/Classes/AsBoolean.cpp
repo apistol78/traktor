@@ -31,21 +31,21 @@ void AsBoolean::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"toString", createNativeFunctionValue(this, &AsBoolean::Boolean_toString));
 	prototype->setMember(L"valueOf", createNativeFunctionValue(this, &AsBoolean::Boolean_valueOf));
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsBoolean::construct(ActionContext* context, const args_t& args)
 {
 	if (args.empty())
-		return ActionValue::fromObject(new ActionBoolean(false));
+		return ActionValue(new ActionBoolean(false));
 	else
-		return ActionValue::fromObject(new ActionBoolean(args[0].getBooleanSafe()));
+		return ActionValue(new ActionBoolean(args[0].getBooleanSafe()));
 }
 
 void AsBoolean::Boolean_toString(CallArgs& ca)

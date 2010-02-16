@@ -32,7 +32,7 @@ void AsArray::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"CASEINSENSITIVE", ActionValue(avm_number_t(0)));
 	prototype->setMember(L"DESCENDING", ActionValue(avm_number_t(1)));
 	prototype->setMember(L"NUMERIC", ActionValue(avm_number_t(2)));
@@ -55,7 +55,7 @@ void AsArray::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsArray::construct(ActionContext* context, const args_t& args)
@@ -63,16 +63,16 @@ ActionValue AsArray::construct(ActionContext* context, const args_t& args)
 	Ref< ActionArray > object = new ActionArray();
 	for (args_t::const_iterator i = args.begin(); i != args.end(); ++i)
 		object->push(*i);
-	return ActionValue::fromObject(object);
+	return ActionValue(object);
 }
 
 void AsArray::Array_concat(CallArgs& ca)
 {
 	Ref< ActionArray > arr = checked_type_cast< ActionArray* >(ca.self);
 	if (!ca.args.empty())
-		ca.ret = ActionValue::fromObject(arr->concat(ca.args));
+		ca.ret = ActionValue(arr->concat(ca.args));
 	else
-		ca.ret = ActionValue::fromObject(arr->concat());
+		ca.ret = ActionValue(arr->concat());
 }
 
 void AsArray::Array_join(CallArgs& ca)

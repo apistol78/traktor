@@ -225,7 +225,7 @@ bool FlashSpriteInstance::getMember(const std::wstring& memberName, ActionValue&
 	FlashDisplayList::layer_map_t::const_iterator i = m_displayList.findLayer(memberName);
 	if (i != m_displayList.getLayers().end())
 	{
-		outMemberValue = ActionValue::fromObject(i->second.instance);
+		outMemberValue = ActionValue(i->second.instance);
 		return true;
 	}
 

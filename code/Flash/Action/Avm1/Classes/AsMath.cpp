@@ -32,7 +32,7 @@ void AsMath::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"e", ActionValue(avm_number_t(2.7182818284590452354)));
 	prototype->setMember(L"ln2", ActionValue(avm_number_t(0.69314718055994530942)));
 	prototype->setMember(L"log2e", ActionValue(avm_number_t(1.4426950408889634074)));
@@ -62,7 +62,7 @@ void AsMath::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsMath::construct(ActionContext* context, const args_t& args)

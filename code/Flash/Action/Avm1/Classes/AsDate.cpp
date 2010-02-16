@@ -31,7 +31,7 @@ void AsDate::createPrototype()
 {
 	Ref< ActionObject > prototype = new ActionObject();
 
-	prototype->setMember(L"__proto__", ActionValue::fromObject(AsObject::getInstance()));
+	prototype->setMember(L"__proto__", ActionValue(AsObject::getInstance()));
 	prototype->setMember(L"getDate", createNativeFunctionValue(this, &AsDate::Date_getDate));
 	prototype->setMember(L"getDay", createNativeFunctionValue(this, &AsDate::Date_getDay));
 	prototype->setMember(L"getFullYear", createNativeFunctionValue(this, &AsDate::Date_getFullYear));
@@ -74,12 +74,12 @@ void AsDate::createPrototype()
 
 	prototype->setReadOnly();
 
-	setMember(L"prototype", ActionValue::fromObject(prototype));
+	setMember(L"prototype", ActionValue(prototype));
 }
 
 ActionValue AsDate::construct(ActionContext* context, const args_t& args)
 {
-	return ActionValue::fromObject(new ActionDate());
+	return ActionValue(new ActionDate());
 }
 
 void AsDate::Date_getDate(CallArgs& ca)
