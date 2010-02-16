@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,19 +17,15 @@ namespace traktor
 	namespace ui
 	{
 
-class Widget;
 class Command;
+class Widget;
 
-		namespace custom
-		{
-
-class ToolBar;
-
-		}
 	}
 
 	namespace editor
 	{
+
+class IEditorPageSite;
 
 /*! \brief Editor plugin.
  * \ingroup Editor
@@ -44,11 +40,11 @@ class T_DLLCLASS IEditorPlugin : public Object
 public:
 	/*! \brief Create plugin.
 	 *
-	 * \param parent Parent widget.
-	 * \param toolBar Editor toolbar.
+	 * \param parent UI parent widget.
+	 * \param site Editor site interface.
 	 * \return True if created successfully.
 	 */
-	virtual bool create(ui::Widget* parent, ui::custom::ToolBar* toolBar) = 0;
+	virtual bool create(ui::Widget* parent, IEditorPageSite* site) = 0;
 
 	/*! \brief Destroy plugin. */
 	virtual void destroy() = 0;
