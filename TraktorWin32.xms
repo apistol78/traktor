@@ -7855,6 +7855,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Auto</name>
+								<items>
+									<item type="File">
+										<fileName>Auto/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
