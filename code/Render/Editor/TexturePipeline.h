@@ -51,6 +51,7 @@ private:
 	int32_t m_skipMips;
 	int32_t m_clampSize;
 	bool m_allowCompression;
+	int32_t m_compressionQuality;
 };
 
 	}

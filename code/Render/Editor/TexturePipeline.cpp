@@ -40,7 +40,6 @@ bool isLog2(int v)
 	return (1 << log2(v)) == v;
 }
 
-
 uint32_t nearestLog2(uint32_t num)
 {
     uint32_t n = num > 0 ? num - 1 : 0;
@@ -96,10 +95,11 @@ struct ScaleTextureTask
 struct CompressTextureTask
 {
 	const drawing::Image* image;
-	int top;
-	int bottom;
+	int32_t top;
+	int32_t bottom;
 	TextureFormat textureFormat;
 	bool hasAlpha;
+	int32_t compressionQuality;
 	std::vector< uint8_t > output;
 
 	void execute()
@@ -148,11 +148,13 @@ struct CompressTextureTask
 						}
 					}
 
+					const int c_compressionFlags[] = { squish::kColourRangeFit, squish::kColourClusterFit, squish::kColourIterativeClusterFit };
+
 					squish::CompressMasked(
 						(const squish::u8*)rgba,
 						mask,
 						block,
-						textureFormat == TfDXT1 ? squish::kDxt1 : squish::kDxt3
+						(textureFormat == TfDXT1 ? squish::kDxt1 : squish::kDxt3) | c_compressionFlags[compressionQuality]
 					);
 
 					block += getTextureBlockSize(textureFormat);
@@ -175,6 +177,7 @@ TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
 ,	m_clampSize(0)
 ,	m_allowCompression(true)
+,	m_compressionQuality(1)
 {
 }
 
@@ -184,6 +187,7 @@ bool TexturePipeline::create(const editor::IPipelineSettings* settings)
 	m_skipMips = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.SkipMips", 0);
 	m_clampSize = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.ClampSize", 0);
 	m_allowCompression = settings->getProperty< editor::PropertyBoolean >(L"TexturePipeline.AllowCompression", true);
+	m_compressionQuality = settings->getProperty< editor::PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
 	return true;
 }
 
@@ -510,6 +514,7 @@ bool TexturePipeline::buildOutput(
 					task->bottom = (height * (j + 1)) / split;
 					task->textureFormat = textureFormat;
 					task->hasAlpha = hasAlpha;
+					task->compressionQuality = m_compressionQuality;
 
 					Job* job = new Job(makeFunctor(task, &CompressTextureTask::execute));
 					JobManager::getInstance().add(*job);
