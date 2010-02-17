@@ -677,7 +677,7 @@ public:
 			uint32_t count = m_polygonData[j].getPositionAttrCount();
 			for (uint32_t k = 0; k < count; k++)
 			{
-				Vector4 pos = m_polygonData[j].getPositionAttr(k);
+				Vector4 pos = transform * m_polygonData[j].getPositionAttr(k);
 				uint32_t positionIndex = outModel->addPosition(pos);
 				m_positionIndicies.push_back(positionIndex);
 			}
@@ -751,7 +751,7 @@ public:
 			uint32_t count = m_polygonData[j].getPositionAttrCount();
 			for (uint32_t k= 0; k < count; k++)
 			{
-				Vector4 pos = morphMesh->m_polygonData[j].getPositionAttr(k);
+				Vector4 pos = transform * morphMesh->m_polygonData[j].getPositionAttr(k);
 				outModel->setBlendTargetPosition(blendTargetIndex, m_positionIndicies[ix++], pos);
 			}
 		}
