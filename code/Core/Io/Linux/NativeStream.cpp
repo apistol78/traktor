@@ -1,11 +1,11 @@
 #include <cstdio>
-#include "Core/Io/Linux/NativeStream.h"
 #include "Core/Io/File.h"
+#include "Core/Io/Linux/NativeStream.h"
 
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, Stream)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.NativeStream", NativeStream, IStream)
 
 NativeStream::NativeStream(std::FILE* fp, uint32_t mode)
 :	m_fp(fp)
@@ -77,11 +77,11 @@ int NativeStream::read(void* block, int nbytes)
 	return int(fread(block, 1, nbytes, m_fp));
 }
 
-int NativeStream::write(const void* block, int nbytes)	
+int NativeStream::write(const void* block, int nbytes)
 {
 	if (m_fp == 0)
 		return 0;
-		
+
 	return int(fwrite(block, 1, nbytes, m_fp));
 }
 

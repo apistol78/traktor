@@ -199,7 +199,7 @@ T_MATH_INLINE Vector2 lerp(const Vector2& a, const Vector2& b, float c)
 T_MATH_INLINE Vector2 reflect(const Vector2& v, const Vector2& at)
 {
 	Vector2 N = at.normalized();
-	Vector2 V = N * ((N, v) * 2.0f);
+	Vector2 V = N * (dot(N, v) * 2.0f);
 	return V - v;
 }
 

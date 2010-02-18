@@ -1796,7 +1796,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
+						<item>__LINUX__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1812,7 +1812,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBOGG-1_1_3_EXPORT</item>
+						<item>__LINUX__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1828,7 +1828,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>__LINUX__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1844,7 +1844,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>__LINUX__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1880,7 +1880,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
+						<item>__LINUX__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1898,7 +1898,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
+						<item>__LINUX__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1916,7 +1916,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>__LINUX__</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -1934,7 +1934,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.1.4/include</item>
 					</includePaths>
 					<definitions>
-						<item>T_STATIC</item>
+						<item>__LINUX__</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths/>
@@ -2913,7 +2913,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.v8</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/v8/src</sourcePath>
 			<configurations>
@@ -3820,7 +3820,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Extern.wxWidgets-2.8.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src</sourcePath>
 			<configurations>
@@ -3848,6 +3848,7 @@
 						<item>HAVE_GMTIME_R</item>
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
+						<item>SIZEOF_INT=4</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3877,6 +3878,7 @@
 						<item>HAVE_GMTIME_R</item>
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
+						<item>SIZEOF_INT=4</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3907,6 +3909,7 @@
 						<item>HAVE_GMTIME_R</item>
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
+						<item>SIZEOF_INT=4</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3936,6 +3939,7 @@
 						<item>HAVE_GMTIME_R</item>
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
+						<item>SIZEOF_INT=4</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -7624,6 +7628,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Auto</name>
+											<items>
+												<item type="File">
+													<fileName>Auto/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -10792,6 +10805,7 @@
 						<item>T_SOUND_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>FLAC_NO_DLL</item>
+						<item>__LINUX__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10812,6 +10826,7 @@
 						<item>T_SOUND_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>FLAC_NO_DLL</item>
+						<item>__LINUX__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10832,6 +10847,7 @@
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>FLAC_NO_DLL</item>
+						<item>__LINUX__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -10852,6 +10868,7 @@
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>FLAC_NO_DLL</item>
+						<item>__LINUX__</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -11657,7 +11674,7 @@
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Ui.Gtk</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
 			<configurations>

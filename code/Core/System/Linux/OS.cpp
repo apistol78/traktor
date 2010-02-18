@@ -1,17 +1,13 @@
 #include <unistd.h>
 #include <sys/param.h>
 #include <pwd.h>
+#include "Core/Misc/TString.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
-#include "Core/Heap/Heap.h"
-#include "Core/Heap/GcNew.h"
-#include "Core/Singleton/SingletonManager.h"
-#include "Core/Misc/TString.h"
 
 namespace traktor
 {
-
-T_IMPLEMENT_RTTI_CLASS(L"traktor.OS", OS, Singleton)
 
 OS& OS::getInstance()
 {
@@ -19,7 +15,7 @@ OS& OS::getInstance()
 	if (!s_instance)
 	{
 		s_instance = new OS();
-		SingletonManager::getInstance().addBefore(s_instance, &Heap::getInstance());
+		SingletonManager::getInstance().add(s_instance);
 	}
 	return *s_instance;
 }
@@ -77,14 +73,26 @@ bool OS::exploreFile(const Path& file) const
 	return false;
 }
 
-Process* OS::execute(const Path& file, const std::wstring& commandLine, const Path& workingDirectory, bool mute) const
+OS::envmap_t OS::getEnvironment() const
+{
+    return envmap_t();
+}
+
+Ref< IProcess > OS::execute(
+    const Path& file,
+    const std::wstring& commandLine,
+    const Path& workingDirectory,
+    const envmap_t* envmap,
+    bool redirect,
+    bool mute
+) const
 {
 	return 0;
 }
 
-SharedMemory* OS::createSharedMemory(const std::wstring& name, uint32_t size) const
+Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const
 {
-	return gc_new< SharedMemoryLinux >(size);
+	return new SharedMemoryLinux(size);
 }
 
 OS::OS()

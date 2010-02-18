@@ -1,9 +1,10 @@
 #include <ctime>
+#include <cstring>
 #include "Core/Date/DateTime.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #if defined(WINCE)
-#include "time_ce.h"
+#   include "time_ce.h"
 #endif
 
 namespace traktor

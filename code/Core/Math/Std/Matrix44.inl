@@ -11,7 +11,7 @@ T_MATH_INLINE Matrix44::Matrix44()
 
 T_MATH_INLINE Matrix44::Matrix44(const Matrix44& m)
 {
-	for (int i = 0; i < sizeof_array(m_c); ++i)
+	for (uint32_t i = 0; i < sizeof_array(m_c); ++i)
 		this->m_c[i] = m.m_c[i];
 }
 
@@ -196,9 +196,9 @@ T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
 
 	if (abs(s) <= FUZZY_EPSILON)
 		return Matrix44::identity();
-	
+
 	s = Scalar(1.0f) / s;
-	
+
 	return Matrix44(
 		s * (m_c[1].y() * m_c[2].z() - m_c[1].z() * m_c[2].y()),
 		s * (m_c[2].y() * m_c[0].z() - m_c[2].z() * m_c[0].y()),
@@ -256,7 +256,7 @@ T_MATH_INLINE Scalar Matrix44::operator () (int r, int c) const
 
 T_MATH_INLINE Matrix44& Matrix44::operator = (const Matrix44& m)
 {
-	for (int i = 0; i < sizeof_array(m_c); ++i)
+	for (uint32_t i = 0; i < sizeof_array(m_c); ++i)
 		this->m_c[i] = m.m_c[i];
 	return *this;
 }
@@ -414,7 +414,7 @@ T_MATH_INLINE Matrix44 perspectiveRh(float fov, float aspect, float zn, float zf
 T_MATH_INLINE Matrix44 translate(const Vector4& t)
 {
 	return Matrix44(
-		1.0f, 0.0f, 0.0f, t.x(), 
+		1.0f, 0.0f, 0.0f, t.x(),
 		0.0f, 1.0f, 0.0f, t.y(),
 		0.0f, 0.0f, 1.0f, t.z(),
 		0.0f, 0.0f, 0.0f, 1.0f
@@ -424,7 +424,7 @@ T_MATH_INLINE Matrix44 translate(const Vector4& t)
 T_MATH_INLINE Matrix44 translate(float x, float y, float z)
 {
 	return Matrix44(
-		1.0f, 0.0f, 0.0f, x, 
+		1.0f, 0.0f, 0.0f, x,
 		0.0f, 1.0f, 0.0f, y,
 		0.0f, 0.0f, 1.0f, z,
 		0.0f, 0.0f, 0.0f, 1.0f
@@ -436,7 +436,7 @@ T_MATH_INLINE Matrix44 rotateX(float angle)
 	float c = cosf(angle);
 	float s = sinf(angle);
 	return Matrix44(
-		1.0f, 0.0f, 0.0f, 0.0f, 
+		1.0f, 0.0f, 0.0f, 0.0f,
 		0.0f,    c,   -s, 0.0f,
 		0.0f,    s,    c, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
@@ -448,7 +448,7 @@ T_MATH_INLINE Matrix44 rotateY(float angle)
 	float c = cosf(angle);
 	float s = sinf(angle);
 	return Matrix44(
-		   c, 0.0f,    s, 0.0f, 
+		   c, 0.0f,    s, 0.0f,
 		0.0f, 1.0f, 0.0f, 0.0f,
 		  -s, 0.0f,    c, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
@@ -460,7 +460,7 @@ T_MATH_INLINE Matrix44 rotateZ(float angle)
 	float c = cosf(angle);
 	float s = sinf(angle);
 	return Matrix44(
-		   c,   -s, 0.0f, 0.0f, 
+		   c,   -s, 0.0f, 0.0f,
 		   s,    c, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
@@ -495,7 +495,7 @@ T_MATH_INLINE Matrix44 rotate(const Vector4& axis, float angle)
 T_MATH_INLINE Matrix44 scale(const Vector4& s)
 {
 	return Matrix44(
-		s.x(),  0.0f,  0.0f, 0.0f, 
+		s.x(),  0.0f,  0.0f, 0.0f,
 		 0.0f, s.y(),  0.0f, 0.0f,
 		 0.0f,  0.0f, s.z(), 0.0f,
 		 0.0f,  0.0f,  0.0f, 1.0f
@@ -505,7 +505,7 @@ T_MATH_INLINE Matrix44 scale(const Vector4& s)
 T_MATH_INLINE Matrix44 scale(float x, float y, float z)
 {
 	return Matrix44(
-		   x, 0.0f, 0.0f, 0.0f, 
+		   x, 0.0f, 0.0f, 0.0f,
 		0.0f,    y, 0.0f, 0.0f,
 		0.0f, 0.0f,    z, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
