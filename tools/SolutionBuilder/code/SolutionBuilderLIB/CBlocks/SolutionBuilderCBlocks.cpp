@@ -80,7 +80,6 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 			os << IncreaseIndent;
 
 			std::wstring outputPath = L"..\\" + configuration->getName();
-			std::wstring outputName = outputPath + L"\\" + project->getName();
 			std::wstring intermediatePath = L"obj\\" + configuration->getName();
 
 			if (m_compiler == L"msvc8")
@@ -88,21 +87,39 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				switch (configuration->getTargetFormat())
 				{
 				case Configuration::TfStaticLibrary:
-					os << L"<Option output=\"" << outputName << L".lib\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L".lib\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
 					break;
 				case Configuration::TfSharedLibrary:
-					os << L"<Option output=\"" << outputName << L".dll\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L".dll\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
 					break;
 				case Configuration::TfExecutable:
-					os << L"<Option output=\"" << outputName << L".exe\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L".exe\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
 					break;
 				case Configuration::TfExecutableConsole:
-					os << L"<Option output=\"" << outputName << L".exe\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L".exe\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					break;
+				}
+			}
+			else if (m_compiler == L"gcc")
+			{
+				switch (configuration->getTargetFormat())
+				{
+				case Configuration::TfStaticLibrary:
+					os << L"<Option output=\"" << outputPath << L"\\lib" << project->getName() << L".a\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					break;
+				case Configuration::TfSharedLibrary:
+					os << L"<Option output=\"" << outputPath << L"\\lib" << project->getName() << L".so\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					break;
+				case Configuration::TfExecutable:
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L"\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
+					break;
+				case Configuration::TfExecutableConsole:
+					os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L"\" prefix_auto=\"0\" extension_auto=\"0\" />" << Endl;
 					break;
 				}
 			}
 			else
-				os << L"<Option output=\"" << outputName << L"\" prefix_auto=\"1\" extension_auto=\"1\" />" << Endl;
+				os << L"<Option output=\"" << outputPath << L"\\" << project->getName() << L"\" prefix_auto=\"1\" extension_auto=\"1\" />" << Endl;
 
 			os << L"<Option object_output=\"" << intermediatePath << L"\" />" << Endl;
 			os << L"<Option compiler=\"" << m_compiler << L"\" />" << Endl;
@@ -173,6 +190,11 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				os << L"<Add option=\"/D UNICODE\" />" << Endl;
 				os << L"<Add option=\"/D _UNICODE\" />" << Endl;
 			}
+			else if (m_compiler == L"gcc")
+			{
+				os << L"<Add option=\"/D UNICODE\" />" << Endl;
+				os << L"<Add option=\"/D _UNICODE\" />" << Endl;
+			}
 
 			const std::vector< std::wstring >& definitions = configuration->getDefinitions();
 			for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
@@ -202,6 +224,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 			)
 			{
 				os << L"<Linker>" << Endl;				os << IncreaseIndent;
+
 				if (m_compiler == L"msvc8")
 				{
 					if (configuration->getTargetProfile() == Configuration::TpDebug)
