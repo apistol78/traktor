@@ -7,6 +7,7 @@
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
 #include "SolutionBuilderLIB/ExternalDependency.h"
+#include "SolutionBuilderLIB/CBlocks/SolutionBuilderCBlocks.h"
 #include "SolutionBuilderLIB/Make/SolutionBuilderMake.h"
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvc.h"
 #include "SolutionBuilderLIB/Xcode/SolutionBuilderXcode.h"
@@ -14,7 +15,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v1.8.0"
+#define TITLE L"SolutionBuilder v1.9.0"
 
 #define ERROR_UNKNOWN_FORMAT 1
 #define ERROR_UNABLE_TO_READ_SOLUTION 2
@@ -35,7 +36,9 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('f'))
 	{
 		std::wstring ide = cmdLine.getOption('f').getString();
-		if (ide == L"make")
+		if (ide == L"cblocks")
+			builder = new SolutionBuilderCBlocks();
+		else if (ide == L"make")
 			builder = new SolutionBuilderMake();
 		else if (ide == L"msvc")
 			builder = new SolutionBuilderMsvc();
@@ -53,7 +56,7 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('?') || cmdLine.hasOption('h') || cmdLine.getCount() <= 0)
 	{
 		traktor::log::info << L"Usage : " << Path(cmdLine.getFile()).getFileName() << L" -[options] [solution]" << Endl;
-		traktor::log::info << L"\t-f=[format]	[\"msvc\"*, \"msvc2k5\", \"make\", \"xcode\"]" << Endl;
+		traktor::log::info << L"\t-f=[format]	[\"cblocks\", \"msvc\"*, \"make\", \"xcode\"]" << Endl;
 		if (builder)
 			builder->showOptions();
 		return 0;

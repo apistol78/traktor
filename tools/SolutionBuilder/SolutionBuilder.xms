@@ -12,7 +12,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -25,7 +25,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -55,7 +55,7 @@
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
+								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -68,7 +68,7 @@
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
+								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -112,6 +112,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>CBlocks</name>
+								<items>
+									<item type="File">
+										<fileName>CBlocks/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies/>
 					</project>
@@ -138,7 +147,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -151,7 +160,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>

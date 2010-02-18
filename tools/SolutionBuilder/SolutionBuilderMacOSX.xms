@@ -12,7 +12,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -25,7 +25,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -44,7 +44,8 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency">
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>SolutionBuilderLIB</name>
@@ -54,7 +55,7 @@
 								<name>DebugShared</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader></precompiledHeader>
+								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -67,7 +68,7 @@
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader></precompiledHeader>
+								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -94,15 +95,6 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Msvc2005</name>
-								<items>
-									<item type="File">
-										<fileName>Msvc2005/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
 								<name>Msvc</name>
 								<items>
 									<item type="File">
@@ -120,15 +112,26 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>CBlocks</name>
+								<items>
+									<item type="File">
+										<fileName>CBlocks/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies/>
 					</project>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Xml</projectName>
 				</item>
@@ -144,7 +147,7 @@
 					<name>DebugShared</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -157,7 +160,7 @@
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader></precompiledHeader>
+					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/tools/SolutionBuilder/code</item>
@@ -176,30 +179,37 @@
 				</item>
 			</items>
 			<dependencies>
-				<item type="ProjectDependency">
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item/dependencies/item/project"/>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Core</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Drawing</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Ui</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Ui.Custom</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Xml</projectName>
 				</item>
-				<item type="ExternalDependency">
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorMacOSX.xms</solutionFileName>
 					<projectName>Traktor.Ui.Cocoa</projectName>
 				</item>

@@ -18,7 +18,7 @@ const std::wstring& File::getFileName() const
 
 void File::getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Path >& outFiles) const
 {
-	traktor::Path path = sourcePath + m_fileName;
+	traktor::Path path = (sourcePath + traktor::Path(m_fileName)).normalized();
 
 	traktor::RefArray< traktor::File > files;
 	traktor::FileSystem::getInstance().find(path, files);
