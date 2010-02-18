@@ -299,6 +299,12 @@ public:
 		m_texTangentDataInfo = findSourceData(L"TEXTANGENT", 0, sourceData, vertexTranslation);
 	}
 
+	void copyTopology(PolygonData* other)
+	{
+		m_vertexCounts = other->m_vertexCounts;
+		m_indicies = other->m_indicies;
+	}
+
 	void read(xml::Element* polyList)
 	{
 		m_material = polyList->getAttribute(L"material", L"")->getValue();
@@ -623,7 +629,7 @@ class ColladaMeshdata : public Object
 {
 	T_RTTI_CLASS
 public:
-	bool read(xml::Element* mesh)
+	bool read(xml::Element* mesh, ColladaMeshdata* morphBaseMesh)
 	{
 		{
 			RefArray< xml::Element > sources;
@@ -665,6 +671,17 @@ public:
 
 			for (uint32_t j = 0; j < polygons.size(); ++j)
 				m_polygonData[p++].read(polygons[j]);
+		}
+		if (morphBaseMesh)
+		{	
+			m_polygonData.resize(morphBaseMesh->m_polygonData.size());
+			for (size_t i = 0; i < m_polygonData.size(); i++)
+			{
+				if (i)
+					m_polygonData[i] = m_polygonData[0];
+				m_polygonData[i].copyTopology(&(morphBaseMesh->m_polygonData[i]));
+			}
+
 		}
 		for (uint32_t i = 0; i < m_polygonData.size(); ++i)
 			m_polygonData[i].setSourceData(m_vertexAttributeData, m_vertexSourceTranslation);
@@ -727,7 +744,7 @@ public:
 					if (m_polygonData[j].getTexCoord0(texCoord, vIndex))
 						vertex.setTexCoord(0, outModel->addUniqueTexCoord(texCoord));
 					if (m_polygonData[j].getTexCoord1(texCoord, vIndex))
-						vertex.setTexCoord(0, outModel->addUniqueTexCoord(texCoord));
+						vertex.setTexCoord(1, outModel->addUniqueTexCoord(texCoord));
 					Vector4 vcolor;
 					if (m_polygonData[j].getVcolor(vcolor, vIndex))
 						vertex.setColor(outModel->addUniqueColor(vcolor));
@@ -761,7 +778,7 @@ private:
 	std::vector< FloatData > m_vertexAttributeData;
 	std::vector< PolygonData > m_polygonData;
 	std::pair< std::wstring, std::wstring > m_vertexSourceTranslation;
-	std::vector< uint32_t > m_positionIndicies;
+	std::vector< uint32_t > m_positionIndicies; 
 };
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model", ColladaMeshdata, Object)
 
@@ -788,7 +805,7 @@ void createMesh(
 			if (!geometry)
 				continue;
 			ColladaMeshdata meshData;
-			if (meshData.read(geometry))
+			if (meshData.read(geometry, 0))
 			{
 				meshData.addPositions(Matrix44::identity(), outModel);
 				meshData.addToModel(Matrix44::identity(), materialRefs, &skinData, outModel);
@@ -805,14 +822,14 @@ void createMesh(
 			Ref< xml::Element > baseGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphData.getMorphSource()) + L"]/mesh");
 			if (!baseGeometry)
 				continue;
-			if (baseMeshData.read(baseGeometry))
+			if (baseMeshData.read(baseGeometry, 0))
 				baseMeshData.addPositions(Matrix44::identity(), outModel);
 			for (size_t j = 0; j < morphData.getMorphTargetCount(); j++)
 			{
 				std::wstring morphTargetGeometry = morphData.getMorphTarget(j);
 				Ref< xml::Element > morphGeometry = libraryGeometries->getSingle(L"geometry[@id=" + dereference(morphTargetGeometry) + L"]/mesh");
 				ColladaMeshdata meshData;
-				if (meshData.read(morphGeometry))
+				if (meshData.read(morphGeometry, &baseMeshData))
 				{
 					uint32_t morphTargetIndex = outModel->addBlendTarget(morphTargetGeometry);
 					baseMeshData.addMorphMeshToModel(Matrix44::identity(), &meshData, morphTargetIndex, outModel);
@@ -854,7 +871,7 @@ void createMesh(
 		else
 			transform = Matrix44::identity();
 		ColladaMeshdata meshData;
-		if (meshData.read(geometry))
+		if (meshData.read(geometry, 0))
 		{
 			meshData.addPositions(transform, outModel);
 			meshData.addToModel(transform, materialRefs, 0, outModel);
