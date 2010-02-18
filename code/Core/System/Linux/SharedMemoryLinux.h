@@ -1,23 +1,23 @@
 #ifndef traktor_SharedMemoryLinux_H
 #define traktor_SharedMemoryLinux_H
 
-#include "Core/System/SharedMemory.h"
+#include "Core/System/ISharedMemory.h"
 #include "Core/Misc/AutoPtr.h"
 
 namespace traktor
 {
 
-class SharedMemoryLinux : public SharedMemory
+class SharedMemoryLinux : public ISharedMemory
 {
-	T_RTTI_CLASS(SharedMemoryLinux)
-	
+	T_RTTI_CLASS;
+
 public:
 	SharedMemoryLinux(uint32_t size);
-	
-	virtual Stream* read(bool exclusive);
-	
-	virtual Stream* write();
-	
+
+	virtual Ref< IStream > read(bool exclusive);
+
+	virtual Ref< IStream > write();
+
 private:
 	AutoArrayPtr< uint8_t > m_data;
 	uint32_t m_size;

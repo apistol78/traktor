@@ -1,26 +1,25 @@
-#include "Core/System/Linux/SharedMemoryLinux.h"
 #include "Core/Io/MemoryStream.h"
-#include "Core/Heap/GcNew.h"
+#include "Core/System/Linux/SharedMemoryLinux.h"
 
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryLinux", SharedMemoryLinux, SharedMemory)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.SharedMemoryLinux", SharedMemoryLinux, ISharedMemory)
 
 SharedMemoryLinux::SharedMemoryLinux(uint32_t size)
 :	m_data(new uint8_t [size])
 ,	m_size(size)
 {
 }
-	
-Stream* SharedMemoryLinux::read(bool exclusive)
+
+Ref< IStream > SharedMemoryLinux::read(bool exclusive)
 {
-	return gc_new< MemoryStream >(m_data.ptr(), m_size, true, false);
+	return new MemoryStream(m_data.ptr(), m_size, true, false);
 }
-	
-Stream* SharedMemoryLinux::write()
+
+Ref< IStream > SharedMemoryLinux::write()
 {
-	return gc_new< MemoryStream >(m_data.ptr(), m_size, false, true);
+	return new MemoryStream(m_data.ptr(), m_size, false, true);
 }
 
 }

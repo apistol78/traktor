@@ -108,10 +108,7 @@ typedef unsigned __int64 uint64_t;
 #		define T_HAVE_TYPES
 #	endif
 #else
-
-#include <sys/types.h>
-
-#	if !defined(__int8_t_defined)
+#	if !defined(T_HAVE_TYPES)
 
 typedef signed char int8_t;
 typedef unsigned char uint8_t;
@@ -122,15 +119,11 @@ typedef unsigned short uint16_t;
 typedef int int32_t;
 typedef unsigned int uint32_t;
 
-#		if !defined(__APPLE__) && !defined(_PS3)
-
 typedef long int int64_t;
 typedef long unsigned int uint64_t;
 
-#		endif
-
-#	endif
-
+#		define T_HAVE_TYPES
+#   endif
 #endif
 
 // Determine size of array in number of elements.
@@ -154,7 +147,7 @@ typedef long unsigned int uint64_t;
 #endif
 
 template < typename T >
-size_t alignOf()
+uint32_t alignOf()
 {
 #if !defined(alignof)
 #	if defined(_MSC_VER)

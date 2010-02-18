@@ -19,14 +19,14 @@ inline bool compare(float e1, float e2)
 	}
 
 #if !defined(NDEBUG)
-#define VALIDATE(v) \
+#   define VALIDATE(v) \
 	T_ASSERT (!isNan((v)._x) && !isInfinite((v)._x)); \
 	T_ASSERT (!isNan((v)._y) && !isInfinite((v)._y)); \
 	T_ASSERT (!isNan((v)._z) && !isInfinite((v)._z)); \
 	T_ASSERT (!isNan((v)._w) && !isInfinite((v)._w));
 
 #else
-#define VALIDATE
+#   define VALIDATE(v)
 #endif
 
 T_MATH_INLINE Vector4::Vector4()
@@ -40,19 +40,20 @@ T_MATH_INLINE Vector4::Vector4()
 }
 
 T_MATH_INLINE Vector4::Vector4(const Vector4& v)
+:	_x(v._x)
+,	_y(v._y)
+,	_z(v._z)
+,	_w(v._w)
 {
-	_x = v._x;
-	_y = v._y;
-	_z = v._z;
-	_w = v._w;
+	VALIDATE(*this);
 }
 
 T_MATH_INLINE Vector4::Vector4(float x, float y, float z, float w)
+:	_x(x)
+,	_y(y)
+,	_z(z)
+,	_w(w)
 {
-	_x = x;
-	_y = y;
-	_z = z;
-	_w = w;
 	VALIDATE(*this);
 }
 
