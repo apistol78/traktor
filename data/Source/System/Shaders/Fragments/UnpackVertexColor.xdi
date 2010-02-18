@@ -2,22 +2,22 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.Platform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>801</first>
 				<second>354</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
-				<first>715</first>
-				<second>406</second>
+				<first>702</first>
+				<second>374</second>
 			</position>
 			<swizzle>zyxw</swizzle>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>516</first>
 				<second>465</second>
@@ -28,7 +28,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>1021</first>
 				<second>402</second>
@@ -37,16 +37,6 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>DX10</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -84,7 +74,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>GCM</name>
+				<name>DX9</name>
 			</destination>
 		</item>
 	</edges>
