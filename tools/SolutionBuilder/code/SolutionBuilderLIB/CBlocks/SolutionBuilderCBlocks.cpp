@@ -192,13 +192,21 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 			}
 			else if (m_compiler == L"gcc")
 			{
-				os << L"<Add option=\"/D UNICODE\" />" << Endl;
-				os << L"<Add option=\"/D _UNICODE\" />" << Endl;
+				if (configuration->getTargetProfile() == Configuration::TpDebug)
+					os << L"<Add option=\"-g\" />" << Endl;
+				else
+					os << L"<Add option=\"-O2\" />" << Endl;
+
+				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
+					os << L"<Add option=\"-fPIC\" />" << Endl;
+
+				os << L"<Add option=\"-DUNICODE\" />" << Endl;
+				os << L"<Add option=\"-D_UNICODE\" />" << Endl;
 			}
 
 			const std::vector< std::wstring >& definitions = configuration->getDefinitions();
 			for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
-				os << L"<Add option=\"/D " << *k << L"\" />" << Endl;
+				os << L"<Add option=\"-D" << *k << L"\" />" << Endl;
 
 			const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 			for (std::vector< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
@@ -386,7 +394,10 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 		os << L"<Compiler>" << Endl;
 		os << IncreaseIndent;
-		os << L"<Add option=\"/W3\" />" << Endl;
+		if (m_compiler == L"msvc8")
+			os << L"<Add option=\"/W3\" />" << Endl;
+		else
+			os << L"<Add option=\"-Wall\" />" << Endl;
 		os << DecreaseIndent;
 		os << L"</Compiler>" << Endl;
 
