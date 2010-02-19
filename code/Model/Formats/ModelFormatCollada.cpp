@@ -129,6 +129,8 @@ struct NameData
 	bool read(Ref< xml::Element > source)
 	{
 		Ref< const xml::Element > nameArray = source->getSingle(L"Name_array");
+		if (!nameArray)
+			nameArray = source->getSingle(L"IDREF_array");
 		if (nameArray)
 		{
 			id = source->getAttribute(L"id", L"")->getValue();
@@ -299,10 +301,11 @@ public:
 		m_texTangentDataInfo = findSourceData(L"TEXTANGENT", 0, sourceData, vertexTranslation);
 	}
 
-	void copyTopology(PolygonData* other)
+	void copyTopolgyAndMaterial(PolygonData* other)
 	{
 		m_vertexCounts = other->m_vertexCounts;
 		m_indicies = other->m_indicies;
+		m_material = other->m_material;
 	}
 
 	void read(xml::Element* polyList)
@@ -679,7 +682,7 @@ public:
 			{
 				if (i)
 					m_polygonData[i] = m_polygonData[0];
-				m_polygonData[i].copyTopology(&(morphBaseMesh->m_polygonData[i]));
+				m_polygonData[i].copyTopolgyAndMaterial(&(morphBaseMesh->m_polygonData[i]));
 			}
 
 		}
