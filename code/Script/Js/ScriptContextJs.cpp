@@ -286,10 +286,10 @@ v8::Handle< v8::Object > ScriptContextJs::createObject(Object* object) const
 {
 	if (object)
 	{
-		const TypeInfo* objectType = &type_of(object);
+		const TypeInfo& objectType = type_of(object);
 		for (std::vector< RegisteredClass >::const_iterator i = m_classRegistry.begin(); i != m_classRegistry.end(); ++i)
 		{
-			if (&i->scriptClass->getExportType() == objectType)
+			if (is_type_of(i->scriptClass->getExportType(), objectType))
 			{
 				Ref< Object >* objectRef = new Ref< Object >(object);
 

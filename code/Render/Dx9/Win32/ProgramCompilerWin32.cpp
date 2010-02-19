@@ -159,7 +159,7 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
 	bool validate,
-	uint32_t* outCostEstimate
+	Stats* outStats
 ) const
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;
@@ -251,11 +251,34 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	resource->m_state = program.getState();
 
 	// Estimate cost from number of bytes in shaders.
-	if (outCostEstimate)
+	if (outStats)
 	{
-		UINT vertexShaderSize = D3DXGetShaderSize((const DWORD *)resource->m_vertexShader->GetBufferPointer());
-		UINT pixelShaderSize = D3DXGetShaderSize((const DWORD *)resource->m_pixelShader->GetBufferPointer());
-		*outCostEstimate = vertexShaderSize + pixelShaderSize;
+		ComRef< ID3DXBuffer > d3dDisasmBuffer;
+		HRESULT hr;
+
+		hr = D3DXDisassembleShader((const DWORD *)resource->m_vertexShader->GetBufferPointer(), FALSE, NULL, &d3dDisasmBuffer.getAssign());
+		if (SUCCEEDED(hr))
+		{
+			// Find and extract cost from "approximately ??? instruction slots used" comment.
+			const char* tmp = (const char *)d3dDisasmBuffer->GetBufferPointer();
+			const char* costp = strstr(tmp, "approximately");
+			if (costp)
+				outStats->vertexCost = atoi(costp + 14);
+		}
+
+
+		hr = D3DXDisassembleShader((const DWORD *)resource->m_pixelShader->GetBufferPointer(), FALSE, NULL, &d3dDisasmBuffer.getAssign());
+		if (SUCCEEDED(hr))
+		{
+			// Find and extract cost from "approximately ??? instruction slots used" comment.
+			const char* tmp = (const char *)d3dDisasmBuffer->GetBufferPointer();
+			const char* costp = strstr(tmp, "approximately");
+			if (costp)
+				outStats->pixelCost = atoi(costp + 14);
+		}
+
+		//outStats->vertexCost = D3DXGetShaderSize((const DWORD *)resource->m_vertexShader->GetBufferPointer());
+		//outStats->pixelCost = D3DXGetShaderSize((const DWORD *)resource->m_pixelShader->GetBufferPointer());
 	}
 
 	return resource;

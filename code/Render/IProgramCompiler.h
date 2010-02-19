@@ -27,6 +27,19 @@ class T_DLLCLASS IProgramCompiler : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Compiled stats. */
+	struct Stats
+	{
+		uint32_t vertexCost;
+		uint32_t pixelCost;
+
+		Stats()
+		:	vertexCost(0)
+		,	pixelCost(0)
+		{
+		}
+	};
+
 	/*! \brief Get platform signature.
 	 *
 	 * \return Platform signature.
@@ -38,14 +51,14 @@ public:
 	 * \param shaderGraph Program shader graph.
 	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
 	 * \param validate Validate compiled program.
-	 * \param outCostEstimate Estimated cost; returned value is compiler dependent and thus only relative values are of interest.
+	 * \param outStats Optional stats.
 	 * \return Compiled program resource.
 	 */
 	virtual Ref< ProgramResource > compile(
 		const ShaderGraph* shaderGraph,
 		int32_t optimize,
 		bool validate,
-		uint32_t* outCostEstimate = 0
+		Stats* outStats = 0
 	) const = 0;
 };
 

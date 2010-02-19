@@ -18,7 +18,7 @@ Ref< ProgramResource > ProgramCompilerSw::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
 	bool validate,
-	uint32_t* outCostEstimate
+	Stats* outStats
 ) const
 {
 	return new ProgramResourceSw(shaderGraph);

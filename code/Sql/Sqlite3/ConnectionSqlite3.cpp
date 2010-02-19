@@ -11,7 +11,7 @@ namespace traktor
 	namespace sql
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sql.ConnectionSqlite3", ConnectionSqlite3, IConnection)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sql.ConnectionSqlite3", 0, ConnectionSqlite3, IConnection)
 
 ConnectionSqlite3::ConnectionSqlite3()
 :	m_db(0)

@@ -1,0 +1,114 @@
+<html>
+	<head>
+		<title>Textures report</title>
+		<style type="text/css">
+			body {
+				background-color: #e0e0d0;
+				font-family: Tahoma;
+				font-size: 80%;
+			}
+			table {
+				background-color: #f0f0e0;
+				border-style: none;
+				border-collapse:collapse;
+				font-size: 90%;
+				width: 100%;
+				text-align: left;
+			}
+			tr, td {
+				border: 1px solid #a0a090;
+			}
+			tr.alt {
+				border: 1px solid #a0a090;
+				background-color: #e0e0d0;
+			}
+			tr.total {
+				border-style: none;
+				background-color: #f5f5e5;
+				font-weight: bold;
+			}
+			th, td {
+				padding: 2px;
+			}
+			th {
+				background-color: #f5f5e5;
+			}
+		</style>
+	</head>
+	<body>
+	
+<h1>Textures report</h1>
+<?tap
+	var formats = [
+		"Invalid",
+		"R (8)",
+		"RGBA (8)",
+		"RGBA (16 F)",
+		"RGBA (32 F)",
+		"RG (16 F)",
+		"RG (32 F)",
+		"R (16 F)",
+		"G (16 F)",
+		"DXT1",
+		"DXT2",
+		"DXT3",
+		"DXT4",
+		"DXT5"
+	];
+
+	var db = Global.connect("fileName=$(REPORT_DB)");
+?>	
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Width</th>
+				<th>Height</th>
+				<th>Mips</th>
+				<th>Format</th>
+				<th>Size (KiB)</th>
+			</tr>
+<?tap
+	var index = 0, totalDataSize = 0;
+	
+	var rs = db.executeQuery("select * from Report_Texture order by dataSize desc");
+	while (rs.next())
+	{
+		var guid = rs.getStringByName("guid");
+		var name = guid;
+			
+		var rs2 = db.executeQuery("select path from TimeStamps where hashId=(select id from PipelineHash where guid='" + guid + "')");
+		if (rs2.next())
+			name = rs2.getStringByName("path");
+			
+		if (index % 2 == 1)
+			Global.print("<tr class=\"alt\">");
+		else
+			Global.print("<tr>");
+	
+		Global.print("<td>" + name + "</td>");
+		Global.print("<td>" + rs.getInt32ByName("width") + "</td>");
+		Global.print("<td>" + rs.getInt32ByName("height") + "</td>");
+		Global.print("<td>" + rs.getInt32ByName("mipCount") + "</td>");
+		Global.print("<td>" + formats[rs.getInt32ByName("format")] + "</td>");
+		Global.print("<td>" + Math.round(rs.getInt32ByName("dataSize") / 1024) + "</td>");
+		
+		Global.printLn("</tr>");
+		
+		++index;
+		totalDataSize += rs.getInt32ByName("dataSize");
+	}
+	
+	Global.print("<tr class=\"total\">");
+	Global.print("<td>Total, " + index + " texture(s)</td>");
+	Global.print("<td/>");
+	Global.print("<td/>");
+	Global.print("<td/>");
+	Global.print("<td/>");
+	Global.print("<td>" + Math.round(totalDataSize / 1024) + "</td>");
+	Global.printLn("</tr>");	
+?>
+		</table>
+		<br/>
+		<br/>
+	</body>
+</html>
