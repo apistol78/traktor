@@ -67,6 +67,11 @@ void AutoWidget::requestUpdate()
 	m_deferredUpdate = true;
 }
 
+void AutoWidget::requestLayout()
+{
+	updateLayout();
+}
+
 void AutoWidget::addCell(AutoWidgetCell* cell)
 {
 	m_cells.push_back(cell);
