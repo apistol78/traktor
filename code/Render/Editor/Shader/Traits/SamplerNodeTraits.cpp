@@ -25,6 +25,7 @@ PinType SamplerNodeTraits::getOutputPinType(
 }
 
 PinType SamplerNodeTraits::getInputPinType(
+	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
 	const PinType* outputPinTypes

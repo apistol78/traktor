@@ -192,6 +192,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 			{
 				const InputPin* inputPin = (*i)->getInputPin(j);
 				inputWidths[inputPin] = nodeTraits->getInputPinType(
+					shaderGraph,
 					*i,
 					inputPin,
 					outputPinCount > 0 ? &outputPinTypes[0] : 0

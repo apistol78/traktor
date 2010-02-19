@@ -25,9 +25,10 @@ PinType DotNodeTraits::getOutputPinType(
 }
 
 PinType DotNodeTraits::getInputPinType(
-   const Node* node,
-   const InputPin* inputPin,
-   const PinType* outputPinTypes
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const InputPin* inputPin,
+	const PinType* outputPinTypes
 ) const
 {
 	return PntScalar4;

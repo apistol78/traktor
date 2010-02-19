@@ -2,11 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="1">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>-19</first>
 				<second>309</second>
@@ -32,26 +28,18 @@ As quaternion
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
-				<first>538</first>
-				<second>294</second>
+				<first>445</first>
+				<second>161</second>
 			</position>
 			<name>Translation</name>
 			<connectable>true</connectable>
-			<optional>false</optional>
+			<optional>true</optional>
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>247</first>
 				<second>427</second>
@@ -71,11 +59,7 @@ As quaternion
 			<values/>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>156</first>
 				<second>323</second>
@@ -83,23 +67,15 @@ As quaternion
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
-				<first>858</first>
-				<second>307</second>
+				<first>1015</first>
+				<second>161</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>582</first>
 				<second>363</second>
@@ -107,11 +83,7 @@ As quaternion
 			<swizzle>xyz0</swizzle>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>309</first>
 				<second>309</second>
@@ -135,11 +107,7 @@ As quaternion
 			<values/>
 		</item>
 		<item type="traktor.render.External" version="1">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
 				<first>456</first>
 				<second>343</second>
@@ -163,14 +131,10 @@ As quaternion
 			<values/>
 		</item>
 		<item type="traktor.render.Add">
-			<comment>
-			<![CDATA[
-
-			]]>
-			</comment>
+			<comment/>
 			<position>
-				<first>690</first>
-				<second>307</second>
+				<first>683</first>
+				<second>197</second>
 			</position>
 		</item>
 		<item type="traktor.render.Comment">
@@ -182,6 +146,13 @@ Transform vector by a quaternion.
 			<position>
 				<first>-75</first>
 				<second>187</second>
+			</position>
+		</item>
+		<item type="traktor.render.Type">
+			<comment/>
+			<position>
+				<first>858</first>
+				<second>141</second>
 			</position>
 		</item>
 	</nodes>
@@ -258,16 +229,6 @@ Transform vector by a quaternion.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Output</name>
 			</source>
@@ -284,6 +245,46 @@ Transform vector by a quaternion.
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Type</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Default</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Vector</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

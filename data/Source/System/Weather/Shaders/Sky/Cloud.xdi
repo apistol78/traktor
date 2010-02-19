@@ -221,6 +221,14 @@ Cloud dark
 			</position>
 			<value>4</value>
 		</item>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>488</first>
+				<second>59</second>
+			</position>
+			<external>{857E4DC7-8E99-0E49-A78C-36A85736DC22}</external>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -471,6 +479,16 @@ Cloud dark
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>

@@ -4,8 +4,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-326</first>
-				<second>652</second>
+				<first>-299</first>
+				<second>541</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -15,8 +15,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-40</first>
-				<second>241</second>
+				<first>-308</first>
+				<second>412</second>
 			</position>
 			<name>LightDirection</name>
 			<connectable>true</connectable>
@@ -26,8 +26,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-7</first>
-				<second>302</second>
+				<first>-273</first>
+				<second>481</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -37,15 +37,15 @@
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>192</first>
-				<second>247</second>
+				<first>526</first>
+				<second>361</second>
 			</position>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>663</first>
-				<second>267</second>
+				<first>990</first>
+				<second>455</second>
 			</position>
 			<name>Diffuse</name>
 		</item>
@@ -66,8 +66,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-50</first>
-				<second>653</second>
+				<first>-29</first>
+				<second>622</second>
 			</position>
 			<fragmentGuid>{A3FDEEFB-60E9-924E-89C4-322C12BC33A1}</fragmentGuid>
 			<inputPins>
@@ -130,40 +130,13 @@
 			<min>0</min>
 			<max>1</max>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>166</first>
-				<second>192</second>
-			</position>
-			<name>Shadow</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>515</first>
-				<second>247</second>
-			</position>
-		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>349</first>
-				<second>247</second>
+				<first>683</first>
+				<second>361</second>
 			</position>
 			<min>0</min>
-			<max>1</max>
-		</item>
-		<item type="traktor.render.Clamp">
-			<comment/>
-			<position>
-				<first>349</first>
-				<second>156</second>
-			</position>
-			<min>0.25</min>
 			<max>1</max>
 		</item>
 	</nodes>
@@ -284,27 +257,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[13]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -324,18 +277,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[16]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

@@ -11,7 +11,7 @@
 	<scaleImage>false</scaleImage>
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
-	<enableCompression>false</enableCompression>
+	<enableCompression>true</enableCompression>
 	<linearGamma>true</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
 </object>

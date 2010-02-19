@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>838</first>
-				<second>413</second>
+				<first>1027</first>
+				<second>444</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
@@ -37,8 +37,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>6</first>
-				<second>245</second>
+				<first>-41</first>
+				<second>316</second>
 			</position>
 			<fragmentGuid>{0C12D2F8-EFDA-984E-907F-8992E5987848}</fragmentGuid>
 			<inputPins/>
@@ -61,8 +61,8 @@
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>275</second>
+				<first>623</first>
+				<second>306</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
@@ -75,23 +75,23 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>266</first>
-				<second>265</second>
+				<first>193</first>
+				<second>296</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>152</first>
-				<second>242</second>
+				<first>78</first>
+				<second>284</second>
 			</position>
 			<value>4</value>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>414</second>
+				<first>623</first>
+				<second>445</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
@@ -104,8 +104,8 @@
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
-				<first>434</first>
-				<second>344</second>
+				<first>623</first>
+				<second>375</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
@@ -118,8 +118,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>652</first>
-				<second>357</second>
+				<first>841</first>
+				<second>388</second>
 			</position>
 			<fragmentGuid>{3BDB38CE-AE49-4D4D-A158-78E64469DF0A}</fragmentGuid>
 			<inputPins>
@@ -146,6 +146,30 @@
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>357</first>
+				<second>71</second>
+			</position>
+			<external>{BCC53FF0-E6FB-9F45-94A7-2530ECCF8EAA}</external>
+		</item>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>360</first>
+				<second>193</second>
+			</position>
+			<external>{FD65BF9E-294E-4845-A781-694FB1A3E737}</external>
+		</item>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>375</first>
+				<second>484</second>
+			</position>
+			<external>{146E83F1-B501-DB42-9888-F1A3DD679925}</external>
 		</item>
 	</nodes>
 	<edges>
@@ -247,6 +271,36 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>
