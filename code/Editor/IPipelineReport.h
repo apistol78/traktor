@@ -25,6 +25,8 @@ class T_DLLCLASS IPipelineReport : public Object
 
 public:
 	virtual void set(const std::wstring& name, int32_t value) = 0;
+
+	virtual void set(const std::wstring& name, const std::wstring& value) = 0;
 };
 
 	}

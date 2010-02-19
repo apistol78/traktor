@@ -149,7 +149,7 @@ Ref< ProgramResource > ProgramCompilerXbox360::compile(
 	const ShaderGraph* shaderGraph,
 	int32_t optimize,
 	bool validate,
-	uint32_t* outCostEstimate
+	Stats* outStats
 ) const
 {
 	ComRef< ID3DXConstantTable > d3dVertexConstantTable;

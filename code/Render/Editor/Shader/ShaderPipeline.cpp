@@ -56,10 +56,10 @@ struct BuildCombinationTask
 	ShaderResource::Technique* shaderResourceTechnique;
 	ShaderResource::Combination* shaderResourceCombination;
 	render::IProgramCompiler* programCompiler;
+	render::IProgramCompiler::Stats stats;
 	int optimize;
 	bool validate;
 	bool result;
-	uint32_t cost;
 
 	void execute()
 	{
@@ -122,7 +122,7 @@ struct BuildCombinationTask
 			programGraph,
 			optimize,
 			validate,
-			&cost
+			&stats
 		);
 		if (!programResource)
 		{
@@ -137,7 +137,7 @@ struct BuildCombinationTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 9, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 10, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_optimize(4)
@@ -303,7 +303,6 @@ bool ShaderPipeline::buildOutput(
 			task->optimize = m_optimize;
 			task->validate = m_validate;
 			task->result = false;
-			task->cost = 0;
 
 			Job* job = new Job(makeFunctor(task, &BuildCombinationTask::execute));
 			JobManager::getInstance().add(*job);
@@ -317,8 +316,8 @@ bool ShaderPipeline::buildOutput(
 
 	log::info << L"Collecting task(s)..." << Endl;
 
+	render::IProgramCompiler::Stats stats;
 	uint32_t failed = 0;
-	uint32_t cost = 0;
 
 	for (size_t i = 0; i < jobs.size(); ++i)
 	{
@@ -330,7 +329,8 @@ bool ShaderPipeline::buildOutput(
 			ShaderResource::Combination* combination = tasks[i]->shaderResourceCombination;
 			technique->combinations.push_back(*combination);
 
-			cost += tasks[i]->cost;
+			stats.vertexCost += tasks[i]->stats.vertexCost;
+			stats.pixelCost += tasks[i]->stats.pixelCost;
 		}
 		else
 			++failed;
@@ -390,7 +390,11 @@ bool ShaderPipeline::buildOutput(
 	// Create report.
 	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Shader", outputGuid);
 	if (report)
-		report->set(L"cost", cost);
+	{
+		report->set(L"path", outputPath);
+		report->set(L"vertexCost", stats.vertexCost);
+		report->set(L"pixelCost", stats.pixelCost);
+	}
 
 	return true;
 }

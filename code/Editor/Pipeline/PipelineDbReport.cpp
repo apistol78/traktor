@@ -24,7 +24,7 @@ PipelineDbReport::~PipelineDbReport()
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
 
-	if (m_values.empty())
+	if (m_ivalues.empty() && m_svalues.empty())
 		return;
 
 	// Create table if it doesn't exist.
@@ -34,8 +34,10 @@ PipelineDbReport::~PipelineDbReport()
 			L"create table " << m_table << L" (" <<
 			L"id integer primary key, " <<
 			L"guid char(37)";
-		for (std::map< std::wstring, int32_t >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+		for (std::map< std::wstring, int32_t >::const_iterator i = m_ivalues.begin(); i != m_ivalues.end(); ++i)
 			ss << L", " << i->first << L" integer";
+		for (std::map< std::wstring, std::wstring >::const_iterator i = m_svalues.begin(); i != m_svalues.end(); ++i)
+			ss << L", " << i->first << L" varchar";
 		ss << L")";
 		m_connection->executeUpdate(ss.str());
 	}
@@ -49,11 +51,15 @@ PipelineDbReport::~PipelineDbReport()
 	// Insert report record.
 	ss.reset();
 	ss << L"insert into " << m_table << L" (guid";
-	for (std::map< std::wstring, int32_t >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = m_ivalues.begin(); i != m_ivalues.end(); ++i)
+		ss << L", " << i->first;
+	for (std::map< std::wstring, std::wstring >::const_iterator i = m_svalues.begin(); i != m_svalues.end(); ++i)
 		ss << L", " << i->first;
 	ss << L") values ('" << m_guid.format() << L"'";
-	for (std::map< std::wstring, int32_t >::const_iterator i = m_values.begin(); i != m_values.end(); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = m_ivalues.begin(); i != m_ivalues.end(); ++i)
 		ss << L", " << i->second;
+	for (std::map< std::wstring, std::wstring >::const_iterator i = m_svalues.begin(); i != m_svalues.end(); ++i)
+		ss << L", '" << i->second << L"'";
 	ss << L")";
 	m_connection->executeUpdate(ss.str());
 
@@ -62,7 +68,12 @@ PipelineDbReport::~PipelineDbReport()
 
 void PipelineDbReport::set(const std::wstring& name, int32_t value)
 {
-	m_values.insert(std::make_pair(name, value));
+	m_ivalues.insert(std::make_pair(name, value));
+}
+
+void PipelineDbReport::set(const std::wstring& name, const std::wstring& value)
+{
+	m_svalues.insert(std::make_pair(name, value));
 }
 
 	}

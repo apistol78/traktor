@@ -31,11 +31,14 @@ public:
 
 	virtual void set(const std::wstring& name, int32_t value);
 
+	virtual void set(const std::wstring& name, const std::wstring& value);
+
 private:
 	Ref< sql::IConnection > m_connection;
 	std::wstring m_table;
 	Guid m_guid;
-	std::map< std::wstring, int32_t > m_values;
+	std::map< std::wstring, int32_t > m_ivalues;
+	std::map< std::wstring, std::wstring > m_svalues;
 };
 
 	}
