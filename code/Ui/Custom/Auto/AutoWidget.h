@@ -46,6 +46,8 @@ public:
 
 	void requestUpdate();
 
+	void requestLayout();
+
 protected:
 	void addCell(AutoWidgetCell* cell);
 
