@@ -69,6 +69,7 @@ void AutoWidget::requestUpdate()
 
 void AutoWidget::requestLayout()
 {
+	updateScrollBar();
 	updateLayout();
 }
 
@@ -94,7 +95,7 @@ void AutoWidget::updateScrollBar()
 		Rect innerRect = getInnerRect();
 
 		int32_t rowCount = (m_clientSize.cy + 15) / 16;
-		int32_t pageCount = (innerRect.getHeight() + 15) / 16;
+		int32_t pageCount = innerRect.getHeight() / 16;
 
 		m_scrollBar->setRange(rowCount);
 		m_scrollBar->setPage(pageCount);
@@ -103,6 +104,9 @@ void AutoWidget::updateScrollBar()
 	}
 	else
 		m_scrollBar->setVisible(false);
+
+	if (!m_scrollBar->isVisible(false))
+		m_scrollOffset = Size(0, 0);
 }
 
 void AutoWidget::updateLayout()
