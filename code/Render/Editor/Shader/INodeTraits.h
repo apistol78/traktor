@@ -12,11 +12,12 @@ namespace traktor
 class InputPin;
 class Node;
 class OutputPin;
+class ShaderGraph;
 
 /*! \brief Shader graph node traits.
  * \ingroup Render
  *
- * Node traits define behaviour of nodes
+ * Node traits define behavior of nodes
  * such as type conversions etc.
  *
  * These are used by optimizing steps in
@@ -41,6 +42,7 @@ public:
 	/*! \brief Get type of input pin.
 	 */
 	virtual PinType getInputPinType(
+		const ShaderGraph* shaderGraph,
 		const Node* node,
 		const InputPin* inputPin,
 		const PinType* outputPinTypes

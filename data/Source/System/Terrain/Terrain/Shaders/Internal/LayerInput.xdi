@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>-448</first>
 				<second>-72</second>
@@ -17,15 +17,14 @@
 					<name>TexCoord</name>
 				</item>
 			</outputPins>
+			<values/>
 		</item>
 		<item type="traktor.render.Sampler">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>311</first>
 				<second>308</second>
 			</position>
-			<parameterName>Heightfield</parameterName>
-			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
@@ -35,7 +34,7 @@
 			<addressW>AdClamp</addressW>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>563</first>
 				<second>276</second>
@@ -43,7 +42,7 @@
 			<name>Normal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>563</first>
 				<second>318</second>
@@ -51,7 +50,7 @@
 			<name>Height</name>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>465</first>
 				<second>331</second>
@@ -59,7 +58,7 @@
 			<swizzle>x</swizzle>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-430</first>
 				<second>247</second>
@@ -68,7 +67,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-435</first>
 				<second>216</second>
@@ -77,7 +76,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>188</first>
 				<second>376</second>
@@ -85,14 +84,14 @@
 			<swizzle>xz</swizzle>
 		</item>
 		<item type="traktor.render.Sub">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-214</first>
 				<second>324</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-390</first>
 				<second>351</second>
@@ -101,7 +100,7 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-393</first>
 				<second>377</second>
@@ -110,21 +109,21 @@
 			<type>PtVector</type>
 		</item>
 		<item type="traktor.render.Div">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-84</first>
 				<second>398</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>45</first>
 				<second>446</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-108</first>
 				<second>490</second>
@@ -132,14 +131,14 @@
 			<value>-1, 0, -1, 0</value>
 		</item>
 		<item type="traktor.render.MulAdd">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-213</first>
 				<second>220</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>-317</first>
 				<second>101</second>
@@ -147,7 +146,7 @@
 			<swizzle>x0y0</swizzle>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>268</first>
 				<second>60</second>
@@ -155,15 +154,15 @@
 			<name>PatchTexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>268</first>
 				<second>97</second>
 			</position>
 			<name>WorldTexCoord</name>
 		</item>
-		<item type="traktor.render.External">
-			<comment></comment>
+		<item type="traktor.render.External" version="1">
+			<comment/>
 			<position>
 				<first>311</first>
 				<second>241</second>
@@ -172,6 +171,7 @@
 			<inputPins>
 				<item>
 					<name>TexCoord</name>
+					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
@@ -179,6 +179,16 @@
 					<name>Output</name>
 				</item>
 			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Uniform">
+			<comment/>
+			<position>
+				<first>109</first>
+				<second>301</second>
+			</position>
+			<parameterName>Heightfield</parameterName>
+			<type>PtTexture</type>
 		</item>
 	</nodes>
 	<edges>
@@ -360,6 +370,16 @@
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
 			</destination>
 		</item>
 	</edges>
