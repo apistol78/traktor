@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.InputPort" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>181</first>
 				<second>304</second>
@@ -13,7 +13,7 @@
 			<defaultValue>0</defaultValue>
 		</item>
 		<item type="traktor.render.Uniform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>205</first>
 				<second>364</second>
@@ -22,7 +22,7 @@
 			<type>PtMatrix</type>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>710</first>
 				<second>333</second>
@@ -30,22 +30,22 @@
 			<technique>Shadow</technique>
 		</item>
 		<item type="traktor.render.PixelOutput" version="2">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>710</first>
 				<second>290</second>
 			</position>
 			<technique>Shadow</technique>
-			<cullMode>CmNever</cullMode>
+			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfOne</blendSource>
 			<blendDestination>BfZero</blendDestination>
 			<colorWriteMask>
 				<red>true</red>
-				<green>true</green>
-				<blue>true</blue>
-				<alpha>true</alpha>
+				<green>false</green>
+				<blue>false</blue>
+				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>true</depthEnable>
 			<depthWriteEnable>true</depthWriteEnable>
@@ -63,7 +63,7 @@
 			<stencilMask>2147483648</stencilMask>
 		</item>
 		<item type="traktor.render.Swizzle">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>619</first>
 				<second>290</second>
@@ -71,7 +71,7 @@
 			<swizzle>z</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>406</first>
 				<second>313</second>
