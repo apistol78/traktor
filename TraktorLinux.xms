@@ -5465,10 +5465,10 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Heap</name>
+								<name>Memory</name>
 								<items>
 									<item type="File">
-										<fileName>Heap/*.*</fileName>
+										<fileName>Memory/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -5667,15 +5667,6 @@
 								<items>
 									<item type="File">
 										<fileName>Meta/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Singleton</name>
-								<items>
-									<item type="File">
-										<fileName>Singleton/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -6986,6 +6977,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Discovery</name>
+											<items>
+												<item type="File">
+													<fileName>Discovery/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -7109,6 +7109,14 @@
 									</item>
 									<item type="File">
 										<fileName>../../../res/editor/Types.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/editor/LayerHidden.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/editor/LayerVisible.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -11674,7 +11682,7 @@
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project"/>
 		<item type="Project" version="1">
-			<enable>false</enable>
+			<enable>true</enable>
 			<name>Traktor.Ui.Gtk</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
 			<configurations>
@@ -11685,7 +11693,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtkmm-2.4 --cflags`</item>
+						<item>`pkg-config --cflags gtkmm-2.4`</item>
 					</includePaths>
 					<definitions>
 						<item>T_UI_GTK_EXPORT</item>
@@ -11693,7 +11701,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config gtkmm-2.4 --libs`</item>
+						<item>`pkg-config --libs gtkmm-2.4`</item>
 					</libraries>
 				</item>
 				<item type="Configuration">
@@ -11703,7 +11711,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtkmm-2.4 --cflags`</item>
+						<item>`pkg-config --cflags gtkmm-2.4`</item>
 					</includePaths>
 					<definitions>
 						<item>T_UI_GTK_EXPORT</item>
@@ -11711,7 +11719,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config gtkmm-2.4 --libs`</item>
+						<item>`pkg-config --libs gtkmm-2.4`</item>
 					</libraries>
 				</item>
 				<item type="Configuration">
@@ -11721,7 +11729,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtkmm-2.4 --cflags`</item>
+						<item>`pkg-config --cflags gtkmm-2.4`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11729,7 +11737,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config gtkmm-2.4 --libs`</item>
+						<item>`pkg-config --libs gtkmm-2.4`</item>
 					</libraries>
 				</item>
 				<item type="Configuration">
@@ -11739,7 +11747,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config gtkmm-2.4 --cflags`</item>
+						<item>`pkg-config --cflags gtkmm-2.4`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11747,7 +11755,7 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries>
-						<item>`pkg-config gtkmm-2.4 --libs`</item>
+						<item>`pkg-config --libs gtkmm-2.4`</item>
 					</libraries>
 				</item>
 			</configurations>

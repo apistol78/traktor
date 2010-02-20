@@ -1,3 +1,4 @@
+#include <cstdio>
 #include "Net/Http/HttpChunkStream.h"
 
 namespace traktor

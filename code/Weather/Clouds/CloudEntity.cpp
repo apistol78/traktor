@@ -283,11 +283,7 @@ void CloudEntity::renderCluster(
 	if (worldRenderView->getTechnique() != world::WorldRenderer::getTechniqueDefault())
 		return;
 
-	render::IRenderView* renderView = renderContext->getRenderView();
-	T_ASSERT (renderView);
-
 	const Frustum& viewFrustum = worldRenderView->getViewFrustum();
-	const Matrix44& projection = worldRenderView->getProjection();
 	const Matrix44& view = worldRenderView->getView();
 
 	Matrix44 worldView = view * m_transform.toMatrix44();
@@ -295,7 +291,6 @@ void CloudEntity::renderCluster(
 	Vector4 cameraPosition = worldView.inverse().translation();
 
 	float nearZ = viewFrustum.getNearZ();
-	float farZ = viewFrustum.getFarZ();
 
 	// Cluster extents in view space.
 	const Aabb& clusterBoundingBox = cluster.getBoundingBox();

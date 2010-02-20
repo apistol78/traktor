@@ -16,9 +16,9 @@ Scene::Scene(
 	world::WorldRenderSettings* worldRenderSettings,
 	world::PostProcessSettings* postProcessSettings
 )
-:	m_controller(controller)
-,	m_entityManager(entityManager)
+:	m_entityManager(entityManager)
 ,	m_rootEntity(rootEntity)
+,	m_controller(controller)
 ,	m_worldRenderSettings(worldRenderSettings)
 ,	m_postProcessSettings(postProcessSettings)
 {

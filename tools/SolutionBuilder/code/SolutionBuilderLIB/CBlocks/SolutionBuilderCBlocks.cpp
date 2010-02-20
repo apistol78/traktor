@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <Core/Io/DynamicMemoryStream.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/FileSystem.h>
@@ -141,7 +142,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				os << L"<Option type=\"1\" />" << Endl;
 				break;
 			}
-			
+
 			os << L"<Compiler>" << Endl;
 			os << IncreaseIndent;
 
@@ -195,7 +196,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				if (configuration->getTargetProfile() == Configuration::TpDebug)
 					os << L"<Add option=\"-g\" />" << Endl;
 				else
-					os << L"<Add option=\"-O2\" />" << Endl;
+					os << L"<Add option=\"-O3\" />" << Endl;
 
 				if (configuration->getTargetFormat() == Configuration::TfSharedLibrary)
 					os << L"<Add option=\"-fPIC\" />" << Endl;
@@ -206,18 +207,34 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 			const std::vector< std::wstring >& definitions = configuration->getDefinitions();
 			for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
-				os << L"<Add option=\"-D" << *k << L"\" />" << Endl;
+			{
+				const std::wstring& def = *k;
+				if (def.empty())
+					continue;
+				if (def[0] == '\'' || def[0] == '`' || def[0] == '\'')
+					os << L"<Add option=\"" << def << L"\" />" << Endl;
+				else
+					os << L"<Add option=\"-D" << def << L"\" />" << Endl;
+			}
 
 			const std::vector< std::wstring >& includePaths = configuration->getIncludePaths();
 			for (std::vector< std::wstring >::const_iterator k = includePaths.begin(); k != includePaths.end(); ++k)
 			{
-				Path relativePath;
-				FileSystem::getInstance().getRelativePath(
-					*k,
-					projectPath,
-					relativePath
-				);
-				os << L"<Add directory=\"" << relativePath.getPathName() << L"\" />" << Endl;
+				const std::wstring& ip = *k;
+				if (ip.empty())
+					continue;
+				if (ip[0] == '\'' || ip[0] == '`' || ip[0] == '\'')
+					os << L"<Add option=\"" << ip << L"\" />" << Endl;
+				else
+				{
+					Path relativePath;
+					FileSystem::getInstance().getRelativePath(
+						ip,
+						projectPath,
+						relativePath
+					);
+					os << L"<Add directory=\"" << relativePath.getPathName() << L"\" />" << Endl;
+				}
 			}
 
 			os << L"<Add directory=\".\" />" << Endl;
@@ -250,6 +267,9 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 					os << L"<Add library=\"odbccp32\" />" << Endl;
 				}
 
+				std::set< Path > dependencyPaths;
+				std::vector< std::wstring > dependencyProducts;
+
 				const std::vector< std::wstring >& libraryPaths = configuration->getLibraryPaths();
 				for (std::vector< std::wstring >::const_iterator k = libraryPaths.begin(); k != libraryPaths.end(); ++k)
 				{
@@ -259,20 +279,17 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 						projectPath,
 						relativePath
 					);
-					os << L"<Add directory=\"" << relativePath.getPathName() << L"\" />" << Endl;
+					dependencyPaths.insert(relativePath);
 				}
 
 				const std::vector< std::wstring >& libraries = configuration->getLibraries();
 				for (std::vector< std::wstring >::const_iterator k = libraries.begin(); k != libraries.end(); ++k)
-					os << L"<Add library=\"" << *k << L"\" />" << Endl;
+					dependencyProducts.push_back(*k);
 
 				// Link to dependency products.
 				RefArray< Dependency > dependencies = project->getDependencies();
 				if (!dependencies.empty())
 				{
-					std::set< Path > dependencyPaths;
-					std::set< std::wstring > dependencyProducts;
-
 					while (!dependencies.empty())
 					{
 						const Dependency* dependency = dependencies.front(); dependencies.pop_front();
@@ -285,7 +302,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 							if (configurationDep)
 							{
 								dependencyPaths.insert(outputPath);
-								dependencyProducts.insert(projectDep->getName());
+								dependencyProducts.push_back(projectDep->getName());
 
 								// Recursively add dependencies from static libraries.
 								if (configurationDep->getTargetFormat() == Configuration::TfStaticLibrary)
@@ -293,21 +310,9 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 									for (RefArray< Dependency >::const_iterator k = projectDep->getDependencies().begin(); k != projectDep->getDependencies().end(); ++k)
 										dependencies.push_back(*k);
 
-									//const std::vector< std::wstring >& libraryPathsDep = configurationDep->getLibraryPaths();
-									//for (const std::vector< std::wstring >::const_iterator k = libraryPathsDep.begin(); k != libraryPathsDep.end(); ++k)
-									//{
-									//	Path relativePath;
-									//	FileSystem::getInstance().getRelativePath(
-									//		*k,
-									//		projectPath,
-									//		relativePath
-									//	);
-									//	dependencyPaths.insert(relativePath);
-									//}
-
 									const std::vector< std::wstring >& librariesDep = configurationDep->getLibraries();
 									for (std::vector< std::wstring >::const_iterator k = librariesDep.begin(); k != librariesDep.end(); ++k)
-										dependencyProducts.insert(*k);
+										dependencyProducts.push_back(*k);
 								}
 							}
 						}
@@ -328,7 +333,7 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 								);
 
 								dependencyPaths.insert(outputDepRelativePath);
-								dependencyProducts.insert(projectDep->getName());
+								dependencyProducts.push_back(projectDep->getName());
 
 								// Recursively add dependencies from static libraries.
 								if (configurationDep->getTargetFormat() == Configuration::TfStaticLibrary)
@@ -336,30 +341,31 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 									for (RefArray< Dependency >::const_iterator k = projectDep->getDependencies().begin(); k != projectDep->getDependencies().end(); ++k)
 										dependencies.push_back(*k);
 
-									//const std::vector< std::wstring >& libraryPathsDep = configurationDep->getLibraryPaths();
-									//for (const std::vector< std::wstring >::const_iterator k = libraryPathsDep.begin(); k != libraryPathsDep.end(); ++k)
-									//{
-									//	Path relativePath;
-									//	FileSystem::getInstance().getRelativePath(
-									//		*k,
-									//		projectPath,
-									//		relativePath
-									//	);
-									//	dependencyPaths.insert(relativePath);
-									//}
-
 									const std::vector< std::wstring >& librariesDep = configurationDep->getLibraries();
 									for (std::vector< std::wstring >::const_iterator k = librariesDep.begin(); k != librariesDep.end(); ++k)
-										dependencyProducts.insert(*k);
+										dependencyProducts.push_back(*k);
 								}
 							}
 						}
 					}
+				}
 
-					for (std::set< Path >::const_iterator k = dependencyPaths.begin(); k != dependencyPaths.end(); ++k)
-						os << L"<Add directory=\"" << k->getPathName() << L"\" />" << Endl;
+				for (std::set< Path >::const_iterator k = dependencyPaths.begin(); k != dependencyPaths.end(); ++k)
+					os << L"<Add directory=\"" << k->getPathName() << L"\" />" << Endl;
 
-					for (std::set< std::wstring >::const_iterator k = dependencyProducts.begin(); k != dependencyProducts.end(); ++k)
+				for (std::vector< std::wstring >::iterator k = dependencyProducts.begin(); k != dependencyProducts.end(); ++k)
+				{
+					const std::wstring& library = *k;
+					if (library.empty())
+						continue;
+
+					// If this dependency is repeated multiple times we wait until last occurance.
+					if (std::find(k + 1, dependencyProducts.end(), library) != dependencyProducts.end())
+						continue;
+
+					if (library[0] == '\'' || library[0] == '`' || library[0] == '\'')
+						os << L"<Add option=\"" << *k << L"\" />" << Endl;
+					else
 						os << L"<Add library=\"" << *k << L"\" />" << Endl;
 				}
 
@@ -384,7 +390,9 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 
 			for (std::set< Path >::const_iterator k = embedItems.begin(); k != embedItems.end(); ++k)
 			{
-				Path binaryIncludePath(L"$(TRAKTOR_HOME)/bin/BinaryInclude");
+				Path binaryIncludePath(
+					m_compiler == L"msvc8" ? L"$(TRAKTOR_HOME)/bin/BinaryInclude" : L"$(TRAKTOR_HOME)/bin/Linux/BinaryInclude"
+				);
 				os << L"<Add before=\"" << binaryIncludePath.getPathName() << L" " << k->getPathName() << L" ./Resources/" << k->getFileNameNoExtension() << L".h c_Resource" << k->getFileNameNoExtension() << L"\" />" << Endl;
 			}
 
@@ -396,8 +404,8 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 		os << IncreaseIndent;
 		if (m_compiler == L"msvc8")
 			os << L"<Add option=\"/W3\" />" << Endl;
-		else
-			os << L"<Add option=\"-Wall\" />" << Endl;
+		//else
+		//	os << L"<Add option=\"-Wall\" />" << Endl;
 		os << DecreaseIndent;
 		os << L"</Compiler>" << Endl;
 
