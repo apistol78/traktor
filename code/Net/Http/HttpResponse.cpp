@@ -7,14 +7,14 @@ namespace traktor
 {
 	namespace net
 	{
-	
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpResponse", HttpResponse, Object)
 
 HttpResponse::HttpResponse()
 :	m_statusCode(0)
 {
 }
-	
+
 bool HttpResponse::parse(IStream* stream)
 {
 	if (!stream)
@@ -26,17 +26,17 @@ bool HttpResponse::parse(IStream* stream)
 		char ch;
 		if (stream->read(&ch, sizeof(ch)) != sizeof(ch))
 			break;
-			
+
 		switch (state)
 		{
 		case 0:
 			if (ch == '\r')
 			{
 				// "HTTP/1.1 <Code> <Message";
-				
+
 				size_t sp1 = response.find(' ');
 				size_t sp2 = response.find(' ', sp1 + 1);
-				
+
 				m_statusCode = parseString< int >(response.substr(sp1 + 1, sp2 - sp1));
 				m_statusMessage = response.substr(sp2 + 1);
 
@@ -61,9 +61,9 @@ bool HttpResponse::parse(IStream* stream)
 			}
 			else
 				response += ch;
-			break;			
+			break;
 		case 2:
-			if (ch = '\n')
+			if (ch == '\n')
 				state = 3;
 			else
 			{

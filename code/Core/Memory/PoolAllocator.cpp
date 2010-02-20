@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Memory/PoolAllocator.h"
 #include "Core/Memory/StdAllocator.h"
 

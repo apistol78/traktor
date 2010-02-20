@@ -1,3 +1,4 @@
+#include <cwctype>
 #include "Ui/Edit.h"
 #include "Ui/Application.h"
 #include "Ui/Itf/IEdit.h"
@@ -77,11 +78,11 @@ void Edit::eventKey(Event* event)
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
 
 	wchar_t ch = keyEvent->getCharacter();
-	if (!m_validator || (!iswgraph(ch) && ch != 8))
+	if (!m_validator || (!std::iswgraph(ch) && ch != 8))
 		return;
 
 	std::wstring text = getText();
-	
+
 	int from, to;
 	static_cast< IEdit* >(m_widget)->getSelection(from, to);
 
