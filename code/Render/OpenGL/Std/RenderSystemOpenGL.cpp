@@ -148,7 +148,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		log::error << L"Unable to open X display!" << Endl;
 
 	log::info << L"Choose X visual..." << Endl;
-	
+
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, None };
 	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
 	T_ASSERT (visual);
@@ -425,13 +425,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 	);
 	if (!glcontext)
 		return 0;
-		
+
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
 	return new RenderViewOpenGL(context, m_globalContext);
 
 #else	// LINUX
-	
+
 	struct Handle { Display* display; Window window; }* handle = reinterpret_cast< Handle* >(windowHandle);
 
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, None };
@@ -453,7 +453,8 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 	log::info << L"GLX context created successfully" << Endl;
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(handle->display, handle->window, ctx);
-	context->setCurrent();
+
+	context->enter();
 
 	log::info << L"Loading OpenGL extensions..." << Endl;
 
@@ -464,7 +465,9 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 	}
 
 	log::info << L"OpenGL extensions loaded successfully" << Endl;
-	
+
+	context->leave();
+
 	return new RenderViewOpenGL(context, m_globalContext);
 
 #endif

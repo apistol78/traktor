@@ -1,7 +1,8 @@
-#include "Sound/Filters/SurroundFilter.h"
-#include "Sound/Filters/SurroundEnvironment.h"
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Sound/Filters/SurroundEnvironment.h"
+#include "Sound/Filters/SurroundFilter.h"
 
 namespace traktor
 {

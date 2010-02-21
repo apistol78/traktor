@@ -129,12 +129,12 @@ bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	lua_getglobal(m_luaState, wstombs(functionName).c_str());
-	if (!lua_isnil(m_luaState, -1)) 
+	if (!lua_isnil(m_luaState, -1))
 	{
 		lua_pop(m_luaState, 1);
 		return true;
-	} 
-	else 
+	}
+	else
 	{
 		lua_pop(m_luaState, 1);
 		return false;
@@ -147,7 +147,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 
 	Any returnValue;
 
-#if !defined(_WIN32) && !defined(__APPLE__)
+#if defined(_PS3)
 	if (std::setjmp(s_jb) == 0)
 #else
 	if (setjmp(s_jb) == 0)
@@ -173,7 +173,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 
 	Any returnValue;
 
-#if !defined(_WIN32) && !defined(__APPLE__)
+#if defined(_PS3)
 	if (std::setjmp(s_jb) == 0)
 #else
 	if (setjmp(s_jb) == 0)
@@ -242,7 +242,7 @@ void ScriptContextLua::registerClass(IScriptClass* scriptClass)
 	if (exportedAsRoot)
 	{
 		lua_newtable(m_luaState);
-		
+
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
 		lua_pushcclosure(m_luaState, getUnknownMethod, 2);
@@ -393,7 +393,7 @@ int ScriptContextLua::callUnknownMethod(lua_State* luaState)
 
 	const char* methodName = lua_tostring(luaState, lua_upvalueindex(1));
 	T_ASSERT (methodName);
-	
+
 	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
 	if (!scriptClass)
 		return 0;

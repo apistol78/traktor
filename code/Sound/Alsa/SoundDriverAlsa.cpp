@@ -1,8 +1,9 @@
+#include <cstring>
 #include <limits>
 #include <alsa/asoundlib.h>
-#include "Sound/Alsa/SoundDriverAlsa.h"
-#include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Sound/Alsa/SoundDriverAlsa.h"
 
 namespace traktor
 {
@@ -10,13 +11,13 @@ namespace traktor
 	{
 		namespace
 		{
-			
+
 const char* c_device = "plughw:0,0";
-			
+
 		}
 
-T_IMPLEMENT_RTTI_SERIALIZABLE_CLASS(L"traktor.sound.SoundDriverAlsa", SoundDriverAlsa, SoundDriver)
-	
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverAlsa", 0, SoundDriverAlsa, ISoundDriver)
+
 SoundDriverAlsa::SoundDriverAlsa()
 :	m_handle(0)
 ,	m_hw_params(0)
@@ -33,42 +34,42 @@ SoundDriverAlsa::~SoundDriverAlsa()
 bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 {
 	int res;
-	
+
 	res = snd_pcm_open(&m_handle, c_device, SND_PCM_STREAM_PLAYBACK, 0);
 	if (res < 0)
 	{
 		log::error << L"Unable to open audio device \"" << mbstows(c_device) << L" - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params_malloc(&m_hw_params);
 	if (res < 0)
 	{
 		log::error<< L"Unable to allocate hardware parameter structure - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params_any(m_handle, m_hw_params);
 	if (res < 0)
 	{
 		log::error << L"Unable to initialize hardware parameter structure - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params_set_access(m_handle, m_hw_params, SND_PCM_ACCESS_RW_INTERLEAVED);
 	if (res < 0)
 	{
 		log::error << L"Unable to set access type - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params_set_format(m_handle, m_hw_params, SND_PCM_FORMAT_S16_LE);
 	if (res < 0)
 	{
 		log::error << L"Unable to set sample format - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	uint32_t sampleRate = desc.sampleRate;
 	res = snd_pcm_hw_params_set_rate_near(m_handle, m_hw_params, &sampleRate, 0);
 	if (res < 0)
@@ -76,56 +77,56 @@ bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 		log::error << L"Unable to set sample rate - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params_set_channels(m_handle, m_hw_params, desc.hwChannels);
 	if (res < 0)
 	{
 		log::error << L"Unable to set channel count - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_hw_params(m_handle, m_hw_params);
 	if (res < 0)
 	{
 		log::error << L"Unable to set parameters - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_sw_params_malloc(&m_sw_params);
 	if (res < 0)
 	{
 		log::error << L"Unable to allocate software parameters - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_sw_params_current(m_handle, m_sw_params);
 	if (res < 0)
 	{
 		log::error << L"Unable to get current software parameters - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_sw_params_set_avail_min(m_handle, m_sw_params, desc.frameSamples);
 	if (res < 0)
 	{
 		log::error << L"Unable to set minimum available - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_sw_params_set_start_threshold(m_handle, m_sw_params, desc.frameSamples);
 	if (res < 0)
 	{
 		log::error << L"Unable to set start threshold - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_sw_params(m_handle, m_sw_params);
 	if (res < 0)
 	{
 		log::error << L"Unable to set software parameters - " << mbstows(snd_strerror(res)) << Endl;
 		return false;
 	}
-	
+
 	res = snd_pcm_prepare(m_handle);
 	if (res < 0)
 	{
@@ -139,7 +140,7 @@ bool SoundDriverAlsa::create(const SoundDriverCreateDesc& desc)
 	m_bufferCount = 0;
 
 	std::memset(m_buffer, 0, desc.frameSamples * 3 * desc.hwChannels * sizeof(int16_t));
-	
+
 	return true;
 }
 
@@ -169,10 +170,15 @@ void SoundDriverAlsa::submit(const SoundBlock& soundBlock)
 	{
 		int16_t* bufferAt = &m_buffer[m_bufferCount * m_desc.hwChannels];
 
-		for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)		
+		for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
 		{
-			for (uint32_t i = 0; i < soundBlock.channels; ++i)
-				*bufferAt++ = int16_t(soundBlock.samples[i][j] * std::numeric_limits< int16_t >::max());
+			for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
+			{
+				if (soundBlock.samples[i])
+					*bufferAt++ = int16_t(soundBlock.samples[i][j] * std::numeric_limits< int16_t >::max());
+				else
+					*bufferAt++ = 0;
+			}
 		}
 
 		m_bufferCount += soundBlock.samplesCount;
@@ -190,7 +196,7 @@ void SoundDriverAlsa::submit(const SoundBlock& soundBlock)
 		framesAvail = m_bufferCount;
 		log::warning << L"Buffer unrun, cannot keep up with playback" << Endl;
 	}
-	
+
 	int32_t framesWritten = snd_pcm_writei(m_handle, m_buffer, framesAvail);
 	if (framesWritten > 0)
 	{
