@@ -172,14 +172,9 @@ std::wstring DateTime::format(const std::wstring& fmt) const
 	return buf;
 }
 
-bool DateTime::operator == (const DateTime& dt) const
+DateTime::operator uint64_t () const
 {
-	return m_epoch == dt.m_epoch;
-}
-
-bool DateTime::operator != (const DateTime& dt) const
-{
-	return !(*this == dt);
+	return m_epoch;
 }
 
 bool DateTime::serialize(ISerializer& s)

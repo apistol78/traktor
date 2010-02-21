@@ -85,11 +85,8 @@ public:
 	 */
 	std::wstring format(const std::wstring& fmt) const;
 
-	/*! \brief Compare equal operator. */
-	bool operator == (const DateTime& dt) const;
-
-	/*! \brief Compare not-equal operator. */
-	bool operator != (const DateTime& dt) const;
+	/*! \brief Implicit convert to epoch. */
+	operator uint64_t () const;
 
 	/*! \brief Serialize object. */
 	bool serialize(ISerializer& s);

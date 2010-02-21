@@ -30,7 +30,7 @@ public:
 
 	virtual int find(const Path& mask, RefArray< File >& out);
 
-	virtual bool modify(const Path& filename, uint32_t flags);
+	virtual bool modify(const Path& fileName, uint32_t flags);
 
 	virtual Ref< IStream > open(const Path& filename, uint32_t mode);
 

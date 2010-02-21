@@ -28,7 +28,28 @@ std::wstring NativeVolume::getDescription() const
 
 Ref< File > NativeVolume::get(const Path& path)
 {
-	return 0;
+	struct stat st;
+
+	std::wstring systemPath = getSystemPath(path);
+	if (stat(wstombs(systemPath).c_str(), &st) != 0)
+		return 0;
+
+	DateTime adt(uint64_t(st.st_atime));
+	DateTime mdt(uint64_t(st.st_mtime));
+
+	uint32_t flags = File::FfNormal;
+
+	if ((st.st_mode & S_IWUSR) == 0)
+		flags |= File::FfReadOnly;
+
+	return new File(
+		path,
+		st.st_size,
+		flags,
+		mdt,
+		adt,
+		mdt
+	);
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)
@@ -38,9 +59,6 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	std::wstring maskPath = mask.getPathOnly();
 	std::wstring systemPath = getSystemPath(maskPath);
 	std::wstring fileMask = mask.getFileName();
-
-	if (fileMask == L"*.*")
-		fileMask = L"*";
 
 	WildCompare maskCompare(fileMask);
 
@@ -58,23 +76,23 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	{
 		if (maskCompare.match(mbstows(dp->d_name)))
 		{
-			int flags = 0;
-			int size = 0;
-
 			if (dp->d_type == DT_DIR)
 			{
-				flags = File::FfDirectory;
+				out.push_back(new File(
+					maskPath + mbstows(dp->d_name),
+					0,
+					File::FfDirectory
+				));
 			}
 			else	// Assumes it's a normal file.
 			{
-				flags = File::FfNormal;
+				Path filePath = maskPath + mbstows(dp->d_name);
+				Ref< File > file = get(filePath);
+				if (file)
+					out.push_back(file);
+				else
+					log::warning << L"Unable to stat file \"" << filePath.getPathName() << L"\"" << Endl;
 			}
-
-			out.push_back(new File(
-				maskPath + mbstows(dp->d_name),
-				size,
-				flags
-			));
 		}
 	}
 	closedir(dirp);
@@ -82,7 +100,7 @@ int NativeVolume::find(const Path& mask, RefArray< File >& out)
 	return int(out.size());
 }
 
-bool NativeVolume::modify(const Path& filename, uint32_t flags)
+bool NativeVolume::modify(const Path& fileName, uint32_t flags)
 {
 	return false;
 }
@@ -152,7 +170,11 @@ Path NativeVolume::getCurrentDirectory() const
 void NativeVolume::mountVolumes(FileSystem& fileSystem)
 {
 	char cwd[256];
-	getcwd(cwd, sizeof(cwd));
+	if (!getcwd(cwd, sizeof(cwd)))
+	{
+		log::error << L"Unable to get current working directory; failed to mount virtual volume" << Endl;
+		return;
+	}
 
 	std::wstring workingDirectory = std::wstring(L"C:") + mbstows(cwd);
 

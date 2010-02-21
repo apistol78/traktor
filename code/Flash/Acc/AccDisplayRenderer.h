@@ -97,8 +97,8 @@ private:
 	RefArray< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccQuad > m_quad;
-	std::map< uint32_t, CacheEntry > m_shapeCache;
-	std::map< uint32_t, render::RenderTargetSet* > m_glyphCache;
+	std::map< uint64_t, CacheEntry > m_shapeCache;
+	std::map< uint64_t, render::RenderTargetSet* > m_glyphCache;
 	Vector4 m_frameSize;
 	float m_aspectRatio;
 	float m_scaleX;

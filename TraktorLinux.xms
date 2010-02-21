@@ -2733,7 +2733,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.ode-0.9</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/ode-0.9</sourcePath>
 			<configurations>
@@ -3820,7 +3820,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.wxWidgets-2.8.10</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/src</sourcePath>
 			<configurations>
@@ -3849,6 +3849,7 @@
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
 						<item>SIZEOF_INT=4</item>
+						<item>VA_LIST_IS_ARRAY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3879,6 +3880,7 @@
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
 						<item>SIZEOF_INT=4</item>
+						<item>VA_LIST_IS_ARRAY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3910,6 +3912,7 @@
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
 						<item>SIZEOF_INT=4</item>
+						<item>VA_LIST_IS_ARRAY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -3940,6 +3943,7 @@
 						<item>HAVE_NANOSLEEP</item>
 						<item>HAVE_DLOPEN</item>
 						<item>SIZEOF_INT=4</item>
+						<item>VA_LIST_IS_ARRAY</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -6627,6 +6631,15 @@
 								<fileName>*.*</fileName>
 								<items/>
 							</item>
+							<item type="Filter">
+								<name>Pipeline</name>
+								<items>
+									<item type="File">
+										<fileName>Pipeline/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -6840,6 +6853,24 @@
 														<fileName>*.*</fileName>
 														<items/>
 													</item>
+													<item type="Filter">
+														<name>Filters</name>
+														<items>
+															<item type="File">
+																<fileName>Filters/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Formats</name>
+														<items>
+															<item type="File">
+																<fileName>Formats/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
 												</items>
 												<dependencies>
 													<item type="ProjectDependency" version="1">
@@ -6995,6 +7026,255 @@
 									</dependencies>
 								</project>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Sql</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Sql</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_SQL_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_SQL_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Sql.Sqlite3</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Sql/Sqlite3</sourcePath>
+									<configurations>
+										<item type="Configuration">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+											</includePaths>
+											<definitions>
+												<item>T_SQL_SQLITE3_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+											</includePaths>
+											<definitions>
+												<item>T_SQL_SQLITE3_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+										<item type="Configuration">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.sqlite-3.6.21</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</sourcePath>
+												<configurations>
+													<item type="Configuration">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+															<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+													<item type="Configuration">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/sqlite-3.6.21</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+															<item>SQLITE_ENABLE_COLUMN_METADATA</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -7112,11 +7392,11 @@
 										<items/>
 									</item>
 									<item type="File">
-										<fileName>../../../res/editor/LayerHidden.png</fileName>
+										<fileName>../../../res/LayerHidden.png</fileName>
 										<items/>
 									</item>
 									<item type="File">
-										<fileName>../../../res/editor/LayerVisible.png</fileName>
+										<fileName>../../../res/LayerVisible.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -8792,6 +9072,18 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
+							<fileName>../../../res/About.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/BigIcons.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallIcons.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
 							<fileName>../../../res/Traktor.png</fileName>
 							<items/>
 						</item>
@@ -8825,6 +9117,10 @@
 						</item>
 						<item type="File">
 							<fileName>../../../res/toolbar/Standard16.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LogFilter.png</fileName>
 							<items/>
 						</item>
 					</items>
@@ -8865,10 +9161,22 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[13]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[20]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Traktor.Ui.Wx</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
+						<name>Traktor.Ui.Gtk</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
 						<configurations>
 							<item type="Configuration">
 								<name>DebugShared</name>
@@ -8877,28 +9185,16 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
-									<item>`pkg-config --cflags gtk+-2.0`</item>
+									<item>`pkg-config --cflags gtkmm-2.4`</item>
 								</includePaths>
 								<definitions>
-									<item>T_UI_WX_EXPORT</item>
+									<item>T_UI_GTK_EXPORT</item>
 									<item>_DEBUG</item>
-									<item>__LINUX__</item>
-									<item>__WXGTK__</item>
-									<item>__WXDEBUG__</item>
-									<item>__WXGTK20__</item>
-									<item>wxSIZE_T_IS_UINT</item>
-									<item>HAVE_BOOL</item>
-									<item>SIZEOF_WCHAR_T=4</item>
-									<item>HAVE_SSIZE_T</item>
-									<item>HAVE_LOCALTIME_R</item>
-									<item>HAVE_GMTIME_R</item>
-									<item>HAVE_NANOSLEEP</item>
-									<item>HAVE_DLOPEN</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>`pkg-config --libs gtkmm-2.4`</item>
+								</libraries>
 							</item>
 							<item type="Configuration">
 								<name>ReleaseShared</name>
@@ -8907,27 +9203,16 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
-									<item>`pkg-config --cflags gtk+-2.0`</item>
+									<item>`pkg-config --cflags gtkmm-2.4`</item>
 								</includePaths>
 								<definitions>
-									<item>T_UI_WX_EXPORT</item>
+									<item>T_UI_GTK_EXPORT</item>
 									<item>NDEBUG</item>
-									<item>__LINUX__</item>
-									<item>__WXGTK__</item>
-									<item>__WXGTK20__</item>
-									<item>wxSIZE_T_IS_UINT</item>
-									<item>HAVE_BOOL</item>
-									<item>SIZEOF_WCHAR_T=4</item>
-									<item>HAVE_SSIZE_T</item>
-									<item>HAVE_LOCALTIME_R</item>
-									<item>HAVE_GMTIME_R</item>
-									<item>HAVE_NANOSLEEP</item>
-									<item>HAVE_DLOPEN</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>`pkg-config --libs gtkmm-2.4`</item>
+								</libraries>
 							</item>
 							<item type="Configuration">
 								<name>DebugStatic</name>
@@ -8936,28 +9221,16 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
-									<item>`pkg-config --cflags gtk+-2.0`</item>
+									<item>`pkg-config --cflags gtkmm-2.4`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
-									<item>__LINUX__</item>
-									<item>__WXGTK__</item>
-									<item>__WXDEBUG__</item>
-									<item>__WXGTK20__</item>
-									<item>wxSIZE_T_IS_UINT</item>
-									<item>HAVE_BOOL</item>
-									<item>SIZEOF_WCHAR_T=4</item>
-									<item>HAVE_SSIZE_T</item>
-									<item>HAVE_LOCALTIME_R</item>
-									<item>HAVE_GMTIME_R</item>
-									<item>HAVE_NANOSLEEP</item>
-									<item>HAVE_DLOPEN</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>`pkg-config --libs gtkmm-2.4`</item>
+								</libraries>
 							</item>
 							<item type="Configuration">
 								<name>ReleaseStatic</name>
@@ -8966,27 +9239,16 @@
 								<precompiledHeader/>
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
-									<item>`pkg-config --cflags gtk+-2.0`</item>
+									<item>`pkg-config --cflags gtkmm-2.4`</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
-									<item>__LINUX__</item>
-									<item>__WXGTK__</item>
-									<item>__WXGTK20__</item>
-									<item>wxSIZE_T_IS_UINT</item>
-									<item>HAVE_BOOL</item>
-									<item>SIZEOF_WCHAR_T=4</item>
-									<item>HAVE_SSIZE_T</item>
-									<item>HAVE_LOCALTIME_R</item>
-									<item>HAVE_GMTIME_R</item>
-									<item>HAVE_NANOSLEEP</item>
-									<item>HAVE_DLOPEN</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>`pkg-config --libs gtkmm-2.4`</item>
+								</libraries>
 							</item>
 						</configurations>
 						<items>
@@ -9008,24 +9270,8 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[14]"/>
-							</item>
 						</dependencies>
 					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[13]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -10295,7 +10541,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Physics.Ode</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Ode</sourcePath>
 			<configurations>
@@ -11681,10 +11927,11 @@
 		</item>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project"/>
+		<item ref="/object/projects/item[28]/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Ui.Gtk</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Gtk</sourcePath>
+			<enable>false</enable>
+			<name>Traktor.Ui.Wx</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Wx</sourcePath>
 			<configurations>
 				<item type="Configuration">
 					<name>DebugShared</name>
@@ -11693,16 +11940,28 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config --cflags gtkmm-2.4`</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
+						<item>`pkg-config --cflags gtk+-2.0`</item>
 					</includePaths>
 					<definitions>
-						<item>T_UI_GTK_EXPORT</item>
+						<item>T_UI_WX_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>__LINUX__</item>
+						<item>__WXGTK__</item>
+						<item>__WXDEBUG__</item>
+						<item>__WXGTK20__</item>
+						<item>wxSIZE_T_IS_UINT</item>
+						<item>HAVE_BOOL</item>
+						<item>SIZEOF_WCHAR_T=4</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
+						<item>HAVE_DLOPEN</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config --libs gtkmm-2.4`</item>
-					</libraries>
+					<libraries/>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseShared</name>
@@ -11711,16 +11970,27 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config --cflags gtkmm-2.4`</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
+						<item>`pkg-config --cflags gtk+-2.0`</item>
 					</includePaths>
 					<definitions>
-						<item>T_UI_GTK_EXPORT</item>
+						<item>T_UI_WX_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>__LINUX__</item>
+						<item>__WXGTK__</item>
+						<item>__WXGTK20__</item>
+						<item>wxSIZE_T_IS_UINT</item>
+						<item>HAVE_BOOL</item>
+						<item>SIZEOF_WCHAR_T=4</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
+						<item>HAVE_DLOPEN</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config --libs gtkmm-2.4`</item>
-					</libraries>
+					<libraries/>
 				</item>
 				<item type="Configuration">
 					<name>DebugStatic</name>
@@ -11729,16 +11999,28 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config --cflags gtkmm-2.4`</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
+						<item>`pkg-config --cflags gtk+-2.0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>__LINUX__</item>
+						<item>__WXGTK__</item>
+						<item>__WXDEBUG__</item>
+						<item>__WXGTK20__</item>
+						<item>wxSIZE_T_IS_UINT</item>
+						<item>HAVE_BOOL</item>
+						<item>SIZEOF_WCHAR_T=4</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
+						<item>HAVE_DLOPEN</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config --libs gtkmm-2.4`</item>
-					</libraries>
+					<libraries/>
 				</item>
 				<item type="Configuration">
 					<name>ReleaseStatic</name>
@@ -11747,16 +12029,27 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>`pkg-config --cflags gtkmm-2.4`</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/wxWidgets-2.8.10/lib/linux_lib/release</item>
+						<item>`pkg-config --cflags gtk+-2.0`</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>__LINUX__</item>
+						<item>__WXGTK__</item>
+						<item>__WXGTK20__</item>
+						<item>wxSIZE_T_IS_UINT</item>
+						<item>HAVE_BOOL</item>
+						<item>SIZEOF_WCHAR_T=4</item>
+						<item>HAVE_SSIZE_T</item>
+						<item>HAVE_LOCALTIME_R</item>
+						<item>HAVE_GMTIME_R</item>
+						<item>HAVE_NANOSLEEP</item>
+						<item>HAVE_DLOPEN</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries>
-						<item>`pkg-config --libs gtkmm-2.4`</item>
-					</libraries>
+					<libraries/>
 				</item>
 			</configurations>
 			<items>
@@ -11778,9 +12071,12 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[14]"/>
+				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[28]/dependencies/item[8]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[9]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[6]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
@@ -11984,5 +12280,8 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[5]/project"/>
 	</projects>
 </object>

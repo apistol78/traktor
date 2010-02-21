@@ -1,6 +1,7 @@
 #include "Drawing/Config.h"
 #if defined(DRAWING_INCLUDE_PNG)
 
+#include <cstring>
 #include <png.h>
 #include "Drawing/Formats/ImageFormatPng.h"
 #include "Drawing/Image.h"

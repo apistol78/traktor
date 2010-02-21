@@ -66,7 +66,7 @@ bool AccDisplayRenderer::create(
 	m_renderSystem = renderSystem;
 	m_textureCache = new AccTextureCache(m_renderSystem);
 	m_clearBackground = clearBackground;
-	
+
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
 		return false;
@@ -99,7 +99,7 @@ void AccDisplayRenderer::destroy()
 {
 	T_ASSERT (m_renderView == 0);
 	m_renderSystem = 0;
-	
+
 	safeDestroy(m_quad);
 	safeDestroy(m_textureCache);
 
@@ -108,7 +108,7 @@ void AccDisplayRenderer::destroy()
 
 	m_renderTargetGlyphs.clear();
 
-	for (std::map< uint32_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
 
 	m_shapeCache.clear();
@@ -209,11 +209,11 @@ void AccDisplayRenderer::endMask()
 
 void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
 {
-	uint32_t hash = reinterpret_cast< uint32_t >(&shape);
-	
+	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
+
 	Ref< AccShape > accShape;
 
-	std::map< uint32_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
+	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape();
@@ -252,12 +252,12 @@ void AccDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix3
 
 void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
 {
-	uint32_t hash = reinterpret_cast< uint32_t >(&shape);
+	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
 	Ref< render::RenderTargetSet > rts;
 	Ref< AccShape > accShape;
 
 	// Get glyph shape; create if not already cached.
-	std::map< uint32_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
+	std::map< uint64_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
 	if (it1 == m_shapeCache.end())
 	{
 		accShape = new AccShape();
@@ -291,7 +291,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	bounds.max.y += py;
 
 	// Get cached glyph target.
-	std::map< uint32_t, render::RenderTargetSet* >::iterator it2 = m_glyphCache.find(hash);
+	std::map< uint64_t, render::RenderTargetSet* >::iterator it2 = m_glyphCache.find(hash);
 	if (it2 != m_glyphCache.end())
 	{
 		rts = it2->second;
@@ -306,7 +306,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		m_renderTargetGlyphs.push_front(rts);
 
 		// Remove from cache; we're about to change target.
-		for (std::map< uint32_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		{
 			if (i->second == rts)
 			{
@@ -372,13 +372,13 @@ void AccDisplayRenderer::end()
 	if (m_shapeCache.size() < c_maxCacheSize)
 	{
 		// Increment "unused" counter still.
-		for (std::map< uint32_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 			i->second.unusedCount++;
 		return;
 	}
 
 	// Nuke cached shapes which hasn't been used for X number of frames.
-	for (std::map< uint32_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
+	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
 	{
 		if (i->second.unusedCount++ >= c_maxUnusedCount)
 		{
