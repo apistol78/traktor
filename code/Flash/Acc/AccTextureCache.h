@@ -41,7 +41,7 @@ public:
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::map< uint32_t, Ref< render::ITexture > > m_cache;
+	std::map< uint64_t, Ref< render::ITexture > > m_cache;
 };
 
 	}

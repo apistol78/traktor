@@ -199,7 +199,7 @@ avm_number_t ActionObject::valueOf() const
 
 std::wstring ActionObject::toString() const
 {
-	StringOutputStream ss; ss << L"object (" << uint32_t(this) << L" " << type_name(this) << L")";
+	StringOutputStream ss; ss << L"object (" << type_name(this) << L")";
 	return ss.str();
 }
 
@@ -213,7 +213,7 @@ bool ActionObject::getLocalMember(const std::wstring& memberName, ActionValue& o
 	member_map_t::const_iterator i = m_members.find(memberName);
 	if (i == m_members.end())
 		return false;
-	
+
 	outMemberValue = i->second;
 	return true;
 }

@@ -15,7 +15,7 @@ ActionFunction::ActionFunction(const std::wstring& name)
 
 std::wstring ActionFunction::toString() const
 {
-	StringOutputStream ss; ss << L"function (" << uint32_t(this) << L" " << m_name << L")";
+	StringOutputStream ss; ss << L"function (" << m_name << L")";
 	return ss.str();
 }
 
