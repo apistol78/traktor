@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferVAR.h"
 #include "Render/VertexElement.h"
@@ -31,7 +32,7 @@ VertexBufferVAR::VertexBufferVAR(IContext* context, const std::vector< VertexEle
 			log::warning << L"Index out of bounds on vertex element " << uint32_t(i) << Endl;
 			continue;
 		}
-	
+
 		int usageIndex = T_OGL_USAGE_INDEX(vertexElements[i].getDataUsage(), vertexElements[i].getIndex());
 		switch (vertexElements[i].getDataType())
 		{
@@ -101,7 +102,7 @@ VertexBufferVAR::VertexBufferVAR(IContext* context, const std::vector< VertexEle
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
 			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
-			
+
 		case DtHalf4:
 			m_attributeDesc[usageIndex].size = 4;
 			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;

@@ -1,8 +1,9 @@
+#include <cstring>
+#include "Core/Log/Log.h"
+#include "Render/VertexElement.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferVBO.h"
-#include "Render/VertexElement.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

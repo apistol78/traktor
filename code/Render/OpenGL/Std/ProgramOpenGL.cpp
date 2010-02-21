@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/GlslType.h"
 #include "Render/OpenGL/GlslProgram.h"
@@ -117,7 +118,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 	GLhandleARB vertexObject = glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
 	T_OGL_SAFE(glShaderSourceARB(vertexObject, 1, &vertexShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShaderARB(vertexObject));
-	
+
 	T_OGL_SAFE(glGetObjectParameterivARB(vertexObject, GL_OBJECT_COMPILE_STATUS_ARB, &status));
 	if (status != 1)
 	{
@@ -131,7 +132,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 			return false;
 		}
 	}
-	
+
 	GLhandleARB fragmentObject = glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 	T_OGL_SAFE(glShaderSourceARB(fragmentObject, 1, &fragmentShaderPtr, NULL));
 	T_OGL_SAFE(glCompileShaderARB(fragmentObject));
@@ -246,7 +247,7 @@ bool ProgramOpenGL::create(const ProgramResource* resource)
 				m_parameterMap[handle].length = uniformSize;
 
 				m_uniformData.resize(offset + allocSize, 0.0f);
-				
+
 				m_uniforms.push_back(Uniform());
 				m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
 				m_uniforms.back().type = uniformType;
@@ -303,7 +304,7 @@ void ProgramOpenGL::setFloatArrayParameter(handle_t handle, const float* param, 
 	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	length = min< int >(i->second.length, length);
 
 	std::memcpy(&m_uniformData[i->second.offset], param, length * sizeof(float));
@@ -325,9 +326,9 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	length = min< int >(i->second.length, length);
-		
+
 	for (int j = 0; j < length; ++j)
 		param[j].store(&m_uniformData[i->second.offset + j * 4]);
 
@@ -349,7 +350,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	std::map< handle_t, Parameter >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
-		
+
 	length = min< int >(i->second.length, length);
 
 	for (int j = 0; j < length; ++j)
@@ -450,7 +451,7 @@ bool ProgramOpenGL::activate()
 			case GL_FLOAT_MAT4_ARB:
 				T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
 				break;
-				
+
 			default:
 				T_ASSERT (0);
 			}
@@ -462,7 +463,7 @@ bool ProgramOpenGL::activate()
 		const Sampler& sampler = m_samplers[i];
 		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
 		const TextureData& td = m_textureData[sampler.texture];
-			
+
 		T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + i));
 		T_OGL_SAFE(glBindTexture(td.target, td.name));
 
