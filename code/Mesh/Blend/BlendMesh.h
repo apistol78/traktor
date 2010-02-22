@@ -54,6 +54,7 @@ public:
 	struct Instance : public Object
 	{
 		Ref< render::Mesh > mesh;
+		std::vector< float > weights;
 		bool opaque;
 	};
 

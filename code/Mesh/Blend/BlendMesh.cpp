@@ -186,43 +186,55 @@ void BlendMesh::render(
 	// Update target mesh only when we're rendering default technique.
 	if (technique == world::WorldRenderer::getTechniqueDefault())
 	{
-		const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
-		uint32_t vertexSize = render::getVertexSize(vertexElements);
-		uint32_t vertexCount = instance->mesh->getVertexBuffer()->getBufferSize() / vertexSize;
+		float difference = 0.0f;
+		for (uint32_t i = 0; i < blendWeights.size(); ++i)
+		{
+			if (i < instance->weights.size())
+				difference += abs(blendWeights[i] - instance->weights[i]);
+			else
+				difference += abs(blendWeights[i]);
+		}
 
-		// Execute multiple tasks to perform blending.
-		uint8_t* destinationVertices = static_cast< uint8_t* >(instance->mesh->getVertexBuffer()->lock());
+		if (difference > FUZZY_EPSILON)
+		{
+			const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
+			uint32_t vertexSize = render::getVertexSize(vertexElements);
+			uint32_t vertexCount = instance->mesh->getVertexBuffer()->getBufferSize() / vertexSize;
+
+			// Execute multiple tasks to perform blending.
+			uint8_t* destinationVertices = static_cast< uint8_t* >(instance->mesh->getVertexBuffer()->lock());
 
 #if 1
-		uint32_t pivots[] =
-		{
-			0,
-			vertexCount / 4,
-			(vertexCount * 2) / 4,
-			(vertexCount * 3) / 4,
-			vertexCount
-		};
+			uint32_t pivots[] =
+			{
+				0,
+				vertexCount / 4,
+				(vertexCount * 2) / 4,
+				(vertexCount * 3) / 4,
+				vertexCount
+			};
 
-		BlendMeshTask task1(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[0], pivots[1]);
-		BlendMeshTask task2(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[1], pivots[2]);
-		BlendMeshTask task3(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[2], pivots[3]);
-		BlendMeshTask task4(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[3], pivots[4]);
+			BlendMeshTask task1(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[0], pivots[1]);
+			BlendMeshTask task2(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[1], pivots[2]);
+			BlendMeshTask task3(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[2], pivots[3]);
+			BlendMeshTask task4(vertexElements, blendWeights, m_vertices, destinationVertices, pivots[3], pivots[4]);
 
-		Job jobs[] =
-		{
-			makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute),
-			makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute),
-			makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute),
-			makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute)
-		};
+			Job jobs[] =
+			{
+				makeFunctor< BlendMeshTask >(&task1, &BlendMeshTask::execute),
+				makeFunctor< BlendMeshTask >(&task2, &BlendMeshTask::execute),
+				makeFunctor< BlendMeshTask >(&task3, &BlendMeshTask::execute),
+				makeFunctor< BlendMeshTask >(&task4, &BlendMeshTask::execute)
+			};
 
-		JobManager::getInstance().fork(jobs, sizeof_array(jobs));
+			JobManager::getInstance().fork(jobs, sizeof_array(jobs));
 #else
-		BlendMeshTask task(vertexElements, blendWeights, m_vertices, destinationVertices, 0, vertexCount);
-		task.execute();
+			BlendMeshTask task(vertexElements, blendWeights, m_vertices, destinationVertices, 0, vertexCount);
+			task.execute();
 #endif
 
-		instance->mesh->getVertexBuffer()->unlock();
+			instance->mesh->getVertexBuffer()->unlock();
+		}
 	}
 
 	// Render mesh.
