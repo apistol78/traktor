@@ -64,6 +64,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetWin32", RenderTargetSetWi
 RenderTargetSetWin32::RenderTargetSetWin32(ResourceManagerDx9* resourceManager)
 :	m_resourceManager(resourceManager)
 {
+	m_resourceManager->add(this);
 }
 
 RenderTargetSetWin32::~RenderTargetSetWin32()

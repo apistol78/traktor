@@ -81,16 +81,33 @@ public:
 
 	void removeRenderView(RenderViewWin32* renderView);
 
+	/*! \brief Begin rendering frame.
+	 *
+	 * Called from render view in order to exclusivly
+	 * acquire device for rendering. No resources
+	 * are permitted to be created during rendering
+	 * except from rendering thread.
+	 *
+	 * \return True if rendering is permitted.
+	 */
 	bool beginRender();
 
+	/*! \brief Finish rendering frame. */
 	void endRender();
+
+	/*! \brief Toggle fullscreen/windowed mode.
+	 *
+	 * \note Will only work if renderer was initially
+	 * created with a fullscreen render view.
+	 */
+	void toggleMode();
 
 	// \}
 
 private:
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	D3DPRESENT_PARAMETERS m_d3dPresentNull;
+	D3DPRESENT_PARAMETERS m_d3dPresent;
 	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
 	HWND m_hWnd;
 	Ref< ResourceManagerDx9 > m_resourceManager;
@@ -100,7 +117,15 @@ private:
 	RefArray< RenderViewWin32 > m_renderViews;
 	Semaphore m_renderLock;
 	float m_mipBias;
+	bool m_lostDevice;
 
+	/*! \brief Reset device.
+	 *
+	 * Release all non-managed resources and
+	 * try to reset the device.
+	 *
+	 * \return Reset error code.
+	 */
 	HRESULT resetDevice();
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

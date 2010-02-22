@@ -40,6 +40,7 @@ RenderSystemWin32::RenderSystemWin32()
 :	m_vertexDeclCache(0)
 ,	m_hWnd(0)
 ,	m_mipBias(0.0f)
+,	m_lostDevice(false)
 {
 }
 
@@ -91,25 +92,25 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 		D3DCREATE_PUREDEVICE |
 		D3DCREATE_MULTITHREADED;
 
-	std::memset(&m_d3dPresentNull, 0, sizeof(m_d3dPresentNull));
-	m_d3dPresentNull.BackBufferFormat = D3DFMT_UNKNOWN;
-	m_d3dPresentNull.BackBufferCount = 1;
-	m_d3dPresentNull.BackBufferWidth = 1;
-	m_d3dPresentNull.BackBufferHeight = 1;
-	m_d3dPresentNull.MultiSampleType = D3DMULTISAMPLE_NONE;
-	m_d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	m_d3dPresentNull.hDeviceWindow = m_hWnd;
-	m_d3dPresentNull.Windowed = TRUE;
-	m_d3dPresentNull.EnableAutoDepthStencil = FALSE;
-	m_d3dPresentNull.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-	m_d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
+	m_d3dPresent.BackBufferFormat = D3DFMT_UNKNOWN;
+	m_d3dPresent.BackBufferCount = 1;
+	m_d3dPresent.BackBufferWidth = 1;
+	m_d3dPresent.BackBufferHeight = 1;
+	m_d3dPresent.MultiSampleType = D3DMULTISAMPLE_NONE;
+	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	m_d3dPresent.hDeviceWindow = m_hWnd;
+	m_d3dPresent.Windowed = TRUE;
+	m_d3dPresent.EnableAutoDepthStencil = FALSE;
+	m_d3dPresent.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	hr = m_d3d->CreateDevice(
 		d3dAdapter,
 		d3dDevType,
-		m_d3dPresentNull.hDeviceWindow,
+		m_d3dPresent.hDeviceWindow,
 		dwBehaviour,
-		&m_d3dPresentNull,
+		&m_d3dPresent,
 		&m_d3dDevice.getAssign()
 	);
 	if (FAILED(hr) || !m_d3dDevice)
@@ -275,20 +276,20 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 			d3dMultiSample = c_d3dMultiSample[desc.multiSample];
 	}
 
-	std::memset(&m_d3dPresentNull, 0, sizeof(m_d3dPresentNull));
-	m_d3dPresentNull.BackBufferFormat = D3DFMT_X8R8G8B8;
-	m_d3dPresentNull.BackBufferCount = 1;
-	m_d3dPresentNull.BackBufferWidth = displayMode->getWidth();
-	m_d3dPresentNull.BackBufferHeight = displayMode->getHeight();
-	m_d3dPresentNull.MultiSampleType = d3dMultiSample;
-	m_d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	m_d3dPresentNull.hDeviceWindow = m_hWnd;
-	m_d3dPresentNull.Windowed = FALSE;
-	m_d3dPresentNull.EnableAutoDepthStencil = FALSE;
-	m_d3dPresentNull.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	m_d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
+	m_d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
+	m_d3dPresent.BackBufferCount = 1;
+	m_d3dPresent.BackBufferWidth = displayMode->getWidth();
+	m_d3dPresent.BackBufferHeight = displayMode->getHeight();
+	m_d3dPresent.MultiSampleType = d3dMultiSample;
+	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	m_d3dPresent.hDeviceWindow = m_hWnd;
+	m_d3dPresent.Windowed = FALSE;
+	m_d3dPresent.EnableAutoDepthStencil = FALSE;
+	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-	hr = m_d3dDevice->Reset(&m_d3dPresentNull);
+	hr = m_d3dDevice->Reset(&m_d3dPresent);
 	if (FAILED(hr))
 		return 0;
 
@@ -296,7 +297,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 		this,
 		m_parameterCache,
 		desc,
-		m_d3dPresentNull,
+		m_d3dPresent,
 		d3dDepthStencilFormat,
 		aspectRatio
 	);
@@ -464,16 +465,25 @@ bool RenderSystemWin32::beginRender()
 	if (!m_renderLock.wait(1000))
 		return false;
 
-	while ((hr = m_d3dDevice->TestCooperativeLevel()) == D3DERR_DEVICELOST)
+	hr = m_d3dDevice->TestCooperativeLevel();
+	if (hr == D3DERR_DEVICELOST)
 	{
-		log::debug << L"Device lost; waiting one second..." << Endl;
-		Sleep(1000);
+		if (!m_lostDevice)
+			log::debug << L"Device lost; skip frame(s)..." << Endl;
+		m_lostDevice = true;
 	}
 
 	if (hr == D3DERR_DEVICENOTRESET)
 	{
-		log::debug << L"Device not reset; trying to reset device" << Endl;
+		log::debug << L"Device not reset; trying to reset device..." << Endl;
 		hr = resetDevice();
+		if (SUCCEEDED(hr))
+		{
+			log::debug << L"Device recovered; back to normal" << Endl;
+			m_lostDevice = false;
+		}
+		else
+			log::debug << L"Device not recovered; hr = " << hr << Endl;
 	}
 
 	return SUCCEEDED(hr);
@@ -482,6 +492,46 @@ bool RenderSystemWin32::beginRender()
 void RenderSystemWin32::endRender()
 {
 	m_renderLock.release();
+}
+
+void RenderSystemWin32::toggleMode()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+
+	if (m_d3dPresent.Windowed)
+	{
+		log::debug << L"Enter fullscreen mode" << Endl;
+
+		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUPWINDOW);
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
+		ShowWindow(m_hWnd, SW_MAXIMIZE);
+		UpdateWindow(m_hWnd);
+
+		m_d3dPresent.Windowed = FALSE;
+	}
+	else
+	{
+		log::debug << L"Enter windowed mode" << Endl;
+
+		SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
+		SetWindowPos(m_hWnd, HWND_TOP, 64, 64, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_SHOWWINDOW);
+		ShowWindow(m_hWnd, SW_NORMAL);
+		UpdateWindow(m_hWnd);
+
+		RECT rcWindow;
+		GetClientRect(m_hWnd, &rcWindow);
+
+		int32_t frameWidth = 2 * m_d3dPresent.BackBufferWidth - (rcWindow.right - rcWindow.left);
+		int32_t frameHeight = 2 * m_d3dPresent.BackBufferHeight - (rcWindow.bottom - rcWindow.top);
+
+		log::debug << L"Window size " << frameWidth << L"x" << frameHeight << Endl;
+
+		SetWindowPos(m_hWnd, NULL, 0, 0, frameWidth, frameHeight, SWP_NOMOVE | SWP_NOZORDER);
+
+		m_d3dPresent.Windowed = TRUE;
+	}
+
+	resetDevice();
 }
 
 HRESULT RenderSystemWin32::resetDevice()
@@ -507,11 +557,11 @@ HRESULT RenderSystemWin32::resetDevice()
 			return hr;
 	}
 
-	hr = m_d3dDevice->Reset(&m_d3dPresentNull);
+	hr = m_d3dDevice->EvictManagedResources();
 	if (FAILED(hr))
 		return hr;
 
-	hr = m_d3dDevice->EvictManagedResources();
+	hr = m_d3dDevice->Reset(&m_d3dPresent);
 	if (FAILED(hr))
 		return hr;
 
@@ -553,6 +603,11 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		createStruct = reinterpret_cast< LPCREATESTRUCT >(lParam);
 		renderSystem = reinterpret_cast< RenderSystemWin32* >(createStruct->lpCreateParams);
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
+		break;
+
+	case WM_SYSKEYDOWN:
+		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
+			renderSystem->toggleMode();
 		break;
 
 #if 0
