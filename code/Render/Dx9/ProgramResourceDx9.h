@@ -30,6 +30,7 @@ private:
 	friend class ProgramXbox360;
 	friend class ProgramCompilerWin32;
 	friend class ProgramCompilerXbox360;
+	friend class RenderSystemWin32;
 
 	ComRef< ID3DXBuffer > m_vertexShader;
 	ComRef< ID3DXBuffer > m_pixelShader;

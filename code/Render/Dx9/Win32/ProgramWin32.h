@@ -9,9 +9,9 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
 #include "Render/Types.h"
+#include "Render/Dx9/IResourceDx9.h"
 #include "Render/Dx9/StateBlockDx9.h"
 #include "Render/Dx9/TypesDx9.h"
-#include "Render/Dx9/Unmanaged.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,10 +26,10 @@ namespace traktor
 	namespace render
 	{
 
-class ContextDx9;
 class HlslProgram;
 class ParameterCache;
 class ProgramResourceDx9;
+class ResourceManagerDx9;
 class ShaderCache;
 class TextureBaseDx9;
 
@@ -38,21 +38,32 @@ class TextureBaseDx9;
  */
 class T_DLLCLASS ProgramWin32
 :	public IProgram
-,	public Unmanaged
+,	public IResourceDx9
 {
 	T_RTTI_CLASS;
 
 public:
-	ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache);
+	ProgramWin32(ResourceManagerDx9* resourceManager, ParameterCache* parameterCache);
 
 	virtual ~ProgramWin32();
 
 	bool create(
 		IDirect3DDevice9* d3dDevice,
+		ShaderCache* shaderCache,
 		const ProgramResourceDx9* resource
 	);
 
 	bool activate();
+
+	/*! \brief Force shader to dirty state.
+	*
+	* Next time any shader is activated the shader state are
+	* unconditionally uploaded to the device.
+	*/
+	static void forceDirty();
+
+	// \name IProgram
+	// \{
 
 	virtual void destroy();
 
@@ -72,25 +83,22 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	/*! \brief Force shader to dirty state.
-	 *
-	 * Next time any shader is activated the shader's state are
-	 * unconditionally uploaded to the device.
-	 */
-	static void forceDirty();
+	// \}
 
-protected:
+	// \name IResourceDx9
+	// \{
+
 	virtual HRESULT lostDevice();
 
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
+	// \}
+
 private:
 	static ProgramWin32* ms_activeProgram;
-
-	Ref< ContextDx9 > m_context;
+	Ref< ResourceManagerDx9 > m_resourceManager;
+	Ref< ParameterCache > m_parameterCache;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
-	Ref< ShaderCache > m_shaderCache;
-	ParameterCache* m_parameterCache;
 	ComRef< IDirect3DVertexShader9 > m_d3dVertexShader;
 	ComRef< IDirect3DPixelShader9 > m_d3dPixelShader;
 	StateBlockDx9 m_state;

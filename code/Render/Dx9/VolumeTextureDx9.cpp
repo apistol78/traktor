@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 #include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -11,13 +11,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VolumeTextureDx9", VolumeTextureDx9, IVolumeTexture)
 
-VolumeTextureDx9::VolumeTextureDx9(ContextDx9* context)
-:	m_context(context)
+VolumeTextureDx9::VolumeTextureDx9(ResourceManagerDx9* resourceManager)
+:	m_resourceManager(resourceManager)
 ,	m_format(TfInvalid)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depth(0)
 {
+	m_resourceManager->add(this);
 }
 
 VolumeTextureDx9::~VolumeTextureDx9()
@@ -53,8 +54,8 @@ bool VolumeTextureDx9::create(IDirect3DDevice9* d3dDevice, const VolumeTextureCr
 
 			for (int depth = 0; depth < desc.depth; ++depth)
 			{
-				const unsigned char* s = static_cast< const unsigned char* >(desc.initialData[i].data) + depth * desc.initialData[i].slicePitch;
-				unsigned char* d = static_cast< unsigned char* >(lb.pBits) + depth * lb.SlicePitch;
+				const uint8_t* s = static_cast< const uint8_t* >(desc.initialData[i].data) + depth * desc.initialData[i].slicePitch;
+				uint8_t* d = static_cast< uint8_t* >(lb.pBits) + depth * lb.SlicePitch;
 
 				for (int j = 0; j < (desc.height >> i); ++j)
 				{
@@ -78,10 +79,8 @@ bool VolumeTextureDx9::create(IDirect3DDevice9* d3dDevice, const VolumeTextureCr
 
 void VolumeTextureDx9::destroy()
 {
-#if !defined(_XBOX) && !defined(T_USE_XDK)
-	if (m_context)
-		m_context->releaseComRef(m_d3dVolumeTexture);
-#endif
+	m_d3dVolumeTexture.release();
+	m_resourceManager->remove(this);
 }
 
 int VolumeTextureDx9::getWidth() const
@@ -99,10 +98,14 @@ int VolumeTextureDx9::getDepth() const
 	return m_depth;
 }
 
-IDirect3DBaseTexture9* VolumeTextureDx9::getD3DBaseTexture() const
+HRESULT VolumeTextureDx9::lostDevice()
 {
-	T_ASSERT (m_d3dVolumeTexture);
-	return static_cast< IDirect3DBaseTexture9* >(m_d3dVolumeTexture);
+	return S_OK;
+}
+
+HRESULT VolumeTextureDx9::resetDevice(IDirect3DDevice9* d3dDevice)
+{
+	return S_OK;
 }
 
 	}

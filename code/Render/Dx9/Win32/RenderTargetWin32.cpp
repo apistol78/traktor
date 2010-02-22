@@ -1,6 +1,5 @@
 #include "Render/Types.h"
 #include "Render/Dx9/TypesDx9.h"
-#include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
@@ -53,9 +52,8 @@ const char c_clearEffect[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetWin32", RenderTargetWin32, ITexture)
 
-RenderTargetWin32::RenderTargetWin32(ContextDx9* context)
-:	m_context(context)
-,	m_width(0)
+RenderTargetWin32::RenderTargetWin32()
+:	m_width(0)
 ,	m_height(0)
 {
 }
@@ -152,34 +150,12 @@ bool RenderTargetWin32::create(
 	return true;
 }
 
-void RenderTargetWin32::destroy()
+void RenderTargetWin32::release()
 {
-	if (!m_context)
-		return;
-	m_context->releaseComRef(m_d3dClearEffect);
-	m_context->releaseComRef(m_d3dTargetTexture);
-	m_context->releaseComRef(m_d3dTargetSurface);
-	m_context->releaseComRef(m_d3dResolveTargetSurface);
-}
-
-int RenderTargetWin32::getWidth() const
-{
-	return m_width;
-}
-
-int RenderTargetWin32::getHeight() const
-{
-	return m_height;
-}
-
-int RenderTargetWin32::getDepth() const
-{
-	return 1;
-}
-
-IDirect3DBaseTexture9* RenderTargetWin32::getD3DBaseTexture() const
-{
-	return m_d3dTargetTexture;
+	m_d3dClearEffect.release();
+	m_d3dTargetTexture.release();
+	m_d3dTargetSurface.release();
+	m_d3dResolveTargetSurface.release();
 }
 
 bool RenderTargetWin32::resolve(IDirect3DDevice9* d3dDevice)
@@ -297,6 +273,26 @@ void RenderTargetWin32::clear(
 		);
 		d3dDevice->Clear(0, NULL, flags, clearColor, z, stencil);
 	}
+}
+
+void RenderTargetWin32::destroy()
+{
+	T_FATAL_ERROR;
+}
+
+int RenderTargetWin32::getWidth() const
+{
+	return m_width;
+}
+
+int RenderTargetWin32::getHeight() const
+{
+	return m_height;
+}
+
+int RenderTargetWin32::getDepth() const
+{
+	return 1;
 }
 
 	}

@@ -1,7 +1,7 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/IndexBufferDx9.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Core/Log/Log.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 
 namespace traktor
 {
@@ -12,13 +12,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IndexBufferDx9", IndexBufferDx9, IndexBu
 
 IndexBufferDx9* IndexBufferDx9::ms_activeIndexBuffer = 0;
 
-IndexBufferDx9::IndexBufferDx9(UnmanagedListener* unmanagedListener, ContextDx9* context, IndexType indexType, uint32_t bufferSize)
+IndexBufferDx9::IndexBufferDx9(ResourceManagerDx9* resourceManager, IndexType indexType, uint32_t bufferSize)
 :	IndexBuffer(indexType, bufferSize)
-,	Unmanaged(unmanagedListener)
-,	m_context(context)
+,	m_resourceManager(resourceManager)
 ,	m_d3dFormat(D3DFMT_UNKNOWN)
 ,	m_dynamic(false)
 {
+	m_resourceManager->add(this);
+
 	switch (indexType)
 	{
 	case ItUInt16:
@@ -29,7 +30,6 @@ IndexBufferDx9::IndexBufferDx9(UnmanagedListener* unmanagedListener, ContextDx9*
 		m_d3dFormat = D3DFMT_INDEX32;
 		break;
 	}
-	Unmanaged::addToListener();
 }
 
 IndexBufferDx9::~IndexBufferDx9()
@@ -81,11 +81,8 @@ void IndexBufferDx9::activate(IDirect3DDevice9* d3dDevice, IndexBufferDx9* index
 
 void IndexBufferDx9::destroy()
 {
-#if !defined(_XBOX) && !defined(T_USE_XDK)
-	if (m_context)
-		m_context->releaseComRef(m_d3dIndexBuffer);
-#endif
-	Unmanaged::removeFromListener();
+	m_d3dIndexBuffer.release();
+	m_resourceManager->remove(this);
 }
 
 void* IndexBufferDx9::lock()
@@ -110,7 +107,7 @@ HRESULT IndexBufferDx9::lostDevice()
 	if (!m_dynamic)
 		return S_OK;
 
-	m_d3dIndexBuffer = 0;
+	m_d3dIndexBuffer.release();
 	return S_OK;
 }
 

@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TypesDx9.h"
 #include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Core/Log/Log.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 
 namespace traktor
 {
@@ -11,12 +11,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CubeTextureDx9", CubeTextureDx9, ICubeTexture)
 
-CubeTextureDx9::CubeTextureDx9(ContextDx9* context)
-:	m_context(context)
+CubeTextureDx9::CubeTextureDx9(ResourceManagerDx9* resourceManager)
+:	m_resourceManager(resourceManager)
 ,	m_format(TfInvalid)
 ,	m_side(0)
 ,	m_lock(0)
 {
+	m_resourceManager->add(this);
 }
 
 CubeTextureDx9::~CubeTextureDx9()
@@ -72,10 +73,8 @@ bool CubeTextureDx9::create(IDirect3DDevice9* d3dDevice, const CubeTextureCreate
 
 void CubeTextureDx9::destroy()
 {
-#if !defined(_XBOX) && !defined(T_USE_XDK)
-	if (m_context)
-		m_context->releaseComRef(m_d3dCubeTexture);
-#endif
+	m_d3dCubeTexture.release();
+	m_resourceManager->remove(this);
 }
 
 int CubeTextureDx9::getWidth() const
@@ -123,10 +122,14 @@ void CubeTextureDx9::unlock(int side, int level)
 	m_lock = 0;
 }
 
-IDirect3DBaseTexture9* CubeTextureDx9::getD3DBaseTexture() const
+HRESULT CubeTextureDx9::lostDevice()
 {
-	T_ASSERT (m_d3dCubeTexture);
-	return static_cast< IDirect3DBaseTexture9* >(m_d3dCubeTexture);
+	return S_OK;
+}
+
+HRESULT CubeTextureDx9::resetDevice(IDirect3DDevice9* d3dDevice)
+{
+	return S_OK;
 }
 
 	}

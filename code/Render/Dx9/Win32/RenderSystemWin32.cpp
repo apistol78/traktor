@@ -1,28 +1,27 @@
-#include "Render/Dx9/Win32/RenderSystemWin32.h"
-#include "Render/Dx9/Win32/RenderViewWin32.h"
-#include "Render/Dx9/Win32/RenderTargetSetWin32.h"
-#include "Render/Dx9/Win32/ProgramCompilerWin32.h"
-#include "Render/Dx9/Win32/ProgramWin32.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Render/Dx9/ShaderCache.h"
-#include "Render/Dx9/ParameterCache.h"
-#include "Render/Dx9/VertexDeclCache.h"
-#include "Render/Dx9/ProgramResourceDx9.h"
-#include "Render/Dx9/VertexBufferDx9.h"
-#include "Render/Dx9/IndexBufferDx9.h"
-#include "Render/Dx9/SimpleTextureDx9.h"
-#include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/VolumeTextureDx9.h"
-#include "Render/Dx9/Unmanaged.h"
-#include "Render/DisplayMode.h"
-#include "Render/VertexElement.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Core/Serialization/DeepHash.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/DeepHash.h"
+#include "Core/Thread/Acquire.h"
+#include "Render/DisplayMode.h"
+#include "Render/VertexElement.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Dx9/CubeTextureDx9.h"
+#include "Render/Dx9/IndexBufferDx9.h"
+#include "Render/Dx9/ParameterCache.h"
+#include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
+#include "Render/Dx9/ShaderCache.h"
+#include "Render/Dx9/SimpleTextureDx9.h"
+#include "Render/Dx9/VertexDeclCache.h"
+#include "Render/Dx9/VertexBufferDx9.h"
+#include "Render/Dx9/VolumeTextureDx9.h"
+#include "Render/Dx9/Win32/ProgramWin32.h"
+#include "Render/Dx9/Win32/ProgramCompilerWin32.h"
+#include "Render/Dx9/Win32/RenderSystemWin32.h"
+#include "Render/Dx9/Win32/RenderTargetSetWin32.h"
+#include "Render/Dx9/Win32/RenderViewWin32.h"
 
 namespace traktor
 {
@@ -38,8 +37,7 @@ const TCHAR* c_className = _T("TraktorRenderSystem");
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemWin32", 0, RenderSystemWin32, IRenderSystem)
 
 RenderSystemWin32::RenderSystemWin32()
-:	m_parameterCache(0)
-,	m_vertexDeclCache(0)
+:	m_vertexDeclCache(0)
 ,	m_hWnd(0)
 ,	m_mipBias(0.0f)
 {
@@ -90,30 +88,28 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	DWORD dwBehaviour =
 		D3DCREATE_HARDWARE_VERTEXPROCESSING |
 		D3DCREATE_FPU_PRESERVE |
-		D3DCREATE_MULTITHREADED |
-		D3DCREATE_PUREDEVICE;
+		D3DCREATE_PUREDEVICE |
+		D3DCREATE_MULTITHREADED;
 
-	D3DPRESENT_PARAMETERS d3dPresentNull;
-
-	std::memset(&d3dPresentNull, 0, sizeof(d3dPresentNull));
-	d3dPresentNull.BackBufferFormat = D3DFMT_A8R8G8B8;
-	d3dPresentNull.BackBufferCount = 1;
-	d3dPresentNull.BackBufferWidth = 1;
-	d3dPresentNull.BackBufferHeight = 1;
-	d3dPresentNull.MultiSampleType = D3DMULTISAMPLE_NONE;
-	d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresentNull.hDeviceWindow = m_hWnd;
-	d3dPresentNull.Windowed = TRUE;
-	d3dPresentNull.EnableAutoDepthStencil = FALSE;
-	d3dPresentNull.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	std::memset(&m_d3dPresentNull, 0, sizeof(m_d3dPresentNull));
+	m_d3dPresentNull.BackBufferFormat = D3DFMT_UNKNOWN;
+	m_d3dPresentNull.BackBufferCount = 1;
+	m_d3dPresentNull.BackBufferWidth = 1;
+	m_d3dPresentNull.BackBufferHeight = 1;
+	m_d3dPresentNull.MultiSampleType = D3DMULTISAMPLE_NONE;
+	m_d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	m_d3dPresentNull.hDeviceWindow = m_hWnd;
+	m_d3dPresentNull.Windowed = TRUE;
+	m_d3dPresentNull.EnableAutoDepthStencil = FALSE;
+	m_d3dPresentNull.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	hr = m_d3d->CreateDevice(
 		d3dAdapter,
 		d3dDevType,
-		d3dPresentNull.hDeviceWindow,
+		m_d3dPresentNull.hDeviceWindow,
 		dwBehaviour,
-		&d3dPresentNull,
+		&m_d3dPresentNull,
 		&m_d3dDevice.getAssign()
 	);
 	if (FAILED(hr) || !m_d3dDevice)
@@ -146,18 +142,12 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 
 	// Investigate available texture memory.
 	UINT availTextureMem = m_d3dDevice->GetAvailableTextureMem();
-	log::debug << L"Estimated " << availTextureMem / (1024 * 1024) << L" Mb texture memory available" << Endl;
+	log::debug << L"Estimated " << availTextureMem / (1024 * 1024) << L" MiB texture memory available" << Endl;
 
-	T_ASSERT (!m_shaderCache);
-	m_shaderCache= new ShaderCache();
-
-	T_ASSERT (!m_parameterCache);
-	m_parameterCache = new ParameterCache(this, m_d3dDevice);
-
-	T_ASSERT (!m_vertexDeclCache);
-	m_vertexDeclCache = new VertexDeclCache(this, m_d3dDevice);
-
-	m_context = new ContextDx9();
+	m_resourceManager = new ResourceManagerDx9();
+	m_shaderCache = new ShaderCache();
+	m_parameterCache = new ParameterCache(m_d3dDevice);
+	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
 	m_mipBias = desc.mipBias;
 
 	return true;
@@ -167,35 +157,28 @@ void RenderSystemWin32::destroy()
 {
 	T_ASSERT (m_renderViews.empty());
 
-	// In case there are any unmanaged resources still lingering we tell them to get lost.
-	for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
+	if (m_resourceManager)
 	{
-		if (*i)
-			(*i)->lostDevice();
+		m_resourceManager->lostDevice();
+		m_resourceManager = 0;
 	}
 
-	if (m_context)
+	if (m_parameterCache)
 	{
-		m_context->deleteResources();
-		m_context = 0;
+		m_parameterCache->lostDevice();
+		m_parameterCache = 0;
+	}
+
+	if (m_vertexDeclCache)
+	{
+		m_vertexDeclCache->lostDevice();
+		m_vertexDeclCache = 0;
 	}
 
 	if (m_shaderCache)
 	{
 		m_shaderCache->releaseAll();
 		m_shaderCache = 0;
-	}
-
-	if (m_parameterCache)
-	{
-		delete m_parameterCache;
-		m_parameterCache = 0;
-	}
-
-	if (m_vertexDeclCache)
-	{
-		delete m_vertexDeclCache;
-		m_vertexDeclCache = 0;
 	}
 
 	if (m_hWnd)
@@ -258,7 +241,6 @@ bool RenderSystemWin32::handleMessages()
 
 Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
 {
-	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
 	HRESULT hr;
@@ -293,28 +275,37 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 			d3dMultiSample = c_d3dMultiSample[desc.multiSample];
 	}
 
-	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
-	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
-	d3dPresent.BackBufferCount = 1;
-	d3dPresent.BackBufferWidth = displayMode->getWidth();
-	d3dPresent.BackBufferHeight = displayMode->getHeight();
-	d3dPresent.MultiSampleType = d3dMultiSample;
-	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresent.hDeviceWindow = m_hWnd;
-	d3dPresent.Windowed = FALSE;
-	d3dPresent.EnableAutoDepthStencil = FALSE;
-	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
-	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+	std::memset(&m_d3dPresentNull, 0, sizeof(m_d3dPresentNull));
+	m_d3dPresentNull.BackBufferFormat = D3DFMT_X8R8G8B8;
+	m_d3dPresentNull.BackBufferCount = 1;
+	m_d3dPresentNull.BackBufferWidth = displayMode->getWidth();
+	m_d3dPresentNull.BackBufferHeight = displayMode->getHeight();
+	m_d3dPresentNull.MultiSampleType = d3dMultiSample;
+	m_d3dPresentNull.SwapEffect = D3DSWAPEFFECT_DISCARD;
+	m_d3dPresentNull.hDeviceWindow = m_hWnd;
+	m_d3dPresentNull.Windowed = FALSE;
+	m_d3dPresentNull.EnableAutoDepthStencil = FALSE;
+	m_d3dPresentNull.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresentNull.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-	return new RenderViewWin32(
-		m_context,
+	hr = m_d3dDevice->Reset(&m_d3dPresentNull);
+	if (FAILED(hr))
+		return 0;
+
+	Ref< RenderViewWin32 > renderView = new RenderViewWin32(
+		this,
 		m_parameterCache,
 		desc,
-		this,
-		d3dPresent,
+		m_d3dPresentNull,
 		d3dDepthStencilFormat,
 		aspectRatio
 	);
+
+	hr = renderView->resetDevice(m_d3dDevice);
+	if (FAILED(hr))
+		return 0;
+
+	return renderView;
 }
 
 Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
@@ -324,8 +315,6 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
 	HRESULT hr;
 	RECT rcWindow;
-
-	T_ASSERT (m_hWnd);
 
 	// Determine output aspect ratio from default display mode; not
 	// correct but we assume user have a matching resolution and monitor
@@ -356,7 +345,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	}
 
 	std::memset(&d3dPresent, 0, sizeof(d3dPresent));
-	d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
+	d3dPresent.BackBufferFormat = D3DFMT_UNKNOWN;
 	d3dPresent.BackBufferCount = 1;
 	d3dPresent.BackBufferWidth = rcWindow.right - rcWindow.left;
 	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
@@ -368,20 +357,26 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
 	d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
-	return new RenderViewWin32(
-		m_context,
+	Ref< RenderViewWin32 > renderView = new RenderViewWin32(
+		this,
 		m_parameterCache,
 		desc,
-		this,
 		d3dPresent,
 		d3dDepthStencilFormat,
 		aspectRatio
 	);
+
+	hr = renderView->resetDevice(m_d3dDevice);
+	if (FAILED(hr))
+		return 0;
+
+	return renderView;
 }
 
 Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
-	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(this, m_context, bufferSize, m_vertexDeclCache);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< VertexBufferDx9 > vertexBuffer = new VertexBufferDx9(m_resourceManager, bufferSize, m_vertexDeclCache);
 	if (!vertexBuffer->create(m_d3dDevice, vertexElements, dynamic))
 		return 0;
 	return vertexBuffer;
@@ -389,7 +384,8 @@ Ref< VertexBuffer > RenderSystemWin32::createVertexBuffer(const std::vector< Ver
 
 Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
-	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(this, m_context, indexType, bufferSize);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< IndexBufferDx9 > indexBuffer = new IndexBufferDx9(m_resourceManager, indexType, bufferSize);
 	if (!indexBuffer->create(m_d3dDevice, dynamic))
 		return 0;
 	return indexBuffer;
@@ -397,7 +393,8 @@ Ref< IndexBuffer > RenderSystemWin32::createIndexBuffer(IndexType indexType, uin
 
 Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
-	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_context);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< SimpleTextureDx9 > texture = new SimpleTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -405,7 +402,8 @@ Ref< ISimpleTexture > RenderSystemWin32::createSimpleTexture(const SimpleTexture
 
 Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_context);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< CubeTextureDx9 > texture = new CubeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -413,7 +411,8 @@ Ref< ICubeTexture > RenderSystemWin32::createCubeTexture(const CubeTextureCreate
 
 Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_context);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< VolumeTextureDx9 > texture = new VolumeTextureDx9(m_resourceManager);
 	if (!texture->create(m_d3dDevice, desc))
 		return 0;
 	return texture;
@@ -421,7 +420,8 @@ Ref< IVolumeTexture > RenderSystemWin32::createVolumeTexture(const VolumeTexture
 
 Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
-	Ref< RenderTargetSetWin32 > renderTargetSet = new RenderTargetSetWin32(this, m_context);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	Ref< RenderTargetSetWin32 > renderTargetSet = new RenderTargetSetWin32(m_resourceManager);
 	if (!renderTargetSet->create(m_d3dDevice, desc))
 		return 0;
 	return renderTargetSet;
@@ -429,15 +429,14 @@ Ref< RenderTargetSet > RenderSystemWin32::createRenderTargetSet(const RenderTarg
 
 Ref< IProgram > RenderSystemWin32::createProgram(const ProgramResource* programResource)
 {
-	T_ASSERT (m_shaderCache);
-	T_ASSERT (m_parameterCache);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
 	Ref< const ProgramResourceDx9 > resource = dynamic_type_cast< const ProgramResourceDx9* >(programResource);
 	if (!resource)
 		return 0;
 
-	Ref< ProgramWin32 > program = new ProgramWin32(this, m_context, m_shaderCache, m_parameterCache);
-	if (!program->create(m_d3dDevice, resource))
+	Ref< ProgramWin32 > program = new ProgramWin32(m_resourceManager, m_parameterCache);
+	if (!program->create(m_d3dDevice, m_shaderCache, resource))
 		return 0;
 
 	return program;
@@ -448,191 +447,98 @@ Ref< IProgramCompiler > RenderSystemWin32::createProgramCompiler() const
 	return new ProgramCompilerWin32();
 }
 
-IDirect3D9* RenderSystemWin32::getD3D() const
+void RenderSystemWin32::addRenderView(RenderViewWin32* renderView)
 {
-	return m_d3d;
+	m_renderViews.push_back(renderView);
 }
 
-IDirect3DDevice9* RenderSystemWin32::getD3DDevice() const
+void RenderSystemWin32::removeRenderView(RenderViewWin32* renderView)
 {
-	return m_d3dDevice;
+	m_renderViews.remove(renderView);
 }
 
-HRESULT RenderSystemWin32::testCooperativeLevel()
+bool RenderSystemWin32::beginRender()
 {
 	HRESULT hr;
 
-	hr = m_d3dDevice->TestCooperativeLevel();
-	if (hr == D3DERR_DEVICENOTRESET)
-		hr = resetDevice();
+	if (!m_renderLock.wait(1000))
+		return false;
 
-	return hr;
+	while ((hr = m_d3dDevice->TestCooperativeLevel()) == D3DERR_DEVICELOST)
+	{
+		log::debug << L"Device lost; waiting one second..." << Endl;
+		Sleep(1000);
+	}
+
+	if (hr == D3DERR_DEVICENOTRESET)
+	{
+		log::debug << L"Device not reset; trying to reset device" << Endl;
+		hr = resetDevice();
+	}
+
+	return SUCCEEDED(hr);
+}
+
+void RenderSystemWin32::endRender()
+{
+	m_renderLock.release();
 }
 
 HRESULT RenderSystemWin32::resetDevice()
 {
 	HRESULT hr;
 
-	// Release all unmanaged resources.
+	hr = m_resourceManager->lostDevice();
+	if (FAILED(hr))
+		return hr;
+
+	hr = m_parameterCache->lostDevice();
+	if (FAILED(hr))
+		return hr;
+
+	hr = m_vertexDeclCache->lostDevice();
+	if (FAILED(hr))
+		return hr;
+
+	for (RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin(); i != m_renderViews.end(); ++i)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
-		for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
-			(*i)->lostDevice();
+		hr = (*i)->lostDevice();
+		if (FAILED(hr))
+			return hr;
 	}
 
-	// Delete any pending resources.
-	m_context->deleteResources();
+	hr = m_d3dDevice->Reset(&m_d3dPresentNull);
+	if (FAILED(hr))
+		return hr;
 
-	RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin();
-	if (i == m_renderViews.end())
-		return S_OK;
+	hr = m_d3dDevice->EvictManagedResources();
+	if (FAILED(hr))
+		return hr;
 
-	D3DPRESENT_PARAMETERS d3dPresent = (*i)->getD3DPresent();
-	if (d3dPresent.Windowed)
+	for (RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin(); i != m_renderViews.end(); ++i)
 	{
-		hr = m_d3dDevice->Reset(&d3dPresent);
+		hr = (*i)->resetDevice(m_d3dDevice);
 		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed; unable to continue" << Endl;
 			return hr;
-		}
-
-		// Create additional swap chains for all windowed render views.
-		for (; i != m_renderViews.end(); ++i)
-		{
-			RenderViewWin32* renderView = *i;
-			if (!renderView)
-				continue;
-
-			D3DPRESENT_PARAMETERS d3dPresent = renderView->getD3DPresent();
-			T_ASSERT (d3dPresent.Windowed);
-
-			ComRef< IDirect3DSwapChain9 > d3dSwapChain;
-			hr = m_d3dDevice->CreateAdditionalSwapChain(
-				&d3dPresent,
-				&d3dSwapChain.getAssign()
-			);
-			if (FAILED(hr))
-			{
-				log::error << L"Reset device failed, unable to create additional swap chain" << Endl;
-				return hr;
-			}
-
-			ComRef< IDirect3DSurface9 > d3dDepthStencilSurface;
-			hr = m_d3dDevice->CreateDepthStencilSurface(
-				d3dPresent.BackBufferWidth,
-				d3dPresent.BackBufferHeight,
-				renderView->getD3DDepthStencilFormat(),
-				d3dPresent.MultiSampleType,
-				0,
-				TRUE,
-				&d3dDepthStencilSurface.getAssign(),
-				NULL
-			);
-			if (FAILED(hr))
-			{
-				log::error << L"Reset device failed, unable to create additional depth/stencil surface" << Endl;
-				return hr;
-			}
-
-			renderView->setD3DBuffers(d3dSwapChain, d3dDepthStencilSurface);
-		}
-	}
-	else
-	{
-		T_ASSERT (m_renderViews.size() == 1);
-
-		hr = m_d3dDevice->Reset(&d3dPresent);
-		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed, unable to continue" << Endl;
-			return hr;
-		}
-
-		ComRef< IDirect3DSwapChain9 > d3dSwapChain;
-		hr = m_d3dDevice->GetSwapChain(
-			0,
-			&d3dSwapChain.getAssign()
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed, unable to get primary swap chain" << Endl;
-			return hr;
-		}
-
-		ComRef< IDirect3DSurface9 > d3dDepthStencilSurface;
-		hr = m_d3dDevice->CreateDepthStencilSurface(
-			d3dPresent.BackBufferWidth,
-			d3dPresent.BackBufferHeight,
-			(*i)->getD3DDepthStencilFormat(),
-			d3dPresent.MultiSampleType,
-			0,
-			TRUE,
-			&d3dDepthStencilSurface.getAssign(),
-			NULL
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed, unable to create depth/stencil surface" << Endl;
-			return hr;
-		}
-
-		(*i)->setD3DBuffers(d3dSwapChain, d3dDepthStencilSurface);
-
-		// Disable screen saver and power-save feature.
-		SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, FALSE, 0, SPIF_SENDWININICHANGE);
-		SystemParametersInfo(SPI_SETPOWEROFFACTIVE, FALSE, 0, SPIF_SENDWININICHANGE);
 	}
 
-	if (SUCCEEDED(hr))
-	{
-		// Evict all managed resources.
-		hr = m_d3dDevice->EvictManagedResources();
-		if (FAILED(hr))
-		{
-			log::error << L"Reset device failed, unable to evict managed resources" << Endl;
-			return hr;
-		}
+	hr = m_resourceManager->resetDevice(m_d3dDevice);
+	if (FAILED(hr))
+		return hr;
 
-		// Reset unmanaged resources.
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
-			for (std::list< Unmanaged* >::iterator i = m_unmanagedList.begin(); i != m_unmanagedList.end(); ++i)
-				(*i)->resetDevice(m_d3dDevice);
-		}
+	hr = m_parameterCache->resetDevice(m_d3dDevice);
+	if (FAILED(hr))
+		return hr;
 
-		// Set global mipmap bias.
-		for (int i = 0; i < ParameterCache::MaxTextureCount; ++i)
-			m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
-	}
+	hr = m_vertexDeclCache->resetDevice(m_d3dDevice);
+	if (FAILED(hr))
+		return hr;
 
+	for (int i = 0; i < ParameterCache::MaxTextureCount; ++i)
+		m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
+
+	log::debug << L"Device reset successful" << Endl;
 	return hr;
-}
-
-void RenderSystemWin32::addRenderView(RenderViewWin32* renderView)
-{
-	m_renderViews.push_back(renderView);
-	HRESULT hr = resetDevice();
-	T_ASSERT (SUCCEEDED(hr));
-}
-
-void RenderSystemWin32::removeRenderView(RenderViewWin32* renderView)
-{
-	m_renderViews.remove(renderView);
-	HRESULT hr = resetDevice();
-	T_ASSERT (SUCCEEDED(hr));
-}
-
-void RenderSystemWin32::addUnmanaged(Unmanaged* unmanaged)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
-	m_unmanagedList.push_back(unmanaged);
-}
-
-void RenderSystemWin32::removeUnmanaged(Unmanaged* unmanaged)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_unmanagedLock);
-	m_unmanagedList.remove(unmanaged);
 }
 
 LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

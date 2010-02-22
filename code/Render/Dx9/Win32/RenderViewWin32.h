@@ -1,12 +1,12 @@
 #ifndef traktor_render_RenderViewWin32_H
 #define traktor_render_RenderViewWin32_H
 
+#include <list>
 #include <map>
 #include <stack>
-#include "Render/Dx9/Platform.h"
-#include "Render/Dx9/Unmanaged.h"
-#include "Render/IRenderView.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/IRenderView.h"
+#include "Render/Dx9/Platform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,30 +21,27 @@ namespace traktor
 	namespace render
 	{
 
+class IndexBufferDx9;
 class ParameterCache;
+class ProgramWin32;
 class RenderSystemWin32;
 class RenderTargetSetWin32;
 class RenderTargetWin32;
-class ContextDx9;
-class ProgramWin32;
 class VertexBufferDx9;
-class IndexBufferDx9;
 
 /*!
  * \ingroup DX9
  */
 class T_DLLCLASS RenderViewWin32
 :	public IRenderView
-,	public Unmanaged
 {
 	T_RTTI_CLASS;
 
 public:
 	RenderViewWin32(
-		ContextDx9* context,
+		RenderSystemWin32* renderSystem,
 		ParameterCache* parameterCache,
 		const RenderViewCreateDesc& createDesc,
-		RenderSystemWin32* renderSystem,
 		const D3DPRESENT_PARAMETERS& d3dPresent,
 		D3DFORMAT d3dDepthStencilFormat,
 		float nativeAspectRatio
@@ -86,24 +83,14 @@ public:
 
 	virtual void setMSAAEnable(bool msaaEnable);
 
-	void setD3DBuffers(IDirect3DSwapChain9* d3dSwapChain, IDirect3DSurface9* d3dDepthStencilSurface);
+	// \name Swap-chain management
+	// \{
 
-	inline IDirect3DDevice9* getD3DDevice() const {
-		return m_d3dDevice;
-	}
+	HRESULT lostDevice();
 
-	inline const D3DPRESENT_PARAMETERS& getD3DPresent() const {
-		return m_d3dPresent;
-	}
+	HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
-	inline D3DFORMAT getD3DDepthStencilFormat() const {
-		return m_d3dDepthStencilFormat;
-	}
-
-protected:
-	virtual HRESULT lostDevice();
-
-	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
+	// \}
 
 private:
 	struct RenderState
@@ -114,11 +101,10 @@ private:
 		RenderTargetWin32* renderTarget;
 	};
 
-	Ref< ContextDx9 > m_context;
+	Ref< RenderSystemWin32 > m_renderSystem;
 	ParameterCache* m_parameterCache;
 	RenderViewCreateDesc m_createDesc;
-	Ref< RenderSystemWin32 > m_renderSystem;
-	IDirect3DDevice9* m_d3dDevice;
+	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	D3DPRESENT_PARAMETERS m_d3dPresent;
 	D3DFORMAT m_d3dDepthStencilFormat;
 	float m_nativeAspectRatio;
@@ -131,13 +117,6 @@ private:
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
 	Ref< ProgramWin32 > m_currentProgram;
 	bool m_targetDirty;
-
-	uint32_t m_frameCount;
-	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[3];
-
-#if defined(_DEBUG)
-	LONG m_ownerThread;
-#endif
 
 	void bindTargets();
 };

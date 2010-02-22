@@ -1,16 +1,16 @@
 #ifndef traktor_render_ParameterCache_H
 #define traktor_render_ParameterCache_H
 
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
-#include "Render/Dx9/Unmanaged.h"
+#include "Render/Dx9/Platform.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-class ParameterCache : public Unmanaged
+class ParameterCache : public Object
 {
 public:
 	enum
@@ -22,7 +22,7 @@ public:
 		MaxTextureCount = 8
 	};
 
-	ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice);
+	ParameterCache(IDirect3DDevice9* d3dDevice);
 
 	virtual ~ParameterCache();
 
@@ -42,10 +42,9 @@ public:
 
 	void setSamplerState(uint32_t sampler, uint32_t state, uint32_t value);
 
-protected:
-	virtual HRESULT lostDevice();
+	HRESULT lostDevice();
 
-	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
+	HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
 private:
 	ComRef< IDirect3DDevice9 > m_d3dDevice;

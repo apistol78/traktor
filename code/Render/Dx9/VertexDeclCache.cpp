@@ -1,5 +1,5 @@
-#include "Render/Dx9/VertexDeclCache.h"
 #include "Core/Log/Log.h"
+#include "Render/Dx9/VertexDeclCache.h"
 
 namespace traktor
 {
@@ -48,16 +48,9 @@ struct VertexElementPred
 
 		}
 
-VertexDeclCache::VertexDeclCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice)
-:	Unmanaged(listener)
-,	m_d3dDevice(d3dDevice)
+VertexDeclCache::VertexDeclCache(IDirect3DDevice9* d3dDevice)
+:	m_d3dDevice(d3dDevice)
 {
-	Unmanaged::addToListener();
-}
-
-VertexDeclCache::~VertexDeclCache()
-{
-	Unmanaged::removeFromListener();
 }
 
 bool VertexDeclCache::createDeclaration(const std::vector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride)
@@ -136,7 +129,7 @@ void VertexDeclCache::setDeclaration(IDirect3DVertexDeclaration9* d3dVertexDecla
 
 HRESULT VertexDeclCache::lostDevice()
 {
-	m_d3dDevice = 0;
+	m_d3dDevice.release();
 	return S_OK;
 }
 

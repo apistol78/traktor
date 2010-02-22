@@ -39,15 +39,12 @@ bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
 
 		}
 
-ParameterCache::ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice)
-:	Unmanaged(listener)
-,	m_d3dVertexShader(0)
+ParameterCache::ParameterCache(IDirect3DDevice9* d3dDevice)
+:	m_d3dVertexShader(0)
 ,	m_d3dPixelShader(0)
 ,	m_vertexConstantsShadow(0)
 ,	m_pixelConstantsShadow(0)
 {
-	Unmanaged::addToListener();
-
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
 	m_pixelConstantsShadow = (float*)Alloc::acquireAlign(PixelConstantCount * 4 * sizeof(float), 16);
 
@@ -57,8 +54,6 @@ ParameterCache::ParameterCache(UnmanagedListener* listener, IDirect3DDevice9* d3
 
 ParameterCache::~ParameterCache()
 {
-	Unmanaged::removeFromListener();
-
 	Alloc::freeAlign(m_pixelConstantsShadow);
 	Alloc::freeAlign(m_vertexConstantsShadow);
 }

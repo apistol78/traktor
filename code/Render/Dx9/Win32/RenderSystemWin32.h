@@ -2,12 +2,12 @@
 #define traktor_render_RenderSystemWin32_H
 
 #include <list>
+#include <map>
 #include "Core/RefArray.h"
 #include "Core/Misc/ComRef.h"
 #include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Dx9/Platform.h"
-#include "Render/Dx9/Unmanaged.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,10 +22,11 @@ namespace traktor
 	namespace render
 	{
 
-class RenderViewWin32;
-class ContextDx9;
-class ShaderCache;
 class ParameterCache;
+class ProgramWin32;
+class RenderViewWin32;
+class ResourceManagerDx9;
+class ShaderCache;
 class VertexDeclCache;
 
 /*! \brief DirectX 9 render system.
@@ -35,7 +36,6 @@ class VertexDeclCache;
  */
 class T_DLLCLASS RenderSystemWin32
 :	public IRenderSystem
-,	public UnmanagedListener
 {
 	T_RTTI_CLASS;
 
@@ -74,50 +74,34 @@ public:
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
 
-	/*! \name Direct3D interface. */
-	//@{
-
-	IDirect3D9* getD3D() const;
-
-	IDirect3DDevice9* getD3DDevice() const;
-
-	HRESULT testCooperativeLevel();
-
-	HRESULT resetDevice();
-
-	//@}
-
-	/*! \name Render view management. */
-	//@{
+	// \name Render view management
+	// \{
 
 	void addRenderView(RenderViewWin32* renderView);
 
 	void removeRenderView(RenderViewWin32* renderView);
 
-	//@}
+	bool beginRender();
 
-	/*! \name Unmanaged listener. */
-	//@{
+	void endRender();
 
-	virtual void addUnmanaged(Unmanaged* unmanaged);
-
-	virtual void removeUnmanaged(Unmanaged* unmanaged);
-
-	//@}
+	// \}
 
 private:
-	Ref< ContextDx9 > m_context;
 	ComRef< IDirect3D9 > m_d3d;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
+	D3DPRESENT_PARAMETERS m_d3dPresentNull;
 	D3DDISPLAYMODE m_d3dDefaultDisplayMode;
-	Ref< ShaderCache > m_shaderCache;
-	ParameterCache* m_parameterCache;
-	VertexDeclCache* m_vertexDeclCache;
-	RefArray< RenderViewWin32 > m_renderViews;
 	HWND m_hWnd;
-	Semaphore m_unmanagedLock;
-	std::list< Unmanaged* > m_unmanagedList;
+	Ref< ResourceManagerDx9 > m_resourceManager;
+	Ref< ShaderCache > m_shaderCache;
+	Ref< ParameterCache > m_parameterCache;
+	Ref< VertexDeclCache > m_vertexDeclCache;
+	RefArray< RenderViewWin32 > m_renderViews;
+	Semaphore m_renderLock;
 	float m_mipBias;
+
+	HRESULT resetDevice();
 
 	static LRESULT wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };

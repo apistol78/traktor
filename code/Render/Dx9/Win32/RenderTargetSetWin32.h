@@ -5,14 +5,14 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
-#include "Render/Dx9/Unmanaged.h"
+#include "Render/Dx9/IResourceDx9.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,23 +21,26 @@ namespace traktor
 	{
 
 class RenderTargetWin32;
-class ContextDx9;
+class ResourceManagerDx9;
 
 /*!
  * \ingroup DX9
  */
 class T_DLLCLASS RenderTargetSetWin32
 :	public RenderTargetSet
-,	public Unmanaged
+,	public IResourceDx9
 {
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetWin32(UnmanagedListener* unmanagedListener, ContextDx9* context);
+	RenderTargetSetWin32(ResourceManagerDx9* resourceManager);
 
 	virtual ~RenderTargetSetWin32();
 
 	bool create(IDirect3DDevice9* d3dDevice, const RenderTargetSetCreateDesc& desc);
+
+	// \name RenderTargetSet
+	// \{
 
 	virtual void destroy();
 
@@ -51,20 +54,23 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
+	// \}
+
+	// \name IResourceDx9
+	// \{
+
 	virtual HRESULT lostDevice();
 
 	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
-	inline Ref< RenderTargetWin32 > getRenderTarget(int renderTarget) const {
-		return m_colorTextures[renderTarget];
-	}
+	// \}
 
-	inline IDirect3DSurface9* getD3DDepthStencilSurface() const {
-		return m_d3dTargetDepthStencilSurface;
-	}
+	Ref< RenderTargetWin32 > getRenderTarget(int renderTarget) const { return m_colorTextures[renderTarget]; }
+
+	IDirect3DSurface9* getD3DDepthStencilSurface() const { return m_d3dTargetDepthStencilSurface; }
 
 private:
-	Ref< ContextDx9 > m_context;
+	Ref< ResourceManagerDx9 > m_resourceManager;
 	RenderTargetSetCreateDesc m_desc;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DTexture9 > m_d3dTargetDepthStencilTexture;

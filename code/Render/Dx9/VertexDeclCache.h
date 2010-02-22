@@ -2,31 +2,28 @@
 #define traktor_render_VertexDeclCache_H
 
 #include <vector>
-#include "Core/Config.h"
+#include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
-#include "Render/Dx9/Unmanaged.h"
 #include "Render/VertexElement.h"
+#include "Render/Dx9/Platform.h"
 
 namespace traktor
 {
 	namespace render
 	{
 
-class VertexDeclCache : public Unmanaged
+class VertexDeclCache : public Object
 {
 public:
-	VertexDeclCache(UnmanagedListener* listener, IDirect3DDevice9* d3dDevice);
-
-	virtual ~VertexDeclCache();
+	VertexDeclCache(IDirect3DDevice9* d3dDevice);
 
 	bool createDeclaration(const std::vector< VertexElement >& vertexElements, ComRef< IDirect3DVertexDeclaration9 >& outVertexDeclaration, DWORD& outVertexStride);
 
 	void setDeclaration(IDirect3DVertexDeclaration9* d3dVertexDeclaration);
 
-protected:
-	virtual HRESULT lostDevice();
+	HRESULT lostDevice();
 
-	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
+	HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
 private:
 	struct Declaration
