@@ -121,7 +121,7 @@ void* VertexBufferDx9::lock()
 #if defined(_XBOX) || defined(T_USE_XDK)
 		flags = D3DLOCK_NOOVERWRITE;
 #else
-		flags = D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE;
+		flags = D3DLOCK_DISCARD;
 #endif
 		if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, flags)))
 			return 0;
