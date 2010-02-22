@@ -38,6 +38,7 @@ void Shader::destroy()
 		}
 		i->second.combinations.resize(0);
 	}
+
 	m_techniques.clear();
 }
 
@@ -53,7 +54,7 @@ void Shader::setTechnique(handle_t handle)
 	updateCurrentProgram();
 }
 
-void Shader::setBooleanParameter(handle_t handle, bool param)
+void Shader::setCombination(handle_t handle, bool param)
 {
 	uint32_t bit = m_parameterBits[handle];
 	if (param)
@@ -65,74 +66,38 @@ void Shader::setBooleanParameter(handle_t handle, bool param)
 
 void Shader::setFloatParameter(handle_t handle, float param)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setFloatParameter(handle, param);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setFloatParameter(handle, param);
 }
 
 void Shader::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setFloatArrayParameter(handle, param, length);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setFloatArrayParameter(handle, param, length);
 }
 
 void Shader::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setVectorParameter(handle, param);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setVectorParameter(handle, param);
 }
 
 void Shader::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setVectorArrayParameter(handle, param, length);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setVectorArrayParameter(handle, param, length);
 }
 
 void Shader::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setMatrixParameter(handle, param);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setMatrixParameter(handle, param);
 }
 
 void Shader::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setMatrixArrayParameter(handle, param, length);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setMatrixArrayParameter(handle, param, length);
 }
 
 void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITexture >& texture)
@@ -142,14 +107,8 @@ void Shader::setTextureParameter(handle_t handle, const resource::Proxy< ITextur
 
 void Shader::setStencilReference(uint32_t stencilReference)
 {
-	if (!m_currentTechnique)
-		return;
-
-	for (std::vector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
-	{
-		if (i->program)
-			i->program->setStencilReference(stencilReference);
-	}
+	if (m_currentProgram)
+		m_currentProgram->setStencilReference(stencilReference);
 }
 
 void Shader::draw(IRenderView* renderView, const Primitives& primitives)

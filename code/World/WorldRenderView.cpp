@@ -160,6 +160,69 @@ void WorldRenderView::resetLights()
 void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	shaderParams->setTechnique(m_technique);
+
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		if (m_lightCount == 1 && m_lights[0].type == LtDirectional)
+		{
+			// Single directional light; enable simple lighting path.
+			shaderParams->setCombination(s_handleLightEnableComplex, false);
+		}
+		else
+		{
+			// Enable complex lighting path with dynamic branching.
+			shaderParams->setCombination(s_handleLightEnableComplex, true);
+		}
+
+		shaderParams->setCombination(s_handleShadowEnable, m_shadowMask != 0);
+		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
+	}
+
+	shaderParams->setFloatParameter(s_handleTime, m_time);
+}
+
+void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const
+{
+	shaderParams->setTechnique(m_technique);
+
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		int lightDirectionalCount = 0;
+		int lightPointCount = 0;
+
+		Scalar radius = bounds.empty() ? Scalar(0.0f) : bounds.getExtent().length();
+
+		// Collect lights affecting entity.
+		for (int i = 0; i < m_lightCount; ++i)
+		{
+			const Light& light = m_lights[i];
+			if (light.type == LtDirectional)
+			{
+				lightDirectionalCount++;
+			}
+			else if (light.type == LtPoint)
+			{
+				Scalar distance = (world.translation() - light.position).length();
+				if (distance - radius <= light.range)
+					lightPointCount++;
+			}
+		}
+
+		if (lightPointCount > 0 || lightDirectionalCount > 1)
+		{
+			// Enable complex lighting path with dynamic branching.
+			shaderParams->setCombination(s_handleLightEnableComplex, true);
+		}
+		else
+		{
+			// Single directional light; enable simple lighting path.
+			shaderParams->setCombination(s_handleLightEnableComplex, false);
+		}
+
+		shaderParams->setCombination(s_handleShadowEnable, m_shadowMask != 0);
+		shaderParams->setCombination(s_handleDepthEnable, m_depthMap != 0);
+	}
+
 	shaderParams->setFloatParameter(s_handleTime, m_time);
 }
 
@@ -186,17 +249,6 @@ void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderP
 void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	T_ASSERT (m_lightCount <= MaxLightCount);
-
-	if (m_lightCount == 1 && m_lights[0].type == LtDirectional)
-	{
-		// Single directional light; enable simple lighting path.
-		shaderParams->setBooleanParameter(s_handleLightEnableComplex, false);
-	}
-	else
-	{
-		// Enable complex lighting path with dynamic branching.
-		shaderParams->setBooleanParameter(s_handleLightEnableComplex, true);
-	}
 
 	// Pack light parameters.
 	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
@@ -258,17 +310,6 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 		}
 	}
 
-	if (lightPointCount > 0 || lightDirectionalCount > 1)
-	{
-		// Enable complex lighting path with dynamic branching.
-		shaderParams->setBooleanParameter(s_handleLightEnableComplex, true);
-	}
-	else
-	{
-		// Single directional light; enable simple lighting path.
-		shaderParams->setBooleanParameter(s_handleLightEnableComplex, false);
-	}
-
 	// Pack light parameters.
 	Vector4 lightPositionAndType[MaxLightCount], *lightPositionAndTypePtr = lightPositionAndType;
 	Vector4 lightDirectionAndRange[MaxLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
@@ -317,23 +358,13 @@ void WorldRenderView::setLightShaderParameters(render::ShaderParameters* shaderP
 void WorldRenderView::setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	if (m_shadowMask)
-	{
-		shaderParams->setBooleanParameter(s_handleShadowEnable, true);
 		shaderParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
-	}
-	else
-		shaderParams->setBooleanParameter(s_handleShadowEnable, false);
 }
 
 void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	if (m_depthMap)
-	{
-		shaderParams->setBooleanParameter(s_handleDepthEnable, true);
 		shaderParams->setTextureParameter(s_handleDepthMap, m_depthMap);
-	}
-	else
-		shaderParams->setBooleanParameter(s_handleDepthEnable, false);
 }
 
 void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
@@ -352,7 +383,7 @@ void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams
 
 void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
 {
-	setTechniqueShaderParameters(shaderParams);
+	setTechniqueShaderParameters(shaderParams, world, bounds);
 	setWorldShaderParameters(shaderParams, world, worldPrevious);
 
 	// Set these parameters only if we're rendering using default technique.

@@ -94,6 +94,8 @@ public:
 
 	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
 
+	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+
 	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const;
 
 	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;

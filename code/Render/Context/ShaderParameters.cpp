@@ -82,7 +82,7 @@ inline const Type* read(uint8_t*& readPtr, int length)
 
 enum ParameterTypes
 {
-	PmtBoolean,
+	PmtCombination,
 	PmtFloat,
 	PmtFloatArray,
 	PmtVector,
@@ -120,12 +120,12 @@ void ShaderParameters::endParameters(RenderContext* context)
 		T_FATAL_ERROR;
 }
 
-void ShaderParameters::setBooleanParameter(handle_t handle, bool param)
+void ShaderParameters::setCombination(handle_t handle, bool param)
 {
 	T_ASSERT (m_parameterLast);
 	align< handle_t >(m_parameterLast);
 	write< handle_t >(m_parameterLast, handle);
-	write< int >(m_parameterLast, PmtBoolean);
+	write< int >(m_parameterLast, PmtCombination);
 	write< bool >(m_parameterLast, param);
 }
 
@@ -213,8 +213,8 @@ void ShaderParameters::fixup(Shader* shader) const
 
 		switch (type)
 		{
-		case PmtBoolean:
-			shader->setBooleanParameter(handle, read< bool >(parameter));
+		case PmtCombination:
+			shader->setCombination(handle, read< bool >(parameter));
 			break;
 
 		case PmtFloat:
