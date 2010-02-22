@@ -1,15 +1,14 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/Dx9/Platform.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Render/Dx9/ProgramResourceDx9.h"
-#include "Render/Dx9/ShaderCache.h"
-#include "Render/Dx9/ParameterCache.h"
-#include "Render/Dx9/TextureBaseDx9.h"
-#include "Render/Dx9/SimpleTextureDx9.h"
 #include "Render/Dx9/CubeTextureDx9.h"
-#include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/HlslProgram.h"
+#include "Render/Dx9/ParameterCache.h"
+#include "Render/Dx9/ProgramResourceDx9.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
+#include "Render/Dx9/ShaderCache.h"
+#include "Render/Dx9/SimpleTextureDx9.h"
+#include "Render/Dx9/VolumeTextureDx9.h"
 #include "Render/Dx9/Win32/ProgramWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
 
@@ -26,13 +25,13 @@ IDirect3DBaseTexture9* getD3DTexture(ITexture* texture)
 		return 0;
 
 	if (is_a< SimpleTextureDx9 >(texture))
-		return static_cast< TextureBaseDx9* >(static_cast< SimpleTextureDx9* >(texture))->getD3DBaseTexture();
+		return static_cast< SimpleTextureDx9* >(texture)->getD3DBaseTexture();
 	if (is_a< CubeTextureDx9 >(texture))
-		return static_cast< TextureBaseDx9* >(static_cast< CubeTextureDx9* >(texture))->getD3DBaseTexture();
+		return static_cast< CubeTextureDx9* >(texture)->getD3DBaseTexture();
 	if (is_a< VolumeTextureDx9 >(texture))
-		return static_cast< TextureBaseDx9* >(static_cast< VolumeTextureDx9* >(texture))->getD3DBaseTexture();
+		return static_cast< VolumeTextureDx9* >(texture)->getD3DBaseTexture();
 	if (is_a< RenderTargetWin32 >(texture))
-		return static_cast< TextureBaseDx9* >(static_cast< RenderTargetWin32* >(texture))->getD3DBaseTexture();
+		return static_cast< RenderTargetWin32* >(texture)->getD3DBaseTexture();
 
 	return 0;
 }
@@ -43,14 +42,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramWin32", ProgramWin32, IProgram)
 
 ProgramWin32* ProgramWin32::ms_activeProgram = 0;
 
-ProgramWin32::ProgramWin32(UnmanagedListener* unmanagedListener, ContextDx9* context, ShaderCache* shaderCache, ParameterCache* parameterCache)
-:	Unmanaged(unmanagedListener)
-,	m_context(context)
-,	m_shaderCache(shaderCache)
+ProgramWin32::ProgramWin32(ResourceManagerDx9* resourceManager, ParameterCache* parameterCache)
+:	m_resourceManager(resourceManager)
 ,	m_parameterCache(parameterCache)
 ,	m_dirty(true)
 {
-	Unmanaged::addToListener();
+	m_resourceManager->add(this);
 }
 
 ProgramWin32::~ProgramWin32()
@@ -60,13 +57,14 @@ ProgramWin32::~ProgramWin32()
 
 bool ProgramWin32::create(
 	IDirect3DDevice9* d3dDevice,
+	ShaderCache* shaderCache,
 	const ProgramResourceDx9* resource
 )
 {
 	T_ASSERT (d3dDevice);
 	HRESULT hr;
 
-	m_d3dVertexShader = m_shaderCache->getVertexShader(resource->m_vertexShaderHash);
+	m_d3dVertexShader = shaderCache->getVertexShader(resource->m_vertexShaderHash);
 	if (!m_d3dVertexShader)
 	{
 		hr = d3dDevice->CreateVertexShader(
@@ -78,10 +76,10 @@ bool ProgramWin32::create(
 			log::error << L"Unable to create program; CreateVertexShader failed " << int32_t(hr) << Endl;
 			return false;
 		}
-		m_shaderCache->putVertexShader(resource->m_vertexShaderHash, m_d3dVertexShader);
+		shaderCache->putVertexShader(resource->m_vertexShaderHash, m_d3dVertexShader);
 	}
 
-	m_d3dPixelShader = m_shaderCache->getPixelShader(resource->m_pixelShaderHash);
+	m_d3dPixelShader = shaderCache->getPixelShader(resource->m_pixelShaderHash);
 	if (!m_d3dPixelShader)
 	{
 		hr = d3dDevice->CreatePixelShader(
@@ -93,7 +91,7 @@ bool ProgramWin32::create(
 			log::error << L"Unable to create program; CreatePixelShader failed " << int32_t(hr) << Endl;
 			return false;
 		}
-		m_shaderCache->putPixelShader(resource->m_pixelShaderHash, m_d3dPixelShader);
+		shaderCache->putPixelShader(resource->m_pixelShaderHash, m_d3dPixelShader);
 	}
 
 	m_vertexScalars = resource->m_vertexScalars;
@@ -128,12 +126,9 @@ bool ProgramWin32::activate()
 	if (ms_activeProgram == this && !m_dirty)
 		return true;
 
-	if (ms_activeProgram != this)
-	{
-		m_parameterCache->setVertexShader(m_d3dVertexShader);
-		m_parameterCache->setPixelShader(m_d3dPixelShader);
-		m_state.apply(m_parameterCache);
-	}
+	m_parameterCache->setVertexShader(m_d3dVertexShader);
+	m_parameterCache->setPixelShader(m_d3dPixelShader);
+	m_state.apply(m_parameterCache);
 
 	for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
 		m_parameterCache->setVertexShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
@@ -152,28 +147,17 @@ bool ProgramWin32::activate()
 	return true;
 }
 
+void ProgramWin32::forceDirty()
+{
+	ms_activeProgram = 0;
+}
+
 void ProgramWin32::destroy()
 {
-	if (ms_activeProgram == this)
-	{
-		if (m_parameterCache)
-		{
-			m_parameterCache->setVertexShader(0);
-			m_parameterCache->setPixelShader(0);
-		}
-		ms_activeProgram = 0;
-	}
-
-	m_shaderCache = 0;
-
-	if (m_context)
-	{
-		m_context->releaseComRef(m_d3dDevice);
-		m_context->releaseComRef(m_d3dVertexShader);
-		m_context->releaseComRef(m_d3dPixelShader);
-	}
-
-	Unmanaged::removeFromListener();
+	m_d3dDevice.release();
+	m_d3dVertexShader.release();
+	m_d3dPixelShader.release();
+	m_resourceManager->remove(this);
 }
 
 void ProgramWin32::setFloatParameter(handle_t handle, float param)
@@ -253,11 +237,6 @@ void ProgramWin32::setTextureParameter(handle_t handle, ITexture* texture)
 void ProgramWin32::setStencilReference(uint32_t stencilReference)
 {
 	m_state.setRenderState(D3DRS_STENCILREF, stencilReference);
-	ms_activeProgram = 0;
-}
-
-void ProgramWin32::forceDirty()
-{
 	ms_activeProgram = 0;
 }
 

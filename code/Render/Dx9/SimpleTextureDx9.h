@@ -1,16 +1,16 @@
 #ifndef traktor_render_SimpleTextureDx9_H
 #define traktor_render_SimpleTextureDx9_H
 
-#include "Render/ISimpleTexture.h"
-#include "Render/Dx9/TextureBaseDx9.h"
 #include "Core/Misc/ComRef.h"
+#include "Render/ISimpleTexture.h"
+#include "Render/Dx9/IResourceDx9.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_DX9_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -18,7 +18,7 @@ namespace traktor
 	namespace render
 	{
 
-class ContextDx9;
+class ResourceManagerDx9;
 struct SimpleTextureCreateDesc;
 
 /*!
@@ -26,16 +26,19 @@ struct SimpleTextureCreateDesc;
  */
 class T_DLLCLASS SimpleTextureDx9
 :	public ISimpleTexture
-,	public TextureBaseDx9
+,	public IResourceDx9
 {
 	T_RTTI_CLASS;
 
 public:
-	SimpleTextureDx9(ContextDx9* context);
+	SimpleTextureDx9(ResourceManagerDx9* resourceManager);
 
 	virtual ~SimpleTextureDx9();
 
 	bool create(IDirect3DDevice9* d3dDevice, const SimpleTextureCreateDesc& desc);
+
+	// \name ISimpleTexture
+	// \{
 
 	virtual void destroy();
 
@@ -49,10 +52,21 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual IDirect3DBaseTexture9* getD3DBaseTexture() const;
+	// \}
+
+	// \name IResourceDx9
+	// \{
+
+	virtual HRESULT lostDevice();
+
+	virtual HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
+
+	// \}
+
+	IDirect3DBaseTexture9* getD3DBaseTexture() const { return m_d3dTexture; }
 
 private:
-	Ref< ContextDx9 > m_context;
+	Ref< ResourceManagerDx9 > m_resourceManager;
 	ComRef< IDirect3DTexture9 > m_d3dTexture;
 	TextureFormat m_format;
 	int m_width;

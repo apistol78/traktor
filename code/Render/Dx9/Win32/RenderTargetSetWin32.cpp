@@ -1,8 +1,8 @@
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
-#include "Render/Dx9/ContextDx9.h"
 #include "Core/Log/Log.h"
 
 namespace traktor
@@ -61,11 +61,9 @@ D3DFORMAT getD3DFormatPromoted(D3DFORMAT d3dFormat)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetWin32", RenderTargetSetWin32, RenderTargetSet)
 
-RenderTargetSetWin32::RenderTargetSetWin32(UnmanagedListener* unmanagedListener, ContextDx9* context)
-:	Unmanaged(unmanagedListener)
-,	m_context(context)
+RenderTargetSetWin32::RenderTargetSetWin32(ResourceManagerDx9* resourceManager)
+:	m_resourceManager(resourceManager)
 {
-	Unmanaged::addToListener();
 }
 
 RenderTargetSetWin32::~RenderTargetSetWin32()
@@ -83,8 +81,16 @@ bool RenderTargetSetWin32::create(IDirect3DDevice9* d3dDevice, const RenderTarge
 
 void RenderTargetSetWin32::destroy()
 {
-	lostDevice();
-	Unmanaged::removeFromListener();
+	for (RefArray< RenderTargetWin32 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
+		(*i)->release();
+
+	m_colorTextures.resize(0);
+
+	m_d3dDevice.release();
+	m_d3dTargetDepthStencilTexture.release();
+	m_d3dTargetDepthStencilSurface.release();
+
+	m_resourceManager->remove(this);
 }
 
 int RenderTargetSetWin32::getWidth() const
@@ -166,7 +172,7 @@ bool RenderTargetSetWin32::read(int index, void* buffer) const
 HRESULT RenderTargetSetWin32::lostDevice()
 {
 	for (RefArray< RenderTargetWin32 >::iterator i = m_colorTextures.begin(); i != m_colorTextures.end(); ++i)
-		(*i)->destroy();
+		(*i)->release();
 
 	m_colorTextures.resize(0);
 
@@ -268,7 +274,7 @@ LRESULT RenderTargetSetWin32::internalCreate()
 	m_colorTextures.resize(m_desc.count);
 	for (int i = 0; i < m_desc.count; ++i)
 	{
-		m_colorTextures[i] = new RenderTargetWin32(m_context);
+		m_colorTextures[i] = new RenderTargetWin32();
 		if (!m_colorTextures[i]->create(m_d3dDevice, m_desc, m_desc.targets[i], d3dFormats[i]))
 			return S_FALSE;
 	}

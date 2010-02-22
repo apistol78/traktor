@@ -1,5 +1,4 @@
 #include "Core/Log/Log.h"
-#include "Render/Dx9/ContextDx9.h"
 #include "Render/Dx9/IndexBufferDx9.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
@@ -8,8 +7,6 @@
 #include "Render/Dx9/Win32/RenderSystemWin32.h"
 #include "Render/Dx9/Win32/RenderTargetSetWin32.h"
 #include "Render/Dx9/Win32/RenderTargetWin32.h"
-
-#define T_SYNCHRONIZE_CPU_GPU 1
 
 namespace traktor
 {
@@ -44,28 +41,21 @@ const D3DPRIMITIVETYPE c_d3dPrimitiveType[] =
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRenderView)
 
 RenderViewWin32::RenderViewWin32(
-	ContextDx9* context,
+	RenderSystemWin32* renderSystem,
 	ParameterCache* parameterCache,
 	const RenderViewCreateDesc& createDesc,
-	RenderSystemWin32* renderSystem,
 	const D3DPRESENT_PARAMETERS& d3dPresent,
 	D3DFORMAT d3dDepthStencilFormat,
 	float nativeAspectRatio
 )
-:	Unmanaged(renderSystem)
-,	m_context(context)
+:	m_renderSystem(renderSystem)
 ,	m_parameterCache(parameterCache)
 ,	m_createDesc(createDesc)
-,	m_renderSystem(renderSystem)
 ,	m_d3dDevice(0)
 ,	m_d3dPresent(d3dPresent)
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
 ,	m_nativeAspectRatio(nativeAspectRatio)
 ,	m_targetDirty(false)
-,	m_frameCount(0)
-#if defined(_DEBUG)
-,	m_ownerThread(-1)
-#endif
 {
 	m_d3dViewport.X = 0;
 	m_d3dViewport.Y = 0;
@@ -73,8 +63,6 @@ RenderViewWin32::RenderViewWin32(
 	m_d3dViewport.Height = m_d3dPresent.BackBufferHeight;
 	m_d3dViewport.MinZ = 0.0f;
 	m_d3dViewport.MaxZ = 1.0f;
-
-	Unmanaged::addToListener();
 
 	m_renderSystem->addRenderView(this);
 }
@@ -86,23 +74,8 @@ RenderViewWin32::~RenderViewWin32()
 
 void RenderViewWin32::close()
 {
-	T_ASSERT (m_renderStateStack.empty());
-
-	if (!m_d3dDevice)
-		return;
-
-	m_d3dSwapChain.release();
-	m_d3dBackBuffer.release();
-	m_d3dDepthStencilSurface.release();
-	m_d3dDevice = 0;
-
-	Unmanaged::removeFromListener();
-
-	if (m_renderSystem)
-		m_renderSystem->removeRenderView(this);
-
-	m_renderSystem = 0;
-	m_context = 0;
+	lostDevice();
+	m_renderSystem->removeRenderView(this);
 }
 
 void RenderViewWin32::resize(int32_t width, int32_t height)
@@ -127,43 +100,8 @@ void RenderViewWin32::resize(int32_t width, int32_t height)
 	m_d3dViewport.MinZ = 0.0f;
 	m_d3dViewport.MaxZ = 1.0f;
 
-	if (m_d3dPresent.Windowed)
-	{
-		ComRef< IDirect3DSwapChain9 > d3dSwapChain;
-		hr = m_d3dDevice->CreateAdditionalSwapChain(
-			&m_d3dPresent,
-			&d3dSwapChain.getAssign()
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Resize view failed, unable to create additional swap chain" << Endl;
-			return;
-		}
-
-		ComRef< IDirect3DSurface9 > d3dDepthStencilSurface;
-		hr = m_d3dDevice->CreateDepthStencilSurface(
-			m_d3dPresent.BackBufferWidth,
-			m_d3dPresent.BackBufferHeight,
-			m_d3dDepthStencilFormat,
-			m_d3dPresent.MultiSampleType,
-			0,
-			TRUE,
-			&d3dDepthStencilSurface.getAssign(),
-			NULL
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Resize view failed, unable to create additional depth/stencil surface" << Endl;
-			return;
-		}
-
-		setD3DBuffers(d3dSwapChain, d3dDepthStencilSurface);
-	}
-	else
-	{
-		if (FAILED(m_renderSystem->resetDevice()))
-			return;
-	}
+	hr = resetDevice(m_d3dDevice);
+	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"Failed to resize render view");
 }
 
 int RenderViewWin32::getWidth() const
@@ -229,8 +167,14 @@ bool RenderViewWin32::begin()
 	if (!m_d3dDevice)
 		return false;
 
-	if (FAILED(m_d3dDevice->BeginScene()))
+	if (!m_renderSystem->beginRender())
 		return false;
+
+	if (FAILED(m_d3dDevice->BeginScene()))
+	{
+		m_renderSystem->endRender();
+		return false;
+	}
 
 	RenderState rs =
 	{
@@ -242,16 +186,12 @@ bool RenderViewWin32::begin()
 	m_renderStateStack.push_back(rs);
 	m_targetDirty = true;
 
-#if defined(_DEBUG)
-	m_ownerThread = GetCurrentThreadId();
-#endif
 	return true;
 }
 
 bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
 	T_ASSERT (!m_renderStateStack.empty());
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 
 	if (!m_d3dDevice || !renderTargetSet)
 		return false;
@@ -281,8 +221,6 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget, 
 
 void RenderViewWin32::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
-	
 	const RenderState& rs = m_renderStateStack.back();
 
 	if (m_targetDirty)
@@ -312,28 +250,24 @@ void RenderViewWin32::clear(uint32_t clearMask, const float color[4], float dept
 void RenderViewWin32::setVertexBuffer(VertexBuffer* vertexBuffer)
 {
 	T_ASSERT (is_a< VertexBufferDx9 >(vertexBuffer));
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 	m_currentVertexBuffer = static_cast< VertexBufferDx9* >(vertexBuffer);
 }
 
 void RenderViewWin32::setIndexBuffer(IndexBuffer* indexBuffer)
 {
 	T_ASSERT (indexBuffer == 0 || is_a< IndexBufferDx9 >(indexBuffer));
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 	m_currentIndexBuffer = static_cast< IndexBufferDx9* >(indexBuffer);
 }
 
 void RenderViewWin32::setProgram(IProgram* program)
 {
 	T_ASSERT (is_a< ProgramWin32 >(program));
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 	m_currentProgram = static_cast< ProgramWin32* >(program);
 }
 
 void RenderViewWin32::draw(const Primitives& primitives)
 {
 	T_ASSERT (!m_renderStateStack.empty());
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 	T_ASSERT (m_currentProgram);
 	T_ASSERT (m_currentVertexBuffer);
 
@@ -371,7 +305,6 @@ void RenderViewWin32::draw(const Primitives& primitives)
 void RenderViewWin32::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
 
 	RenderState& rs = m_renderStateStack.back();
 	if (rs.renderTarget)
@@ -386,30 +319,8 @@ void RenderViewWin32::end()
 
 void RenderViewWin32::present()
 {
-	T_ASSERT (m_ownerThread == GetCurrentThreadId());
-
-	HRESULT hr = m_d3dSwapChain->Present(NULL, NULL, NULL, NULL, 0);
-	if (hr == D3DERR_DEVICELOST)
-		m_renderSystem->testCooperativeLevel();
-
-	if (m_context)
-		m_context->deleteResources();
-
-	// Synchronize GPU; don't want CPU to overrun GPU.
-#if T_SYNCHRONIZE_CPU_GPU
-	if (!m_d3dPresent.Windowed)
-	{
-		uint32_t previousQuery = (m_frameCount + 1) % sizeof_array(m_d3dSyncQueries);
-		uint32_t currentQuery = m_frameCount % sizeof_array(m_d3dSyncQueries);
-
-		m_d3dSyncQueries[currentQuery].get()->Issue(D3DISSUE_END);
-
-		while (m_d3dSyncQueries[previousQuery]->GetData(NULL, 0, D3DGETDATA_FLUSH) == S_FALSE)
-			;
-	}
-#endif
-
-	m_frameCount++;
+	m_d3dSwapChain->Present(NULL, NULL, NULL, NULL, 0);
+	m_renderSystem->endRender();
 }
 
 void RenderViewWin32::setMSAAEnable(bool msaaEnable)
@@ -417,52 +328,74 @@ void RenderViewWin32::setMSAAEnable(bool msaaEnable)
 	m_d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, msaaEnable ? TRUE : FALSE);
 }
 
-void RenderViewWin32::setD3DBuffers(IDirect3DSwapChain9* d3dSwapChain, IDirect3DSurface9* d3dDepthStencilSurface)
-{
-	m_d3dSwapChain = d3dSwapChain;
-	m_d3dSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &m_d3dBackBuffer.getAssign());
-	m_d3dDepthStencilSurface = d3dDepthStencilSurface;
-}
-
 HRESULT RenderViewWin32::lostDevice()
 {
-	m_d3dDevice = 0;
-
+	m_d3dDevice.release();
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
 
 	m_renderStateStack.clear();
-
 	m_currentVertexBuffer = 0;
 	m_currentIndexBuffer = 0;
 	m_currentProgram = 0;
-
-#if T_SYNCHRONIZE_CPU_GPU
-	if (!m_d3dPresent.Windowed)
-	{
-		for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-			m_d3dSyncQueries[i].release();
-	}
-#endif
 
 	return S_OK;
 }
 
 HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
+	HRESULT hr;
+
 	m_d3dDevice = d3dDevice;
 
-#if T_SYNCHRONIZE_CPU_GPU
-	if (!m_d3dPresent.Windowed)
+	if (m_d3dPresent.Windowed)
 	{
-		for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
-			m_d3dDevice->CreateQuery(
-			D3DQUERYTYPE_EVENT,
-			&m_d3dSyncQueries[i].getAssign()
+		hr = m_d3dDevice->CreateAdditionalSwapChain(
+			&m_d3dPresent,
+			&m_d3dSwapChain.getAssign()
 		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create additional swap chain; hr = " << hr << Endl;
+			return hr;
+		}
 	}
-#endif
+	else
+	{
+		hr = m_d3dDevice->GetSwapChain(
+			0,
+			&m_d3dSwapChain.getAssign()
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Reset device failed, unable to get primary swap chain" << Endl;
+			return hr;
+		}
+	}
+
+	hr = m_d3dSwapChain->GetBackBuffer(0, D3DBACKBUFFER_TYPE_MONO, &m_d3dBackBuffer.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to get back buffer; hr = " << hr << Endl;
+		return hr;
+	}
+
+	hr = m_d3dDevice->CreateDepthStencilSurface(
+		m_d3dPresent.BackBufferWidth,
+		m_d3dPresent.BackBufferHeight,
+		m_d3dDepthStencilFormat,
+		m_d3dPresent.MultiSampleType,
+		0,
+		TRUE,
+		&m_d3dDepthStencilSurface.getAssign(),
+		NULL
+	);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to get depth/stencil surface; hr = " << hr << Endl;
+		return hr;
+	}
 
 	return S_OK;
 }

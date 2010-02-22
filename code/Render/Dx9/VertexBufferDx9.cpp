@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 #include "Render/Dx9/VertexBufferDx9.h"
 #include "Render/Dx9/VertexDeclCache.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -13,16 +13,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDx9", VertexBufferDx9, Verte
 
 VertexBufferDx9* VertexBufferDx9::ms_activeVertexBuffer = 0;
 
-VertexBufferDx9::VertexBufferDx9(UnmanagedListener* unmanagedListener, ContextDx9* context, uint32_t bufferSize, VertexDeclCache* vertexDeclCache)
+VertexBufferDx9::VertexBufferDx9(ResourceManagerDx9* resourceManager, uint32_t bufferSize, VertexDeclCache* vertexDeclCache)
 :	VertexBuffer(bufferSize)
-,	Unmanaged(unmanagedListener)
-,	m_context(context)
+,	m_resourceManager(resourceManager)
 ,	m_vertexDeclCache(vertexDeclCache)
 ,	m_d3dVertexStride(0)
 ,	m_locked(false)
 ,	m_dynamic(false)
 {
-	Unmanaged::addToListener();
+	m_resourceManager->add(this);
 }
 
 VertexBufferDx9::~VertexBufferDx9()
@@ -85,18 +84,17 @@ void VertexBufferDx9::activate(IDirect3DDevice9* d3dDevice, VertexBufferDx9* ver
 	ms_activeVertexBuffer = vertexBuffer;
 }
 
+void VertexBufferDx9::forceDirty()
+{
+	ms_activeVertexBuffer = 0;
+}
+
 void VertexBufferDx9::destroy()
 {
 	T_ASSERT (!m_locked);
-#if !defined(_XBOX) && !defined(T_USE_XDK)
-	if (m_context)
-	{
-		m_context->releaseComRef(m_d3dDevice);
-		m_context->releaseComRef(m_d3dVertexDeclaration);
-		m_context->releaseComRef(m_d3dVertexBuffer);
-	}
-#endif
-	Unmanaged::removeFromListener();
+	m_d3dDevice.release();
+	m_d3dVertexBuffer.release();
+	m_resourceManager->remove(this);
 }
 
 void* VertexBufferDx9::lock()
@@ -178,10 +176,6 @@ void VertexBufferDx9::unlock()
 	}
 }
 
-void VertexBufferDx9::forceDirty()
-{
-	ms_activeVertexBuffer = 0;
-}
 
 HRESULT VertexBufferDx9::lostDevice()
 {
@@ -192,8 +186,8 @@ HRESULT VertexBufferDx9::lostDevice()
 
 	unlock();
 
-	m_d3dDevice = 0;
-	m_d3dVertexBuffer = 0;
+	m_d3dDevice.release();
+	m_d3dVertexBuffer.release();
 
 	return S_OK;
 }

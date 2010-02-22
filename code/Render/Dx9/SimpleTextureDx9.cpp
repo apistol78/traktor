@@ -1,8 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx9/Platform.h"
 #include "Render/Dx9/TypesDx9.h"
+#include "Render/Dx9/ResourceManagerDx9.h"
 #include "Render/Dx9/SimpleTextureDx9.h"
-#include "Render/Dx9/ContextDx9.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -25,13 +25,14 @@ bool isLog2(uint32_t x)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SimpleTextureDx9", SimpleTextureDx9, ISimpleTexture)
 
-SimpleTextureDx9::SimpleTextureDx9(ContextDx9* context)
-:	m_context(context)
+SimpleTextureDx9::SimpleTextureDx9(ResourceManagerDx9* resourceManager)
+:	m_resourceManager(resourceManager)
 ,	m_format(TfInvalid)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_lock(0)
 {
+	m_resourceManager->add(this);
 }
 
 SimpleTextureDx9::~SimpleTextureDx9()
@@ -130,10 +131,8 @@ bool SimpleTextureDx9::create(IDirect3DDevice9* d3dDevice, const SimpleTextureCr
 
 void SimpleTextureDx9::destroy()
 {
-#if !defined(_XBOX) && !defined(T_USE_XDK)
-	if (m_context)
-		m_context->releaseComRef(m_d3dTexture);
-#endif
+	m_d3dTexture.release();
+	m_resourceManager->remove(this);
 }
 
 int SimpleTextureDx9::getWidth() const
@@ -184,10 +183,14 @@ void SimpleTextureDx9::unlock(int level)
 	m_lock = 0;
 }
 
-IDirect3DBaseTexture9* SimpleTextureDx9::getD3DBaseTexture() const
+HRESULT SimpleTextureDx9::lostDevice()
 {
-	T_ASSERT (m_d3dTexture);
-	return static_cast< IDirect3DBaseTexture9* >(m_d3dTexture);
+	return S_OK;
+}
+
+HRESULT SimpleTextureDx9::resetDevice(IDirect3DDevice9* d3dDevice)
+{
+	return S_OK;
 }
 
 	}

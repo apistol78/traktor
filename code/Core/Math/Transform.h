@@ -56,7 +56,7 @@ public:
 
 	T_MATH_INLINE bool operator != (const Transform& rh) const;
 
-	virtual bool serialize(ISerializer& s);
+	bool serialize(ISerializer& s);
 
 	friend T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& rh, const Transform& lh);
 
