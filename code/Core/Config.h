@@ -109,6 +109,9 @@ typedef unsigned __int64 uint64_t;
 #	endif
 #else
 #	if !defined(T_HAVE_TYPES)
+#		if defined(_PS3)
+#			include <sys/types.h>
+#		else
 
 typedef signed char int8_t;
 typedef unsigned char uint8_t;
@@ -122,6 +125,7 @@ typedef unsigned int uint32_t;
 typedef long int int64_t;
 typedef long unsigned int uint64_t;
 
+#		endif
 #		define T_HAVE_TYPES
 #   endif
 #endif
