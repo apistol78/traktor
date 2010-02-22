@@ -43,7 +43,7 @@ public:
 
 	void endParameters(RenderContext* context);
 
-	void setBooleanParameter(handle_t handle, bool param);
+	void setCombination(handle_t handle, bool param);
 
 	void setFloatParameter(handle_t handle, float param);
 
@@ -72,7 +72,7 @@ public:
 
 	inline void setTechnique(const std::wstring& name) { setTechnique(getParameterHandle(name)); }
 
-	inline void setBooleanParameter(const std::wstring& name, bool param) { setBooleanParameter(getParameterHandle(name), param); }
+	inline void setCombination(const std::wstring& name, bool param) { setCombination(getParameterHandle(name), param); }
 
 	inline void setFloatParameter(const std::wstring& name, float param) { setFloatParameter(getParameterHandle(name), param); }
 
