@@ -157,6 +157,34 @@ void WorldRenderView::resetLights()
 	m_lightCount = 0;
 }
 
+void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
+{
+	setTechniqueShaderParameters(shaderParams);
+	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
+
+	// Set these parameters only if we're rendering using default technique.
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		setLightShaderParameters(shaderParams);
+		setShadowMapShaderParameters(shaderParams);
+		setDepthMapShaderParameters(shaderParams);
+	}
+}
+
+void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
+{
+	setTechniqueShaderParameters(shaderParams, world, bounds);
+	setWorldShaderParameters(shaderParams, world, worldPrevious);
+
+	// Set these parameters only if we're rendering using default technique.
+	if (m_technique == s_handleDefaultTechnique)
+	{
+		setLightShaderParameters(shaderParams, world, bounds);
+		setShadowMapShaderParameters(shaderParams);
+		setDepthMapShaderParameters(shaderParams);
+	}
+}
+
 void WorldRenderView::setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const
 {
 	shaderParams->setTechnique(m_technique);
@@ -365,34 +393,6 @@ void WorldRenderView::setDepthMapShaderParameters(render::ShaderParameters* shad
 {
 	if (m_depthMap)
 		shaderParams->setTextureParameter(s_handleDepthMap, m_depthMap);
-}
-
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams) const
-{
-	setTechniqueShaderParameters(shaderParams);
-	setWorldShaderParameters(shaderParams, Matrix44::identity(), Matrix44::identity());
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightShaderParameters(shaderParams);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
-	}
-}
-
-void WorldRenderView::setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const
-{
-	setTechniqueShaderParameters(shaderParams, world, bounds);
-	setWorldShaderParameters(shaderParams, world, worldPrevious);
-
-	// Set these parameters only if we're rendering using default technique.
-	if (m_technique == s_handleDefaultTechnique)
-	{
-		setLightShaderParameters(shaderParams, world, bounds);
-		setShadowMapShaderParameters(shaderParams);
-		setDepthMapShaderParameters(shaderParams);
-	}
 }
 
 	}

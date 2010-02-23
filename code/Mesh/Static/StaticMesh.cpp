@@ -58,15 +58,15 @@ void StaticMesh::render(
 		renderBlock->primitives = &parts[i].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
-		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
-		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
 			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
+		renderBlock->shaderParams->setFloatParameter(s_handleUserParameter, userParameter);
+		if (parameterCallback)
+			parameterCallback->setParameters(renderBlock->shaderParams);
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(

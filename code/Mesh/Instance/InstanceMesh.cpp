@@ -113,12 +113,12 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			renderBlock->maxIndex = parts[i].primitives.maxIndex;
 
 			renderBlock->shaderParams->beginParameters(renderContext);
+			worldRenderView->setShaderParameters(renderBlock->shaderParams, boundingBoxCenter, boundingBoxCenter, boundingBoxWorld);
 			renderBlock->shaderParams->setVectorArrayParameter(
 				s_handleInstanceWorld,
 				reinterpret_cast< const Vector4* >(instanceBatch),
 				batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 			);
-			worldRenderView->setShaderParameters(renderBlock->shaderParams, boundingBoxCenter, boundingBoxCenter, boundingBoxWorld);
 			renderBlock->shaderParams->endParameters(renderContext);
 
 			renderContext->draw(render::RfOpaque, renderBlock);
@@ -158,12 +158,12 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				renderBlock->maxIndex = parts[i].primitives.maxIndex;
 
 				renderBlock->shaderParams->beginParameters(renderContext);
+				worldRenderView->setShaderParameters(renderBlock->shaderParams);
 				renderBlock->shaderParams->setVectorArrayParameter(
 					s_handleInstanceWorld,
 					reinterpret_cast< const Vector4* >(instanceBatch),
 					batchCount * sizeof(InstanceMeshData) / sizeof(Vector4)
 				);
-				worldRenderView->setShaderParameters(renderBlock->shaderParams);
 				renderBlock->shaderParams->endParameters(renderContext);
 
 				renderContext->draw(render::RfAlphaBlend, renderBlock);
