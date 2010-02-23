@@ -6,6 +6,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Thread/Semaphore.h"
 #include "Render/Types.h"
 #include "World/PostProcess/PostProcessStep.h"
 
@@ -94,7 +95,7 @@ public:
 
 	Ref< render::RenderTargetSet >& getTargetRef(int32_t id);
 
-	void setParameter(render::handle_t handle, const Vector4& value);
+	void setParameter(render::handle_t handle, float value);
 
 	void prepareShader(render::Shader* shader) const;
 
@@ -109,9 +110,10 @@ private:
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	std::map< int32_t, Ref< render::RenderTargetSet > > m_targets;
 	RefArray< PostProcessStep::Instance > m_instances;
-	std::map< render::handle_t, Vector4 > m_parameters;
+	std::map< render::handle_t, float > m_parameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
+	Semaphore m_lock;
 };
 
 	}
