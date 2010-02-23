@@ -189,14 +189,15 @@ HRESULT RenderTargetSetWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 	if (!(m_d3dDevice = d3dDevice))
 		return S_FALSE;
 
-	if (!internalCreate())
-		return S_FALSE;
+	HRESULT hr = internalCreate();
+	if (FAILED(hr))
+		return hr;
 
 	setContentValid(false);
 	return S_OK;
 }
 
-LRESULT RenderTargetSetWin32::internalCreate()
+HRESULT RenderTargetSetWin32::internalCreate()
 {
 	ComRef< IDirect3D9 > d3d;
 	D3DCAPS9 d3dCaps;

@@ -486,7 +486,15 @@ bool RenderSystemWin32::beginRender()
 			log::debug << L"Device not recovered; hr = " << hr << Endl;
 	}
 
-	return SUCCEEDED(hr);
+	if (FAILED(hr))
+	{
+		// Just yield thread a while; it's possible application will
+		// spin on beginRender otherwise.
+		Sleep(100);
+		return false;
+	}
+
+	return true;
 }
 
 void RenderSystemWin32::endRender()
@@ -628,7 +636,8 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		break;
 
 	case WM_SETCURSOR:
-		SetCursor(NULL);
+		if (!renderSystem->m_d3dPresent.Windowed)
+			SetCursor(NULL);
 		break;
 	
 	default:
