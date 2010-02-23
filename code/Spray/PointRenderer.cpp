@@ -211,7 +211,6 @@ void PointRenderer::flush(
 
 			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 
-			renderBlock->type = render::RbtAlphaBlend;
 			renderBlock->distance = i->distance;
 			renderBlock->shader = i->shader;
 			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -227,7 +226,7 @@ void PointRenderer::flush(
 			worldRenderView->setShaderParameters(renderBlock->shaderParams);
 			renderBlock->shaderParams->endParameters(renderContext);
 
-			renderContext->draw(renderBlock);
+			renderContext->draw(render::RfAlphaBlend, renderBlock);
 		}
 
 		m_batches[m_currentBuffer].resize(0);

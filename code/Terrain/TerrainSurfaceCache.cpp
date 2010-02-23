@@ -191,7 +191,6 @@ void TerrainSurfaceCache::get(
 	renderBlock->screenRenderer = m_screenRenderer;
 	renderBlock->renderTargetSet = renderTargetSet;
 
-	renderBlock->type = render::RbtOpaque;
 	renderBlock->distance = 0.0f;
 	renderBlock->shader = shader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();

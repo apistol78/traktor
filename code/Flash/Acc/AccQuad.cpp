@@ -3,10 +3,10 @@
 #include "Flash/SwfTypes.h"
 #include "Flash/Acc/AccQuad.h"
 #include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -82,8 +82,9 @@ void AccQuad::destroy()
 }
 
 void AccQuad::render(
-	render::IRenderView* renderView,
+	render::RenderContext* renderContext,
 	const Vector4& frameSize,
+	const Vector4& viewSize,
 	float scaleX,
 	const Matrix33& transform,
 	const SwfRect& bounds,
@@ -107,14 +108,6 @@ void AccQuad::render(
 
 	Matrix44 m = m1 * m2;
 
-	render::Viewport viewport = renderView->getViewport();
-	Vector4 viewSize(
-		float(viewport.width),
-		float(viewport.height),
-		1.0f / viewport.width,
-		1.0f / viewport.height
-	);
-
 	Vector4 stepSize(
 		(frameSize.z() - frameSize.x()) * viewSize.z() * Scalar(0.5f),
 		(frameSize.w() - frameSize.y()) * viewSize.w() * Scalar(0.5f),
@@ -123,25 +116,26 @@ void AccQuad::render(
 	);
 	stepSize = m.inverse() * stepSize;
 
-	renderView->setVertexBuffer(m_vertexBuffer);
+	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+	renderBlock->shader = m_shaderTextured;
+	renderBlock->vertexBuffer = m_vertexBuffer;
+	renderBlock->primitive = render::PtTriangleStrip;
+	renderBlock->offset = 0;
+	renderBlock->count = 2;
 
-	m_shaderTextured->setMatrixParameter(s_handleTransform, m);
-	m_shaderTextured->setVectorParameter(s_handleFrameSize, frameSize);
-	m_shaderTextured->setVectorParameter(s_handleViewSize, viewSize);
-	m_shaderTextured->setFloatParameter(s_handleScaleX, scaleX);
-	m_shaderTextured->setVectorParameter(s_handleStepSize, stepSize);
-	m_shaderTextured->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-	m_shaderTextured->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	m_shaderTextured->setTextureParameter(s_handleTexture, texture);
+	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlock->shaderParams->beginParameters(renderContext);
+	renderBlock->shaderParams->setMatrixParameter(s_handleTransform, m);
+	renderBlock->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlock->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlock->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
+	renderBlock->shaderParams->setVectorParameter(s_handleStepSize, stepSize);
+	renderBlock->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+	renderBlock->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlock->shaderParams->setTextureParameter(s_handleTexture, texture);
+	renderBlock->shaderParams->endParameters(renderContext);
 
-	m_shaderTextured->draw(
-		renderView,
-		render::Primitives(
-			render::PtTriangleStrip,
-			0,
-			2
-		)
-	);
+	renderContext->draw(render::RfOverlay, renderBlock);
 }
 
 	}

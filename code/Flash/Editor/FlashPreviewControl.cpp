@@ -103,7 +103,7 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		return false;
 
 	m_displayRenderer = new AccDisplayRenderer();
-	m_displayRenderer->create(resourceManager, renderSystem, true);
+	m_displayRenderer->create(resourceManager, renderSystem, 1, true);
 #else
 	graphics::CreateDesc desc;
 
@@ -266,6 +266,14 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 
 	if (m_renderView->begin())
 	{
+		// Build render context.
+		if (m_movie)
+		{
+			m_displayRenderer->build(0, true);
+			m_moviePlayer->renderFrame();
+		}
+
+		// Flush render context.
 		const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0 };
 		m_renderView->clear(
 			render::CfColor | render::CfDepth | render::CfStencil,
@@ -273,16 +281,14 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 			1.0f,
 			0
 		);
-		if (m_movie)
-		{
-			m_displayRenderer->beginRender(m_renderView, true);
-			m_moviePlayer->renderFrame();
-			m_displayRenderer->endRender();
-		}
-		m_renderView->end();
-	}
 
-	m_renderView->present();
+		m_displayRenderer->render(m_renderView, 0);
+		m_displayRenderer->flush(0);
+
+		m_renderView->end();
+		m_renderView->present();
+	}
+	
 #else
 	if (!m_graphicsSystem)
 		return;

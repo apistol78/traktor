@@ -14,6 +14,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
+#include "Render/Context/RenderContext.h"
 
 namespace traktor
 {
@@ -38,6 +39,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AccDisplayRenderer", AccDisplayRenderer, 
 
 AccDisplayRenderer::AccDisplayRenderer()
 :	m_frameSize(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_viewSize(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_aspectRatio(1.0f)
 ,	m_scaleX(1.0f)
 ,	m_clearBackground(false)
@@ -59,6 +61,7 @@ AccDisplayRenderer::~AccDisplayRenderer()
 bool AccDisplayRenderer::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
+	uint32_t frameCount,
 	bool clearBackground
 )
 {
@@ -92,12 +95,15 @@ bool AccDisplayRenderer::create(
 			return false;
 	}
 
+	m_renderContexts.resize(frameCount);
+	for (uint32_t i = 0; i < frameCount; ++i)
+		m_renderContexts[i] = new render::RenderContext(256 * 1024);
+
 	return true;
 }
 
 void AccDisplayRenderer::destroy()
 {
-	T_ASSERT (m_renderView == 0);
 	m_renderSystem = 0;
 
 	safeDestroy(m_quad);
@@ -105,48 +111,53 @@ void AccDisplayRenderer::destroy()
 
 	for (RefArray< render::RenderTargetSet >::iterator i = m_renderTargetGlyphs.begin(); i != m_renderTargetGlyphs.end(); ++i)
 		(*i)->destroy();
-
 	m_renderTargetGlyphs.clear();
 
 	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
-
 	m_shapeCache.clear();
+
+	m_renderContexts.clear();
+	m_renderContext = 0;
 }
 
-void AccDisplayRenderer::beginRender(render::IRenderView* renderView, bool correctAspectRatio)
+void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 {
-	T_ASSERT (m_renderView == 0);
-	m_renderView = renderView;
+	m_renderContext = m_renderContexts[frame];
 
 	if (correctAspectRatio)
-	{
-		render::Viewport viewport = m_renderView->getViewport();
-		m_aspectRatio = float(viewport.width) / viewport.height;
-	}
+		m_aspectRatio = m_viewSize.x() / m_viewSize.y();
 	else
 		m_aspectRatio = 0.0f;
 
 	m_scaleX = 1.0f;
 
-	// Clean glyph cache; remove targets which have become invalid.
-	for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
-	{
-		if (!i->second->isContentValid())
-			m_glyphCache.erase(i++);
-		else
-			++i;
-	}
+	// \fixme Not thread safe
+	//for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
+	//{
+	//	if (!i->second->isContentValid())
+	//		m_glyphCache.erase(i++);
+	//	else
+	//		++i;
+	//}
 }
 
-void AccDisplayRenderer::endRender()
+void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
 {
-	m_renderView = 0;
+	m_renderContexts[frame]->render(renderView, render::RfOverlay);
+
+	// \fixme Not very nice.
+	render::Viewport viewport = renderView->getViewport();
+	m_viewSize.set(float(viewport.width), float(viewport.height), 1.0f / viewport.width, 1.0f / viewport.height);
+}
+
+void AccDisplayRenderer::flush(uint32_t frame)
+{
+	m_renderContexts[frame]->flush();
 }
 
 void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgroundColor)
 {
-	T_ASSERT (m_renderView != 0);
 	const SwfRect& bounds = movie.getFrameBounds();
 
 	m_frameSize = Vector4(
@@ -163,31 +174,20 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 		m_scaleX = frameAspect / m_aspectRatio;
 	}
 
-	const float clearColor[] =
-	{
-		backgroundColor.red / 255.0f,
-		backgroundColor.green / 255.0f,
-		backgroundColor.blue / 255.0f,
-		0.0f
-	};
-
 	if (m_clearBackground)
 	{
-		m_renderView->clear(
-			render::CfColor | render::CfStencil,
-			clearColor,
-			0.0f,
-			0
-		);
+		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >();
+		renderBlock->clearMask = render::CfColor | render::CfStencil;
+		renderBlock->clearColor[0] = backgroundColor.red / 255.0f;
+		renderBlock->clearColor[1] = backgroundColor.green / 255.0f;
+		renderBlock->clearColor[2] = backgroundColor.blue / 255.0f;
+		m_renderContext->draw(render::RfOverlay, renderBlock);
 	}
 	else
 	{
-		m_renderView->clear(
-			render::CfStencil,
-			clearColor,
-			0.0f,
-			0
-		);
+		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >();
+		renderBlock->clearMask = render::CfStencil;
+		m_renderContext->draw(render::RfOverlay, renderBlock);
 	}
 
 	m_maskWrite = false;
@@ -243,9 +243,10 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	}
 
 	accShape->render(
-		m_renderView,
+		m_renderContext,
 		shape,
 		m_frameSize,
+		m_viewSize,
 		m_scaleX,
 		transform,
 		cxform,
@@ -324,16 +325,19 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			}
 		}
 
-		// Update render target with new glyph.
-		m_renderView->begin(rts, 0, false);
+		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >();
+		renderBlockBegin->renderTargetSet = rts;
+		renderBlockBegin->renderTargetIndex = 0;
+		renderBlockBegin->keepDepthStencil = false;
+		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
-		const float c_clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		m_renderView->clear(render::CfColor, c_clearColor, 1.0f, 0);
+		render::TargetClearRenderBlock* renderBlockClear = m_renderContext->alloc< render::TargetClearRenderBlock >();
+		renderBlockClear->clearMask = render::CfColor;
+		m_renderContext->draw(render::RfOverlay, renderBlockClear);
 
 		const SwfCxTransform cxfi = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
-
 		accShape->render(
-			m_renderView,
+			m_renderContext,
 			shape,
 			Vector4(
 				bounds.min.x,
@@ -341,6 +345,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 				bounds.max.x,
 				bounds.max.y
 			),
+			m_viewSize,
 			1.0f,
 			Matrix33::identity(),
 			cxfi,
@@ -349,7 +354,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			false
 		);
 
-		m_renderView->end();
+		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >();
+		m_renderContext->draw(render::RfOverlay, renderBlockEnd);
 
 		// Place in cache.
 		m_glyphCache[hash] = rts;
@@ -365,8 +371,9 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	};
 
 	m_quad->render(
-		m_renderView,
+		m_renderContext,
 		m_frameSize,
+		m_viewSize,
 		m_scaleX,
 		transform,
 		bounds,

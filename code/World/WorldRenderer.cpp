@@ -192,26 +192,26 @@ bool WorldRenderer::create(
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = new WorldContext(this, entityRenderers, m_renderView);
+			i->depth = new WorldContext(this, entityRenderers);
 	}
 
 	// Allocate "velocity" context.
 	if (m_settings.velocityPassEnable)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->velocity = new WorldContext(this, entityRenderers, m_renderView);
+			i->velocity = new WorldContext(this, entityRenderers);
 	}
 
 	// Allocate "shadow" contexts for each slice.
 	if (m_settings.shadowsEnabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->shadow = new WorldContext(this, entityRenderers, m_renderView);
+			i->shadow = new WorldContext(this, entityRenderers);
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(this, entityRenderers, m_renderView);
+		i->visual = new WorldContext(this, entityRenderers);
 
 	m_time = 0.0f;
 	m_count = 0;
@@ -334,7 +334,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
 			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			f.depth->getRenderContext()->render(render::RenderContext::RfOpaque);
+			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
 	}
@@ -347,7 +347,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float velocityColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 			m_renderView->clear(render::CfColor, velocityColor, 1.0f, 0);
-			f.velocity->getRenderContext()->render(render::RenderContext::RfOpaque);
+			f.velocity->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
 	}
@@ -358,7 +358,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		{
 			const float shadowClear[] = { m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ };
 			m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
-			f.shadow->getRenderContext()->render(render::RenderContext::RfOpaque);
+			f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
 
@@ -383,14 +383,14 @@ void WorldRenderer::render(uint32_t flags, int frame)
 
 	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = 0;
+		uint32_t renderFlags = render::RfOverlay;
 
 		if (flags & WrfVisualOpaque)
-			renderFlags |= render::RenderContext::RfOpaque;
+			renderFlags |= render::RfOpaque;
 		if (flags & WrfVisualAlphaBlend)
-			renderFlags |= render::RenderContext::RfAlphaBlend;
+			renderFlags |= render::RfAlphaBlend;
 
-		f.visual->getRenderContext()->render(renderFlags);
+		f.visual->getRenderContext()->render(m_renderView, renderFlags);
 	}
 }
 

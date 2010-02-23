@@ -91,7 +91,6 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 	// Create render blocks.
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
-	renderBlock->type = render::RbtAlphaBlend;
 	renderBlock->distance = 0.0f;
 	renderBlock->shader = m_shader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -107,7 +106,10 @@ void UndergrowthEntity::render(render::RenderContext* renderContext, const world
 
 	renderBlock->shaderParams->endParameters(renderContext);
 
-	renderContext->draw(renderBlock);
+	renderContext->draw(
+		render::RfAlphaBlend,
+		renderBlock
+	);
 }
 
 void UndergrowthEntity::update(const world::EntityUpdate* update)

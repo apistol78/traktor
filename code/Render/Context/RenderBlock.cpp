@@ -7,6 +7,12 @@ namespace traktor
 	namespace render
 	{
 
+void NullRenderBlock::render(IRenderView* renderView) const
+{
+	if (shaderParams)
+		shaderParams->fixup(shader);
+}
+
 void SimpleRenderBlock::render(IRenderView* renderView) const
 {
 	if (shaderParams)
@@ -40,17 +46,26 @@ void IndexedRenderBlock::render(IRenderView* renderView) const
 	shader->draw(renderView, p);
 }
 
-void TargetRenderBlock::render(IRenderView* renderView) const
+void TargetBeginRenderBlock::render(IRenderView* renderView) const
 {
-	if (renderView->begin(renderTargetSet, renderTargetIndex, keepDepthStencil))
+	renderView->begin(renderTargetSet, renderTargetIndex, keepDepthStencil);
+}
+
+void TargetEndRenderBlock::render(IRenderView* renderView) const
+{
+	renderView->end();
+}
+
+void TargetClearRenderBlock::render(IRenderView* renderView) const
+{
+	if (clearMask)
 	{
-		if (clearMask)
-			renderView->clear(clearMask, clearColor, clearDepth, clearStencil);
-
-		if (inner)
-			inner->render(renderView);
-
-		renderView->end();
+		renderView->clear(
+			clearMask,
+			clearColor,
+			clearDepth,
+			clearStencil
+		);
 	}
 }
 

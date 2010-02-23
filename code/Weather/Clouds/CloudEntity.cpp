@@ -319,167 +319,167 @@ void CloudEntity::renderCluster(
 	// Render impostors.
 	float cameraPositionDelta = (m_lastCameraPosition - cameraPosition).length();
 	float cameraDirectionDelta = rad2deg(acosf(dot3(m_lastCameraDirection, cameraDirection)));
-	if (
-		m_timeUntilUpdate <= 0.0f ||
-		cameraPositionDelta > m_updatePositionThreshold ||
-		abs(cameraDirectionDelta) >= m_updateDirectionThreshold
-	)
-	{
-		// Sort all cloud particles back to front.
-		AlignedVector< CloudParticle > particles = cluster.getParticles();
-		std::sort(particles.begin(), particles.end(), ParticlePredicate< std::greater< float > >(cameraPosition));
+	//if (
+	//	m_timeUntilUpdate <= 0.0f ||
+	//	cameraPositionDelta > m_updatePositionThreshold ||
+	//	abs(cameraDirectionDelta) >= m_updateDirectionThreshold
+	//)
+	//{
+	//	// Sort all cloud particles back to front.
+	//	AlignedVector< CloudParticle > particles = cluster.getParticles();
+	//	std::sort(particles.begin(), particles.end(), ParticlePredicate< std::greater< float > >(cameraPosition));
 
-		// Sample opacity from mask.
-		if (m_mask.valid())
-		{
-			for (AlignedVector< CloudParticle >::iterator i = particles.begin(); i != particles.end(); ++i)
-			{
-				Vector4 position = i->position / m_particleData.getSize();
+	//	// Sample opacity from mask.
+	//	if (m_mask.valid())
+	//	{
+	//		for (AlignedVector< CloudParticle >::iterator i = particles.begin(); i != particles.end(); ++i)
+	//		{
+	//			Vector4 position = i->position / m_particleData.getSize();
 
-				int32_t x = int32_t((position.x() * 0.5f + 0.5f) * m_mask->getSize());
-				int32_t z = int32_t((position.z() * 0.5f + 0.5f) * m_mask->getSize());
+	//			int32_t x = int32_t((position.x() * 0.5f + 0.5f) * m_mask->getSize());
+	//			int32_t z = int32_t((position.z() * 0.5f + 0.5f) * m_mask->getSize());
 
-				CloudMask::Sample sample = m_mask->getSample(x, z);
-				i->opacity = sample.opacity / 255.0f;
-				i->radius = i->maxRadius * sample.size / 255.0f;
-			}
-		}
+	//			CloudMask::Sample sample = m_mask->getSample(x, z);
+	//			i->opacity = sample.opacity / 255.0f;
+	//			i->radius = i->maxRadius * sample.size / 255.0f;
+	//		}
+	//	}
 
-		// Update slices with different frequency.
-		uint32_t lastUpdateSlice = m_impostorSliceCount;
-		if (m_timeUntilUpdate <= 0.0f)
-		{
-			switch (m_updateCount++ % 3)
-			{
-			case 1:
-				lastUpdateSlice = (m_impostorSliceCount + 1) / 2;
-				break;
-			case 2:
-				lastUpdateSlice = (m_impostorSliceCount + 3) / 4;
-				break;
-			}
-		}
+	//	// Update slices with different frequency.
+	//	uint32_t lastUpdateSlice = m_impostorSliceCount;
+	//	if (m_timeUntilUpdate <= 0.0f)
+	//	{
+	//		switch (m_updateCount++ % 3)
+	//		{
+	//		case 1:
+	//			lastUpdateSlice = (m_impostorSliceCount + 1) / 2;
+	//			break;
+	//		case 2:
+	//			lastUpdateSlice = (m_impostorSliceCount + 3) / 4;
+	//			break;
+	//		}
+	//	}
 
-		for (uint32_t slice = 0; slice < lastUpdateSlice; ++slice)
-		{
-			float sliceNearZ = minZ + sliceDistance * (slice + 0.0f);
-			float sliceFarZ = minZ + sliceDistance * (slice + 1.0f);
+	//	for (uint32_t slice = 0; slice < lastUpdateSlice; ++slice)
+	//	{
+	//		float sliceNearZ = minZ + sliceDistance * (slice + 0.0f);
+	//		float sliceFarZ = minZ + sliceDistance * (slice + 1.0f);
 
-			float minXY[2], maxXY[2];
-			calculateVSQuad(extents, viewFrustum, sliceFarZ, minXY, maxXY);
+	//		float minXY[2], maxXY[2];
+	//		calculateVSQuad(extents, viewFrustum, sliceFarZ, minXY, maxXY);
 
-			// Calculate cluster to impostor transform.
-			Matrix44 clusterProjection = perspectiveLh(PI / 2.0f, 1.0f, 1.0f, 1000.0f);
+	//		// Calculate cluster to impostor transform.
+	//		Matrix44 clusterProjection = perspectiveLh(PI / 2.0f, 1.0f, 1.0f, 1000.0f);
 
-			float scaleX = 2.0f * sliceFarZ / (maxXY[0] - minXY[0]);
-			float scaleY = 2.0f * sliceFarZ / (maxXY[1] - minXY[1]);
+	//		float scaleX = 2.0f * sliceFarZ / (maxXY[0] - minXY[0]);
+	//		float scaleY = 2.0f * sliceFarZ / (maxXY[1] - minXY[1]);
 
-			float offsetX = (maxXY[0] + minXY[0]) / (2.0f * sliceFarZ);
-			float offsetY = (maxXY[1] + minXY[1]) / (2.0f * sliceFarZ);
+	//		float offsetX = (maxXY[0] + minXY[0]) / (2.0f * sliceFarZ);
+	//		float offsetY = (maxXY[1] + minXY[1]) / (2.0f * sliceFarZ);
 
-			clusterProjection =
-				scale(scaleX, scaleY, 1.0f) *
-				translate(-offsetX, -offsetY, 0.0f) *
-				clusterProjection;
+	//		clusterProjection =
+	//			scale(scaleX, scaleY, 1.0f) *
+	//			translate(-offsetX, -offsetY, 0.0f) *
+	//			clusterProjection;
 
-			// Gather cloud particles in current slice.
-			std::vector< const CloudParticle* > sliceParticles;
-			for (AlignedVector< CloudParticle >::const_iterator i = particles.begin(); i != particles.end(); ++i)
-			{
-				const float c_threshold = 0.1f;
-				float z = (worldView * i->position).z();
-				if (z >= sliceNearZ - c_threshold && z < sliceFarZ + c_threshold)
-					sliceParticles.push_back(&(*i));
-			}
+	//		// Gather cloud particles in current slice.
+	//		std::vector< const CloudParticle* > sliceParticles;
+	//		for (AlignedVector< CloudParticle >::const_iterator i = particles.begin(); i != particles.end(); ++i)
+	//		{
+	//			const float c_threshold = 0.1f;
+	//			float z = (worldView * i->position).z();
+	//			if (z >= sliceNearZ - c_threshold && z < sliceFarZ + c_threshold)
+	//				sliceParticles.push_back(&(*i));
+	//		}
 
-			Vector4 haloColor = colorAsVector4(m_particleData.getHaloColor());
+	//		Vector4 haloColor = colorAsVector4(m_particleData.getHaloColor());
 
-			render::TargetRenderBlock* targetRenderBlock = renderContext->alloc< render::TargetRenderBlock >();
-			targetRenderBlock->type = render::RbtOpaque;
-			targetRenderBlock->distance = -std::numeric_limits< float >::max();
-			targetRenderBlock->renderTargetSet = m_impostorTargets[slice];
-			targetRenderBlock->renderTargetIndex = 0;
-			targetRenderBlock->keepDepthStencil = false;
-			targetRenderBlock->clearMask = render::CfColor;
-			targetRenderBlock->clearColor[0] = haloColor.x();
-			targetRenderBlock->clearColor[1] = haloColor.y();
-			targetRenderBlock->clearColor[2] = haloColor.z();
-			targetRenderBlock->inner = 0;
+	//		render::TargetRenderBlock* targetRenderBlock = renderContext->alloc< render::TargetRenderBlock >();
+	//		targetRenderBlock->type = render::RbtOpaque;
+	//		targetRenderBlock->distance = -std::numeric_limits< float >::max();
+	//		targetRenderBlock->renderTargetSet = m_impostorTargets[slice];
+	//		targetRenderBlock->renderTargetIndex = 0;
+	//		targetRenderBlock->keepDepthStencil = false;
+	//		targetRenderBlock->clearMask = render::CfColor;
+	//		targetRenderBlock->clearColor[0] = haloColor.x();
+	//		targetRenderBlock->clearColor[1] = haloColor.y();
+	//		targetRenderBlock->clearColor[2] = haloColor.z();
+	//		targetRenderBlock->inner = 0;
 
-			render::ChainRenderBlock* chainRenderBlockTail = 0;
+	//		render::ChainRenderBlock* chainRenderBlockTail = 0;
 
-			uint32_t sliceParticleCount = uint32_t(sliceParticles.size());
-			for (uint32_t i = 0; i < sliceParticleCount; )
-			{
-				uint32_t instanceCount = std::min(sliceParticleCount - i, c_instanceCount);
+	//		uint32_t sliceParticleCount = uint32_t(sliceParticles.size());
+	//		for (uint32_t i = 0; i < sliceParticleCount; )
+	//		{
+	//			uint32_t instanceCount = std::min(sliceParticleCount - i, c_instanceCount);
 
-				for (uint32_t j = 0; j < instanceCount; ++j)
-				{
-					instanceData1[j] = sliceParticles[i + j]->position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, sliceParticles[i + j]->opacity);
-					instanceData2[j] = Vector4(
-						sliceParticles[i + j]->radius,
-						sliceParticles[i + j]->rotation,
-						(sliceParticles[i + j]->sprite & 1) / 2.0f,
-						(sliceParticles[i + j]->sprite >> 1) / 2.0f
-					);
-				}
+	//			for (uint32_t j = 0; j < instanceCount; ++j)
+	//			{
+	//				instanceData1[j] = sliceParticles[i + j]->position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, sliceParticles[i + j]->opacity);
+	//				instanceData2[j] = Vector4(
+	//					sliceParticles[i + j]->radius,
+	//					sliceParticles[i + j]->rotation,
+	//					(sliceParticles[i + j]->sprite & 1) / 2.0f,
+	//					(sliceParticles[i + j]->sprite >> 1) / 2.0f
+	//				);
+	//			}
 
-				const wchar_t* c_techniquePasses[] = { L"Opacity", L"Default" };
-				for (uint32_t pass = 0; pass < sizeof_array(c_techniquePasses); ++pass)
-				{
-					render::IndexedRenderBlock* particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
-					particleRenderBlock->type = render::RbtAlphaBlend;
-					particleRenderBlock->distance = 0.0f;
-					particleRenderBlock->shader = m_particleShader;
-					particleRenderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
-					particleRenderBlock->indexBuffer = m_indexBuffer;
-					particleRenderBlock->vertexBuffer = m_vertexBuffer;
-					particleRenderBlock->primitive = render::PtTriangles;
-					particleRenderBlock->offset = 0;
-					particleRenderBlock->count = instanceCount * 2;
-					particleRenderBlock->minIndex = 0;
-					particleRenderBlock->maxIndex = c_instanceCount * 4;
+	//			const wchar_t* c_techniquePasses[] = { L"Opacity", L"Default" };
+	//			for (uint32_t pass = 0; pass < sizeof_array(c_techniquePasses); ++pass)
+	//			{
+	//				render::IndexedRenderBlock* particleRenderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+	//				particleRenderBlock->type = render::RbtAlphaBlend;
+	//				particleRenderBlock->distance = 0.0f;
+	//				particleRenderBlock->shader = m_particleShader;
+	//				particleRenderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	//				particleRenderBlock->indexBuffer = m_indexBuffer;
+	//				particleRenderBlock->vertexBuffer = m_vertexBuffer;
+	//				particleRenderBlock->primitive = render::PtTriangles;
+	//				particleRenderBlock->offset = 0;
+	//				particleRenderBlock->count = instanceCount * 2;
+	//				particleRenderBlock->minIndex = 0;
+	//				particleRenderBlock->maxIndex = c_instanceCount * 4;
 
-					particleRenderBlock->shaderParams->beginParameters(renderContext);
-					worldRenderView->setShaderParameters(particleRenderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
-					particleRenderBlock->shaderParams->setTechnique(c_techniquePasses[pass]);
-					particleRenderBlock->shaderParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
-					particleRenderBlock->shaderParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
-					particleRenderBlock->shaderParams->setMatrixParameter(L"Projection", clusterProjection);
-					particleRenderBlock->shaderParams->setVectorParameter(L"SkyColor", colorAsVector4(m_particleData.getSkyColor()));
-					particleRenderBlock->shaderParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
-					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
-					particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
-					particleRenderBlock->shaderParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
-					particleRenderBlock->shaderParams->endParameters(renderContext);
+	//				particleRenderBlock->shaderParams->beginParameters(renderContext);
+	//				worldRenderView->setShaderParameters(particleRenderBlock->shaderParams, m_transform.toMatrix44(), Matrix44::identity(), clusterBoundingBox);
+	//				particleRenderBlock->shaderParams->setTechnique(c_techniquePasses[pass]);
+	//				particleRenderBlock->shaderParams->setFloatParameter(L"ParticleDensity", m_particleData.getDensity());
+	//				particleRenderBlock->shaderParams->setFloatParameter(L"SunInfluence", m_particleData.getSunInfluence());
+	//				particleRenderBlock->shaderParams->setMatrixParameter(L"Projection", clusterProjection);
+	//				particleRenderBlock->shaderParams->setVectorParameter(L"SkyColor", colorAsVector4(m_particleData.getSkyColor()));
+	//				particleRenderBlock->shaderParams->setVectorParameter(L"GroundColor", colorAsVector4(m_particleData.getGroundColor()));
+	//				particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData1", instanceData1, instanceCount);
+	//				particleRenderBlock->shaderParams->setVectorArrayParameter(L"InstanceData2", instanceData2, instanceCount);
+	//				particleRenderBlock->shaderParams->setTextureParameter(L"ParticleTexture", m_particleTexture);
+	//				particleRenderBlock->shaderParams->endParameters(renderContext);
 
-					render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
-					chainRenderBlock->inner = particleRenderBlock;
-					chainRenderBlock->next = 0;
+	//				render::ChainRenderBlock* chainRenderBlock = renderContext->alloc< render::ChainRenderBlock >();
+	//				chainRenderBlock->inner = particleRenderBlock;
+	//				chainRenderBlock->next = 0;
 
-					if (chainRenderBlockTail)
-					{
-						chainRenderBlockTail->next = chainRenderBlock;
-						chainRenderBlockTail = chainRenderBlock;
-					}
-					else
-					{
-						targetRenderBlock->inner = chainRenderBlock;
-						chainRenderBlockTail = chainRenderBlock;
-					}
-				}
+	//				if (chainRenderBlockTail)
+	//				{
+	//					chainRenderBlockTail->next = chainRenderBlock;
+	//					chainRenderBlockTail = chainRenderBlock;
+	//				}
+	//				else
+	//				{
+	//					targetRenderBlock->inner = chainRenderBlock;
+	//					chainRenderBlockTail = chainRenderBlock;
+	//				}
+	//			}
 
-				i += instanceCount;
-			}
+	//			i += instanceCount;
+	//		}
 
-			renderContext->draw(targetRenderBlock);
-		}
+	//		renderContext->draw(targetRenderBlock);
+	//	}
 
-		m_lastCameraPosition = cameraPosition;
-		m_lastCameraDirection = cameraDirection;
+	//	m_lastCameraPosition = cameraPosition;
+	//	m_lastCameraDirection = cameraDirection;
 
-		m_timeUntilUpdate = 1.0f / m_updateFrequency;
-	}
+	//	m_timeUntilUpdate = 1.0f / m_updateFrequency;
+	//}
 
 	// Render impostors.
 	for (uint32_t slice = 0; slice < m_impostorSliceCount; ++slice)
@@ -496,7 +496,6 @@ void CloudEntity::renderCluster(
 
 		render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
 
-		renderBlock->type = render::RbtAlphaBlend;
 		renderBlock->distance = sliceNearZ;
 		renderBlock->shader = m_impostorShader;
 		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -519,7 +518,7 @@ void CloudEntity::renderCluster(
 		renderBlock->shaderParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
 		renderBlock->shaderParams->endParameters(renderContext);
 
-		renderContext->draw(renderBlock);
+		renderContext->draw(render::RfAlphaBlend, renderBlock);
 	}
 }
 

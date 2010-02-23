@@ -128,7 +128,6 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
-	renderBlock->type = render::RbtAlphaBlend;
 	renderBlock->distance = 0.0f;
 	renderBlock->shader = m_shader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -162,7 +161,7 @@ void OceanEntity::render(render::RenderContext* renderContext, const world::Worl
 
 	renderBlock->shaderParams->endParameters(renderContext);
 
-	renderContext->draw(renderBlock);
+	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }
 
 void OceanEntity::update(const world::EntityUpdate* update)

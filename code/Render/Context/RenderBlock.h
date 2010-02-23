@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,29 +24,18 @@ class ShaderParameters;
 class IndexBuffer;
 class VertexBuffer;
 
-/*! \brief Type of render block.
- * \ingroup Render
- */
-enum RenderBlockType
-{
-	RbtOpaque,
-	RbtAlphaBlend
-};
-
 /*! \brief Render block base class.
  * \ingroup Render
  */
 class T_DLLCLASS RenderBlock
 {
 public:
-	uint8_t type;
 	float distance;
 	Shader* shader;
 	ShaderParameters* shaderParams;
 
 	RenderBlock()
-	:	type(RbtOpaque)
-	,	distance(0.0f)
+	:	distance(0.0f)
 	,	shader(0)
 	,	shaderParams(0)
 	{
@@ -57,6 +46,18 @@ public:
 
 #pragma warning( push )
 #pragma warning( disable : 4311 )	// Pointer truncation
+
+/*! \brief Null render block.
+ * \ingroup Render
+ *
+ * Doesn't render anything; just update
+ * shader parameters if available.
+ */
+class T_DLLCLASS NullRenderBlock : public RenderBlock
+{
+public:
+	virtual void render(IRenderView* renderView) const;
+};
 
 /*! \brief Simple render block.
  * \ingroup Render
@@ -128,30 +129,52 @@ public:
 	virtual void render(IRenderView* renderView) const;
 };
 
-/*! \brief Alternative target render block.
+/*! \brief Begin target render block.
  * \ingroup Render
  */
-class T_DLLCLASS TargetRenderBlock : public RenderBlock
+class T_DLLCLASS TargetBeginRenderBlock : public RenderBlock
 {
 public:
 	RenderTargetSet* renderTargetSet;
 	int32_t renderTargetIndex;
 	bool keepDepthStencil;
-	uint32_t clearMask;
-	float clearColor[4];
-	float clearDepth;
-	uint8_t clearStencil;
-	RenderBlock* inner;
 
-	TargetRenderBlock()
+	TargetBeginRenderBlock()
 	:	RenderBlock()
 	,	renderTargetSet(0)
 	,	renderTargetIndex(0)
 	,	keepDepthStencil(false)
+	{
+	}
+
+	virtual void render(IRenderView* renderView) const;
+};
+
+/*! \brief End target render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS TargetEndRenderBlock : public RenderBlock
+{
+public:
+	virtual void render(IRenderView* renderView) const;
+};
+
+/*! \brief Clear target render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS TargetClearRenderBlock : public RenderBlock
+{
+public:
+	uint32_t clearMask;
+	float clearColor[4];
+	float clearDepth;
+	uint8_t clearStencil;
+
+	TargetClearRenderBlock()
+	:	RenderBlock()
 	,	clearMask(0)
 	,	clearDepth(1.0f)
 	,	clearStencil(0)
-	,	inner(0)
 	{
 		clearColor[0] =
 		clearColor[1] =
