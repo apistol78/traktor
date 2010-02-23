@@ -789,14 +789,25 @@ void createMesh(
 	xml::Element* libraryGeometries,
 	xml::Element* libraryControllers,
 	const RefArray< xml::Element >& instanceGeometryNodes,
-	const RefArray< xml::Element >& instanceControllers,
+	const RefArray< xml::Element >& instanceControllerNodes,
 	const std::map< std::wstring, uint32_t >& materialRefs,
 	Model* outModel
 )
 {
-	for (size_t i = 0; i < instanceControllers.size(); ++i)
+	for (size_t i = 0; i < instanceControllerNodes.size(); ++i)
 	{
-		std::wstring controllerRef = instanceControllers[i]->getAttribute(L"url", L"")->getValue();
+		Ref< xml::Element > instanceController = instanceControllerNodes[i]->getSingle(L"instance_controller");
+		Matrix44 transform;
+		if (Ref< xml::Element > scaleE = instanceControllerNodes[i]->getSingle(L"scale"))
+		{
+			std::vector< float > scaleArray;
+			parseStringToArray(scaleE->getValue(), scaleArray);
+			transform = scale(scaleArray[0],scaleArray[1], scaleArray[2]);
+		}
+		else
+			transform = Matrix44::identity();
+
+		std::wstring controllerRef = instanceController->getAttribute(L"url", L"")->getValue();
 
 		Ref< xml::Element > skin = libraryControllers->getSingle(L"controller[@id=" + dereference(controllerRef) + L"]/skin");
 		if (skin)
@@ -810,8 +821,8 @@ void createMesh(
 			ColladaMeshdata meshData;
 			if (meshData.read(geometry, 0))
 			{
-				meshData.addPositions(Matrix44::identity(), outModel);
-				meshData.addToModel(Matrix44::identity(), materialRefs, &skinData, outModel);
+				meshData.addPositions(transform, outModel);
+				meshData.addToModel(transform, materialRefs, &skinData, outModel);
 			}
 			return;
 		}
@@ -826,7 +837,7 @@ void createMesh(
 			if (!baseGeometry)
 				continue;
 			if (baseMeshData.read(baseGeometry, 0))
-				baseMeshData.addPositions(Matrix44::identity(), outModel);
+				baseMeshData.addPositions(transform, outModel);
 			for (size_t j = 0; j < morphData.getMorphTargetCount(); j++)
 			{
 				std::wstring morphTargetGeometry = morphData.getMorphTarget(j);
@@ -835,10 +846,10 @@ void createMesh(
 				if (meshData.read(morphGeometry, &baseMeshData))
 				{
 					uint32_t morphTargetIndex = outModel->addBlendTarget(morphTargetGeometry);
-					baseMeshData.addMorphMeshToModel(Matrix44::identity(), &meshData, morphTargetIndex, outModel);
+					baseMeshData.addMorphMeshToModel(transform, &meshData, morphTargetIndex, outModel);
 				}
 			}
-			baseMeshData.addToModel(Matrix44::identity(), materialRefs, 0, outModel);
+			baseMeshData.addToModel(transform, materialRefs, 0, outModel);
 			return;
 		}
 	}
@@ -1020,7 +1031,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 
 		if (Ref< xml::Element > instanceController = node->getSingle(L"instance_controller"))
 		{
-			instanceControllers.push_back(instanceController);
+			instanceControllers.push_back(node);
 
 			RefArray< xml::Element > instanceMaterials;
 			instanceController->get(L"bind_material/technique_common/instance_material", instanceMaterials);
