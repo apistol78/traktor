@@ -55,6 +55,7 @@ RenderViewWin32::RenderViewWin32(
 ,	m_d3dPresent(d3dPresent)
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
 ,	m_nativeAspectRatio(nativeAspectRatio)
+,	m_frameCount(0)
 ,	m_targetDirty(false)
 {
 	m_d3dViewport.X = 0;
@@ -172,7 +173,7 @@ bool RenderViewWin32::begin()
 
 	if (FAILED(m_d3dDevice->BeginScene()))
 	{
-		m_renderSystem->endRender();
+		m_renderSystem->endRender(false);
 		return false;
 	}
 
@@ -319,8 +320,25 @@ void RenderViewWin32::end()
 
 void RenderViewWin32::present()
 {
-	m_d3dSwapChain->Present(NULL, NULL, NULL, NULL, 0);
-	m_renderSystem->endRender();
+	HRESULT hr;
+
+	hr = m_d3dSwapChain->Present(NULL, NULL, NULL, NULL, 0);
+
+	if (SUCCEEDED(hr))
+	{
+		uint32_t previousQuery = (m_frameCount + 1) % sizeof_array(m_d3dSyncQueries);
+		uint32_t currentQuery = m_frameCount % sizeof_array(m_d3dSyncQueries);
+
+		m_d3dSyncQueries[currentQuery].get()->Issue(D3DISSUE_END);
+
+		while (m_d3dSyncQueries[previousQuery]->GetData(NULL, 0, D3DGETDATA_FLUSH) == S_FALSE)
+			;
+	}
+
+	m_renderSystem->endRender(
+		hr == D3DERR_DEVICELOST ||
+		hr == D3DERR_DEVICENOTRESET
+	);
 }
 
 void RenderViewWin32::setMSAAEnable(bool msaaEnable)
@@ -334,6 +352,9 @@ HRESULT RenderViewWin32::lostDevice()
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
 	m_d3dDepthStencilSurface.release();
+
+	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+		m_d3dSyncQueries[i].release();
 
 	m_renderStateStack.clear();
 	m_currentVertexBuffer = 0;
@@ -395,6 +416,19 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 	{
 		log::error << L"Unable to get depth/stencil surface; hr = " << hr << Endl;
 		return hr;
+	}
+
+	for (uint32_t i = 0; i < sizeof_array(m_d3dSyncQueries); ++i)
+	{
+		hr = m_d3dDevice->CreateQuery(
+			D3DQUERYTYPE_EVENT,
+			&m_d3dSyncQueries[i].getAssign()
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Failed to create query; hr = " << hr << Endl;
+			return hr;
+		}
 	}
 
 	return S_OK;

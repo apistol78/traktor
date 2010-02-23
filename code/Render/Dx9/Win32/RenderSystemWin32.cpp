@@ -465,40 +465,28 @@ bool RenderSystemWin32::beginRender()
 	if (!m_renderLock.wait(1000))
 		return false;
 
-	hr = m_d3dDevice->TestCooperativeLevel();
-	if (hr == D3DERR_DEVICELOST)
+	if (m_lostDevice)
 	{
-		if (!m_lostDevice)
-			log::debug << L"Device lost; skip frame(s)..." << Endl;
-		m_lostDevice = true;
-	}
+		hr = m_d3dDevice->TestCooperativeLevel();
 
-	if (hr == D3DERR_DEVICENOTRESET)
-	{
-		log::debug << L"Device not reset; trying to reset device..." << Endl;
-		hr = resetDevice();
+		if (hr == D3DERR_DEVICENOTRESET)
+			hr = resetDevice();
+
 		if (SUCCEEDED(hr))
-		{
-			log::debug << L"Device recovered; back to normal" << Endl;
 			m_lostDevice = false;
-		}
 		else
-			log::debug << L"Device not recovered; hr = " << hr << Endl;
-	}
-
-	if (FAILED(hr))
-	{
-		// Just yield thread a while; it's possible application will
-		// spin on beginRender otherwise.
-		Sleep(100);
-		return false;
+		{
+			Sleep(100);
+			return false;
+		}
 	}
 
 	return true;
 }
 
-void RenderSystemWin32::endRender()
+void RenderSystemWin32::endRender(bool lostDevice)
 {
+	m_lostDevice = lostDevice;
 	m_renderLock.release();
 }
 
