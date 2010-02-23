@@ -78,10 +78,12 @@ bool WorldRenderer::create(
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = multiSample;
-		desc.depthStencil = false;
+		//desc.width = width;
+		//desc.height = height;
+		desc.width = width / 2;
+		desc.height = height / 2;
+		desc.multiSample = 0; //multiSample;
+		desc.depthStencil = true; //false;
 		desc.targets[0].format = render::TfR16F;
 
 		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -330,10 +332,11 @@ void WorldRenderer::render(uint32_t flags, int frame)
 
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
-		if (m_renderView->begin(m_depthTargetSet, 0, true))
+		if (m_renderView->begin(m_depthTargetSet, 0, /*true*/false))
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
-			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
+			//m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
+			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}

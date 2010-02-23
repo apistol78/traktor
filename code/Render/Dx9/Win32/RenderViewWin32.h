@@ -112,10 +112,12 @@ private:
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;
 	ComRef< IDirect3DSurface9 > m_d3dDepthStencilSurface;
+	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[2];
 	std::list< RenderState > m_renderStateStack;
 	Ref< VertexBufferDx9 > m_currentVertexBuffer;
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
 	Ref< ProgramWin32 > m_currentProgram;
+	uint32_t m_frameCount;
 	bool m_targetDirty;
 
 	void bindTargets();

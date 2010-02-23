@@ -83,7 +83,7 @@ public:
 
 	/*! \brief Begin rendering frame.
 	 *
-	 * Called from render view in order to exclusivly
+	 * Called from render view in order to exclusively
 	 * acquire device for rendering. No resources
 	 * are permitted to be created during rendering
 	 * except from rendering thread.
@@ -92,13 +92,16 @@ public:
 	 */
 	bool beginRender();
 
-	/*! \brief Finish rendering frame. */
-	void endRender();
+	/*! \brief Finish rendering frame.
+	 *
+	 * \param lostDevice If device lost reported from Present.
+	 */
+	void endRender(bool lostDevice);
 
-	/*! \brief Toggle fullscreen/windowed mode.
+	/*! \brief Toggle full-screen/windowed mode.
 	 *
 	 * \note Will only work if renderer was initially
-	 * created with a fullscreen render view.
+	 * created with a full-screen render view.
 	 */
 	void toggleMode();
 
