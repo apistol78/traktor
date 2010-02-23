@@ -77,7 +77,7 @@ private:
 	ComRef< IDirect3DSurface9 > m_d3dTargetDepthStencilSurface;
 	RefArray< RenderTargetWin32 > m_colorTextures;
 
-	LRESULT internalCreate();
+	HRESULT internalCreate();
 };
 
 	}

@@ -1,15 +1,15 @@
 #include <cstring>
-#include "Mesh/Blend/BlendMesh.h"
-#include "Mesh/IMeshParameterCallback.h"
-#include "Render/IRenderSystem.h"
-#include "Render/VertexBuffer.h"
-#include "Render/IndexBuffer.h"
-#include "Render/Shader.h"
-#include "Render/Mesh/Mesh.h"
-#include "Render/Context/RenderContext.h"
-#include "World/WorldRenderView.h"
-#include "World/WorldRenderer.h"
 #include "Core/Thread/JobManager.h"
+#include "Mesh/IMeshParameterCallback.h"
+#include "Mesh/Blend/BlendMesh.h"
+#include "Render/IndexBuffer.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Shader.h"
+#include "Render/VertexBuffer.h"
+#include "Render/Context/RenderContext.h"
+#include "World/WorldRenderer.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -186,16 +186,20 @@ void BlendMesh::render(
 	// Update target mesh only when we're rendering default technique.
 	if (technique == world::WorldRenderer::getTechniqueDefault())
 	{
-		float difference = 0.0f;
-		for (uint32_t i = 0; i < blendWeights.size(); ++i)
+		bool update = true;
+		if (blendWeights.size() == instance->weights.size())
 		{
-			if (i < instance->weights.size())
-				difference += abs(blendWeights[i] - instance->weights[i]);
-			else
-				difference += abs(blendWeights[i]);
+			update = false;
+			for (uint32_t i = 0; i < blendWeights.size(); ++i)
+			{
+				if (abs(blendWeights[i] - instance->weights[i]) >= FUZZY_EPSILON)
+				{
+					update = true;
+					break;
+				}
+			}
 		}
-
-		if (difference > FUZZY_EPSILON)
+		if (update)
 		{
 			const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
 			uint32_t vertexSize = render::getVertexSize(vertexElements);
@@ -234,6 +238,7 @@ void BlendMesh::render(
 #endif
 
 			instance->mesh->getVertexBuffer()->unlock();
+			instance->weights = blendWeights;
 		}
 	}
 

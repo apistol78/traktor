@@ -128,6 +128,15 @@ void AccDisplayRenderer::beginRender(render::IRenderView* renderView, bool corre
 		m_aspectRatio = 0.0f;
 
 	m_scaleX = 1.0f;
+
+	// Clean glyph cache; remove targets which have become invalid.
+	for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
+	{
+		if (!i->second->isContentValid())
+			m_glyphCache.erase(i++);
+		else
+			++i;
+	}
 }
 
 void AccDisplayRenderer::endRender()
