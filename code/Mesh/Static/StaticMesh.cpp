@@ -69,9 +69,10 @@ void StaticMesh::render(
 		);
 		renderBlock->shaderParams->endParameters(renderContext);
 
-		renderBlock->type = m_parts[i].opaque ? render::RbtOpaque : render::RbtAlphaBlend;
-
-		renderContext->draw(renderBlock);
+		renderContext->draw(
+			m_parts[i].opaque ? render::RfOpaque : render::RfAlphaBlend,
+			renderBlock
+		);
 	}
 }
 

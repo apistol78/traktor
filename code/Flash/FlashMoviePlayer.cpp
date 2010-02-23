@@ -1,7 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Math/Const.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovieRenderer.h"
@@ -79,7 +78,6 @@ bool FlashMoviePlayer::create(FlashMovie* movie)
 
 void FlashMoviePlayer::destroy()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	m_displayRenderer = 0;
 	m_movieRenderer = 0;
 	m_actionVM = 0;
@@ -91,21 +89,18 @@ void FlashMoviePlayer::destroy()
 
 void FlashMoviePlayer::gotoAndPlay(uint32_t frame)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	m_movieInstance->setPlaying(true);
 	m_movieInstance->gotoFrame(frame);
 }
 
 void FlashMoviePlayer::gotoAndStop(uint32_t frame)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	m_movieInstance->setPlaying(false);
 	m_movieInstance->gotoFrame(frame);
 }
 
 void FlashMoviePlayer::gotoAndPlay(const std::wstring& frameLabel)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
 	if (frame >= 0)
 	{
@@ -116,7 +111,6 @@ void FlashMoviePlayer::gotoAndPlay(const std::wstring& frameLabel)
 
 void FlashMoviePlayer::gotoAndStop(const std::wstring& frameLabel)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	int frame = m_movie->getMovieClip()->findFrame(frameLabel);
 	if (frame >= 0)
 	{
@@ -127,20 +121,16 @@ void FlashMoviePlayer::gotoAndStop(const std::wstring& frameLabel)
 
 uint32_t FlashMoviePlayer::getFrameCount() const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	return m_movie->getMovieClip()->getFrameCount();
 }
 
 void FlashMoviePlayer::renderFrame()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 	m_movieRenderer->renderFrame(m_movie, m_movieInstance);
 }
 
 void FlashMoviePlayer::executeFrame()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
-
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	ActionValue memberValue;
 

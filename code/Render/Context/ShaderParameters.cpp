@@ -89,7 +89,8 @@ enum ParameterTypes
 	PmtVectorArray,
 	PmtMatrix,
 	PmtMatrixArray,
-	PmtTexture
+	PmtTexture,
+	PmtStencilReference
 };
 
 		}
@@ -199,6 +200,15 @@ void ShaderParameters::setTextureParameter(handle_t handle, ITexture* texture)
 	write< ITexture* >(m_parameterLast, texture);
 }
 
+void ShaderParameters::setStencilReference(uint32_t stencilReference)
+{
+	T_ASSERT (m_parameterLast);
+	align< handle_t >(m_parameterLast);
+	write< handle_t >(m_parameterLast, 0);
+	write< int >(m_parameterLast, PmtStencilReference);
+	write< uint32_t >(m_parameterLast, stencilReference);
+}
+
 void ShaderParameters::fixup(Shader* shader) const
 {
 	if (m_technique)
@@ -256,6 +266,10 @@ void ShaderParameters::fixup(Shader* shader) const
 
 		case PmtTexture:
 			shader->setTextureParameter(handle, read< ITexture* >(parameter));
+			break;
+
+		case PmtStencilReference:
+			shader->setStencilReference(read< uint32_t >(parameter));
 			break;
 		}
 	}

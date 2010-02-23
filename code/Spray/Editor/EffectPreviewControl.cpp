@@ -95,7 +95,7 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
 		return false;
 
-	m_renderContext = new render::RenderContext(m_renderView);
+	m_renderContext = new render::RenderContext();
 	m_pointRenderer = new PointRenderer(renderSystem, 1.0f, 1.0f);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
@@ -350,7 +350,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			&worldRenderView
 		);
 
-		m_renderContext->render(render::RenderContext::RfOpaque | render::RenderContext::RfAlphaBlend);
+		m_renderContext->render(m_renderView, render::RfAll);
 		m_renderContext->flush();
 
 		m_lastDeltaTime = deltaTime;

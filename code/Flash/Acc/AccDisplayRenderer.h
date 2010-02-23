@@ -27,6 +27,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class RenderContext;
 class RenderTargetSet;
 
 	}
@@ -56,19 +57,20 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
+		uint32_t frameCount,
 		bool clearBackground
 	);
 
 	void destroy();
 
-	/*! \brief Begin rendering Flash movie.
-	 *
-	 * \param renderView Output render view.
-	 * \param correctAspectRatio Render movie with correct aspect ratio.
-	 */
-	void beginRender(render::IRenderView* renderView, bool correctAspectRatio);
+	void build(uint32_t frame, bool correctAspectRatio);
 
-	void endRender();
+	void render(render::IRenderView* renderView, uint32_t frame);
+
+	void flush(uint32_t frame);
+
+	// \name IDisplayRenderer
+	// \{
 
 	virtual void begin(const FlashMovie& movie, const SwfColor& backgroundColor);
 
@@ -84,6 +86,8 @@ public:
 
 	virtual void end();
 
+	// \}
+
 private:
 	struct CacheEntry
 	{
@@ -93,13 +97,15 @@ private:
 
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::IRenderView > m_renderView;
+	RefArray< render::RenderContext > m_renderContexts;
+	Ref< render::RenderContext > m_renderContext;
 	RefArray< render::RenderTargetSet > m_renderTargetGlyphs;
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccQuad > m_quad;
 	std::map< uint64_t, CacheEntry > m_shapeCache;
 	std::map< uint64_t, render::RenderTargetSet* > m_glyphCache;
 	Vector4 m_frameSize;
+	Vector4 m_viewSize;
 	float m_aspectRatio;
 	float m_scaleX;
 	bool m_clearBackground;

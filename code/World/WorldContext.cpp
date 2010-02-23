@@ -12,10 +12,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
-WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers, render::IRenderView* renderView)
+WorldContext::WorldContext(WorldRenderer* worldRenderer, WorldEntityRenderers* entityRenderers)
 :	m_worldRenderer(worldRenderer)
 ,	m_entityRenderers(entityRenderers)
-,	m_renderContext(new render::RenderContext(renderView))
+,	m_renderContext(new render::RenderContext())
 ,	m_lastEntityType(0)
 ,	m_lastEntityRenderer(0)
 {

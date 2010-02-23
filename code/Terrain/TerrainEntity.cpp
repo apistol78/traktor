@@ -442,7 +442,6 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 			);
 		}
 
-		renderBlock->type = render::RbtOpaque;
 		renderBlock->distance = i->distance;
 		renderBlock->shader = m_shader;
 		renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -470,7 +469,7 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 
 		renderBlock->shaderParams->endParameters(renderContext);
 
-		renderContext->draw(renderBlock);
+		renderContext->draw(render::RfOpaque, renderBlock);
 	}
 }
 

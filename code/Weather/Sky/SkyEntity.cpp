@@ -33,7 +33,6 @@ void SkyEntity::render(render::RenderContext* renderContext, const world::WorldR
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
 	// Render sky after all opaques but first of all alpha blended.
-	renderBlock->type = render::RbtAlphaBlend;
 	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->shader = m_shader;
 	renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
@@ -49,7 +48,7 @@ void SkyEntity::render(render::RenderContext* renderContext, const world::WorldR
 
 	renderBlock->shaderParams->endParameters(renderContext);
 
-	renderContext->draw(renderBlock);
+	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }
 
 void SkyEntity::update(const world::EntityUpdate* update)

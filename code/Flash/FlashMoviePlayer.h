@@ -19,15 +19,15 @@ namespace traktor
 	namespace flash
 	{
 
-class FlashMovieRenderer;
-class IActionVM;
-class IDisplayRenderer;
 class ActionObject;
 class ActionFunction;
 class AsKey;
 class AsMouse;
 class FlashMovie;
+class FlashMovieRenderer;
 class FlashSpriteInstance;
+class IActionVM;
+class IDisplayRenderer;
 
 struct CallArgs;
 
@@ -187,7 +187,6 @@ private:
 	Ref< AsMouse > m_mouse;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
-	mutable Semaphore m_renderLock;
 	std::list< Event > m_events;
 	std::list< std::pair< std::wstring, std::wstring > > m_fsCommands;
 	std::map< uint32_t, Interval > m_interval;

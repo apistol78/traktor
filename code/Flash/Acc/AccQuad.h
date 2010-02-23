@@ -18,9 +18,9 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
-class IRenderView;
-class Shader;
 class ITexture;
+class RenderContext;
+class Shader;
 class VertexBuffer;
 
 	}
@@ -45,8 +45,9 @@ public:
 	void destroy();
 
 	void render(
-		render::IRenderView* renderView,
+		render::RenderContext* renderContext,
 		const Vector4& frameSize,
+		const Vector4& viewSize,
 		float scaleX,
 		const Matrix33& transform,
 		const SwfRect& bounds,

@@ -11,9 +11,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,6 +22,17 @@ namespace traktor
 	{
 
 class IRenderView;
+
+/*! \brief Render block type.
+ * \ingroup Render
+ */
+enum RenderBlockType
+{
+	RfOpaque = 1,
+	RfAlphaBlend = 2,
+	RfOverlay = 4,
+	RfAll = (RfOpaque | RfAlphaBlend | RfOverlay)
+};
 
 /*! \brief Deferred render context.
  * \ingroup Render
@@ -34,19 +45,13 @@ class T_DLLCLASS RenderContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	enum
-	{
-		RfOpaque = 1,
-		RfAlphaBlend = 2
-	};
-
 #if defined(WINCE)
 	enum { DefaultHeapSize = 512 * 1024 };
 #else
 	enum { DefaultHeapSize = 4 * 1024 * 1024 };
 #endif
 
-	RenderContext(IRenderView* renderView, uint32_t heapSize = DefaultHeapSize);
+	RenderContext(uint32_t heapSize = DefaultHeapSize);
 
 	virtual ~RenderContext();
 
@@ -70,24 +75,21 @@ public:
 	}
 
 	/*! \brief Enqueue a render block in context. */
-	void draw(RenderBlock* renderBlock);
+	void draw(uint32_t type, RenderBlock* renderBlock);
 
 	/*! \brief Render blocks. */
-	void render(uint32_t flags) const;
+	void render(IRenderView* renderView, uint32_t flags) const;
 
 	/*! \brief Flush blocks. */
 	void flush();
 
-	inline Ref< IRenderView > getRenderView() const { return m_renderView; }
-
 	inline uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - &m_heap[0]); }
 
 private:
-	Ref< IRenderView > m_renderView;
 	uint8_t* m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	std::vector< RenderBlock* > m_renderQueue[2];
+	std::vector< RenderBlock* > m_renderQueue[3];
 };
 
 	}

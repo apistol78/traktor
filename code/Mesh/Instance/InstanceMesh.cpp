@@ -121,9 +121,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			worldRenderView->setShaderParameters(renderBlock->shaderParams, boundingBoxCenter, boundingBoxCenter, boundingBoxWorld);
 			renderBlock->shaderParams->endParameters(renderContext);
 
-			renderBlock->type = render::RbtOpaque;
-
-			renderContext->draw(renderBlock);
+			renderContext->draw(render::RfOpaque, renderBlock);
 
 			batchOffset += batchCount;
 		}
@@ -168,9 +166,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				worldRenderView->setShaderParameters(renderBlock->shaderParams);
 				renderBlock->shaderParams->endParameters(renderContext);
 
-				renderBlock->type = render::RbtAlphaBlend;
-
-				renderContext->draw(renderBlock);
+				renderContext->draw(render::RfAlphaBlend, renderBlock);
 
 				batchOffset += batchCount;
 			}

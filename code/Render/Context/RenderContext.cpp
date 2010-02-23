@@ -12,7 +12,6 @@ struct SortOpaquePredicate
 {
 	T_FORCE_INLINE bool operator () (const RenderBlock* renderBlock1, const RenderBlock* renderBlock2) const
 	{
-		T_ASSERT (renderBlock1->type == RbtOpaque);
 		if (renderBlock1->shader < renderBlock2->shader)
 			return true;
 		if (renderBlock1->shader > renderBlock2->shader)
@@ -25,7 +24,6 @@ struct SortAlphaBlendPredicate
 {
 	T_FORCE_INLINE bool operator () (const RenderBlock* renderBlock1, const RenderBlock* renderBlock2) const
 	{
-		T_ASSERT (renderBlock1->type == RbtAlphaBlend);
 		return renderBlock1->distance > renderBlock2->distance;
 	}
 };
@@ -52,9 +50,8 @@ T_FORCE_INLINE void insert(std::vector< RenderBlock* >& queue, RenderBlock* rend
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
-RenderContext::RenderContext(IRenderView* renderView, uint32_t heapSize)
-:	m_renderView(renderView)
-,	m_heap(0)
+RenderContext::RenderContext(uint32_t heapSize)
+:	m_heap(0)
 ,	m_heapEnd(0)
 ,	m_heapPtr(0)
 {
@@ -86,28 +83,37 @@ void* RenderContext::alloc(int blockSize, int align)
 	return alloc(blockSize);
 }
 
-void RenderContext::draw(RenderBlock* renderBlock)
+void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 {
-	if (renderBlock->type == RbtOpaque)
-		insert(m_renderQueue[RbtOpaque], renderBlock, SortOpaquePredicate());
-	else
-		insert(m_renderQueue[RbtAlphaBlend], renderBlock, SortAlphaBlendPredicate());
+	if (type == RfOpaque)
+		insert(m_renderQueue[0], renderBlock, SortOpaquePredicate());
+	else if (type == RfAlphaBlend)
+		insert(m_renderQueue[1], renderBlock, SortAlphaBlendPredicate());
+	else	// RbtOverlay
+		m_renderQueue[2].push_back(renderBlock);
 }
 
-void RenderContext::render(uint32_t flags) const
+void RenderContext::render(render::IRenderView* renderView, uint32_t flags) const
 {
 	// Render opaque blocks, sorted by shader.
 	if (flags & RfOpaque)
 	{
-		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[RbtOpaque].begin(); i != m_renderQueue[RbtOpaque].end(); ++i)
-			(*i)->render(m_renderView);
+		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
+			(*i)->render(renderView);
 	}
 
 	// Render alpha blend blocks back to front.
 	if (flags & RfAlphaBlend)
 	{
-		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[RbtAlphaBlend].begin(); i != m_renderQueue[RbtAlphaBlend].end(); ++i)
-			(*i)->render(m_renderView);
+		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
+			(*i)->render(renderView);
+	}
+
+	// Render overlay blocks unsorted.
+	if (flags & RfOverlay)
+	{
+		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
+			(*i)->render(renderView);
 	}
 }
 

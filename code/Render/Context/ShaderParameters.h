@@ -59,6 +59,8 @@ public:
 
 	void setTextureParameter(handle_t handle, ITexture* texture);
 
+	void setStencilReference(uint32_t stencilReference);
+
 	void fixup(Shader* shader) const;
 
 	//@}

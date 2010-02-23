@@ -8,11 +8,11 @@
 #include "Flash/Acc/AccTextureCache.h"
 #include "Flash/Acc/PathTesselator.h"
 #include "Flash/Acc/Triangulator.h"
-#include "Resource/IResourceManager.h"
-#include "Render/IRenderView.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
+#include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
@@ -289,9 +289,10 @@ void AccShape::destroy()
 }
 
 void AccShape::render(
-	render::IRenderView* renderView,
+	render::RenderContext* renderContext,
 	const FlashShape& shape,
 	const Vector4& frameSize,
+	const Vector4& viewSize,
 	float scaleX,
 	const Matrix33& transform,
 	const SwfCxTransform& cxform,
@@ -303,7 +304,6 @@ void AccShape::render(
 	if (!m_vertexBuffer)
 		return;
 
-	// Convert transform into 4x4.
 	Matrix44 m(
 		transform.e11, transform.e12, transform.e13, 0.0f,
 		transform.e21, transform.e22, transform.e23, 0.0f,
@@ -312,7 +312,6 @@ void AccShape::render(
 	);
 
 	Ref< render::Shader > shaderSolid, shaderTextured;
-
 	if (!maskWrite)
 	{
 		if (maskReference == 0)
@@ -335,37 +334,50 @@ void AccShape::render(
 
 		shaderTextured = 0;
 	}
-
 	if (!shaderSolid && !shaderTextured)
 		return;
 
-	render::Viewport viewport = renderView->getViewport();
-	Vector4 viewSize(float(viewport.width), float(viewport.height), 1.0f / viewport.width, 1.0f / viewport.height);
+	render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >();
+	renderBlockSolid->shader = shaderSolid;
+	renderBlockSolid->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlockSolid->shaderParams->beginParameters(renderContext);
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlockSolid->shaderParams->setMatrixParameter(s_handleTransform, m);
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlockSolid->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlockSolid->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
+	renderBlockSolid->shaderParams->setStencilReference(maskReference);
+	renderBlockSolid->shaderParams->endParameters(renderContext);
+	renderContext->draw(render::RfOverlay, renderBlockSolid);
 
-	shaderSolid->setVectorParameter(s_handleFrameSize, frameSize);
-	shaderSolid->setMatrixParameter(s_handleTransform, m);
-	shaderSolid->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-	shaderSolid->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-	shaderSolid->setVectorParameter(s_handleViewSize, viewSize);
-	shaderSolid->setFloatParameter(s_handleScaleX, scaleX);
-	shaderSolid->setStencilReference(maskReference);
-
-	if (shaderTextured)
-	{
-		shaderTextured->setVectorParameter(s_handleFrameSize, frameSize);
-		shaderTextured->setMatrixParameter(s_handleTransform, m);
-		shaderTextured->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
-		shaderTextured->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
-		shaderTextured->setVectorParameter(s_handleViewSize, viewSize);
-		shaderTextured->setFloatParameter(s_handleScaleX, scaleX);
-		shaderTextured->setStencilReference(maskReference);
-	}
-
-	// Render batches.
-	renderView->setVertexBuffer(m_vertexBuffer);
+	render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >();
+	renderBlockTextured->shader = shaderTextured;
+	renderBlockTextured->shaderParams = renderContext->alloc< render::ShaderParameters >();
+	renderBlockTextured->shaderParams->beginParameters(renderContext);
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleFrameSize, frameSize);
+	renderBlockTextured->shaderParams->setMatrixParameter(s_handleTransform, m);
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormMul, Vector4(cxform.red[0], cxform.green[0], cxform.blue[0], cxform.alpha[0]));
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
+	renderBlockTextured->shaderParams->setVectorParameter(s_handleViewSize, viewSize);
+	renderBlockTextured->shaderParams->setFloatParameter(s_handleScaleX, scaleX);
+	renderBlockTextured->shaderParams->setStencilReference(maskReference);
+	renderBlockTextured->shaderParams->endParameters(renderContext);
+	renderContext->draw(render::RfOverlay, renderBlockTextured);
+	
 	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 	{
-		if (i->texture && shaderTextured)
+		if (!i->texture)
+		{
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+			renderBlock->shader = shaderSolid;
+			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->primitive = i->primitives.type;
+			renderBlock->offset = i->primitives.offset;
+			renderBlock->count = i->primitives.count;
+			renderContext->draw(render::RfOverlay, renderBlock);
+		}
+		else
 		{
 			Matrix44 textureMatrix(
 				i->textureMatrix.e11, i->textureMatrix.e12, i->textureMatrix.e13, 0.0f,
@@ -374,12 +386,19 @@ void AccShape::render(
 				0.0f, 0.0f, 0.0, 0.0f
 			);
 
-			shaderTextured->setTextureParameter(s_handleTexture, i->texture);
-			shaderTextured->setMatrixParameter(s_handleTextureMatrix, textureMatrix);
-			shaderTextured->draw(renderView, i->primitives);
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+			renderBlock->shader = shaderTextured;
+			renderBlock->vertexBuffer = m_vertexBuffer;
+			renderBlock->primitive = i->primitives.type;
+			renderBlock->offset = i->primitives.offset;
+			renderBlock->count = i->primitives.count;
+			renderBlock->shaderParams = renderContext->alloc< render::ShaderParameters >();
+			renderBlock->shaderParams->beginParameters(renderContext);
+			renderBlock->shaderParams->setTextureParameter(s_handleTexture, i->texture);
+			renderBlock->shaderParams->setMatrixParameter(s_handleTextureMatrix, textureMatrix);
+			renderBlock->shaderParams->endParameters(renderContext);
+			renderContext->draw(render::RfOverlay, renderBlock);
 		}
-		else
-			shaderSolid->draw(renderView, i->primitives);
 	}
 }
 

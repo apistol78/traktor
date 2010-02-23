@@ -89,9 +89,10 @@ void StreamMesh::render(
 		);
 		renderBlock->shaderParams->endParameters(renderContext);
 
-		renderBlock->type = it->second.opaque ? render::RbtOpaque : render::RbtAlphaBlend;
-
-		renderContext->draw(renderBlock);
+		renderContext->draw(
+			it->second.opaque ? render::RfOpaque : render::RfAlphaBlend,
+			renderBlock
+		);
 	}
 }
 
