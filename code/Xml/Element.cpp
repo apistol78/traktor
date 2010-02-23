@@ -100,8 +100,34 @@ int Element::get(const std::wstring& path, RefArray< Element >& elements)
 
 Ref< Element > Element::getSingle(const std::wstring& path)
 {
-	RefArray< Element > elements;
-	return (get(path, elements) > 0) ? elements.front() : 0;
+	size_t i = path.find_first_of(L'/');
+	if (i != path.npos)
+	{
+		std::wstring name = path.substr(0, i);
+		std::wstring sub = path.substr(i + 1);
+		
+		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		{
+			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			if (elm && elm->match(name) == true)
+			{
+				Ref< Element > found = elm->getSingle(sub);
+				if (found)
+					return found;
+			}
+		}
+	}
+	else
+	{
+		for (Ref< Node > child = getFirstChild(); child != 0; child = child->getNextSibling())
+		{
+			Ref< Element > elm = dynamic_type_cast< Element* >(child);
+			if (elm && elm->match(path) == true)
+				return elm;
+		}
+	}
+
+	return 0;
 }
 
 std::wstring Element::getPath() const

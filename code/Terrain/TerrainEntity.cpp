@@ -454,6 +454,7 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		renderBlock->primitives = &m_primitives[patchLod];
 
 		renderBlock->shaderParams->beginParameters(renderContext);
+		worldRenderView->setShaderParameters(renderBlock->shaderParams);
 
 		renderBlock->shaderParams->setTextureParameter(m_handleSurface, surface);
 		renderBlock->shaderParams->setTextureParameter(m_handleHeightfield, m_heightfield->getHeightTexture());
@@ -464,8 +465,6 @@ void TerrainEntity::render(render::RenderContext* renderContext, const world::Wo
 		renderBlock->shaderParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->shaderParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
 		renderBlock->shaderParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-
-		worldRenderView->setShaderParameters(renderBlock->shaderParams);
 
 		renderBlock->shaderParams->endParameters(renderContext);
 

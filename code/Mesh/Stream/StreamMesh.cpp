@@ -79,14 +79,14 @@ void StreamMesh::render(
 		renderBlock->primitives = &parts[i].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
-		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
 			worldTransformPrevious.toMatrix44(),
 			getBoundingBox()
 		);
+		if (parameterCallback)
+			parameterCallback->setParameters(renderBlock->shaderParams);
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(

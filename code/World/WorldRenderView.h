@@ -92,20 +92,6 @@ public:
 
 	void resetLights();
 
-	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
-
-	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
-
-	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const;
-
-	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;
-
-	void setLightShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
-
-	void setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const;
-
-	void setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const;
-
 	/*! \brief Set shader parameters defined by world renderer.
 	 *
 	 * \param shaderParams Pointer to shader parameter container.
@@ -194,6 +180,20 @@ private:
 	float m_shadowMapBias;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;
+
+	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+
+	void setWorldShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious) const;
+
+	void setLightShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setLightShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Aabb& bounds) const;
+
+	void setShadowMapShaderParameters(render::ShaderParameters* shaderParams) const;
+
+	void setDepthMapShaderParameters(render::ShaderParameters* shaderParams) const;
 };
 	
 	}

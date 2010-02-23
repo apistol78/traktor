@@ -61,16 +61,16 @@ void SkinnedMesh::render(
 		renderBlock->primitives = &parts[i].primitives;
 
 		renderBlock->shaderParams->beginParameters(renderContext);
-		if (parameterCallback)
-			parameterCallback->setParameters(renderBlock->shaderParams);
-		if (!boneTransforms.empty())
-			renderBlock->shaderParams->setMatrixArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
 			worldTransform.toMatrix44(),	// @fixme
 			getBoundingBox()
 		);
+		if (parameterCallback)
+			parameterCallback->setParameters(renderBlock->shaderParams);
+		if (!boneTransforms.empty())
+			renderBlock->shaderParams->setMatrixArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
 		renderBlock->shaderParams->endParameters(renderContext);
 
 		renderContext->draw(
