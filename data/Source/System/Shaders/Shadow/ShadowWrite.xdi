@@ -36,7 +36,7 @@
 				<second>290</second>
 			</position>
 			<technique>Shadow</technique>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>CmCounterClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfOne</blendSource>
