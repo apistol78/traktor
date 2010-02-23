@@ -1,12 +1,13 @@
-#include "World/PostProcess/PostProcess.h"
-#include "World/PostProcess/PostProcessSettings.h"
-#include "World/PostProcess/PostProcessDefine.h"
-#include "World/PostProcess/PostProcessStep.h"
+#include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
-#include "Render/ScreenRenderer.h"
 #include "Render/RenderTargetSet.h"
-#include "Core/Log/Log.h"
+#include "Render/ScreenRenderer.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessDefine.h"
+#include "World/PostProcess/PostProcessSettings.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 namespace traktor
 {
@@ -99,6 +100,8 @@ bool PostProcess::render(
 	float deltaTime
 )
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	m_targets[PdtSourceColor] = colorBuffer;
 	m_targets[PdtSourceDepth] = depthBuffer;
 	m_targets[PdtSourceVelocity] = velocityBuffer;
@@ -146,15 +149,16 @@ Ref< render::RenderTargetSet >& PostProcess::getTargetRef(int32_t id)
 	return m_targets[id];
 }
 
-void PostProcess::setParameter(render::handle_t handle, const Vector4& value)
+void PostProcess::setParameter(render::handle_t handle, float value)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_parameters[handle] = value;
 }
 
 void PostProcess::prepareShader(render::Shader* shader) const
 {
-	for (std::map< render::handle_t, Vector4 >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
-		shader->setVectorParameter(i->first, i->second);
+	for (std::map< render::handle_t, float >::const_iterator i = m_parameters.begin(); i != m_parameters.end(); ++i)
+		shader->setFloatParameter(i->first, i->second);
 }
 
 Ref< render::RenderTargetSet > PostProcess::createOutputTarget(
