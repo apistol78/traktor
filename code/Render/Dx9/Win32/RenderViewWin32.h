@@ -112,7 +112,7 @@ private:
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;
 	ComRef< IDirect3DSurface9 > m_d3dDepthStencilSurface;
-	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[2];
+	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[1];
 	std::list< RenderState > m_renderStateStack;
 	Ref< VertexBufferDx9 > m_currentVertexBuffer;
 	Ref< IndexBufferDx9 > m_currentIndexBuffer;
