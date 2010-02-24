@@ -544,7 +544,7 @@ void PhysicsManagerBullet::update()
 	for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
 		(*i)->setPreviousState((*i)->getState());
 
-	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
+	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime);
 }
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
