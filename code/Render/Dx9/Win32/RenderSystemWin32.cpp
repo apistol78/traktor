@@ -54,6 +54,8 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(m_d3d->GetAdapterDisplayMode(D3DADAPTER_DEFAULT, &m_d3dDefaultDisplayMode)))
 		return false;
 
+	log::debug << L"Adapter display mode " << m_d3dDefaultDisplayMode.Width << L"x" << m_d3dDefaultDisplayMode.Height << L" " << m_d3dDefaultDisplayMode.RefreshRate << L" Hz" << Endl;
+
 	WNDCLASS wc;
 	std::memset(&wc, 0, sizeof(wc));
 	wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -286,7 +288,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	m_d3dPresent.hDeviceWindow = m_hWnd;
 	m_d3dPresent.Windowed = FALSE;
 	m_d3dPresent.EnableAutoDepthStencil = FALSE;
-	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
+	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
 
 	hr = m_d3dDevice->Reset(&m_d3dPresent);
