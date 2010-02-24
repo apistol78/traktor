@@ -48,7 +48,7 @@ Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 	bankCursor->m_grainIndex = 0;
 	bankCursor->m_grainCursor = m_grains[0]->createCursor(this);
 
-	return bankCursor;
+	return bankCursor->m_grainCursor ? bankCursor : 0;
 }
 
 bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
