@@ -28,7 +28,9 @@ class T_DLLCLASS RepeatGrain : public IGrain
 public:
 	RepeatGrain();
 
-	virtual Ref< ISoundBufferCursor > createCursor(const BankBuffer* bank) const;
+	virtual bool bind(resource::IResourceManager* resourceManager);
+
+	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 

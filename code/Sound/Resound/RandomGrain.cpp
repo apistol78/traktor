@@ -31,13 +31,23 @@ RandomGrain::RandomGrain()
 {
 }
 
-Ref< ISoundBufferCursor > RandomGrain::createCursor(const BankBuffer* bank) const
+bool RandomGrain::bind(resource::IResourceManager* resourceManager)
+{
+	for (RefArray< IGrain >::iterator i = m_grains.begin(); i != m_grains.end(); ++i)
+	{
+		if (!(*i)->bind(resourceManager))
+			return false;
+	}
+	return true;
+}
+
+Ref< ISoundBufferCursor > RandomGrain::createCursor() const
 {
 	int32_t index = int32_t(m_random.nextFloat() * m_grains.size());
 
 	Ref< RandomGrainCursor > cursor = new RandomGrainCursor();
 	cursor->m_grain = m_grains[index];
-	cursor->m_grainCursor = m_grains[index]->createCursor(bank);
+	cursor->m_grainCursor = m_grains[index]->createCursor();
 
 	return cursor;
 }

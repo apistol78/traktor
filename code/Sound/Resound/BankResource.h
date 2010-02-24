@@ -17,7 +17,6 @@ namespace traktor
 	namespace sound
 	{
 
-class BankSound;
 class IGrain;
 
 /*! \brief Bank sound resource.
@@ -31,8 +30,7 @@ public:
 	BankResource();
 
 	BankResource(
-		const RefArray< IGrain >& grains,
-		const RefArray< BankSound >& sounds
+		const RefArray< IGrain >& grains
 	);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
@@ -41,11 +39,8 @@ public:
 
 	const RefArray< IGrain >& getGrains() const { return m_grains; }
 
-	const RefArray< BankSound >& getSounds() const { return m_sounds; }
-
 private:
 	RefArray< IGrain > m_grains;
-	RefArray< BankSound > m_sounds;
 };
 
 	}

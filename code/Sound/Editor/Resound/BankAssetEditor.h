@@ -37,13 +37,6 @@ class Event;
 class PopupMenu;
 class Slider;
 
-		namespace custom
-		{
-
-class GridRow;
-class GridView;
-
-		}
 	}
 
 	namespace sound
@@ -51,6 +44,9 @@ class GridView;
 
 class BankAsset;
 class IGrain;
+class IGrainEditor;
+class GrainView;
+class GrainViewItem;
 class SoundSystem;
 
 class T_DLLCLASS BankAssetEditor : public editor::IObjectEditor
@@ -70,37 +66,24 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< BankAsset > m_asset;
-
-	Ref< ui::custom::GridView > m_gridGrains;
-	Ref< ui::custom::GridView > m_gridSounds;
+	Ref< GrainView > m_grainView;
 	Ref< ui::Container > m_containerGrainProperties;
-	Ref< ui::Container > m_containerSoundProperties;
-	Ref< ui::Slider > m_sliderPitch;
 	Ref< ui::PopupMenu > m_menuGrains;
-	Ref< ui::PopupMenu > m_menuSounds;
-
+	Ref< IGrainEditor > m_grainEditorDefault;
 	Ref< SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 
-	void updateGridGrains(ui::custom::GridRow* parentRow, const RefArray< IGrain >& grains);
+	void updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains);
 
-	void updateGridGrains();
-
-	void updateGridSounds();
+	void updateGrainView();
 
 	void handleCommand(const ui::Command& command);
 
 	void eventToolBarClick(ui::Event* event);
 
-	void eventGridGrainsSelect(ui::Event* event);
+	void eventGrainSelect(ui::Event* event);
 
-	void eventGridGrainsButtonUp(ui::Event* event);
-
-	void eventGridSoundsSelect(ui::Event* event);
-
-	void eventGridSoundsButtonUp(ui::Event* event);
-
-	void eventSliderPitchChange(ui::Event* event);
+	void eventGrainButtonUp(ui::Event* event);
 };
 
 	}

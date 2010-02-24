@@ -25,7 +25,9 @@ class T_DLLCLASS SequenceGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISoundBufferCursor > createCursor(const BankBuffer* bank) const;
+	virtual bool bind(resource::IResourceManager* resourceManager);
+
+	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 

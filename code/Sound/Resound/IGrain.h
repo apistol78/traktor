@@ -14,10 +14,16 @@
 
 namespace traktor
 {
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
 	namespace sound
 	{
 
-class BankBuffer;
 class ISoundBufferCursor;
 
 /*! \brief
@@ -28,7 +34,9 @@ class T_DLLCLASS IGrain : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISoundBufferCursor > createCursor(const BankBuffer* bank) const = 0;
+	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
+
+	virtual Ref< ISoundBufferCursor > createCursor() const = 0;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const = 0;
 };

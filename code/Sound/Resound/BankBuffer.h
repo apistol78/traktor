@@ -18,19 +18,13 @@ namespace traktor
 	{
 
 class IGrain;
-class BankSound;
 
 class T_DLLCLASS BankBuffer : public ISoundBuffer
 {
 	T_RTTI_CLASS;
 
 public:
-	BankBuffer(
-		const RefArray< IGrain >& grains,
-		const RefArray< BankSound >& sounds
-	);
-
-	BankSound* getSound(int32_t index) const;
+	BankBuffer(const RefArray< IGrain >& grains);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -38,7 +32,6 @@ public:
 
 private:
 	RefArray< IGrain > m_grains;
-	RefArray< BankSound > m_sounds;
 };
 
 	}

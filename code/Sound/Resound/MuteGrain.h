@@ -27,11 +27,15 @@ class T_DLLCLASS MuteGrain : public IGrain
 public:
 	MuteGrain();
 
-	virtual Ref< ISoundBufferCursor > createCursor(const BankBuffer* bank) const;
+	virtual bool bind(resource::IResourceManager* resourceManager);
+
+	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 	virtual bool serialize(ISerializer& s);
+
+	double getDuration() const { return m_duration; }
 
 private:
 	double m_duration;

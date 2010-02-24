@@ -12,7 +12,6 @@ namespace traktor
 
 struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
-	const BankBuffer* m_bank;
 	int32_t m_grainIndex;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
@@ -26,15 +25,24 @@ struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SequenceGrain", 0, SequenceGrain, IGrain)
 
-Ref< ISoundBufferCursor > SequenceGrain::createCursor(const BankBuffer* bank) const
+bool SequenceGrain::bind(resource::IResourceManager* resourceManager)
+{
+	for (RefArray< IGrain >::iterator i = m_grains.begin(); i != m_grains.end(); ++i)
+	{
+		if (!(*i)->bind(resourceManager))
+			return false;
+	}
+	return true;
+}
+
+Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
 {
 	if (m_grains.empty())
 		return 0;
 
 	Ref< SequenceGrainCursor > cursor = new SequenceGrainCursor();
-	cursor->m_bank = bank;
 	cursor->m_grainIndex = 0;
-	cursor->m_grainCursor = m_grains[0]->createCursor(bank);
+	cursor->m_grainCursor = m_grains[0]->createCursor();
 
 	return cursor;
 }
@@ -57,7 +65,7 @@ bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) c
 
 		grain = m_grains[sequenceCursor->m_grainIndex];
 
-		sequenceCursor->m_grainCursor = grain->createCursor(sequenceCursor->m_bank);
+		sequenceCursor->m_grainCursor = grain->createCursor();
 	}
 
 	return true;

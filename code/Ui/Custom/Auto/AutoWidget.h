@@ -40,7 +40,13 @@ public:
 
 	bool create(ui::Widget* parent, int32_t style);
 
+	void setBackgroundColor(const Color& color);
+
 	void setClientSize(const Size& size);
+
+	void setFocusCell(AutoWidgetCell* focusCell);
+
+	AutoWidgetCell* getFocusCell() const;
 
 	AutoWidgetCell* hitTest(const Point& position);
 
@@ -59,8 +65,10 @@ protected:
 
 private:
 	RefArray< AutoWidgetCell > m_cells;
-	Ref< AutoWidgetCell > m_captureItem;
+	Ref< AutoWidgetCell > m_focusCell;
+	Ref< AutoWidgetCell > m_captureCell;
 	Ref< ScrollBar > m_scrollBar;
+	Color m_backgroundColor;
 	Size m_scrollOffset;
 	Size m_clientSize;
 	bool m_deferredUpdate;
