@@ -12,7 +12,6 @@ namespace traktor
 
 struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
-	const BankBuffer* m_bank;
 	Ref< ISoundBufferCursor > m_cursor;
 	uint32_t m_count;
 
@@ -31,14 +30,18 @@ RepeatGrain::RepeatGrain()
 {
 }
 
-Ref< ISoundBufferCursor > RepeatGrain::createCursor(const BankBuffer* bank) const
+bool RepeatGrain::bind(resource::IResourceManager* resourceManager)
+{
+	return m_grain ? m_grain->bind(resourceManager) : true;
+}
+
+Ref< ISoundBufferCursor > RepeatGrain::createCursor() const
 {
 	if (!m_grain)
 		return 0;
 
 	Ref< RepeatGrainCursor > cursor = new RepeatGrainCursor();
-	cursor->m_bank = bank;
-	cursor->m_cursor = m_grain->createCursor(bank);
+	cursor->m_cursor = m_grain->createCursor();
 	cursor->m_count = 0;
 
 	return cursor->m_cursor ? cursor : 0;
@@ -53,7 +56,7 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) con
 		if (m_count != 0 && ++loopCursor->m_count >= m_count)
 			return false;
 
-		loopCursor->m_cursor = m_grain->createCursor(loopCursor->m_bank);
+		loopCursor->m_cursor = m_grain->createCursor();
 		if (!loopCursor->m_cursor)
 			return false;
 

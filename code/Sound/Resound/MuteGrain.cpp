@@ -37,7 +37,12 @@ MuteGrain::MuteGrain()
 {
 }
 
-Ref< ISoundBufferCursor > MuteGrain::createCursor(const BankBuffer* bank) const
+bool MuteGrain::bind(resource::IResourceManager* resourceManager)
+{
+	return true;
+}
+
+Ref< ISoundBufferCursor > MuteGrain::createCursor() const
 {
 	Ref< MuteGrainCursor > muteCursor = new MuteGrainCursor();
 	muteCursor->m_first = true;

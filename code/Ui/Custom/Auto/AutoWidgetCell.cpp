@@ -21,7 +21,7 @@ Rect AutoWidgetCell::getRect() const
 
 AutoWidgetCell* AutoWidgetCell::hitTest(AutoWidget* widget, const Point& position)
 {
-	return false;
+	return m_rect.inside(position) ? this : 0;
 }
 
 bool AutoWidgetCell::beginCapture(AutoWidget* widget)

@@ -75,7 +75,7 @@ void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 
 bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 {
-	if (!m_sound)
+	if (!m_sound || !m_cursor)
 		return false;
 
 	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();

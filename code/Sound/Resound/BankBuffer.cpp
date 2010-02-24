@@ -24,21 +24,9 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankBuffer", BankBuffer, ISoundBuffer)
 
-BankBuffer::BankBuffer(
-	const RefArray< IGrain >& grains,
-	const RefArray< BankSound >& sounds
-)
+BankBuffer::BankBuffer(const RefArray< IGrain >& grains)
 :	m_grains(grains)
-,	m_sounds(sounds)
 {
-}
-
-BankSound* BankBuffer::getSound(int32_t index) const
-{
-	if (index >= 0 && index < int32_t(m_sounds.size()))
-		return m_sounds[index];
-	else
-		return 0;
 }
 
 Ref< ISoundBufferCursor > BankBuffer::createCursor() const
@@ -46,7 +34,7 @@ Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 	Ref< BankBufferCursor > bankCursor = new BankBufferCursor();
 
 	bankCursor->m_grainIndex = 0;
-	bankCursor->m_grainCursor = m_grains[0]->createCursor(this);
+	bankCursor->m_grainCursor = m_grains[0]->createCursor();
 
 	return bankCursor->m_grainCursor ? bankCursor : 0;
 }
@@ -69,7 +57,7 @@ bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) cons
 
 		grain = m_grains[bankCursor->m_grainIndex];
 
-		bankCursor->m_grainCursor = grain->createCursor(this);
+		bankCursor->m_grainCursor = grain->createCursor();
 	}
 
 	return true;

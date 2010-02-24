@@ -17,7 +17,6 @@ namespace traktor
 	namespace sound
 	{
 
-class BankSound;
 class IGrain;
 
 class T_DLLCLASS BankAsset : public editor::ITypedAsset
@@ -29,17 +28,12 @@ public:
 
 	const RefArray< IGrain >& getGrains() const;
 
-	void addSound(BankSound* sound);
-
-	const RefArray< BankSound >& getSounds() const;
-
 	virtual const TypeInfo* getOutputType() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< IGrain > m_grains;
-	RefArray< BankSound > m_sounds;
 };
 
 	}
