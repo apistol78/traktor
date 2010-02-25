@@ -1,8 +1,11 @@
 #include <cstring>
-#include "Sound/Filters/FFTFilter.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Hermite.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Math/Const.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberStaticArray.h"
+#include "Sound/Filters/FFTFilter.h"
 
 namespace traktor
 {
@@ -140,19 +143,18 @@ struct PairAccessor
 	}
 };
 
+struct FFTFilterInstance : public RefCountImpl< IFilterInstance >
+{
+	float m_history[2][FFTFilter::N];
+};
+
 			}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.FFTFilter", FFTFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.FFTFilter", 0, FFTFilter, IFilter)
 
 FFTFilter::FFTFilter(uint32_t sampleRate)
 :	m_sampleRate(sampleRate)
 {
-	for (uint32_t i = 0; i < N; ++i)
-	{
-		m_filter[i] = 1.0f;
-		m_history[0][i] = 0.0f;
-		m_history[1][i] = 0.0f;
-	}
 }
 
 void FFTFilter::setFilter(const std::vector< std::pair< float, float > >& filter, uint32_t windowWidth)
@@ -205,8 +207,21 @@ void FFTFilter::setFilter(const std::vector< std::pair< float, float > >& filter
 		m_filter[i] = sqrtf(fr[i] * fr[i] + fi[i] * fi[i]);
 }
 
-void FFTFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > FFTFilter::createInstance() const
 {
+	Ref< FFTFilterInstance > instance = new FFTFilterInstance();
+	for (uint32_t i = 0; i < N; ++i)
+	{
+		instance->m_history[0][i] = 0.0f;
+		instance->m_history[1][i] = 0.0f;
+	}
+	return instance;
+}
+
+void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	FFTFilterInstance* ffti = static_cast< FFTFilterInstance* >(instance);
+
 	float fr[N], fi[N], dummy[N];
 
 	T_ASSERT (outBlock.samplesCount % N == 0);
@@ -217,7 +232,7 @@ void FFTFilter::apply(SoundBlock& outBlock)
 
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
-		float* history = m_history[i];
+		float* history = ffti->m_history[i];
 		float* samples = outBlock.samples[i];
 		
 		for (uint32_t j = 0; j < outBlock.samplesCount; j += n1)
@@ -243,6 +258,13 @@ void FFTFilter::apply(SoundBlock& outBlock)
 			std::memcpy(&samples[j], &buf[n2], n1 * sizeof(float));
 		}
 	}
+}
+
+bool FFTFilter::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
+	s >> MemberStaticArray< float, N >(L"filter", m_filter);
+	return true;
 }
 
 	}

@@ -47,6 +47,20 @@ Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
 	return cursor;
 }
 
+void SequenceGrain::updateCursor(ISoundBufferCursor* cursor) const
+{
+	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
+	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
+	return grain->updateCursor(sequenceCursor->m_grainCursor);
+}
+
+const IGrain* SequenceGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
+{
+	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
+	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
+	return grain->getCurrentGrain(sequenceCursor->m_grainCursor);
+}
+
 bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);

@@ -43,6 +43,7 @@ void SoundChannel::setFilter(IFilter* filter)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
 	m_filter = filter;
+	m_filterInstance = filter->createInstance();
 }
 
 Ref< IFilter > SoundChannel::getFilter() const
@@ -59,6 +60,11 @@ bool SoundChannel::isPlaying() const
 void SoundChannel::stop()
 {
 	m_sound = 0;
+}
+
+ISoundBufferCursor* SoundChannel::getCursor() const
+{
+	return m_cursor;
 }
 
 void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
@@ -118,7 +124,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	if (m_filter)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
-		m_filter->apply(soundBlock);
+		m_filter->apply(m_filterInstance, soundBlock);
 	}
 
 	// Normalize sound block to hardware sample rate.

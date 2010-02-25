@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,11 +27,15 @@ class T_DLLCLASS DitherFilter : public IFilter
 public:
 	DitherFilter(uint32_t bitsPerSample = 16);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
+
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	float m_ditherAmplitude;
-	Random m_random;
+	mutable Random m_random;
 };
 
 	}

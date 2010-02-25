@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -5,7 +6,7 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Sound/Resound/IGrain.h"
-#include "Sound/Editor/Resound/DefaultGrainEditor.h"
+#include "Sound/Editor/Resound/GrainProperties.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
@@ -17,43 +18,36 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.DefaultGrainEditor", DefaultGrainEditor, IGrainEditor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GrainProperties", GrainProperties, ui::EventSubject)
 
-DefaultGrainEditor::DefaultGrainEditor(editor::IEditor* editor)
+GrainProperties::GrainProperties(editor::IEditor* editor)
 :	m_editor(editor)
 {
 }
 
-bool DefaultGrainEditor::create(ui::Widget* parent)
+bool GrainProperties::create(ui::Widget* parent)
 {
 	m_grainPropertyList = new ui::custom::AutoPropertyList();
 	m_grainPropertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
-	m_grainPropertyList->addCommandEventHandler(ui::createMethodHandler(this, &DefaultGrainEditor::eventPropertyCommand));
+	m_grainPropertyList->addCommandEventHandler(ui::createMethodHandler(this, &GrainProperties::eventPropertyCommand));
+	m_grainPropertyList->addChangeEventHandler(ui::createMethodHandler(this, &GrainProperties::eventPropertyChange));
 	m_grainPropertyList->setSeparator(200);
 	m_grainPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_grainPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
-	m_grainPropertyList->setVisible(false);
 	return true;
 }
 
-void DefaultGrainEditor::destroy()
+void GrainProperties::destroy()
 {
-	m_grainPropertyList->destroy();
+	safeDestroy(m_grainPropertyList);
 }
 
-void DefaultGrainEditor::show(IGrain* grain)
+void GrainProperties::set(IGrain* grain)
 {
 	m_grainPropertyList->bind(grain, 0);
-	m_grainPropertyList->setVisible(true);
 }
 
-void DefaultGrainEditor::hide()
-{
-	m_grainPropertyList->apply();
-	m_grainPropertyList->setVisible(false);
-}
-
-bool DefaultGrainEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
+bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
 	if (!instance)
@@ -63,7 +57,7 @@ bool DefaultGrainEditor::resolvePropertyGuid(const Guid& guid, std::wstring& res
 	return true;
 }
 
-void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
+void GrainProperties::eventPropertyCommand(ui::Event* event)
 {
 	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
 	const ui::Command& cmd = cmdEvent->getCommand();
@@ -109,12 +103,14 @@ void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
 				{
 					browseItem->setValue(instance->getGuid());
 					m_grainPropertyList->apply();
+					raiseEvent(ui::EiUser + 1, 0);
 				}
 			}
 			else
 			{
 				browseItem->setValue(Guid());
 				m_grainPropertyList->apply();
+				raiseEvent(ui::EiUser + 1, 0);
 			}
 		}
 		else if (cmd == L"Property.Edit")
@@ -150,6 +146,8 @@ void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
 
 					m_grainPropertyList->refresh(objectItem, object);
 					m_grainPropertyList->apply();
+
+					raiseEvent(ui::EiUser + 1, 0);
 				}
 			}
 		}
@@ -159,6 +157,8 @@ void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
 
 			m_grainPropertyList->refresh(objectItem, 0);
 			m_grainPropertyList->apply();
+
+			raiseEvent(ui::EiUser + 1, 0);
 		}
 	}
 
@@ -176,6 +176,7 @@ void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
 					m_grainPropertyList->addObject(arrayItem, object);
 					m_grainPropertyList->apply();
 					m_grainPropertyList->refresh();
+					raiseEvent(ui::EiUser + 1, 0);
 				}
 			}
 		}
@@ -183,10 +184,17 @@ void DefaultGrainEditor::eventPropertyCommand(ui::Event* event)
 		{
 			m_grainPropertyList->apply();
 			m_grainPropertyList->refresh();
+			raiseEvent(ui::EiUser + 1, 0);
 		}
 	}
 
 	m_grainPropertyList->update();
+}
+
+void GrainProperties::eventPropertyChange(ui::Event* event)
+{
+	raiseEvent(ui::EiUser + 1, 0);
+	m_grainPropertyList->apply();
 }
 
 	}

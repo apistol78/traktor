@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,7 +27,11 @@ class T_DLLCLASS GroupFilter : public IFilter
 public:
 	void addFilter(IFilter* filter);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
+
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
 	RefArray< IFilter > m_filters;

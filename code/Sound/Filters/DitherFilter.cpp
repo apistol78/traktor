@@ -5,14 +5,19 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.DitherFilter", DitherFilter, IFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.DitherFilter", 0, DitherFilter, IFilter)
 
 DitherFilter::DitherFilter(uint32_t bitsPerSample)
 :	m_ditherAmplitude(1.0f / (1 << bitsPerSample))
 {
 }
 
-void DitherFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > DitherFilter::createInstance() const
+{
+	return 0;
+}
+
+void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
@@ -20,6 +25,11 @@ void DitherFilter::apply(SoundBlock& outBlock)
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			outBlock.samples[j][i] += r;
 	}
+}
+
+bool DitherFilter::serialize(ISerializer& s)
+{
+	return true;
 }
 
 	}

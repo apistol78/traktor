@@ -16,6 +16,11 @@ void BankAsset::addGrain(IGrain* grain)
 	m_grains.push_back(grain);
 }
 
+void BankAsset::removeGrain(IGrain* grain)
+{
+	m_grains.remove(grain);
+}
+
 const RefArray< IGrain >& BankAsset::getGrains() const
 {
 	return m_grains;

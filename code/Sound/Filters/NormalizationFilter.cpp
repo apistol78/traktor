@@ -1,23 +1,42 @@
 #include <cmath>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Sound/Filters/NormalizationFilter.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.NormalizationFilter", NormalizationFilter, IFilter)
+struct NormalizationFilterInstance : public RefCountImpl< IFilterInstance >
+{
+	float m_currentGain;
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.NormalizationFilter", 0, NormalizationFilter, IFilter)
 
 NormalizationFilter::NormalizationFilter(float targetEnergy, float energyThreshold, float attackRate)
 :	m_targetEnergy(targetEnergy)
 ,	m_energyThreshold(energyThreshold)
 ,	m_attackRate(attackRate)
-,	m_currentGain(1.0f)
 {
 }
 
-void NormalizationFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > NormalizationFilter::createInstance() const
 {
+	Ref< NormalizationFilterInstance > nfi = new NormalizationFilterInstance();
+	nfi->m_currentGain = 1.0f;
+	return nfi;
+}
+
+void NormalizationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	NormalizationFilterInstance* nfi = static_cast< NormalizationFilterInstance* >(instance);
+
 	// Measure energy in sound block.
 	float energy = 0.0f;
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
@@ -37,8 +56,8 @@ void NormalizationFilter::apply(SoundBlock& outBlock)
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
 			for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
-				outBlock.samples[j][i] *= m_currentGain;
-			m_currentGain = middleGain * attackRate + m_currentGain * (1.0f - attackRate);
+				outBlock.samples[j][i] *= nfi->m_currentGain;
+			nfi->m_currentGain = middleGain * attackRate + nfi->m_currentGain * (1.0f - attackRate);
 		}
 	}
 	else
@@ -47,9 +66,17 @@ void NormalizationFilter::apply(SoundBlock& outBlock)
 		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
 			for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
-				outBlock.samples[j][i] *= m_currentGain;
+				outBlock.samples[j][i] *= nfi->m_currentGain;
 		}
 	}
+}
+
+bool NormalizationFilter::serialize(ISerializer& s)
+{
+	s >> Member< float >(L"targetEnergy", m_targetEnergy);
+	s >> Member< float >(L"energyThreshold", m_energyThreshold);
+	s >> Member< float >(L"attackRate", m_attackRate);
+	return true;
 }
 
 	}
