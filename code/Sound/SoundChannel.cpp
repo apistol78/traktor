@@ -42,8 +42,8 @@ void SoundChannel::setVolume(float volume)
 void SoundChannel::setFilter(IFilter* filter)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
-	m_filter = filter;
-	m_filterInstance = filter->createInstance();
+	if ((m_filter = filter) != 0)
+		m_filterInstance = filter->createInstance();
 }
 
 Ref< IFilter > SoundChannel::getFilter() const
