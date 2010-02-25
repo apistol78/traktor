@@ -2,6 +2,7 @@
 #define traktor_sound_BankBuffer_H
 
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "Sound/ISoundBuffer.h"
 
 // import/export mechanism.
@@ -26,12 +27,17 @@ class T_DLLCLASS BankBuffer : public ISoundBuffer
 public:
 	BankBuffer(const RefArray< IGrain >& grains);
 
+	const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
+
+	void updateCursor(ISoundBufferCursor* cursor) const;
+
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
 	RefArray< IGrain > m_grains;
+	mutable Semaphore m_lock;
 };
 
 	}

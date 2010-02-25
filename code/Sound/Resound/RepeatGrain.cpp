@@ -47,20 +47,32 @@ Ref< ISoundBufferCursor > RepeatGrain::createCursor() const
 	return cursor->m_cursor ? cursor : 0;
 }
 
+void RepeatGrain::updateCursor(ISoundBufferCursor* cursor) const
+{
+	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
+	return m_grain->updateCursor(repeatCursor->m_cursor);
+}
+
+const IGrain* RepeatGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
+{
+	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
+	return m_grain->getCurrentGrain(repeatCursor->m_cursor);
+}
+
 bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
-	RepeatGrainCursor* loopCursor = static_cast< RepeatGrainCursor* >(cursor);
+	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 
-	if (!m_grain->getBlock(loopCursor->m_cursor, outBlock))
+	if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
 	{
-		if (m_count != 0 && ++loopCursor->m_count >= m_count)
+		if (m_count != 0 && ++repeatCursor->m_count >= m_count)
 			return false;
 
-		loopCursor->m_cursor = m_grain->createCursor();
-		if (!loopCursor->m_cursor)
+		repeatCursor->m_cursor = m_grain->createCursor();
+		if (!repeatCursor->m_cursor)
 			return false;
 
-		if (!m_grain->getBlock(loopCursor->m_cursor, outBlock))
+		if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
 			return false;
 	}
 

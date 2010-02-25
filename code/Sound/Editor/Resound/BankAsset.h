@@ -26,6 +26,8 @@ class T_DLLCLASS BankAsset : public editor::ITypedAsset
 public:
 	void addGrain(IGrain* grain);
 
+	void removeGrain(IGrain* grain);
+
 	const RefArray< IGrain >& getGrains() const;
 
 	virtual const TypeInfo* getOutputType() const;

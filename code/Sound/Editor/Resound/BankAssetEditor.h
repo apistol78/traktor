@@ -1,6 +1,7 @@
 #ifndef traktor_sound_BankAssetEditor_H
 #define traktor_sound_BankAssetEditor_H
 
+#include <map>
 #include "Core/RefArray.h"
 #include "Editor/IObjectEditor.h"
 
@@ -37,16 +38,26 @@ class Event;
 class PopupMenu;
 class Slider;
 
+		namespace custom
+		{
+
+class ToolBar;
+class ToolBarButton;
+
+		}
 	}
 
 	namespace sound
 	{
 
 class BankAsset;
+class BankBuffer;
 class IGrain;
-class IGrainEditor;
+class IGrainFacade;
+class GrainProperties;
 class GrainView;
 class GrainViewItem;
+class SoundChannel;
 class SoundSystem;
 
 class T_DLLCLASS BankAssetEditor : public editor::IObjectEditor
@@ -66,12 +77,17 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< BankAsset > m_asset;
+	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
 	Ref< GrainView > m_grainView;
 	Ref< ui::Container > m_containerGrainProperties;
+	Ref< GrainProperties > m_grainProperties;
 	Ref< ui::PopupMenu > m_menuGrains;
-	Ref< IGrainEditor > m_grainEditorDefault;
-	Ref< SoundSystem > m_soundSystem;
+	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< SoundSystem > m_soundSystem;
+	Ref< SoundChannel > m_soundChannel;
+	Ref< BankBuffer > m_bankBuffer;
 
 	void updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains);
 
@@ -84,6 +100,10 @@ private:
 	void eventGrainSelect(ui::Event* event);
 
 	void eventGrainButtonUp(ui::Event* event);
+
+	void eventGrainPropertiesChange(ui::Event* event);
+
+	void eventTimer(ui::Event* event);
 };
 
 	}

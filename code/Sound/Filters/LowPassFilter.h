@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,21 +24,20 @@ class T_DLLCLASS LowPassFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	LowPassFilter(float cutOff);
+	LowPassFilter(float cutOff = 0.0f);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
 
-	inline void setCutOff(float cutOff) {
-		m_cutOff = cutOff;
-	}
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
 
-	inline float getCutOff() const {
-		return m_cutOff;
-	}
+	virtual bool serialize(ISerializer& s);
+
+	inline void setCutOff(float cutOff) { m_cutOff = cutOff; }
+
+	inline float getCutOff() const { return m_cutOff; }
 
 private:
 	float m_cutOff;
-	float m_history[SbcMaxChannelCount];
 };
 
 	}

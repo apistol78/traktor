@@ -1,21 +1,47 @@
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Sound/Filters/GroupFilter.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GroupFilter", GroupFilter, IFilter)
+struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
+{
+	RefArray< IFilterInstance > m_instances;
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GroupFilter", 0, GroupFilter, IFilter)
 
 void GroupFilter::addFilter(IFilter* filter)
 {
 	m_filters.push_back(filter);
 }
 
-void GroupFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > GroupFilter::createInstance() const
 {
-	for (RefArray< IFilter >::iterator i = m_filters.begin(); i != m_filters.end(); ++i)
-		(*i)->apply(outBlock);
+	Ref< GroupFilterInstance > gfi = new GroupFilterInstance();
+	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
+		gfi->m_instances.push_back((*i)->createInstance());
+	return gfi;
+}
+
+void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	GroupFilterInstance* gfi = static_cast< GroupFilterInstance* >(instance);
+	uint32_t nfilters = m_filters.size();
+	for (uint32_t i = 0; i < nfilters; ++i)
+		m_filters[i]->apply(gfi->m_instances[i], outBlock);
+}
+
+bool GroupFilter::serialize(ISerializer& s)
+{
+	return s >> MemberRefArray< IFilter >(L"filters", m_filters);
 }
 
 	}

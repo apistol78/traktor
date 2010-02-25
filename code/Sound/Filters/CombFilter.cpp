@@ -1,43 +1,74 @@
 #include <cstring>
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Sound/Filters/CombFilter.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.CombFilter", CombFilter, IFilter)
+struct CombFilterInstance : public RefCountImpl< IFilterInstance >
+{
+	std::vector< float > m_history[2];
+	float m_last[2];
+	uint32_t m_index[2];
+};
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.CombFilter", 0, CombFilter, IFilter)
 
 CombFilter::CombFilter(uint32_t samplesLength, float feedback, float damp)
-:	m_feedback(feedback)
+:	m_samplesLength(samplesLength)
+,	m_feedback(feedback)
 ,	m_damp(damp)
 {
-	m_history[0].resize(samplesLength);
-	m_history[1].resize(samplesLength);
 
-	std::memset(&m_history[0][0], 0, samplesLength * sizeof(float));
-	std::memset(&m_history[1][0], 0, samplesLength * sizeof(float));
-
-	m_last[0] =
-	m_last[1] = 0.0f;
-
-	m_index[0] =
-	m_index[1] = 0;
 }
 
-void CombFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > CombFilter::createInstance() const
 {
+	Ref< CombFilterInstance > instance = new CombFilterInstance();
+
+	instance->m_history[0].resize(m_samplesLength, 0.0f);
+	instance->m_history[1].resize(m_samplesLength, 0.0f);
+
+	instance->m_last[0] =
+	instance->m_last[1] = 0.0f;
+
+	instance->m_index[0] =
+	instance->m_index[1] = 0;
+
+	return instance;
+}
+
+void CombFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	CombFilterInstance* cfi = static_cast< CombFilterInstance* >(instance);
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
-			m_last[j] = m_history[j][m_index[j]] * (1.0f - m_damp) + m_last[j] * m_damp;
-			m_history[j][m_index[j]] = outBlock.samples[j][i] + m_last[j] * m_feedback;
-			if (++m_index[j] >= m_history[j].size())
-				m_index[j] = 0;
-			outBlock.samples[j][i] = m_history[j][m_index[j]];
+			cfi->m_last[j] = cfi->m_history[j][cfi->m_index[j]] * (1.0f - m_damp) + cfi->m_last[j] * m_damp;
+			cfi->m_history[j][cfi->m_index[j]] = outBlock.samples[j][i] + cfi->m_last[j] * m_feedback;
+			
+			if (++cfi->m_index[j] >= cfi->m_history[j].size())
+				cfi->m_index[j] = 0;
+
+			outBlock.samples[j][i] = cfi->m_history[j][cfi->m_index[j]];
 		}
 	}
+}
+
+bool CombFilter::serialize(ISerializer& s)
+{
+	s >> Member< uint32_t >(L"samplesLength", m_samplesLength);
+	s >> Member< float >(L"feedBack", m_feedback);
+	s >> Member< float >(L"damp", m_damp);
+	return true;
 }
 
 	}

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,16 +24,18 @@ class T_DLLCLASS CombFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	CombFilter(uint32_t samplesLength, float feedback, float damp);
+	CombFilter(uint32_t samplesLength = 10, float feedback = 0.0f, float damp = 0.0f);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
+
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
+	uint32_t m_samplesLength;
 	float m_feedback;
 	float m_damp;
-	std::vector< float > m_history[2];
-	float m_last[2];
-	uint32_t m_index[2];
 };
 
 	}

@@ -1,6 +1,8 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/Member.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
 
@@ -19,6 +21,11 @@ float angleDifference(float angle1, float angle2)
 	return min(min(A, B), C);
 }
 
+struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
+{
+	float m_buffer[SbcMaxChannelCount][4096];
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
@@ -27,7 +34,6 @@ SurroundFilter::SurroundFilter(SurroundEnvironment* environment)
 :	m_environment(environment)
 ,	m_speakerPosition(0.0f, 0.0f, 0.0f, 1.0f)
 {
-	std::memset(m_buffer, 0, sizeof(m_buffer));
 }
 
 void SurroundFilter::setSpeakerPosition(const Vector4& position)
@@ -35,8 +41,17 @@ void SurroundFilter::setSpeakerPosition(const Vector4& position)
 	m_speakerPosition = position;
 }
 
-void SurroundFilter::apply(SoundBlock& outBlock)
+Ref< IFilterInstance > SurroundFilter::createInstance() const
 {
+	Ref< SurroundFilterInstance > sfi = new SurroundFilterInstance();
+	std::memset(sfi->m_buffer, 0, sizeof(sfi->m_buffer));
+	return sfi;
+}
+
+void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
+
 	const struct Speaker
 	{
 		float angle;
@@ -57,14 +72,14 @@ void SurroundFilter::apply(SoundBlock& outBlock)
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 			sample += outBlock.samples[j][i];
 		for (uint32_t j = 0; j < sizeof_array(c_speakers); ++j)
-			m_buffer[c_speakers[j].channel][i] = sample;
-		m_buffer[SbcCenter][i] = sample;
-		m_buffer[SbcLfe][i] = 0.0f;
+			sfi->m_buffer[c_speakers[j].channel][i] = sample;
+		sfi->m_buffer[SbcCenter][i] = sample;
+		sfi->m_buffer[SbcLfe][i] = 0.0f;
 	}
 
 	outBlock.maxChannel = SbcMaxChannelCount;
 	for (uint32_t j = 0; j < SbcMaxChannelCount; ++j)
-		outBlock.samples[j] = m_buffer[j];
+		outBlock.samples[j] = sfi->m_buffer[j];
 
 	// Get speaker position in listener space.
 	Matrix44 listenerTransformInv = m_environment->getListenerTransformInv();
@@ -98,6 +113,11 @@ void SurroundFilter::apply(SoundBlock& outBlock)
 		outBlock.samples[SbcCenter][j] *= (1.0f - innerAtten);
 		outBlock.samples[SbcLfe][j] = outBlock.samples[SbcCenter][j];
 	}
+}
+
+bool SurroundFilter::serialize(ISerializer& s)
+{
+	return s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition);
 }
 
 	}

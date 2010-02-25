@@ -18,6 +18,8 @@ namespace traktor
 	namespace sound
 	{
 
+struct IFilterInstance;
+
 class IFilter;
 class ISoundBufferCursor;
 class Sound;
@@ -49,6 +51,8 @@ public:
 
 	void stop();
 
+	ISoundBufferCursor* getCursor() const;
+
 private:
 	friend class SoundSystem;
 
@@ -56,6 +60,7 @@ private:
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_filterLock;
 	Ref< IFilter > m_filter;
+	Ref< IFilterInstance > m_filterInstance;
 	Ref< Sound > m_sound;
 	Ref< ISoundBufferCursor > m_cursor;
 	double m_time;

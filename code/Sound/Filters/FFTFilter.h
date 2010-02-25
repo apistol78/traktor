@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,9 @@ class T_DLLCLASS FFTFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	FFTFilter(uint32_t sampleRate);
+	enum { N = 4096 };
+
+	FFTFilter(uint32_t sampleRate = 44100);
 
 	/*!
 	 * Set per frequency filter gain.
@@ -35,14 +37,15 @@ public:
 	 */
 	void setFilter(const std::vector< std::pair< float, float > >& filter, uint32_t windowWidth);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
+
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
+
+	virtual bool serialize(ISerializer& s);
 
 private:
-	enum { N = 4096 };
-
 	uint32_t m_sampleRate;
 	float m_filter[N];
-	float m_history[2][N];
 };
 
 	}

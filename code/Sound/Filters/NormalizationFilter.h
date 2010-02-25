@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,29 +27,22 @@ class T_DLLCLASS NormalizationFilter : public IFilter
 public:
 	NormalizationFilter(float targetEnergy = 1.0f, float energyThreshold = 0.2f, float attackRate = 0.1f);
 
-	virtual void apply(SoundBlock& outBlock);
+	virtual Ref< IFilterInstance > createInstance() const;
 
-	inline float getTargetEnergy() const {
-		return m_targetEnergy;
-	}
+	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
 
-	inline float getEnergyThreshold() const {
-		return m_energyThreshold;
-	}
+	virtual bool serialize(ISerializer& s);
 
-	inline float getAttackRate() const {
-		return m_attackRate;
-	}
+	inline float getTargetEnergy() const { return m_targetEnergy; }
 
-	inline float getCurrentGain() const {
-		return m_currentGain;
-	}
+	inline float getEnergyThreshold() const { return m_energyThreshold; }
+
+	inline float getAttackRate() const { return m_attackRate; }
 
 private:
 	float m_targetEnergy;
 	float m_energyThreshold;
 	float m_attackRate;
-	float m_currentGain;
 };
 
 	}

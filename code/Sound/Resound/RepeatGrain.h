@@ -32,6 +32,10 @@ public:
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
+	virtual void updateCursor(ISoundBufferCursor* cursor) const;
+
+	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
+
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 	virtual bool serialize(ISerializer& s);

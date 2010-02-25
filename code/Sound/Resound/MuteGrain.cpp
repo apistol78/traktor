@@ -51,6 +51,15 @@ Ref< ISoundBufferCursor > MuteGrain::createCursor() const
 	return muteCursor;
 }
 
+void MuteGrain::updateCursor(ISoundBufferCursor* cursor) const
+{
+}
+
+const IGrain* MuteGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool MuteGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);

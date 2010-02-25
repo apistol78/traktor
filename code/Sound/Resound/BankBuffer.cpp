@@ -1,3 +1,4 @@
+#include "Core/Thread/Acquire.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/IGrain.h"
@@ -29,6 +30,22 @@ BankBuffer::BankBuffer(const RefArray< IGrain >& grains)
 {
 }
 
+const IGrain* BankBuffer::getCurrentGrain(ISoundBufferCursor* cursor) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
+	const IGrain* currentGrain = m_grains[bankCursor->m_grainIndex];
+	return currentGrain ? currentGrain->getCurrentGrain(bankCursor->m_grainCursor) : 0;
+}
+
+void BankBuffer::updateCursor(ISoundBufferCursor* cursor) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
+	const IGrain* currentGrain = m_grains[bankCursor->m_grainIndex];
+	currentGrain->updateCursor(bankCursor->m_grainCursor);
+}
+
 Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 {
 	Ref< BankBufferCursor > bankCursor = new BankBufferCursor();
@@ -41,6 +58,8 @@ Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 
 bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	BankBufferCursor* bankCursor = static_cast< BankBufferCursor* >(cursor);
 	IGrain* grain = m_grains[bankCursor->m_grainIndex];
 
