@@ -1,15 +1,16 @@
 #include <cstring>
-#include "Sound/SoundSystem.h"
-#include "Sound/ISoundDriver.h"
-#include "Sound/SoundChannel.h"
-#include "Sound/Sound.h"
-#include "Core/Memory/Alloc.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Timer/Timer.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
+#include "Sound/ISoundDriver.h"
+#include "Sound/Sound.h"
+#include "Sound/SoundBlockUtilities.h"
+#include "Sound/SoundChannel.h"
+#include "Sound/SoundSystem.h"
 
 namespace traktor
 {
@@ -252,10 +253,7 @@ void SoundSystem::threadMixer()
 				{
 					float strength = m_desc.cm[j][k];
 					if (requestBlock.samples[k] && abs(strength) >= FUZZY_EPSILON)
-					{
-						for (uint32_t m = 0; m < requestBlock.samplesCount; ++m)
-							frameBlock.samples[j][m] += requestBlock.samples[k][m] * strength;
-					}
+						soundBlockAddMulConst(frameBlock, j, requestBlock, k, strength);
 				}
 			}
 		}

@@ -62,7 +62,7 @@ void GrainViewCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, co
 	if (!text.empty())
 	{
 		ui::Rect textRect = rect;
-		textRect.left += 32;
+		textRect.left += 36;
 
 		canvas.setForeground(Color(0, 0, 0));
 		canvas.drawText(textRect, text, ui::AnLeft, ui::AnCenter);

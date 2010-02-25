@@ -898,12 +898,20 @@
       <second>{0} ms</second>
     </item>
     <item>
+      <first>RESOUND_PLAY_GRAIN_TEXT</first>
+      <second>{0}% - {1}%</second>
+    </item>
+    <item>
+      <first>RESOUND_RANDOM_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
       <first>RESOUND_REPEAT_GRAIN_TEXT</first>
       <second>{0} time(s)</second>
     </item>
     <item>
-      <first>RESOUND_PLAY_GRAIN_TEXT</first>
-      <second>{0} %</second>
+      <first>RESOUND_SEQUENCE_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
     </item>
     <item>
       <first>STATUS_BUILDING</first>

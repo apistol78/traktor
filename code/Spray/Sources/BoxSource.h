@@ -1,9 +1,9 @@
 #ifndef traktor_spray_BoxSource_H
 #define traktor_spray_BoxSource_H
 
-#include "Spray/Source.h"
-#include "Spray/Range.h"
 #include "Core/Math/RandomGeometry.h"
+#include "Core/Math/Range.h"
+#include "Spray/Source.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
