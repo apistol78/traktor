@@ -54,6 +54,7 @@ void Video::destroy()
 	for (uint32_t i = 0; i < sizeof_array(m_textures); ++i)
 		safeDestroy(m_textures[i]);
 	m_decoder = 0;
+	m_playing = false;
 }
 
 bool Video::update(float deltaTime)
