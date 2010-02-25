@@ -405,6 +405,8 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	int32_t dataSize = stream->tell();
+
 	// Convert mesh asset.
 	if (!converter->convert(
 		models,
@@ -418,6 +420,7 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	dataSize = stream->tell() - dataSize;
 	stream->close();
 
 	// Commit resource.
@@ -431,7 +434,11 @@ bool MeshPipeline::buildOutput(
 	// Create report.
 	Ref< editor::IPipelineReport > report = pipelineBuilder->createReport(L"Mesh", outputGuid);
 	if (report)
+	{
+		report->set(L"path", outputPath);
 		report->set(L"type", int32_t(asset->getMeshType()));
+		report->set(L"size", dataSize);
+	}
 
 	return true;
 }
