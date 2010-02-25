@@ -1,17 +1,17 @@
 #ifndef traktor_spray_SplineSource_H
 #define traktor_spray_SplineSource_H
 
-#include "Spray/Source.h"
-#include "Spray/Range.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Range.h"
+#include "Core/Math/Vector4.h"
+#include "Spray/Source.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

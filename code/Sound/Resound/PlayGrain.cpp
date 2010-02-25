@@ -1,6 +1,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -8,6 +9,7 @@
 #include "Sound/ISoundBuffer.h"
 #include "Sound/ISoundResource.h"
 #include "Sound/Sound.h"
+#include "Sound/SoundBlockUtilities.h"
 #include "Sound/Resound/PlayGrain.h"
 
 namespace traktor
@@ -23,6 +25,8 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBufferCursor > m_soundCursor;
 	RefArray< IFilterInstance > m_filterInstances;
 	double m_timeOffset;
+	float m_gain;
+	float m_pitch;
 
 	virtual void setCursor(double time)
 	{
@@ -35,10 +39,11 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrain", 1, PlayGrain, IGrain)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrain", 2, PlayGrain, IGrain)
 
 PlayGrain::PlayGrain()
-:	m_gain(0.0f)
+:	m_gain(0.0f, 0.0f)
+,	m_pitch(1.0f, 1.0f)
 {
 }
 
@@ -62,6 +67,8 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	playCursor->m_soundBuffer = soundBuffer;
 	playCursor->m_soundCursor = soundCursor;
 	playCursor->m_timeOffset = -1.0;
+	playCursor->m_gain = m_gain.random(m_random);
+	playCursor->m_pitch = m_pitch.random(m_random);
 
 	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
 		playCursor->m_filterInstances.push_back((*i) ? (*i)->createInstance() : 0);
@@ -99,19 +106,8 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 			m_filters[i]->apply(playCursor->m_filterInstances[i], outBlock);
 	}
 
-	if (abs(m_gain) > FUZZY_EPSILON)
-	{
-		float factor = m_gain + 1.0f;
-		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
-		{
-			float* samples = outBlock.samples[i];
-			if (samples)
-			{
-				for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-					samples[j] *= factor;
-			}
-		}
-	}
+	if (abs(playCursor->m_gain) > FUZZY_EPSILON || abs(1.0f - playCursor->m_pitch) > FUZZY_EPSILON)
+		soundBlockMulConst(outBlock, playCursor->m_gain + 1.0f);
 
 	return true;
 }
@@ -121,7 +117,17 @@ bool PlayGrain::serialize(ISerializer& s)
 	s >> resource::Member< Sound, ISoundResource >(L"sound", m_sound);
 	if (s.getVersion() >= 1)
 		s >> MemberRefArray< IFilter >(L"filters", m_filters);
-	s >> Member< float >(L"gain", m_gain);
+	if (s.getVersion() >= 2)
+	{
+		s >> MemberComposite< Range< float > >(L"gain", m_gain);
+		s >> MemberComposite< Range< float > >(L"pitch", m_pitch);
+	}
+	else
+	{
+		float gain = 0.0f;
+		s >> Member< float >(L"gain", gain);
+		m_gain = Range< float >(gain, gain);
+	}
 	return true;
 }
 

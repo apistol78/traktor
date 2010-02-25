@@ -1,15 +1,16 @@
-#ifndef traktor_spray_Range_H
-#define traktor_spray_Range_H
+#ifndef traktor_Range_H
+#define traktor_Range_H
 
+#include "Core/Math/Random.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Core/Math/Random.h"
 
 namespace traktor
 {
-	namespace spray
-	{
 
+/*! \brief Range template.
+ * \ingroup Core
+ */
 template < typename Type >
 class Range
 {
@@ -34,13 +35,17 @@ public:
 		return true;
 	}
 
-	inline Type random(Random& r) const
+	T_MATH_INLINE Type delta() const
+	{
+		return min - max;
+	}
+
+	T_MATH_INLINE Type random(Random& r) const
 	{
 		return min + r.nextFloat() * (max - min);
 	}
 };
 
-	}
 }
 
-#endif	// traktor_spray_Range_H
+#endif	// traktor_Range_H

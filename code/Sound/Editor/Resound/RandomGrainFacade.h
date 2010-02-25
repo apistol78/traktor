@@ -13,6 +13,10 @@ class RandomGrainFacade : public IGrainFacade
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getImage(const IGrain* grain) const;
+
+	virtual std::wstring getText(const IGrain* grain) const;
+
 	virtual bool canHaveChildren() const;
 
 	virtual bool addChild(IGrain* parentGrain, IGrain* childGrain);

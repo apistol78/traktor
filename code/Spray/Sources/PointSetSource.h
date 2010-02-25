@@ -1,17 +1,17 @@
 #ifndef traktor_spray_PointSetSource_H
 #define traktor_spray_PointSetSource_H
 
-#include "Spray/Source.h"
-#include "Spray/Range.h"
-#include "Spray/PointSet.h"
+#include "Core/Math/Range.h"
 #include "Resource/Proxy.h"
+#include "Spray/PointSet.h"
+#include "Spray/Source.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

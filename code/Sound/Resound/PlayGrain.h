@@ -2,6 +2,7 @@
 #define traktor_sound_PlayGrain_H
 
 #include "Core/RefArray.h"
+#include "Core/Math/Range.h"
 #include "Resource/Proxy.h"
 #include "Sound/Resound/IGrain.h"
 
@@ -45,12 +46,16 @@ public:
 
 	const resource::Proxy< Sound >& getSound() const { return m_sound; }
 
-	float getGain() const { return m_gain; }
+	const Range< float >& getGain() const { return m_gain; }
+
+	const Range< float >& getPitch() const { return m_pitch; }
 
 private:
 	mutable resource::Proxy< Sound > m_sound;
 	RefArray< IFilter > m_filters;
-	float m_gain;
+	Range< float > m_gain;
+	Range< float > m_pitch;
+	mutable Random m_random;
 };
 
 	}

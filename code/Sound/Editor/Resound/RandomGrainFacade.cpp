@@ -1,3 +1,4 @@
+#include "I18N/Format.h"
 #include "Sound/Resound/RandomGrain.h"
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
 
@@ -7,6 +8,17 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RandomGrainFacade", RandomGrainFacade, IGrainFacade)
+
+int32_t RandomGrainFacade::getImage(const IGrain* grain) const
+{
+	return 3;
+}
+
+std::wstring RandomGrainFacade::getText(const IGrain* grain) const
+{
+	uint32_t count = checked_type_cast< const RandomGrain* >(grain)->getGrains().size();
+	return i18n::Format(L"RESOUND_RANDOM_GRAIN_TEXT", int32_t(count));
+}
 
 bool RandomGrainFacade::canHaveChildren() const
 {

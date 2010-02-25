@@ -11,7 +11,7 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
-#include "Sound/Resound/IGrain.h"
+#include "Sound/Resound/MuteGrain.h"
 #include "Sound/Resound/PlayGrain.h"
 #include "Sound/Resound/RandomGrain.h"
 #include "Sound/Resound/RepeatGrain.h"
@@ -22,6 +22,8 @@
 #include "Sound/Editor/Resound/GrainProperties.h"
 #include "Sound/Editor/Resound/GrainView.h"
 #include "Sound/Editor/Resound/GrainViewItem.h"
+#include "Sound/Editor/Resound/MuteGrainFacade.h"
+#include "Sound/Editor/Resound/PlayGrainFacade.h"
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
 #include "Sound/Editor/Resound/RepeatGrainFacade.h"
 #include "Sound/Editor/Resound/SequenceGrainFacade.h"
@@ -94,6 +96,8 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.RemoveGrain"), L"Remove grain..."));
 
 	// Create grain editor facades.
+	m_grainFacades[&type_of< MuteGrain >()] = new MuteGrainFacade();
+	m_grainFacades[&type_of< PlayGrain >()] = new PlayGrainFacade();
 	m_grainFacades[&type_of< RandomGrain >()] = new RandomGrainFacade();
 	m_grainFacades[&type_of< RepeatGrain >()] = new RepeatGrainFacade();
 	m_grainFacades[&type_of< SequenceGrain >()] = new SequenceGrainFacade();
@@ -149,16 +153,21 @@ void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGr
 {
 	for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 	{
-		Ref< GrainViewItem > item = new GrainViewItem(parent, *i);
+		IGrainFacade* grainFacade = m_grainFacades[&type_of(*i)];
+		if (!grainFacade)
+			continue;
+
+		Ref< GrainViewItem > item = new GrainViewItem(
+			parent,
+			*i,
+			grainFacade->getText(*i),
+			grainFacade->getImage(*i)
+		);
 		m_grainView->add(item);
 
-		IGrainFacade* grainFacade = m_grainFacades[&type_of(*i)];
-		if (grainFacade)
-		{
-			RefArray< IGrain > childGrains;
-			if (grainFacade->getChildren(*i, childGrains))
-				updateGrainView(item, childGrains);
-		}
+		RefArray< IGrain > childGrains;
+		if (grainFacade->getChildren(*i, childGrains))
+			updateGrainView(item, childGrains);
 	}
 }
 

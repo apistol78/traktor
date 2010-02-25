@@ -1,5 +1,5 @@
-#ifndef traktor_sound_SequenceGrainFacade_H
-#define traktor_sound_SequenceGrainFacade_H
+#ifndef traktor_sound_PlayGrainFacade_H
+#define traktor_sound_PlayGrainFacade_H
 
 #include "Sound/Editor/Resound/IGrainFacade.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-class SequenceGrainFacade : public IGrainFacade
+class PlayGrainFacade : public IGrainFacade
 {
 	T_RTTI_CLASS;
 
@@ -29,4 +29,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_SequenceGrainFacade_H
+#endif	// traktor_sound_PlayGrainFacade_H

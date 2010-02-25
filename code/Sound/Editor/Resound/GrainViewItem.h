@@ -16,9 +16,7 @@ class GrainViewItem : public Object
 	T_RTTI_CLASS;
 
 public:
-	GrainViewItem(IGrain* grain);
-
-	GrainViewItem(GrainViewItem* parent, IGrain* grain);
+	GrainViewItem(GrainViewItem* parent, IGrain* grain, const std::wstring& text, int32_t image);
 
 	GrainViewItem* getParent() const;
 
@@ -31,6 +29,8 @@ public:
 private:
 	GrainViewItem* m_parent;
 	Ref< IGrain > m_grain;
+	std::wstring m_text;
+	int32_t m_image;
 };
 
 	}

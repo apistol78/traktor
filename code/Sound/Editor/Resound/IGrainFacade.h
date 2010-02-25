@@ -16,6 +16,10 @@ class IGrainFacade : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual int32_t getImage(const IGrain* grain) const = 0;
+
+	virtual std::wstring getText(const IGrain* grain) const = 0;
+
 	virtual bool canHaveChildren() const = 0;
 
 	virtual bool addChild(IGrain* parentGrain, IGrain* childGrain) = 0;
