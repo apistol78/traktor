@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>177</first>
+				<first>-105</first>
 				<second>224</second>
 			</position>
 			<fragmentGuid>{6DE0FC81-3E61-0D45-81F4-8FB4B950B941}</fragmentGuid>
@@ -36,7 +36,7 @@
 		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
-				<first>659</first>
+				<first>720</first>
 				<second>244</second>
 			</position>
 			<technique>Default</technique>
@@ -49,7 +49,7 @@
 				<red>true</red>
 				<green>true</green>
 				<blue>true</blue>
-				<alpha>true</alpha>
+				<alpha>false</alpha>
 			</colorWriteMask>
 			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
@@ -119,22 +119,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>RGB</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>RGB</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
