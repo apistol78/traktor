@@ -1,4 +1,6 @@
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/Reader.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberType.h"
@@ -7,6 +9,10 @@
 #include "Sound/Sound.h"
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/StreamSoundResource.h"
+
+#if defined(_PS3)
+#	define T_PRELOAD_STREAM_DATA	1
+#endif
 
 namespace traktor
 {
@@ -31,6 +37,22 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		log::error << L"Unable to create sound, no decoder type" << Endl;
 		return 0;
 	}
+
+#if T_PRELOAD_STREAM_DATA
+
+	Ref< DynamicMemoryStream > memoryStream = new DynamicMemoryStream();
+	if (!StreamCopy(memoryStream, stream).execute())
+	{
+		log::error << L"Unable to create sound, pre-loading failed" << Endl;
+		return 0;
+	}
+
+	stream->close();
+
+	stream = memoryStream;
+	stream->seek(IStream::SeekSet, 0);
+
+#endif
 
 	Ref< IStreamDecoder > streamDecoder = checked_type_cast< IStreamDecoder* >(m_decoderType->createInstance());
 	if (!streamDecoder->create(stream))

@@ -10,6 +10,7 @@ struct Internal
 {
 	sys_mutex_t mutex;
 	sys_cond_t cond;
+	uint32_t count;
 };
 	
 	}
@@ -26,6 +27,8 @@ Event::Event()
 	sys_cond_attribute_t attr2;
 	sys_cond_attribute_initialize(attr2);
 	sys_cond_create(&in->cond, in->mutex, &attr2);
+
+	in->count = 0;
 
 	m_handle = in;
 }
@@ -47,7 +50,17 @@ void Event::pulse(int count)
 	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
-	sys_cond_signal(in->cond);
+	
+	if (in->count)
+	{
+		if (count <= in->count)
+			in->count -= count;
+		else
+			in->count = 0;
+		
+		sys_cond_signal_all(in->cond);
+	}
+
 	sys_mutex_unlock(in->mutex);
 }
 
@@ -57,7 +70,13 @@ void Event::broadcast()
 	T_ASSERT (in);
 
 	sys_mutex_lock(in->mutex, SYS_NO_TIMEOUT);
-	sys_cond_signal(in->cond);
+	
+	if (in->count)
+	{
+		in->count = 0;
+		sys_cond_signal_all(in->cond);
+	}
+
 	sys_mutex_unlock(in->mutex);
 }
 
@@ -75,7 +94,13 @@ bool Event::wait(int32_t timeout)
 	if (rc != CELL_OK)
 		return false;
 
+	++in->count;
+
 	rc = sys_cond_wait(in->cond, timeout);
+	
+	if (rc != CELL_OK)
+		--in->count;
+
 	sys_mutex_unlock(in->mutex);
 	
 	return bool(rc == CELL_OK);

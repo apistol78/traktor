@@ -571,7 +571,7 @@
 						<item>T_LIBMAD_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_PPC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -590,7 +590,7 @@
 						<item>T_LIBMAD_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_PPC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -609,7 +609,7 @@
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_PPC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -628,7 +628,7 @@
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>HAVE_CONFIG_H</item>
-						<item>FPM_DEFAULT</item>
+						<item>FPM_PPC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>

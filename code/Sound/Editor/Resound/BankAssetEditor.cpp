@@ -116,6 +116,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		sscd.driverDesc.bitsPerSample = 16;
 		sscd.driverDesc.hwChannels = 2;
 		sscd.driverDesc.frameSamples = 1400;
+		sscd.driverDesc.mixerFrames = 8;
 
 		if (!m_soundSystem->create(sscd))
 			m_soundSystem = 0;

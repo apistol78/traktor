@@ -35,15 +35,20 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc)
 	CellAudioPortConfig	portConfig;
 	int err;
 
-	if (desc.frameSamples != CELL_AUDIO_BLOCK_SAMPLES)
+	if (desc.sampleRate != 48000)
 	{
-		log::error << L"Unable to create PS3 audio; must have " << CELL_AUDIO_BLOCK_SAMPLES << L" frameSamples" << Endl;
+		log::error << L"Unable to create PS3 audio; \"sampleRate\" must be 48000" << Endl;
+		return false;
+	}
+	if ((desc.frameSamples % CELL_AUDIO_BLOCK_SAMPLES) != 0)
+	{
+		log::error << L"Unable to create PS3 audio; \"frameSamples\" must be a multiple of " << CELL_AUDIO_BLOCK_SAMPLES << Endl;
 		return false;
 	}
 
-	int32_t channelsAvailPcm = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_LPCM, CELL_AUDIO_OUT_FS_44KHZ, 0);
-	int32_t channelsAvailDts = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_DTS, CELL_AUDIO_OUT_FS_44KHZ, 0);
-	int32_t channelsAvailAc3 = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_AC3, CELL_AUDIO_OUT_FS_44KHZ, 0);
+	int32_t channelsAvailPcm = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_LPCM, CELL_AUDIO_OUT_FS_48KHZ, 0);
+	int32_t channelsAvailDts = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_DTS, CELL_AUDIO_OUT_FS_48KHZ, 0);
+	int32_t channelsAvailAc3 = cellAudioOutGetSoundAvailability(CELL_AUDIO_OUT_PRIMARY, CELL_AUDIO_OUT_CODING_TYPE_AC3, CELL_AUDIO_OUT_FS_48KHZ, 0);
 	int32_t channelsAvail = 0;
 
 	log::info << L"Available channels:" << Endl <<
@@ -98,6 +103,8 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc)
 		return false;
 	}
 
+	std::memset(&audioParam, 0, sizeof(audioParam));
+
 	switch (desc.hwChannels)
 	{
 	case 2:
@@ -123,7 +130,7 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc)
 		return false;
 	}
 	
-	audioParam.nBlock = CELL_AUDIO_BLOCK_8;
+	audioParam.nBlock = CELL_AUDIO_BLOCK_16;
 	audioParam.attr = 0;
 
 	err = cellAudioPortOpen(&audioParam, &m_port);
@@ -132,6 +139,8 @@ bool SoundDriverPs3::create(const SoundDriverCreateDesc& desc)
 		cellAudioQuit();
 		return false;
 	}
+
+	std::memset(&portConfig, 0, sizeof(portConfig));
 
 	err = cellAudioGetPortConfig(m_port, &portConfig);
 	if (err != CELL_OK)
@@ -160,34 +169,40 @@ void SoundDriverPs3::destroy()
 
 void SoundDriverPs3::wait()
 {
-	uint64_t currentReadBlock;
-
 	for (;;)
 	{
-		currentReadBlock = *m_readIndexPtr;
-		if (currentReadBlock != m_lastReadBlock)
+		int32_t distance = 0;
+
+		uint64_t readBlock = *m_readIndexPtr;
+		while (readBlock != m_writeBlock)
+		{
+			readBlock = (readBlock + 1) % 16;
+			++distance;
+		}
+
+		if (distance <= 2)
 			break;
 
 		sys_timer_usleep(2 * 1000);
 	}
-
-	m_writeBlock = (currentReadBlock + 1) % 8;
-	m_lastReadBlock = currentReadBlock;
 }
 
 void SoundDriverPs3::submit(const SoundBlock& soundBlock)
 {
 	uint32_t blockSize = m_blockChannels * CELL_AUDIO_BLOCK_SAMPLES * sizeof(float);
-	float* blockPtr = (float*)(m_blockPtr + m_writeBlock * blockSize);
-
-	for (int32_t i = 0; i < CELL_AUDIO_BLOCK_SAMPLES; ++i)
+	for (uint32_t offset = 0; offset < soundBlock.samplesCount; offset += CELL_AUDIO_BLOCK_SAMPLES)
 	{
-		for (int32_t c = 0; c < m_blockChannels; ++c)
+		float* blockPtr = (float*)(m_blockPtr + m_writeBlock * blockSize);
+		for (int32_t i = 0; i < CELL_AUDIO_BLOCK_SAMPLES; ++i)
 		{
-			int32_t oc = m_remap[c];
-			blockPtr[oc] = soundBlock.samples[c] ? soundBlock.samples[c][i] : 0.0f;
+			for (int32_t c = 0; c < m_blockChannels; ++c)
+			{
+				int32_t oc = m_remap[c];
+				blockPtr[oc] = soundBlock.samples[c] ? soundBlock.samples[c][i + offset] : 0.0f;
+			}
+			blockPtr += m_blockChannels;
 		}
-		blockPtr += m_blockChannels;
+		m_writeBlock = (m_writeBlock + 1) % 16;
 	}
 }
 
