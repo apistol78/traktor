@@ -4,17 +4,17 @@
 #include <list>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Event.h"
+#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Thread.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,8 +23,8 @@ namespace traktor
 	{
 
 class ISoundDriver;
-class SoundChannel;
 class Sound;
+class SoundChannel;
 
 /*! \brief Sound system manager.
  * \ingroup Sound
@@ -98,12 +98,27 @@ private:
 	Thread* m_threadSubmit;
 	Semaphore m_channelAttachLock;
 	RefArray< SoundChannel > m_channels;
+
+	// \name Submission queue
+	// \{
+
 	Semaphore m_submitQueueLock;
 	Event m_submitQueueEvent;
 	Event m_submitConsumedEvent;
 	std::list< SoundBlock > m_submitQueue;
-	Semaphore m_samplesBlocksLock;
+
+	// \}
+	
+	// \name Mixer data blocks
+	// \{
+
+	float* m_samplesData;
 	std::vector< float* > m_samplesBlocks;
+	int32_t m_samplesBlockHead;
+	int32_t m_samplesBlockTail;
+
+	// \}
+
 	double m_time;
 	double m_mixerThreadTime;
 	double m_submitThreadTime;

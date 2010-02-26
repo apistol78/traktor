@@ -16,13 +16,6 @@ namespace traktor
 {
 	namespace sound
 	{
-		namespace
-		{
-
-const uint32_t c_allocateBlocks = 4;
-const uint32_t c_mixerFramesAhead = 2;	//< Number of frames the mixer thread should be in front of submission thread.
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
@@ -30,6 +23,10 @@ SoundSystem::SoundSystem(ISoundDriver* driver)
 :	m_driver(driver)
 ,	m_threadMixer(0)
 ,	m_threadSubmit(0)
+,	m_samplesData(0)
+,	m_samplesBlockHead(0)
+,	m_samplesBlockTail(0)
+,	m_time(0.0)
 ,	m_mixerThreadTime(0.0)
 ,	m_submitThreadTime(0.0)
 {
@@ -47,17 +44,18 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 		return false;
 
 	// Allocate samples.
-	for (uint32_t i = 0; i < c_allocateBlocks; ++i)
-	{
-		float* block = static_cast< float* >(Alloc::acquireAlign(
-			m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels * sizeof(float),
-			16
-		));
-		if (!block)
-			return false;
+	uint32_t samplesBlockCount = m_desc.driverDesc.mixerFrames * 2;
+	uint32_t samplesPerBlock = m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels;
 
-		m_samplesBlocks.push_back(block);
-	}
+	m_samplesData = static_cast< float* >(Alloc::acquireAlign(
+		samplesPerBlock * samplesBlockCount * sizeof(float),
+		16
+	));
+	if (!m_samplesData)
+		return false;
+
+	for (uint32_t i = 0; i < samplesBlockCount; ++i)
+		m_samplesBlocks.push_back(&m_samplesData[i * samplesPerBlock]);
 
 	// Create mixer and submission threads.
 	m_threadMixer = ThreadManager::getInstance().create(makeFunctor(this, &SoundSystem::threadMixer), L"Sound mixer", 1);
@@ -88,7 +86,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_time = 0.0;
 
 	// Start threads.
-	m_threadMixer->start();
+	m_threadMixer->start(Thread::Above);
 	m_threadSubmit->start(Thread::Above);
 
 	return true;
@@ -112,16 +110,10 @@ void SoundSystem::destroy()
 
 	m_driver->destroy();
 
-	while (!m_submitQueue.empty())
+	if (m_samplesData)
 	{
-		Alloc::freeAlign(m_submitQueue.back().samples[0]);
-		m_submitQueue.pop_back();
-	}
-
-	while (!m_samplesBlocks.empty())
-	{
-		Alloc::freeAlign(m_samplesBlocks.back());
-		m_samplesBlocks.pop_back();
+		Alloc::freeAlign(m_samplesData);
+		m_samplesData = 0;
 	}
 }
 
@@ -206,7 +198,7 @@ void SoundSystem::threadMixer()
 	while (!m_threadMixer->stopped())
 	{
 		// Wait until submission queue is below threshold.
-		while (m_submitQueue.size() >= c_mixerFramesAhead && !m_threadMixer->stopped())
+		while (m_submitQueue.size() >= m_desc.driverDesc.mixerFrames && !m_threadMixer->stopped())
 			m_submitConsumedEvent.wait(100);
 
 		if (m_threadMixer->stopped())
@@ -215,11 +207,8 @@ void SoundSystem::threadMixer()
 		double startTime = timerMixer.getElapsedTime();
 
 		// Allocate new frame block.
-		m_samplesBlocksLock.wait();
-		T_ASSERT_M(!m_samplesBlocks.empty(), L"Out of sample blocks");
-		float* samples = m_samplesBlocks.back();
-		m_samplesBlocks.pop_back();
-		m_samplesBlocksLock.release();
+		float* samples = m_samplesBlocks[m_samplesBlockHead];
+		m_samplesBlockHead = (m_samplesBlockHead + 1) % m_samplesBlocks.size();
 
 		// Prepare new frame block.
 		std::memset (samples, 0, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels * sizeof(float));
@@ -244,7 +233,7 @@ void SoundSystem::threadMixer()
 				continue;
 
 			T_ASSERT (requestBlock.sampleRate == m_desc.driverDesc.sampleRate);
-			T_ASSERT (requestBlock.samplesCount <= m_desc.driverDesc.frameSamples);
+			T_ASSERT (requestBlock.samplesCount == m_desc.driverDesc.frameSamples);
 
 			// Final combine channels into hardware channels using "combine matrix".
 			for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
@@ -253,7 +242,7 @@ void SoundSystem::threadMixer()
 				{
 					float strength = m_desc.cm[j][k];
 					if (requestBlock.samples[k] && abs(strength) >= FUZZY_EPSILON)
-						soundBlockAddMulConst(frameBlock, j, requestBlock, k, strength);
+						soundBlockAddMulConst(frameBlock.samples[j], requestBlock.samples[k], requestBlock.samplesCount, strength);
 				}
 			}
 		}
@@ -283,7 +272,7 @@ void SoundSystem::threadSubmit()
 		if (m_submitQueue.empty())
 		{
 			log::warning << L"Sound - submit thread starved, waiting for mixer to catch up" << Endl;
-			while (m_submitQueue.size() < c_mixerFramesAhead && !m_threadSubmit->stopped())
+			while (m_submitQueue.size() < m_desc.driverDesc.mixerFrames && !m_threadSubmit->stopped())
 			{
 				m_submitQueueLock.release();
 				m_submitQueueEvent.wait(100);
@@ -293,18 +282,17 @@ void SoundSystem::threadSubmit()
 				break;
 		}
 
-		double startTime = timerSubmit.getElapsedTime();
-
 		// Submit block to driver.
+		double startTime = timerSubmit.getElapsedTime();
 		m_driver->submit(m_submitQueue.front());
 
 		// Move block back into heap.
-		m_samplesBlocksLock.wait();
-		m_samplesBlocks.push_back(m_submitQueue.front().samples[0]);
-		m_samplesBlocksLock.release();
-		m_submitQueue.pop_front();
+		m_samplesBlocks[m_samplesBlockTail] = m_submitQueue.front().samples[0];
+		m_samplesBlockTail = (m_samplesBlockTail + 1) % m_samplesBlocks.size();
 
+		m_submitQueue.pop_front();
 		m_submitQueueLock.release();
+
 		m_submitConsumedEvent.broadcast();
 
 		double endTime = timerSubmit.getElapsedTime();

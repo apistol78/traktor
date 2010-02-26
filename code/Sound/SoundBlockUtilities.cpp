@@ -15,7 +15,7 @@ void soundBlockMulConst(SoundBlock& sb, float factor)
 			continue;
 
 		uint32_t s = 0;
-		for (; s + 4 < sb.samplesCount; s += 4)
+		for (; s < (sb.samplesCount & ~3UL); s += 4)
 		{
 			Vector4 s4(&sb.samples[ch][s]);
 			s4 *= sf;
@@ -26,19 +26,42 @@ void soundBlockMulConst(SoundBlock& sb, float factor)
 	}
 }
 
-void soundBlockAddMulConst(SoundBlock& lsb, int lch, const SoundBlock& rsb, int32_t rch, float factor)
+void soundBlockMulConst(float* lsb, const float* rsb, uint32_t count, float factor)
 {
 	Scalar sf(factor);
 	uint32_t s = 0;
-	for (; s + 4 < rsb.samplesCount; s += 4)
+	for (; s < (count & ~3UL); s += 4)
 	{
-		const Vector4 rs4(&rsb.samples[rch][s]);
-		Vector4 ls4(&lsb.samples[lch][s]);
-		ls4 += rs4 * sf;
-		ls4.store(&lsb.samples[lch][s]);
+		Vector4 rs4(&rsb[s]);
+		rs4 *= sf;
+		rs4.store(&lsb[s]);
 	}
-	for (; s < rsb.samplesCount; ++s)
-		lsb.samples[lch][s] += rsb.samples[rch][s] * factor;
+	for (; s < count; ++s)
+		lsb[s] = rsb[s] * factor;
+}
+
+void soundBlockAddMulConst(float* lsb, const float* rsb, uint32_t count, float factor)
+{
+	Scalar sf(factor);
+	uint32_t s = 0;
+	for (; s < (count & ~3UL); s += 4)
+	{
+		const Vector4 rs4(&rsb[s]);
+		Vector4 ls4(&lsb[s]);
+		ls4 += rs4 * sf;
+		ls4.store(&lsb[s]);
+	}
+	for (; s < count; ++s)
+		lsb[s] += rsb[s] * factor;
+}
+
+void soundBlockMute(float* sb, uint32_t count)
+{
+	uint32_t s = 0;
+	for (; s < (count & ~3UL); s += 4)
+		Vector4::zero().store(&sb[s]);
+	for (; s < count; ++s)
+		sb[s] = 0.0f;
 }
 
 	}

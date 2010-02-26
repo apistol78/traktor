@@ -52,7 +52,7 @@ public:
 private:
 	std::vector< uint8_t > m_internal;
 	std::vector< uint8_t >& m_buffer;
-	std::vector< uint8_t >::iterator m_bufferIter;
+	uint32_t m_readPosition;
 	bool m_readAllowed;
 	bool m_writeAllowed;
 };

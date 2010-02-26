@@ -27,6 +27,7 @@ public:
 	Mp3StreamDecoderImpl()
 	:	m_decodedCount(0)
 	,	m_consumedCount(0)
+	,	m_sampleRate(0)
 	{
 	}
 
@@ -59,13 +60,16 @@ public:
 		if (m_consumedCount)
 		{
 			T_ASSERT (m_consumedCount <= m_decodedCount);
-			memmove(m_decoded[SbcLeft], &m_decoded[SbcLeft][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
-			memmove(m_decoded[SbcRight], &m_decoded[SbcRight][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
+			std::memmove(m_decoded[SbcLeft], &m_decoded[SbcLeft][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
+			std::memmove(m_decoded[SbcRight], &m_decoded[SbcRight][m_consumedCount], (m_decodedCount - m_consumedCount) * sizeof(float));
 			m_decodedCount -= m_consumedCount;
 			m_consumedCount = 0;
 		}
 
-		while (m_decodedCount < outSoundBlock.samplesCount)
+		while (
+			(m_decodedCount < outSoundBlock.samplesCount || m_sampleRate == 0) &&
+			m_decodedCount < sizeof_array(m_decoded[0]) 
+		)
 		{
 			if (!m_mad_stream.buffer || m_mad_stream.error == MAD_ERROR_BUFLEN)
 			{
@@ -76,7 +80,7 @@ public:
 				if (m_mad_stream.next_frame)
 				{
 					remaining = uint32_t(m_mad_stream.bufend - m_mad_stream.next_frame);
-					memmove(m_readBuffer, m_mad_stream.next_frame, remaining);
+					std::memmove(m_readBuffer, m_mad_stream.next_frame, remaining);
 					readStart = &m_readBuffer[remaining];
 					readSize = sizeof(m_readBuffer) - remaining;
 				}
@@ -100,17 +104,18 @@ public:
 			{
 				if (MAD_RECOVERABLE(m_mad_stream.error) || m_mad_stream.error == MAD_ERROR_BUFLEN)
 					continue;
-
-				log::error << L"Sound - Unrecoverable MP3 decode error" << Endl;
-				return false;
+				else
+				{
+					log::error << L"Sound - Unrecoverable MP3 decode error" << Endl;
+					return false;
+				}
 			}
 
 			mad_timer_add(&m_mad_timer, m_mad_frame.header.duration);
 			mad_synth_frame(&m_mad_synth, &m_mad_frame);
 
-			T_ASSERT (outSoundBlock.sampleRate == 0 || outSoundBlock.sampleRate == m_mad_synth.pcm.samplerate);
-			outSoundBlock.sampleRate = m_mad_synth.pcm.samplerate;
-			outSoundBlock.maxChannel = m_mad_synth.pcm.channels;
+			if (m_mad_synth.pcm.samplerate != 0)
+				m_sampleRate = m_mad_synth.pcm.samplerate;
 
 			const mad_fixed_t* left = m_mad_synth.pcm.samples[0];
 			const mad_fixed_t* right = m_mad_synth.pcm.samples[1];
@@ -128,6 +133,8 @@ public:
 		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
 		outSoundBlock.samplesCount = std::min(m_decodedCount, outSoundBlock.samplesCount);
+		outSoundBlock.sampleRate = m_sampleRate;
+		outSoundBlock.maxChannel = 2;
 
 		m_consumedCount = outSoundBlock.samplesCount;
 
@@ -147,6 +154,7 @@ private:
 	float m_decoded[2][65535];
 	uint32_t m_decodedCount;
 	uint32_t m_consumedCount;
+	uint32_t m_sampleRate;
 };
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.Mp3StreamDecoder", 0, Mp3StreamDecoder, IStreamDecoder)
@@ -185,7 +193,10 @@ void Mp3StreamDecoder::rewind()
 	m_stream->seek(IStream::SeekSet, 0);
 	m_decoderImpl = new Mp3StreamDecoderImpl();
 	if (!m_decoderImpl->create(m_stream))
+	{
+		log::error << L"Unable to create MP3 decoder" << Endl;
 		m_decoderImpl = 0;
+	}
 }
 
 	}

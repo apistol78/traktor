@@ -1,23 +1,24 @@
 #include <cstring>
-#include "Sound/Editor/SoundPipeline.h"
-#include "Sound/Editor/SoundAsset.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
+#include "Core/Io/Writer.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Misc/String.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
 #include "Sound/IStreamDecoder.h"
-#include "Sound/Decoders/WavStreamDecoder.h"
+#include "Sound/Editor/SoundAsset.h"
+#include "Sound/Editor/SoundPipeline.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
 #include "Sound/Decoders/Mp3StreamDecoder.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Instance.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Io/Writer.h"
-#include "Core/Math/MathUtils.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Sound/Decoders/WavStreamDecoder.h"
 
 namespace traktor
 {
@@ -35,11 +36,17 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 1, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 2, SoundPipeline, editor::IPipeline)
+
+SoundPipeline::SoundPipeline()
+:	m_sampleRate(44100)
+{
+}
 
 bool SoundPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
+	m_sampleRate = settings->getProperty< editor::PropertyInteger >(L"SoundPipeline.SampleRate", m_sampleRate);
 	return true;
 }
 
@@ -126,15 +133,7 @@ bool SoundPipeline::buildOutput(
 			return false;
 		}
 
-		// Copy source stream content.
-		bool result = true;
-		while (sourceStream->available() > 0 && result)
-		{
-			uint8_t block[1024];
-			int readBytes = sourceStream->read(block, sizeof(block));
-			if (!stream->write(block, readBytes))
-				result = false;
-		}
+		bool result = StreamCopy(stream, sourceStream).execute();
 
 		stream->close();
 		sourceStream->close();
@@ -182,36 +181,44 @@ bool SoundPipeline::buildOutput(
 		}
 
 		// Decode source stream.
-		uint32_t sampleRate = 0;
 		uint32_t samplesCount = 0;
-		uint32_t channelsCount = 0;
+		uint32_t maxChannel = 0;
 		std::vector< int16_t > samples[SbcMaxChannelCount];
 
 		SoundBlock soundBlock;
-		memset(&soundBlock, 0, sizeof(soundBlock));
+		std::memset(&soundBlock, 0, sizeof(soundBlock));
 		soundBlock.samplesCount = 4096;
 
 		while (decoder->getBlock(soundBlock))
 		{
+			uint32_t outputSamplesCount = uint32_t(double(soundBlock.samplesCount * m_sampleRate) / soundBlock.sampleRate + 0.5);
+
 			for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
 			{
-				for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
-					samples[i].push_back(quantify(soundBlock.samples[i][j]));
+				for (uint32_t j = 0; j < outputSamplesCount; ++j)
+				{
+					uint32_t p0 = ((j + 0) * soundBlock.sampleRate) / m_sampleRate;
+					uint32_t p1 = ((j + 1) * soundBlock.sampleRate) / m_sampleRate;
+
+					float s0 = soundBlock.samples[i][p0];
+					float s1 = soundBlock.samples[i][p1];
+
+					samples[i].push_back(quantify((s0 + s1) * 0.5f));
+				}
 			}
 
-			sampleRate = soundBlock.sampleRate;
-			samplesCount += soundBlock.samplesCount;
-			channelsCount = soundBlock.maxChannel;
+			samplesCount += outputSamplesCount;
+			maxChannel = max(soundBlock.maxChannel, maxChannel);
 		}
 
 		// Write asset.
 		Writer writer(stream);
 		writer << uint32_t(2);
-		writer << uint32_t(sampleRate);
+		writer << uint32_t(m_sampleRate);
 		writer << uint32_t(samplesCount);
-		writer << uint32_t(channelsCount);
+		writer << uint32_t(maxChannel);
 
-		for (uint32_t i = 0; i < channelsCount; ++i)
+		for (uint32_t i = 0; i < maxChannel; ++i)
 			writer.write(&samples[i][0], int(samples[i].size()), sizeof(int16_t));
 
 		stream->close();

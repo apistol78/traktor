@@ -8,7 +8,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.DynamicMemoryStream", DynamicMemoryStream, IStr
 
 DynamicMemoryStream::DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed, bool writeAllowed)
 :	m_buffer(buffer)
-,	m_bufferIter(buffer.begin())
+,	m_readPosition(0)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
 {
@@ -16,7 +16,7 @@ DynamicMemoryStream::DynamicMemoryStream(std::vector< uint8_t >& buffer, bool re
 
 DynamicMemoryStream::DynamicMemoryStream(bool readAllowed, bool writeAllowed)
 :	m_buffer(m_internal)
-,	m_bufferIter(m_internal.begin())
+,	m_readPosition(0)
 ,	m_readAllowed(readAllowed)
 ,	m_writeAllowed(writeAllowed)
 {
@@ -40,13 +40,13 @@ bool DynamicMemoryStream::canWrite() const
 
 bool DynamicMemoryStream::canSeek() const
 {
-	return false;
+	return true;
 }
 
 int DynamicMemoryStream::tell() const
 {
 	if (m_readAllowed)
-		return int(std::distance(m_buffer.begin(), m_bufferIter));
+		return m_readPosition;
 	else if (m_writeAllowed)
 		return int(m_buffer.size());
 	else
@@ -55,12 +55,18 @@ int DynamicMemoryStream::tell() const
 
 int DynamicMemoryStream::available() const
 {
-	return int(std::distance(m_bufferIter, m_buffer.end()));
+	return m_buffer.size() - m_readPosition;
 }
 
 int DynamicMemoryStream::seek(SeekOriginType origin, int offset)
 {
-	return 0;
+	if (origin == SeekCurrent)
+		m_readPosition += offset;
+	else if (origin == SeekEnd)
+		m_readPosition = m_buffer.size() + offset;
+	else if (origin == SeekSet)
+		m_readPosition = offset;
+	return m_readPosition;
 }
 
 int DynamicMemoryStream::read(void* block, int nbytes)
@@ -74,8 +80,8 @@ int DynamicMemoryStream::read(void* block, int nbytes)
 	int nread = std::min< int >(nbytes, available());
 	if (nread > 0)
 	{
-		std::memcpy(block, &(*m_bufferIter), nread);
-		m_bufferIter += nread;
+		std::memcpy(block, &m_buffer[m_readPosition], nread);
+		m_readPosition += nread;
 	}
 
 	return nread;

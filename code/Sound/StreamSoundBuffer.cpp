@@ -1,6 +1,6 @@
-#include "Sound/StreamSoundBuffer.h"
-#include "Sound/IStreamDecoder.h"
 #include "Core/Log/Log.h"
+#include "Sound/IStreamDecoder.h"
+#include "Sound/StreamSoundBuffer.h"
 
 namespace traktor
 {
@@ -55,8 +55,9 @@ bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 {
 	double time = static_cast< StreamSoundBufferCursor* >(cursor)->m_time;
 	
-	if (m_time > time)
+	if (m_time > time + 0.1)
 	{
+		log::debug << L"Rewind stream sound decoder" << Endl;
 		m_streamDecoder->rewind();
 		m_time = 0.0;
 	}
