@@ -180,10 +180,10 @@ Static branching
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>-9</first>
-				<second>-38</second>
+				<first>-56</first>
+				<second>-80</second>
 			</position>
-			<name>Output</name>
+			<name>Diffuse</name>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -454,6 +454,30 @@ Dynamic branching
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>-56</first>
+				<second>-38</second>
+			</position>
+			<name>Specular</name>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>-134</first>
+				<second>-80</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>-134</first>
+				<second>-38</second>
+			</position>
+			<swizzle>w</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1003,7 +1027,37 @@ Dynamic branching
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[15]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Input</name>
 			</destination>
 		</item>
