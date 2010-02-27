@@ -36,10 +36,10 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1121</first>
-				<second>444</second>
+				<first>671</first>
+				<second>451</second>
 			</position>
-			<name>Output</name>
+			<name>Specular</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -100,37 +100,6 @@
 				</item>
 			</outputPins>
 			<values/>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment>
-			<![CDATA[
-Diffuse light
-			]]>
-			</comment>
-			<position>
-				<first>816</first>
-				<second>418</second>
-			</position>
-			<swizzle>xyz0</swizzle>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment>
-			<![CDATA[
-Specular light
-			]]>
-			</comment>
-			<position>
-				<first>818</first>
-				<second>480</second>
-			</position>
-			<swizzle>000x</swizzle>
-		</item>
-		<item type="traktor.render.Add">
-			<comment/>
-			<position>
-				<first>946</first>
-				<second>410</second>
-			</position>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -228,6 +197,30 @@ Specular light
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>870</first>
+				<second>295</second>
+			</position>
+			<name>Diffuse</name>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>790</first>
+				<second>295</second>
+			</position>
+			<swizzle>xyz</swizzle>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>603</first>
+				<second>451</second>
+			</position>
+			<swizzle>x</swizzle>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -262,37 +255,7 @@ Specular light
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -302,21 +265,11 @@ Specular light
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>SpecularRoughness</name>
 			</destination>
 		</item>
@@ -326,17 +279,17 @@ Specular light
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
@@ -346,23 +299,23 @@ Specular light
 				<name>Direction</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>LightDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Diffuse</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Diffuse</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Diffuse</name>
 			</source>
 			<destination>
@@ -372,32 +325,62 @@ Specular light
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
-				<name>Specular</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Shadow</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Specular</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Specular</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
-				<name>Specular</name>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>
