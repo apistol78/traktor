@@ -111,6 +111,8 @@ typedef unsigned __int64 uint64_t;
 #	if !defined(T_HAVE_TYPES)
 #		if defined(_PS3)
 #			include <sys/types.h>
+#		elif defined(__APPLE__)
+#			include <stdint.h>
 #		else
 
 typedef signed char int8_t;
