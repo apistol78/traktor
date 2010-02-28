@@ -30,8 +30,11 @@ bool SessionManagerLocal::create()
 	}
 
 	// Open sessions database.
+	std::wstring sessionDb = OS::getInstance().getUserApplicationDataPath() + L"/Doctor Entertainment AB/Sessions.db";
+	log::debug << L"Using session database \"" << sessionDb << L"\"" << Endl;
+
 	m_db = new sql::ConnectionSqlite3();
-	if (!m_db->connect(L"fileName=Sessions.db"))
+	if (!m_db->connect(L"fileName=" + sessionDb))
 	{
 		log::error << L"Unable to create local session manager; unable to connect to database" << Endl;
 		return false;
