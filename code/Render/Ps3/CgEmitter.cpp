@@ -64,87 +64,6 @@ bool emitArcusTan(CgContext& cx, ArcusTan* node)
 	return true;
 }
 
-bool emitBranch(CgContext& cx, Branch* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
-
-	CgVariable caseTrue, caseFalse;
-	std::wstring caseTrueBranch, caseFalseBranch;
-
-	// Emit true branch.
-	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
-		cx.getShader().pushScope();
-
-		CgVariable* ct = cx.emitInput(node, L"True");
-		if (!ct)
-			return false;
-
-		caseTrue = *ct;
-		caseTrueBranch = fs.str();
-
-		cx.getShader().popScope();
-		cx.getShader().popOutputStream(CgShader::BtBody);
-	}
-
-	// Emit false branch.
-	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(CgShader::BtBody, &fs);
-		cx.getShader().pushScope();
-
-		CgVariable* cf = cx.emitInput(node, L"False");
-		if (!cf)
-			return false;
-
-		caseFalse = *cf;
-		caseFalseBranch = fs.str();
-
-		cx.getShader().popScope();
-		cx.getShader().popOutputStream(CgShader::BtBody);
-	}
-
-	// Create output variable.
-	CgType outputType = std::max< CgType >(caseTrue.getType(), caseFalse.getType());
-	
-	CgVariable* out = cx.emitOutput(node, L"Output", outputType);
-	f << cg_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
-
-	f << L"if (" << node->getParameterName() << L")" << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
-
-	f << caseTrueBranch;
-	f << out->getName() << L" = " << caseTrue.cast(outputType) << L";" << Endl;
-
-	f << DecreaseIndent;
-	f << L"}" << Endl;
-	f << L"else" << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
-
-	f << caseFalseBranch;
-	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
-	
-	f << DecreaseIndent;
-	f << L"}" << Endl;
-
-	// Create boolean uniform.
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
-	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(CgShader::BtUniform);
-		int32_t booleanRegister = cx.allocateBooleanRegister();
-		fu << L"bool " << node->getParameterName() << L" : register(b" << booleanRegister << L") = false;" << Endl;
-		cx.getShader().addUniform(node->getParameterName(), CtBoolean, 1);
-	}
-
-	return true;
-}
-
 bool emitClamp(CgContext& cx, Clamp* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
@@ -1430,7 +1349,6 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Add >()] = new EmitterCast< Add >(emitAdd);
 	m_emitters[&type_of< ArcusCos >()] = new EmitterCast< ArcusCos >(emitArcusCos);
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
-	m_emitters[&type_of< Branch >()] = new EmitterCast< Branch >(emitBranch);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
