@@ -44,6 +44,12 @@ Ref< Image > SwizzleFilter::apply(const Image* image)
 				case L'B': 
 					out.set(i, in.getBlue());
 					break;
+				case L'0':
+					out.set(i, 0.0f);
+					break;
+				case L'1':
+					out.set(i, 1.0f);
+					break;
 				}
 			}
 			final->setPixel(x, y, out);

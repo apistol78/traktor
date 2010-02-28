@@ -11,6 +11,7 @@
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
+#include "Drawing/Filters/SwizzleFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineReport.h"
@@ -116,7 +117,7 @@ struct CompressTextureTask
 		output.resize(outputSize);
 		std::memset(&output[0], 0, outputSize);
 
-		if (textureFormat == TfDXT1 || textureFormat == TfDXT3)
+		if (textureFormat == TfDXT1 || textureFormat == TfDXT3 || textureFormat == TfDXT5)
 		{
 			const uint8_t* data = static_cast< const uint8_t* >(image->getData());
 			uint8_t* block = &output[0];
@@ -349,6 +350,14 @@ bool TexturePipeline::buildOutput(
 		image = image->applyFilter(&filter);
 	}
 
+	// Swizzle channels to prepare for DXT5nm compression.
+	if (m_allowCompression && textureAsset->m_enableDXT5nmCompression)
+	{
+		// [rgba] -> [0,g,0,r]
+		drawing::SwizzleFilter filter(L"0g0r");
+		image = image->applyFilter(&filter);
+	}
+
 	// Rescale image.
 	if (textureAsset->m_scaleImage)
 	{
@@ -411,18 +420,31 @@ bool TexturePipeline::buildOutput(
 		T_ASSERT (mipCount >= 1);
 
 		// Determine texture compression format.
-		if (m_allowCompression && textureAsset->m_enableCompression && isLog2(width) && isLog2(height))
+		if (
+			m_allowCompression &&
+			(textureAsset->m_enableCompression || textureAsset->m_enableDXT5nmCompression) &&
+			isLog2(width) &&
+			isLog2(height)
+		)
 		{
-			bool binaryAlpha = isBinaryAlpha(image);
-			if (hasAlpha && !binaryAlpha)
+			if (textureAsset->m_enableDXT5nmCompression)
 			{
-				log::info << L"Using DXT3 compression" << Endl;
-				textureFormat = TfDXT3;
+				log::info << L"Using DXT5nm compression" << Endl;
+				textureFormat = TfDXT5;
 			}
 			else
 			{
-				log::info << L"Using DXT1 compression" << Endl;
-				textureFormat = TfDXT1;
+				bool binaryAlpha = isBinaryAlpha(image);
+				if (hasAlpha && !binaryAlpha)
+				{
+					log::info << L"Using DXT3 compression" << Endl;
+					textureFormat = TfDXT3;
+				}
+				else
+				{
+					log::info << L"Using DXT1 compression" << Endl;
+					textureFormat = TfDXT1;
+				}
 			}
 		}
 		else
