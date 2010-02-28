@@ -64,87 +64,6 @@ bool emitArcusTan(HlslContext& cx, ArcusTan* node)
 	return true;
 }
 
-bool emitBranch(HlslContext& cx, Branch* node)
-{
-	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
-
-	HlslVariable caseTrue, caseFalse;
-	std::wstring caseTrueBranch, caseFalseBranch;
-
-	// Emit true branch.
-	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
-		cx.getShader().pushScope();
-
-		HlslVariable* ct = cx.emitInput(node, L"True");
-		if (!ct)
-			return false;
-
-		caseTrue = *ct;
-		caseTrueBranch = fs.str();
-
-		cx.getShader().popScope();
-		cx.getShader().popOutputStream(HlslShader::BtBody);
-	}
-
-	// Emit false branch.
-	{
-		StringOutputStream fs;
-
-		cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
-		cx.getShader().pushScope();
-
-		HlslVariable* cf = cx.emitInput(node, L"False");
-		if (!cf)
-			return false;
-
-		caseFalse = *cf;
-		caseFalseBranch = fs.str();
-
-		cx.getShader().popScope();
-		cx.getShader().popOutputStream(HlslShader::BtBody);
-	}
-
-	// Create output variable.
-	HlslType outputType = std::max< HlslType >(caseTrue.getType(), caseFalse.getType());
-	
-	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
-	f << hlsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
-
-	f << L"if (" << node->getParameterName() << L")" << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
-
-	f << caseTrueBranch;
-	f << out->getName() << L" = " << caseTrue.cast(outputType) << L";" << Endl;
-
-	f << DecreaseIndent;
-	f << L"}" << Endl;
-	f << L"else" << Endl;
-	f << L"{" << Endl;
-	f << IncreaseIndent;
-
-	f << caseFalseBranch;
-	f << out->getName() << L" = " << caseFalse.cast(outputType) << L";" << Endl;
-	
-	f << DecreaseIndent;
-	f << L"}" << Endl;
-
-	// Create boolean uniform.
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(node->getParameterName()) == uniforms.end())
-	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		int32_t booleanRegister = cx.allocateBooleanRegister();
-		fu << L"bool " << node->getParameterName() << L" : register(b" << booleanRegister << L") = false;" << Endl;
-		cx.getShader().addUniform(node->getParameterName(), HtBoolean, 1);
-	}
-
-	return true;
-}
-
 bool emitClamp(HlslContext& cx, Clamp* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1469,7 +1388,6 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Add >()] = new EmitterCast< Add >(emitAdd);
 	m_emitters[&type_of< ArcusCos >()] = new EmitterCast< ArcusCos >(emitArcusCos);
 	m_emitters[&type_of< ArcusTan >()] = new EmitterCast< ArcusTan >(emitArcusTan);
-	m_emitters[&type_of< Branch >()] = new EmitterCast< Branch >(emitBranch);
 	m_emitters[&type_of< Clamp >()] = new EmitterCast< Clamp >(emitClamp);
 	m_emitters[&type_of< Color >()] = new EmitterCast< Color >(emitColor);
 	m_emitters[&type_of< Conditional >()] = new EmitterCast< Conditional >(emitConditional);
