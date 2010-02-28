@@ -13549,16 +13549,16 @@
 						</item>
 					</items>
 				</item>
-        <item type="Filter">
-          <name>Resources</name>
-          <items>
-            <item type="File">
-              <fileName>../../../res/resound/Grain.png</fileName>
-              <items/>
-            </item>
-          </items>
-        </item>
-      </items>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../res/resound/Grain.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14786,6 +14786,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>OC_X86_ASM</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14802,6 +14803,7 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
+						<item>OC_X86_ASM</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14818,6 +14820,7 @@
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
+						<item>OC_X86_ASM</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14834,6 +14837,7 @@
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
+						<item>OC_X86_ASM</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
@@ -14847,6 +14851,19 @@
 				<item type="File">
 					<fileName>*.h</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>x86_vc</name>
+					<items>
+						<item type="File">
+							<fileName>x86_vc/*.c</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>x86_vc/*.h</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

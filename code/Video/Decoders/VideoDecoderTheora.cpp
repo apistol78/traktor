@@ -124,6 +124,26 @@ public:
 			return false;
 
 		m_td = th_decode_alloc(&m_ti, m_ts);
+
+		int pp_level_max;
+		int pp_level;
+
+		th_decode_ctl(
+			m_td,
+			TH_DECCTL_GET_PPLEVEL_MAX,
+			&pp_level_max,
+			sizeof(pp_level_max)
+		);
+
+		pp_level = pp_level_max;
+		
+		th_decode_ctl(
+			m_td,
+			TH_DECCTL_SET_PPLEVEL,
+			&pp_level,
+			sizeof(pp_level)
+		);
+
 		log::debug << L"Theora decoder created, " << m_ti.pic_width << L"x" << m_ti.pic_height << L", " << float(m_ti.fps_numerator / m_ti.fps_denominator) << L" fps" << Endl;
 
 		return true;
