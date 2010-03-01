@@ -7,8 +7,6 @@
 #include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
-#include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 
 using namespace cell::Gcm;
@@ -103,6 +101,7 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;
+
 	m_vertexSamplers = resource->m_vertexSamplers;
 	m_pixelSamplers = resource->m_pixelSamplers;
 
@@ -213,21 +212,13 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 
 void ProgramPs3::bind(StateCachePs3& stateCache)
 {
-	stateCache.setProgram(m_vertexProgram, m_vertexShaderUCode->getPointer(), m_pixelProgram, m_pixelShaderUCode->getOffset());
 	stateCache.setRenderState(m_renderState);
 
 	if (m_dirty || ms_activeProgram != this)
 	{
 		// Set vertex program constants.
 		for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
-		{
-			cellGcmSetVertexProgramParameterBlock(
-				gCellGcmCurrentContext,
-				i->vertexRegisterIndex,
-				i->vertexRegisterCount,
-				&m_scalarParameterData[i->offset]
-			);
-		}
+			stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
 
 		// Patch fragment program with parameters.
 		uint8_t* programUCode = (uint8_t*)m_pixelShaderUCode->getPointer();
@@ -244,29 +235,21 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 			}
 		}
 
-		cellGcmSetUpdateFragmentProgramParameter(
-			gCellGcmCurrentContext,
-			m_pixelShaderUCode->getOffset()
-		);
-
 		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
 		{
 			ITexture* texture = m_textureParameterData[i->texture];
 			if (texture)
-			{
-				if (is_a< SimpleTexturePs3 >(texture))
-				{
-					static_cast< SimpleTexturePs3* >(texture)->bind(i->stage, m_renderState.samplerStates[i->stage]);
-					continue;
-				}
-				if (is_a< RenderTargetPs3 >(texture))
-				{
-					static_cast< RenderTargetPs3* >(texture)->bind(i->stage, m_renderState.samplerStates[i->stage]);
-					continue;
-				}
-			}
+				stateCache.setTexture(i->stage, texture, m_renderState.samplerStates[i->stage]);
 		}
 	}
+
+	stateCache.setProgram(
+		m_vertexProgram,
+		m_vertexShaderUCode->getPointer(),
+		m_pixelProgram,
+		m_pixelShaderUCode->getOffset(),
+		(m_dirty || ms_activeProgram != this)
+	);
 
 	ms_activeProgram = this;
 }

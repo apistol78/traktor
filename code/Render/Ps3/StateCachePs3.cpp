@@ -1,15 +1,61 @@
+#include <vec_types.h>
+#include "Core/Memory/Alloc.h"
 #include "Render/Ps3/StateCachePs3.h"
+#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/SimpleTexturePs3.h"
 
 namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+bool compareExchangeEqual4(float* ptr1, const float* ptr2, size_t count)
+{
+	T_ASSERT ((count & 3) == 0);
+
+	const float* src = ptr2;
+	float* dst = ptr1;
+	bool equal = true;
+
+	for (size_t i = 0; i < (count >> 2); ++i)
+	{
+		if (
+			dst[0] != src[0] ||
+			dst[1] != src[1] ||
+			dst[2] != src[2] ||
+			dst[3] != src[3]
+		)
+		{
+			dst[0] = src[0];
+			dst[1] = src[1];
+			dst[2] = src[2];
+			dst[3] = src[3];
+			equal = false;
+		}
+
+		src += 4;
+		dst += 4;
+	}
+
+	return equal;
+}
+
+		}
 
 StateCachePs3::StateCachePs3()
 :	m_inFp32Mode(false)
 ,	m_vertexUCode(0)
 ,	m_fragmentOffset(0)
 {
+	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
+	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
+}
+
+StateCachePs3::~StateCachePs3()
+{
+	Alloc::freeAlign(m_vertexConstantsShadow);
 }
 
 void StateCachePs3::setInFp32Mode(bool inFp32Mode)
@@ -91,7 +137,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 	}
 }
 
-void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset)
+void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset, bool updateFragmentProgram)
 {
 	if (vertexUCode != m_vertexUCode)
 	{
@@ -102,6 +148,39 @@ void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertex
 	{
 		cellGcmSetFragmentProgram(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
 		m_fragmentOffset = fragmentOffset;
+	}
+	else if (updateFragmentProgram)
+	{
+		cellGcmSetUpdateFragmentProgramParameter(gCellGcmCurrentContext, fragmentOffset);
+	}
+}
+
+void StateCachePs3::setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData)
+{
+	float* shadow = &m_vertexConstantsShadow[registerOffset * 4];
+	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
+	{
+		cellGcmSetVertexProgramParameterBlock(
+			gCellGcmCurrentContext,
+			registerOffset,
+			registerCount,
+			constantData
+		);
+	}
+}
+
+void StateCachePs3::setTexture(uint16_t stage, ITexture* texture, const SamplerState& samplerState)
+{
+	if (texture != m_textures[stage])
+	{
+		if (texture)
+		{
+			if (is_a< SimpleTexturePs3 >(texture))
+				static_cast< SimpleTexturePs3* >(texture)->bind(stage, samplerState);
+			else if (is_a< RenderTargetPs3 >(texture))
+				static_cast< RenderTargetPs3* >(texture)->bind(stage, samplerState);
+		}
+		m_textures[stage] = texture;
 	}
 }
 
@@ -134,6 +213,14 @@ void StateCachePs3::reset(bool force)
 
 	m_vertexUCode = 0;
 	m_fragmentOffset = 0;
+
+	resetTextures();
+}
+
+void StateCachePs3::resetTextures()
+{
+	for (int i = 0; i < sizeof_array(m_textures); ++i)
+		m_textures[i] = 0;
 }
 
 	}

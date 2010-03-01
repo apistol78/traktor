@@ -267,6 +267,8 @@ bool RenderViewPs3::begin()
 	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
 	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
 
+	m_stateCache.resetTextures();
+
 	return true;
 }
 
