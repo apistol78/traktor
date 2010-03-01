@@ -125,7 +125,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1356</first>
+				<first>1511</first>
 				<second>266</second>
 			</position>
 			<name>Output</name>
@@ -136,6 +136,14 @@
 				<first>1203</first>
 				<second>246</second>
 			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1378</first>
+				<second>266</second>
+			</position>
+			<swizzle>xyz0</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -242,6 +250,16 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
