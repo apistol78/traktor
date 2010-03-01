@@ -26,9 +26,11 @@ class T_DLLCLASS Thread : public IWaitable
 public:
 	enum Priority
 	{
-		Below	= -1,
-		Normal	= 0,
-		Above	= 1
+		Lowest = -2,
+		Below = -1,
+		Normal = 0,
+		Above = 1,
+		Highest = 2
 	};
 
 	bool start(Priority priority = Normal);
