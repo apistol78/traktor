@@ -1,4 +1,4 @@
-#include "Render/Shader/Node.h"
+#include "Render/Shader/Nodes.h"
 #include "Render/Shader/OutputPin.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/INodeTraits.h"
@@ -40,27 +40,56 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 	if (i != m_cache.end())
 		return i->second;
 
+	PinType outputPinType = PntVoid;
 	m_cache[outputPin] = PntVoid;
 
 	const Node* node = outputPin->getNode();
 	T_ASSERT (node);
 
-	const INodeTraits* nodeTraits = findNodeTraits(node);
-	T_ASSERT (nodeTraits);
+	if (is_a< Type >(node))
+	{
+		PinType inputType = evaluate(node, L"Type");
 
-	uint32_t inputPinCount = node->getInputPinCount();
+		const InputPin* inputPin = 0;
+		if (isPinTypeScalar(inputType))
+		{
+			if (getPinTypeWidth(inputType) <= 1)
+				inputPin = node->findInputPin(L"Scalar");
+			else
+				inputPin = node->findInputPin(L"Vector");
+		}
+		else if (inputType == PntMatrix)
+		{
+			inputPin = node->findInputPin(L"Matrix");
+		}
+		else if (inputType == PntTexture)
+		{
+			inputPin = node->findInputPin(L"Texture");
+		}
+		if (!inputPin)
+			return PntVoid;
 
-	// Evaluate input pin types.
-	std::vector< PinType > inputPinTypes(inputPinCount);
-	for (uint32_t i = 0; i < inputPinCount; ++i)
-		inputPinTypes[i] = evaluate(node->getInputPin(i));
+		outputPinType = evaluate(inputPin);
+	}
+	else
+	{
+		const INodeTraits* nodeTraits = findNodeTraits(node);
+		T_ASSERT (nodeTraits);
 
-	// Determine output pin type from trait.
-	PinType outputPinType = nodeTraits->getOutputPinType(
-		node,
-		outputPin,
-		inputPinCount > 0 ? &inputPinTypes[0] : 0
-	);
+		uint32_t inputPinCount = node->getInputPinCount();
+
+		// Evaluate input pin types.
+		std::vector< PinType > inputPinTypes(inputPinCount);
+		for (uint32_t i = 0; i < inputPinCount; ++i)
+			inputPinTypes[i] = evaluate(node->getInputPin(i));
+
+		// Determine output pin type from trait.
+		outputPinType = nodeTraits->getOutputPinType(
+			node,
+			outputPin,
+			inputPinCount > 0 ? &inputPinTypes[0] : 0
+		);
+	}
 
 	m_cache[outputPin] = outputPinType;
 	return outputPinType;

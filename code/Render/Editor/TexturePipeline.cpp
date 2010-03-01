@@ -99,14 +99,14 @@ struct CompressTextureTask
 	int32_t top;
 	int32_t bottom;
 	TextureFormat textureFormat;
-	bool hasAlpha;
+	bool needAlpha;
 	int32_t compressionQuality;
 	std::vector< uint8_t > output;
 
 	void execute()
 	{
-		int width = image->getWidth();
-		int height = image->getHeight();
+		int32_t width = image->getWidth();
+		int32_t height = image->getHeight();
 
 		uint32_t outputSize = getTextureMipPitch(
 			textureFormat,
@@ -122,19 +122,19 @@ struct CompressTextureTask
 			const uint8_t* data = static_cast< const uint8_t* >(image->getData());
 			uint8_t* block = &output[0];
 
-			for (int y = top; y < bottom; y += 4)
+			for (int32_t y = top; y < bottom; y += 4)
 			{
-				for (int x = 0; x < width; x += 4)
+				for (int32_t x = 0; x < width; x += 4)
 				{
 					uint8_t rgba[4][4][4];
-					int mask = 0;
+					int32_t mask = 0;
 
 					for (int iy = 0; iy < 4; ++iy)
 					{
 						for (int ix = 0; ix < 4; ++ix)
 						{
-							int sx = x + ix;
-							int sy = y + iy;
+							int32_t sx = x + ix;
+							int32_t sy = y + iy;
 
 							if (sx >= width || sy >= height)
 								continue;
@@ -143,19 +143,27 @@ struct CompressTextureTask
 							rgba[iy][ix][0] = data[offset + 0];
 							rgba[iy][ix][1] = data[offset + 1];
 							rgba[iy][ix][2] = data[offset + 2];
-							rgba[iy][ix][3] = hasAlpha ? data[offset + 3] : 0xff;
+							rgba[iy][ix][3] = needAlpha ? data[offset + 3] : 0xff;
 
 							mask |= 1 << (ix + iy * 4);
 						}
 					}
 
-					const int c_compressionFlags[] = { squish::kColourRangeFit, squish::kColourClusterFit, squish::kColourIterativeClusterFit };
+					const int32_t c_compressionFlags[] = { squish::kColourRangeFit, squish::kColourClusterFit, squish::kColourIterativeClusterFit };
+
+					int32_t flags = c_compressionFlags[compressionQuality];
+					if (textureFormat == TfDXT1)
+						flags |= squish::kDxt1;
+					else if (textureFormat == TfDXT3)
+						flags |= squish::kDxt3;
+					else if (textureFormat == TfDXT5)
+						flags |= squish::kDxt5;
 
 					squish::CompressMasked(
 						(const squish::u8*)rgba,
 						mask,
 						block,
-						(textureFormat == TfDXT1 ? squish::kDxt1 : squish::kDxt3) | c_compressionFlags[compressionQuality]
+						flags
 					);
 
 					block += getTextureBlockSize(textureFormat);
@@ -172,7 +180,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 8, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 9, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -241,13 +249,16 @@ bool TexturePipeline::buildOutput(
 	int32_t height = image->getHeight();
 	int32_t mipCount = 1;
 	int32_t dataSize = 0;
-	bool hasAlpha = image->getPixelFormat().getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha;
+
+	bool needAlpha = 
+		(image->getPixelFormat().getAlphaBits() > 0 && !textureAsset->m_ignoreAlpha) ||
+		textureAsset->m_enableNormalMapCompression;
 
 	// Determine pixel and texel formats.
 	drawing::PixelFormat pixelFormat;
 	TextureFormat textureFormat;
 
-	if (hasAlpha)
+	if (needAlpha)
 	{
 #if defined(T_LITTLE_ENDIAN)
 		pixelFormat = drawing::PixelFormat::getA8B8G8R8();
@@ -351,7 +362,7 @@ bool TexturePipeline::buildOutput(
 	}
 
 	// Swizzle channels to prepare for DXT5nm compression.
-	if (m_allowCompression && textureAsset->m_enableDXT5nmCompression)
+	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
 	{
 		// [rgba] -> [0,g,0,r]
 		drawing::SwizzleFilter filter(L"0g0r");
@@ -422,12 +433,12 @@ bool TexturePipeline::buildOutput(
 		// Determine texture compression format.
 		if (
 			m_allowCompression &&
-			(textureAsset->m_enableCompression || textureAsset->m_enableDXT5nmCompression) &&
+			(textureAsset->m_enableCompression || textureAsset->m_enableNormalMapCompression) &&
 			isLog2(width) &&
 			isLog2(height)
 		)
 		{
-			if (textureAsset->m_enableDXT5nmCompression)
+			if (textureAsset->m_enableNormalMapCompression)
 			{
 				log::info << L"Using DXT5nm compression" << Endl;
 				textureFormat = TfDXT5;
@@ -435,7 +446,7 @@ bool TexturePipeline::buildOutput(
 			else
 			{
 				bool binaryAlpha = isBinaryAlpha(image);
-				if (hasAlpha && !binaryAlpha)
+				if (needAlpha && !binaryAlpha)
 				{
 					log::info << L"Using DXT3 compression" << Endl;
 					textureFormat = TfDXT3;
@@ -535,7 +546,7 @@ bool TexturePipeline::buildOutput(
 					task->top = (height * j) / split;
 					task->bottom = (height * (j + 1)) / split;
 					task->textureFormat = textureFormat;
-					task->hasAlpha = hasAlpha;
+					task->needAlpha = needAlpha;
 					task->compressionQuality = m_compressionQuality;
 
 					Job* job = new Job(makeFunctor(task, &CompressTextureTask::execute));
