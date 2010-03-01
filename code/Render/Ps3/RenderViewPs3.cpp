@@ -306,6 +306,7 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
 	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
 
+	rts->setContentValid(true);
 	rt->beginRender();
 
 	return true;
