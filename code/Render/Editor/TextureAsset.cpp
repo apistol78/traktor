@@ -22,7 +22,7 @@ TextureAsset::TextureAsset()
 ,	m_scaleWidth(0)
 ,	m_scaleHeight(0)
 ,	m_enableCompression(true)
-,	m_enableDXT5nmCompression(false)
+,	m_enableNormalMapCompression(false)
 ,	m_linearGamma(true)
 ,	m_generateSphereMap(false)
 {
@@ -51,7 +51,7 @@ bool TextureAsset::serialize(ISerializer& s)
 	s >> Member< bool >(L"enableCompression", m_enableCompression);
 
 	if (s.getVersion() >= 2)
-		s >> Member< bool >(L"enableDXT5nmCompression", m_enableDXT5nmCompression);
+		s >> Member< bool >(L"enableNormalMapCompression", m_enableNormalMapCompression);
 
 	s >> Member< bool >(L"linearGamma", m_linearGamma);
 

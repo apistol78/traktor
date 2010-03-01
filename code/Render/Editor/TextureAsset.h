@@ -32,7 +32,7 @@ public:
 	int32_t m_scaleWidth;
 	int32_t m_scaleHeight;
 	bool m_enableCompression;
-	bool m_enableDXT5nmCompression;
+	bool m_enableNormalMapCompression;
 	bool m_linearGamma;
 	bool m_generateSphereMap;
 
