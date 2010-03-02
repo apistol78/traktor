@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,15 +27,15 @@ class UndoStack;
 	{
 
 class Event;
-class PopupMenu;
 class Point;
+class PopupMenu;
 
 		namespace custom
 		{
 
-class ToolBar;
 class GraphControl;
 class Node;
+class ToolBar;
 
 		}
 	}
@@ -43,10 +43,11 @@ class Node;
 	namespace render
 	{
 
-class ShaderGraph;
+class Edge;
 class Node;
 class NodeFacade;
-class Edge;
+class QuickMenuTool;
+class ShaderGraph;
 
 class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 {
@@ -84,6 +85,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< NodeFacade > > m_nodeFacades;
 	Guid m_fragmentGuid;
 	bool m_lastValidationResult;

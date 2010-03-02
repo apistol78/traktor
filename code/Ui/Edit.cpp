@@ -73,6 +73,11 @@ void Edit::selectAll()
 	static_cast< IEdit* >(m_widget)->selectAll();
 }
 
+void Edit::addChangeEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiContentChange, eventHandler);
+}
+
 void Edit::eventKey(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);

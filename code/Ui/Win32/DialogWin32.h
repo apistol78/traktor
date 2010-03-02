@@ -30,6 +30,7 @@ private:
 	bool m_modal;
 	Size m_minSize;
 	bool m_centerDesktop;
+	int32_t m_result;
 
 #if !defined(WINCE)
 
@@ -38,6 +39,8 @@ private:
 #endif
 
 	LRESULT eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
+
+	LRESULT eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
 	}

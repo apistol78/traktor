@@ -31,6 +31,7 @@ void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComm
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.Center"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.QuickMenu"));
 }
 
 	}
