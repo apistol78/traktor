@@ -36,8 +36,12 @@ bool SessionManagerLocal::create()
 	m_db = new sql::ConnectionSqlite3();
 	if (!m_db->connect(L"fileName=" + sessionDb))
 	{
-		log::error << L"Unable to create local session manager; unable to connect to database" << Endl;
-		return false;
+		// \hack Try to create database in current working directory.
+		if (!m_db->connect(L"fileName=Sessions.db"))
+		{
+			log::error << L"Unable to create local session manager; unable to connect to database" << Endl;
+			return false;
+		}
 	}
 
 	if (!m_db->tableExists(L"Users"))
