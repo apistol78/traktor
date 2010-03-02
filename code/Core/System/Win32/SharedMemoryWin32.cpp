@@ -1,17 +1,20 @@
-#include "Core/System/Win32/SharedMemoryWin32.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
+#include "Core/System/Win32/SharedMemoryWin32.h"
 
 namespace traktor
 {
 	namespace
 	{
 
+#pragma pack(1)
 struct Header
 {
 	LONG readerCount;
 	LONG writerCount;
 	LONG dataSize;
 };
+#pragma pack()
 
 class SharedReaderStream : public MemoryStream
 {
@@ -105,7 +108,9 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 
 #if !defined(WINCE)
 	m_hMap = OpenFileMapping(FILE_MAP_WRITE | FILE_MAP_READ, FALSE, name.c_str());
-	if (m_hMap == NULL)
+	if (m_hMap != NULL)
+		log::debug << L"Shared memory object \"" << name << L"\" (size " << size << L") opened" << Endl;
+	else
 #endif
 	{
 		// No such mapping opened; create new mapping.
@@ -119,6 +124,8 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 		);
 		if (m_hMap == NULL)
 			return false;
+
+		log::debug << L"Shared memory object \"" << name << L"\" (size " << size << L") created" << Endl;
 
 		// We've created the mapping; need to initialize header.
 		initializeMemory = true;
