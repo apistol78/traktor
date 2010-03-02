@@ -184,8 +184,13 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 		);
 		if (m_video)
 		{
-			m_shader->setTextureParameter(L"Texture", m_video->getTexture());
-			m_screenRenderer->draw(m_renderView, m_shader);
+			render::ITexture* texture = m_video->getTexture();
+			if (texture)
+			{
+				m_shader->setTextureParameter(L"Texture", texture);
+				m_shader->setVectorParameter(L"TextureSize", Vector4(texture->getWidth(), texture->getHeight(), 0.0f, 0.0f));
+				m_screenRenderer->draw(m_renderView, m_shader);
+			}
 		}
 		m_renderView->end();
 	}
