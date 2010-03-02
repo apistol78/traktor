@@ -18,6 +18,7 @@ render::handle_t s_handleViewDistance;
 render::handle_t s_handleTargetSize;
 render::handle_t s_handleViewSize;
 render::handle_t s_handleWorld;
+render::handle_t s_handleWorldInverse;
 render::handle_t s_handleWorldPrevious;
 render::handle_t s_handleEyePosition;
 render::handle_t s_handleLightEnableComplex;
@@ -69,6 +70,7 @@ WorldRenderView::WorldRenderView()
 		s_handleTargetSize = render::getParameterHandle(L"TargetSize");
 		s_handleViewSize = render::getParameterHandle(L"ViewSize");
 		s_handleWorld = render::getParameterHandle(L"World");
+		s_handleWorldInverse = render::getParameterHandle(L"WorldInverse");
 		s_handleWorldPrevious = render::getParameterHandle(L"WorldPrevious");
 		s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 		s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
@@ -265,6 +267,7 @@ void WorldRenderView::setWorldShaderParameters(render::ShaderParameters* shaderP
 	shaderParams->setMatrixParameter(s_handleView, m_view);
 	shaderParams->setMatrixParameter(s_handleViewPrevious, m_viewPrevious);
 	shaderParams->setMatrixParameter(s_handleWorld, world);
+	shaderParams->setMatrixParameter(s_handleWorldInverse, world.inverse());
 	shaderParams->setMatrixParameter(s_handleWorldPrevious, worldPrevious);
 	shaderParams->setVectorParameter(s_handleTargetSize, Vector4(m_targetSize.x, m_targetSize.y, targetSizeInvX, targetSizeInvY));
 	shaderParams->setVectorParameter(s_handleViewSize, Vector4(m_viewSize.x, m_viewSize.y, viewSizeInvX, viewSizeInvY));
