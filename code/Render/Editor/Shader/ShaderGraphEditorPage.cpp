@@ -1,9 +1,24 @@
-#include "Render/Editor/Shader/ShaderGraphEditorPage.h"
-#include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
-#include "Render/Editor/Shader/NodeFacade.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorPageSite.h"
+#include "Editor/Settings.h"
+#include "Editor/UndoStack.h"
+#include "Editor/IBrowseFilter.h"
+#include "I18N/Text.h"
+#include "Render/Editor/TextureAsset.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/Edge.h"
 #include "Render/Editor/Shader/NodeCategories.h"
+#include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
+#include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
@@ -12,14 +27,6 @@
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
-#include "Render/Editor/TextureAsset.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/Edge.h"
-#include "Editor/IEditor.h"
-#include "Editor/IEditorPageSite.h"
-#include "Editor/Settings.h"
-#include "Editor/UndoStack.h"
-#include "Editor/IBrowseFilter.h"
 #include "Ui/Application.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
@@ -40,11 +47,6 @@
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Edge.h"
 #include "Ui/Custom/Graph/Pin.h"
-#include "I18N/Text.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/Alignment.h"
@@ -165,6 +167,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 	m_menuPopup->add(menuItemCreate);
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SHADERGRAPH_DELETE_NODE")));
 
+	// Build quick menu.
+	m_menuQuick = new QuickMenuTool();
+	m_menuQuick->create(m_editorGraph);
+
 	// Setup node facades.
 	std::vector< const TypeInfo* > nodeTypes;
 	type_of< Node >().findAllOf(nodeTypes);
@@ -189,8 +195,9 @@ bool ShaderGraphEditorPage::create(ui::Container* parent, editor::IEditorPageSit
 void ShaderGraphEditorPage::destroy()
 {
 	m_nodeFacades.clear();
-	m_editorGraph->destroy();
-	m_menuPopup->destroy();
+	safeDestroy(m_editorGraph);
+	safeDestroy(m_menuPopup);
+	safeDestroy(m_menuQuick);
 }
 
 void ShaderGraphEditorPage::activate()
@@ -527,10 +534,20 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	else if (command == L"ShaderGraph.Editor.Center")
 	{
 		// Center graph view.
-		//m_editorGraph->center();
-
-		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getSwizzledPermutation();
-		setDataObject(0, m_shaderGraph);
+		m_editorGraph->center();
+	}
+	else if (command == L"ShaderGraph.Editor.QuickMenu")
+	{
+		const TypeInfo* typeInfo = m_menuQuick->showMenu();
+		if (typeInfo)
+		{
+			m_undoStack->push(m_shaderGraph);
+			createNode(
+				typeInfo,
+				m_editorGraph->getInnerRect().getCenter() - m_editorGraph->getOffset()
+			);
+		}
+		m_editorGraph->setFocus();
 	}
 	else
 		return false;

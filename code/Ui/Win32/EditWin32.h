@@ -23,6 +23,9 @@ public:
 	virtual void selectAll();
 
 	virtual Size getPreferedSize() const;
+
+private:
+	LRESULT eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip);
 };
 
 	}

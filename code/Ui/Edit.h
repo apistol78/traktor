@@ -36,6 +36,12 @@ public:
 
 	void selectAll();
 
+	/*! \brief Text changed event.
+	 *
+	 * Raised when edit text has changed.
+	 */
+	void addChangeEventHandler(EventHandler* eventHandler);
+
 private:
 	Ref< EditValidator > m_validator;
 

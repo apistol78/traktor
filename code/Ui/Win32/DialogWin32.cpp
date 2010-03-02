@@ -1,6 +1,6 @@
-#include "Ui/Win32/DialogWin32.h"
 #include "Ui/Dialog.h"
 #include "Ui/Events/CloseEvent.h"
+#include "Ui/Win32/DialogWin32.h"
 
 namespace traktor
 {
@@ -18,6 +18,7 @@ DialogWin32::DialogWin32(EventSubject* owner)
 ,	m_modal(false)
 ,	m_minSize(0, 0)
 ,	m_centerDesktop(false)
+,	m_result(0)
 {
 }
 
@@ -69,6 +70,7 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	m_hWnd.registerMessageHandler(WM_SIZING, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventSizing));
 #endif
 	m_hWnd.registerMessageHandler(WM_CLOSE, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventClose));
+	m_hWnd.registerMessageHandler(WM_ENDMODAL, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventEndModal));
 
 	return true;
 }
@@ -79,7 +81,6 @@ void DialogWin32::setIcon(drawing::Image* icon)
 
 int DialogWin32::showModal()
 {
-	int result = DrCancel;
 	MSG msg;
 	
 	// Disable parent window, should be application main window.
@@ -95,7 +96,7 @@ int DialogWin32::showModal()
 	if (!hCenterWnd)
 		hCenterWnd = GetDesktopWindow();
 
-	// Position dialog window centered above parent window.
+	// Place dialog window centered above parent window.
 	RECT rcParent;
 	GetWindowRect(hCenterWnd, &rcParent);
 	POINT pntPos =
@@ -107,46 +108,38 @@ int DialogWin32::showModal()
 		pntPos.x = 0;
 	if (pntPos.y < 0)
 		pntPos.y = 0;
-	SetWindowPos(m_hWnd, NULL, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE);
-
-	// Show dialog window.
-	ShowWindow(m_hWnd, SW_SHOW);
-	SetActiveWindow(m_hWnd);
+	SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 	
 	// Handle events from the dialog.
+	m_result = DrCancel;
 	m_modal = true;
-	while (GetMessage(&msg, NULL, 0, 0))
+
+	while (m_modal)
 	{
-		if (msg.message == WM_ENDMODAL)
-		{
-			result = int(msg.wParam);
-			break;
-		}
-		else if (!IsDialogMessage(m_hWnd, &msg))
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		else
+			Sleep(100);
 	}
-	m_modal = false;
 
 	if (hParentWnd)
 	{
 		// Enable parent window.
 		EnableWindow(hParentWnd, TRUE);
-		SetForegroundWindow(hParentWnd);
+		SetWindowPos(hParentWnd, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
 	}
 
-	// Hide dialog window.
-	ShowWindow(m_hWnd, SW_HIDE);
-
-	return result;
+	return m_result;
 }
 
 void DialogWin32::endModal(int result)
 {
 	T_ASSERT_M (m_modal, L"Not modal");
-	PostMessage(NULL, WM_ENDMODAL, result, 0);
+	SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_HIDEWINDOW);
+	PostMessage(m_hWnd, WM_ENDMODAL, result, 0);
 }
 
 void DialogWin32::setMinSize(const Size& minSize)
@@ -241,17 +234,26 @@ LRESULT DialogWin32::eventClose(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 
 	if (closeEvent.consumed() && closeEvent.cancelled())
 	{
-		skip = true;
-		return FALSE;
+		skip = false;
+		return 0;
 	}
 
 	if (m_modal)
 	{
 		endModal(DrCancel);
 		skip = false;
+		return 0;
 	}
 
-	return TRUE;
+	skip = true;
+	return 0;
+}
+
+LRESULT DialogWin32::eventEndModal(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
+{
+	m_modal = false;
+	m_result = wParam;
+	return 0;
 }
 
 	}

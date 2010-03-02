@@ -25,7 +25,7 @@ bool EditWin32::create(IWidget* parent, const std::wstring& text, int style)
 		(HWND)parent->getInternalHandle(),
 		_T("EDIT"),
 		wstots(text).c_str(),
-		WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | nativeStyle,
+		WS_VISIBLE | WS_CHILD | WS_TABSTOP | ES_AUTOHSCROLL | ES_LEFT | ES_WANTRETURN | nativeStyle,
 		nativeStyleEx,
 		0,
 		0,
@@ -38,6 +38,8 @@ bool EditWin32::create(IWidget* parent, const std::wstring& text, int style)
 
 	if (!WidgetWin32Impl::create(style))
 		return false;
+
+	m_hWnd.registerMessageHandler(WM_REFLECTED_COMMAND, new MethodMessageHandler< EditWin32 >(this, &EditWin32::eventCommand));
 
 	return true;
 }
@@ -62,6 +64,17 @@ Size EditWin32::getPreferedSize() const
 	Font currentFont = getFont();
 	int32_t currentFontHeight = abs(currentFont.getSize() * 72) / 96;
 	return Size(128, currentFontHeight + c_heightMargin);
+}
+
+LRESULT EditWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& skip)
+{
+	if (HIWORD(wParam) != EN_CHANGE)
+		return 0;
+
+	CommandEvent cmdEvent(m_owner, 0);
+	m_owner->raiseEvent(EiContentChange, &cmdEvent);
+
+	return 0;
 }
 
 	}

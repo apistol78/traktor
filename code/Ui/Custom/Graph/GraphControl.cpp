@@ -23,6 +23,27 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+struct SortNodePred
+{
+	GraphControl::EvenSpace m_space;
+
+	SortNodePred(GraphControl::EvenSpace space)
+	:	m_space(space)
+	{
+	}
+
+	bool operator () (const Node* n1, const Node* n2) const
+	{
+		Point pt1 = n1->calculateRect().getTopLeft();
+		Point pt2 = n2->calculateRect().getTopLeft();
+		return m_space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
+	}
+};
+
+			}
 
 enum Modes
 {
@@ -320,28 +341,6 @@ void GraphControl::alignNodes(Alignment align)
 	}
 }
 
-namespace
-{
-
-	struct SortNodePred
-	{
-		GraphControl::EvenSpace m_space;
-
-		SortNodePred(GraphControl::EvenSpace space)
-		:	m_space(space)
-		{
-		}
-
-		bool operator () (const Node* n1, const Node* n2) const
-		{
-			Point pt1 = n1->calculateRect().getTopLeft();
-			Point pt2 = n2->calculateRect().getTopLeft();
-			return m_space == GraphControl::EsHorizontally ? pt1.x < pt2.x : pt1.y < pt2.y;
-		}
-	};
-
-}
-
 void GraphControl::evenSpace(EvenSpace space)
 {
 	RefArray< Node > nodes;
@@ -350,8 +349,7 @@ void GraphControl::evenSpace(EvenSpace space)
 	if (nodes.size() <= 1)
 		return;
 
-	//std::sort(nodes.begin(), nodes.end(), SortNodePred(space));
-	log::debug << L"fixme, GraphControl evenSpace" << Endl;
+	nodes.sort(SortNodePred(space));
 
 	Rect bounds(
 		std::numeric_limits< int >::max(),
