@@ -1,17 +1,18 @@
 #include <algorithm>
 #include "Database/Local/LocalBus.h"
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Thread/Acquire.h"
 #include "Core/System/OS.h"
 #include "Core/System/ISharedMemory.h"
-#include "Core/Io/IStream.h"
-#include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -119,12 +120,12 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 :	m_localGuid(Guid::create())
 ,	m_globalLock(c_guidGlobalLock)
 {
-	Acquire< Mutex > _lock_(m_globalLock);
+	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
 	Ref< EventLog > eventLog;
 	Ref< IStream > eventFile;
 
 	// Create our shared memory object.
-	m_shm = OS::getInstance().createSharedMemory(eventFileName, 4UL * 1024 * 1024);
+	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 4UL * 1024 * 1024);
 	T_ASSERT (m_shm);
 
 	if (m_globalLock.existing())
@@ -165,7 +166,7 @@ LocalBus::~LocalBus()
 
 void LocalBus::close()
 {
-	Acquire< Mutex > _lock_(m_globalLock);
+	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
 
 	// Read change log.
 	Ref< EventLog > eventLog;
@@ -192,7 +193,7 @@ void LocalBus::close()
 
 bool LocalBus::putEvent(ProviderEvent event, const Guid& eventId)
 {
-	Acquire< Mutex > _lock_(m_globalLock);
+	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
 
 	// Read change log.
 	Ref< EventLog > eventLog;
@@ -232,7 +233,7 @@ bool LocalBus::getEvent(ProviderEvent& outEvent, Guid& outEventId, bool& outRemo
 	}
 
 	// Read events from global log.
-	Acquire< Mutex > _lock_(m_globalLock);
+	T_ANONYMOUS_VAR(Acquire< Mutex >)(m_globalLock);
 
 	Ref< IStream > eventFile = m_shm->read();
 	if (!eventFile)
