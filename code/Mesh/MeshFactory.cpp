@@ -5,6 +5,12 @@
 #include "Mesh/IMesh.h"
 #include "Mesh/IMeshResource.h"
 #include "Mesh/MeshFactory.h"
+#include "Mesh/Blend/BlendMesh.h"
+#include "Mesh/Indoor/IndoorMesh.h"
+#include "Mesh/Instance/InstanceMesh.h"
+#include "Mesh/Skinned/SkinnedMesh.h"
+#include "Mesh/Static/StaticMesh.h"
+#include "Mesh/Stream/StreamMesh.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 
 namespace traktor
@@ -27,6 +33,12 @@ const TypeInfoSet MeshFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< IMesh >());
+	typeSet.insert(&type_of< BlendMesh >());
+	typeSet.insert(&type_of< IndoorMesh >());
+	typeSet.insert(&type_of< InstanceMesh >());
+	typeSet.insert(&type_of< SkinnedMesh >());
+	typeSet.insert(&type_of< StaticMesh >());
+	typeSet.insert(&type_of< StreamMesh >());
 	return typeSet;
 }
 
@@ -62,6 +74,12 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 	if (!mesh)
 	{
 		log::error << L"Mesh factory failed; unable to create mesh" << Endl;
+		return 0;
+	}
+
+	if (!is_type_of(resourceType, type_of(mesh)))
+	{
+		log::error << L"Mesh factory failed; incorrect type of mesh, must be a " << resourceType.getName() << Endl;
 		return 0;
 	}
 	
