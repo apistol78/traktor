@@ -7,7 +7,7 @@
 	<instances>
 		<item type="traktor.world.EntityInstance">
 			<name>Unnamed</name>
-			<entityData type="traktor.mesh.StaticMeshEntityData">
+			<entityData type="traktor.mesh.MeshEntityData">
 				<transform>
 					<translation>0.170934, -0.17094, -0.02849, 0</translation>
 					<rotation>0, 0, 0, 1</rotation>
@@ -18,7 +18,7 @@
 		</item>
 		<item type="traktor.world.EntityInstance">
 			<name>Unnamed</name>
-			<entityData type="traktor.mesh.StaticMeshEntityData">
+			<entityData type="traktor.mesh.MeshEntityData">
 				<transform>
 					<translation>-1.07236, 1.19658, 0.014245, 0</translation>
 					<rotation>0, 0, 0, 1</rotation>
