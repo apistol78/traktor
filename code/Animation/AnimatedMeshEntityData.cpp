@@ -1,15 +1,15 @@
-#include "Animation/AnimatedMeshEntityData.h"
 #include "Animation/AnimatedMeshEntity.h"
+#include "Animation/AnimatedMeshEntityData.h"
+#include "Animation/Bone.h"
 #include "Animation/IPoseControllerData.h"
 #include "Animation/Skeleton.h"
-#include "Animation/Bone.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshResource.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
