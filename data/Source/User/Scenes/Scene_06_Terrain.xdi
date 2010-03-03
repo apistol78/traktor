@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="2">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="2">
-		<viewNearZ>0.1</viewNearZ>
-		<viewFarZ>1000</viewFarZ>
+<object type="traktor.scene.SceneAsset" version="2">	
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="3">
+		<viewNearZ>1</viewNearZ>
+		<viewFarZ>500</viewFarZ>
 		<depthPassEnabled>true</depthPassEnabled>
 		<velocityPassEnable>false</velocityPassEnable>
 		<shadowsEnabled>true</shadowsEnabled>
-		<shadowFarZ>500</shadowFarZ>
+		<ssaoEnabled>false</ssaoEnabled>
+		<shadowFarZ>100</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.01</shadowMapBias>
 	</worldRenderSettings>
@@ -47,7 +48,7 @@
 				</item>
 				<item type="traktor.world.EntityInstance" version="1">
 					<name>Mesh</name>
-					<entityData type="traktor.mesh.StaticMeshEntityData">
+					<entityData type="traktor.mesh.MeshEntityData">
 						<transform>
 							<translation>14.0277, 19.0145, 3.8522, 0</translation>
 							<rotation>0, 0, 0, 1</rotation>
