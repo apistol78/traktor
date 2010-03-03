@@ -3,7 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Math/Aabb.h"
-#include "Mesh/MeshResource.h"
+#include "Mesh/IMeshResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS StreamMeshResource : public MeshResource
+class T_DLLCLASS StreamMeshResource : public IMeshResource
 {
 	T_RTTI_CLASS;
 
@@ -34,21 +34,18 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
-	void setFrameOffsets(const std::vector< uint32_t >& frameOffsets);
-
-	const std::vector< uint32_t >& getFrameOffsets() const;
-
-	void setBoundingBox(const Aabb& boundingBox);
-
-	const Aabb& getBoundingBox() const;
-
-	void setParts(const std::vector< Part >& parts);
-
-	const std::vector< Part >& getParts() const;
+	virtual Ref< IMesh > createMesh(
+		IStream* dataStream,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		render::MeshFactory* meshFactory
+	) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
+	friend class StreamMeshConverter;
+
 	std::vector< uint32_t > m_frameOffsets;
 	Aabb m_boundingBox;
 	std::vector< Part > m_parts;

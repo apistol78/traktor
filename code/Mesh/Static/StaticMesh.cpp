@@ -1,7 +1,7 @@
-#include "Mesh/Static/StaticMesh.h"
 #include "Mesh/IMeshParameterCallback.h"
-#include "Render/Mesh/Mesh.h"
+#include "Mesh/Static/StaticMesh.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -15,7 +15,7 @@ render::handle_t s_handleUserParameter = 0;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, IMesh)
 
 StaticMesh::StaticMesh()
 {

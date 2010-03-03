@@ -1,5 +1,5 @@
-#ifndef traktor_mesh_MeshConverter_H
-#define traktor_mesh_MeshConverter_H
+#ifndef traktor_mesh_IMeshConverter_H
+#define traktor_mesh_IMeshConverter_H
 
 #include <map>
 #include "Core/Guid.h"
@@ -21,9 +21,9 @@ class Model;
 	namespace mesh
 	{
 
-class MeshResource;
+class IMeshResource;
 
-class MeshConverter : public Object
+class IMeshConverter : public Object
 {
 public:
 	struct MaterialInfo
@@ -32,13 +32,13 @@ public:
 		bool opaque;
 	};
 
-	virtual Ref< MeshResource > createResource() const = 0;
+	virtual Ref< IMeshResource > createResource() const = 0;
 
 	virtual bool convert(
 		const RefArray< model::Model >& models,
 		const std::map< std::wstring, MaterialInfo >& materialInfo,
 		const std::vector< render::VertexElement >& vertexElements,
-		MeshResource* meshResource,
+		IMeshResource* meshResource,
 		IStream* meshResourceStream
 	) const = 0;
 };
@@ -46,4 +46,4 @@ public:
 	}
 }
 
-#endif	// traktor_mesh_MeshConverter_H
+#endif	// traktor_mesh_IMeshConverter_H

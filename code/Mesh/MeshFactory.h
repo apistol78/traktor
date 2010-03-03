@@ -1,14 +1,14 @@
-#ifndef traktor_mesh_InstanceMeshFactory_H
-#define traktor_mesh_InstanceMeshFactory_H
+#ifndef traktor_mesh_MeshFactory_H
+#define traktor_mesh_MeshFactory_H
 
 #include "Resource/IResourceFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,12 +31,12 @@ class MeshFactory;
 	namespace mesh
 	{
 
-class T_DLLCLASS InstanceMeshFactory : public resource::IResourceFactory
+class T_DLLCLASS MeshFactory : public resource::IResourceFactory
 {
 	T_RTTI_CLASS;
 
 public:
-	InstanceMeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
+	MeshFactory(db::Database* database, render::IRenderSystem* renderSystem, render::MeshFactory* meshFactory = 0);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -53,4 +53,4 @@ private:
 	}
 }
 
-#endif	// traktor_mesh_InstanceMeshFactory_H
+#endif	// traktor_mesh_MeshFactory_H

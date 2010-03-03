@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "Mesh/Indoor/IndoorMesh.h"
 #include "Mesh/IMeshParameterCallback.h"
+#include "Mesh/Indoor/IndoorMesh.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Context/RenderContext.h"
 #include "World/WorldRenderView.h"
@@ -16,7 +16,7 @@ render::handle_t s_handleUserParameter = 0;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMesh", IndoorMesh, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMesh", IndoorMesh, IMesh)
 
 IndoorMesh::IndoorMesh()
 {

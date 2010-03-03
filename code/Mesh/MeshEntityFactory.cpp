@@ -1,6 +1,6 @@
-#include "Mesh/MeshEntityFactory.h"
-#include "Mesh/MeshEntityData.h"
+#include "Mesh/AbstractMeshEntityData.h"
 #include "Mesh/MeshEntity.h"
+#include "Mesh/MeshEntityFactory.h"
 
 namespace traktor
 {
@@ -17,19 +17,14 @@ MeshEntityFactory::MeshEntityFactory(resource::IResourceManager* resourceManager
 const TypeInfoSet MeshEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< MeshEntityData >());
+	typeSet.insert(&type_of< AbstractMeshEntityData >());
 	return typeSet;
 }
 
 Ref< world::Entity > MeshEntityFactory::createEntity(world::IEntityBuilder* builder, const std::wstring& name, const world::EntityData& entityData, const Object* instanceData) const
 {
-	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(&entityData))
-		return meshEntityData->createEntity(m_resourceManager, builder);
-	else
-	{
-		T_BREAKPOINT;
-		return 0;
-	}
+	const AbstractMeshEntityData* meshEntityData = checked_type_cast< const AbstractMeshEntityData* >(&entityData);
+	return meshEntityData->createEntity(m_resourceManager, builder);
 }
 
 	}

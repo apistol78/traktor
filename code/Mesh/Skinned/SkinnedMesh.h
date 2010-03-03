@@ -1,19 +1,19 @@
 #ifndef traktor_mesh_SkinnedMesh_H
 #define traktor_mesh_SkinnedMesh_H
 
-#include "Resource/Proxy.h"
-#include "Core/Object.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Containers/AlignedVector.h"
+#include "Mesh/IMesh.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -45,7 +45,7 @@ class IMeshParameterCallback;
  * the final world transform from a palette of
  * transforms using per-vertex weights.
  */
-class T_DLLCLASS SkinnedMesh : public Object
+class T_DLLCLASS SkinnedMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -68,7 +68,7 @@ public:
 	const std::map< std::wstring, int32_t >& getBoneMap() const;
 
 private:
-	friend class SkinnedMeshFactory;
+	friend class SkinnedMeshResource;
 
 	struct Part
 	{

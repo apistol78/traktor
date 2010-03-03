@@ -1,17 +1,17 @@
 #ifndef traktor_mesh_IndoorMeshResource_H
 #define traktor_mesh_IndoorMeshResource_H
 
-#include "Mesh/MeshResource.h"
+#include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb.h"
-#include "Core/Guid.h"
+#include "Mesh/IMeshResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS IndoorMeshResource : public MeshResource
+class T_DLLCLASS IndoorMeshResource : public IMeshResource
 {
 	T_RTTI_CLASS;
 
@@ -53,17 +53,18 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
-	void setSectors(const AlignedVector< Sector >& sectors);
-
-	const AlignedVector< Sector >& getSectors() const;
-
-	void setPortals(const AlignedVector< Portal >& portals);
-
-	const AlignedVector< Portal >& getPortals() const;
+	virtual Ref< IMesh > createMesh(
+		IStream* dataStream,
+		resource::IResourceManager* resourceManager,
+		render::IRenderSystem* renderSystem,
+		render::MeshFactory* meshFactory
+	) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
+	friend class IndoorMeshConverter;
+
 	AlignedVector< Sector > m_sectors;
 	AlignedVector< Portal > m_portals;
 };

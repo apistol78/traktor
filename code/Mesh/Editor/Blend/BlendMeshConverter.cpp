@@ -18,7 +18,7 @@ namespace traktor
 	namespace mesh
 	{
 
-Ref< MeshResource > BlendMeshConverter::createResource() const
+Ref< IMeshResource > BlendMeshConverter::createResource() const
 {
 	return new BlendMeshResource();
 }
@@ -27,7 +27,7 @@ bool BlendMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
-	MeshResource* meshResource,
+	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -208,11 +208,11 @@ bool BlendMeshConverter::convert(
 			return false;
 	}
 
-	checked_type_cast< BlendMeshResource* >(meshResource)->setParts(assetParts);
+	checked_type_cast< BlendMeshResource* >(meshResource)->m_parts = assetParts;
 
 	// Create blend shape "name to weight" mapping.
 	for (uint32_t i = 0; i < model.getBlendTargetCount(); ++i)
-		checked_type_cast< BlendMeshResource* >(meshResource)->setBlendTarget(model.getBlendTarget(i), i);
+		checked_type_cast< BlendMeshResource* >(meshResource)->m_targetMap[model.getBlendTarget(i)] = i;
 
 	return true;
 }

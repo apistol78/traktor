@@ -20,7 +20,7 @@ namespace traktor
 	namespace mesh
 	{
 
-Ref< MeshResource > StreamMeshConverter::createResource() const
+Ref< IMeshResource > StreamMeshConverter::createResource() const
 {
 	return new StreamMeshResource();
 }
@@ -29,7 +29,7 @@ bool StreamMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
-	MeshResource* meshResource,
+	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -163,8 +163,8 @@ bool StreamMeshConverter::convert(
 		boundingBox.contain(mesh->getBoundingBox());
 	}
 
-	streamMeshResource->setFrameOffsets(frameOffsets);
-	streamMeshResource->setBoundingBox(boundingBox);
+	streamMeshResource->m_frameOffsets = frameOffsets;
+	streamMeshResource->m_boundingBox = boundingBox;
 
 	// Create resource parts.
 	std::vector< StreamMeshResource::Part > resourceParts;
@@ -175,7 +175,7 @@ bool StreamMeshConverter::convert(
 		resourceParts.back().material = i->second.guid;
 		resourceParts.back().opaque = i->second.opaque;
 	}
-	streamMeshResource->setParts(resourceParts);
+	streamMeshResource->m_parts = resourceParts;
 
 	return true;
 }

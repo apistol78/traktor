@@ -9,7 +9,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineReport.h"
 #include "Editor/IPipelineSettings.h"
-#include "Mesh/MeshResource.h"
+#include "Mesh/IMeshResource.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
@@ -229,7 +229,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Build materials.
-	std::map< std::wstring, MeshConverter::MaterialInfo > materialInfo;
+	std::map< std::wstring, IMeshConverter::MaterialInfo > materialInfo;
 	std::vector< render::VertexElement > vertexElements;
 	uint32_t vertexElementOffset = 0;
 
@@ -343,7 +343,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		// Insert into material map.
-		MeshConverter::MaterialInfo mi = { materialGuid, isOpaqueMaterial(materialShaderGraph) };
+		IMeshConverter::MaterialInfo mi = { materialGuid, isOpaqueMaterial(materialShaderGraph) };
 		materialInfo.insert(std::make_pair(i->first, mi));
 
 		// Increment guid for each material, quite hackish but won't guid;s still be universally unique?
@@ -351,7 +351,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Create mesh converter.
-	Ref< MeshConverter > converter;
+	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
 	{
 	case MeshAsset::MtBlend:
@@ -378,7 +378,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Create render mesh.
-	Ref< MeshResource > resource = converter->createResource();
+	Ref< IMeshResource > resource = converter->createResource();
 	if (!resource)
 	{
 		log::error << L"Mesh pipeline failed; unable to create mesh resource" << Endl;

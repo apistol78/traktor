@@ -4,16 +4,11 @@
 #include "Ui/Command.h"
 
 // Resource factories
-#include "Render/Resource/TextureFactory.h"
+#include "Mesh/MeshFactory.h"
 #include "Render/Resource/ShaderFactory.h"
-#include "World/PostProcess/PostProcessFactory.h"
-#include "Mesh/Blend/BlendMeshFactory.h"
-#include "Mesh/Indoor/IndoorMeshFactory.h"
-#include "Mesh/Instance/InstanceMeshFactory.h"
-#include "Mesh/Skinned/SkinnedMeshFactory.h"
-#include "Mesh/Static/StaticMeshFactory.h"
-#include "Mesh/Stream/StreamMeshFactory.h"
+#include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
+#include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories
 #include "Mesh/MeshEntityFactory.h"
@@ -55,16 +50,11 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
+	outResourceFactories.push_back(new mesh::MeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new mesh::BlendMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::IndoorMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::InstanceMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::SkinnedMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::StaticMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
-	outResourceFactories.push_back(new mesh::StreamMeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
+	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 }
 
 void DefaultEditorProfile::createEntityFactories(

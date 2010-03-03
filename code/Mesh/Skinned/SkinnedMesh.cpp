@@ -1,7 +1,7 @@
-#include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/IMeshParameterCallback.h"
-#include "Render/Mesh/Mesh.h"
+#include "Mesh/Skinned/SkinnedMesh.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -16,7 +16,7 @@ render::handle_t s_handleUserParameter = 0;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
 
 SkinnedMesh::SkinnedMesh()
 :	m_boneCount(0)

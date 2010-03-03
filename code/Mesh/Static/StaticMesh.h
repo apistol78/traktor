@@ -1,18 +1,18 @@
 #ifndef traktor_mesh_StaticMesh_H
 #define traktor_mesh_StaticMesh_H
 
-#include "Resource/Proxy.h"
-#include "Core/Object.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Matrix44.h"
+#include "Mesh/IMesh.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -44,7 +44,7 @@ class IMeshParameterCallback;
  * all times should be placed on the GPU for
  * quick rendering.
  */
-class T_DLLCLASS StaticMesh : public Object
+class T_DLLCLASS StaticMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -74,7 +74,7 @@ public:
 	inline const std::vector< Part >& getParts() const { return m_parts; }
 
 private:
-	friend class StaticMeshFactory;
+	friend class StaticMeshResource;
 
 	Ref< render::Mesh > m_mesh;
 	std::vector< Part > m_parts;

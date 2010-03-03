@@ -18,6 +18,9 @@ namespace traktor
 	namespace mesh
 	{
 
+/*! \brief Blend mesh entity
+ * \ingroup Mesh
+ */
 class T_DLLCLASS BlendMeshEntity : public MeshEntity
 {
 	T_RTTI_CLASS;
