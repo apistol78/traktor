@@ -31,18 +31,18 @@ Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resou
 
 	Ref< MeshEntity > meshEntity;
 
-	if (BlendMesh* blendMesh = dynamic_type_cast< BlendMesh* >(m_mesh))
-		meshEntity = new BlendMeshEntity(getTransform(), blendMesh);
-	else if (IndoorMesh* indoorMesh = dynamic_type_cast< IndoorMesh* >(m_mesh))
-		meshEntity = new IndoorMeshEntity(getTransform(), indoorMesh);
-	else if (InstanceMesh* instanceMesh = dynamic_type_cast< InstanceMesh* >(m_mesh))
-		meshEntity = new InstanceMeshEntity(getTransform(), instanceMesh);
-	else if (SkinnedMesh* skinnedMesh = dynamic_type_cast< SkinnedMesh* >(m_mesh))
-		meshEntity = new SkinnedMeshEntity(getTransform(), skinnedMesh);
-	else if (StaticMesh* staticMesh = dynamic_type_cast< StaticMesh* >(m_mesh))
-		meshEntity = new StaticMeshEntity(getTransform(), staticMesh);
-	else if (StreamMesh* streamMesh = dynamic_type_cast< StreamMesh* >(m_mesh))
-		meshEntity = new StreamMeshEntity(getTransform(), streamMesh);
+	if (is_a< BlendMesh >(m_mesh))
+		meshEntity = new BlendMeshEntity(getTransform(), resource::Proxy< BlendMesh >(m_mesh.getHandle()));
+	else if (is_a< IndoorMesh >(m_mesh))
+		meshEntity = new IndoorMeshEntity(getTransform(), resource::Proxy< IndoorMesh >(m_mesh.getHandle()));
+	else if (is_a< InstanceMesh >(m_mesh))
+		meshEntity = new InstanceMeshEntity(getTransform(), resource::Proxy< InstanceMesh >(m_mesh.getHandle()));
+	else if (is_a< SkinnedMesh >(m_mesh))
+		meshEntity = new SkinnedMeshEntity(getTransform(), resource::Proxy< SkinnedMesh >(m_mesh.getHandle()));
+	else if (is_a< StaticMesh >(m_mesh))
+		meshEntity = new StaticMeshEntity(getTransform(), resource::Proxy< StaticMesh >(m_mesh.getHandle()));
+	else if (is_a< StreamMesh >(m_mesh))
+		meshEntity = new StreamMeshEntity(getTransform(), resource::Proxy< StreamMesh >(m_mesh.getHandle()));
 
 	return meshEntity;
 }

@@ -32,16 +32,6 @@ public:
 	{
 	}
 
-	Proxy< ResourceType >(ResourceType* rs)
-	:	m_resource(rs)
-	{
-	}
-
-	Proxy< ResourceType >(const Ref< ResourceType >& rs)
-	:	m_resource(rs)
-	{
-	}
-
 	Proxy< ResourceType >(const Guid& guid)
 	:	m_guid(guid)
 	{
@@ -49,6 +39,16 @@ public:
 
 	Proxy< ResourceType >(IResourceHandle* handle)
 	:	m_handle(handle)
+	{
+	}
+
+	Proxy< ResourceType >(ResourceType* rs)
+	:	m_resource(rs)
+	{
+	}
+
+	Proxy< ResourceType >(const Ref< ResourceType >& rs)
+	:	m_resource(rs)
 	{
 	}
 
@@ -64,6 +64,12 @@ public:
 	Proxy< ResourceType >(const Ref< DerivedType >& rs)
 	:	m_resource(rs)
 	{
+	}
+
+	/*! \brief Get resource's handle. */
+	IResourceHandle* getHandle() const
+	{
+		return m_handle;
 	}
 
 	/*! \brief Get resource's guid. */

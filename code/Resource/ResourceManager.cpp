@@ -35,19 +35,19 @@ ResourceManager::ResourceManager()
 
 void ResourceManager::addFactory(IResourceFactory* factory)
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_factories.push_back(factory);
 }
 
 void ResourceManager::removeFactory(IResourceFactory* factory)
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_factories.remove(factory);
 }
 
 void ResourceManager::removeAllFactories()
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_factories.clear();
 }
 
@@ -68,9 +68,9 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 		handle = new ResourceHandle(type);
 	else
 	{
-		Acquire< Semaphore > scope(m_lock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		handle = m_cache[guid];
-		if (!handle || &handle->getResourceType() != &type)
+		if (!handle/* || &handle->getResourceType() != &type*/)
 		{
 			handle = new ResourceHandle(type);
 			m_cache[guid] = handle;
@@ -87,7 +87,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 
 void ResourceManager::update(const Guid& guid, bool force)
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
 	if (i == m_cache.end())
@@ -108,7 +108,7 @@ void ResourceManager::update(const Guid& guid, bool force)
 
 void ResourceManager::flush(const Guid& guid)
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.find(guid);
 	if (i == m_cache.end())
@@ -122,7 +122,7 @@ void ResourceManager::flush(const Guid& guid)
 
 void ResourceManager::flush()
 {
-	Acquire< Semaphore > scope(m_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	for (std::map< Guid, Ref< ResourceHandle > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 		i->second->flush();
 }
