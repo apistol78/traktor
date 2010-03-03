@@ -22,7 +22,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshEntityData", 0, MeshEntityData, AbstractMeshEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshEntityData", 0, MeshEntityData, AbstractMeshEntityData)
 
 Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
