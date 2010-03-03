@@ -1,43 +1,44 @@
-#include "Mesh/Stream/StreamMeshResource.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberStl.h"
+#include "Mesh/Stream/StreamMesh.h"
+#include "Mesh/Stream/StreamMeshResource.h"
+#include "Render/Mesh/MeshReader.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 0, StreamMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 0, StreamMeshResource, IMeshResource)
 
-void StreamMeshResource::setFrameOffsets(const std::vector< uint32_t >& frameOffsets)
+Ref< IMesh > StreamMeshResource::createMesh(
+	IStream* dataStream,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	render::MeshFactory* meshFactory
+) const
 {
-	m_frameOffsets = frameOffsets;
-}
+	Ref< StreamMesh > streamMesh = new StreamMesh();
+	streamMesh->m_stream = dataStream;
+	streamMesh->m_meshReader = new render::MeshReader(meshFactory);
+	streamMesh->m_frameOffsets = m_frameOffsets;
+	streamMesh->m_boundingBox = m_boundingBox;
 
-const std::vector< uint32_t >& StreamMeshResource::getFrameOffsets() const
-{
-	return m_frameOffsets;
-}
+	for (std::vector< StreamMeshResource::Part >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
+	{
+		StreamMesh::Part part;
+		part.material = i->material;
+		part.opaque = i->opaque;
 
-void StreamMeshResource::setBoundingBox(const Aabb& boundingBox)
-{
-	m_boundingBox = boundingBox;
-}
+		if (resourceManager->bind(part.material))
+			streamMesh->m_parts[i->name] = part;
+		else
+			return 0;
+	}
 
-const Aabb& StreamMeshResource::getBoundingBox() const
-{
-	return m_boundingBox;
-}
-
-void StreamMeshResource::setParts(const std::vector< Part >& parts)
-{
-	m_parts = parts;
-}
-
-const std::vector< StreamMeshResource::Part >& StreamMeshResource::getParts() const
-{
-	return m_parts;
+	return streamMesh;
 }
 
 bool StreamMeshResource::serialize(ISerializer& s)

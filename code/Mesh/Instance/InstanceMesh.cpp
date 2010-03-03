@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Mesh/Instance/InstanceMesh.h"
-#include "Render/Mesh/Mesh.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -23,7 +23,7 @@ struct SortInstanceDistance
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.InstanceMesh", InstanceMesh, IMesh)
 
 InstanceMesh::InstanceMesh()
 {

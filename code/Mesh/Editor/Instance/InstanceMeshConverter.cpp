@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-Ref< MeshResource > InstanceMeshConverter::createResource() const
+Ref< IMeshResource > InstanceMeshConverter::createResource() const
 {
 	return new InstanceMeshResource();
 }
@@ -28,7 +28,7 @@ bool InstanceMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
-	MeshResource* meshResource,
+	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -158,7 +158,7 @@ bool InstanceMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< InstanceMeshResource* >(meshResource)->setParts(assetParts);
+	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = assetParts;
 
 	return true;
 }

@@ -1,20 +1,20 @@
 #ifndef traktor_mesh_IndoorMesh_H
 #define traktor_mesh_IndoorMesh_H
 
-#include "Resource/Proxy.h"
-#include "Core/Object.h"
 #include "Core/Math/Aabb.h"
-#include "Core/Math/Matrix44.h"
 #include "Core/Math/Frustum.h"
+#include "Core/Math/Matrix44.h"
 #include "Core/Math/Winding.h"
+#include "Mesh/IMesh.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -40,7 +40,7 @@ class WorldRenderView;
 
 class IMeshParameterCallback;
 
-class T_DLLCLASS IndoorMesh : public Object
+class T_DLLCLASS IndoorMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -58,7 +58,7 @@ public:
 	);
 
 private:
-	friend class IndoorMeshFactory;
+	friend class IndoorMeshResource;
 
 	struct Part
 	{

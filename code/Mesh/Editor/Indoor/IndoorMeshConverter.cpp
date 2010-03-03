@@ -511,7 +511,7 @@ void createSectors(
  * CONVERTER
  */
 
-Ref< MeshResource > IndoorMeshConverter::createResource() const
+Ref< IMeshResource > IndoorMeshConverter::createResource() const
 {
 	return new IndoorMeshResource();
 }
@@ -520,7 +520,7 @@ bool IndoorMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
-	MeshResource* meshResource,
+	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -668,8 +668,8 @@ bool IndoorMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< IndoorMeshResource* >(meshResource)->setSectors(assetSectors);
-	checked_type_cast< IndoorMeshResource* >(meshResource)->setPortals(assetPortals);
+	checked_type_cast< IndoorMeshResource* >(meshResource)->m_sectors = assetSectors;
+	checked_type_cast< IndoorMeshResource* >(meshResource)->m_portals = assetPortals;
 
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Finished" << Endl;

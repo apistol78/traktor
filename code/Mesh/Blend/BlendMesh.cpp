@@ -4,10 +4,10 @@
 #include "Mesh/Blend/BlendMesh.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
-#include "Render/Mesh/Mesh.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
+#include "Render/Mesh/Mesh.h"
 #include "World/WorldRenderer.h"
 #include "World/WorldRenderView.h"
 
@@ -107,7 +107,7 @@ struct BlendMeshTask
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMesh", BlendMesh, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BlendMesh", BlendMesh, IMesh)
 
 BlendMesh::BlendMesh()
 {

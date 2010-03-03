@@ -75,7 +75,8 @@ uint32_t transform(xml::Element* element)
 
 	if (element->getName() == L"worldRenderSettings")
 	{
-		if (element->getAttribute(L"version", L"")->getValue() != L"3")
+		int32_t version = parseString< int32_t >(element->getAttribute(L"version", L"100")->getValue());
+		if (version < 3)
 		{
 			element->removeAllChildren();
 
@@ -95,11 +96,11 @@ uint32_t transform(xml::Element* element)
 		}
 	}
 
-	if (
-		element->getName() == L"object" ||
-		element->getName() == L"entityData" ||
-		element->getName() == L"item"
-	)
+	//if (
+	//	element->getName() == L"object" ||
+	//	element->getName() == L"entityData" ||
+	//	element->getName() == L"item"
+	//)
 	{
 		std::wstring typeName = element->getAttribute(L"type", L"")->getValue();
 
@@ -207,6 +208,19 @@ uint32_t transform(xml::Element* element)
 				element->removeChild(xentityDataName);
 				changes++;
 			}
+		}
+
+		if (
+			typeName == L"traktor.mesh.BlendMeshEntityData" ||
+			typeName == L"traktor.mesh.IndoorMeshEntityData" ||
+			typeName == L"traktor.mesh.InstanceMeshEntityData" ||
+			typeName == L"traktor.mesh.SkinnedMeshEntityData" ||
+			typeName == L"traktor.mesh.StaticMeshEntityData" ||
+			typeName == L"traktor.mesh.StreamMeshEntityData"
+		)
+		{
+			element->setAttribute(L"type", L"traktor.mesh.MeshEntityData");
+			changes++;
 		}
 	}
 

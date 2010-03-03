@@ -1,9 +1,9 @@
 #ifndef traktor_mesh_StreamMesh_H
 #define traktor_mesh_StreamMesh_H
 
-#include "Core/Object.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Matrix44.h"
+#include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 
@@ -44,7 +44,7 @@ class IMeshParameterCallback;
 
 /*! \brief Stream mesh.
  */
-class T_DLLCLASS StreamMesh : public Object
+class T_DLLCLASS StreamMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -75,7 +75,7 @@ public:
 	);
 
 private:
-	friend class StreamMeshFactory;
+	friend class StreamMeshResource;
 
 	struct Part
 	{

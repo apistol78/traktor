@@ -1,33 +1,79 @@
-#include "Mesh/Blend/BlendMeshResource.h"
+#include "Core/RefArray.h"
+#include "Core/Io/Reader.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Mesh/Blend/BlendMesh.h"
+#include "Mesh/Blend/BlendMeshResource.h"
+#include "Render/VertexBuffer.h"
+#include "Render/Mesh/Mesh.h"
+#include "Render/Mesh/MeshReader.h"
+#include "Render/Mesh/RenderMeshFactory.h"
+#include "Render/Mesh/SystemMeshFactory.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 1, BlendMeshResource, MeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 1, BlendMeshResource, IMeshResource)
 
-void BlendMeshResource::setParts(const std::vector< Part >& parts)
+Ref< IMesh > BlendMeshResource::createMesh(
+	IStream* dataStream,
+	resource::IResourceManager* resourceManager,
+	render::IRenderSystem* renderSystem,
+	render::MeshFactory* meshFactory
+) const
 {
-	m_parts = parts;
-}
+	Reader reader(dataStream);
 
-const std::vector< BlendMeshResource::Part >& BlendMeshResource::getParts() const
-{
-	return m_parts;
-}
+	uint32_t meshCount;
+	reader >> meshCount;
 
-void BlendMeshResource::setBlendTarget(const std::wstring& name, int index)
-{
-	m_targetMap[name] = index;
-}
+	if (!meshCount)
+	{
+		log::error << L"Blend mesh create failed; no meshes" << Endl;
+		return 0;
+	}
 
-const std::map< std::wstring, int >& BlendMeshResource::getBlendTargetMap() const
-{
-	return m_targetMap;
+	render::SystemMeshFactory systemMeshFactory;
+	RefArray< render::Mesh > meshes(meshCount);
+	std::vector< const uint8_t* > meshVertices(meshCount);
+
+	for (uint32_t i = 0; i < meshCount; ++i)
+	{
+		if (!(meshes[i] = render::MeshReader(&systemMeshFactory).read(dataStream)))
+		{
+			log::error << L"Blend mesh create failed; unable to read mesh" << Endl;
+			return 0;
+		}
+		meshVertices[i] = static_cast< const uint8_t* >(meshes[i]->getVertexBuffer()->lock());
+		if (!meshVertices[i])
+		{
+			log::error << L"Blend mesh create failed; unable to lock vertices" << Endl;
+			return 0;
+		}
+	}
+
+	Ref< BlendMesh > blendMesh = new BlendMesh();
+	blendMesh->m_renderSystem = renderSystem;
+	blendMesh->m_meshes = meshes;
+	blendMesh->m_vertices = meshVertices;
+	blendMesh->m_parts.resize(m_parts.size());
+
+	for (size_t i = 0; i < m_parts.size(); ++i)
+	{
+		blendMesh->m_parts[i].material = m_parts[i].material;
+		blendMesh->m_parts[i].opaque = m_parts[i].opaque;
+		if (!resourceManager->bind(blendMesh->m_parts[i].material))
+			return 0;
+	}
+
+	blendMesh->m_targetMap = m_targetMap;
+
+	return blendMesh;
 }
 
 bool BlendMeshResource::serialize(ISerializer& s)

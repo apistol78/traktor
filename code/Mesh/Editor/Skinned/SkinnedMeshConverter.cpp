@@ -32,7 +32,7 @@ struct InfluencePredicate
 
 		}
 
-Ref< MeshResource > SkinnedMeshConverter::createResource() const
+Ref< IMeshResource > SkinnedMeshConverter::createResource() const
 {
 	return new SkinnedMeshResource();
 }
@@ -41,7 +41,7 @@ bool SkinnedMeshConverter::convert(
 	const RefArray< model::Model >& models,
 	const std::map< std::wstring, MaterialInfo >& materialInfo,
 	const std::vector< render::VertexElement >& vertexElements,
-	MeshResource* meshResource,
+	IMeshResource* meshResource,
 	IStream* meshResourceStream
 ) const
 {
@@ -212,9 +212,9 @@ bool SkinnedMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< SkinnedMeshResource* >(meshResource)->setParts(assetParts);
+	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = assetParts;
 	for (uint32_t i = 0; i < model.getBoneCount(); ++i)
-		checked_type_cast< SkinnedMeshResource* >(meshResource)->setBone(model.getBone(i), i);
+		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_boneMap[model.getBone(i)] = i;
 
 	return true;
 }

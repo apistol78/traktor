@@ -1,19 +1,19 @@
 #ifndef traktor_mesh_BlendMesh_H
 #define traktor_mesh_BlendMesh_H
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb.h"
 #include "Core/Math/Transform.h"
+#include "Mesh/IMesh.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -40,13 +40,14 @@ class WorldRenderView;
 
 class IMeshParameterCallback;
 
-/*! \brief Blend mesh.
+/*! \brief Blend mesh
+ * \ingroup Mesh
  *
  * A blend mesh is mesh which is calculated
  * from several blend mesh shapes before being
  * rendered.
  */
-class T_DLLCLASS BlendMesh : public Object
+class T_DLLCLASS BlendMesh : public IMesh
 {
 	T_RTTI_CLASS;
 
@@ -79,7 +80,7 @@ public:
 	const std::map< std::wstring, int >& getBlendTargetMap() const;
 
 private:
-	friend class BlendMeshFactory;
+	friend class BlendMeshResource;
 
 	struct Part
 	{
