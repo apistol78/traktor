@@ -47,7 +47,7 @@ private:
 	IXAudio2VoiceCallback* m_voiceCallback;
 	IXAudio2MasteringVoice* m_masteringVoice;
 	IXAudio2SourceVoice* m_sourceVoice;
-	WAVEFORMATEX m_wfx;
+	WAVEFORMATEXTENSIBLE m_wfx;
 	HANDLE m_eventNotify;
 	uint32_t m_bufferSize;
 	uint8_t* m_buffers[3];
