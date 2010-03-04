@@ -49,13 +49,14 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &VideoEditorPage::eventPaint));
 
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
-	m_renderView = m_editor->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
+	m_renderView = m_editor->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

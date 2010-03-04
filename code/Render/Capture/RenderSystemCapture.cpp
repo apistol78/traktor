@@ -23,17 +23,17 @@ void RenderSystemCapture::destroy()
 	m_renderSystem->destroy();
 }
 
-int RenderSystemCapture::getDisplayModeCount() const
+uint32_t RenderSystemCapture::getDisplayModeCount() const
 {
 	return m_renderSystem->getDisplayModeCount();
 }
 
-Ref< DisplayMode > RenderSystemCapture::getDisplayMode(int index)
+DisplayMode RenderSystemCapture::getDisplayMode(uint32_t index) const
 {
 	return m_renderSystem->getDisplayMode(index);
 }
 
-Ref< DisplayMode > RenderSystemCapture::getCurrentDisplayMode()
+DisplayMode RenderSystemCapture::getCurrentDisplayMode() const
 {
 	return m_renderSystem->getCurrentDisplayMode();
 }
@@ -43,18 +43,18 @@ bool RenderSystemCapture::handleMessages()
 	return m_renderSystem->handleMessages();
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
-	Ref< IRenderView > renderView = m_renderSystem->createRenderView(displayMode, desc);
+	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return 0;
 
 	return new RenderViewCapture(m_renderSystem, renderView);
 }
 
-Ref< IRenderView > RenderSystemCapture::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemCapture::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
-	Ref< IRenderView > renderView = m_renderSystem->createRenderView(windowHandle, desc);
+	Ref< IRenderView > renderView = m_renderSystem->createRenderView(desc);
 	if (!renderView)
 		return 0;
 

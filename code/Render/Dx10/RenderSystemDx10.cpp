@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Render/VertexElement.h"
 #include "Render/Dx10/RenderSystemDx10.h"
 #include "Render/Dx10/RenderViewDx10.h"
 #include "Render/Dx10/ContextDx10.h"
@@ -12,9 +14,6 @@
 #include "Render/Dx10/ProgramDx10.h"
 #include "Render/Dx10/TypesDx10.h"
 #include "Render/Dx10/Utilities.h"
-#include "Render/DisplayMode.h"
-#include "Render/VertexElement.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -95,14 +94,13 @@ bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
 	if (FAILED(hr))
 		return 0;
 
-	for (UINT j = 0; j < count; ++j)
+	m_displayModes.resize(count);
+	for (UINT i = 0; i < count; ++i)
 	{
-		m_displayModes.push_back(new DisplayMode(
-			j,
-			m_dxgiDisplayModes[j].Width,
-			m_dxgiDisplayModes[j].Height,
-			32
-		));
+		m_displayModes[i].width = m_dxgiDisplayModes[i].Width;
+		m_displayModes[i].height = m_dxgiDisplayModes[i].Height;
+		m_displayModes[i].refreshRate = m_dxgiDisplayModes[i].RefreshRate.Numerator;
+		m_displayModes[i].colorBits = 32;
 	}
 
 	WNDCLASS wc;
@@ -157,20 +155,19 @@ void RenderSystemDx10::destroy()
 	m_d3dDevice.release();
 }
 
-int RenderSystemDx10::getDisplayModeCount() const
+uint32_t RenderSystemDx10::getDisplayModeCount() const
 {
-	return int(m_displayModes.size());
+	return uint32_t(m_displayModes.size());
 }
 
-Ref< DisplayMode > RenderSystemDx10::getDisplayMode(int index)
+DisplayMode RenderSystemDx10::getDisplayMode(uint32_t index) const
 {
-	T_ASSERT (index >= 0 && index < int(m_displayModes.size()));
 	return m_displayModes[index];
 }
 
-Ref< DisplayMode > RenderSystemDx10::getCurrentDisplayMode()
+DisplayMode RenderSystemDx10::getCurrentDisplayMode() const
 {
-	return 0;
+	return DisplayMode();
 }
 
 bool RenderSystemDx10::handleMessages()
@@ -191,19 +188,36 @@ bool RenderSystemDx10::handleMessages()
 	return going;
 }
 
-Ref< IRenderView > RenderSystemDx10::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	DXGI_SWAP_CHAIN_DESC scd;
 	DXGI_MODE_DESC* dmd;
 	HRESULT hr;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_SHOWWINDOW);
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_SHOWWINDOW);
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 	UpdateWindow(m_hWnd);
 
-	dmd = &m_dxgiDisplayModes[displayMode->getIndex()];
-	T_ASSERT (dmd);
+	// Find matching display mode.
+	dmd = 0;
+	for (uint32_t i = 0; i < m_displayModes.size(); ++i)
+	{
+		const DisplayMode& dm = m_displayModes[i];
+		if (dm.width == desc.displayMode.width && dm.height == desc.displayMode.height)
+		{
+			if (desc.displayMode.refreshRate != 0 && dm.refreshRate != desc.displayMode.refreshRate)
+				continue;
+
+			dmd = &m_dxgiDisplayModes[i];
+			break;
+		}
+	}
+	if (!dmd)
+	{
+		log::error << L"Unable to create render view; display mode not supported" << Endl;
+		return 0;
+	}
 
 	std::memset(&scd, 0, sizeof(scd));
 	scd.SampleDesc.Count = 1;
@@ -240,13 +254,13 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(const DisplayMode* display
 	);
 }
 
-Ref< IRenderView > RenderSystemDx10::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemDx10::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 	ComRef< IDXGISwapChain > d3dSwapChain;
 	HRESULT hr;
 
 	RECT rc;
-	GetClientRect((HWND)windowHandle, &rc);
+	GetClientRect((HWND)desc.nativeWindowHandle, &rc);
 
 	if (rc.right <= rc.left)
 		rc.right = 8;
@@ -264,7 +278,7 @@ Ref< IRenderView > RenderSystemDx10::createRenderView(void* windowHandle, const 
 	scd.BufferDesc.RefreshRate.Numerator = 60;
 	scd.BufferDesc.RefreshRate.Denominator = 1;
 	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	scd.OutputWindow = (HWND)windowHandle;
+	scd.OutputWindow = (HWND)desc.nativeWindowHandle;
 	scd.Windowed = TRUE;
 
 	if (!setupSampleDesc(m_d3dDevice, desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))

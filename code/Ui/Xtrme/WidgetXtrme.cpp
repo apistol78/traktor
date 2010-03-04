@@ -27,13 +27,14 @@ bool WidgetXtrme::create(Widget* parent, int style)
 	if (!Widget::create(parent, style))
 		return false;
 
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
-	m_renderView = ms_renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);
+	m_renderView = ms_renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

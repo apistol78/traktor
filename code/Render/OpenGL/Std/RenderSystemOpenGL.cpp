@@ -1,5 +1,8 @@
 #include <algorithm>
 #include <locale>
+#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
@@ -14,10 +17,6 @@
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
-#include "Render/DisplayMode.h"
-#include "Render/VertexElement.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Log/Log.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
@@ -190,17 +189,17 @@ void RenderSystemOpenGL::destroy()
 	}
 }
 
-int RenderSystemOpenGL::getDisplayModeCount() const
+uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 {
 #if defined(_WIN32)
 
-	int count = 0;
+	uint32_t count = 0;
 
-	DEVMODE dm;
-	memset(&dm, 0, sizeof(dm));
-	dm.dmSize = sizeof(dm);
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
 
-	while (EnumDisplaySettings(NULL, count, &dm))
+	while (EnumDisplaySettings(NULL, count, &dmgl))
 		++count;
 
 	return count;
@@ -210,46 +209,44 @@ int RenderSystemOpenGL::getDisplayModeCount() const
 #endif
 }
 
-Ref< DisplayMode > RenderSystemOpenGL::getDisplayMode(int index)
+DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 {
 #if defined(_WIN32)
 
-	DEVMODE dm;
-	memset(&dm, 0, sizeof(dm));
-	dm.dmSize = sizeof(dm);
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
 
-	if (!EnumDisplaySettings(NULL, index, &dm))
-		return 0;
+	EnumDisplaySettings(NULL, index, &dmgl);
 
-	return new DisplayMode(
-		index,
-		dm.dmPelsWidth,
-		dm.dmPelsHeight,
-		dm.dmBitsPerPel
-	);
+	DisplayMode dm;
+	dm.width = dmgl.dmPelsWidth;
+	dm.height = dmgl.dmPelsHeight;
+	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
+	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
+	return dm;
 
 #else
 	return 0;
 #endif
 }
 
-Ref< DisplayMode > RenderSystemOpenGL::getCurrentDisplayMode()
+DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 {
 #if defined(_WIN32)
 
-	DEVMODE dm;
-	memset(&dm, 0, sizeof(dm));
-	dm.dmSize = sizeof(dm);
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
 
-	if (!EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dm))
-		return 0;
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dmgl);
 
-	return new DisplayMode(
-		ENUM_CURRENT_SETTINGS,
-		dm.dmPelsWidth,
-		dm.dmPelsHeight,
-		dm.dmBitsPerPel
-	);
+	DisplayMode dm;
+	dm.width = dmgl.dmPelsWidth;
+	dm.height = dmgl.dmPelsHeight;
+	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
+	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
+	return dm;
 
 #else
 	return 0;
@@ -280,7 +277,7 @@ bool RenderSystemOpenGL::handleMessages()
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGL::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -300,19 +297,32 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const DisplayMode* displ
 	if (!m_hWnd)
 		return 0;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_SHOWWINDOW);
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_SHOWWINDOW);
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 	UpdateWindow(m_hWnd);
 
-	DEVMODE dm;
-	std::memset(&dm, 0, sizeof(dm));
-	dm.dmSize = sizeof(dm);
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
 
-	if (!EnumDisplaySettings(NULL, displayMode->getIndex(), &dm))
-		return 0;
+	for (UINT count = 0; EnumDisplaySettings(NULL, count, &dmgl); ++count)
+	{
+		if (
+			dmgl.dmPelsWidth == desc.displayMode.width &&
+			dmgl.dmPelsHeight == desc.displayMode.height
+		)
+		{
+			if (desc.displayMode.colorBits != 0 && dmgl.dmBitsPerPel != desc.displayMode.colorBits)
+				continue;
+			if (desc.displayMode.refreshRate != 0 && dmgl.dmDisplayFrequency != desc.displayMode.refreshRate)
+				continue;
 
-	if (ChangeDisplaySettings(&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
-		return 0;
+			if (ChangeDisplaySettings(&dmgl, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
+				return 0;
+
+			break;
+		}
+	}
 
 	PIXELFORMATDESCRIPTOR pfd =
 	{
@@ -361,7 +371,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const DisplayMode* displ
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -387,7 +397,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 		0, 0, 0
 	};
 
-	HDC hDC = GetDC((HWND)windowHandle);
+	HDC hDC = GetDC((HWND)desc.nativeWindowHandle);
 	if (!hDC)
 		return 0;
 
@@ -402,7 +412,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 	if (!hRC)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL((HWND)windowHandle, hDC, hRC);
+	Ref< ContextOpenGL > context = new ContextOpenGL((HWND)desc.nativeWindowHandle, hDC, hRC);
 	m_globalContext->share(context);
 
 	context->enter();
@@ -412,12 +422,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 
 	context->leave();
 
-	return new RenderViewOpenGL(context, m_globalContext, (HWND)windowHandle);
+	return new RenderViewOpenGL(context, m_globalContext, (HWND)desc.nativeWindowHandle);
 
 #elif defined(__APPLE__)
 
 	void* glcontext = cglwCreateContext(
-		windowHandle,
+		desc.nativeWindowHandle,
 		m_globalContext->getGLContext(),
 		desc.depthBits,
 		desc.stencilBits,
@@ -432,7 +442,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(void* windowHandle, cons
 
 #else	// LINUX
 
-	struct Handle { Display* display; Window window; }* handle = reinterpret_cast< Handle* >(windowHandle);
+	struct Handle { Display* display; Window window; }* handle = reinterpret_cast< Handle* >(desc.nativeWindowHandle);
 
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, 16, None };
 	XVisualInfo* visual = glXChooseVisual(handle->display, DefaultScreen(handle->display), attribs);

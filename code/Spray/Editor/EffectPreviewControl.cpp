@@ -81,13 +81,14 @@ bool EffectPreviewControl::create(ui::Widget* parent, int style, resource::IReso
 	if (!Widget::create(parent, style))
 		return false;
 
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
-	m_renderView = renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);
+	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

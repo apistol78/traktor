@@ -434,6 +434,11 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 	return S_OK;
 }
 
+void RenderViewWin32::setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent)
+{
+	m_d3dPresent = d3dPresent;
+}
+
 void RenderViewWin32::bindTargets()
 {
 	T_ASSERT (m_targetDirty);
