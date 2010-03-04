@@ -91,14 +91,15 @@ bool FlashPreviewControl::create(ui::Widget* parent, int style, resource::IResou
 		return false;
 
 #if T_USE_ACCELERATED_RENDERER
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 8;
 	desc.multiSample = 0;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = getIWidget()->getSystemHandle();
 
 	m_renderSystem = renderSystem;
-	m_renderView = renderSystem->createRenderView(getIWidget()->getSystemHandle(), desc);
+	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

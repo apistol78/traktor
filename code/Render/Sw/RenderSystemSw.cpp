@@ -1,3 +1,8 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Graphics/IGraphicsSystem.h"
+#include "Render/VertexElement.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Sw/RenderSystemSw.h"
 #include "Render/Sw/RenderViewSw.h"
 #include "Render/Sw/VertexBufferSw.h"
@@ -9,12 +14,6 @@
 #include "Render/Sw/ProgramResourceSw.h"
 #include "Render/Sw/Emitter/Emitter.h"
 #include "Render/Sw/Emitter/EmitterContext.h"
-#include "Render/DisplayMode.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/VertexElement.h"
-#include "Graphics/IGraphicsSystem.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
@@ -96,24 +95,24 @@ void RenderSystemSw::destroy()
 {
 }
 
-int RenderSystemSw::getDisplayModeCount() const
+uint32_t RenderSystemSw::getDisplayModeCount() const
 {
-	return int(m_displayModes.size());
+	return uint32_t(m_displayModes.size());
 }
 
-Ref< DisplayMode > RenderSystemSw::getDisplayMode(int index)
+DisplayMode RenderSystemSw::getDisplayMode(uint32_t index) const
 {
-	return new DisplayMode(
-		index,
-		m_displayModes[index].width,
-		m_displayModes[index].height,
-		m_displayModes[index].bits
-	);
+	DisplayMode dm;
+	dm.width = m_displayModes[index].width;
+	dm.height = m_displayModes[index].height;
+	dm.refreshRate = 0;
+	dm.colorBits = m_displayModes[index].bits;
+	return dm;
 }
 
-Ref< DisplayMode > RenderSystemSw::getCurrentDisplayMode()
+DisplayMode RenderSystemSw::getCurrentDisplayMode() const
 {
-	return 0;
+	return DisplayMode();
 }
 
 bool RenderSystemSw::handleMessages()
@@ -140,7 +139,7 @@ bool RenderSystemSw::handleMessages()
 #endif
 }
 
-Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
@@ -153,8 +152,8 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMo
 		WS_POPUP,
 		0,
 		0,
-		displayMode->getWidth(),
-		displayMode->getHeight(),
+		desc.displayMode.width,
+		desc.displayMode.height,
 		NULL,
 		NULL,
 		static_cast< HMODULE >(GetModuleHandle(NULL)),
@@ -179,9 +178,9 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMo
 
 	graphicsDesc.windowHandle = m_hWnd;
 	graphicsDesc.fullScreen = true;
-	graphicsDesc.displayMode.width = displayMode->getWidth();
-	graphicsDesc.displayMode.height = displayMode->getHeight();
-	graphicsDesc.displayMode.bits = displayMode->getColorBits();
+	graphicsDesc.displayMode.width = desc.displayMode.width;
+	graphicsDesc.displayMode.height = desc.displayMode.height;
+	graphicsDesc.displayMode.bits = desc.displayMode.colorBits;
 	graphicsDesc.pixelFormat = graphics::PfeR5G6B5;
 
 	if (!graphicsSystem->create(graphicsDesc))
@@ -190,12 +189,12 @@ Ref< IRenderView > RenderSystemSw::createRenderView(const DisplayMode* displayMo
 	return new RenderViewSw(this, graphicsSystem, m_processor);
 }
 
-Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemSw::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 	Ref< graphics::IGraphicsSystem > graphicsSystem;
 	graphics::CreateDesc graphicsDesc;
 
-	graphicsDesc.windowHandle = windowHandle;
+	graphicsDesc.windowHandle = desc.nativeWindowHandle;
 	graphicsDesc.fullScreen = false;
 	graphicsDesc.displayMode.width = 16;
 	graphicsDesc.displayMode.height = 16;
@@ -210,7 +209,7 @@ Ref< IRenderView > RenderSystemSw::createRenderView(void* windowHandle, const Re
 #	endif
 
 	RECT rc;
-	GetClientRect((HWND)windowHandle, &rc);
+	GetClientRect((HWND)desc.nativeWindowHandle, &rc);
 	graphicsDesc.displayMode.width = std::max(int(rc.right - rc.left), 16);
 	graphicsDesc.displayMode.height = std::max(int(rc.bottom - rc.top), 16);
 

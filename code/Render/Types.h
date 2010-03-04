@@ -146,6 +146,23 @@ struct Viewport
 	}
 };
 
+/*! \brief Display mode structure. */
+struct DisplayMode
+{
+	uint32_t width;
+	uint32_t height;
+	uint16_t refreshRate;
+	uint16_t colorBits;
+
+	DisplayMode()
+	:	width(0)
+	,	height(0)
+	,	refreshRate(0)
+	,	colorBits(0)
+	{
+	}
+};
+
 /*! \brief Descriptor for render system. */
 struct RenderSystemCreateDesc
 {
@@ -170,6 +187,31 @@ struct RenderViewCreateDesc
 	,	stencilBits(0)
 	,	multiSample(0)
 	,	waitVBlank(false)
+	{
+	}
+};
+
+/*! \brief Descriptor for default render views. */
+struct RenderViewCreateDefaultDesc : public RenderViewCreateDesc
+{
+	DisplayMode displayMode;
+	bool fullscreen;
+
+	RenderViewCreateDefaultDesc()
+	:	RenderViewCreateDesc()
+	,	fullscreen(true)
+	{
+	}
+};
+
+/*! \brief Descriptor for embedded render views. */
+struct RenderViewCreateEmbeddedDesc : public RenderViewCreateDesc
+{
+	void* nativeWindowHandle;
+
+	RenderViewCreateEmbeddedDesc()
+	:	RenderViewCreateDesc()
+	,	nativeWindowHandle(0)
 	{
 	}
 };

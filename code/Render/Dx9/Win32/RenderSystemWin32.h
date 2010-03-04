@@ -46,17 +46,17 @@ public:
 
 	virtual void destroy();
 
-	virtual int getDisplayModeCount() const;
+	virtual uint32_t getDisplayModeCount() const;
 	
-	virtual Ref< DisplayMode > getDisplayMode(int index);
+	virtual DisplayMode getDisplayMode(uint32_t index) const;
 	
-	virtual Ref< DisplayMode > getCurrentDisplayMode();
+	virtual DisplayMode getCurrentDisplayMode() const;
 
 	virtual bool handleMessages();
 
-	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewCreateDefaultDesc& desc);
 
-	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc);
+	virtual Ref< IRenderView > createRenderView(const RenderViewCreateEmbeddedDesc& desc);
 
 	virtual Ref< VertexBuffer > createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic);
 

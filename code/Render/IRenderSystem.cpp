@@ -1,7 +1,6 @@
 #include <limits>
-#include "Render/IRenderSystem.h"
-#include "Render/DisplayMode.h"
 #include "Core/Math/MathUtils.h"
+#include "Render/IRenderSystem.h"
 
 namespace traktor
 {
@@ -10,42 +9,27 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.IRenderSystem", IRenderSystem, Object)
 
-Ref< DisplayMode > IRenderSystem::findDisplayMode(const DisplayMode* criteria)
+bool IRenderSystem::findDisplayMode(const DisplayMode& criteria, DisplayMode& outBestMatch) const
 {
-	int bestMatch = std::numeric_limits< int >::max();
-	Ref< DisplayMode > best;
+	int32_t bestMatch = std::numeric_limits< int32_t >::max();
 	
-	// Try to find the best matching display mode using a weight criteria.
-	for (int i = 0; i < getDisplayModeCount(); ++i)
+	for (uint32_t i = 0; i < getDisplayModeCount(); ++i)
 	{
-		Ref< DisplayMode > check = getDisplayMode(i);
-		if (check != 0)
+		DisplayMode check = getDisplayMode(i);
+		int32_t match =
+			abs< int32_t >(
+				(int32_t)(check.width - criteria.width) +
+				(int32_t)(check.height - criteria.height) +
+				(int32_t)(check.colorBits - criteria.colorBits) * 10
+			);
+		if (match < bestMatch)
 		{
-			int32_t match =
-				abs< int32_t >(
-					(int32_t)(check->getWidth() - criteria->getWidth()) +
-					(int32_t)(check->getHeight() - criteria->getHeight()) +
-					(int32_t)(check->getColorBits() - criteria->getColorBits()) * 10
-				);
-			if (match == 0)
-			{
-				// Better than this isn't possible.
-				best = check;
-				break;
-			}
-			else
-			{
-				// Is it better than any previously found.
-				if (best == 0 || match < bestMatch)
-				{
-					best = check;
-					bestMatch = match;
-				}
-			}
+			outBestMatch = check;
+			bestMatch = match;
 		}
 	}
 	
-	return best;
+	return bestMatch != std::numeric_limits< int32_t >::max();
 }
 
 	}

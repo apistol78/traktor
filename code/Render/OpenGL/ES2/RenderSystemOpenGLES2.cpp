@@ -1,5 +1,8 @@
 #include <algorithm>
 #include <locale>
+#include "Core/Log/Log.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
@@ -13,10 +16,6 @@
 #if defined(TARGET_OS_IPHONE)
 #	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
 #endif
-#include "Render/DisplayMode.h"
-#include "Render/VertexElement.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -79,19 +78,19 @@ void RenderSystemOpenGLES2::destroy()
 #endif
 }
 
-int RenderSystemOpenGLES2::getDisplayModeCount() const
+uint32_t RenderSystemOpenGLES2::getDisplayModeCount() const
 {
 	return 0;
 }
 
-Ref< DisplayMode > RenderSystemOpenGLES2::getDisplayMode(int index)
+DisplayMode RenderSystemOpenGLES2::getDisplayMode(uint32_t index) const
 {
-	return 0;
+	return DisplayMode();
 }
 
-Ref< DisplayMode > RenderSystemOpenGLES2::getCurrentDisplayMode()
+DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 {
-	return 0;
+	return DisplayMode();
 }
 
 bool RenderSystemOpenGLES2::handleMessages()
@@ -117,7 +116,7 @@ bool RenderSystemOpenGLES2::handleMessages()
 	return true;
 }
 
-Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 #if defined(_WIN32)
 	if (m_hWnd)
@@ -139,20 +138,27 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const DisplayMode* di
 	if (!m_hWnd)
 		return 0;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_NOMOVE);
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, desc.displayMode.width, desc.displayMode.height, SWP_NOMOVE);
 
-	return createRenderView(m_hWnd, desc);
+	RenderViewCreateEmbeddedDesc desc2;
+	desc2.depthBits = desc.depthBits;
+	desc2.stencilBits = desc.stencilBits;
+	desc2.multiSample = desc.multiSample;
+	desc2.waitVBlank = desc.waitVBlank;
+	desc2.nativeWindowHandle = m_hWnd;
+
+	return createRenderView(desc2);
 #else
 	return 0;
 #endif
 }
 
-Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 #if !defined(T_OFFLINE_ONLY)
 #	if defined(TARGET_OS_IPHONE)
 	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (!wrapper->create(windowHandle, desc.depthBits != 0))
+	if (!wrapper->create(desc.nativeWindowHandle, desc.depthBits != 0))
 		return 0;
 		
 	return new RenderViewOpenGLES2(m_globalContext, wrapper);
@@ -160,7 +166,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(void* windowHandle, c
 	const uint32_t c_maxConfigAttrSize = 32;
 	const uint32_t c_maxMatchConfigs = 64;
 
-	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)windowHandle;
+	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)desc.nativeWindowHandle;
 
 	m_display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 	if (m_display == EGL_NO_DISPLAY) 

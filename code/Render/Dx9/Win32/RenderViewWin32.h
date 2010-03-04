@@ -90,6 +90,8 @@ public:
 
 	HRESULT resetDevice(IDirect3DDevice9* d3dDevice);
 
+	void setD3DPresent(const D3DPRESENT_PARAMETERS& d3dPresent);
+
 	// \}
 
 private:

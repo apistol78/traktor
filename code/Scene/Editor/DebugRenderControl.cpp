@@ -30,13 +30,14 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	if (!m_renderWidget->create(parent))
 		return false;
 
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 0;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
-	m_renderView = m_context->getRenderSystem()->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
+	m_renderView = m_context->getRenderSystem()->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

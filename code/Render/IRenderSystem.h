@@ -19,7 +19,6 @@ namespace traktor
 	namespace render
 	{
 
-class DisplayMode;
 class IRenderView;
 class VertexElement;
 class VertexBuffer;
@@ -67,26 +66,26 @@ public:
 	 * preferably display modes supported by both graphics card
 	 * and monitor.
 	 */
-	virtual int getDisplayModeCount() const = 0;
+	virtual uint32_t getDisplayModeCount() const = 0;
 	
 	/*! \brief Get display mode.
 	 *
 	 * Get information about display mode from index 0 - (getDisplayMode() - 1).
 	 */
-	virtual Ref< DisplayMode > getDisplayMode(int index) = 0;
+	virtual DisplayMode getDisplayMode(uint32_t index) const = 0;
 	
 	/*! \brief Get current display mode.
 	 *
 	 * Get information about currently set display mode.
 	 */
-	virtual Ref< DisplayMode > getCurrentDisplayMode() = 0;
+	virtual DisplayMode getCurrentDisplayMode() const = 0;
 	
 	/*! \brief Find supported display mode from criterion.
 	 *
 	 * Find best matching and supported display mode from a criterion.
 	 * Using a simple heuristics to find best matching mode, width + height + color depth * 10.
 	 */
-	virtual Ref< DisplayMode > findDisplayMode(const DisplayMode* criteria);
+	virtual bool findDisplayMode(const DisplayMode& criteria, DisplayMode& outBestMatch) const;
 	
 	//@}
 
@@ -106,11 +105,11 @@ public:
 	/*! \name Render view creation. */
 	//@{
 	
-	/*! \brief Create full screen render view. */
-	virtual Ref< IRenderView > createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc) = 0;
+	/*! \brief Create default render view. */
+	virtual Ref< IRenderView > createRenderView(const RenderViewCreateDefaultDesc& desc) = 0;
 
-	/*! \brief Create windowed render view. */
-	virtual Ref< IRenderView > createRenderView(void* windowHandle, const RenderViewCreateDesc& desc) = 0;
+	/*! \brief Create embedded render view. */
+	virtual Ref< IRenderView > createRenderView(const RenderViewCreateEmbeddedDesc& desc) = 0;
 	
 	//@}
 

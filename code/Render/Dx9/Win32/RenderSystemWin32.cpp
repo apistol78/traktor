@@ -4,7 +4,6 @@
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/Acquire.h"
-#include "Render/DisplayMode.h"
 #include "Render/VertexElement.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Dx9/CubeTextureDx9.h"
@@ -31,6 +30,64 @@ namespace traktor
 		{
 
 const TCHAR* c_className = _T("TraktorRenderSystem");
+
+uint16_t colorBitsFromFormat(D3DFORMAT d3dFormat)
+{
+	switch (d3dFormat)
+	{
+	case D3DFMT_A2R10G10B10:
+	case D3DFMT_A8R8G8B8:
+		return 32;
+	case D3DFMT_X8R8G8B8:
+		return 24;
+	case D3DFMT_A1R5G5B5:
+		return 16;
+	case D3DFMT_X1R5G5B5:
+	case D3DFMT_R5G6B5:
+		return 15;
+	}
+	return 0;
+}
+
+void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool fullScreen)
+{
+	if (fullScreen)
+	{
+		SetWindowLong(hWnd, GWL_STYLE, WS_POPUPWINDOW);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+	}
+	else
+	{
+		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
+		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+	}
+
+	RECT rcWindow;
+	GetWindowRect(hWnd, &rcWindow);
+
+	RECT rcClient;
+	GetClientRect(hWnd, &rcClient);
+
+	int32_t windowWidth = rcWindow.right - rcWindow.left;
+	int32_t windowHeight = rcWindow.bottom - rcWindow.top;
+
+	int32_t realClientWidth = rcClient.right - rcClient.left;
+	int32_t realClientHeight = rcClient.bottom - rcClient.top;
+
+	windowWidth = (windowWidth - realClientWidth) + clientWidth;
+	windowHeight = (windowHeight - realClientHeight) + clientHeight;
+
+	if (fullScreen)
+	{
+		SetWindowPos(hWnd, NULL, 0, 0, windowWidth, windowHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_SHOWWINDOW);
+	}
+	else
+	{
+		SetWindowPos(hWnd, NULL, 128, 128, windowWidth, windowHeight, SWP_NOZORDER | SWP_SHOWWINDOW);
+	}
+
+	UpdateWindow(hWnd);
+}
 
 		}
 
@@ -194,34 +251,32 @@ void RenderSystemWin32::destroy()
 	m_d3d.release();
 }
 
-int RenderSystemWin32::getDisplayModeCount() const
+uint32_t RenderSystemWin32::getDisplayModeCount() const
 {
-	return int(m_d3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format));
+	return uint32_t(m_d3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format));
 }
 
-Ref< DisplayMode > RenderSystemWin32::getDisplayMode(int index)
+DisplayMode RenderSystemWin32::getDisplayMode(uint32_t index) const
 {
-	D3DDISPLAYMODE dm;
-	
-	if (FAILED(m_d3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format, index, &dm)))
-		return 0;
-	
-	return new DisplayMode(
-		index,
-		dm.Width,
-		dm.Height,
-		0
-	);
+	D3DDISPLAYMODE d3ddm;
+	m_d3d->EnumAdapterModes(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format, index, &d3ddm);
+
+	DisplayMode dm;
+	dm.width = d3ddm.Width;
+	dm.height = d3ddm.Height;
+	dm.refreshRate = d3ddm.RefreshRate;
+	dm.colorBits = colorBitsFromFormat(d3ddm.Format);
+	return dm;
 }
 
-Ref< DisplayMode > RenderSystemWin32::getCurrentDisplayMode()
+DisplayMode RenderSystemWin32::getCurrentDisplayMode() const
 {
-	return new DisplayMode(
-		0,
-		m_d3dDefaultDisplayMode.Width,
-		m_d3dDefaultDisplayMode.Height,
-		0
-	);
+	DisplayMode dm;
+	dm.width = m_d3dDefaultDisplayMode.Width;
+	dm.height = m_d3dDefaultDisplayMode.Height;
+	dm.refreshRate = m_d3dDefaultDisplayMode.RefreshRate;
+	dm.colorBits = colorBitsFromFormat(m_d3dDefaultDisplayMode.Format);
+	return dm;
 }
 
 bool RenderSystemWin32::handleMessages()
@@ -242,7 +297,7 @@ bool RenderSystemWin32::handleMessages()
 	return going;
 }
 
-Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 	D3DFORMAT d3dDepthStencilFormat;
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
@@ -250,16 +305,13 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 
 	T_ASSERT (m_hWnd);
 	T_ASSERT (m_renderViews.empty());
-	T_ASSERT (displayMode);
 
 	// Determine output aspect ratio from default display mode; not
 	// correct but we assume user have a matching resolution and monitor
 	// have square pixels.
 	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 
-	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, displayMode->getWidth(), displayMode->getHeight(), SWP_SHOWWINDOW);
-	ShowWindow(m_hWnd, SW_MAXIMIZE);
-	UpdateWindow(m_hWnd);
+	setWindowStyle(m_hWnd, desc.displayMode.width, desc.displayMode.height, desc.fullscreen);
 
 	if (desc.stencilBits == 1)
 		d3dDepthStencilFormat = D3DFMT_D15S1;
@@ -281,12 +333,12 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	std::memset(&m_d3dPresent, 0, sizeof(m_d3dPresent));
 	m_d3dPresent.BackBufferFormat = D3DFMT_X8R8G8B8;
 	m_d3dPresent.BackBufferCount = 1;
-	m_d3dPresent.BackBufferWidth = displayMode->getWidth();
-	m_d3dPresent.BackBufferHeight = displayMode->getHeight();
+	m_d3dPresent.BackBufferWidth = desc.displayMode.width;
+	m_d3dPresent.BackBufferHeight = desc.displayMode.height;
 	m_d3dPresent.MultiSampleType = d3dMultiSample;
 	m_d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
 	m_d3dPresent.hDeviceWindow = m_hWnd;
-	m_d3dPresent.Windowed = FALSE;
+	m_d3dPresent.Windowed = desc.fullscreen ? FALSE : TRUE;
 	m_d3dPresent.EnableAutoDepthStencil = FALSE;
 	m_d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE;
 	m_d3dPresent.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
@@ -311,7 +363,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const DisplayMode* displa
 	return renderView;
 }
 
-Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 	D3DPRESENT_PARAMETERS d3dPresent;
 	D3DFORMAT d3dDepthStencilFormat;
@@ -324,7 +376,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	// have square pixels.
 	float aspectRatio = float(m_d3dDefaultDisplayMode.Width) / m_d3dDefaultDisplayMode.Height;
 
-	GetClientRect((HWND)windowHandle, &rcWindow);
+	GetClientRect((HWND)desc.nativeWindowHandle, &rcWindow);
 	if (rcWindow.left >= rcWindow.right)
 		rcWindow.right = rcWindow.left + 10;
 	if (rcWindow.top >= rcWindow.bottom)
@@ -354,7 +406,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(void* windowHandle, const
 	d3dPresent.BackBufferHeight = rcWindow.bottom - rcWindow.top;
 	d3dPresent.MultiSampleType = d3dMultiSample;
 	d3dPresent.SwapEffect = D3DSWAPEFFECT_DISCARD;
-	d3dPresent.hDeviceWindow = (HWND)windowHandle;
+	d3dPresent.hDeviceWindow = (HWND)desc.nativeWindowHandle;
 	d3dPresent.Windowed = TRUE;
 	d3dPresent.EnableAutoDepthStencil = FALSE;
 	d3dPresent.PresentationInterval = desc.waitVBlank ? D3DPRESENT_INTERVAL_ONE : D3DPRESENT_INTERVAL_IMMEDIATE;
@@ -496,38 +548,11 @@ void RenderSystemWin32::toggleMode()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
 
-	if (m_d3dPresent.Windowed)
-	{
-		log::debug << L"Enter fullscreen mode" << Endl;
+	m_d3dPresent.Windowed = !m_d3dPresent.Windowed;
+	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
 
-		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUPWINDOW);
-		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW);
-		ShowWindow(m_hWnd, SW_MAXIMIZE);
-		UpdateWindow(m_hWnd);
-
-		m_d3dPresent.Windowed = FALSE;
-	}
-	else
-	{
-		log::debug << L"Enter windowed mode" << Endl;
-
-		SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-		SetWindowPos(m_hWnd, HWND_TOP, 64, 64, 0, 0, SWP_FRAMECHANGED | SWP_NOSIZE | SWP_SHOWWINDOW);
-		ShowWindow(m_hWnd, SW_NORMAL);
-		UpdateWindow(m_hWnd);
-
-		RECT rcWindow;
-		GetClientRect(m_hWnd, &rcWindow);
-
-		int32_t frameWidth = 2 * m_d3dPresent.BackBufferWidth - (rcWindow.right - rcWindow.left);
-		int32_t frameHeight = 2 * m_d3dPresent.BackBufferHeight - (rcWindow.bottom - rcWindow.top);
-
-		log::debug << L"Window size " << frameWidth << L"x" << frameHeight << Endl;
-
-		SetWindowPos(m_hWnd, NULL, 0, 0, frameWidth, frameHeight, SWP_NOMOVE | SWP_NOZORDER);
-
-		m_d3dPresent.Windowed = TRUE;
-	}
+	if (!m_renderViews.empty())
+		m_renderViews.front()->setD3DPresent(m_d3dPresent);
 
 	resetDevice();
 }
@@ -628,6 +653,8 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_SETCURSOR:
 		if (!renderSystem->m_d3dPresent.Windowed)
 			SetCursor(NULL);
+		else
+			SetCursor(LoadCursor(NULL, IDC_ARROW));
 		break;
 	
 	default:

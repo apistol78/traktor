@@ -101,13 +101,14 @@ bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* 
 
 	m_site->createAdditionalPanel(m_skeletonPanel, 250, false);
 
-	render::RenderViewCreateDesc desc;
+	render::RenderViewCreateEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
 	desc.multiSample = 4;
 	desc.waitVBlank = false;
+	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
-	m_renderView = renderSystem->createRenderView(m_renderWidget->getIWidget()->getSystemHandle(), desc);
+	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 

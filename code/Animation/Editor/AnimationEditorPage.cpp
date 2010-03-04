@@ -231,17 +231,18 @@ bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite*
 	{
 		Ref< RenderWidgetData > data = m_renderWidgets[i]->getData< RenderWidgetData >(L"DATA");
 
-		render::RenderViewCreateDesc desc;
+		render::RenderViewCreateEmbeddedDesc desc;
 		desc.depthBits = 16;
 		desc.stencilBits = 0;
 		desc.multiSample = 4;
 		desc.waitVBlank = false;
+		desc.nativeWindowHandle = m_renderWidgets[i]->getIWidget()->getSystemHandle();
 
 		data->orthogonal = i > 0;
 		data->cameraAngleX = c_cameraAngles[i][0];
 		data->cameraAngleY = c_cameraAngles[i][1];
 
-		data->renderView = renderSystem->createRenderView(m_renderWidgets[i]->getIWidget()->getSystemHandle(), desc);
+		data->renderView = renderSystem->createRenderView(desc);
 		if (!data->renderView)
 			return false;
 
