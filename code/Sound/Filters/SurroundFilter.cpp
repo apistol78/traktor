@@ -13,6 +13,15 @@ namespace traktor
 		namespace
 		{
 
+float angleRange(float angle)
+{
+	while (angle < 0.0f)
+		angle += TWO_PI;
+	while (angle > TWO_PI)
+		angle -= TWO_PI;
+	return angle;
+}
+
 float angleDifference(float angle1, float angle2)
 {
 	float A = abs(angle1 - angle2);
@@ -24,6 +33,19 @@ float angleDifference(float angle1, float angle2)
 struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	float m_buffer[SbcMaxChannelCount][4096];
+};
+
+const struct Speaker
+{
+	float angle;
+	int channel;
+}
+c_speakers[] =
+{
+	{ deg2rad(45), SbcRight },
+	{ deg2rad(135), SbcLeft },
+	{ deg2rad(225), SbcRearLeft },
+	{ deg2rad(315), SbcRearRight }
 };
 
 		}
@@ -52,19 +74,6 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
-	const struct Speaker
-	{
-		float angle;
-		int channel;
-	}
-	c_speakers[] =
-	{
-		{ deg2rad(45), SbcRight },
-		{ deg2rad(135), SbcLeft },
-		{ deg2rad(225), SbcRearLeft },
-		{ deg2rad(315), SbcRearRight }
-	};
-
 	// Collapse all channels; should be mono sound sources.
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
@@ -86,7 +95,7 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 
 	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
 	float speakerDistance = speakerPosition.xyz0().length();
-	float speakerAngle = atan2f(speakerPosition.x(), speakerPosition.z()) + PI;
+	float speakerAngle = angleRange(atan2f(speakerPosition.x(), speakerPosition.z()) + PI);
 
 	float maxDistance = m_environment->getMaxDistance();
 	float innerRadius = m_environment->getInnerRadius();

@@ -72,6 +72,8 @@ SoundDriverXAudio2::~SoundDriverXAudio2()
 
 bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 {
+	XAUDIO2_DEVICE_DETAILS deviceDetails;
+	UINT32 deviceCount;
 	HRESULT hr;
 
 #if !defined(_XBOX)
@@ -86,28 +88,60 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 #if defined(_DEBUG)
 	flags |= XAUDIO2_DEBUG_ENGINE;
 #endif
-	hr = XAudio2Create(&m_audio.getAssign(), flags);
+	hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
 	if (FAILED(hr))
 		return false;
 
-	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels);
+	m_audio->GetDeviceCount(&deviceCount);
+
+	UINT32 preferredDevice = 0;
+	for (UINT32 i = 0; i < deviceCount; i++)
+	{
+		m_audio->GetDeviceDetails(i, &deviceDetails);
+		if (deviceDetails.OutputFormat.Format.nChannels >= desc.hwChannels)
+		{
+			log::debug << L"Found preferred XAudio2 device \"" << deviceDetails.DisplayName << L"\"" << Endl;
+			preferredDevice = i;
+			break;
+		}
+	}
+
+	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels, XAUDIO2_DEFAULT_SAMPLERATE, 0, preferredDevice, NULL);
 	if (FAILED(hr))
 		return false;
 
 	m_masteringVoice->SetVolume(1.0f);
 
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
-	m_wfx.cbSize = sizeof(m_wfx);
-	m_wfx.wFormatTag = WAVE_FORMAT_PCM;
-	m_wfx.nChannels = desc.hwChannels;
-	m_wfx.nSamplesPerSec = desc.sampleRate;
-	m_wfx.wBitsPerSample = desc.bitsPerSample;
-	m_wfx.nBlockAlign = m_wfx.nChannels * m_wfx.wBitsPerSample / 8;
-	m_wfx.nAvgBytesPerSec = m_wfx.nSamplesPerSec * m_wfx.nBlockAlign;
+	m_wfx.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE);
+	m_wfx.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+	m_wfx.Format.nChannels = desc.hwChannels;
+	m_wfx.Format.nSamplesPerSec = desc.sampleRate;
+	m_wfx.Format.wBitsPerSample = desc.bitsPerSample;
+	m_wfx.Format.nBlockAlign = desc.hwChannels * desc.bitsPerSample / 8;
+	m_wfx.Format.nAvgBytesPerSec = desc.sampleRate * m_wfx.Format.nBlockAlign;
+	m_wfx.Samples.wValidBitsPerSample = desc.bitsPerSample;
+
+	switch (desc.hwChannels)
+	{
+	case 7+1:
+		m_wfx.dwChannelMask |= SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT;
+	case 5+1:
+		m_wfx.dwChannelMask |= SPEAKER_FRONT_CENTER;
+	case 4+1:
+		m_wfx.dwChannelMask |= SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT;
+	case 2+1:
+		m_wfx.dwChannelMask |= SPEAKER_LOW_FREQUENCY;
+	case 2:
+		m_wfx.dwChannelMask |= SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+		break;
+	}
+
+	m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
 
 	m_voiceCallback = new StreamingVoiceContext(m_eventNotify);
 
-	hr = m_audio->CreateSourceVoice(&m_sourceVoice, &m_wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, m_voiceCallback, NULL, NULL);
+	hr = m_audio->CreateSourceVoice(&m_sourceVoice, (WAVEFORMATEX*)&m_wfx, 0, XAUDIO2_DEFAULT_FREQ_RATIO, m_voiceCallback, NULL, NULL);
 	if (FAILED(hr))
 		return false;
 
@@ -179,7 +213,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 	if (!m_sourceVoice)
 		return;
 
-	uint32_t blockSize = soundBlock.samplesCount * m_wfx.nChannels * m_wfx.wBitsPerSample / 8;
+	uint32_t blockSize = soundBlock.samplesCount * m_wfx.Format.nChannels * m_wfx.Format.wBitsPerSample / 8;
 
 	// Grab buffer to submit.
 	std::memset(&buffer, 0, sizeof(buffer));
@@ -189,7 +223,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 
 	// Fill buffer with samples.
 	uint8_t* data = (uint8_t*)buffer.pAudioData;
-	switch (m_wfx.wBitsPerSample)
+	switch (m_wfx.Format.wBitsPerSample)
 	{
 	case 8:
 		for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
