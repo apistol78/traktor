@@ -628,16 +628,13 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		SetWindowLongPtr(hWnd, 0, reinterpret_cast< LONG_PTR >(renderSystem));
 		break;
 
-	case WM_SYSKEYDOWN:
-		if (wParam == VK_RETURN && (lParam & (1 << 29)) != 0)
-			renderSystem->toggleMode();
-		break;
-
-#if 0
 	case WM_KEYDOWN:
-		if (wParam != VK_ESCAPE)
-			break;
-#endif
+		if (wParam == VK_RETURN)
+		{
+			if (GetAsyncKeyState(VK_CONTROL) != 0)
+				renderSystem->toggleMode();
+		}
+		break;
 	
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
