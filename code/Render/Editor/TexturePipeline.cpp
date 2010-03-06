@@ -12,6 +12,7 @@
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
+#include "Drawing/Filters/TransformFilter.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineReport.h"
@@ -180,7 +181,7 @@ struct CompressTextureTask
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 9, TexturePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TexturePipeline", 10, TexturePipeline, editor::IPipeline)
 
 TexturePipeline::TexturePipeline()
 :	m_skipMips(0)
@@ -364,9 +365,13 @@ bool TexturePipeline::buildOutput(
 	// Swizzle channels to prepare for DXT5nm compression.
 	if (m_allowCompression && textureAsset->m_enableNormalMapCompression)
 	{
+		// Negative X axis; do it here instead of in shader.
+		drawing::TransformFilter transformFilter(drawing::Color(-1.0f, 1.0f, 1.0f, 1.0f), drawing::Color(1.0f, 0.0f, 0.0f, 0.0f));
+		image = image->applyFilter(&transformFilter);
+
 		// [rgba] -> [0,g,0,r]
-		drawing::SwizzleFilter filter(L"0g0r");
-		image = image->applyFilter(&filter);
+		drawing::SwizzleFilter swizzleFilter(L"0g0r");
+		image = image->applyFilter(&swizzleFilter);
 	}
 
 	// Rescale image.

@@ -41,6 +41,8 @@ class T_DLLCLASS MeshEntity : public world::SpatialEntity
 public:
 	MeshEntity(const Transform& transform);
 
+	virtual void update(const world::EntityUpdate* update);
+
 	virtual void setTransform(const Transform& transform);
 
 	virtual bool getTransform(Transform& outTransform) const;
@@ -60,6 +62,14 @@ protected:
 	Transform m_transformPrevious;
 	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
+	bool m_first;
+
+	/*! \brief Calculate render transform.
+	 *
+	 * Use interval to interpolate between previous transform
+	 * and current transform.
+	 */
+	Transform getTransform(float interval) const;
 };
 
 	}

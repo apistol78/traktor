@@ -666,11 +666,12 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			);
 
 		// Render entities.
+		m_worldRenderView.setTimes(0.0f, deltaTime, 0.0f);
 		m_worldRenderView.setView(view);
 
 		if (rootEntity)
 		{
-			m_worldRenderer->build(m_worldRenderView, deltaTime, rootEntity, 0);
+			m_worldRenderer->build(m_worldRenderView, rootEntity, 0);
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap, 0);
 
 			if (m_renderTarget)

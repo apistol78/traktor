@@ -140,11 +140,10 @@ public:
 	/*! \brief Build "render contexts".
 	 *
 	 * \param worldRenderView World render view.
-	 * \param deltaTime Current delta time.
 	 * \param entity Root entity.
 	 * \param frame Multi threaded context frame.
 	 */
-	void build(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+	void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
 	/*! \brief Render "render contexts".
 	 *
@@ -231,7 +230,6 @@ private:
 	Ref< render::ISimpleTexture > m_shadowDiscRotation[2];
 	Ref< PostProcess > m_shadowMaskProjection;
 	AlignedVector< Frame > m_frames;
-	float m_time;
 	uint32_t m_count;
 
 	/*! \brief Build render contexts.
@@ -240,11 +238,10 @@ private:
 	 *       regardless of what is specified in the settings.
 	 *
 	 * \param worldRenderView World render view.
-	 * \param deltaTime Current delta time.
 	 * \param entity Root entity.
 	 * \param frame Multi threaded context frame.
 	 */
-	void buildShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+	void buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
 	/*! \brief Build render contexts.
 	 *
@@ -252,11 +249,10 @@ private:
 	 *       regardless of what is specified in the settings.
 	 *
 	 * \param worldRenderView World render view.
-	 * \param deltaTime Current delta time.
 	 * \param entity Root entity.
 	 * \param frame Multi threaded context frame.
 	 */
-	void buildNoShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame);
+	void buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame);
 };
 
 	}

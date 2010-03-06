@@ -686,11 +686,12 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			);
 
 		// Render entities.
+		worldRenderView.setTimes(0.0f, deltaTime, 0.0f);
 		worldRenderView.setView(view);
 
 		if (rootEntity)
 		{
-			m_worldRenderer->build(worldRenderView, deltaTime, rootEntity, 0);
+			m_worldRenderer->build(worldRenderView, rootEntity, 0);
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
 			m_worldRenderer->flush(0);
 		}

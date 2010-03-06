@@ -46,19 +46,13 @@ void StreamMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 	m_mesh->render(
 		worldContext->getRenderContext(),
 		worldRenderView,
-		m_transform,
+		getTransform(worldRenderView->getInterval()),
 		m_transformPrevious,
 		m_instance,
 		m_frame,
 		distance,
 		getParameterCallback()
 	);
-
-	m_transformPrevious = m_transform;
-}
-
-void StreamMeshEntity::update(const world::EntityUpdate* update)
-{
 }
 
 bool StreamMeshEntity::validate() const

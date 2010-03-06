@@ -86,7 +86,7 @@ public:
 
 	void setDepthMap(render::ITexture* depthMap);
 
-	void setTime(float time);
+	void setTimes(float time, float deltaTime, float interval);
 
 	void addLight(const Light& light);
 
@@ -107,60 +107,68 @@ public:
 	 */
 	void setShaderParameters(render::ShaderParameters* shaderParams, const Matrix44& world, const Matrix44& worldPrevious, const Aabb& bounds) const;
 
-	inline render::handle_t getTechnique() const {
+	T_FORCE_INLINE render::handle_t getTechnique() const {
 		return m_technique;
 	}
 
-	inline const Frustum& getViewFrustum() const {
+	T_FORCE_INLINE const Frustum& getViewFrustum() const {
 		return m_viewFrustum;
 	}
 
-	inline const Frustum& getCullFrustum() const {
+	T_FORCE_INLINE const Frustum& getCullFrustum() const {
 		return m_cullFrustum;
 	}
 
-	inline const Matrix44& getProjection() const {
+	T_FORCE_INLINE const Matrix44& getProjection() const {
 		return m_projection;
 	}
 
-	inline const Matrix44& getView() const {
+	T_FORCE_INLINE const Matrix44& getView() const {
 		return m_view;
 	}
 
-	inline const Matrix44& getViewPrevious() const {
+	T_FORCE_INLINE const Matrix44& getViewPrevious() const {
 		return m_viewPrevious;
 	}
 
-	inline const Vector2& getTargetSize() const {
+	T_FORCE_INLINE const Vector2& getTargetSize() const {
 		return m_targetSize;
 	}
 
-	inline const Vector2& getViewSize() const {
+	T_FORCE_INLINE const Vector2& getViewSize() const {
 		return m_viewSize;
 	}
 
-	inline const Vector4& getEyePosition() const {
+	T_FORCE_INLINE const Vector4& getEyePosition() const {
 		return m_eyePosition;
 	}
 
-	inline const Light& getLight(int index) const {
+	T_FORCE_INLINE const Light& getLight(int index) const {
 		return m_lights[index];
 	}
 
-	inline const Aabb& getShadowBox() const {
+	T_FORCE_INLINE const Aabb& getShadowBox() const {
 		return m_shadowBox;
 	}
 
-	inline Ref< render::ITexture > getShadowMask() const {
+	T_FORCE_INLINE Ref< render::ITexture > getShadowMask() const {
 		return m_shadowMask;
 	}
 
-	inline Ref< render::ITexture > getDepthMap() const {
+	T_FORCE_INLINE Ref< render::ITexture > getDepthMap() const {
 		return m_depthMap;
 	}
 
-	inline float getTime() const {
+	T_FORCE_INLINE float getTime() const {
 		return m_time;
+	}
+
+	T_FORCE_INLINE float getDeltaTime() const {
+		return m_deltaTime;
+	}
+
+	T_FORCE_INLINE float getInterval() const {
+		return m_interval;
 	}
 	
 private:
@@ -180,6 +188,8 @@ private:
 	float m_shadowMapBias;
 	Ref< render::ITexture > m_depthMap;
 	float m_time;
+	float m_deltaTime;
+	float m_interval;
 
 	void setTechniqueShaderParameters(render::ShaderParameters* shaderParams) const;
 

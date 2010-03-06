@@ -35,9 +35,5 @@ void IndoorMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 	);
 }
 
-void IndoorMeshEntity::update(const world::EntityUpdate* update)
-{
-}
-
 	}
 }

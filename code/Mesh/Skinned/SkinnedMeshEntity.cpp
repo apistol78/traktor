@@ -41,15 +41,11 @@ void SkinnedMeshEntity::render(world::WorldContext* worldContext, world::WorldRe
 	m_mesh->render(
 		worldContext->getRenderContext(),
 		worldRenderView,
-		m_transform,
+		getTransform(worldRenderView->getInterval()),
 		m_boneTransforms,
 		distance,
 		getParameterCallback()
 	);
-}
-
-void SkinnedMeshEntity::update(const world::EntityUpdate* update)
-{
 }
 
 bool SkinnedMeshEntity::validate() const

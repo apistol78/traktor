@@ -83,8 +83,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>1752</first>
-				<second>258</second>
+				<first>1572</first>
+				<second>230</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -113,21 +113,6 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 				<first>990</first>
 				<second>306</second>
 			</position>
-		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>1574</first>
-				<second>238</second>
-			</position>
-		</item>
-		<item type="traktor.render.Vector">
-			<comment/>
-			<position>
-				<first>1394</first>
-				<second>307</second>
-			</position>
-			<value>-1, 1, 1, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -253,26 +238,6 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
@@ -283,7 +248,7 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[14]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
