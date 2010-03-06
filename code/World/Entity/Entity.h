@@ -44,12 +44,11 @@ public:
 	 */
 	virtual void destroy();
 
-	/*! \brief Update entity state.
+	/*! \brief Update entity.
 	 *
-	 * Should be called frequently in order to update
-	 * each entity's state.
+	 * Simulate entity's state dT.
 	 *
-	 * \param update Update message.
+	 * \param update Update state.
 	 */
 	virtual void update(const EntityUpdate* update) = 0;
 

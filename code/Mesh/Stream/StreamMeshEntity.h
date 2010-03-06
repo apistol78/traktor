@@ -33,8 +33,6 @@ public:
 
 	virtual void render(world::WorldContext* worldContext, world::WorldRenderView* worldRenderView, float distance);
 
-	virtual void update(const world::EntityUpdate* update);
-
 private:
 	mutable resource::Proxy< StreamMesh > m_mesh;
 	mutable Ref< StreamMesh::Instance > m_instance;

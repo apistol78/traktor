@@ -43,8 +43,7 @@ render::handle_t WorldRenderer::ms_techniqueShadow = 0;
 render::handle_t WorldRenderer::ms_techniqueVelocity = 0;
 
 WorldRenderer::WorldRenderer()
-:	m_time(0.0f)
-,	m_count(0)
+:	m_count(0)
 {
 	ms_techniqueDefault = render::getParameterHandle(L"Default");
 	ms_techniqueDepth = render::getParameterHandle(L"Depth");
@@ -215,9 +214,7 @@ bool WorldRenderer::create(
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		i->visual = new WorldContext(this, entityRenderers);
 
-	m_time = 0.0f;
 	m_count = 0;
-
 	return true;
 }
 
@@ -278,11 +275,9 @@ void WorldRenderer::createRenderView(const WorldViewOrtho& worldView, WorldRende
 	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
 }
 
-void WorldRenderer::build(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)
+void WorldRenderer::build(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
-
-	worldRenderView.setTime(m_time);
 
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
@@ -311,15 +306,14 @@ void WorldRenderer::build(WorldRenderView& worldRenderView, float deltaTime, Ent
 		f.haveVelocity = false;
 
 	if (m_settings.shadowsEnabled)
-		buildShadows(worldRenderView, deltaTime, entity, frame);
+		buildShadows(worldRenderView, entity, frame);
 	else
-		buildNoShadows(worldRenderView, deltaTime, entity, frame);
+		buildNoShadows(worldRenderView, entity, frame);
 
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.projection = worldRenderView.getProjection();
-	f.deltaTime = deltaTime;
+	f.deltaTime = worldRenderView.getDeltaTime();
 
-	m_time += deltaTime;
 	m_count++;
 }
 
@@ -413,13 +407,13 @@ void WorldRenderer::flush(int frame)
 	f.visual->getRenderContext()->flush();
 }
 
-void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)
+void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	const WorldRenderView::Light& light = worldRenderView.getLight(0);
 	if (light.type != WorldRenderView::LtDirectional)
 	{
 		// Only primary light as directional enables shadows; do no-shadows path instead.
-		buildNoShadows(worldRenderView, deltaTime, entity, frame);
+		buildNoShadows(worldRenderView, entity, frame);
 		return;
 	}
 
@@ -504,7 +498,11 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	shadowRenderView.setEyePosition(eyePosition);
 	shadowRenderView.setViewFrustum(shadowFrustum);
 	shadowRenderView.setCullFrustum(shadowFrustum);
-	shadowRenderView.setTime(m_time);
+	shadowRenderView.setTimes(
+		worldRenderView.getTime(),
+		worldRenderView.getDeltaTime(),
+		worldRenderView.getInterval()
+	);
 
 	f.shadow->build(&shadowRenderView, entity);
 	f.shadow->flush(&shadowRenderView);
@@ -524,7 +522,7 @@ void WorldRenderer::buildShadows(WorldRenderView& worldRenderView, float deltaTi
 	f.haveShadows = true;
 }
 
-void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, float deltaTime, Entity* entity, int frame)
+void WorldRenderer::buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
 

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,6 +35,8 @@ public:
 	inline resource::Proxy< InstanceMesh >& getMesh() { return m_mesh; }
 
 private:
+	friend class InstanceMeshEntityRenderer;
+
 	mutable resource::Proxy< InstanceMesh > m_mesh;
 };
 

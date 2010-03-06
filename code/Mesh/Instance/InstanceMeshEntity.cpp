@@ -23,6 +23,7 @@ Aabb InstanceMeshEntity::getBoundingBox() const
 
 void InstanceMeshEntity::update(const world::EntityUpdate* update)
 {
+	MeshEntity::update(update);
 	m_mesh.validate();
 }
 

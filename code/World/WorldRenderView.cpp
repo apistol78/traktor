@@ -48,6 +48,8 @@ WorldRenderView::WorldRenderView()
 ,	m_lightCount(0)
 ,	m_shadowMapBias(0.0f)
 ,	m_time(0.0f)
+,	m_deltaTime(0.0f)
+,	m_interval(0.0f)
 {
 	for (int i = 0; i < MaxLightCount; ++i)
 	{
@@ -143,9 +145,11 @@ void WorldRenderView::setDepthMap(render::ITexture* depthMap)
 	m_depthMap = depthMap;
 }
 
-void WorldRenderView::setTime(float time)
+void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 {
 	m_time = time;
+	m_deltaTime = deltaTime;
+	m_interval = interval;
 }
 
 void WorldRenderView::addLight(const Light& light)

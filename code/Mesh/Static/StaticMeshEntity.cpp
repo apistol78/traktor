@@ -29,18 +29,12 @@ void StaticMeshEntity::render(world::WorldContext* worldContext, world::WorldRen
 	m_mesh->render(
 		worldContext->getRenderContext(),
 		worldRenderView,
-		m_transform,
+		getTransform(worldRenderView->getInterval()),
 		m_transformPrevious,
 		distance,
 		getUserParameter(),
 		getParameterCallback()
 	);
-
-	m_transformPrevious = m_transform;
-}
-
-void StaticMeshEntity::update(const world::EntityUpdate* update)
-{
 }
 
 	}

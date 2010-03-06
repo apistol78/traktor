@@ -48,10 +48,6 @@ void BlendMeshEntity::render(world::WorldContext* worldContext, world::WorldRend
 	);
 }
 
-void BlendMeshEntity::update(const world::EntityUpdate* update)
-{
-}
-
 bool BlendMeshEntity::validate() const
 {
 	if (m_mesh.valid() && m_instance)
