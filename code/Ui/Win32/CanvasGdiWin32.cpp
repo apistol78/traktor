@@ -400,14 +400,14 @@ void CanvasGdiWin32::fillPolygon(const Point* pnts, int count)
 	SelectObject(m_hDC, hCurrentPen);
 }
 
-void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode)
+void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
 
 	HDC hImageDC = CreateCompatibleDC(m_hDC);
 	
-	if (blendMode == BmNone)
+	if ((blendMode & BmAlpha) == 0)
 	{
 		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmap();
 		if (!hBitmap)
@@ -428,7 +428,7 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Si
 
 		SelectObject(hImageDC, hCurrBitmap);
 	}
-	else if (blendMode == BmAlpha)
+	else
 	{
 		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
 		if (!hBitmap)
@@ -465,14 +465,14 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Si
 	DeleteDC(hImageDC);
 }
 
-void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
+void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
 	if (!bitmap)
 		return;
 
 	HDC hImageDC = CreateCompatibleDC(m_hDC);
 
-	if (blendMode == BmNone)
+	if ((blendMode & BmAlpha) == 0)
 	{
 		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmap();
 		if (!hBitmap)
@@ -499,7 +499,7 @@ void CanvasGdiWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const P
 
 		SelectObject(hImageDC, hCurrBitmap);
 	}
-	else if (blendMode == BmAlpha)
+	else
 	{
 		HBITMAP hBitmap = reinterpret_cast< BitmapWin32* >(bitmap)->getHBitmapPreMulAlpha();
 		if (!hBitmap)

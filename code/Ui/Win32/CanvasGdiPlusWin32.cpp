@@ -1,10 +1,9 @@
 #if defined(T_USE_GDI_PLUS)
 
 #include <cmath>
-#include "Ui/Win32/CanvasGdiPlusWin32.h"
-#include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Application.h"
-#include "Core/Timer/Profiler.h"
+#include "Ui/Win32/BitmapWin32.h"
+#include "Ui/Win32/CanvasGdiPlusWin32.h"
 
 using namespace Gdiplus;
 
@@ -82,7 +81,7 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 
 	m_font = new Gdiplus::Font(m_hDC, hWnd.getFont());
 
-	setForeground(0xffffff);
+	setForeground(Color(255, 255, 255, 255));
 	setBackground(getSystemColor(ScButtonFace));
 
 	return true;
@@ -281,11 +280,25 @@ void CanvasGdiPlusWin32::fillPolygon(const Point* pnts, int count)
 	m_graphics->FillPolygon(&m_brush, &points[0], (INT)points.size());
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
 {
 	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
 	if (bm)
 	{
+		Gdiplus::ImageAttributes attr;
+		if ((blendMode & BmModulate) != 0)
+		{
+			Gdiplus::ColorMatrix cm =
+			{
+				m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+			};
+			attr.SetColorMatrix(&cm);
+		}
+
 		m_graphics->DrawImage(
 			bm,
 			Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)size.cx, (Gdiplus::REAL)size.cy),
@@ -293,16 +306,31 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Point& srcAt, cons
 			(Gdiplus::REAL)srcAt.y,
 			(Gdiplus::REAL)size.cx,
 			(Gdiplus::REAL)size.cy,
-			UnitPixel
+			UnitPixel,
+			&attr
 		);
 	}
 }
 
-void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
+void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
 	Gdiplus::Bitmap* bm = reinterpret_cast< BitmapWin32* >(bitmap)->getGdiPlusBitmap();
 	if (bm)
 	{
+		Gdiplus::ImageAttributes attr;
+		if ((blendMode & BmModulate) != 0)
+		{
+			Gdiplus::ColorMatrix cm =
+			{
+				m_backGround.GetR() / 255.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, m_backGround.GetG() / 255.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, m_backGround.GetB() / 255.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, m_backGround.GetA() / 255.0f, 0.0f,
+				0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+			};
+			attr.SetColorMatrix(&cm);
+		}
+
 		m_graphics->DrawImage(
 			bm,
 			Gdiplus::RectF((Gdiplus::REAL)dstAt.x, (Gdiplus::REAL)dstAt.y, (Gdiplus::REAL)dstSize.cx, (Gdiplus::REAL)dstSize.cy),
@@ -310,7 +338,8 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, con
 			(Gdiplus::REAL)srcAt.y,
 			(Gdiplus::REAL)srcSize.cx,
 			(Gdiplus::REAL)srcSize.cy,
-			UnitPixel
+			UnitPixel,
+			&attr
 		);
 	}
 }

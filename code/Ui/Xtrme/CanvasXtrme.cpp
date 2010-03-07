@@ -244,12 +244,12 @@ void CanvasXtrme::fillPolygon(const Point* pnts, int count)
 	}
 }
 
-void CanvasXtrme::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, BlendMode blendMode)
+void CanvasXtrme::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, IBitmap* bitmap, uint32_t blendMode)
 {
 	drawBitmap(dstAt, size, srcAt, size, bitmap, blendMode);
 }
 
-void CanvasXtrme::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, BlendMode blendMode)
+void CanvasXtrme::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, IBitmap* bitmap, uint32_t blendMode)
 {
 	Ref< render::ITexture > texture = m_imageCache.getTexture(bitmap);
 	T_ASSERT (texture);
@@ -261,11 +261,15 @@ void CanvasXtrme::drawBitmap(const Point& dstAt, const Size& dstSize, const Poin
 	float u2 = u1 + float(srcSize.cx) / size.cx;
 	float v2 = v1 + float(srcSize.cy) / size.cy;
 
+	uint32_t modulate = 0xffffffff;
+	if ((blendMode & BmModulate) != 0)
+		modulate = m_backGround;
+
 	m_batchRenderer.batch(BatchRenderer::PiImage, texture, render::PtTriangleStrip);
-	m_batchRenderer.add(dstAt.x, dstAt.y, u1, v1, m_backGround);
-	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y, u2, v1, m_backGround);
-	m_batchRenderer.add(dstAt.x, dstAt.y + dstSize.cy, u1, v2, m_backGround);
-	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y + dstSize.cy, u2, v2, m_backGround);
+	m_batchRenderer.add(dstAt.x, dstAt.y, u1, v1, modulate);
+	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y, u2, v1, modulate);
+	m_batchRenderer.add(dstAt.x, dstAt.y + dstSize.cy, u1, v2, modulate);
+	m_batchRenderer.add(dstAt.x + dstSize.cx, dstAt.y + dstSize.cy, u2, v2, modulate);
 }
 
 void CanvasXtrme::drawText(const Point& at, const std::wstring& text)

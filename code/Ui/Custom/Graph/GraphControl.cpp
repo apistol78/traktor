@@ -1,18 +1,18 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Drawing/Image.h"
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/Events/MouseEvent.h"
+#include "Ui/Events/PaintEvent.h"
 #include "Ui/Custom/Graph/GraphControl.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/Edge.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/SelectEvent.h"
-#include "Ui/Application.h"
-#include "Ui/Bitmap.h"
-#include "Ui/MethodHandler.h"
-#include "Ui/Events/MouseEvent.h"
-#include "Ui/Events/PaintEvent.h"
-#include "Drawing/Image.h"
 
 // Resources
 #include "Resources/Background.h"
@@ -780,8 +780,6 @@ void GraphControl::eventPaint(Event* e)
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(rc);
 
-#if T_GRAPH_USE_XTRME
-
 	// Draw background.
 	if (m_imageBackground)
 	{
@@ -798,8 +796,6 @@ void GraphControl::eventPaint(Event* e)
 			ui::BmAlpha
 		);
 	}
-
-#endif
 
 	// Draw arrow hints.
 	canvas.setBackground(m_paintSettings->getNodeShadow());
@@ -882,19 +878,10 @@ void GraphControl::eventPaint(Event* e)
 	// Selection rectangle.
 	if (m_mode == MdDrawSelectionRectangle)
 	{
-#if T_GRAPH_USE_XTRME
-
 		canvas.setForeground(Color(220, 220, 255, 200));
 		canvas.setBackground(Color(90, 90, 120, 80));
 		canvas.fillRect(Rect(m_origin, m_cursor));
 		canvas.drawRect(Rect(m_origin, m_cursor));
-
-#else	// !T_GRAPH_USE_XTRME
-
-		canvas.setForeground(Color(220, 220, 255));
-		canvas.drawRect(Rect(m_origin, m_cursor));
-
-#endif
 	}
 
 	e->consume();

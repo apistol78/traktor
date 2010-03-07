@@ -161,7 +161,7 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		m_gpBits = 0;
 	}
 
-	m_gpAlphaAdd = (image->getPixelFormat()->getAlphaBits() > 0) ? 0x00000000 : 0xff000000;
+	m_gpAlphaAdd = (image->getPixelFormat().getAlphaBits() > 0) ? 0x00000000 : 0xff000000;
 #endif
 }
 
@@ -269,13 +269,16 @@ Gdiplus::Bitmap* BitmapWin32::getGdiPlusBitmap()
 	{
 		m_gpBits = new uint32_t [m_width * m_height];
 
-		const uint32_t* src = reinterpret_cast< const uint32_t* >(m_pBits);
+		const uint32_t* srcColor = reinterpret_cast< const uint32_t* >(m_pBits);
+		const uint32_t* srcAlpha = reinterpret_cast< const uint32_t* >(m_pBitsPreMulAlpha);
+
 		for (uint32_t y = 0; y < m_height; ++y)
 		{
+			uint32_t srcOffset = (m_height - y - 1) * m_width;
+			uint32_t dstOffset = y * m_width;
+
 			for (uint32_t x = 0; x < m_width; ++x)
-			{
-				m_gpBits[x + y * m_width] = src[x + (m_height - y - 1) * m_width] | m_gpAlphaAdd;
-			}
+				m_gpBits[dstOffset + x] = (srcColor[srcOffset + x] & 0x00ffffff) | (srcAlpha[srcOffset + x] & 0xff000000) | m_gpAlphaAdd;
 		}
 
 		m_gpBitmap = new Gdiplus::Bitmap(
