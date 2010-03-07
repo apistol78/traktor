@@ -294,7 +294,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.freetype-2.3.5</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/src</sourcePath>
 			<configurations>
@@ -7878,133 +7878,6 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project type="Project" version="1">
-									<enable>true</enable>
-									<name>Traktor.Ui.Xtrme</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
-									<configurations>
-										<item type="Configuration">
-											<name>DebugShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_UI_XTRME_EXPORT</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-										</item>
-										<item type="Configuration">
-											<name>ReleaseShared</name>
-											<targetFormat>TfSharedLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_UI_XTRME_EXPORT</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-										</item>
-										<item type="Configuration">
-											<name>DebugStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpDebug</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>_DEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-										</item>
-										<item type="Configuration">
-											<name>ReleaseStatic</name>
-											<targetFormat>TfStaticLibrary</targetFormat>
-											<targetProfile>TpRelease</targetProfile>
-											<precompiledHeader/>
-											<includePaths>
-												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
-											</includePaths>
-											<definitions>
-												<item>T_STATIC</item>
-												<item>NDEBUG</item>
-											</definitions>
-											<libraryPaths/>
-											<libraries/>
-										</item>
-									</configurations>
-									<items>
-										<item type="File">
-											<fileName>*.*</fileName>
-											<items/>
-										</item>
-										<item type="Filter">
-											<name>Resources</name>
-											<items>
-												<item type="File">
-													<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2d.xdi</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dFont.xdi</fileName>
-													<items/>
-												</item>
-												<item type="File">
-													<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dImage.xdi</fileName>
-													<items/>
-												</item>
-											</items>
-										</item>
-									</items>
-									<dependencies>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[16]/dependencies/item/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[2]"/>
-										</item>
-									</dependencies>
-								</project>
-							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -9287,11 +9160,13 @@
 									<item>_DEBUG</item>
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
+									<item>T_USE_GDI_PLUS</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9307,11 +9182,13 @@
 									<item>NDEBUG</item>
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
+									<item>T_USE_GDI_PLUS</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9327,11 +9204,13 @@
 									<item>_DEBUG</item>
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
+									<item>T_USE_GDI_PLUS</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 							<item type="Configuration">
@@ -9347,11 +9226,13 @@
 									<item>NDEBUG</item>
 									<item>UNICODE</item>
 									<item>_UNICODE</item>
+									<item>T_USE_GDI_PLUS</item>
 								</definitions>
 								<libraryPaths/>
 								<libraries>
 									<item>msimg32.lib</item>
 									<item>comctl32.lib</item>
+									<item>gdiplus.lib</item>
 								</libraries>
 							</item>
 						</configurations>
@@ -9389,10 +9270,6 @@
 							</item>
 						</dependencies>
 					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14557,7 +14434,130 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[17]/dependencies/item[7]/project/dependencies/item[3]/project"/>
+		<item type="Project" version="1">
+			<enable>false</enable>
+			<name>Traktor.Ui.Xtrme</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Xtrme</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_XTRME_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_XTRME_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/freetype-2.3.5/include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2d.xdi</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dFont.xdi</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../data/Source/System/CanvasXtrme/Shaders/Cx2dImage.xdi</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[2]"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item[17]/dependencies/item[8]/project/dependencies/item[9]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -14764,7 +14764,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[28]/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[28]/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[17]/dependencies/item[3]/project/dependencies/item[4]/project"/>

@@ -73,7 +73,7 @@ void IpolNodeShape::paint(const Node* node, const PaintSettings* settings, Canva
 		Point(0, 0),
 		Size(32, 32),
 		m_imageNode,
-		ui::BmAlpha
+		ui::BmAlpha | ui::BmModulate
 	);
 
 	Size pinSize = m_imagePin->getSize();

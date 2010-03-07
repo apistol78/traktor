@@ -1,7 +1,7 @@
 #ifndef traktor_ui_custom_GraphControl_H
 #define traktor_ui_custom_GraphControl_H
 
-#define T_GRAPH_USE_XTRME 1
+#define T_GRAPH_USE_XTRME 0
 
 #include <list>
 #include "Core/RefArray.h"

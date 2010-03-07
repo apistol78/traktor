@@ -66,7 +66,7 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 				Point(sx[ix], sy[iy]),
 				Size(sx[ix + 1] - sx[ix], sy[iy + 1] - sy[iy]),
 				m_imageNode,
-				ui::BmAlpha
+				ui::BmAlpha | ui::BmModulate
 			);
 		}
 	}

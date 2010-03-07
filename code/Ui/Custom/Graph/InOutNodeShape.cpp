@@ -86,7 +86,7 @@ void InOutNodeShape::paint(const Node* node, const PaintSettings* settings, Canv
 			Point(sx[ix], 0),
 			Size(sx[ix + 1] - sx[ix], 32),
 			m_imageNode,
-			ui::BmAlpha
+			ui::BmAlpha | ui::BmModulate
 		);
 	}
 

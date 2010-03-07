@@ -76,7 +76,6 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/ProgressBar.h"
 #include "Ui/Custom/InputDialog.h"
-#include "Ui/Xtrme/WidgetXtrme.h"
 #include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
 
@@ -477,9 +476,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 	else
 		log::warning << L"Unable to find render system type, no render system created" << Endl;
-
-	// Attach render system to UI Xtrme.
-	ui::xtrme::WidgetXtrme::setRenderSystem(m_renderSystem);
 
 	// Restore last used form settings.
 	int x = m_settings->getProperty< PropertyInteger >(L"Editor.PositionX");

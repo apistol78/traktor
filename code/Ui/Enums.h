@@ -112,8 +112,9 @@ enum SystemColor
 
 enum BlendMode
 {
-	BmNone,
-	BmAlpha
+	BmNone		= 0,
+	BmAlpha		= 1,
+	BmModulate	= 2
 };
 
 enum KeyStates

@@ -147,13 +147,13 @@ void Canvas::fillPolygon(const Point* pnts, int count)
 	m_canvas->fillPolygon(pnts, count);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, Bitmap* bitmap, BlendMode blendMode)
+void Canvas::drawBitmap(const Point& dstAt, const Point& srcAt, const Size& size, Bitmap* bitmap, uint32_t blendMode)
 {
 	if (bitmap && bitmap->getIBitmap())
 		m_canvas->drawBitmap(dstAt, srcAt, size, bitmap->getIBitmap(), blendMode);
 }
 
-void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, Bitmap* bitmap, BlendMode blendMode)
+void Canvas::drawBitmap(const Point& dstAt, const Size& dstSize, const Point& srcAt, const Size& srcSize, Bitmap* bitmap, uint32_t blendMode)
 {
 	if (bitmap && bitmap->getIBitmap())
 		m_canvas->drawBitmap(dstAt, dstSize, srcAt, srcSize, bitmap->getIBitmap(), blendMode);
