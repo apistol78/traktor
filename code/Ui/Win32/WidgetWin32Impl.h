@@ -5,7 +5,7 @@
 #include "Ui/Win32/Window.h"
 #include "Ui/Win32/CanvasGdiWin32.h"
 #if defined(T_USE_GDI_PLUS)
-#include "Ui/Win32/CanvasGdiPlusWin32.h"
+#	include "Ui/Win32/CanvasGdiPlusWin32.h"
 #endif
 #include "Ui/Win32/SmartHandle.h"
 #include "Ui/Win32/UtilitiesWin32.h"
@@ -245,6 +245,27 @@ public:
 
 	virtual Size getTextExtent(const std::wstring& text) const
 	{
+#if defined(T_USE_GDI_PLUS)
+		Gdiplus::RectF boundingBox;
+
+		HDC hDC = GetDC(m_hWnd);
+
+		Gdiplus::Graphics* graphics = new Gdiplus::Graphics(hDC);
+		Gdiplus::Font* font = new Gdiplus::Font(hDC, m_hWnd.getFont());
+
+		graphics->MeasureString(
+			text.c_str(),
+			(INT)text.length(),
+			font,
+			Gdiplus::RectF(0, 0, 0, 0),
+			&boundingBox
+		);
+
+		delete font;
+		delete graphics;
+
+		return Size(int(boundingBox.Width), int(boundingBox.Height));
+#else
 		SIZE size = { 0, 0 };
 		HDC hDC = GetDC(m_hWnd);
 		HGDIOBJ hOldFont = SelectObject(hDC, m_hFont.getHandle());
@@ -252,6 +273,7 @@ public:
 		SelectObject(hDC, hOldFont);
 		ReleaseDC(m_hWnd, hDC);
 		return Size(size.cx, size.cy);
+#endif
 	}
 
 	virtual void setFont(const Font& font)
