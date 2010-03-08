@@ -2,7 +2,6 @@
 #define traktor_render_RenderViewPs3_H
 
 #include <list>
-#include "Render/DisplayMode.h"
 #include "Render/IRenderView.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/ClearFpPs3.h"
@@ -36,7 +35,7 @@ public:
 
 	virtual ~RenderViewPs3();
 
-	bool create(const DisplayMode* displayMode, const RenderViewCreateDesc& desc);
+	bool create(const RenderViewCreateDefaultDesc& desc);
 
 	virtual void close();
 

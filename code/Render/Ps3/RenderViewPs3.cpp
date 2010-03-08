@@ -70,14 +70,14 @@ RenderViewPs3::~RenderViewPs3()
 {
 }
 
-bool RenderViewPs3::create(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 {
 	CellVideoOutState videoState;
 	CellVideoOutConfiguration videoConfig;
 	int32_t ret;
 
-	m_width = displayMode->getWidth();
-	m_height = displayMode->getHeight();
+	m_width = desc.displayMode.width;
+	m_height = desc.displayMode.height;
 
 	m_colorPitch = m_width * 4;
 

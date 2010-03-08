@@ -1,6 +1,5 @@
 #include <cstdlib>
 #include "Core/Log/Log.h"
-#include "Render/DisplayMode.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/LocalMemoryManager.h"
@@ -61,12 +60,12 @@ void RenderSystemPs3::destroy()
 	cellGcmFinish(1);
 }
 
-int RenderSystemPs3::getDisplayModeCount() const
+uint32_t RenderSystemPs3::getDisplayModeCount() const
 {
 	return 1;
 }
 
-Ref< DisplayMode > RenderSystemPs3::getDisplayMode(int index)
+DisplayMode RenderSystemPs3::getDisplayMode(uint32_t index) const
 {
 	CellVideoOutState videoState;
 	CellVideoOutResolution videoResolution;
@@ -74,22 +73,19 @@ Ref< DisplayMode > RenderSystemPs3::getDisplayMode(int index)
 
 	ret = cellVideoOutGetState(CELL_VIDEO_OUT_PRIMARY, 0, &videoState);
 	if (ret != CELL_OK)
-	{
 		log::error << L"Get display mode failed, cellVideoOutGetState failed" << Endl;
-		return 0;
-	}
 
 	cellVideoOutGetResolution(videoState.displayMode.resolutionId, &videoResolution);
 
-	return new DisplayMode(
-		videoState.displayMode.resolutionId,
-		videoResolution.width,
-		videoResolution.height,
-		32
-	);
+	DisplayMode dm;
+	dm.width = videoResolution.width;
+	dm.height = videoResolution.height;
+	dm.refreshRate = 0;
+	dm.colorBits = 0;
+	return dm;
 }
 
-Ref< DisplayMode > RenderSystemPs3::getCurrentDisplayMode()
+DisplayMode RenderSystemPs3::getCurrentDisplayMode() const
 {
 	return getDisplayMode(0);
 }
@@ -99,16 +95,16 @@ bool RenderSystemPs3::handleMessages()
 	return true;
 }
 
-Ref< IRenderView > RenderSystemPs3::createRenderView(const DisplayMode* displayMode, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateDefaultDesc& desc)
 {
 	Ref< RenderViewPs3 > renderView = new RenderViewPs3(this);
-	if (renderView->create(displayMode, desc))
+	if (renderView->create(desc))
 		return renderView;
 	else
 		return 0;
 }
 
-Ref< IRenderView > RenderSystemPs3::createRenderView(void* windowHandle, const RenderViewCreateDesc& desc)
+Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateEmbeddedDesc& desc)
 {
 	return 0;
 }
