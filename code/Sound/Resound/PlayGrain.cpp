@@ -99,6 +99,7 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 	))
 		return false;
 
+	// Apply filter chain.
 	uint32_t nfilters = m_filters.size();
 	for (uint32_t i = 0; i < nfilters; ++i)
 	{
@@ -106,8 +107,13 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 			m_filters[i]->apply(playCursor->m_filterInstances[i], outBlock);
 	}
 
-	if (abs(playCursor->m_gain) > FUZZY_EPSILON || abs(1.0f - playCursor->m_pitch) > FUZZY_EPSILON)
+	// Apply random gain.
+	if (abs(playCursor->m_gain) > FUZZY_EPSILON)
 		soundBlockMulConst(outBlock, playCursor->m_gain + 1.0f);
+
+	// Modify sample rate by random pitch; sound channel will normalize sample rate thus alter pitch.
+	if (abs(1.0f - playCursor->m_pitch) > FUZZY_EPSILON)
+		outBlock.sampleRate = uint32_t(outBlock.sampleRate * playCursor->m_pitch);
 
 	return true;
 }
