@@ -19,7 +19,7 @@ bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::l
 {
 	Ref< ui::Container > container;
 
-	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 500, 400, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
+	if (!ui::ConfigDialog::create(parent, i18n::Text(L"EDITOR_SETTINGS_TITLE"), 700, 600, ui::ConfigDialog::WsDefaultResizable, new ui::FloodLayout()))
 		return false;
 
 	addClickEventHandler(ui::createMethodHandler(this, &SettingsDialog::eventDialogClick));

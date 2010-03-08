@@ -84,8 +84,6 @@ public:
 
 	virtual Ref< db::Database > getOutputDatabase();
 
-	virtual Ref< render::IRenderSystem > getRenderSystem();
-
 	virtual const TypeInfo* browseType(const TypeInfo* base);
 
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);
@@ -104,6 +102,10 @@ public:
 
 	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
 
+	virtual void setStoreObject(const std::wstring& name, Object* object);
+
+	virtual Object* getStoreObject(const std::wstring& name) const;
+
 	//@}
 
 private:
@@ -115,6 +117,7 @@ private:
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
+	std::map< std::wstring, Ref< Object > > m_objectStore;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;
 	Ref< ui::Dock > m_dock;
@@ -132,7 +135,6 @@ private:
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< LogView > m_logView;
-	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< Settings > m_settings;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;

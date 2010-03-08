@@ -390,9 +390,49 @@
       <second>Renderare</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_RENDERER_TYPE</first>
+      <second>Renderare</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MIPBIAS</first>
+      <second>Mip-map bias</second>
+    </item>
+    <item>
 			<first>EDITOR_SETTINGS_REMOVE_MODULE</first>
 			<second>Ta bort</second>
 		</item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND</first>
+      <second>Ljud</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_DRIVER_TYPE</first>
+      <second>Ljud-drivrutin</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS</first>
+      <second># virtuella kanaler</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_SAMPLE_RATE</first>
+      <second>Samplings hastighet</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE</first>
+      <second>Upplösning</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_HW_CHANNELS</first>
+      <second>Utkanaler</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_FRAME_SAMPLES</first>
+      <second># samplingar per block</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_MIXER_FRAMES</first>
+      <second># mixer block</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Genväg</second>
@@ -1195,7 +1235,7 @@
     </item>
     <item>
       <first>SCENE_EDITOR_SETTINGS</first>
-      <second>Scene editor</second>
+      <second>Scene</second>
     </item>
     <item>
       <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>

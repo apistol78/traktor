@@ -157,10 +157,12 @@ AnimationEditorPage::AnimationEditorPage(editor::IEditor* editor)
 
 bool AnimationEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
 	m_site = site;
 	T_ASSERT (m_site);
-
-	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	Ref< ui::custom::QuadSplitter > splitter = new ui::custom::QuadSplitter();
 	splitter->create(parent, ui::Point(50, 50), true);

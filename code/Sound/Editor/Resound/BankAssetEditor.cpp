@@ -5,7 +5,6 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Resource/ResourceManager.h"
-#include "Sound/ISoundDriver.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/SoundFactory.h"
@@ -102,36 +101,17 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< RepeatGrain >()] = new RepeatGrainFacade();
 	m_grainFacades[&type_of< SequenceGrain >()] = new SequenceGrainFacade();
 
-	// Create sound system used for preview.
-	const TypeInfo* soundDriverType = TypeInfo::find(L"traktor.sound.SoundDriverDs8");
-	if (soundDriverType)
-	{
-		Ref< sound::ISoundDriver > soundDriver = checked_type_cast< ISoundDriver*, false >(soundDriverType->createInstance());
-
-		m_soundSystem = new sound::SoundSystem(soundDriver);
-
-		sound::SoundSystemCreateDesc sscd;
-		sscd.channels = 4;
-		sscd.driverDesc.sampleRate = 44100;
-		sscd.driverDesc.bitsPerSample = 16;
-		sscd.driverDesc.hwChannels = 2;
-		sscd.driverDesc.frameSamples = 1400;
-		sscd.driverDesc.mixerFrames = 8;
-
-		if (!m_soundSystem->create(sscd))
-			m_soundSystem = 0;
-
-		m_resourceManager = new resource::ResourceManager();
-		m_resourceManager->addFactory(
-			new SoundFactory(
-				m_editor->getOutputDatabase(),
-				m_soundSystem
-			)
-		);
-	}
-
+	// Get sound system for preview.
+	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
 	if (!m_soundSystem)
 		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+
+	m_resourceManager = new resource::ResourceManager();
+	if (m_soundSystem)
+		m_resourceManager->addFactory(new SoundFactory(
+			m_editor->getOutputDatabase(),
+			m_soundSystem
+		));
 
 	updateGrainView();
 	return true;
@@ -139,10 +119,15 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 
 void BankAssetEditor::destroy()
 {
+	if (m_soundChannel)
+	{
+		m_soundChannel->stop();
+		m_soundChannel = 0;
+	}
+
 	if (m_resourceManager)
 		m_resourceManager = 0;
 
-	safeDestroy(m_soundSystem);
 	safeDestroy(m_menuGrains);
 }
 

@@ -16,7 +16,7 @@ PaintSettings::PaintSettings(const ui::Font& font)
 ,	m_smoothSpline(false)
 {
 	m_gridBackground = Color(220, 220, 220);
-	m_nodeShadow = Color(190, 190, 190);
+	m_nodeShadow = Color(100, 100, 100);
 	m_nodeForeground = Color(90, 90, 90);
 	m_nodeBackgroundTop = Color(230, 230, 230);
 	m_nodeBackgroundBottom = Color(198, 198, 198);

@@ -69,10 +69,12 @@ SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor)
 
 bool SkeletonEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
 	m_site = site;
 	T_ASSERT (site);
-
-	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 
 	m_renderWidget = new ui::Widget();
 	m_renderWidget->create(parent, ui::WsNone);
