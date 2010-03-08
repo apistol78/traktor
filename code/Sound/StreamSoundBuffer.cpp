@@ -11,16 +11,16 @@ namespace traktor
 
 struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
-	double m_time;
+	uint64_t m_position;
 
 	StreamSoundBufferCursor()
-	:	m_time(0.0)
+	:	m_position(0)
 	{
 	}
 
-	virtual void setCursor(double time)
+	virtual void reset()
 	{
-		m_time = time;
+		m_position = 0;
 	}
 };
 
@@ -29,7 +29,7 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.StreamSoundBuffer", StreamSoundBuffer, ISoundBuffer)
 
 StreamSoundBuffer::StreamSoundBuffer()
-:	m_time(0.0)
+:	m_position(0)
 {
 }
 
@@ -53,23 +53,25 @@ Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
 
 bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
-	double time = static_cast< StreamSoundBufferCursor* >(cursor)->m_time;
-	
-	if (m_time > time + 0.1)
+	StreamSoundBufferCursor* ssbc = static_cast< StreamSoundBufferCursor* >(cursor);
+	uint64_t position = ssbc->m_position;
+
+	if (m_position > position)
 	{
 		log::debug << L"Rewind stream sound decoder" << Endl;
 		m_streamDecoder->rewind();
-		m_time = 0.0;
+		m_position = 0;
 	}
 
-	while (m_time < time)
+	while (m_position < position)
 	{
 		if (!m_streamDecoder->getBlock(outBlock))
 			return false;
 
-		m_time += double(outBlock.samplesCount) / outBlock.sampleRate;
+		m_position += outBlock.samplesCount;
 	}
 
+	ssbc->m_position += outBlock.samplesCount;
 	return true;
 }
 

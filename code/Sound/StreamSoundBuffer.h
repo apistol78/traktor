@@ -30,7 +30,7 @@ public:
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;
-	mutable double m_time;
+	mutable uint64_t m_position;
 };
 
 	}

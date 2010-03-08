@@ -9,16 +9,16 @@ namespace traktor
 
 struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 {
-	double m_time;
+	uint32_t m_position;
 
 	StaticSoundBufferCursor()
-	:	m_time(0.0)
+	:	m_position(0)
 	{
 	}
 
-	virtual void setCursor(double time)
+	virtual void reset()
 	{
-		m_time = time;
+		m_position = 0;
 	}
 };
 
@@ -72,13 +72,13 @@ Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 
 bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
-	double time = static_cast< StaticSoundBufferCursor* >(cursor)->m_time;
-	uint32_t samplePosition = uint32_t(time * m_sampleRate);
+	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 
-	if (samplePosition >= m_samplesCount)
+	uint32_t position = ssbc->m_position;
+	if (position >= m_samplesCount)
 		return false;
 
-	uint32_t samplesCount = m_samplesCount - samplePosition;
+	uint32_t samplesCount = m_samplesCount - position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
 	samplesCount = std::min< uint32_t >(samplesCount, sizeof_array(m_blocks[0]));
 
@@ -86,13 +86,14 @@ bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 	{
 		outBlock.samples[i] = m_blocks[i];
 		for (uint32_t j = 0; j < samplesCount; ++j)
-			m_blocks[i][j] = float(m_samples[i][samplePosition + j] / 32767.0f);
+			m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
 	}
 
 	outBlock.samplesCount = samplesCount;
 	outBlock.sampleRate = m_sampleRate;
 	outBlock.maxChannel = m_channelsCount;
 
+	ssbc->m_position += samplesCount;
 	return true;
 }
 
