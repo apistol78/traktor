@@ -1,15 +1,16 @@
 #ifndef traktor_world_EntityInstance_H
 #define traktor_world_EntityInstance_H
 
+#include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -36,7 +37,19 @@ class T_DLLCLASS EntityInstance : public ISerializable
 public:
 	EntityInstance();
 
-	EntityInstance(const std::wstring& name, EntityData* entityData);
+	EntityInstance(const Guid& guid, const std::wstring& name, EntityData* entityData);
+
+	/*! \brief Set guid of instance.
+	 *
+	 * \param guid New instance guid.
+	 */
+	virtual void setGuid(const Guid& guid);
+
+	/*! \brief Get guid of instance.
+	 *
+	 * \param guid Instance guid.
+	 */
+	virtual const Guid& getGuid() const;
 
 	/*! \brief Set name of instance.
 	 *
@@ -98,6 +111,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	Guid m_guid;
 	std::wstring m_name;
 	Ref< EntityData > m_entityData;
 	Ref< ISerializable > m_instanceData;

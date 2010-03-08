@@ -2,6 +2,7 @@
 #include <Xml/Document.h>
 #include <Xml/Element.h>
 #include <Xml/Text.h>
+#include <Core/Guid.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Misc/CommandLine.h>
@@ -221,6 +222,26 @@ uint32_t transform(xml::Element* element)
 		{
 			element->setAttribute(L"type", L"traktor.mesh.MeshEntityData");
 			changes++;
+		}
+
+		if (typeName == L"traktor.world.EntityInstance")
+		{
+			int32_t version = parseString< int32_t >(element->getAttribute(L"version", L"0")->getValue());
+			if (version <= 1)
+			{
+				Ref< xml::Element > xinstanceGuid = new xml::Element(L"guid");
+				xinstanceGuid->addChild(new xml::Text(Guid::create().format()));
+				element->insertBefore(xinstanceGuid, 0);
+
+				if (version <= 0)
+				{
+					Ref< xml::Element > xinstanceData = new xml::Element(L"instanceData");
+					element->insertAfter(xinstanceData, element->getChildElementByName(L"entityData"));
+				}
+
+				element->setAttribute(L"version", L"2");
+				changes++;
+			}
 		}
 	}
 

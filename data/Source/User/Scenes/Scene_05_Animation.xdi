@@ -11,11 +11,13 @@
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.001</shadowMapBias>
 	</worldRenderSettings>
-	<instance type="traktor.world.EntityInstance">
+	<instance type="traktor.world.EntityInstance" version="2">
+		<guid>{BA41854E-2E65-FA4F-BF35-D63E7F772409}</guid>
 		<name>Root</name>
 		<entityData type="traktor.world.GroupEntityData">
 			<instances>
-				<item type="traktor.world.EntityInstance">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{5FC39078-11FB-4348-BA01-8C2B59B67616}</guid>
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
@@ -26,9 +28,11 @@
 						<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 						<shadowColor>0, 0, 0, 0</shadowColor>
 					</entityData>
+					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{1A3CA314-C39B-EC4C-998B-C432505B83E6}</guid>
 					<name>Animated</name>
 					<entityData type="traktor.animation.AnimatedMeshEntityData">
 						<transform>
@@ -41,10 +45,12 @@
 							<stateGraph>{64FBB6B3-9BCB-7E47-9FB1-E86C27F15069}</stateGraph>
 						</poseController>
 					</entityData>
+					<instanceData/>
 					<references/>
 				</item>
 			</instances>
 		</entityData>
+		<instanceData/>
 		<references/>
 	</instance>
 	<controllerData/>

@@ -84,7 +84,7 @@ void EntityAdapterBuilder::begin(world::IEntityManager* entityManager)
 			parent->unlink(entityAdapter);
 
 		// Insert into map from instance to adapter.
-		m_cachedInstances.insert(std::make_pair(entityAdapter->getInstance(), entityAdapter));
+		m_cachedInstances.insert(std::make_pair(entityAdapter->getInstance()->getGuid(), entityAdapter));
 	}
 
 	T_ASSERT (!m_rootAdapter);
@@ -153,7 +153,7 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 	Ref< EntityAdapter > entityAdapter;
 	Ref< world::Entity > entity;
 
-	std::map< const world::EntityInstance*, Ref< EntityAdapter > >::iterator i = m_cachedInstances.find(instance);
+	std::map< Guid, Ref< EntityAdapter > >::iterator i = m_cachedInstances.find(instance->getGuid());
 	if (i != m_cachedInstances.end())
 	{
 		entityAdapter = i->second;
@@ -162,7 +162,7 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 	else
 	{
 		entityAdapter = new EntityAdapter(const_cast< world::EntityInstance* >(instance));
-		m_cachedInstances.insert(std::make_pair(instance, entityAdapter));
+		m_cachedInstances.insert(std::make_pair(instance->getGuid(), entityAdapter));
 	}
 
 	if (!entity)

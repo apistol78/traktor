@@ -12,11 +12,13 @@
 		<shadowMapBias>0.01</shadowMapBias>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
-	<instance type="traktor.world.EntityInstance" version="1">
+	<instance type="traktor.world.EntityInstance" version="2">
+		<guid>{C1382369-B006-3E44-ACE3-FBAA313668AC}</guid>
 		<name>Root</name>
 		<entityData type="traktor.world.GroupEntityData">
 			<instances>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{BAAF16FE-E1A3-6740-B79C-ED27FD04BE88}</guid>
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
@@ -30,7 +32,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{DDA2DEB6-557C-8C44-BDDC-3570C7FFB658}</guid>
 					<name>Terrain</name>
 					<entityData type="traktor.terrain.TerrainEntityData">
 						<heightfield>{03E35B06-EE2A-6644-B4FE-B2A3A15F4B1C}</heightfield>
@@ -46,7 +49,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{19BFD614-A292-B04E-8330-5DD380650E22}</guid>
 					<name>Mesh</name>
 					<entityData type="traktor.mesh.MeshEntityData">
 						<transform>
@@ -58,7 +62,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{9745D93C-BB1B-3A48-AFD8-0B5C30FA043A}</guid>
 					<name>Ocean</name>
 					<entityData type="traktor.terrain.OceanEntityData">
 						<heightfield>{03E35B06-EE2A-6644-B4FE-B2A3A15F4B1C}</heightfield>
@@ -230,7 +235,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{7663E2A6-ECFC-714B-A617-6912E848C131}</guid>
 					<name>Sky</name>
 					<entityData type="traktor.weather.SkyEntityData">
 						<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>

@@ -2,6 +2,7 @@
 #define traktor_scene_EntityAdapterBuilder_H
 
 #include <map>
+#include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "World/Entity/IEntityBuilder.h"
 
@@ -38,7 +39,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< world::IEntityManager > m_entityManager;
 	RefArray< world::IEntityFactory > m_entityFactories;
-	std::map< const world::EntityInstance*, Ref< EntityAdapter > > m_cachedInstances;
+	std::map< Guid, Ref< EntityAdapter > > m_cachedInstances;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
 };
