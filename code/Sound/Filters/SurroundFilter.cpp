@@ -45,7 +45,9 @@ c_speakers[] =
 	{ deg2rad(45), SbcRight },
 	{ deg2rad(135), SbcLeft },
 	{ deg2rad(225), SbcRearLeft },
-	{ deg2rad(315), SbcRearRight }
+	{ deg2rad(315), SbcRearRight },
+	{ deg2rad(90), SbcCenter },
+	{ deg2rad(90), SbcLfe }
 };
 
 		}
@@ -95,7 +97,7 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 
 	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
 	float speakerDistance = speakerPosition.xyz0().length();
-	float speakerAngle = angleRange(atan2f(speakerPosition.x(), speakerPosition.z()) + PI);
+	float speakerAngle = angleRange(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI);
 
 	float maxDistance = m_environment->getMaxDistance();
 	float innerRadius = m_environment->getInnerRadius();
@@ -110,18 +112,15 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 	{
 		float angleOffset = angleDifference(c_speakers[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
-		float attenuation = angleAtten * distanceAtten * innerAtten;
+		float attenuation = angleAtten * distanceAtten;
 
 		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
 			outBlock.samples[c_speakers[i].channel][j] *= attenuation;
 	}
 
-	// Center speaker.
+	// LFE only on sounds in inner radius.
 	for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-	{
-		outBlock.samples[SbcCenter][j] *= (1.0f - innerAtten);
-		outBlock.samples[SbcLfe][j] = outBlock.samples[SbcCenter][j];
-	}
+		outBlock.samples[SbcLfe][j] *= innerAtten;
 }
 
 bool SurroundFilter::serialize(ISerializer& s)
