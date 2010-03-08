@@ -287,7 +287,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		m_undoStack->push(m_dataObject);
 
 		// Create instance and adapter.
-		Ref< world::EntityInstance > entityInstance = new world::EntityInstance(instance->getName(), entityData);
+		Ref< world::EntityInstance > entityInstance = new world::EntityInstance(Guid::create(), instance->getName(), entityData);
 		Ref< EntityAdapter > entityAdapter = new EntityAdapter(entityInstance);
 
 		if (parentGroupAdapter)
@@ -553,7 +553,7 @@ void SceneEditorPage::createControllerEditor()
 Ref< SceneAsset > SceneEditorPage::createWhiteRoomSceneAsset(world::EntityData* entityData)
 {
 	// Create temporary instance from entity data.
-	Ref< world::EntityInstance > instance = new world::EntityInstance(L"Entity", entityData);
+	Ref< world::EntityInstance > instance = new world::EntityInstance(Guid::create(), L"Entity", entityData);
 
 	// Read white-room scene asset from system database.
 	Ref< SceneAsset > sceneAsset = m_context->getSourceDatabase()->getObjectReadOnly< SceneAsset >(c_guidWhiteRoomScene);
@@ -709,13 +709,16 @@ bool SceneEditorPage::addEntity()
 
 	// Create instance and adapter.
 	Ref< world::EntityInstance > instance = new world::EntityInstance(
+		Guid::create(),
 		i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY"),
 		entityData
 	);
-	Ref< EntityAdapter > entityAdapter = new EntityAdapter(instance);
 
 	if (parentGroupAdapter)
+	{
+		Ref< EntityAdapter > entityAdapter = new EntityAdapter(instance);
 		parentGroupAdapter->addChild(entityAdapter);
+	}
 	else
 		m_context->getSceneAsset()->setInstance(instance);
 

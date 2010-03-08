@@ -12,16 +12,27 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityInstance", 1, EntityInstance, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityInstance", 2, EntityInstance, ISerializable)
 
 EntityInstance::EntityInstance()
 {
 }
 
-EntityInstance::EntityInstance(const std::wstring& name, EntityData* entityData)
-:	m_name(name)
+EntityInstance::EntityInstance(const Guid& guid, const std::wstring& name, EntityData* entityData)
+:	m_guid(guid)
+,	m_name(name)
 ,	m_entityData(entityData)
 {
+}
+
+void EntityInstance::setGuid(const Guid& guid)
+{
+	m_guid = guid;
+}
+
+const Guid& EntityInstance::getGuid() const
+{
+	return m_guid;
 }
 
 void EntityInstance::setName(const std::wstring& name)
@@ -78,6 +89,11 @@ const std::vector< EntityInstance* >& EntityInstance::getReferences() const
 
 bool EntityInstance::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 2)
+		s >> Member< Guid >(L"guid", m_guid);
+	else
+		m_guid = Guid::create();
+
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRef< EntityData >(L"entityData", m_entityData);
 

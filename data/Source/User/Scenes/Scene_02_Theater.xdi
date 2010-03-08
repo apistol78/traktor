@@ -14,11 +14,13 @@
 		<shadowMapBias>0.001</shadowMapBias>
 	</worldRenderSettings>
 	<postProcessSettings>{04C6D46A-74B8-A445-A906-4B0AC92A1A75}</postProcessSettings>
-	<instance type="traktor.world.EntityInstance" version="1">
+	<instance type="traktor.world.EntityInstance" version="2">
+		<guid>{9DBAA302-EBD7-2043-ABCA-E789EDF0B9B6}</guid>
 		<name>Root</name>
 		<entityData type="traktor.world.GroupEntityData">
 			<instances>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{A9DD3FE9-5E3D-A94E-B5DB-7B635EAF058F}</guid>
 					<name>Light</name>
 					<entityData type="traktor.world.DirectionalLightEntityData">
 						<transform>
@@ -32,7 +34,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{2CEC991D-6C9A-C04C-A7C9-BD3907E81753}</guid>
 					<name>Mesh</name>
 					<entityData type="traktor.mesh.MeshEntityData">
 						<transform>
@@ -44,7 +47,8 @@
 					<instanceData/>
 					<references/>
 				</item>
-				<item type="traktor.world.EntityInstance" version="1">
+				<item type="traktor.world.EntityInstance" version="2">
+					<guid>{B14900E2-4D3A-B540-8C99-44D4216B11DE}</guid>
 					<name>Camera null</name>
 					<entityData type="traktor.world.NullEntityData">
 						<transform>

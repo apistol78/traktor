@@ -86,7 +86,24 @@ void Node::removeAllChildren()
 
 void Node::insertBefore(Node* child, Node* beforeNode)
 {
-	// TODO Implement and alter addChild.
+	T_ASSERT (child->m_parent == 0);
+	T_ASSERT (!beforeNode || beforeNode->m_parent == this);
+
+	if (!beforeNode)
+		beforeNode = m_firstChild;
+
+	child->m_parent = this;
+	
+	child->m_previousSibling = beforeNode->m_previousSibling;
+	child->m_nextSibling = beforeNode;
+
+	if (child->m_previousSibling)
+		child->m_previousSibling->m_nextSibling = child;
+
+	beforeNode->m_previousSibling = child;
+
+	if (m_firstChild == beforeNode)
+		m_firstChild = child;
 }
 
 void Node::insertAfter(Node* child, Node* afterNode)

@@ -5,7 +5,8 @@
 		<rotation>0, 0, 0, 1</rotation>
 	</transform>
 	<instances>
-		<item type="traktor.world.EntityInstance">
+		<item type="traktor.world.EntityInstance" version="2">
+			<guid>{13BC98EF-467C-AB45-B94D-5363C9C942FE}</guid>
 			<name>Unnamed</name>
 			<entityData type="traktor.mesh.MeshEntityData">
 				<transform>
@@ -14,9 +15,11 @@
 				</transform>
 				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 			</entityData>
+			<instanceData/>
 			<references/>
 		</item>
-		<item type="traktor.world.EntityInstance">
+		<item type="traktor.world.EntityInstance" version="2">
+			<guid>{338864E7-282C-2C49-B326-04F001D45D84}</guid>
 			<name>Unnamed</name>
 			<entityData type="traktor.mesh.MeshEntityData">
 				<transform>
@@ -25,6 +28,7 @@
 				</transform>
 				<mesh>{CDC1E470-7F50-0A47-A47C-8C9534092368}</mesh>
 			</entityData>
+			<instanceData/>
 			<references/>
 		</item>
 	</instances>
