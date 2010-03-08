@@ -86,7 +86,7 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_time = 0.0;
 
 	// Start threads.
-	m_threadMixer->start(Thread::Above);
+	m_threadMixer->start();
 	m_threadSubmit->start(Thread::Above);
 
 	return true;
@@ -208,7 +208,9 @@ void SoundSystem::threadMixer()
 
 		// Allocate new frame block.
 		float* samples = m_samplesBlocks[m_samplesBlockHead];
+		m_samplesBlocks[m_samplesBlockHead] = 0;
 		m_samplesBlockHead = (m_samplesBlockHead + 1) % m_samplesBlocks.size();
+		T_ASSERT (samples);
 
 		// Prepare new frame block.
 		std::memset (samples, 0, m_desc.driverDesc.frameSamples * m_desc.driverDesc.hwChannels * sizeof(float));
@@ -287,6 +289,7 @@ void SoundSystem::threadSubmit()
 		m_driver->submit(m_submitQueue.front());
 
 		// Move block back into heap.
+		T_ASSERT (m_samplesBlocks[m_samplesBlockTail] == 0);
 		m_samplesBlocks[m_samplesBlockTail] = m_submitQueue.front().samples[0];
 		m_samplesBlockTail = (m_samplesBlockTail + 1) % m_samplesBlocks.size();
 

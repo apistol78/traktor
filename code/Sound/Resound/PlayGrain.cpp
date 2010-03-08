@@ -67,8 +67,8 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	playCursor->m_soundBuffer = soundBuffer;
 	playCursor->m_soundCursor = soundCursor;
 	playCursor->m_timeOffset = -1.0;
-	playCursor->m_gain = m_gain.random(m_random);
-	playCursor->m_pitch = m_pitch.random(m_random);
+	playCursor->m_gain = clamp(m_gain.random(m_random), -1.0f, 1.0f);
+	playCursor->m_pitch = clamp(m_pitch.random(m_random), 0.5f, 1.5f);
 
 	for (RefArray< IFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
 		playCursor->m_filterInstances.push_back((*i) ? (*i)->createInstance() : 0);
