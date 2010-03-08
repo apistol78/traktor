@@ -23,6 +23,7 @@ EntityAdapter::EntityAdapter(world::EntityInstance* instance)
 :	m_instance(instance)
 ,	m_parent(0)
 ,	m_selected(false)
+,	m_expanded(false)
 ,	m_visible(true)
 {
 }
@@ -255,6 +256,16 @@ Ref< IEntityEditor > EntityAdapter::getEntityEditor() const
 bool EntityAdapter::isSelected() const
 {
 	return m_selected;
+}
+
+void EntityAdapter::setExpanded(bool expanded)
+{
+	m_expanded = expanded;
+}
+
+bool EntityAdapter::isExpanded() const
+{
+	return m_expanded;
 }
 
 void EntityAdapter::setVisible(bool visible)

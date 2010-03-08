@@ -71,6 +71,8 @@ public:
 
 	void addClickEventHandler(EventHandler* eventHandler);
 
+	void addExpandEventHandler(EventHandler* eventHandler);
+
 	virtual Size getPreferedSize() const;
 
 	virtual void update(const Rect* rc = 0, bool immediate = false);

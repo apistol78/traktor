@@ -134,6 +134,8 @@ private:
 
 	void eventInstanceSelect(ui::Event* event);
 
+	void eventInstanceExpand(ui::Event* event);
+
 	void eventInstanceButtonDown(ui::Event* event);
 
 	void eventInstanceClick(ui::Event* event);

@@ -139,6 +139,10 @@ public:
 
 	bool isSelected() const;
 
+	void setExpanded(bool expanded);
+
+	bool isExpanded() const;
+
 	void setVisible(bool visible);
 	
 	bool isVisible() const;
@@ -168,6 +172,7 @@ private:
 	RefArray< EntityAdapter > m_children;
 	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;
+	bool m_expanded;
 	bool m_visible;
 };
 

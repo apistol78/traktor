@@ -26,6 +26,8 @@ namespace traktor
 			namespace
 			{
 
+enum { EiExpand = EiUser + 1 };
+
 const int32_t c_itemHeight = 18;
 const int32_t c_columnsHeight = 25;
 const int32_t c_leftMargin = 16;
@@ -190,6 +192,11 @@ void GridView::addClickEventHandler(EventHandler* eventHandler)
 	addEventHandler(EiClick, eventHandler);
 }
 
+void GridView::addExpandEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiExpand, eventHandler);
+}
+
 Size GridView::getPreferedSize() const
 {
 	int32_t width = 0;
@@ -327,6 +334,11 @@ void GridView::eventButtonDown(Event* event)
 				else
 					state |= GridRow::RsExpanded;
 
+				rows[index]->setState(state);
+
+				ui::Event evnt(this, rows[index]);
+				raiseEvent(EiExpand, &evnt);
+
 				m_lastSelected = -1;
 			}
 			else
@@ -369,9 +381,9 @@ void GridView::eventButtonDown(Event* event)
 
 					setCapture();
 				}
-			}
 
-			rows[index]->setState(state);
+				rows[index]->setState(state);
+			}
 		}
 
 		updateScrollBars();
