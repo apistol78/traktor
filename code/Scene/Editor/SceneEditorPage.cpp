@@ -121,6 +121,7 @@ bool SceneEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_ENTITY_NAME"), 200));
 	m_instanceGrid->addColumn(new ui::custom::GridColumn(L"", 30));
 	m_instanceGrid->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceSelect));
+	m_instanceGrid->addExpandEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceExpand));
 	m_instanceGrid->addButtonDownEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceButtonDown));
 	m_instanceGrid->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventInstanceClick));
 
@@ -600,7 +601,10 @@ Ref< ui::custom::GridRow > SceneEditorPage::createEntityListRow(EntityAdapter* e
 {
 	Ref< ui::custom::GridRow > row = new ui::custom::GridRow(0);
 	row->setData(L"ENTITY", entityAdapter);
-	row->setState(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0);
+	row->setState(
+		(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0) |
+		(entityAdapter->isExpanded() ? ui::custom::GridRow::RsExpanded : 0)
+	);
 	
 	// All external entities is highlighted as they shouldn't be edited.
 	if (entityAdapter->isChildOfExternal())
@@ -651,7 +655,7 @@ void SceneEditorPage::updateInstanceGrid()
 		Ref< ui::custom::GridRow > entityRow = createEntityListRow(entityAdapter);
 		if (entityRow)
 		{
-			entityRow->setState(entityRow->getState() | ui::custom::GridRow::RsExpanded);
+			entityRow->setState(entityRow->getState());
 			m_instanceGrid->addRow(entityRow);
 		}
 	}
@@ -843,6 +847,13 @@ void SceneEditorPage::eventInstanceSelect(ui::Event* event)
 
 	// Raise context select event.
 	m_context->raiseSelect(this);
+}
+
+void SceneEditorPage::eventInstanceExpand(ui::Event* event)
+{
+	ui::custom::GridRow* row = checked_type_cast< ui::custom::GridRow*, false >(event->getItem());
+	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
+	entityAdapter->setExpanded((row->getState() & ui::custom::GridRow::RsExpanded) != 0);
 }
 
 void SceneEditorPage::eventInstanceButtonDown(ui::Event* event)
