@@ -390,8 +390,48 @@
       <second>Renderer</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_RENDERER_TYPE</first>
+      <second>Renderer</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_RENDERER_MIPBIAS</first>
+      <second>Mip-map bias</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_REMOVE_MODULE</first>
       <second>Remove module</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND</first>
+      <second>Sound</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_DRIVER_TYPE</first>
+      <second>Driver</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_VIRTUAL_CHANNELS</first>
+      <second># virtual channels</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_SAMPLE_RATE</first>
+      <second>Sample rate</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_BITS_PER_SAMPLE</first>
+      <second>Resolution</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_HW_CHANNELS</first>
+      <second>Output channels</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_FRAME_SAMPLES</first>
+      <second># samples per frame</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_SOUND_MIXER_FRAMES</first>
+      <second># mixer frames</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_SHORTCUTS</first>
@@ -1159,7 +1199,7 @@
     </item>
     <item>
       <first>SCENE_EDITOR_SETTINGS</first>
-      <second>Scene editor</second>
+      <second>Scene</second>
     </item>
     <item>
       <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>

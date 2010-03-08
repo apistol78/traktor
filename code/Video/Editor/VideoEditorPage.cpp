@@ -42,6 +42,10 @@ VideoEditorPage::VideoEditorPage(editor::IEditor* editor)
 
 bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
 	m_renderWidget = new ui::Widget();
 	if (!m_renderWidget->create(parent, ui::WsClientBorder))
 		return false;
@@ -56,17 +60,17 @@ bool VideoEditorPage::create(ui::Container* parent, editor::IEditorPageSite* sit
 	desc.waitVBlank = false;
 	desc.nativeWindowHandle = m_renderWidget->getIWidget()->getSystemHandle();
 
-	m_renderView = m_editor->getRenderSystem()->createRenderView(desc);
+	m_renderView = renderSystem->createRenderView(desc);
 	if (!m_renderView)
 		return false;
 
 	m_screenRenderer = new render::ScreenRenderer();
-	if (!m_screenRenderer->create(m_editor->getRenderSystem()))
+	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
 	m_resourceManager = new resource::ResourceManager();
 	m_resourceManager->addFactory(
-		new render::ShaderFactory(m_editor->getOutputDatabase(), m_editor->getRenderSystem())
+		new render::ShaderFactory(m_editor->getOutputDatabase(), renderSystem)
 	);
 
 	if (!m_resourceManager->bind(m_shader))
@@ -107,6 +111,9 @@ void VideoEditorPage::deactivate()
 
 bool VideoEditorPage::setDataObject(db::Instance* instance, Object* data)
 {
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	T_ASSERT (renderSystem);
+
 	Ref< VideoAsset > asset = checked_type_cast< VideoAsset*, false >(data);
 
 	std::wstring assetPath = m_editor->getSettings()->getProperty< editor::PropertyString >(L"Pipeline.AssetPath", L"");
@@ -120,7 +127,7 @@ bool VideoEditorPage::setDataObject(db::Instance* instance, Object* data)
 		return false;
 
 	Ref< Video > video = new Video();
-	if (!video->create(m_editor->getRenderSystem(), decoder))
+	if (!video->create(renderSystem, decoder))
 		return false;
 	
 	m_instance = instance;

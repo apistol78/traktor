@@ -51,7 +51,6 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
-#include "Render/IRenderSystem.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
@@ -84,10 +83,6 @@
 #include "Resources/Save.h"
 #include "Resources/Standard16.h"
 #include "Resources/Types.h"
-
-#if defined(_DEBUG)
-#	include "Render/Capture/RenderSystemCapture.h"
-#endif
 
 #if defined(MessageBox)
 #	undef MessageBox
@@ -453,30 +448,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Build shortcut accelerator table.
 	updateShortcutTable();
 
-	// Create render system.
-	const TypeInfo* renderSystemType = TypeInfo::find(m_settings->getProperty< PropertyString >(L"Editor.RenderSystem"));
-	if (renderSystemType)
-	{
-		m_renderSystem = dynamic_type_cast< render::IRenderSystem* >(renderSystemType->createInstance());
-		T_ASSERT (m_renderSystem);
-
-#if defined(_DEBUG)
-		// Wrap render system in capture system.
-		m_renderSystem = new render::RenderSystemCapture(m_renderSystem);
-#endif
-
-		render::RenderSystemCreateDesc desc;
-		desc.mipBias = 0.0f;
-
-		if (!m_renderSystem->create(desc))
-		{
-			log::warning << L"Unable to create render system" << Endl;
-			m_renderSystem = 0;
-		}
-	}
-	else
-		log::warning << L"Unable to find render system type, no render system created" << Endl;
-
 	// Restore last used form settings.
 	int x = m_settings->getProperty< PropertyInteger >(L"Editor.PositionX");
 	int y = m_settings->getProperty< PropertyInteger >(L"Editor.PositionY");
@@ -527,13 +498,6 @@ void EditorForm::destroy()
 	m_toolBar->destroy();
 	m_menuBar->destroy();
 
-	// Destroy render system.
-	if (m_renderSystem)
-	{
-		m_renderSystem->destroy();
-		m_renderSystem = 0;
-	}
-
 	Form::destroy();
 }
 
@@ -550,11 +514,6 @@ Ref< db::Database > EditorForm::getSourceDatabase()
 Ref< db::Database > EditorForm::getOutputDatabase()
 {
 	return m_outputDatabase;
-}
-
-Ref< render::IRenderSystem > EditorForm::getRenderSystem()
-{
-	return m_renderSystem;
 }
 
 const TypeInfo* EditorForm::browseType(const TypeInfo* base)
@@ -1070,6 +1029,17 @@ bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t rec
 	pipelineDepends.getDependencies(outDependencies);
 
 	return true;
+}
+
+void EditorForm::setStoreObject(const std::wstring& name, Object* object)
+{
+	m_objectStore.insert(std::make_pair(name, object));
+}
+
+Object* EditorForm::getStoreObject(const std::wstring& name) const
+{
+	std::map< std::wstring, Ref< Object > >::const_iterator i = m_objectStore.find(name);
+	return i != m_objectStore.end() ? i->second : 0;
 }
 
 void EditorForm::updateTitle()

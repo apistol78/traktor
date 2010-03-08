@@ -1,16 +1,17 @@
-#include "Scene/Editor/SceneEditorPageFactory.h"
-#include "Scene/Editor/SceneEditorPage.h"
-#include "Scene/Editor/SceneEditorContext.h"
-#include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/ISceneEditorPlugin.h"
-#include "Scene/Editor/SceneAsset.h"
+#include "Core/Log/Log.h"
 #include "Editor/IEditor.h"
 #include "Editor/Settings.h"
-#include "Resource/ResourceManager.h"
 #include "Physics/PhysicsManager.h"
-#include "World/Entity/EntityData.h"
+#include "Render/IRenderSystem.h"
+#include "Resource/ResourceManager.h"
+#include "Scene/Editor/ISceneEditorPlugin.h"
+#include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/SceneAsset.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/SceneEditorPage.h"
+#include "Scene/Editor/SceneEditorPageFactory.h"
 #include "Ui/Command.h"
-#include "Core/Log/Log.h"
+#include "World/Entity/EntityData.h"
 
 namespace traktor
 {
@@ -29,11 +30,9 @@ const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 
 Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor) const
 {
-	if (!editor->getRenderSystem())
-	{
-		log::error << L"Unable to create scene editor; render system required." << Endl;
-		return 0;
-	}
+	render::IRenderSystem* renderSystem = editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
 
 	// Create resource manager.
 	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
@@ -66,7 +65,7 @@ Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEdi
 		editor->getOutputDatabase(),
 		editor->getSourceDatabase(),
 		resourceManager,
-		editor->getRenderSystem(),
+		renderSystem,
 		physicsManager
 	);
 

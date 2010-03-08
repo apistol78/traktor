@@ -1,16 +1,22 @@
-#include "Spray/Editor/EffectEditorPage.h"
-#include "Spray/Editor/EffectPreviewControl.h"
-#include "Spray/Effect.h"
-#include "Spray/EffectLayer.h"
-#include "Spray/EffectFactory.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "Editor/Settings.h"
+#include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
+#include "Render/Resource/ShaderFactory.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Resource/ResourceManager.h"
+#include "Spray/Effect.h"
+#include "Spray/EffectFactory.h"
+#include "Spray/EffectLayer.h"
+#include "Spray/Editor/EffectEditorPage.h"
+#include "Spray/Editor/EffectPreviewControl.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Container.h"
-#include "Ui/TableLayout.h"
 #include "Ui/Command.h"
+#include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -19,11 +25,6 @@
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Range.h"
 #include "Ui/Custom/Splitter.h"
-#include "I18N/Text.h"
-#include "Render/Resource/TextureFactory.h"
-#include "Render/Resource/ShaderFactory.h"
-#include "Resource/ResourceManager.h"
-#include "Core/Io/StringOutputStream.h"
 
 // Resources
 #include "Resources/Playback.h"
@@ -46,10 +47,13 @@ EffectEditorPage::EffectEditorPage(editor::IEditor* editor)
 
 bool EffectEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
 	m_site = site;
 	T_ASSERT (m_site);
 
-	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager();

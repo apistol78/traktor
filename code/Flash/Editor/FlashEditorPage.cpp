@@ -9,6 +9,7 @@
 #include "Flash/Editor/FlashEditorPage.h"
 #include "Flash/Editor/FlashMovieAsset.h"
 #include "Flash/Editor/FlashPreviewControl.h"
+#include "Render/IRenderSystem.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Bitmap.h"
@@ -40,7 +41,10 @@ FlashEditorPage::FlashEditorPage(editor::IEditor* editor)
 
 bool FlashEditorPage::create(ui::Container* parent, editor::IEditorPageSite* site)
 {
-	Ref< render::IRenderSystem > renderSystem = m_editor->getRenderSystem();
+	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
+	if (!renderSystem)
+		return false;
+
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
 	m_resourceManager = new resource::ResourceManager();

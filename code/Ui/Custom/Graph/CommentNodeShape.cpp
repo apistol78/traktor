@@ -87,7 +87,7 @@ void CommentNodeShape::paint(const Node* node, const PaintSettings* settings, Ca
 			textSize.cy += lineHeight;
 		}
 
-		canvas->setForeground(settings->getNodeShadow());
+		canvas->setForeground(settings->getNodeText());
 
 		int32_t x = rc.left + (rc.getWidth() - textSize.cx) / 2;
 		int32_t y = rc.top + (rc.getHeight() - textSize.cy) / 2;

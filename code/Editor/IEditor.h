@@ -9,9 +9,10 @@
 namespace traktor
 {
 
-class TypeInfo;
 class Guid;
 class ISerializable;
+class Object;
+class TypeInfo;
 
 	namespace db
 	{
@@ -21,20 +22,13 @@ class Instance;
 
 	}
 
-	namespace render
-	{
-
-class IRenderSystem;
-
-	}
-
 	namespace editor
 	{
 
-class Settings;
 class IEditorPage;
 class IBrowseFilter;
 class PipelineDependency;
+class Settings;
 
 /*! \brief Editor base interface.
  * \ingroup Editor
@@ -53,9 +47,6 @@ public:
 
 	/*! \brief Get output database. */
 	virtual Ref< db::Database > getOutputDatabase() = 0;
-
-	/*! \brief Get editor render system. */
-	virtual Ref< render::IRenderSystem > getRenderSystem() = 0;
 
 	/*! \brief Browse for rtti type. */
 	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
@@ -89,6 +80,31 @@ public:
 	 * \return True if successful.
 	 */
 	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies) = 0;
+
+	/*! \brief Set object in object store.
+	 *
+	 * \param name Name of object.
+	 * \param object Object.
+	 */
+	virtual void setStoreObject(const std::wstring& name, Object* object) = 0;
+
+	/*! \brief Get object from object store.
+	 *
+	 * \param name Name of object.
+	 * \return Object, null if no such named object exists in store.
+	 */
+	virtual Object* getStoreObject(const std::wstring& name) const = 0;
+
+	/*! \brief Get object from object store.
+	 *
+	 * \param name Name of object.
+	 * \return Object, null if no such named object exists in store.
+	 */
+	template < typename ObjectType >
+	ObjectType* getStoreObject(const std::wstring& name) const
+	{
+		return dynamic_type_cast< ObjectType* >(getStoreObject(name));
+	}
 };
 
 	}

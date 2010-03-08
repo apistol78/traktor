@@ -72,8 +72,6 @@ SoundDriverXAudio2::~SoundDriverXAudio2()
 
 bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 {
-	XAUDIO2_DEVICE_DETAILS deviceDetails;
-	UINT32 deviceCount;
 	HRESULT hr;
 
 #if !defined(_XBOX)
@@ -92,9 +90,13 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 	if (FAILED(hr))
 		return false;
 
-	m_audio->GetDeviceCount(&deviceCount);
-
 	UINT32 preferredDevice = 0;
+
+#if 0
+	XAUDIO2_DEVICE_DETAILS deviceDetails;
+	UINT32 deviceCount;
+
+	m_audio->GetDeviceCount(&deviceCount);
 	for (UINT32 i = 0; i < deviceCount; i++)
 	{
 		m_audio->GetDeviceDetails(i, &deviceDetails);
@@ -105,6 +107,7 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
 			break;
 		}
 	}
+#endif
 
 	hr = m_audio->CreateMasteringVoice(&m_masteringVoice, desc.hwChannels, XAUDIO2_DEFAULT_SAMPLERATE, 0, preferredDevice, NULL);
 	if (FAILED(hr))

@@ -1,14 +1,12 @@
-#include "Editor/App/GeneralSettingsPage.h"
-#include "Editor/Settings.h"
-#include "Ui/TableLayout.h"
-#include "Ui/Container.h"
-#include "Ui/DropDown.h"
-#include "Ui/CheckBox.h"
-#include "Ui/Static.h"
-#include "Ui/Edit.h"
-#include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Editor/Settings.h"
+#include "Editor/App/GeneralSettingsPage.h"
+#include "I18N/Text.h"
+#include "Ui/CheckBox.h"
+#include "Ui/Container.h"
+#include "Ui/Edit.h"
+#include "Ui/Static.h"
+#include "Ui/TableLayout.h"
 
 namespace traktor
 {
@@ -38,26 +36,6 @@ bool GeneralSettingsPage::create(ui::Container* parent, Settings* settings, cons
 
 	m_editOutputDatabase = new ui::Edit();
 	m_editOutputDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.OutputDatabase", L""));
-
-	Ref< ui::Static > staticRenderer = new ui::Static();
-	staticRenderer->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_RENDERER"));
-
-	m_dropRenderSystem = new ui::DropDown();
-	m_dropRenderSystem->create(containerInner, L"");
-
-	std::wstring renderSystemType = settings->getProperty< PropertyString >(L"Editor.RenderSystem");
-
-	std::vector< const TypeInfo* > renderSystemTypes;
-	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes, false);
-
-	for (std::vector< const TypeInfo* >::const_iterator i = renderSystemTypes.begin(); i != renderSystemTypes.end(); ++i)
-	{
-		std::wstring name = (*i)->getName();
-
-		int index = m_dropRenderSystem->add(name);
-		if (name == renderSystemType)
-			m_dropRenderSystem->select(index);
-	}
 
 	Ref< ui::Static > staticAssetPath = new ui::Static();
 	staticAssetPath->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_ASSET_PATH"));
@@ -95,7 +73,6 @@ bool GeneralSettingsPage::apply(Settings* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());
 	settings->setProperty< PropertyString >(L"Editor.OutputDatabase", m_editOutputDatabase->getText());
-	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
 	settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());

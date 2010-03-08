@@ -78,6 +78,9 @@ bool CanvasGdiPlusWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 	}
 
 	m_graphics = new Graphics(m_hDC);
+	m_graphics->SetTextRenderingHint(TextRenderingHintSystemDefault);
+	m_graphics->SetPixelOffsetMode(PixelOffsetModeNone);
+	m_graphics->SetSmoothingMode(SmoothingModeHighSpeed);
 
 	m_font = new Gdiplus::Font(m_hDC, hWnd.getFont());
 
@@ -346,11 +349,15 @@ void CanvasGdiPlusWin32::drawBitmap(const Point& dstAt, const Size& dstSize, con
 
 void CanvasGdiPlusWin32::drawText(const Point& at, const std::wstring& text)
 {
+	StringFormat* stringFormat = StringFormat::GenericDefault()->Clone();
+	stringFormat->SetFormatFlags(StringFormatFlagsNoWrap);
+
 	m_graphics->DrawString(
 		text.c_str(),
 		(INT)text.length(),
 		m_font,
 		Gdiplus::PointF((Gdiplus::REAL)at.x, (Gdiplus::REAL)at.y),
+		stringFormat,
 		&SolidBrush(m_foreGround)
 	);
 }
