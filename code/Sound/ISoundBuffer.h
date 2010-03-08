@@ -23,7 +23,7 @@ namespace traktor
 class T_DLLCLASS ISoundBufferCursor : public IRefCount
 {
 public:
-	virtual void setCursor(double time) = 0;
+	virtual void reset() = 0;
 };
 
 /*! \brief Sound buffer base class.

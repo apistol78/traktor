@@ -15,9 +15,9 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	int32_t m_grainIndex;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
-	virtual void setCursor(double time)
+	virtual void reset()
 	{
-		m_grainCursor->setCursor(time);
+		m_grainCursor->reset();
 	}
 };
 

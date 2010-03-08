@@ -24,16 +24,12 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBuffer > m_soundBuffer;
 	Ref< ISoundBufferCursor > m_soundCursor;
 	RefArray< IFilterInstance > m_filterInstances;
-	double m_timeOffset;
 	float m_gain;
 	float m_pitch;
 
-	virtual void setCursor(double time)
+	virtual void reset()
 	{
-		if (m_timeOffset < 0.0)
-			m_timeOffset = time;
-
-		m_soundCursor->setCursor(time - m_timeOffset);
+		m_soundCursor->reset();
 	}
 };
 
@@ -66,7 +62,6 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	Ref< PlayGrainCursor > playCursor = new PlayGrainCursor();
 	playCursor->m_soundBuffer = soundBuffer;
 	playCursor->m_soundCursor = soundCursor;
-	playCursor->m_timeOffset = -1.0;
 	playCursor->m_gain = clamp(m_gain.random(m_random), -1.0f, 1.0f);
 	playCursor->m_pitch = clamp(m_pitch.random(m_random), 0.5f, 1.5f);
 

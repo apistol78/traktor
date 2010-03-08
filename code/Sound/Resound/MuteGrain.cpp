@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Timer/Timer.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/MuteGrain.h"
 
@@ -12,20 +13,10 @@ namespace traktor
 
 struct MuteGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
-	bool m_first;
-	double m_timeEnd;
-	double m_time;
+	Timer m_timer;
+	double m_end;
 
-	virtual void setCursor(double time)
-	{
-		if (m_first)
-		{
-			m_timeEnd += time;
-			m_first = false;
-		}
-
-		m_time = time;
-	}
+	virtual void reset() {}
 };
 
 		}
@@ -45,9 +36,8 @@ bool MuteGrain::bind(resource::IResourceManager* resourceManager)
 Ref< ISoundBufferCursor > MuteGrain::createCursor() const
 {
 	Ref< MuteGrainCursor > muteCursor = new MuteGrainCursor();
-	muteCursor->m_first = true;
-	muteCursor->m_timeEnd = m_duration;
-	muteCursor->m_time = 0.0;
+	muteCursor->m_timer.start();
+	muteCursor->m_end = muteCursor->m_timer.getElapsedTime() + m_duration;
 	return muteCursor;
 }
 
@@ -63,7 +53,7 @@ const IGrain* MuteGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 bool MuteGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
-	return muteCursor->m_time <= muteCursor->m_timeEnd;
+	return muteCursor->m_timer.getElapsedTime() <= muteCursor->m_end;
 }
 
 bool MuteGrain::serialize(ISerializer& s)

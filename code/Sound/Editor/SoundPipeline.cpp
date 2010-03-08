@@ -189,6 +189,7 @@ bool SoundPipeline::buildOutput(
 		std::memset(&soundBlock, 0, sizeof(soundBlock));
 		soundBlock.samplesCount = 4096;
 
+		float peek = 0.0f;
 		while (decoder->getBlock(soundBlock))
 		{
 			uint32_t outputSamplesCount = uint32_t(double(soundBlock.samplesCount * m_sampleRate) / soundBlock.sampleRate + 0.5);
@@ -202,14 +203,20 @@ bool SoundPipeline::buildOutput(
 
 					float s0 = soundBlock.samples[i][p0];
 					float s1 = soundBlock.samples[i][p1];
+					float s = (s0 + s1) * 0.5f;
 
-					samples[i].push_back(quantify((s0 + s1) * 0.5f));
+					samples[i].push_back(quantify(s));
+
+					peek = max(peek, s);
 				}
 			}
 
 			samplesCount += outputSamplesCount;
 			maxChannel = max(soundBlock.maxChannel, maxChannel);
 		}
+
+		if (peek > 1.0f)
+			log::warning << L"Sound peek sample higher than 1; clipped to range" << Endl;
 
 		// Write asset.
 		Writer writer(stream);

@@ -15,7 +15,7 @@ namespace traktor
 // Convert from MAD fixed point to 32-bit float sample.
 inline float scale(mad_fixed_t sample)
 {
-	double output = double(sample) / (1L << MAD_F_FRACBITS);
+	double output = mad_f_todouble(sample);
 	return float(output);
 }
 

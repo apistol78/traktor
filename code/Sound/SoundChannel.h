@@ -63,12 +63,9 @@ private:
 	Ref< IFilterInstance > m_filterInstance;
 	Ref< Sound > m_sound;
 	Ref< ISoundBufferCursor > m_cursor;
-	double m_time;
 	uint32_t m_repeat;
-	
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
-
 	float m_volume;
 
 	void playSound(Sound* sound, double time, uint32_t repeat);

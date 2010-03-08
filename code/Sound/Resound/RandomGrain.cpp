@@ -16,10 +16,10 @@ struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< IGrain > m_grain;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
-	virtual void setCursor(double time)
+	virtual void reset()
 	{
 		if (m_grainCursor)
-			m_grainCursor->setCursor(time);
+			m_grainCursor->reset();
 	}
 };
 
