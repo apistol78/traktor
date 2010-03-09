@@ -45,6 +45,9 @@ bool VertexBufferDx9::create(IDirect3DDevice9* d3dDevice, const std::vector< Ver
 	usage = D3DUSAGE_WRITEONLY | (dynamic ? D3DUSAGE_DYNAMIC : 0);
 #endif
 
+	if (dynamic)
+		d3dDevice->EvictManagedResources();
+
 	hr = d3dDevice->CreateVertexBuffer(
 		getBufferSize(),
 		usage,
@@ -121,7 +124,7 @@ void* VertexBufferDx9::lock()
 #if defined(_XBOX) || defined(T_USE_XDK)
 		flags = D3DLOCK_NOOVERWRITE;
 #else
-		flags = D3DLOCK_DISCARD;
+		flags = D3DLOCK_DISCARD | D3DLOCK_NOOVERWRITE;
 #endif
 		if (FAILED(m_d3dVertexBuffer->Lock(0, getBufferSize(), &ptr, flags)))
 			return 0;
