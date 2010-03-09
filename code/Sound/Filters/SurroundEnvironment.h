@@ -2,14 +2,14 @@
 #define traktor_sound_SurroundEnvironment_H
 
 #include "Core/Object.h"
-#include "Core/Math/Matrix44.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,7 +24,8 @@ class T_DLLCLASS SurroundEnvironment : public Object
 public:
 	SurroundEnvironment(
 		float maxDistance = 10.0f,
-		float innerRadius = 1.0f
+		float innerRadius = 1.0f,
+		bool fullSurround = true
 	);
 
 	void setMaxDistance(float maxDistance);
@@ -35,17 +36,22 @@ public:
 
 	float getInnerRadius() const { return m_innerRadius; }
 
-	void setListenerTransform(const Matrix44& listenerTransform);
+	void setFullSurround(bool fullSurround);
 
-	const Matrix44& getListenerTransform() const { return m_listenerTransform; }
+	bool getFullSurround() const { return m_fullSurround; }
 
-	const Matrix44& getListenerTransformInv() const { return m_listenerTransformInv; }
+	void setListenerTransform(const Transform& listenerTransform);
+
+	const Transform& getListenerTransform() const { return m_listenerTransform; }
+
+	const Transform& getListenerTransformInv() const { return m_listenerTransformInv; }
 
 private:
 	float m_maxDistance;
 	float m_innerRadius;
-	Matrix44 m_listenerTransform;
-	Matrix44 m_listenerTransformInv;
+	bool m_fullSurround;
+	Transform m_listenerTransform;
+	Transform m_listenerTransformInv;
 };
 
 	}

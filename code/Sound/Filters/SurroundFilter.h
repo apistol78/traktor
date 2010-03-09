@@ -40,6 +40,10 @@ public:
 private:
 	Ref< SurroundEnvironment > m_environment;
 	Vector4 m_speakerPosition;
+
+	void applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const;
+
+	void applyFull(IFilterInstance* instance, SoundBlock& outBlock) const;
 };
 
 	}
