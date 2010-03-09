@@ -183,7 +183,14 @@ Ref< world::Entity > EntityAdapterBuilder::build(const world::EntityInstance* in
 		entityAdapter->setEntity(entity);
 	}
 
+	m_builtInstances.insert(std::make_pair(instance, entity));
 	return entity;
+}
+
+Ref< world::Entity > EntityAdapterBuilder::get(const world::EntityInstance* instance) const
+{
+	std::map< const world::EntityInstance*, Ref< world::Entity > >::const_iterator i = m_builtInstances.find(instance);
+	return i != m_builtInstances.end() ? i->second : 0;
 }
 
 void EntityAdapterBuilder::end()

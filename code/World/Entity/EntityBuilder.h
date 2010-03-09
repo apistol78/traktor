@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -37,6 +37,8 @@ public:
 	virtual Ref< Entity > create(const std::wstring& name, const EntityData* entityData, const Object* instanceData);
 
 	virtual Ref< Entity > build(const EntityInstance* instance);
+
+	virtual Ref< Entity > get(const EntityInstance* instance) const;
 
 	virtual void end();
 

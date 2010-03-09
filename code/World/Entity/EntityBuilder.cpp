@@ -131,6 +131,12 @@ Ref< Entity > EntityBuilder::build(const EntityInstance* instance)
 	return entity;
 }
 
+Ref< Entity > EntityBuilder::get(const EntityInstance* instance) const
+{
+	std::map< Ref< const EntityInstance >, Ref< Entity > >::const_iterator i = m_instances.find(instance);
+	return i != m_instances.end() ? i->second : 0;
+}
+
 void EntityBuilder::end()
 {
 	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
