@@ -59,7 +59,11 @@ void setWindowStyle(HWND hWnd, int32_t clientWidth, int32_t clientHeight, bool f
 	else
 	{
 		SetWindowLong(hWnd, GWL_STYLE, WS_OVERLAPPED | WS_SYSMENU | WS_CAPTION | WS_MINIMIZEBOX);
-		SetWindowPos(hWnd, HWND_TOP, 0, 0, clientWidth, clientHeight, SWP_FRAMECHANGED | SWP_NOMOVE);
+
+		UINT exStyle = GetWindowLong(hWnd, GWL_EXSTYLE);
+		SetWindowLong(hWnd, GWL_EXSTYLE, exStyle & ~WS_EX_TOPMOST);
+
+		SetWindowPos(hWnd, NULL, 0, 0, clientWidth, clientHeight, SWP_NOZORDER | SWP_FRAMECHANGED | SWP_NOMOVE);
 	}
 
 	RECT rcWindow;
@@ -284,6 +288,7 @@ bool RenderSystemWin32::handleMessages()
 	bool going = true;
 	MSG msg;
 	
+	// Dispatch pending window messages.
 	while (PeekMessage(&msg, NULL, 0, 0, PM_NOREMOVE))
 	{
 		int ret = GetMessage(&msg, NULL, 0, 0);
@@ -292,6 +297,21 @@ bool RenderSystemWin32::handleMessages()
 
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
+	}
+
+	// Try to reset lost device.
+	if (m_lostDevice)
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+		HRESULT hr;
+
+		hr = m_d3dDevice->TestCooperativeLevel();
+
+		if (hr == D3DERR_DEVICENOTRESET)
+			hr = resetDevice();
+
+		if (SUCCEEDED(hr))
+			m_lostDevice = false;
 	}
 
 	return going;
@@ -514,25 +534,13 @@ void RenderSystemWin32::removeRenderView(RenderViewWin32* renderView)
 
 bool RenderSystemWin32::beginRender()
 {
-	HRESULT hr;
-
 	if (!m_renderLock.wait(1000))
 		return false;
 
 	if (m_lostDevice)
 	{
-		hr = m_d3dDevice->TestCooperativeLevel();
-
-		if (hr == D3DERR_DEVICENOTRESET)
-			hr = resetDevice();
-
-		if (SUCCEEDED(hr))
-			m_lostDevice = false;
-		else
-		{
-			Sleep(100);
-			return false;
-		}
+		Sleep(100);
+		return false;
 	}
 
 	return true;
@@ -540,13 +548,16 @@ bool RenderSystemWin32::beginRender()
 
 void RenderSystemWin32::endRender(bool lostDevice)
 {
-	m_lostDevice = lostDevice;
+	if (lostDevice)
+		m_lostDevice = true;
+
 	m_renderLock.release();
 }
 
 void RenderSystemWin32::toggleMode()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_renderLock);
+	HRESULT hr;
 
 	m_d3dPresent.Windowed = !m_d3dPresent.Windowed;
 	setWindowStyle(m_hWnd, m_d3dPresent.BackBufferWidth, m_d3dPresent.BackBufferHeight, m_d3dPresent.Windowed ? false : true);
@@ -554,7 +565,9 @@ void RenderSystemWin32::toggleMode()
 	if (!m_renderViews.empty())
 		m_renderViews.front()->setD3DPresent(m_d3dPresent);
 
-	resetDevice();
+	hr = resetDevice();
+	if (FAILED(hr))
+		m_lostDevice = true;
 }
 
 HRESULT RenderSystemWin32::resetDevice()
@@ -580,10 +593,6 @@ HRESULT RenderSystemWin32::resetDevice()
 			return hr;
 	}
 
-	hr = m_d3dDevice->EvictManagedResources();
-	if (FAILED(hr))
-		return hr;
-
 	hr = m_d3dDevice->Reset(&m_d3dPresent);
 	if (FAILED(hr))
 		return hr;
@@ -591,6 +600,7 @@ HRESULT RenderSystemWin32::resetDevice()
 	for (RefArray< RenderViewWin32 >::iterator i = m_renderViews.begin(); i != m_renderViews.end(); ++i)
 	{
 		hr = (*i)->resetDevice(m_d3dDevice);
+
 		if (FAILED(hr))
 			return hr;
 	}
@@ -618,7 +628,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 {
 	RenderSystemWin32* renderSystem = reinterpret_cast< RenderSystemWin32* >(GetWindowLongPtr(hWnd, 0));
 	LPCREATESTRUCT createStruct;
-	LRESULT result = TRUE;
+	LRESULT result = 0;
 	
 	switch (uMsg)
 	{
@@ -635,6 +645,15 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 				renderSystem->toggleMode();
 		}
 		break;
+
+	case WM_ACTIVATEAPP:
+		if (!wParam)
+		{
+			// We're about to be deactivated; ensure we're running in windowed mode.
+			if (renderSystem && !renderSystem->m_d3dPresent.Windowed)
+				renderSystem->toggleMode();
+		}
+		break;
 	
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
@@ -645,6 +664,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 		break;
 		
 	case WM_ERASEBKGND:
+		result = TRUE;
 		break;
 
 	case WM_SETCURSOR:
@@ -652,6 +672,7 @@ LRESULT RenderSystemWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 			SetCursor(NULL);
 		else
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		result = TRUE;
 		break;
 	
 	default:

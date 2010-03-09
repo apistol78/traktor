@@ -48,6 +48,9 @@ bool IndexBufferDx9::create(IDirect3DDevice9* d3dDevice, bool dynamic)
 	usage = D3DUSAGE_WRITEONLY | (dynamic ? D3DUSAGE_DYNAMIC : 0);
 #endif
 
+	if (dynamic)
+		d3dDevice->EvictManagedResources();
+
 	hr = d3dDevice->CreateIndexBuffer(
 		getBufferSize(),
 		usage,

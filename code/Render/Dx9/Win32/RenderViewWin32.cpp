@@ -165,11 +165,10 @@ bool RenderViewWin32::begin()
 {
 	T_ASSERT (m_renderStateStack.empty());
 
-	if (!m_d3dDevice)
-		return false;
-
 	if (!m_renderSystem->beginRender())
 		return false;
+
+	T_ASSERT (m_d3dDevice);
 
 	if (FAILED(m_d3dDevice->BeginScene()))
 	{
@@ -348,6 +347,8 @@ void RenderViewWin32::setMSAAEnable(bool msaaEnable)
 
 HRESULT RenderViewWin32::lostDevice()
 {
+	log::debug << L"RenderViewWin32::lostDevice" << Endl;
+
 	m_d3dDevice.release();
 	m_d3dSwapChain.release();
 	m_d3dBackBuffer.release();
@@ -368,6 +369,9 @@ HRESULT RenderViewWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 {
 	HRESULT hr;
 
+	log::debug << L"RenderViewWin32::resetDevice, d3dDevice = " << (void*)(d3dDevice) << Endl;
+
+	T_ASSERT (d3dDevice);
 	m_d3dDevice = d3dDevice;
 
 	if (m_d3dPresent.Windowed)
