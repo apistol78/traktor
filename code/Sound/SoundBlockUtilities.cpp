@@ -26,6 +26,20 @@ void soundBlockMulConst(SoundBlock& sb, float factor)
 	}
 }
 
+void soundBlockMulConst(float* sb, uint32_t count, float factor)
+{
+	Scalar sf(factor);
+	uint32_t s = 0;
+	for (; s < (count & ~3UL); s += 4)
+	{
+		Vector4 s4(&sb[s]);
+		s4 *= sf;
+		s4.store(&sb[s]);
+	}
+	for (; s < count; ++s)
+		sb[s] *= factor;
+}
+
 void soundBlockMulConst(float* lsb, const float* rsb, uint32_t count, float factor)
 {
 	Scalar sf(factor);

@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Sound/SoundBlockUtilities.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
 
@@ -35,20 +36,32 @@ struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 	float m_buffer[SbcMaxChannelCount][4096];
 };
 
-const struct Speaker
+struct Speaker
 {
 	float angle;
+	float inner;
 	int channel;
-}
-c_speakers[] =
-{
-	{ deg2rad(45), SbcRight },
-	{ deg2rad(135), SbcLeft },
-	{ deg2rad(225), SbcRearLeft },
-	{ deg2rad(315), SbcRearRight },
-	{ deg2rad(90), SbcCenter },
-	{ deg2rad(90), SbcLfe }
 };
+
+const Speaker c_speakersStereo[] =
+{
+	{ deg2rad(0), 0.0f, SbcRight },
+	{ deg2rad(180), 0.0f, SbcLeft }
+};
+
+const uint32_t c_speakersStereoMaxChannel = SbcRight + 1;
+
+const Speaker c_speakersFull[] =
+{
+	{ deg2rad(45), 0.0f, SbcRight },
+	{ deg2rad(135), 0.0f, SbcLeft },
+	{ deg2rad(225), 0.0f, SbcRearLeft },
+	{ deg2rad(315), 0.0f, SbcRearRight },
+	{ deg2rad(90), 1.0f, SbcCenter },
+	{ deg2rad(90), 1.0f, SbcLfe }
+};
+
+const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
 
 		}
 
@@ -74,26 +87,76 @@ Ref< IFilterInstance > SurroundFilter::createInstance() const
 
 void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
+	if (m_environment->getFullSurround())
+		applyFull(instance, outBlock);
+	else
+		applyStereo(instance, outBlock);
+}
+
+void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const
+{
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
-	// Collapse all channels; should be mono sound sources.
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 	{
 		float sample = 0.0f;
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
-			sample += outBlock.samples[j][i];
-		for (uint32_t j = 0; j < sizeof_array(c_speakers); ++j)
-			sfi->m_buffer[c_speakers[j].channel][i] = sample;
-		sfi->m_buffer[SbcCenter][i] = sample;
-		sfi->m_buffer[SbcLfe][i] = 0.0f;
+		{
+			if (outBlock.samples[j])
+				sample += outBlock.samples[j][i];
+		}
+		for (uint32_t j = 0; j < sizeof_array(c_speakersStereo); ++j)
+			sfi->m_buffer[c_speakersStereo[j].channel][i] = sample;
 	}
 
-	outBlock.maxChannel = SbcMaxChannelCount;
-	for (uint32_t j = 0; j < SbcMaxChannelCount; ++j)
+	outBlock.maxChannel = c_speakersStereoMaxChannel;
+	for (uint32_t j = 0; j < c_speakersStereoMaxChannel; ++j)
 		outBlock.samples[j] = sfi->m_buffer[j];
 
-	// Get speaker position in listener space.
-	Matrix44 listenerTransformInv = m_environment->getListenerTransformInv();
+	const Transform& listenerTransformInv = m_environment->getListenerTransformInv();
+
+	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
+	float speakerDistance = speakerPosition.xyz0().length();
+	float speakerAngle = angleRange(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI);
+
+	float maxDistance = m_environment->getMaxDistance();
+	float innerRadius = m_environment->getInnerRadius();
+
+	float distanceAtten = clamp(1.0f - speakerDistance / maxDistance, 0.0f, 1.0f);
+	float innerAtten = clamp(speakerDistance / innerRadius, 0.0f, 1.0f);
+
+	const float c_angleCone = deg2rad(180.0f);
+
+	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
+	{
+		float angleOffset = angleDifference(c_speakersStereo[i].angle, speakerAngle);
+		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
+		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
+		soundBlockMulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
+	}
+}
+
+void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) const
+{
+	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
+
+	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+	{
+		float sample = 0.0f;
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
+		{
+			if (outBlock.samples[j])
+				sample += outBlock.samples[j][i];
+		}
+		for (uint32_t j = 0; j < sizeof_array(c_speakersFull); ++j)
+			sfi->m_buffer[c_speakersFull[j].channel][i] = sample;
+	}
+
+	outBlock.maxChannel = c_speakersFullMaxChannel;
+	for (uint32_t j = 0; j < c_speakersFullMaxChannel; ++j)
+		outBlock.samples[j] = sfi->m_buffer[j];
+
+	const Transform& listenerTransformInv = m_environment->getListenerTransformInv();
 
 	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
 	float speakerDistance = speakerPosition.xyz0().length();
@@ -107,20 +170,13 @@ void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) cons
 
 	const float c_angleCone = deg2rad(90.0f + 30.0f);
 
-	// Satellite speakers.
-	for (uint32_t i = 0; i < sizeof_array(c_speakers); ++i)
+	for (uint32_t i = 0; i < sizeof_array(c_speakersFull); ++i)
 	{
-		float angleOffset = angleDifference(c_speakers[i].angle, speakerAngle);
+		float angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
-		float attenuation = angleAtten * distanceAtten;
-
-		for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-			outBlock.samples[c_speakers[i].channel][j] *= attenuation;
+		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
+		soundBlockMulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
 	}
-
-	// LFE only on sounds in inner radius.
-	for (uint32_t j = 0; j < outBlock.samplesCount; ++j)
-		outBlock.samples[SbcLfe][j] *= innerAtten;
 }
 
 bool SurroundFilter::serialize(ISerializer& s)
