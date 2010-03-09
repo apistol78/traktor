@@ -40,6 +40,8 @@ public:
 
 	virtual Ref< Entity > build(const EntityInstance* instance) = 0;
 
+	virtual Ref< Entity > get(const EntityInstance* instance) const = 0;
+
 	virtual void end() = 0;
 };
 

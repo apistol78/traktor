@@ -31,6 +31,8 @@ public:
 
 	virtual Ref< world::Entity > build(const world::EntityInstance* instance);
 
+	virtual Ref< world::Entity > get(const world::EntityInstance* instance) const;
+
 	virtual void end();
 
 	Ref< EntityAdapter > getRootAdapter() const;
@@ -40,6 +42,7 @@ private:
 	Ref< world::IEntityManager > m_entityManager;
 	RefArray< world::IEntityFactory > m_entityFactories;
 	std::map< Guid, RefArray< EntityAdapter > > m_cachedInstances;
+	std::map< const world::EntityInstance*, Ref< world::Entity > > m_builtInstances;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
 };
