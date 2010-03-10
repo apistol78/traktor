@@ -130,13 +130,18 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 {
 	T_ASSERT (m_meshes[0]->getIndexBuffer());
 
-	Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
-		m_meshes[0]->getVertexElements(),
-		m_meshes[0]->getVertexBuffer()->getBufferSize(),
-		true
-	);
-	if (!vertexBuffer)
-		return 0;
+	Ref< BlendMesh::Instance > instance = new BlendMesh::Instance();
+
+	for (uint32_t i = 0; i < VertexBufferCount; ++i)
+	{
+		instance->vertexBuffers[i] = m_renderSystem->createVertexBuffer(
+			m_meshes[0]->getVertexElements(),
+			m_meshes[0]->getVertexBuffer()->getBufferSize(),
+			true
+		);
+		if (!instance->vertexBuffers[i])
+			return 0;
+	}
 
 	Ref< render::IndexBuffer > indexBuffer = m_renderSystem->createIndexBuffer(
 		m_meshes[0]->getIndexBuffer()->getIndexType(),
@@ -155,12 +160,10 @@ Ref< BlendMesh::Instance > BlendMesh::createInstance() const
 	m_meshes[0]->getIndexBuffer()->unlock();
 	indexBuffer->unlock();
 
-	// Create instance.
-	Ref< BlendMesh::Instance > instance = new BlendMesh::Instance();
-
+	// Create render mesh.
 	instance->mesh = new render::Mesh();
 	instance->mesh->setVertexElements(m_meshes[0]->getVertexElements());
-	instance->mesh->setVertexBuffer(vertexBuffer);
+	instance->mesh->setVertexBuffer(0);
 	instance->mesh->setIndexBuffer(indexBuffer);
 	instance->mesh->setParts(m_meshes[0]->getParts());
 	instance->mesh->setBoundingBox(m_meshes[0]->getBoundingBox());
@@ -178,13 +181,13 @@ void BlendMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	// Build renderable mesh by weighting in each blend shape's vertices.
+	// Build render-able mesh by weighting in each blend shape's vertices.
 	T_ASSERT (blendWeights.size() == getBlendTargetCount());
 
 	render::handle_t technique = worldRenderView->getTechnique();
 
 	// Update target mesh only when we're rendering default technique.
-	if (technique == world::WorldRenderer::getTechniqueDefault())
+	if (technique == world::WorldRenderer::getTechniqueDefault() || instance->count == 0)
 	{
 		bool update = true;
 		if (blendWeights.size() == instance->weights.size())
@@ -201,12 +204,14 @@ void BlendMesh::render(
 		}
 		if (update)
 		{
+			render::VertexBuffer* vertexBuffer = instance->vertexBuffers[instance->count++ % VertexBufferCount];
+
 			const std::vector< render::VertexElement >& vertexElements = instance->mesh->getVertexElements();
 			uint32_t vertexSize = render::getVertexSize(vertexElements);
-			uint32_t vertexCount = instance->mesh->getVertexBuffer()->getBufferSize() / vertexSize;
+			uint32_t vertexCount = vertexBuffer->getBufferSize() / vertexSize;
 
 			// Execute multiple tasks to perform blending.
-			uint8_t* destinationVertices = static_cast< uint8_t* >(instance->mesh->getVertexBuffer()->lock());
+			uint8_t* destinationVertices = static_cast< uint8_t* >(vertexBuffer->lock());
 
 #if 1
 			uint32_t pivots[] =
@@ -237,7 +242,9 @@ void BlendMesh::render(
 			task.execute();
 #endif
 
-			instance->mesh->getVertexBuffer()->unlock();
+			vertexBuffer->unlock();
+
+			instance->mesh->setVertexBuffer(vertexBuffer);
 			instance->weights = blendWeights;
 		}
 	}
@@ -266,7 +273,7 @@ void BlendMesh::render(
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),	// @fixme
+			worldTransform.toMatrix44(),	// \fixme
 			getBoundingBox()
 		);
 		if (parameterCallback)
