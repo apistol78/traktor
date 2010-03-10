@@ -181,6 +181,8 @@ HRESULT RenderTargetSetWin32::lostDevice()
 	m_d3dTargetDepthStencilTexture.release();
 	m_d3dTargetDepthStencilSurface.release();
 
+	setContentValid(false);
+
 	return S_OK;
 }
 
@@ -193,7 +195,6 @@ HRESULT RenderTargetSetWin32::resetDevice(IDirect3DDevice9* d3dDevice)
 	if (FAILED(hr))
 		return hr;
 
-	setContentValid(false);
 	return S_OK;
 }
 

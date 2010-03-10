@@ -131,15 +131,6 @@ void AccDisplayRenderer::build(uint32_t frame, bool correctAspectRatio)
 		m_aspectRatio = 0.0f;
 
 	m_scaleX = 1.0f;
-
-	// \fixme Not thread safe
-	//for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
-	//{
-	//	if (!i->second->isContentValid())
-	//		m_glyphCache.erase(i++);
-	//	else
-	//		++i;
-	//}
 }
 
 void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame)
@@ -325,6 +316,10 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			}
 		}
 
+		// Indicate target as valid here; we don't want to wait until
+		// target actually been updated.
+		rts->setContentValid(true);
+
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >();
 		renderBlockBegin->renderTargetSet = rts;
 		renderBlockBegin->renderTargetIndex = 0;
@@ -401,6 +396,15 @@ void AccDisplayRenderer::end()
 			i->second.shape->destroy();
 			m_shapeCache.erase(i++);
 		}
+		else
+			++i;
+	}
+
+	// Remove cached glyphs if the target has become invalid.
+	for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
+	{
+		if (!i->second->isContentValid())
+			m_glyphCache.erase(i++);
 		else
 			++i;
 	}
