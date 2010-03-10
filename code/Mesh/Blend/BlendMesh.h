@@ -22,9 +22,10 @@ namespace traktor
 	{
 
 class IRenderSystem;
-class RenderContext;
-class Mesh;
 class ITexture;
+class Mesh;
+class RenderContext;
+class VertexBuffer;
 
 	}
 
@@ -52,11 +53,19 @@ class T_DLLCLASS BlendMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
+	enum { VertexBufferCount = 2 };
+
 	struct Instance : public Object
 	{
+		Ref< render::VertexBuffer > vertexBuffers[VertexBufferCount];
 		Ref< render::Mesh > mesh;
 		std::vector< float > weights;
-		bool opaque;
+		uint32_t count;
+
+		Instance()
+		:	count(0)
+		{
+		}
 	};
 
 	BlendMesh();
