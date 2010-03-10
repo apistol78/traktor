@@ -8,7 +8,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
-:	m_paused(true)
+:	m_frequency(0)
+,	m_first(0)
+,	m_last(0)
+,	m_paused(true)
 {
 	m_frequency = sys_time_get_timebase_frequency();
 }
@@ -32,14 +35,14 @@ void Timer::stop()
 
 double Timer::getElapsedTime() const
 {
-	int64_t curr;
+	uint64_t curr;
 	SYS_TIMEBASE_GET(curr);
 	return double(curr - m_first) / m_frequency;
 }
 
 double Timer::getDeltaTime()
 {
-	int64_t curr;
+	uint64_t curr;
 	SYS_TIMEBASE_GET(curr);
 	
 	double delta = double(curr - m_last) / m_frequency;
