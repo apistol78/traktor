@@ -27,7 +27,7 @@ const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 const uint32_t c_maxCachedGlyphs = 32;
 #if !defined(TARGET_OS_IPHONE)
-const uint32_t c_cacheGlyphSize = 128;
+const uint32_t c_cacheGlyphSize = 64;
 #else
 const uint32_t c_cacheGlyphSize = 32;
 #endif
@@ -400,6 +400,8 @@ void AccDisplayRenderer::end()
 			++i;
 	}
 
+#if !defined(_PS3)
+
 	// Remove cached glyphs if the target has become invalid.
 	for (std::map< uint64_t, render::RenderTargetSet* >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); )
 	{
@@ -408,6 +410,8 @@ void AccDisplayRenderer::end()
 		else
 			++i;
 	}
+
+#endif
 }
 
 	}

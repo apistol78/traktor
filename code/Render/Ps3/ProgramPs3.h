@@ -61,6 +61,8 @@ public:
 
 	static void unbind();
 
+	inline const std::vector< uint8_t >& getInputSignature() const { return m_inputSignature; }
+
 private:
 	static ProgramPs3* ms_activeProgram;
 
@@ -69,6 +71,7 @@ private:
 	CGprogram m_pixelProgram;
 	LocalMemoryObject* m_vertexShaderUCode;
 	LocalMemoryObject* m_pixelShaderUCode;
+	std::vector< uint8_t > m_inputSignature;
 	RenderState m_renderState;
 	std::vector< ProgramScalar > m_vertexScalars;
 	std::vector< ProgramScalar > m_pixelScalars;

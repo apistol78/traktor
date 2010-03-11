@@ -12,6 +12,7 @@ namespace traktor
 	{
 
 VertexBufferPs3* VertexBufferPs3::ms_activeVertexBuffer = 0;
+bool VertexBufferPs3::ms_attributeEnable[16] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferPs3", VertexBufferPs3, VertexBuffer)
 
@@ -141,14 +142,14 @@ void VertexBufferPs3::unlock()
 {
 }
 
-void VertexBufferPs3::bind()
+void VertexBufferPs3::bind(const std::vector< uint8_t >& signature)
 {
 	//if (ms_activeVertexBuffer == this)
 	//	return;
 
 	for (int i = 0; i < sizeof_array(m_attributeDesc); ++i)
 	{
-		if (m_attributeDesc[i].size)
+		if (m_attributeDesc[i].size && signature[i])
 		{
 			T_GCM_CALL(cellGcmSetVertexDataArray)(
 				gCellGcmCurrentContext,
@@ -160,6 +161,21 @@ void VertexBufferPs3::bind()
 				CELL_GCM_LOCATION_LOCAL,
 				m_vbo->getOffset() + m_attributeDesc[i].offset
 			);
+			ms_attributeEnable[i] = true;
+		}
+		else if (ms_attributeEnable[i])
+		{
+			T_GCM_CALL(cellGcmSetVertexDataArray)(
+				gCellGcmCurrentContext,
+				i,
+				0,
+				0,
+				0,
+				CELL_GCM_VERTEX_F,
+				CELL_GCM_LOCATION_LOCAL,
+				0
+			);
+			ms_attributeEnable[i] = false;
 		}
 	}
 

@@ -175,7 +175,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourcePs3", 0, ProgramResourcePs3, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourcePs3", 1, ProgramResourcePs3, ProgramResource)
 
 ProgramResourcePs3::ProgramResourcePs3()
 :	m_vertexShaderBin(0)
@@ -193,6 +193,8 @@ ProgramResourcePs3::~ProgramResourcePs3()
 
 bool ProgramResourcePs3::serialize(ISerializer& s)
 {
+	T_FATAL_ASSERT (s.getVersion() >= 1);
+
 	s >> MemberBin(L"vertexProgramBin", m_vertexShaderBin);
 	s >> MemberBin(L"pixelProgramBin", m_pixelShaderBin);
 	s >> MemberStlVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
@@ -203,7 +205,9 @@ bool ProgramResourcePs3::serialize(ISerializer& s)
 	s >> MemberStlMap< std::wstring, uint32_t >(L"textureParameterMap", m_textureParameterMap);
 	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
 	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
+	s >> MemberStlVector< uint8_t >(L"inputSignature", m_inputSignature);
 	s >> MemberRenderState(L"renderState", m_renderState);
+
 	return true;
 }
 

@@ -19,6 +19,7 @@ namespace traktor
 	{
 
 class LocalMemoryObject;
+class StateCachePs3;
 		
 class T_DLLCLASS SimpleTexturePs3 : public ISimpleTexture
 {
@@ -43,7 +44,7 @@ public:
 
 	virtual void unlock(int level);
 
-	void bind(int stage, const SamplerState& samplerState);
+	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
 
 private:
 	LocalMemoryObject* m_data;

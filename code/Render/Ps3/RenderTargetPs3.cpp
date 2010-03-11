@@ -1,8 +1,9 @@
-#include "Render/Ps3/RenderTargetPs3.h"
+#include "Core/Log/Log.h"
 #include "Render/Ps3/LocalMemoryManager.h"
 #include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/StateCachePs3.h"
 #include "Render/Ps3/TypesPs3.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -76,9 +77,6 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 	m_width = setDesc.width;
 	m_height = setDesc.height;
 
-	int surfaceWidth = m_width;
-	int surfaceHeight = m_height;
-
 	m_colorTexture.format |= CELL_GCM_TEXTURE_LN | CELL_GCM_TEXTURE_NR;
 	m_colorTexture.mipmap = 1;
 	m_colorTexture.dimension = CELL_GCM_TEXTURE_DIMENSION_2;
@@ -92,22 +90,22 @@ bool RenderTargetPs3::create(const RenderTargetSetCreateDesc& setDesc, const Ren
 		CELL_GCM_TEXTURE_REMAP_FROM_G << 4 |
 		CELL_GCM_TEXTURE_REMAP_FROM_R << 2 |
 		CELL_GCM_TEXTURE_REMAP_FROM_A;
-	m_colorTexture.width = surfaceWidth;
-	m_colorTexture.height = surfaceHeight;
+	m_colorTexture.width = m_width;
+	m_colorTexture.height = m_height;
 	m_colorTexture.depth = 1;
 	m_colorTexture.location = CELL_GCM_LOCATION_LOCAL;
-	m_colorTexture.pitch = cellGcmGetTiledPitchSize(surfaceWidth * byteSize);
+	m_colorTexture.pitch = cellGcmGetTiledPitchSize(m_width * byteSize);
 	m_colorTexture.offset = 0;
 
 	uint32_t textureSize = m_colorTexture.pitch * m_colorTexture.height;
 	m_colorData = LocalMemoryManager::getInstance().alloc(textureSize, 4096, false);
 
-	log::info <<
-		L"PS3 render target created:" << Endl <<
-		L" format " << getTextureFormatName(desc.format) << Endl <<
-		L" size " << m_width << L"*" << m_height << Endl <<
-		L" offset " << (void*)m_colorData->getOffset() << L" (initial)" << Endl <<
-		L" pitch " << m_colorTexture.pitch << Endl;
+	//log::info <<
+	//	L"PS3 render target created:" << Endl <<
+	//	L" format " << getTextureFormatName(desc.format) << Endl <<
+	//	L" size " << m_width << L"*" << m_height << Endl <<
+	//	L" offset " << (void*)m_colorData->getOffset() << L" (initial)" << Endl <<
+	//	L" pitch " << m_colorTexture.pitch << Endl;
 
 	return true;
 }
@@ -149,10 +147,10 @@ void RenderTargetPs3::finishRender()
 
 	// Write label at current location in command buffer.
 	m_waitLabel = ++s_waitLabelCounter;
-	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
+	//T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
 }
 
-void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
+void RenderTargetPs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
 {
 	T_ASSERT (!m_inRender);
 
@@ -160,8 +158,8 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 	if (m_waitLabel)
 	{
 		T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
-		while (*m_waitLabelData < m_waitLabel)
-			sys_timer_usleep(100);
+	//	while (*m_waitLabelData < m_waitLabel)
+	//		sys_timer_usleep(100);
 
 		m_waitLabel = 0;
 	}
@@ -170,72 +168,21 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 
 	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
-		T_GCM_CALL(cellGcmSetTextureControl)(
-			gCellGcmCurrentContext,
-			stage,
-			CELL_GCM_TRUE,
-			0,
-			0,
-			CELL_GCM_TEXTURE_MAX_ANISO_1
-		);
-
-		T_GCM_CALL(cellGcmSetTextureFilter)(
-			gCellGcmCurrentContext,
-			stage,
-			0,
-			samplerState.minFilter,
-			samplerState.magFilter,
-			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
-		);
-
-		T_GCM_CALL(cellGcmSetTextureAddress)(
-			gCellGcmCurrentContext,
-			stage,
-			samplerState.wrapU,
-			samplerState.wrapV,
-			samplerState.wrapW,
-			CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
-			CELL_GCM_TEXTURE_ZFUNC_NEVER,
-			0
-		);
+		stateCache.setSamplerState(stage, samplerState);
+		stateCache.setSamplerTexture(stage, &m_colorTexture, 0);
 	}
 	else	// FP targets.
 	{
-		T_GCM_CALL(cellGcmSetTextureControl)(
-			gCellGcmCurrentContext,
-			stage,
-			CELL_GCM_TRUE,
-			0,
-			0,
-			0
-		);
+		SamplerState fpss;
+		fpss.minFilter = CELL_GCM_TEXTURE_NEAREST_NEAREST;
+		fpss.magFilter = CELL_GCM_TEXTURE_NEAREST;
+		fpss.wrapU = CELL_GCM_TEXTURE_CLAMP;
+		fpss.wrapV = CELL_GCM_TEXTURE_CLAMP;
+		fpss.wrapW = CELL_GCM_TEXTURE_CLAMP;
 
-		T_GCM_CALL(cellGcmSetTextureFilter)(
-			gCellGcmCurrentContext,
-			stage,
-			0,
-			CELL_GCM_TEXTURE_NEAREST_NEAREST,
-			CELL_GCM_TEXTURE_NEAREST,
-			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
-		);
-
-		T_GCM_CALL(cellGcmSetTextureAddress)(
-			gCellGcmCurrentContext,
-			stage,
-			CELL_GCM_TEXTURE_CLAMP,
-			CELL_GCM_TEXTURE_CLAMP,
-			CELL_GCM_TEXTURE_CLAMP,
-			CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
-			CELL_GCM_TEXTURE_ZFUNC_NEVER,
-			0
-		);
+		stateCache.setSamplerState(stage, fpss);
+		stateCache.setSamplerTexture(stage, &m_colorTexture, 0);
 	}
-
-	T_GCM_CALL(cellGcmSetTexture)(
-		gCellGcmCurrentContext,
-		stage,
-		&m_colorTexture
-	);
 }
 
 const CellGcmTexture& RenderTargetPs3::getGcmColorTexture()

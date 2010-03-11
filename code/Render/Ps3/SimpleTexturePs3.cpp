@@ -1,10 +1,11 @@
 #include <cstring>
-#include "Render/Ps3/SimpleTexturePs3.h"
-#include "Render/Ps3/LocalMemoryManager.h"
-#include "Render/Ps3/LocalMemoryObject.h"
-#include "Render/Ps3/TypesPs3.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
+#include "Render/Ps3/LocalMemoryManager.h"
+#include "Render/Ps3/LocalMemoryObject.h"
+#include "Render/Ps3/SimpleTexturePs3.h"
+#include "Render/Ps3/StateCachePs3.h"
+#include "Render/Ps3/TypesPs3.h"
 
 namespace traktor
 {
@@ -191,44 +192,11 @@ void SimpleTexturePs3::unlock(int level)
 {
 }
 
-void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
+void SimpleTexturePs3::bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState)
 {
 	m_texture.offset = m_data->getOffset();
-
-	T_GCM_CALL(cellGcmSetTextureControl)(
-		gCellGcmCurrentContext,
-		stage,
-		CELL_GCM_TRUE,
-		0,
-		m_texture.mipmap << 8,
-		CELL_GCM_TEXTURE_MAX_ANISO_1
-	);
-
-	T_GCM_CALL(cellGcmSetTextureFilter)(
-		gCellGcmCurrentContext,
-		stage,
-		0,
-		samplerState.minFilter,
-		samplerState.magFilter,
-		CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
-	);
-
-	T_GCM_CALL(cellGcmSetTextureAddress)(
-		gCellGcmCurrentContext,
-		stage,
-		samplerState.wrapU,
-		samplerState.wrapV,
-		samplerState.wrapW,
-		CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
-		CELL_GCM_TEXTURE_ZFUNC_NEVER,
-		0
-	);
-
-	T_GCM_CALL(cellGcmSetTexture)(
-		gCellGcmCurrentContext,
-		stage,
-		&m_texture
-	);
+	stateCache.setSamplerState(stage, samplerState);
+	stateCache.setSamplerTexture(stage, &m_texture, m_texture.mipmap << 8);
 }
 
 	}

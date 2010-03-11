@@ -1,5 +1,6 @@
 #include <cstdlib>
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/IndexBufferPs3.h"
 #include "Render/Ps3/LocalMemoryManager.h"
@@ -111,6 +112,7 @@ Ref< IRenderView > RenderSystemPs3::createRenderView(const RenderViewCreateEmbed
 
 Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	LocalMemoryObject* vbo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
 	if (vbo)
 		return new VertexBufferPs3(vertexElements, vbo, bufferSize);
@@ -120,6 +122,7 @@ Ref< VertexBuffer > RenderSystemPs3::createVertexBuffer(const std::vector< Verte
 
 Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	LocalMemoryObject* ibo = LocalMemoryManager::getInstance().alloc(bufferSize, 128, false);
 	if (ibo)
 		return new IndexBufferPs3(ibo, indexType, bufferSize);
@@ -129,6 +132,7 @@ Ref< IndexBuffer > RenderSystemPs3::createIndexBuffer(IndexType indexType, uint3
 
 Ref< ISimpleTexture > RenderSystemPs3::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< SimpleTexturePs3 > texture = new SimpleTexturePs3();
 	if (texture->create(desc))
 		return texture;
@@ -148,6 +152,7 @@ Ref< IVolumeTexture > RenderSystemPs3::createVolumeTexture(const VolumeTextureCr
 
 Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	Ref< RenderTargetSetPs3 > renderTargetSet = new RenderTargetSetPs3();
 	if (renderTargetSet->create(desc))
 		return renderTargetSet;
@@ -157,6 +162,8 @@ Ref< RenderTargetSet > RenderSystemPs3::createRenderTargetSet(const RenderTarget
 
 Ref< IProgram > RenderSystemPs3::createProgram(const ProgramResource* programResource)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	Ref< const ProgramResourcePs3 > resource = dynamic_type_cast< const ProgramResourcePs3* >(programResource);
 	if (!resource)
 		return 0;

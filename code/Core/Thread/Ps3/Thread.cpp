@@ -95,7 +95,7 @@ bool Thread::wait(int timeout)
 
 			for (rc = 0; rc == 0 && !in->finished; )
 			{
-				rc = sys_cond_wait(in->cond, timeout);
+				rc = sys_cond_wait(in->cond, usecond_t(timeout) * 1000);
 				if (rc == ETIMEDOUT)
 					break;
 			}

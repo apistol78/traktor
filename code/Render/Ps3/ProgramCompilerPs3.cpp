@@ -7,6 +7,7 @@
 #include "Core/Thread/Semaphore.h"
 #include "Render/Ps3/Cg.h"
 #include "Render/Ps3/CgProgram.h"
+#include "Render/Ps3/CgType.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
 #include "Render/Ps3/ProgramCompilerPs3.h"
 #include "Render/Shader/Nodes.h"
@@ -205,6 +206,24 @@ bool collectSamplerParameters(
 	return true;
 }
 
+bool collectInputSignature(const ShaderGraph* shaderGraph, std::vector< uint8_t >& outSignature)
+{
+	RefArray< VertexInput > vertexInputNodes;
+	shaderGraph->findNodesOf< VertexInput >(vertexInputNodes);
+
+	outSignature.resize(16, 0);
+
+	for (RefArray< VertexInput >::const_iterator i = vertexInputNodes.begin(); i != vertexInputNodes.end(); ++i)
+	{
+		outSignature[cg_attr_index(
+			(*i)->getDataUsage(),
+			(*i)->getIndex()
+		)] = 1;
+	}
+
+	return true;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramCompilerPs3", 0, ProgramCompilerPs3, IProgramCompiler)
@@ -333,6 +352,10 @@ Ref< ProgramResource > ProgramCompilerPs3::compile(
 			resource->m_textureParameterDataSize
 		))
 			return 0;
+
+		// Create vertex input signature.
+		if (!collectInputSignature(shaderGraph, resource->m_inputSignature))
+			return false;
 
 		resource->m_renderState = cgProgram.getRenderState();
 

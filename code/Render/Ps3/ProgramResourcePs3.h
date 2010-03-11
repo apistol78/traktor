@@ -38,6 +38,7 @@ private:
 	std::map< std::wstring, uint32_t > m_textureParameterMap;
 	uint32_t m_scalarParameterDataSize;
 	uint32_t m_textureParameterDataSize;
+	std::vector< uint8_t > m_inputSignature;
 	RenderState m_renderState;
 };
 

@@ -62,6 +62,7 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 ,	m_depthAddr(0)
 ,	m_frameCounter(1)
 ,	m_frameSyncLabelData(0)
+,	m_renderTargetDirty(false)
 ,	m_patchProgramObject(0)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
@@ -207,60 +208,34 @@ int RenderViewPs3::getHeight() const
 
 void RenderViewPs3::setViewport(const Viewport& viewport)
 {
-	if (m_renderStateStack.empty())
+	if (m_renderTargetStack.empty())
 		m_viewport = viewport;
 	else
 	{
-		RenderState& rs = m_renderStateStack.back();
+		RenderState& rs = m_renderTargetStack.back();
 		rs.viewport = viewport;
-
-		float scale[4];
-		float offset[4];
-
-		scale[0] = rs.viewport.width * 0.5f;
-		scale[1] = rs.viewport.height * -0.5f;
-		scale[2] = (rs.viewport.farZ - rs.viewport.nearZ) * 0.5f;
-		scale[3] = 0.0f;
-
-		offset[0] = rs.viewport.left + scale[0];
-		offset[1] = rs.viewport.height - rs.viewport.top + scale[1];
-		offset[2] = (rs.viewport.farZ + rs.viewport.nearZ) * 0.5f;
-		offset[3] = 0.0f;
-
-		T_GCM_CALL(cellGcmSetViewport)(
-			gCellGcmCurrentContext,
-			rs.viewport.left,
-			rs.viewport.top,
-			rs.viewport.width,
-			rs.viewport.height,
-			rs.viewport.nearZ,
-			rs.viewport.farZ,
-			scale,
-			offset
-		);
-
-		T_GCM_CALL(cellGcmSetScissor)(
-			gCellGcmCurrentContext,
-			rs.viewport.left,
-			rs.viewport.top,
-			rs.viewport.width,
-			rs.viewport.height
-		);
+		m_stateCache.setViewport(rs.viewport);
 	}
 }
 
 Viewport RenderViewPs3::getViewport()
 {
-	return m_viewport;
+	if (m_renderTargetStack.empty())
+		return m_viewport;
+	else
+		return m_renderTargetStack.back().viewport;
 }
 
 bool RenderViewPs3::getNativeAspectRatio(float& outAspectRatio) const
 {
-	return false;
+	outAspectRatio = float(m_width) / m_height;
+	return true;
 }
 
 bool RenderViewPs3::begin()
 {
+	m_renderSystem->acquireLock();
+
 	LocalMemoryManager::getInstance().compact();
 
 	uint32_t frameIndex = m_frameCounter % sizeof_array(m_colorOffset);
@@ -278,15 +253,9 @@ bool RenderViewPs3::begin()
 		0
 	};
 
-	T_ASSERT (m_renderStateStack.empty());
-	m_renderStateStack.push_back(rs);
-
-	setCurrentRenderState();
-
-	T_GCM_CALL(cellGcmSetInvalidateVertexCache)(gCellGcmCurrentContext); 
-	T_GCM_CALL(cellGcmSetInvalidateTextureCache)(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
-
-	m_stateCache.resetTextures();
+	T_ASSERT (m_renderTargetStack.empty());
+	m_renderTargetStack.push_back(rs);
+	m_renderTargetDirty = true;
 
 	// Reset patched program pool.
 	uint8_t* patchArea = static_cast< uint8_t* >(m_patchProgramObject->getPointer()) + (m_frameCounter % c_patchProgramCount) * c_patchProgramSize;
@@ -294,13 +263,12 @@ bool RenderViewPs3::begin()
 
 	// Ensure no program is currently bound; might need to repatch program.
 	ProgramPs3::unbind();
-
 	return true;
 }
 
 bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bool keepDepthStencil)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT (!m_renderTargetStack.empty());
 
 	RenderTargetSetPs3* rts = checked_type_cast< RenderTargetSetPs3* >(renderTargetSet);
 	RenderTargetPs3* rt = rts->getRenderTarget(renderTarget);
@@ -321,16 +289,12 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 
 	if (keepDepthStencil)
 	{
-		rs.depthOffset = m_renderStateStack.back().depthOffset;
-		rs.depthPitch = m_renderStateStack.back().depthPitch;
+		rs.depthOffset = m_renderTargetStack.back().depthOffset;
+		rs.depthPitch = m_renderTargetStack.back().depthPitch;
 	}
 
-	m_renderStateStack.push_back(rs);
-
-	setCurrentRenderState();
-
-	//T_GCM_CALL(cellGcmSetInvalidateVertexCache)(gCellGcmCurrentContext); 
-	//T_GCM_CALL(cellGcmSetInvalidateTextureCache)(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
+	m_renderTargetStack.push_back(rs);
+	m_renderTargetDirty = true;
 
 	rts->setContentValid(true);
 	rt->beginRender();
@@ -340,9 +304,12 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 
 void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT (!m_renderTargetStack.empty());
 
-	const RenderState& rs = m_renderStateStack.back();
+	if (m_renderTargetDirty)
+		setCurrentRenderState();
+
+	const RenderState& rs = m_renderTargetStack.back();
 	uint32_t gcmClearMask = 0;
 
 	if (clearMask & CfColor)
@@ -414,8 +381,11 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	T_ASSERT (m_currentVertexBuffer);
 	T_ASSERT (m_currentProgram);
 
-	m_currentVertexBuffer->bind();
+	if (m_renderTargetDirty)
+		setCurrentRenderState();
+
 	m_currentProgram->bind(m_patchProgramPool, m_stateCache);
+	m_currentVertexBuffer->bind(m_currentProgram->getInputSignature());
 
 	uint32_t count = 0;
 	switch (primitives.type)
@@ -476,18 +446,18 @@ void RenderViewPs3::draw(const Primitives& primitives)
 
 void RenderViewPs3::end()
 {
-	T_ASSERT (!m_renderStateStack.empty());
+	T_ASSERT (!m_renderTargetStack.empty());
 
-	RenderState& rs = m_renderStateStack.back();
+	RenderState& rs = m_renderTargetStack.back();
 	RenderTargetPs3* rt = rs.renderTarget;
 	
-	m_renderStateStack.pop_back();
+	m_renderTargetStack.pop_back();
 
-	if (!m_renderStateStack.empty())
+	if (!m_renderTargetStack.empty())
 	{
 		T_ASSERT (rt);
 		rt->finishRender();
-		setCurrentRenderState();
+		m_renderTargetDirty = true;
 	}
 }
 
@@ -507,6 +477,8 @@ void RenderViewPs3::present()
 		sys_timer_usleep(100);
 
 	m_frameCounter = incrementLabel(m_frameCounter);
+
+	m_renderSystem->releaseLock();
 }
 
 void RenderViewPs3::setMSAAEnable(bool msaaEnable)
@@ -525,7 +497,9 @@ void RenderViewPs3::popMarker()
 
 void RenderViewPs3::setCurrentRenderState()
 {
-	const RenderState& rs = m_renderStateStack.back();
+	T_ASSERT (m_renderTargetDirty);
+
+	const RenderState& rs = m_renderTargetStack.back();
 
 	CellGcmSurface sf;
 
@@ -563,48 +537,17 @@ void RenderViewPs3::setCurrentRenderState()
 
 	T_GCM_CALL(cellGcmSetSurface)(gCellGcmCurrentContext, &sf);
 
-	float scale[4];
-	float offset[4];
-
-	scale[0] = rs.viewport.width * 0.5f;
-	scale[1] = rs.viewport.height * -0.5f;
-	scale[2] = (rs.viewport.farZ - rs.viewport.nearZ) * 0.5f;
-	scale[3] = 0.0f;
-
-	offset[0] = rs.viewport.left + scale[0];
-	offset[1] = rs.viewport.height - rs.viewport.top + scale[1];
-	offset[2] = (rs.viewport.farZ + rs.viewport.nearZ) * 0.5f;
-	offset[3] = 0.0f;
-
-	T_GCM_CALL(cellGcmSetViewport)(
-		gCellGcmCurrentContext,
-		rs.viewport.left,
-		rs.viewport.top,
-		rs.viewport.width,
-		rs.viewport.height,
-		rs.viewport.nearZ,
-		rs.viewport.farZ,
-		scale,
-		offset
-	);
-
-	T_GCM_CALL(cellGcmSetScissor)(
-		gCellGcmCurrentContext,
-		rs.viewport.left,
-		rs.viewport.top,
-		rs.viewport.width,
-		rs.viewport.height
-	);
-
-	T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
-	T_GCM_CALL(cellGcmSetColorMaskMrt)(gCellGcmCurrentContext, 0);
+	m_stateCache.setViewport(rs.viewport);
+	m_stateCache.setColorMask(CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
 
 	if (rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32)
 		m_stateCache.setInFp32Mode(true);
 	else
 		m_stateCache.setInFp32Mode(false);
 
-	m_stateCache.reset(false);
+	m_stateCache.reset(/*StateCachePs3::RfRenderState | */StateCachePs3::RfSamplerStates);
+
+	m_renderTargetDirty = false;
 }
 
 	}

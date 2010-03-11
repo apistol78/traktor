@@ -96,7 +96,7 @@ bool Event::wait(int32_t timeout)
 
 	++in->count;
 
-	rc = sys_cond_wait(in->cond, timeout);
+	rc = sys_cond_wait(in->cond, usecond_t(timeout) * 1000);
 	
 	if (rc != CELL_OK)
 		--in->count;

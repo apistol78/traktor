@@ -10,6 +10,8 @@
 #include "Render/Ps3/LocalMemoryObject.h"
 #include "Render/Ps3/ProgramPs3.h"
 #include "Render/Ps3/ProgramResourcePs3.h"
+#include "Render/Ps3/RenderTargetPs3.h"
+#include "Render/Ps3/SimpleTexturePs3.h"
 #include "Render/Ps3/StateCachePs3.h"
 
 using namespace cell::Gcm;
@@ -114,7 +116,9 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 	m_scalarParameterData.resize(resource->m_scalarParameterDataSize);
 	m_textureParameterData.resize(resource->m_textureParameterDataSize);
 
+	m_inputSignature = resource->m_inputSignature;
 	m_renderState = resource->m_renderState;
+
 	return true;
 }
 
@@ -250,7 +254,12 @@ void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache
 		{
 			ITexture* texture = m_textureParameterData[i->texture];
 			if (texture)
-				stateCache.setTexture(i->stage, texture, m_renderState.samplerStates[i->stage]);
+			{
+				if (SimpleTexturePs3* simpleTexture = dynamic_type_cast< SimpleTexturePs3* >(texture))
+					simpleTexture->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
+				else if (RenderTargetPs3* renderTarget = dynamic_type_cast< RenderTargetPs3* >(texture))
+					renderTarget->bind(stateCache, i->stage, m_renderState.samplerStates[i->stage]);
+			}
 		}
 	}
 

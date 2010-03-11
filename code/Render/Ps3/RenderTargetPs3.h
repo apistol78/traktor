@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class LocalMemoryObject;
+class StateCachePs3;
 
 class T_DLLCLASS RenderTargetPs3 : public ITexture
 {
@@ -40,7 +41,7 @@ public:
 
 	void finishRender();
 
-	void bind(int stage, const SamplerState& samplerState);
+	void bind(StateCachePs3& stateCache, int stage, const SamplerState& samplerState);
 
 	const CellGcmTexture& getGcmColorTexture();
 

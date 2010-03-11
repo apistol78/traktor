@@ -53,6 +53,8 @@ class T_DLLCLASS InstanceMesh : public IMesh
 public:
 #if TARGET_OS_IPHONE
 	enum { MaxInstanceCount = 10 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
+#elif defined(_PS3)
+	enum { MaxInstanceCount = 30 };
 #else
 	enum { MaxInstanceCount = 60 };
 #endif

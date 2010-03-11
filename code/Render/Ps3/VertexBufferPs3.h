@@ -37,7 +37,7 @@ public:
 	
 	virtual void unlock();
 
-	void bind();
+	void bind(const std::vector< uint8_t >& signature);
 
 private:
 	struct AttributeDesc
@@ -48,6 +48,7 @@ private:
 	};
 
 	static VertexBufferPs3* ms_activeVertexBuffer;
+	static bool ms_attributeEnable[16];
 
 	LocalMemoryObject* m_vbo;
 	uint8_t m_vertexStride;

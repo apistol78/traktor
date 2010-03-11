@@ -16,7 +16,14 @@ public:
 	enum
 	{
 		VertexConstantCount = 256,
-		MaxTextureCount = 8
+		SamplerCount = 8
+	};
+
+	enum ResetFlags
+	{
+		RfRenderState = 1,
+		RfSamplerStates = 2,
+		RfForced = 4
 	};
 
 	StateCachePs3();
@@ -27,23 +34,32 @@ public:
 
 	void setRenderState(const RenderState& rs);
 
+	void setSamplerState(int32_t stage, const SamplerState& ss);
+
+	void setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod);
+
 	void setProgram(const CGprogram vertexProgram, const void* vertexUCode, const CGprogram fragmentProgram, const uint32_t fragmentOffset, bool updateFragmentProgram);
 
 	void setVertexShaderConstant(uint32_t registerOffset, uint32_t registerCount, const float* constantData);
 
-	void setTexture(uint16_t stage, ITexture* texture, const SamplerState& samplerState);
+	void setColorMask(uint32_t colorMask);
 
-	void reset(bool force);
+	void setViewport(const Viewport& viewport);
 
-	void resetTextures();
+	void reset(uint32_t flags);
 
 private:
 	bool m_inFp32Mode;
 	RenderState m_renderState;
+	SamplerState m_samplerStates[SamplerCount];
 	const void* m_vertexUCode;
 	uint32_t m_fragmentOffset;
 	float* m_vertexConstantsShadow;
-	ITexture* m_textures[MaxTextureCount];
+	const CellGcmTexture* m_textures[SamplerCount];
+	uint32_t m_textureOffsets[SamplerCount];
+	uint16_t m_textureLods[SamplerCount];
+	uint32_t m_colorMask;
+	Viewport m_viewport;
 };
 
 	}

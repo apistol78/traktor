@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetPs3", RenderTargetSetPs3, RenderTargetSet)
 
 RenderTargetSetPs3::RenderTargetSetPs3()
-:	m_width(0)
+:	RenderTargetSet()
+,	m_width(0)
 ,	m_height(0)
 ,	m_depthData(0)
 {

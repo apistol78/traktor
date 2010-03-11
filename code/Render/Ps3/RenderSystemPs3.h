@@ -1,6 +1,7 @@
 #ifndef traktor_render_RenderSystemPs3_H
 #define traktor_render_RenderSystemPs3_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Render/IRenderSystem.h"
 
 // import/export mechanism.
@@ -56,6 +57,13 @@ public:
 	virtual Ref< IProgram > createProgram(const ProgramResource* programResource);
 
 	virtual Ref< IProgramCompiler > createProgramCompiler() const;
+
+	void acquireLock() { m_lock.wait(); }
+
+	void releaseLock() { m_lock.release(); }
+
+private:
+	Semaphore m_lock;
 };
 
 	}

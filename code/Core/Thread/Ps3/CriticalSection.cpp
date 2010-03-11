@@ -26,7 +26,7 @@ CriticalSection::~CriticalSection()
 bool CriticalSection::wait(int32_t timeout)
 {
 	sys_mutex_t* mutex = reinterpret_cast< sys_mutex_t* >(m_handle);
-	int rc = sys_mutex_lock(*mutex, timeout);
+	int rc = sys_mutex_lock(*mutex, usecond_t(timeout) * 1000);
 	return bool(rc == CELL_OK);
 }
 

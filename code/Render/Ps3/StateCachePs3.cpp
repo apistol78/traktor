@@ -1,8 +1,6 @@
 #include <vec_types.h>
 #include "Core/Memory/Alloc.h"
 #include "Render/Ps3/StateCachePs3.h"
-#include "Render/Ps3/RenderTargetPs3.h"
-#include "Render/Ps3/SimpleTexturePs3.h"
 
 namespace traktor
 {
@@ -58,6 +56,8 @@ StateCachePs3::StateCachePs3()
 		VertexConstantCount,
 		m_vertexConstantsShadow
 	);
+
+	reset(RfRenderState | RfSamplerStates | RfForced);
 }
 
 StateCachePs3::~StateCachePs3()
@@ -78,7 +78,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.cullFaceEnable = rs.cullFaceEnable;
 	}
 
-	if (/*rs.cullFaceEnable && */(rs.cullFace != m_renderState.cullFace))
+	if (/*rs.cullFaceEnable == CELL_GCM_TRUE && */(rs.cullFace != m_renderState.cullFace))
 	{
 		T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, rs.cullFace);
 		m_renderState.cullFace = rs.cullFace;
@@ -102,7 +102,7 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 		m_renderState.depthMask = rs.depthMask;
 	}
 
-	if (/*rs.depthTestEnable && */(rs.depthFunc != m_renderState.depthFunc))
+	if (/*rs.depthTestEnable == CELL_GCM_TRUE && */(rs.depthFunc != m_renderState.depthFunc))
 	{
 		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, rs.depthFunc);
 		m_renderState.depthFunc = rs.depthFunc;
@@ -116,13 +116,13 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 			m_renderState.blendEnable = rs.blendEnable;
 		}
 
-		if (/*rs.blendEnable && */(rs.blendEquation != m_renderState.blendEquation))
+		if (/*rs.blendEnable == CELL_GCM_TRUE && */(rs.blendEquation != m_renderState.blendEquation))
 		{
 			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
 			m_renderState.blendEquation = rs.blendEquation;
 		}
 
-		if (/*rs.blendEnable && */(rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
+		if (/*rs.blendEnable == CELL_GCM_TRUE && */(rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
 		{
 			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
 			m_renderState.blendFuncSrc = rs.blendFuncSrc;
@@ -135,12 +135,74 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 			m_renderState.alphaTestEnable = rs.alphaTestEnable;
 		}
 
-		if (/*rs.alphaTestEnable && */(rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef))
+		if (/*rs.alphaTestEnable == CELL_GCM_TRUE && */(rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef))
 		{
 			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
 			m_renderState.alphaFunc = rs.alphaFunc;
 			m_renderState.alphaRef = rs.alphaRef;
 		}
+	}
+}
+
+void StateCachePs3::setSamplerState(int32_t stage, const SamplerState& ss)
+{
+	SamplerState& samplerState = m_samplerStates[stage];
+
+	if (ss.minFilter != samplerState.minFilter || ss.magFilter != samplerState.magFilter)
+	{
+		T_GCM_CALL(cellGcmSetTextureFilter)(
+			gCellGcmCurrentContext,
+			stage,
+			0,
+			ss.minFilter,
+			ss.magFilter,
+			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
+		);
+		samplerState.minFilter = ss.minFilter;
+		samplerState.magFilter = ss.magFilter;
+	}
+
+	if (ss.wrapU != samplerState.wrapU || ss.wrapV != samplerState.wrapV || ss.wrapW != samplerState.wrapW)
+	{
+		T_GCM_CALL(cellGcmSetTextureAddress)(
+			gCellGcmCurrentContext,
+			stage,
+			ss.wrapU,
+			ss.wrapV,
+			ss.wrapW,
+			CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
+			CELL_GCM_TEXTURE_ZFUNC_NEVER,
+			0
+		);
+		samplerState.wrapU = ss.wrapU;
+		samplerState.wrapV = ss.wrapV;
+		samplerState.wrapW = ss.wrapW;
+	}
+}
+
+void StateCachePs3::setSamplerTexture(int32_t stage, const CellGcmTexture* texture, uint16_t maxLod)
+{
+	if (maxLod != m_textureLods[stage])
+	{
+		T_GCM_CALL(cellGcmSetTextureControl)(
+			gCellGcmCurrentContext,
+			stage,
+			CELL_GCM_TRUE,
+			0,
+			maxLod,
+			CELL_GCM_TEXTURE_MAX_ANISO_1
+		);
+		m_textureLods[stage] = maxLod;
+	}
+	if (texture != m_textures[stage] || texture->offset != m_textureOffsets[stage])
+	{
+		T_GCM_CALL(cellGcmSetTexture)(
+			gCellGcmCurrentContext,
+			stage,
+			texture
+		);
+		m_textures[stage] = texture;
+		m_textureOffsets[stage] = texture->offset;
 	}
 }
 
@@ -176,58 +238,166 @@ void StateCachePs3::setVertexShaderConstant(uint32_t registerOffset, uint32_t re
 	}
 }
 
-void StateCachePs3::setTexture(uint16_t stage, ITexture* texture, const SamplerState& samplerState)
+void StateCachePs3::setColorMask(uint32_t colorMask)
 {
-	if (texture != m_textures[stage])
+	if (colorMask != m_colorMask)
 	{
-		if (texture)
-		{
-			if (is_a< SimpleTexturePs3 >(texture))
-				static_cast< SimpleTexturePs3* >(texture)->bind(stage, samplerState);
-			else if (is_a< RenderTargetPs3 >(texture))
-				static_cast< RenderTargetPs3* >(texture)->bind(stage, samplerState);
-		}
-		m_textures[stage] = texture;
+		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, colorMask);
+		m_colorMask = colorMask;
 	}
 }
 
-void StateCachePs3::reset(bool force)
+void StateCachePs3::setViewport(const Viewport& viewport)
 {
-	if (!force)
+	if (
+		viewport.left != m_viewport.left ||
+		viewport.top != m_viewport.top ||
+		viewport.width != m_viewport.width ||
+		viewport.height != m_viewport.height ||
+		viewport.nearZ != m_viewport.nearZ ||
+		viewport.farZ != m_viewport.farZ
+	)
 	{
-		setRenderState(RenderState());
+		float scale[4];
+		float offset[4];
+
+		scale[0] = viewport.width * 0.5f;
+		scale[1] = viewport.height * -0.5f;
+		scale[2] = (viewport.farZ - viewport.nearZ) * 0.5f;
+		scale[3] = 0.0f;
+
+		offset[0] = viewport.left + scale[0];
+		offset[1] = viewport.height - viewport.top + scale[1];
+		offset[2] = (viewport.farZ + viewport.nearZ) * 0.5f;
+		offset[3] = 0.0f;
+
+		T_GCM_CALL(cellGcmSetViewport)(
+			gCellGcmCurrentContext,
+			viewport.left,
+			viewport.top,
+			viewport.width,
+			viewport.height,
+			viewport.nearZ,
+			viewport.farZ,
+			scale,
+			offset
+		);
+
+		T_GCM_CALL(cellGcmSetScissor)(
+			gCellGcmCurrentContext,
+			viewport.left,
+			viewport.top,
+			viewport.width,
+			viewport.height
+		);
+
+		m_viewport = viewport;
+	}
+}
+
+void StateCachePs3::reset(uint32_t flags)
+{
+	if (!(flags & RfForced))
+	{
+		if (flags & RfRenderState)
+			setRenderState(RenderState());
+
+		if (flags & RfSamplerStates)
+		{
+			for (int i = 0; i < SamplerCount; ++i)
+			{
+				setSamplerState(i, SamplerState());
+
+				if (m_textureLods[i] != uint16_t(~0))
+				{
+					T_GCM_CALL(cellGcmSetTextureControl)(
+						gCellGcmCurrentContext,
+						i,
+						CELL_GCM_FALSE,
+						0,
+						0,
+						CELL_GCM_TEXTURE_MAX_ANISO_1
+					);
+				}
+			}
+		}
 	}
 	else
 	{
 		m_renderState = RenderState();
 
-		T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
-		T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
-		T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
-		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, m_renderState.colorMask);
-		T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, m_renderState.depthMask);
-		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, m_renderState.depthFunc);
-
-		if (!m_inFp32Mode)
+		if (flags & RfRenderState)
 		{
+			T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
+			T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
+			T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
+			T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, m_renderState.colorMask);
+			T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, m_renderState.depthMask);
+			T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, m_renderState.depthFunc);
+
 			T_GCM_CALL(cellGcmSetBlendEnable)(gCellGcmCurrentContext, m_renderState.blendEnable);
 			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
 			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
 			T_GCM_CALL(cellGcmSetAlphaTestEnable)(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
 			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
 		}
+
+		if (flags & RfSamplerStates)
+		{
+			for (int i = 0; i < SamplerCount; ++i)
+			{
+				m_samplerStates[i] = SamplerState();
+
+				T_GCM_CALL(cellGcmSetTextureFilter)(
+					gCellGcmCurrentContext,
+					i,
+					0,
+					m_samplerStates[i].minFilter,
+					m_samplerStates[i].magFilter,
+					CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
+				);
+
+				T_GCM_CALL(cellGcmSetTextureAddress)(
+					gCellGcmCurrentContext,
+					i,
+					m_samplerStates[i].wrapU,
+					m_samplerStates[i].wrapV,
+					m_samplerStates[i].wrapW,
+					CELL_GCM_TEXTURE_UNSIGNED_REMAP_NORMAL,
+					CELL_GCM_TEXTURE_ZFUNC_NEVER,
+					0
+				);
+
+				T_GCM_CALL(cellGcmSetTextureControl)(
+					gCellGcmCurrentContext,
+					i,
+					CELL_GCM_FALSE,
+					0,
+					0,
+					CELL_GCM_TEXTURE_MAX_ANISO_1
+				);
+			}
+		}
+
+		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_A);
 	}
 
 	m_vertexUCode = 0;
 	m_fragmentOffset = 0;
 
-	resetTextures();
-}
+	if (flags & RfSamplerStates)
+	{
+		for (int i = 0; i < sizeof_array(m_textures); ++i)
+			m_textures[i] = 0;
 
-void StateCachePs3::resetTextures()
-{
-	for (int i = 0; i < sizeof_array(m_textures); ++i)
-		m_textures[i] = 0;
+		for (int i = 0; i < sizeof_array(m_textureOffsets); ++i)
+			m_textureOffsets[i] = 0;
+
+		for (int i = 0; i < sizeof_array(m_textureLods); ++i)
+			m_textureLods[i] = uint16_t(~0);
+	}
+
+	m_colorMask = CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_A;
 }
 
 	}

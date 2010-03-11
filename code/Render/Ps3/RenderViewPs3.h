@@ -106,7 +106,8 @@ private:
 	CellGcmTexture m_depthTexture;
 	uint32_t m_frameCounter;
 	volatile uint32_t* m_frameSyncLabelData;
-	std::list< RenderState > m_renderStateStack;
+	std::list< RenderState > m_renderTargetStack;
+	bool m_renderTargetDirty;
 	ClearFpPs3 m_clearFp;
 	StateCachePs3 m_stateCache;
 	LocalMemoryObject* m_patchProgramObject;

@@ -80,7 +80,7 @@ bool Signal::wait(int32_t timeout)
 
 	while (in->signal == 0)
 	{
-		rc = sys_cond_wait(in->cond, timeout);
+		rc = sys_cond_wait(in->cond, usecond_t(timeout) * 1000);
 		if (rc == ETIMEDOUT)
 			break;
 	}
