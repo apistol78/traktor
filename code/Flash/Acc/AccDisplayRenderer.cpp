@@ -167,7 +167,7 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 
 	if (m_clearBackground)
 	{
-		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >();
+		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
 		renderBlock->clearMask = render::CfColor | render::CfStencil;
 		renderBlock->clearColor[0] = backgroundColor.red / 255.0f;
 		renderBlock->clearColor[1] = backgroundColor.green / 255.0f;
@@ -176,7 +176,7 @@ void AccDisplayRenderer::begin(const FlashMovie& movie, const SwfColor& backgrou
 	}
 	else
 	{
-		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >();
+		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
 		renderBlock->clearMask = render::CfStencil;
 		m_renderContext->draw(render::RfOverlay, renderBlock);
 	}
@@ -320,7 +320,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		// target actually been updated.
 		rts->setContentValid(true);
 
-		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >();
+		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = rts;
 		renderBlockBegin->renderTargetIndex = 0;
 		renderBlockBegin->keepDepthStencil = false;
@@ -349,7 +349,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			false
 		);
 
-		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >();
+		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash glyph render end");
 		m_renderContext->draw(render::RfOverlay, renderBlockEnd);
 
 		// Place in cache.

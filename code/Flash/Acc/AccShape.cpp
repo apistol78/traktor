@@ -337,7 +337,7 @@ void AccShape::render(
 	if (!shaderSolid && !shaderTextured)
 		return;
 
-	render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >();
+	render::NullRenderBlock* renderBlockSolid = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set solid parameters");
 	renderBlockSolid->shader = shaderSolid;
 	renderBlockSolid->shaderParams = renderContext->alloc< render::ShaderParameters >();
 	renderBlockSolid->shaderParams->beginParameters(renderContext);
@@ -351,7 +351,7 @@ void AccShape::render(
 	renderBlockSolid->shaderParams->endParameters(renderContext);
 	renderContext->draw(render::RfOverlay, renderBlockSolid);
 
-	render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >();
+	render::NullRenderBlock* renderBlockTextured = renderContext->alloc< render::NullRenderBlock >("Flash AccShape; set textured parameters");
 	renderBlockTextured->shader = shaderTextured;
 	renderBlockTextured->shaderParams = renderContext->alloc< render::ShaderParameters >();
 	renderBlockTextured->shaderParams->beginParameters(renderContext);
@@ -369,7 +369,7 @@ void AccShape::render(
 	{
 		if (!i->texture)
 		{
-			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw solid batch");
 			renderBlock->shader = shaderSolid;
 			renderBlock->vertexBuffer = m_vertexBuffer;
 			renderBlock->primitive = i->primitives.type;
@@ -386,7 +386,7 @@ void AccShape::render(
 				0.0f, 0.0f, 0.0, 0.0f
 			);
 
-			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+			render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccShape; draw textured batch");
 			renderBlock->shader = shaderTextured;
 			renderBlock->vertexBuffer = m_vertexBuffer;
 			renderBlock->primitive = i->primitives.type;

@@ -345,6 +345,14 @@ void RenderViewWin32::setMSAAEnable(bool msaaEnable)
 	m_d3dDevice->SetRenderState(D3DRS_MULTISAMPLEANTIALIAS, msaaEnable ? TRUE : FALSE);
 }
 
+void RenderViewWin32::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewWin32::popMarker()
+{
+}
+
 HRESULT RenderViewWin32::lostDevice()
 {
 	log::debug << L"RenderViewWin32::lostDevice" << Endl;

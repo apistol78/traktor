@@ -209,7 +209,7 @@ void PointRenderer::flush(
 			if (!i->shader || !i->count)
 				continue;
 
-			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("PointRenderer");
 
 			renderBlock->distance = i->distance;
 			renderBlock->shader = i->shader;

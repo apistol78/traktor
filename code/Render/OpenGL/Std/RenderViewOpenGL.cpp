@@ -332,5 +332,13 @@ void RenderViewOpenGL::setMSAAEnable(bool msaaEnable)
 {
 }
 
+void RenderViewOpenGL::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewOpenGL::popMarker()
+{
+}
+
 	}
 }

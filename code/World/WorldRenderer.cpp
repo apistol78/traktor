@@ -326,6 +326,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
 	{
+		m_renderView->pushMarker("World: Depth");
 		if (m_renderView->begin(m_depthTargetSet, 0, /*true*/false))
 		{
 			const float depthColor[] = { m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ, m_settings.viewFarZ };
@@ -334,12 +335,14 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
+		m_renderView->popMarker();
 	}
 
 	if ((flags & WrfVelocityMap) != 0 && f.haveVelocity)
 	{
 		m_velocityTargetSet->swap(0, 1);
 
+		m_renderView->pushMarker("World: Velocity");
 		if (m_renderView->begin(m_velocityTargetSet, 0, true))
 		{
 			const float velocityColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -347,10 +350,12 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			f.velocity->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
+		m_renderView->popMarker();
 	}
 
 	if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 	{
+		m_renderView->pushMarker("World: Shadow map");
 		if (m_renderView->begin(m_shadowTargetSet, 0, false))
 		{
 			const float shadowClear[] = { m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ, m_settings.shadowFarZ };
@@ -358,7 +363,9 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			f.shadow->getRenderContext()->render(m_renderView, render::RfOpaque);
 			m_renderView->end();
 		}
+		m_renderView->popMarker();
 
+		m_renderView->pushMarker("World: Shadow mask");
 		if (m_renderView->begin(m_shadowMaskTargetSet, 0, false))
 		{
 			const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -376,6 +383,7 @@ void WorldRenderer::render(uint32_t flags, int frame)
 			);
 			m_renderView->end();
 		}
+		m_renderView->popMarker();
 	}
 
 	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
@@ -387,7 +395,9 @@ void WorldRenderer::render(uint32_t flags, int frame)
 		if (flags & WrfVisualAlphaBlend)
 			renderFlags |= render::RfAlphaBlend;
 
+		m_renderView->pushMarker("World: Visual");
 		f.visual->getRenderContext()->render(m_renderView, renderFlags);
+		m_renderView->popMarker();
 	}
 }
 

@@ -17,6 +17,15 @@ namespace traktor
 	namespace render
 	{
 
+/*! \group Render block debug name.
+ * \ingroup Render
+ * \{
+ */
+
+#define T_USE_RENDERBLOCK_NAME
+
+/*! \} */
+
 class IRenderView;
 class RenderTargetSet;
 class Shader;
@@ -30,12 +39,20 @@ class VertexBuffer;
 class T_DLLCLASS RenderBlock
 {
 public:
+#if defined(T_USE_RENDERBLOCK_NAME)
+	const char* name;
+#endif
 	float distance;
 	Shader* shader;
 	ShaderParameters* shaderParams;
 
 	RenderBlock()
+#if defined(T_USE_RENDERBLOCK_NAME)
+	:	name(0)
+	,	distance(0.0f)
+#else
 	:	distance(0.0f)
+#endif
 	,	shader(0)
 	,	shaderParams(0)
 	{

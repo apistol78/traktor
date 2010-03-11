@@ -209,5 +209,16 @@ void RenderViewCapture::setMSAAEnable(bool msaaEnable)
 	m_renderView->setMSAAEnable(msaaEnable);
 }
 
+void RenderViewCapture::pushMarker(const char* const marker)
+{
+	m_renderView->pushMarker(marker);
+}
+
+void RenderViewCapture::popMarker()
+{
+	m_renderView->popMarker();
+}
+
+
 	}
 }

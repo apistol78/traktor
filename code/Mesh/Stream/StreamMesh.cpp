@@ -69,7 +69,7 @@ void StreamMesh::render(
 		if (!it->second.material->hasTechnique(worldRenderView->getTechnique()))
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("StreamMesh");
 
 		renderBlock->distance = distance;
 		renderBlock->shader = it->second.material;

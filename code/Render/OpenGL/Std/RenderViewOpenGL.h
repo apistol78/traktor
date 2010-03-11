@@ -93,6 +93,10 @@ public:
 
 	virtual void setMSAAEnable(bool msaaEnable);
 
+	virtual void pushMarker(const char* const marker);
+
+	virtual void popMarker();
+
 private:
 	Ref< RenderSystemOpenGL > m_renderSystem;
 	Ref< ContextOpenGL > m_context;
