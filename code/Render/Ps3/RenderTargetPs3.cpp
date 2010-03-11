@@ -149,7 +149,7 @@ void RenderTargetPs3::finishRender()
 
 	// Write label at current location in command buffer.
 	m_waitLabel = ++s_waitLabelCounter;
-	cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
+	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_waitLabelId, m_waitLabel);
 }
 
 void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
@@ -159,7 +159,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 	// Wait until label has been reached.
 	if (m_waitLabel)
 	{
-		cellGcmFlush(gCellGcmCurrentContext);
+		T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 		while (*m_waitLabelData < m_waitLabel)
 			sys_timer_usleep(100);
 
@@ -170,7 +170,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 
 	if (m_colorSurfaceFormat == CELL_GCM_SURFACE_B8 || m_colorSurfaceFormat == CELL_GCM_SURFACE_A8R8G8B8)
 	{
-		cellGcmSetTextureControl(
+		T_GCM_CALL(cellGcmSetTextureControl)(
 			gCellGcmCurrentContext,
 			stage,
 			CELL_GCM_TRUE,
@@ -179,7 +179,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			CELL_GCM_TEXTURE_MAX_ANISO_1
 		);
 
-		cellGcmSetTextureFilter(
+		T_GCM_CALL(cellGcmSetTextureFilter)(
 			gCellGcmCurrentContext,
 			stage,
 			0,
@@ -188,7 +188,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 		);
 
-		cellGcmSetTextureAddress(
+		T_GCM_CALL(cellGcmSetTextureAddress)(
 			gCellGcmCurrentContext,
 			stage,
 			samplerState.wrapU,
@@ -201,7 +201,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 	}
 	else	// FP targets.
 	{
-		cellGcmSetTextureControl(
+		T_GCM_CALL(cellGcmSetTextureControl)(
 			gCellGcmCurrentContext,
 			stage,
 			CELL_GCM_TRUE,
@@ -210,7 +210,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			0
 		);
 
-		cellGcmSetTextureFilter(
+		T_GCM_CALL(cellGcmSetTextureFilter)(
 			gCellGcmCurrentContext,
 			stage,
 			0,
@@ -219,7 +219,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 			CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 		);
 
-		cellGcmSetTextureAddress(
+		T_GCM_CALL(cellGcmSetTextureAddress)(
 			gCellGcmCurrentContext,
 			stage,
 			CELL_GCM_TEXTURE_CLAMP,
@@ -231,7 +231,7 @@ void RenderTargetPs3::bind(int stage, const SamplerState& samplerState)
 		);
 	}
 
-	cellGcmSetTexture(
+	T_GCM_CALL(cellGcmSetTexture)(
 		gCellGcmCurrentContext,
 		stage,
 		&m_colorTexture

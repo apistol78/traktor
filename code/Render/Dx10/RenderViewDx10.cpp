@@ -402,5 +402,13 @@ void RenderViewDx10::setMSAAEnable(bool msaaEnable)
 {
 }
 
+void RenderViewDx10::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewDx10::popMarker()
+{
+}
+
 	}
 }

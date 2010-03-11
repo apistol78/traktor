@@ -11,6 +11,12 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+const uint32_t c_clearColorRegister = 0;
+
+		}
 
 ClearFpPs3::ClearFpPs3()
 {
@@ -43,7 +49,6 @@ ClearFpPs3::ClearFpPs3()
 	CGparameter color = cellGcmCgGetNamedParameter(m_clearVertexProgram, "color");
 
 	m_clearPositionIndex = cellGcmCgGetParameterResource(m_clearVertexProgram, position) - CG_ATTR0;
-	m_clearColorIndex = cellGcmCgGetParameterResource(m_clearVertexProgram, color) - CG_ATTR0;
 }
 
 ClearFpPs3::~ClearFpPs3()
@@ -64,13 +69,15 @@ void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 {
 	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, "Clear FP target");
 
+	stateCache.reset(false);
 	stateCache.setProgram(
 		m_clearVertexProgram, m_clearVertexProgramUcode,
 		m_clearFragmentProgram, m_clearFragmentProgramUcode->getOffset(),
 		false
 	);
+	stateCache.setVertexShaderConstant(c_clearColorRegister, 1, color);
 
-	cellGcmSetVertexDataArray(
+	T_GCM_CALL(cellGcmSetVertexDataArray)(
 		gCellGcmCurrentContext,
 		m_clearPositionIndex,
 		0, 
@@ -80,13 +87,8 @@ void ClearFpPs3::clear(StateCachePs3& stateCache, const float color[4])
 		CELL_GCM_LOCATION_LOCAL, 
 		m_quadBuffer->getOffset()
 	);
-	cellGcmSetVertexData4f(
-		gCellGcmCurrentContext,
-		m_clearColorIndex, 
-		color
-	);
 
-	cellGcmSetDrawArrays(gCellGcmCurrentContext, CELL_GCM_PRIMITIVE_TRIANGLE_STRIP, 0, 4);
+	T_GCM_CALL(cellGcmSetDrawArrays)(gCellGcmCurrentContext, CELL_GCM_PRIMITIVE_TRIANGLE_STRIP, 0, 4);
 
 	cellGcmSetPerfMonPopMarker(gCellGcmCurrentContext);
 }

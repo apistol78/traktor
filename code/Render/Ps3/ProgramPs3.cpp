@@ -1,5 +1,8 @@
+#include <ppu_intrinsics.h>
 #include "Core/Log/Log.h"
+#include "Core/Memory/PoolAllocator.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Misc/Align.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Render/Ps3/PlatformPs3.h"
@@ -26,7 +29,7 @@ struct UCodeCacheEntry
 
 std::map< uint32_t, UCodeCacheEntry > m_ucodeCache;
 
-void getVertexProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
+void getProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
 {
 	uint32_t ucodeSize;
 	void* ucode;
@@ -55,18 +58,6 @@ void getVertexProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
 	}
 }
 
-void getPixelProgramUCode(CGprogram program, LocalMemoryObject*& outUCode)
-{
-	uint32_t ucodeSize;
-	void* ucode;
-
-	cellGcmCgInitProgram(program);
-	cellGcmCgGetUCode(program, &ucode, &ucodeSize);
-
-	outUCode = LocalMemoryManager::getInstance().alloc(ucodeSize, 64, false);
-	std::memcpy(outUCode->getPointer(), ucode, ucodeSize);
-}
-
 		}
 
 ProgramPs3* ProgramPs3::ms_activeProgram = 0;
@@ -78,6 +69,7 @@ ProgramPs3::ProgramPs3()
 ,	m_pixelProgram(0)
 ,	m_vertexShaderUCode(0)
 ,	m_pixelShaderUCode(0)
+,	m_patchedPixelShaderOffset(0)
 ,	m_dirty(false)
 {
 }
@@ -96,8 +88,8 @@ bool ProgramPs3::create(const ProgramResourcePs3* resource)
 	m_vertexProgram = (CGprogram)sceCgcGetBinData(resource->m_vertexShaderBin);
 	m_pixelProgram = (CGprogram)sceCgcGetBinData(resource->m_pixelShaderBin);
 
-	getVertexProgramUCode(m_vertexProgram, m_vertexShaderUCode);
-	getPixelProgramUCode(m_pixelProgram, m_pixelShaderUCode);
+	getProgramUCode(m_vertexProgram, m_vertexShaderUCode);
+	getProgramUCode(m_pixelProgram, m_pixelShaderUCode);
 
 	m_vertexScalars = resource->m_vertexScalars;
 	m_pixelScalars = resource->m_pixelScalars;
@@ -210,7 +202,7 @@ void ProgramPs3::setStencilReference(uint32_t stencilReference)
 {
 }
 
-void ProgramPs3::bind(StateCachePs3& stateCache)
+void ProgramPs3::bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache)
 {
 	stateCache.setRenderState(m_renderState);
 
@@ -220,20 +212,39 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 		for (std::vector< ProgramScalar >::iterator i = m_vertexScalars.begin(); i != m_vertexScalars.end(); ++i)
 			stateCache.setVertexShaderConstant(i->vertexRegisterIndex, i->vertexRegisterCount, &m_scalarParameterData[i->offset]);
 
-		// Patch fragment program with parameters.
-		uint8_t* programUCode = (uint8_t*)m_pixelShaderUCode->getPointer();
-		for (std::vector< ProgramScalar >::iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
+		// Get patched pixel shader.
+		if (!m_pixelScalars.empty())
 		{
-			for (std::vector< FragmentOffset >::iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
+			uint32_t ucodeSize = alignUp(m_pixelShaderUCode->getSize(), 64);
+
+			uint8_t* patchedPixelShaderUCode = static_cast< uint8_t* >(patchProgramPool.alloc(ucodeSize));
+			T_ASSERT_M (patchedPixelShaderUCode, L"Out of memory for patched pixel programs");
+
+			std::memcpy(
+				patchedPixelShaderUCode,
+				m_pixelShaderUCode->getPointer(),
+				m_pixelShaderUCode->getSize()
+			);
+
+			for (std::vector< ProgramScalar >::iterator i = m_pixelScalars.begin(); i != m_pixelScalars.end(); ++i)
 			{
-				// Swap 16-in-32 each dword of data.
-				for (uint32_t k = 0; k < 4; ++k)
+				for (std::vector< FragmentOffset >::iterator j = i->fragmentOffsets.begin(); j != i->fragmentOffsets.end(); ++j)
 				{
-					uint32_t v = *(uint32_t*)&m_scalarParameterData[i->offset + j->parameterOffset + k];
-					*(uint32_t*)&programUCode[j->ucodeOffset + k * 4] = (v >> 16) | (v << 16);
+					const uint32_t* sv = (const uint32_t*)&m_scalarParameterData[i->offset + j->parameterOffset];
+					uint32_t* uc = (uint32_t*)&patchedPixelShaderUCode[j->ucodeOffset];
+
+					for (uint32_t k = 0; k < 4; ++k)
+					{
+						const uint32_t v = sv[k];
+						uc[k] = (v >> 16) | (v << 16);
+					}
 				}
 			}
+
+			cellGcmAddressToOffset(patchedPixelShaderUCode, &m_patchedPixelShaderOffset);
 		}
+		else
+			m_patchedPixelShaderOffset = m_pixelShaderUCode->getOffset();
 
 		for (std::vector< ProgramSampler >::iterator i = m_pixelSamplers.begin(); i != m_pixelSamplers.end(); ++i)
 		{
@@ -247,11 +258,16 @@ void ProgramPs3::bind(StateCachePs3& stateCache)
 		m_vertexProgram,
 		m_vertexShaderUCode->getPointer(),
 		m_pixelProgram,
-		m_pixelShaderUCode->getOffset(),
+		m_patchedPixelShaderOffset,
 		(m_dirty || ms_activeProgram != this)
 	);
 
 	ms_activeProgram = this;
+}
+
+void ProgramPs3::unbind()
+{
+	ms_activeProgram = 0;
 }
 
 	}

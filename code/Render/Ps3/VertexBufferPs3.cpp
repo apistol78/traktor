@@ -150,7 +150,7 @@ void VertexBufferPs3::bind()
 	{
 		if (m_attributeDesc[i].size)
 		{
-			cellGcmSetVertexDataArray(
+			T_GCM_CALL(cellGcmSetVertexDataArray)(
 				gCellGcmCurrentContext,
 				i,
 				0,

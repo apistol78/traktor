@@ -116,7 +116,7 @@ void AccQuad::render(
 	);
 	stepSize = m.inverse() * stepSize;
 
-	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >();
+	render::NonIndexedRenderBlock* renderBlock = renderContext->alloc< render::NonIndexedRenderBlock >("Flash AccQuad");
 	renderBlock->shader = m_shaderTextured;
 	renderBlock->vertexBuffer = m_vertexBuffer;
 	renderBlock->primitive = render::PtTriangleStrip;

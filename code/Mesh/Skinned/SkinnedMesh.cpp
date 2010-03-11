@@ -51,7 +51,7 @@ void SkinnedMesh::render(
 		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("SkinnedMesh");
 
 		renderBlock->distance = distance;
 		renderBlock->shader = m_parts[i].material;
@@ -64,7 +64,7 @@ void SkinnedMesh::render(
 		worldRenderView->setShaderParameters(
 			renderBlock->shaderParams,
 			worldTransform.toMatrix44(),
-			worldTransform.toMatrix44(),	// @fixme
+			worldTransform.toMatrix44(),	// \fixme
 			getBoundingBox()
 		);
 		if (parameterCallback)

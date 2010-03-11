@@ -2,6 +2,7 @@
 #define traktor_render_RenderViewPs3_H
 
 #include <list>
+#include "Core/Memory/PoolAllocator.h"
 #include "Render/IRenderView.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/ClearFpPs3.h"
@@ -71,6 +72,10 @@ public:
 
 	virtual void setMSAAEnable(bool msaaEnable);
 
+	virtual void pushMarker(const char* const marker);
+
+	virtual void popMarker();
+
 private:
 	struct RenderState
 	{
@@ -104,6 +109,8 @@ private:
 	std::list< RenderState > m_renderStateStack;
 	ClearFpPs3 m_clearFp;
 	StateCachePs3 m_stateCache;
+	LocalMemoryObject* m_patchProgramObject;
+	PoolAllocator m_patchProgramPool;
 
 	void setCurrentRenderState();
 };

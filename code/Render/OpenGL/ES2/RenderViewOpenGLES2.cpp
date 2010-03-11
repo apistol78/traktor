@@ -375,6 +375,14 @@ void RenderViewOpenGLES2::setMSAAEnable(bool msaaEnable)
 {
 }
 
+void RenderViewOpenGLES2::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewOpenGLES2::popMarker()
+{
+}
+
 	}
 }
 

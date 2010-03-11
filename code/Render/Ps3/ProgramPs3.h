@@ -18,6 +18,9 @@
 
 namespace traktor
 {
+
+class PoolAllocator;
+
 	namespace render
 	{
 
@@ -54,7 +57,9 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	void bind(StateCachePs3& stateCache);
+	void bind(PoolAllocator& patchProgramPool, StateCachePs3& stateCache);
+
+	static void unbind();
 
 private:
 	static ProgramPs3* ms_activeProgram;
@@ -73,6 +78,7 @@ private:
 	std::map< handle_t, uint32_t > m_textureParameterMap;
 	AlignedVector< float > m_scalarParameterData;
 	RefArray< ITexture > m_textureParameterData;
+	uint32_t m_patchedPixelShaderOffset;
 	bool m_dirty;
 };
 

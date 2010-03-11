@@ -99,7 +99,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 			for (uint32_t j = 0; j < batchCount; ++j)
 				instanceBatch[j] = instanceWorld[batchOffset + j].first;
 
-			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+			render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh opaque");
 
 			renderBlock->distance = instanceWorld[batchOffset].second;
 			renderBlock->shader = m_parts[i].material;
@@ -144,7 +144,7 @@ void InstanceMesh::render(render::RenderContext* renderContext, const world::Wor
 				for (uint32_t j = 0; j < batchCount; ++j)
 					instanceBatch[j] = instanceWorld[batchOffset + j].first;
 
-				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
+				render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("InstanceMesh blend");
 
 				renderBlock->distance = instanceWorld[batchOffset].second;
 				renderBlock->shader = m_parts[i].material;

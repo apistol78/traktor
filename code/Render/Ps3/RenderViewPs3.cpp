@@ -17,6 +17,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_patchProgramSize = 1024 * 1024;
+const uint32_t c_patchProgramCount = 2;
 const uint8_t c_frameSyncLabelId = 128;
 const uint8_t c_waitLabelId = 129;
 
@@ -60,6 +62,7 @@ RenderViewPs3::RenderViewPs3(RenderSystemPs3* renderSystem)
 ,	m_depthAddr(0)
 ,	m_frameCounter(1)
 ,	m_frameSyncLabelData(0)
+,	m_patchProgramObject(0)
 {
 	std::memset(m_colorAddr, 0, sizeof(m_colorAddr));
 	std::memset(m_colorOffset, 0, sizeof(m_colorOffset));
@@ -100,7 +103,10 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 		return 0;
 	}
 
-	cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
+	if (desc.waitVBlank)
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_VSYNC);
+	else
+		cellGcmSetFlipMode(CELL_GCM_DISPLAY_HSYNC);
 
 	uint32_t colorSize = m_colorPitch * m_height;
 	m_colorObject = LocalMemoryManager::getInstance().alloc(sizeof_array(m_colorAddr) * colorSize, 4096, true);
@@ -148,11 +154,19 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 		m_depthTexture.offset = m_depthObject->getOffset();
 	}
 
+	// Create frame synchronization labels.
 	m_frameSyncLabelData = cellGcmGetLabelAddress(c_frameSyncLabelId);
 	*m_frameSyncLabelData = m_frameCounter;
 
 	volatile uint32_t* waitLabelData = cellGcmGetLabelAddress(c_waitLabelId);
 	*waitLabelData = 0;
+
+	// Allocate area for patched pixel programs.
+	m_patchProgramObject = LocalMemoryManager::getInstance().alloc(
+		c_patchProgramSize * c_patchProgramCount,
+		64,
+		false
+	);
 
 	setViewport(Viewport(0, 0, m_width, m_height, 0.0f, 1.0f));
 	return true;
@@ -160,6 +174,11 @@ bool RenderViewPs3::create(const RenderViewCreateDefaultDesc& desc)
 
 void RenderViewPs3::close()
 {
+	if (m_patchProgramObject)
+	{
+		LocalMemoryManager::getInstance().free(m_patchProgramObject);
+		m_patchProgramObject = 0;
+	}
 	if (m_depthObject)
 	{
 		LocalMemoryManager::getInstance().free(m_depthObject);
@@ -208,7 +227,7 @@ void RenderViewPs3::setViewport(const Viewport& viewport)
 		offset[2] = (rs.viewport.farZ + rs.viewport.nearZ) * 0.5f;
 		offset[3] = 0.0f;
 
-		cellGcmSetViewport(
+		T_GCM_CALL(cellGcmSetViewport)(
 			gCellGcmCurrentContext,
 			rs.viewport.left,
 			rs.viewport.top,
@@ -220,7 +239,7 @@ void RenderViewPs3::setViewport(const Viewport& viewport)
 			offset
 		);
 
-		cellGcmSetScissor(
+		T_GCM_CALL(cellGcmSetScissor)(
 			gCellGcmCurrentContext,
 			rs.viewport.left,
 			rs.viewport.top,
@@ -264,10 +283,17 @@ bool RenderViewPs3::begin()
 
 	setCurrentRenderState();
 
-	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
-	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
+	T_GCM_CALL(cellGcmSetInvalidateVertexCache)(gCellGcmCurrentContext); 
+	T_GCM_CALL(cellGcmSetInvalidateTextureCache)(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
 
 	m_stateCache.resetTextures();
+
+	// Reset patched program pool.
+	uint8_t* patchArea = static_cast< uint8_t* >(m_patchProgramObject->getPointer()) + (m_frameCounter % c_patchProgramCount) * c_patchProgramSize;
+	m_patchProgramPool = PoolAllocator(patchArea, c_patchProgramSize);
+
+	// Ensure no program is currently bound; might need to repatch program.
+	ProgramPs3::unbind();
 
 	return true;
 }
@@ -303,8 +329,8 @@ bool RenderViewPs3::begin(RenderTargetSet* renderTargetSet, int renderTarget, bo
 
 	setCurrentRenderState();
 
-	cellGcmSetInvalidateVertexCache(gCellGcmCurrentContext); 
-	cellGcmSetInvalidateTextureCache(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
+	//T_GCM_CALL(cellGcmSetInvalidateVertexCache)(gCellGcmCurrentContext); 
+	//T_GCM_CALL(cellGcmSetInvalidateTextureCache)(gCellGcmCurrentContext, CELL_GCM_INVALIDATE_TEXTURE);
 
 	rts->setContentValid(true);
 	rt->beginRender();
@@ -334,11 +360,10 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 				(uint32_t(color[2] * 255.0f) << 0) |
 				(uint32_t(color[3] * 255.0f) << 24);
 
-			cellGcmSetClearColor(gCellGcmCurrentContext, clearColor);
+			T_GCM_CALL(cellGcmSetClearColor)(gCellGcmCurrentContext, clearColor);
 		}
 		else
 		{
-			m_stateCache.reset(false);
 			m_clearFp.clear(m_stateCache, color);
 		}
 	}
@@ -349,7 +374,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 		{
 			gcmClearMask |= CELL_GCM_CLEAR_Z;
 
-			cellGcmSetClearDepthStencil(
+			T_GCM_CALL(cellGcmSetClearDepthStencil)(
 				gCellGcmCurrentContext,
 				(uint32_t(depth * 0xffffff) << 8) | (stencil & 0xff)
 			);
@@ -357,7 +382,7 @@ void RenderViewPs3::clear(uint32_t clearMask, const float color[4], float depth,
 	}
 
 	if (gcmClearMask)
-		cellGcmSetClearSurface(gCellGcmCurrentContext, gcmClearMask);
+		T_GCM_CALL(cellGcmSetClearSurface)(gCellGcmCurrentContext, gcmClearMask);
 }
 
 void RenderViewPs3::setVertexBuffer(VertexBuffer* vertexBuffer)
@@ -386,14 +411,13 @@ void RenderViewPs3::draw(const Primitives& primitives)
 		CELL_GCM_PRIMITIVE_TRIANGLES
 	};
 
-	uint32_t count = 0;
-
 	T_ASSERT (m_currentVertexBuffer);
 	T_ASSERT (m_currentProgram);
 
 	m_currentVertexBuffer->bind();
-	m_currentProgram->bind(m_stateCache);
+	m_currentProgram->bind(m_patchProgramPool, m_stateCache);
 
+	uint32_t count = 0;
 	switch (primitives.type)
 	{
 	case PtPoints:
@@ -430,7 +454,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 			offset += primitives.offset * 2;
 		}
 		
-		cellGcmSetDrawIndexArray(
+		T_GCM_CALL(cellGcmSetDrawIndexArray)(
 			gCellGcmCurrentContext,
 			c_mode[primitives.type],
 			count,
@@ -441,7 +465,7 @@ void RenderViewPs3::draw(const Primitives& primitives)
 	}
 	else
 	{
-		cellGcmSetDrawArrays(
+		T_GCM_CALL(cellGcmSetDrawArrays)(
 			gCellGcmCurrentContext,
 			c_mode[primitives.type],
 			primitives.offset,
@@ -474,10 +498,10 @@ void RenderViewPs3::present()
 		log::error << L"Failed to present, unable to issue flip" << Endl;
 		return;
 	}
-	cellGcmSetWaitFlip(gCellGcmCurrentContext);
+	T_GCM_CALL(cellGcmSetWaitFlip)(gCellGcmCurrentContext);
 
-	cellGcmSetWriteBackEndLabel(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
-	cellGcmFlush(gCellGcmCurrentContext);
+	T_GCM_CALL(cellGcmSetWriteBackEndLabel)(gCellGcmCurrentContext, c_frameSyncLabelId, m_frameCounter);
+	T_GCM_CALL(cellGcmFlush)(gCellGcmCurrentContext);
 
 	while (*m_frameSyncLabelData + 2 < m_frameCounter)
 		sys_timer_usleep(100);
@@ -487,6 +511,16 @@ void RenderViewPs3::present()
 
 void RenderViewPs3::setMSAAEnable(bool msaaEnable)
 {
+}
+
+void RenderViewPs3::pushMarker(const char* const marker)
+{
+	cellGcmSetPerfMonPushMarker(gCellGcmCurrentContext, marker);
+}
+
+void RenderViewPs3::popMarker()
+{
+	cellGcmSetPerfMonPopMarker(gCellGcmCurrentContext);
 }
 
 void RenderViewPs3::setCurrentRenderState()
@@ -527,7 +561,7 @@ void RenderViewPs3::setCurrentRenderState()
 	sf.x = 0;
 	sf.y = 0;
 
-	cellGcmSetSurface(gCellGcmCurrentContext, &sf);
+	T_GCM_CALL(cellGcmSetSurface)(gCellGcmCurrentContext, &sf);
 
 	float scale[4];
 	float offset[4];
@@ -542,7 +576,7 @@ void RenderViewPs3::setCurrentRenderState()
 	offset[2] = (rs.viewport.farZ + rs.viewport.nearZ) * 0.5f;
 	offset[3] = 0.0f;
 
-	cellGcmSetViewport(
+	T_GCM_CALL(cellGcmSetViewport)(
 		gCellGcmCurrentContext,
 		rs.viewport.left,
 		rs.viewport.top,
@@ -554,7 +588,7 @@ void RenderViewPs3::setCurrentRenderState()
 		offset
 	);
 
-	cellGcmSetScissor(
+	T_GCM_CALL(cellGcmSetScissor)(
 		gCellGcmCurrentContext,
 		rs.viewport.left,
 		rs.viewport.top,
@@ -562,8 +596,8 @@ void RenderViewPs3::setCurrentRenderState()
 		rs.viewport.height
 	);
 
-	cellGcmSetColorMask(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
-	cellGcmSetColorMaskMrt(gCellGcmCurrentContext, 0);
+	T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, CELL_GCM_COLOR_MASK_B | CELL_GCM_COLOR_MASK_G | CELL_GCM_COLOR_MASK_R | CELL_GCM_COLOR_MASK_A);
+	T_GCM_CALL(cellGcmSetColorMaskMrt)(gCellGcmCurrentContext, 0);
 
 	if (rs.colorFormat == CELL_GCM_SURFACE_F_W32Z32Y32X32 || rs.colorFormat == CELL_GCM_SURFACE_F_X32)
 		m_stateCache.setInFp32Mode(true);

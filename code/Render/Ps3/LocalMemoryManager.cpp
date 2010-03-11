@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Ps3/PlatformPs3.h"
 #include "Render/Ps3/LocalMemoryManager.h"
@@ -14,18 +15,6 @@ namespace traktor
 
 const uint32_t c_blockSize = 128;				//< Allocation size must be a multiple of c_blockSize.
 const uint32_t c_transferWaitLabelId = 151;
-
-template < typename T >
-T alignDown(T v, size_t a)
-{
-	return (T)((size_t)v & ~(a - 1));
-}
-
-template < typename T >
-T alignUp(T v, size_t a)
-{
-	return (T)(((size_t)v + (a - 1)) & ~(a - 1));
-}
 
 		}
 

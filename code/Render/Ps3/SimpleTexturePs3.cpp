@@ -195,7 +195,7 @@ void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 {
 	m_texture.offset = m_data->getOffset();
 
-	cellGcmSetTextureControl(
+	T_GCM_CALL(cellGcmSetTextureControl)(
 		gCellGcmCurrentContext,
 		stage,
 		CELL_GCM_TRUE,
@@ -204,7 +204,7 @@ void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 		CELL_GCM_TEXTURE_MAX_ANISO_1
 	);
 
-	cellGcmSetTextureFilter(
+	T_GCM_CALL(cellGcmSetTextureFilter)(
 		gCellGcmCurrentContext,
 		stage,
 		0,
@@ -213,7 +213,7 @@ void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 		CELL_GCM_TEXTURE_CONVOLUTION_QUINCUNX
 	);
 
-	cellGcmSetTextureAddress(
+	T_GCM_CALL(cellGcmSetTextureAddress)(
 		gCellGcmCurrentContext,
 		stage,
 		samplerState.wrapU,
@@ -224,7 +224,7 @@ void SimpleTexturePs3::bind(int stage, const SamplerState& samplerState)
 		0
 	);
 
-	cellGcmSetTexture(
+	T_GCM_CALL(cellGcmSetTexture)(
 		gCellGcmCurrentContext,
 		stage,
 		&m_texture

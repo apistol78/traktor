@@ -51,6 +51,13 @@ StateCachePs3::StateCachePs3()
 {
 	m_vertexConstantsShadow = (float*)Alloc::acquireAlign(VertexConstantCount * 4 * sizeof(float), 16);
 	std::memset(m_vertexConstantsShadow, 0, VertexConstantCount * 4 * sizeof(float));
+
+	T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
+		gCellGcmCurrentContext,
+		0,
+		VertexConstantCount,
+		m_vertexConstantsShadow
+	);
 }
 
 StateCachePs3::~StateCachePs3()
@@ -67,37 +74,37 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 {
 	if (rs.cullFaceEnable != m_renderState.cullFaceEnable)
 	{
-		cellGcmSetCullFaceEnable(gCellGcmCurrentContext, rs.cullFaceEnable);
+		T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, rs.cullFaceEnable);
 		m_renderState.cullFaceEnable = rs.cullFaceEnable;
 	}
 
-	if (rs.cullFace != m_renderState.cullFace)
+	if (/*rs.cullFaceEnable && */(rs.cullFace != m_renderState.cullFace))
 	{
-		cellGcmSetCullFace(gCellGcmCurrentContext, rs.cullFace);
+		T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, rs.cullFace);
 		m_renderState.cullFace = rs.cullFace;
 	}
 
 	if (rs.depthTestEnable != m_renderState.depthTestEnable)
 	{
-		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, rs.depthTestEnable);
+		T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, rs.depthTestEnable);
 		m_renderState.depthTestEnable = rs.depthTestEnable;
 	}
 
 	if (rs.colorMask != m_renderState.colorMask)
 	{
-		cellGcmSetColorMask(gCellGcmCurrentContext, rs.colorMask);
+		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, rs.colorMask);
 		m_renderState.colorMask = rs.colorMask;
 	}
 
 	if (rs.depthMask != m_renderState.depthMask)
 	{
-		cellGcmSetDepthMask(gCellGcmCurrentContext, rs.depthMask);
+		T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, rs.depthMask);
 		m_renderState.depthMask = rs.depthMask;
 	}
 
-	if (rs.depthFunc != m_renderState.depthFunc)
+	if (/*rs.depthTestEnable && */(rs.depthFunc != m_renderState.depthFunc))
 	{
-		cellGcmSetDepthFunc(gCellGcmCurrentContext, rs.depthFunc);
+		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, rs.depthFunc);
 		m_renderState.depthFunc = rs.depthFunc;
 	}
 
@@ -105,32 +112,32 @@ void StateCachePs3::setRenderState(const RenderState& rs)
 	{
 		if (rs.blendEnable != m_renderState.blendEnable)
 		{
-			cellGcmSetBlendEnable(gCellGcmCurrentContext, rs.blendEnable);
+			T_GCM_CALL(cellGcmSetBlendEnable)(gCellGcmCurrentContext, rs.blendEnable);
 			m_renderState.blendEnable = rs.blendEnable;
 		}
 
-		if (rs.blendEquation != m_renderState.blendEquation)
+		if (/*rs.blendEnable && */(rs.blendEquation != m_renderState.blendEquation))
 		{
-			cellGcmSetBlendEquation(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
+			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, rs.blendEquation, CELL_GCM_FUNC_ADD);
 			m_renderState.blendEquation = rs.blendEquation;
 		}
 
-		if (rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest)
+		if (/*rs.blendEnable && */(rs.blendFuncSrc != m_renderState.blendFuncSrc || rs.blendFuncDest != m_renderState.blendFuncDest))
 		{
-			cellGcmSetBlendFunc(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, rs.blendFuncSrc, rs.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
 			m_renderState.blendFuncSrc = rs.blendFuncSrc;
 			m_renderState.blendFuncDest = rs.blendFuncDest;
 		}
 
 		if (rs.alphaTestEnable != m_renderState.alphaTestEnable)
 		{
-			cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, rs.alphaTestEnable);
+			T_GCM_CALL(cellGcmSetAlphaTestEnable)(gCellGcmCurrentContext, rs.alphaTestEnable);
 			m_renderState.alphaTestEnable = rs.alphaTestEnable;
 		}
 
-		if (rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef)
+		if (/*rs.alphaTestEnable && */(rs.alphaFunc != m_renderState.alphaFunc || m_renderState.alphaRef != m_renderState.alphaRef))
 		{
-			cellGcmSetAlphaFunc(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
+			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, rs.alphaFunc, rs.alphaRef);
 			m_renderState.alphaFunc = rs.alphaFunc;
 			m_renderState.alphaRef = rs.alphaRef;
 		}
@@ -141,17 +148,17 @@ void StateCachePs3::setProgram(const CGprogram vertexProgram, const void* vertex
 {
 	if (vertexUCode != m_vertexUCode)
 	{
-		cellGcmSetVertexProgram(gCellGcmCurrentContext, vertexProgram, vertexUCode);
+		T_GCM_CALL(cellGcmSetVertexProgram)(gCellGcmCurrentContext, vertexProgram, vertexUCode);
 		m_vertexUCode = vertexUCode;
 	}
 	if (fragmentOffset != m_fragmentOffset)
 	{
-		cellGcmSetFragmentProgram(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
+		T_GCM_CALL(cellGcmSetFragmentProgram)(gCellGcmCurrentContext, fragmentProgram, fragmentOffset);
 		m_fragmentOffset = fragmentOffset;
 	}
 	else if (updateFragmentProgram)
 	{
-		cellGcmSetUpdateFragmentProgramParameter(gCellGcmCurrentContext, fragmentOffset);
+		T_GCM_CALL(cellGcmSetUpdateFragmentProgramParameter)(gCellGcmCurrentContext, fragmentOffset);
 	}
 }
 
@@ -160,7 +167,7 @@ void StateCachePs3::setVertexShaderConstant(uint32_t registerOffset, uint32_t re
 	float* shadow = &m_vertexConstantsShadow[registerOffset * 4];
 	if (!compareExchangeEqual4(shadow, constantData, registerCount * 4))
 	{
-		cellGcmSetVertexProgramParameterBlock(
+		T_GCM_CALL(cellGcmSetVertexProgramParameterBlock)(
 			gCellGcmCurrentContext,
 			registerOffset,
 			registerCount,
@@ -194,20 +201,20 @@ void StateCachePs3::reset(bool force)
 	{
 		m_renderState = RenderState();
 
-		cellGcmSetCullFaceEnable(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
-		cellGcmSetCullFace(gCellGcmCurrentContext, m_renderState.cullFace);
-		cellGcmSetDepthTestEnable(gCellGcmCurrentContext, m_renderState.depthTestEnable);
-		cellGcmSetColorMask(gCellGcmCurrentContext, m_renderState.colorMask);
-		cellGcmSetDepthMask(gCellGcmCurrentContext, m_renderState.depthMask);
-		cellGcmSetDepthFunc(gCellGcmCurrentContext, m_renderState.depthFunc);
+		T_GCM_CALL(cellGcmSetCullFaceEnable)(gCellGcmCurrentContext, m_renderState.cullFaceEnable);
+		T_GCM_CALL(cellGcmSetCullFace)(gCellGcmCurrentContext, m_renderState.cullFace);
+		T_GCM_CALL(cellGcmSetDepthTestEnable)(gCellGcmCurrentContext, m_renderState.depthTestEnable);
+		T_GCM_CALL(cellGcmSetColorMask)(gCellGcmCurrentContext, m_renderState.colorMask);
+		T_GCM_CALL(cellGcmSetDepthMask)(gCellGcmCurrentContext, m_renderState.depthMask);
+		T_GCM_CALL(cellGcmSetDepthFunc)(gCellGcmCurrentContext, m_renderState.depthFunc);
 
 		if (!m_inFp32Mode)
 		{
-			cellGcmSetBlendEnable(gCellGcmCurrentContext, m_renderState.blendEnable);
-			cellGcmSetBlendEquation(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
-			cellGcmSetBlendFunc(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
-			cellGcmSetAlphaTestEnable(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
-			cellGcmSetAlphaFunc(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
+			T_GCM_CALL(cellGcmSetBlendEnable)(gCellGcmCurrentContext, m_renderState.blendEnable);
+			T_GCM_CALL(cellGcmSetBlendEquation)(gCellGcmCurrentContext, m_renderState.blendEquation, CELL_GCM_FUNC_ADD);
+			T_GCM_CALL(cellGcmSetBlendFunc)(gCellGcmCurrentContext, m_renderState.blendFuncSrc, m_renderState.blendFuncDest, CELL_GCM_ONE, CELL_GCM_ZERO);
+			T_GCM_CALL(cellGcmSetAlphaTestEnable)(gCellGcmCurrentContext, m_renderState.alphaTestEnable);
+			T_GCM_CALL(cellGcmSetAlphaFunc)(gCellGcmCurrentContext, m_renderState.alphaFunc, m_renderState.alphaRef);
 		}
 	}
 

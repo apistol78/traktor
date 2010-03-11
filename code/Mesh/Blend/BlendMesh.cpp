@@ -260,7 +260,7 @@ void BlendMesh::render(
 		if (!m_parts[i].material->hasTechnique(worldRenderView->getTechnique()))
 			continue;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("BlendMesh");
 
 		renderBlock->distance = distance;
 		renderBlock->shader = m_parts[i].material;

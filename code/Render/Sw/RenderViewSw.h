@@ -81,6 +81,10 @@ public:
 
 	virtual void setMSAAEnable(bool msaaEnable);
 
+	virtual void pushMarker(const char* const marker);
+
+	virtual void popMarker();
+
 private:
 	struct RenderState
 	{

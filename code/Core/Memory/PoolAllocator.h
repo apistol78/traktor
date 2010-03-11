@@ -35,9 +35,13 @@ class T_DLLCLASS PoolAllocator : public Object
 	T_RTTI_CLASS;
 
 public:
+	PoolAllocator();
+
 	PoolAllocator(IAllocator* allocator, uint32_t totalSize);
 
 	PoolAllocator(uint32_t totalSize);
+
+	PoolAllocator(void* heap, uint32_t totalSize);
 
 	virtual ~PoolAllocator();
 

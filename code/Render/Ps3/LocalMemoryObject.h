@@ -13,6 +13,8 @@ class LocalMemoryObject
 public:
 	LocalMemoryObject();
 
+	size_t getSize() const { return m_size; }
+
 	void* getPointer() const { return m_pointer; }
 
 	uint32_t getOffset() const { return m_offset; }

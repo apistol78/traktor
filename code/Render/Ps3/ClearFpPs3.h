@@ -34,7 +34,6 @@ private:
 	void* m_clearVertexProgramUcode;
 	LocalMemoryObject* m_clearFragmentProgramUcode;
 	uint32_t m_clearPositionIndex;
-	uint32_t m_clearColorIndex;
 };
 
 	}

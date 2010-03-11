@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -116,11 +116,17 @@ public:
 	/*! \brief Swap back and front buffers. */
 	virtual void present() = 0;
 
-	/*! \brief Set multisample antialias enable/disable.
+	/*! \brief Set MSAA enable/disable.
 	 *
 	 * \param msaaEnable True if MSAA write enable; false no MSAA when writing to MSAA targets.
 	 */
 	virtual void setMSAAEnable(bool msaaEnable) = 0;
+
+	/*! \brief Write push debug marker to command buffer. */
+	virtual void pushMarker(const char* const marker) = 0;
+
+	/*! \brief Write pop debug marker to command buffer. */
+	virtual void popMarker() = 0;
 };
 
 	}

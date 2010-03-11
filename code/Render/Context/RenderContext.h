@@ -74,6 +74,17 @@ public:
 		return object;
 	}
 
+	/*! \brief Allocate named object from context's heap. */
+	template < typename ObjectType >
+	ObjectType* alloc(const char* const name)
+	{
+		ObjectType* object = alloc< ObjectType >();
+#if defined T_USE_RENDERBLOCK_NAME
+		object->name = name;
+#endif
+		return object;
+	}
+
 	/*! \brief Enqueue a render block in context. */
 	void draw(uint32_t type, RenderBlock* renderBlock);
 

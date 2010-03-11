@@ -306,6 +306,14 @@ void RenderViewSw::setMSAAEnable(bool msaaEnable)
 {
 }
 
+void RenderViewSw::pushMarker(const char* const marker)
+{
+}
+
+void RenderViewSw::popMarker()
+{
+}
+
 void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const
 {
 	const std::vector< VertexElement >& vertexElements = m_currentVertexBuffer->getVertexElements();

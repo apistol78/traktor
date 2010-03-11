@@ -93,7 +93,7 @@ void IndoorMesh::render(
 			if (!material.validate())
 				continue;
 
-			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+			render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("IndoorMesh");
 
 			renderBlock->distance = distance;
 			renderBlock->shader = material;
@@ -106,7 +106,7 @@ void IndoorMesh::render(
 			worldRenderView->setShaderParameters(
 				renderBlock->shaderParams,
 				worldTransform.toMatrix44(),
-				worldTransform.toMatrix44(),	// @fixme
+				worldTransform.toMatrix44(),	// \fixme
 				getBoundingBox()
 			);
 			if (parameterCallback)
