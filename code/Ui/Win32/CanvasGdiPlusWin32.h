@@ -5,6 +5,7 @@
 
 #include <windows.h>
 #include <gdiplus.h>
+#include "Core/Misc/AutoPtr.h"
 #include "Ui/Win32/CanvasWin32.h"
 
 namespace traktor
@@ -81,12 +82,12 @@ private:
 	bool m_ownDC;
 	HBITMAP m_hOffScreenBitmap;
 
-	Gdiplus::Graphics* m_graphics;
+	mutable AutoPtr< Gdiplus::Graphics > m_graphics;
+	mutable AutoPtr< Gdiplus::Font > m_font;
 	Gdiplus::Color m_foreGround;
 	Gdiplus::Color m_backGround;
 	Gdiplus::Pen m_pen;
 	Gdiplus::SolidBrush m_brush;
-	Gdiplus::Font* m_font;
 };
 	
 	}

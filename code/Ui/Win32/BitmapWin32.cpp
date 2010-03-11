@@ -69,18 +69,6 @@ void BitmapWin32::destroy()
 		DeleteObject(m_hBitmapPreMulAlpha);
 		m_hBitmapPreMulAlpha = NULL;
 	}
-#if defined(T_USE_GDI_PLUS)
-	if (m_gpBitmap)
-	{
-		delete m_gpBitmap;
-		m_gpBitmap = 0;
-	}
-	if (m_gpBits)
-	{
-		delete[] m_gpBits;
-		m_gpBits = 0;
-	}
-#endif
 	delete this;
 }
 
@@ -149,17 +137,8 @@ void BitmapWin32::copySubImage(drawing::Image* image, const Rect& srcRect, const
 		m_mask = data[2] | (data[1] << 8) | (data[0] << 16);
 
 #if defined(T_USE_GDI_PLUS)
-	if (m_gpBitmap)
-	{
-		delete m_gpBitmap;
-		m_gpBitmap = 0;
-	}
-
-	if (m_gpBits)
-	{
-		delete[] m_gpBits;
-		m_gpBits = 0;
-	}
+	m_gpBitmap.release();
+	m_gpBits.release();
 
 	m_gpAlphaAdd = (image->getPixelFormat().getAlphaBits() > 0) ? 0x00000000 : 0xff000000;
 #endif
@@ -265,9 +244,9 @@ HICON BitmapWin32::createIcon() const
 #if defined(T_USE_GDI_PLUS)
 Gdiplus::Bitmap* BitmapWin32::getGdiPlusBitmap()
 {
-	if (!m_gpBitmap)
+	if (!m_gpBitmap.ptr())
 	{
-		m_gpBits = new uint32_t [m_width * m_height];
+		m_gpBits.reset(new uint32_t [m_width * m_height]);
 
 		const uint32_t* srcColor = reinterpret_cast< const uint32_t* >(m_pBits);
 		const uint32_t* srcAlpha = reinterpret_cast< const uint32_t* >(m_pBitsPreMulAlpha);
@@ -281,15 +260,15 @@ Gdiplus::Bitmap* BitmapWin32::getGdiPlusBitmap()
 				m_gpBits[dstOffset + x] = (srcColor[srcOffset + x] & 0x00ffffff) | (srcAlpha[srcOffset + x] & 0xff000000) | m_gpAlphaAdd;
 		}
 
-		m_gpBitmap = new Gdiplus::Bitmap(
+		m_gpBitmap.reset(new Gdiplus::Bitmap(
 			m_width,
 			m_height,
 			m_width * 4,
 			PixelFormat32bppARGB,
-			(LPBYTE)m_gpBits
-		);
+			(LPBYTE)m_gpBits.ptr()
+		));
 	}
-	return m_gpBitmap;
+	return m_gpBitmap.ptr();
 }
 #endif
 

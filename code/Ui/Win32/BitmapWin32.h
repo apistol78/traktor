@@ -3,12 +3,13 @@
 
 #define _WIN32_LEAN_AND_MEAN
 #ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501
+#	define _WIN32_WINNT 0x0501
 #endif
 #include <windows.h>
 #if defined(T_USE_GDI_PLUS)
-#include <gdiplus.h>
+#	include <gdiplus.h>
 #endif
+#include "Core/Misc/AutoPtr.h"
 #include "Ui/Itf/IBitmap.h"
 
 namespace traktor
@@ -58,8 +59,8 @@ private:
 	uint32_t m_height;
 	COLORREF m_mask;
 #if defined(T_USE_GDI_PLUS)
-	Gdiplus::Bitmap* m_gpBitmap;
-	uint32_t* m_gpBits;
+	AutoPtr< Gdiplus::Bitmap > m_gpBitmap;
+	AutoArrayPtr< uint32_t > m_gpBits;
 	uint32_t m_gpAlphaAdd;
 #endif
 };
