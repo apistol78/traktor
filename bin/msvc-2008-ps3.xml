@@ -69,10 +69,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-g</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-g</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -133,10 +133,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-O3 -ffast-math -funroll-loops</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O3 -ffast-math -funroll-loops</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -248,10 +248,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-g</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-g</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -301,7 +301,7 @@
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -348,10 +348,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-O3 -ffast-math -funroll-loops</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O3 -ffast-math -funroll-loops</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -421,7 +421,7 @@
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -507,10 +507,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-g</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-g</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -560,7 +560,7 @@
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -580,7 +580,7 @@
                 </item>
               </staticOptions>
             </item>
-           <item type="SolutionBuilderMsvcGenericTool">
+            <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPostBuildEventTool</toolName>
               <staticOptions>
                 <item>
@@ -599,10 +599,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-O3 -ffast-math -funroll-loops</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O3 -ffast-math -funroll-loops</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -671,8 +671,8 @@
               <staticOptions/>
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
-               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolvePaths>false</resolvePaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -694,13 +694,13 @@
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
                 </item>
-				<item>
-				  <first>GenerateDebugInformation</first>
-				  <second>true</second>
-				</item>				
+                <item>
+                  <first>GenerateDebugInformation</first>
+                  <second>true</second>
+                </item>
               </staticOptions>
             </item>
-			<item type="SolutionBuilderMsvcGenericTool">
+            <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPostBuildEventTool</toolName>
               <staticOptions>
                 <item>
@@ -708,7 +708,7 @@
                   <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
                 </item>
               </staticOptions>
-            </item>			
+            </item>
           </item>
         </tools>
       </item>
@@ -750,10 +750,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-g</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-g</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -803,7 +803,7 @@
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -831,7 +831,7 @@
                   <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
                 </item>
               </staticOptions>
-            </item>			
+            </item>
           </item>
           <!-- 1: TpRelease -->
           <item>
@@ -842,10 +842,10 @@
             <item type="SolutionBuilderMsvcCompilerTool">
               <resolvePaths>false</resolvePaths>
               <staticOptions>
-				<item>
-				  <first>AdditionalOptions</first>
-				  <second>-O3 -ffast-math -funroll-loops</second>
-				</item>
+                <item>
+                  <first>AdditionalOptions</first>
+                  <second>-O3 -ffast-math -funroll-loops</second>
+                </item>
                 <item>
                   <first>AdditionalIncludeDirectories</first>
                   <second>.</second>
@@ -915,7 +915,7 @@
             </item>
             <item type="SolutionBuilderMsvcLinkerTool" version="1">
               <resolvePaths>false</resolvePaths>
-			  <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
+              <resolveFullLibraryPaths>true</resolveFullLibraryPaths>
               <staticOptions>
                 <item>
                   <first>LinkIncremental</first>
@@ -937,13 +937,13 @@
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
                 </item>
-				<item>
-				  <first>GenerateDebugInformation</first>
-				  <second>true</second>
-				</item>				
+                <item>
+                  <first>GenerateDebugInformation</first>
+                  <second>true</second>
+                </item>
               </staticOptions>
             </item>
-           <item type="SolutionBuilderMsvcGenericTool">
+            <item type="SolutionBuilderMsvcGenericTool">
               <toolName>VCPostBuildEventTool</toolName>
               <staticOptions>
                 <item>
@@ -951,7 +951,7 @@
                   <second>$(SCE_PS3_ROOT)/host-win32/bin/make_fself $(TargetPath) $(TargetDir)$(TargetName).self</second>
                 </item>
               </staticOptions>
-            </item>			
+            </item>
           </item>
         </tools>
       </item>
@@ -1017,7 +1017,7 @@
           </staticOptions>
         </second>
       </item>
-	  <item>
+      <item>
         <first>fpo</first>
         <second type="SolutionBuilderMsvcGenericTool">
           <toolName>VCCustomBuildTool</toolName>
@@ -1037,6 +1037,6 @@
           </staticOptions>
         </second>
       </item>
-    </customTools>    
+    </customTools>
   </project>
 </object>

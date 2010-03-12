@@ -31,19 +31,21 @@ Ref< IFilterInstance > LowPassFilter::createInstance() const
 	return lpfi;
 }
 
-void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void LowPassFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
 
 	float dt = 1.0f / outBlock.sampleRate;
 	float alpha = dt / (dt + 1.0f / m_cutOff);
 
-	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+	for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 	{
-		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
+		float* samples = outBlock.samples[j];
+		float& history = lpfi->m_history[j];
+		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
 		{
-			outBlock.samples[j][i] = outBlock.samples[j][i] * alpha + lpfi->m_history[j] * (1.0f - alpha);
-			lpfi->m_history[j] = outBlock.samples[j][i];
+			samples[i] = samples[i] * alpha + history * (1.0f - alpha);
+			history = samples[i];
 		}
 	}
 }

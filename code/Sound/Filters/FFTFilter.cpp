@@ -218,7 +218,7 @@ Ref< IFilterInstance > FFTFilter::createInstance() const
 	return instance;
 }
 
-void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void FFTFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	FFTFilterInstance* ffti = static_cast< FFTFilterInstance* >(instance);
 

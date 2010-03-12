@@ -7,9 +7,9 @@
 #include "Resource/Member.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
+#include "Sound/ISoundMixer.h"
 #include "Sound/ISoundResource.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundBlockUtilities.h"
 #include "Sound/Resound/PlayGrain.h"
 
 namespace traktor
@@ -85,10 +85,11 @@ const IGrain* PlayGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 	return this;
 }
 
-bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool PlayGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
 	if (!playCursor->m_soundBuffer->getBlock(
+		mixer,
 		playCursor->m_soundCursor,
 		outBlock
 	))
@@ -99,12 +100,24 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 	for (uint32_t i = 0; i < nfilters; ++i)
 	{
 		if (m_filters[i])
-			m_filters[i]->apply(playCursor->m_filterInstances[i], outBlock);
+		{
+			m_filters[i]->apply(
+				mixer,
+				playCursor->m_filterInstances[i],
+				outBlock
+			);
+		}
 	}
 
 	// Apply random gain.
 	if (abs(playCursor->m_gain) > FUZZY_EPSILON)
-		soundBlockMulConst(outBlock, playCursor->m_gain + 1.0f);
+	{
+		for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
+		{
+			if (outBlock.samples[i])
+				mixer->mulConst(outBlock.samples[i], outBlock.samplesCount, playCursor->m_gain + 1.0f);
+		}
+	}
 
 	// Modify sample rate by random pitch; sound channel will normalize sample rate thus alter pitch.
 	if (abs(1.0f - playCursor->m_pitch) > FUZZY_EPSILON)

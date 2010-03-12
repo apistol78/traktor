@@ -16,6 +16,8 @@ namespace traktor
 	namespace sound
 	{
 
+class SoundMixerPs3;
+
 /*!
  * \ingroup SoundPS3
  */
@@ -28,7 +30,7 @@ public:
 
 	virtual ~SoundDriverPs3();
 
-	virtual bool create(const SoundDriverCreateDesc& desc);
+	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 
@@ -44,6 +46,7 @@ private:
 	uint64_t m_writeBlock;
 	uint32_t m_blockChannels;
 	const int32_t* m_remap;
+	Ref< SoundMixerPs3 > m_mixer;
 };
 
 	}

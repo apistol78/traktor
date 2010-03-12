@@ -3,13 +3,15 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/ISoundDriver.h"
+#include "Sound/ISoundMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundBlockUtilities.h"
 #include "Sound/SoundChannel.h"
+#include "Sound/SoundMixer.h"
 #include "Sound/SoundSystem.h"
 
 namespace traktor
@@ -21,6 +23,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundSystem", SoundSystem, Object)
 
 SoundSystem::SoundSystem(ISoundDriver* driver)
 :	m_driver(driver)
+,	m_mixer(0)
 ,	m_threadMixer(0)
 ,	m_threadSubmit(0)
 ,	m_samplesData(0)
@@ -40,8 +43,13 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 	m_desc.driverDesc.frameSamples &= ~3U;
 
 	// Create driver.
-	if (!m_driver->create(m_desc.driverDesc))
+	if (!m_driver->create(m_desc.driverDesc, m_mixer))
 		return false;
+
+	// If driver didn't create an alternative sound mixer we create
+	// a default mixer.
+	if (!m_mixer)
+		m_mixer = new SoundMixer();
 
 	// Allocate samples.
 	uint32_t samplesBlockCount = m_desc.driverDesc.mixerFrames * 2;
@@ -108,7 +116,8 @@ void SoundSystem::destroy()
 		ThreadManager::getInstance().destroy(m_threadMixer);
 	}
 
-	m_driver->destroy();
+	m_mixer = 0;
+	safeDestroy(m_driver);
 
 	if (m_samplesData)
 	{
@@ -229,7 +238,7 @@ void SoundSystem::threadMixer()
 
 			// Temporarily lock channels as we don't want user to attach new sounds just yet.
 			m_channelAttachLock.wait();
-			bool got = m_channels[i]->getBlock(m_time, requestBlock);
+			bool got = m_channels[i]->getBlock(m_mixer, m_time, requestBlock);
 			m_channelAttachLock.release();
 			if (!got || !requestBlock.maxChannel)
 				continue;
@@ -244,10 +253,18 @@ void SoundSystem::threadMixer()
 				{
 					float strength = m_desc.cm[j][k];
 					if (requestBlock.samples[k] && abs(strength) >= FUZZY_EPSILON)
-						soundBlockAddMulConst(frameBlock.samples[j], requestBlock.samples[k], requestBlock.samplesCount, strength);
+					{
+						m_mixer->addMulConst(
+							frameBlock.samples[j],
+							requestBlock.samples[k],
+							requestBlock.samplesCount,
+							strength
+						);
+					}
 				}
 			}
 		}
+
 		m_time += double(m_desc.driverDesc.frameSamples) / m_desc.driverDesc.sampleRate;
 
 		if (m_threadMixer->stopped())

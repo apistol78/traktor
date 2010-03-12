@@ -73,11 +73,12 @@ const IGrain* RandomGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 	return randomCursor->m_grain->getCurrentGrain(randomCursor->m_grainCursor);
 }
 
-bool RandomGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool RandomGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);
 
 	return randomCursor->m_grain->getBlock(
+		mixer,
 		randomCursor->m_grainCursor,
 		outBlock
 	);

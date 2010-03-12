@@ -1,8 +1,8 @@
 #include <limits>
-#include "Sound/XAudio2/SoundDriverXAudio2.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Math/MathUtils.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/XAudio2/SoundDriverXAudio2.h"
 
 #undef min
 #undef max
@@ -70,7 +70,7 @@ SoundDriverXAudio2::~SoundDriverXAudio2()
 	destroy();
 }
 
-bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc)
+bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	HRESULT hr;
 

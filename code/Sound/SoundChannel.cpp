@@ -7,8 +7,8 @@
 #include "Core/Thread/Acquire.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
+#include "Sound/ISoundMixer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundBlockUtilities.h"
 #include "Sound/SoundChannel.h"
 
 namespace traktor
@@ -86,7 +86,7 @@ void SoundChannel::playSound(Sound* sound, double time, uint32_t repeat)
 	}
 }
 
-bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
+bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
 {
 	if (!m_sound || !m_cursor)
 		return false;
@@ -113,13 +113,13 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 	{
 		// Request sound block from buffer.
 		SoundBlock soundBlock = { { 0, 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(m_cursor, soundBlock))
+		if (!soundBuffer->getBlock(mixer, m_cursor, soundBlock))
 		{
 			// No more blocks from sound buffer.
 			if (--m_repeat > 0)
 			{
 				m_cursor->reset();
-				if (!soundBuffer->getBlock(m_cursor, soundBlock))
+				if (!soundBuffer->getBlock(mixer, m_cursor, soundBlock))
 				{
 					m_sound = 0;
 					return false;
@@ -140,7 +140,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 		if (m_filter)
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_filterLock);
-			m_filter->apply(m_filterInstance, soundBlock);
+			m_filter->apply(mixer, m_filterInstance, soundBlock);
 		}
 
 		// Convert sound block into hardware required sample rate.
@@ -160,7 +160,7 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
 					}
 				}
 				else
-					soundBlockMute(outputSamples, outputSamplesCount);
+					mixer->mute(outputSamples, outputSamplesCount);
 			}
 			m_outputSamplesIn += outputSamplesCount;
 		}
@@ -172,9 +172,9 @@ bool SoundChannel::getBlock(double time, SoundBlock& outBlock)
  				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
  
  				if (inputSamples)
- 					soundBlockMulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
+ 					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
  				else
- 					soundBlockMute(outputSamples, soundBlock.samplesCount);
+ 					mixer->mute(outputSamples, soundBlock.samplesCount);
  			}
  			m_outputSamplesIn += soundBlock.samplesCount;
  		}

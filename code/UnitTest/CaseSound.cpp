@@ -25,7 +25,7 @@ public:
 	{
 	}
 
-	virtual bool create(const sound::SoundDriverCreateDesc& desc)
+	virtual bool create(const sound::SoundDriverCreateDesc& desc, Ref< sound::ISoundMixer >& outMixer)
 	{
 		return true;
 	}
@@ -70,7 +70,7 @@ public:
 		return 0;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(const sound::ISoundMixer* mixer, sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);
