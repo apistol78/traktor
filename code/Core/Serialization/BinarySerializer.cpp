@@ -504,7 +504,7 @@ bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	}
 	else
 	{
-		(*m).store(values);
+		(*m).storeAligned(values);
 		for (int i = 0; i < 16; ++i)
 			result &= write_primitive< float >(m_stream, values[i]);
 	}

@@ -154,7 +154,7 @@ void ProgramPs3::setVectorParameter(handle_t handle, const Vector4& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.store(&m_scalarParameterData[i->second]);
+	param.storeAligned(&m_scalarParameterData[i->second]);
 	m_dirty = true;
 }
 
@@ -165,7 +165,7 @@ void ProgramPs3::setVectorArrayParameter(handle_t handle, const Vector4* param, 
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_scalarParameterData[i->second + j * 4]);
+		param[j].storeAligned(&m_scalarParameterData[i->second + j * 4]);
 
 	m_dirty = true;
 }
@@ -176,7 +176,7 @@ void ProgramPs3::setMatrixParameter(handle_t handle, const Matrix44& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.store(&m_scalarParameterData[i->second]);
+	param.storeAligned(&m_scalarParameterData[i->second]);
 	m_dirty = true;
 }
 
@@ -187,7 +187,7 @@ void ProgramPs3::setMatrixArrayParameter(handle_t handle, const Matrix44* param,
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_scalarParameterData[i->second + j * 16]);
+		param[j].storeAligned(&m_scalarParameterData[i->second + j * 16]);
 
 	m_dirty = true;
 }

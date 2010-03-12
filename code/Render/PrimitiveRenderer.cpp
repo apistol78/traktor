@@ -45,13 +45,13 @@ struct Vertex
 	
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color& rgb_)
 	{
-		pos_.store(pos);
+		pos_.storeUnaligned(pos);
 		rgb = rgb_;
 	}
 
 	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color& rgb_)
 	{
-		pos_.store(pos);
+		pos_.storeUnaligned(pos);
 		texCoord[0] = texCoord_.x;
 		texCoord[1] = texCoord_.y;
 		rgb = rgb_;

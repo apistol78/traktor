@@ -25,14 +25,14 @@ inline void write(uint8_t*& writePtr, const Type& value)
 template < >
 inline void write< Vector4 >(uint8_t*& writePtr, const Vector4& value)
 {
-	value.store(reinterpret_cast< float* >(writePtr));
+	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Vector4);
 }
 
 template < >
 inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44& value)
 {
-	value.store(reinterpret_cast< float* >(writePtr));
+	value.storeAligned(reinterpret_cast< float* >(writePtr));
 	writePtr += sizeof(Matrix44);
 }
 
@@ -51,7 +51,7 @@ inline void write< Vector4 >(uint8_t*& writePtr, const Vector4* valueArray, int 
 {
 	for (int i = 0; i < length; ++i)
 	{
-		valueArray[i].store(reinterpret_cast< float* >(writePtr));
+		valueArray[i].storeAligned(reinterpret_cast< float* >(writePtr));
 		writePtr += sizeof(Vector4);
 	}
 }
@@ -61,7 +61,7 @@ inline void write< Matrix44 >(uint8_t*& writePtr, const Matrix44* valueArray, in
 {
 	for (int i = 0; i < length; ++i)
 	{
-		valueArray[i].store(reinterpret_cast< float* >(writePtr));
+		valueArray[i].storeAligned(reinterpret_cast< float* >(writePtr));
 		writePtr += sizeof(Matrix44);
 	}
 }

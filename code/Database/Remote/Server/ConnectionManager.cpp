@@ -17,14 +17,14 @@ bool ConnectionManager::create(const Configuration* configuration)
 {
 	if (!net::Network::initialize())
 	{
-		log::error << L"Failed to create connection managar; unable to initialize network" << Endl;
+		log::error << L"Failed to create remote database connection managar; unable to initialize network" << Endl;
 		return false;
 	}
 
 	m_configuration = configuration;
 	if (!m_configuration)
 	{
-		log::error << L"Failed to create connection manager; no configuration" << Endl;
+		log::error << L"Failed to create remote database connection manager; no configuration" << Endl;
 		return false;
 	}
 
@@ -32,17 +32,17 @@ bool ConnectionManager::create(const Configuration* configuration)
 
 	if (!m_serverSocket->bind(net::SocketAddressIPv4(m_configuration->getListenPort())))
 	{
-		log::error << L"Failed to create connection manager; unable to bind server socket to port " << m_configuration->getListenPort() << Endl;
+		log::error << L"Failed to create remote database connection manager; unable to bind server socket to port " << m_configuration->getListenPort() << Endl;
 		return false;
 	}
 
 	if (!m_serverSocket->listen())
 	{
-		log::error << L"Failed to create connection manager; unable to listenen to port " << m_configuration->getListenPort() << Endl;
+		log::error << L"Failed to create remote database connection manager; unable to listenen to port " << m_configuration->getListenPort() << Endl;
 		return false;
 	}
 
-	log::info << L"Connection manager created" << Endl;
+	log::info << L"Remote database connection manager created" << Endl;
 	return true;
 }
 
@@ -60,8 +60,6 @@ void ConnectionManager::destroy()
 	}
 
 	net::Network::finalize();
-
-	log::info << L"Connection manager destroyed" << Endl;
 }
 
 bool ConnectionManager::update(int32_t waitTimeout)
@@ -90,7 +88,7 @@ bool ConnectionManager::acceptConnections(int32_t waitTimeout)
 	Ref< Connection > connection = new Connection(m_configuration, clientSocket);
 	m_connections.push_back(connection);
 
-	log::info << L"Connection accepted" << Endl;
+	log::info << L"Remote database connection accepted" << Endl;
 	return true;
 }
 
@@ -109,7 +107,7 @@ bool ConnectionManager::cleanupConnections()
 	count -= uint32_t(m_connections.size());
 
 	if (count)
-		log::info << count << L" connection(s) removed" << Endl;
+		log::info << count << L" remote database connection(s) removed" << Endl;
 
 	return true;
 }

@@ -85,7 +85,9 @@ public:
 	 *
 	 * \param out Pointer out 16 floats.
 	 */
-	T_MATH_INLINE void store(float* out) const;
+	T_MATH_INLINE void storeAligned(float* out) const;
+
+	T_MATH_INLINE void storeUnaligned(float* out) const;
 
 	T_MATH_INLINE Scalar get(int r, int c) const;
 

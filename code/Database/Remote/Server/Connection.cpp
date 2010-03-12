@@ -114,10 +114,7 @@ void Connection::messageThread()
 	{
 		Ref< IMessage > message;
 		if (!m_messageTransport->receive(100, message))
-		{
-			log::info << L"Transport disconnected; connection terminated" << Endl;
 			break;
-		}
 
 		if (!message)
 			continue;

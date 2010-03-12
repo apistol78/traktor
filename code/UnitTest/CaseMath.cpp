@@ -57,7 +57,7 @@ void CaseMath::run()
 	CASE_ASSERT_COMPARE(unalignedLoad, Vector4(1.0f, 2.0f, 3.0f, 4.0f), compareEqual);
 
 	float vd2[5] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	unalignedLoad.store(&vd2[1]);
+	unalignedLoad.storeUnaligned(&vd2[1]);
 	CASE_ASSERT_EQUAL(vd2[0], 0.0f);
 	CASE_ASSERT_EQUAL(vd2[1], 1.0f);
 	CASE_ASSERT_EQUAL(vd2[2], 2.0f);

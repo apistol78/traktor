@@ -173,9 +173,9 @@ void PointRenderer::render(
 
 			for (int j = 0; j < 4; ++j)
 			{
-				point.position.store(vertex->positionAndOrientation.position);
-				point.velocity.store(vertex->velocityAndRandom.velocity);
-				point.color.store(vertex->attrib2.color);
+				point.position.storeUnaligned(vertex->positionAndOrientation.position);
+				point.velocity.storeUnaligned(vertex->velocityAndRandom.velocity);
+				point.color.storeUnaligned(vertex->attrib2.color);
 
 				vertex->positionAndOrientation.orientation = point.orientation;
 				vertex->velocityAndRandom.random = point.random;
