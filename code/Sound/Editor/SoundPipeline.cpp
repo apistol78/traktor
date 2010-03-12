@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Compress/Zip/DeflateStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
@@ -36,7 +37,7 @@ inline int16_t quantify(float sample)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 2, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 3, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 :	m_sampleRate(44100)
@@ -220,15 +221,20 @@ bool SoundPipeline::buildOutput(
 
 		// Write asset.
 		Writer writer(stream);
-		writer << uint32_t(2);
+		writer << uint32_t(3);
 		writer << uint32_t(m_sampleRate);
 		writer << uint32_t(samplesCount);
 		writer << uint32_t(maxChannel);
 
-		for (uint32_t i = 0; i < maxChannel; ++i)
-			writer.write(&samples[i][0], int(samples[i].size()), sizeof(int16_t));
+		Ref< IStream > streamData = new compress::DeflateStream(stream);
+		Writer writerData(streamData);
 
+		for (uint32_t i = 0; i < maxChannel; ++i)
+			writerData.write(&samples[i][0], int(samples[i].size()), sizeof(int16_t));
+
+		streamData->close();
 		stream->close();
+
 		sourceStream->close();
 
 		if (!instance->commit())

@@ -111,7 +111,13 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 	return Vector4(_mm_and_ps(m_data, mask));
 }
 
-T_MATH_INLINE void Vector4::store(float* out) const
+T_MATH_INLINE void Vector4::storeAligned(float* out) const
+{
+	T_ASSERT (out);
+	_mm_store_ps(out, m_data);
+}
+
+T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
 	T_ASSERT (out);
 	_mm_storeu_ps(out, m_data);

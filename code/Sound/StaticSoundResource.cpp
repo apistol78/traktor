@@ -1,3 +1,4 @@
+#include "Compress/Zip/InflateStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Log/Log.h"
 #include "Database/Instance.h"
@@ -22,7 +23,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 
 	uint32_t version;
 	reader >> version;
-	if (version != 2)
+	if (version != 3)
 	{
 		log::error << L"Unable to create sound, incorrect version" << Endl;
 		return 0;
@@ -40,15 +41,19 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		return 0;
 	}
 
+	Ref< compress::InflateStream > streamData = new compress::InflateStream(stream);
+	Reader readerData(streamData);
+
 	for (uint32_t i = 0; i < channelsCount; ++i)
 	{
 		int16_t* samples = soundBuffer->getSamplesData(i);
 		T_ASSERT (samples);
 
-		if (reader.read(samples, samplesCount, sizeof(int16_t)) != samplesCount * sizeof(int16_t))
+		if (readerData.read(samples, samplesCount, sizeof(int16_t)) != samplesCount * sizeof(int16_t))
 			log::warning << L"Unable to read specified number of samples into channel " << i << Endl;
 	}
 
+	streamData->close();
 	stream->close();
 
 	return new Sound(soundBuffer);

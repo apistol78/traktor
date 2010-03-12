@@ -231,12 +231,20 @@ T_MATH_INLINE void Matrix44::load(const float* in)
 	m_c[3] = Vector4(&in[12]);
 }
 
-T_MATH_INLINE void Matrix44::store(float* out) const
+T_MATH_INLINE void Matrix44::storeAligned(float* out) const
 {
-	m_c[0].store(&out[0]);
-	m_c[1].store(&out[4]);
-	m_c[2].store(&out[8]);
-	m_c[3].store(&out[12]);
+	m_c[0].storeAligned(&out[0]);
+	m_c[1].storeAligned(&out[4]);
+	m_c[2].storeAligned(&out[8]);
+	m_c[3].storeAligned(&out[12]);
+}
+
+T_MATH_INLINE void Matrix44::storeUnaligned(float* out) const
+{
+	m_c[0].storeUnaligned(&out[0]);
+	m_c[1].storeUnaligned(&out[4]);
+	m_c[2].storeUnaligned(&out[8]);
+	m_c[3].storeUnaligned(&out[12]);
 }
 
 T_MATH_INLINE Scalar Matrix44::get(int r, int c) const

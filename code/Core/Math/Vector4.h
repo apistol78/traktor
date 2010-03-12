@@ -93,7 +93,9 @@ public:
 
 	T_MATH_INLINE Vector4 absolute() const;
 
-	T_MATH_INLINE void store(float* out) const;
+	T_MATH_INLINE void storeAligned(float* out) const;
+
+	T_MATH_INLINE void storeUnaligned(float* out) const;
 
 	T_MATH_INLINE Scalar get(int index) const;
 

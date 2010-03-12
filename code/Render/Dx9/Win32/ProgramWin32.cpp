@@ -186,7 +186,7 @@ void ProgramWin32::setVectorParameter(handle_t handle, const Vector4& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.store(&m_scalarParameterData[i->second]);
+	param.storeUnaligned(&m_scalarParameterData[i->second]);
 	m_dirty = true;
 }
 
@@ -197,7 +197,7 @@ void ProgramWin32::setVectorArrayParameter(handle_t handle, const Vector4* param
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_scalarParameterData[i->second + j * 4]);
+		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 4]);
 
 	m_dirty = true;
 }
@@ -208,7 +208,7 @@ void ProgramWin32::setMatrixParameter(handle_t handle, const Matrix44& param)
 	if (i == m_scalarParameterMap.end())
 		return;
 
-	param.store(&m_scalarParameterData[i->second]);
+	param.storeUnaligned(&m_scalarParameterData[i->second]);
 	m_dirty = true;
 }
 
@@ -219,7 +219,7 @@ void ProgramWin32::setMatrixArrayParameter(handle_t handle, const Matrix44* para
 		return;
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_scalarParameterData[i->second + j * 16]);
+		param[j].storeUnaligned(&m_scalarParameterData[i->second + j * 16]);
 
 	m_dirty = true;
 }

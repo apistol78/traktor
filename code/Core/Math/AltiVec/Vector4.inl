@@ -122,7 +122,13 @@ T_MATH_INLINE Vector4 Vector4::absolute() const
 	return Vector4(vec_and(m_data, (vec_float4)umask));
 }
 
-T_MATH_INLINE void Vector4::store(float* out) const
+T_MATH_INLINE void Vector4::storeAligned(float* out) const
+{
+	T_ASSERT (out);
+	*(vec_float4*)out = m_data;
+}
+
+T_MATH_INLINE void Vector4::storeUnaligned(float* out) const
 {
 	T_ASSERT (out);
 	out[0] = vec_extract(m_data, 0);

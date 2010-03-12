@@ -33,7 +33,7 @@ float angleDifference(float angle1, float angle2)
 
 struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 {
-	float m_buffer[SbcMaxChannelCount][4096];
+	float T_MATH_ALIGN16 m_buffer[SbcMaxChannelCount][4096];
 };
 
 struct Speaker

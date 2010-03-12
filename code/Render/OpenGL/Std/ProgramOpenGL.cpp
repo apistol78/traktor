@@ -317,7 +317,7 @@ void ProgramOpenGL::setVectorParameter(handle_t handle, const Vector4& param)
 	if (i == m_parameterMap.end())
 		return;
 
-	param.store(&m_uniformData[i->second.offset]);
+	param.storeUnaligned(&m_uniformData[i->second.offset]);
 	m_dirty = true;
 }
 
@@ -330,7 +330,7 @@ void ProgramOpenGL::setVectorArrayParameter(handle_t handle, const Vector4* para
 	length = min< int >(i->second.length, length);
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_uniformData[i->second.offset + j * 4]);
+		param[j].storeUnaligned(&m_uniformData[i->second.offset + j * 4]);
 
 	m_dirty = true;
 }
@@ -341,7 +341,7 @@ void ProgramOpenGL::setMatrixParameter(handle_t handle, const Matrix44& param)
 	if (i == m_parameterMap.end())
 		return;
 
-	param.store(&m_uniformData[i->second.offset]);
+	param.storeUnaligned(&m_uniformData[i->second.offset]);
 	m_dirty = true;
 }
 
@@ -354,7 +354,7 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 	length = min< int >(i->second.length, length);
 
 	for (int j = 0; j < length; ++j)
-		param[j].store(&m_uniformData[i->second.offset + j * 16]);
+		param[j].storeUnaligned(&m_uniformData[i->second.offset + j * 16]);
 
 	m_dirty = true;
 }
