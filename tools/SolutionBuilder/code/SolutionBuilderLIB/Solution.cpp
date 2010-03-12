@@ -1,11 +1,12 @@
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberRefArray.h>
+#include <Core/Serialization/MemberStl.h>
 #include "Solution.h"
 #include "Project.h"
 #include "ProjectDependency.h"
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 0, Solution, traktor::ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"Solution", 1, Solution, traktor::ISerializable)
 
 void Solution::setName(const std::wstring& name)
 {
@@ -25,6 +26,21 @@ void Solution::setRootPath(const std::wstring& rootPath)
 const std::wstring& Solution::getRootPath() const
 {
 	return m_rootPath;
+}
+
+void Solution::addDefinition(const std::wstring& definition)
+{
+	m_definitions.push_back(definition);
+}
+
+void Solution::setDefinitions(const std::vector< std::wstring >& definitions)
+{
+	m_definitions = definitions;
+}
+
+const std::vector< std::wstring >& Solution::getDefinitions() const
+{
+	return m_definitions;
 }
 
 void Solution::addProject(Project* project)
@@ -64,6 +80,10 @@ bool Solution::serialize(traktor::ISerializer& s)
 {
 	s >> traktor::Member< std::wstring >(L"name", m_name);
 	s >> traktor::Member< std::wstring >(L"rootPath", m_rootPath);
+
+	if (s.getVersion() >= 1)
+		s >> traktor::MemberStlVector< std::wstring >(L"definitions", m_definitions);
+
 	s >> traktor::MemberRefArray< Project >(L"projects", m_projects);
 	return true;
 }

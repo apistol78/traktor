@@ -205,7 +205,8 @@ bool SolutionBuilderCBlocks::generate(Solution* solution)
 				os << L"<Add option=\"-D_UNICODE\" />" << Endl;
 			}
 
-			const std::vector< std::wstring >& definitions = configuration->getDefinitions();
+			std::vector< std::wstring > definitions = solution->getDefinitions();
+			definitions.insert(definitions.end(), configuration->getDefinitions().begin(), configuration->getDefinitions().end());
 			for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
 			{
 				const std::wstring& def = *k;

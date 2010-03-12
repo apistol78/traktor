@@ -21,6 +21,12 @@ public:
 
 	const std::wstring& getRootPath() const;
 
+	void addDefinition(const std::wstring& definition);
+
+	void setDefinitions(const std::vector< std::wstring >& definitions);
+
+	const std::vector< std::wstring >& getDefinitions() const;
+
 	void addProject(Project* project);
 
 	void removeProject(Project* project);
@@ -32,6 +38,7 @@ public:
 private:
 	std::wstring m_name;
 	std::wstring m_rootPath;
+	std::vector< std::wstring > m_definitions;
 	traktor::RefArray< Configuration > m_configurations;
 	traktor::RefArray< Project > m_projects;
 };

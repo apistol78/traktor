@@ -1,9 +1,10 @@
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
 #include <Core/Serialization/MemberStl.h>
-#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcCompilerTool.h"
-#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
 #include "SolutionBuilderLIB/Configuration.h"
+#include "SolutionBuilderLIB/Solution.h"
+#include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
+#include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcCompilerTool.h"
 
 using namespace traktor;
 
@@ -36,6 +37,8 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 
 	// Preprocessor definitions.
 	os << L"PreprocessorDefinitions=\"";
+	for (std::vector< std::wstring >::const_iterator i = solution->getDefinitions().begin(); i != solution->getDefinitions().end(); ++i)
+		os << *i << L";";
 	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
 		os << *i << L";";
 
