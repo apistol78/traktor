@@ -53,21 +53,24 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 
 	os << L"\"" << Endl;
 
-	switch (configuration->getTargetFormat())
+	if (m_staticOptions.find(L"OutputFile") == m_staticOptions.end())
 	{
-	case Configuration::TfSharedLibrary:
-		if (configuration->getTargetProfile() == Configuration::TpDebug)
-			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.dll\"" << Endl;
-		else
-			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".dll\"" << Endl;
-		break;
+		switch (configuration->getTargetFormat())
+		{
+		case Configuration::TfSharedLibrary:
+			if (configuration->getTargetProfile() == Configuration::TpDebug)
+				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.dll\"" << Endl;
+			else
+				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".dll\"" << Endl;
+			break;
 
-	case Configuration::TfExecutable:
-		if (configuration->getTargetProfile() == Configuration::TpDebug)
-			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.exe\"" << Endl;
-		else
-			os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".exe\"" << Endl;
-		break;
+		case Configuration::TfExecutable:
+			if (configuration->getTargetProfile() == Configuration::TpDebug)
+				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L"_d.exe\"" << Endl;
+			else
+				os << L"OutputFile=\"$(OutDir)/" << project->getName() << L".exe\"" << Endl;
+			break;
+		}
 	}
 
 	os << L"AdditionalLibraryDirectories=\"";
@@ -79,12 +82,11 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 
 	std::map< std::wstring, std::wstring >::const_iterator i2 = m_staticOptions.find(L"AdditionalLibraryDirectories");
 	if (i2 != m_staticOptions.end())
-		os << context.format(i1->second) << L";";
+		os << context.format(i2->second) << L";";
 
 	os << L"\"" << Endl;
 	
-	std::map< std::wstring, std::wstring >::const_iterator i3 = m_staticOptions.find(L"GenerateDebugInformation");
-	if (i3 == m_staticOptions.end())
+	if (m_staticOptions.find(L"GenerateDebugInformation") == m_staticOptions.end())
 	{
 		if (configuration->getTargetProfile() == Configuration::TpDebug)
 		{
@@ -189,7 +191,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 				continue;
 			}
 
-			if (dependentConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
+			if (dependentConfiguration->getTargetFormat() != Configuration::TfSharedLibrary)
 			{
 				collectAdditionalLibraries(
 					projectDependency->getProject(),
@@ -224,7 +226,7 @@ void SolutionBuilderMsvcLinkerTool::collectAdditionalLibraries(
 				outAdditionalLibraries.insert(externalProjectPath + L"/" + externalProjectName);
 			}
 
-			if (externalConfiguration->getTargetFormat() == Configuration::TfStaticLibrary)
+			if (externalConfiguration->getTargetFormat() != Configuration::TfSharedLibrary)
 			{
 				collectAdditionalLibraries(
 					externalDependency->getProject(),

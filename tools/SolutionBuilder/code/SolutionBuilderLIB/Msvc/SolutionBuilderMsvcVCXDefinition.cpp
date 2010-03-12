@@ -31,8 +31,9 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	for (std::vector< std::wstring >::const_iterator i = includePaths.begin(); i != includePaths.end(); ++i)
 		ssip << *i << L";";
 
-	const std::vector< std::wstring >& definitions = configuration->getDefinitions();
-	for (std::vector< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+	for (std::vector< std::wstring >::const_iterator i = solution->getDefinitions().begin(); i != solution->getDefinitions().end(); ++i)
+		ssd << *i << L";";
+	for (std::vector< std::wstring >::const_iterator i = configuration->getDefinitions().begin(); i != configuration->getDefinitions().end(); ++i)
 		ssd << *i << L";";
 
 	std::set< std::wstring > libraries, libraryPaths;

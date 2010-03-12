@@ -28,6 +28,14 @@ namespace
 		}
 	};
 
+	struct ProjectSortPredicate
+	{
+		bool operator () (const Project* p1, const Project* p2) const
+		{
+			return p1->getName().compare(p2->getName()) < 0;
+		}
+	};
+
 }
 
 bool ProjectPropertyPage::create(ui::Widget* parent)
@@ -157,6 +165,7 @@ void ProjectPropertyPage::updateDependencyList()
 	}
 
 	// Update drop down with available projects.
+	projects.sort(ProjectSortPredicate());
 	m_dropAvailable->removeAll();
 	for(RefArray< Project >::iterator i = projects.begin(); i != projects.end(); ++i)
 	{

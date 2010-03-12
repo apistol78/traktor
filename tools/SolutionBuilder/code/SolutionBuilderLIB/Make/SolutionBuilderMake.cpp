@@ -320,7 +320,8 @@ bool SolutionBuilderMake::generateProject(Solution* solution, Project* project)
 		
 		s << toUpper(configuration->getName()) + L"_DEFINES=";
 
-		const std::vector< std::wstring >& definitions = configuration->getDefinitions();
+		std::vector< std::wstring > definitions = solution->getDefinitions();
+		definitions.insert(definitions.end(), configuration->getDefinitions().begin(), configuration->getDefinitions().end());
 		for (std::vector< std::wstring >::const_iterator k = definitions.begin(); k != definitions.end(); ++k)
 		{
 			if (k != definitions.begin())

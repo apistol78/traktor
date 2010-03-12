@@ -28,10 +28,12 @@
 #include "SolutionBuilderLIB/Filter.h"
 #include "SolutionBuilderLIB/File.h"
 
+// Tools
 #include "AddMultipleConfigurations.h"
-#include "ImportProject.h"
 #include "EditConfigurations.h"
+#include "FlattenDefinitionsTool.h"
 #include "ImportMsvcProject.h"
+#include "ImportProject.h"
 
 // Embedded resources.
 #include "SolutionBitmap.h"
@@ -39,7 +41,7 @@
 
 using namespace traktor;
 
-#define TITLE L"SolutionBuilder v2.0.1"
+#define TITLE L"SolutionBuilder v2.1"
 
 T_IMPLEMENT_RTTI_CLASS(L"SolutionForm", SolutionForm, ui::Form)
 
@@ -101,7 +103,8 @@ bool SolutionForm::create(const traktor::CommandLine& cmdLine)
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.AddMultipleConfigurations"), L"&Add multiple configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.EditConfigurations"), L"&Edit configurations..."));
 	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportProject"), L"&Import project..."));
-	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"&Import MSVC project..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.ImportMsvcProject"), L"Import &MSVC project..."));
+	menuTools->add(new ui::MenuItem(ui::Command(L"Tools.FlattenDefinitions"), L"&Flatten definitions"));
 	m_menuBar->add(menuTools);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
@@ -537,6 +540,12 @@ void SolutionForm::eventMenuClick(ui::Event* event)
 	{
 		ImportMsvcProject importMsvcProject;
 		importMsvcProject.execute(this, m_solution, m_solutionFileName);
+		updateSolutionTree();
+	}
+	else if (command == L"Tools.FlattenDefinitions")
+	{
+		FlattenDefinitionsTool flattenDefinitions;
+		flattenDefinitions.execute(this, m_solution);
 		updateSolutionTree();
 	}
 }
