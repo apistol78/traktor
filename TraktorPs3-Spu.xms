@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="Solution" version="1">
+	<name>Traktor Ps3 SPU</name>
+	<rootPath>$(TRAKTOR_HOME)/build/ps3-spu</rootPath>
+	<definitions/>
+	<projects>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Sound.Ps3.JobMixerMC</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobMixerMC.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Sound.Ps3.JobMixerAMC</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Sound/Ps3/Spu</sourcePath>
+			<configurations>
+				<item type="Configuration">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+				<item type="Configuration">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutable</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs.a</item>
+						<item>$(SCE_PS3_ROOT)/target/spu/lib/libspurs_jq.a</item>
+					</libraries>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>JobMixerAMC.cpp</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+	</projects>
+</object>

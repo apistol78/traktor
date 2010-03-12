@@ -31,12 +31,12 @@ Ref< IFilterInstance > GroupFilter::createInstance() const
 	return gfi;
 }
 
-void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void GroupFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	GroupFilterInstance* gfi = static_cast< GroupFilterInstance* >(instance);
 	uint32_t nfilters = m_filters.size();
 	for (uint32_t i = 0; i < nfilters; ++i)
-		m_filters[i]->apply(gfi->m_instances[i], outBlock);
+		m_filters[i]->apply(mixer, gfi->m_instances[i], outBlock);
 }
 
 bool GroupFilter::serialize(ISerializer& s)

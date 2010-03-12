@@ -2,19 +2,19 @@
 #define traktor_sound_SoundDriverXAudio2_H
 
 #if !defined(_XBOX)
-#define _WIN32_DCOM
-#include <windows.h>
+#	define _WIN32_DCOM
+#	include <windows.h>
 #endif
 #include <xaudio2.h>
-#include "Sound/ISoundDriver.h"
 #include "Core/Misc/ComRef.h"
+#include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_XAUDIO2_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -34,7 +34,7 @@ public:
 
 	virtual ~SoundDriverXAudio2();
 
-	virtual bool create(const SoundDriverCreateDesc& desc);
+	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
 	virtual void destroy();
 

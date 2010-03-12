@@ -3,7 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Sound/SoundBlockUtilities.h"
+#include "Sound/ISoundMixer.h"
 #include "Sound/Filters/SurroundEnvironment.h"
 #include "Sound/Filters/SurroundFilter.h"
 
@@ -85,15 +85,15 @@ Ref< IFilterInstance > SurroundFilter::createInstance() const
 	return sfi;
 }
 
-void SurroundFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	if (m_environment->getFullSurround())
-		applyFull(instance, outBlock);
+		applyFull(mixer, instance, outBlock);
 	else
-		applyStereo(instance, outBlock);
+		applyStereo(mixer, instance, outBlock);
 }
 
-void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyStereo(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
@@ -132,11 +132,11 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 		float angleOffset = angleDifference(c_speakersStereo[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
 		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
-		soundBlockMulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
+		mixer->mulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
 	}
 }
 
-void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) const
+void SurroundFilter::applyFull(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	SurroundFilterInstance* sfi = static_cast< SurroundFilterInstance* >(instance);
 
@@ -175,7 +175,7 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 		float angleOffset = angleDifference(c_speakersFull[i].angle, speakerAngle);
 		float angleAtten = clamp(1.0f - angleOffset / c_angleCone, 0.0f, 1.0f);
 		float attenuation = angleAtten * distanceAtten * (1.0f - c_speakersFull[i].inner * innerAtten);
-		soundBlockMulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
+		mixer->mulConst(outBlock.samples[c_speakersStereo[i].channel], outBlock.samplesCount, attenuation);
 	}
 }
 

@@ -33,7 +33,7 @@ Ref< IFilterInstance > RingModulationFilter::createInstance() const
 	return rmfi;
 }
 
-void RingModulationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void RingModulationFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	RingModulationFilterInstance* rmfi = static_cast< RingModulationFilterInstance* >(instance);
 	const float sampleDeltaTime = 1.0f / m_sampleRate;

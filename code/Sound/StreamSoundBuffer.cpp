@@ -51,7 +51,7 @@ Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
 	return new StreamSoundBufferCursor();
 }
 
-bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool StreamSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	StreamSoundBufferCursor* ssbc = static_cast< StreamSoundBufferCursor* >(cursor);
 	uint64_t position = ssbc->m_position;

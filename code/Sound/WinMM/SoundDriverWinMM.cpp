@@ -1,8 +1,8 @@
 #include <limits>
-#include "Sound/WinMM/SoundDriverWinMM.h"
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Math/MathUtils.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/WinMM/SoundDriverWinMM.h"
 
 #undef min
 #undef max
@@ -57,7 +57,7 @@ SoundDriverWinMM::SoundDriverWinMM()
 {
 }
 
-bool SoundDriverWinMM::create(const SoundDriverCreateDesc& desc)
+bool SoundDriverWinMM::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	m_eventNotify = CreateEvent(NULL, FALSE, FALSE, NULL);
 	if (!m_eventNotify)

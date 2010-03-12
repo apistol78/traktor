@@ -23,6 +23,7 @@ namespace traktor
 	{
 
 class ISoundDriver;
+class ISoundMixer;
 class Sound;
 class SoundChannel;
 
@@ -93,6 +94,7 @@ public:
 
 private:
 	Ref< ISoundDriver > m_driver;
+	Ref< ISoundMixer > m_mixer;
 	SoundSystemCreateDesc m_desc;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;

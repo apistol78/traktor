@@ -22,6 +22,7 @@ struct IFilterInstance;
 
 class IFilter;
 class ISoundBufferCursor;
+class ISoundMixer;
 class Sound;
 
 /*! \brief Virtual sound channel.
@@ -70,7 +71,7 @@ private:
 
 	void playSound(Sound* sound, double time, uint32_t repeat);
 
-	bool getBlock(double time, SoundBlock& outBlock);
+	bool getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock);
 };
 
 	}

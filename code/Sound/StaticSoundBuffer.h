@@ -29,7 +29,7 @@ public:
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
+	virtual bool getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 private:
 	uint32_t m_sampleRate;

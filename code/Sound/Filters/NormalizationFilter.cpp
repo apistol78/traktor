@@ -33,7 +33,7 @@ Ref< IFilterInstance > NormalizationFilter::createInstance() const
 	return nfi;
 }
 
-void NormalizationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void NormalizationFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	NormalizationFilterInstance* nfi = static_cast< NormalizationFilterInstance* >(instance);
 

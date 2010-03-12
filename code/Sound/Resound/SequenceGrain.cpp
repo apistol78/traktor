@@ -62,7 +62,7 @@ const IGrain* SequenceGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 	return grain->getCurrentGrain(sequenceCursor->m_grainCursor);
 }
 
-bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool SequenceGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
 	IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
@@ -70,6 +70,7 @@ bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) c
 	for (;;)
 	{
 		if (grain->getBlock(
+			mixer,
 			sequenceCursor->m_grainCursor,
 			outBlock
 		))

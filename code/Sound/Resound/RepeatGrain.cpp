@@ -60,11 +60,11 @@ const IGrain* RepeatGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 	return m_grain->getCurrentGrain(repeatCursor->m_cursor);
 }
 
-bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool RepeatGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 
-	if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
+	if (!m_grain->getBlock(mixer, repeatCursor->m_cursor, outBlock))
 	{
 		if (m_count != 0 && ++repeatCursor->m_count >= m_count)
 			return false;
@@ -73,7 +73,7 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) con
 		if (!repeatCursor->m_cursor)
 			return false;
 
-		if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
+		if (!m_grain->getBlock(mixer, repeatCursor->m_cursor, outBlock))
 			return false;
 	}
 

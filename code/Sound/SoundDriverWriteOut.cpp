@@ -21,7 +21,7 @@ SoundDriverWriteOut::SoundDriverWriteOut()
 {
 }
 
-bool SoundDriverWriteOut::create(const SoundDriverCreateDesc& desc)
+bool SoundDriverWriteOut::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
 	for (uint32_t i = 0; i < desc.hwChannels; ++i)
 	{

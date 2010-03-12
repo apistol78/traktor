@@ -1,6 +1,6 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/Align.h"
-#include "Sound/SoundBlockUtilities.h"
+#include "Sound/SoundMixer.h"
 
 namespace traktor
 {
@@ -16,35 +16,12 @@ uint32_t alignmentOffset(const float* s)
 
 		}
 
-void soundBlockMulConst(SoundBlock& sb, float factor)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundMixer", SoundMixer, ISoundMixer)
+
+void SoundMixer::mulConst(float* sb, uint32_t count, float factor) const
 {
 	Scalar sf(factor);
-	for (uint32_t ch = 0; ch < sb.maxChannel; ++ch)
-	{
-		if (!sb.samples[ch])
-			continue;
 
-		uint32_t s = 0;
-
-		for (; s < alignmentOffset(sb.samples[ch]); ++s)
-			sb.samples[ch][s] *= factor;
-
-		for (; s < (sb.samplesCount & ~3UL); s += 4)
-		{
-			Vector4 s4(&sb.samples[ch][s]);
-			s4 *= sf;
-			s4.storeAligned(&sb.samples[ch][s]);
-		}
-
-		for (; s < sb.samplesCount; ++s)
-			sb.samples[ch][s] *= factor;
-	}
-}
-
-void soundBlockMulConst(float* sb, uint32_t count, float factor)
-{
-	Scalar sf(factor);
-	
 	uint32_t s = 0;
 
 	for (; s < alignmentOffset(sb); ++s)
@@ -61,10 +38,10 @@ void soundBlockMulConst(float* sb, uint32_t count, float factor)
 		sb[s] *= factor;
 }
 
-void soundBlockMulConst(float* lsb, const float* rsb, uint32_t count, float factor)
+void SoundMixer::mulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
 	Scalar sf(factor);
-	
+
 	uint32_t s = 0;
 
 	for (; s < alignmentOffset(rsb); ++s)
@@ -81,7 +58,7 @@ void soundBlockMulConst(float* lsb, const float* rsb, uint32_t count, float fact
 		lsb[s] = rsb[s] * factor;
 }
 
-void soundBlockAddMulConst(float* lsb, const float* rsb, uint32_t count, float factor)
+void SoundMixer::addMulConst(float* lsb, const float* rsb, uint32_t count, float factor) const
 {
 	Scalar sf(factor);
 
@@ -102,7 +79,7 @@ void soundBlockAddMulConst(float* lsb, const float* rsb, uint32_t count, float f
 		lsb[s] += rsb[s] * factor;
 }
 
-void soundBlockMute(float* sb, uint32_t count)
+void SoundMixer::mute(float* sb, uint32_t count) const
 {
 	uint32_t s = 0;
 

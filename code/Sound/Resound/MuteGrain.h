@@ -35,7 +35,7 @@ public:
 
 	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
+	virtual bool getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
 	virtual bool serialize(ISerializer& s);
 

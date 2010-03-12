@@ -45,7 +45,7 @@ Ref< IFilterInstance > CombFilter::createInstance() const
 	return instance;
 }
 
-void CombFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
+void CombFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	CombFilterInstance* cfi = static_cast< CombFilterInstance* >(instance);
 	for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
