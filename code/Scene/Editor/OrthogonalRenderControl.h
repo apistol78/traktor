@@ -72,6 +72,8 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::WorldRenderer > m_worldRenderer;
+	bool m_gridEnable;
+	bool m_guideEnable;
 	Color m_colorClear;
 	Color m_colorGrid;
 	Color m_colorRef;

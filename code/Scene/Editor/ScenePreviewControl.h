@@ -66,8 +66,6 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleX;
 	Ref< ui::custom::ToolBarButton > m_toolToggleY;
 	Ref< ui::custom::ToolBarButton > m_toolToggleZ;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGrid;
-	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSnap;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAddReference;
 	SplitType m_splitType;

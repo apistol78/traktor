@@ -56,7 +56,10 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_fieldOfView(c_defaultFieldOfView)
+:	m_gridEnable(true)
+,	m_guideEnable(true)
+,	m_postProcessEnable(true)
+,	m_fieldOfView(c_defaultFieldOfView)
 ,	m_mousePosition(0, 0)
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
@@ -243,6 +246,18 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 
 	if (command == L"Editor.SettingsChanged")
 		updateSettings();
+	else if (command == L"Scene.Editor.EnableGrid")
+		m_gridEnable = true;
+	else if (command == L"Scene.Editor.DisableGrid")
+		m_gridEnable = false;
+	else if (command == L"Scene.Editor.EnableGuide")
+		m_guideEnable = true;
+	else if (command == L"Scene.Editor.DisableGuide")
+		m_guideEnable = false;
+	else if (command == L"Scene.Editor.EnablePostProcess")
+		m_postProcessEnable = true;
+	else if (command == L"Scene.Editor.DisablePostProcess")
+		m_postProcessEnable = false;
 
 	return result;
 }
@@ -592,7 +607,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushView(view);
 
 		// Render XZ grid.
-		if (m_context->getGridEnable())
+		if (m_gridEnable)
 		{
 			Vector4 viewPosition = view.inverse().translation();
 			float vx = floorf(viewPosition.x());
@@ -655,7 +670,8 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			}
 
 			// Draw entity guides.
-			m_context->drawGuide(m_primitiveRenderer, *i);
+			if (m_guideEnable)
+				m_context->drawGuide(m_primitiveRenderer, *i);
 		}
 
 		// Draw controller guides.
@@ -674,7 +690,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			m_worldRenderer->build(m_worldRenderView, rootEntity, 0);
 			m_worldRenderer->render(world::WrfDepthMap | world::WrfVelocityMap | world::WrfShadowMap, 0);
 
-			if (m_renderTarget)
+			if (m_postProcessEnable && m_renderTarget)
 			{
 				m_renderView->begin(m_renderTarget, 0, true);
 				m_renderView->clear(
@@ -687,7 +703,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 			m_worldRenderer->render(world::WrfVisualOpaque | world::WrfVisualAlphaBlend, 0);
 
-			if (m_renderTarget)
+			if (m_postProcessEnable && m_renderTarget)
 			{
 				m_renderView->end();
 				m_postProcess->render(

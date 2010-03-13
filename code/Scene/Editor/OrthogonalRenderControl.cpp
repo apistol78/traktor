@@ -56,7 +56,9 @@ uint32_t nearestLog2(uint32_t num)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
-:	m_mousePosition(0, 0)
+:	m_gridEnable(true)
+,	m_guideEnable(true)
+,	m_mousePosition(0, 0)
 ,	m_mouseButton(0)
 ,	m_modifyCamera(false)
 ,	m_modifyAlternative(false)
@@ -200,6 +202,14 @@ bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
 
 	if (command == L"Editor.SettingsChanged")
 		updateSettings();
+	else if (command == L"Scene.Editor.EnableGrid")
+		m_gridEnable = true;
+	else if (command == L"Scene.Editor.DisableGrid")
+		m_gridEnable = false;
+	else if (command == L"Scene.Editor.EnableGuide")
+		m_guideEnable = true;
+	else if (command == L"Scene.Editor.DisableGuide")
+		m_guideEnable = false;
 
 	return result;
 }
@@ -554,6 +564,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		m_primitiveRenderer->pushProjection(worldRenderView.getProjection());
 
 		// Render grid.
+		if (m_gridEnable)
 		{
 			float hx = worldView.width * 0.5f;
 			float hy = worldView.height * 0.5f;
@@ -640,7 +651,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			}
 
 			// Draw entity guides.
-			m_context->drawGuide(m_primitiveRenderer, *i);
+			if (m_guideEnable)
+				m_context->drawGuide(m_primitiveRenderer, *i);
 		}
 
 		// Draw cameras.

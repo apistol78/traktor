@@ -127,9 +127,6 @@ void PathEntityEditor::drawGuide(
 	scene::EntityAdapter* entityAdapter
 ) const
 {
-	if (!context->getGuideEnable() && !entityAdapter->isSelected())
-		return;
-
 	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(entityAdapter->getEntity());
 
 	// Draw entity's path.

@@ -8,13 +8,19 @@
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/ReferencesRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+
+// Resources
+#include "Resources/SceneEdit.h"
 
 namespace traktor
 {
@@ -34,6 +40,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	T_ASSERT (settings);
 
 	int32_t viewType = settings->getProperty< editor::PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
+	bool postProcessEnable = settings->getProperty< editor::PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(index), true);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -43,19 +50,45 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	if (!m_toolBar->create(m_container))
 		return false;
 
-	m_toolBarView = new ui::custom::ToolBarDropDown(ui::Command(), 100, i18n::Text(L"View mode"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_TOP"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES"));
-	m_toolBarView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
-	m_toolBarView->select(viewType);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 17);
 
-	m_toolBar->addItem(m_toolBarView);
+	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_FRONT"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BACK"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_TOP"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES"));
+	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
+	m_toolView->select(viewType);
+
+	m_toolToggleGrid = new ui::custom::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"),
+		ui::Command(1, L"Scene.Editor.ToggleGrid"),
+		16,
+		ui::custom::ToolBarButton::BsDefaultToggled
+	);
+
+	m_toolToggleGuide = new ui::custom::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
+		ui::Command(1, L"Scene.Editor.ToggleGuide"),
+		5,
+		ui::custom::ToolBarButton::BsDefaultToggled
+	);
+
+	m_toolTogglePostProcess = new ui::custom::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_TOGGLE_POSTPROCESS"),
+		ui::Command(1, L"Scene.Editor.TogglePostProcess"),
+		6,
+		postProcessEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
+	);
+
+	m_toolBar->addItem(m_toolView);
+	m_toolBar->addItem(m_toolToggleGrid);
+	m_toolBar->addItem(m_toolToggleGuide);
+	m_toolBar->addItem(m_toolTogglePostProcess);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
 
 	createRenderControl(viewType);
@@ -65,7 +98,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 void DefaultRenderControl::destroy()
 {
-	m_toolBarView = 0;
+	m_toolView = 0;
 
 	if (m_renderControl)
 	{
@@ -188,6 +221,21 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	m_container->update();
 	m_renderControl->updateWorldRenderer();
 
+	if (m_toolToggleGrid->isToggled())
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGrid"));
+	else
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGrid"));
+
+	if (m_toolToggleGuide->isToggled())
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
+	else
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
+
+	if (m_toolTogglePostProcess->isToggled())
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
+	else
+		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
+
 	Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
@@ -196,9 +244,43 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 
 void DefaultRenderControl::eventToolClick(ui::Event* event)
 {
-	int32_t selected = m_toolBarView->getSelected();
-	T_ASSERT (selected >= 0);
-	createRenderControl(selected);
+	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
+	if (cmdEvent->getCommand() == L"Scene.Editor.View")
+	{
+		int32_t selected = m_toolView->getSelected();
+		T_ASSERT (selected >= 0);
+		createRenderControl(selected);
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleGrid")
+	{
+		if (m_toolToggleGrid->isToggled())
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGrid"));
+		else
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGrid"));
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleGuide")
+	{
+		if (m_toolToggleGuide->isToggled())
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnableGuide"));
+		else
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisableGuide"));
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.TogglePostProcess")
+	{
+		Ref< editor::Settings > settings = m_context->getEditor()->getSettings();
+		T_ASSERT (settings);
+
+		if (m_toolTogglePostProcess->isToggled())
+		{
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
+			settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), true);
+		}
+		else
+		{
+			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
+			settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.PostProcessEnable" + toString(m_index), false);
+		}
+	}
 }
 
 	}
