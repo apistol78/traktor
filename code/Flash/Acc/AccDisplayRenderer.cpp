@@ -84,11 +84,7 @@ bool AccDisplayRenderer::create(
 		rtscd.height = c_cacheGlyphSize;
 		rtscd.multiSample = 0;
 		rtscd.depthStencil = false;
-#if !defined(_PS3) && !defined(TARGET_OS_IPHONE)
-		rtscd.targets[0].format = render::TfR8;
-#else
 		rtscd.targets[0].format = render::TfR8G8B8A8;
-#endif
 
 		m_renderTargetGlyphs[i] = m_renderSystem->createRenderTargetSet(rtscd);
 		if (!m_renderTargetGlyphs[i])
