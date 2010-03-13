@@ -157,9 +157,6 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 
 void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 {
-	if (!m_context->getGuideEnable())
-		return;
-
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
 

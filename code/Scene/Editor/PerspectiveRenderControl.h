@@ -71,6 +71,9 @@ private:
 	Ref< world::WorldRenderer > m_worldRenderer;
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
+	bool m_gridEnable;
+	bool m_guideEnable;
+	bool m_postProcessEnable;
 	Color m_colorClear;
 	Color m_colorGrid;
 	Color m_colorRef;

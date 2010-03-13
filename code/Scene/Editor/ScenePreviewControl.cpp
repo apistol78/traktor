@@ -68,8 +68,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleX = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_X"), ui::Command(1, L"Scene.Editor.ToggleX"), 2, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleY = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Y"), ui::Command(1, L"Scene.Editor.ToggleY"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleZ = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(1, L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleGrid = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"), ui::Command(1, L"Scene.Editor.ToggleGrid"), 16, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"), ui::Command(1, L"Scene.Editor.ToggleGuide"), 5, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(1, L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAddReference = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_ADD_REFERENCE"), ui::Command(1, L"Scene.Editor.ToggleAddReference"), 12, ui::custom::ToolBarButton::BsDefaultToggle);
 
@@ -80,8 +78,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolToggleX->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleX", true));
 	m_toolToggleY->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleY", true));
 	m_toolToggleZ->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleZ", true));
-	m_toolToggleGrid->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleGrid", true));
-	m_toolToggleGuide->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleGuide", true));
 	m_toolToggleSnap->setToggled(settings->getProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", true));
 
 	m_toolBarActions = new ui::custom::ToolBar();
@@ -97,8 +93,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(m_toolToggleY);
 	m_toolBarActions->addItem(m_toolToggleZ);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarActions->addItem(m_toolToggleGrid);
-	m_toolBarActions->addItem(m_toolToggleGuide);
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolToggleAddReference);
 	m_toolBarActions->addClickEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventToolBarActionClicked));
@@ -150,8 +144,6 @@ void ScenePreviewControl::destroy()
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleX", m_toolToggleX->isToggled());
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleY", m_toolToggleY->isToggled());
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleZ", m_toolToggleZ->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleGrid", m_toolToggleGrid->isToggled());
-	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleGuide", m_toolToggleGuide->isToggled());
 	settings->setProperty< editor::PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 
 	// Destroy render controls.
@@ -199,18 +191,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 			else if (command == L"Scene.Editor.ToggleZ")
 				m_toolToggleZ->setToggled(!m_toolToggleZ->isToggled());
 		}
-		updateEditState();
-	}
-	else if (command == L"Scene.Editor.ToggleGrid")
-	{
-		if (command.getId() == 0)
-			m_toolToggleGrid->setToggled(!m_toolToggleGrid->isToggled());
-		updateEditState();
-	}
-	else if (command == L"Scene.Editor.ToggleGuide")
-	{
-		if (command.getId() == 0)
-			m_toolToggleGuide->setToggled(!m_toolToggleGuide->isToggled());
 		updateEditState();
 	}
 	else if (command == L"Scene.Editor.ToggleSnap")
@@ -401,8 +381,6 @@ void ScenePreviewControl::updateEditState()
 	m_context->setAxisEnable(axisEnabled);
 
 	// Guides enabled.
-	m_context->setGridEnable(m_toolToggleGrid->isToggled());
-	m_context->setGuideEnable(m_toolToggleGuide->isToggled());
 	m_context->setSnapEnable(m_toolToggleSnap->isToggled());
 	m_context->setAddReferenceMode(m_toolToggleAddReference->isToggled());
 

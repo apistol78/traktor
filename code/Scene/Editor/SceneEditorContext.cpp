@@ -149,8 +149,6 @@ SceneEditorContext::SceneEditorContext(
 ,	m_physicsManager(physicsManager)
 ,	m_pickEnable(true)
 ,	m_axisEnable(AeXYZ)
-,	m_gridEnable(true)
-,	m_guideEnable(true)
 ,	m_snapEnable(true)
 ,	m_physicsEnable(false)
 ,	m_referenceMode(false)
@@ -215,26 +213,6 @@ void SceneEditorContext::setAxisEnable(uint32_t axisEnable)
 uint32_t SceneEditorContext::getAxisEnable() const
 {
 	return m_axisEnable;
-}
-
-void SceneEditorContext::setGridEnable(bool gridEnable)
-{
-	m_gridEnable = gridEnable;
-}
-
-bool SceneEditorContext::getGridEnable() const
-{
-	return m_gridEnable;
-}
-
-void SceneEditorContext::setGuideEnable(bool guideEnable)
-{
-	m_guideEnable = guideEnable;
-}
-
-bool SceneEditorContext::getGuideEnable() const
-{
-	return m_guideEnable;
 }
 
 void SceneEditorContext::setSnapEnable(bool snapEnable)

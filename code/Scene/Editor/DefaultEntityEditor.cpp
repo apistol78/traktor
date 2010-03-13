@@ -166,9 +166,6 @@ void DefaultEntityEditor::drawGuide(
 {
 	const Vector4 c_expandBoundingBox(0.001f, 0.001f, 0.001f, 0.0f);
 
-	if (!context->getGuideEnable() && !entityAdapter->isSelected())
-		return;
-
 	Transform transform = entityAdapter->getTransform();
 	
 	Aabb boundingBox = entityAdapter->getBoundingBox();

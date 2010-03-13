@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -130,14 +130,6 @@ public:
 	void setAxisEnable(uint32_t axisEnable);
 
 	uint32_t getAxisEnable() const;
-
-	void setGridEnable(bool gridEnable);
-
-	bool getGridEnable() const;
-
-	void setGuideEnable(bool guideEnable);
-
-	bool getGuideEnable() const;
 
 	void setSnapEnable(bool snapEnable);
 
@@ -301,8 +293,6 @@ private:
 	Ref< IModifier > m_modifier;
 	bool m_pickEnable;
 	uint32_t m_axisEnable;
-	bool m_gridEnable;
-	bool m_guideEnable;
 	bool m_snapEnable;
 	bool m_physicsEnable;
 	bool m_referenceMode;
