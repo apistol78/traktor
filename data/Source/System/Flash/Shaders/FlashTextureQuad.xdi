@@ -60,8 +60,8 @@
 				<second>87</second>
 			</position>
 			<lookup>LuSimple</lookup>
-			<minFilter>FtPoint</minFilter>
-			<mipFilter>FtPoint</mipFilter>
+			<minFilter>FtLinear</minFilter>
+			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
