@@ -1,9 +1,10 @@
 #include <cstring>
 #include <vorbis/codec.h>
-#include "Sound/Decoders/OggStreamDecoder.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/Decoders/OggStreamDecoder.h"
 
 namespace traktor
 {
@@ -16,6 +17,9 @@ public:
 	bool create(IStream* stream)
 	{
 		m_stream = stream;
+
+		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
 
 		ogg_sync_init(&m_oy);
 
@@ -144,6 +148,9 @@ public:
 
 		// OK, clean up the framer
 		ogg_sync_clear(&m_oy);
+
+		Alloc::freeAlign(m_decoded[0]);
+		Alloc::freeAlign(m_decoded[1]);
 	}
 
 	double getDuration() const
@@ -233,7 +240,7 @@ private:
 	vorbis_dsp_state m_vd;
 	vorbis_block m_vb;
 	char* m_buffer;
-	float m_decoded[2][65535];
+	float* m_decoded[2];
 	bool m_readPage;
 	bool m_readPacket;
 };

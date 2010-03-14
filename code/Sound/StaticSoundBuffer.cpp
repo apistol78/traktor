@@ -1,3 +1,5 @@
+#include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
 #include "Sound/StaticSoundBuffer.h"
 
 namespace traktor
@@ -44,11 +46,15 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 	m_samplesCount = samplesCount;
 	m_channelsCount = channelsCount;
 
+	std::memset(m_blocks, 0, sizeof(m_blocks));
+
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
 	{
 		m_samples[i].reset(new int16_t [m_samplesCount]);
 		if (!m_samples[i].ptr())
 			return false;
+
+		m_blocks[i] = (float*)Alloc::acquireAlign(sizeof(float) * 4096, 16);
 	}
 
 	return true;
@@ -57,7 +63,10 @@ bool StaticSoundBuffer::create(uint32_t sampleRate, uint32_t samplesCount, uint3
 void StaticSoundBuffer::destroy()
 {
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
+	{
+		Alloc::freeAlign(m_blocks[i]);
 		m_samples[i].release();
+	}
 }
 
 int16_t* StaticSoundBuffer::getSamplesData(uint32_t channel)
@@ -80,7 +89,7 @@ bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 
 	uint32_t samplesCount = m_samplesCount - position;
 	samplesCount = std::min< uint32_t >(samplesCount, outBlock.samplesCount);
-	samplesCount = std::min< uint32_t >(samplesCount, sizeof_array(m_blocks[0]));
+	samplesCount = std::min< uint32_t >(samplesCount, 4096);
 
 	for (uint32_t i = 0; i < m_channelsCount; ++i)
 	{
@@ -89,7 +98,7 @@ bool StaticSoundBuffer::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* c
 			m_blocks[i][j] = float(m_samples[i][position + j] / 32767.0f);
 	}
 
-	outBlock.samplesCount = samplesCount;
+	outBlock.samplesCount = alignUp(samplesCount, 4);
 	outBlock.sampleRate = m_sampleRate;
 	outBlock.maxChannel = m_channelsCount;
 
