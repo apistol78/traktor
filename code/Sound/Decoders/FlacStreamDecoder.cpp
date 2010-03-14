@@ -1,10 +1,11 @@
 #include <cstring>
 #include <FLAC/stream_decoder.h>
-#include "Sound/Decoders/FlacStreamDecoder.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/IStream.h"
-#include "Core/Misc/TString.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/Decoders/FlacStreamDecoder.h"
 
 namespace traktor
 {
@@ -31,6 +32,9 @@ public:
 		FLAC__StreamDecoderInitStatus status;
 
 		m_stream = stream;
+
+		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
 
 		m_decoder = FLAC__stream_decoder_new();
 		if (!m_decoder)
@@ -62,6 +66,10 @@ public:
 	void destroy()
 	{
 		FLAC__stream_decoder_delete(m_decoder);
+		
+		Alloc::freeAlign(m_decoded[0]);
+		Alloc::freeAlign(m_decoded[1]);
+
 		m_decoder = 0;
 	}
 
@@ -74,8 +82,8 @@ public:
 	{
 		if (m_keepOffset > 0)
 		{
-			memmove(&m_decoded[SbcLeft][0], &m_decoded[SbcLeft][m_keepOffset], (m_decodedCount - m_keepOffset) * sizeof(float));
-			memmove(&m_decoded[SbcRight][0], &m_decoded[SbcRight][m_keepOffset], (m_decodedCount - m_keepOffset) * sizeof(float));
+			std::memmove(&m_decoded[SbcLeft][0], &m_decoded[SbcLeft][m_keepOffset], (m_decodedCount - m_keepOffset) * sizeof(float));
+			std::memmove(&m_decoded[SbcRight][0], &m_decoded[SbcRight][m_keepOffset], (m_decodedCount - m_keepOffset) * sizeof(float));
 			m_decodedCount -= m_keepOffset;
 		}
 
@@ -102,7 +110,7 @@ public:
 private:
 	Ref< IStream > m_stream;
 	FLAC__StreamDecoder* m_decoder;
-	float m_decoded[2][65535];
+	float* m_decoded[2];
 	uint32_t m_decodedCount;
 	uint32_t m_keepOffset;
 	

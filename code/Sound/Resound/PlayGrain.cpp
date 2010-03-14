@@ -88,7 +88,7 @@ const IGrain* PlayGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
 bool PlayGrain::getBlock(const ISoundMixer* mixer, ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
-	if (!playCursor->m_soundBuffer->getBlock(
+	if (!playCursor || !playCursor->m_soundBuffer->getBlock(
 		mixer,
 		playCursor->m_soundCursor,
 		outBlock

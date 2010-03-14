@@ -1,9 +1,11 @@
 #include <cstring>
 #include <mad.h>
-#include "Sound/Decoders/Mp3StreamDecoder.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Sound/Decoders/Mp3StreamDecoder.h"
 
 namespace traktor
 {
@@ -35,6 +37,9 @@ public:
 	{
 		m_stream = stream;
 
+		m_decoded[0] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+		m_decoded[1] = (float*)Alloc::acquireAlign(sizeof(float) * 65536, 16);
+
 		mad_stream_init(&m_mad_stream);
 		mad_frame_init(&m_mad_frame);
 		mad_synth_init(&m_mad_synth);
@@ -48,6 +53,9 @@ public:
 		mad_synth_finish(&m_mad_synth);
 		mad_frame_finish(&m_mad_frame);
 		mad_stream_finish(&m_mad_stream);
+
+		Alloc::freeAlign(m_decoded[0]);
+		Alloc::freeAlign(m_decoded[1]);
 	}
 
 	double getDuration() const
@@ -122,7 +130,6 @@ public:
 
 			for (uint32_t i = 0; i < m_mad_synth.pcm.length; ++i)
 			{
-				T_ASSERT (m_decodedCount < sizeof_array(m_decoded[0]));
 				m_decoded[SbcLeft][m_decodedCount] = scale(*left++);
 				if (m_mad_synth.pcm.channels == 2)
 					m_decoded[SbcRight][m_decodedCount] = scale(*right++);
@@ -132,7 +139,7 @@ public:
 
 		outSoundBlock.samples[SbcLeft] = m_decoded[SbcLeft];
 		outSoundBlock.samples[SbcRight] = m_decoded[SbcRight];
-		outSoundBlock.samplesCount = std::min(m_decodedCount, outSoundBlock.samplesCount);
+		outSoundBlock.samplesCount = alignDown(std::min(m_decodedCount, outSoundBlock.samplesCount), 4);
 		outSoundBlock.sampleRate = m_sampleRate;
 		outSoundBlock.maxChannel = 2;
 
@@ -151,7 +158,7 @@ private:
 	mad_synth m_mad_synth;
 	mad_timer_t m_mad_timer;
 	uint8_t m_readBuffer[8192];
-	float m_decoded[2][65535];
+	float* m_decoded[2];
 	uint32_t m_decodedCount;
 	uint32_t m_consumedCount;
 	uint32_t m_sampleRate;

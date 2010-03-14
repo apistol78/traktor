@@ -4,6 +4,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
 #include "Core/Thread/Acquire.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
@@ -147,10 +148,18 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		if (soundBlock.sampleRate != m_hwSampleRate)
 		{
 			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_hwSampleRate) / soundBlock.sampleRate;
+
+			// Ensure we produce "multiple-of-4" number of samples; slight adjust block's sample rate.
+			outputSamplesCount = alignUp(outputSamplesCount, 4);
+			soundBlock.sampleRate = (soundBlock.samplesCount * m_hwSampleRate) / outputSamplesCount;
+
 			for (uint32_t i = 0; i < SbcMaxChannelCount; ++i)
 			{
 				const float* inputSamples = soundBlock.samples[i];
+				
 				float* outputSamples = m_outputSamples[i] + m_outputSamplesIn;
+				T_ASSERT (alignUp(outputSamples, 16) == outputSamples);
+
 				if (inputSamples)
 				{
 					for (uint32_t j = 0; j < outputSamplesCount; ++j)
@@ -160,8 +169,9 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 					}
 				}
 				else
-					mixer->mute(outputSamples, outputSamplesCount);
+					mixer->mute(outputSamples, alignUp(outputSamplesCount, 4));
 			}
+
 			m_outputSamplesIn += outputSamplesCount;
 		}
  		else

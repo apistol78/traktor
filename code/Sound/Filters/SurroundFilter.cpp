@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Memory/Alloc.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/ISoundMixer.h"
@@ -33,7 +34,19 @@ float angleDifference(float angle1, float angle2)
 
 struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 {
-	float T_MATH_ALIGN16 m_buffer[SbcMaxChannelCount][4096];
+	float* m_buffer[SbcMaxChannelCount];
+
+	SurroundFilterInstance()
+	{
+		for (int i = 0; i < sizeof_array(m_buffer); ++i)
+			m_buffer[i] = (float*)Alloc::acquireAlign(4096 * sizeof(float), 16);
+	}
+
+	virtual ~SurroundFilterInstance()
+	{
+		for (int i = 0; i < sizeof_array(m_buffer); ++i)
+			Alloc::freeAlign(m_buffer[i]);
+	}
 };
 
 struct Speaker
@@ -80,9 +93,7 @@ void SurroundFilter::setSpeakerPosition(const Vector4& position)
 
 Ref< IFilterInstance > SurroundFilter::createInstance() const
 {
-	Ref< SurroundFilterInstance > sfi = new SurroundFilterInstance();
-	std::memset(sfi->m_buffer, 0, sizeof(sfi->m_buffer));
-	return sfi;
+	return new SurroundFilterInstance();
 }
 
 void SurroundFilter::apply(const ISoundMixer* mixer, IFilterInstance* instance, SoundBlock& outBlock) const

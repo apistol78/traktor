@@ -36,7 +36,7 @@ private:
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
 	AutoArrayPtr< int16_t > m_samples[SbcMaxChannelCount];
-	mutable float T_ALIGN16 m_blocks[SbcMaxChannelCount][4096];
+	mutable float* m_blocks[SbcMaxChannelCount];
 };
 
 	}
